@@ -1,0 +1,92 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<test_set>
+
+    <default_timeout value="480"/>
+
+    <description>JTAX module test definitions</description>
+
+    <test_group name="Implicit">
+
+        <task_declaration>
+
+            <task id="RecoveryManager" classname="com.arjuna.ats.arjuna.recovery.RecoveryManager" runner="ServiceRunner" type="expect_ready" location="all"/>
+            <task id="ImplicitServer" classname="com.arjuna.ats.jtax.tests.implicit.server.ImplicitServer" runner="UnitTestRunner" type="expect_ready"/>
+            <task id="ImplicitClient" classname="com.arjuna.ats.jtax.tests.implicit.client.ImplicitClient" runner="UnitTestRunner" type="expect_pass_fail"/>
+
+        </task_declaration>
+
+        <test_declaration id="ImplicitPropagationTest01" descriptive_name="Implicit propagation test" author="Richard Begg">
+
+            <description>Implicit propagation test</description>
+            <configuration names_required="1"/>
+            <action_list>
+                <start_task id="RecoveryManager" runtime_id="RecoveryManager">
+                    <param>-test</param>
+                </start_task>
+                <start_task id="ImplicitServer" runtime_id="server">
+                    <param>$(1)</param>
+                </start_task>
+                <perform_task id="ImplicitClient">
+                    <param>$(1)</param>
+                </perform_task>
+                <terminate_task runtime_id="server"/>
+                <terminate_task runtime_id="RecoveryManager"/>
+            </action_list>
+
+        </test_declaration>
+
+    </test_group>
+
+    <test_group name="Basic">
+
+        <task_declaration>
+
+            <task id="JTATransactionCommitTest" classname="com.hp.mwtests.ts.jta.jts.basic.JTATransactionCommitTest" runner="UnitTestRunner" type="expect_pass_fail"/>
+            <task id="NullResource" classname="com.hp.mwtests.ts.jta.jts.basic.NullResource" runner="UnitTestRunner" type="expect_pass_fail"/>
+
+        </task_declaration>
+
+        <test_declaration id="NullResource" descriptive_name="NullResource test" author="QA2DTF">
+
+            <description>A simple NullResource JTA test</description>
+            <configuration/>
+            <action_list>
+                <perform_task id="NullResource"/>
+            </action_list>
+
+        </test_declaration>
+
+        <test_declaration id="CommitTest" descriptive_name="Commit test" author="Richard Begg">
+
+            <description>
+                A simple test that ensure that you can start a transaction and then commit it via
+                the Transaction interface even when another transaction is associated with the thread.
+            </description>
+            <configuration/>
+            <action_list>
+                <perform_task id="JTATransactionCommitTest"/>
+            </action_list>
+
+        </test_declaration>
+    </test_group>
+
+</test_set>

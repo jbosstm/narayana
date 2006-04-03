@@ -1,0 +1,130 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and others contributors as indicated 
+  by the @authors tag. All rights reserved. 
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors. 
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en-gb] (WinNT; I) [Netscape]">
+   <title>Introduction_to_Logging</title>
+</head>
+<body>
+
+<h2>
+1. Introduction to Logging</h2>
+This most basic form of logging involves developers manually inserting
+code into their applications to display small (or large) pieces of internal
+state information to help understand what's going on. It's a useful technique
+that every developer has used at least once. The problem is that it doesn't
+scale. Using print statements for a small program is fine, but for a large,
+commercial grade piece of software there is far too much labor involved
+in manually adding and removing logging statements.
+<br>C programmers know, of course, that the way to conditionally add and
+remove code is via the C preprocessor and the <font face="Courier New,Courier"><font size=-1>#ifdef</font></font>
+directive. Unfortunately, Java doesn't have a preprocessor. How can we
+make logging scale to a useful level in Java?
+<br>A simple way to provide logging in your program is to use the Java
+compiler's ability to evaluate boolean expressions at compile time, provided
+that all the arguments are known. For example, in this code, the <font face="Courier New,Courier"><font size=-1>println</font></font>
+statements will not be executed if DEBUG not set to true.
+<blockquote><font face="Courier New,Courier"><font size=-1>class foo {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp; public
+bar() {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+if(DEBUG) {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.out.println("Debugging enabled.");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp; }</font></font>
+<br><font face="Courier New,Courier"><font size=-1>}</font></font></blockquote>
+A much better way, and the way that most logging is done in environments
+where the logged output is important, is to use a logging class. A much
+better way, and the way that most logging is done in environments where
+the logged output is important, is to use a logging class.
+<br>A logging class collects all the messages in one central place and
+not only records them, but can also sort and filter them so that you don't
+have to see every message being generated.&nbsp; A logging class provides
+more information than just the message. It can automatically add information
+such as the time the event occurred, the thread that generated the message,
+and a stack trace of where the message was generated.
+<br>Some logging classes will write their output directly to the screen
+or a file. More advanced logging systems may instead open a socket to allow
+the log messages to be sent to a separate process, which is in turn responsible
+for passing those messages to the user or storing them. The advantage with
+this&nbsp;&nbsp; system is that it allows for messages from multiple sources
+to be aggregated in a single location and it allows for monitoring remote
+systems.
+<br>The format of the log being generated should be customizable. This
+could start from just allowing setting the Log "level" - which means that
+each log message is assigned a severity level and only messages of greater
+importance than the log level are logged - to allowing more flexible log
+file formatting by using some sort LogFormatter objects that do transformations
+on the logging information.
+<br>The logging service should be able to route logging information to
+different locations based on the type of the information. Examples might
+be printing certain messages to the console, writing to a flat file, to
+a number of different flat files, to a database and so on. Examples of
+different types information could be for example errors, access information
+etc.
+<h3>
+Features</h3>
+An appropriate logging library should provide these features
+<ul>
+<li>
+Control over which logging statements are enabled or disabled,</li>
+
+<li>
+Define importance or severity for logging statement via a set of levels</li>
+
+<li>
+Manage output destinations,</li>
+
+<li>
+Manage output format.</li>
+
+<li>
+Manage <a href="Internationalization.html">internationalization (i18n)
+and Localization (L10N)</a></li>
+
+<li>
+Offer a way to configure above features.</li>
+</ul>
+
+<h3>
+Relevant Logging Framework</h3>
+According to features&nbsp; a logging framework should provide, several
+logging API and tools have been provided, the most popular are:
+<ul>
+<li>
+The Apache/Jakarta <a href="http://jakarta.apache.org/log4j/docs/index.html">Log4j.</a></li>
+
+<li>
+Sun <a href="http://java.sun.com/j2se/1.4/docs/guide/util/logging/index.html">JDK
+1.4 logging API</a></li>
+
+<br>HP&nbsp; <a href="http://usage.fc.hp.com/partners/bluestone/common_javadoc/index.html">logging
+API </a>(mainly used by the HP CSF)
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;</ul>
+<a href="../Arjuna_CLF_main.html">Main</a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="../trail2/Installation.html">Next</a>
+</body>
+</html>

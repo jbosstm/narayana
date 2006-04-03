@@ -1,0 +1,412 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and others contributors as indicated 
+  by the @authors tag. All rights reserved. 
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors. 
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en-gb] (WinNT; I) [Netscape]">
+   <title>Internationalization</title>
+</head>
+<body>
+
+<h2>
+5 Internationalization</h2>
+A commonLogger may have a Resource Bundle name associated with it. The
+corresponding Resource Bundle can be used to map between raw message strings
+and localized message strings.
+<br>The Common Logging Framework relies on the underlying logging implementation
+to take into account the Resource Bundle by requesting the appropriate
+API. When instantiated a commonLogger object can be associated with a ResourceBundle
+name by provided in the <i>getLogger</i> method on the LoggerFactory.
+<p>The following class named, logi18n,&nbsp; illustrates how the Common
+Logging Framework manages i18n.
+<br>&nbsp;
+<table BORDER COLS=1 WIDTH="83%" BGCOLOR="#CCCCCC" >
+<tr>
+<td><font face="Courier New,Courier"><font size=-1>import com.hp.mw.common.util.logging.CommonLevel;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import com.hp.mw.common.util.logging.commonLogger;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import com.hp.mw.common.util.logging.LoggerFactory;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import com.hp.mw.common.util.logging.LogManager;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import java.util.*;</font></font>
+<p><font face="Courier New,Courier"><font size=-1>public class logi18n{</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;static LoggerFactory
+log_fac = LogManager.getLogFactory();</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;static String
+language = System.getProperty("language", "en");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;static String
+country&nbsp; = System.getProperty("country", "US");</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;private static
+Locale currentLocale = new Locale(language,country); //(1)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;private static
+ResourceBundle log_mesg =&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ResourceBundle.getBundle("logging_msg", currentLocale); // (2)</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;static commonLogger
+mylog = (CommonLogger)log_fac.getLogger(logi18n.class.getName(),&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"logging_msg_"+language+"_"+country);</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;public static void
+main(String[] args) {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp; mylog.log(CommonLevel.FATAL,"FATAL_Message");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp; mylog.log(CommonLevel.INFO,"INFO_Message");</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;}</font></font>
+<br><font face="Courier New,Courier"><font size=-1>}</font></font></td>
+</tr>
+</table>
+
+<p>Within the logi18n class, messages defined with specific keys are displayed
+according to the language or Locale object specified by the application
+(1). As mentioned the US English is chosen by default. To determine the
+national text associated with a key (given with the log request), The ResourceBundle
+object is then created (3) and associated with the “logging_msg” which
+indicates to the ResourceBundle to seek a file beginning with its name
+as a prefix, where the rest of the file name is obtained with the Locale
+object. For instance, if the language chosen by the application is the
+US English, the file name to be considered is “logging_msg_en_US.properties”,
+while for the French used in France, the file name to be considered will
+be “logging_msg_fr_FR.properties”.&nbsp; Such properties file contains
+a national corresponding a key provided in the logging request.
+<br>The following files illustrate how national texts are provided for
+the English and the French. Additional files appropriate to other languages
+can be defined in a similar way.
+<ul>
+<li>
+logging_msg_en_US.properties</li>
+
+<br><font face="Courier New,Courier"><font size=-1>FATAL_Message = This
+is a Fatal message</font></font>
+<br><font face="Courier New,Courier"><font size=-1>INFO_Message = This
+is an Info message</font></font>
+<br>&nbsp;
+<li>
+logging_msg_fr_FR.properties</li>
+
+<br><font face="Courier New,Courier"><font size=-1>FATAL_Message = Ceci
+est un message Fatal</font></font>
+<br><font face="Courier New,Courier"><font size=-1>INFO_Message = Ceci
+est un message pour information</font></font></ul>
+A log message provided with a string key, used as an entry by the ResourceBundle
+object to determine the corresponding text in a properties file, may be
+associated with a set of arguments for which their positions have previewed
+in the properties files.&nbsp; The following example illustrates how a
+set of arguments is associated&nbsp;&nbsp; with a key in the properties
+file. Assume that the logging_msg_en_US&nbsp; and logging_msg_fr_FR file
+contain respectively the following entry:
+<blockquote>
+<li>
+English</li>
+
+<br><font face="Courier New,Courier"><font size=-1>IDENTIFICATION = The
+FirstName is {0} and the LastName is {1}</font></font>
+<br>&nbsp;
+<li>
+French</li>
+
+<br><font face="Courier New,Courier"><font size=-1>IDENTIFICATION = Le
+prenom est {0} et le nom est {1}</font></font></blockquote>
+
+<p><br>The class logi18n may extended with:
+<br>&nbsp;
+<br>&nbsp;
+<table BORDER COLS=1 WIDTH="72%" BGCOLOR="#CCCCCC" >
+<tr>
+<td><font face="Courier New,Courier"><font size=-1>public class logi18n{</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp; . . .</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp; public static
+void main(String[] args) {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp; Object[]
+myParams = new Object[2];</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; myParams[0]=
+“Foo”;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; myParams[1]=
+“Bar”;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; mylog.info("IDENTIFICATION",myParams);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp; . . .</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp; }</font></font>
+<br><font face="Courier New,Courier"><font size=-1>}</font></font></td>
+</tr>
+</table>
+
+<p>When the logi18n class is executed the variable replacement, defined
+with the key named IDENTIFICATION, are specified with the arguments provided
+in myParams.
+<br>&nbsp;
+<h4>
+Missing Resource</h4>
+If a commonLogger object is used to manage i18n, any string key provided
+in a logging request should have an entry in the properties file. If not
+the commonLogger object accepts the provided key, but uses this key as
+a text to be logger in addition to mention that the associated entry does
+not exist in the provided bundle name. The following example is an illustration.
+In the class logi18n described above we assume that an additional logging
+request is invoked on the commonLogger object but using an entry which
+does not exist in the properties files
+<br>&nbsp;
+<table BORDER COLS=1 WIDTH="72%" BGCOLOR="#CCCCCC" >
+<tr>
+<td><font face="Courier New,Courier"><font size=-1>public class logi18n{</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp; . . .&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp; public
+static void main(String[] args) {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+mylog.log(CommonLevel.FATAL,"Test_Message");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+. . .&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;}</font></font>
+<br><font face="Courier New,Courier"><font size=-1>}</font></font></td>
+</tr>
+</table>
+
+<p>Assuming that the FATAL log level is enabled, and the language is the
+French, the produced log message is.
+<blockquote><font face="Courier New,Courier"><font size=-1>[19 mars 2002
+- 10:51:26][main ][FATAL] - String "FATAL_Message" not found in bundle
+"logging_msg_fr_FR".</font></font></blockquote>
+Note that the message is “String&nbsp; “Test Message” is in English”
+<br>&nbsp;
+<h4>
+Per Class/Per Module Resource Bundle</h4>
+When requested to log a message, a commonLogger object can determine if
+the provided message has to be sent as it to the output or corresponds
+to a key associated with a resource bundle (then used to retrieve a national
+text). To distinguish these two cases,&nbsp; the commonLogger can determine
+if a resource bundle is associated with a log request&nbsp; as follow:
+<ul>
+<li>
+Default resource bundle associated with the commonLogger;</li>
+
+<br>There are two ways to associate a default resource bundle with a commonLogger:
+<ul>
+<li>
+At the creation via the getLogger method defined by the LoggerFactory,
+as follow:</li>
+
+<br><font face="Courier New,Courier"><font size=-1>commonLogger getLogger(String
+key, String resourceBundleName);</font></font>
+<br>&nbsp;
+<li>
+Set a resource bundle name with the following method defined by the commonLogger</li>
+
+<br><font face="Courier New,Courier"><font size=-1>void setResourceBundleName(String
+BaseName);</font></font></ul>
+
+<li>
+Resource bundle name specified with the log request</li>
+
+<br>A set of methods with a “b” suffix (“b” for bundle) have been defined
+on the commonLogger interface to allow the possibility to specify the resource
+bundle that should be used by the commonLogger to retrieve the String associated
+to a message. These methods are: logb, debugb, infob, warnb, errorb and
+fatalb.
+<br>If requested with a method defining a resource bundle, a commonLogger
+object will seek the specified resource bundle. If found, the message is
+sought within the loaded resource bundle, If the specified resource bundle
+does not exist the commonLogger checks if a default resource bundle has
+been specified to use instead.</ul>
+A commonLogger object can be used either by one particular class or by
+a set of classes, which may belong to a particular set we refer as a module.
+A class using a commonLogger object can either define its own resource
+bundle – resource bundle per class- or share one with other classes – resource
+bundle per module.
+<br>To enable a class to specify the resource bundle to use for it’s a
+log request, methods allowing to provide the resource bundle name are used.
+<h4>
+Get the String without logging</h4>
+An application can request a commonLogger object to obtain a string associated
+with a message defined in a resource bundle. The following methods are
+provided for this aim – these methods do not sent the message to the output
+with a particular log level.
+<br>&nbsp;
+<table BORDER COLS=1 WIDTH="83%" BGCOLOR="#CCCCCC" >
+<tr>
+<td><font face="Courier New,Courier"><font size=-1>/** Get an object from
+the commonLogger using a string key if a default&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>*&nbsp;&nbsp; ResourceBundle
+is associated with it. */&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; String
+getString(String Key) throws MissingResourceException ;</font></font>
+<p><font face="Courier New,Courier"><font size=-1>/** Get an object from
+the commonLogger using a key and arguments if a default&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>*&nbsp;&nbsp; ResourceBundle
+is associated with it. */</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; String
+getString(String Key, Object[] arguments) throws&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+MissingResourceException;</font></font>
+<p><font face="Courier New,Courier"><font size=-1>/** Get an object from
+the commonLogger using a string key in the ResourceBundle&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>*&nbsp;&nbsp; specified
+with BundleName. */</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; String
+getString(String BundleName, String Key) throws&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+MissingResourceException ;</font></font>
+<p><font face="Courier New,Courier"><font size=-1>/** Get an object from
+the commonLogger using a key and arguments in the&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>*&nbsp;&nbsp; ResourceBundle
+specified with BundleName.*/</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; String
+getString(String BundleName, String Key, Object[] arguments)&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+throws MissingResourceException;</font></font></td>
+</tr>
+</table>
+
+<h4>
+Resource Bundle List</h4>
+In addition to the possibility to define a default resource bundle name
+at the commonLogger creation via the method getLogger (getLogger(String
+key, String resourceBundleName), or setResourceBundle, a list of default
+resource bundle names can be associated with a commonLogger. Hence, a string
+provided with a logging request will be sought not only in one default
+resource bundle but in all resource bundles defined in the list. In order
+to define such resource bundle list the following class is provided:
+<br>&nbsp;
+<table BORDER COLS=1 WIDTH="82%" BGCOLOR="#CCCCCC" >
+<tr>
+<td><font face="Courier New,Courier"><font size=-1>package com.hp.mw.common.util.logging;</font></font>
+<p><font face="Courier New,Courier"><font size=-1>public class ListBundleNames
+{</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; /**
+Constructs a new instance of ListBundleNames&nbsp;&nbsp;&nbsp; */</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; public
+ListBundleNames()&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; {.
+. . }</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+/** add a resource bundle name in the list&nbsp;&nbsp; */</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; public
+void add(Object obj)&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; {
+. . . }</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; /**
+remove a resource bundle name from the list&nbsp;&nbsp;&nbsp; */</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; public
+void remove(Object obj)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; {
+. . . }</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; /**
+Determines if a resource bundle name is in the list&nbsp; */</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; public
+boolean contains(Object obj)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; {.
+. .}</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; /**
+Get the first resource bundle name from the list&nbsp;&nbsp; */</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; public
+Object getFirst()</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; {.
+. . }</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; /**
+Get the last resource bundle name from the list&nbsp;&nbsp;&nbsp; */</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; public
+Object getLast()</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; {.
+. . }</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; /**
+Get a resource bundle name from the list&nbsp;&nbsp;&nbsp; */</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; public
+Object getElement(int index)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; {.
+. . }</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; /**
+Determines if the list is empty&nbsp;&nbsp;&nbsp; */</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; public
+boolean isEmpty()</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; {.
+. . }</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; /**
+get the nombre of elements in the list&nbsp; */</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; public
+int size()</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; {.
+. . }</font></font>
+<br>}</td>
+</tr>
+</table>
+
+<p>The following scenario illustrates how a resource bundle list can be
+associated to a commonLogger at is creation and how an element can be removed
+from the list.
+<br>&nbsp;
+<table BORDER COLS=1 WIDTH="82%" BGCOLOR="#CCCCCC" >
+<tr>
+<td><font face="Courier New,Courier"><font size=-1>import com.hp.mw.common.util.logging.CommonLevel;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import com.hp.mw.common.util.logging.commonLogger;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import com.hp.mw.common.util.logging.LoggerFactory;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import com.hp.mw.common.util.logging.LogManager;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import com.hp.mw.common.util.logging.ListBundleNames;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import java.util.*;</font></font>
+<p><font face="Courier New,Courier"><font size=-1>public class BundleList{&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; static
+LoggerFactory log_fac = LogManager.getLogFactory();</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; static
+String language = System.getProperty("language", "en");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; static
+String country&nbsp; = System.getProperty("country", "US");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; private
+static Locale currentLocale = new Locale(language,country);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; static&nbsp;
+ListBundleNames myBundList = new ListBundleNames();</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; static
+commonLogger mylog ;</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; public
+static void main(String[] args) {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+myBundList.add("logging_msg_"+language+"_"+country);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+myBundList.add("logging_msg_test");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+System.out.println("My bund list size is : "+myBundList.size());</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+mylog = (commonLogger)log_fac.getLogger("BundleList", myBundList);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+Object[] myParams = new Object[2];</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+myParams[0]= “Foo”;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+myParams[1]= “Bar”;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+mylog.info("IDENTIFICATION",myParams);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+mylog.log(CommonLevel.FATAL,"FATAL_Message");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+mylog.log(CommonLevel.INFO,"INFO_Message");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+myBundList.remove("logging_msg_test");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+mylog.log(CommonLevel.FATAL,"msg_test");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+myBundList.remove("logging_msg_test");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+mylog.log(CommonLevel.FATAL,"msg_test");&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// NOT found message is returned for the above request</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; }</font></font>
+<br><font face="Courier New,Courier"><font size=-1>}</font></font></td>
+</tr>
+</table>
+
+<p><a href="../Arjuna_CLF_main.html">Main</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="../trail4/Handler and Output Format.html">Previous</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="../trail6/Logging Configuration.html">Next</a>
+</body>
+</html>

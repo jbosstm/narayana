@@ -1,0 +1,218 @@
+<?xml version="1.0"?>
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<page title="Arjuna Technologies Limited: Trail map: ORB Portability" rootpath="../..">
+	<header>         Trail map: ORB Portability     </header>
+	<content>
+		<navigation>
+			<links include="includes/www_arjuna_com_navigation.xml"/>
+			<links include="includes/trailmap_navigation.xml"/>
+			<links title="Navigation">
+				<link ref="index.html">Home</link>
+			</links>
+			<links include="includes/trailmap_additional.xml"/>
+		</navigation>
+		<area title="ORB Portability">
+			<html>
+				<h4>Introduction</h4>
+				<p>Many ORBs currently in use support different versions of CORBA and/or the Java 
+  language mapping.<br>
+  The Arjuna Transaction Service only supports the new Portable Object Adapter 
+  (POA) architecture described in the CORBA 2.3 specification as a replacement 
+  for the Basic Object Adapter (BOA). Unlike the BOA, which was weakly specified 
+  and led to a number of different (and often conflicting) implementations, the 
+  POA was deliberately designed to reduce the differences between ORB implementations, 
+  and thus minimise the amount of re-coding that would need to be done when porting 
+  applications from one ORB to another. However, there is still scope for slight 
+  differences between ORB implementations, notably in the area of threading. Note, 
+  instead of talking about the POA, this manual will consider the Object Adapter</br>
+  (OA).</p>
+				<p>Because the Arjuna Transaction Service must be able to run on a number of different 
+  ORBs, we have developed an ORB portability interface which allows entire applications 
+  to be moved between ORBs with little or no modifications. This portability interface 
+  is available to the application programmer in the form of several Java classes. 
+</p>
+				<h4>The ORB Portability API</h4>
+				<h5>Using the ORB </h5>
+				<p>The ORB class provided in the package com.arjuna.orbportability.ORB shown below 
+  provides a uniform way of using the ORB. There are methods for obtaining a reference 
+  to the ORB, and for placing the application into a mode where it listens for 
+  incoming connections. There are also methods for registering application specific 
+  classes to be invoked before or after ORB initialisation. </p>
+<pre>
+public class ORB
+{
+   public static ORB getInstance(String uniqueId);
+   // given the various parameters,this method initialises the ORB and
+   // retains a reference to it within the ORB class.
+   public synchronized void initORB () throws SystemException;
+   public synchronized void initORB (Applet a, Properties p) 
+        throws SystemException;
+   public synchronized void initORB (String[] s, Properties p) 
+        throws SystemException;
+   
+  //The orb method returns a reference to the ORB. 
+  //After shutdown is called this reference may be null.
+   public synchronized org.omg.CORBA.ORB orb ();
+   public synchronized boolean setOrb (org.omg.CORBA.ORB theORB);
+   // If supported, this method cleanly shuts down the ORB. 
+   // Any pre- and post- ORB shutdown classes which 
+   //have been registered will also be called. 
+   public synchronized void shutdown ();
+     
+  public synchronized boolean addAttribute (Attribute p);
+  public synchronized void addPreShutdown (PreShutdown c);
+  public synchronized void addPostShutdown (PostShutdown c);
+ 
+  public synchronized void destroy () throws SystemException;
+  //these methods place the ORB into a listening mode, 
+  //where it waits for incoming invocations.
+   public void run ();
+   public void run (String name);
+};
+</pre>
+				<p>Note, some of the methods are not supported on all ORBs, and in this situation, 
+  a suitable exception will be thrown. The ORB class is a factory class which 
+  has no public constructor. To create an instance of an ORB you must call the 
+  getInstance method passing a unique name as a parameter. If this unique name 
+  has not been passed in a previous call to getInstance you will be returned a 
+  new ORB instance. Two invocations of getInstance made with the same unique name, 
+  within the same JVM, will return the same ORB instance. </p>
+				<h5>Using the Object Adapater (OA)</h5>
+				<p>The OA classes shown below provide a uniform way of using Object Adapters (OA). 
+  There are methods for obtaining a reference to the OA. There are also methods 
+  for registering application specific classes to be invoked before or after OA 
+  initialisation. Note, some of the methods are not supported on all ORBs, and 
+  in this situation, a suitable exception will be thrown. The OA class is an abstract 
+  class and provides the basic interface to an Object Adapter. It has two sub-classes 
+  RootOA and ChildOA, these classes expose the interfaces specific to the root 
+  Object Adapter and a child Object Adapter respectively. From the RootOA you 
+  can obtain a reference to the RootOA for a given ORB by using the static method 
+  getRootOA. To create a ChildOA instance use the createPOA method on the RootOA.</p>
+				<p>As described below, the OA class and its sub-classes provide most operations 
+  provided by the POA as specified in the POA specification. </p>
+<pre>
+public abstract class OA
+{ 
+  public synchronized static RootOA getRootOA(ORB associatedORB);
+  public synchronized void initPOA () throws SystemException;
+  public synchronized void initPOA (String[] args) throws SystemException;
+  public synchronized void initOA () throws SystemException;
+  public synchronized void initOA (String[] args) throws SystemException;
+  public synchronized ChildOA createPOA (String adapterName, 
+      PolicyList policies) throws AdapterAlreadyExists, InvalidPolicy; 
+  public synchronized org.omg.PortableServer.POA rootPoa ();
+  public synchronized boolean setPoa (org.omg.PortableServer.POA thePOA);
+  public synchronized org.omg.PortableServer.POA poa (String adapterName);
+  public synchronized boolean setPoa (String adapterName,
+     org.omg.PortableServer.POA thePOA);
+  ...
+};
+
+public class RootOA extends OA
+{ 
+  public synchronized void destroy() throws SystemException;
+  public org.omg.CORBA.Object corbaReference (Servant obj);
+  public boolean objectIsReady (Servant obj, byte[] id);
+  public boolean objectIsReady (Servant obj);
+  public boolean shutdownObject (org.omg.CORBA.Object obj);
+  public boolean shutdownObject (Servant obj);
+};
+
+public class ChildOA extends OA
+{ 
+  public synchronized boolean setRootPoa (POA thePOA);
+  public synchronized void destroy() throws SystemException;
+  public org.omg.CORBA.Object corbaReference (Servant obj);
+  public boolean objectIsReady (Servant obj, byte[] id) 
+      throws SystemException;
+  public boolean objectIsReady (Servant obj) throws SystemException;
+  public boolean shutdownObject (org.omg.CORBA.Object obj);
+  public boolean shutdownObject (Servant obj);
+};
+</pre>
+				<h5>Example</h5>
+				<p>The following example illustrates how to use the ORB Portability API to create 
+</p>
+				<pre>
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.OA;
+
+public static void main(String[] args)
+{
+    try
+    {
+     // Create an ORB instance
+     ORB orb = ORB.getInstance(&quot;orb_test&quot;);
+     OA oa = OA.getRootOA( orb );  // Get the root POA
+     orb.initORB(args, null); // Initialize the ORB
+     oa.initOA(args);  // Initialize the OA
+     // Do Work
+     oa.destroy(); // destroy the OA
+     orb.shutdown();  // Shutdown the ORB
+    }
+    catch(Exception e) {}
+};
+</pre>
+				<h5>Specifying the ORB to use</h5>
+				<p> If using such a JDK (from its version 1.2.2) in conjunction with another ORB 
+  it is necessary to tell the JVM which ORB to use. This happens by specifying 
+  the <font face="Courier New, Courier, mono">org.omg.CORBA.ORBClass</font> and 
+  <font face="Courier New, Courier, mono">org.omg.CORBA.ORBSingletonClass properties</font>. 
+  If used, ORB Portability classes will ensure that these properties are automatically 
+  set when required, i.e., during ORB initialisation. </p>
+				<p>The ORB portability library attempts to detect which ORB is in use, it does 
+  this by looking for the ORB implementation class for each ORB it supports. This 
+  means that if there are classes for more than one ORB in the classpath the wrong 
+  ORB can be detected. Therefore it is best to only have one ORB in your classpath. 
+  If it is necessary to have multiple ORBs in the classpath then the property 
+  <font face="Courier New, Courier, mono">com.hp.mw.orbportability.orbImplementation</font> 
+  must be set to the value specified in the table below.</p>
+				<table width="75%" border="1">
+					<tr bgcolor="#8BD5FC">
+						<td width="22%">
+							<strong>ORB</strong>
+						</td>
+						<td width="78%">
+							<strong>Property Value</strong>
+						</td>
+					</tr>
+					<tr>
+						<td>IONA Orbix 2000 v2.0</td>
+						<td>com.arjuna.orbportability.internal.orbspecific.orbix2000.orb.implementations.orbix2000_2_0</td>
+					</tr>
+					<tr>
+						<td>HP-ORB v1.2</td>
+						<td>com.arjuna.orbportability.internal.orbspecific.hporb.orb.implementations.hporb_1_2</td>
+					</tr>
+					<tr>
+						<td>JacORB v2.0</td>
+						<td>com.arjuna.orbportability.internal.orbspecific.jacorb.orb.implementations.jacorb_2_0</td>
+					</tr>
+				</table>
+				<p>For additional details on the features provided by the ORB Portability API 
+  refer to the documentation provided by the ArjunaTS distribution.</p>
+				<p/>
+			</html>
+		</area>
+	</content>
+	<footer/>
+</page>

@@ -1,0 +1,386 @@
+<?xml version="1.0"?>
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<page title="Arjuna Technologies Limited: Trail map: Running and Testing Examples" rootpath="../..">
+	<header>         Trail map: Running and Testing Examples     </header>
+	<content>
+		<navigation>
+			<links include="includes/www_arjuna_com_navigation.xml"/>
+			<links include="includes/trailmap_navigation.xml"/>
+			<links title="Navigation">
+				<link ref="index.html">Home</link>
+				<link ref="part5_testing_jts.html">Previous</link>
+			</links>
+			<links include="includes/trailmap_additional.xml"/>
+		</navigation>
+		<area title="Running and Testing examples">
+			<html>
+				<h4>How the Banking Application is build using JTS interfaces</h4>
+				<p>The bank client is an application program able to manage transactions either in a <a class="linkscoloured" href="ots_overview.html#program_models">direct or indirect 
+  management mode</a>, respectively with the interfaces <a class="linkscoloured" href="ots_overview.html#TransactionFactory">org.omg.CosTransactions.TransactionFactory</a> 
+  and <a class="linkscoloured" href="ots_overview.html#Terminator">org.omg.CosTransactions.Terminator</a> or with the <a class="linkscoloured" href="ots_overview.html#Current">org.omg.CosTransactions.Current</a> 
+  interface. Transactions created by the client in the Banking application are 
+  done in the indirect mode. </p>
+				<p>Invoking a remote object within a CORBA environment means that the remote object 
+  implements a CORBA interface defined in a CORBA idl file. The following Bank.idl 
+  describes the interfaces then the possible kind of distributed CORBA objects 
+  involved in the banking application. There is no any interface that inherits 
+  the <a class="linkscoloured" href="ots_overview.html#Terminator">CosTransactions::TransactionalObject</a> interface, which means that for any 
+  remote invocations the transactional context is normally not propagated. However, 
+  since the Account object may have to register Resource objects that participate 
+  to transaction completion, a context is needed. In the following Bank.idl file 
+  operations defined in the Account interface have explicitly in their signature 
+  the CosTransactions::Control argument meaning that it passed explicitly by the 
+  caller - in this case the Bank Client program.</p>
+
+<pre>
+module arjuna {
+   module demo {
+     module jts {
+      module explicitremotebank {
+
+        interface Account :
+        {
+          float balance(<strong>in CosTransactions::Control ctrl</strong>);
+          void credit( <strong>in CosTransactions::Control ctrl</strong>, in float value );
+          void debit( <strong>in CosTransactions::Control ctrl</strong>, in float value );
+        };
+         
+        exception NotExistingAccount
+        { };
+   
+        interface Bank
+        {
+          Account create_account( in string name );
+          Account get_account( in string name )
+            raises( NotExistingAccount );
+        };
+       };
+      };
+     };
+   };
+   </pre>
+
+				<p>The following portion of code illustrates how a JTS transaction is started 
+  and terminated when the client asks to transfer money from one account to another. 
+  This also describes what are ArjunaTS packages that need to be used in order 
+  to obtain appropriate objects instances (such Current).</p>
+				<p>Note: The code below is a simplified view of the BankClient.java program. Only 
+  the transfer operation is illustrated; other operations manage transactions 
+  in the same way. (see for details the <a class="linkscoloured" href="../src/com/arjuna/demo/jts/explicitremotebank/BankClient.java">BankClient.java</a>)</p>
+
+<pre>package com.arjuna.demo.jta.remotebank;
+<strong>import com.arjuna.ats.jts.OTSManager;</strong>
+public class BankClient
+{
+   private Bank _bank;
+   ....
+   // This operation is used to make a transfer 
+   //from an account to another account
+   private void makeTransfer()
+   {
+     //get the name of the supplier(name_supplier) and 
+     // the consumer(name_consumer)
+     // get the amount to transfer (famount)
+     ...
+     try
+      {
+       //the following instruction asks a specific 
+       //ArjunaTS class to obtain a Current instance
+       <strong>Current current = OTSManager.get_current(); </strong>
+       System.out.println(&quot;Beginning a User transaction to get balance&quot;);
+       <strong>current.begin()</strong>;
+    
+       Account supplier = _bank.get_account( name_supplier );
+       Account consumer = _bank.get_account( name_consumer );
+       supplier.debit( <strong>current.get_control()</strong>, famount ); 
+       <strong>//The Control is explicitly propagated</strong>
+       consumer.credit( <strong>current.get_control()</strong>, famount );
+       <strong>current.commit( )</strong>;
+      }
+     catch (Exception e)
+      {
+       ...
+      }
+   }</pre>
+					<p>Since JTS is used invocations against an ORB are needed, such ORB and Object 
+    Adapter instantiation and initialisation. To ensure a better portability, 
+    the <a class="linkscoloured" href="ArjunaTS_ORBPortability.html"> ORB Portability API</a> provides a set of 
+    methods that can be used as described below. </p>
+<pre>public static void main( String [] args )
+{
+  ....  
+  <strong>myORB = ORB.getInstance(&quot;test&quot;);// Create an ORB instance
+  myORB.initORB(args, null); //Initialise the ORB
+  </strong>
+  org.omg.CORBA.Object obj = null;
+  try
+  { 
+     //Read the reference string from a file then convert to Object
+     ....
+      obj = myORB.orb().string_to_object(stringTarget);
+  }
+  catch ( java.io.IOException ex )
+  {
+     ...
+  }
+  Bank bank = BankHelper.narrow(obj); 
+   ....
+}
+</pre>
+
+				<p>The Bank object has mainly two operations: creating an account, which is added 
+  in the account list, and returning an Account object. No transactional instruction 
+  is performed by the Bank object. The following lines decribe the implementation 
+  of the Bank CORBA object</p>
+			
+<pre>public class BankImpl extends BankPOA {
+     public BankImpl(OA oa)
+     {
+       _accounts = new java.util.Hashtable();
+       _oa = oa;  
+     }
+     
+     public Account create_account( String name )
+     {
+         AccountImpl acc = new AccountImpl(name);
+         _accounts.put( name, acc );
+          return com.arjuna.demo.jts.remotebank.AccountHelper.
+               narrow(_oa.corbaReference(acc));
+     }
+     
+     public Account get_account(String name)
+          throws NotExistingAccount
+     {
+      AccountImpl acc = ( AccountImpl ) _accounts.get( name );
+      if ( acc == null )
+       throw new NotExistingAccount(&quot;The Account requested does not exist&quot;);
+      return com.arjuna.demo.jts.remotebank.AccountHelper.
+           narrow(_oa.corbaReference(acc));	     
+     }
+     private java.util.Hashtable _accounts;// Accounts created by the Bank
+     private OA _oa;
+}</pre>
+				<p>After having defined an implementation of the Bank object, we should now create 
+  an instance and make it available for client requests. This is the role of the 
+  Bank Server that has the responsibility to create the ORB and the Object Adapater 
+  instances, then the Bank CORBA object that has its object reference stored in 
+  a file well known by the bank client. The following lines describe how the Bank 
+  server is implemented.</p>
+			
+<pre>public class BankServer
+{
+      public static void main( String [] args )
+      {
+       ORB myORB = null;
+       RootOA myOA = null;
+       try
+       {
+       <strong> myORB = ORB.getInstance(&quot;ServerSide&quot;);
+        myOA = OA.getRootOA(myORB);
+        myORB.initORB(args, null);
+        myOA.initOA();</strong>
+        ....
+        <strong>BankImpl bank = new BankImpl(myOA);</strong>
+   
+        String reference = <strong>myORB.orb().
+             object_to_string(myOA.corbaReference(bank))</strong>;
+        //Store the Object reference in the file
+        ...
+ 
+        System.out.println(&quot;The bank server is now ready...&quot;);
+        <strong>myOA.run();</strong>
+      }
+}</pre>
+				
+				<p>The Account object provides mainly three methods <font face="Courier New, Courier, mono">balance</font>, 
+  <font face="Courier New, Courier, mono">credit</font> and <font face="Courier New, Courier, mono">withdraw</font>. 
+  However, in order to provide the transactional behaviour, rather than to modify 
+  the current account directly (according to credit or withdraw) this task is 
+  delegated to an AccountResource object that is able, according to the transaction 
+  outcome, to set the account value either to its initial state or its final state.<br/>
+  The AccountResource object is in fact an object that implements the <a class="linkscoloured" href="ots_overview.html#Resource">org.omg.CosTransactions.Resource</a>, 
+  then able to participate to the transaction commitment. For this aim, the Account 
+  object has to register the AccountResource object as a participant, after having 
+  obtaining the reference of the <a class="linkscoloured" href="ots_overview.html#Coordinator">org.omg.CosTransactions.Coordinator</a> object , 
+  itself obtained via the <a class="linkscoloured" href="ots_overview.html#Control">org.omg.CosTransactions.Control</a> object</p>
+
+<pre>
+package com.arjuna.demo.jta.remotebank;
+
+import org.omg.CosTransactions.*;
+import ....
+
+public class AccountImpl extends AccountPOA
+{
+   float _balance;
+   AccountResource accRes = null;
+   
+   public Account(String name )
+   {
+     _name = name;
+     _balance = 0;
+   }
+   
+   public float balance(Control ctrl)
+   {
+     return getResource(ctrl).balance();;
+   }
+   
+   public void credit(Control ctrl, float value )
+   {
+     getResource(ctrl).credit( value );
+   }
+   
+   public void debit(Control ctrl, float value )
+   {
+     getResource(ctrl).debit( value );
+   }
+
+   public AccountResource getResource(Control control)
+   { 
+      try
+      {
+         if (accRes == null) {
+            accRes = new AccountResource(this, _name) ;
+           <strong> 
+           //The invocation on the ORB illustrates the fact that the same
+           //ORB instance created by the Bank Server is returned. 
+           ref = org.omg.CosTransactions.ResourceHelper.
+              narrow(OA.getRootOA(ORB.getInstance(&quot;ServerSide&quot;)).
+              corbaReference(accRes));
+           RecoveryCoordinator recoverycoordinator = 
+              control.get_coordinator().register_resource(ref);</strong>
+         }
+      }
+      catch (Exception e){...}
+      return accRes;
+       }   
+   ...
+}</pre>
+
+				<p>To be considered as a org.omg.CosTransactions.Resource, the AccountResource 
+  class shall extends the class org.omg.CosTransactions.ResourcePOA generated 
+  by the CORBA IDL compiler. The AccountRessource provides similar methods as 
+  the Account class (credit, withdraw and balance) with the appropriate methods 
+  to participate to the <a class="linkscoloured" href="part2.html#2pc">2PC protocol</a>. The following portion of code describes 
+  how the methods <font face="Courier New, Courier, mono">prepare</font>, <font face="Courier New, Courier, mono">commit</font> 
+  and <font face="Courier New, Courier, mono">rollback</font> are implemented.</p>
+
+<pre>public class AccountResource <strong>extends org.omg.CosTransactions.ResourcePOA</strong>
+{
+   public AccountResource(Account account, String name )
+   {
+     _name = name;
+     _account = account;
+     _initial_balance = account._balance;
+     _current_balance = _initial_balance;
+   }
+   
+   public float balance()
+   {
+     return _current_balance;
+   }
+   
+   public void credit( float value )
+   {
+     _current_balance += value;
+   }
+   
+   public void debit( float value )
+   {
+     _current_balance -= value;
+   }
+   
+   <strong>public org.omg.CosTransactions.Vote prepare()</strong>
+	   throws org.omg.CosTransactions.HeuristicMixed, 
+	   org.omg.CosTransactions.HeuristicHazard
+  {
+    if ( _initial_balance == _current_balance )
+       return org.omg.CosTransactions.Vote.VoteReadOnly;
+    if ( _current_balance &lt; 0 )
+       return org.omg.CosTransactions.Vote.VoteRollback;
+    return org.omg.CosTransactions.Vote.VoteCommit;
+  }
+
+   <strong>public void rollback()</strong>
+     throws org.omg.CosTransactions.HeuristicCommit, 
+     org.omg.CosTransactions.HeuristicMixed, 
+     org.omg.CosTransactions.HeuristicHazard
+   {
+     //Nothing to do 
+   }
+     
+   <strong>public void commit()</strong>
+     throws org.omg.CosTransactions.NotPrepared, 
+     org.omg.CosTransactions.HeuristicRollback,
+     org.omg.CosTransactions.HeuristicMixed, 
+     org.omg.CosTransactions.HeuristicHazard
+   {
+      _account._balance = _current_balance; 
+   }
+     
+   public void commit_one_phase()
+     throws org.omg.CosTransactions.HeuristicHazard
+   {
+     _account._balance = _current_balance; 
+   }
+
+   .....</pre>
+					<pre>   private float _initial_balance;
+   private float _current_balance;
+   private Account _account;
+   
+   }
+ </pre>
+
+				<h5>Sample Application Source Code</h5>
+				<p>Full source code for the banking application is included to provide you with 
+  a starting point for experimentation. </p>
+				<ul>
+					<li>JTS Version 
+    <ul>
+							<li>
+								<a class="linkscoloured" href="../src/com/arjuna/demo/jts/explicitremotebank/Bank.idl">Bank.idl</a>
+							</li>
+							<li>
+								<a class="linkscoloured" href="../src/com/arjuna/demo/jts/explicitremotebank/BankClient.java">BankClient.java</a>
+							</li>
+							<li>
+								<a class="linkscoloured" href="../src/com/arjuna/demo/jts/explicitremotebank/BankServer.java">BankServer.java</a>
+							</li>
+							<li>
+								<a class="linkscoloured" href="../src/com/arjuna/demo/jts/explicitremotebank/BankImpl.java">BankImpl.java</a>
+							</li>
+							<li>
+								<a class="linkscoloured" href="../src/com/arjuna/demo/jts/explicitremotebank/AccountImpl.java">AccountImpl.java</a>
+							</li>
+							<li>
+								<a class="linkscoloured" href="../src/com/arjuna/demo/jts/explicitremotebank/AccountResource.java">AccountRessource.java</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</html>
+		</area>
+	</content>
+	<footer/>
+</page>

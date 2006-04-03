@@ -1,0 +1,339 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<!--
+  ORB Portability
+
+  Copyright (C) 1998, 1999, 2000, 2001, 2002
+
+  Arjuna Solutions Limited,
+  Newcastle upon Tyne,
+  Tyne and Wear,
+  UK.
+
+  $Id: build.xml 2342 2006-03-30 13:06:17Z  $
+  -->
+<project name="module-orbportability" default="com.hp.mw.orbportability.build" basedir=".">
+
+	<!-- class path behaviour -->
+	<property name="build.sysclasspath" value="last"/>
+
+	<!-- Set default properties filename -->
+	<property name="com.hp.mwlabs.modulename" value="orbportability"/>
+
+    <property name="com.hp.mwlabs.classpathbuilderfilename" location="buildsystem.classpath"/>
+
+	<property name="com.hp.mwlabs.orbportability.src" value="classes"/>
+    <property name="com.hp.mwlabs.orbportability.etc" location="etc"/>
+	<property name="com.hp.mwlabs.orbportability.config" value="config"/>
+	<property name="com.hp.mwlabs.orbportability.buildroot" value="build"/>
+	<property name="com.hp.mwlabs.orbportability.builddir" location="${com.hp.mwlabs.orbportability.buildroot}/classes/"/>
+    <property name="com.hp.mwlabs.orbportability.destdir" value="lib"/>
+	<property name="com.hp.mwlabs.orbportability.properties.src" value="${com.hp.mwlabs.orbportability.src}/com/arjuna/orbportability/common/Configuration.javatmpl"/>
+	<property name="com.hp.mwlabs.orbportability.properties.dest" value="${com.hp.mwlabs.orbportability.src}/com/arjuna/orbportability/common/Configuration.java"/>
+    <property name="com.hp.mwlabs.orbportability.tests.src" value="tests/classes/"/>
+    <property name="com.hp.mwlabs.orbportability.tests.build" value="${com.hp.mwlabs.orbportability.buildroot}/tests/"/>
+    <property name="com.hp.mwlabs.orbportability.tests.destdir" value="${com.hp.mwlabs.orbportability.destdir}/tests/"/>
+
+    <property name="com.hp.mwlabs.orbportability.resourcebundle" value="orbportability_msg_en_US.properties"/>
+
+    <property name="com.hp.mwlabs.orbportability.propertyfile.src" value="${com.hp.mwlabs.modulename}-properties.xml"/>
+
+	<property name="com.hp.mwlabs.orbportability.mappingfile" value="${com.hp.mwlabs.modulename}-properties.mappings"/>
+
+	<target name="com.hp.mwlabs.orbportability.init" depends="com.hp.mwlabs.orbportability.setpropertyfiles">
+		<!-- Define default build properties -->
+		<property name="com.hp.mw.sourceid" value="unknown"/>
+		<property name="com.hp.mw.version" value="unknown"/>
+		<property name="com.hp.mw.installationdirectory" value="install"/>
+		<property name="com.hp.mw.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
+		<property name="com.hp.mw.notes" value=""/>
+
+		<tstamp>
+	    		<format property="com.hp.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
+	  	</tstamp>
+
+                <!-- Define classpath builder task -->
+                <taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpath="${com.arjuna.buildsystem.classpath}"/>
+
+		<condition property="com.hp.mwlabs.orbportability.tests.compile">
+			<equals arg1="${com.hp.mw.orbportability.tests.compile}" arg2="yes"/>
+		</condition>
+
+		<condition property="com.hp.mwlabs.orbportability.tests.install">
+			<equals arg1="${com.hp.mw.orbportability.tests.install}" arg2="yes"/>
+		</condition>
+
+		<echo message="Initialising module orbportability"/>
+		<echo message="Source ID = ${com.hp.mw.sourceid}"/>
+		<echo message="Version   = ${com.hp.mw.version}"/>
+		<echo message="Builder   = ${com.hp.mw.builder}"/>
+		<echo message="Date      = ${com.hp.mw.date}"/>
+		<echo message="Notes     = ${com.hp.mw.notes}"/>
+
+		<!-- Installation directory -->
+		<property name="com.hp.mwlabs.installationdirectory"
+		    location="${com.hp.mw.installationdirectory}"/>
+
+		<!-- Compile with debugging? -->
+		<condition property="com.hp.mwlabs.debug" value="no">
+			<equals arg1="${com.hp.mw.debug}" arg2="no"/>
+		</condition>
+		<property name="com.hp.mwlabs.debug" value="yes"/>
+
+		<!-- Compile with deprecation? -->
+		<condition property="com.hp.mwlabs.deprecation" value="yes">
+			<equals arg1="${com.hp.mw.deprecation}" arg2="yes"/>
+		</condition>
+		<property name="com.hp.mwlabs.deprecation" value="no"/>
+
+		<mkdir	dir="${com.hp.mwlabs.orbportability.builddir}"/>
+                <mkdir	dir="${com.hp.mwlabs.orbportability.destdir}"/>
+
+		<copy
+			file="${com.hp.mwlabs.orbportability.src}/com/arjuna/orbportability/Info.javatmpl"
+			tofile="${com.hp.mwlabs.orbportability.src}/com/arjuna/orbportability/Info.java"
+			overwrite="yes"
+		>
+                    <filterset>
+                        <filter token="MODULE" value="${com.hp.mwlabs.modulename}"/>
+                        <filter token="SOURCEID" value="${com.hp.mw.sourceid}"/>
+                        <filter token="BUILDINFO" value="${com.hp.mw.builder}"/>
+                        <filter token="VERSION" value="${com.hp.mw.version}"/>
+                        <filter token="DATE" value="${com.hp.mw.date}"/>
+                        <filter token="NOTES" value="${com.hp.mw.notes}"/>
+                    </filterset>
+		</copy>
+
+		<!-- Set the module property file details -->
+		<property name="com.hp.mwlabs.orbportability.propertyfile" value="${com.hp.mwlabs.modulename}-properties.xml"/>
+                <property name="com.hp.mw.orbportability.configurationfile" value="defaultorb-configuration.xml"/>
+		<property name="com.hp.mw.propertydirectory" location="${com.hp.mwlabs.installationdirectory}/etc"/>
+
+		<echo message="Property directory : ${com.hp.mw.propertydirectory}"/>
+		<echo message="Property file name : ${com.hp.mwlabs.orbportability.propertyfile}"/>
+		<!-- Process the class that uses the property file -->
+		<copy
+			file="${com.hp.mwlabs.orbportability.properties.src}"
+			tofile="${com.hp.mwlabs.orbportability.properties.dest}"
+			overwrite="yes"
+		>
+			<filterset>
+				<filter token="ORBPORTABILITY_VERSION" value="${com.hp.mw.version}"/>
+				<filter token="PROPERTIES_FILE" value="${com.hp.mwlabs.orbportability.propertyfile}"/>
+				<filter token="PROPERTIES_DIR" value="${com.hp.mw.propertydirectory}"/>
+                                <filter token="ORB_CONFIGURATION" value="${com.hp.mw.orbportability.configurationfile}"/>
+			</filterset>
+		</copy>
+
+	</target>
+
+    <!-- If this build is part of a product build set the property files to the product property file -->
+    <target name="com.hp.mwlabs.orbportability.setpropertyfiles" if="com.hp.mw.ts.product.name">
+
+            <echo>Overriding propertyfile settings with product propertyfile settings</echo>
+            <property name="com.hp.mwlabs.orbportability.propertyfile" value="${com.hp.mw.ts.product.propertyfile}"/>
+
+    </target>
+
+
+	<target name="com.hp.mw.orbportability.build" depends="com.hp.mw.orbportability.jar,com.hp.mwlabs.orbportability.tests.jar">
+
+	</target>
+
+	<target name="com.hp.mwlabs.orbportability.compile" depends="com.hp.mwlabs.orbportability.init, com.hp.mwlabs.orbportability.generateresourcebundle">
+
+                <ant antfile="build-anttasks.xml"/>
+
+                <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}">
+                    <classpath>
+                        <pathelement location="${com.hp.mwlabs.orbportability.destdir}/ext/orbportability-ant.jar"/>
+                        <pathelement location="${com.hp.mwlabs.orbportability.config}"/>
+                    </classpath>
+                </classpath-builder>
+
+                <!-- Make ANT aware of user-defined task -->
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="orbport.classpath"/>
+	        <taskdef name="idl-build-list" classname="com.arjuna.orbportability.common.ant.IDLBuildList" classpath="${orbport.classpath}"/>
+
+   		<idl-build-list inproperty="com.hp.mw.orbportability.orbspecific.buildlist">
+   		</idl-build-list>
+
+		<ant antfile="orbspecific.xml">
+                    <property name="com.hp.mw.orbportability.orbspecific.modulename" value="orbportability"/>
+                    <property name="com.hp.mw.orbportability.orbspecific.include" value="include/"/>
+                    <property name="com.hp.mw.orbportability.orbspecific.srcdir" location="${com.hp.mwlabs.orbportability.src}"/>
+                </ant>
+
+                <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+                <echo message="Building ORB portability code"/>
+
+		<javac 	srcdir="${com.hp.mwlabs.orbportability.src}"
+                        destdir="${com.hp.mwlabs.orbportability.builddir}"
+                        includes="**/*.java"
+                        excludes="com/arjuna/orbportability/internal/orbspecific/**/*.java"
+                        debug="${com.hp.mwlabs.debug}"
+			deprecation="${com.hp.mwlabs.deprecation}"
+		>
+
+                    <classpath>
+                        <pathelement location="${com.hp.mwlabs.orbportability.src}"/>
+                        <pathelement path="${build.classpath}"/>
+                    </classpath>
+
+		</javac>
+
+	</target>
+
+    <target name="com.hp.mw.orbportability.install" depends="com.hp.mw.orbportability.build,com.hp.mw.orbportability.tests.install">
+
+            <echo message="Installing module orbportability"/>
+            <echo message="Installation directory : ${com.hp.mwlabs.installationdirectory}"/>
+            <mkdir dir="${com.hp.mw.propertydirectory}"/>
+
+            <taskdef name="merge-property-files"
+                         classname="com.hp.mw.buildsystem.ant.MergePropertyFiles" classpath="${com.arjuna.buildsystem.classpath}"/>
+
+            <echo>Merging propertyfiles into main product property file</echo>
+
+            <merge-property-files master="${com.hp.mw.propertydirectory}/${com.hp.mwlabs.orbportability.propertyfile}"
+                                      merge="${com.hp.mwlabs.orbportability.etc}/default-${com.hp.mwlabs.orbportability.propertyfile.src}"/>
+
+    </target>
+
+    <target name="com.hp.mw.orbportability.jar" depends="com.hp.mw.orbportability.compile">
+
+            <copy file="${com.hp.mwlabs.orbportability.etc}/${com.hp.mwlabs.orbportability.mappingfile}"
+                      todir="${com.hp.mwlabs.orbportability.builddir}"
+                      overwrite="true"/>
+
+            <jar basedir="${com.hp.mwlabs.orbportability.builddir}"
+                    jarfile="${com.hp.mwlabs.orbportability.destdir}/${com.hp.mwlabs.modulename}.jar"
+                    excludes="com/arjuna/orbportability/common/ant/**/*.class"/>
+
+            <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}">
+                    <classpath>
+                            <pathelement location="${com.hp.mwlabs.orbportability.destdir}/${com.hp.mwlabs.modulename}.jar"/>
+                    </classpath>
+            </classpath-builder>
+
+    </target>
+
+
+	<target name="com.hp.mw.orbportability.clean">
+
+                <echo message="Cleaning ORB Portability module"/>
+		<delete dir="${com.hp.mwlabs.orbportability.buildroot}"/>
+		<delete dir="${com.hp.mwlabs.orbportability.destdir}"/>
+		<delete dir="${com.hp.mwlabs.orbportability.tests.build}"/>
+		<delete file="${com.hp.mwlabs.orbportability.src}/com/arjuna/orbportability/Info.java"/>
+		<delete file="${com.hp.mwlabs.orbportability.properties.dest}"/>
+
+	</target>
+
+	<!-- Compilation targets -->
+	<target name="com.hp.mw.orbportability.compile" depends="com.hp.mwlabs.orbportability.compile">
+
+	</target>
+
+	<target name="com.hp.mw.orbportability.tests.install" depends="com.hp.mwlabs.orbportability.tests.jar" if="com.hp.mwlabs.orbportability.tests.install">
+
+		<echo message="Installing tests"/>
+
+	</target>
+
+	<target name="com.hp.mwlabs.orbportability.tests.jar" depends="com.hp.mwlabs.orbportability.tests.compile" if="com.hp.mwlabs.orbportability.tests.compile">
+
+            <mkdir dir="${com.hp.mwlabs.orbportability.tests.destdir}"/>
+            <jar    basedir="${com.hp.mwlabs.orbportability.tests.build}"
+                    jarfile="${com.hp.mwlabs.orbportability.tests.destdir}/${com.hp.mwlabs.modulename}_tests.jar"/>
+
+        </target>
+
+	<target name="com.hp.mwlabs.orbportability.tests.compile" depends="com.hp.mw.orbportability.jar" if="com.hp.mwlabs.orbportability.tests.compile">
+
+                <!-- Make ANT aware of user-defined task -->
+                <taskdef name="idl-build-list" classname="com.arjuna.orbportability.common.ant.IDLBuildList" classpath="lib/ext/orbportability-ant.jar"/>
+                <taskdef name="idl-build-list-element" classname="com.arjuna.orbportability.common.ant.IDLBuildListElement" classpath="lib/ext/orbportability-ant.jar"/>
+                <taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpath="${com.arjuna.buildsystem.classpath}"/>
+
+		<echo message="Building tests"/>
+
+                <mkdir dir="${com.hp.mwlabs.orbportability.tests.build}"/>
+
+                <echo message="Performing ORB specific build"/>
+
+                <property name="com.hp.mwlabs.orbportability.tests.idldir" location="tests/idl/"/>
+
+                <idl-build-list inproperty="com.hp.mw.orbportability.orbspecific.buildlist">
+                    <element src="${com.hp.mwlabs.orbportability.tests.idldir}/orbtests.idl" mappings="orbtests=com.hp.mwtests.orbportability.orbspecific" package="com.hp.mwtests.orbportability.orbspecific"/>
+                </idl-build-list>
+
+                <ant antfile="orbspecific.xml">
+                    <property name="com.hp.mw.orbportability.orbspecific.modulename" value="orbportability_tests"/>
+                    <property name="com.hp.mw.orbportability.orbspecific.lib" value="lib/tests/"/>
+                    <property name="com.hp.mw.orbportability.orbspecific.srcdir" location="${com.hp.mwlabs.orbportability.tests.src}"/>
+                </ant>
+
+                <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<javac 	srcdir="${com.hp.mwlabs.orbportability.tests.src}"
+                        destdir="${com.hp.mwlabs.orbportability.tests.build}"
+                        debug="${com.hp.mwlabs.debug}"
+			deprecation="${com.hp.mwlabs.deprecation}"
+		>
+
+                    <classpath>
+                        <pathelement path="${build.classpath}"/>
+                    </classpath>
+
+		</javac>
+
+	</target>
+
+        <target name="clean" depends="com.hp.mw.orbportability.clean"/>
+
+        <target name="com.hp.mwlabs.orbportability.generateresourcebundle">
+
+            <echo message="Generating ORB Portability Resource Bundle"/>
+
+            <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+            <javadoc    sourcepath="${com.hp.mwlabs.orbportability.src}"
+                        packagenames="com.arjuna.*"
+                        failonerror="yes"
+                        private="yes"
+                        defaultexcludes="yes"
+                        classpath="${build.classpath}">
+
+                 <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
+                    <path>
+                        <pathelement path="${com.arjuna.buildsystem.classpath}"/>
+                    </path>
+                    <param name="-basedir" value="${com.hp.mwlabs.orbportability.builddir}"/>
+                    <param name="-resourcebundle" value="${com.hp.mwlabs.orbportability.resourcebundle}"/>
+                    <param name="-appendkey" value="[]"/>
+                 </doclet>
+            </javadoc>
+
+        </target>
+
+</project>

@@ -1,0 +1,199 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and others contributors as indicated 
+  by the @authors tag. All rights reserved. 
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors. 
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<project name="jbosstm" default="help">
+   <property name="com.hp.mw.installationdirectory" location="install"/>
+
+   <property environment="env"/>
+
+   <property name="ext.dir" location="ext"/>
+   <property name="common.dir" location="common"/>
+   <property name="buildsystem.dir" location="antbuildsystem"/>
+   <property name="core.dir" location="ArjunaCore"/>
+   <property name="jta.dir" location="ArjunaJTA"/>
+   <property name="jts.dir" location="ArjunaJTS"/>
+   <property name="integration.dir" location="atsintegration"/>
+
+   <available property="jts.present" file="${jts.dir}" type="dir"/>
+
+   <target name="help">
+      <echo>
+Targets supported in this build.xml file
+ clean - clean projects
+ core - build the core transaction engine
+ jta - build the standalone jta transaction engine
+ jts - build the standalone jts transaction engine
+ jbossjta - build the jboss integrated jta transaction engine
+ jbossjts - build the jboss integrated jts transaction engine
+      </echo>
+   </target>
+
+   <target name="jts" if="jts.present">
+      <antcall target="install_jts"/>
+   </target>
+
+   <target name="jta" depends="install_jta"/>
+
+   <target name="core" depends="install_core"/>
+
+   <target name="jbossjts" if="jts.present">
+      <antcall target="init_integration"/>
+      <antcall target="install_jts"/>
+      <antcall target="install_integration"/>
+   </target>
+
+   <target name="jbossjta" depends="init_integration, install_jta, install_integration"/>
+
+   <target name="clean" depends="clean_jts">
+      <delete dir="${com.hp.mw.installationdirectory}"/>
+      <ant dir="${jta.dir}" target="clean"/>
+      <ant dir="${core.dir}" target="clean"/>
+      <ant dir="${common.dir}" target="clean"/>
+      <ant dir="${buildsystem.dir}" target="clean"/>
+      <ant dir="${integration.dir}" target="clean"/>
+      <delete>
+         <fileset dir="." includes="idl-compiler*"/>
+      </delete>
+   </target>
+
+   <target name="clean_jts" if="jts.present">
+      <ant dir="${jts.dir}" target="clean"/>
+   </target>
+
+   <target name="install_jts" depends="clean, init_jts, init, install_jta">
+      <ant dir="${jts.dir}" target="install-all"/>
+   </target>
+
+   <target name="install_jta" depends="clean, init_jta, init, install_core">
+      <ant dir="${jta.dir}" target="install-all"/>
+   </target>
+
+   <target name="install_core" depends="clean, init_core, init, build_common">
+      <ant dir="${core.dir}" target="install-all"/>
+   </target>
+
+   <target name="install_integration">
+      <ant dir="${integration.dir}" target="install"/>
+   </target>
+
+   <target name="build_jts" depends="init_jts, init, build_jta">
+      <ant dir="${jts.dir}" target="jar"/>
+   </target>
+
+   <target name="build_jta" depends="init_jta, init, build_core">
+      <ant dir="${jta.dir}" target="jar"/>
+   </target>
+
+   <target name="build_core" depends="init_core, init, build_common">
+      <ant dir="${core.dir}" target="jar"/>
+   </target>
+
+   <target name="build_common" depends="build_buildsystem">
+      <ant dir="${common.dir}" target="jar"/>
+   </target>
+
+   <target name="build_buildsystem">
+      <ant dir="${buildsystem.dir}" target="jar"/>
+   </target>
+
+   <target name="build_integration">
+      <ant dir="${integration.dir}" target="jar"/>
+   </target>
+
+   <target name="init_jts" unless="init_product">
+      <property name="com.hp.mw.ts.product.name" value="JBossJTS"/>
+      <property name="com.hp.mw.ts.product.shortened.name" value="JBossTS"/>
+      <property name="com.hp.mw.ts.product.name.lowercase" value="jbossjts"/>
+      <property name="com.hp.mw.ts.product.shortened.name.uppercase" value="JBOSSTS"/>
+      <property name="com.hp.mwlabs.ts.build.jts" value="true"/>
+      <path id="com.hp.mwlabs.ts.product.htdocs.path">
+         <dirset dir="${core.dir}" includes="*/classes"/>
+         <dirset dir="${jta.dir}" includes="*/classes"/>
+         <dirset dir="${jts.dir}" includes="*/classes"/>
+      </path>
+      <property name="com.hp.mwlabs.ts.product.htdocs.path" refid="com.hp.mwlabs.ts.product.htdocs.path"/>
+   </target>
+
+   <target name="init_jta" unless="init_product">
+      <property name="com.hp.mw.ts.product.name" value="JBossJTA"/>
+      <property name="com.hp.mw.ts.product.shortened.name" value="JBossTA"/>
+      <property name="com.hp.mw.ts.product.name.lowercase" value="jbossjta"/>
+      <property name="com.hp.mw.ts.product.shortened.name.uppercase" value="JBOSSTA"/>
+      <property name="com.hp.mwlabs.ts.build.jta" value="true"/>
+      <path id="com.hp.mwlabs.ts.product.htdocs.path">
+         <dirset dir="${core.dir}" includes="*/classes"/>
+         <dirset dir="${jta.dir}" includes="*/classes"/>
+      </path>
+      <property name="com.hp.mwlabs.ts.product.htdocs.path" refid="com.hp.mwlabs.ts.product.htdocs.path"/>
+   </target>
+
+   <target name="init_core" unless="init_product">
+      <property name="com.hp.mw.ts.product.name" value="JBossCore"/>
+      <property name="com.hp.mw.ts.product.shortened.name" value="JBossCore"/>
+      <property name="com.hp.mw.ts.product.name.lowercase" value="jbosscore"/>
+      <property name="com.hp.mw.ts.product.shortened.name.uppercase" value="JBOSSCORE"/>
+      <property name="com.hp.mwlabs.ts.build.core" value="true"/>
+      <path id="com.hp.mwlabs.ts.product.htdocs.path">
+         <dirset dir="${core.dir}" includes="*/classes"/>
+      </path>
+      <property name="com.hp.mwlabs.ts.product.htdocs.path" refid="com.hp.mwlabs.ts.product.htdocs.path"/>
+   </target>
+
+   <target name="init">
+      <property name="init_product" value="done"/>
+
+      <tstamp>
+         <format property="com.hp.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
+      </tstamp>
+
+      <condition property="JDK_1.4">
+         <equals arg1="${java.specification.version}" arg2="1.4"/>
+      </condition>
+
+      <fail unless="JDK_1.4">
+         The JBossJTS build currently requires jdk1.4 to build.
+      </fail>
+      
+      <property name="com.hp.mw.ts.product.propertyfile" value="${com.hp.mw.ts.product.name.lowercase}-properties.xml"/>
+
+      <property name="com.hp.mw.sourceid" value="unknown"/>
+      <property name="com.hp.mw.version" value="unknown"/>
+
+      <property name="com.hp.mw.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
+      <property name="com.hp.mw.notes" value=""/>
+
+      <echo message="Initialising product ${com.hp.mw.ts.product.name}"/>
+      <echo message="Source ID = ${com.hp.mw.sourceid}"/>
+      <echo message="Version   = ${com.hp.mw.version}"/>
+      <echo message="Builder   = ${com.hp.mw.builder}"/>
+      <echo message="Date      = ${com.hp.mw.date}"/>
+      <echo message="Notes     = ${com.hp.mw.notes}"/>
+   </target>
+
+   <target name="init_integration">
+      <condition property="jboss.home" value="${env.JBOSS_HOME}">
+         <isset property="env.JBOSS_HOME"/>
+      </condition>
+
+      <fail unless="jboss.home">
+The JBoss installation directory must be specified with the JBOSS_HOME environment variable or the jboss.home property.
+      </fail>
+   </target>
+</project>

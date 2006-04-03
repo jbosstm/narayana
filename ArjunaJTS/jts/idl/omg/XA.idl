@@ -1,0 +1,147 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2006, JBoss Inc., and individual contributors as indicated
+ * by the @authors tag.  All rights reserved. 
+ * See the copyright.txt in the distribution for a full listing 
+ * of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU General Public License, v. 2.0.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License,
+ * v. 2.0 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ * 
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ */
+/*
+ * Copyright (C) 2005,
+ *
+ * Arjuna Technologies Ltd,
+ * Newcastle upon Tyne,
+ * Tyne and Wear,
+ * UK.
+ *
+ * $Id: XA.idl 2342 2006-03-30 13:06:17Z  $
+ */
+
+#ifndef _XA_IDL_
+#define _XA_IDL_
+
+#include <CosTransactions.idl>
+
+#ifndef NO_PRAGMA_SUPPORT
+#pragma prefix "omg.org"
+#endif
+
+#ifdef HAVE_JAVAPACKAGE
+#pragma javaPackage "org.omg"
+#endif
+
+module XA
+{
+    typedef short ThreadModel;
+    const ThreadModel PROCESS = 0;
+    const ThreadModel THREAD = 1;
+    
+    typedef sequence<CosTransactions::otid_t> XIDs;
+    
+    interface XASwitch
+    {
+	readonly attribute string name;
+	readonly attribute unsigned long flags;
+	readonly attribute long version;
+	
+	long xa_open (in string name, in long rmid,
+		      in unsigned long flags);
+	long xa_close (in string name, in long rmid,
+		       in unsigned long flags);
+	
+	long xa_start (in CosTransactions::otid_t txid,
+		       in long rmid, in unsigned long flags);
+	long xa_end (in CosTransactions::otid_t txid,
+		     in long rmid, in unsigned long flags);
+	
+	long xa_rollback (in CosTransactions::otid_t txid,
+			  in long rmid, in unsigned long flags);
+	long xa_prepare (in CosTransactions::otid_t txid,
+			 in long rmid, in unsigned long flags);
+	long xa_commit (in CosTransactions::otid_t txid,
+			in long rmid, in unsigned long flags);
+
+	long xa_recover (out XIDs txid, in long rmid,
+			 in unsigned long flags);
+	
+	long xa_forget (in CosTransactions::otid_t txid,
+			in long rmid, in unsigned long flags);
+	long xa_complete (inout long handle, inout long retval,
+			  in long rmid, in unsigned long flags);
+    };
+	    
+    local interface CurrentConnection
+    {
+	void start( // xa_start(TMNOFLAGS) or xa_start(TMJOIN)
+		   in CosTransactions::Coordinator tx,
+		   in CosTransactions::otid_t otid
+		   );
+
+	void suspend( // xa_end(TMSUSPEND)
+		     in CosTransactions::Coordinator tx,
+		     in CosTransactions::otid_t otid
+		     );
+
+	void resume( // xa_start(TMRESUME)
+		    in CosTransactions::Coordinator tx,
+		    in CosTransactions::otid_t otid
+		    );
+
+	void end( // xa_end(TMSUCCESS) or xa_end(TMFAIL)
+		 in CosTransactions::Coordinator tx,
+		 in CosTransactions::otid_t otid,
+		 in boolean success
+		 );
+
+	ThreadModel thread_model();
+
+	long rmid();
+    };
+
+    interface BeforeCompletionCallback
+    {
+	void before_completion(in CosTransactions::Coordinator tx,
+			       in CosTransactions::otid_t otid,
+			       in boolean success);
+    };
+
+    interface ResourceManager
+    {
+	unsigned long register_before_completion_callback(in BeforeCompletionCallback bcc);
+	void unregister_before_completion_callback(in unsigned long key);
+    };
+
+    local interface Connector
+    {
+	ResourceManager create_resource_manager(in string resource_manager_name,
+						in XASwitch xa_switch,
+						in string open_string,
+						in string close_string,
+						in ThreadModel thread_model,
+						in boolean automatic_association,
+						in boolean dynamic_registration_optimization,
+						out CurrentConnection current_connection);
+
+	CurrentConnection connect_to_resource_manager(in ResourceManager rm,
+						      in XASwitch xa_switch,
+						      in string open_string,
+						      in string close_string,
+						      in ThreadModel thread_model,
+						      in boolean automatic_association,
+						      in boolean dynamic_registration_optimization);
+    };
+};
+
+#endif /*!_XA_IDL_*/

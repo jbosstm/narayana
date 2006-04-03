@@ -1,0 +1,498 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<!--$Id: build.xml 2342 2006-03-30 13:06:17Z  $-->
+
+<project name="module-jts" default="com.hp.mw.ts.jts.build" basedir=".">
+
+	<!-- class path behaviour -->
+	<property name="build.sysclasspath" value="last"/>
+	<property name="com.hp.mwlabs.classpathbuilderfilename" location="buildsystem.classpath"/>
+
+	<!-- Set module name -->
+	<property name="com.hp.mwlabs.ts.modulename" value="jts"/>
+
+	<!-- Set default properties filename -->
+	<property name="com.hp.mw.ts.properties" value="module-jts.properties"/>
+
+	<!-- Load Build Properties File -->
+	<property file="${com.hp.mw.ts.properties}"/>
+
+	<!-- Set external property defaults -->
+	<property name="com.hp.mw.ts.jts.tests.compile" value="yes"/>
+	<property name="com.hp.mw.ts.jts.tests.install" value="no"/>
+    <property name="com.hp.mw.ts.jts.services.install" value="yes"/>
+
+	<!-- Set internal property defaults -->
+		<!-- Path names -->
+	<property name="com.hp.mwlabs.ts.jts.src" location="classes"/>
+	<property name="com.hp.mwlabs.ts.jts.etc" location="etc"/>
+	<property name="com.hp.mwlabs.ts.jts.buildroot"
+		location="build"/>
+	<property name="com.hp.mwlabs.ts.jts.builddir" location="${com.hp.mwlabs.ts.jts.buildroot}/classes/"/>
+	<property name="com.hp.mwlabs.ts.jts.dest" location="${com.hp.mwlabs.ts.jts.buildroot}/classes"/>
+	<property name="com.hp.mwlabs.ts.jts.tests.src" location="tests"/>
+	<property name="com.hp.mwlabs.ts.jts.tests.dest" location="${com.hp.mwlabs.ts.jts.buildroot}/tests"/>
+	<property name="com.hp.mwlabs.ts.jts.jar.dest" location="lib"/>
+	<property name="com.hp.mwlabs.ts.jts.tests.destdir" location="${com.hp.mwlabs.ts.jts.jar.dest}/tests/"/>
+    <property name="com.hp.mwlabs.ts.jts.services.src" location="services/classes"/>
+    <property name="com.hp.mwlabs.ts.jts.services.config" location="services/config"/>
+    <property name="com.hp.mwlabs.ts.jts.services.scripts" location="services/scripts"/>
+    <property name="com.hp.mwlabs.ts.jts.services.dest" value="${com.hp.mwlabs.ts.jts.buildroot}/services/"/>
+    <property name="com.hp.mwlabs.ts.jts.services.destdir" value="${com.hp.mwlabs.ts.jts.jar.dest}/services/"/>
+
+		<!-- Files that need word substitutions -->
+	<property name="com.hp.mwlabs.ts.jts.info.src" location="${com.hp.mwlabs.ts.jts.src}/com/arjuna/ats/jts/Info.javatmpl"/>
+	<property name="com.hp.mwlabs.ts.jts.info.dest" location="${com.hp.mwlabs.ts.jts.src}/com/arjuna/ats/jts/Info.java"/>
+	<property name="com.hp.mwlabs.ts.jts.properties.src" location="${com.hp.mwlabs.ts.jts.src}/com/arjuna/ats/jts/common/Configuration.javatmpl"/>
+	<property name="com.hp.mwlabs.ts.jts.properties.dest" location="${com.hp.mwlabs.ts.jts.src}/com/arjuna/ats/jts/common/Configuration.java"/>
+        <property name="com.hp.mwlabs.ts.jts.resourcebundle"
+	value="jts_msg_en_US.properties"/>
+
+    <property name="com.hp.mwlabs.ts.jts.propertyfile.src" value="${com.hp.mwlabs.ts.modulename}-properties.xml"/>
+    <property name="com.hp.mwlabs.ts.jts.recoverymanagerpropertyfile.src" value="RecoveryManager-properties.xml"/>
+
+	<property name="com.hp.mwlabs.ts.jts.mappingfile" value="${com.hp.mwlabs.ts.modulename}-properties.mappings"/>
+
+	<!-- Initialisation -->
+	<target name="com.hp.mwlabs.ts.jts.init" depends="com.hp.mwlabs.ts.jts.setpropertyfiles">
+		<!-- Define default build properties -->
+		<property name="com.hp.mw.sourceid" value="unknown"/>
+		<property name="com.hp.mw.version" value="unknown"/>
+		<property name="com.hp.mw.installationdirectory" value="install"/>
+		<property name="com.hp.mw.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
+		<property name="com.hp.mw.notes" value=""/>
+
+		<tstamp>
+	    	<format property="com.hp.mw.ts.date" pattern="yyyy/MMM/dd HH:mm"/>
+	  	</tstamp>
+
+		<!-- Define classpath builder task -->
+		<taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpath="${com.arjuna.buildsystem.classpath}"/>
+
+		<echo message="Initialising module jts"/>
+		<echo message="Source ID = ${com.hp.mw.sourceid}"/>
+		<echo message="Version   = ${com.hp.mw.version}"/>
+		<echo message="Builder   = ${com.hp.mw.builder}"/>
+		<echo message="Date      = ${com.hp.mw.date}"/>
+		<echo message="Notes     = ${com.hp.mw.notes}"/>
+
+		<!-- Installation directory -->
+		<property name="com.hp.mwlabs.installationdirectory"
+		    location="${com.hp.mw.installationdirectory}"/>
+
+		<condition property="com.hp.mwlabs.debug" value="no">
+			<equals arg1="${com.hp.mw.debug}" arg2="no"/>
+		</condition>
+		<property name="com.hp.mwlabs.debug" value="yes"/>
+
+		<!-- Compile with deprecation? -->
+		<condition property="com.hp.mwlabs.deprecation" value="yes">
+			<equals arg1="${com.hp.mw.deprecation}" arg2="yes"/>
+		</condition>
+		<property name="com.hp.mwlabs.deprecation" value="no"/>
+
+		<!-- Check which bits to compile and/or install -->
+		<condition property="com.hp.mwlabs.ts.jts.tests.compile">
+			<equals arg1="${com.hp.mw.ts.jts.tests.compile}" arg2="yes"/>
+		</condition>
+
+		<condition property="com.hp.mwlabs.ts.jts.tests.install">
+			<equals arg1="${com.hp.mw.ts.jts.tests.install}" arg2="yes"/>
+		</condition>
+
+        <condition property="com.hp.mwlabs.ts.jts.services.install">
+            <equals arg1="${com.hp.mw.ts.jts.services.install}" arg2="yes"/>
+        </condition>
+
+		<!-- Process the info class -->
+		<copy
+			file="${com.hp.mwlabs.ts.jts.info.src}"
+			tofile="${com.hp.mwlabs.ts.jts.info.dest}"
+		>
+			<filterset>
+				<filter token="MODULE" value="${com.hp.mwlabs.ts.modulename}"/>
+				<filter token="SOURCEID" value="${com.hp.mw.sourceid}"/>
+				<filter token="BUILDINFO" value="${com.hp.mw.builder}"/>
+				<filter token="VERSION" value="${com.hp.mw.version}"/>
+				<filter token="DATE" value="${com.hp.mw.date}"/>
+				<filter token="NOTES" value="${com.hp.mw.notes}"/>
+			</filterset>
+		</copy>
+
+		<!-- Set the module property file details -->
+		<property name="com.hp.mwlabs.ts.jts.propertyfile" value="${com.hp.mwlabs.ts.modulename}-properties.xml"/>
+                <property name="com.hp.mwlabs.ts.jts.recoverymanager.propertyfile" value="RecoveryManager-properties.xml"/>
+
+		<property name="com.hp.mw.propertydirectory" location="${com.hp.mwlabs.installationdirectory}/etc"/>
+
+		<echo message="Property file name : ${com.hp.mwlabs.ts.jts.propertyfile}"/>
+		<echo message="Property directory : ${com.hp.mw.propertydirectory}"/>
+
+		<property name="com.hp.mw.idldirectory" location="${com.hp.mwlabs.installationdirectory}/idl"/>
+		<echo message="IDL directory : ${com.hp.mw.idldirectory}"/>
+
+		<!-- Process the class that uses the property file -->
+		<copy
+			file="${com.hp.mwlabs.ts.jts.properties.src}"
+			tofile="${com.hp.mwlabs.ts.jts.properties.dest}"
+		>
+			<filterset>
+				<filter token="JTS_VERSION" value="${com.hp.mw.ts.version}"/>
+				<filter token="PROPERTIES_FILE" value="${com.hp.mwlabs.ts.jts.propertyfile}"/>
+				<filter token="PROPERTIES_DIR" value="${com.hp.mw.propertydirectory}"/>
+			</filterset>
+		</copy>
+
+		<!-- Make the destination directory -->
+		<mkdir dir="${com.hp.mwlabs.ts.jts.dest}"/>
+
+	</target>
+
+    <!-- If this build is part of a product build set the property files to the product property file -->
+    <target name="com.hp.mwlabs.ts.jts.setpropertyfiles" if="com.hp.mw.ts.product.name">
+
+            <echo>Overriding propertyfile settings with product propertyfile settings</echo>
+            <property name="com.hp.mwlabs.ts.jts.propertyfile" value="${com.hp.mw.ts.product.propertyfile}"/>
+            <property name="com.hp.mwlabs.ts.jts.recoverymanager.propertyfile" value="${com.hp.mw.ts.product.propertyfile}"/>
+
+    </target>
+
+    <!-- Default build target -->
+    <target name="com.hp.mw.ts.jts.build"
+    depends="com.hp.mwlabs.jts.generateresourcebundle,com.hp.mw.ts.jts.jar, com.hp.mwlabs.ts.jts.services.jar, com.hp.mwlabs.ts.jts.tests.jar"/>
+ 
+	<!-- Compilation targets -->
+	<target name="com.hp.mw.ts.jts.compile" depends="com.hp.mwlabs.ts.jts.idl.compile,com.hp.mwlabs.ts.jts.compile,com.hp.mwlabs.jts.generateresourcebundle">
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jts.idl.compile"
+	depends="com.hp.mwlabs.ts.jts.init">
+	
+        	<!-- Make ANT aware of user-defined task -->
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="orbport.classpath"/>
+	        <taskdef name="idl-build-list" classname="com.arjuna.orbportability.common.ant.IDLBuildList" classpath="${orbport.classpath}"/>
+		<taskdef name="idl-build-list-element" classname="com.arjuna.orbportability.common.ant.IDLBuildListElement" classpath="${orbport.classpath}"/>
+
+		<property name="com.hp.mwlabs.ts.jts.build-dir" location="."/>
+		<property name="com.hp.mw.orbportability.orbspecific.include"
+		    value="${com.hp.mwlabs.ts.jts.build-dir}/idl/omg;${com.hp.mwlabs.ts.jts.build-dir}/idl/arjuna"/>
+		<idl-build-list inproperty="com.hp.mw.orbportability.orbspecific.buildlist">
+			<element src="${com.hp.mwlabs.ts.jts.build-dir}/idl/omg/CosTransactions.idl"
+			    	 package="org.omg"
+		    		 mappings="CosTransactions=org.omg"/>
+			<element src="${com.hp.mwlabs.ts.jts.build-dir}/idl/arjuna/ArjunaOTS.idl"
+					 package="com.arjuna"
+					 mappings="CosTransactions=org.omg;ArjunaOTS=com.arjuna;CORBA=org.omg"/>
+			<element src="${com.hp.mwlabs.ts.jts.build-dir}/idl/omg/XA.idl"
+			    	 package="org.omg"
+		    		 mappings="XA=org.omg"/>
+		</idl-build-list>
+
+		<ant antfile="../orbportability/orbspecific.xml">
+			<property name="com.hp.mw.orbportability.orbspecific.modulename" value="jts"/>
+			<property name="com.hp.mw.orbportability.orbspecific.srcdir" location="classes"/>
+		</ant>
+
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jts.compile" depends="com.hp.mwlabs.ts.jts.init">
+
+		<echo message="Compiling module"/>
+
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<property name="com.hp.mwlabs.ts.jts.compile.excludes"
+		    value="**/orbspecific/**/*.java"/>
+
+		<javac
+			srcdir="${com.hp.mwlabs.ts.jts.src}"
+			destdir="${com.hp.mwlabs.ts.jts.dest}"
+			excludes="${com.hp.mwlabs.ts.jts.compile.excludes}"
+                        debug="${com.hp.mwlabs.debug}"
+			deprecation="${com.hp.mwlabs.deprecation}"
+		>
+			<classpath>
+				<path path="${build.classpath}"/>
+				<path path="${com.hp.mwlabs.ts.jts.src}"/>
+			</classpath>
+		</javac>
+
+	</target>
+
+    <target name="com.hp.mwlabs.ts.jts.services.install" depends="com.hp.mwlabs.ts.jts.services.jar" if="com.hp.mwlabs.ts.jts.services.install">
+
+        <echo message="Installing services"/>
+
+        <mkdir dir="${com.hp.mw.installationdirectory}/services/config"/>
+
+        <copy todir="${com.hp.mw.installationdirectory}/services/config" filtering="on" overwrite="yes">
+            <fileset dir="${com.hp.mwlabs.ts.jts.services.config}">
+                <include name="*.conf"/>
+                <include name="*.properties"/>
+                <include name="*.xml"/>
+            </fileset>
+            <filterset>
+                <filter token="PRODUCT_NAME" value="${com.hp.mw.ts.product.name.lowercase}"/>
+            </filterset>
+        </copy>
+
+        <!-- Create copy of unix scripts for each *NIX platform -->
+        <mkdir dir="${com.hp.mw.installationdirectory}/services/bin/hpux"/>
+
+        <copy todir="${com.hp.mw.installationdirectory}/services/bin/hpux/">
+            <fileset dir="${com.hp.mwlabs.ts.jts.services.scripts}/unix">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+
+        <mkdir dir="${com.hp.mw.installationdirectory}/services/bin/solaris"/>
+        <copy todir="${com.hp.mw.installationdirectory}/services/bin/solaris/">
+            <fileset dir="${com.hp.mwlabs.ts.jts.services.scripts}/unix">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+
+        <mkdir dir="${com.hp.mw.installationdirectory}/services/bin/linux"/>
+        <copy todir="${com.hp.mw.installationdirectory}/services/bin/linux/">
+            <fileset dir="${com.hp.mwlabs.ts.jts.services.scripts}/unix">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+
+        <mkdir dir="${com.hp.mw.installationdirectory}/services/bin/windows"/>
+        <copy todir="${com.hp.mw.installationdirectory}/services/bin/windows/">
+            <fileset dir="${com.hp.mwlabs.ts.jts.services.scripts}/windows">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+
+    </target>
+
+    <target name="com.hp.mwlabs.ts.jts.services.jar" depends="com.hp.mwlabs.ts.jts.services.compile" if="com.hp.mwlabs.ts.jts.services.install">
+
+        <mkdir dir="${com.hp.mwlabs.ts.jts.services.destdir}"/>
+        <jar    basedir="${com.hp.mwlabs.ts.jts.services.dest}"
+                jarfile="${com.hp.mwlabs.ts.jts.services.destdir}/${com.hp.mwlabs.ts.modulename}_services.jar"/>
+
+    </target>
+
+    <target name="com.hp.mwlabs.ts.jts.services.compile" if="com.hp.mwlabs.ts.jts.services.install">
+
+        <echo message="Compiling services"/>
+
+        <mkdir dir="${com.hp.mwlabs.ts.jts.services.dest}"/>
+
+        <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+        <javac
+            srcdir="${com.hp.mwlabs.ts.jts.services.src}"
+            destdir="${com.hp.mwlabs.ts.jts.services.dest}"
+            debug="${com.hp.mwlabs.debug}"
+            deprecation="${com.hp.mwlabs.deprecation}"
+        >
+            <classpath>
+                <path path="${build.classpath}"/>
+                <path path="${com.hp.mwlabs.ts.jts.dest}"/>
+            </classpath>
+        </javac>
+
+    </target>
+
+	<target name="com.hp.mwlabs.ts.jts.tests.jar" depends="com.hp.mwlabs.ts.jts.tests.compile" if="com.hp.mwlabs.ts.jts.tests.compile">
+
+		<mkdir dir="${com.hp.mwlabs.ts.jts.tests.destdir}"/>
+		<jar	basedir="${com.hp.mwlabs.ts.jts.tests.dest}"
+			jarfile="${com.hp.mwlabs.ts.jts.tests.destdir}/${com.hp.mwlabs.ts.modulename}_tests.jar"/>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jts.tests.compile" depends="com.hp.mw.ts.jts.jar" if="com.hp.mwlabs.ts.jts.tests.compile">
+
+		<echo message="Compiling tests"/>
+
+		<mkdir dir="${com.hp.mwlabs.ts.jts.tests.dest}"/>
+
+        	<!-- Make ANT aware of user-defined task -->
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="orbport.classpath"/>
+	        <taskdef name="idl-build-list" classname="com.arjuna.orbportability.common.ant.IDLBuildList" classpath="${orbport.classpath}"/>
+		<taskdef name="idl-build-list-element" classname="com.arjuna.orbportability.common.ant.IDLBuildListElement" classpath="${orbport.classpath}"/>
+
+		<property name="com.hp.mwlabs.ts.jts.build-dir" location="."/>
+		<property name="com.hp.mwlabs.ts.jts.tests-dir" location="tests"/>
+		<property name="com.hp.mw.orbportability.orbspecific.include"
+		    location="${com.hp.mwlabs.ts.jts.build-dir}/idl/omg"/>
+
+		<idl-build-list inproperty="com.hp.mw.orbportability.orbspecific.buildlist">
+			<element 	src="${com.hp.mwlabs.ts.jts.tests-dir}/idl/TestModule.idl"
+						package="com.hp.mwtests.ts.jts" mappings="CosTransactions=org.omg;TestModule=com.hp.mwtests.ts.jts;CORBA=org.omg"/>
+
+        </idl-build-list>
+
+        <ant antfile="../orbportability/orbspecific.xml">
+            <property name="com.hp.mw.orbportability.orbspecific.modulename" value="jts_tests"/>
+            <property name="com.hp.mw.orbportability.orbspecific.lib" value="${com.hp.mwlabs.ts.jts.tests.destdir}"/>
+            <property name="com.hp.mw.orbportability.orbspecific.srcdir" value="${com.hp.mwlabs.ts.jts.tests-dir}/classes"/>
+        </ant>
+
+                <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<javac
+			srcdir="${com.hp.mwlabs.ts.jts.tests.src}"
+			destdir="${com.hp.mwlabs.ts.jts.tests.dest}"
+                        debug="${com.hp.mwlabs.debug}"
+			deprecation="${com.hp.mwlabs.deprecation}"
+		>
+                    <classpath>
+                        <path path="${build.classpath}"/>
+                        <path path="${com.hp.mwlabs.ts.jts.tests.src}/classes"/>
+                    </classpath>
+		</javac>
+
+	</target>
+
+	<!-- Jar targets -->
+	<target name="com.hp.mw.ts.jts.jar" depends="com.hp.mw.ts.jts.compile">
+
+		<echo message="Building jar file"/>
+		<mkdir dir="${com.hp.mwlabs.ts.jts.jar.dest}"/>
+
+        <copy file="etc/${com.hp.mwlabs.ts.jts.mappingfile}"
+                tofile="${com.hp.mwlabs.ts.jts.dest}/${com.hp.mwlabs.ts.jts.mappingfile}"/>
+
+		<jar
+			jarfile="${com.hp.mwlabs.ts.jts.jar.dest}/${com.hp.mwlabs.ts.modulename}.jar"
+			basedir="${com.hp.mwlabs.ts.jts.dest}"
+		/>
+
+        <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}">
+            <classpath>
+                <pathelement location="${com.hp.mwlabs.ts.jts.jar.dest}/${com.hp.mwlabs.ts.modulename}.jar"/>
+            </classpath>
+        </classpath-builder>
+
+	</target>
+
+	<!-- Installation targets -->
+    <target name="com.hp.mw.ts.jts.install" depends="com.hp.mw.ts.jts.build, com.hp.mwlabs.ts.jts.tests.install, com.hp.mwlabs.ts.jts.services.install">
+
+            <echo message="Installing module jts"/>
+            <echo message="Installation directory ${com.hp.mwlabs.installationdirectory}"/>
+            <mkdir dir="${com.hp.mw.propertydirectory}"/>
+
+            <taskdef name="merge-property-files"
+                         classname="com.hp.mw.buildsystem.ant.MergePropertyFiles" classpath="${com.arjuna.buildsystem.classpath}"/>
+
+            <echo>Merging propertyfiles into main product property file</echo>
+
+            <merge-property-files master="${com.hp.mw.propertydirectory}/${com.hp.mwlabs.ts.jts.propertyfile}"
+                                      merge="${com.hp.mwlabs.ts.jts.etc}/default-${com.hp.mwlabs.ts.jts.propertyfile.src}"/>
+
+            <merge-property-files master="${com.hp.mw.propertydirectory}/${com.hp.mwlabs.ts.jts.recoverymanager.propertyfile}"
+                                      merge="${com.hp.mwlabs.ts.jts.etc}/default-${com.hp.mwlabs.ts.jts.recoverymanagerpropertyfile.src}"
+                                                      override="true"/>
+
+            <mkdir dir="${com.hp.mw.idldirectory}"/>
+            <copy
+                    todir="${com.hp.mw.idldirectory}"
+                    >
+                    <fileset dir="idl/arjuna">
+                            <include name="ArjunaOTS.idl"/>
+                    </fileset>
+                    <fileset dir="idl/omg">
+                            <include name="CosTransactions.idl"/>
+                    </fileset>
+                    <fileset dir="idl/omg">
+                            <include name="XA.idl"/>
+                    </fileset>
+            </copy>
+
+    </target>
+
+	<target name="com.hp.mwlabs.ts.jts.tests.install" depends="com.hp.mwlabs.ts.jts.tests.compile" if="com.hp.mwlabs.ts.jts.tests.install">
+
+		<echo message="Installing tests"/>
+
+	</target>
+
+	<!-- Clean targets -->
+	<target name="com.hp.mw.ts.jts.clean" depends="com.hp.mwlabs.ts.jts.tests.clean">
+
+		<echo message="Cleaning module"/>
+		<delete dir="${com.hp.mwlabs.ts.jts.dest}"/>
+		<delete dir="${com.hp.mwlabs.ts.jts.jar.dest}"/>
+		<delete file="${com.hp.mwlabs.ts.jts.info.dest}"/>
+		<delete file="${com.hp.mwlabs.ts.jts.properties.dest}"/>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jts.tests.clean">
+
+		<echo message="Cleaning tests"/>
+		<delete dir="${com.hp.mwlabs.ts.jts.tests.dest}"/>
+
+	</target>
+
+	<!-- Short target names -->
+	<target name="compile" depends="com.hp.mwlabs.ts.jts.idl.compile, com.hp.mw.ts.jts.compile">
+
+	</target>
+
+	<target name="jar" depends="com.hp.mw.ts.jts.jar">
+
+	</target>
+
+	<target name="install" depends="com.hp.mw.ts.jts.install">
+
+	</target>
+
+	<target name="clean" depends="com.hp.mw.ts.jts.clean">
+
+	</target>
+
+        <target name="com.hp.mwlabs.jts.generateresourcebundle">
+
+            <echo message="Generating JTS Resource Bundle"/>
+
+            <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+            <javadoc    sourcepath="${com.hp.mwlabs.ts.jts.src}"
+                        packagenames="com.arjuna.*"
+                        failonerror="yes"
+                        private="yes"
+                        defaultexcludes="yes"
+                        classpath="${build.classpath}">
+
+                 <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
+                    <path>
+                        <pathelement path="${com.arjuna.buildsystem.classpath}"/>
+                    </path>
+                    <param name="-basedir" value="${com.hp.mwlabs.ts.jts.builddir}"/>
+                    <param name="-resourcebundle" value="${com.hp.mwlabs.ts.jts.resourcebundle}"/>
+                    <param name="-appendkey" value="[]"/>
+                 </doclet>
+            </javadoc>
+
+        </target>
+
+</project>
+

@@ -1,0 +1,74 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2006, JBoss Inc., and individual contributors as indicated
+ * by the @authors tag.  All rights reserved. 
+ * See the copyright.txt in the distribution for a full listing 
+ * of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU General Public License, v. 2.0.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License,
+ * v. 2.0 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ * 
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ */
+//File: CosTypedEventChannelAdmin.idl
+//Part of the Event Service
+//Updated to reflect version 1.1 - March 2001
+
+#ifndef _COS_TYPED_EVENT_CHANNEL_ADMIN_IDL_
+#define _COS_TYPED_EVENT_CHANNEL_ADMIN_IDL_
+
+#include <CosEventChannelAdmin.idl>
+#include <CosTypedEventComm.idl>
+
+#pragma prefix "omg.org"
+
+module CosTypedEventChannelAdmin {  
+
+   exception InterfaceNotSupported {};
+   exception NoSuchImplementation {};
+   typedef string Key;                             //Repository ID
+
+   interface TypedProxyPushConsumer :  
+         CosEventChannelAdmin::ProxyPushConsumer,  
+         CosTypedEventComm::TypedPushConsumer  { };
+
+   interface TypedProxyPullSupplier :
+         CosEventChannelAdmin::ProxyPullSupplier,  
+         CosTypedEventComm::TypedPullSupplier { };
+
+   interface TypedSupplierAdmin :
+         CosEventChannelAdmin::SupplierAdmin {
+      TypedProxyPushConsumer obtain_typed_push_consumer(
+            in Key supported_interface)      
+         raises(InterfaceNotSupported);
+      CosEventChannelAdmin::ProxyPullConsumer obtain_typed_pull_consumer (
+            in Key uses_interface)     
+          raises(NoSuchImplementation);
+   };
+
+   interface TypedConsumerAdmin :
+         CosEventChannelAdmin::ConsumerAdmin {
+      TypedProxyPullSupplier obtain_typed_pull_supplier(
+            in Key supported_interface)      
+         raises (InterfaceNotSupported);
+      CosEventChannelAdmin::ProxyPushSupplier obtain_typed_push_supplier(
+            in Key uses_interface)     
+         raises(NoSuchImplementation);
+   };
+
+   interface TypedEventChannel {
+      TypedConsumerAdmin for_consumers();       
+      TypedSupplierAdmin for_suppliers();
+      void destroy ();
+   };
+};
+
+#endif /* ifndef _COS_TYPED_EVENT_CHANNEL_ADMIN_IDL_ */

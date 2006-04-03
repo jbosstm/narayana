@@ -1,0 +1,63 @@
+Installing JBossJTS into JBoss 4.0.3SP1
+---------------------------------------
+
+The installation of JBossJTS into JBoss 4.0.3SP1 is currently a manual process.
+We hope to release an installer in the near future that will automate this
+process.
+
+The following steps are required
+
+ - download the tar or zip version of JBoss 4.0.3SP1
+ - extract the distribution into an installation directory
+
+ - copy the following jars from the JBossJTS installation into the
+   server/XXX/lib directory of the JBoss 4.0.3 SP1 installation
+   - lib/jbossjts.jar
+   - lib/jbossjts-jacorb.jar
+   - lib/jbossjts-integration.jar
+   - lib/ext/jbossts-common.jar
+   - jboss/jboss.jar
+   - jboss/jboss-iiop.jar
+   - jboss/jboss-hibernate.jar
+ - copy the following jar from the JBossJTS installation into the
+   server/XXX/deploy/jboss-aop.deployer directory of the JBoss 4.0.3 SP1
+   installation
+   - jboss/jboss-aspect-library.jar
+ - copy the following configuration file from the JBossJTS installation into
+   the server/XXX/conf directory of the JBoss 4.0.3 SP1 installation
+   - etc/jbossjts-properties.xml
+ - Edit the server/all/conf/jboss-service.xml file and replace the
+   jboss:service=TransactionManager mbean declaration with the following
+
+   <mbean code="com.arjuna.ats.jbossatx.jts.TransactionManagerService"
+      name="jboss:service=TransactionManager">
+      <attribute name="TransactionTimeout">300</attribute>
+   </mbean>
+
+ - Edit the server/default/conf/jboss-service.xml file and replace the
+   jboss:service=TransactionManager mbean declaration with the following
+
+   <mbean code="com.arjuna.ats.jbossatx.jta.TransactionManagerService"
+      name="jboss:service=TransactionManager">
+      <attribute name="TransactionTimeout">300</attribute>
+   </mbean>
+
+ - Edit the server/all/conf/jacorb.properies as follows.
+  - change the jacorb.poa.thread_pool_max property to 32
+  - add the following property the the end of the file
+
+org.omg.PortableInterceptor.ORBInitializerClass.com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition.InterpositionORBInitializerImpl=com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition.InterpositionORBInitializerImpl
+
+ - Edit the server/all/deploy/iiop-service.xml and modify the
+   PortableInterceptorInitializers attribute as follows.
+  - remove the following lines
+         <!-- comment out to disable null transaction propagation over IIOP -->
+         <initializer>org.jboss.tm.iiop.TxServerClientInterceptorInitializer</initializer>
+         <!-- comment out to disable transaction demarcation over IIOP -->
+         <initializer>org.jboss.tm.iiop.TxServerInterceptorInitializer</initializer>
+  - add the following lines
+         <!-- JBoss TS interceptor -->
+         <initializer>com.arjuna.ats.jts.orbspecific.jacorb.interceptors.context.ContextORBInitializerImpl</initializer>
+
+The application server will now be configured to use the JBossJTS transaction
+manager instead of the JBoss Transaction Manager.

@@ -1,0 +1,193 @@
+<?xml version="1.0"?>
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<page title="Arjuna Technologies Limited: The X/Open DTP model" rootpath="../..">
+	<header>         Trail map: The X/Open DTP model   </header>
+	<content>
+		<navigation>
+			<links include="includes/www_arjuna_com_navigation.xml"/>
+			<links include="includes/trailmap_navigation.xml"/>
+			<links title="Navigation">
+				<link ref="index.html">Home</link>
+			</links>
+			<links include="includes/trailmap_additional.xml"/>
+		</navigation>
+		<area title="Overview of the X/Open DTP model">
+			<html>
+				The X/Open Distributed Transaction Processing (DTP) model is a distributed
+transaction processing model proposed by the Open Group, a vendor consortium.
+This model is a standard among most of the commercial vendors in transaction
+processing and database domains.
+<br>This model consists of the follwng components (illustrated in Figure 1)</br>
+				<ol>
+					<li>
+an Application Program (AP), which defines transaction boundaries and specifies
+actions that constitute a transaction</li>
+					<li>
+Resource Managers (RMs) such as databases or file access systems, which
+provide access to resources</li>
+					<li>
+a Transaction Manager (TM), which assigns identifiers to transactions,
+monitors their progress, and takes responsibility for transaction completion
+and for coordinating failure recovery</li>
+					<li>
+Communication Resource Managers (CRMs), which control communication between
+distributed applications within or across TM domains</li>
+				</ol>
+				<img SRC="includes/xopen.GIF"/>
+				<br>Figure 1 - The X/Open DTP model</br>
+				<h5> Interface between functional components</h5>
+There are six interfaces between software components in the X/Open DTP model.
+<ul>
+					<li>
+AP-RM. The AP-RM interfaces give the AP access to resources. X/Open interfaces,
+such as SQL and ISAM provide AP portability. The X/Open DTP model imposes
+few constraints on native RM APIs. The constraints involve only those native
+RM interfaces that define transactions.</li>
+					<li>
+AP-TM. The AP-TM interface (the TX interface) provides the AP with an Application
+Programming Interface (API) by which the AP coordinates global transaction
+management with the TM. For example, when the AP calls tx_begin( ) the
+TM informs the participating RMs of the start of a global transaction.
+After each request is completed, the TM provides a return value to the
+AP reporting back the success or otherwise of the TX call.</li>
+					<li>
+TM-RM. The TM-RM interface (the XA interface) lets the TM structure the
+work of RMs into global transactions and coordinate completion or recovery.
+The XA interface is the bidirectional interface between the TM and RM.</li>
+					<br>The functions that each RM provides for the TM are called the xa_*()
+functions. For example the TM calls xa_start( ) in each participating
+RM to start an RM-internal transaction as part of a new global transaction.
+Later, the TM may call in sequence xa_end() xa_prepare( ) and xa_commit()
+to coordinate a (successful in this case) two-phase commit protocol.
+The functions that the TM provides for each RM are called the ax_*( ) functions.
+For example an RM calls ax_reg( ) to register dynamically with the TM.</br>
+					<li>
+TM-CRM. The TM-CRM interface (the XA+ interface) supports global transaction
+information flow across TM Domains. In particular TMs can instruct CRMs
+by use of xa_*() function calls to suspend or complete transaction branches,
+and to propagate global transaction commitment protocols to other transaction
+branches. CRMs pass information to TMs in subordinate branches by use of
+ax_*( ) function calls. CRMs also use ax_*( ) function calls to request
+the TM to create subordinate transaction branches, to save and retrieve
+recovery information, and to inform the TM of the start and end of blocking
+conditions.</li>
+					<li>
+AP-CRM. X/Open provides portable APIs for DTP communication between APs
+within a global transaction. The API chosen can significantly influence
+(and may indeed be fundamental to) the whole architecture of the application.
+For this reason, these APIs are frequently referred to in this specification
+and elsewhere as communication paradigms.In practice, each paradigm has
+unique strengths, so X/Open offers the following popular paradigms:</li>
+					<ul>
+						<li>
+the TxRPC interface (see the referenced TxRPC specification)</li>
+						<li>
+the XATMI interface (see the referenced XATMI specification)</li>
+						<li>
+the CPI-C interface (see the referenced CPI-C specification).</li>
+					</ul>
+X/Open interfaces, such as the CRM APIs listed above, provide application
+portability. The X/Open DTP model imposes few constraints on native CRM
+APIs.
+<li>
+CRM-OSI TP. This interface (the XAP-TP interface) provides a programming
+interface between a CRM and Open Systems Interconnection Distributed Transaction
+Processing (OSI TP) services. XAP-TP interfaces with the OSI TP Service
+and the Presentation Layer of the seven-layer OSI model. X/Open has defined
+this interface to support portable implementations of application-specific
+OSI services. The use of OSI TP is mandatory for communication between
+heterogeneous TM domains. For details of this interface, see the referenced
+XAP-TP specification and the OSI TP standards.</li>
+				</ul>
+Although the aim of the Open Group was providing portable interfaces, only
+the XA interface appears to be accepted and implemented by a wide
+range of vendors.
+<br>XA is a bidirectional interface between resource managers and transaction
+managers. This interface specifies two sets of functions. The first set,
+called as xa_*() functions are implemented by resource managers for use
+by the transaction manager.</br>
+				<p>Table 1 - XA Interface of X/Open DTP Model for the transaction manager</p>
+				<table BORDER="" WIDTH="100%">
+					<tr BGCOLOR="#8BD5FC">
+						<td>
+							<b>Function</b>
+						</td>
+						<td>
+							<b>Purpose</b>
+						</td>
+					</tr>
+					<tr>
+						<td>xa_start</td>
+						<td>Directs a resource manager to associate the subsequent requests by
+application programs to a transaction identified by the supplied identifier.</td>
+					</tr>
+					<tr>
+						<td>xa_end</td>
+						<td>Ends the association of a resource manager with the transaction.</td>
+					</tr>
+					<tr>
+						<td>xa_prepare</td>
+						<td>Prepares the resource manager for the commit operation. Issued by the
+transaction manager in the first phase of the two-phase commit operation.</td>
+					</tr>
+					<tr>
+						<td>xa_commit</td>
+						<td>Commits the transactional operations. Issued by the transaction manager
+in the second phase of the two-phase commit operation.</td>
+					</tr>
+					<tr>
+						<td>xa_recover</td>
+						<td>Retrieves a list of prepared and heuristically committed or heuristically
+rolled back transactions</td>
+					</tr>
+					<tr>
+						<td>xa_forget</td>
+						<td>Forgets the heuristic transaction associated with the given transaction
+identifier</td>
+					</tr>
+				</table>
+				<p>The second set of functions, called as ax_*() functions, are implemented
+by the transaction manager for use by resource managers.</p>
+				<p>Table 2 - XA Interface of X/Open DTP Model for resource managers</p>
+				<table BORDER="" WIDTH="58%">
+					<tr BGCOLOR="#8BD5FC">
+						<td>
+							<b>Function</b>
+						</td>
+						<td>
+							<b>Purpose</b>
+						</td>
+					</tr>
+					<tr>
+						<td>ax_reg()</td>
+						<td>Dynamically enlists with the transaction manager.</td>
+					</tr>
+					<tr>
+						<td>ax_unreg()</td>
+						<td>Dynamically delists from the transaction manager.</td>
+					</tr>
+				</table>
+			</html>
+		</area>
+	</content>
+	<footer/>
+</page>

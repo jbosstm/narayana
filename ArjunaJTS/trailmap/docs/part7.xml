@@ -1,0 +1,265 @@
+<?xml version="1.0"?>
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<page title="Arjuna Technologies Limited: Trail map: Running and Testing Examples" rootpath="../..">
+	<header>   Recovery From Failure   </header>
+	<content>
+		<navigation>
+			<links include="includes/www_arjuna_com_navigation.xml"/>
+			<links include="includes/trailmap_navigation.xml"/>
+			<links title="Navigation">
+				<link ref="index.html">Home</link>
+				<link ref="part6.html">Previous</link>
+				<link ref="next.html">Next</link>
+			</links>
+			<links include="includes/trailmap_additional.xml"/>
+		</navigation>
+		<area title="Recovery From Failure Examples">
+			<html>
+				<p>Recovery is the mechanism which preserves the transaction atomicity in presence of failures. 
+				The basic technique for implementing transactions in presence of failures is based on the use 
+				of logs.  That is, a transaction system has to record enough information to ensure that it can 
+				be able to return to a previous state in case of failure or to ensure that changes committed by a 
+				transaction are properly stored.</p>
+				<p>
+				ATS ensures that results of a transaction are applied consistently to all resources involved in 
+				a transaction, even in the presence of failure. To recover from failure, ATS relies on its Recovery 
+				Manager.</p>
+				<p>
+				Basically, the Recovery Manager is a daemon process that invokes a set of well known Recovery Modules 
+				periodically in two steps; a first to determine transactions in doubt state and a second step to continue 
+				the completion of those transactions found in the first step. Since different type of resources may be 
+				involved in a transaction, different type of Recovery Modules may exist. ATS provides several type of 
+				modules that manage resources according to their position in the transaction tree (root, subordinate, leaf) 
+				or the nature of the data itself, transactional object for java or XAResource as seen in 
+				<a class="linkscoloured" href="part6.html">the previous trail</a>. </p>
+				<p>
+				Whatever the nature of the involved resource, recovery is based on information or logs held in the Object Store, 
+				which contains specific subdirectory holding information according to the nature of the participant.
+				</p>
+			</html>
+		</area>
+		<area title="Running the Recovery Manager">
+			<html>
+				<p>
+				<i>This section provides only brief information on running the recovery manager from provided scripts. 
+				For complete information on the recovery manager (including how to configure it), click 
+				<a class="linkscoloured" href="ArjunaTS_Recovery.html">here</a>.</i></p>
+				<h4>Windows</h4>
+				<p>
+				To run the Recovery Manager as a Windows NT service, simply:</p>
+				<ol>
+					<li>Open a command prompt</li>
+					<li>cd to the directory <font face="Courier New, Courier, mono">&lt;arjunats_install_root&gt;\services\bin\windows</font></li>
+					<li>Type <font face="Courier New, Courier, mono">InstallRecoveryManagerService-NT.bat</font></li>
+				</ol>
+				<p>
+				Note: This directory also contains the uninstall script which is ran in the same manner.</p>
+				<p>
+				To launch the Recovery Manager as a Windows process, simply:</p>
+				<ol>
+					<li>Open a command prompt</li>
+					<li>cd to the directory <font face="Courier New, Courier, mono">&lt;arjunats_install_root&gt;\services\bin\windows</font></li>
+					<li>Type <font face="Courier New, Courier, mono">recoverymanagerservice.bat</font></li>
+				</ol>
+				<h4>UNIX</h4>
+				<p>
+				To launch the Recovery Manager on a UNIX platform, simply:</p>
+				<ol>
+					<li>Open a command prompt</li>
+					<li>cd to the directory <font face="Courier New, Courier, mono">&lt;arjunats_install_root&gt;\services\bin\[platform]</font></li>
+					<li>Type <font face="Courier New, Courier, mono">recoverymanagerservice.sh start</font></li>
+				</ol>
+				<p>
+				Note: To uninstall the recovery manager, rerun the script specifying the stop flag.</p>
+			</html>
+		</area>
+		<area title="The Recovery Process and XAResources">
+			<html>
+				<p>
+				The Arjuna recovery manager provides support for recovering XAResources whether or not they are Serializable. XAResources that <i>do</i>
+				implement the Serializable interface are handled without requiring additional programmer defined classes. For those XAResources that need
+				to recover but which cannot implement Serializable, it is possible to provide a small class which is used to help recover them.</p>
+				<p>
+				This example shows the Arjuna recovery manager recovering a Serializable XAResource and a non-Serializable XAResource.</p>
+				<h4>The demo's components</h4>
+				The application consists of four classes. Each class is well documented and it is recommended that the provided code is inspected to gain
+				useful insight into some of the nuances of the recovery process.
+				<ul>
+				<li>The code of the main class that controls the application 
+				(<a class="linkscoloured" href="../src/com/arjuna/demo/recovery/xaresource/TestXAResourceRecovery.java">TestRecoveryModule.java</a>), allows
+				the user to specify a number of options: <font face="Courier New, Courier, mono">[-waitForRecovery] [-useExternalRecoveryManager]</font></li>
+				<li>Programmer-defined support of the Serializable XAResource is only required in the XAResource implementation class
+				<a class="linkscoloured" href="../src/com/arjuna/demo/recovery/xaresource/ExampleXAResource.java">ExampleXAResource.java</a></li>
+				<li>Programmer-defined support of the non-Serializable XAResource is required both in the XAResource implementation class
+				<a class="linkscoloured" href="../src/com/arjuna/demo/recovery/xaresource/NonSerializableExampleXAResource.java">NonSerializableExampleXAResource</a>,
+				and in a class that implements a helper for the Arjuna recovery process 
+				<a class="linkscoloured" href="../src/com/arjuna/demo/recovery/xaresource/NonSerializableExampleXAResourceRecovery.java">NonSerializableExampleXAResourceRecovery.java</a></li>
+				</ul>
+				<h4>XAResourceRecovery registration</h4>
+
+				<p>
+         			When recovering from failures, Arjuna requires the ability to reconnect to the XAResource
+ 			        that were in use prior to the failures in order to resolve any outstanding transactions.
+			        In order to recreate those connections for non-Serializable XAResources it is necessary to 
+				provide implementations of the following Arjuna interface com.arjuna.ats.jta.waitForRecovery.XAResourceRecovery.</p>
+			        <p>
+			        To inform the waitForRecovery system about each of the XAResourceRecovery instances, it is
+			        necessary to specify their class names through property variables in the arjunajts-properties.xml file. 
+				Any property variable which starts with the name XAResourceRecovery will be assumed to represent 
+				one of these instances, and its value should be the class name.</p>
+
+				<p>
+			        When running XA waitForRecovery it is necessary to tell Arjuna which types of
+			        Xid it can recover. Each Xid that Arjuna creates has a unique node
+			        identifier encoded within it and Arjuna will only recover transactions
+			        and states that match a specified node identifier. The node identifier to
+			        use should be provided to Arjuna via a property that starts with the
+			        name com.arjuna.ats.jta.xaRecoveryNode (multiple values may
+			        be provided). A value of * will force Arjuna to recover (and possibly
+			        rollback) all transactions irrespective of their node identifier and should be
+			        used with caution.</p>
+
+				<p>
+				The recovery module for the non-Serializable XAResource must be deployed in order to provide support to recover the non-Serializable XAResource. 
+				If this step was missed out the Serializable XAResource would recover OK but Arjuna would have no knowledge of the non-Serializable XAResource
+				and so it could not recover it. To register the non-Serializable XAResource XAResourceRecovery module, add an entry to the arjunajts-properties.xml.</p>
+
+				<p>
+				Under the element <font face="Courier New, Courier, mono">&lt;properties depends="jts" name="jta"&gt;</font>, add:</p>
+				<blockquote>
+				&lt;property name="com.arjuna.ats.jta.recovery.XAResourceRecovery1" value=
+				"com.arjuna.demo.recovery.xaresource.NonSerializableExampleXAResourceRecovery"/&gt;
+				&lt;property name="com.arjuna.ats.jta.xaRecoveryNode" value="*"/&gt;
+				</blockquote>
+				<h4>Configure the recovery manager scan period</h4>
+				<p>
+				By default, the recovery manager is configured to perform a pass over resources to be recovered every two minutes. It will then wait for ten seconds
+				before re-checking the resources. Although the test will run OK with this configuration, it is possible to configure the recovery
+				manager scan times to reduce the time waiting. To configure the intervals, edit the arjunajts-properties.xml as follows:</p>
+				<ul>
+					<li>Edit the property <font face="Courier New, Courier, mono">"com.arjuna.ats.arjuna.recovery.periodicRecoveryPeriod"</font> 
+					to change the value from 120 to 5.</li>
+					<li>Edit the property <font face="Courier New, Courier, mono">"com.arjuna.ats.arjuna.recovery.recoveryBackoffPeriod"</font> 
+					to change the value from 10 to 5.</li>
+				</ul>
+
+				<h4>Specify the transaction manager type to use</h4>
+				<p>
+				The recovery manager will work in the same manner for either the JTA or JTS implementation. By default the Arjuna Transaction Service 
+				is configured to use a JTS transaction manager, in order to configure it to use a JTA transaction manager a change must again be made 
+				to the arjunajts-properties.xml. <i>See <a class="linkscoloured" href="part5_testing_jta.html">here</a> for more information on how to configure 
+				the ATS transaction manager to use JTA rather than JTS.</i></p>
+				<p>
+				<b>If you do change the transaction manager type remember to reconfigure the recovery manager as follows:</b></p>
+				<p>
+				If you are using the ArjunaCore (raw JTA) transaction manager implementation comment out the element in arjunajts-properties.xml containing the following text:</p>
+				<blockquote>
+				<font face="Courier New, Courier, mono">internal.jta.recovery.jts.XARecoveryModule</font>
+				</blockquote>
+				<p>
+				If you are using the JTS transaction manager implementation comment out the element in arjunajts-properties.xml containing the following text:</p>
+				<blockquote>
+				<font face="Courier New, Courier, mono">internal.jta.recovery.arjunacore.XARecoveryModule</font>
+				</blockquote>
+				<h4>Launching the demo</h4>
+				<p>To launch the Test Recovery Module, execute the following java program</p>
+				<ol>
+					<li>Open a command prompt</li>
+					<li>cd to the directory <font face="Courier New, Courier, mono">&lt;arjunats_install_root&gt;\trail_map</font></li>
+					<li>Type <font face="Courier New, Courier, mono">java com.arjuna.demo.recovery.xaresource.TestXAResourceRecovery</font></li>
+					<li>View the output noting the crash during commit.</li>
+					<li>Inspect the current working directory to note that the applications have created several log files which you may like to review.</li>
+					<li>Type <font face="Courier New, Courier, mono">java com.arjuna.demo.recovery.xaresource.TestXAResourceRecovery -waitForRecovery</font></li>
+					<li>Wait for the two resources to be recovered and committed.</li>
+					<li>Re-review the log files from the working directory, if wanted.</li>
+				</ol>
+				<p>
+				Note: As you can see, the Serializable XAResource does not need it's recover() method called as the transaction manager is aware of all the
+				information about this resource.</p>
+			</html>
+		</area>
+		<area title="The Recovery Process and AbstractRecords">
+			<html>
+				<p>
+				<b>WARNING: Implementing a RecoveryModule and AbstractRecord is a very advanced feature of the transaction service. It should only 
+				be performed by users familiar with the all the concepts used in the Arjuna Transactions product. Please see the ArjunaCore guide for more 
+				information about RecoveryModules and AbstractRecords.</b></p>
+				<p>
+				The following sample gives an overview how the Recovery Manager invokes a module to recover from failure.
+				This basic sample does not aim to present a complete process to recover from failure, but mainly to illustrate 
+				the way to implement a recovery module. More details can be found in "Failure Recovery Guide". </p>
+				The application used here consists to create an atomic transaction, to register a participant within 
+				the created transaction and finally to terminate it either by commit or abort. A set of arguments 
+				are provided:
+				<ul>
+				<li>to decide committing or aborting the transaction,</li>
+				<li>to decide generating a crash during the commitment process. </li>
+				</ul>
+				<h4>The demo's components</h4>
+				The application consists of three programs
+				<ul>
+				<li>The code of the main class that control the application 
+				(<a class="linkscoloured" href="../src/com/arjuna/demo/recoverymodule/TestRecoveryModule.java">TestRecoveryModule.java</a>), 
+				which consists to give the choice to either commit or abort the transaction and also to generate a crash.
+				</li>
+				<li>The registered participant (<a class="linkscoloured" href="../src/com/arjuna/demo/recoverymodule/SimpleRecord.java">SimpleRecord.java</a>) has the following behaviour: <br/>
+					- During the prepare phase, it writes a simple message - "I'm prepared" - on the disk such 
+					The message is written in a well known file <br/>
+					- During the commit phase, it writes another message - "I'm committed" - in the same file 
+					used during prepare <br/>
+					- If it receives an abort message, it removes from the disk the file used for prepare if any. <br/>
+					- if a crash has been decided for the test, then it crashes during the commit phase - the file remains
+					with the message "I'm prepared".
+				</li>
+				<li>A Recovery Module (<a class="linkscoloured" href="../src/com/arjuna/demo/recoverymodule/SimpleRecoveryModule.java">SimpleRecoveryModule.java</a>) that consists to read the content of the file used to store the status of the participant, 
+				to determine that status and print a message indicating if a recovery action is needed or not. 
+				</li>
+				</ul>
+				Using the provided ATS Recovery Modules ensures that resources are correctly recovered. This sample illustrates 
+				how to define and register its own module. It's the responsibility of the module to re-create the appropriate 
+				objects using information retrieved from a log.
+				
+				<h4>Recovery Module registration</h4>
+				The recovery module should now be deployed in order to be called by the Recovery Manager. To do so, 
+				we just need to add an entry in the arjunajts-properties.xml by adding a new property as follow: 
+				<blockquote>
+					&lt;property name="com.arjuna.ats.arjuna.recovery.recoveryExtension&lt;i&gt;"
+				        value="com.arjuna.demo.recoverymodule.SimpleRecoveryModule"/&gt;
+				</blockquote>
+Where &lt;i&gt; represent the new occurrence number that follows the last that already exists in the file. Once started, the Recovery Manager will automatically load the added Recovery module.
+
+			<h4>Starting the Recovery Manager</h4>
+			In a separate window launch the <a class="linkscoloured" href="ArjunaTS_Recovery.html">Recovery Manager</a>, 
+  as follow.
+					<pre>java com.arjuna.ats.arjuna.recovery.RecoveryManager -test</pre>
+			
+			<h4>Launching the demo</h4>
+			<p>To launch the Test Recovery Module, execute the following java program</p>
+
+<pre>java com.arjuna.demo.recoverymodule.TestRecoveryModule 
+		[-commit|-abort] [-crash]</pre>
+
+			</html>
+		</area>
+	</content>
+	<footer/>
+</page>

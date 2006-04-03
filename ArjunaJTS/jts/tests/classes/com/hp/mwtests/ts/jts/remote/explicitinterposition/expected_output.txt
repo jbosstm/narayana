@@ -1,0 +1,20 @@
+From Server:
+
+**SetGet server started**
+setget_i.set 2
+setget_i.set - managed to set up interposition hierarchy
+setget_i.set - current returned a control!
+setget_i.set - beginning nested action
+setget_i.set - registering self
+setget_i.set - committing nested action
+SETGET_I : COMMIT_SUBTRANSACTION
+setget_i.set - finished
+SETGET_I : COMMIT_ONE_PHASE
+
+From Client:
+
+Set value.
+committing first nested action
+committing second nested action
+Got value.
+committed top-level action

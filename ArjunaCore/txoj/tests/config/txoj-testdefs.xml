@@ -1,0 +1,195 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and others contributors as indicated 
+  by the @authors tag. All rights reserved. 
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors. 
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<test_set>
+    <default_timeout value="480"/>
+    <description>
+        TxOJ test definitions.
+    </description>
+
+	<test_group name="atomicobject">
+
+		<task_declaration>
+			<task id="AtomicObjectTest1" classname="com.hp.mwtests.ts.txoj.atomicobject.AtomicObjectTest1" runner="UnitTestRunner" type="expect_pass_fail"/>
+			<task id="AtomicObjectTest2" classname="com.hp.mwtests.ts.txoj.atomicobject.AtomicObjectTest2" runner="UnitTestRunner" type="expect_pass_fail"/>
+			<task id="AtomicObjectTest3" classname="com.hp.mwtests.ts.txoj.atomicobject.AtomicObjectTest3" runner="UnitTestRunner" type="expect_pass_fail" timeout="1200"/>
+		</task_declaration>
+
+		<test_declaration id="AtomicObjectTest1" descriptive_name="Simple TxOJ Atomic Object Test" author="Mark Litle">
+
+			<configuration/>
+
+			<action_list>
+				<perform_task id="AtomicObjectTest1"/>
+			</action_list>
+
+		</test_declaration>
+
+		<test_declaration id="AtomicObjectTest2" descriptive_name="Simple TxOJ Atomic Object Test" author="Mark Litle">
+
+			<configuration/>
+
+			<action_list>
+				<perform_task id="AtomicObjectTest2"/>
+			</action_list>
+
+		</test_declaration>
+
+		<test_declaration id="AtomicObjectTest3" descriptive_name="Simple TxOJ Atomic Object Test" author="Mark Litle">
+
+			<configuration/>
+
+			<action_list>
+				<perform_task id="AtomicObjectTest3"/>
+			</action_list>
+
+		</test_declaration>
+
+	</test_group>
+
+	<test_group name="basic">
+
+		<task_declaration>
+		    <task id="RecoveryManager" classname="com.arjuna.ats.arjuna.recovery.RecoveryManager" runner="ServiceRunner" type="expect_ready" location="all"/>
+		    <task id="AtomicTest" classname="com.hp.mwtests.ts.txoj.basic.AtomicTest" runner="UnitTestRunner" type="expect_pass_fail"/>
+		    <task id="PersistenceTest" classname="com.hp.mwtests.ts.txoj.basic.PersistenceTest" runner="UnitTestRunner" type="expect_pass_fail"/>
+		    <task id="BasicActionTest" classname="com.hp.mwtests.ts.txoj.basic.BasicActionTest" runner="UnitTestRunner" type="expect_pass_fail"/>
+		    <task id="RecoverableTest" classname="com.hp.mwtests.ts.txoj.basic.RecoverableTest" runner="UnitTestRunner" type="expect_pass_fail"/>
+		</task_declaration>
+
+		<test_declaration id="AtomicTest" descriptive_name="Basic TXOJ Atomic Test" author="Mark Litle">
+
+			<configuration/>
+
+			<action_list>
+				<perform_task id="AtomicTest"/>
+			</action_list>
+
+		</test_declaration>
+
+		<test_declaration id="PersistenceTest" descriptive_name="Basic TXOJ Persistence Test" author="Mark Litle">
+
+			<configuration/>
+
+			<action_list>
+				<perform_task id="PersistenceTest"/>
+			</action_list>
+
+		</test_declaration>
+
+		<test_declaration id="BasicActionTest" descriptive_name="Basic TXOJ Action Test" author="Mark Litle">
+
+			<configuration/>
+
+			<action_list>
+				<perform_task id="BasicActionTest"/>
+			</action_list>
+
+		</test_declaration>
+
+		<test_declaration id="BasicRecoverableTest" descriptive_name="Basic TXOJ Recovery Test" author="Mark Litle">
+
+			<configuration/>
+
+			<action_list>
+			    <start_task id="RecoveryManager" runtime_id="RcvMngr">
+				<param>-test</param>
+			    </start_task>
+			    <perform_task id="RecoverableTest"/>
+			    <terminate_task runtime_id="RcvMngr"/>
+			</action_list>
+
+		</test_declaration>
+
+	</test_group>
+
+    <test_group name="PerformanceTests">
+
+            <task_declaration>
+                    <task id="PerformanceTest1" classname="com.hp.mwtests.ts.txoj.performance.PerformanceTest1" runner="UnitTestRunner" type="expect_pass_fail"/>
+            </task_declaration>
+
+            <test_declaration id="PerformanceTest1" descriptive_name="Simple TxOJ Performance Test" author="Mark Litle">
+
+                <configuration/>
+
+                <action_list>
+                    <perform_task id="PerformanceTest1"/>
+                </action_list>
+
+            </test_declaration>
+
+    </test_group>
+
+	<test_group name="concurrencycontrol">
+
+			<task_declaration>
+					<task id="ConcurrencyTest" classname="com.hp.mwtests.ts.txoj.concurrencycontrol.ConcurrencyTest" runner="UnitTestRunner" type="expect_pass_fail"/>
+			</task_declaration>
+
+			<test_declaration id="ConcurrencyTest" descriptive_name="Simple TxOJ Concurrency Test" author="Mark Litle">
+
+				<configuration/>
+
+				<action_list>
+					<perform_task id="ConcurrencyTest"/>
+				</action_list>
+
+			</test_declaration>
+
+	</test_group>
+
+	<test_group name="destroy">
+
+			<task_declaration>
+					<task id="DestroyTest" classname="com.hp.mwtests.ts.txoj.destroy.DestroyTest" runner="UnitTestRunner" type="expect_pass_fail"/>
+			</task_declaration>
+
+			<test_declaration id="DestroyTest" descriptive_name="Simple TxOJ Destroy Test" author="Mark Litle">
+
+				<configuration/>
+
+				<action_list>
+					<perform_task id="DestroyTest"/>
+				</action_list>
+
+			</test_declaration>
+
+	</test_group>
+
+	<test_group name="hammer">
+
+			<task_declaration>
+					<task id="HammerTest" classname="com.hp.mwtests.ts.txoj.hammer.Hammer" runner="UnitTestRunner" type="expect_pass_fail"/>
+			</task_declaration>
+
+			<test_declaration id="HammerTest" descriptive_name="Simple TxOJ Hammer Test" author="Mark Litle">
+
+				<configuration/>
+
+				<action_list>
+					<perform_task id="HammerTest"/>
+				</action_list>
+
+			</test_declaration>
+
+	</test_group>
+
+</test_set>

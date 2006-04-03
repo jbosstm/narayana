@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<page title="Arjuna Technologies Limited: Trail map: Running and Testing Examples" rootpath="../..">
+	<header>         Trail map: Running and Testing Examples     </header>
+	<content>
+		<navigation>
+			<links include="includes/www_arjuna_com_navigation.xml"/>
+			<links include="includes/trailmap_navigation.xml"/>
+			<links title="Navigation">
+				<link ref="index.html">Home</link>
+				<link ref="part5.html">Previous</link>
+			</links>
+			<links include="includes/trailmap_additional.xml"/>
+		</navigation>
+		<area title="Running The Banking application with JTS">
+			<html>
+
+<p>The JTS version of the Banking application means that the Object Request Broker 
+  will be used. The ArjunaTS distribution is provided to works with JacORB version 
+  2.1 that can be obtained from the arjuna product page. ArjunaTS works also 
+  with Orbix 2000 v2.0, for more details see the ORB configuration section of the 
+  <a class="linkscoloured" href="../../docs/user_guide/ProgrammersGuide.pdf" target="_blank">Programmers Guide (pdf)</a>
+  </p>
+<p>To describe the possibilities provided by ArjunaTS to build a transactional 
+  application according to the programming models defined by the OTS specification, 
+  the Banking Application is programmed in different ways. </p>
+<ul>
+  <li>Local transactions: The Bank Client and the Bank server are collocated in 
+    the same process.</li>
+  <li>Distributed Transactions: The Bank Client and the Bank Server and located 
+    on different process. To participate within a client's transaction, Account 
+    Objects needed to access the transactional context. We describe the two of 
+    context propagation. 
+    <ul>
+      <li>implicit context propagation, and</li>
+      <li>explicit context propagation. </li>
+    </ul>
+  </li>
+</ul>
+<p><a class="linkscoloured" href="part5_testing_jtsLocal.html">JTS Local Transactions</a></p>
+<p><a class="linkscoloured" href="part5_testing_jtsDistributed.html">JTS Distributed Transactions</a></p>
+			</html>
+		</area>
+	</content>
+	<footer/>
+</page>

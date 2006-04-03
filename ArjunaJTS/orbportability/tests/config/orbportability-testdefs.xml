@@ -1,0 +1,158 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<test_set>
+    <default_timeout value="480"/>
+    <description>
+        ORB Portability test definitions.
+    </description>
+
+	<test_group name="ServicesTests">
+
+		<task_declaration>
+				<task id="ServicesTest" classname="com.hp.mwtests.orbportability.services.ServiceTestSetup" runner="UnitTestRunner" type="expect_pass_fail"/>
+		</task_declaration>
+
+		<test_declaration id="ServicesTest1" descriptive_name="Test CosServices" author="Richard A. Begg">
+
+			<description>
+				This tests the use of Services to bind and lookup objects
+			</description>
+
+			<configuration/>
+
+			<action_list>
+				<perform_task id="ServicesTest"/>
+			</action_list>
+
+		</test_declaration>
+
+	</test_group>
+
+	<test_group name="PostSetTests">
+			<task_declaration>
+					<task id="PostSetTest" classname="com.hp.mwtests.orbportability.initialisation.PostSetTest" runner="UnitTestRunner" type="expect_pass_fail"/>
+			</task_declaration>
+
+			<test_declaration id="PostSetTest1" descriptive_name="Scoped property ORB post set test" author="Richard A. Begg">
+
+                <description>
+                    This tests the use of system scoped ORB post-set properties
+                </description>
+
+                <configuration/>
+
+                <action_list>
+                    <perform_task id="PostSetTest"/>
+                </action_list>
+
+            </test_declaration>
+
+	</test_group>
+
+    <test_group name="PropertyInitTest">
+            <task_declaration>
+                    <task id="PropertyInitTest" classname="com.hp.mwtests.orbportability.initialisation.PropertyInitTest" runner="UnitTestRunner" type="expect_pass_fail"/>
+                    <task id="PropertyInitTest2" classname="com.hp.mwtests.orbportability.initialisation.PropertyInitTest2" runner="UnitTestRunner" type="expect_pass_fail"/>
+                    <task id="PropertyInitTest3" classname="com.hp.mwtests.orbportability.initialisation.PropertyInitTest3" runner="UnitTestRunner" type="expect_pass_fail"/>
+            </task_declaration>
+
+            <test_declaration id="PropertyInitTest" descriptive_name="Scoped property ORB initialisation test" author="Richard A. Begg">
+
+                <description>
+                    This tests the use of system scoped ORB pre/post-initialisation properties
+                </description>
+
+                <configuration/>
+
+                <action_list>
+                    <perform_task id="PropertyInitTest"/>
+                </action_list>
+
+            </test_declaration>
+
+            <test_declaration id="PropertyInitTest2" descriptive_name="Scoped property ORB/OA initialisation test" author="Richard A. Begg">
+
+                <description>
+                    This tests the use of system scoped ORB/OA pre/post-initialisation properties
+                </description>
+
+                <configuration/>
+
+                <action_list>
+                    <perform_task id="PropertyInitTest2"/>
+                </action_list>
+
+            </test_declaration>
+
+            <test_declaration id="PropertyInitTest3" descriptive_name="Scoped property ORB/OA initialisation test" author="Richard A. Begg">
+
+                <description>
+                    This tests the use of ORB.init scoped ORB/OA pre/post-initialisation properties
+                </description>
+
+                <configuration/>
+
+                <action_list>
+                    <perform_task id="PropertyInitTest3"/>
+                </action_list>
+
+            </test_declaration>
+
+	</test_group>
+
+	<test_group name="ORBInstanceTests">
+
+            <task_declaration>
+                    <task id="MultipleORBInstances" classname="com.hp.mwtests.orbportability.orbinstance.MultipleORBInstances" runner="UnitTestRunner" type="expect_pass_fail"/>
+                    <task id="MultipleORBInstanceServer" classname="com.hp.mwtests.orbportability.orbspecific.orbinstance.SimpleServer" runner="UnitTestRunner" type="expect_pass_fail"/>
+            </task_declaration>
+
+            <test_declaration id="MultipleORBInstances" descriptive_name="Multiple ORB Instances Test" author="Richard A. Begg">
+
+                <description>
+                    Tests the use of multiple ORB instances in the same JVM instance.
+                </description>
+
+                <configuration/>
+
+                <action_list>
+                    <perform_task id="MultipleORBInstances"/>
+                </action_list>
+
+            </test_declaration>
+
+            <test_declaration id="MultipleORBInstanceServer" descriptive_name="Multiple ORB Instances using a CORBA Server Test" author="Richard A. Begg">
+
+                <description>
+                    Tests the use of multiple ORB instances in the same JVM instance and using multiple OAs for registering objects.
+                </description>
+
+                <configuration/>
+
+                <action_list>
+                    <perform_task id="MultipleORBInstanceServer"/>
+                </action_list>
+
+            </test_declaration>
+
+    </test_group>
+
+</test_set>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and others contributors as indicated 
+  by the @authors tag. All rights reserved. 
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors. 
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<!-- log4j configuration file for the AMS server component -->
+
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+    <!-- an appender for the CSF console -->
+    <appender name="CSF_CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="%d %-5p [%t] %C{2} (%F:%L) - %m%n"/>
+        </layout>
+    </appender>
+
+    <!-- a rolling file appender -->
+    <appender name="ROLLING_FILE" class="org.apache.log4j.RollingFileAppender">
+        <param name="File"              value="../system/ams-server.log"/>
+        <param name="MaxFileSize"       value="100KB"/>
+        <param name="MaxBackupIndex"    value="3"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%t %-5p %c{2} - %m%n"/>
+        </layout>
+    </appender>
+
+    <!-- this appender can log into the native windows NT event log (not supported on Unix platforms)              -->
+    <!-- note that the file NTEventLogAppender.dll (in the AMS lib directory) must be copied into a directory that -->
+    <!-- is in the windows system path, e.g., c:\windows\system32                                                  -->
+    <appender name="NT_EVENTLOG" class="org.apache.log4j.nt.NTEventLogAppender">
+        <param name="Source" value="AMS 4.0 Server"/>
+    </appender>
+
+    <!-- an appender that tries to connect to a TCP/IP server for logging; this can be used with the Chainsaw     -->
+    <!-- graphical log analysis tool                                                                              -->
+    <appender name="CHAINSAW" class="org.apache.log4j.net.SocketAppender">
+        <param name="RemoteHost"    value="localhost"/>
+        <param name="Port"          value="4445"/>
+        <param name="LocationInfo"  value="true"/>
+    </appender>
+
+    <!-- an XML log file; this can be analysed with the Chainsaw graphical log analysis tool                      -->
+    <appender name="XML_FILE" class="org.apache.log4j.FileAppender">
+        <param name="File"    value="../system/server.log"/>
+        <param name="Append"  value="false"/>
+        <layout class="org.apache.log4j.xml.XMLLayout"/>
+    </appender>
+
+    <!-- an SMTP email logger; this is used by the server when signalling important events to the administrator   -->
+    <appender name="EMAIL" class="org.apache.log4j.net.SMTPAppender">
+        <param name="SMTPHost" value="popout.ncl.ac.uk"/>
+        <param name="To" value="thomas.rischbeck@arjuna.com"/>
+        <param name="From" value="ams@arjuna.com"/>
+        <layout class="org.apache.log4j.HTMLLayout"/>
+
+    </appender>
+
+    <!-- only log info an higher priority events for the transactioning subsystem                                 -->
+    <category name="com.arjuna.ats">
+        <priority value="warn"/>
+    </category>
+
+    <!-- only log info an higher priority events for the client library (the client library is used on the server -->
+    <!-- side for implementing message driven services (MDS)                                                      -->
+    <category name="com.arjuna.ams.internal.client">
+        <priority value="info"/>
+    </category>
+
+    <!-- set up an email appender for the HA-classes that logs anything above and including info level            -->
+    <category name="com.arjuna.ams.internal.service.ha.email">
+        <priority value="info"/>
+        <appender-ref ref="EMAIL"/>         <!-- log through email notifications -->
+    </category>
+
+    <!-- set the log level for the root hierarchy                                                                 -->
+    <root>
+        <priority value="info"/>
+        <appender-ref ref="CSF_CONSOLE"/>   <!-- log to the CSF console (when running with Swing embeddor) or to the terminal console (in text mode) -->
+        <!-- <appender-ref ref="ROLLING_FILE"/>  --> <!-- log to a rolling file -->
+
+        <!-- <appender-ref ref="CHAINSAW"/> enable this appender to use the graphical chainsaw log analysis tool -->
+        <!-- <appender-ref ref="XML_FILE"/> enable this for logging to an XML file (this could be analysed through chainsaw -->
+    </root>
+
+</log4j:configuration>

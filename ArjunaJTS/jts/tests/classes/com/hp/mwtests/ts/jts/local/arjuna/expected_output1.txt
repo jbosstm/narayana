@@ -1,0 +1,10 @@
+Registered DemoArjunaResource
+committing first nested transaction
+DEMOARJUNARESOURCE : PREPARE_SUBTRANSACTION
+DEMOARJUNARESOURCE : COMMIT_SUBTRANSACTION
+committing second nested transaction
+DEMOARJUNARESOURCE : PREPARE_SUBTRANSACTION
+DEMOARJUNARESOURCE : COMMIT_SUBTRANSACTION
+committing top-level transaction
+DEMOARJUNARESOURCE : COMMIT_ONE_PHASE
+Test completed successfully.

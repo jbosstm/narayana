@@ -1,0 +1,323 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<!--$Id: build.xml 2342 2006-03-30 13:06:17Z  $-->
+
+<project name="module-jtax" default="com.hp.mw.ts.jtax.build" basedir=".">
+
+    <property name="orbport.classpath"
+    value="../../orbportability/lib/ext/orbportability-ant.jar"/>
+
+	<!-- class path behaviour -->
+	<property name="build.sysclasspath" value="last"/>
+	<property name="com.hp.mwlabs.classpathbuilderfilename" location="buildsystem.classpath"/>
+
+	<!-- Set module name -->
+	<property name="com.hp.mwlabs.ts.modulename" value="jtax"/>
+
+	<!-- Set default properties filename -->
+	<property name="com.hp.mw.ts.properties" value="module-jtax.properties"/>
+
+	<!-- Load Build Properties File -->
+	<property file="${com.hp.mw.ts.properties}"/>
+
+	<!-- Set external property defaults -->
+	<property name="com.hp.mw.ts.jtax.tests.compile" value="yes"/>
+	<property name="com.hp.mw.ts.jtax.tests.install" value="no"/>
+
+	<!-- Set internal property defaults -->
+		<!-- Path names -->
+	<property name="com.hp.mwlabs.ts.jtax.src" value="classes"/>
+	<property name="com.hp.mwlabs.ts.jtax.buildroot"
+		value="build"/>
+	<property name="com.hp.mwlabs.ts.jtax.builddir" location="${com.hp.mwlabs.ts.jtax.buildroot}/classes/"/>
+	<property name="com.hp.mwlabs.ts.jtax.dest" value="${com.hp.mwlabs.ts.jtax.buildroot}/classes"/>
+	<property name="com.hp.mwlabs.ts.jtax.tests.src" location="tests"/>
+    <property name="com.hp.mwlabs.ts.jtax.tests.idl" value="${com.hp.mwlabs.ts.jtax.tests.src}/idl"/>
+	<property name="com.hp.mwlabs.ts.jtax.tests.dest" value="${com.hp.mwlabs.ts.jtax.buildroot}/tests"/>
+	<property name="com.hp.mwlabs.ts.jta.tests.dest" value="../jta/build/tests"/>
+	<property name="com.hp.mwlabs.ts.jtax.jar.dest" value="lib"/>
+	<property name="com.hp.mwlabs.ts.jtax.tests.destdir" value="${com.hp.mwlabs.ts.jtax.jar.dest}/tests/"/>
+
+		<!-- Files that need word substitutions -->
+
+    <property
+    name="com.hp.mw.orbportability.orbspecific.orbix.classpath"
+    value="../lib/jts.jar:../../common/lib/common.jar:../../orbportability/lib/orbportability.jar:../../orbportability/lib/ext/orbportability-ant.jar:../../arjuna/lib/arjuna.jar:../../txoj/lib/txoj.jar"/>
+
+    <property
+    name="com.hp.mw.orbportability.orbspecific.hporb.classpath"
+    value="../lib/jts.jar:../../common/lib/common.jar:../../orbportability/lib/orbportability.jar:../../orbportability/lib/ext/orbportability-ant.jar:../../arjuna/lib/arjuna.jar:../../txoj/lib/txoj.jar"/>
+
+        <property name="com.hp.mwlabs.ts.jtax.resourcebundle"
+	value="jtax_msg_en_US.properties"/>
+
+	<!-- Initialisation -->
+	<target name="com.hp.mwlabs.ts.jtax.init">
+		<!-- Define default build properties -->
+		<property name="com.hp.mw.sourceid" value="unknown"/>
+		<property name="com.hp.mw.version" value="unknown"/>
+		<property name="com.hp.mw.installationdirectory" value="install"/>
+		<property name="com.hp.mw.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
+		<property name="com.hp.mw.notes" value=""/>
+
+		<tstamp>
+	    	<format property="com.hp.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
+	  	</tstamp>
+
+		<!-- Define classpath builder task -->
+		<taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpath="${com.arjuna.buildsystem.classpath}"/>
+
+		<echo message="Initialising module jtax"/>
+		<echo message="Source ID = ${com.hp.mw.sourceid}"/>
+		<echo message="Version   = ${com.hp.mw.version}"/>
+		<echo message="Builder   = ${com.hp.mw.builder}"/>
+		<echo message="Date      = ${com.hp.mw.date}"/>
+		<echo message="Notes     = ${com.hp.mw.notes}"/>
+
+		<!-- Installation directory -->
+		<property name="com.hp.mwlabs.installationdirectory"
+		    location="${com.hp.mw.installationdirectory}"/>
+
+		<condition property="com.hp.mwlabs.debug" value="no">
+			<equals arg1="${com.hp.mw.debug}" arg2="no"/>
+		</condition>
+		<property name="com.hp.mwlabs.debug" value="yes"/>
+
+		<!-- Compile with deprecation? -->
+		<condition property="com.hp.mwlabs.deprecation" value="yes">
+			<equals arg1="${com.hp.mw.deprecation}" arg2="yes"/>
+		</condition>
+		<property name="com.hp.mwlabs.deprecation" value="no"/>
+
+		<!-- Check which bits to compile and/or install -->
+		<condition property="com.hp.mwlabs.ts.jtax.tests.compile">
+			<equals arg1="${com.hp.mw.ts.jtax.tests.compile}" arg2="yes"/>
+		</condition>
+
+		<condition property="com.hp.mwlabs.ts.jtax.tests.install">
+			<equals arg1="${com.hp.mw.ts.jtax.tests.install}" arg2="yes"/>
+		</condition>
+
+		<!-- Set the module property file details -->
+<!-- XXX: No property file in jtax
+		<property name="com.hp.mwlabs.ts.jtax.propertyfile" value="${com.hp.mwlabs.ts.modulename}-properties.xml"/>
+
+		<property name="com.hp.mw.propertydirectory" location="${com.hp.mwlabs.installationdirectory}/etc"/>
+
+		<echo message="Property file name : ${com.hp.mwlabs.ts.jtax.propertyfile}"/>
+		<echo message="Property directory : ${com.hp.mw.propertydirectory}"/>
+-->
+
+		<!-- Make the destination directory -->
+		<mkdir dir="${com.hp.mwlabs.ts.jtax.dest}"/>
+
+	</target>
+
+        <!-- Default build target -->
+        <target name="com.hp.mw.ts.jtax.build" depends="com.hp.mwlabs.jtax.generateresourcebundle,com.hp.mw.ts.jtax.jar, com.hp.mwlabs.ts.jtax.tests.jar"/>
+ 
+	<!-- Compilation targets -->
+	<target name="com.hp.mw.ts.jtax.compile"
+	depends="com.hp.mwlabs.ts.jtax.compile,com.hp.mwlabs.jtax.generateresourcebundle">
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jtax.compile" depends="com.hp.mwlabs.ts.jtax.init">
+
+	   	<!-- Make ANT aware of user-defined task -->
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="orbport.classpath"/>
+		<taskdef name="idl-build-list" classname="com.arjuna.orbportability.common.ant.IDLBuildList" classpath="${orbport.classpath}"/>
+		<taskdef name="idl-build-list-element" classname="com.arjuna.orbportability.common.ant.IDLBuildListElement" classpath="${orbport.classpath}"/>
+
+		<property name="com.hp.mw.ts.jtax.build-dir" location="."/>
+
+		<idl-build-list inproperty="com.hp.mw.orbportability.orbspecific.buildlist">
+        		</idl-build-list>
+
+		<ant antfile="../orbportability/orbspecific.xml">
+			<property name="com.hp.mw.orbportability.orbspecific.modulename" value="jta"/>
+			<property name="com.hp.mw.orbportability.orbspecific.srcdir" location="classes"/>
+		</ant>
+
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<echo message="Compiling module"/>
+
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<property name="com.hp.mwlabs.ts.jtax.compile.excludes"
+		    value="**/orbspecific/**/*.java"/>
+
+		<javac
+			srcdir="${com.hp.mwlabs.ts.jtax.src}"
+			destdir="${com.hp.mwlabs.ts.jtax.dest}"
+			excludes="${com.hp.mwlabs.ts.jtax.compile.excludes}"
+                        debug="${com.hp.mwlabs.debug}"
+			deprecation="${com.hp.mwlabs.deprecation}"
+		>
+			<classpath>
+				<path path="${build.classpath}"/>
+				<path path="${com.hp.mwlabs.ts.jtax.src}"/>
+			</classpath>
+		</javac>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jtax.tests.jar" depends="com.hp.mwlabs.ts.jtax.tests.compile" if="com.hp.mwlabs.ts.jtax.tests.compile">
+
+		<mkdir dir="${com.hp.mwlabs.ts.jtax.tests.destdir}"/>
+		<jar	basedir="${com.hp.mwlabs.ts.jtax.tests.dest}"
+			jarfile="${com.hp.mwlabs.ts.jtax.tests.destdir}/${com.hp.mwlabs.ts.modulename}_tests.jar"/>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jtax.tests.compile" depends="com.hp.mw.ts.jtax.jar" if="com.hp.mwlabs.ts.jtax.tests.compile">
+
+		<echo message="Compiling tests"/>
+
+		<mkdir dir="${com.hp.mwlabs.ts.jtax.tests.dest}"/>
+
+        <idl-build-list inproperty="com.hp.mw.orbportability.orbspecific.buildlist">
+
+            <element 	src="${com.hp.mwlabs.ts.jtax.tests.idl}/test.idl"
+                        package="Example" mappings="CosTransactions=org.omg;TestModule=com.hp.mwtests.ts.jts;CORBA=org.omg"/>
+
+        </idl-build-list>
+
+        <ant antfile="../orbportability/orbspecific.xml">
+            <property name="com.hp.mw.orbportability.orbspecific.modulename" value="jtax_tests"/>
+            <property name="com.hp.mw.orbportability.orbspecific.lib" value="${com.hp.mwlabs.ts.jtax.tests.destdir}"/>
+            <property name="com.hp.mw.orbportability.orbspecific.srcdir" value="${com.hp.mwlabs.ts.jtax.tests.src}"/>
+        </ant>
+
+        <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<javac
+			srcdir="${com.hp.mwlabs.ts.jtax.tests.src}"
+			destdir="${com.hp.mwlabs.ts.jtax.tests.dest}"
+            debug="${com.hp.mwlabs.debug}"
+			deprecation="${com.hp.mwlabs.deprecation}">
+            <classpath>
+                <path path="${build.classpath}"/>
+                <path path="${com.hp.mwlabs.ts.jtax.dest}"/>
+            	<path path="${com.hp.mwlabs.ts.jta.tests.dest}"/>
+            </classpath>
+		</javac>
+
+	</target>
+
+	<!-- Jar targets -->
+	<target name="com.hp.mw.ts.jtax.jar" depends="com.hp.mw.ts.jtax.compile">
+
+		<echo message="Building jar file"/>
+		<mkdir dir="${com.hp.mwlabs.ts.jtax.jar.dest}"/>
+		<jar
+			jarfile="${com.hp.mwlabs.ts.jtax.jar.dest}/${com.hp.mwlabs.ts.modulename}.jar"
+			basedir="${com.hp.mwlabs.ts.jtax.dest}"
+		/>
+
+        <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}">
+            <classpath>
+                <pathelement location="${com.hp.mwlabs.ts.jtax.jar.dest}/${com.hp.mwlabs.ts.modulename}.jar"/>
+            </classpath>
+        </classpath-builder>
+
+	</target>
+
+	<!-- Installation targets -->
+	<target name="com.hp.mw.ts.jtax.install" depends="com.hp.mw.ts.jtax.build, com.hp.mwlabs.ts.jtax.tests.install">
+
+		<echo message="Installing module jtax"/>
+		<echo message="Installation directory ${com.hp.mwlabs.installationdirectory}"/>
+<!-- XXX: No property file in jtax
+		<mkdir dir="${com.hp.mw.propertydirectory}"/>
+		<copy
+			file="etc/default-${com.hp.mwlabs.ts.jtax.propertyfile}"
+			tofile="${com.hp.mw.propertydirectory}/${com.hp.mwlabs.ts.jtax.propertyfile}"
+		>
+		</copy>
+-->
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jtax.tests.install" depends="com.hp.mwlabs.ts.jtax.tests.compile" if="com.hp.mwlabs.ts.jtax.tests.install">
+
+		<echo message="Installing tests"/>
+
+	</target>
+
+	<!-- Clean targets -->
+	<target name="com.hp.mw.ts.jtax.clean" depends="com.hp.mwlabs.ts.jtax.tests.clean">
+
+		<echo message="Cleaning module"/>
+		<delete dir="${com.hp.mwlabs.ts.jtax.destroot}"/>
+		<delete dir="${com.hp.mwlabs.ts.jtax.jar.dest}"/>
+		<delete dir="${com.hp.mwlabs.ts.jtax.tests.dest}"/>
+		<delete file="${com.hp.mwlabs.ts.jtax.info.dest}"/>
+		<delete file="${com.hp.mwlabs.ts.jtax.properties.dest}"/>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jtax.tests.clean">
+
+		<echo message="Cleaning tests"/>
+
+	</target>
+
+	<!-- Short target names -->
+
+	<target name="jar" depends="com.hp.mw.ts.jtax.jar">
+
+	</target>
+
+	<target name="install" depends="com.hp.mw.ts.jtax.install">
+
+	</target>
+
+	<target name="clean" depends="com.hp.mw.ts.jtax.clean">
+
+	</target>
+
+        <target name="com.hp.mwlabs.jtax.generateresourcebundle">
+
+            <echo message="Generating JTAX Resource Bundle"/>
+
+            <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+            <javadoc    sourcepath="${com.hp.mwlabs.ts.jtax.src}"
+                        packagenames="com.arjuna.*"
+                        failonerror="yes"
+                        private="yes"
+                        defaultexcludes="yes"
+                        classpath="${build.classpath}">
+
+                 <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
+                    <path>
+                        <pathelement path="${com.arjuna.buildsystem.classpath}"/>
+                    </path>
+                    <param name="-basedir" value="${com.hp.mwlabs.ts.jtax.builddir}"/>
+                    <param name="-resourcebundle" value="${com.hp.mwlabs.ts.jtax.resourcebundle}"/>
+                    <param name="-appendkey" value="[]"/>
+                 </doclet>
+            </javadoc>
+
+        </target>
+
+</project>
+

@@ -1,0 +1,10 @@
+Thread Thread[main,5,main] starting transaction.
+Thread Thread[Thread-0,5,main] attempting to rollback transaction.
+Abort of action id -7f0f69ac:3c896f2f:3801b950:0 invoked while multiple threads active within it.
+
+WARNING CheckedAction::check - atomic action -7f0f69ac:3c896f2f:3801b950:0 aborting with 1 threads active!
+
+Transaction rolled back. Checked transactions disabled.
+Thread Thread[main,5,main] committing transaction.
+Caught exception: org.omg.CORBA.INVALID_TRANSACTION:   minor code: 0  completed: No
+Checked transactions disabled!

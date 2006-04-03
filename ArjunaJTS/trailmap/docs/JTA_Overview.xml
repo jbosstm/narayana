@@ -1,0 +1,379 @@
+<?xml version="1.0"?>
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<page title="Arjuna Technologies Limited: Trail map: Managing Transaction in J2EE" rootpath="../..">
+	<header>
+        Trail map: Managing Transactions in J2EE
+    </header>
+	<content>
+		<navigation>
+			<links include="includes/www_arjuna_com_navigation.xml"/>
+			<links include="includes/trailmap_navigation.xml"/>
+			<links title="Navigation">
+				<link ref="index.html">Home</link>
+			</links>
+			<links include="includes/trailmap_additional.xml"/>
+		</navigation>
+		<area title="Managing Transactions in J2EE">
+			<html>
+				<h3> JTA/JTS Architecture</h3>
+The Java transaction initiative consists of two specifications: Java Transaction Service (JTS) and Java Transaction API (JTA).
+<br>JTS specifies the implementation of a Java transaction manager. This
+transaction manager supports the JTA, using which application servers can
+be built to support transactional Java applications. Internally the JTS
+implements the Java mapping of the OMG OTS specifications.</br>
+				<br>The JTA specifies an architecture for building transactional
+application servers and defines a set of interfaces for various components
+of this architecture. The components are: the application, resource managers,
+and the application server, as shown in the slide.</br>
+				<br>The JTS thus provides a new architecture for transactional application
+servers and applications, while complying to the OMG OTS 1.1 interfaces
+internally. This allows the JTA compliant applications to interoperate
+with other OTS 1.1 complaint applications through the standard IIOP.</br>
+				<br>
+As shown in the Figure 1, in the Java transaction model, the Java application 
+components can conduct transactional operations on JTA compliant resources via 
+the JTS. The JTS acts as a layer over the OTS. The applications can therefore 
+initiate global transactions to include other OTS transaction managers, or participate 
+in global transactions initiated by other OTS compliant transaction managers.</br>
+				<p>
+					<img SRC="includes/j2ee_1.GIF"/>
+				</p>
+				<blockquote>Figure 1 - The JTA/JTS transaction model</blockquote>
+				<p>The Java Transaction Service is architected around an application server and 
+  a transaction manager. The architecture is shown in Figure 2. </p>
+				<p>
+					<img SRC="includes/j2ee_2.GIF"/>
+				</p>
+				<blockquote>Figure 2 - The JTA/JTS Architecture</blockquote>
+				<p/>The JTS architecture consists of the following components:<br/>
+				<ul>
+					<li>
+						<b>Transaction Manager</b>: The transaction manager is the core component
+of this architecture and is provided by an implementation of the JTS. It
+provides interfaces to create transactions (including transaction demarcation
+and propagation of transaction context), allows enlistment and delistment
+of resources, provides interfaces for registering components for application
+synchronization, implements the synchronization protocol, and initiates
+and directs the two phase commit and recovery protocol with the resource
+managers.</li>
+					<li>
+						<b>Application Server</b>: One of the key features of the JTS architecture
+is that it allows an application server to be built on top of the transaction
+service and the resources. Application developers can develop and deploy
+application components onto the application server for initiating and managing
+transactions. The application server can therefore abstract all transactional
+semantics from the application programs.</li>
+					<li>
+						<b>Application Components</b>: These are the clients for the transactional
+resources and implement business transactions. These are deployed on the
+application server. Depending on the architecture of the application server,
+these components can directly or indirectly create transactions and operate
+on the transactional resources. For example, an Enterprise JavaBean (EJB)
+server allows declarative transaction demarcation, in which case, the EJB
+components need not directly implement the transactions. However, a Java
+implementation of a CORBA OTS, requires the CORBA object to demarcate transactions
+explicitly.</li>
+					<li>
+						<b>Resource Manager</b>: A resource manager is an X/Open XA compliant component
+that manages a persistent and stable storage system, and participates in
+the two phase commit and recovery protocol with the transaction manager.
+The application manager also provides interfaces for the application server
+and the application components to operate on the data managed by it.</li>
+					<li>
+						<b>Communication Resource Manager</b>: This allows the transaction manager
+to participate in transactions initiated by other transaction managers.
+However, the JTS specification does not specify any protocol for this communication
+and assumes that an implementation of the communication resource manager
+supports the CORBA OTS and GIOP specifications.</li>
+				</ul>
+				<h3> Java Transaction API</h3>
+The JTA specification may be classified into three categories of interface
+as shown in Figure 3. The Java Transaction API consists of three elements:
+a high-level application transaction demarcation interface, a high-level
+transaction manager interface intended for application server, and a standard
+Java mapping of the X/Open XA protocol intended for transactional resource
+manager.
+<p>
+					<img SRC="includes/j2ee_3_API.GIF"/>
+				</p>
+				<blockquote>Figure 3 - JTA Interfaces </blockquote>
+				<h4> Transaction Manager Interfaces</h4>
+				<ul>
+					<li> javax.transaction.Status: Defines the following flags for the status of 
+    a transaction:</li>
+				</ul>
+				<table width="89%" border="1">
+					<tr bgcolor="#0099CC">
+						<td width="34%">
+							<div align="center">
+								<strong>Flag</strong>
+							</div>
+						</td>
+						<td width="66%">
+							<div align="center">
+								<strong>Purpose </strong>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>STATUS_ACTIVE</td>
+						<td>Transaction is active (started but not prepared)</td>
+					</tr>
+					<tr>
+						<td>STATUS_COMMITTED</td>
+						<td>Transaction is committed</td>
+					</tr>
+					<tr>
+						<td>STATUS_COMMITTING</td>
+						<td>Transaction is in the process of committing.</td>
+					</tr>
+					<tr>
+						<td>STATUS_MARKED_ROLLBACK</td>
+						<td>Transaction is marked for rollback.</td>
+					</tr>
+					<tr>
+						<td>STATUS_NO_TRANSACTION</td>
+						<td>There is no transaction associated with the current Transaction, UserTransaction 
+      or TransactionManager objects.</td>
+					</tr>
+					<tr>
+						<td>STATUS_PREPARED</td>
+						<td>Voting phase of the two phase commit is over and the transaction is prepared.</td>
+					</tr>
+					<tr>
+						<td>STATUS_PREPARING</td>
+						<td>Transaction is in the process of preparing.</td>
+					</tr>
+					<tr>
+						<td>STATUS_ROLLEDBACK</td>
+						<td>Outcome of the transaction has been determined as rollback. It is likely 
+      that heuristics exists.</td>
+					</tr>
+					<tr>
+						<td>STATUS_ROLLING_BACK</td>
+						<td>Transaction is in the process of rolling back.</td>
+					</tr>
+					<tr>
+						<td>STATUS_UNKNOWN</td>
+						<td>A transaction exists but its current status can not be determined. This 
+      is a transient condition</td>
+					</tr>
+				</table>
+				<blockquote>
+					<p>Table 1: Transaction Status Flags</p>
+				</blockquote>
+The javax.transaction.Transaction, javax.transaction.TransactionManager, and javax.transaction.UserTransaction 
+interfaces provide a getStatus method that returns one of the above status flags.<br/>
+				<ul>
+					<li>
+						<font face="Courier New,Courier">
+							<a name="Transaction"/>javax.transaction.Transaction</font>:
+An object of this type is created for each global transaction. This interface
+provides methods for transaction completion(commit and rollback), resource
+enlistment (enlistResource) and delistment (delistResource), registration
+of synchronization objects (registerSynchronization), and query of status
+of the transaction (getStatus).</li>
+					<li>
+						<font face="Courier New,Courier">
+							<a name="TransactionManager"/>javax.transaction.TransactionManager</font>:
+This interface is implemented by the JTS and allows an application server
+to communicate with the transaction manager to demarcate transactions (begin,
+commit, rollback), suspending and resuming transactions (suspend and resume),
+set the transaction for rollback (setRollbackOnly), get the associated
+Transaction object (getTransaction), set the transaction timeout interval
+(setTransactionTimeout) and query the status of the transaction (getStatus).</li>
+					<li>
+						<font face="Courier New,Courier">
+							<a name="UserTransaction"/>javax.transaction.UserTransaction</font>:
+. This interface provides methods to begin and end transactions (begin,
+commit, and rollback), set the transaction for rollback (setRollbackOnly),
+set the transaction timeout interval (setTransactionTimeout), and get the
+status of the transaction (getStatus). Nested transactions are not supported,
+and begin throws the NotSupportedException when the calling thread is already
+associated with a transaction. UserTransaction automatically associates
+newly created transactions with the invoking thread.</li>
+					<li>
+						<font face="Courier New,Courier">javax.transaction.xa.Xid</font>: This
+interface is a Java mapping of the X/Open transaction identifier xid structure.
+The transaction manager uses an object of this type to associate a resource
+manager with a transaction.</li>
+				</ul>
+				<h4>Resource Manager Interfaces</h4>
+				<ul>
+					<li>
+						<font face="Courier New,Courier">
+							<a name="XAResource"/>javax.transaction.xa.XAResource</font>:
+This is a Java mapping of the X/Open XA interface, and is implemented by
+resource managers operating with the JTS. This interface provides methods
+to start (start) and end (end) work on behalf of a specified transaction,
+to prepare a transaction with the current resource (prepare), to end transactions
+with the current resource (commit, forget, recover, and rollback), to compare
+the current resource manager with another resource manager (isSameRM),
+and to get and set the transaction timeout (getTransactionTimeout, setTransactionTimeout).</li>
+				</ul>
+				<h4>Application Interfaces</h4>
+The only interface that an application object could implement is the Synchronization
+interface. The application components may have to implement whatever other
+interfaces are mandated by a given application server.
+<ul>
+					<li>
+						<font face="Courier New,Courier">javax.transaction.Synchronization</font>:
+An object intended to participate in a synchronization protocol with the
+transaction manager should implement this interface. This mechanism is
+based on the Observer pattern. This interface has two methods - beforeCompletion
+and afterCompletion to be called before starting and after completing,
+respectively, the two phase commit operation.</li>
+				</ul>
+				<h3>
+Java Transaction API - Usage</h3>
+This section describes the usage of the JTA for implementing various transaction
+semantics. The purpose of this section is to provide conceptual guidelines
+only.
+<h4>Transaction Demarcation</h4>
+The JTA specifies two approaches with which new global transactions can
+be initiated and demarcated.
+<ol>
+					<li>
+Application Program Demarcation: The <font face="Courier New,Courier">javax.transaction.UserTransaction</font>
+interface provides methods for application components to begin and end
+transactions programmatically. The underlying application server should
+provide a mechanism to obtain a reference to this object. The JTA specification
+requires that the application servers use the JNDI for storing references
+to UserTransaction objects and for lookup.</li>
+					<br>The application component can then use this object to begin, commit
+and rollback transactions. In this approach, association between the calling
+thread and the transaction, and transaction context propagation are handled
+transparently by the transaction manager.</br>
+<br/>Usage:
+<pre>
+// Get a UserTransaction object
+// Begin a transaction
+userTransaction.begin();
+// Transactional operations ...
+// End the transaction
+userTransaction.commit();
+</pre>
+<li> Application Server Controlled Demarcation In this approach, the javax.transaction.TransactionManager 
+    interface controls transaction demarcation on behalf of the application being 
+    managed. The transaction manager also maintains the transaction context and 
+    its association with the calling threads implicitly.</li>
+<br/>Usage
+<pre>
+// Begin a transaction
+Transaction t = TransactionManager.begin();
+// Transactional operations ...
+// End the transaction
+TransactionManager.commit();
+</pre>
+</ol>
+				<h4>Resource Enlistment and Delistment</h4>
+Transactional resources such as database connections are typically managed by 
+the application server in conjunction with some resource adapter and optionally 
+with connection pooling optimisation. In order for an external transaction manager 
+to co-ordinate transactional work performed by the resource managers, the application 
+server must enlist and de-list the resources used in the transaction. These resources 
+(participants) are enlisted with the transaction so that they can be informed 
+when the transaction terminates, e.g., are driven through the two-phase commit 
+protocol. <br>
+The JTA is much more closely integrated with the XA concept of resources
+than the arbitrary objects. For each resource in-use by the application,
+the application server invokes the enlistResource method with an XAResource
+object which identifies the resource in use.</br>
+				<br>The enlistment request results in the transaction manager informing
+the resource manager to start associating the transaction with the work
+performed through the corresponding resource. The transaction manager is
+responsible for passing the appropriate flag in its XAResource.start method
+call to the resource manager.</br>
+				<br>The delistResource method is used to disassociate the specified resource
+from the transaction context in the target object. The application server
+invokes the method with the two parameters: the XAResource object that
+represents the resource, and a flag to indicate whether the operation is
+due to the transaction being suspended (TMSUSPEND), a portion of the work
+has failed (TMFAIL), or a normal resource release by the application (TMSUCCESS).</br>
+				<br>The de-list request results in the transaction manager informing the
+resource manager to end the association of the transaction with the target
+XAResource. The flag value allows the application server to indicate whether
+it intends to come back to the same resource whereby the resource states
+must be kept intact. The transaction manager passes the appropriate flag
+value in its XAResource.end method call to the underlying resource manager.</br>
+				<br>
+The <a class="linkscoloured" href="EJB_Transactions.html">application server </a>can enlist and delist resource managers with the transaction 
+manager using the <font face="Courier New,Courier">javax.transaction.Transaction</font> 
+interface</br>
+Usage 
+  <p>Resource enlistment is in general done by the application server when an application 
+    requests it for a connection to a transactional resource.</p>
+<pre>
+// ... an implementation of the application server
+// Get a reference to the underlying TransactionManager object.
+...
+// Get the current Transaction object from the TransactionManager.
+transaction = transactionManager.getTransaction();
+// Get an XAResource object from a transactional resource.
+...
+// Create a Transaction object.
+...
+// Enlist the resource
+transaction.enlistResource(xaResource);...
+// Return the connection to the application.
+...
+</pre>
+<p> Resource delistment is done similarly after the application closes connections  to transactional resources.</p>
+
+				<h4>
+Application Synchronization with a Transaction</h4>
+Using the JTS synchronization protocol, certain objects can be registered
+with the transaction manager for notification before the start of and the
+completion of the two-phase commit process. This enables such application
+objects to synchronize transient state and data stored in persistent storage.
+<p>The <font face="Courier New,Courier">javax.transaction.Transaction</font>
+interface provides the <i>registerSynchronization</i> method to register
+<font face="Courier New,Courier">javax.transaction.Synchronization</font>
+objects with the transaction manager. The transaction manager then uses
+the synchronization protocol and calls the beforeCompletion and afterCompletion
+methods before and after the two phase commit process.</p>
+				<ul>
+					<li>
+The <i>beforeCompletion</i> method is called prior to the start of the
+two-phase transaction complete process. This call is executed in the same
+transaction context of the caller who initiates the TransactionManager.commit
+or the call is executed with no transaction context if Transaction.commit
+is used.</li>
+					<li>
+The <i>afterCompletion</i> method is called after the transaction has completed.
+The status of the transaction is supplied in the parameter. This method
+is executed without a transaction context.</li>
+				</ul>
+				<h5>Further Reading</h5>
+				<ul>
+					<li>
+						<a class="linkscoloured" href="JDBC_Transactions.html">JDBC and Transactions</a>
+					</li>
+					<li>
+						<a class="linkscoloured" href="EJB_Transactions.html">Entreprise Java Beans and Transactions</a>
+					</li>
+				</ul>
+			</html>
+		</area>
+	</content>
+	<footer/>
+</page>

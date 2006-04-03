@@ -1,0 +1,1536 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2006, JBoss Inc., and individual contributors as indicated
+ * by the @authors tag.  All rights reserved. 
+ * See the copyright.txt in the distribution for a full listing 
+ * of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU General Public License, v. 2.0.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License,
+ * v. 2.0 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ * 
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ */
+/*
+ * Copyright (C) 2001, 2002,
+ *
+ * Hewlett-Packard Arjuna Labs,
+ * Newcastle upon Tyne,
+ * Tyne and Wear,
+ * UK.
+ *
+ * $Id: XAResourceRecord.java 2342 2006-03-30 13:06:17Z  $
+ */
+
+package com.arjuna.ats.internal.jta.resources.jts.orbspecific;
+
+import com.arjuna.ats.jta.recovery.*;
+
+import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.common.Environment;
+
+import com.arjuna.ats.jta.xa.*;
+import com.arjuna.ats.jta.utils.XAHelper;
+import com.arjuna.ats.jta.logging.*;
+import com.arjuna.ats.jta.resources.StartXAResource;
+import com.arjuna.ats.jta.resources.EndXAResource;
+
+import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
+import com.arjuna.ats.internal.jta.xa.TxInfo;
+import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
+
+import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.state.*;
+import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+
+import com.arjuna.ats.jts.utils.Utility;
+
+import com.arjuna.ats.internal.jts.ORBManager;
+
+import com.arjuna.common.util.logging.*;
+
+import org.omg.CosTransactions.*;
+
+import com.arjuna.ArjunaOTS.*;
+
+import javax.transaction.xa.*;
+import java.io.*;
+
+import org.omg.CosTransactions.NotPrepared;
+import org.omg.CosTransactions.HeuristicCommit;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicRollback;
+import org.omg.CORBA.OBJECT_NOT_EXIST;
+import org.omg.CORBA.SystemException;
+import org.omg.CORBA.UNKNOWN;
+import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+
+/**
+ * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction
+ *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction]
+ *          {0} - null transaction!
+ * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror
+ *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror] {0}
+ *          caused an XA error: {1}
+ * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.loadstateread
+ *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.loadstateread]
+ *          Reading state caught: {1}
+ */
+
+public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
+{
+
+	public static final int XACONNECTION = 0;
+
+	private static final Uid START_XARESOURCE = new Uid("0:0:0:1");
+
+	private static final Uid END_XARESOURCE = new Uid(
+			"7fffffff:7fffffff:7fffffff:7fffffff");
+
+	/**
+	 * The params represent specific parameters we need to recreate the
+	 * connection to the database in the event of a failure. If they're not set
+	 * then recovery is out of our control.
+	 * 
+	 * Could also use it to pass other information, such as the readonly flag.
+	 * 
+	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.consterror
+	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.consterror]
+	 *          {0} caught exception during construction: {1}
+	 */
+
+	public XAResourceRecord(TransactionImple tx, XAResource res, Xid xid,
+			Object[] params)
+	{
+		if (jtaLogger.logger.isDebugEnabled())
+		{
+			jtaLogger.logger.debug(DebugLevel.CONSTRUCTORS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"XAResourceRecord.XAResourceRecord ( " + xid + " )");
+		}
+
+		_theXAResource = res;
+		_recoveryObject = null;
+		_tranID = xid;
+
+		_valid = true;
+
+		if (params != null)
+		{
+			if (params.length >= XACONNECTION)
+			{
+				if (params[XACONNECTION] instanceof RecoverableXAConnection)
+					_recoveryObject = (RecoverableXAConnection) params[XACONNECTION];
+			}
+		}
+
+		_prepared = false;
+		_committed = false;
+		_heuristic = TwoPhaseOutcome.FINISH_OK;
+		_objStore = null;
+		_theUid = new Uid();
+		_theReference = null;
+		_recoveryCoordinator = null;
+
+		_theTransaction = tx;
+
+		if (_theXAResource instanceof StartXAResource)
+			_cachedUidStringForm = START_XARESOURCE.stringForm();
+		else
+		{
+			if (_theXAResource instanceof EndXAResource)
+				_cachedUidStringForm = END_XARESOURCE.stringForm();
+		}
+	}
+
+	public void finalize()
+	{
+		if (_theTransaction != null)
+		{
+			_theTransaction = null;
+		}
+	}
+
+	public final Uid get_uid()
+	{
+		return _theUid;
+	}
+
+	public final synchronized org.omg.CosTransactions.Resource getResource()
+	{
+		if (_theReference == null)
+		{
+			ORBManager.getPOA().objectIsReady(this);
+
+			_theReference = org.omg.CosTransactions.ResourceHelper
+					.narrow(ORBManager.getPOA().corbaReference(this));
+		}
+
+		return _theReference;
+	}
+
+	public final Xid getXid()
+	{
+		return _tranID;
+	}
+
+	public org.omg.CosTransactions.Vote prepare() throws HeuristicMixed,
+			HeuristicHazard, org.omg.CORBA.SystemException
+	{
+		if (jtaLogger.logger.isDebugEnabled())
+		{
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"XAResourceRecord.prepare for " + _tranID);
+		}
+
+		if (!_valid || (_theXAResource == null))
+		{
+			removeConnection();
+
+			return Vote.VoteReadOnly;
+		}
+
+		if (_tranID == null)
+		{
+			if (jtaLogger.loggerI18N.isWarnEnabled())
+			{
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
+								new Object[]
+								{ "XAResourceRecord.prepare" });
+			}
+
+			removeConnection();
+
+			return Vote.VoteRollback;
+		}
+
+		try
+		{
+			/*
+			 * Window of vulnerability versus performance trade-off: if we
+			 * create the resource log here then we slow things down in the case
+			 * the resource rolls back or returns read only (since we have
+			 * written data for no reason and now need to delete it). If we
+			 * create the resource log after we know the prepare outcome then
+			 * there's a chance we may crash between prepare and writing the
+			 * state.
+			 * 
+			 * We go for the latter currently since failures are rare, but
+			 * performance is always required. The result is that the
+			 * transaction will roll back (since it won't get an ack from
+			 * prepare) and the resource won't be recovered. The sys. admin.
+			 * will have to clean up manually.
+			 * 
+			 * Actually what will happen in the case of ATS is that the XA
+			 * recovery module will eventually roll back this resource when it
+			 * notices that there is no log entry for it.
+			 */
+
+			if (endAssociation())
+			{
+				_theXAResource.end(_tranID, XAResource.TMSUCCESS);
+			}
+
+			if (_theXAResource.prepare(_tranID) == XAResource.XA_RDONLY)
+			{
+				removeConnection();
+
+				return Vote.VoteReadOnly;
+			}
+			else
+			{
+				if (createState())
+					return Vote.VoteCommit;
+				else
+					return Vote.VoteRollback;
+			}
+		}
+		catch (XAException e1)
+		{
+			/*
+			 * XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
+			 * XAER_PROTO.
+			 */
+
+			if (_rollbackOptimization) // won't have rollback called on it
+				removeConnection();
+
+			return Vote.VoteRollback;
+		}
+		catch (Exception e2)
+		{
+			/*
+			 * XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
+			 * XAER_PROTO.
+			 */
+
+			if (_rollbackOptimization) // won't have rollback called on it
+				removeConnection();
+
+			return Vote.VoteRollback;
+		}
+	}
+
+	public void rollback() throws org.omg.CORBA.SystemException,
+			HeuristicCommit, HeuristicMixed, HeuristicHazard
+	{
+		if (jtaLogger.logger.isDebugEnabled())
+		{
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"XAResourceRecord.rollback for " + _tranID);
+		}
+
+		if (!_valid)
+			return;
+
+		if (_theTransaction != null
+				&& _theTransaction.getXAResourceState(_theXAResource) == TxInfo.OPTIMIZED_ROLLBACK)
+		{
+			/*
+			 * Already rolledback during delist.
+			 */
+
+			return;
+		}
+
+		if (_tranID == null)
+		{
+			if (jtaLogger.loggerI18N.isWarnEnabled())
+			{
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
+								new Object[]
+								{ "XAResourceRecord.rollback" });
+			}
+		}
+		else
+		{
+			if (_theXAResource != null)
+			{
+				switch (_heuristic)
+				{
+				case TwoPhaseOutcome.HEURISTIC_HAZARD:
+					throw new org.omg.CosTransactions.HeuristicHazard();
+				case TwoPhaseOutcome.HEURISTIC_MIXED:
+					throw new org.omg.CosTransactions.HeuristicMixed();
+				default:
+					break;
+				}
+
+				try
+				{
+					if (!_prepared)
+					{
+						if (endAssociation())
+						{
+							_theXAResource.end(_tranID, XAResource.TMSUCCESS);
+						}
+					}
+
+					_theXAResource.rollback(_tranID);
+				}
+				catch (XAException e1)
+				{
+					if (notAProblem(e1, false))
+					{
+						// some other thread got there first (probably)
+					}
+					else
+					{
+						if (jtaLogger.loggerI18N.isWarnEnabled())
+						{
+							jtaLogger.loggerI18N
+									.warn(
+											"com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror",
+											new Object[]
+											{
+													"XAResourceRecord.rollback",
+													XAHelper
+															.printXAErrorCode(e1) });
+						}
+
+						switch (e1.errorCode)
+						{
+						case XAException.XAER_RMERR:
+							if (!_prepared)
+								break; // just do the finally block
+						case XAException.XA_HEURHAZ:
+							updateState(TwoPhaseOutcome.HEURISTIC_HAZARD);
+
+							throw new org.omg.CosTransactions.HeuristicHazard();
+						case XAException.XA_HEURCOM:
+							updateState(TwoPhaseOutcome.HEURISTIC_COMMIT);
+
+							throw new org.omg.CosTransactions.HeuristicCommit();
+						case XAException.XA_HEURMIX:
+							updateState(TwoPhaseOutcome.HEURISTIC_MIXED);
+
+							throw new org.omg.CosTransactions.HeuristicMixed();
+						case XAException.XA_HEURRB:
+						case XAException.XA_RBROLLBACK:
+						case XAException.XA_RBEND:
+							destroyState();
+							break;
+						default:
+							destroyState();
+
+							if (_prepared)
+								throw new org.omg.CosTransactions.HeuristicHazard();
+							else
+								throw new UNKNOWN();
+						}
+					}
+				}
+				catch (Exception e2)
+				{
+					e2.printStackTrace();
+
+					throw new UNKNOWN();
+				}
+				finally
+				{
+					if (_prepared)
+						destroyState();
+					else
+						removeConnection();
+				}
+			}
+		}
+	}
+
+	public void commit() throws org.omg.CORBA.SystemException, NotPrepared,
+			HeuristicRollback, HeuristicMixed, HeuristicHazard
+	{
+		if (jtaLogger.logger.isDebugEnabled())
+		{
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"XAResourceRecord.commit for " + _tranID);
+		}
+
+		if (_tranID == null)
+		{
+			if (jtaLogger.loggerI18N.isWarnEnabled())
+			{
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
+								new Object[]
+								{ "XAResourceRecord.commit" });
+			}
+		}
+		else
+		{
+			if ((_theXAResource != null) && (!_committed))
+			{
+				switch (_heuristic)
+				{
+				case TwoPhaseOutcome.HEURISTIC_HAZARD:
+					throw new org.omg.CosTransactions.HeuristicHazard();
+				case TwoPhaseOutcome.HEURISTIC_MIXED:
+					throw new org.omg.CosTransactions.HeuristicMixed();
+				case TwoPhaseOutcome.HEURISTIC_ROLLBACK:
+					throw new org.omg.CosTransactions.HeuristicRollback();
+				default:
+					break;
+				}
+
+				if (!_prepared)
+					throw new NotPrepared();
+
+				try
+				{
+					if (!_committed)
+					{
+						_committed = true;
+
+						_theXAResource.commit(_tranID, false);
+
+						destroyState();
+					}
+				}
+				catch (XAException e1)
+				{
+					e1.printStackTrace();
+
+					if (notAProblem(e1, true))
+					{
+						// some other thread got there first (probably)
+						destroyState();
+					}
+					else
+					{
+						_committed = false;
+
+						if (jtaLogger.loggerI18N.isWarnEnabled())
+						{
+							jtaLogger.loggerI18N
+									.warn(
+											"com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror",
+											new Object[]
+											{
+													"XAResourceRecord.commit",
+													XAHelper
+															.printXAErrorCode(e1) });
+						}
+
+						/*
+						 * XA_HEURHAZ, XA_HEURCOM, XA_HEURRB, XA_HEURMIX,
+						 * XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
+						 * XAER_PROTO.
+						 */
+
+						switch (e1.errorCode)
+						{
+						case XAException.XAER_RMERR:
+						case XAException.XA_HEURHAZ:
+							updateState(TwoPhaseOutcome.HEURISTIC_HAZARD);
+
+							throw new org.omg.CosTransactions.HeuristicHazard();
+						case XAException.XA_HEURCOM:
+							destroyState();
+							break;
+						case XAException.XA_HEURRB:
+							updateState(TwoPhaseOutcome.HEURISTIC_ROLLBACK);
+
+							throw new org.omg.CosTransactions.HeuristicRollback();
+						case XAException.XA_HEURMIX:
+							updateState(TwoPhaseOutcome.HEURISTIC_MIXED);
+
+							throw new org.omg.CosTransactions.HeuristicMixed();
+						case XAException.XAER_NOTA:
+						case XAException.XAER_PROTO:
+							break;
+						case XAException.XAER_INVAL:
+						case XAException.XAER_RMFAIL: // resource manager
+													  // failed, did it
+													  // rollback?
+							throw new org.omg.CosTransactions.HeuristicHazard();
+						default:
+							throw new org.omg.CosTransactions.HeuristicHazard();
+						}
+					}
+				}
+				catch (Exception e2)
+				{
+					_committed = false;
+
+					throw new UNKNOWN();
+				}
+				finally
+				{
+					removeConnection();
+				}
+			}
+		}
+	}
+
+	public org.omg.CosTransactions.Vote prepare_subtransaction()
+			throws SystemException
+	{
+		return Vote.VoteRollback; // shouldn't be possible!
+	}
+
+	public void commit_subtransaction(Coordinator parent)
+			throws SystemException
+	{
+		throw new UNKNOWN();
+	}
+
+	public void rollback_subtransaction() throws SystemException
+	{
+		throw new UNKNOWN();
+	}
+
+	public int type_id() throws SystemException
+	{
+		return RecordType.JTAX_RECORD;
+	}
+
+	public String uid() throws SystemException
+	{
+		if (_cachedUidStringForm == null)
+			_cachedUidStringForm = _theUid.stringForm();
+
+		return _cachedUidStringForm;
+	}
+
+	public boolean propagateOnAbort() throws SystemException
+	{
+		return false;
+	}
+
+	public boolean propagateOnCommit() throws SystemException
+	{
+		return false; // nesting not supported
+	}
+
+	public boolean saveRecord() throws SystemException
+	{
+		return true;
+	}
+
+	public void merge(OTSAbstractRecord record) throws SystemException
+	{
+	}
+
+	public void alter(OTSAbstractRecord record) throws SystemException
+	{
+	}
+
+	public boolean shouldAdd(OTSAbstractRecord record) throws SystemException
+	{
+		return false;
+	}
+
+	public boolean shouldAlter(OTSAbstractRecord record) throws SystemException
+	{
+		return false;
+	}
+
+	public boolean shouldMerge(OTSAbstractRecord record) throws SystemException
+	{
+		return false;
+	}
+
+	public boolean shouldReplace(OTSAbstractRecord record)
+			throws SystemException
+	{
+		return false;
+	}
+
+	/**
+	 * Is the XAException a non-error when received in reply to commit or
+	 * rollback? It normally is, but may be overridden in recovery.
+	 */
+
+	protected boolean notAProblem(XAException ex, boolean commit)
+	{
+		return XAResourceErrorHandler.notAProblem(_theXAResource, ex, commit);
+	}
+
+	/**
+	 * For commit_one_phase we can do whatever we want since the transaction
+	 * outcome is whatever we want. Therefore, we do not need to save any
+	 * additional recoverable state, such as a reference to the transaction
+	 * coordinator, since it will not have an intentions list anyway.
+	 * 
+	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.coperror
+	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.coperror]
+	 *          Caught the following error while trying to single phase complete
+	 *          resource {0}
+	 */
+
+	public void commit_one_phase() throws HeuristicHazard,
+			org.omg.CORBA.SystemException
+	{
+		if (jtaLogger.logger.isDebugEnabled())
+		{
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"XAResourceRecord.commit_one_phase for " + _tranID);
+		}
+
+		if (_tranID == null)
+		{
+			if (jtaLogger.loggerI18N.isWarnEnabled())
+			{
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
+								new Object[]
+								{ "XAResourceRecord.commit_one_phase" });
+			}
+		}
+		else
+		{
+			if (_theXAResource != null)
+			{
+				try
+				{
+					switch (_heuristic)
+					{
+					case TwoPhaseOutcome.HEURISTIC_HAZARD:
+						throw new org.omg.CosTransactions.HeuristicHazard();
+					default:
+						break;
+					}
+
+					/*
+					 * TODO in Oracle, the end is not required. Is this
+					 * common to other RM implementations?
+					 */
+					
+					if (endAssociation())
+					{
+						_theXAResource.end(_tranID, XAResource.TMSUCCESS);
+					}
+
+					try
+					{
+						_theXAResource.commit(_tranID, true);
+					}
+					catch (XAException xaex)
+					{
+						if (jtaLogger.loggerI18N.isWarnEnabled())
+						{
+							jtaLogger.loggerI18N
+									.warn(
+											"com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror",
+											new Object[]
+											{
+													"XAResourceRecord.commit_one_phase",
+													XAHelper
+															.printXAErrorCode(xaex) });
+						}
+						
+						if ((xaex.errorCode > XAException.XA_RBBASE)
+								&& (xaex.errorCode <= XAException.XA_RBEND))
+						{
+							throw new TRANSACTION_ROLLEDBACK();
+						}
+						
+						_theXAResource.rollback(_tranID);
+
+						throw xaex;
+					}
+				}
+				catch (XAException e1)
+				{
+					e1.printStackTrace();
+
+					/*
+					 * XA_HEURHAZ, XA_HEURCOM, XA_HEURRB, XA_HEURMIX,
+					 * XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
+					 * XAER_PROTO. XA_RB*
+					 */
+
+					if ((e1.errorCode > XAException.XA_RBBASE)
+							&& (e1.errorCode <= XAException.XA_RBEND))
+					{
+						throw new TRANSACTION_ROLLEDBACK();
+					}
+
+					switch (e1.errorCode)
+					{
+					case XAException.XAER_RMERR:
+					case XAException.XA_HEURHAZ:
+					case XAException.XA_HEURMIX:
+						updateState(TwoPhaseOutcome.HEURISTIC_HAZARD);
+
+						throw new org.omg.CosTransactions.HeuristicHazard();
+					case XAException.XA_HEURCOM:
+						break;
+					case XAException.XA_HEURRB:
+						// throw new org.omg.CosTransactions.HeuristicHazard();
+					case XAException.XA_RBROLLBACK:
+						throw new TRANSACTION_ROLLEDBACK();
+					case XAException.XAER_NOTA:
+					case XAException.XAER_PROTO:
+						break;
+					case XAException.XAER_INVAL:
+					case XAException.XAER_RMFAIL: // resource manager failed,
+												  // did it rollback?
+						throw new UNKNOWN();
+					default:
+						throw new UNKNOWN();
+					}
+				}
+				catch (SystemException ex)
+				{
+					ex.printStackTrace();
+					
+					throw ex;
+				}
+				catch (org.omg.CosTransactions.HeuristicHazard ex)
+				{
+					throw ex;
+				}
+				catch (Exception e2)
+				{
+					if (jtaLogger.loggerI18N.isWarnEnabled())
+					{
+						jtaLogger.loggerI18N
+								.warn(
+										"com.arjuna.ats.internal.jta.resources.jts.orbspecific.coperror",
+										e2);
+					}
+
+					e2.printStackTrace();
+					
+					throw new UNKNOWN();
+				}
+				finally
+				{
+					removeConnection();
+				}
+			}
+		}
+	}
+
+	public void forget() throws org.omg.CORBA.SystemException
+	{
+		if (jtaLogger.logger.isDebugEnabled())
+		{
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"XAResourceRecord.forget for " + _tranID);
+		}
+
+		if ((_theXAResource != null) && (_tranID != null))
+		{
+			try
+			{
+				_theXAResource.forget(_tranID);
+			}
+			catch (Exception e)
+			{
+			}
+		}
+
+		destroyState();
+
+		removeConnection();
+	}
+
+	/**
+	 * 	  @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.saveState
+	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.saveState]
+	 *          Could not serialize a serializable XAResource!
+	 */
+	
+	public boolean saveState(OutputObjectState os)
+	{
+		boolean res = false;
+
+		try
+		{
+			os.packInt(_heuristic);
+
+			/*
+			 * Since we don't know what type of Xid we are using, leave it up to
+			 * XID to pack.
+			 */
+
+			XidImple.pack(os, _tranID);
+
+			/*
+			 * If no recovery object set then rely upon object serialisation!
+			 */
+
+			if (_recoveryObject == null)
+			{
+				os.packInt(RecoverableXAConnection.OBJECT_RECOVERY);
+
+				boolean shouldSerialize = false;
+				
+				try
+				{
+					if (_theXAResource instanceof Serializable)
+						shouldSerialize = true;
+					
+					ByteArrayOutputStream s = new ByteArrayOutputStream();
+					ObjectOutputStream o = new ObjectOutputStream(s);
+
+					o.writeObject(_theXAResource);
+					o.close();
+
+					os.packBoolean(true);
+
+					os.packBytes(s.toByteArray());
+				}
+				catch (NotSerializableException ex)
+				{
+					if (!shouldSerialize)
+					{
+						// have to rely upon XAResource.recover!
+	
+						os.packBoolean(false);		
+					}			
+					else
+					{
+						if (jtaLogger.loggerI18N.isWarnEnabled())
+						{
+							jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.saveState");
+						}
+						
+						return false;
+					}
+				}
+			}
+			else
+			{
+				os.packInt(RecoverableXAConnection.AUTO_RECOVERY);
+				os.packString(_recoveryObject.getClass().getName());
+
+				_recoveryObject.packInto(os);
+			}
+
+			if (_recoveryCoordinator == null)
+				os.packBoolean(false);
+			else
+			{
+				os.packBoolean(true);
+
+				String ior = ORBManager.getORB().orb().object_to_string(
+						_recoveryCoordinator);
+
+				os.packString(ior);
+
+				ior = null;
+			}
+
+			res = true;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+
+			res = false;
+		}
+
+		return res;
+	}
+
+	/**
+	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.restoreerror1
+	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.restoreerror1]
+	 *          Exception on attempting to resource XAResource: {0}
+	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.restoreerror2
+	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.restoreerror2]
+	 *          Unexpected exception on attempting to resource XAResource: {0}
+	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.norecoveryxa
+	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.norecoveryxa]
+	 *          Could not find new XAResource to use for recovering
+	 *          non-serializable XAResource {0}
+	 */
+
+	public boolean restoreState(InputObjectState os)
+	{
+		boolean res = false;
+
+		try
+		{
+			_heuristic = os.unpackInt();
+			_tranID = XidImple.unpack(os);
+
+			_theXAResource = null;
+			_recoveryObject = null;
+
+			if (os.unpackInt() == RecoverableXAConnection.OBJECT_RECOVERY)
+			{
+				boolean haveXAResource = os.unpackBoolean();
+
+				if (haveXAResource)
+				{
+					try
+					{
+						byte[] b = os.unpackBytes();
+
+						ByteArrayInputStream s = new ByteArrayInputStream(b);
+						ObjectInputStream o = new ObjectInputStream(s);
+
+						_theXAResource = (XAResource) o.readObject();
+						o.close();
+
+						if (jtaLogger.logger.isDebugEnabled())
+						{
+							jtaLogger.logger
+									.debug(
+											DebugLevel.FUNCTIONS,
+											VisibilityLevel.VIS_PUBLIC,
+											com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+											"XAResourceRecord.restore_state - XAResource de-serialized");
+						}
+					}
+					catch (Exception ex)
+					{
+						// not serializable in the first place!
+
+						if (jtaLogger.loggerI18N.isWarnEnabled())
+						{
+							jtaLogger.loggerI18N
+									.warn(
+											"com.arjuna.ats.internal.jta.resources.jts.orbspecific.restoreerror1",
+											new Object[]
+											{ ex });
+						}
+						
+						return false;
+					}
+				}
+			}
+			else
+			{
+				String creatorName = os.unpackString();
+				Class c = Thread.currentThread().getContextClassLoader()
+						.loadClass(creatorName);
+
+				_recoveryObject = (RecoverableXAConnection) c.newInstance();
+
+				_recoveryObject.unpackFrom(os);
+				_theXAResource = _recoveryObject.getResource();
+
+				if (_theXAResource == null)
+				{
+					jtaLogger.loggerI18N
+							.warn(
+									"com.arjuna.ats.internal.jta.resources.jts.orbspecific.norecoveryxa",
+									new Object[]
+									{ _tranID });
+				}
+
+				if (jtaLogger.logger.isDebugEnabled())
+				{
+					jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+							VisibilityLevel.VIS_PUBLIC,
+							com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+							"XAResourceRecord.restore_state - XAResource got from "
+									+ creatorName);
+				}
+			}
+
+			boolean haveRecCoord = os.unpackBoolean();
+
+			if (haveRecCoord)
+			{
+				String ior = os.unpackString();
+
+				if (ior == null)
+					return false;
+				else
+				{
+					org.omg.CORBA.Object objRef = ORBManager.getORB().orb()
+							.string_to_object(ior);
+
+					_recoveryCoordinator = RecoveryCoordinatorHelper
+							.narrow(objRef);
+				}
+			}
+			else
+				_recoveryCoordinator = null;
+
+			res = true;
+		}
+		catch (Exception e)
+		{
+			if (jtaLogger.loggerI18N.isWarnEnabled())
+			{
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.restoreerror2",
+								new Object[]
+								{ e });
+			}
+
+			e.printStackTrace();
+
+			res = false;
+		}
+
+		return res;
+	}
+
+	public String type()
+	{
+		return XAResourceRecord.typeName();
+	}
+
+	public static String typeName()
+	{
+		return "/CosTransactions/XAResourceRecord";
+	}
+
+	public final void setRecoveryCoordinator(RecoveryCoordinator recCoord)
+	{
+		_recoveryCoordinator = recCoord;
+	}
+
+	public final RecoveryCoordinator getRecoveryCoordinator()
+	{
+		return _recoveryCoordinator;
+	}
+
+	protected XAResourceRecord(Uid u)
+	{
+		_theXAResource = null;
+		_recoveryObject = null;
+		_tranID = null;
+		_prepared = true;
+		_committed = false;
+		_heuristic = TwoPhaseOutcome.FINISH_OK;
+		_theUid = new Uid(u);
+		_objStore = null;
+		_valid = false;
+		_theReference = null;
+		_recoveryCoordinator = null;
+		_theTransaction = null;
+
+		_valid = loadState();
+	}
+
+	/**
+	 * For those objects where the original XAResource could not be saved.
+	 */
+
+	protected synchronized void setXAResource(XAResource res)
+	{
+		_theXAResource = res;
+	}
+
+	/**
+	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.notprepared
+	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.notprepared]
+	 *          {0} caught NotPrepared exception during recovery phase!
+	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.unexpected
+	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.unexpected]
+	 *          {0} caught unexpected exception: {1} during recovery phase!
+	 */
+
+	protected int recover()
+	{
+		if (jtaLogger.logger.isDebugEnabled())
+		{
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PROTECTED,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"XAResourceRecord.recover");
+		}
+
+		if (_valid)
+		{
+			org.omg.CosTransactions.Status s = org.omg.CosTransactions.Status.StatusUnknown;
+
+			try
+			{
+				// force tx to rollback if not prepared
+
+				s = _recoveryCoordinator.replay_completion(getResource());
+			}
+			catch (OBJECT_NOT_EXIST ex)
+			{
+				// no coordinator, so presumed abort.
+
+				s = org.omg.CosTransactions.Status.StatusRolledBack;
+			}
+			catch (NotPrepared ex1)
+			{
+				if (jtaLogger.loggerI18N.isWarnEnabled())
+				{
+					jtaLogger.loggerI18N
+							.warn(
+									"com.arjuna.ats.internal.jta.resources.jts.orbspecific.notprepared",
+									new Object[]
+									{ "XAResourceRecord" });
+				}
+
+				return XARecoveryResource.TRANSACTION_NOT_PREPARED;
+			}
+			catch (java.lang.NullPointerException ne)
+			{
+				/*
+				 * No recovery coordinator!
+				 */
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+
+				/*
+				 * Unknown error, so better to do nothing at this stage.
+				 */
+
+				if (jtaLogger.loggerI18N.isWarnEnabled())
+				{
+					jtaLogger.loggerI18N
+							.warn(
+									"com.arjuna.ats.internal.jta.resources.jts.orbspecific.unexpected",
+									new Object[]
+									{ "XAResourceRecord", e });
+				}
+
+				return XARecoveryResource.FAILED_TO_RECOVER;
+			}
+
+			if (jtaLogger.logger.isDebugEnabled())
+			{
+				jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+						VisibilityLevel.VIS_PROTECTED,
+						com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+						"XAResourceRecord.recover got status: "
+								+ Utility.stringStatus(s));
+			}
+
+			boolean doCommit = false;
+
+			switch (s.value())
+			{
+			case org.omg.CosTransactions.Status._StatusUnknown:
+				// some problem occurred
+
+				return XARecoveryResource.FAILED_TO_RECOVER;
+			case org.omg.CosTransactions.Status._StatusMarkedRollback:
+			case org.omg.CosTransactions.Status._StatusRollingBack:
+				// we should be told eventually, so wait
+
+				return XARecoveryResource.WAITING_FOR_RECOVERY;
+			case org.omg.CosTransactions.Status._StatusCommitted:
+
+				doCommit = true;
+				break;
+			case org.omg.CosTransactions.Status._StatusRolledBack:
+			case org.omg.CosTransactions.Status._StatusNoTransaction:
+				// presumed abort
+
+				doCommit = false;
+				break;
+			case org.omg.CosTransactions.Status._StatusCommitting:
+				// leave it for now as we'll be driven top-down soon
+
+				return XARecoveryResource.WAITING_FOR_RECOVERY;
+			default:
+				// wait
+
+				return XARecoveryResource.FAILED_TO_RECOVER;
+			}
+
+			return doRecovery(doCommit);
+		}
+
+		return XARecoveryResource.FAILED_TO_RECOVER;
+	}
+
+	private final void setObjectStore()
+	{
+		if (_objStore == null)
+			_objStore = new ObjectStore(null, ""); // interface gets default
+	}
+
+	/**
+	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.createstate
+	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.createstate]
+	 *          Committing of resource state failed.
+	 */
+
+	private final boolean createState()
+	{
+		setObjectStore();
+
+		if ((_theXAResource != null) && (_tranID != null)
+				&& (_objStore != null))
+		{
+			OutputObjectState os = new OutputObjectState();
+
+			if (saveState(os))
+			{
+				try
+				{
+					_valid = _objStore.write_committed(_theUid, type(), os);
+					_prepared = true;
+				}
+				catch (Exception e)
+				{
+					if (jtaLogger.loggerI18N.isWarnEnabled())
+					{
+						jtaLogger.loggerI18N
+								.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.createstate");
+					}
+
+					_valid = false;
+				}
+			}
+			else
+				_valid = false;
+		}
+		else
+			_valid = false;
+
+		return _valid;
+	}
+
+	/**
+	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.updatestate
+	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.updatestate]
+	 *          Updating of resource state failed.
+	 */
+
+	private final boolean updateState(int h)
+	{
+		setObjectStore();
+
+		if (_prepared) // only need do if we have prepared
+		{
+			OutputObjectState os = new OutputObjectState();
+
+			_heuristic = h;
+
+			if (saveState(os))
+			{
+				try
+				{
+					_valid = _objStore.write_committed(_theUid, type(), os);
+				}
+				catch (Exception e)
+				{
+					_valid = false;
+				}
+			}
+			else
+			{
+				if (jtaLogger.loggerI18N.isWarnEnabled())
+				{
+					jtaLogger.loggerI18N
+							.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.updatestate");
+				}
+
+				_valid = false;
+			}
+		}
+
+		return _valid;
+	}
+
+	private final boolean loadState()
+	{
+		setObjectStore();
+
+		InputObjectState os = null;
+
+		try
+		{
+			os = _objStore.read_committed(_theUid, type());
+		}
+		catch (Exception e)
+		{
+			if (jtaLogger.loggerI18N.isWarnEnabled())
+			{
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.loadstateread",
+								e);
+			}
+
+			os = null;
+		}
+
+		if (os != null)
+		{
+			_valid = restoreState(os);
+
+			os = null;
+		}
+		else
+			_valid = false;
+
+		return _valid;
+	}
+
+	private final boolean destroyState()
+	{
+		setObjectStore();
+
+		if (_prepared && _valid)
+		{
+			try
+			{
+				_valid = _objStore.remove_committed(_theUid, type());
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+
+				_valid = false;
+			}
+		}
+
+		if (_recoveryObject != null)
+			removeConnection();
+
+		return _valid;
+	}
+
+	/**
+	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.remconn
+	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.remconn]
+	 *          Attempted shutdown of resource failed with:
+	 */
+
+	private final void removeConnection()
+	{
+		/*
+		 * Should only be called once. Remove the connection so that user can
+		 * reuse the driver as though it were fresh (e.g., can do read only
+		 * optimisation).
+		 */
+
+		if (_recoveryObject != null)
+		{
+			_recoveryObject.close();
+			_recoveryObject = null;
+		}
+
+		if (_theTransaction != null)
+			_theTransaction = null;
+
+		try
+		{
+			if (_theReference != null)
+			{				
+				ORBManager.getPOA().shutdownObject(this);
+				_theReference = null;
+			}
+		}
+		catch (Exception e)
+		{
+			if (jtaLogger.loggerI18N.isWarnEnabled())
+			{
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.remconn",
+								e);
+			}
+		}
+	}
+
+	/**
+	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.recfailed
+	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.recfailed]
+	 *          Recovery of resource failed when trying to call {0} got: {1}
+	 * @message com.arjuna.ats.internal.jta.recovery.jts.orbspecific.commit XA
+	 *          recovery committing {0}
+	 * @message com.arjuna.ats.internal.jta.recovery.jts.orbspecific.rollback XA
+	 *          recovery rolling back {0}
+	 */
+
+	private final int doRecovery(boolean commit)
+	{
+		if (jtaLogger.logger.isDebugEnabled())
+		{
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PRIVATE,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"XAResourceRecord.doRecovery ( " + commit + " )");
+		}
+
+		int result = XARecoveryResource.FAILED_TO_RECOVER;
+
+		if ((_theXAResource != null) && (_tranID != null))
+		{
+			try
+			{
+				if (jtaLogger.logger.isInfoEnabled())
+				{
+					if (commit)
+						jtaLogger.loggerI18N
+								.info(
+										"com.arjuna.ats.internal.jta.recovery.jts.orbspecific.commit",
+										new Object[]
+										{ _tranID });
+					else
+						jtaLogger.loggerI18N
+								.info(
+										"com.arjuna.ats.internal.jta.recovery.jts.orbspecific.rollback",
+										new Object[]
+										{ _tranID });
+				}
+
+				if (commit)
+					commit();
+				else
+					rollback();
+
+				// if those succeed, they will have removed any persistent state
+
+				result = XARecoveryResource.RECOVERED_OK;
+			}
+			catch (Exception e2)
+			{
+				e2.printStackTrace();
+
+				if (jtaLogger.loggerI18N.isWarnEnabled())
+				{
+					jtaLogger.loggerI18N
+							.warn(
+									"com.arjuna.ats.internal.jta.resources.jts.orbspecific.recfailed",
+									new Object[]
+									{ ((commit) ? "commit" : "rollback"), e2 });
+				}
+			}
+		}
+
+		return result;
+	}
+
+	/*
+	 * Ask the transaction whether or not this XAResource is still associated
+	 * with the thread, i.e., has end already been called on it?
+	 */
+
+	private final boolean endAssociation()
+	{
+		boolean doEnd = true;
+
+		if (_theTransaction != null)
+		{
+			if (_theTransaction.getXAResourceState(_theXAResource) != TxInfo.ASSOCIATED)
+			{
+				doEnd = false;
+			}
+		}
+		else
+			doEnd = false; // recovery mode
+
+		return doEnd;
+	}
+
+	protected XAResource _theXAResource;
+
+	private RecoverableXAConnection _recoveryObject;
+	private Xid _tranID;
+	private boolean _prepared;
+	private boolean _committed;
+	private boolean _valid;
+	private int _heuristic;
+	private ObjectStore _objStore;
+	private Uid _theUid;
+	private org.omg.CosTransactions.Resource _theReference;
+	private org.omg.CosTransactions.RecoveryCoordinator _recoveryCoordinator;
+	private TransactionImple _theTransaction;
+
+	// cached variables
+
+	private String _cachedUidStringForm;
+	
+	private static boolean _rollbackOptimization = false;
+
+	static
+	{
+		String optimization = jtaPropertyManager.propertyManager.getProperty(
+				Environment.JTA_TM_IMPLEMENTATION, "OFF");
+
+		if (optimization.equals("ON"))
+			_rollbackOptimization = true;
+	}
+
+}

@@ -1,0 +1,11 @@
+From Server:
+
+**StackServer started**
+
+From Client:
+
+pushing 1 onto stack
+pushing 2 onto stack
+popped top of stack 2
+pushed 3 onto stack. Aborting nested action.
+popped top of stack is 1

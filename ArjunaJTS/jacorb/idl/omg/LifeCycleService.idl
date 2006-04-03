@@ -1,0 +1,66 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2006, JBoss Inc., and individual contributors as indicated
+ * by the @authors tag.  All rights reserved. 
+ * See the copyright.txt in the distribution for a full listing 
+ * of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU General Public License, v. 2.0.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License,
+ * v. 2.0 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ * 
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ */
+// LifeCycleService Module, p 6- 55 CORBAservices, Life Cycle
+// Service V1.0, 3/94
+
+#include <CosLifeCycle.idl> 
+
+#pragma prefix "omg.org"
+
+module LifeCycleService {
+
+        typedef sequence <CosLifeCycle::NameValuePair> PolicyList;
+        typedef sequence <CosLifeCycle::Key> Keys;
+        typedef sequence <CosLifeCycle::NameValuePair> PropertyList; 
+        typedef sequence <CosNaming::NameComponent> NameComponents;
+
+        interface LifeCycleServiceAdmin {
+
+                attribute PolicyList policies;
+
+                void bind_generic_factory(
+                                in CosLifeCycle::GenericFactory gf,
+                                in CosNaming::NameComponent name,
+                                in Keys key_set,
+                                in PropertyList other_properties)
+                        raises (CosNaming::NamingContext::AlreadyBound, CosNaming::NamingContext::InvalidName);
+
+                void unbind_generic_factory(
+                                in CosNaming::NameComponent name)
+                        raises (CosNaming::NamingContext::NotFound, CosNaming::NamingContext::InvalidName);
+
+               CosLifeCycle::GenericFactory resolve_generic_factory(
+                                in CosNaming::NameComponent name)
+                        raises (CosNaming::NamingContext::NotFound, CosNaming::NamingContext::InvalidName);
+
+                NameComponents list_generic_factories();
+
+                boolean match_service (in CosLifeCycle::GenericFactory f);
+
+                string get_hint();
+
+                void get_link_properties(
+                                in CosNaming::NameComponent name,
+                                out Keys key_set,
+                                out PropertyList other_properties)
+                        raises (CosNaming::NamingContext::NotFound, CosNaming::NamingContext::InvalidName);
+        };
+};

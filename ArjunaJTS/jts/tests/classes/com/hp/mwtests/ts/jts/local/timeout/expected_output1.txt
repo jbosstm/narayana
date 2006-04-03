@@ -1,0 +1,9 @@
+Thread Thread[main,5,main] starting transaction.
+Abort of action id -7f0f69ac:67e89:3833e3f3:0 invoked while multiple threads active within it.
+
+WARNING CheckedAction::check - atomic action -7f0f69ac:67e89:3833e3f3:0 aborting with 1 threads active!
+
+Thread Thread[main,5,main] committing transaction.
+Caught exception: org.omg.CORBA.INVALID_TRANSACTION:   minor code: 0  completed: No
+Timeout went off.
+Test completed successfully.

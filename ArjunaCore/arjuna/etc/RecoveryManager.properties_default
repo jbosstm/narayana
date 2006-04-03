@@ -1,0 +1,106 @@
+#
+# JBoss, Home of Professional Open Source
+# Copyright 2006, JBoss Inc., and others contributors as indicated 
+# by the @authors tag. All rights reserved. 
+# See the copyright.txt in the distribution for a
+# full listing of individual contributors. 
+# This copyrighted material is made available to anyone wishing to use,
+# modify, copy, or redistribute it subject to the terms and conditions
+# of the GNU Lesser General Public License, v. 2.1.
+# This program is distributed in the hope that it will be useful, but WITHOUT A 
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+# PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public License,
+# v.2.1 along with this distribution; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+# MA  02110-1301, USA.
+# 
+# (C) 2005-2006,
+# @author JBoss Inc.
+#
+# 
+# Copyright (C) 2002-2004 by Arjuna Technologies Ltd. All rights Reserved.
+#
+# Arjuna Technologies Ltd,
+# Newcastle upon Tyne,
+# Tyne and Wear,
+# UK.
+#
+# $Id: RecoveryManager.properties_default 2342 2006-03-30 13:06:17Z  $
+#
+
+#  This is the special properties file for the RecoveryManager
+#  it's settings add to and override those in the regular
+#  arjuna properties file
+
+# -----------------------------------------------------------------------------
+#  overrides of debug tracing properties normally set in the
+#  arjuna properties file 
+#  RcvMgr uses debug tracing with facility code FAC_RECOVERY_NORMAL for its
+#  normal messages
+#  Consequently some of the debug properties need to be changed from their
+#  defaults
+
+#  Set debugEnabled=YES to show normal output.
+#  RcvMgr will produce no messages apart from errors if 
+#  debugEnabled=NO
+com.hp.mw.ts.arjuna.logging.debug.debugEnabled=NO
+
+# (default is 0x0, RecoveryManager needs to set non-zero to make the normal
+# messages visible)
+com.hp.mw.ts.arjuna.logging.debug.debugLevel=0x0
+
+# visLevel default of 0x04 is usable
+com.hp.mw.ts.arjuna.logging.debug.visLevel=0x0004
+
+# (RcvMgr forces FAC_RECOVERY_NORMAL (0x40000) on ) 0x800 is FAC_CRASH_RECOVERY 
+#  Default would produce a LOT of messages
+com.hp.mw.ts.arjuna.logging.debug.facLevel=0x00
+
+#------------------------------------------------------------------------------
+#	properties used only by the RecoveryManager
+
+# ------------ Periodic recovery settings -------------------------------------
+#  Time values in this section are in seconds
+
+#  Interval in seconds between initiating the periodic recovery modules.
+#    (Default is 120 seconds)
+com.hp.mw.ts.arjuna.recovery.periodicRecoveryPeriod=120
+
+
+#  Interval in seconds between first and second pass of periodic recovery.
+#   (Default is 10 seconds)
+com.hp.mw.ts.arjuna.recovery.recoveryBackoffPeriod=10
+
+
+# Periodic recovery modules to use.
+#     will be invoked in sort-order of names
+com.hp.mw.ts.arjuna.recovery.recoveryExtension1=com.hp.mwlabs.ts.arjuna.recovery.AtomicActionRecoveryModule
+com.hp.mw.ts.arjuna.recovery.recoveryExtension2=com.hp.mwlabs.ts.txoj.recovery.TORecoveryModule
+
+# ------------- Expired entry removal ------------------------------
+
+# Expiry scanners to use (order of invocation is random) 
+#  Names must begin with "com.hp.mw.ts.arjuna.recovery.expiryScanner"
+
+com.hp.mw.ts.arjuna.recovery.expiryScannerTransactionStatusManager=com.hp.mwlabs.ts.arjuna.recovery.ExpiredTransactionStatusManagerScanner
+
+# Interval, in hours, between running the expiry scanners.
+# This can be quite long. The absolute value determines the interval - if the
+# value is negative, the scan will NOT be run until after one interval has
+# elapsed. If positive the first scan will be immediately after startup. Zero
+# will prevent any scanning.
+# Default  = 12 = run immediately, then every 12 hours
+com.hp.mw.ts.arjuna.recovery.expiryScanInterval=12
+
+
+# Age, in hours, for removal of transaction status manager item. This should be longer
+# than any ts-using process will remain running
+#  Zero = Never removed. Default 12
+com.hp.mw.ts.arjuna.recovery.transactionStatusManagerExpiryTime=12
+
+#
+# Use this to fix the port on which the TransactionStatusManager listens,
+# the default behaviour is to use any free port. 
+#
+com.hp.mw.ts.arjuna.recovery.transactionStatusManagerPort=0

@@ -1,0 +1,26 @@
+Client:
+
+Setting transaction timeout to 2 seconds.
+Set value.
+Now sleeping for 5 seconds.
+
+committing nested action.
+Caught TransactionRolledBack
+
+committing top-level action
+Caught TransactionRolledBack
+
+Server:
+
+**SetGet server started**
+setget_i.set 2
+setget_i.set - managed to set up interposition hierarchy
+setget_i.set - current returned a control!
+setget_i.set - beginning nested action
+setget_i.set - registering self
+setget_i.set - committing nested action
+SETGET_I : COMMIT_SUBTRANSACTION
+setget_i.set - finished
+Abort of action id -7f0f69ac:5d7056:38354907:0 invoked while child actions active
+        Aborting child: -7f0f69ac:5d7056:38354907:2
+SETGET_I : ROLLBACK_SUBTRANSACTION

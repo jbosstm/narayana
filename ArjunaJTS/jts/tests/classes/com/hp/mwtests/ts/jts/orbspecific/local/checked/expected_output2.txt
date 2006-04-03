@@ -1,0 +1,6 @@
+Thread Thread[main,5,main] starting transaction.
+Thread Thread[Thread-0,5,main] attempting to rollback transaction.
+Caught exception: org.omg.CORBA.NO_PERMISSION:   minor code: 0  completed: No
+Checked transactions enabled!
+Thread Thread[main,5,main] committing transaction.
+Transaction committed. Checked transactions enabled.

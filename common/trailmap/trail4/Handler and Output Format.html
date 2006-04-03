@@ -1,0 +1,263 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and others contributors as indicated 
+  by the @authors tag. All rights reserved. 
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors. 
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en-gb] (WinNT; I) [Netscape]">
+   <title>Handler and Output Format</title>
+</head>
+<body>
+
+<h2>
+4 Handler and Output Format</h2>
+
+<h3>
+<a NAME="4.1 Output Destination"></a>4.1 Output Destination</h3>
+The Common Logging Framework allows logging requests to print to multiple
+destinations. By default logging requests are either sent
+<br>to the console or to a file according to the value assigned to the
+property <font face="Courier New,Courier"><font size=-1>com.hp.mw.common.utils.logging.factory.output:</font></font>
+<ul>
+<li>
+<font face="Courier New,Courier"><font size=-1>console</font></font> –
+this the default value</li>
+
+<li>
+<font face="Courier New,Courier"><font size=-1>file</font></font></li>
+</ul>
+Expect for the simple commonLogger implementation provided by this distribution,
+the CLF relies on the underlying logging, when used,
+<br>to manage the output via the appropriate class or interface they define.&nbsp;
+For instance, log4j provide the <i>Appender</i> interface and the set of
+classes implementing this interface. Among these classes there are the
+<i>ConsoleAppender</i>
+class, which sends log events to the console, or the <i>FileAppender</i>
+class, which sends the log requests to the file. Similarly, the HP logging
+service provides the LogWriter interface, and the classes ConsoleLogWriter
+or TextFileLogWriter.
+<p>Once created by LogManager, the LoggerFactory is associated with an
+appropriate “output class ”. By default any commonLogger object created
+by that LoggerFactory is associated with an output class that sends logging
+messages to the console.&nbsp; The application can send logging messages
+to the file using the property output as follow:
+<blockquote><font face="Courier New,Courier"><font size=-1>java –Dcom.hp.mw.common.utils.logging.factory.output=&lt;output_value>
+MyApplication</font></font></blockquote>
+Where the property output_value may have one of the values described above:
+<font face="Courier New,Courier"><font size=-1>console
+</font></font>or
+<font face="Courier New,Courier"><font size=-1>file</font></font>
+<br>&nbsp;
+<h4>
+Choosing its own output</h4>
+As said above logging messages are by default sent to the console. An application
+may require to send logging messages to other outputs in addition to the
+console or instead the console. Two ways are provided for this aim:
+<ul>
+<li>
+Use&nbsp; a configuration defined by the underlying logging. Most logging
+tools allows to define a set of properties via a configuration file. For
+instance log4j allows to use a Java properties file (default name log4j.properties)
+or XML file to define properties used by log4j to determine how to deal
+with logging requests.</li>
+
+<br>Rather than to provide default properties that must be used by the
+underlying logging the Common Logging Framework allows to use a configuration
+file that can be used directly by the underlying logging. For this aim,
+the property <font face="Courier New,Courier"><font size=-1>com.hp.mw.common.utils.logging.factory.output
+take one the following values:</font></font>
+<ul>
+<li>
+<font face="Courier New,Courier"><font size=-1>config_key - </font></font>this
+indicates that the properties shall be determined by reading the content
+of a configuration file (Java properties) used by the underlying logging.</li>
+
+<li>
+<font face="Courier New,Courier"><font size=-1>config_xml - </font></font>this
+indicates that the properties shall be determined by reading the content
+of a configuration file (Java properties) used by the underlying logging.</li>
+</ul>
+
+<li>
+Use the method AddHandler provided by the commonLogger. This method takes
+as&nbsp; argument an object implementing the <i>Handler</i> interface.
+The <i><a href="../../htdocs/com/hp/mw/common/util/logging/Handler.html">Handler</a></i>
+interface is an “empty” interface without methods and represents a generic
+name given for an output such a console or a text file. This interface
+is used to hide the nature of the similar underlying handler.</li>
+</ul>
+
+<h4>
+How to add a Handler?</h4>
+Two classes are provided to the application to define additional output
+classes:
+<ul>
+<li>
+The <i>CommonLogWriter</i> to build a Handler object associated to a LogWriter
+object recognized by the CSF logging service</li>
+
+<li>
+The <i>CommonAppender</i> to a Handler object associated to an Appender
+object recognized by log4j</li>
+</ul>
+Let us give examples to illustrate how these classes are used.
+<blockquote><b>1) Add a LogWriter</b>
+<br>As seen above a created commonLogger sends log messages to the console.
+The CSF logging service has defined a class named TextFileLogWriter, which
+implements the LogWriter interface. The following example illustrates how
+an application adds a TextFileLogWriter object to the commonLogger to send
+log messages to a file in addition to the console.
+<br>&nbsp;
+<br>&nbsp;
+<table BORDER COLS=1 WIDTH="80%" BGCOLOR="#CCCCCC" >
+<tr>
+<td><font face="Courier New,Courier"><font size=-1>. . .</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import com.hp.mwlabs.common.util.logging.csf.CommonLogWriter;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import com.hp.mwlabs.common.util.logging.TextFileLogWriter;</font></font>
+<p><font face="Courier New,Courier"><font size=-1>import java.io.File;</font></font>
+<p><font face="Courier New,Courier"><font size=-1>public class AddLogWriter{</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; static
+LoggerFactory log_fac = LogManager.getLogFactory();</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; static
+commonLogger mylog = (commonLogger)log_fac.getLogger("TestAddLogWriter");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; static
+CommonLogWriter MyLogWriter;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; static
+TextFileLogWriter filewriter;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+. . .&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+java.io.File the_directory = new File(“MyDirectory”);&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+filewriter = new TextFileLogWriter(); // (1)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+filewriter.setName(“MyLogFile”);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+filewriter.setDirectory(the_directory);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+MyLogWriter = new CommonLogWriter(filewriter); // (2)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+mylog.addHandler(MyLogWriter);&nbsp; // (3)&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+mylog.log(CommonLevel.FATAL, "This is the first FATAL Message");//(4)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+mylog.removeHandler(MyLogWriter); // (5)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
+log_fac.releaseResource();</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; ...&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>}</font></font></td>
+</tr>
+</table>
+
+<p>The application creates a TextFileLogWriter object (1) and uses it as
+argument to create a CommonLogWriter object (2), which implements the Handler
+interface. The CommonLogWriter object is registered with the commonLogger
+object (3). The commonLogger object will use all Handler or output class
+registered to forward the log message (4).&nbsp; Before leaving, the application
+un-registers the Handler from the commonLogger object.
+<p><b>2) Add an Appender</b>
+<br>Log4j defines a class named FileAppender, which implements the Appender
+interface. The following example illustrates how an application adds a
+FileAppender object to the commonLogger to send log messages to a file
+in addition to the console.
+<br>&nbsp;
+<table BORDER COLS=1 WIDTH="81%" BGCOLOR="#CCCCCC" >
+<tr>
+<td><font face="Courier New,Courier"><font size=-1>. . .</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import org.apache.log4j.PatternLayout;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import org.apache.log4j.FileAppender;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import com.hp.mw.common.util.logging.log4j.CommonAppender;</font></font>
+<p><font face="Courier New,Courier"><font size=-1>public class AddAppender{</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp; static LoggerFactory
+log_fac = LogManager.getLogFactory();</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp; static
+commonLogger mylog = (commonLogger)log_fac.getLogger("TestAddAppender");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp; static
+CommonAppender MyAppender;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp; static
+FileAppender fileAppender;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp; static
+PatternLayout theLayout;</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; theLayout
+= new PatternLayout(PatternLayout.TTCC_CONVERSION_PATTERN);// (1)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; fileAppender
+= new FileAppender(theLayout, “theLogFileName”); // (2)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; MyAppender
+= new CommonAppender(fileAppender); // (3)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; mylog.addHandler(MyAppender);&nbsp;
+//&nbsp; (4)</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp; mylog.log(CommonLevel.FATAL,
+"This is the first FATAL Message"); // (5)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp; log_fac.releaseResource();</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp; . . .&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>}</font></font></td>
+</tr>
+</table>
+
+<p>The log4j.PatternLayout is a particular class implementing the log4j.Layout
+responsible to format a message before sending it to output (1). The application
+uses the created PatternLayout object to instantiate a FileAppender object
+(2). That all log messages sent to the file managed by the FileAppender
+object will be printed using the format defined for the PatternLayout object.
+The FileAppender object is used as an argument to instantiate a CommonAppender
+object (3), which implements the Handler interface. The CommonAppender
+object is registered with the commonLogger object (4). The commonLogger
+object will use all Handler or output class registered to forward the log
+message (5).
+<p><b>3) Remove/Add the default output</b>
+<br>As described above, a default output destination can be defined by
+specifying the value of the “output” property – “console” or “file”. However
+an application may wish to remove this default output in such that only
+its own output provided via the method addHandler on the commonLogger interface.
+For this aim, the commonLogger interface provides two methods to remove
+the default output destination from the list of output destination and
+to add if needed, after removing, the default output; respectively these
+methods are:
+<blockquote><font face="Courier New,Courier"><font size=-1>void removeDefaultOutput();</font></font></blockquote>
+and
+<blockquote><font face="Courier New,Courier"><font size=-1>void addDefaultOutput();</font></font></blockquote>
+</blockquote>
+
+<h3>
+<a NAME="4.2 Message Formatting"></a>4.2 Message Formatting</h3>
+Similarly to the output destination, formatting log messages before their
+sending to the output relies on interface or classes provided by the underlying
+logging service. That is, an application may use provided classes to format
+the message, as done in the previous example where the application uses
+the PatternLayout class, or develop its own classes but implementing interface
+defined by the underlying service.
+<p>When using the provided simple commonLogger the output generated is
+as follow:
+<blockquote><font face="Courier New,Courier"><font size=-1>{Date} - {Time}
+- {Log_level} - {Log_Message_with_arguments_if_provided} - {Throwable_message_if_any}</font></font></blockquote>
+<b><i>Example</i></b>: The following logging request
+<blockquote><font face="Courier New,Courier"><font size=-1>mylogger.warn("This
+is a Warning Message");</font></font></blockquote>
+will produce, if the WARN level is enabled
+<blockquote><font face="Courier New,Courier"><font size=-1>February 3,
+2003 - 12:44:24 PM - [WARN]&nbsp; - This is a Warning Message</font></font>
+<br><font face="Courier New,Courier"><font size=-1></font></font>&nbsp;
+<br><font face="Courier New,Courier"><font size=-1></font></font>&nbsp;</blockquote>
+<a href="../Arjuna_CLF_main.html">Main</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="../trail3/How does it work.html">Previous</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="../trail5/Internationalization.html">Next</a>
+</body>
+</html>

@@ -1,0 +1,16 @@
+beginning top-level transaction.
+getting coordinator
+registering resources.
+committing top-level transaction.
+HEURISTIC : PREPARE
+HEURISTIC : throwing HeuristicHazard
+Prepare phase of action -7f0f2f9a:80c98a2:36cee684:0 received heuristic decision: PrepareOutcome.HEURISTIC_HAZARD
+BasicAction.End() - prepare phase of action-id -7f0f2f9a:80c98a2:36cee684:0 failed. Received heuristic: PrepareOutcome.HEURISTIC_HAZARD. Action aborting.
+ATOMIC : ROLLBACK
+HEURISTIC : FORGET
+
+Transaction HeuristicHazard exception
+Trying to determing final transaction outcome.
+
+Final action status: CosTransactions::StatusUnknown
+Test completed successfully.

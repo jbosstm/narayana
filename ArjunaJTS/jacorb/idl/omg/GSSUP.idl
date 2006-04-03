@@ -1,0 +1,73 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2006, JBoss Inc., and individual contributors as indicated
+ * by the @authors tag.  All rights reserved. 
+ * See the copyright.txt in the distribution for a full listing 
+ * of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU General Public License, v. 2.0.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License,
+ * v. 2.0 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ * 
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ */
+#ifndef _GSSUP_IDL_
+#define _GSSUP_IDL_
+#include <CSI.idl>
+
+#pragma prefix "omg.org"
+
+module GSSUP {
+
+    // The GSS Object Identifier allocated for the 
+    // username/password mechanism is defined below.
+    //
+    // { iso-itu-t (2) international-organization (23) omg (130)
+    //	security (1) authentication (1) gssup-mechanism (1) }
+
+    const CSI::StringOID GSSUPMechOID = "oid:2.23.130.1.1.1";
+
+    // The following structure defines the inner contents of the
+    // username password initial context token. This structure is
+    // CDR encapsulated and appended at the end of the
+    // username/password GSS (initial context) Token.
+
+    struct InitialContextToken {
+	CSI::UTF8String username;
+	CSI::UTF8String password;
+	CSI::GSS_NT_ExportedName target_name;
+    };
+
+    typedef unsigned long ErrorCode;
+
+    // GSSUP Mechanism-Specific Error Token
+    struct ErrorToken {
+	ErrorCode error_code;
+    };
+
+    // The context validator has chosen not to reveal the GSSUP
+    // specific cause of the failure.
+    const ErrorCode GSS_UP_S_G_UNSPECIFIED = 1;
+
+    // The user identified in the username field of the
+    // GSSUP::InitialContextToken is unknown to the target.
+    const ErrorCode GSS_UP_S_G_NOUSER = 2;
+
+    // The password supplied in the GSSUP::InitialContextToken was
+    // incorrect.
+    const ErrorCode GSS_UP_S_G_BAD_PASSWORD = 3;
+
+    // The target_name supplied in the GSSUP::InitialContextToken does
+    // not match a target_name in a mechanism definition of the target.
+    const ErrorCode GSS_UP_S_G_BAD_TARGET = 4;
+
+}; // GSSUP
+
+#endif

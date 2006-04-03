@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<test_selection>
+	<description>
+
+        JTS Test Selections
+
+    </description>
+    
+    <options permutations="os"/>
+    
+	<os id="Win2K">
+		<product id="ATJ2">
+			<test_group id="ArjunaNesting">
+				<test id="ArjunaNesting1" selected="true"/>
+				<test id="ArjunaNesting2" selected="true"/>
+				<test id="ArjunaNesting3" selected="true"/>
+				<test id="ArjunaNesting4" selected="true"/>
+			</test_group>
+			<test_group id="Asynchronous">
+				<test id="AsyncTest1" selected="true"/>
+				<test id="AsyncTest2" selected="true"/>
+				<test id="AsyncTest3" selected="true"/>
+				<test id="AsyncTest4" selected="true"/>
+				<test id="AsyncTest5" selected="true"/>
+			</test_group>
+			<test_group id="Hammer">
+				<test id="Hammer1" selected="true"/>
+				<test id="Hammer2" selected="true"/>
+				<test id="Hammer3" selected="true"/>
+			</test_group>
+			<test_group id="Nested">
+				<test id="NestedTester1" selected="true"/>
+				<test id="NestedTester2" selected="true"/>
+				<test id="NestedTester3" selected="true"/>
+			</test_group>
+			<test_group id="DistributedHammerTests">
+				<test id="DistributedHammerTest1" selected="true"/>
+				<test id="DistributedHammerTest2" selected="true"/>
+				<test id="DistributedHammerTest3" selected="true"/>
+			</test_group>
+			<test_group id="ContextPropagationTests">
+				<test id="ExplicitPropagationTest" selected="true"/>
+				<test id="ImplicitPropagationTest" selected="true"/>
+				<test id="ImplicitGridTest" selected="true"/>
+			</test_group>
+			<test_group id="ExplicitInterpositionTests">
+				<test id="ExplicitInterpositionTest" selected="true"/>
+			</test_group>
+			<test_group id="TimeoutTests">
+				<test id="TimeoutTest" selected="true"/>
+			</test_group>
+			<test_group id="CurrentTest">
+				<test id="CurrentTest" selected="true"/>
+			</test_group>
+		</product>
+	</os>
+	<os id="SunOS">
+		<product id="ATJ2">
+			<test_group id="ArjunaNesting">
+				<test id="ArjunaNesting1" selected="true"/>
+				<test id="ArjunaNesting2" selected="true"/>
+				<test id="ArjunaNesting3" selected="true"/>
+				<test id="ArjunaNesting4" selected="true"/>
+			</test_group>
+			<test_group id="Asynchronous">
+				<test id="AsyncTest1" selected="true"/>
+				<test id="AsyncTest2" selected="true"/>
+				<test id="AsyncTest3" selected="true"/>
+				<test id="AsyncTest4" selected="true"/>
+				<test id="AsyncTest5" selected="true"/>
+			</test_group>
+			<test_group id="Hammer">
+				<test id="Hammer1" selected="true"/>
+				<test id="Hammer2" selected="true"/>
+				<test id="Hammer3" selected="true"/>
+			</test_group>
+			<test_group id="Nested">
+				<test id="NestedTester1" selected="true"/>
+				<test id="NestedTester2" selected="true"/>
+				<test id="NestedTester3" selected="true"/>
+			</test_group>
+			<test_group id="DistributedHammerTests">
+				<test id="DistributedHammerTest1" selected="true"/>
+				<test id="DistributedHammerTest2" selected="true"/>
+				<test id="DistributedHammerTest3" selected="true"/>
+			</test_group>
+			<test_group id="ContextPropagationTests">
+				<test id="ExplicitPropagationTest" selected="true"/>
+				<test id="ImplicitPropagationTest" selected="true"/>
+				<test id="ImplicitGridTest" selected="true"/>
+			</test_group>
+			<test_group id="ExplicitInterpositionTests">
+				<test id="ExplicitInterpositionTest" selected="true"/>
+			</test_group>
+			<test_group id="TimeoutTests">
+				<test id="TimeoutTest" selected="true"/>
+			</test_group>
+			<test_group id="CurrentTest">
+				<test id="CurrentTest" selected="true"/>
+			</test_group>
+		</product>
+<!-- Not doing ATO (Orbix) for now
+        <product id="ATO">
+            <test_group id="ArjunaNesting">
+                <test id="ArjunaNesting1" selected="true"/>
+                <test id="ArjunaNesting2" selected="true"/>
+                <test id="ArjunaNesting3" selected="true"/>
+                <test id="ArjunaNesting4" selected="true"/>
+            </test_group>
+            <test_group id="Asynchronous">
+                <test id="AsyncTest1" selected="true"/>
+                <test id="AsyncTest2" selected="true"/>
+                <test id="AsyncTest3" selected="true"/>
+                <test id="AsyncTest4" selected="true"/>
+                <test id="AsyncTest5" selected="true"/>
+            </test_group>
+            <test_group id="Hammer">
+                <test id="Hammer1" selected="true"/>
+                <test id="Hammer2" selected="true"/>
+                <test id="Hammer3" selected="true"/>
+            </test_group>
+            <test_group id="Nested">
+                <test id="NestedTester1" selected="true"/>
+                <test id="NestedTester2" selected="true"/>
+                <test id="NestedTester3" selected="true"/>
+            </test_group>
+            <test_group id="DistributedHammerTests">
+                <test id="DistributedHammerTest1" selected="true"/>
+                <test id="DistributedHammerTest2" selected="true"/>
+                <test id="DistributedHammerTest3" selected="true"/>
+            </test_group>
+            <test_group id="ContextPropagationTests">
+                <test id="ExplicitPropagationTest" selected="true"/>
+                <test id="ImplicitPropagationTest" selected="true"/>
+                <test id="ImplicitGridTest" selected="true"/>
+            </test_group>
+            <test_group id="ExplicitInterpositionTests">
+                <test id="ExplicitInterpositionTest" selected="true"/>
+            </test_group>
+            <test_group id="TimeoutTests">
+                <test id="TimeoutTest" selected="true"/>
+            </test_group>
+            <test_group id="CurrentTest">
+                <test id="CurrentTest" selected="true"/>
+            </test_group>
+        </product>
+-->
+	</os>
+</test_selection>

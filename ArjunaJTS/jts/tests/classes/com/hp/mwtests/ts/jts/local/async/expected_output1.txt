@@ -1,0 +1,402 @@
+committing top-level transaction
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : PREPARE
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Thread[main,5,main]
+DEMORESOURCE : COMMIT
+Test completed.

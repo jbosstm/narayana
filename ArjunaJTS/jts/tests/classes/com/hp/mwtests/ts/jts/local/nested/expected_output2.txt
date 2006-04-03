@@ -1,0 +1,8 @@
+Registered DemoSubTranResource
+Registered DemoResource
+committing first nested transaction
+DEMOSUBTRANRESOURCE : COMMIT_SUBTRANSACTION
+committing second nested transaction
+committing top-level transaction
+DEMORESOURCE : COMMIT_ONE_PHASE
+Test completed successfully.

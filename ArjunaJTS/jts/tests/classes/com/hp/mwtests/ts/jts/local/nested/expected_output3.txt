@@ -1,0 +1,9 @@
+Registered DemoSubTranResource
+Registered DemoResource
+committing first nested transaction
+DEMOSUBTRANRESOURCE : COMMIT_SUBTRANSACTION
+committing second nested transaction
+aborting top-level transaction
+DEMOSUBTRANRESOURCE : ROLLBACK
+DEMORESOURCE : ROLLBACK
+Test completed successfully.

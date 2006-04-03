@@ -1,0 +1,476 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and others contributors as indicated 
+  by the @authors tag. All rights reserved. 
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors. 
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<!--$Id: build.xml 2353 2006-03-31 13:05:02Z  $ -->
+<project name="product" default="com.hp.mw.ts.product.build" basedir=".">
+
+	<!-- class path behaviour -->
+	<property name="build.sysclasspath" value="last"/>
+
+	<!-- Set default properties filename -->
+	<property name="com.hp.mw.ts.properties" value="product.properties"/>
+
+	<!-- Load Build Properties File -->
+	<property file="${com.hp.mw.ts.properties}"/>
+	
+	<!-- configure dependencies -->
+	<property name="com.arjuna.buildsystem.dir" location="${buildsystem.dir}"/>
+	<property name="com.arjuna.common.dir" location="${common.dir}"/>
+	
+	<property name="com.arjuna.ext.dir" location="${ext.dir}"/>
+
+	<property name="com.arjuna.buildsystem.build.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
+	
+	<property name="com.arjuna.common.build.lib" location="${com.arjuna.common.dir}/build/lib"/>
+
+	<!-- Set external property defaults -->
+	<property name="com.hp.mw.ts.module.name" value="JBossCore"/>
+	<property name="com.hp.mw.ts.module.name.lowercase" value="jbosscore"/>
+
+	<property name="com.hp.mw.ts.product.htdocs.internal" value="no"/>
+	<property name="com.hp.mw.csf.compile" value="no"/>
+
+	<!-- Set internal property defaults -->
+	<property name="com.hp.mwlabs.ts.product.jar.dest" location="lib"/>
+	<property name="com.hp.mwlabs.ts.product.htdocs.dest" location="htdocs"/>
+	<property name="com.hp.mwlabs.classpathbuilderfilename" location="buildsystem.classpath"/>
+    <property name="com.hp.mwlabs.ts.product.services.jar.dest" location="services"/>
+
+	<!-- Initialisation -->
+	<target name="com.hp.mwlabs.ts.product.init">
+		<!-- Define default build properties -->
+		<tstamp>
+		<format property="com.hp.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
+	  	</tstamp>
+
+		<condition property="JDK_1.4">
+			<equals arg1="${java.specification.version}" arg2="1.4"/>
+		</condition>
+
+	    <fail unless="JDK_1.4">
+	      The ArjunaJTS build currently requires jdk1.4 to build.
+	    </fail>
+		
+		<property name="com.hp.mw.installationdirectory" location="install"/>
+		<property name="com.hp.mw.sourceid" value="unknown"/>
+		<property name="com.hp.mw.version" value="unknown"/>
+
+		<property name="com.hp.mw.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
+		<property name="com.hp.mw.notes" value=""/>
+
+		<echo message="Initialising module ${com.hp.mw.ts.module.name}"/>
+		<echo message="Source ID = ${com.hp.mw.sourceid}"/>
+		<echo message="Version   = ${com.hp.mw.version}"/>
+		<echo message="Builder   = ${com.hp.mw.builder}"/>
+		<echo message="Date      = ${com.hp.mw.date}"/>
+		<echo message="Notes     = ${com.hp.mw.notes}"/>
+
+		<path id="com.arjuna.buildsystem.classpath">
+			<fileset dir="${com.arjuna.buildsystem.build.lib}"/>
+		</path>
+		<property name="com.arjuna.buildsystem.classpath" refid="com.arjuna.buildsystem.classpath"/>
+	
+		<!-- Tests -->
+                <property name="com.hp.mw.ts.arjuna.tests.compile" value="${com.hp.mw.alltests.build}"/>
+                <property name="com.hp.mw.ts.txoj.tests.compile" value="${com.hp.mw.alltests.build}"/>
+                <property name="com.arjuna.mw.ts.tsmx.tests.compile" value="${com.hp.mw.alltests.build}"/>
+
+		<!-- Installation directory -->
+		<property name="com.hp.mwlabs.installationdirectory"
+		    location="${com.hp.mw.installationdirectory}"/>
+
+		<!-- Compile with debugging? -->
+		<condition property="com.hp.mwlabs.debug" value="no">
+			<equals arg1="${com.hp.mw.debug}" arg2="no"/>
+		</condition>
+		<property name="com.hp.mwlabs.debug" value="yes"/>
+
+		<!-- Compile with deprecation? -->
+		<condition property="com.hp.mwlabs.deprecation" value="yes">
+			<equals arg1="${com.hp.mw.deprecation}" arg2="yes"/>
+		</condition>
+		<property name="com.hp.mwlabs.deprecation" value="no"/>
+
+		<!-- Build htdocs for just mw, or mw and mwlabs -->
+		<condition property="com.hp.mwlabs.ts.product.htdocs.list" value="com.arjuna.ats.*,com.arjuna.orbportability.*">
+			<equals arg1="${com.hp.mw.ts.product.htdocs.internal}" arg2="yes"/>
+		</condition>
+		<condition property="com.hp.mwlabs.ts.product.htdocs.exclude" value="">
+			<equals arg1="${com.hp.mw.ts.product.htdocs.internal}" arg2="yes"/>
+		</condition>
+		<condition property="com.hp.mwlabs.ts.product.htdocs.private" value="yes">
+			<equals arg1="${com.hp.mw.ts.product.htdocs.internal}" arg2="yes"/>
+		</condition>
+		<property name="com.hp.mwlabs.ts.product.htdocs.list" value="com.arjuna.ats.arjuna.*,com.arjuna.ats.txoj.*,com.arjuna.orbportability.*,com.arjuna.ats.jts.*,com.arjuna.ats.jta.*,com.arjuna.ats.jtax.*,com.arjuna.ats.jdbc.*,com.arjuna.ats.tsmx.*,com.arjuna.ats.csfx.*"/>
+		<property name="com.hp.mwlabs.ts.product.htdocs.exclude" value="com.arjuna.orbportability.internal.*"/>
+		<property name="com.hp.mwlabs.ts.product.htdocs.private" value="no"/>
+
+		<!-- Define classpath builder task and add this JAR to the classpath -->
+		<taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder"
+			classpathref="com.arjuna.buildsystem.classpath"/>
+
+		<!-- Clear build classpath file and add all JARs within lib/ext/ -->
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" clear="true">
+            <classpath>
+                <fileset dir="${com.arjuna.ext.dir}">
+                    <include name="**.jar"/>
+                    <include name="**.zip"/>
+                </fileset>
+                <fileset dir="${com.arjuna.common.build.lib}" includes="jbossts-common.jar"/>
+            </classpath>
+        </classpath-builder>
+
+	</target>
+
+	<!-- Project targets - must add all module names to each target -->
+	<target name="com.hp.mw.ts.product.build" depends="com.hp.mw.ts.product.compile, com.hp.mw.ts.product.dojar, com.hp.mw.ts.product.htdocs"/>
+
+	<target name="com.hp.mw.ts.product.compile"
+		depends="com.hp.mwlabs.ts.product.init,
+		com.hp.mwlabs.ts.product.arjuna.compile,
+		com.hp.mwlabs.ts.product.txoj.compile,
+		com.hp.mwlabs.ts.product.tsmx.compile"/>
+
+	<target name="com.hp.mw.ts.product.jar"
+		depends="com.hp.mwlabs.ts.product.init,
+		com.hp.mwlabs.ts.product.arjuna.jar,
+		com.hp.mwlabs.ts.product.txoj.jar,
+		com.hp.mwlabs.ts.product.tsmx.jar,
+		com.hp.mw.ts.product.tests.dojar,
+		com.hp.mw.ts.product.dojar"/>
+
+	<target name="com.hp.mw.ts.product.dojar">
+		<taskdef name="module-to-product" classname="com.hp.mw.buildsystem.ant.ModuleToProduct"
+			classpathref="com.arjuna.buildsystem.classpath"/>
+
+		<module-to-product destdir="${com.hp.mwlabs.ts.product.jar.dest}" destfile="${com.hp.mw.ts.module.name.lowercase}">
+			<fileset dir=".">
+				<include name="arjuna/lib/*.jar"/>
+				<include name="txoj/lib/*.jar"/>
+				<include name="tsmx/lib/*.jar"/>
+			</fileset>
+		</module-to-product>
+
+        <mkdir dir="${com.hp.mwlabs.ts.product.services.jar.dest}"/>
+        <module-to-product destdir="${com.hp.mwlabs.ts.product.services.jar.dest}" destfile="${com.hp.mw.ts.module.name.lowercase}-services">
+            <fileset dir=".">
+                <include name="arjuna/lib/services/*.jar"/>
+            </fileset>
+        </module-to-product>
+
+	</target>
+
+	<target name="com.hp.mw.ts.product.tests.dojar">
+		<taskdef name="module-to-product" classname="com.hp.mw.buildsystem.ant.ModuleToProduct"
+			classpathref="com.arjuna.buildsystem.classpath"/>
+
+		<module-to-product destdir="${com.hp.mwlabs.ts.product.jar.dest}" destfile="${com.hp.mw.ts.module.name.lowercase}-tests">
+			<fileset dir=".">
+				<include name="arjuna/lib/tests/*.jar"/>
+				<include name="txoj/lib/tests/*.jar"/>
+				<include name="tsmx/lib/tests/*.jar"/>
+			</fileset>
+		</module-to-product>
+
+	</target>
+
+	<target name="com.hp.mw.ts.product.htdocs"
+		depends="com.hp.mwlabs.ts.product.init"
+        	if="com.hp.mwlabs.ts.build.core">
+		<echo message="Building htdocs "/>
+		<mkdir dir="${com.hp.mwlabs.ts.product.htdocs.dest}"/>
+
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<javadoc
+			sourcepath="${com.hp.mwlabs.ts.product.htdocs.path}"
+			destdir="${com.hp.mwlabs.ts.product.htdocs.dest}"
+			packagenames="${com.hp.mwlabs.ts.product.htdocs.list}"
+			excludepackagenames="${com.hp.mwlabs.ts.product.htdocs.exclude}"
+			private="${com.hp.mwlabs.ts.product.htdocs.private}"
+            		classpath="${build.classpath}"
+		>
+		</javadoc>
+	</target>
+
+    <target name="com.hp.mw.ts.product.install-all"
+            depends="com.hp.mw.ts.product.install,
+            com.hp.mwlabs.ts.product.htdocs.install,
+            com.hp.mwlabs.ts.product.docs.install"/>
+
+    <target name="com.hp.mwlabs.ts.product.htdocs.install" depends="com.hp.mw.ts.product.htdocs" if="com.hp.mwlabs.ts.build.core">
+
+            <echo message="Installing htdocs"/>
+            <mkdir dir="${com.hp.mwlabs.installationdirectory}/htdocs"/>
+            <copy
+                    todir="${com.hp.mwlabs.installationdirectory}/htdocs"
+            >
+                    <fileset dir="htdocs"/>
+            </copy>
+
+    </target>
+
+    <target name="com.hp.mw.ts.product.install"
+        depends="com.hp.mwlabs.ts.product.init,
+            com.hp.mwlabs.ts.product.arjuna.install,
+            com.hp.mwlabs.ts.product.txoj.install,
+            com.hp.mwlabs.ts.product.tsmx.install,
+            com.hp.mw.ts.product.dojar,
+            com.hp.mwlabs.ts.product.scripts.install,
+            com.hp.mwlabs.ts.product.services.install,
+            com.hp.mwlabs.ts.product.libs.install"
+        if="com.hp.mwlabs.ts.build.core">
+
+            <echo message="Installation directory : ${com.hp.mwlabs.installationdirectory}"/>
+            <mkdir dir="${com.hp.mwlabs.installationdirectory}/lib"/>
+            <copy todir="${com.hp.mwlabs.installationdirectory}/lib">
+                <fileset dir="${com.hp.mwlabs.ts.product.jar.dest}" includes="${com.hp.mw.ts.module.name.lowercase}.jar"/>
+            </copy>
+            <copy todir="${com.hp.mwlabs.installationdirectory}" file="copyright.txt"/>
+    </target>
+
+    <target name="com.hp.mwlabs.ts.product.libs.install">
+            <echo message="Installing jar files"/>
+            <mkdir dir="${com.hp.mwlabs.installationdirectory}/lib/ext"/>
+            <copy todir="${com.hp.mwlabs.installationdirectory}/lib/ext">
+                    <fileset dir="${com.arjuna.ext.dir}">
+                            <exclude name="Readme"/>
+                            <exclude name="TestingFramework.jar"/>
+                            <exclude name="classes12.jar"/>
+                            <exclude name="xalan.jar"/>
+                    </fileset>
+            </copy>
+            <copy todir="${com.hp.mwlabs.installationdirectory}/lib/ext">
+                <fileset dir="${com.arjuna.common.build.lib}" includes="jbossts-common.jar"/>
+            </copy>
+    </target>
+
+	<target name="com.hp.mwlabs.ts.product.docs.install" depends="com.hp.mwlabs.ts.product.docs.coreinstall, com.hp.mwlabs.ts.product.docs.noncoreinstall"/>
+
+	<target name="com.hp.mwlabs.ts.product.docs.coreinstall" if="com.hp.mwlabs.ts.build.core">
+		<echo message="Installing ${com.hp.mw.ts.module.name} docs"/>
+		<mkdir dir="${com.hp.mwlabs.installationdirectory}/docs/"/>
+		<copy todir="${com.hp.mwlabs.installationdirectory}/docs">
+			<fileset dir="docs" includes="**/*.pdf"/>
+			<flattenmapper/>
+		</copy>
+	</target>
+
+	<target name="com.hp.mwlabs.ts.product.docs.noncoreinstall" unless="com.hp.mwlabs.ts.build.core">
+		<echo message="Installing ${com.hp.mw.ts.module.name} docs"/>
+		<mkdir dir="${com.hp.mwlabs.installationdirectory}/docs/user_guide/transaction_core"/>
+		<copy todir="${com.hp.mwlabs.installationdirectory}/docs/user_guide/transaction_core">
+			<fileset dir="docs/user_guide" includes="*.pdf" excludes="Administration*"/>
+		</copy>
+	</target>
+
+	<target name="com.hp.mwlabs.ts.product.scripts.install"
+            depends="com.hp.mwlabs.ts.product.scripts.install.withoutorb, com.hp.mwlabs.ts.product.scripts.install.withorb">
+		<echo message="Installing scripts"/>
+
+		<mkdir dir="${com.hp.mwlabs.installationdirectory}/bin"/>
+
+		<copy todir="${com.hp.mwlabs.installationdirectory}/bin" filtering="true" overwrite="true" >
+			<fileset dir="scripts">
+				<include name="start-recovery-manager.bat"/>
+				<include name="start-recovery-manager.sh"/>
+				<include name="run-tools.bat"/>
+				<include name="run-tools.sh"/>
+			</fileset>
+            <filterset>
+                <filter token="PRODUCT_NAME" value="${com.hp.mw.ts.product.name.lowercase}"/>
+                <filter token="HOME_DIRECTORY" value="${com.hp.mw.ts.product.shortened.name.uppercase}_HOME"/>
+            </filterset>
+		</copy>
+
+	</target>
+
+    <target name="com.hp.mwlabs.ts.product.scripts.install.withoutorb"
+            unless="com.hp.mwlabs.ts.build.jts">
+        <echo message="Installing without-orb scripts"/>
+
+        <mkdir dir="${com.hp.mwlabs.installationdirectory}/bin"/>
+
+        <copy tofile="${com.hp.mwlabs.installationdirectory}/bin/setup-env.bat" filtering="on" overwrite="true">
+            <filterset>
+                <filter token="PRODUCT_NAME" value="${com.hp.mw.ts.product.name.lowercase}"/>
+                <filter token="HOME_DIRECTORY" value="${com.hp.mw.ts.product.shortened.name.uppercase}_HOME"/>
+            </filterset>
+            <fileset dir="scripts">
+                <include name="withoutorb-setup-env.bat"/>
+            </fileset>
+        </copy>
+
+        <copy tofile="${com.hp.mwlabs.installationdirectory}/bin/setup-env.sh" filtering="on" overwrite="true">
+            <filterset>
+                <filter token="PRODUCT_NAME" value="${com.hp.mw.ts.product.name.lowercase}"/>
+                <filter token="HOME_DIRECTORY" value="${com.hp.mw.ts.product.shortened.name.uppercase}_HOME"/>
+            </filterset>
+            <fileset dir="scripts">
+                <include name="withoutorb-setup-env.sh"/>
+            </fileset>
+        </copy>
+
+    </target>
+
+    <target name="com.hp.mwlabs.ts.product.scripts.install.withorb"
+            if="com.hp.mwlabs.ts.build.jts">
+        <echo message="Installing with-orb scripts"/>
+
+        <mkdir dir="${com.hp.mwlabs.installationdirectory}/bin"/>
+
+        <copy tofile="${com.hp.mwlabs.installationdirectory}/bin/setup-env.bat" filtering="on" overwrite="true">
+            <filterset>
+                <filter token="PRODUCT_NAME" value="${com.hp.mw.ts.product.name.lowercase}"/>
+                <filter token="HOME_DIRECTORY" value="${com.hp.mw.ts.product.shortened.name.uppercase}_HOME"/>
+            </filterset>
+            <fileset dir="scripts">
+                <include name="withorb-setup-env.bat"/>
+            </fileset>
+        </copy>
+
+        <copy tofile="${com.hp.mwlabs.installationdirectory}/bin/setup-env.sh" filtering="on" overwrite="true">
+            <filterset>
+                <filter token="PRODUCT_NAME" value="${com.hp.mw.ts.product.name.lowercase}"/>
+                <filter token="HOME_DIRECTORY" value="${com.hp.mw.ts.product.shortened.name.uppercase}_HOME"/>
+            </filterset>
+            <fileset dir="scripts">
+                <include name="withorb-setup-env.sh"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${com.hp.mwlabs.installationdirectory}/bin/" filtering="on" overwrite="true">
+            <filterset>
+                <filter token="PRODUCT_NAME" value="${com.hp.mw.ts.product.name.lowercase}"/>
+                <filter token="HOME_DIRECTORY" value="${com.hp.mw.ts.product.shortened.name.uppercase}_HOME"/>
+            </filterset>
+            <fileset dir="scripts">
+                <include name="start-transaction-service.bat"/>
+                <include name="start-transaction-service.sh"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="com.hp.mwlabs.ts.product.services.install"
+            unless="com.hp.mwlabs.ts.build.jts">
+
+        <echo>Installing services</echo>
+
+        <mkdir dir="${com.hp.mwlabs.installationdirectory}/services/lib"/>
+
+        <copy
+                todir="${com.hp.mwlabs.installationdirectory}/services/lib"
+        >
+                <fileset dir="${com.hp.mwlabs.ts.product.services.jar.dest}"
+                    includes="*.jar"/>
+                <globmapper from="${com.hp.mw.ts.module.name.lowercase}*"
+                            to="${com.hp.mw.ts.product.name.lowercase}*"/>
+        </copy>
+
+	<mkdir dir="${com.hp.mwlabs.installationdirectory}/services/logs/"/>
+    </target>
+
+	<target name="com.hp.mw.ts.product.clean"
+		depends="com.hp.mwlabs.ts.product.arjuna.clean,
+		com.hp.mwlabs.ts.product.txoj.clean,
+		com.hp.mwlabs.ts.product.tsmx.clean">
+
+		<delete dir="${com.hp.mwlabs.ts.product.jar.dest}" quiet="true"/>
+		<delete dir="${com.hp.mwlabs.ts.product.htdocs.dest}" quiet="true"/>
+		<delete dir="${com.hp.mwlabs.ts.product.services.jar.dest}" quiet="true"/>
+
+	</target>
+
+
+	<!-- Module targets -->
+	<target name="com.hp.mwlabs.ts.product.arjuna.compile">
+		<ant dir="arjuna" />
+	</target>
+
+	<target name="com.hp.mwlabs.ts.product.txoj.compile">
+		<ant dir="txoj" />
+	</target>
+
+	<target name="com.hp.mwlabs.ts.product.tsmx.compile">
+		<ant dir="tsmx" />
+	</target>
+
+	<target name="com.hp.mwlabs.ts.product.arjuna.jar">
+		<ant dir="arjuna" target="com.hp.mw.ts.arjuna.jar" />
+	</target>
+
+	<target name="com.hp.mwlabs.ts.product.txoj.jar">
+		<ant dir="txoj" target="com.hp.mw.ts.txoj.jar" />
+	</target>
+
+	<target name="com.hp.mwlabs.ts.product.tsmx.jar">
+		<ant dir="tsmx" target="com.arjuna.mw.ts.tsmx.jar" />
+	</target>
+
+	<target name="com.hp.mwlabs.ts.product.arjuna.install">
+		<ant dir="arjuna" target="com.hp.mw.ts.arjuna.install" />
+	</target>
+
+	<target name="com.hp.mwlabs.ts.product.txoj.install">
+		<ant dir="txoj" target="com.hp.mw.ts.txoj.install"/>
+	</target>
+
+	<target name="com.hp.mwlabs.ts.product.tsmx.install">
+		<ant dir="tsmx" target="com.arjuna.mw.ts.tsmx.install"/>
+	</target>
+
+	<target name="com.hp.mwlabs.ts.product.arjuna.clean">
+		<ant dir="arjuna" target="com.hp.mw.ts.arjuna.clean" />
+	</target>
+
+	<target name="com.hp.mwlabs.ts.product.txoj.clean">
+		<ant dir="txoj" target="com.hp.mw.ts.txoj.clean" />
+	</target>
+
+	<target name="com.hp.mwlabs.ts.product.tsmx.clean">
+		<ant dir="tsmx" target="com.arjuna.mw.ts.tsmx.clean" />
+	</target>
+
+	<!-- Short target names -->
+	<target name="build" depends="com.hp.mw.ts.product.build">
+
+	</target>
+
+	<target name="clean" depends="com.hp.mw.ts.product.clean">
+
+	</target>
+
+	<target name="jar" depends="com.hp.mw.ts.product.jar">
+
+	</target>
+
+	<target name="htdocs" depends="com.hp.mw.ts.product.htdocs">
+
+	</target>
+
+	<target name="install" depends="com.hp.mw.ts.product.install">
+
+	</target>
+
+    <target name="install-all" depends="com.hp.mw.ts.product.install-all">
+
+    </target>
+
+</project>

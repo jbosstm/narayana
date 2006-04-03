@@ -1,0 +1,520 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and others contributors as indicated 
+  by the @authors tag. All rights reserved. 
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors. 
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<!--$Id: build.xml 2342 2006-03-30 13:06:17Z  $-->
+
+<project name="module-jdbc" default="com.hp.mw.ts.jdbc.build" basedir=".">
+
+	<!-- class path behaviour -->
+	<property name="build.sysclasspath" value="last"/>
+	<property name="com.hp.mwlabs.classpathbuilderfilename" location="buildsystem.classpath"/>
+
+	<!-- Set module name -->
+	<property name="com.hp.mwlabs.ts.modulename" value="jdbc"/>
+
+	<!-- Set default properties filename -->
+	<property name="com.hp.mw.ts.properties" value="module-jdbc.properties"/>
+
+	<!-- Load Build Properties File -->
+	<property file="${com.hp.mw.ts.properties}"/>
+
+	<!-- Set external property defaults -->
+	<property name="com.hp.mw.ts.jdbc.cloudscape36.compile" value="no"/>
+	<property name="com.hp.mw.ts.jdbc.sequelink51.compile" value="no"/>
+	<property name="com.hp.mw.ts.jdbc.oracle81.compile" value="no"/>
+	<property name="com.hp.mw.ts.jdbc.oracle90.compile" value="yes"/>
+	<property name="com.hp.mw.ts.jdbc.tests.compile" value="yes"/>
+	<property name="com.hp.mw.ts.jdbc.tests.install" value="no"/>
+
+	<!-- Set internal property defaults -->
+		<!-- Path names -->
+	<property name="com.hp.mwlabs.ts.jdbc.src" location="classes"/>
+	<property name="com.hp.mwlabs.ts.jdbc.etc" location="etc"/>
+	<property name="com.hp.mwlabs.ts.jdbc.buildroot"
+		location="build"/>
+	<property name="com.hp.mwlabs.ts.jdbc.builddir" location="${com.hp.mwlabs.ts.jdbc.buildroot}/classes/"/>
+	<property name="com.hp.mwlabs.ts.jdbc.dest" location="${com.hp.mwlabs.ts.jdbc.buildroot}/classes"/>
+	<property name="com.hp.mwlabs.ts.jdbc.tests.src" location="tests"/>
+	<property name="com.hp.mwlabs.ts.jdbc.tests.dest" location="${com.hp.mwlabs.ts.jdbc.buildroot}/tests"/>
+	<property name="com.hp.mwlabs.ts.jdbc.jar.dest" location="lib"/>
+	<property name="com.hp.mwlabs.ts.jdbc.tests.destdir" location="${com.hp.mwlabs.ts.jdbc.jar.dest}/tests/"/>
+		<!-- Relative path for files to exclude in main compile -->
+	<property name="com.hp.mwlabs.ts.jdbc.compile.excludes" value="**/oracle_8*.java, **/oracle_9*.java, **/sequelink*.java, **/cloudscape*.java"/>
+		<!-- Files that need word substitutions -->
+	<property name="com.hp.mwlabs.ts.jdbc.properties.src" location="${com.hp.mwlabs.ts.jdbc.src}/com/arjuna/ats/jdbc/common/Configuration.javatmpl"/>
+	<property name="com.hp.mwlabs.ts.jdbc.properties.dest"
+	location="${com.hp.mwlabs.ts.jdbc.src}/com/arjuna/ats/jdbc/common/Configuration.java"/>
+	<property name="com.hp.mwlabs.ts.jdbc.info.src" location="${com.hp.mwlabs.ts.jdbc.src}/com/arjuna/ats/jdbc/Info.javatmpl"/>
+	<property name="com.hp.mwlabs.ts.jdbc.info.dest"
+		location="${com.hp.mwlabs.ts.jdbc.src}/com/arjuna/ats/jdbc/Info.java"/>
+        <property name="com.hp.mwlabs.ts.jdbc.resourcebundle"
+	value="jdbc_msg_en_US.properties"/>
+
+    <property name="com.hp.mwlabs.ts.jdbc.propertyfile.src" value="${com.hp.mwlabs.ts.modulename}-properties.xml"/>
+
+	<property name="com.hp.mwlabs.ts.jdbc.mappingfile" value="${com.hp.mwlabs.ts.modulename}-properties.mappings"/>
+
+	<!-- Initialisation -->
+	<target name="com.hp.mwlabs.ts.jdbc.init" depends="com.hp.mwlabs.ts.jdbc.setpropertyfiles">
+		<!-- Define default build properties -->
+		<property name="com.hp.mw.sourceid" value="unknown"/>
+		<property name="com.hp.mw.version" value="unknown"/>
+		<property name="com.hp.mw.installationdirectory" value="install"/>
+		<property name="com.hp.mw.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
+		<property name="com.hp.mw.notes" value=""/>
+
+		<tstamp>
+	    	<format property="com.hp.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
+	  	</tstamp>
+
+		<!-- Define classpath builder task -->
+		<taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpath="${com.arjuna.buildsystem.classpath}"/>
+
+		<echo message="Initialising module jdbc"/>
+		<echo message="Source ID = ${com.hp.mw.sourceid}"/>
+		<echo message="Version   = ${com.hp.mw.version}"/>
+		<echo message="Builder   = ${com.hp.mw.builder}"/>
+		<echo message="Date      = ${com.hp.mw.date}"/>
+		<echo message="Notes     = ${com.hp.mw.notes}"/>
+
+		<!-- Installation directory -->
+		<property name="com.hp.mwlabs.installationdirectory"
+		    location="${com.hp.mw.installationdirectory}"/>
+
+		<!-- Compile with debugging? -->
+		<condition property="com.hp.mwlabs.debug" value="no">
+			<equals arg1="${com.hp.mw.debug}" arg2="no"/>
+		</condition>
+		<property name="com.hp.mwlabs.debug" value="yes"/>
+
+		<!-- Compile with deprecation? -->
+		<condition property="com.hp.mwlabs.deprecation" value="yes">
+			<equals arg1="${com.hp.mw.deprecation}" arg2="yes"/>
+		</condition>
+		<property name="com.hp.mwlabs.deprecation" value="no"/>
+
+		<!-- Check which bits to compile and/or install -->
+		<condition property="com.hp.mwlabs.ts.jdbc.cloudscape36.compile">
+			<equals arg1="${com.hp.mw.ts.jdbc.cloudscape36.compile}" arg2="yes"/>
+		</condition>
+
+		<condition property="com.hp.mwlabs.ts.jdbc.sequelink51.compile">
+			<equals arg1="${com.hp.mw.ts.jdbc.sequelink51.compile}" arg2="yes"/>
+		</condition>
+
+		<condition property="com.hp.mwlabs.ts.jdbc.oracle81.compile">
+			<equals arg1="${com.hp.mw.ts.jdbc.oracle81.compile}" arg2="yes"/>
+		</condition>
+
+		<condition property="com.hp.mwlabs.ts.jdbc.oracle90.compile">
+			<equals arg1="${com.hp.mw.ts.jdbc.oracle90.compile}" arg2="yes"/>
+		</condition>
+
+		<condition property="com.hp.mwlabs.ts.jdbc.tests.compile">
+			<equals arg1="${com.hp.mw.ts.jdbc.tests.compile}" arg2="yes"/>
+		</condition>
+
+		<condition property="com.hp.mwlabs.ts.jdbc.tests.install">
+			<equals arg1="${com.hp.mw.ts.jdbc.tests.install}" arg2="yes"/>
+		</condition>
+
+		<!--Set the properties we need to preprocess files.-->
+
+		<condition property="com.hp.mwlabs.ts.jdbc.sequelink51.ifdef" value=" ">
+			<equals arg1="${com.hp.mw.ts.jdbc.sequelink51.compile}" arg2="yes"/>
+		</condition>
+		<property name="com.hp.mwlabs.ts.jdbc.sequelink51.ifdef" value="/*"/>
+
+		<condition property="com.hp.mwlabs.ts.jdbc.sequelink51.endif" value=" ">
+			<equals arg1="${com.hp.mw.ts.jdbc.sequelink51.compile}" arg2="yes"/>
+		</condition>
+		<property name="com.hp.mwlabs.ts.jdbc.sequelink51.endif" value="*/"/>
+
+		<condition property="com.hp.mwlabs.ts.jdbc.oracle81.ifdef" value=" ">
+			<equals arg1="${com.hp.mw.ts.jdbc.oracle81.compile}" arg2="yes"/>
+		</condition>
+		<property name="com.hp.mwlabs.ts.jdbc.oracle81.ifdef" value="/*"/>
+
+		<condition property="com.hp.mwlabs.ts.jdbc.oracle81.endif" value=" ">
+			<equals arg1="${com.hp.mw.ts.jdbc.oracle81.compile}" arg2="yes"/>
+		</condition>
+		<property name="com.hp.mwlabs.ts.jdbc.oracle81.endif"
+		value="*/"/>
+
+		<condition property="com.hp.mwlabs.ts.jdbc.oracle90.ifdef" value=" ">
+			<equals arg1="${com.hp.mw.ts.jdbc.oracle90.compile}" arg2="yes"/>
+		</condition>
+		<property name="com.hp.mwlabs.ts.jdbc.oracle90.ifdef" value="/*"/>
+
+		<condition property="com.hp.mwlabs.ts.jdbc.oracle90.endif" value=" ">
+			<equals arg1="${com.hp.mw.ts.jdbc.oracle90.compile}" arg2="yes"/>
+		</condition>
+		<property name="com.hp.mwlabs.ts.jdbc.oracle90.endif" value="*/"/>
+
+		<condition property="com.hp.mwlabs.ts.jdbc.cloudscape36.ifdef" value=" ">
+			<equals arg1="${com.hp.mw.ts.jdbc.cloudscape36.compile}" arg2="yes"/>
+		</condition>
+		<property name="com.hp.mwlabs.ts.jdbc.cloudscape36.ifdef" value="/*"/>
+
+		<condition property="com.hp.mwlabs.ts.jdbc.cloudscape36.endif" value=" ">
+			<equals arg1="${com.hp.mw.ts.jdbc.cloudscape36.compile}" arg2="yes"/>
+		</condition>
+		<property name="com.hp.mwlabs.ts.jdbc.cloudscape36.endif" value="*/"/>
+
+		<!-- Process the info class -->
+		<copy
+			file="${com.hp.mwlabs.ts.jdbc.info.src}"
+			tofile="${com.hp.mwlabs.ts.jdbc.info.dest}"
+			overwrite="yes"
+		>
+			<filterset>
+				<filter token="IFDEF_BUILD_SEQUELINK_5_1" value="${com.hp.mwlabs.ts.jdbc.sequelink51.ifdef}"/>
+				<filter
+				token="ENDIF_BUILD_SEQUELINK_5_1"
+				value="${com.hp.mwlabs.ts.jdbc.sequelink51.endif}"/>
+				<filter token="IFDEF_BUILD_CLOUDSCAPE_3_6" value="${com.hp.mwlabs.ts.jdbc.cloudscape36.ifdef}"/>
+				<filter
+				token="ENDIF_BUILD_CLOUDSCAPE_3_6"
+				value="${com.hp.mwlabs.ts.jdbc.cloudscape36.endif}"/>
+				<filter token="IFDEF_BUILD_ORACLE_8_1_6" value="${com.hp.mwlabs.ts.jdbc.oracle81.ifdef}"/>
+				<filter
+				token="ENDIF_BUILD_ORACLE_8_1_6"
+				value="${com.hp.mwlabs.ts.jdbc.oracle81.endif}"/>
+				<filter token="IFDEF_BUILD_ORACLE_9_0" value="${com.hp.mwlabs.ts.jdbc.oracle90.ifdef}"/>
+				<filter token="ENDIF_BUILD_ORACLE_9_0" value="${com.hp.mwlabs.ts.jdbc.oracle90.endif}"/>
+				<filter token="MODULE" value="${com.hp.mwlabs.ts.modulename}"/>
+				<filter token="SOURCEID" value="${com.hp.mw.sourceid}"/>
+				<filter token="BUILDINFO" value="${com.hp.mw.builder}"/>
+				<filter token="VERSION" value="${com.hp.mw.version}"/>
+				<filter token="DATE" value="${com.hp.mw.date}"/>
+				<filter token="NOTES" value="${com.hp.mw.notes}"/>
+			</filterset>
+		</copy>
+
+		<!-- Set the module property file details -->
+
+		<property name="com.hp.mwlabs.ts.jdbc.propertyfile" value="${com.hp.mwlabs.ts.modulename}-properties.xml"/>
+
+		<property name="com.hp.mw.propertydirectory" location="${com.hp.mwlabs.installationdirectory}/etc"/>
+
+		<echo message="Property file name : ${com.hp.mwlabs.ts.jdbc.propertyfile}"/>
+		<echo message="Property directory : ${com.hp.mw.propertydirectory}"/>
+
+		<!-- Process the class that uses the property file -->
+		<copy
+			file="${com.hp.mwlabs.ts.jdbc.properties.src}"
+			tofile="${com.hp.mwlabs.ts.jdbc.properties.dest}"
+			overwrite="yes"
+		>
+			<filterset>
+				<filter token="JDBC_VERSION" value="${com.hp.mw.version}"/>
+				<filter token="PROPERTIES_FILE" value="${com.hp.mwlabs.ts.jdbc.propertyfile}"/>
+			</filterset>
+		</copy>
+
+		<!-- Make the destination directory -->
+		<mkdir dir="${com.hp.mwlabs.ts.jdbc.dest}"/>
+
+	</target>
+
+    <!-- If this build is part of a product build set the property files to the product property file -->
+    <target name="com.hp.mwlabs.ts.jdbc.setpropertyfiles" if="com.hp.mw.ts.product.name">
+
+        <echo>Overriding propertyfile settings with product propertyfile settings</echo>
+        <property name="com.hp.mwlabs.ts.jdbc.propertyfile" value="${com.hp.mw.ts.product.propertyfile}"/>
+
+    </target>
+
+    <!-- Default build target -->
+    <target name="com.hp.mw.ts.jdbc.build" depends="com.hp.mwlabs.jdbc.generateresourcebundle,com.hp.mw.ts.jdbc.jar, com.hp.mwlabs.ts.jdbc.tests.jar"/>
+
+	<!-- Compilation targets -->
+	<target name="com.hp.mw.ts.jdbc.compile" depends="com.hp.mwlabs.ts.jdbc.drivers.compile,com.hp.mwlabs.ts.jdbc.compile,com.hp.mwlabs.jdbc.generateresourcebundle">
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jdbc.compile" depends="com.hp.mwlabs.ts.jdbc.init">
+
+		<echo message="Compiling module"/>
+
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<javac
+			srcdir="${com.hp.mwlabs.ts.jdbc.src}"
+			destdir="${com.hp.mwlabs.ts.jdbc.dest}"
+			excludes="${com.hp.mwlabs.ts.jdbc.compile.excludes}"
+			debug="${com.hp.mwlabs.debug}"
+			deprecation="${com.hp.mwlabs.deprecation}"
+		>
+			<classpath>
+				<path path="${build.classpath}"/>
+				<path path="${com.hp.mwlabs.ts.jdbc.src}"/>
+			</classpath>
+		</javac>
+
+	</target>
+
+	<!-- Non-specific objectstore files -->
+	<target name="com.hp.mwlabs.ts.jdbc.drivers.compile" depends="com.hp.mwlabs.ts.jdbc.cloudscape36.compile, com.hp.mwlabs.ts.jdbc.sequelink51.compile, com.hp.mwlabs.ts.jdbc.oracle81.compile, com.hp.mwlabs.ts.jdbc.oracle90.compile">
+
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<javac
+			srcdir="${com.hp.mwlabs.ts.jdbc.src}"
+			destdir="${com.hp.mwlabs.ts.jdbc.dest}"
+			classpath="${com.hp.mwlabs.ts.jdbc.src}"
+			debug="${com.hp.mwlabs.debug}"
+			deprecation="${com.hp.mwlabs.deprecation}"
+		>
+			<exclude name="**"/>
+			<include name="**/drivers/modifiers/jndi.java"/>
+			<include name="**/drivers/modifiers/modifiers.java"/>
+			<include name="**/drivers/jndi.java"/>
+			<include name="**/drivers/modifiers/list.java"/>
+			<classpath>
+				<path path="${build.classpath}"/>
+				<path path="${com.hp.mwlabs.ts.jdbc.src}"/>
+			</classpath>
+		</javac>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jdbc.cloudscape36.compile" depends="com.hp.mwlabs.ts.jdbc.init" if="com.hp.mwlabs.ts.jdbc.cloudscape36.compile">
+
+		<echo message="Compiling cloudscape 3.6 driver support"/>
+
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<javac
+			srcdir="${com.hp.mwlabs.ts.jdbc.src}"
+			destdir="${com.hp.mwlabs.ts.jdbc.dest}"
+			debug="${com.hp.mwlabs.debug}"
+			deprecation="${com.hp.mwlabs.deprecation}"
+		>
+			<include name="**/drivers/cloudscape_3_6.java"/>
+			<include name="**/drivers/modifiers/cloudscape_3_6_accessor.java"/>
+			<classpath>
+				<path path="${build.classpath}"/>
+				<path path="${com.hp.mwlabs.ts.jdbc.src}"/>
+			</classpath>
+		</javac>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jdbc.sequelink51.compile" depends="com.hp.mwlabs.ts.jdbc.init" if="com.hp.mwlabs.ts.jdbc.sequelink51.compile">
+
+		<echo message="Compiling sequelink 5.1 driver support"/>
+
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<javac
+			srcdir="${com.hp.mwlabs.ts.jdbc.src}"
+			destdir="${com.hp.mwlabs.ts.jdbc.dest}"
+			debug="${com.hp.mwlabs.debug}"
+			deprecation="${com.hp.mwlabs.deprecation}"
+		>
+			<include name="**/drivers/sequelink_5_1.java"/>
+			<include name="**/drivers/modifiers/sequelink_5_1_accessor.java"/>
+			<classpath>
+				<path path="${build.classpath}"/>
+				<path path="${com.hp.mwlabs.ts.jdbc.src}"/>
+			</classpath>
+		</javac>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jdbc.oracle81.compile" depends="com.hp.mwlabs.ts.jdbc.init" if="com.hp.mwlabs.ts.jdbc.oracle81.compile">
+
+		<echo message="Compiling oracle 8.1 driver support"/>
+
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<javac
+			srcdir="${com.hp.mwlabs.ts.jdbc.src}"
+			destdir="${com.hp.mwlabs.ts.jdbc.dest}"
+			debug="${com.hp.mwlabs.debug}"
+			deprecation="${com.hp.mwlabs.deprecation}"
+		>
+			<include name="**/drivers/oracle_8_1_6.java"/>
+			<include name="**/drivers/modifiers/oracle_8_1_accessor.java"/>
+			<classpath>
+				<path path="${build.classpath}"/>
+				<path path="${com.hp.mwlabs.ts.jdbc.src}"/>
+			</classpath>
+		</javac>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jdbc.oracle90.compile" depends="com.hp.mwlabs.ts.jdbc.init" if="com.hp.mwlabs.ts.jdbc.oracle90.compile">
+
+		<echo message="Compiling oracle 9.0 driver support"/>
+
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<javac
+			srcdir="${com.hp.mwlabs.ts.jdbc.src}"
+			destdir="${com.hp.mwlabs.ts.jdbc.dest}"
+			debug="${com.hp.mwlabs.debug}"
+			deprecation="${com.hp.mwlabs.deprecation}"
+		>
+			<include name="**/drivers/oracle_9_0.java"/>
+			<include name="**/drivers/modifiers/oracle_9_0_accessor.java"/>
+			<classpath>
+				<path path="${build.classpath}"/>
+				<path path="${com.hp.mwlabs.ts.jdbc.src}"/>
+			</classpath>
+		</javac>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jdbc.tests.jar" depends="com.hp.mwlabs.ts.jdbc.tests.compile" if="com.hp.mwlabs.ts.jdbc.tests.compile">
+
+		<mkdir dir="${com.hp.mwlabs.ts.jdbc.tests.destdir}"/>
+		<jar	basedir="${com.hp.mwlabs.ts.jdbc.tests.dest}"
+			jarfile="${com.hp.mwlabs.ts.jdbc.tests.destdir}/${com.hp.mwlabs.ts.modulename}_tests.jar"/>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jdbc.tests.compile" depends="com.hp.mw.ts.jdbc.jar" if="com.hp.mwlabs.ts.jdbc.tests.compile">
+
+		<echo message="Compiling tests"/>
+
+		<mkdir dir="${com.hp.mwlabs.ts.jdbc.tests.dest}"/>
+
+                <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<javac
+			srcdir="${com.hp.mwlabs.ts.jdbc.tests.src}"
+			destdir="${com.hp.mwlabs.ts.jdbc.tests.dest}"
+			debug="${com.hp.mwlabs.debug}"
+			deprecation="${com.hp.mwlabs.deprecation}"
+		>
+                    <classpath>
+                        <path path="${build.classpath}"/>
+                        <path path="${com.hp.mwlabs.ts.jdbc.dest}"/>
+                    </classpath>
+		</javac>
+
+	</target>
+
+	<!-- Jar targets -->
+	<target name="com.hp.mw.ts.jdbc.jar" depends="com.hp.mw.ts.jdbc.compile">
+
+		<echo message="Building jar file"/>
+		<mkdir dir="${com.hp.mwlabs.ts.jdbc.jar.dest}"/>
+
+        <copy file="etc/${com.hp.mwlabs.ts.jdbc.mappingfile}"
+                tofile="${com.hp.mwlabs.ts.jdbc.dest}/${com.hp.mwlabs.ts.jdbc.mappingfile}"/>
+
+		<jar
+			jarfile="${com.hp.mwlabs.ts.jdbc.jar.dest}/${com.hp.mwlabs.ts.modulename}.jar"
+			basedir="${com.hp.mwlabs.ts.jdbc.dest}"
+		/>
+
+        <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}">
+            <classpath>
+                <pathelement location="${com.hp.mwlabs.ts.jdbc.jar.dest}/${com.hp.mwlabs.ts.modulename}.jar"/>
+            </classpath>
+        </classpath-builder>
+
+	</target>
+
+	<!-- Installation targets -->
+    <target name="com.hp.mw.ts.jdbc.install" depends="com.hp.mw.ts.jdbc.build, com.hp.mwlabs.ts.jdbc.tests.install">
+
+            <echo message="Installing module jdbc"/>
+            <echo message="Installation directory ${com.hp.mwlabs.installationdirectory}"/>
+            <mkdir dir="${com.hp.mw.propertydirectory}"/>
+
+            <taskdef name="merge-property-files"
+                     classname="com.hp.mw.buildsystem.ant.MergePropertyFiles"
+                     classpath="${com.arjuna.buildsystem.classpath}"/>
+
+            <echo>Merging propertyfiles into main product property file</echo>
+
+            <merge-property-files master="${com.hp.mw.propertydirectory}/${com.hp.mwlabs.ts.jdbc.propertyfile}"
+                                      merge="${com.hp.mwlabs.ts.jdbc.etc}/default-${com.hp.mwlabs.ts.jdbc.propertyfile.src}"/>
+
+    </target>
+
+	<target name="com.hp.mwlabs.ts.jdbc.tests.install" depends="com.hp.mwlabs.ts.jdbc.tests.compile" if="com.hp.mwlabs.ts.jdbc.tests.install">
+
+		<echo message="Installing tests"/>
+
+	</target>
+
+	<!-- Clean targets -->
+	<target name="com.hp.mw.ts.jdbc.clean" depends="com.hp.mwlabs.ts.jdbc.tests.clean">
+
+		<echo message="Cleaning module"/>
+		<delete dir="${com.hp.mwlabs.ts.jdbc.destroot}"/>
+		<delete dir="${com.hp.mwlabs.ts.jdbc.jar.dest}"/>
+		<delete dir="${com.hp.mwlabs.ts.jdbc.tests.dest}"/>
+		<delete file="${com.hp.mwlabs.ts.jdbc.info.dest}"/>
+		<delete file="${com.hp.mwlabs.ts.jdbc.properties.dest}"/>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jdbc.tests.clean">
+
+		<echo message="Cleaning tests"/>
+
+	</target>
+
+	<!-- Short target names -->
+
+	<target name="jar" depends="com.hp.mw.ts.jdbc.jar">
+
+	</target>
+
+	<target name="install" depends="com.hp.mw.ts.jdbc.install">
+
+	</target>
+
+	<target name="clean" depends="com.hp.mw.ts.jdbc.clean">
+
+	</target>
+
+        <target name="com.hp.mwlabs.jdbc.generateresourcebundle">
+
+            <echo message="Generating JDBC Resource Bundle"/>
+
+            <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+            <javadoc    sourcepath="${com.hp.mwlabs.ts.jdbc.src}"
+                        packagenames="com.arjuna.*"
+                        failonerror="yes"
+                        private="yes"
+                        defaultexcludes="yes"
+                        classpath="${build.classpath}">
+
+                 <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
+                    <path>
+                        <pathelement path="${com.arjuna.buildsystem.classpath}"/>
+                    </path>
+                    <param name="-basedir" value="${com.hp.mwlabs.ts.jdbc.builddir}"/>
+                    <param name="-resourcebundle" value="${com.hp.mwlabs.ts.jdbc.resourcebundle}"/>
+                    <param name="-appendkey" value="[]"/>
+                 </doclet>
+            </javadoc>
+
+        </target>
+
+</project>

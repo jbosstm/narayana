@@ -1,0 +1,23 @@
+
+Attempting to terminate out of sequence 'current'. Should fail!
+Abort of action id -7f0f2f9a:80c983e:36cee4c3:0 invoked while child actions active
+	Aborting child: -7f0f2f9a:80c983e:36cee4c3:2
+
+Commit failed! org.omg.CORBA.TRANSACTION_ROLLEDBACK: 
+
+Now attempting to terminate 'current' hierarchy. Should fail!
+Nested commit failed! org.omg.CORBA.INVALID_TRANSACTION: 
+Top-level commit failed! org.omg.CORBA.INVALID_TRANSACTION: 
+
+Now creating new top-level action.
+
+Attempting to terminate out of sequence 'factory' action. Should fail!
+Commit of action id -7f0f2f9a:80c983e:36cee4c3:4 invoked while child actions active
+	Aborting child: -7f0f2f9a:80c983e:36cee4c3:5
+	Now aborting self: -7f0f2f9a:80c983e:36cee4c3:4
+
+Commit failed! org.omg.CORBA.TRANSACTION_ROLLEDBACK: 
+
+Now attempting to terminate 'factory' nested action. Should fail!
+Commit failed! org.omg.CORBA.INVALID_TRANSACTION: 
+Test completed successfully.

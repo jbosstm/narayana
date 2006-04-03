@@ -1,0 +1,407 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and others contributors as indicated 
+  by the @authors tag. All rights reserved. 
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors. 
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en-gb] (WinNT; I) [Netscape]">
+   <title>Internationalization</title>
+</head>
+<body>
+
+<h1>
+<b>Internationalization</b></h1>
+An application is internationalized, if it can correctly handle different
+encodings of character data. An application is localized, if it formats
+and interprets data (dates, times, timezones, currencies, messages and
+so on) according to rules specific to the user's locale (country and language).
+<p><i>Internationalization</i> (I18N) is the process of designing an application
+so that it can be adapted to various languages and regions without engineering
+changes. <i>Localization</i> (L10N) is the use of locale-specific language
+and constructs at run time.
+<h3>
+The Java Internationalization API</h3>
+Java Internationalization shows how to write software that is multi-lingual,
+using Unicode, a standard system that supports hundreds of character sets.
+<br>The Java Internationalization API is a comprehensive set of APIs for
+creating multilingual applications. The JDK internationalization features,
+from its version 1.1, include:
+<ul>
+<li>
+Classes for storing and loading language-specific objects.</li>
+
+<li>
+Services for formatting messages, date, times, and numbers.</li>
+
+<li>
+Services for comparing and collating text.</li>
+
+<li>
+Support for finding character, word, and sentence boundaries.</li>
+
+<li>
+Support for display, input, and output of Unicode characters.</li>
+</ul>
+
+<h4>
+Java Interfaces for Internationalization</h4>
+Users of the Java internationalization interfaces should be familiar with
+the following interfaces included in the Java Developer's Kit (JDK):
+<ul>
+<li>
+java.util.Locale - Represents a specific geographical, political, or cultural
+region.</li>
+
+<li>
+java.util.ResourceBundle - Containers for locale-specific objects</li>
+
+<li>
+java.text.MessageFormat - A means to produce concatenated messages in a
+language-neutral way.</li>
+</ul>
+
+<h4>
+Set the Locale</h4>
+The concept of a Locale object, which identifies a specific cultural region,
+includes information about the country or region. If a class varies its
+behavior according to Locale, it is said to be locale-sensitive. For example,
+the NumberFormat class is locale-sensitive; the format of the number it
+returns depends on the Locale. Thus NumberFormat may return a number as
+902 300 (France), or 902.300 (Germany), or 902,300 (United States). Locale
+objects are only identifiers.
+<p>Most operating systems allow to indicate their locale or to modify it.
+For instance Windows NT does this through the control panel, under the
+Regional Option&nbsp; icon. In Java, you can get the Locale object that
+matches the user's control-panel setting using
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; myLocale
+= Locale.getDefault()</font></font>;
+<p>You can also create Locale objects for specific places by indicating
+the language and country you want, such as
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; myLocale
+= new Locale("fr", "CA")</font></font>;
+<br>for "Canadian French."
+<p>The next example creates Locale objects for the English language in
+the United States and Great Britain:
+<blockquote><font face="Courier New,Courier"><font size=-1>bLocale = new
+Locale("en", "US");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>cLocale = new Locale("en",
+"GB");</font></font></blockquote>
+The strings you pass to the Locale constructor are two-letter language
+and country codes, as defined by ISO standards (put here reference)
+<h4>
+Isolate your Locale Data</h4>
+The first step in making an international Java program is to isolate all
+elements of your Java code that will need to change in another country.
+This includes user-interface text -- label text, menu items, shortcut keys,
+messages, and the like.
+<p>The <i>ResourceBundle</i> class is an abstract class that provides an
+easy way to organize and retrieve locale-specific strings or other resources.
+It stores these resources in an external file, along with a key that you
+use to retrieve the information. You'll create a ResourceBundle for each
+locale your Java program supports.
+<center><img SRC="ResourceBundles.GIF" height=300 width=400 align=TEXTTOP></center>
+The ResourceBundle class is an abstract class in the java.util package.
+You can provide your own subclass of ResourceBundle or use one of the subclass
+implementations, as in the case of PropertyResourceBundle or ListResourceBundle.
+<p>Resource bundles inherit from the ResourceBundle class and contain localized
+elements that are stored external to an application. Resource bundles share
+a base name. The base name TeT_Bundle, to display transactional messages
+such “Transaction Commited”, might be selected because of the resources
+it contains. Locale information further differentiates a resource bundle.
+For example, TeT_Bundle_it means that this resource bundle contains locale-specific
+transactional messages for Italian.
+<p>To select the appropriate ResourceBundle, invoke the ResourceBundle.getBundle
+method. The following example selects the TeT_Bundle ResourceBundle for
+the Locale that matches the French language, the country of Canada.
+<blockquote><font face="Courier New,Courier"><font size=-1>Locale currentLocale
+= new Locale("fr", "CA");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>ResourceBundle introLabels
+=&nbsp;&nbsp;&nbsp; ResourceBundle.getBundle("TeT_Bundle", currentLocale);</font></font></blockquote>
+Java loads your resources based on the locale argument to the getBundle
+method. It searches for matching files with various suffixes, based on
+the language, country, and any variant or dialect to try to find the best
+match. Java tries to find a complete match first, and then works its way
+down to the base filename as a last resort.
+<p>You should always supply a base resource bundle with no suffixes, so
+that your program will still work if the user's locale does not match any
+of the resource bundles you supply. The default file can contain the U.S.
+English strings. Then you should provide properties files for each additional
+language you want to support.
+<p>Basically, a resource bundle is a container for key/value pairs. The
+key is used to identify a locale-specific resource in a bundle. If that
+key is found in a particular resource bundle, its value is returned.
+<p>The jdk API defines two kinds of ResourceBundle subclasses -- the PropertyResourceBundle
+and ListResourceBundle.
+<br>A PropertyResourceBundle is backed by a properties file. A properties
+file is a plain-text file that contains translatable text. Properties files
+are not part of the Java source code, and they can contain values for String
+objects only. A simple default properties file, named hpts_Bundle.properties,&nbsp;
+for messages sent by HPTS could be.
+<blockquote><font face="Courier New,Courier"><font size=-1># Sample properties
+file for demonstrating PropertyResourceBundle</font></font>
+<br><font face="Courier New,Courier"><font size=-1># Text to inform on
+transaction outcomes in English (by default)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>trans_committed= Transaction
+Committed</font></font>
+<br><font face="Courier New,Courier"><font size=-1>trans_rolledback= Transaction
+Rolled Back</font></font>
+<br><font face="Courier New,Courier"><font size=-1># …</font></font></blockquote>
+The equivalent properties file, hpts_Bundle_fr_FR.properties, for French
+would be:
+<blockquote><font face="Courier New,Courier"><font size=-1># Sample properties
+file for demonstrating PropertyResourceBundle</font></font>
+<br><font face="Courier New,Courier"><font size=-1># Text to inform on
+transaction outcomes in French</font></font>
+<br><font face="Courier New,Courier"><font size=-1>trans_committed = La
+Transaction a &eacute;t&eacute; Valid&eacute;e</font></font>
+<br><font face="Courier New,Courier"><font size=-1>trans_rolledback = La
+Transaction a &eacute;t&eacute; Abandonn&eacute;e</font></font>
+<br><font face="Courier New,Courier"><font size=-1># …</font></font></blockquote>
+
+<h4>
+Use a Hint to retrieve a translation</h4>
+As described in properties files, keys are exactly the same, only the associated
+strings differ according to the national text. To enable a particular reader
+understanding a particular language, say English, to recognize the corresponding
+English message for a message displayed with a different language such
+French or Japanese, it is useful to add within the displayed string a particular
+hint for this aim. For instance properties files described above, hpts_Bundle.properties
+and&nbsp;&nbsp; hpts_Bundle_fr_FR.properties, could be modified as follow:
+<ul>
+<li>
+hpts_Bundle.properties</li>
+
+<br><font face="Courier New,Courier"><font size=-1># Sample properties
+file for demonstrating PropertyResourceBundle</font></font>
+<br><font face="Courier New,Courier"><font size=-1># Text to inform on
+transaction outcomes in English (by default)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>trans_committed= [trans_1]
+Transaction Committed</font></font>
+<br><font face="Courier New,Courier"><font size=-1>trans_rolledback= [trans_2]
+Transaction Rolled Back</font></font>
+<br><font face="Courier New,Courier"><font size=-1># …</font></font>
+<br>&nbsp;
+<li>
+hpts_Bundle_fr_FR.properties</li>
+
+<br><font face="Courier New,Courier"><font size=-1># Sample properties
+file for demonstrating PropertyResourceBundle</font></font>
+<br><font face="Courier New,Courier"><font size=-1># Text to inform on
+transaction outcomes in French</font></font>
+<br><font face="Courier New,Courier"><font size=-1>trans_committed = [trans_1]
+La Transaction a &eacute;t&eacute; Valid&eacute;e</font></font>
+<br><font face="Courier New,Courier"><font size=-1>trans_rolledback = [trans_2]
+La Transaction a &eacute;t&eacute; Abandonn&eacute;e</font></font>
+<br><font face="Courier New,Courier"><font size=-1># …</font></font></ul>
+[trans_1] and [trans_2] are displayed whatever the resource bundle or language
+chosen. In such way a reader, such a support team can determine quickly
+the corresponding message to its own language.
+<p>The ListResourceBundle class manages resources with a convenient list.
+Each ListResourceBundle is backed by a class file. You can store any locale-specific
+object in a ListResourceBundle. Resources in a ListResourceBundle are not
+limited to text strings, as are the resources in a PropertyResourceBundle.
+For example, images are one example of resources that can be localized,
+but can't be stored as text strings.&nbsp; To add support for an additional
+Locale, you create another source file and compile it into a class file
+as described below where the first file, hpts_Bundle.java defines the default
+English messages and the second file, hpts_Bundle_fr_FR.java, its equivalent
+for French.
+<br>&nbsp;
+<center><table BORDER COLS=1 WIDTH="73%" BGCOLOR="#CCCCCC" >
+<tr>
+<td><font face="Courier New,Courier"><font size=-1>import java. util.*;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>public class TeT_Bundle
+extends ListResourceBundle {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp; public Object
+[][] getContents() {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; return
+contents;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp; }</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp; static final Object
+[][] contents = {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; {"
+trans_committed", “Transaction Committed”},</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; {"
+trans_rolledback", “Transaction Rolled Back”},</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp; };</font></font>
+<br><font face="Courier New,Courier"><font size=-1>}</font></font></td>
+</tr>
+</table></center>
+
+<br>&nbsp;
+<center><table BORDER COLS=1 WIDTH="73%" BGCOLOR="#CCCCCC" >
+<tr>
+<td><font face="Courier New,Courier"><font size=-1>import java. util.*;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>public class TeT_Bundle
+extends ListResourceBundle {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp; public Object
+[][] getContents() {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; return
+contents;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp; }</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp; static final Object
+[][] contents = {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; {"
+trans_committed", “Transaction Committed”},</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; {"
+trans_rolledback", “Transaction Rolled Back”},</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp; };</font></font>
+<br><font face="Courier New,Courier"><font size=-1>}</font></font></td>
+</tr>
+</table></center>
+
+<p>Note that the ResourceBundle class is flexible. If you first put your
+locale-specific String objects in a PropertyResourceBundle and then later
+decided to use ListResourceBundle instead, there is no impact on the code.
+<h5>
+Example</h5>
+The following example illustrates how to use the internationalization API
+allowing separating the text with a language specified by the user, from
+the source code.
+<br>&nbsp;
+<center><table BORDER COLS=1 WIDTH="87%" BGCOLOR="#CCCCCC" >
+<tr>
+<td><font face="Courier New,Courier"><font size=-1>import com.hp.mw.orbportability.*;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import com.hp.mw.ts.jts.extensions.*;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import com.hp.mw.ts.jts.common.jtsPropertyManager;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import com.hp.mw.ts.jts.common.Environment;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import com.hp.mw.ts.jts.OTSManager;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import com.hp.mwlabs.ts.jts.ORBManager;</font></font>
+<p><font face="Courier New,Courier"><font size=-1>import org.omg.CosTransactions.*;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import org.omg.CosTransactions.Unavailable;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import org.omg.CosTransactions.WrongTransaction;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import org.omg.CORBA.SystemException;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import org.omg.CORBA.UserException;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import org.omg.CORBA.INVALID_TRANSACTION;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import org.omg.CORBA.TRANSACTION_REQUIRED;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>import org.omg.CORBA.TRANSACTION_ROLLEDBACK;</font></font>
+<p><font face="Courier New,Courier"><font size=-1>public class TransactionTest1</font></font>
+<br><font face="Courier New,Courier"><font size=-1>{</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; public
+static void main (String[] args)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ORB myORB = null;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+RootOA myOA = null;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+String language;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+String country;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+if (args.length != 2) {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+language = new String("en");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+country = new String("US");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+} else {</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+language = new String(args[0]);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+country = new String(args[1]);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Locale currentLocale;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ResourceBundle messages;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+currentLocale = new Locale(language, country);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+trans_message = ResourceBundle.getBundle("hpts_Bundle", currentLocale);</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+try</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+{</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+myORB = ORB.getInstance("test");</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+myOA = OA.getRootOA(myORB);&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+myORB.initORB(args, null);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+myOA.initOA();&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ORBManager.setORB(myORB);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ORBManager.setPOA(myOA);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+catch (Exception e)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+{</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.err.println("Initialisation failed: "+e);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+try</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+{</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Current current = OTSManager.get_current();</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+current.begin();</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+current.commit(true);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.out.println(tran_message.getString("trans_committed"));</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+catch (INVALID_TRANSACTION&nbsp; e1)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+{</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.err.println("Invalid Transaction "+e1);</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+catch (TRANSACTION_ROLLEDBACK&nbsp; e1)</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+{</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+System.out.println(tran_message.getString("trans_rolledback"));</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}</font></font>
+<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+myOA.destroy();</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+myORB.shutdown();</font></font>
+<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp; }&nbsp;</font></font>
+<br><font face="Courier New,Courier"><font size=-1>}</font></font></td>
+</tr>
+</table></center>
+
+<p>In the following example the language code is fr (French) and the country
+code is FR (France), so the program displays the messages in French:
+<blockquote><font face="Courier New,Courier"><font size=-1>% java TransDemoClient
+fr FR</font></font>
+<br><font face="Courier New,Courier"><font size=-1>La Transaction a &eacute;t&eacute;
+valid&eacute;e</font></font></blockquote>
+Rather to specify explicitly the language to be used to display messages,
+a property variable can be
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>

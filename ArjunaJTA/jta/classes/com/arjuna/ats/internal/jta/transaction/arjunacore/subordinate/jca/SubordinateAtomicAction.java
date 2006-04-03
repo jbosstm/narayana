@@ -1,0 +1,137 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2006, JBoss Inc., and others contributors as indicated 
+ * by the @authors tag. All rights reserved. 
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors. 
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ * 
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ */
+/*
+ * Copyright (C) 2003,
+ * 
+ * Hewlett-Packard Arjuna Labs, Newcastle upon Tyne, Tyne and Wear, UK.
+ * 
+ * $Id: SubordinateAtomicAction.java 2342 2006-03-30 13:06:17Z  $
+ */
+
+package com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca;
+
+import java.io.IOException;
+
+import javax.transaction.xa.Xid;
+
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.jta.xa.XidImple;
+
+/**
+ * A subordinate JTA transaction; used when importing another transaction
+ * context via JCA. This overrides the basic subordinate transaction simply so
+ * that we can ensure JCA transactions are laid out in the right place in the
+ * object store.
+ * 
+ * @author mcl
+ */
+
+public class SubordinateAtomicAction extends
+		com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.SubordinateAtomicAction
+{
+
+	public SubordinateAtomicAction ()
+	{
+		super();
+		
+		start();
+	}
+
+	public SubordinateAtomicAction (int timeout, Xid xid)
+	{
+		super(timeout);
+		
+		start();
+		
+		_theXid = new XidImple(xid);
+	}
+	
+	/**
+	 * The type of the class is used to locate the state of the transaction log
+	 * in the object store.
+	 * 
+	 * Overloads BasicAction.type()
+	 * 
+	 * @return a string representation of the hierarchy of the class for storing
+	 *         logs in the transaction object store.
+	 */
+
+	// TODO crash recovery!!!!
+	
+	public String type ()
+	{
+		return getType();
+	}
+
+	public static final String getType ()
+	{
+		return "/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/SubordinateAtomicAction/JCA";
+	}
+	
+	public final Xid getXid ()
+	{
+		return _theXid;
+	}
+
+	public boolean save_state (OutputObjectState os, int t)
+	{
+		if (_theXid != null)
+		{
+			try
+			{
+				os.packBoolean(true);
+				
+				((XidImple) _theXid).packInto(os);
+			}
+			catch (IOException ex)
+			{
+				return false;
+			}
+		}
+
+		return super.save_state(os, t);
+	}
+	
+	public boolean restore_state (InputObjectState os, int t)
+	{
+		try
+		{
+			boolean haveXid = os.unpackBoolean();
+			
+			if (haveXid)
+			{
+				_theXid = new XidImple();
+				
+				((XidImple) _theXid).unpackFrom(os);
+			}
+		}
+		catch (IOException ex)
+		{
+			return false;
+		}
+		
+		return super.restore_state(os, t);
+	}
+	
+	private Xid _theXid;
+	
+}

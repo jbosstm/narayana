@@ -1,0 +1,90 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<project name="module-orbportability-anttasks" default="com.hp.mw.orbportability.anttasks.default" basedir=".">
+
+    <property name="com.hp.mwlabs.orbportability.src" value="classes"/>
+    <property name="com.hp.mwlabs.orbportability.config" value="config"/>
+    <property name="com.hp.mwlabs.orbportability.buildroot" value="build"/>
+    <property name="com.hp.mwlabs.orbportability.builddir" location="${com.hp.mwlabs.orbportability.buildroot}/classes/"/>
+    <property name="com.hp.mwlabs.orbportability.destdir" value="lib"/>
+    <property name="com.hp.mwlabs.orbportability.extdestdir" value="lib/ext"/>
+
+    <target name="com.hp.mw.orbportability.anttasks.default" depends="com.hp.mw.orbportability.anttasks.jar">
+
+    </target>
+
+    <target name="com.hp.mw.orbportability.anttasks.jar" depends="com.hp.mw.orbportability.anttasks.build">
+
+        <echo 	message="Build ORB Portability ANT tasks JAR file"/>
+
+        <mkdir	dir="${com.hp.mwlabs.orbportability.destdir}"/>
+        <mkdir  dir="${com.hp.mwlabs.orbportability.extdestdir}"/>
+        <jar    jarfile="${com.hp.mwlabs.orbportability.extdestdir}/orbportability-ant.jar">
+
+            <fileset dir="${com.hp.mwlabs.orbportability.builddir}" includes="com/arjuna/orbportability/common/ant/**/*.class"/>
+
+            <fileset dir="${com.hp.mwlabs.orbportability.builddir}" includes="**/*.xml"/>
+
+        </jar>
+
+    </target>
+
+    <target name="com.hp.mw.orbportability.anttasks.build" depends="com.hp.mw.orbportability.anttasks.clean">
+
+	<!-- Compile with debug? -->
+	<condition property="com.hp.mwlabs.debug" value="no">
+		<equals arg1="${com.hp.mw.debug}" arg2="no"/>
+	</condition>
+	<property name="com.hp.mwlabs.debug" value="yes"/>
+
+	<!-- Compile with deprecation? -->
+	<condition property="com.hp.mwlabs.deprecation" value="yes">
+		<equals arg1="${com.hp.mw.deprecation}" arg2="yes"/>
+	</condition>
+	<property name="com.hp.mwlabs.deprecation" value="no"/>
+
+        <echo   message="Building ORB Portability ANT Tasks"/>
+
+        <mkdir dir="${com.hp.mwlabs.orbportability.builddir}"/>
+
+        <javac  srcdir="${com.hp.mwlabs.orbportability.src}/com/arjuna/orbportability/common/ant/"
+                destdir="${com.hp.mwlabs.orbportability.builddir}"
+                includes="**/*.java"
+                debug="${com.hp.mwlabs.debug}"
+                deprecation="${com.hp.mwlabs.deprecation}"
+	/>
+
+		<copy todir="${com.hp.mwlabs.orbportability.builddir}">
+			<fileset dir="${com.hp.mwlabs.orbportability.config}" includes="*.xml"/>
+		</copy>
+
+    </target>
+
+    <target name="com.hp.mw.orbportability.anttasks.clean">
+
+        <echo message="Delete and removing the build directory"/>
+
+        <delete dir="${com.hp.mwlabs.orbportability.builddir}/com/hp/mw/common/anttasks/"/>
+        <delete file="${com.hp.mwlabs.orbportability.destdir}/orbportability-ant.jar"/>
+
+    </target>
+
+</project>

@@ -1,0 +1,92 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2006, JBoss Inc., and individual contributors as indicated
+ * by the @authors tag.  All rights reserved. 
+ * See the copyright.txt in the distribution for a full listing 
+ * of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU General Public License, v. 2.0.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License,
+ * v. 2.0 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ * 
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ */
+/*
+ * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003
+ *
+ * Arjuna Technologies Ltd.
+ * Newcastle upon Tyne,
+ * Tyne and Wear,
+ * UK.
+ * 
+ * $Id: ServiceTestSetup.java 2342 2006-03-30 13:06:17Z  $
+ */
+package com.hp.mwtests.orbportability.services;
+
+import com.arjuna.mwlabs.testframework.unittest.Test;
+import com.arjuna.mwlabs.testframework.unittest.LocalHarness;
+import com.arjuna.orbportability.Services;
+import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.OA;
+import com.hp.mwtests.orbportability.orbspecific.orbinstance.SimpleObjectImpl;
+
+public class ServiceTestSetup extends Test
+{
+	private final static String ORB_INSTANCE_NAME = "servicetest-orb";
+	private final static String TEST_SERVICE_NAME = "com.mwtests.orbportability.services.ServiceTestSetup.TestService";
+
+	/**
+	 * The main test method which must assert either a pass or a fail.
+	 */
+	public void run(String[] args)
+	{
+		try
+		{
+			/** Create ORB and OA **/
+			ORB testORB = ORB.getInstance( ORB_INSTANCE_NAME );
+			OA testOA = OA.getRootOA( testORB );
+
+			/** Initialise ORB and OA **/
+			testORB.initORB(args, null);
+			testOA.initPOA(args);
+
+			/** Create services object **/
+			Services testServ = new Services(testORB);
+
+			String[] params = new String[1];
+			params[0] = com.arjuna.orbportability.Services.otsKind;
+
+			SimpleObjectImpl servant = new com.hp.mwtests.orbportability.orbspecific.orbinstance.SimpleObjectImpl();
+
+			testOA.objectIsReady(servant);
+
+			/*
+			 * Register using the default mechanism.
+			 */
+			testServ.registerService(com.hp.mwtests.orbportability.orbspecific.orbtests.SimpleObjectHelper.narrow(testOA.corbaReference(servant)), TEST_SERVICE_NAME, params, Services.CONFIGURATION_FILE);
+
+			assertSuccess();
+		}
+		catch (Exception e)
+		{
+			System.err.println("An unexpected exception occurred - "+e);
+			e.printStackTrace(System.err);
+
+			assertFailure();
+		}
+	}
+
+	public static void main(String[] args)
+	{
+		ServiceTestSetup test = new ServiceTestSetup();
+		test.initialise(null, null, args, new LocalHarness());
+		test.runTest();
+	}
+}

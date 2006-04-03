@@ -1,0 +1,16 @@
+From Server:
+
+**ImplGrid server started**
+trangrid_i.height - found implicit transactional context.
+trangrid_i.width - found implicit transactional context.
+trangrid_i.set - found implicit transactional context!
+TRANGRID : PREPARE
+TRANGRID : COMMIT
+
+From Client:
+
+height is 100
+width  is 100
+calling set
+calling get
+trangrid[2,4] is 123

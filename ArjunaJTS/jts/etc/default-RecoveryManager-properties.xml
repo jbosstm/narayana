@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<!-- $Id: default-RecoveryManager-properties.xml 2342 2006-03-30 13:06:17Z  $ -->
+<!--
+  This is the special properties file for the RecoveryManager - its settings
+  add to and override those in the regular arjuna properties file
+-->
+<transaction-service
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="transaction-service-2_0.xsd">
+    <properties name="recoverymanager" depends="arjuna,txoj,jts">
+      <!--
+        Properties used only by the RecoveryManager.
+      -->
+      <!--
+        Periodic recovery settings.
+        Time values in this section are in seconds.
+      -->
+      <!--
+        Interval in seconds between initiating the periodic recovery modules.
+        Default is 120 seconds.
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.recovery.periodicRecoveryPeriod"
+        value="120"/>
+      <!--
+        Interval in seconds between first and second pass of periodic recovery.
+        Default is 10 seconds.
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.recovery.recoveryBackoffPeriod"
+        value="10"/>
+      <!--
+        Periodic recovery modules to use.  Invoked in sort-order of names.
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.recovery.recoveryExtension1"
+        value="com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule"/>
+      <property
+        name="com.arjuna.ats.arjuna.recovery.recoveryExtension2"
+        value="com.arjuna.ats.internal.txoj.recovery.TORecoveryModule"/>
+      <property
+        name="com.arjuna.ats.arjuna.recovery.recoveryExtension3"
+        value="com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule"/>
+      <property
+        name="com.arjuna.ats.arjuna.recovery.recoveryExtension4"
+        value="com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule"/>
+      <property
+        name="com.arjuna.ats.arjuna.recovery.recoveryExtension5"
+        value="com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule"/>
+      <property
+        name="com.arjuna.ats.arjuna.recovery.recoveryExtension6"
+        value="com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule"/>
+      <!--
+         Recovery Activator to use.
+      -->
+      <property
+	name="com.arjuna.ats.arjuna.recovery.recoveryActivator_1"
+        value="com.arjuna.ats.internal.jts.orbspecific.recovery.RecoveryEnablement"/>
+      <!--
+        Expired entry removal
+      -->
+      <!--
+        Expiry scanners to use (order of invocation is random).
+        Names must begin with "com.arjuna.ats.arjuna.recovery.expiryScanner"
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.recovery.expiryScannerTransactionStatusManager"
+        value="com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner"/>
+      <property
+        name="com.arjuna.ats.arjuna.recovery.expiryScannerContact"
+        value="com.arjuna.ats.internal.jts.recovery.contact.ExpiredContactScanner"/>
+      <property
+        name="com.arjuna.ats.arjuna.recovery.expiryScannerTopLevelTran"
+        value="com.arjuna.ats.internal.jts.recovery.transactions.ExpiredToplevelScanner"/>
+      <property
+        name="com.arjuna.ats.arjuna.recovery.expiryScannerServerTran"
+        value="com.arjuna.ats.internal.jts.recovery.transactions.ExpiredServerScanner"/>
+
+
+      <!--
+        Interval, in hours, between running the expiry scanners.
+        This can be quite long. The absolute value determines the interval -
+        if the value is negative, the scan will NOT be run until after one
+        interval has elapsed. If positive the first scan will be immediately
+        after startup. Zero will prevent any scanning.
+        Default  = 12 = run immediately, then every 12 hours.
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.recovery.expiryScanInterval"
+        value="12"/>
+      <!--
+        Age, in hours, for removal of transaction status manager item.
+        This should be longer than any ts-using process will remain running.
+        Zero = Never removed.  Default is 12.
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.recovery.transactionStatusManagerExpiryTime"
+        value="12"/>
+      <!--
+        Use this to fix the port on which the TransactionStatusManager listens,
+        The default behaviour is to use any free port.
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.recovery.transactionStatusManagerPort"
+        value="0"/>
+
+    </properties>
+</transaction-service>

@@ -1,0 +1,303 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and others contributors as indicated 
+  by the @authors tag. All rights reserved. 
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors. 
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<!--
+
+    Common Module containing:
+
+    * PropertyManager
+    * Logging API
+
+-->
+
+<project name="module-common" default="com.arjuna.common.build" basedir=".">
+    <!-- class path behaviour -->
+    <property name="build.sysclasspath" value="last"/>
+    <property name="com.hp.mwlabs.classpathbuilderfilename" location="buildsystem.classpath"/>
+
+    <!-- Set module name -->
+    <property name="com.arjuna.common.modulename" value="common"/>
+
+    <!-- Load Build Properties File -->
+    <property file="com.arjuna.common.properties"/>
+
+    <!-- Set external property defaults -->
+    <property name="com.hp.mw.ts.common.htdocs.internal" value="no"/>
+
+    <!-- Set internal property defaults -->
+    <!-- Path names -->
+	<property name="com.arjuna.buildsystem.dir" location="${buildsystem.dir}"/>
+	<property name="com.arjuna.buildsystem.build.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
+	
+	<property name="com.arjuna.common.src" location="classes"/>
+    <property name="com.hp.mwlabs.ts.common.tests.src" location="tests/"/>
+	
+    <property name="com.arjuna.common.destroot" location="build"/>
+    <property name="com.hp.mwlabs.ts.common.jar.dest" location="${com.arjuna.common.destroot}/lib"/>
+    <property name="com.hp.mwlabs.ts.common.src.dest" location="${com.arjuna.common.destroot}/src"/>
+    <property name="com.hp.mwlabs.ts.common.dest" location="${com.arjuna.common.destroot}/classes"/>
+    <property name="com.hp.mwlabs.ts.common.htdocs.dest" value="${com.arjuna.common.destroot}/htdocs"/>
+    <property name="com.hp.mwlabs.ts.common.tests.dest" location="${com.arjuna.common.destroot}/tests"/>
+    <property name="com.hp.mwlabs.ts.common.tests.destdir" location="${com.hp.mwlabs.ts.common.jar.dest}/tests/"/>
+
+
+    <property name="com.hp.mw.ts.common.tests.compile" value="no"/>
+    <property name="com.hp.mw.ts.common.tests.install" value="no"/>
+
+    <property name="com.hp.mw.ts.common.log4j.compile" value="yes"/>
+    <property name="com.hp.mw.ts.common.csf.compile" value="yes"/>
+
+    <property name="com.hp.mwlabs.ts.common.resourcebundle" value="common_msg_en_US.properties"/>
+
+    <!-- Initialisation -->
+    <target name="com.hp.mwlabs.ts.common.init">
+        <!-- Define default build properties -->
+        <tstamp>
+            <format property="com.hp.mw.ts.common.date" pattern="yyyy/MMM/dd HH:mm"/>
+        </tstamp>
+        <property name="com.hp.mw.ts.common.installationdirectory" value="install"/>
+        <property name="com.hp.mw.ts.common.sourceid" value="unknown"/>
+        <property name="com.hp.mw.ts.common.version" value="unknown"/>
+        <property name="com.arjuna.common.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
+        <property name="com.hp.mw.ts.common.notes" value=""/>
+
+	<path id="com.arjuna.buildsystem.classpath">
+		<fileset dir="${com.arjuna.buildsystem.build.lib}"/>
+	</path>
+	<property name="com.arjuna.buildsystem.classpath" refid="com.arjuna.buildsystem.classpath"/>
+	
+        <!-- Define classpath builder task -->
+        <taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpath="${com.arjuna.buildsystem.classpath}"/>
+
+	<!-- Clear build classpath file and add all JARs within lib/ext/ -->
+	<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" clear="true">
+            <classpath>
+                <fileset dir="lib/ext/">
+                    <include name="**.jar"/>
+                    <include name="**.zip"/>
+                </fileset>
+            </classpath>
+        </classpath-builder>
+
+        <condition property="com.hp.mwlabs.ts.common.tests.compile">
+            <equals arg1="${com.hp.mw.ts.common.tests.compile}" arg2="yes"/>
+        </condition>
+
+        <condition property="com.hp.mwlabs.ts.common.tests.install">
+            <equals arg1="${com.hp.mw.ts.common.tests.install}" arg2="yes"/>
+        </condition>
+
+
+        <echo message="Initialising module common"/>
+        <echo message="Source ID = ${com.hp.mw.ts.common.sourceid}"/>
+        <echo message="Version   = ${com.hp.mw.ts.common.version}"/>
+        <echo message="Builder   = ${com.arjuna.common.builder}"/>
+        <echo message="Date      = ${com.hp.mw.ts.common.date}"/>
+        <echo message="Notes     = ${com.hp.mw.ts.common.notes}"/>
+
+        <!-- Installation directory -->
+        <property name="com.hp.mwlabs.ts.common.installationdirectory"
+            location="${com.hp.mw.ts.common.installationdirectory}"/>
+
+        <!-- Compile with debugging? -->
+        <condition property="com.hp.mwlabs.ts.common.debug" value="no">
+            <equals arg1="${com.hp.mw.ts.common.debug}" arg2="no"/>
+        </condition>
+        <property name="com.hp.mwlabs.ts.common.debug" value="yes"/>
+
+        <!-- Build htdocs for which package? -->
+        <property name="com.arjuna.common.htdocs.list" value="com.arjuna.common.logging.*"/>
+
+        <!-- Process the info class -->
+        <copy todir="${com.hp.mwlabs.ts.common.src.dest}" overwrite="yes">
+                       <fileset dir="${com.arjuna.common.src}" includes="**/*.javatmpl"/>
+                       <mapper type="glob" from="*.javatmpl" to="*.java"/>
+            <filterset>
+                <filter token="MODULE" value="${com.arjuna.common.modulename}"/>
+                <filter token="SOURCEID" value="${com.hp.mw.ts.common.sourceid}"/>
+                <filter token="BUILDINFO" value="${com.arjuna.common.builder}"/>
+                <filter token="VERSION" value="${com.hp.mw.ts.common.version}"/>
+                <filter token="DATE" value="${com.hp.mw.ts.common.date}"/>
+                <filter token="NOTES" value="${com.hp.mw.ts.common.notes}"/>
+            </filterset>
+        </copy>
+
+        <!-- Set the module property file details -->
+        <taskdef name="version-to-property" classname="com.hp.mw.buildsystem.ant.VersToProp" classpath="${com.arjuna.buildsystem.classpath}"/>
+        <version-to-property version="${com.hp.mw.ts.common.version}" property="com.hp.mwlabs.ts.common.propertyversion"/>
+
+        <property name="com.hp.mwlabs.ts.common.propertyfile" value="CommonLogging-properties.xml"/>
+        <property name="com.hp.mw.ts.common.propertydirectory" location="${com.hp.mwlabs.ts.common.installationdirectory}/etc"/>
+
+        <echo message="Property file name : ${com.hp.mwlabs.ts.common.propertyfile}"/>
+        <echo message="Property directory : ${com.hp.mw.ts.common.propertydirectory}"/>
+
+        <!-- Make the destination directories -->
+        <mkdir dir="${com.arjuna.common.destroot}"/>
+        <mkdir dir="${com.hp.mwlabs.ts.common.src.dest}"/>
+        <mkdir dir="${com.hp.mwlabs.ts.common.dest}"/>
+    </target>
+
+    <target name="com.arjuna.common.build" depends="com.hp.mw.ts.common.jar, com.hp.mwlabs.ts.common.tests.jar, com.hp.mw.ts.common.htdocs"/>
+
+    <!-- Compilation targets -->
+    <target name="com.arjuna.common.compile" depends="com.hp.mwlabs.ts.common.init,com.hp.mwlabs.ts.common.generateresourcebundle">
+
+        <echo message="Compiling module"/>
+
+        <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+        <javac srcdir="${com.arjuna.common.src}:${com.hp.mwlabs.ts.common.src.dest}"
+            destdir="${com.hp.mwlabs.ts.common.dest}"
+            classpath="${com.arjuna.common.src}"
+            excludes="${com.arjuna.common.compile.excludes}"
+            debug="${com.hp.mwlabs.ts.common.debug}">
+            <classpath>
+                <path path="${build.classpath}"/>
+                <path path="${com.arjuna.common.src}"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- Jar targets -->
+    <target name="com.hp.mw.ts.common.jar" depends="com.arjuna.common.compile, com.hp.mw.ts.common.htdocs">
+
+        <echo message="Building common jar file"/>
+
+        <mkdir dir="${com.hp.mwlabs.ts.common.jar.dest}"/>
+
+        <jar jarfile="${com.hp.mwlabs.ts.common.jar.dest}/jbossts-common.jar"
+            basedir="${com.hp.mwlabs.ts.common.dest}"/>
+
+        <jar jarfile="${com.hp.mwlabs.ts.common.jar.dest}/jbossts-common_jdocs.jar"
+            basedir="${com.hp.mwlabs.ts.common.htdocs.dest}"/>
+    </target>
+
+
+    <target name="com.hp.mw.ts.common.htdocs">
+        <echo message="Building htdocs "/>
+
+        <mkdir dir="${com.hp.mwlabs.ts.common.htdocs.dest}"/>
+
+        <javadoc sourcepath="${com.arjuna.common.src}"
+            packagenames="com.arjuna.common.*"
+            destdir="${com.hp.mwlabs.ts.common.htdocs.dest}"
+            failonerror="yes"
+            private="yes"
+            defaultexcludes="yes"
+            >
+        </javadoc>
+
+    </target>
+
+    <target name="com.hp.mw.ts.common.tests.compile" depends="com.hp.mw.ts.common.jar" if="com.hp.mwlabs.ts.common.tests.compile">
+
+        <echo message="Building tests"/>
+
+        <mkdir dir="${com.hp.mwlabs.ts.common.tests.dest}"/>
+        <!-- <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/> -->
+
+        <javac srcdir="${com.hp.mwlabs.ts.common.tests.src}"
+            destdir="${com.hp.mwlabs.ts.common.tests.dest}"
+            classpath="${com.hp.mwlabs.ts.common.tests.src}"
+            debug="${com.hp.mwlabs.ts.common.debug}">
+            <classpath>
+                <path location="${com.hp.mwlabs.ts.common.dest}"/>
+            </classpath>
+        </javac>
+
+    </target>
+
+    <target name="com.hp.mwlabs.ts.common.tests.jar" depends="com.hp.mw.ts.common.tests.compile" if="com.hp.mwlabs.ts.common.tests.compile">
+
+        <mkdir dir="${com.hp.mwlabs.ts.common.tests.destdir}"/>
+        <jar basedir="${com.hp.mwlabs.ts.common.tests.dest}"
+            jarfile="${com.hp.mwlabs.ts.common.tests.destdir}/${com.arjuna.common.modulename}_tests.jar"/>
+
+    </target>
+
+
+    <!-- Installation targets -->
+    <target name="com.hp.mw.ts.common.install" depends="com.arjuna.common.build, com.hp.mwlabs.ts.common.tests.install">
+
+        <echo message="Installation directory : ${com.hp.mwlabs.ts.common.installationdirectory}"/>
+
+        <echo message="Installing module common"/>
+
+        <echo message="Installing jar files"/>
+        <mkdir dir="${com.hp.mwlabs.ts.common.installationdirectory}/lib"/>
+        <copy
+            todir="${com.hp.mwlabs.ts.common.installationdirectory}/lib"
+            >
+            <fileset dir="${com.hp.mwlabs.ts.common.jar.dest}"/>
+        </copy>
+        <echo message="Installing htdocs"/>
+        <mkdir dir="${com.hp.mwlabs.ts.common.installationdirectory}/htdocs"/>
+        <copy
+            todir="${com.hp.mwlabs.ts.common.installationdirectory}/htdocs"
+            >
+            <fileset dir="${com.hp.mwlabs.ts.common.htdocs.dest}"/>
+        </copy>
+    </target>
+
+    <target name="com.hp.mwlabs.ts.common.tests.install" depends="com.hp.mwlabs.ts.common.tests.jar" if="com.hp.mwlabs.ts.common.tests.install">
+
+        <echo message="Installing tests"/>
+
+    </target>
+
+    <!-- Clean targets -->
+    <target name="com.hp.mw.ts.common.clean">
+        <echo message="Cleaning module"/>
+        <delete dir="${com.arjuna.common.destroot}"/>
+    </target>
+
+    <target name="com.hp.mwlabs.ts.common.generateresourcebundle">
+
+        <echo message="Generating Common Resource Bundle"/>
+
+        <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+        <javadoc sourcepath="${com.arjuna.common.src}"
+            packagenames="com.arjuna.common.*"
+            failonerror="yes"
+            private="yes"
+            defaultexcludes="yes"
+            classpath="${build.classpath}">
+
+            <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
+                <path>
+                    <pathelement path="${com.arjuna.buildsystem.classpath}"/>
+                </path>
+                <param name="-basedir" value="${com.hp.mwlabs.ts.common.dest}"/>
+                <param name="-resourcebundle" value="${com.hp.mwlabs.ts.common.resourcebundle}"/>
+                <param name="-appendkey" value="[]"/>
+            </doclet>
+        </javadoc>
+
+    </target>
+
+    <!-- Short target names -->
+    <target name="compile" depends="com.arjuna.common.compile"/>
+    <target name="jar" depends="com.hp.mw.ts.common.jar"/>
+    <target name="clean" depends="com.hp.mw.ts.common.clean"/>
+    <target name="htdocs" depends="com.hp.mw.ts.common.htdocs"/>
+    <target name="install" depends="com.hp.mw.ts.common.install"/>
+</project>

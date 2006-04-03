@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<page title="Arjuna Technologies Limited: Trail map: Running and Testing Examples" rootpath="../.."> 	<header>         Making the Banking Application Persistent   </header> 	<content> 		<navigation> 			<links include="includes/www_arjuna_com_navigation.xml"/> 			<links include="includes/trailmap_navigation.xml"/> 			<links title="Navigation"> 				<link ref="index.html">Home</link> 				<link ref="part5.html">Previous</link> 				<link ref="part7.html">Next</link> 			</links> 			<links include="includes/trailmap_additional.xml"/> 		</navigation> 		<area title="Making the Banking Application Persistent"> 			<html> 				<p>The way the banking application is built and deployed in the previous trail    does not it make it persistent, in such way that any created account can be    retrieved later after stopping the bank server or if the application crashes;    moreover, it does not allow concurrent access to accounts without leading to    inconsistent values.</p> 				<p>Two ways will be presented in this trail on the way to build the banking application    as a persistent and sharable application:</p> 				<ul> 					<li>Using the Arjuna Transactional Object For Java (TXOJ) mechanisms      <ul> 							<li> 								<a class="linkscoloured" href="part6_txoj_introduction.html"> Overview of the Transactional Object For Java</a> 							</li> 							<li> 								<a class="linkscoloured" href="part6_txoj_banking_deploy.html">Deploying the Banking application with TXOJ mechanisms</a> 							</li> 						</ul> 					</li> 					<li>Using the JDBC API by considering the banking application as a relational database.      <ul> 							<li> 								<a class="linkscoloured" href="part6_jdbc_introduction.html">Developing applications with JDBC and ArjunaTA</a> 							</li> 							<li> 								<a class="linkscoloured" href="part6_jdbc_banking.html">The banking application as a relational database accessed with JDBC</a> 							</li> 						</ul> 					</li> 				</ul> 			</html> 		</area> 	</content> 	<footer/> </page> 

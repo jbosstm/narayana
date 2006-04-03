@@ -1,0 +1,349 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and others contributors as indicated 
+  by the @authors tag. All rights reserved. 
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors. 
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<!--$Id: build.xml 2342 2006-03-30 13:06:17Z  $-->
+
+<project name="module-jta" default="com.hp.mw.ts.jta.build" basedir=".">
+
+	<!-- class path behaviour -->
+	<property name="build.sysclasspath" value="last"/>
+	<property name="com.hp.mwlabs.classpathbuilderfilename" location="buildsystem.classpath"/>
+
+	<!-- Set module name -->
+	<property name="com.hp.mwlabs.ts.modulename" value="jta"/>
+
+	<!-- Set default properties filename -->
+	<property name="com.hp.mw.ts.properties" value="module-jta.properties"/>
+
+	<!-- Load Build Properties File -->
+	<property file="${com.hp.mw.ts.properties}"/>
+
+	<!-- Set external property defaults -->
+	<property name="com.hp.mw.ts.jta.tests.compile" value="yes"/>
+	<property name="com.hp.mw.ts.jta.tests.install" value="no"/>
+
+	<!-- Set internal property defaults -->
+		<!-- Path names -->
+	<property name="com.hp.mwlabs.ts.jta.src" location="classes"/>
+	<property name="com.hp.mwlabs.ts.jta.etc" location="etc"/>
+	<property name="com.hp.mwlabs.ts.jta.buildroot"
+		location="build"/>
+	<property name="com.hp.mwlabs.ts.jta.builddir" location="${com.hp.mwlabs.ts.jta.buildroot}/classes/"/>
+	<property name="com.hp.mwlabs.ts.jta.dest" location="${com.hp.mwlabs.ts.jta.buildroot}/classes"/>
+	<property name="com.hp.mwlabs.ts.jta.tests.src" location="tests"/>
+	<property name="com.hp.mwlabs.ts.jta.tests.dest" location="${com.hp.mwlabs.ts.jta.buildroot}/tests"/>
+	<property name="com.hp.mwlabs.ts.jta.jar.dest" location="lib"/>
+	<property name="com.hp.mwlabs.ts.jta.tests.destdir" location="${com.hp.mwlabs.ts.jta.jar.dest}/tests/"/>
+
+		<!-- Files that need word substitutions -->
+
+	<property name="com.hp.mwlabs.ts.jta.properties.src" value="${com.hp.mwlabs.ts.jta.src}/com/arjuna/ats/jta/common/Configuration.javatmpl"/>
+	<property name="com.hp.mwlabs.ts.jta.properties.dest"
+	value="${com.hp.mwlabs.ts.jta.src}/com/arjuna/ats/jta/common/Configuration.java"/>
+        <property name="com.hp.mwlabs.ts.jta.resourcebundle"
+	value="jta_msg_en_US.properties"/>
+
+    <property name="com.hp.mwlabs.ts.jta.propertyfile.tmpl" value="${com.hp.mwlabs.ts.modulename}-properties.xmltmpl"/>
+    <property name="com.hp.mwlabs.ts.jta.propertyfile.src" value="${com.hp.mwlabs.ts.modulename}-properties.xml"/>
+
+	<property name="com.hp.mwlabs.ts.jta.mappingfile" value="${com.hp.mwlabs.ts.modulename}-properties.mappings"/>
+
+	<!-- Initialisation -->
+	<target name="com.hp.mwlabs.ts.jta.init" depends="com.hp.mwlabs.ts.jta.setpropertyfiles">
+		<!-- Define default build properties -->
+		<property name="com.hp.mw.sourceid" value="unknown"/>
+		<property name="com.hp.mw.version" value="unknown"/>
+		<property name="com.hp.mw.installationdirectory" value="install"/>
+		<property name="com.hp.mw.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
+		<property name="com.hp.mw.notes" value=""/>
+
+		<tstamp>
+	    	<format property="com.hp.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
+	  	</tstamp>
+
+		<!-- Define classpath builder task -->
+		<taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpath="${com.arjuna.buildsystem.classpath}"/>
+
+		<echo message="Initialising module jta"/>
+		<echo message="Source ID = ${com.hp.mw.sourceid}"/>
+		<echo message="Version   = ${com.hp.mw.version}"/>
+		<echo message="Builder   = ${com.hp.mw.builder}"/>
+		<echo message="Date      = ${com.hp.mw.date}"/>
+		<echo message="Notes     = ${com.hp.mw.notes}"/>
+
+		<!-- Installation directory -->
+		<property name="com.hp.mwlabs.installationdirectory"
+		    location="${com.hp.mw.installationdirectory}"/>
+
+		<condition property="com.hp.mwlabs.debug" value="no">
+			<equals arg1="${com.hp.mw.debug}" arg2="no"/>
+		</condition>
+		<property name="com.hp.mwlabs.debug" value="yes"/>
+
+		<!-- Compile with deprecation? -->
+		<condition property="com.hp.mwlabs.deprecation" value="yes">
+			<equals arg1="${com.hp.mw.deprecation}" arg2="yes"/>
+		</condition>
+		<property name="com.hp.mwlabs.deprecation" value="no"/>
+
+		<!-- Check which bits to compile and/or install -->
+		<condition property="com.hp.mwlabs.ts.jta.tests.compile">
+			<equals arg1="${com.hp.mw.ts.jta.tests.compile}" arg2="yes"/>
+		</condition>
+
+		<condition property="com.hp.mwlabs.ts.jta.tests.install">
+			<equals arg1="${com.hp.mw.ts.jta.tests.install}" arg2="yes"/>
+		</condition>
+
+		<!-- Which module to use for TransactionImple -->
+		<condition property="com.hp.mwlabs.ts.jta.module1" value="jts">
+			<isset property="com.hp.mwlabs.ts.build.jts"/>
+		</condition>
+		<property name="com.hp.mwlabs.ts.jta.module1" value="arjunacore"/>
+
+		<condition property="com.hp.mwlabs.ts.jta.module2" value="arjunacore">
+			<isset property="com.hp.mwlabs.ts.build.jts"/>
+		</condition>
+		<property name="com.hp.mwlabs.ts.jta.module2" value="jts"/>
+
+		<!-- Set the module property file details -->
+
+		<property name="com.hp.mwlabs.ts.jta.propertyfile" value="${com.hp.mwlabs.ts.modulename}-properties.xml"/>
+
+		<property name="com.hp.mw.propertydirectory" location="${com.hp.mwlabs.installationdirectory}/etc"/>
+
+		<echo message="Property file name : ${com.hp.mwlabs.ts.jta.propertyfile}"/>
+		<echo message="Property directory : ${com.hp.mw.propertydirectory}"/>
+
+		<!-- Process the class that uses the property file -->
+		<copy
+			file="${com.hp.mwlabs.ts.jta.properties.src}"
+			tofile="${com.hp.mwlabs.ts.jta.properties.dest}"
+			overwrite="yes"
+		>
+			<filterset>
+				<filter token="JTA_VERSION" value="${com.hp.mw.version}"/>
+				<filter token="PROPERTIES_FILE" value="${com.hp.mwlabs.ts.jta.propertyfile}"/>
+			</filterset>
+		</copy>
+
+		<!-- Process the property file -->
+		<copy
+			file="${com.hp.mwlabs.ts.jta.etc}/default-${com.hp.mwlabs.ts.jta.propertyfile.tmpl}"
+			tofile="${com.hp.mwlabs.ts.jta.etc}/default-${com.hp.mwlabs.ts.jta.propertyfile.src}"
+			overwrite="yes"
+		>
+			<filterset>
+				<filter token="MODULE1" value="${com.hp.mwlabs.ts.jta.module1}"/>
+				<filter token="MODULE2" value="${com.hp.mwlabs.ts.jta.module2}"/>
+			</filterset>
+		</copy>
+
+		<!-- Make the destination directory -->
+		<mkdir dir="${com.hp.mwlabs.ts.jta.dest}"/>
+
+	</target>
+
+    <!-- If this build is part of a product build set the property files to the product property file -->
+    <target name="com.hp.mwlabs.ts.jta.setpropertyfiles" if="com.hp.mw.ts.product.name">
+
+            <echo>Overriding propertyfile settings with product propertyfile settings</echo>
+            <property name="com.hp.mwlabs.ts.jta.propertyfile" value="${com.hp.mw.ts.product.propertyfile}"/>
+
+    </target>
+
+    <!-- Default build target -->
+    <target name="com.hp.mw.ts.jta.build" depends="com.hp.mwlabs.jta.generateresourcebundle,com.hp.mw.ts.jta.jar, com.hp.mwlabs.ts.jta.tests.jar"/>
+
+	<!-- Compilation targets -->
+	<target name="com.hp.mw.ts.jta.compile" depends="com.hp.mwlabs.ts.jta.compile,com.hp.mwlabs.jta.generateresourcebundle">
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jta.compile" depends="com.hp.mwlabs.ts.jta.init">
+
+		<echo message="Compiling module"/>
+
+		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<javac
+			srcdir="${com.hp.mwlabs.ts.jta.src}"
+			destdir="${com.hp.mwlabs.ts.jta.dest}"
+			excludes="${com.hp.mwlabs.ts.jta.compile.excludes}"
+                        debug="${com.hp.mwlabs.debug}"
+			deprecation="${com.hp.mwlabs.deprecation}"
+		>
+			<classpath>
+				<path path="${com.hp.mwlabs.ts.jta.src}"/>
+				<path path="${build.classpath}"/>
+			</classpath>
+		</javac>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jta.tests.jar" depends="com.hp.mwlabs.ts.jta.tests.compile" if="com.hp.mwlabs.ts.jta.tests.compile">
+
+		<mkdir dir="${com.hp.mwlabs.ts.jta.tests.destdir}"/>
+		<jar	basedir="${com.hp.mwlabs.ts.jta.tests.dest}"
+			jarfile="${com.hp.mwlabs.ts.jta.tests.destdir}/${com.hp.mwlabs.ts.modulename}_tests.jar"/>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jta.tests.compile" depends="com.hp.mw.ts.jta.jar" if="com.hp.mwlabs.ts.jta.tests.compile">
+
+		<echo message="Compiling tests"/>
+
+		<mkdir dir="${com.hp.mwlabs.ts.jta.tests.dest}"/>
+
+                <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+		<javac
+			srcdir="${com.hp.mwlabs.ts.jta.tests.src}"
+			destdir="${com.hp.mwlabs.ts.jta.tests.dest}"
+                        debug="${com.hp.mwlabs.debug}"
+			deprecation="${com.hp.mwlabs.deprecation}"
+		>
+                    <classpath>
+                        <path path="${build.classpath}"/>
+                        <path path="${com.hp.mwlabs.ts.jta.dest}"/>
+                    </classpath>
+		</javac>
+
+	</target>
+
+	<!-- Jar targets -->
+	<target name="com.hp.mw.ts.jta.jar" depends="com.hp.mw.ts.jta.compile">
+
+		<echo message="Building jar file"/>
+		<mkdir dir="${com.hp.mwlabs.ts.jta.jar.dest}"/>
+
+        <copy file="etc/${com.hp.mwlabs.ts.jta.mappingfile}"
+                tofile="${com.hp.mwlabs.ts.jta.dest}/${com.hp.mwlabs.ts.jta.mappingfile}"/>
+
+		<jar
+			jarfile="${com.hp.mwlabs.ts.jta.jar.dest}/${com.hp.mwlabs.ts.modulename}.jar"
+			basedir="${com.hp.mwlabs.ts.jta.dest}"
+		/>
+
+        <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}">
+            <classpath>
+                <pathelement location="${com.hp.mwlabs.ts.jta.jar.dest}/${com.hp.mwlabs.ts.modulename}.jar"/>
+            </classpath>
+        </classpath-builder>
+
+	</target>
+
+	<!-- Installation targets -->
+    <target name="com.hp.mw.ts.jta.install" depends="com.hp.mw.ts.jta.build, com.hp.mwlabs.ts.jta.tests.install">
+
+            <echo message="Installing module jta"/>
+            <echo message="Installation directory ${com.hp.mwlabs.installationdirectory}"/>
+            <mkdir dir="${com.hp.mw.propertydirectory}"/>
+
+            <taskdef name="merge-property-files"
+                     classname="com.hp.mw.buildsystem.ant.MergePropertyFiles"
+                     classpath="${com.arjuna.buildsystem.classpath}"/>
+
+            <echo>Merging propertyfiles into main product property file</echo>
+
+            <condition property="com.hp.mwlabs.ts.jta.depends" value="jts">
+                <isset property="com.hp.mwlabs.ts.build.jts"/>
+            </condition>
+            <property name="com.hp.mwlabs.ts.jta.depends" value="arjuna"/>
+
+            <copy tofile="${com.hp.mwlabs.ts.jta.etc}/processed-${com.hp.mwlabs.ts.jta.propertyfile.src}"
+                  file="${com.hp.mwlabs.ts.jta.etc}/default-${com.hp.mwlabs.ts.jta.propertyfile.src}"
+                  filtering="true" overwrite="true">
+                <filterset>
+                    <filter token="JTA_DEPENDS" value="${com.hp.mwlabs.ts.jta.depends}"/>
+                </filterset>
+            </copy>
+
+            <merge-property-files master="${com.hp.mw.propertydirectory}/${com.hp.mwlabs.ts.jta.propertyfile}"
+                                  merge="${com.hp.mwlabs.ts.jta.etc}/processed-${com.hp.mwlabs.ts.jta.propertyfile.src}"/>
+
+    </target>
+
+
+	<target name="com.hp.mwlabs.ts.jta.tests.install" depends="com.hp.mwlabs.ts.jta.tests.compile" if="com.hp.mwlabs.ts.jta.tests.install">
+
+		<echo message="Installing tests"/>
+
+	</target>
+
+	<!-- Clean targets -->
+	<target name="com.hp.mw.ts.jta.clean" depends="com.hp.mwlabs.ts.jta.tests.clean">
+
+		<echo message="Cleaning module"/>
+		<delete dir="${com.hp.mwlabs.ts.jta.dest}"/>
+		<delete dir="${com.hp.mwlabs.ts.jta.jar.dest}"/>
+		<delete dir="${com.hp.mwlabs.ts.jta.tests.dest}"/>
+		<delete file="${com.hp.mwlabs.ts.jta.info.dest}"/>
+		<delete file="${com.hp.mwlabs.ts.jta.properties.dest}"/>
+		<delete file="${com.hp.mwlabs.ts.jta.propertyfile.src}"/>
+
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jta.tests.clean">
+
+		<echo message="Cleaning tests"/>
+
+	</target>
+
+	<!-- Short target names -->
+
+	<target name="jar" depends="com.hp.mw.ts.jta.jar">
+
+	</target>
+
+	<target name="install" depends="com.hp.mw.ts.jta.install">
+
+	</target>
+
+	<target name="clean" depends="com.hp.mw.ts.jta.clean">
+
+	</target>
+
+        <target name="com.hp.mwlabs.jta.generateresourcebundle">
+
+            <echo message="Generating JTA Resource Bundle"/>
+
+            <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+            <javadoc    sourcepath="${com.hp.mwlabs.ts.jta.src}"
+                        packagenames="com.arjuna.*"
+                        failonerror="yes"
+                        private="yes"
+                        defaultexcludes="yes"
+                        classpath="${build.classpath}">
+
+                 <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
+                    <path>
+                        <pathelement path="${com.arjuna.buildsystem.classpath}"/>
+                    </path>
+                    <param name="-basedir" value="${com.hp.mwlabs.ts.jta.builddir}"/>
+                    <param name="-resourcebundle" value="${com.hp.mwlabs.ts.jta.resourcebundle}"/>
+                    <param name="-appendkey" value="[]"/>
+                 </doclet>
+            </javadoc>
+
+        </target>
+
+</project>
+
