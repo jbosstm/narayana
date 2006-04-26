@@ -31,6 +31,7 @@ The following steps are required
 
    <mbean code="com.arjuna.ats.jbossatx.jts.TransactionManagerService"
       name="jboss:service=TransactionManager">
+      <depends>jboss:service=CorbaORB</depends>
       <attribute name="TransactionTimeout">300</attribute>
    </mbean>
 
