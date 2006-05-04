@@ -23,7 +23,7 @@
  * Arjuna Technologies Limited
  * Newcastle upon Tyne, UK
  *
- * $Id: Bank.java 2342 2006-03-30 13:06:17Z  $
+ * $Id: Bank.java 2342 2006-03-30 13:06:17Z tjenkinson $
  */
 
 package com.arjuna.demo.jta.jdbcbank;
@@ -99,7 +99,7 @@ public class Bank
 
             // Create a statement and execute an update to the database to reserve space for the new bank account
             Statement stmtx = connection.createStatement();  // tx statement
-            stmtx.executeUpdate("INSERT INTO accounts (accountName, value) VALUES ('" + accountName + "'," + openingBalance + ")");
+            stmtx.executeUpdate("INSERT INTO accounts (name, value) VALUES ('" + accountName + "'," + openingBalance + ")");
         }
         catch (SQLException e)
         {
@@ -259,7 +259,15 @@ public class Bank
             }
 
             if (BankClient.clean || BankClient.create)
+            {
                 stmt.executeUpdate("CREATE TABLE accounts (name VARCHAR(10) NOT NULL UNIQUE, value REAL)");
+                
+                if (BankClient.clean)
+                	BankClient.clean = false;
+                
+                if (BankClient.create)
+                	BankClient.create = false;
+            }
 
             stmt.close();
             connection.close();
