@@ -26,7 +26,7 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: TransactionImple.java 2342 2006-03-30 13:06:17Z kconner $
+ * $Id: TransactionImple.java 2342 2006-03-30 13:06:17Z  $
  */
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
@@ -39,7 +39,6 @@ import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XidImple;
-import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
 import com.arjuna.ats.jta.logging.*;
 import com.arjuna.ats.jta.xa.XAModifier;
 
@@ -182,13 +181,13 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		if (_theTransaction != null)
 		{
-			switch (status = _theTransaction.status())
+			switch (_theTransaction.status())
 			{
 			case ActionStatus.RUNNING:
 			case ActionStatus.ABORT_ONLY:
 				break;
 			default:
-				throw new InactiveTransactionException(
+				throw new IllegalStateException(
 						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 			}
 
@@ -257,7 +256,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			case ActionStatus.ABORT_ONLY:
 				break;
 			default:
-				throw new InactiveTransactionException(
+				throw new IllegalStateException(
 						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 			}
 
@@ -1148,7 +1147,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			case ActionStatus.ABORT_ONLY:
 				break;
 			default:
-				throw new InactiveTransactionException(
+				throw new IllegalStateException(
 						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 			}
 		}
@@ -1230,7 +1229,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			case ActionStatus.ABORT_ONLY:
 				break;
 			default:
-				throw new InactiveTransactionException(
+				throw new IllegalStateException(
 						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 			}
 		}
