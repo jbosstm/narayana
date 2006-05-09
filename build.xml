@@ -53,9 +53,7 @@ Targets supported in this build.xml file
 
    <target name="core" depends="install_core"/>
 
-   <target name="jbossjts" if="jts.present">
-      <antcall target="init_integration"/>
-      <antcall target="install_jts"/>
+   <target name="jbossjts" if="jts.present" depends="init_integration, install_jts">
       <antcall target="install_integration"/>
    </target>
 
