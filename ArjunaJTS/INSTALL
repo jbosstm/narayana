@@ -55,7 +55,7 @@ The following steps are required
          <initializer>org.jboss.tm.iiop.TxServerInterceptorInitializer</initializer>
   - add the following lines
          <!-- JBoss TS interceptor -->
-         <initializer>com.arjuna.ats.jts.orbspecific.jacorb.interceptors.context.ContextORBInitializerImpl</initializer>
+         <initializer>com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition.InterpositionORBInitializerImpl</initializer>
 
 The application server will now be configured to use the JBossJTS transaction
 manager instead of the JBoss Transaction Manager.
