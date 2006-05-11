@@ -321,6 +321,7 @@
 		<copy todir="${com.hp.mwlabs.installationdirectory}/trail_map">
 			<fileset dir="trailmap">
 				<include name="build.xml"/>
+				<include name="README.txt"/>
 				<include name="html/**"/>
 				<include name="src/**"/>
 			</fileset>
