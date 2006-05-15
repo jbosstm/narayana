@@ -20,8 +20,11 @@ The trail map is provided with examples (the Banking application) that
 allow  a better  understanding   of the  way   to  use  the   JBossTS
 Programming interfaces.
 
-To build the sources files you should follow instructins given below:
+To build the sources files you should follow instructions given below:
 
+- Download the version of JacORB from the JBossTS download page. Place this
+in a directory called jacorb_2_1 in the root of your JBossTS installation, i.e.,
+at the same level as the trailmap directory.
 
 - Ensure you have the Ant build system installed. Ant is a Java build
 tool, similar to make. 
@@ -46,11 +49,16 @@ Important Note:
   the jacorb (version 2.2.2) jar files
 
  From a command prompt,  go (or 'cd') to  the directory containing the
- build.xml file (<arjunats_install_root>/trailmap) and type 'ant'.
+ build.xml file (<jbossjts_install_root>/trailmap) and type 'ant'.
 
  Add   the  generated file  named   arjunats-demo.jar and located under
- <arjunats_install_root>/trailmap/lib  in    you  CLASSPATH environment
+ <jbossjts_install_root>/trailmap/lib  in    you  CLASSPATH environment
  variable.
+ 
+When running the local JTS transactions part of the trailmap, you will need to start
+the recovery manager: java com.arjuna.ats.arjuna.recovery.RecoveryManager -test
+
+You will need a jacorb.properties file to run the distributed JTS tests.
 
  For each sample, refer to the appropriate trail page.
  
