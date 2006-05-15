@@ -67,3 +67,13 @@ file is unique.
 
 The application server will now be configured to use the JBossJTS transaction
 manager instead of the JBoss Transaction Manager.
+
+Note, the following issues exist with the trailmap shipped with JBossTS (http://www.jboss.org/index.html?module=bb&op=viewtopic&t=82879):
+
+(i) it talks about ArjunaTS and the arjunats-properties.xml file. This was the old name for JBossTS. The
+new properties file is the jbossjts-properties.xml.
+
+(ii) when running the local JTS transactions part of the trailmap, you will need to start
+the recovery manager: java com.arjuna.ats.arjuna.recovery.RecoveryManager -test
+
+(iii) you will need a jacorb.properties file to run the distributed JTS tests.
