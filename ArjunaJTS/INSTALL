@@ -26,6 +26,9 @@ The following steps are required
  - copy the following configuration file from the JBossJTS installation into
    the server/XXX/conf directory of the JBoss 4.0.3 SP1 installation
    - etc/jbossjts-properties.xml
+   - edit the properties file to remove either the arjunacore XARecoveryModule or the jts
+   XARecoveryModule, depending upon whether you are using JTS or local JTA, respectively.
+   
  - Edit the server/all/conf/jboss-service.xml file and replace the
    jboss:service=TransactionManager mbean declaration with the following
 
@@ -56,6 +59,11 @@ The following steps are required
   - add the following lines
          <!-- JBoss TS interceptor -->
          <initializer>com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition.InterpositionORBInitializerImpl</initializer>
+
+Replace jacorb.jar in client/lib and server/all/lib with the jacorb.jar located http://labs.jboss.com/file-access/default/members/jbosstm/downloads/4.2/binary/jacorb_2_2_1_patch.zip
+
+For each deployment of JacORB, you will need to ensure that the jacorb.implname in the jacorb.properties
+file is unique.
 
 The application server will now be configured to use the JBossJTS transaction
 manager instead of the JBoss Transaction Manager.
