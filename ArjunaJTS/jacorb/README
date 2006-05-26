@@ -1,4 +1,4 @@
 This directory contains an extract of the JacORB 2.2.2 distribution.
 
-These files are only used for building orb specific code and are not shipped
-as part of the product.
+These files are used for building orb specific code and running the
+product standalone.
