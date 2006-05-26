@@ -60,7 +60,7 @@ The following steps are required
          <!-- JBoss TS interceptor -->
          <initializer>com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition.InterpositionORBInitializerImpl</initializer>
 
-Replace jacorb.jar in client/lib and server/all/lib with the jacorb.jar located http://labs.jboss.com/file-access/default/members/jbosstm/downloads/4.2/binary/jacorb_2_2_1_patch.zip
+Replace jacorb.jar in client/lib and server/all/lib with the jacorb.jar located in the jacorb directory.
 
 For each deployment of JacORB, you will need to ensure that the jacorb.implname in the jacorb.properties
 file is unique.
