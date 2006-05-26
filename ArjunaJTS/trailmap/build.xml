@@ -34,7 +34,7 @@
 <project name="ArjunaTS_TrailMap" default="buildjar" basedir=".">
 
     <!-- Where the transaction has been installed to, this should not need changing by default -->
-    <property name="arjunahome" value=".."/>
+    <property name="jbosstshome" value=".."/>
 
     <!-- This source code directory for the trailmap -->
     <property name="src" value="src"/>
@@ -46,10 +46,10 @@
     <property name="lib" value="lib"/>
 
     <!-- The location of JacORB to use. This should not need changing unless a different version of JacORB is used -->
-    <property name="jacorb-home" value="${arjunahome}/jacorb_2_1"/>
+    <property name="jacorb-home" value="${jbosstshome}/jacorb"/>
 
     <!-- The location of the Arjuna IDL files used by the JTS -->
-    <property name="arjuna-include" value="${arjunahome}/idl"/>
+    <property name="jbossts-include" value="${jbosstshome}/idl"/>
 
     <!-- The include files required by JacORB -->
     <property name="jacorb-include" value="${jacorb-home}/idl/omg"/>
@@ -60,7 +60,7 @@
         ensure that the code has already been built.
     -->
     <target name="buildjar" depends="compile">
-        <jar basedir="${build}" jarfile="${lib}/arjunats-demo.jar"/>
+        <jar basedir="${build}" jarfile="${lib}/jbossts-demo.jar"/>
     </target>
 
 
@@ -71,8 +71,8 @@
     <target name="compile" depends="idl">
         <javac srcdir="${src}" destdir="${build}">
             <classpath>
-                <fileset dir="${arjunahome}/lib" includes="*.jar"/>
-                <fileset dir="${arjunahome}/lib/ext" includes="*.jar"/>
+                <fileset dir="${jbosstshome}/lib" includes="*.jar"/>
+                <fileset dir="${jbosstshome}/lib/ext" includes="*.jar"/>
                 <fileset dir="${jacorb-home}/lib" includes="*.jar"/>
             </classpath>
         </javac>
@@ -90,7 +90,7 @@
             <classpath>
                 <fileset dir="${jacorb-home}/lib" includes="*.jar"/>
             </classpath>
-            <arg value="-I${arjuna-include}"/>
+            <arg value="-I${jbossts-include}"/>
             <arg value="-I${jacorb-include}"/>
             <arg line="-d ${src}/generated"/>
             <arg value="${src}/com/arjuna/demo/simple/Hello.idl"/>
@@ -101,7 +101,7 @@
             <classpath>
                 <fileset dir="${jacorb-home}/lib" includes="*.jar"/>
             </classpath>
-            <arg value="-I${arjuna-include}"/>
+            <arg value="-I${jbossts-include}"/>
             <arg value="-I${jacorb-include}"/>
             <arg line="-d ${src}/generated"/>
             <arg value="${src}/com/arjuna/demo/jts/remotebank/Bank.idl"/>
@@ -112,7 +112,7 @@
             <classpath>
                 <fileset dir="${jacorb-home}/lib" includes="*.jar"/>
             </classpath>
-            <arg value="-I${arjuna-include}"/>
+            <arg value="-I${jbossts-include}"/>
             <arg value="-I${jacorb-include}"/>
             <arg line="-d ${src}/generated"/>
             <arg value="${src}/com/arjuna/demo/jts/explicitremotebank/Bank.idl"/>
@@ -123,7 +123,7 @@
             <classpath>
                 <fileset dir="${jacorb-home}/lib" includes="*.jar"/>
             </classpath>
-            <arg value="-I${arjuna-include}"/>
+            <arg value="-I${jbossts-include}"/>
             <arg value="-I${jacorb-include}"/>
             <arg line="-d ${src}/generated"/>
             <arg value="${src}/com/arjuna/demo/jts/txojbank/Bank.idl"/>

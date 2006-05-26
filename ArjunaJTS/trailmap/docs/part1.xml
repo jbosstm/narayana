@@ -61,7 +61,7 @@ installation. When installed, the ArjunaTS should have the following structure.
     to running any applications.
 					</li>
 					<li>
-						<font face="Courier New,Courier">/jacorb_2_1</font>: If the jacorb installation has been selected during the installation, this directory contains the jacorb distribution.
+						<font face="Courier New,Courier">/jacorb</font>: This directory contains the jacorb distribution.
 					</li>
 					<li>
 						<font face="Courier New,Courier">/lib</font>: this directory contains the 
@@ -98,7 +98,7 @@ installation. When installed, the ArjunaTS should have the following structure.
     the directory <font face="Courier New, Courier, mono">&lt;arjunats_install_root&gt;/trail_map/lib</font>
 					</li>
 					<li>Add the generated jar file to the CLASSPATH environment variable.</li>
-					<li>Ensure that the jacorb (version 2.1) jar files are added in your CLASSPATH. <br/>
+					<li>Ensure that the jacorb (version 2.2.2) jar files are added in your CLASSPATH. <br/>
 					<b>Ensure that ArjunaTS jar files appear before jacorb jar files. </b></li>
 				</ul>
 				<ul>
