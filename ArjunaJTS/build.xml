@@ -228,6 +228,7 @@
             depends="com.hp.mw.ts.product.install,
             com.hp.mwlabs.ts.product.htdocs.install,
             com.hp.mwlabs.ts.product.docs.install,
+            com.hp.mwlabs.ts.product.jacorb.install,
             com.hp.mwlabs.ts.product.trailmap.install"/>
 
     <target name="com.hp.mwlabs.ts.product.htdocs.install" depends="com.hp.mw.ts.product.htdocs" if="com.hp.mwlabs.ts.build.jts">
@@ -325,6 +326,16 @@
 				<include name="html/**"/>
 				<include name="src/**"/>
 			</fileset>
+		</copy>
+	</target>
+
+	<target name="com.hp.mwlabs.ts.product.jacorb.install">
+		<echo message="Installing JacORB"/>
+
+		<mkdir dir="${com.hp.mwlabs.installationdirectory}/jacorb"/>
+
+		<copy todir="${com.hp.mwlabs.installationdirectory}/jacorb">
+			<fileset dir="jacorb"/>
 		</copy>
 	</target>
 
