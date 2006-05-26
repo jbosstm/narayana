@@ -1,0 +1,216 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<project name="WSTX" default="com.arjuna.mw.wstx.war" basedir=".">
+	<!-- Set module name -->
+	<property name="com.arjuna.mwlabs.ts.modulename" value="wstx"/>
+
+	<!-- Set default properties filename -->
+	<property name="com.arjuna.mw.wstx.properties" value="wstx.properties"/>
+
+	<!-- Load Build Properties File -->
+	<property file="${com.arjuna.mw.wstx.properties}"/>
+
+	<!-- Set internal property defaults -->
+	<!-- Path names -->
+	<property name="com.arjuna.mwlabs.wstx.src" value="classes"/>
+	<property name="com.arjuna.mwlabs.wstx.dest.root" value="build"/>
+	<property name="com.arjuna.mwlabs.wstx.dest" value="build/classes"/>
+	<property name="com.arjuna.mwlabs.wstx.war.dest" value="build/webapps"/>
+	<property name="com.arjuna.mwlabs.wstx.jar.dest" value="build/lib"/>
+	<property name="com.arjuna.mwlabs.wstx.htdocs.dest" value="build/htdocs"/>
+
+    <property name="com.arjuna.buildsystem.dir" location="../../antbuildsystem"/>
+    <property name="com.arjuna.jta.install" location="../../install"/>
+	
+    <property name="com.arjuna.buildsystem.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
+    <property name="com.arjuna.jta.install.lib" location="${com.arjuna.jta.install}/lib"/>
+    <property name="com.arjuna.jta.install.ext" location="${com.arjuna.jta.install.lib}/ext"/>
+    <property name="com.arjuna.xts.ext" location="../ext"/>
+	
+    <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
+	
+    <property name="jta.lib.jars" value="jbossjts.jar"/>
+    <property name="jta.ext.jars" value="jbossts-common.jar"/>
+    <property name="jta.ext.compile.jars" value="commons-logging.jar"/>
+    <property name="xts.ext.compile.jars" value="jaxrpc.jar saaj-api.jar servlet.jar stax-api-1.0.jar wstx-asl-2.0.3.jar glue.jar"/>
+	
+    <property name="wsas.libs" value="wsas.jar"/>
+    <property name="wsc.libs" value="ws-c.jar"/>
+    <property name="wscf.libs" value="wscf.jar"/>
+    <property name="wst.libs" value="ws-t.jar"/>
+
+    <!-- Define classpath builder task -->
+    <path id="com.arjuna.buildsystem.classpath">
+        <fileset dir="${com.arjuna.buildsystem.lib}" includes="${com.arjuna.buildsystem.lib.jars}"/>
+    </path>
+    <property name="com.arjuna.buildsystem.classpath" refid="com.arjuna.buildsystem.classpath"/>
+	<taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpathref="com.arjuna.buildsystem.classpath"/>
+	<!-- class path behaviour -->
+	<property name="build.sysclasspath" value="last"/>
+	<property name="com.arjuna.mwlabs.classpathbuilderfilename" location="buildsystem.classpath"/>
+
+    <property name="com.arjuna.mwlabs.wstx.resourcebundle"
+	      value="wstx_msg_en_US.properties"/>
+
+	<!--Set external directories -->
+
+	<property name="com.arjuna.mwlabs.wsas.jar.dest" value="../WSAS/build/lib"/>
+	<property name="com.arjuna.mwlabs.wsc.jar.dest" value="../WS-C/build/dev/lib"/>
+	<property name="com.arjuna.mwlabs.wscf.jar.dest" value="../WSCF/build/lib"/>
+	<property name="com.arjuna.mwlabs.wst.jar.dest" value="../WS-T/build/dev/lib"/>
+
+	<path id="com.arjuna.mwlabs.wstx.lib.classpath">
+        <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
+        <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars} ${jta.ext.compile.jars}"/>
+        <fileset dir="${com.arjuna.xts.ext}" includes="${xts.ext.compile.jars}"/>
+        <fileset dir="${com.arjuna.mwlabs.wsas.jar.dest}" includes="${wsas.libs}"/>
+        <fileset dir="${com.arjuna.mwlabs.wsc.jar.dest}" includes="${wsc.libs}"/>
+        <fileset dir="${com.arjuna.mwlabs.wscf.jar.dest}" includes="${wscf.libs}"/>
+        <fileset dir="${com.arjuna.mwlabs.wst.jar.dest}" includes="${wst.libs}"/>
+    </path>
+
+	<!-- Initialisation -->
+	<target name="com.arjuna.mwlabs.wstx.init">
+		<!-- Define default build properties -->
+		<tstamp>
+			<format property="com.arjuna.mw.wstx.date" pattern="yyyy/mm/dd hh:mm aa"/>
+		</tstamp>
+		<!-- Make the destination directory -->
+		<mkdir dir="${com.arjuna.mwlabs.wstx.dest}"/>
+		<mkdir dir="${com.arjuna.mwlabs.wstx.war.dest}"/>
+	</target>
+
+	<!-- Compilation targets -->
+
+	<target name="com.arjuna.mw.wstx.compile"
+	depends="com.arjuna.mwlabs.wstx.compile,
+		com.arjuna.mw.wstx.htdocs, com.arjuna.mwlabs.wstx.generateresourcebundle"/>
+
+	<target name="com.arjuna.mwlabs.wstx.compile" depends="com.arjuna.mwlabs.wstx.init">
+		<echo message="Compiling module"/>
+		<javac srcdir="${com.arjuna.mwlabs.wstx.src}"
+                       destdir="${com.arjuna.mwlabs.wstx.dest}"
+                       excludes="${com.arjuna.mwlabs.wstx.compile.excludes}"
+                       debug="yes"
+	        >
+			<classpath>
+				<path refid="com.arjuna.mwlabs.wstx.lib.classpath"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<!-- htdocs paths -->
+	<path id="com.arjuna.mw.wstx.htdocs.path">
+		<pathelement path="classes"/>
+	</path>
+
+	<!-- Build htdocs for just mw, or mw and mwlabs -->
+	<property name="com.arjuna.mwlabs.wstx.htdocs.list" value="com.arjuna.mw.*"/>
+
+	<target name="com.arjuna.mw.wstx.war" depends="com.arjuna.mw.wstx.jar">
+	  <war warfile="${com.arjuna.mwlabs.wstx.war.dest}/${com.arjuna.mwlabs.ts.modulename}.war" webxml="xml/wstx_web-app.xml">
+        <manifest>
+            <attribute name="Class-Path" value="${com.arjuna.mwlabs.ts.modulename}.jar"/>
+        </manifest>
+	  </war>
+	</target>
+
+	<!-- Jar targets -->
+	<target name="com.arjuna.mw.wstx.jar" depends="com.arjuna.mw.wstx.compile">
+		<echo message="Building jar file"/>
+		<mkdir dir="${com.arjuna.mwlabs.wstx.jar.dest}"/>
+
+		<copy file="xml/UserTwoPhaseTx.xml"
+		tofile="${com.arjuna.mwlabs.wstx.dest}/com/arjuna/mwlabs/wstx/model/as/twophase/UserTwoPhaseTx.xml"/>
+
+		<copy file="xml/AtomicTransaction.xml"
+		tofile="${com.arjuna.mwlabs.wstx.dest}/com/arjuna/mwlabs/wst/at/ContextFactoryImple.xml"/>
+		<copy file="xml/BusinessActivity.xml"
+		tofile="${com.arjuna.mwlabs.wstx.dest}/com/arjuna/mwlabs/wst/ba/ContextFactoryImple.xml"/>
+
+		<jar jarfile="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"
+            basedir="${com.arjuna.mwlabs.wstx.dest}">
+            <manifest>
+                <attribute name="Class-Path" value="${wst.libs} ${wscf.libs}"/>
+            </manifest>
+        </jar>
+	</target>
+
+	<target name="com.arjuna.mw.wstx.htdocs"
+				depends="com.arjuna.mwlabs.wstx.init">
+		<echo message="Building htdocs "/>
+		<mkdir dir="${com.arjuna.mwlabs.wstx.htdocs.dest}"/>
+		<path id="com.arjuna.mwlabs.wstx.htdocs.path">
+			<path refid="com.arjuna.mw.wstx.htdocs.path"/>
+		</path>
+
+		<javadoc
+			sourcepathref="com.arjuna.mwlabs.wstx.htdocs.path"
+			destdir="${com.arjuna.mwlabs.wstx.htdocs.dest}"
+			packagenames="${com.arjuna.mwlabs.wstx.htdocs.list}"
+	        >
+			<classpath>
+				<path refid="com.arjuna.mwlabs.wstx.lib.classpath"/>
+				<path path="${com.arjuna.mwlabs.wstx.src}"/>
+			</classpath>
+		</javadoc>
+	</target>
+
+        <target name="com.arjuna.mwlabs.wstx.generateresourcebundle">
+
+            <echo message="Generating WSTX Bundle"/>
+
+            <classpath-builder filename="${com.arjuna.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+            <javadoc    sourcepath="${com.arjuna.mwlabs.wstx.src}"
+                        packagenames="com.arjuna.*"
+                        failonerror="yes"
+                        private="yes"
+                        defaultexcludes="yes"
+                        classpath="${build.classpath}">
+
+                 <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
+                    <path>
+                        <pathelement path="${com.arjuna.buildsystem.classpath}"/>
+                    </path>
+                    <param name="-basedir" value="${basedir}/${com.arjuna.mwlabs.wstx.dest}"/>
+                    <param name="-resourcebundle" value="${com.arjuna.mwlabs.wstx.resourcebundle}"/>
+                 </doclet>
+            </javadoc>
+
+        </target>
+
+	<!-- Clean targets -->
+	<target name="com.arjuna.mw.wstx.clean">
+		<echo message="Cleaning module"/>
+		<delete dir="${com.arjuna.mwlabs.wstx.dest}"/>
+		<delete dir="${com.arjuna.mwlabs.wstx.dest.root}"/>
+		<delete dir="${com.arjuna.mwlabs.wstx.htdocs.dest}"/>
+		<delete file="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
+		<delete file="${com.arjuna.mwlabs.wstx.info.dest}"/>
+	</target>
+
+	<!-- Short target names -->
+	<target name="compile" depends="com.arjuna.mw.wstx.compile"/>
+	<target name="jar" depends="com.arjuna.mw.wstx.jar"/>
+	<target name="war" depends="com.arjuna.mw.wstx.war"/>
+	<target name="clean" depends="com.arjuna.mw.wstx.clean"/>
+</project>

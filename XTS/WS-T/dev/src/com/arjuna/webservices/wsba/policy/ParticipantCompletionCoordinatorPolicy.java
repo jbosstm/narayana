@@ -1,0 +1,74 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2006, JBoss Inc., and individual contributors as indicated
+ * by the @authors tag.  All rights reserved. 
+ * See the copyright.txt in the distribution for a full listing 
+ * of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU General Public License, v. 2.0.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License,
+ * v. 2.0 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ * 
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ */
+package com.arjuna.webservices.wsba.policy;
+
+import com.arjuna.webservices.HandlerRegistry;
+import com.arjuna.webservices.wsba.BusinessActivityConstants;
+import com.arjuna.webservices.wsba.handlers.ParticipantCompletionCoordinatorCancelledHandler;
+import com.arjuna.webservices.wsba.handlers.ParticipantCompletionCoordinatorClosedHandler;
+import com.arjuna.webservices.wsba.handlers.ParticipantCompletionCoordinatorCompensatedHandler;
+import com.arjuna.webservices.wsba.handlers.ParticipantCompletionCoordinatorCompletedHandler;
+import com.arjuna.webservices.wsba.handlers.ParticipantCompletionCoordinatorExitHandler;
+import com.arjuna.webservices.wsba.handlers.ParticipantCompletionCoordinatorFaultHandler;
+import com.arjuna.webservices.wsba.handlers.ParticipantCompletionCoordinatorGetStatusHandler;
+import com.arjuna.webservices.wsba.handlers.ParticipantCompletionCoordinatorSoapFaultHandler;
+import com.arjuna.webservices.wsba.handlers.ParticipantCompletionCoordinatorStatusHandler;
+
+/**
+ * Policy responsible for binding in the WS-BusinessActivity header handlers.
+ * @author kevin
+ */
+public class ParticipantCompletionCoordinatorPolicy
+{
+    /**
+     * Add this policy to the registry.
+     * @param registry The registry containing the policy.
+     */
+    public static void register(final HandlerRegistry registry)
+    {
+        registry.registerBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_COMPLETED_QNAME, new ParticipantCompletionCoordinatorCompletedHandler()) ;
+        registry.registerBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_FAULT_QNAME, new ParticipantCompletionCoordinatorFaultHandler()) ;
+        registry.registerBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_COMPENSATED_QNAME, new ParticipantCompletionCoordinatorCompensatedHandler()) ;
+        registry.registerBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_CLOSED_QNAME, new ParticipantCompletionCoordinatorClosedHandler()) ;
+        registry.registerBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_CANCELLED_QNAME, new ParticipantCompletionCoordinatorCancelledHandler()) ;
+        registry.registerBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_EXIT_QNAME, new ParticipantCompletionCoordinatorExitHandler()) ;
+        registry.registerBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_GET_STATUS_QNAME, new ParticipantCompletionCoordinatorGetStatusHandler()) ;
+        registry.registerBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_STATUS_QNAME, new ParticipantCompletionCoordinatorStatusHandler()) ;
+        registry.registerFaultHandler(new ParticipantCompletionCoordinatorSoapFaultHandler()) ;
+    }
+
+    /**
+     * Remove this policy from the registry.
+     * @param registry The registry containing the policy.
+     */
+    public static void remove(final HandlerRegistry registry)
+    {
+        registry.registerFaultHandler(null) ;
+        registry.removeBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_STATUS_QNAME) ;
+        registry.removeBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_GET_STATUS_QNAME) ;
+        registry.removeBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_EXIT_QNAME) ;
+        registry.removeBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_CANCELLED_QNAME) ;
+        registry.removeBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_CLOSED_QNAME) ;
+        registry.removeBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_COMPENSATED_QNAME) ;
+        registry.removeBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_FAULT_QNAME) ;
+        registry.removeBodyHandler(BusinessActivityConstants.WSBA_ELEMENT_COMPLETED_QNAME) ;
+    }
+}

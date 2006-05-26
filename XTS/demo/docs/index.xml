@@ -1,0 +1,60 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<page title="XML Transaction Service Demonstration Application: Introduction" rootpath="../..">
+    <header>
+        XML Transaction Service Demonstration Application: Introduction
+    </header>
+    <content>
+        <navigation>
+            <links include="includes/trailmap_navigation.xml"/>
+            <links title="Navigation">
+                <link ref="installcontent.html">Next</link>
+            </links>
+        </navigation>
+
+        <area title="Introduction">
+            <html>
+                <p>
+                    Welcome to the &quot;Night Out&quot; sample application for the XML Transaction component of ATS 4.1.
+                </p>
+                <p>
+                    This documentation will help you get started with using the JBossTS Web services transactioning product.
+                </p>
+                <p>
+                    This trail map is structured as follows:
+                    <ul>
+                        <li><a class="linkscoloured" href="installcontent.html">Installation Content</a>: Details the components which have been installed.</li>
+                        <li><a class="linkscoloured" href="about.html">About the Sample Application</a>: An explanatory overview of the sample application.</li>
+                        <li><a class="linkscoloured" href="deploying.html">Deploying the Sample Application</a>: Shows how to deploy and run the sample.</li>
+                        <li><a class="linkscoloured" href="atomictransaction.html">Atomic Transactions</a>: Overview and example for short lived ACID transactions style.</li>
+                        <li><a class="linkscoloured" href="businessactivity.html">Business Activities</a>: Extended transactions for long running business processes.</li>
+                        <li><a class="linkscoloured" href="sourcecode.html">Source code</a>: How the sample application is structured and built.</li>
+                        <li><a class="linkscoloured" href="wherenext.html">Where Next?</a>: Further reading and suggested next steps.</li>
+                    </ul>
+                </p>
+                <p>
+                    Use the links in the panel on the left to navigate the documentation. On the following pages, click the 'Home' link to return to this page.
+                </p>
+            </html>
+        </area>
+    </content>
+    <footer/>
+</page>

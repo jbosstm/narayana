@@ -1,0 +1,75 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<page title="XML Transaction Service Demonstration Application: Deploying the sample application" rootpath="../..">
+    <header>
+        XML Transaction Service Demonstration Application: Deploying the sample application
+    </header>
+    <content>
+        <navigation>
+            <links include="includes/trailmap_navigation.xml"/>
+            <links title="Navigation">
+                <link ref="index.html">Start Trailmap</link>
+                <link ref="about.html">Previous</link>
+                <link ref="atomictransaction.html">Next</link>
+            </links>
+        </navigation>
+
+        <area title="Deploying the sample application">
+            <html>
+                <p>
+                    To run the demonstration application, you must compile the source code; bundle it, along with the required metadata files, into appropriate deployment constructs and then deploy these into the application container. This process is somewhat involved, but fortunately is completely automated by an ant build script.
+                </p>
+                <p>
+                    To proceed, you will need to install ant (<a class="linkscoloured" href="http://ant.apache.org/" target="_blank">http://ant.apache.org/</a>) to take advantage of the supplied build file. Version 1.6.1 or later of ant is recommended for this application. The application may not function correctly with versions prior to 1.5.
+                </p>
+                <p>
+					Deploying into webMethods.
+				</p>
+				<p>
+					This release has been tested against webMethods 5.0.2.
+			    </p>
+			    <p>
+					N.B. The classpath used to run webMethods must be modified so that the stax-api.1.0.jar contained within this distribution is encountered prior to all other webMethods jars.
+                </p>
+                <ol>
+                    <li><p>Install webMethods.</p>
+                    </li>
+                    <li><p>Edit the <code>&lt;xts-home&gt;/demo/webmethods.properties</code> file, replacing the <code>WEBMETHODS_HOSTNAME</code>, <code>WEBMETHODS_PORT</code>, <code>WEBMETHODS_URLSTUB</code>, <code>WEBMETHODS_DEPLOY_DIR</code> and <code>WEBMETHODS_HOME</code> variables to reflect the location of your webMethods installation</p></li>
+                        <p><b>Note</b>: You will not have to do this part if you chose to initialise this information during install.</p>
+                    <li><p>Compile the application source, build the application archive file and deploy it into webMethods deploy directory by typing '<code>build.sh webmethods clean deploy</code>' on Unix or '<code>build.bat webmethods clean deploy</code>' on Windows</p></li>
+                    <li><p>Run the application from the deploy directory by using the webMethods runapp command.</p></li>
+                    <li><p>Invoke the demo client by browsing the URL (e.g.): <code>http://hostname:port/xts-demo/</code></p></li>
+                </ol>
+                <p>
+                This release of the demo application includes the ability to run the client against a mixture of backend webservices. The property files contain the URLs of the webservices, which can be changed to exercise any combination and demonstrate a distributed transaction.
+                The services are started using the same mechanism as above. Each platform will be running its own copy of the webservices but the deployed client will access those services configured in the relevant property file.
+                </p>
+                <p>Using the application</p>
+                <ul>
+                    <li><p>When invoked, the client will attempt to begin a transaction, reserve theatre tickets, a restaurant table and a taxi according to the parameters you have selected, then commit the transaction. It will log each step of its activity to the console window. As the transaction proceeds, each of the Web Services will pop up a window of its own in which its state and activity log can be seen. Some events in the service code are also logged to the console.</p></li>
+                    <li><p>The three server applications support a manual transaction control mode which you can use to simulate transaction failures. Use the Change Mode button on the server GUIs. Notice that the client throws an exception if the transaction is rolled back. [ Note: The manual commit mode overrides the normal availability checks in the services, so overbooking may occur. ]</p></li>
+                    <li><p>The following pages explain the two transaction models available in the XML Transaction , Atomic Transactions and Business Activities. Reading the following pages will help you understand the events taking place within the sample application.</p></li>
+                </ul>
+            </html>
+        </area>
+    </content>
+    <footer/>
+</page>

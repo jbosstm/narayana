@@ -1,0 +1,104 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+
+<web-services xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <handler-chains>
+    <handler-chain name="WSTContextProcessor">
+      <handler class-name="com.arjuna.mw.wst.service.JaxRPCHeaderContextProcessor"/>
+    </handler-chain>
+  </handler-chains>
+
+  <web-service name="RestaurantServiceAT" uri="/RestaurantServiceAT" targetNamespace="http://www.arjuna.com/xtsdemo/nightout/RestaurantServiceAT">
+    <components>
+      <java-class name="restaurantServiceAT" class-name="com.arjuna.xts.nightout.services.Restaurant.RestaurantServiceAT"/>
+    </components>
+    <operations>
+      <operation method="bookSeats" handler-chain="WSTContextProcessor" component="restaurantServiceAT">
+        <params>
+          <param name="howMany" class-name="java.lang.Integer" style="in" type="xsd:int"/>
+        </params>
+      </operation>
+    </operations>
+  </web-service>
+  <web-service name="RestaurantServiceBA" uri="/RestaurantServiceBA" targetNamespace="http://www.arjuna.com/xtsdemo/nightout/RestaurantServiceBA">
+    <components>
+      <java-class name="restaurantServiceBA" class-name="com.arjuna.xts.nightout.services.Restaurant.RestaurantServiceBA"/>
+    </components>
+    <operations>
+      <operation method="bookSeats" handler-chain="WSTContextProcessor" component="restaurantServiceBA">
+        <params>
+          <param name="howMany" class-name="java.lang.Integer" style="in" type="xsd:int"/>
+	      <return-param name="result" class-name="java.lang.Boolean" type="xsd:boolean"/>
+	    </params>
+      </operation>
+    </operations>
+  </web-service>
+
+  <web-service name="TaxiServiceAT" uri="/TaxiServiceAT" targetNamespace="http://www.arjuna.com/xtsdemo/nightout/TaxiServiceAT">
+    <components>
+      <java-class name="taxiServiceAT" class-name="com.arjuna.xts.nightout.services.Taxi.TaxiServiceAT"/>
+    </components>
+    <operations>
+      <operation method="bookTaxi" handler-chain="WSTContextProcessor" component="taxiServiceAT"/>
+    </operations>
+  </web-service>
+  <web-service name="TaxiServiceBA" uri="/TaxiServiceBA" targetNamespace="http://www.arjuna.com/xtsdemo/nightout/TaxiServiceBA">
+    <components>
+      <java-class name="taxiServiceBA" class-name="com.arjuna.xts.nightout.services.Taxi.TaxiServiceBA"/>
+    </components>
+    <operations>
+      <operation method="bookTaxi" handler-chain="WSTContextProcessor" component="taxiServiceBA">
+        <params>
+	      <return-param name="result" class-name="java.lang.Boolean" type="xsd:boolean"/>
+	    </params>
+	  </operation>
+    </operations>
+  </web-service>
+
+  <web-service name="TheatreServiceAT" uri="/TheatreServiceAT" targetNamespace="http://www.arjuna.com/xtsdemo/nightout/TheatreServiceAT">
+    <components>
+      <java-class name="theatreServiceAT" class-name="com.arjuna.xts.nightout.services.Theatre.TheatreServiceAT"/>
+    </components>
+    <operations>
+      <operation method="bookSeats" handler-chain="WSTContextProcessor" component="theatreServiceAT">
+        <params>
+          <param name="howMany" class-name="java.lang.Integer" style="in" type="xsd:int"/>
+          <param name="whichArea" class-name="java.lang.Integer" style="in" type="xsd:int"/>
+        </params>
+      </operation>
+    </operations>
+  </web-service>
+  <web-service name="TheatreServiceBA" uri="/TheatreServiceBA" targetNamespace="http://www.arjuna.com/xtsdemo/nightout/TheatreServiceBA">
+    <components>
+      <java-class name="theatreServiceBA" class-name="com.arjuna.xts.nightout.services.Theatre.TheatreServiceBA"/>
+    </components>
+    <operations>
+      <operation method="bookSeats" handler-chain="WSTContextProcessor" component="theatreServiceBA">
+        <params>
+          <param name="howMany" class-name="java.lang.Integer" style="in" type="xsd:int"/>
+          <param name="whichArea" class-name="java.lang.Integer" style="in" type="xsd:int"/>
+	      <return-param name="result" class-name="java.lang.Boolean" type="xsd:boolean"/>
+	    </params>
+      </operation>
+    </operations>
+  </web-service>
+</web-services>
+

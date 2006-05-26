@@ -1,0 +1,139 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2006, JBoss Inc., and individual contributors as indicated
+ * by the @authors tag.  All rights reserved. 
+ * See the copyright.txt in the distribution for a full listing 
+ * of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU General Public License, v. 2.0.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License,
+ * v. 2.0 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ * 
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ */
+/*
+ * Copyright (C) 2002,
+ *
+ * Arjuna Technologies Limited,
+ * Newcastle upon Tyne,
+ * Tyne and Wear,
+ * UK.
+ *
+ * $Id: ParticipantWrapper.java,v 1.4 2005/05/19 12:13:33 nmcl Exp $
+ */
+
+package com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore;
+
+import com.arjuna.ats.arjuna.state.*;
+
+import com.arjuna.mw.wscf.model.as.coordinator.*;
+
+import com.arjuna.mw.wsas.activity.Outcome;
+
+import com.arjuna.mw.wsas.exceptions.*;
+
+import java.util.Hashtable;
+
+/**
+ * @author Mark Little (mark.little@arjuna.com)
+ * @version $Id: ParticipantWrapper.java,v 1.4 2005/05/19 12:13:33 nmcl Exp $
+ */
+
+public class ParticipantWrapper implements Participant
+{
+    
+    /**
+     * Constructor.
+     *
+     * @param theResource is the proxy that allows us to call out to the
+     * object.
+     */
+
+    public ParticipantWrapper (Participant theResource)
+    {
+	_resourceHandle = theResource;
+	_responses = new Hashtable();
+    }
+
+    /**
+     * Process the message from the coordinator and return a response, which
+     * may be null - validity is down to the specific coordinator.
+     *
+     * @param Message notification The message to be processed.
+     *
+     * @exception WrongStateException Thrown if the participant is not in a
+     * state which is valid given the input message.
+     * @exception ProtocolViolationException Thrown if the participant has
+     * violated the coordination protocol.
+     * @exception SystemException Thrown if any other error occurs.
+     * 
+     * @return the Outcome message representing the result of dealing with
+     * the notification. Null may be a valid response.
+     */
+
+    public Outcome processMessage (Message notification) throws WrongStateException, ProtocolViolationException, SystemException
+    {
+	Outcome out = (Outcome) _responses.get(notification);
+	
+	if (out == null)
+	    out = _resourceHandle.processMessage(notification);
+	
+	return out;
+    }
+    
+    /**
+     * @exception SystemException Thrown if any error occurs.
+     *
+     * @return the unique identity for this participant.
+     */
+
+    public String identity () throws SystemException
+    {
+	return _resourceHandle.identity();
+    }
+
+    /*
+     * These methods are required so that the coordinator can serialise and
+     * de-serialise information about the inferior during completion and
+     * recovery.
+     */
+
+    /**
+     * Pack the state of the participant into the object buffer.
+     *
+     * @return <code>true</code> if successful, <code>false</code> otherwise.
+     */
+
+    public boolean packState (OutputObjectState os)
+    {
+	return _resourceHandle.packState(os);
+    }
+
+    /**
+     * Unpack the state of the participant from the object buffer.
+     *
+     * @return <code>true</code> if successful, <code>false</code> otherwise.
+     */
+
+    public boolean unpackState (InputObjectState os)
+    {
+	return _resourceHandle.unpackState(os);
+    }
+
+    public final void setResponse (Message notification, Outcome response)
+    {
+	_responses.put(notification, response);
+    }
+
+    private Participant _resourceHandle;
+    private Hashtable   _responses;
+    
+}
+

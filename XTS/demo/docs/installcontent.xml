@@ -1,0 +1,62 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<page title="XML Transaction Service Demonstration Application: Installation Content" rootpath="../..">
+    <header>
+        XML Transaction Service Demonstration Application: Installation Content
+    </header>
+    <content>
+        <navigation>
+            <links include="includes/trailmap_navigation.xml"/>
+            <links title="Navigation">
+                <link ref="index.html">Start Trailmap</link>
+                <link ref="about.html">Next</link>
+            </links>
+        </navigation>
+
+        <area title="Installation Content">
+            <html>
+                <p>
+                    The installer should have installed the following directories under &lt;ats 4.1 install&gt;/wst directory:
+                    <ul>
+                        <p>conf: product configuration files.</p>
+                        <p>coordinator: an application independent version of the transaction coordinator.</p>
+                        <p>demo: a sample application and introductory documentation.</p>
+                        <p>docs: product manuals and API javadocs.</p>
+                        <p>lib: jar files for the JBossTS components and their 3rd party prerequisites.</p>
+                        <p>webapps: pre built J2EE web applications for the product components.</p>
+                    </ul>
+                </p>
+                <p>
+                    In addition, you will require a Web services platform on which to deploy and run the product.
+				    This release of the XML Transaction component of ATS 4.1 is designed to run within webMethods.
+				</p>
+				<p>
+    				This release has been tested on webMethods 5.0.2.
+                </p>
+                <p>
+                    To compile, deploy and run the sample application we also recommend using java SDK 1.4.2 and Apache ant 1.6.1 or later.
+                    If you do not already have these, you can download them from <a class="linkscoloured" href="http://java.sun.com/">java website</a> and the <a class="linkscoloured" href="http://ant.apache.org/">ant website</a>.
+                </p>
+            </html>
+        </area>
+    </content>
+    <footer/>
+</page>

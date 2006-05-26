@@ -1,0 +1,39 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+
+<!-- CVS Stamp -->
+<!-- $Id: client-config.wsdd,v 1.2 2004/05/11 09:58:43 nmcl Exp $ -->
+
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+ <globalConfiguration>
+  <parameter name="sendXsiTypes" value="true"/>
+  <parameter name="sendMultiRefs" value="true"/>
+  <parameter name="sendXMLDeclaration" value="true"/>
+  <requestFlow>
+   <handler type="java:com.arjuna.mw.wst.client.AxisHeaderContextProcessor"/>
+  </requestFlow>
+  <responseFlow>
+   <handler type="java:com.arjuna.mw.wst.service.AxisHeaderContextProcessor"/>
+  </responseFlow>  
+ </globalConfiguration>
+ <transport name="http" pivot="java:org.apache.axis.transport.http.HTTPSender"/>
+ <transport name="local" pivot="java:org.apache.axis.transport.local.LocalSender"/>
+</deployment>

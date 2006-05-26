@@ -1,0 +1,112 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, JBoss Inc., and individual contributors as indicated
+  by the @authors tag.  All rights reserved. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<page title="XML Transaction Service Demonstration Application: Source code overview" rootpath="../..">
+    <header>
+        XML Transaction Service Demonstration Application: Source code overview
+    </header>
+    <content>
+        <navigation>
+            <links include="includes/trailmap_navigation.xml"/>
+            <links title="Navigation">
+                <link ref="index.html">Start Trailmap</link>
+                <link ref="businessactivity.html">Previous</link>
+                <link ref="wherenext.html">Next</link>
+            </links>
+        </navigation>
+
+        <area title="Source code overview">
+            <html>
+                <p>
+                    You can begin experimenting with the XML Transaction component of ATS 4.1 by editing the sample application source code, which is heavily commented to assist your understanding. The source code can be found in the &lt;ats 4.1 install&gt;/wst/demo/src directory.
+                </p>
+                <p>
+                    It is structured as follows:
+                </p>
+                <p>
+                    <ul>
+                        <li>
+                            <p>
+                                com/arjuna/xts/nightout/clients/
+                            </p>
+                            <ul>
+                                <li>
+                                    <p>
+                                        jboss/BasicClient.java: A servlet that processes the form input and runs either an Atomic Transaction or Business Activity to make the bookings.
+                                    </p>
+                                    <p>
+                                        This servlet uses the JBoss JAX-RPC implementation as the SOAP transport library.
+                                    </p>
+                                </li>
+                                <li>
+                                    <p>
+                                        jboss/restaurant/* : JBoss JAX-RPC client interfaces for accessing the restaurant web services.
+                                    </p>
+                                </li>
+                                <li>
+                                    <p>
+                                        jboss/taxi/* : JBoss JAX-RPC client interfaces for accessing the taxi web services.
+                                    </p>
+                                </li>
+                                <li>
+                                    <p>
+                                        jboss/theatre/* : JBoss JAX-RPC client interfaces for accessing the theatre web services.
+                                    </p>
+                                </li>
+                                <li>
+                                    <p>
+                                        weblogic/BasicClient.java: A servlet that processes the form input and runs either an Atomic Transaction or Business Activity to make the bookings.
+                                    </p>
+                                    <p>
+                                        This servlet uses the WebLogic JAX-RPC implementation as the SOAP transport library.
+                                    </p>
+                                </li>
+                                <li>
+                                    <p>
+                                        weblogic/proxies/* : WebLogic JAX-RPC client side code for accessing the Web services. This is automatically generated code.
+                                    </p>
+                                </li>
+                                <li>
+                                    <p>
+                                        webmethods/BasicClient.java: A servlet that processes the form input and runs either an Atomic Transaction or Business Activity to make the bookings.
+                                    </p>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p>
+                                com/arjuna/xts/nightout/services/[Restuarant|Taxi|Theatre]/
+                            </p>
+                            <ul>
+                                <li>
+                                    <p>Each of these three Web services has similar structure, featuring a *Manager.java class (the transactional business logic, knowing nothing of Web services),
+                                    a *View.java file (the GUI component, largely tool generated), and the files that expose the business logic as transactional Web services.
+                                    In the filenames, AT denotes Atomic Transaction, whilst BA is for Business Activities. The *Service.java file is the business interface, whilst the *Participant.java file has the transaction management code.
+                                    </p>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </p>
+            </html>
+        </area>
+    </content>
+    <footer/>
+</page>
