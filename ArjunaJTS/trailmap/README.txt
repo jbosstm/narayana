@@ -22,10 +22,6 @@ Programming interfaces.
 
 To build the sources files you should follow instructions given below:
 
-- Download the version of JacORB from the JBossTS download page. Place this
-in a directory called jacorb_2_1 in the root of your JBossTS installation, i.e.,
-at the same level as the trailmap directory.
-
 - Ensure you have the Ant build system installed. Ant is a Java build
 tool, similar to make. 
   It is available for free from http://ant.apache.org/ 
