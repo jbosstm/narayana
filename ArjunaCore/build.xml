@@ -254,7 +254,6 @@
                             <exclude name="Readme"/>
                             <exclude name="TestingFramework.jar"/>
                             <exclude name="classes12.jar"/>
-                            <exclude name="xalan.jar"/>
                     </fileset>
             </copy>
             <copy todir="${com.hp.mwlabs.installationdirectory}/lib/ext">
