@@ -36,13 +36,13 @@ import org.jboss.tm.XAExceptionFormatter;
 
 import com.arjuna.ats.internal.jbossatx.jta.jca.XATerminator;
 import com.arjuna.ats.internal.jbossatx.agent.LocalJBossAgentImpl;
-import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple;
 import com.arjuna.ats.jta.utils.JNDIManager;
 import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxStats;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 
 import com.arjuna.ats.internal.tsmx.mbeans.PropertyServiceJMXPlugin;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
@@ -73,7 +73,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
     private final static String PROPAGATION_CONTEXT_EXPORTER_JNDI_REFERENCE = "java:/TransactionPropagationContextExporter";
     private static final JBossXATerminator TERMINATOR = new XATerminator() ;
 
-    private RecoveryManagerImple _recoveryManager;
+    private RecoveryManager _recoveryManager;
     private boolean _initialised = false;
     private boolean _runRM = true;
     private int _transactionTimeout = -1;
@@ -127,7 +127,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
             {
                 this.getLog().info("Starting recovery manager");
 
-                _recoveryManager = new RecoveryManagerImple(true);
+                _recoveryManager = RecoveryManager.manager() ;
 
                 this.getLog().info("Recovery manager started");
             }
