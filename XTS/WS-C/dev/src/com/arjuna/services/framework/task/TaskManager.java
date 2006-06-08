@@ -118,7 +118,7 @@ public class TaskManager
      */
     public boolean queueTask(final Task task)
     {
-        final boolean debugEnabled = WSCLogger.arjLoggerI18N.debugAllowed() ;
+        final boolean debugEnabled = WSCLogger.arjLoggerI18N.isDebugEnabled() ;
         synchronized(workerPool)
         {
             if (shutdown)
@@ -182,7 +182,7 @@ public class TaskManager
      */
     public void setMinimumWorkerCount(final int minimumWorkerCount)
     {
-        final boolean debugEnabled = WSCLogger.arjLoggerI18N.debugAllowed() ;
+        final boolean debugEnabled = WSCLogger.arjLoggerI18N.isDebugEnabled() ;
         synchronized(workerPool)
         {
             if (shutdown)
@@ -251,7 +251,7 @@ public class TaskManager
      */
     public void setMaximumWorkerCount(final int maximumWorkerCount)
     {
-        final boolean debugEnabled = WSCLogger.arjLoggerI18N.debugAllowed() ;
+        final boolean debugEnabled = WSCLogger.arjLoggerI18N.isDebugEnabled() ;
         synchronized(workerPool)
         {
             if (shutdown)
@@ -325,7 +325,7 @@ public class TaskManager
      */
     public void shutdown()
     {
-        final boolean debugEnabled = WSCLogger.arjLoggerI18N.debugAllowed() ;
+        final boolean debugEnabled = WSCLogger.arjLoggerI18N.isDebugEnabled() ;
 
         synchronized(workerPool)
         {
@@ -403,7 +403,7 @@ public class TaskManager
      */
     Task getTask()
     {
-        final boolean debugEnabled = WSCLogger.arjLoggerI18N.debugAllowed() ;
+        final boolean debugEnabled = WSCLogger.arjLoggerI18N.isDebugEnabled() ;
 
         while(true)
         {

@@ -50,5 +50,8 @@ public class HttpClientInitialisation implements ServletContextListener
      */
     public void contextDestroyed(final ServletContextEvent servletContextEvent)
     {
+        final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
+        soapRegistry.removeSoapClient(HttpUtils.HTTPS_SCHEME) ;
+        soapRegistry.removeSoapClient(HttpUtils.HTTP_SCHEME) ;
     }
 }

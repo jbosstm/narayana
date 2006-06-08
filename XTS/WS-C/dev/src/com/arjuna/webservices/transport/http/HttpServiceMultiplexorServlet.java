@@ -90,7 +90,7 @@ public class HttpServiceMultiplexorServlet extends HttpServlet implements SoapSe
     /**
      * Flag to log packets.
      */
-    private boolean logPackets = true ;
+    private boolean logPackets ;
   
     /**
      * Initialise the servlet.
@@ -101,7 +101,6 @@ public class HttpServiceMultiplexorServlet extends HttpServlet implements SoapSe
         throws ServletException
     {
         config(servletConfig) ;
-        // KEV configure the packet logging.
     }
     
     /**
@@ -141,17 +140,17 @@ public class HttpServiceMultiplexorServlet extends HttpServlet implements SoapSe
                 final MessageContext messageContext = new MessageContext() ;
                 initialiseContext(messageContext, request) ;
                 final MessageContext messageResponseContext = new MessageContext() ;
+                final Reader input = request.getReader() ;
                 final Reader reader ;
-                // KEV create a reader to remove the XML declaration.
                 if (logPackets)
                 {
-                    final String contents = readAll(request.getReader()) ;
+                    final String contents = readAll(input) ;
                     SoapMessageLogging.appendThreadLog(contents) ;
                     reader = new StringReader(contents) ;
                 }
                 else
                 {
-                    reader = request.getReader() ;
+                    reader = input ;
                 }
                 final SoapMessage soapResponse ;
                 try
@@ -388,6 +387,12 @@ public class HttpServiceMultiplexorServlet extends HttpServlet implements SoapSe
         
         baseHttpURI = processURI(servletConfig.getInitParameter("BaseHttpURI")) ;
         baseHttpsURI = processURI(servletConfig.getInitParameter("BaseHttpsURI")) ;
+        
+        final String logPacketValue = servletConfig.getInitParameter("LogPackets") ;
+        if (logPacketValue != null)
+        {
+            logPackets = Boolean.valueOf(logPacketValue).booleanValue() ;
+        }
     }
     
     /**
@@ -470,29 +475,6 @@ public class HttpServiceMultiplexorServlet extends HttpServlet implements SoapSe
                 break ;
             }
         }
-        checkForXMLDecl(contents) ;
         return contents.toString() ;
-    }
-    
-    private static void checkForXMLDecl(final StringBuffer buffer)
-    {
-        int count = 0 ;
-        try
-        {
-            while(Character.isWhitespace(buffer.charAt(count))) count++ ;
-            if (buffer.charAt(count) == '<')
-            {
-                if (buffer.charAt(count+1) == '?')
-                {
-                    count+=2 ;
-                    while(buffer.charAt(count++) != '>') ;
-                }
-            }
-            if (count > 0)
-            {
-                buffer.delete(0, count) ;
-            }
-        }
-        catch (final StringIndexOutOfBoundsException sioobe) {}
     }
 }

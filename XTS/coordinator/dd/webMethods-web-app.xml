@@ -64,6 +64,19 @@
 
     <description>XML Transaction Coordinator</description>
     
+    <!--  Initialise the Task Manager -->
+    <context-param>
+        <param-name>TaskManager.minWorkerCount</param-name>
+        <param-value>0</param-value>
+    </context-param>
+    <context-param>
+        <param-name>TaskManager.maxWorkerCount</param-name>
+        <param-value>10</param-value>
+    </context-param>
+    <listener>
+        <listener-class>com.arjuna.services.framework.admin.TaskManagerInitialisation</listener-class>
+    </listener>
+    
     <!-- Initialise WS-C services -->
     <listener>
         <listener-class>com.arjuna.webservices.wscoor.server.ActivationCoordinatorInitialisation</listener-class>
@@ -154,7 +167,11 @@
         <!--
         <init-param>
             <param-name>BaseHttpsURI</param-name>
-            <param-value>https://@hostname@:@port@/arjuna/soap/</param-value>
+            <param-value>https://@hostname@:@port@/@urlstub@/soap/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>LogPackets</param-name>
+            <param-value>true</param-value>
         </init-param>
         -->
         <load-on-startup>1</load-on-startup>

@@ -22,6 +22,7 @@ package com.arjuna.webservices.transport.http;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -116,10 +117,16 @@ public class HttpClient extends TransportSoapClient
             throw new SoapFault(SoapFaultType.FAULT_SENDER, WSCLogger.log_mesg.getString("com.arjuna.webservices.transport.http.HttpClient_2")) ;
         }
         
-        final String requestContents = serialiseRequest(request) ;
-        if (SoapMessageLogging.isThreadLogEnabled())
+        final boolean threadLogEnabled = SoapMessageLogging.isThreadLogEnabled() ;
+        final String requestContents ;
+        if (threadLogEnabled)
         {
+            requestContents = serialiseRequest(request) ;
             SoapMessageLogging.appendThreadLog(requestContents) ;
+        }
+        else
+        {
+            requestContents = null ;
         }
         
         final HttpURLConnection httpURLConnection ;
@@ -132,105 +139,122 @@ public class HttpClient extends TransportSoapClient
             throw new SoapFault(SoapFaultType.FAULT_SENDER, WSCLogger.log_mesg.getString("com.arjuna.webservices.transport.http.HttpClient_3")) ;
         }
         
-        try
+        httpURLConnection.setDoOutput(true) ;
+        httpURLConnection.setUseCaches(false) ;
+        
+        final int numHeaders = HTTP_HEADERS.length ;
+        for(int count = 0 ; count < numHeaders ; count++)
         {
-            httpURLConnection.setDoOutput(true) ;
-            httpURLConnection.setUseCaches(false) ;
-            
-            final int numHeaders = HTTP_HEADERS.length ;
-            for(int count = 0 ; count < numHeaders ; count++)
-            {
-                final String[] header = HTTP_HEADERS[count] ;
-                httpURLConnection.setRequestProperty(header[0], header[1]) ;
-            }
-            
-            final SoapDetails soapDetails = request.getSoapDetails() ;
-            final String contentType = HttpUtils.getContentType(soapDetails) ;
-            httpURLConnection.setRequestProperty(HttpUtils.HTTP_CONTENT_TYPE_HEADER, contentType + HttpUtils.HTTP_DEFAULT_CHARSET_PARAMETER) ;
-            httpURLConnection.setRequestProperty(HttpUtils.HTTP_ACCEPT_HEADER, contentType) ;
-            
-            final String requestAction = request.getAction() ;
-            final String actionValue = (requestAction == null ? "" : requestAction) ;
-            
-            // KEV - fix action handling for different SOAP versions
-            httpURLConnection.setRequestProperty(HttpUtils.SOAP_ACTION_HEADER, '"' + actionValue + '"') ;
-            
+            final String[] header = HTTP_HEADERS[count] ;
+            httpURLConnection.setRequestProperty(header[0], header[1]) ;
+        }
+        
+        final SoapDetails soapDetails = request.getSoapDetails() ;
+        final String contentType = HttpUtils.getContentType(soapDetails) ;
+        httpURLConnection.setRequestProperty(HttpUtils.HTTP_CONTENT_TYPE_HEADER, contentType + HttpUtils.HTTP_DEFAULT_CHARSET_PARAMETER) ;
+        httpURLConnection.setRequestProperty(HttpUtils.HTTP_ACCEPT_HEADER, contentType) ;
+        
+        final String requestAction = request.getAction() ;
+        final String actionValue = (requestAction == null ? "" : requestAction) ;
+        
+        // KEV - fix action handling for different SOAP versions
+        httpURLConnection.setRequestProperty(HttpUtils.SOAP_ACTION_HEADER, '"' + actionValue + '"') ;
+        
+        if (requestContents != null)
+        {
             httpURLConnection.setRequestProperty(HttpUtils.HTTP_CONTENT_LENGTH_HEADER,
                 Integer.toString(requestContents.length())) ;
-            
-            final int port = serviceURL.getPort() ;
-            final String host = (port > 0 ? serviceURL.getHost() + ":" + port : serviceURL.getHost()) ;
-            httpURLConnection.setRequestProperty(HttpUtils.HTTP_HOST_HEADER, host) ;
-            httpURLConnection.setRequestProperty(HttpUtils.HTTP_CONNECTION_HEADER, "close") ;
-            httpURLConnection.setRequestMethod("POST") ;
-            
-            httpURLConnection.connect() ;
-            final OutputStream os = httpURLConnection.getOutputStream() ;
+        }
+        
+        final int port = serviceURL.getPort() ;
+        final String host = (port > 0 ? serviceURL.getHost() + ":" + port : serviceURL.getHost()) ;
+        httpURLConnection.setRequestProperty(HttpUtils.HTTP_HOST_HEADER, host) ;
+        httpURLConnection.setRequestMethod("POST") ;
+        
+        httpURLConnection.connect() ;
+        final OutputStream os = httpURLConnection.getOutputStream() ;
+        try
+        {
             final PrintWriter writer = new PrintWriter(os) ;
-            writer.print(requestContents) ;
-            writer.flush() ;
-            
-            final int responseCode = httpURLConnection.getResponseCode() ;
-            
-            if ((responseCode != HttpURLConnection.HTTP_OK) &&
-                (responseCode != HttpURLConnection.HTTP_ACCEPTED) &&
-                (responseCode != HttpURLConnection.HTTP_INTERNAL_ERROR))
+            if (requestContents != null)
             {
-                final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.transport.http.HttpClient_4") ;
-                final String message = MessageFormat.format(pattern, new Object[] {new Integer(responseCode)}) ;
-                throw new SoapFault(SoapFaultType.FAULT_SENDER, message) ;
-            }
-            
-            final String fullResponseContentType = httpURLConnection.getContentType() ;
-//            final String responseContentType = HttpUtils.getContentType(fullResponseContentType) ;
-            // Ignore responses that aren't the same version of SOAP
-//            if ((contentType != null) && !contentType.equals(responseContentType))
-//            {
-//                if (SoapMessageLogging.isThreadLogEnabled())
-//                {
-//                    SoapMessageLogging.appendThreadLog(null) ;
-//                }
-//                return null ;
-//            }
-            
-            final int contentLength = httpURLConnection.getContentLength() ;
-            if (contentLength == 0)
-            {
-                if (SoapMessageLogging.isThreadLogEnabled())
-                {
-                    SoapMessageLogging.appendThreadLog(null) ;
-                }
-                return null ;
-            }
-            
-            final SoapService soapService = request.getSoapService() ;
-            final String encoding = HttpUtils.getContentTypeEncoding(fullResponseContentType) ;
-            final BufferedInputStream bis ;
-            if (responseCode == HttpURLConnection.HTTP_INTERNAL_ERROR)
-            {
-                bis = new BufferedInputStream(httpURLConnection.getErrorStream()) ;
+                writer.print(requestContents) ;
             }
             else
             {
-                bis = new BufferedInputStream(httpURLConnection.getInputStream()) ;
+                request.output(writer) ;
             }
+            writer.flush() ;
+        }
+        finally
+        {
+            os.close() ;
+        }
+        
+        final int responseCode = httpURLConnection.getResponseCode() ;
+        
+        if ((responseCode != HttpURLConnection.HTTP_OK) &&
+            (responseCode != HttpURLConnection.HTTP_ACCEPTED) &&
+            (responseCode != HttpURLConnection.HTTP_INTERNAL_ERROR))
+        {
+            final String pattern = WSCLogger.log_mesg.getString("com.arjuna.webservices.transport.http.HttpClient_4") ;
+            final String message = MessageFormat.format(pattern, new Object[] {new Integer(responseCode)}) ;
+            throw new SoapFault(SoapFaultType.FAULT_SENDER, message) ;
+        }
+        
+        final String fullResponseContentType = httpURLConnection.getContentType() ;
+//        final String responseContentType = HttpUtils.getContentType(fullResponseContentType) ;
+        // Ignore responses that aren't the same version of SOAP
+//        if ((contentType != null) && !contentType.equals(responseContentType))
+//        {
+//            if (threadLogEnabled)
+//            {
+//                SoapMessageLogging.appendThreadLog(null) ;
+//            }
+//            return null ;
+//        }
+        
+        final int contentLength = httpURLConnection.getContentLength() ;
+        if (contentLength == 0)
+        {
+            if (threadLogEnabled)
+            {
+                SoapMessageLogging.appendThreadLog(null) ;
+            }
+            return null ;
+        }
+        
+        final SoapService soapService = request.getSoapService() ;
+        final String encoding = HttpUtils.getContentTypeEncoding(fullResponseContentType) ;
+        final InputStream is ;
+        if (responseCode == HttpURLConnection.HTTP_INTERNAL_ERROR)
+        {
+            is = httpURLConnection.getErrorStream() ;
+        }
+        else
+        {
+            is = httpURLConnection.getInputStream() ;
+        }
+        try
+        {
+            final BufferedInputStream bis = new BufferedInputStream(is) ;
             final InputStreamReader isr = (encoding == null ? new InputStreamReader(bis) : new InputStreamReader(bis, encoding)) ;
             
             final Reader reader ;
-            if ((contentLength <= 0) || SoapMessageLogging.isThreadLogEnabled())
+            if (threadLogEnabled || (contentLength <= 0))
             {
                 final String responseContents = readStream(isr) ;
                 
                 if (responseContents.length() == 0)
                 {
-                    if (SoapMessageLogging.isThreadLogEnabled())
+                    if (threadLogEnabled)
                     {
                         SoapMessageLogging.appendThreadLog(null) ;
                     }
                     return null ;
                 }
                 
-                if (SoapMessageLogging.isThreadLogEnabled())
+                if (threadLogEnabled)
                 {
                     SoapMessageLogging.appendThreadLog(responseContents) ;
                 }
@@ -256,7 +280,7 @@ public class HttpClient extends TransportSoapClient
         }
         finally
         {
-            httpURLConnection.disconnect() ;
+            is.close() ;
         }
     }
     
@@ -283,30 +307,7 @@ public class HttpClient extends TransportSoapClient
                 break ;
             }
         }
-        checkForXMLDecl(stringBuffer) ;
         
         return stringBuffer.toString() ;
-    }
-    
-    private static void checkForXMLDecl(final StringBuffer buffer)
-    {
-        int count = 0 ;
-        try
-        {
-            while(Character.isWhitespace(buffer.charAt(count))) count++ ;
-            if (buffer.charAt(count) == '<')
-            {
-                if (buffer.charAt(count+1) == '?')
-                {
-                    count+=2 ;
-                    while(buffer.charAt(count++) != '>') ;
-                }
-            }
-            if (count > 0)
-            {
-                buffer.delete(0, count) ;
-            }
-        }
-        catch (final StringIndexOutOfBoundsException sioobe) {}
     }
 }
