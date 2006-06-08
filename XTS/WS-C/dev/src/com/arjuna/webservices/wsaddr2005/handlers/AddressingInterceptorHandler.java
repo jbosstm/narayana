@@ -276,7 +276,7 @@ public class AddressingInterceptorHandler implements InterceptorHandler
         final String action, final XMLStreamReader in)
         throws SoapFault
     {
-        final AddressingContext addressingContext = AddressingContext.getContext(context) ;
+        final HandlerAddressingContext addressingContext = HandlerAddressingContext.getHandlerContext(context) ;
         final QName faultHeaderName = addressingContext.getFaultHeaderName() ;
         if (faultHeaderName != null)
         {

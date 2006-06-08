@@ -34,7 +34,6 @@ import com.arjuna.webservices.MessageContext;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.logging.WSCLogger;
 import com.arjuna.webservices.stax.AnyContentSupport;
-import com.arjuna.webservices.stax.ElementContent;
 import com.arjuna.webservices.stax.NamedElement;
 import com.arjuna.webservices.util.StreamHelper;
 
@@ -47,7 +46,7 @@ public class AddressingContext extends AnyContentSupport
     /**
      * The key used for the addressing context within a message exchange.
      */
-    private static final byte[] ADDRESSING_CONTEXT_PROPERTY = new byte[0] ;
+    protected static final byte[] ADDRESSING_CONTEXT_PROPERTY = new byte[0] ;
     
     /**
      * The To header.
@@ -79,15 +78,6 @@ public class AddressingContext extends AnyContentSupport
     private List relatesTo ;
     
     /**
-     * The fault header name.
-     */
-    private QName faultHeaderName ;
-    /**
-     * The fault header.
-     */
-    private ElementContent faultHeader ;
-    
-    /**
      * The associated request addressing context.
      */
     private AddressingContext requestContext ;
@@ -95,7 +85,7 @@ public class AddressingContext extends AnyContentSupport
     /**
      * Default constructor.
      */
-    private AddressingContext()
+    protected AddressingContext()
     {
     }
     
@@ -240,42 +230,6 @@ public class AddressingContext extends AnyContentSupport
             relatesTo = new ArrayList() ;
         }
         relatesTo.add(relationship) ;
-    }
-    
-    /**
-     * Get the fault header name.
-     * @return The fault header name.
-     */
-    public QName getFaultHeaderName()
-    {
-        return faultHeaderName ;
-    }
-    
-    /**
-     * Set the fault header name.
-     * @param faultHeaderName The fault header name.
-     */
-    public void setFaultHeaderName(final QName faultHeaderName)
-    {
-        this.faultHeaderName = faultHeaderName;
-    }
-    
-    /**
-     * Get the fault header.
-     * @return The fault header.
-     */
-    public ElementContent getFaultHeader()
-    {
-        return faultHeader ;
-    }
-    
-    /**
-     * Set the fault header.
-     * @param faultHeader The fault header.
-     */
-    public void setFaultHeader(final ElementContent faultHeader)
-    {
-        this.faultHeader = faultHeader;
     }
     
     /**

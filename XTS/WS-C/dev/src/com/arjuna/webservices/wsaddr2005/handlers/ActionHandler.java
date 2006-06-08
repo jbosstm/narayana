@@ -26,7 +26,6 @@ import javax.xml.stream.XMLStreamReader;
 
 import com.arjuna.webservices.MessageContext;
 import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices.wsaddr2005.AddressingContext;
 import com.arjuna.webservices.wsaddr2005.AttributedURIType;
 
 /**
@@ -47,15 +46,23 @@ public class ActionHandler extends AddressingHeaderHandler
     {
         final QName headerName = in.getName() ;
         final AttributedURIType action = new AttributedURIType(in) ;
-        final AddressingContext addressingContext = AddressingContext.getContext(context) ;
-        if (addressingContext.getAction() != null)
+        final HandlerAddressingContext addressingContext = HandlerAddressingContext.getHandlerContext(context) ;
+        if (!addressingContext.isFaultedAction())
         {
-            addressingContext.setFaultHeaderName(headerName) ;
-            addressingContext.setFaultHeader(action) ;
-        }
-        else
-        {
-            addressingContext.setAction(action) ;
+            if (addressingContext.getAction() != null)
+            {
+                addressingContext.setFaultedAction() ;
+                addressingContext.setAction(null) ;
+                if (addressingContext.getFaultHeaderName() == null)
+                {
+                    addressingContext.setFaultHeaderName(headerName) ;
+                    addressingContext.setFaultHeader(action) ;
+                }
+            }
+            else
+            {
+                addressingContext.setAction(action) ;
+            }
         }
     }
 }

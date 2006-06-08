@@ -26,7 +26,6 @@ import javax.xml.stream.XMLStreamReader;
 
 import com.arjuna.webservices.MessageContext;
 import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices.wsaddr2005.AddressingContext;
 import com.arjuna.webservices.wsaddr2005.EndpointReferenceType;
 
 /**
@@ -47,15 +46,23 @@ public class FaultToHandler extends AddressingHeaderHandler
     {
         final QName headerName = in.getName() ;
         final EndpointReferenceType faultTo = new EndpointReferenceType(in) ;
-        final AddressingContext addressingContext = AddressingContext.getContext(context) ;
-        if (addressingContext.getFaultTo() != null)
+        final HandlerAddressingContext addressingContext = HandlerAddressingContext.getHandlerContext(context) ;
+        if (!addressingContext.isFaultedFaultTo())
         {
-            addressingContext.setFaultHeaderName(headerName) ;
-            addressingContext.setFaultHeader(faultTo) ;
-        }
-        else
-        {
-            addressingContext.setFaultTo(faultTo) ;
+            if (addressingContext.getFaultTo() != null)
+            {
+                addressingContext.setFaultedFaultTo() ;
+                addressingContext.setFaultTo(null) ;
+                if (addressingContext.getFaultHeaderName() == null)
+                {
+                    addressingContext.setFaultHeaderName(headerName) ;
+                    addressingContext.setFaultHeader(faultTo) ;
+                }
+            }
+            else
+            {
+                addressingContext.setFaultTo(faultTo) ;
+            }
         }
     }
 }
