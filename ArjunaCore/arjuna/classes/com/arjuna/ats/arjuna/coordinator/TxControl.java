@@ -56,6 +56,16 @@ import com.arjuna.ats.arjuna.recovery.TransactionStatusManager;
 public class TxControl
 {
 
+	public static final int getDefaultTimeout ()
+	{
+		return _defaultTimeout;
+	}
+	
+	public static final void setDefaultTimeout (int timeout)
+	{
+		_defaultTimeout = timeout;
+	}
+	
     public static final void enable ()
     {
 	TxControl.enable = true;
@@ -156,9 +166,26 @@ public class TxControl
     static TransactionStatusManager transactionStatusManager = null;
     static ClassName actionStoreType = null;
     static byte[]  xaNodeName = null;
+    static int _defaultTimeout = 60000; // 60 seconds
 
     static
     {
+    	String env = arjPropertyManager.propertyManager.getProperty(Environment.DEFAULT_TIMEOUT);
+    	
+    	if (env != null)
+    	{
+    		try
+    		{
+    			Integer in = new Integer(env);
+    			
+    			_defaultTimeout = in.intValue();
+    		}
+    		catch (Exception ex)
+    		{
+    			ex.printStackTrace();
+    		}
+    	}
+    	
 	String env = arjPropertyManager.propertyManager.getProperty(Environment.MAINTAIN_HEURISTICS);
 	
 	if (env != null)

@@ -55,7 +55,7 @@ import com.arjuna.ats.arjuna.common.*;
 public class AtomicAction extends TwoPhaseCoordinator
 {
 
-	public static final int NO_TIMEOUT = 0;
+	public static final int NO_TIMEOUT = -1;
 	
 	/**
 	 * Create a new transaction. If there is already a transaction associated
@@ -140,6 +140,9 @@ public class AtomicAction extends TwoPhaseCoordinator
 
 			_timeout = timeout;
 	
+			if (_timeout == 0)
+				_timeout = TxControl.getDefaultTimeout();
+			
 			if (_timeout > AtomicAction.NO_TIMEOUT)
 				TransactionReaper.transactionReaper(true).insert(this, _timeout);
 	

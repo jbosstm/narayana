@@ -79,6 +79,7 @@ package com.arjuna.ats.arjuna.common;
  * <li> OBJECTSTORE_HIERARCHY_TIMEOUT = com.arjuna.ats.arjuna.objectstore.hierarchyTimeout
  * <li> RECOVERY_MANAGER_PORT = com.arjuna.ats.internal.arjuna.recovery.recoveryPort
  * <li> XA_NODE_IDENTIFIER = com.arjuna.ats.arjuna.xa.nodeIdentifier
+ * <li> DEFAULT_TIMEOUT = com.arjuna.ats.arjuna.coordinator.defaultTimeout
  * </ul>
  *
  * @author Mark Little (mark@arjuna.com)
@@ -132,6 +133,7 @@ public class Environment
     public static final String OBJECTSTORE_HIERARCHY_TIMEOUT = "com.arjuna.ats.arjuna.objectstore.hierarchyTimeout";
     public static final String RECOVERY_MANAGER_PORT = "com.arjuna.ats.internal.arjuna.recovery.recoveryPort";
     public static final String XA_NODE_IDENTIFIER = "com.arjuna.ats.arjuna.xa.nodeIdentifier";
+    public static final String DEFAULT_TIMEOUT = "com.arjuna.ats.arjuna.coordinator.defaultTimeout";
     
 }
 
