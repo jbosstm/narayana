@@ -166,7 +166,7 @@ public class TxControl
     static TransactionStatusManager transactionStatusManager = null;
     static ClassName actionStoreType = null;
     static byte[]  xaNodeName = null;
-    static int _defaultTimeout = 60000; // 60 seconds
+    static int _defaultTimeout = 60; // 60 seconds
 
     static
     {
@@ -186,7 +186,7 @@ public class TxControl
     		}
     	}
     	
-	String env = arjPropertyManager.propertyManager.getProperty(Environment.MAINTAIN_HEURISTICS);
+	env = arjPropertyManager.propertyManager.getProperty(Environment.MAINTAIN_HEURISTICS);
 	
 	if (env != null)
 	{
