@@ -145,8 +145,6 @@ public class AtomicAction extends TwoPhaseCoordinator
 			
 			if (_timeout > AtomicAction.NO_TIMEOUT)
 				TransactionReaper.transactionReaper(true).insert(this, _timeout);
-	
-			_timeout = timeout;
 		}
 
 		return status;
