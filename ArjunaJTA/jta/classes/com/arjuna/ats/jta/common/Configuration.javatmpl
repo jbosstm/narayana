@@ -66,8 +66,19 @@ public static synchronized final void setPropertiesFile (String file)
 	_propFile = file;
     }
 
+    public static synchronized final Boolean getXATransactionTimeoutEnabled()
+    {
+        return _xaTransactionTimeoutEnabled ;
+    }
+
+    public static synchronized final void setXATransactionTimeoutEnabled(final Boolean xaTransactionTimeoutEnabled)
+    {
+        _xaTransactionTimeoutEnabled = xaTransactionTimeoutEnabled ;
+    }
+
 private static String _lockStore = null;
 private static String _propFile = "@PROPERTIES_FILE@";
+private static Boolean _xaTransactionTimeoutEnabled ;
     
 }
 

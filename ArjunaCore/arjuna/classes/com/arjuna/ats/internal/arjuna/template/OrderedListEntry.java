@@ -51,17 +51,17 @@ public final OrderedListElement car ()
 	return _theElement;
     }
 
-public final OrderedListEntry cdr ()
+public synchronized final OrderedListEntry cdr ()
     {
 	return _next;
     }
 
-public final void setfCdr (OrderedListEntry n)
+public synchronized final void setfCdr (OrderedListEntry n)
     {
 	_next = n;
     }
 
-private OrderedListElement _theElement;
+private final OrderedListElement _theElement;
 private OrderedListEntry _next;
 
 };

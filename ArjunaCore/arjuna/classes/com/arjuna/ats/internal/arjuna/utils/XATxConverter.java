@@ -168,7 +168,7 @@ public class XATxConverter
 
 	    System.arraycopy(xid.data, nodeNameIndex, buff, 0, buff.length);
 
-	    Uid tx = new Uid(new String(buff), false);
+	    Uid tx = new Uid(new String(buff), true);
 
 	    buff = null;
 

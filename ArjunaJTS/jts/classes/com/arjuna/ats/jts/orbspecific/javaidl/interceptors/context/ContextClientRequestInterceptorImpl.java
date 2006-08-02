@@ -198,7 +198,7 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 			throw new UNKNOWN(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.invalidparam"));
 		}
 		else
-		    threadId = Thread.currentThread().getName();
+		    threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
 
 		if (threadId != null)
 		{

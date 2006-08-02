@@ -145,13 +145,15 @@ public class ThreadActionData
 
 	public static BasicAction popAction () throws EmptyStackException
 	{
-		return popAction(Thread.currentThread().getName(), true);
+        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+		return popAction(threadId, true);
 	}
 
 	public static BasicAction popAction (boolean unregister)
 			throws EmptyStackException
 	{
-		return popAction(Thread.currentThread().getName(), unregister);
+        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+		return popAction(threadId, unregister);
 	}
 
 	public static BasicAction popAction (String threadId)
@@ -206,7 +208,10 @@ public class ThreadActionData
 			throws NoSuchElementException
 	{
 		if ((act != null) && (unregister))
-			act.removeChildThread(t.getName());
+        {
+            final String threadId = Integer.toHexString(System.identityHashCode(t)) ;
+			act.removeChildThread(threadId);
+        }
 
 		Stack txs = (Stack) _threadList.get();
 
@@ -246,7 +251,10 @@ public class ThreadActionData
 					BasicAction act = (BasicAction) txs.pop();
 
 					if (act != null)
-						act.removeChildThread(t.getName());
+                    {
+                        final String threadId = Integer.toHexString(System.identityHashCode(t)) ;
+						act.removeChildThread(threadId);
+                    }
 				}
 			}
 		}

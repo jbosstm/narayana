@@ -176,7 +176,7 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 			throw new UNKNOWN("Invalid PI tx parameter!");
 		}
 		else
-		    threadId = Thread.currentThread().getName();
+		    threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
 		
 		if (threadId != null)
 		{

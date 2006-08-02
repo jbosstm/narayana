@@ -66,8 +66,6 @@ public class PropagationContextManager
 			log.debug("PropagationContextManager.getTransactionPropagationContext - called");
 		}
 
-		String threadId = Thread.currentThread().getName();
-
 		String txid = ((BasicAction.Current() == null) ? null : BasicAction.Current().get_uid().stringForm());
 
 		return txid;

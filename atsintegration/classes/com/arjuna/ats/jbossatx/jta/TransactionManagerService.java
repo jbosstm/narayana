@@ -30,7 +30,9 @@
  */
 package com.arjuna.ats.jbossatx.jta;
 
+import org.jboss.mx.util.ObjectNameFactory;
 import org.jboss.system.ServiceMBeanSupport;
+import org.jboss.system.server.Server;
 import org.jboss.tm.JBossXATerminator;
 import org.jboss.tm.XAExceptionFormatter;
 
@@ -40,7 +42,7 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple;
 import com.arjuna.ats.jta.utils.JNDIManager;
 import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
-import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.coordinator.TxStats;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 
@@ -48,6 +50,11 @@ import com.arjuna.ats.internal.tsmx.mbeans.PropertyServiceJMXPlugin;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 import com.arjuna.common.util.propertyservice.PropertyManager;
 
+import javax.management.InstanceNotFoundException;
+import javax.management.Notification;
+import javax.management.NotificationFilterSupport;
+import javax.management.NotificationListener;
+import javax.management.ObjectName;
 import javax.naming.Reference;
 import javax.naming.InitialContext;
 import javax.transaction.TransactionManager;
@@ -64,7 +71,7 @@ import java.io.PrintStream;
  * @author Richard A. Begg (richard.begg@arjuna.com)
  * @version $Id: TransactionManagerService.java,v 1.5 2005/06/24 15:24:15 kconner Exp $
  */
-public class TransactionManagerService extends ServiceMBeanSupport implements TransactionManagerServiceMBean
+public class TransactionManagerService extends ServiceMBeanSupport implements TransactionManagerServiceMBean, NotificationListener
 {
     public final static String PROPAGATE_FULL_CONTEXT_PROPERTY = "com.arjuna.ats.jbossatx.jta.propagatefullcontext";
 
@@ -74,9 +81,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
     private static final JBossXATerminator TERMINATOR = new XATerminator() ;
 
     private RecoveryManager _recoveryManager;
-    private boolean _initialised = false;
     private boolean _runRM = true;
-    private int _transactionTimeout = -1;
 
     /**
      * Use the short class name as the default for the service name.
@@ -125,11 +130,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         {
             if (_runRM)
             {
-                this.getLog().info("Starting recovery manager");
-
-                _recoveryManager = RecoveryManager.manager() ;
-
-                this.getLog().info("Recovery manager started");
+                registerNotification() ;
             }
             else
             {
@@ -158,19 +159,20 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         jtaPropertyManager.propertyManager.setProperty(Environment.JTA_UT_IMPLEMENTATION, UserTransactionImple.class.getName());
 
         JNDIManager.bindJTATransactionManagerImplementation();
+    }
+    
+    /**
+     * Handle JMX notification.
+     * @param notification The JMX notification event.
+     * @param param The notification parameter.
+     */
+    public void handleNotification(final Notification notification, final Object param)
+    {
+        this.getLog().info("Starting recovery manager");
 
-        /** Signal that the transaction manager has been bound **/
-        _initialised = true;
+        _recoveryManager = RecoveryManager.manager() ;
 
-        /**
-         * If a call to set transaction has been called before the transaction
-         * manager is bound then set the transaction timeout now
-         */
-        if (_transactionTimeout != -1)
-        {
-            this.getLog().info("Transaction timeout set to " + _transactionTimeout);
-            setTransactionTimeout(_transactionTimeout);
-        }
+        this.getLog().info("Recovery manager started");
     }
 
     private boolean isRecoveryManagerRunning() throws Exception
@@ -268,19 +270,12 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
      */
     public void setTransactionTimeout(int timeout) throws javax.transaction.SystemException
     {
-        if (_initialised)
+        if (timeout > 0)
         {
-            javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-
-            tm.setTransactionTimeout(timeout);
+            TxControl.setDefaultTimeout(timeout);
         }
         else
-        {
-            if (timeout > 0)
-                _transactionTimeout = timeout;
-            else
-                throw new javax.transaction.SystemException("Transaction Timeout < 0");
-        }
+            throw new javax.transaction.SystemException("Transaction Timeout < 0");
     }
 
     /**
@@ -409,6 +404,17 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         _runRM = runRM;
     }
 
+    private void registerNotification()
+        throws InstanceNotFoundException
+    {
+        final NotificationFilterSupport notificationFilter = new NotificationFilterSupport() ;
+        notificationFilter.enableType(Server.START_NOTIFICATION_TYPE) ;
+        
+        final ObjectName serverName = ObjectNameFactory.create("jboss.system:type=Server") ;
+        
+        getServer().addNotificationListener(serverName, this, notificationFilter, null) ;
+    }
+    
     private void bindRef(String jndiName, String className)
             throws Exception
     {

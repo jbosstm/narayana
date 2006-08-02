@@ -42,23 +42,28 @@ public class CheckedActions
 
     public static final synchronized void remove () throws SystemException
     {
-	otsCheckedAction.remove(Thread.currentThread().getName());
+        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+        otsCheckedAction.remove(threadId);
     }
     
     public static final synchronized CheckedAction get () throws SystemException
     {
-	if (otsCheckedAction != null)
-	    return (CheckedAction) otsCheckedAction.get(Thread.currentThread().getName());
-	else
-	    return null;
+    	if (otsCheckedAction != null)
+        {
+            final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+    	    return (CheckedAction) otsCheckedAction.get(threadId);
+        }
+    	else
+    	    return null;
     }
 
     public static final synchronized void set (CheckedAction ca) throws SystemException
     {
-	if (otsCheckedAction == null)
-	    otsCheckedAction = new Hashtable();
-
-	otsCheckedAction.put(Thread.currentThread().getName(), ca);
+    	if (otsCheckedAction == null)
+    	    otsCheckedAction = new Hashtable();
+    
+        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+    	otsCheckedAction.put(threadId, ca);
     }
 
     private static Hashtable otsCheckedAction = null;

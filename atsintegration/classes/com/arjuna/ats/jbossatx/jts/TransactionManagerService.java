@@ -31,7 +31,9 @@
 package com.arjuna.ats.jbossatx.jts;
 
 import org.jboss.system.ServiceMBeanSupport;
+import org.jboss.system.server.Server;
 import org.jboss.iiop.CorbaORBService;
+import org.jboss.mx.util.ObjectNameFactory;
 import org.jboss.tm.JBossXATerminator;
 import org.jboss.tm.XAExceptionFormatter;
 import com.arjuna.ats.internal.jbossatx.jts.PropagationContextWrapper;
@@ -42,7 +44,6 @@ import com.arjuna.ats.jta.utils.JNDIManager;
 import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxStats;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.orbportability.ORB;
@@ -53,6 +54,11 @@ import com.arjuna.ats.internal.jts.recovery.RecoveryORBManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 import com.arjuna.common.util.propertyservice.PropertyManager;
 
+import javax.management.InstanceNotFoundException;
+import javax.management.Notification;
+import javax.management.NotificationFilterSupport;
+import javax.management.NotificationListener;
+import javax.management.ObjectName;
 import javax.naming.Reference;
 import javax.naming.InitialContext;
 import javax.transaction.TransactionManager;
@@ -69,7 +75,7 @@ import java.io.PrintStream;
  * @author Richard A. Begg (richard.begg@arjuna.com)
  * @version $Id: TransactionManagerService.java,v 1.17 2005/06/24 15:24:14 kconner Exp $
  */
-public class TransactionManagerService extends ServiceMBeanSupport implements TransactionManagerServiceMBean
+public class TransactionManagerService extends ServiceMBeanSupport implements TransactionManagerServiceMBean, NotificationListener
 {
     public final static String PROPAGATE_FULL_CONTEXT_PROPERTY = "com.arjuna.ats.jbossatx.jts.propagatefullcontext";
 
@@ -79,7 +85,6 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
     private static final JBossXATerminator TERMINATOR = new XATerminator() ;
 
     private RecoveryManager _recoveryManager;
-    private boolean _initialised = false;
     private boolean _runRM = true;
 
     /**
@@ -146,11 +151,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         {
             if (_runRM)
             {
-                this.getLog().info("Starting recovery manager");
-
-                _recoveryManager = RecoveryManager.manager() ;
-
-                this.getLog().info("Recovery manager started");
+                registerNotification() ;
             }
             else
             {
@@ -179,9 +180,20 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         jtaPropertyManager.propertyManager.setProperty(Environment.JTA_UT_IMPLEMENTATION, UserTransactionImple.class.getName());
 
         JNDIManager.bindJTATransactionManagerImplementation();
+    }
+    
+    /**
+     * Handle JMX notification.
+     * @param notification The JMX notification event.
+     * @param param The notification parameter.
+     */
+    public void handleNotification(final Notification notification, final Object param)
+    {
+        this.getLog().info("Starting recovery manager");
 
-        /** Signal that the transaction manager has been bound **/
-        _initialised = true;
+        _recoveryManager = RecoveryManager.manager() ;
+
+        this.getLog().info("Recovery manager started");
     }
 
     private boolean isRecoveryManagerRunning() throws Exception
@@ -413,6 +425,17 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
     public void setRunInVMRecoveryManager(boolean runRM)
     {
         _runRM = runRM;
+    }
+    
+    private void registerNotification()
+        throws InstanceNotFoundException
+    {
+        final NotificationFilterSupport notificationFilter = new NotificationFilterSupport() ;
+        notificationFilter.enableType(Server.START_NOTIFICATION_TYPE) ;
+        
+        final ObjectName serverName = ObjectNameFactory.create("jboss.system:type=Server") ;
+        
+        getServer().addNotificationListener(serverName, this, notificationFilter, null) ;
     }
 
     private void bindRef(String jndiName, String className)

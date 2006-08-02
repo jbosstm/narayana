@@ -46,7 +46,10 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator;
 
 import com.arjuna.ats.jta.xa.*;
+import com.arjuna.ats.jta.common.Configuration;
+import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.jta.logging.*;
+import com.arjuna.ats.jts.common.jtsPropertyManager;
 
 import com.arjuna.ats.internal.jta.xa.TxInfo;
 
@@ -685,25 +688,28 @@ public class TransactionImple implements javax.transaction.Transaction,
 				{
 					try
 					{
+                        if (_xaTransactionTimeoutEnabled)
+                        {
+                            int timeout = _theTransaction.getTimeout();
+
+                            if (timeout > 0)
+                            {
+                                try
+                                {
+                                    xaRes.setTransactionTimeout(timeout);
+                                }
+                                catch (XAException te)
+                                {
+                                    if (jtaLogger.loggerI18N.isWarnEnabled())
+                                    {
+                                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.timeouterror", new Object[]
+                                        { "TransactionImple.enlistResource", XAHelper.printXAErrorCode(te), xid });
+                                    }
+                                }
+                            }
+                        }
+
 						xaRes.start(xid, XAResource.TMNOFLAGS);
-
-						int timeout = _theTransaction.getTimeout();
-
-						if (timeout > 0)
-						{
-							try
-							{
-								xaRes.setTransactionTimeout(timeout);
-							}
-							catch (XAException te)
-							{
-								if (jtaLogger.loggerI18N.isWarnEnabled())
-								{
-									jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.timeouterror", new Object[]
-									{ "TransactionImple.enlistResource", XAHelper.printXAErrorCode(te), xid });
-								}
-							}
-						}
 
 						associatedWork = true;
 
@@ -1218,6 +1224,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 			jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.syncproblem", ex);
 		}
+		_xaTransactionTimeoutEnabled = getXATransactionTimeoutEnabled() ;
 	}
 
 	protected void commitAndDisassociate ()
@@ -1641,11 +1648,37 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 	}
 
+	private static boolean getXATransactionTimeoutEnabled()
+	{
+		final Boolean xaTransactionTimeoutEnabled = Configuration.getXATransactionTimeoutEnabled() ;
+		if (xaTransactionTimeoutEnabled != null)
+		{
+			return xaTransactionTimeoutEnabled.booleanValue() ;
+		}
+		return XA_TRANSACTION_TIMEOUT_ENABLED ;
+	}
+
 	protected AtomicTransaction _theTransaction;
 
 	private Hashtable _resources;
 	private Hashtable _duplicateResources;
 	private int _suspendCount;
+	private final boolean _xaTransactionTimeoutEnabled ;
+
+	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED ;
+
+	static
+	{
+		final String xaTransactionTimeoutEnabled = jtsPropertyManager.propertyManager.getProperty(Environment.XA_TRANSACTION_TIMEOUT_ENABLED) ;
+		if (xaTransactionTimeoutEnabled != null)
+		{
+			XA_TRANSACTION_TIMEOUT_ENABLED = Boolean.valueOf(xaTransactionTimeoutEnabled).booleanValue() ;
+		}
+		else
+		{
+			XA_TRANSACTION_TIMEOUT_ENABLED = true ;
+		}
+	}
 	
 	private static Hashtable _transactions = new Hashtable();
 

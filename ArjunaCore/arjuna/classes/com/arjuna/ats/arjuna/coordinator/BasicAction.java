@@ -849,7 +849,8 @@ public class BasicAction extends StateManager
 				if (_childThreads == null)
 					_childThreads = new Hashtable();
 
-				_childThreads.put(t.getName(), t); // makes sure so we don't get
+                final String threadId = Integer.toHexString(System.identityHashCode(t)) ;
+				_childThreads.put(threadId, t); // makes sure so we don't get
 												   // duplicates
 
 				result = true;
@@ -880,7 +881,8 @@ public class BasicAction extends StateManager
 
 	public final boolean removeChildThread () // current thread
 	{
-		return removeChildThread(Thread.currentThread().getName());
+        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+		return removeChildThread(threadId);
 	}
 
 	/**

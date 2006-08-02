@@ -56,7 +56,8 @@ public void finalize ()
     {
 	if (action != null)
 	{
-	    action.removeChildThread(this.getName());
+        final String threadId = Integer.toHexString(System.identityHashCode(this)) ;
+	    action.removeChildThread(threadId);
 	    action = null;
 	}
     }
@@ -68,14 +69,15 @@ public static void create (Thread thread) throws IllegalArgumentException
 	 * should work!
 	 */
 
-	if (actions.get(thread.getName()) == null)
+    final String threadId = Integer.toHexString(System.identityHashCode(thread)) ;
+	if (actions.get(threadId) == null)
 	{
 	    BasicAction currentAction = BasicAction.Current();
 
 	    if (currentAction != null)
 	    {
 		currentAction.addChildThread(thread);
-		actions.put(thread.getName(), currentAction);
+		actions.put(threadId, currentAction);
 		
 		currentAction = null;
 	    }
@@ -86,13 +88,14 @@ public static void create (Thread thread) throws IllegalArgumentException
 
 public static void destroy (Thread thread) throws IllegalArgumentException
     {
-	BasicAction currentAction = (BasicAction) actions.remove(thread.getName());
+    final String threadId = Integer.toHexString(System.identityHashCode(thread)) ;
+	BasicAction currentAction = (BasicAction) actions.remove(threadId);
 
 	if (currentAction != null)
 	{
 	    if (currentAction != null)
 	    {
-		currentAction.removeChildThread(thread.getName());
+		currentAction.removeChildThread(threadId);
 		currentAction = null;
 	    }
 	}

@@ -37,6 +37,9 @@ import com.arjuna.ats.internal.jta.utils.arjunacore.StatusConverter;
 import com.arjuna.ats.internal.jta.resources.arjunacore.SynchronizationImple;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 
+import com.arjuna.ats.jta.common.Configuration;
+import com.arjuna.ats.jta.common.Environment;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XidImple;
 import com.arjuna.ats.jta.logging.*;
@@ -98,6 +101,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		_resources = new Hashtable();
 		_duplicateResources = new Hashtable();
 		_suspendCount = 0;
+		_xaTransactionTimeoutEnabled = getXATransactionTimeoutEnabled() ;
 	}
 
 	/**
@@ -629,28 +633,31 @@ public class TransactionImple implements javax.transaction.Transaction,
 				{
 					try
 					{
+                        if (_xaTransactionTimeoutEnabled)
+                        {
+                            int timeout = _theTransaction.getTimeout();
+
+                            if (timeout > 0)
+                            {
+                                try
+                                {
+                                    xaRes.setTransactionTimeout(timeout);
+                                }
+                                catch (XAException te)
+                                {
+                                    if (jtaLogger.loggerI18N.isWarnEnabled())
+                                    {
+                                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.timeouterror", new Object[]
+                                        { "TransactionImple.enlistResource", XAHelper.printXAErrorCode(te), xid });
+                                    }
+                                }
+                            }
+                        }
+
 						int xaStartNormal = ((theModifier == null) ? XAResource.TMNOFLAGS
 								: theModifier.xaStartParameters(XAResource.TMNOFLAGS));
 
 						xaRes.start(xid, xaStartNormal);
-
-						int timeout = _theTransaction.getTimeout();
-
-						if (timeout > 0)
-						{
-							try
-							{
-								xaRes.setTransactionTimeout(timeout);
-							}
-							catch (XAException te)
-							{
-								if (jtaLogger.loggerI18N.isWarnEnabled())
-								{
-									jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.timeouterror", new Object[]
-									{ "TransactionImple.enlistResource", XAHelper.printXAErrorCode(te), xid });
-								}
-							}
-						}
 
 						associatedWork = true;
 
@@ -690,8 +697,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 						{
 							if (jtaLogger.loggerI18N.isWarnEnabled())
 							{
-								jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.enliststartfailed", new Object[]
-								{ "TransactionImple.enlistResource", xid });
+								jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.enliststarterror", new Object[]
+                                { "TransactionImple.enlistResource", XAHelper.printXAErrorCode(e), xid });
 							}
 
 							markRollbackOnly();
@@ -1116,6 +1123,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 		
 		_suspendCount = 0;
+		_xaTransactionTimeoutEnabled = getXATransactionTimeoutEnabled() ;
 	}
 
 	final com.arjuna.ats.arjuna.AtomicAction getAtomicAction()
@@ -1541,11 +1549,37 @@ public class TransactionImple implements javax.transaction.Transaction,
 		_transactions.remove(tx.get_uid());
 	}
 
+	private static boolean getXATransactionTimeoutEnabled()
+	{
+		final Boolean xaTransactionTimeoutEnabled = Configuration.getXATransactionTimeoutEnabled() ;
+		if (xaTransactionTimeoutEnabled != null)
+		{
+			return xaTransactionTimeoutEnabled.booleanValue() ;
+		}
+		return XA_TRANSACTION_TIMEOUT_ENABLED ;
+	}
+
 	protected com.arjuna.ats.arjuna.AtomicAction _theTransaction;
 
 	private Hashtable _resources;
 	private Hashtable _duplicateResources;
 	private int _suspendCount;
+	private final boolean _xaTransactionTimeoutEnabled ;
+
+	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED ;
+
+	static
+	{
+		final String xaTransactionTimeoutEnabled = jtaPropertyManager.propertyManager.getProperty(Environment.XA_TRANSACTION_TIMEOUT_ENABLED) ;
+		if (xaTransactionTimeoutEnabled != null)
+		{
+			XA_TRANSACTION_TIMEOUT_ENABLED = Boolean.valueOf(xaTransactionTimeoutEnabled).booleanValue() ;
+		}
+		else
+		{
+			XA_TRANSACTION_TIMEOUT_ENABLED = true ;
+		}
+	}
 
 	private static Hashtable _transactions = new Hashtable();
 

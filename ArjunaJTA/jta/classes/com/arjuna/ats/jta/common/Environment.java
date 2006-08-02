@@ -54,6 +54,7 @@ public class Environment
     public static final String TM_JNDI_CONTEXT = "com.arjuna.ats.jta.utils.TMJNDIContext";
 
     public static final String XA_ERROR_HANDLER = "com.arjuna.ats.jta.xaErrorHandler";
+    public static final String XA_TRANSACTION_TIMEOUT_ENABLED = "com.arjuna.ats.jta.xaTransactionTimeoutEnabled";
 
 }
 

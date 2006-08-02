@@ -60,7 +60,6 @@ import com.arjuna.common.util.logging.*;
 import java.io.PrintStream;
 import java.util.*;
 import java.lang.Object;
-import org.omg.CORBA.CompletionStatus;
 import org.omg.CORBA.*;
 
 import org.omg.PortableInterceptor.*;
@@ -180,7 +179,8 @@ public class ContextManager
 						 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ContextManager::current ()");
 	}
 
-	Object arg = otsCurrent.get(Thread.currentThread().getName());
+    final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+	Object arg = otsCurrent.get(threadId);
 	ControlWrapper wrapper = null;
 
 	if (arg != null)
@@ -317,7 +317,8 @@ public class ContextManager
 
     public final ControlWrapper popAction ()
     {
-	return popAction(Thread.currentThread().getName());
+        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+        return popAction(threadId);
     }
 
     public final void purgeActions (String threadId)
@@ -348,7 +349,8 @@ public class ContextManager
 
     public final void purgeActions ()
     {
-	purgeActions(Thread.currentThread().getName());
+        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+        purgeActions(threadId);
     }
 
     /**
@@ -592,8 +594,8 @@ public class ContextManager
 						 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ContextManager::pushAction ()");
 	}
 
-	Thread ct = Thread.currentThread();
-	Stack sl = (Stack) otsCurrent.get(ct.getName());
+    final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+	Stack sl = (Stack) otsCurrent.get(threadId);
 	boolean isNew = false;
 	
 	if (sl == null)
@@ -621,7 +623,7 @@ public class ContextManager
 	sl.push(action);
 
 	if (isNew)
-	    otsCurrent.put(ct.getName(), sl);
+	    otsCurrent.put(threadId, sl);
 
 	associateContext();
 
@@ -684,7 +686,8 @@ public class ContextManager
 
 		    org.omg.CORBA.Any threadData = ORBManager.getORB().orb().create_any();
 
-		    threadData.insert_string(Thread.currentThread().getName());
+            final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+		    threadData.insert_string(threadId);
 
 		    _piCurrent.set_slot(slotId, threadData);
 
@@ -835,7 +838,8 @@ public class ContextManager
 		{
 		    org.omg.CORBA.Any localDataAny = ORBManager.getORB().orb().create_any();
 
-		    localDataAny.insert_string(Thread.currentThread().getName());
+            final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+		    localDataAny.insert_string(threadId);
 
 		    _piCurrent.set_slot(slotId, localDataAny);
 		}

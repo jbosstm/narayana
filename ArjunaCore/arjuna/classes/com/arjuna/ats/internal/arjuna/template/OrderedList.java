@@ -217,19 +217,15 @@ public final synchronized boolean remove (OrderedListElement element)
 	{
 	    if (ptr.car() == element)  // we mean '==' rather than equals
 	    {
-		OrderedListEntry oldcons = ptr;
-	    
 		// unlink the cons cell for the element we're removing
 		
 		if (prev != null)
 		    prev.setfCdr(ptr.cdr());
 		else
 		    _headOfList = ptr.cdr();
+        ptr.setfCdr(null) ;
 
 		_entryCount--;
-	    
-		// flush the dead cons cell
-		oldcons = null;
 	    
 		return true;
 	    }
@@ -250,6 +246,7 @@ public final synchronized OrderedListElement orderedPop ()
 	    OrderedListElement p = _headOfList.car();
 
 	    _headOfList = remove.cdr();
+        remove.setfCdr(null) ;
 	    _entryCount--;
 
 	    remove = null;
@@ -258,6 +255,20 @@ public final synchronized OrderedListElement orderedPop ()
 	}
 	else
 	    return null;
+    }
+    
+    public final synchronized OrderedListElement peak()
+    {
+        if (_headOfList != null)
+        {
+            return _headOfList.car();
+        }
+        return null;
+    }
+    
+    final synchronized OrderedListEntry head()
+    {
+        return _headOfList;
     }
 
     /**
@@ -283,8 +294,8 @@ public final synchronized long size ()
 	return _entryCount;
     }
 
-protected OrderedListEntry _headOfList;
-protected long             _entryCount;
+private OrderedListEntry _headOfList;
+private long             _entryCount;
     
 private boolean _increasing;
 

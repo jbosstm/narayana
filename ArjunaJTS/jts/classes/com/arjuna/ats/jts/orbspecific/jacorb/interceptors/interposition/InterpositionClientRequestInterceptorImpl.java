@@ -181,7 +181,7 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 			throw new UNKNOWN(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.invalidparam"));
 		}
 		else
-		    threadId = Thread.currentThread().getName();
+		    threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
 
 		if (threadId != null)
 		{

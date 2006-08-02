@@ -129,7 +129,7 @@ public class AtomicAction extends TwoPhaseCoordinator
 	public int begin (int timeout)
 	{
 		int status = super.start();
-
+        
 		if (status == ActionStatus.RUNNING)
 		{
 			/*

@@ -83,8 +83,8 @@ public class BaseTransaction
 			}
 		}
 
-		Integer value = (Integer) _timeouts.get(Thread.currentThread()
-				.getName());
+        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+		Integer value = (Integer) _timeouts.get(threadId);
 		int v = 0; // if not set then assume 0. What else can we do?
 
 		if (value != null)
@@ -213,13 +213,14 @@ public class BaseTransaction
 	public void setTransactionTimeout(int seconds)
 			throws javax.transaction.SystemException
 	{
-		_timeouts.put(Thread.currentThread().getName(), new Integer(seconds));
+        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+		_timeouts.put(threadId, new Integer(seconds));
 	}
 
 	public int getTimeout() throws javax.transaction.SystemException
 	{
-		Integer value = (Integer) _timeouts.get(Thread.currentThread()
-				.getName());
+        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+		Integer value = (Integer) _timeouts.get(threadId);
 
 		if (value != null)
 		{
@@ -262,7 +263,8 @@ public class BaseTransaction
 			throw new javax.transaction.SystemException(e2.toString());
 		}
 		
-		Integer value = (Integer) _timeouts.get(Thread.currentThread().getName());
+        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+		Integer value = (Integer) _timeouts.get(threadId);
 		int v = 0; // if not set then assume 0. What else can we do?
 		
 		if (value != null)

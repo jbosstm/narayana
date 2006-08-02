@@ -181,7 +181,7 @@ class ContextClientRequestInterceptorImpl extends LocalObject implements ClientR
 			throw new UNKNOWN(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.context.invalidparam"));
 		}
 		else
-		    threadId = Thread.currentThread().getName();
+		    threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
 
 		if (threadId != null)
 		{

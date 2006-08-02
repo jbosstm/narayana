@@ -48,7 +48,7 @@ public class OrderedListIterator
 
 public OrderedListIterator (OrderedList L)
     {
-	ptr = L._headOfList;
+	ptr = L.head();
     }
 
 public void finalize ()
@@ -60,7 +60,7 @@ public void finalize ()
      * Return the next item in the list.
      */
 
-public synchronized OrderedListElement iterate ()
+public OrderedListElement iterate ()
     {
 	if (ptr != null)
 	{
