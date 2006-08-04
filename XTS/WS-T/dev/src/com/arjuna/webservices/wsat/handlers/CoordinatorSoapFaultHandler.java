@@ -60,7 +60,7 @@ public class CoordinatorSoapFaultHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorProcessor.getCoordinator().handleSoapFault(soapFault, addressingContext, arjunaContext) ;
+                CoordinatorProcessor.getProcessor().soapFault(soapFault, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

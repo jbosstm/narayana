@@ -31,6 +31,8 @@
 
 package com.arjuna.mw.wscf.model.twophase.participants;
 
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.mw.wscf.model.twophase.vote.Vote;
 import com.arjuna.mw.wscf.model.twophase.exceptions.*;
 
@@ -147,6 +149,11 @@ public interface Participant
     public void forget () throws InvalidParticipantException, WrongStateException, SystemException;
 
     public String id () throws SystemException;
+    
+    // recovery information
+    
+    public boolean save_state (OutputObjectState os);
+    public boolean restore_state (InputObjectState os);
 
 }
 

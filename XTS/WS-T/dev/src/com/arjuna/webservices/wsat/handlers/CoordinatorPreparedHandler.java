@@ -61,7 +61,7 @@ public class CoordinatorPreparedHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorProcessor.getCoordinator().handlePrepared(prepared, addressingContext, arjunaContext) ;
+                CoordinatorProcessor.getProcessor().prepared(prepared, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

@@ -40,7 +40,7 @@ public abstract class RegistrationCoordinatorProcessor
      * Get the coordinator.
      * @return The coordinator.
      */
-    public static synchronized RegistrationCoordinatorProcessor getCoordinator()
+    public static RegistrationCoordinatorProcessor getCoordinator()
     {
         return COORDINATOR ;
     }
@@ -50,7 +50,7 @@ public abstract class RegistrationCoordinatorProcessor
      * @param coordinator The coordinator.
      * @return The orig coordinator.
      */
-    public static synchronized RegistrationCoordinatorProcessor setCoordinator(final RegistrationCoordinatorProcessor coordinator)
+    public static RegistrationCoordinatorProcessor setCoordinator(final RegistrationCoordinatorProcessor coordinator)
     {
         final RegistrationCoordinatorProcessor origCoordinator = COORDINATOR ;
         COORDINATOR = coordinator ;

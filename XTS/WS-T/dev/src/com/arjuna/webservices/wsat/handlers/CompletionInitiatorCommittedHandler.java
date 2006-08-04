@@ -61,7 +61,7 @@ public class CompletionInitiatorCommittedHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CompletionInitiatorProcessor.getInitiator().handleCommitted(committed, addressingContext, arjunaContext) ;
+                CompletionInitiatorProcessor.getProcessor().handleCommitted(committed, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

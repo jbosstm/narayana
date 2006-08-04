@@ -32,29 +32,29 @@ import com.arjuna.wst.CompletionCoordinatorParticipant;
 public abstract class CompletionCoordinatorProcessor
 {
     /**
-     * The coordinator.
+     * The coordinator processor.
      */
-    private static CompletionCoordinatorProcessor COORDINATOR ;
+    private static CompletionCoordinatorProcessor PROCESSOR ;
     
     /**
-     * Get the coordinator.
-     * @return The coordinator.
+     * Get the processor.
+     * @return The processor.
      */
-    public static synchronized CompletionCoordinatorProcessor getCoordinator()
+    public static CompletionCoordinatorProcessor getProcessor()
     {
-        return COORDINATOR ;
+        return PROCESSOR ;
     }
 
     /**
-     * Set the coordinator.
-     * @param coordinator The coordinator.
-     * @return The previous coordinator.
+     * Set the processor.
+     * @param processor The processor.
+     * @return The previous processor.
      */
-    public static synchronized CompletionCoordinatorProcessor setCoordinator(final CompletionCoordinatorProcessor coordinator)
+    public static CompletionCoordinatorProcessor setProcessor(final CompletionCoordinatorProcessor processor)
     {
-        final CompletionCoordinatorProcessor origCoordinator = COORDINATOR ;
-        COORDINATOR = coordinator ;
-        return origCoordinator ;
+        final CompletionCoordinatorProcessor origProcessor = PROCESSOR ;
+        PROCESSOR = processor ;
+        return origProcessor ;
     }
 
     /**

@@ -144,7 +144,7 @@ public class HttpServiceMultiplexorServlet extends HttpServlet implements SoapSe
                 final Reader reader ;
                 if (logPackets)
                 {
-                    final String contents = readAll(input) ;
+                    final String contents = HttpUtils.readAll(input) ;
                     SoapMessageLogging.appendThreadLog(contents) ;
                     reader = new StringReader(contents) ;
                 }
@@ -450,31 +450,5 @@ public class HttpServiceMultiplexorServlet extends HttpServlet implements SoapSe
         {
             return null ;
         }
-    }
-    
-    /**
-     * Read all the contents of the reader.
-     * @param reader The specified reader.
-     * @return The contents.
-     * @throws IOException For errors during reading.
-     */
-    private static String readAll(final Reader reader)
-        throws IOException
-    {
-        final StringBuffer contents = new StringBuffer() ;
-        final char[] buffer = new char[256] ;
-        while(true)
-        {
-            final int count = reader.read(buffer) ;
-            if (count > 0)
-            {
-                contents.append(buffer, 0, count) ;
-            }
-            else
-            {
-                break ;
-            }
-        }
-        return contents.toString() ;
     }
 }

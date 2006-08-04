@@ -106,7 +106,7 @@ public class BusinessActivityTerminatorImple implements BusinessActivityTerminat
         }
         finally
         {
-            TerminationCoordinatorProcessor.getParticipant().deactivateParticipant(this) ;
+            TerminationCoordinatorProcessor.getProcessor().deactivateParticipant(this) ;
         }
     }
 
@@ -155,7 +155,7 @@ public class BusinessActivityTerminatorImple implements BusinessActivityTerminat
 	}
 	finally
 	{
-        TerminationCoordinatorProcessor.getParticipant().deactivateParticipant(this) ;
+        TerminationCoordinatorProcessor.getProcessor().deactivateParticipant(this) ;
 	}
     }
 

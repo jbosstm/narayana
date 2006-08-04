@@ -21,45 +21,43 @@
 package com.arjuna.webservices.wsba.processors;
 
 import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices.base.processors.Callback;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsarj.ArjunaContext;
-import com.arjuna.webservices.wsarj.processor.BaseNotificationProcessor;
 import com.arjuna.webservices.wsba.NotificationType;
+import com.arjuna.webservices.wsba.ParticipantCompletionParticipantInboundEvents;
 import com.arjuna.webservices.wsba.StatusType;
-import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
 
 
 /**
  * The Participant Completion Participant processor.
  * @author kevin
  */
-public abstract class ParticipantCompletionParticipantProcessor extends BaseNotificationProcessor
+public abstract class ParticipantCompletionParticipantProcessor
 {
     /**
-     * The participant.
+     * The participant processor.
      */
-    private static ParticipantCompletionParticipantProcessor PARTICIPANT ;
+    private static ParticipantCompletionParticipantProcessor PROCESSOR ;
     
     /**
-     * Get the participant.
-     * @return The participant.
+     * Get the processor.
+     * @return The processor.
      */
-    public static synchronized ParticipantCompletionParticipantProcessor getParticipant()
+    public static ParticipantCompletionParticipantProcessor getProcessor()
     {
-        return PARTICIPANT ;
+        return PROCESSOR ;
     }
     
     /**
-     * Set the participant.
-     * @param participant The participant.
-     * @return The previous participant.
+     * Set the processor.
+     * @param processor The processor.
+     * @return The previous processor.
      */
-    public static synchronized ParticipantCompletionParticipantProcessor setParticipant(final ParticipantCompletionParticipantProcessor participant)
+    public static ParticipantCompletionParticipantProcessor setProcessor(final ParticipantCompletionParticipantProcessor processor)
     {
-        final ParticipantCompletionParticipantProcessor origParticipant = PARTICIPANT ;
-        PARTICIPANT = participant ;
-        return origParticipant ;
+        final ParticipantCompletionParticipantProcessor origProcessor = PROCESSOR ;
+        PROCESSOR = processor ;
+        return origProcessor ;
     }
     
     /**
@@ -67,13 +65,13 @@ public abstract class ParticipantCompletionParticipantProcessor extends BaseNoti
      * @param participant The participant.
      * @param identifier The identifier.
      */
-    public abstract void activateParticipant(final BusinessAgreementWithParticipantCompletionParticipant participant, final String identifier) ;
+    public abstract void activateParticipant(final ParticipantCompletionParticipantInboundEvents participant, final String identifier) ;
 
     /**
      * Deactivate the participant.
      * @param participant The participant.
      */
-    public abstract void deactivateParticipant(final BusinessAgreementWithParticipantCompletionParticipant participant) ;
+    public abstract void deactivateParticipant(final ParticipantCompletionParticipantInboundEvents participant) ;
     
     /**
      * Cancel.
@@ -82,7 +80,7 @@ public abstract class ParticipantCompletionParticipantProcessor extends BaseNoti
      * @param arjunaContext The arjuna context.
      */
     public abstract void cancel(final NotificationType cancel, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
-
+    
     /**
      * Close.
      * @param close The close notification.
@@ -100,6 +98,22 @@ public abstract class ParticipantCompletionParticipantProcessor extends BaseNoti
     public abstract void compensate(final NotificationType compensate, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
     
     /**
+     * Exited.
+     * @param exited The exited notification.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext The arjuna context.
+     */
+    public abstract void exited(final NotificationType exited, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
+    
+    /**
+     * Faulted.
+     * @param faulted The faulted notification.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext The arjuna context.
+     */
+    public abstract void faulted(final NotificationType faulted, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
+    
+    /**
      * Get Status.
      * @param getStatus The get status notification.
      * @param addressingContext The addressing context.
@@ -107,90 +121,20 @@ public abstract class ParticipantCompletionParticipantProcessor extends BaseNoti
      */
     public abstract void getStatus(final NotificationType getStatus, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
     
-    
     /**
-     * Handle a complete response.
-     * @param complete The complete notification.
+     * Status.
+     * @param status The status.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void handleComplete(final NotificationType complete, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-    {
-        handleCallbacks(new CallbackExecutorAdapter() {
-            public void execute(final Callback callback) {
-                ((ParticipantCompletionParticipantCallback)callback).complete(complete, addressingContext, arjunaContext) ;
-            }
-        }, getIDs(addressingContext, arjunaContext)) ;
-    }
+    public abstract void status(final StatusType status, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
     
     /**
-     * Handle an exited response.
-     * @param exited The exited notification.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
-     */
-    public void handleExited(final NotificationType exited, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-    {
-        handleCallbacks(new CallbackExecutorAdapter() {
-            public void execute(final Callback callback) {
-                ((ParticipantCompletionParticipantCallback)callback).exited(exited, addressingContext, arjunaContext) ;
-            }
-        }, getIDs(addressingContext, arjunaContext)) ;
-    }
-    
-    /**
-     * Handle a faulted response.
-     * @param faulted The faulted notification.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
-     */
-    public void handleFaulted(final NotificationType faulted, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-    {
-        handleCallbacks(new CallbackExecutorAdapter() {
-            public void execute(final Callback callback) {
-                ((ParticipantCompletionParticipantCallback)callback).faulted(faulted, addressingContext, arjunaContext) ;
-            }
-        }, getIDs(addressingContext, arjunaContext)) ;
-    }
-    
-    /**
-     * Handle a status response.
-     * @param status The status notification.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
-     */
-    public void handleStatus(final StatusType status, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-    {
-        handleCallbacks(new CallbackExecutorAdapter() {
-            public void execute(final Callback callback) {
-                ((ParticipantCompletionParticipantCallback)callback).status(status, addressingContext, arjunaContext) ;
-            }
-        }, getIDs(addressingContext, arjunaContext)) ;
-    }
-    
-    /**
-     * Handle a SOAP fault response.
+     * SOAP fault.
      * @param soapFault The SOAP fault.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void handleSoapFault(final SoapFault soapFault, final AddressingContext addressingContext,
-        final ArjunaContext arjunaContext)
-    {
-        handleCallbacks(new CallbackExecutorAdapter() {
-            public void execute(final Callback callback) {
-                ((ParticipantCompletionParticipantCallback)callback).soapFault(soapFault, addressingContext, arjunaContext) ;
-            }
-        }, getIDs(addressingContext, arjunaContext)) ;
-    }
-
-    /**
-     * Register a callback for the specific instance identifier.
-     * @param instanceIdentifier The instance identifier.
-     * @param callback The callback for the response.
-     */
-    public void registerCallback(final String instanceIdentifier, final ParticipantCompletionParticipantCallback callback)
-    {
-        register(instanceIdentifier, callback) ;
-    }
+    public abstract void soapFault(final SoapFault soapFault, final AddressingContext addressingContext,
+        final ArjunaContext arjunaContext) ;
 }

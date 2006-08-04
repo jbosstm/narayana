@@ -214,7 +214,7 @@ public class RegistrarImple implements Registrar
 			try
 			{
                 final CompletionCoordinatorParticipant participant = new CompletionCoordinatorImple(_coordManager, hier, true) ;
-                CompletionCoordinatorProcessor.getCoordinator().activateParticipant(participant, instanceIdentifier.getInstanceIdentifier()) ;
+                CompletionCoordinatorProcessor.getProcessor().activateParticipant(participant, instanceIdentifier.getInstanceIdentifier()) ;
 
 				_coordManager.suspend();
 

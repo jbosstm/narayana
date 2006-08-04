@@ -64,7 +64,7 @@ public class BusinessActivityTerminatorStub implements com.arjuna.wst.BusinessAc
         final AddressingContext addressingContext = AddressingContext.createRequestContext(_terminationParticipant, MessageId.getMessageId()) ;
         
         final RequestCallback callback = new RequestCallback() ;
-        final TerminationParticipantProcessor terminatorCoordinatorProcessor = TerminationParticipantProcessor.getCoordinator() ;
+        final TerminationParticipantProcessor terminatorCoordinatorProcessor = TerminationParticipantProcessor.getProcessor() ;
         terminatorCoordinatorProcessor.registerCallback(_id, callback) ;
         try
         {
@@ -109,7 +109,7 @@ public class BusinessActivityTerminatorStub implements com.arjuna.wst.BusinessAc
         final AddressingContext addressingContext = AddressingContext.createRequestContext(_terminationParticipant, MessageId.getMessageId()) ;
         
         final RequestCallback callback = new RequestCallback() ;
-        final TerminationParticipantProcessor terminatorCoordinatorProcessor = TerminationParticipantProcessor.getCoordinator() ;
+        final TerminationParticipantProcessor terminatorCoordinatorProcessor = TerminationParticipantProcessor.getProcessor() ;
         terminatorCoordinatorProcessor.registerCallback(_id, callback) ;
         try
         {
@@ -154,7 +154,7 @@ public class BusinessActivityTerminatorStub implements com.arjuna.wst.BusinessAc
         final AddressingContext addressingContext = AddressingContext.createRequestContext(_terminationParticipant, MessageId.getMessageId()) ;
         
         final RequestCallback callback = new RequestCallback() ;
-        final TerminationParticipantProcessor terminatorCoordinatorProcessor = TerminationParticipantProcessor.getCoordinator() ;
+        final TerminationParticipantProcessor terminatorCoordinatorProcessor = TerminationParticipantProcessor.getProcessor() ;
         terminatorCoordinatorProcessor.registerCallback(_id, callback) ;
         try
         {

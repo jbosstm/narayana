@@ -109,7 +109,7 @@ public class CoordinatorClient extends BaseWSAddrClient
      * Send a prepared request.
      * @param addressingContext addressing context initialised with to and message ID.
      * @param identifier The identifier of the initiator.
-     * @throws SoapFault For any errors.
+     * @throws SoapFault For any SOAP errors.
      * @throws IOException for any transport errors.
      */
     public void sendPrepared(final AddressingContext addressingContext, final InstanceIdentifier identifier)
@@ -125,7 +125,7 @@ public class CoordinatorClient extends BaseWSAddrClient
      * Send an aborted request.
      * @param addressingContext addressing context initialised with to and message ID.
      * @param identifier The identifier of the initiator.
-     * @throws SoapFault For any errors.
+     * @throws SoapFault For any SOAP errors.
      * @throws IOException for any transport errors.
      */
     public void sendAborted(final AddressingContext addressingContext, final InstanceIdentifier identifier)
@@ -140,7 +140,7 @@ public class CoordinatorClient extends BaseWSAddrClient
      * Send a read only request.
      * @param addressingContext addressing context initialised with to and message ID.
      * @param identifier The identifier of the initiator.
-     * @throws SoapFault For any errors.
+     * @throws SoapFault For any SOAP errors.
      * @throws IOException for any transport errors.
      */
     public void sendReadOnly(final AddressingContext addressingContext, final InstanceIdentifier identifier)
@@ -155,7 +155,7 @@ public class CoordinatorClient extends BaseWSAddrClient
      * Send a committed request.
      * @param addressingContext addressing context initialised with to and message ID.
      * @param identifier The identifier of the initiator.
-     * @throws SoapFault For any errors.
+     * @throws SoapFault For any SOAP errors.
      * @throws IOException for any transport errors.
      */
     public void sendCommitted(final AddressingContext addressingContext, final InstanceIdentifier identifier)
@@ -170,7 +170,7 @@ public class CoordinatorClient extends BaseWSAddrClient
      * Send a replay request.
      * @param addressingContext addressing context initialised with to and message ID.
      * @param identifier The identifier of the initiator.
-     * @throws SoapFault For any errors.
+     * @throws SoapFault For any SOAP errors.
      * @throws IOException for any transport errors.
      */
     public void sendReplay(final AddressingContext addressingContext, final InstanceIdentifier identifier)
@@ -187,7 +187,7 @@ public class CoordinatorClient extends BaseWSAddrClient
      * @param addressingContext The addressing context.
      * @param soapFault The SOAP fault.
      * @param identifier The arjuna instance identifier.
-     * @throws SoapFault For any errors.
+     * @throws SoapFault For any SOAP errors.
      * @throws IOException for any transport errors.
      */
     public void sendSoapFault(final AddressingContext addressingContext, final SoapFault soapFault, final InstanceIdentifier identifier)

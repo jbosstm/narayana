@@ -61,7 +61,7 @@ public class ParticipantCompletionParticipantCompensateHandler implements BodyHa
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                ParticipantCompletionParticipantProcessor.getParticipant().compensate(compensate, addressingContext, arjunaContext) ;
+                ParticipantCompletionParticipantProcessor.getProcessor().compensate(compensate, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

@@ -18,60 +18,47 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package com.arjuna.webservices.wsba.processors;
+package com.arjuna.webservices.wsat;
 
 import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices.base.processors.Callback;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsarj.ArjunaContext;
-import com.arjuna.webservices.wsba.NotificationType;
-import com.arjuna.webservices.wsba.StatusType;
 
 
 /**
- * The Participant Completion Participant callback.
- * @author kevin
+ * The Participant events.
  */
-public abstract class ParticipantCompletionParticipantCallback extends Callback
+public interface ParticipantInboundEvents
 {
     /**
-     * A complete response.
-     * @param complete The complete notification.
+     * Handle the commit event.
+     * @param commit The commit notification.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void complete(final NotificationType complete, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
+    public void commit(final NotificationType commit, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
     
     /**
-     * An exited response.
-     * @param exited The exited notification.
+     * Handle the prepare event.
+     * @param prepare The prepare notification.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void exited(final NotificationType exited, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
+    public void prepare(final NotificationType prepare, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
     
     /**
-     * A faulted response.
-     * @param faulted The faulted notification.
+     * Handle the rollback event.
+     * @param rollback The rollback notification.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void faulted(final NotificationType faulted, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
+    public void rollback(final NotificationType rollback, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
     
     /**
-     * A status response.
-     * @param status The status notification.
+     * Handle the soap fault event.
+     * @param soapFault The soap fault.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void status(final StatusType status, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
-    
-    /**
-     * A SOAP fault response.
-     * @param soapFault The SOAP fault.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
-     */
-    public abstract void soapFault(final SoapFault soapFault, final AddressingContext addressingContext,
-        final ArjunaContext arjunaContext) ;
+    public void soapFault(final SoapFault soapFault, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
 }

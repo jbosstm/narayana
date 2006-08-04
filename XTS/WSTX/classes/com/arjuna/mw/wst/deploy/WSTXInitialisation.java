@@ -66,6 +66,8 @@ public class WSTXInitialisation implements ServletContextListener
             configure();
 
             Configuration.initialise("/wstx.xml");
+            // Start recovery
+//            RecoveryManager.manager() ;
         }
         catch (Exception exception)
         {
@@ -184,5 +186,6 @@ public class WSTXInitialisation implements ServletContextListener
      */
     public void contextDestroyed(final ServletContextEvent servletContextEvent)
     {
+//        RecoveryManager.manager().stop() ;
     }
 }

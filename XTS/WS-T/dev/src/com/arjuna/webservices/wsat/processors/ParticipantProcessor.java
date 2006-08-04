@@ -24,7 +24,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsarj.ArjunaContext;
 import com.arjuna.webservices.wsat.NotificationType;
-import com.arjuna.webservices.wsat.Participant;
+import com.arjuna.webservices.wsat.ParticipantInboundEvents;
 
 /**
  * The Participant processor.
@@ -33,29 +33,29 @@ import com.arjuna.webservices.wsat.Participant;
 public abstract class ParticipantProcessor
 {
     /**
-     * The participant.
+     * The participant processor.
      */
-    private static ParticipantProcessor PARTICIPANT ;
+    private static ParticipantProcessor PROCESSOR ;
     
     /**
-     * Get the participant.
-     * @return The participant.
+     * Get the processor.
+     * @return The processor.
      */
-    public static synchronized ParticipantProcessor getParticipant()
+    public static ParticipantProcessor getProcessor()
     {
-        return PARTICIPANT ;
+        return PROCESSOR ;
     }
 
     /**
-     * Set the participant.
-     * @param participant The participant.
-     * @return The previous participant.
+     * Set the processor.
+     * @param processor The processor.
+     * @return The previous processor.
      */
-    public static synchronized ParticipantProcessor setParticipant(final ParticipantProcessor participant)
+    public static ParticipantProcessor setProcessor(final ParticipantProcessor processor)
     {
-        final ParticipantProcessor origParticipant = PARTICIPANT ;
-        PARTICIPANT = participant ;
-        return origParticipant ;
+        final ParticipantProcessor origProcessor = PROCESSOR ;
+        PROCESSOR = processor ;
+        return origProcessor ;
     }
     
     /**
@@ -63,13 +63,13 @@ public abstract class ParticipantProcessor
      * @param participant The participant.
      * @param identifier The identifier.
      */
-    public abstract void activateParticipant(final Participant participant, final String identifier) ;
+    public abstract void activateParticipant(final ParticipantInboundEvents participant, final String identifier) ;
 
     /**
      * Deactivate the participant.
      * @param participant The participant.
      */
-    public abstract void deactivateParticipant(final Participant participant) ;
+    public abstract void deactivateParticipant(final ParticipantInboundEvents participant) ;
 
     /**
      * Commit.

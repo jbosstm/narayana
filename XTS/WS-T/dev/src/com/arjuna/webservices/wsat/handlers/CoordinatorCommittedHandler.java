@@ -61,7 +61,7 @@ public class CoordinatorCommittedHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorProcessor.getCoordinator().handleCommitted(committed, addressingContext, arjunaContext) ;
+                CoordinatorProcessor.getProcessor().committed(committed, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

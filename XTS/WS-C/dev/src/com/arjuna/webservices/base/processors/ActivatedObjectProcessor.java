@@ -18,21 +18,16 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package com.arjuna.wst.messaging;
+package com.arjuna.webservices.base.processors;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The base class for processors acting on registered objects.
+ * This class manages the association between an object and its identifier.
  */
-class ActivatedObjectProcessor
+public final class ActivatedObjectProcessor
 {
-    /**
-     * Lock for guarding the maps.
-     */
-    private final byte[] lock = new byte[0] ;
-    
     /**
      * The identifier to object map.
      */
@@ -47,28 +42,22 @@ class ActivatedObjectProcessor
      * @param object The object.
      * @param identifier The identifier.
      */
-    void activateObject(final Object object, final String identifier)
+    public synchronized void activateObject(final Object object, final String identifier)
     {
-        synchronized(lock)
-        {
-            objectMap.put(identifier, object);
-            identifierMap.put(object, identifier);
-        }
+        objectMap.put(identifier, object);
+        identifierMap.put(object, identifier);
     }
 
     /**
      * Deactivate the object.
      * @param object The object.
      */
-    void deactivateObject(final Object object)
+    public synchronized void deactivateObject(final Object object)
     {
-        synchronized(lock)
+        String identifier = (String) identifierMap.remove(object) ;
+        if (identifier != null)
         {
-            String identifier = (String) identifierMap.remove(object) ;
-            if (identifier != null)
-            {
-                objectMap.remove(identifier) ;
-            }
+            objectMap.remove(identifier) ;
         }
     }
     
@@ -77,11 +66,17 @@ class ActivatedObjectProcessor
      * @param identifier The identifier.
      * @return The participant or null if not known.
      */
-    Object getObject(final String identifier)
+    public synchronized Object getObject(final String identifier)
     {
-        synchronized(lock)
-        {
-            return objectMap.get(identifier) ;
-        }
+        return objectMap.get(identifier) ;
+    }
+    
+    /**
+     * Get the number of active objects.
+     * @return The number of active objects.
+     */
+    public synchronized int count()
+    {
+        return objectMap.size() ;
     }
 }

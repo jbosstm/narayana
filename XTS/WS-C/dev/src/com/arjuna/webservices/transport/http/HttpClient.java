@@ -243,7 +243,7 @@ public class HttpClient extends TransportSoapClient
             final Reader reader ;
             if (threadLogEnabled || (contentLength <= 0))
             {
-                final String responseContents = readStream(isr) ;
+                final String responseContents = HttpUtils.readAll(isr) ;
                 
                 if (responseContents.length() == 0)
                 {
@@ -282,32 +282,5 @@ public class HttpClient extends TransportSoapClient
         {
             is.close() ;
         }
-    }
-    
-    /**
-     * Get the contents of the stream for logging.
-     * @param isr The input stream reader.
-     * @return The stream contents.
-     * @throws IOException For errors during reading.
-     */
-    private String readStream(final InputStreamReader isr)
-        throws IOException
-    {
-        final StringBuffer stringBuffer = new StringBuffer() ;
-        final char[] charBuffer = new char[256] ;
-        while(true)
-        {
-            final int count = isr.read(charBuffer) ;
-            if (count > 0)
-            {
-                stringBuffer.append(charBuffer, 0, count) ;
-            }
-            else
-            {
-                break ;
-            }
-        }
-        
-        return stringBuffer.toString() ;
     }
 }

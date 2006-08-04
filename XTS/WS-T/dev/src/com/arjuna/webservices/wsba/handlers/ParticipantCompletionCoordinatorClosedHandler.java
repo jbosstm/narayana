@@ -61,7 +61,7 @@ public class ParticipantCompletionCoordinatorClosedHandler implements BodyHandle
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                ParticipantCompletionCoordinatorProcessor.getCoordinator().handleClosed(closed, addressingContext, arjunaContext) ;
+                ParticipantCompletionCoordinatorProcessor.getProcessor().closed(closed, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

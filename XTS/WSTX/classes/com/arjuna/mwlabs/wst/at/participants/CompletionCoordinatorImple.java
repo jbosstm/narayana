@@ -109,7 +109,7 @@ public class CompletionCoordinatorImple implements com.arjuna.wst.CompletionCoor
 	finally
 	{
 	    if (deactivate)
-	        CompletionCoordinatorProcessor.getCoordinator().deactivateParticipant(this);
+	        CompletionCoordinatorProcessor.getProcessor().deactivateParticipant(this);
 	}
     }
     
@@ -161,7 +161,7 @@ public class CompletionCoordinatorImple implements com.arjuna.wst.CompletionCoor
 	finally
 	{
         if (deactivate)
-            CompletionCoordinatorProcessor.getCoordinator().deactivateParticipant(this);
+            CompletionCoordinatorProcessor.getProcessor().deactivateParticipant(this);
 	}
     }
 

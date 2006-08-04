@@ -31,6 +31,8 @@
 
 package com.arjuna.mwtests.wscf.common;
 
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wsas.exceptions.WrongStateException;
 import com.arjuna.mw.wscf.exceptions.InvalidParticipantException;
@@ -85,6 +87,16 @@ public class TwoPhaseParticipant implements Participant
     public String id () throws SystemException
     {
 	return _id;
+    }
+    
+    public boolean save_state(OutputObjectState os)
+    {
+        return false ;
+    }
+    
+    public boolean restore_state(InputObjectState os)
+    {
+        return false ;
     }
 
     private String _id;

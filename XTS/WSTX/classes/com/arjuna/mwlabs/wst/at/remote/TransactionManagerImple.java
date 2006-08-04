@@ -55,6 +55,7 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.Volatile2PCParticipant;
 import com.arjuna.wst.WrongStateException;
+import com.arjuna.wst.messaging.engines.ParticipantEngine;
 
 /**
  * This is the interface that the core exposes in order to allow different types
@@ -76,7 +77,7 @@ public class TransactionManagerImple extends TransactionManager
 		{
 			registerParticipant(getParticipant(id) , Protocols.DurableTwoPhaseCommit);
 
-			ParticipantProcessor.getParticipant().activateParticipant(tpp, id) ;
+			ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(tpp), id) ;
 		}
 		catch (com.arjuna.wsc.InvalidProtocolException ex)
 		{
@@ -100,7 +101,7 @@ public class TransactionManagerImple extends TransactionManager
 		{
 			registerParticipant(getParticipant(id), Protocols.VolatileTwoPhaseCommit);
 
-            ParticipantProcessor.getParticipant().activateParticipant(tpp, id) ;
+            ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(tpp), id) ;
 		}
 		catch (com.arjuna.wsc.InvalidProtocolException ex)
 		{

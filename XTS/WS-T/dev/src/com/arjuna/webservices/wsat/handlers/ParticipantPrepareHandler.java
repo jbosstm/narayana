@@ -61,7 +61,7 @@ public class ParticipantPrepareHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                ParticipantProcessor.getParticipant().prepare(prepare, addressingContext, arjunaContext) ;
+                ParticipantProcessor.getProcessor().prepare(prepare, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

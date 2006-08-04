@@ -141,7 +141,7 @@ public class ContextFactoryImple implements ContextFactory
             InstanceIdentifier.setEndpointInstanceIdentifier(registrationCoordinator, arjunaContext.getTransactionIdentifier()) ;
             coordinationContext.setRegistrationService(registrationCoordinator) ;
             
-            TerminationCoordinatorProcessor.getParticipant().activateParticipant(new BusinessActivityTerminatorImple(), arjunaContext.getTransactionIdentifier()) ;
+            TerminationCoordinatorProcessor.getProcessor().activateParticipant(new BusinessActivityTerminatorImple(), arjunaContext.getTransactionIdentifier()) ;
     
     		_theRegistrar.associate();
     

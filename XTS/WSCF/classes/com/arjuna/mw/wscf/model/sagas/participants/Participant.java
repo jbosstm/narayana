@@ -31,6 +31,8 @@
 
 package com.arjuna.mw.wscf.model.sagas.participants;
 
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.mw.wscf.model.sagas.exceptions.*;
 
 import com.arjuna.mw.wscf.exceptions.*;
@@ -96,6 +98,9 @@ public interface Participant
     public void forget () throws InvalidParticipantException, WrongStateException, SystemException;
 
     public String id () throws SystemException;
+    
+    public boolean save_state (OutputObjectState os);
+    public boolean restore_state (InputObjectState os);
     
 }
 

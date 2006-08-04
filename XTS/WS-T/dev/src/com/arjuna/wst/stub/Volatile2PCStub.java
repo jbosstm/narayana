@@ -36,6 +36,6 @@ public class Volatile2PCStub extends ParticipantStub implements Volatile2PCParti
     public Volatile2PCStub(final String id, final EndpointReferenceType twoPCParticipant)
         throws Exception
     {
-        super(id, twoPCParticipant) ;
+        super(id, false, twoPCParticipant) ;
     }
 }

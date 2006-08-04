@@ -60,7 +60,7 @@ public class CompletionStub implements
         final AddressingContext addressingContext = AddressingContext.createRequestContext(_completionCoordinator, MessageId.getMessageId()) ;
         
         final RequestCallback callback = new RequestCallback() ;
-        final CompletionInitiatorProcessor completionInitiator = CompletionInitiatorProcessor.getInitiator() ;
+        final CompletionInitiatorProcessor completionInitiator = CompletionInitiatorProcessor.getProcessor() ;
         completionInitiator.registerCallback(_id, callback) ;
         try
         {
@@ -102,7 +102,7 @@ public class CompletionStub implements
         final AddressingContext addressingContext = AddressingContext.createRequestContext(_completionCoordinator, MessageId.getMessageId()) ;
         
         final RequestCallback callback = new RequestCallback() ;
-        final CompletionInitiatorProcessor completionInitiator = CompletionInitiatorProcessor.getInitiator() ;
+        final CompletionInitiatorProcessor completionInitiator = CompletionInitiatorProcessor.getProcessor() ;
         completionInitiator.registerCallback(_id, callback) ;
         try
         {

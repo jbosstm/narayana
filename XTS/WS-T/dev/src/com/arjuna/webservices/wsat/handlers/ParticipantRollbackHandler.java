@@ -61,7 +61,7 @@ public class ParticipantRollbackHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                ParticipantProcessor.getParticipant().rollback(rollback, addressingContext, arjunaContext) ;
+                ParticipantProcessor.getProcessor().rollback(rollback, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

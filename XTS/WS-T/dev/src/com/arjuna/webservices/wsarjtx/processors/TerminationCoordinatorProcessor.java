@@ -32,29 +32,29 @@ import com.arjuna.wst.BusinessActivityTerminator;
 public abstract class TerminationCoordinatorProcessor
 {
     /**
-     * The participant.
+     * The participant processor.
      */
-    private static TerminationCoordinatorProcessor PARTICIPANT ;
+    private static TerminationCoordinatorProcessor PROCESSOR ;
     
     /**
-     * Get the participant.
-     * @return The participant.
+     * Get the processor.
+     * @return The processor.
      */
-    public static synchronized TerminationCoordinatorProcessor getParticipant()
+    public static TerminationCoordinatorProcessor getProcessor()
     {
-        return PARTICIPANT ;
+        return PROCESSOR ;
     }
     
     /**
-     * Set the participant.
-     * @param participant The participant.
-     * @return The previous participant.
+     * Set the processor.
+     * @param processor The processor.
+     * @return The previous processor.
      */
-    public static synchronized TerminationCoordinatorProcessor setParticipant(final TerminationCoordinatorProcessor participant)
+    public static TerminationCoordinatorProcessor setProcessor(final TerminationCoordinatorProcessor processor)
     {
-        final TerminationCoordinatorProcessor origParticipant = PARTICIPANT ;
-        PARTICIPANT = participant ;
-        return origParticipant ;
+        final TerminationCoordinatorProcessor origProcessor = PROCESSOR ;
+        PROCESSOR = processor ;
+        return origProcessor ;
     }
 
     /**

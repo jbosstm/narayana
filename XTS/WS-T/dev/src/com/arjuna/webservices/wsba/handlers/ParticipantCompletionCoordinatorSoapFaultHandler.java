@@ -60,7 +60,7 @@ public class ParticipantCompletionCoordinatorSoapFaultHandler implements BodyHan
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                ParticipantCompletionCoordinatorProcessor.getCoordinator().handleSoapFault(soapFault, addressingContext, arjunaContext) ;
+                ParticipantCompletionCoordinatorProcessor.getProcessor().soapFault(soapFault, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

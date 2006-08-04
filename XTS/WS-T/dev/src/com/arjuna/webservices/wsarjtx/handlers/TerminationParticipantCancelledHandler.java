@@ -61,7 +61,7 @@ public class TerminationParticipantCancelledHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                TerminationParticipantProcessor.getCoordinator().handleCancelled(cancelled, addressingContext, arjunaContext) ;
+                TerminationParticipantProcessor.getProcessor().handleCancelled(cancelled, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

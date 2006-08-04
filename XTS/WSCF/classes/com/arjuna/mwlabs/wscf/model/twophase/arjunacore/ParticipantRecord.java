@@ -106,6 +106,8 @@ public class ParticipantRecord extends
 
 	public int typeIs ()
 	{
+		// TODO add specific record type.
+		
 		return RecordType.USER_DEF_FIRST0;
 	}
 
@@ -115,7 +117,7 @@ public class ParticipantRecord extends
 
 	public ClassName className ()
 	{
-		return new ClassName(toString());
+		return new ClassName("WSATParticipantRecord");
 	}
 
 	/**
@@ -621,11 +623,10 @@ public class ParticipantRecord extends
 		{
 			try
 			{
-				//TODO
-
-				//                result = _resourceHandle.unpackState(os);
-
-				_timeout = os.unpackLong();
+				result = _resourceHandle.restore_state(os);
+				
+				if (result)
+					_timeout = os.unpackLong();
 
 				/*
 				 * TODO: unpack qualifiers and coord id.
@@ -657,10 +658,10 @@ public class ParticipantRecord extends
 		{
 			try
 			{
-				// TODO
-				//                result = _resourceHandle.packState(os);
-
-				os.packLong(_timeout);
+				result = _resourceHandle.save_state(os);
+				
+				if (result)
+					os.packLong(_timeout);
 
 				/*
 				 * TODO: pack qualifiers and coord id.

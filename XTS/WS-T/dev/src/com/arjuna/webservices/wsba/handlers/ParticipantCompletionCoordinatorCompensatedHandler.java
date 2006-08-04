@@ -61,7 +61,7 @@ public class ParticipantCompletionCoordinatorCompensatedHandler implements BodyH
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                ParticipantCompletionCoordinatorProcessor.getCoordinator().handleCompensated(compensated, addressingContext, arjunaContext) ;
+                ParticipantCompletionCoordinatorProcessor.getProcessor().compensated(compensated, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

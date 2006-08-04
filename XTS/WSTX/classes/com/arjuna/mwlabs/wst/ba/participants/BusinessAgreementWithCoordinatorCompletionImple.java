@@ -31,64 +31,50 @@
 
 package com.arjuna.mwlabs.wst.ba.participants;
 
-import com.arjuna.webservices.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
-import com.arjuna.wst.BAParticipantManager;
-import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
-
-import com.arjuna.mw.wscf.exceptions.*;
-
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wsas.exceptions.WrongStateException;
+import com.arjuna.mw.wscf.exceptions.InvalidParticipantException;
+import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
- * @version $Id: BusinessAgreementWithCoordinatorCompletionImple.java,v 1.1.2.2 2004/08/09 12:34:26 nmcl Exp $
+ * @version $Id: BusinessAgreementWithCoordinatorCompletionImple.java,v 1.1.2.2
+ *          2004/08/09 12:34:26 nmcl Exp $
  * @since 1.0.
  */
 
-public class BusinessAgreementWithCoordinatorCompletionImple extends BusinessAgreementWithParticipantCompletionImple implements com.arjuna.mw.wscf.model.sagas.participants.ParticipantWithComplete
+public class BusinessAgreementWithCoordinatorCompletionImple extends
+		BusinessAgreementWithParticipantCompletionImple implements
+		com.arjuna.mw.wscf.model.sagas.participants.ParticipantWithComplete
 {
-    
-    public BusinessAgreementWithCoordinatorCompletionImple (BusinessAgreementWithCoordinatorCompletionParticipant participant, String identifier)
-    {
-	super(participant, identifier);
-    }
-    
-    public void complete () throws InvalidParticipantException, WrongStateException, SystemException
-    {
-	if (_resource != null)
+
+	public BusinessAgreementWithCoordinatorCompletionImple (
+			BusinessAgreementWithCoordinatorCompletionParticipant participant,
+			String identifier)
 	{
-	    try
-	    {
-		((BusinessAgreementWithCoordinatorCompletionParticipant) _resource).complete();
-	    }
-	    catch (com.arjuna.wst.WrongStateException ex)
-	    {
-		throw new WrongStateException(ex.toString());
-	    }
-	    catch (com.arjuna.wst.SystemException ex)
-	    {
-		throw new SystemException(ex.toString());
-	    }
+		super(participant, identifier);
 	}
-	else
-	    throw new InvalidParticipantException();
-    }
 
-    protected void deactivateParticipantManager(final BAParticipantManager participantManager)
-        throws SystemException
-    {
-        try
-        {
-            CoordinatorCompletionCoordinatorProcessor.getCoordinator().deactivateParticipant(participantManager) ;
-        }
-        catch (Throwable ex)
-        {
-            ex.printStackTrace();
-            
-            throw new SystemException(ex.toString());
-        }
-    }
-    
+	public void complete () throws InvalidParticipantException,
+			WrongStateException, SystemException
+	{
+		if (_resource != null)
+		{
+			try
+			{
+				((BusinessAgreementWithCoordinatorCompletionParticipant) _resource)
+						.complete();
+			}
+			catch (com.arjuna.wst.WrongStateException ex)
+			{
+				throw new WrongStateException(ex.toString());
+			}
+			catch (com.arjuna.wst.SystemException ex)
+			{
+				throw new SystemException(ex.toString());
+			}
+		}
+		else
+			throw new InvalidParticipantException();
+	}
 }
-

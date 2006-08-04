@@ -61,7 +61,7 @@ public class CoordinatorReadOnlyHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorProcessor.getCoordinator().handleReadOnly(readOnly, addressingContext, arjunaContext) ;
+                CoordinatorProcessor.getProcessor().readOnly(readOnly, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

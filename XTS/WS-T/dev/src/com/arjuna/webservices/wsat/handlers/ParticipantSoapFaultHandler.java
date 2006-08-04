@@ -60,7 +60,7 @@ public class ParticipantSoapFaultHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                ParticipantProcessor.getParticipant().soapFault(soapFault, addressingContext, arjunaContext) ;
+                ParticipantProcessor.getProcessor().soapFault(soapFault, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

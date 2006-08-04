@@ -36,6 +36,6 @@ public class Durable2PCStub extends ParticipantStub implements Durable2PCPartici
     public Durable2PCStub(final String id, final EndpointReferenceType twoPCParticipant)
         throws Exception
     {
-        super(id, twoPCParticipant) ;
+        super(id, true, twoPCParticipant) ;
     }
 }

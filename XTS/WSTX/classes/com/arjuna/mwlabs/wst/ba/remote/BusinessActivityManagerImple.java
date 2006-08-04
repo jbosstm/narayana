@@ -53,6 +53,8 @@ import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
+import com.arjuna.wst.messaging.engines.CoordinatorCompletionParticipantEngine;
+import com.arjuna.wst.messaging.engines.ParticipantCompletionParticipantEngine;
 import com.arjuna.wst.stub.BACoordinatorCompletionParticipantManagerStub;
 import com.arjuna.wst.stub.BAParticipantCompletionParticipantManagerStub;
 
@@ -76,9 +78,10 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
     	try
     	{
             EndpointReferenceType baPMEndpoint = registerParticipant(participant, Protocols.BusinessAgreementWithParticipantCompletion);
-            ParticipantCompletionParticipantProcessor.getParticipant().activateParticipant(bap, id) ;
+            final ParticipantCompletionParticipantEngine engine = new ParticipantCompletionParticipantEngine(id, baPMEndpoint, bap) ;
+            ParticipantCompletionParticipantProcessor.getProcessor().activateParticipant(engine, id) ;
     
-            return new BAParticipantCompletionParticipantManagerStub(id, baPMEndpoint);
+            return new BAParticipantCompletionParticipantManagerStub(engine);
     	}
     	catch (com.arjuna.wsc.InvalidProtocolException ex)
     	{
@@ -106,9 +109,10 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
     	try
     	{
     	    EndpointReferenceType baPMEndpoint = registerParticipant(participant, Protocols.BusinessAgreementWithCoordinatorCompletion);
-            CoordinatorCompletionParticipantProcessor.getParticipant().activateParticipant(bawcp, id) ;
+            final CoordinatorCompletionParticipantEngine engine = new CoordinatorCompletionParticipantEngine(id, baPMEndpoint, bawcp) ;
+            CoordinatorCompletionParticipantProcessor.getProcessor().activateParticipant(engine, id) ;
         
-            return new BACoordinatorCompletionParticipantManagerStub(id, baPMEndpoint);
+            return new BACoordinatorCompletionParticipantManagerStub(engine);
     	}
     	catch (com.arjuna.wsc.InvalidProtocolException ex)
     	{

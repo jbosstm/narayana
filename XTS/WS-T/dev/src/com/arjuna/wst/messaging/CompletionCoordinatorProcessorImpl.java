@@ -24,6 +24,7 @@ import java.text.MessageFormat;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
+import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsarj.ArjunaContext;

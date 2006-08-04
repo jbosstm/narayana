@@ -61,7 +61,7 @@ public class ParticipantCompletionParticipantCloseHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                ParticipantCompletionParticipantProcessor.getParticipant().close(close, addressingContext, arjunaContext) ;
+                ParticipantCompletionParticipantProcessor.getProcessor().close(close, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

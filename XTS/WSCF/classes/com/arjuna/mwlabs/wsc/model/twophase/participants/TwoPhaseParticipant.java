@@ -31,6 +31,8 @@
 
 package com.arjuna.mwlabs.wsc.model.twophase.participants;
 
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.mw.wscf.logging.wscfLogger;
 
 import com.arjuna.mw.wsas.exceptions.SystemException;
@@ -68,8 +70,11 @@ public class TwoPhaseParticipant implements Participant
 			WrongStateException, HeuristicHazardException,
 			HeuristicMixedException, SystemException
 	{
-		wscfLogger.arjLoggerI18N.info("com.arjuna.mwlabs.wsc.model.twophase.participants.TwoPhaseParticipant_1", new Object[]
-		{ "TwoPhaseParticipant.prepare" });
+        if (wscfLogger.arjLoggerI18N.isInfoEnabled())
+        {
+    		wscfLogger.arjLoggerI18N.info("com.arjuna.mwlabs.wsc.model.twophase.participants.TwoPhaseParticipant_1", new Object[]
+    		{ "TwoPhaseParticipant.prepare" });
+        }
 
 		return new VoteConfirm();
 	}
@@ -78,31 +83,43 @@ public class TwoPhaseParticipant implements Participant
 			WrongStateException, HeuristicHazardException,
 			HeuristicMixedException, HeuristicCancelException, SystemException
 	{
-		wscfLogger.arjLoggerI18N.info("com.arjuna.mwlabs.wsc.model.twophase.participants.TwoPhaseParticipant_1", new Object[]
-		{ "TwoPhaseParticipant.confirm" });
+        if (wscfLogger.arjLoggerI18N.isInfoEnabled())
+        {
+    		wscfLogger.arjLoggerI18N.info("com.arjuna.mwlabs.wsc.model.twophase.participants.TwoPhaseParticipant_1", new Object[]
+    		{ "TwoPhaseParticipant.confirm" });
+        }
 	}
 
 	public void cancel () throws InvalidParticipantException,
 			WrongStateException, HeuristicHazardException,
 			HeuristicMixedException, HeuristicConfirmException, SystemException
 	{
-		wscfLogger.arjLoggerI18N.info("com.arjuna.mwlabs.wsc.model.twophase.participants.TwoPhaseParticipant_1", new Object[]
-		{ "TwoPhaseParticipant.cancel" });
+        if (wscfLogger.arjLoggerI18N.isInfoEnabled())
+        {
+    		wscfLogger.arjLoggerI18N.info("com.arjuna.mwlabs.wsc.model.twophase.participants.TwoPhaseParticipant_1", new Object[]
+    		{ "TwoPhaseParticipant.cancel" });
+        }
 	}
 
 	public void confirmOnePhase () throws InvalidParticipantException,
 			WrongStateException, HeuristicHazardException,
 			HeuristicMixedException, HeuristicCancelException, SystemException
 	{
-		wscfLogger.arjLoggerI18N.info("com.arjuna.mwlabs.wsc.model.twophase.participants.TwoPhaseParticipant_1", new Object[]
-		{ "TwoPhaseParticipant.confirmOnePhase" });
+        if (wscfLogger.arjLoggerI18N.isInfoEnabled())
+        {
+    		wscfLogger.arjLoggerI18N.info("com.arjuna.mwlabs.wsc.model.twophase.participants.TwoPhaseParticipant_1", new Object[]
+    		{ "TwoPhaseParticipant.confirmOnePhase" });
+        }
 	}
 
 	public void forget () throws InvalidParticipantException,
 			WrongStateException, SystemException
 	{
-		wscfLogger.arjLoggerI18N.info("com.arjuna.mwlabs.wsc.model.twophase.participants.TwoPhaseParticipant_1", new Object[]
-		{ "TwoPhaseParticipant.forget" });
+        if (wscfLogger.arjLoggerI18N.isInfoEnabled())
+        {
+    		wscfLogger.arjLoggerI18N.info("com.arjuna.mwlabs.wsc.model.twophase.participants.TwoPhaseParticipant_1", new Object[]
+    		{ "TwoPhaseParticipant.forget" });
+        }
 	}
 
 	public String id () throws SystemException
@@ -110,6 +127,16 @@ public class TwoPhaseParticipant implements Participant
 		return _id;
 	}
 
+    public boolean save_state(OutputObjectState os)
+    {
+        return false ;
+    }
+    
+    public boolean restore_state(InputObjectState os)
+    {
+        return false ;
+    }
+    
 	private EndpointReferenceType _address;
 
 	private String _id;

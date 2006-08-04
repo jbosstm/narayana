@@ -20,6 +20,9 @@
  */
 package com.arjuna.webservices.transport.http;
 
+import java.io.IOException;
+import java.io.Reader;
+
 import com.arjuna.webservices.soap.SoapDetails;
 
 /**
@@ -74,6 +77,15 @@ class HttpUtils
      * The default charset parameter.
      */
     public static final String HTTP_DEFAULT_CHARSET_PARAMETER = "; " + HTTP_CHARSET_PARAMETER + "=utf-8" ;
+
+    /**
+     * The name of the HTTP scheme.
+     */
+    public static final String HTTP_SCHEME = "http" ;
+    /**
+     * The name of the HTTPS scheme.
+     */
+    public static final String HTTPS_SCHEME = "https" ;
     
     /**
      * Get the base content type.
@@ -206,11 +218,58 @@ class HttpUtils
     }
 
     /**
-     * The name of the HTTP scheme.
+     * Read all the contents of the reader.
+     * @param reader The specified reader.
+     * @return The contents.
+     * @throws IOException For errors during reading.
      */
-    public static final String HTTP_SCHEME = "http" ;
+    static String readAll(final Reader reader)
+        throws IOException
+    {
+        final StringBuffer contents = new StringBuffer() ;
+        final char[] buffer = new char[256] ;
+        while(true)
+        {
+            final int count = reader.read(buffer) ;
+            if (count > 0)
+            {
+                contents.append(buffer, 0, count) ;
+            }
+            else
+            {
+                break ;
+            }
+        }
+        return checkForXMLDecl(contents) ;
+    }
+    
     /**
-     * The name of the HTTPS scheme.
+     * Check for the XML declaration and remove.
+     * This method is only used if we are intending to log the SOAP message so that it is easy to combine the XML without creating invalid documents.
+     * @param contents The current stream contents.
+     * @return The stream contents as a string.
      */
-    public static final String HTTPS_SCHEME = "https" ;
+    private static String checkForXMLDecl(final StringBuffer contents)
+    {
+        int count = 0 ;
+        try
+        {
+            while(Character.isWhitespace(contents.charAt(count))) count++ ;
+            if (contents.charAt(count) == '<')
+            {
+                if (contents.charAt(count+1) == '?')
+                {
+                    count+=2 ;
+                    while(contents.charAt(count++) != '>') ;
+                }
+            }
+            if (count > 0)
+            {
+                contents.delete(0, count) ;
+            }
+        }
+        catch (final StringIndexOutOfBoundsException sioobe) {}
+        
+        return contents.toString() ;
+    }
 }

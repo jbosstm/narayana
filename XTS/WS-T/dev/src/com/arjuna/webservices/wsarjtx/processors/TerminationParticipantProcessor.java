@@ -34,17 +34,17 @@ import com.arjuna.webservices.wsat.NotificationType;
 public class TerminationParticipantProcessor extends BaseNotificationProcessor
 {
     /**
-     * The coordinator singleton.
+     * The coordinator processor.
      */
-    private static final TerminationParticipantProcessor COORDINATOR = new TerminationParticipantProcessor() ;
+    private static final TerminationParticipantProcessor PROCESSOR = new TerminationParticipantProcessor() ;
     
     /**
-     * Get the coordinator singleton.
+     * Get the processor singleton.
      * @return The singleton.
      */
-    public static TerminationParticipantProcessor getCoordinator()
+    public static TerminationParticipantProcessor getProcessor()
     {
-        return COORDINATOR ;
+        return PROCESSOR ;
     }
 
     /**

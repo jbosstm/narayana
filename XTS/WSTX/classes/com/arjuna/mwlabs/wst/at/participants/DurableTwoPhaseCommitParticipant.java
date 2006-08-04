@@ -33,6 +33,8 @@ package com.arjuna.mwlabs.wst.at.participants;
 
 import com.arjuna.wst.Durable2PCParticipant;
 
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.mw.wscf.model.twophase.participants.*;
 import com.arjuna.mw.wscf.model.twophase.exceptions.*;
 import com.arjuna.mw.wscf.model.twophase.vote.*;
@@ -41,6 +43,7 @@ import com.arjuna.mw.wscf.exceptions.*;
 
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wsas.exceptions.WrongStateException;
+import com.arjuna.mwlabs.wst.util.PersistableParticipantHelper;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -271,6 +274,17 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 		return _id;
 	}
 
+	public boolean save_state (OutputObjectState os)
+	{
+        return PersistableParticipantHelper.save_state(os, _resource) ;
+	}
+	
+	public boolean restore_state (InputObjectState os)
+	{
+        _resource = (Durable2PCParticipant)PersistableParticipantHelper.restore_state(os) ;
+        return true ;
+	}
+	
 	private Durable2PCParticipant _resource;
 	private String _id;
 	private boolean _readonly;

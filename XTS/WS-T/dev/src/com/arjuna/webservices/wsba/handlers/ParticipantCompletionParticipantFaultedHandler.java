@@ -61,7 +61,7 @@ public class ParticipantCompletionParticipantFaultedHandler implements BodyHandl
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                ParticipantCompletionParticipantProcessor.getParticipant().handleFaulted(faulted, addressingContext, arjunaContext) ;
+                ParticipantCompletionParticipantProcessor.getProcessor().faulted(faulted, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

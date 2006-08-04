@@ -61,7 +61,7 @@ public class CompletionCoordinatorRollbackHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CompletionCoordinatorProcessor.getCoordinator().rollback(rollback, addressingContext, arjunaContext) ;
+                CompletionCoordinatorProcessor.getProcessor().rollback(rollback, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

@@ -20,56 +20,21 @@
  */
 package com.arjuna.wst.messaging;
 
-import java.text.MessageFormat;
-
 import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices.SoapFaultType;
+import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsarj.ArjunaContext;
 import com.arjuna.webservices.wsarj.InstanceIdentifier;
-import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
+import com.arjuna.webservices.wsba.CoordinatorCompletionParticipantInboundEvents;
 import com.arjuna.webservices.wsba.NotificationType;
-import com.arjuna.webservices.wsba.State;
-import com.arjuna.webservices.wsba.client.CoordinatorCompletionCoordinatorClient;
+import com.arjuna.webservices.wsba.StatusType;
 import com.arjuna.webservices.wsba.processors.CoordinatorCompletionParticipantProcessor;
-import com.arjuna.wsc.messaging.MessageId;
-import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
-import com.arjuna.wst.FaultedException;
-import com.arjuna.wst.SystemException;
-import com.arjuna.wst.WrongStateException;
 
 
 /**
  * The Coordinator Completion Participant processor.
  * @author kevin
- * 
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_1] - Wrong state
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_2] - Unknown error: {0}
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_3 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_3] - Unexpected exception thrown from cancel:
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_4 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_4] - Cancel called on unknown participant: {0}
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_5 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_5] - Unknown participant
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_6 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_6] - Wrong state
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_7 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_7] - Unknown error: {0}
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_8 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_8] - Unexpected exception thrown from close:
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_9 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_9] - Close called on unknown participant: {0}
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_10 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_10] - Unknown participant
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_11 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_11] - Wrong state
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_12 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_12] - Unknown error: {0}
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_13 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_13] - Unexpected exception thrown from compensate:
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_14 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_14] - Compensate called on unknown participant: {0}
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_15 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_15] - Unknown participant
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_16 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_16] - Wrong state
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_17 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_17] - Unknown error: {0}
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_18 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_18] - Unexpected exception thrown from complete:
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_19 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_19] - Complete called on unknown participant: {0}
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_20 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_20] - Unknown participant
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_21 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_21] - Unknown error: {0}
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_22 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_22] - Unexpected exception thrown from getStatus:
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_23 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_23] - Complete called on unknown participant: {0}
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_24 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_24] - Unknown participant
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_25 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_25] - Unexpected exception thrown from soapFault:
- * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_26 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_26] - SoapFault called on unknown participant: {0}
  */
 public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCompletionParticipantProcessor
 {
@@ -83,7 +48,7 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param participant The participant.
      * @param identifier The identifier.
      */
-    public void activateParticipant(final BusinessAgreementWithCoordinatorCompletionParticipant participant, final String identifier)
+    public void activateParticipant(final CoordinatorCompletionParticipantInboundEvents participant, final String identifier)
     {
         activatedObjectProcessor.activateObject(participant, identifier) ;
     }
@@ -92,7 +57,7 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * Deactivate the participant.
      * @param participant The participant.
      */
-    public void deactivateParticipant(final BusinessAgreementWithCoordinatorCompletionParticipant participant)
+    public void deactivateParticipant(final CoordinatorCompletionParticipantInboundEvents participant)
     {
         activatedObjectProcessor.deactivateObject(participant) ;
     }
@@ -102,10 +67,10 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param instanceIdentifier The participant identifier.
      * @return The participant or null if not known.
      */
-    private BusinessAgreementWithCoordinatorCompletionParticipant getParticipant(final InstanceIdentifier instanceIdentifier)
+    private CoordinatorCompletionParticipantInboundEvents getParticipant(final InstanceIdentifier instanceIdentifier)
     {
         final String identifier = (instanceIdentifier != null ? instanceIdentifier.getInstanceIdentifier() : null) ;
-        return (BusinessAgreementWithCoordinatorCompletionParticipant)activatedObjectProcessor.getObject(identifier) ;
+        return (CoordinatorCompletionParticipantInboundEvents)activatedObjectProcessor.getObject(identifier) ;
     }
 
     /**
@@ -113,68 +78,32 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param cancel The cancel notification.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
+     * 
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_1] - Unexpected exception thrown from cancel:
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_2] - Cancel called on unknown participant: {0}
      */
     public void cancel(final NotificationType cancel, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
-        final BusinessAgreementWithCoordinatorCompletionParticipant participant = getParticipant(instanceIdentifier) ;
+        final CoordinatorCompletionParticipantInboundEvents participant = getParticipant(instanceIdentifier) ;
 
-        try
+        if (participant != null)
         {
-            if (participant != null)
+            try
             {
-                final String messageId = MessageId.getMessageId() ;
-                try
-                {
-                    participant.cancel() ;
-                }
-                catch (final WrongStateException wse)
-                {
-                    final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.WRONGSTATE_ERROR_CODE_QNAME,
-                        WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_1")) ;
-                    CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
-                    return ;
-                }
-                catch (final SystemException se)
-                {
-                    final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final String pattern = WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_2") ;
-                    final String message = MessageFormat.format(pattern, new Object[] {se}) ;
-                    final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
-                    CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
-                    return ;
-                }
-                catch (final Throwable th)
-                {
-                    if (WSTLogger.arjLoggerI18N.isDebugEnabled())
-                    {
-                        WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_3", th) ;
-                    }
-                    final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
-                    final SoapFault soapFault = new SoapFault(th) ;
-                    CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
-                    return ;
-                }
-                final AddressingContext responseAddressingContext =
-                    AddressingContext.createNotificationContext(addressingContext, messageId) ;
-                CoordinatorCompletionCoordinatorClient.getClient().sendCancelled(responseAddressingContext, instanceIdentifier) ;
+                participant.cancel(cancel, addressingContext, arjunaContext) ;
             }
-            else
+            catch (final Throwable th)
             {
                 if (WSTLogger.arjLoggerI18N.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_4", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_1", th) ;
                 }
-                final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
-                final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                    WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_5")) ;
-                CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
             }
         }
-        catch (Throwable throwable)
+        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
         {
-            throwable.printStackTrace(System.err);
+            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_2", new Object[] {instanceIdentifier}) ;
         }
     }
     
@@ -183,68 +112,32 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param close The close notification.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
+     * 
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_1] - Unexpected exception thrown from close:
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_2] - Close called on unknown participant: {0}
      */
     public void close(final NotificationType close, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
-        final BusinessAgreementWithCoordinatorCompletionParticipant participant = getParticipant(instanceIdentifier) ;
+        final CoordinatorCompletionParticipantInboundEvents participant = getParticipant(instanceIdentifier) ;
 
-        try
+        if (participant != null)
         {
-            if (participant != null)
+            try
             {
-                final String messageId = MessageId.getMessageId() ;
-                try
-                {
-                    participant.close() ;
-                }
-                catch (final WrongStateException wse)
-                {
-                    final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.WRONGSTATE_ERROR_CODE_QNAME,
-                        WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_6")) ;
-                    CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
-                    return ;
-                }
-                catch (final SystemException se)
-                {
-                    final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final String pattern = WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_7") ;
-                    final String message = MessageFormat.format(pattern, new Object[] {se}) ;
-                    final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
-                    CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
-                    return ;
-                }
-                catch (final Throwable th)
-                {
-                    if (WSTLogger.arjLoggerI18N.isDebugEnabled())
-                    {
-                        WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_8", th) ;
-                    }
-                    final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
-                    final SoapFault soapFault = new SoapFault(th) ;
-                    CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
-                    return ;
-                }
-                final AddressingContext responseAddressingContext =
-                    AddressingContext.createNotificationContext(addressingContext, messageId) ;
-                CoordinatorCompletionCoordinatorClient.getClient().sendClosed(responseAddressingContext, instanceIdentifier) ;
+                participant.close(close, addressingContext, arjunaContext) ;
             }
-            else
+            catch (final Throwable th)
             {
                 if (WSTLogger.arjLoggerI18N.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_9", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_1", th) ;
                 }
-                final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
-                final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                    WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_10")) ;
-                CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
             }
         }
-        catch (Throwable throwable)
+        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
         {
-            throwable.printStackTrace(System.err);
+            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.close_2", new Object[] {instanceIdentifier}) ;
         }
     }
     
@@ -253,75 +146,32 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param compensate The compensate notification.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
+     * 
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_1] - Unexpected exception thrown from compensate:
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_2] - Compensate called on unknown participant: {0}
      */
     public void compensate(final NotificationType compensate, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
-        final BusinessAgreementWithCoordinatorCompletionParticipant participant = getParticipant(instanceIdentifier) ;
+        final CoordinatorCompletionParticipantInboundEvents participant = getParticipant(instanceIdentifier) ;
 
-        try
+        if (participant != null)
         {
-            if (participant != null)
+            try
             {
-                final String messageId = MessageId.getMessageId() ;
-                try
-                {
-                    participant.compensate() ;
-                }
-                catch (final FaultedException fe)
-                {
-                    final AddressingContext responseAddressingContext =
-                        AddressingContext.createNotificationContext(addressingContext, messageId) ;
-                    CoordinatorCompletionCoordinatorClient.getClient().sendFault(responseAddressingContext, instanceIdentifier, null) ;
-                    return ;
-                }
-                catch (final WrongStateException wse)
-                {
-                    final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.WRONGSTATE_ERROR_CODE_QNAME,
-                        WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_11")) ;
-                    CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
-                    return ;
-                }
-                catch (final SystemException se)
-                {
-                    final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final String pattern = WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_12") ;
-                    final String message = MessageFormat.format(pattern, new Object[] {se}) ;
-                    final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
-                    CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
-                    return ;
-                }
-                catch (final Throwable th)
-                {
-                    if (WSTLogger.arjLoggerI18N.isDebugEnabled())
-                    {
-                        WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_13", th) ;
-                    }
-                    final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
-                    final SoapFault soapFault = new SoapFault(th) ;
-                    CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
-                    return ;
-                }
-                final AddressingContext responseAddressingContext =
-                    AddressingContext.createNotificationContext(addressingContext, messageId) ;
-                CoordinatorCompletionCoordinatorClient.getClient().sendCompensated(responseAddressingContext, instanceIdentifier) ;
+                participant.compensate(compensate, addressingContext, arjunaContext) ;
             }
-            else
+            catch (final Throwable th)
             {
                 if (WSTLogger.arjLoggerI18N.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_14", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_1", th) ;
                 }
-                final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
-                final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                    WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_15")) ;
-                CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
             }
         }
-        catch (Throwable throwable)
+        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
         {
-            throwable.printStackTrace(System.err);
+            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_2", new Object[] {instanceIdentifier}) ;
         }
     }
     
@@ -330,68 +180,100 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param complete The complete notification.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
+     * 
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_1] - Unexpected exception thrown from complete:
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_2] - Complete called on unknown participant: {0}
      */
     public void complete(final NotificationType complete, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
-        final BusinessAgreementWithCoordinatorCompletionParticipant participant = getParticipant(instanceIdentifier) ;
+        final CoordinatorCompletionParticipantInboundEvents participant = getParticipant(instanceIdentifier) ;
 
-        try
+        if (participant != null)
         {
-            if (participant != null)
+            try
             {
-                final String messageId = MessageId.getMessageId() ;
-                try
-                {
-                    participant.complete() ;
-                }
-                catch (final WrongStateException wse)
-                {
-                    final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.WRONGSTATE_ERROR_CODE_QNAME,
-                        WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_16")) ;
-                    CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
-                    return ;
-                }
-                catch (final SystemException se)
-                {
-                    final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final String pattern = WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_17") ;
-                    final String message = MessageFormat.format(pattern, new Object[] {se}) ;
-                    final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
-                    CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
-                    return ;
-                }
-                catch (final Throwable th)
-                {
-                    if (WSTLogger.arjLoggerI18N.isDebugEnabled())
-                    {
-                        WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_18", th) ;
-                    }
-                    final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
-                    final SoapFault soapFault = new SoapFault(th) ;
-                    CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
-                    return ;
-                }
-                final AddressingContext responseAddressingContext =
-                    AddressingContext.createNotificationContext(addressingContext, messageId) ;
-                CoordinatorCompletionCoordinatorClient.getClient().sendCompleted(responseAddressingContext, instanceIdentifier) ;
+                participant.complete(complete, addressingContext, arjunaContext) ;
             }
-            else
+            catch (final Throwable th)
             {
                 if (WSTLogger.arjLoggerI18N.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_19", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_1", th) ;
                 }
-                final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
-                final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                    WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_20")) ;
-                CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
             }
         }
-        catch (Throwable throwable)
+        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
         {
-            throwable.printStackTrace(System.err);
+            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_2", new Object[] {instanceIdentifier}) ;
+        }
+    }
+    
+    /**
+     * Exited.
+     * @param exited The exited notification.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext The arjuna context.
+     * 
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_1] - Unexpected exception thrown from exited:
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_2] - Exited called on unknown participant: {0}
+     */
+    public void exited(final NotificationType exited, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    {
+        final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
+        final CoordinatorCompletionParticipantInboundEvents participant = getParticipant(instanceIdentifier) ;
+
+        if (participant != null)
+        {
+            try
+            {
+                participant.exited(exited, addressingContext, arjunaContext) ;
+            }
+            catch (final Throwable th)
+            {
+                if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                {
+                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_1", th) ;
+                }
+            }
+        }
+        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        {
+            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.exited_2", new Object[] {instanceIdentifier}) ;
+        }
+    }
+    
+    /**
+     * Faulted.
+     * @param faulted The faulted notification.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext The arjuna context.
+     * 
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_1] - Unexpected exception thrown from faulted:
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_2] - Faulted called on unknown participant: {0}
+     */
+    public void faulted(final NotificationType faulted, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    {
+        final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
+        final CoordinatorCompletionParticipantInboundEvents participant = getParticipant(instanceIdentifier) ;
+
+        if (participant != null)
+        {
+            try
+            {
+                participant.faulted(faulted, addressingContext, arjunaContext) ;
+            }
+            catch (final Throwable th)
+            {
+                if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                {
+                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_1", th) ;
+                }
+            }
+        }
+        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        {
+            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.faulted_2", new Object[] {instanceIdentifier}) ;
         }
     }
     
@@ -400,61 +282,66 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param getStatus The get status notification.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
+     * 
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_1] - Unexpected exception thrown from getStatus:
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_2] - GetStatus called on unknown participant: {0}
      */
     public void getStatus(final NotificationType getStatus, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
-        final BusinessAgreementWithCoordinatorCompletionParticipant participant = getParticipant(instanceIdentifier) ;
+        final CoordinatorCompletionParticipantInboundEvents participant = getParticipant(instanceIdentifier) ;
 
-        try
+        if (participant != null)
         {
-            if (participant != null)
+            try
             {
-                final String messageId = MessageId.getMessageId() ;
-                final State state ;
-                try
-                {
-                    state = State.toState(participant.status()) ;
-                }
-                catch (final SystemException se)
-                {
-                    final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
-                    final String pattern = WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_21") ;
-                    final String message = MessageFormat.format(pattern, new Object[] {se}) ;
-                    final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME, message) ;
-                    CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
-                    return ;
-                }
-                catch (final Throwable th)
-                {
-                    if (WSTLogger.arjLoggerI18N.isDebugEnabled())
-                    {
-                        WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_22", th) ;
-                    }
-                    final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
-                    final SoapFault soapFault = new SoapFault(th) ;
-                    CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
-                    return ;
-                }
-                final AddressingContext responseAddressingContext =
-                    AddressingContext.createNotificationContext(addressingContext, messageId) ;
-                CoordinatorCompletionCoordinatorClient.getClient().sendStatus(responseAddressingContext, instanceIdentifier, state) ;
+                participant.getStatus(getStatus, addressingContext, arjunaContext) ;
             }
-            else
+            catch (final Throwable th)
             {
                 if (WSTLogger.arjLoggerI18N.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_23", new Object[] {instanceIdentifier}) ;
+                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_1", th) ;
                 }
-                final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, MessageId.getMessageId()) ;
-                final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
-                    WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_24")) ;
-                CoordinatorCompletionCoordinatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
             }
         }
-        catch (Throwable throwable)
+        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
         {
-            throwable.printStackTrace(System.err);
+            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_2", new Object[] {instanceIdentifier}) ;
+        }
+    }
+    
+    /**
+     * Status.
+     * @param status The status.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext The arjuna context.
+     * 
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_1] - Unexpected exception thrown from status:
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_2] - Status called on unknown participant: {0}
+     */
+    public void status(final StatusType status, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    {
+        final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
+        final CoordinatorCompletionParticipantInboundEvents participant = getParticipant(instanceIdentifier) ;
+
+        if (participant != null)
+        {
+            try
+            {
+                participant.status(status, addressingContext, arjunaContext) ;
+            }
+            catch (final Throwable th)
+            {
+                if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+                {
+                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_1", th) ;
+                }
+            }
+        }
+        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        {
+            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.status_2", new Object[] {instanceIdentifier}) ;
         }
     }
     
@@ -463,33 +350,33 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @param soapFault The SOAP fault notification.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
+     * 
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_1 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_1] - Unexpected exception thrown from soapFault:
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_2 [com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_2] - SoapFault called on unknown participant: {0}
      */
     public void soapFault(final SoapFault fault, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
-        final BusinessAgreementWithCoordinatorCompletionParticipant participant = getParticipant(instanceIdentifier) ;
+        final CoordinatorCompletionParticipantInboundEvents participant = getParticipant(instanceIdentifier) ;
 
         if (participant != null)
         {
             try
             {
-                participant.error() ;
+                participant.soapFault(fault, addressingContext, arjunaContext) ;
             }
             catch (final Throwable th)
             {
                 if (WSTLogger.arjLoggerI18N.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_25", th) ;
+                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_1", th) ;
                 }
             }
         }
-        else
+        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
-            {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl_25", new Object[] {instanceIdentifier}) ;
-            }
+            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl.soapFault_2", new Object[] {instanceIdentifier}) ;
         }
     }
 }

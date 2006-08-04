@@ -61,7 +61,7 @@ public class TerminationParticipantFaultedHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                TerminationParticipantProcessor.getCoordinator().handleFaulted(faulted, addressingContext, arjunaContext) ;
+                TerminationParticipantProcessor.getProcessor().handleFaulted(faulted, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

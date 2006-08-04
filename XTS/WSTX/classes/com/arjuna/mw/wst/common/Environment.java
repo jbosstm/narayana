@@ -39,24 +39,4 @@ public interface Environment
 
     public static final String COORDINATOR_URL = "com.arjuna.mw.wst.coordinatorURL";
 
-    public static final String ACTIVATION_REQUESTER = "com.arjuna.mw.wst.activationrequester";
-    public static final String ACTIVATION_COORDINATOR = "com.arjuna.mw.wst.activationcoordinator";
-    public static final String REGISTRATION_REQUESTER = "com.arjuna.mw.wst.registrationrequester";
-
-    public static final String COMPLETION_PARTICIPANT = "com.arjuna.mw.wst.at.completionparticipant";
-    public static final String COMPLETION_WITH_ACK_PARTICIPANT = "com.arjuna.mw.wst.at.completionwithackparticipant";
-
-    public static final String DURABLE_TWOPC_DISPATCHER = "com.arjuna.mw.wst.at.durabletwopcdispatcher";
-    public static final String DURABLE_TWOPC_PARTICIPANT = "com.arjuna.mw.wst.at.durabletwopcparticipant";
-    public static final String VOLATILE_TWOPC_DISPATCHER = "com.arjuna.mw.wst.at.volatiletwopcdispatcher";
-    public static final String VOLATILE_TWOPC_PARTICIPANT = "com.arjuna.mw.wst.at.volatiletwopcparticipant";
-
-    public static final String BUSINESSAGREEMENTWPC_DISPATCHER = "com.arjuna.mw.wst.ba.businessagreementwpcdispatcher";
-    public static final String BUSINESSAGREEMENTWPC_PARTICIPANT = "com.arjuna.mw.wst.ba.businessagreementwpcparticipant";
-    public static final String BUSINESSAGREEMENTWCC_DISPATCHER = "com.arjuna.mw.wst.ba.businessagreementwccispatcher";
-    public static final String BUSINESSAGREEMENTWCC_PARTICIPANT = "com.arjuna.mw.wst.ba.businessagreementwccparticipant";
-
-    public static final String TERMINATOR_PARTICIPANT = "com.arjuna.mw.wst.ba.businessactivityterminatorparticipant";
-    public static final String TERMINATOR_COORDINATOR = "com.arjuna.mw.wst.ba.businessactivityterminatorcoordinator";
-
 }

@@ -60,7 +60,7 @@ public class CompletionInitiatorSoapFaultHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CompletionInitiatorProcessor.getInitiator().handleSoapFault(soapFault, addressingContext, arjunaContext) ;
+                CompletionInitiatorProcessor.getProcessor().handleSoapFault(soapFault, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

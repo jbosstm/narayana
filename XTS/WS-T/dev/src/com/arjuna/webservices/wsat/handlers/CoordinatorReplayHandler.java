@@ -61,7 +61,7 @@ public class CoordinatorReplayHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorProcessor.getCoordinator().handleReplay(replay, addressingContext, arjunaContext) ;
+                CoordinatorProcessor.getProcessor().replay(replay, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

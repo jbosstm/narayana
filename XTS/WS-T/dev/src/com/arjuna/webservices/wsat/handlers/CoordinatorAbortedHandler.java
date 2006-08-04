@@ -61,7 +61,7 @@ public class CoordinatorAbortedHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorProcessor.getCoordinator().handleAborted(aborted, addressingContext, arjunaContext) ;
+                CoordinatorProcessor.getProcessor().aborted(aborted, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

@@ -26,238 +26,165 @@
 
 package com.arjuna.wst.stub;
 
-import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices.SoapFaultType;
+import java.io.StringWriter;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamWriter;
+
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.webservices.logging.WSTLogger;
-import com.arjuna.webservices.wsaddr.AddressingContext;
-import com.arjuna.webservices.wsaddr.EndpointReferenceType;
-import com.arjuna.webservices.wsarj.ArjunaContext;
-import com.arjuna.webservices.wsarj.InstanceIdentifier;
-import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
-import com.arjuna.webservices.wsba.ExceptionType;
-import com.arjuna.webservices.wsba.NotificationType;
-import com.arjuna.webservices.wsba.StatusType;
-import com.arjuna.webservices.wsba.client.CoordinatorCompletionParticipantClient;
-import com.arjuna.webservices.wsba.processors.CoordinatorCompletionCoordinatorCallback;
-import com.arjuna.webservices.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
-import com.arjuna.wsc.messaging.MessageId;
+import com.arjuna.webservices.soap.SoapUtils;
+import com.arjuna.webservices.util.StreamHelper;
+import com.arjuna.webservices.wsba.State;
+import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 import com.arjuna.wst.FaultedException;
+import com.arjuna.wst.PersistableParticipant;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.WrongStateException;
+import com.arjuna.wst.messaging.engines.CoordinatorCompletionCoordinatorEngine;
 
-public class BusinessAgreementWithCoordinatorCompletionStub implements com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant
+public class BusinessAgreementWithCoordinatorCompletionStub implements BusinessAgreementWithCoordinatorCompletionParticipant, PersistableParticipant
 {
-    private EndpointReferenceType _businessAgreementWithCoordinatorCompletionParticipant = null;
-    private final String _id ;
+    private static final QName QNAME_BACC_PARTICIPANT = new QName("baccParticipant") ;
+    private CoordinatorCompletionCoordinatorEngine participant ;
 
-    public BusinessAgreementWithCoordinatorCompletionStub (final String id, final EndpointReferenceType businessAgreementWithCoordinatorCompletionParticipant)
+    public BusinessAgreementWithCoordinatorCompletionStub (final CoordinatorCompletionCoordinatorEngine participant)
         throws Exception
     {
-        _businessAgreementWithCoordinatorCompletionParticipant         = businessAgreementWithCoordinatorCompletionParticipant;
-        _id = id ;
+        this.participant = participant ;
     }
 
-    public void close ()
+    public synchronized void close ()
         throws WrongStateException, SystemException
     {
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(_businessAgreementWithCoordinatorCompletionParticipant, MessageId.getMessageId()) ;
+        /*
+         * Active -> illegal state
+         * Canceling -> illegal state
+         * Canceling-Active -> illegal state
+         * Canceling-Completing -> illegal state
+         * Completing -> illegal state
+         * Completed -> illegal state
+         * Closing -> no response
+         * Compensating -> illegal state
+         * Faulting -> illegal state
+         * Faulting-Active -> illegal state
+         * Faulting-Compensating -> illegal state
+         * Exiting -> illegal state
+         * Ended -> ended
+         */
+        final State state = participant.close() ;
         
-        final RequestCallback callback = new RequestCallback() ;
-        final CoordinatorCompletionCoordinatorProcessor coordinatorCompletionCoordinator = CoordinatorCompletionCoordinatorProcessor.getCoordinator() ;
-        coordinatorCompletionCoordinator.registerCallback(_id, callback) ;
-        try
+        if (state == State.STATE_CLOSING)
         {
-            CoordinatorCompletionParticipantClient.getClient().sendClose(addressingContext, new InstanceIdentifier(_id)) ;
-            callback.waitUntilTriggered() ;
-        }
-        catch (final Throwable th)
-        {
-            th.printStackTrace() ;
             throw new SystemException() ;
         }
-        finally
+        else if (state != State.STATE_ENDED)
         {
-            coordinatorCompletionCoordinator.removeCallback(_id) ;
+            throw new WrongStateException() ;
         }
-        
-        if (callback.hasTriggered())
-        {
-            if (callback.receivedClosed())
-            {
-                return ;
-            }
-            final SoapFault soapFault = callback.getSoapFault() ;
-            if ((soapFault != null) && ArjunaTXConstants.WRONGSTATE_ERROR_CODE_QNAME.equals(soapFault.getSubcode()))
-            {
-                throw new WrongStateException();
-            }
-        }
-        
-        throw new SystemException() ;
     }
 
-    public void cancel ()
+    public synchronized void cancel ()
         throws WrongStateException, SystemException
     {
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(_businessAgreementWithCoordinatorCompletionParticipant, MessageId.getMessageId()) ;
+        /*
+         * Active -> illegal state
+         * Canceling -> no response
+         * Canceling-Active -> no response
+         * Canceling-Completing -> no response
+         * Completing -> illegal state
+         * Completed -> illegal state
+         * Closing -> illegal state
+         * Compensating -> illegal state
+         * Faulting -> illegal state
+         * Faulting-Active -> illegal state
+         * Faulting-Compensating -> illegal state
+         * Exiting -> illegal state
+         * Ended -> ended
+         */
+        final State state = participant.cancel() ;
         
-        final RequestCallback callback = new RequestCallback() ;
-        final CoordinatorCompletionCoordinatorProcessor coordinatorCompletionCoordinator = CoordinatorCompletionCoordinatorProcessor.getCoordinator() ;
-        coordinatorCompletionCoordinator.registerCallback(_id, callback) ;
-        try
+        if ((state == State.STATE_CANCELING) || (state == State.STATE_CANCELING_ACTIVE) ||
+            (state == State.STATE_CANCELING_COMPLETING))
         {
-            CoordinatorCompletionParticipantClient.getClient().sendCancel(addressingContext, new InstanceIdentifier(_id)) ;
-            callback.waitUntilTriggered() ;
-        }
-        catch (final Throwable th)
-        {
-            th.printStackTrace() ;
             throw new SystemException() ;
         }
-        finally
+        else if (state != State.STATE_ENDED)
         {
-            coordinatorCompletionCoordinator.removeCallback(_id) ;
+            throw new WrongStateException() ;
         }
-        
-        if (callback.hasTriggered())
-        {
-            if (callback.receivedCancelled())
-            {
-                return ;
-            }
-            final SoapFault soapFault = callback.getSoapFault() ;
-            if ((soapFault != null) && ArjunaTXConstants.WRONGSTATE_ERROR_CODE_QNAME.equals(soapFault.getSubcode()))
-            {
-                throw new WrongStateException();
-            }
-        }
-        
-        throw new SystemException() ;
     }
 
-    public void compensate ()
+    public synchronized void compensate ()
         throws FaultedException, WrongStateException, SystemException
     {
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(_businessAgreementWithCoordinatorCompletionParticipant, MessageId.getMessageId()) ;
-        
-        final RequestCallback callback = new RequestCallback() ;
-        final CoordinatorCompletionCoordinatorProcessor coordinatorCompletionCoordinator = CoordinatorCompletionCoordinatorProcessor.getCoordinator() ;
-        coordinatorCompletionCoordinator.registerCallback(_id, callback) ;
-        try
+        /*
+         * Active -> illegal state
+         * Canceling -> illegal state
+         * Canceling-Active -> illegal state
+         * Canceling-Completing -> illegal state
+         * Completing -> illegal state
+         * Completed -> illegal state
+         * Closing -> illegal state
+         * Compensating -> no response
+         * Faulting -> illegal state
+         * Faulting-Active -> illegal state
+         * Faulting-Compensating -> fault
+         * Exiting -> illegal state
+         * Ended -> ended
+         */
+        final State state = participant.compensate() ;
+        if (state == State.STATE_COMPENSATING)
         {
-            CoordinatorCompletionParticipantClient.getClient().sendCompensate(addressingContext, new InstanceIdentifier(_id)) ;
-            callback.waitUntilTriggered() ;
-        }
-        catch (final Throwable th)
-        {
-            th.printStackTrace() ;
             throw new SystemException() ;
         }
-        finally
+        else if (state == State.STATE_FAULTING_COMPENSATING)
         {
-            coordinatorCompletionCoordinator.removeCallback(_id) ;
+            throw new FaultedException() ;
         }
-        
-        if (callback.hasTriggered())
+        else if (state != State.STATE_ENDED)
         {
-            if (callback.receivedCompensated())
-            {
-                return ;
-            }
-            final ExceptionType fault = callback.getFault() ;
-            if (fault != null)
-            {
-                final AddressingContext responseContext = AddressingContext.createNotificationContext(callback.getAddressingContext(),
-                    MessageId.getMessageId()) ;
-                try
-                {
-                    CoordinatorCompletionParticipantClient.getClient().sendFaulted(responseContext, new InstanceIdentifier(_id)) ;
-                }
-                catch (final Throwable th) {} // ignore this as we are faulting
-                throw new FaultedException() ;
-            }
-            final SoapFault soapFault = callback.getSoapFault() ;
-            if ((soapFault != null) && ArjunaTXConstants.WRONGSTATE_ERROR_CODE_QNAME.equals(soapFault.getSubcode()))
-            {
-                throw new WrongStateException();
-            }
+            throw new WrongStateException() ;
         }
-        
-        throw new SystemException() ;
     }
 
-    public void complete ()
+    public synchronized void complete ()
         throws WrongStateException, SystemException
     {
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(_businessAgreementWithCoordinatorCompletionParticipant, MessageId.getMessageId()) ;
-        
-        final RequestCallback callback = new RequestCallback() ;
-        final CoordinatorCompletionCoordinatorProcessor coordinatorCompletionCoordinator = CoordinatorCompletionCoordinatorProcessor.getCoordinator() ;
-        coordinatorCompletionCoordinator.registerCallback(_id, callback) ;
-        try
+        /*
+         * Active -> illegal state
+         * Canceling -> illegal state
+         * Canceling-Active -> illegal state
+         * Canceling-Completing -> canceling
+         * Completing -> no response
+         * Completed -> completed
+         * Closing -> illegal state
+         * Compensating -> illegal state
+         * Faulting -> illegal state
+         * Faulting-Active -> illegal state
+         * Faulting-Compensating -> fault
+         * Exiting -> exiting
+         * Ended -> illegal state
+         */
+        final State state = participant.complete() ;
+        if (state == State.STATE_COMPLETED)
         {
-            CoordinatorCompletionParticipantClient.getClient().sendComplete(addressingContext, new InstanceIdentifier(_id)) ;
-            callback.waitUntilTriggered() ;
+            return ;
         }
-        catch (final Throwable th)
+        else if ((state == State.STATE_FAULTING_COMPENSATING) || (state == State.STATE_CANCELING_COMPLETING) ||
+            (state == State.STATE_EXITING))
         {
-            th.printStackTrace() ;
             throw new SystemException() ;
         }
-        finally
-        {
-            coordinatorCompletionCoordinator.removeCallback(_id) ;
-        }
-        
-        if (callback.hasTriggered())
-        {
-            if (callback.receivedCompleted())
-            {
-                return ;
-            }
-            final SoapFault soapFault = callback.getSoapFault() ;
-            if ((soapFault != null) && ArjunaTXConstants.WRONGSTATE_ERROR_CODE_QNAME.equals(soapFault.getSubcode()))
-            {
-                throw new WrongStateException();
-            }
-        }
-        
-        throw new SystemException() ;
+        throw new WrongStateException() ;
     }
 
     public String status ()
         throws SystemException
     {
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(_businessAgreementWithCoordinatorCompletionParticipant, MessageId.getMessageId()) ;
-        
-        final RequestCallback callback = new RequestCallback() ;
-        final CoordinatorCompletionCoordinatorProcessor coordinatorCompletionCoordinator = CoordinatorCompletionCoordinatorProcessor.getCoordinator() ;
-        coordinatorCompletionCoordinator.registerCallback(_id, callback) ;
-        try
-        {
-            CoordinatorCompletionParticipantClient.getClient().sendGetStatus(addressingContext, new InstanceIdentifier(_id)) ;
-            callback.waitUntilTriggered() ;
-        }
-        catch (final Throwable th)
-        {
-            th.printStackTrace() ;
-            throw new SystemException() ;
-        }
-        finally
-        {
-            coordinatorCompletionCoordinator.removeCallback(_id) ;
-        }
-        
-        if (callback.hasTriggered())
-        {
-            final StatusType status = callback.getStatus() ;
-            if (status != null)
-            {
-                return status.getState().toString() ;
-            }
-        }
-        
-        throw new SystemException() ;
+        final State state = participant.getStatus() ;
+        return (state == null ? null : state.getValue().getLocalPart()) ;
     }
 
     public void unknown ()
@@ -266,242 +193,63 @@ public class BusinessAgreementWithCoordinatorCompletionStub implements com.arjun
         error() ;
     }
 
-    /**
-     * @message com.arjuna.wst.stub.BusinessAgreementWithCoordinatorCompletionStub_1 [com.arjuna.wst.stub.BusinessAgreementWithCoordinatorCompletionStub_1] - Unknown error
-     */
-    public void error ()
+    public synchronized void error ()
         throws SystemException
     {
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(_businessAgreementWithCoordinatorCompletionParticipant, MessageId.getMessageId()) ;
-        final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME,
-                WSTLogger.log_mesg.getString("com.arjuna.wst.stub.BusinessAgreementWithCoordinatorCompletionStub_1")) ;
+        participant.cancel() ;
+    }
+    
+    /**
+     * @message com.arjuna.wst.stub.BusinessAgreementWithCoordinatorCompletionStub_2 [com.arjuna.wst.stub.BusinessAgreementWithCoordinatorCompletionStub_2] - Error persisting participant state
+     */
+    public boolean saveState(final OutputObjectState oos)
+    {
         try
         {
-            CoordinatorCompletionParticipantClient.getClient().sendSoapFault(addressingContext, soapFault, new InstanceIdentifier(_id)) ;
+            oos.packString(participant.getId()) ;
+            
+            final StringWriter sw = new StringWriter() ;
+            final XMLStreamWriter writer = SoapUtils.getXMLStreamWriter(sw) ;
+            StreamHelper.writeStartElement(writer, QNAME_BACC_PARTICIPANT) ;
+            participant.getParticipant().writeContent(writer) ;
+            StreamHelper.writeEndElement(writer, null, null) ;
+            writer.close() ;
+            
+            oos.packString(writer.toString()) ;
+            
+            return true ;
         }
         catch (final Throwable th)
         {
-            th.printStackTrace() ;
-            throw new SystemException() ;
+            WSTLogger.arjLoggerI18N.error("com.arjuna.wst.stub.BusinessAgreementWithCoordinatorCompletionStub_2", th) ;
+            return false ;
         }
     }
-
-    private static class RequestCallback extends CoordinatorCompletionCoordinatorCallback
+    
+    /**
+     * @message com.arjuna.wst.stub.BusinessAgreementWithCoordinatorCompletionStub_3 [com.arjuna.wst.stub.BusinessAgreementWithCoordinatorCompletionStub_3] - Error restoring participant state
+     */
+    public boolean restoreState(final InputObjectState ios)
     {
-        /**
-         * The addressing context.
-         */
-        private AddressingContext addressingContext ;
-        /**
-         * The arjuna context.
-         */
-        private ArjunaContext arjunaContext ;
-        /**
-         * The SOAP fault.
-         */
-        private SoapFault soapFault ;
-        /**
-         * The fault.
-         */
-        private ExceptionType fault ;
-        /**
-         * The status.
-         */
-        private StatusType status ;
-        /**
-         * The completed notification flag.
-         */
-        private boolean completed ;
-        /**
-         * The cancelled notification flag.
-         */
-        private boolean cancelled ;
-        /**
-         * The closed notification flag.
-         */
-        private boolean closed ;
-        /**
-         * The compensated notification flag.
-         */
-        private boolean compensated ;
-        
-        /**
-         * Get the addressing context.
-         * @return The addressing context.
-         */
-        AddressingContext getAddressingContext()
-        {
-            return addressingContext ;
-        }
-        
-        /**
-         * Get the arjuna context.
-         * @return The arjuna context.
-         */
-        ArjunaContext getArjunaContext()
-        {
-            return arjunaContext ;
-        }
-        
-        /**
-         * Get the SOAP fault.
-         * @return The SOAP fault.
-         */
-        SoapFault getSoapFault()
-        {
-            return soapFault ;
-        }
-        
-        /**
-         * Get the fault.
-         * @return The fault.
-         */
-        ExceptionType getFault()
-        {
-            return fault ;
-        }
-        
-        /**
-         * Get the status.
-         * @return The status.
-         */
-        StatusType getStatus()
-        {
-            return status ;
-        }
-        
-        /**
-         * Did we receive a completed notification?
-         * @return True if completed, false otherwise.
-         */
-        boolean receivedCompleted()
-        {
-            return completed ;
-        }
-        
-        /**
-         * Did we receive a cancelled notification?
-         * @return True if cancelled, false otherwise.
-         */
-        boolean receivedCancelled()
-        {
-            return cancelled ;
-        }
-        
-        /**
-         * Did we receive a closed notification?
-         * @return True if closed, false otherwise.
-         */
-        boolean receivedClosed()
-        {
-            return closed ;
-        }
-        
-        /**
-         * Did we receive a compensated notification?
-         * @return True if compensated, false otherwise.
-         */
-        boolean receivedCompensated()
-        {
-            return compensated ;
-        }
-        
-        /**
-         * A completed response.
-         * @param completed The completed notification.
-         * @param addressingContext The addressing context.
-         * @param arjunaContext The arjuna context.
-         */
-        public void completed(final NotificationType completed, final AddressingContext addressingContext,
-            final ArjunaContext arjunaContext)
-        {
-            this.completed = true ;
-            this.addressingContext = addressingContext ;
-            this.arjunaContext = arjunaContext ;
-        }
-
-        /**
-         * A cancelled response.
-         * @param cancelled The cancelled notification.
-         * @param addressingContext The addressing context.
-         * @param arjunaContext The arjuna context.
-         */
-        public void cancelled(final NotificationType cancelled, final AddressingContext addressingContext,
-            final ArjunaContext arjunaContext)
-        {
-            this.cancelled  = true ;
-            this.addressingContext = addressingContext ;
-            this.arjunaContext = arjunaContext ;
-        }
-
-        /**
-         * A closed response.
-         * @param closed The closed notification.
-         * @param addressingContext The addressing context.
-         * @param arjunaContext The arjuna context.
-         */
-        public void closed(final NotificationType closed, final AddressingContext addressingContext,
-            final ArjunaContext arjunaContext)
-        {
-            this.closed = true ;
-            this.addressingContext = addressingContext ;
-            this.arjunaContext = arjunaContext ;
-        }
-
-        /**
-         * A compensated response.
-         * @param compensated The compensated notification.
-         * @param addressingContext The addressing context.
-         * @param arjunaContext The arjuna context.
-         */
-        public void compensated(final NotificationType compensated, final AddressingContext addressingContext,
-            final ArjunaContext arjunaContext)
-        {
-            this.compensated = true ;
-            this.addressingContext = addressingContext ;
-            this.arjunaContext = arjunaContext ;
-        }
-
-        /**
-         * A fault response.
-         * @param fault The fault notification.
-         * @param addressingContext The addressing context.
-         * @param arjunaContext The arjuna context.
-         */
-        public void fault(final ExceptionType fault, final AddressingContext addressingContext,
-            final ArjunaContext arjunaContext)
-        {
-            this.fault = fault ;
-            this.addressingContext = addressingContext ;
-            this.arjunaContext = arjunaContext ;
-        }
-
-        /**
-         * A status response.
-         * @param status The status notification.
-         * @param addressingContext The addressing context.
-         * @param arjunaContext The arjuna context.
-         */
-        public void status(final StatusType status, final AddressingContext addressingContext,
-            final ArjunaContext arjunaContext)
-        {
-            this.status = status ;
-            this.addressingContext = addressingContext ;
-            this.arjunaContext = arjunaContext ;
-        }
-        
-        /**
-         * A SOAP fault response.
-         * @param soapFault The SOAP fault.
-         * @param addressingContext The addressing context.
-         * @param arjunaContext The arjuna context.
-         */
-        public void soapFault(final SoapFault soapFault, final AddressingContext addressingContext,
-            final ArjunaContext arjunaContext)
-        {
-            this.soapFault = soapFault ;
-            this.addressingContext = addressingContext ;
-            this.arjunaContext = arjunaContext ;
-        }
+        // KEV - rework
+        return false ;
+//        try
+//        {
+//            final String id = ios.unpackString() ;
+//            final String eprValue = ios.unpackString() ;
+//            
+//            final XMLStreamReader reader = SoapUtils.getXMLStreamReader(new StringReader(eprValue)) ;
+//            StreamHelper.checkNextStartTag(reader, QNAME_BACC_PARTICIPANT) ;
+//            final EndpointReferenceType endpointReferenceType = new EndpointReferenceType(reader) ;
+//            
+//            _id = id ;
+//            _businessAgreementWithCoordinatorCompletionParticipant = endpointReferenceType ;
+//            return true ;
+//        }
+//        catch (final Throwable th)
+//        {
+//            WSTLogger.arjLoggerI18N.error("com.arjuna.wst.stub.BusinessAgreementWithCoordinatorCompletionStub_3", th) ;
+//            return false ;
+//        }
     }
 }

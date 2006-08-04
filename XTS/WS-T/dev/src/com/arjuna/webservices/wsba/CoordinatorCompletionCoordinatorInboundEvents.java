@@ -18,78 +18,89 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package com.arjuna.webservices.wsba.processors;
+package com.arjuna.webservices.wsba;
 
 import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices.base.processors.Callback;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsarj.ArjunaContext;
-import com.arjuna.webservices.wsba.ExceptionType;
-import com.arjuna.webservices.wsba.NotificationType;
-import com.arjuna.webservices.wsba.StatusType;
 
 
 /**
- * The Coordinator Completion Coordinator callback.
- * @author kevin
+ * The Participant events.
  */
-public abstract class CoordinatorCompletionCoordinatorCallback extends Callback
+public interface CoordinatorCompletionCoordinatorInboundEvents
 {
     /**
-     * A cancelled response.
+     * Handle the cancelled event.
      * @param cancelled The cancelled notification.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void cancelled(final NotificationType cancelled, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
+    public void cancelled(final NotificationType cancelled, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
     
     /**
-     * A closed response.
+     * Handle the closed event.
      * @param closed The closed notification.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void closed(final NotificationType closed, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
+    public void closed(final NotificationType closed, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
     
     /**
-     * A compensated response.
+     * Handle the compensated event.
      * @param compensated The compensated notification.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void compensated(final NotificationType compensated, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
-
+    public void compensated(final NotificationType compensated, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
+    
     /**
-     * A completed response.
+     * Handle the completed event.
      * @param completed The completed notification.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void completed(final NotificationType completed, final AddressingContext addressingContext,
+    public void completed(final NotificationType completed, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext) ;
     
     /**
-     * A Status.
-     * @param status The status notification.
+     * Handle the exit event.
+     * @param exit The exit notification.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void status(final StatusType status, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
+    public void exit(final NotificationType exit, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
     
     /**
-     * A fault response.
-     * @param fault The fault notification.
+     * Handle the fault event.
+     * @param fault The fault exception.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void fault(final ExceptionType fault, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
-    
-    /**
-     * A SOAP fault response.
-     * @param soapFault The SOAP fault.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
-     */
-    public abstract void soapFault(final SoapFault soapFault, final AddressingContext addressingContext,
+    public void fault(final ExceptionType fault, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext) ;
+    
+    /**
+     * Handle the getStatus event.
+     * @param getStatus The getStatus notification.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext The arjuna context.
+     */
+    public void getStatus(final NotificationType getStatus, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
+    
+    /**
+     * Handle the status event.
+     * @param status The status.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext The arjuna context.
+     */
+    public void status(final StatusType status, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
+    
+    /**
+     * Handle the soap fault event.
+     * @param soapFault The soap fault.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext The arjuna context.
+     */
+    public void soapFault(final SoapFault soapFault, final AddressingContext addressingContext, final ArjunaContext arjunaContext) ;
 }

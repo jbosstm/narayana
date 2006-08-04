@@ -78,5 +78,4 @@ public interface BusinessAgreementWithParticipantCompletionParticipant
      */
 
     public void error () throws SystemException;
-    
 }

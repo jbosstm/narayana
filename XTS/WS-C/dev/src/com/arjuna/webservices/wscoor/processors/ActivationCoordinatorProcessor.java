@@ -38,7 +38,7 @@ public abstract class ActivationCoordinatorProcessor
      * Get the coordinator.
      * @return The coordinator.
      */
-    public static synchronized ActivationCoordinatorProcessor getCoordinator()
+    public static ActivationCoordinatorProcessor getCoordinator()
     {
         return COORDINATOR ;
     }
@@ -48,7 +48,7 @@ public abstract class ActivationCoordinatorProcessor
      * @param coordinator The coordinator.
      * @return The previous coordinator.
      */
-    public static synchronized ActivationCoordinatorProcessor setCoordinator(final ActivationCoordinatorProcessor coordinator)
+    public static ActivationCoordinatorProcessor setCoordinator(final ActivationCoordinatorProcessor coordinator)
     {
         final ActivationCoordinatorProcessor origCoordinator = COORDINATOR ;
         COORDINATOR = coordinator ;

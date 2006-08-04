@@ -42,8 +42,9 @@
 	    <property
 	    name="com.arjuna.ats.arjuna.objectstore.objectStoreDir"
 	    value="XTSObjectStore"/>
-	    <!-- property
-	    name="com.arjuna.mw.wst.coordinatorURL"
-	    value="http://localhost:8080/xts/soap/ActivationCoordinator"/ -->
+
+	    <property
+	    name="com.arjuna.ats.arjuna.recovery.recoveryExtension1"
+	    value="com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule"/>
 	</properties>
 </wstx-config>

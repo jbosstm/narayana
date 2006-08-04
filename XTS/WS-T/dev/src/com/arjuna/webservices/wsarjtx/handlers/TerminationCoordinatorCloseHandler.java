@@ -61,7 +61,7 @@ public class TerminationCoordinatorCloseHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                TerminationCoordinatorProcessor.getParticipant().close(close, addressingContext, arjunaContext) ;
+                TerminationCoordinatorProcessor.getProcessor().close(close, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

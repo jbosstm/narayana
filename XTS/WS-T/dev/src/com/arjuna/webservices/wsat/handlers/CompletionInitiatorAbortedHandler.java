@@ -61,7 +61,7 @@ public class CompletionInitiatorAbortedHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CompletionInitiatorProcessor.getInitiator().handleAborted(aborted, addressingContext, arjunaContext) ;
+                CompletionInitiatorProcessor.getProcessor().handleAborted(aborted, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

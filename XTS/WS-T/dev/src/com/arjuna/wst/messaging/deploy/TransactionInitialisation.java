@@ -23,8 +23,10 @@ package com.arjuna.wst.messaging.deploy;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import com.arjuna.common.util.SharedTimer;
 import com.arjuna.webservices.wsarjtx.processors.TerminationCoordinatorProcessor;
 import com.arjuna.webservices.wsat.processors.CompletionCoordinatorProcessor;
+import com.arjuna.webservices.wsat.processors.CoordinatorProcessor;
 import com.arjuna.webservices.wsat.processors.ParticipantProcessor;
 import com.arjuna.webservices.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
 import com.arjuna.webservices.wsba.processors.CoordinatorCompletionParticipantProcessor;
@@ -33,6 +35,7 @@ import com.arjuna.webservices.wsba.processors.ParticipantCompletionParticipantPr
 import com.arjuna.wst.messaging.CompletionCoordinatorProcessorImpl;
 import com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl;
 import com.arjuna.wst.messaging.CoordinatorCompletionParticipantProcessorImpl;
+import com.arjuna.wst.messaging.CoordinatorProcessorImpl;
 import com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl;
 import com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl;
 import com.arjuna.wst.messaging.ParticipantProcessorImpl;
@@ -50,13 +53,14 @@ public class TransactionInitialisation implements ServletContextListener
      */
     public void contextInitialized(final ServletContextEvent servletContextEvent)
     {
-        CompletionCoordinatorProcessor.setCoordinator(new CompletionCoordinatorProcessorImpl()) ;
-        ParticipantProcessor.setParticipant(new ParticipantProcessorImpl()) ;
-        TerminationCoordinatorProcessor.setParticipant(new TerminatorParticipantProcessorImpl()) ;
-        CoordinatorCompletionParticipantProcessor.setParticipant(new CoordinatorCompletionParticipantProcessorImpl()) ;
-        ParticipantCompletionParticipantProcessor.setParticipant(new ParticipantCompletionParticipantProcessorImpl()) ;
-        CoordinatorCompletionCoordinatorProcessor.setCoordinator(new CoordinatorCompletionCoordinatorProcessorImpl()) ;
-        ParticipantCompletionCoordinatorProcessor.setCoordinator(new ParticipantCompletionCoordinatorProcessorImpl()) ;
+        CompletionCoordinatorProcessor.setProcessor(new CompletionCoordinatorProcessorImpl()) ;
+        ParticipantProcessor.setProcessor(new ParticipantProcessorImpl()) ;
+        CoordinatorProcessor.setProcessor(new CoordinatorProcessorImpl()) ;
+        TerminationCoordinatorProcessor.setProcessor(new TerminatorParticipantProcessorImpl()) ;
+        CoordinatorCompletionParticipantProcessor.setProcessor(new CoordinatorCompletionParticipantProcessorImpl()) ;
+        ParticipantCompletionParticipantProcessor.setProcessor(new ParticipantCompletionParticipantProcessorImpl()) ;
+        CoordinatorCompletionCoordinatorProcessor.setProcessor(new CoordinatorCompletionCoordinatorProcessorImpl()) ;
+        ParticipantCompletionCoordinatorProcessor.setProcessor(new ParticipantCompletionCoordinatorProcessorImpl()) ;
     }
 
     /**
@@ -65,5 +69,6 @@ public class TransactionInitialisation implements ServletContextListener
      */
     public void contextDestroyed(final ServletContextEvent servletContextEvent)
     {
+        SharedTimer.getTimer().cancel() ;
     }
 }

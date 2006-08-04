@@ -28,176 +28,133 @@
 
 package com.arjuna.wst.stub;
 
-import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices.SoapFaultType;
+import java.io.StringReader;
+import java.io.StringWriter;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+
+import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.webservices.logging.WSTLogger;
-import com.arjuna.webservices.wsaddr.AddressingContext;
+import com.arjuna.webservices.soap.SoapUtils;
+import com.arjuna.webservices.util.StreamHelper;
 import com.arjuna.webservices.wsaddr.EndpointReferenceType;
-import com.arjuna.webservices.wsarj.ArjunaContext;
-import com.arjuna.webservices.wsarj.InstanceIdentifier;
-import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
-import com.arjuna.webservices.wsat.NotificationType;
 import com.arjuna.webservices.wsat.Participant;
-import com.arjuna.webservices.wsat.client.ParticipantClient;
-import com.arjuna.webservices.wsat.processors.CoordinatorCallback;
-import com.arjuna.webservices.wsat.processors.CoordinatorProcessor;
-import com.arjuna.wsc.messaging.MessageId;
+import com.arjuna.webservices.wsat.State;
 import com.arjuna.wst.Aborted;
+import com.arjuna.wst.PersistableParticipant;
 import com.arjuna.wst.Prepared;
 import com.arjuna.wst.ReadOnly;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.Vote;
 import com.arjuna.wst.WrongStateException;
+import com.arjuna.wst.messaging.engines.CoordinatorEngine;
 
-public class ParticipantStub implements Participant
+public class ParticipantStub implements Participant, PersistableParticipant
 {
-    private final EndpointReferenceType _twoPCParticipant ;
-    private final String _id ;
+    private static final QName QNAME_TWO_PC_PARTICIPANT = new QName("twoPCParticipant") ;
+    private CoordinatorEngine coordinator ;
     
-    public ParticipantStub(final String id, final EndpointReferenceType twoPCParticipant)
+    public ParticipantStub(final String id, final boolean durable, final EndpointReferenceType twoPCParticipant)
         throws Exception
     {
-        _twoPCParticipant = twoPCParticipant;
-        _id = id ;
+        coordinator = new CoordinatorEngine(id, durable, twoPCParticipant) ;
     }
 
     public Vote prepare()
         throws WrongStateException, SystemException
     {
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(_twoPCParticipant, MessageId.getMessageId()) ;
-        
-        final RequestCallback callback = new RequestCallback() ;
-        final CoordinatorProcessor coordinator = CoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(_id, callback) ;
-        try
+        /*
+         * null - aborted or read only
+         * Active - illegal state
+         * Preparing - no answer
+         * Prepared - illegal state
+         * PreparedSuccess - prepared
+         * Committing - illegal state
+         * Aborting - aborting
+         */
+        final State state = coordinator.prepare() ;
+        if (state == State.STATE_PREPARED_SUCCESS)
         {
-            ParticipantClient.getClient().sendPrepare(addressingContext, new InstanceIdentifier(_id)) ;
-            callback.waitUntilTriggered() ;
+            return new Prepared() ;
         }
-        catch (final Throwable th)
+        else if (state == State.STATE_ABORTING)
         {
-            th.printStackTrace() ;
-            throw new SystemException() ;
+            return new Aborted() ;
         }
-        finally
+        else if (state == null)
         {
-            coordinator.removeCallback(_id) ;
-        }
-        
-        if (callback.hasTriggered())
-        {
-            if (callback.receivedPrepared())
-            {
-                return new Prepared() ;
-            }
-            else if (callback.receivedReadOnly())
+            if (coordinator.isReadOnly())
             {
                 return new ReadOnly() ;
             }
-            else if (callback.receivedAborted())
+            else
             {
                 return new Aborted() ;
             }
-            final SoapFault soapFault = callback.getSoapFault() ;
-            if ((soapFault != null) && ArjunaTXConstants.WRONGSTATE_ERROR_CODE_QNAME.equals(soapFault.getSubcode()))
-            {
-                throw new WrongStateException() ;
-            }
         }
-        
-        throw new SystemException() ;
+        else if (state == State.STATE_PREPARING)
+        {
+            throw new SystemException() ;
+        }
+        else
+        {
+            throw new WrongStateException() ;
+        }
     }
 
     public void commit()
         throws WrongStateException, SystemException
     {
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(_twoPCParticipant, MessageId.getMessageId()) ;
-        
-        final RequestCallback callback = new RequestCallback() ;
-        final CoordinatorProcessor coordinator = CoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(_id, callback) ;
-        try
+        /*
+         * null - committed
+         * Active - illegal state
+         * Preparing - illegal state
+         * Prepared - illegal state
+         * PreparedSuccess - illegal state
+         * Committing - no response
+         * Aborting - illegal state
+         */
+        final State state = coordinator.commit() ;
+        if (state != null)
         {
-            ParticipantClient.getClient().sendCommit(addressingContext, new InstanceIdentifier(_id)) ;
-            callback.waitUntilTriggered() ;
-        }
-        catch (final Throwable th)
-        {
-            th.printStackTrace() ;
-            throw new SystemException() ;
-        }
-        finally
-        {
-            coordinator.removeCallback(_id) ;
-        }
-        
-        if (callback.hasTriggered())
-        {
-            if (callback.receivedCommitted())
+            if (state == State.STATE_COMMITTING)
             {
-                return ;
+                throw new SystemException() ;
             }
-            else if (callback.receivedReplay())
-            {
-                commit() ;
-                return ;
-            }
-            final SoapFault soapFault = callback.getSoapFault() ;
-            if ((soapFault != null) && ArjunaTXConstants.WRONGSTATE_ERROR_CODE_QNAME.equals(soapFault.getSubcode()))
+            else
             {
                 throw new WrongStateException() ;
             }
         }
-        
-        throw new SystemException() ;
     }
 
     public void rollback()
         throws WrongStateException, SystemException
     {
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(_twoPCParticipant, MessageId.getMessageId()) ;
-        
-        final RequestCallback callback = new RequestCallback() ;
-        final CoordinatorProcessor coordinator = CoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(_id, callback) ;
-        try
+        /*
+         * null - aborted
+         * Active - illegal state
+         * Preparing - illegal state
+         * Prepared - illegal state
+         * PreparedSuccess - illegal state
+         * Committing - illegal state
+         * Aborting - no response
+         */
+        final State state = coordinator.rollback() ;
+        if (state != null)
         {
-            ParticipantClient.getClient().sendRollback(addressingContext, new InstanceIdentifier(_id)) ;
-            callback.waitUntilTriggered() ;
-        }
-        catch (final Throwable th)
-        {
-            th.printStackTrace() ;
-            throw new SystemException() ;
-        }
-        finally
-        {
-            coordinator.removeCallback(_id) ;
-        }
-        
-        if (callback.hasTriggered())
-        {
-            if (callback.receivedAborted())
+            if (state == State.STATE_ABORTING)
             {
-                return ;
+                throw new SystemException() ;
             }
-            else if (callback.receivedPrepared() || callback.receivedReplay())
-            {
-                rollback() ;
-                return ;
-            }
-            else if (callback.receivedReplay())
-            {
-                commit() ;
-            }
-            final SoapFault soapFault = callback.getSoapFault() ;
-            if ((soapFault != null) && ArjunaTXConstants.WRONGSTATE_ERROR_CODE_QNAME.equals(soapFault.getSubcode()))
+            else
             {
                 throw new WrongStateException() ;
             }
         }
-        
-        throw new SystemException() ;
     }
 
     public void unknown()
@@ -206,215 +163,66 @@ public class ParticipantStub implements Participant
         error() ;
     }
 
-    /**
-     * @message com.arjuna.wst.stub.ParticipantStub_1 [com.arjuna.wst.stub.ParticipantStub_1] - Unknown error
-     */
     public void error()
         throws SystemException
     {
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(_twoPCParticipant, MessageId.getMessageId()) ;
-        final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME,
-                WSTLogger.log_mesg.getString("com.arjuna.wst.stub.ParticipantStub_1")) ;
         try
         {
-            ParticipantClient.getClient().sendSoapFault(addressingContext, soapFault, new InstanceIdentifier(_id)) ;
+            rollback() ;
+        }
+        catch (final WrongStateException wse) {} // ignore
+    }
+    
+    /**
+     * @message com.arjuna.wst.stub.ParticipantStub_1 [com.arjuna.wst.stub.ParticipantStub_1] - Error persisting participant state
+     */
+    public boolean saveState(final OutputObjectState oos)
+    {
+        try
+        {
+            oos.packString(coordinator.getId()) ;
+            oos.packBoolean(coordinator.isDurable()) ;
+            
+            final StringWriter sw = new StringWriter() ;
+            final XMLStreamWriter writer = SoapUtils.getXMLStreamWriter(sw) ;
+            StreamHelper.writeStartElement(writer, QNAME_TWO_PC_PARTICIPANT) ;
+            coordinator.getParticipant().writeContent(writer) ;
+            StreamHelper.writeEndElement(writer, null, null) ;
+            writer.close() ;
+            
+            oos.packString(writer.toString()) ;
+            
+            return true ;
         }
         catch (final Throwable th)
         {
-            th.printStackTrace() ;
-            throw new SystemException() ;
+            WSTLogger.arjLoggerI18N.error("com.arjuna.wst.stub.ParticipantStub_1", th) ;
+            return false ;
         }
     }
-
-    private static final class RequestCallback extends CoordinatorCallback
+    
+    /**
+     * @message com.arjuna.wst.stub.ParticipantStub_2 [com.arjuna.wst.stub.ParticipantStub_2] - Error restoring participant state
+     */
+    public boolean restoreState(final InputObjectState ios)
     {
-        /**
-         * The addressing context.
-         */
-        private AddressingContext addressingContext ;
-        /**
-         * The arjuna context.
-         */
-        private ArjunaContext arjunaContext ;
-        /**
-         * The SOAP fault.
-         */
-        private SoapFault soapFault ;
-        /**
-         * The aborted notification flag.
-         */
-        private boolean aborted ;
-        /**
-         * The committed notification flag.
-         */
-        private boolean committed ;
-        /**
-         * The prepared notification flag.
-         */
-        private boolean prepared ;
-        /**
-         * The read only notification flag.
-         */
-        private boolean readOnly ;
-        /**
-         * The replay notification flag.
-         */
-        private boolean replay ;
-        
-        /**
-         * Get the addressing context.
-         * @return The addressing context.
-         */
-        AddressingContext getAddressingContext()
+        try
         {
-            return addressingContext ;
+            final String id = ios.unpackString() ;
+            final boolean durable = ios.unpackBoolean() ;
+            final String eprValue = ios.unpackString() ;
+            
+            final XMLStreamReader reader = SoapUtils.getXMLStreamReader(new StringReader(eprValue)) ;
+            StreamHelper.checkNextStartTag(reader, QNAME_TWO_PC_PARTICIPANT) ;
+            final EndpointReferenceType endpointReferenceType = new EndpointReferenceType(reader) ;
+            
+            coordinator = new CoordinatorEngine(id, durable, endpointReferenceType, State.STATE_PREPARED_SUCCESS) ;
+            return true ;
         }
-        
-        /**
-         * Get the arjuna context.
-         * @return The arjuna context.
-         */
-        ArjunaContext getArjunaContext()
+        catch (final Throwable th)
         {
-            return arjunaContext ;
-        }
-        
-        /**
-         * Get the SOAP fault.
-         * @return The SOAP fault.
-         */
-        SoapFault getSoapFault()
-        {
-            return soapFault ;
-        }
-        
-        /**
-         * Did we receive a aborted notification?
-         * @return True if aborted, false otherwise.
-         */
-        boolean receivedAborted()
-        {
-            return aborted ;
-        }
-        
-        /**
-         * Did we receive a committed notification?
-         * @return True if committed, false otherwise.
-         */
-        boolean receivedCommitted()
-        {
-            return committed ;
-        }
-        
-        /**
-         * Did we receive a prepared notification?
-         * @return True if prepared, false otherwise.
-         */
-        boolean receivedPrepared()
-        {
-            return prepared ;
-        }
-        
-        /**
-         * Did we receive a read only notification?
-         * @return True if read only, false otherwise.
-         */
-        boolean receivedReadOnly()
-        {
-            return readOnly ;
-        }
-        
-        /**
-         * Did we receive a replay notification?
-         * @return True if replay, false otherwise.
-         */
-        boolean receivedReplay()
-        {
-            return replay ;
-        }
-        
-        /**
-         * An aborted response.
-         * @param aborted The aborted notification.
-         * @param addressingContext The addressing context.
-         * @param arjunaContext The arjuna context.
-         */
-        public void aborted(final NotificationType aborted, final AddressingContext addressingContext,
-            final ArjunaContext arjunaContext)
-        {
-            this.aborted = true ;
-            this.addressingContext = addressingContext ;
-            this.arjunaContext = arjunaContext ;
-        }
-        
-        /**
-         * A committed response.
-         * @param committed The committed notification.
-         * @param addressingContext The addressing context.
-         * @param arjunaContext The arjuna context.
-         */
-        public void committed(final NotificationType committed, final AddressingContext addressingContext,
-            final ArjunaContext arjunaContext)
-        {
-            this.committed = true ;
-            this.addressingContext = addressingContext ;
-            this.arjunaContext = arjunaContext ;
-        }
-        
-        /**
-         * A prepared response.
-         * @param prepared The prepared notification.
-         * @param addressingContext The addressing context.
-         * @param arjunaContext The arjuna context.
-         */
-        public void prepared(final NotificationType prepared, final AddressingContext addressingContext,
-            final ArjunaContext arjunaContext)
-        {
-            this.prepared = true ;
-            this.addressingContext = addressingContext ;
-            this.arjunaContext = arjunaContext ;
-        }
-        
-        /**
-         * A read only response.
-         * @param readOnly The read only notification.
-         * @param addressingContext The addressing context.
-         * @param arjunaContext The arjuna context.
-         */
-        public void readOnly(final NotificationType readOnly, final AddressingContext addressingContext,
-            final ArjunaContext arjunaContext)
-        {
-            this.readOnly = true ;
-            this.addressingContext = addressingContext ;
-            this.arjunaContext = arjunaContext ;
-        }
-        
-        /**
-         * A replay response.
-         * @param replay The replay notification.
-         * @param addressingContext The addressing context.
-         * @param arjunaContext The arjuna context.
-         */
-        public void replay(final NotificationType replay, final AddressingContext addressingContext,
-            final ArjunaContext arjunaContext)
-        {
-            this.replay = true ;
-            this.addressingContext = addressingContext ;
-            this.arjunaContext = arjunaContext ;
-        }
-        
-        /**
-         * A SOAP fault response.
-         * @param soapFault The SOAP fault.
-         * @param addressingContext The addressing context.
-         * @param arjunaContext The arjuna context.
-         */
-        public void soapFault(final SoapFault soapFault, final AddressingContext addressingContext,
-            final ArjunaContext arjunaContext)
-        {
-            this.soapFault = soapFault ;
-            this.addressingContext = addressingContext ;
-            this.arjunaContext = arjunaContext ;
+            WSTLogger.arjLoggerI18N.error("com.arjuna.wst.stub.ParticipantStub_2", th) ;
+            return false ;
         }
     }
 }

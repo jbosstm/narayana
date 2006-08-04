@@ -61,7 +61,7 @@ public class ParticipantCommitHandler implements BodyHandler
         final ArjunaContext arjunaContext = ArjunaContext.getContext(context) ;
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                ParticipantProcessor.getParticipant().commit(commit, addressingContext, arjunaContext) ;
+                ParticipantProcessor.getProcessor().commit(commit, addressingContext, arjunaContext) ;
             }
         }) ;
         return null ;

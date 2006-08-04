@@ -45,4 +45,7 @@ public class Environment
 
     public static final String DEPLOYMENT_CONTEXT = "com.arjuna.mw.wsas.deploymentContext";
     
+    public static final String REPLAY_TIMEOUT = "com.arjuna.mw.wsas.replayTimeout" ;
+    
+    public static final String REPLAY_COUNT = "com.arjuna.mw.wsas.replayCount" ;
 }

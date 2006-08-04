@@ -36,15 +36,15 @@ public class CompletionInitiatorProcessor extends BaseNotificationProcessor
     /**
      * The initiator singleton.
      */
-    private static final CompletionInitiatorProcessor INITIATOR = new CompletionInitiatorProcessor() ;
+    private static final CompletionInitiatorProcessor PROCESSOR = new CompletionInitiatorProcessor() ;
     
     /**
-     * Get the initiator singleton.
+     * Get the processor singleton.
      * @return The singleton.
      */
-    public static CompletionInitiatorProcessor getInitiator()
+    public static CompletionInitiatorProcessor getProcessor()
     {
-        return INITIATOR ;
+        return PROCESSOR ;
     }
 
     /**
