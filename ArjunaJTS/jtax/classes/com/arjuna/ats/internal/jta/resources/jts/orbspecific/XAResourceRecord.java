@@ -1493,8 +1493,10 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 		if (_theTransaction != null)
 		{
-			if (_theTransaction.getXAResourceState(_theXAResource) != TxInfo.ASSOCIATED)
+			if (_theTransaction.getXAResourceState(_theXAResource) == TxInfo.NOT_ASSOCIATED)
 			{
+				// end has been called so we don't need to do it again!
+				
 				doEnd = false;
 			}
 		}

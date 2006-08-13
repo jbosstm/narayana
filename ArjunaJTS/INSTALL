@@ -68,6 +68,39 @@ file is unique.
 The application server will now be configured to use the JBossJTS transaction
 manager instead of the JBoss Transaction Manager.
 
+For the Web Services Transactions component (also known as the XML Transaction Service, or XTS),
+in order to create a stand-alone coordinator:
+
+(1) create a separate installation of your application server to the one you
+will use for your clients/services.
+
+(2) edit the build.xml to point to this installation.
+
+You need to set hostname, port and deploy.dir parameters to those for the
+application server used for the stand-alone coordinator.
+
+(3) run ant with the deploy target that matches your application server
+(deploy-webmethods, deploy-weblogic or deploy-jboss).
+
+(4) when running clients and services, edit the wstx.xml file in their
+deployment to add
+
+	    <property
+	    name="com.arjuna.mw.wst.coordinatorURL"
+	    value="http://@hostname@:@port@/xts/soap/ActivationCoordinator"/>
+
+	    <property
+	    name="com.arjuna.mw.wst.ba.terminatorURL"
+	    value="http://@hostname@:@port@/xts/soap/BusinessActivityTerminatorParticipant"/>
+
+where hostname and port are replaced with the appropriate values.
+
+(5) make sure you start  your coordinator deployment before any clients or
+services that may want to use it.
+
+We recommend that you run through the XTS trailmap in order to understand how to build and use
+transaction-aware Web Services, before deciding whether or not to use a stand-alone coordinator service.
+
 Note, the following issues exist with the trailmap shipped with JBossTS (http://www.jboss.org/index.html?module=bb&op=viewtopic&t=82879):
 
 (i) it talks about ArjunaTS and the arjunats-properties.xml file. This was the old name for JBossTS. The
@@ -77,3 +110,6 @@ new properties file is the jbossjts-properties.xml.
 the recovery manager: java com.arjuna.ats.arjuna.recovery.RecoveryManager -test
 
 (iii) you will need a jacorb.properties file to run the distributed JTS tests.
+
+(iv) the XTS trailmap talks about webMethods deployments. Obviously it is intended to be deployed
+with JBossAS 4.0.3SP1 as well!

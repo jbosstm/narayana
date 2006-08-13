@@ -1093,8 +1093,10 @@ public class XAResourceRecord extends AbstractRecord
 
 		if (_theTransaction != null)
 		{
-			if (_theTransaction.getXAResourceState(_theXAResource) != TxInfo.ASSOCIATED)
+			if (_theTransaction.getXAResourceState(_theXAResource) == TxInfo.NOT_ASSOCIATED)
 			{
+				// end has been called so we don't need to do it again!
+				
 				doEnd = false;
 			}
 		}
@@ -1107,15 +1109,10 @@ public class XAResourceRecord extends AbstractRecord
 	protected XAResource _theXAResource;
 
 	private RecoverableXAConnection _recoveryObject;
-
 	private Xid _tranID;
-
 	private boolean _prepared;
-
 	private boolean _valid;
-
 	private int _heuristic;
-
 	private TransactionImple _theTransaction;
 
 	private static boolean _rollbackOptimization = false;
