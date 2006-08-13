@@ -49,6 +49,8 @@ The following steps are required
  - Edit the server/all/conf/jacorb.properies as follows.
   - change the jacorb.poa.thread_pool_max property to 32
 
+org.omg.PortableInterceptor.ORBInitializerClass.com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition.InterpositionORBInitializerImpl=com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition.InterpositionORBInitializerImpl
+
  - Edit the server/all/deploy/iiop-service.xml and modify the
    PortableInterceptorInitializers attribute as follows.
   - remove the following lines
