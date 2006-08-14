@@ -75,7 +75,7 @@ function emailThisPage()
         <TR>
             <TD width="494">
                 <xsl:element name="IMG">
-                    <xsl:attribute name="src"><xsl:value-of select="$rootpath"/>/images/look_and_feel/arjuna_logo_id.gif</xsl:attribute>
+                    <xsl:attribute name="src"><xsl:value-of select="$rootpath"/>/images/look_and_feel/JBoss_DivOfRH_RGB.gif</xsl:attribute>
                     <xsl:attribute name="alt">arjuna logo</xsl:attribute>
                     <xsl:attribute name="width">178</xsl:attribute>
                     <xsl:attribute name="height">63</xsl:attribute>

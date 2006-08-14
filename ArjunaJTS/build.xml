@@ -279,7 +279,7 @@
                     <fileset dir="docs" includes="index.html"/>
                 </copy>
 		<copy todir="${com.hp.mwlabs.installationdirectory}/docs/images"
-			file="docs/images/arjuna_logo.gif"/>
+			file="docs/images/JBoss_DivOfRH_RGB.gif"/>
 	</target>
 
     <target name="com.hp.mwlabs.ts.product.services.install">
