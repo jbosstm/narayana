@@ -36,6 +36,7 @@ import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.state.*;
+import com.arjuna.ats.arjuna.xa.XID;
 
 import com.arjuna.ats.internal.arjuna.utils.XATxConverter;
 
@@ -59,6 +60,7 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 	public XidImple ()
 	{
 		_theXid = null;
+		hashCode = getHash(_theXid) ;
 	}
 
 	public XidImple (Xid xid)
@@ -66,6 +68,7 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 		_theXid = null;
 
 		copy(xid);
+		hashCode = getHash(_theXid) ;
 	}
 
 	public XidImple (AtomicAction c)
@@ -95,6 +98,7 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 
 			// abort or throw exception?
 		}
+		hashCode = getHash(_theXid) ;
 	}
 
 	public XidImple (Uid id, Uid branch, int formatId)
@@ -109,11 +113,13 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 
 			// abort or throw exception?
 		}
+		hashCode = getHash(_theXid) ;
 	}
 
 	public XidImple (com.arjuna.ats.arjuna.xa.XID x)
 	{
 		_theXid = x;
+		hashCode = getHash(_theXid) ;
 	}
 
 	public final boolean isSameTransaction (Xid xid)
@@ -391,7 +397,60 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 		else
 			return jtaLogger.logMesg.getString("com.arjuna.ats.jta.xa.xidunset");
 	}
+	
+	/**
+	 * Is the specified object equal to this one?
+	 * @param obj The object to test.
+	 * @return true if they are equal, false otherwise.
+	 */
+    public boolean equals(final Object obj)
+    {
+        if (obj instanceof Xid)
+        {
+        	return equals((Xid)obj) ;
+        }
+        return false ;
+    }
+    
+    /**
+     * Return the hash code for this Xid.
+     * @return the hash code.
+     */
+    public int hashCode()
+    {
+        return hashCode ;
+    }
+    
+    /**
+     * Generate the hash code for the xid.
+     * @param xid The xid.
+     * @return The hash code.
+     */
+    private static int getHash(final XID xid)
+    {
+    	if (xid == null)
+    	{
+    		return 0 ;
+    	}
+    	final int hash = generateHash(xid.formatID, xid.data, 0, xid.gtrid_length) ;
+        return generateHash(hash, xid.data, xid.gtrid_length, xid.bqual_length) ;
+    }
 
-	private com.arjuna.ats.arjuna.xa.XID _theXid;
-
+	/**
+	 * Generate a hash code for the specified bytes.
+	 * @param hash The initial hash.
+	 * @param bytes The bytes to include in the hash.
+	 * @return The new hash code.
+	 */
+    private static int generateHash(int hash, final byte[] bytes, final int start, final int length)
+    {
+        for(int count = start ; count < length ; count++)
+        {
+            hash = 31 * hash + bytes[count] ;
+        }
+        return hash ;
+    }
+    
+	private XID _theXid;
+    private final int hashCode ;
 }
