@@ -422,6 +422,15 @@ public class Uid implements Cloneable, Serializable
 		if (u == this)
 			return false;
 
+		if (this.equals(u))
+			return false ;
+		
+		if (MAX_UID.equals(this))
+			return false ;
+		
+		if (MAX_UID.equals(u))
+			return true ;
+		
 		if (hostAddr < u.hostAddr)
 			return true;
 		else
@@ -449,6 +458,15 @@ public class Uid implements Cloneable, Serializable
 
 		if (u == this)
 			return false;
+
+		if (this.equals(u))
+			return false ;
+		
+		if (MAX_UID.equals(this))
+			return true ;
+		
+		if (MAX_UID.equals(u))
+			return false ;
 
 		if (hostAddr > u.hostAddr)
 			return true;
@@ -493,6 +511,21 @@ public class Uid implements Cloneable, Serializable
 			NIL_UID = new Uid("0:0:0:0");
 
 		return NIL_UID;
+	}
+
+	/**
+	 * Return a max Uid (0:0:0:1)
+	 */
+	public static final synchronized Uid maxUid ()
+	{
+		/*
+		 * Only create a single instance of this.
+		 */
+
+		if (MAX_UID == null)
+			MAX_UID = new Uid("0:0:0:1");
+
+		return MAX_UID;
 	}
 
 	/*
@@ -648,4 +681,5 @@ public class Uid implements Cloneable, Serializable
 
 	private static Uid NIL_UID ;
 
+	private static Uid MAX_UID ;
 }
