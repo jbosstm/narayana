@@ -48,8 +48,8 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.Transa
 import org.jboss.tm.JBossXATerminator;
 import org.jboss.util.UnexpectedThrowable;
 
+import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 import com.arjuna.ats.jta.TransactionManager;
-import com.arjuna.ats.jta.logging.*;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TxWorkManager;
 
@@ -108,13 +108,13 @@ public class XATerminator extends XATerminatorImple implements
 			case Status.STATUS_NO_TRANSACTION:
 			case Status.STATUS_UNKNOWN:
 				throw new WorkCompletedException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.inactive"),
+						jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.inactive"),
 						WorkException.TX_RECREATE_FAILED);
 			case Status.STATUS_ACTIVE:
 				break;
 			default:
 				throw new WorkCompletedException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.completing"),
+						jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.completing"),
 						WorkException.TX_CONCURRENT_WORK_DISALLOWED);
 			}
 
@@ -146,7 +146,7 @@ public class XATerminator extends XATerminatorImple implements
 			ex.printStackTrace();
 
 			throw new WorkCompletedException(
-					jtaLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.unknown"),
+					jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.unknown"),
 					WorkException.INTERNAL);
 		}
 	}
@@ -173,7 +173,7 @@ public class XATerminator extends XATerminatorImple implements
 
 			if (!TxWorkManager.getWork(tx).equals(work))
 			{
-				throw new WorkCompletedException(jtaLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.unknownwork"),
+				throw new WorkCompletedException(jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.unknownwork"),
 						WorkException.INTERNAL);
 			}
 
@@ -186,13 +186,13 @@ public class XATerminator extends XATerminatorImple implements
 		catch (InvalidTransactionException ex)
 		{
 			throw new WorkCompletedException(
-					jtaLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.inactive"),
+					jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.inactive"),
 					WorkException.TX_RECREATE_FAILED);
 		}
 		catch (SystemException ex)
 		{
 			throw new WorkCompletedException(
-					jtaLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.unknown"),
+					jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.unknown"),
 					WorkException.INTERNAL);
 		}
 	}

@@ -31,6 +31,10 @@
     <property file="${com.arjuna.mw.ts.properties}"/>
 
     <property environment="env"/>
+	
+	<!-- configure dependencies -->
+	<property name="com.arjuna.buildsystem.dir" location="${buildsystem.dir}"/>
+	<property name="com.arjuna.buildsystem.build.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
 
     <!-- Set internal property defaults -->
     <!-- Path names -->
@@ -41,6 +45,7 @@
 
     <property name="com.arjuna.mwlabs.ts.jbossatx.docs.src" location="docbuild"/>
     <property name="com.arjuna.mwlabs.ts.jbossatx.docs.dest" location="${com.arjuna.mwlabs.ts.jbossatx.buildroot}/docs"/>
+    <property name="com.arjuna.mwlabs.ts.jbossatx.resourcebundle" value="jbossatx_msg_en_US.properties"/>
 
     <!-- Initialisation -->
     <target name="com.arjuna.mwlabs.ts.jbossatx.init">
@@ -88,6 +93,11 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
         <echo message="Date      = ${com.arjuna.mw.date}"/>
         <echo message="Notes     = ${com.arjuna.mw.notes}"/>
 
+        <path id="com.arjuna.buildsystem.classpath">
+            <fileset dir="${com.arjuna.buildsystem.build.lib}"/>
+        </path>
+        <property name="com.arjuna.buildsystem.classpath" refid="com.arjuna.buildsystem.classpath"/>
+    	
         <!-- Installation directory -->
         <property name="com.arjuna.mwlabs.installationdirectory"
             location="${com.hp.mw.installationdirectory}"/>
@@ -134,7 +144,7 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
     </target>
 
     <!-- Default build target -->
-    <target name="com.arjuna.mw.ts.jbossatx.build" depends="com.arjuna.mwlabs.ts.jbossatx.service.compile,com.arjuna.mw.ts.jbossatx.jar"/>
+    <target name="com.arjuna.mw.ts.jbossatx.build" depends="com.arjuna.mwlabs.ts.jbossatx.service.compile,com.arjuna.mwlabs.ts.jbossatx.generateresourcebundle,com.arjuna.mw.ts.jbossatx.jar"/>
 
     <target name="com.arjuna.mwlabs.ts.jbossatx.service.compile" depends="com.arjuna.mwlabs.ts.jbossatx.init">
 
@@ -223,5 +233,27 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
     <target name="install" depends="com.arjuna.mw.ts.jbossatx.install"/>
 
     <target name="clean" depends="com.arjuna.mw.ts.jbossatx.clean"/>
+
+    <target name="com.arjuna.mwlabs.ts.jbossatx.generateresourcebundle">
+
+        <echo message="Generating Integration Resource Bundle"/>
+
+        <javadoc    sourcepath="${com.arjuna.mwlabs.ts.jbossatx.src}"
+                    packagenames="com.arjuna.*"
+                    failonerror="yes"
+                    private="yes"
+                    defaultexcludes="yes"
+                    classpath="${build.classpath}">
+
+            <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
+                <path>
+                    <pathelement path="${com.arjuna.buildsystem.classpath}"/>
+                </path>
+                <param name="-basedir" value="${com.arjuna.mwlabs.ts.jbossatx.dest}"/>
+                <param name="-resourcebundle" value="${com.arjuna.mwlabs.ts.jbossatx.resourcebundle}"/>
+                <param name="-appendkey" value="[]"/>
+            </doclet>
+        </javadoc>
+    </target>
 </project>
 
