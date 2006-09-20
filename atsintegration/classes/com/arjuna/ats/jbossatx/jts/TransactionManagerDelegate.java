@@ -25,18 +25,70 @@ import java.util.Hashtable;
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.spi.ObjectFactory;
+import javax.transaction.RollbackException;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
 
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple;
 import com.arjuna.ats.jbossatx.BaseTransactionManagerDelegate;
+import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 
 public class TransactionManagerDelegate extends BaseTransactionManagerDelegate implements ObjectFactory
 {
+    /**
+     * The transaction manager.
+     */
+    private static final TransactionManagerImple TRANSACTION_MANAGER = new TransactionManagerImple() ;
+    
     /**
      * Construct the delegate with the appropriate transaction manager
      */
     public TransactionManagerDelegate()
     {
         super(new TransactionManagerImple());
+    }
+    
+    /**
+     * Get the transaction timeout.
+     * 
+     * @return the timeout in seconds associated with this thread
+     * @throws SystemException for any error
+     */
+    public int getTransactionTimeout()
+        throws SystemException
+    {
+        return getTransactionManager().getTimeout() ;
+    }
+
+    /**
+     * Get the time left before transaction timeout
+     * 
+     * @param errorRollback throw an error if the transaction is marked for rollback
+     * @return the remaining in the current transaction or -1
+     * if there is no transaction
+     * @throws RollbackException if the transaction is marked for rollback and
+     * errorRollback is true
+     * 
+     * @message com.arjuna.ats.jbossatx.jts.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_1
+     * 		[com.arjuna.ats.jbossatx.jts.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_1] - Transaction rolledback
+     * @message com.arjuna.ats.jbossatx.jts.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_2
+     * 		[com.arjuna.ats.jbossatx.jts.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_2] - Unexpected error retrieving transaction status
+     */
+    public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback)
+        throws RollbackException
+    {
+    	try
+    	{
+	    	if (getStatus() == Status.STATUS_MARKED_ROLLBACK)
+	    	{
+	    		throw new RollbackException(jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jts.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_1")) ;
+			}
+		}
+    	catch (final SystemException se)
+    	{
+    		throw new RollbackException(jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jts.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_2")) ;
+    	}
+        return -1 ;
     }
     
     /**
@@ -52,5 +104,14 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
         throws Exception
     {
         return this ;
+    }
+    
+    /**
+     * Get the transaction manager.
+     * @return The transaction manager.
+     */
+    private static TransactionManagerImple getTransactionManager()
+    {
+        return TRANSACTION_MANAGER ;
     }
 }

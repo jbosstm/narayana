@@ -31,12 +31,13 @@ import javax.transaction.TransactionManager;
 
 import org.jboss.tm.TransactionLocal;
 import org.jboss.tm.TransactionLocalDelegate;
+import org.jboss.tm.TransactionTimeoutConfiguration;
 
 /**
  * Delegate for JBoss TransactionManager/TransactionLocalDelegate.
  * @author kevin
  */
-public class BaseTransactionManagerDelegate implements TransactionManager, TransactionLocalDelegate
+public abstract class BaseTransactionManagerDelegate implements TransactionManager, TransactionLocalDelegate, TransactionTimeoutConfiguration
 {
     /**
      * Delegate transaction manager.
@@ -194,16 +195,16 @@ public class BaseTransactionManagerDelegate implements TransactionManager, Trans
      * @throws InterruptedException if the thread is interrupted
      */
     public void lock(final TransactionLocal local, final Transaction tx)
-    		throws InterruptedException
-	{
-    		transactionLocalDelegate.lock(local, tx) ;
-	}
+        throws InterruptedException
+    {
+        transactionLocalDelegate.lock(local, tx) ;
+    }
     
     /**
      * Unlock the transaction local in the context of this transaction
      */
     public void unlock(final TransactionLocal local, final Transaction tx)
     {
-		transactionLocalDelegate.unlock(local, tx) ;
+        transactionLocalDelegate.unlock(local, tx) ;
     }
 }
