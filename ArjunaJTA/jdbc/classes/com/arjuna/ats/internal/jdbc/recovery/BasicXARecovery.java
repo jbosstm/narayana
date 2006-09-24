@@ -222,7 +222,7 @@ public class BasicXARecovery implements XAResourceRecovery
 	String url = new String(dbTag+number+urlTag);
 	String password = new String(dbTag+number+passwordTag);
 	String user = new String(dbTag+number+userTag);
-	String dynamicClass = new String(dbTag+user+dynamicClassTag);
+	String dynamicClass = new String(dbTag+number+dynamicClassTag);
 
 	Properties dbProperties = new Properties();
 
