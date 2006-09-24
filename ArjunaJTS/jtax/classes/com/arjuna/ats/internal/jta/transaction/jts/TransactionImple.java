@@ -131,7 +131,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 				theTx = (TwoPhaseCoordinator) BasicAction.Current();
 
-				theTx.addSynchronization(new LocalCleanupSynchronization(this));
+				if (theTx != null)  // TM is local
+					theTx.addSynchronization(new LocalCleanupSynchronization(this));
+				else
+					registerSynchronization(new CleanupSynchronization(this));
 			}
 			catch (ClassCastException ex)
 			{
