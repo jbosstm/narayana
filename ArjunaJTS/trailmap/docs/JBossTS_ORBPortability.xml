@@ -19,7 +19,7 @@
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<page title="Arjuna Technologies Limited: Trail map: ORB Portability" rootpath="../..">
+<page title="JBoss (a Division of Redhat): Trail map: ORB Portability" rootpath="../..">
 	<header>         Trail map: ORB Portability     </header>
 	<content>
 		<navigation>
@@ -35,7 +35,7 @@
 				<h4>Introduction</h4>
 				<p>Many ORBs currently in use support different versions of CORBA and/or the Java 
   language mapping.<br>
-  The Arjuna Transaction Service only supports the new Portable Object Adapter 
+  The JBoss Transaction Service only supports the new Portable Object Adapter 
   (POA) architecture described in the CORBA 2.3 specification as a replacement 
   for the Basic Object Adapter (BOA). Unlike the BOA, which was weakly specified 
   and led to a number of different (and often conflicting) implementations, the 
@@ -209,7 +209,7 @@ public static void main(String[] args)
 					</tr>
 				</table>
 				<p>For additional details on the features provided by the ORB Portability API 
-  refer to the documentation provided by the ArjunaTS distribution.</p>
+  refer to the documentation provided by the JBossTS distribution.</p>
 				<p/>
 			</html>
 		</area>

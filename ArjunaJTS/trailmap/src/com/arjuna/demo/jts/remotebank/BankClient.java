@@ -36,7 +36,7 @@ import org.omg.CosTransactions.Current;
 import java.io.IOException;
 
 /**
- * The <CODE>BankClient</CODE> application is an interactive CLI that allows the user of the Arjuna Transactions product
+ * The <CODE>BankClient</CODE> application is an interactive CLI that allows the user of the JBoss Transactions product
  * to manipulate a database backed bank under transactional control.
  */
 public class BankClient
@@ -447,19 +447,19 @@ public class BankClient
      */
     public static void main(String[] args)
     {
-        // Define an ORB suitable for use by the Arjuna Transactions product ORB portability layer.
+        // Define an ORB suitable for use by the JBoss Transactions product ORB portability layer.
         ORB myORB = null;
-        // Define an object adapter suitable for use by the Arjuna Transactions product ORB portability layer.
+        // Define an object adapter suitable for use by the JBoss Transactions product ORB portability layer.
         RootOA myOA = null;
         try
         {
-            // Initialize the ORB reference using the Arjuna Transactions product ORB portability layer.
+            // Initialize the ORB reference using the JBoss Transactions product ORB portability layer.
             myORB = ORB.getInstance("ClientSide");
-            // Initialize the object adapter reference using the Arjuna Transactions product ORB portability layer.
+            // Initialize the object adapter reference using the JBoss Transactions product ORB portability layer.
             myOA = OA.getRootOA(myORB);
-            // Initialize the ORB using the Arjuna Transactions product ORB portability layer.
+            // Initialize the ORB using the JBoss Transactions product ORB portability layer.
             myORB.initORB(args, null);
-            // Initialize the object adapter reference using the Arjuna Transactions product ORB portability layer.
+            // Initialize the object adapter reference using the JBoss Transactions product ORB portability layer.
             myOA.initOA();
         }
         catch (Exception e)
@@ -472,7 +472,7 @@ public class BankClient
         }
 
         // Obtain a reference to the BankImpl CORBA representation inorder to be able to use it to transactionally
-        // invoke banking operations as part of the Arjuna Transactions product trailmap
+        // invoke banking operations as part of the JBoss Transactions product trailmap
         // Define the reference to invoke
         Bank bank = null;
         // Obtain the reference for bank

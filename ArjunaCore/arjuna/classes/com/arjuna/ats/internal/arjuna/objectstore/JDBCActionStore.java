@@ -284,6 +284,6 @@ public class JDBCActionStore extends JDBCStore
     private JDBCAccess _txJDBCAccess;
     private String _txClassName;
     private String _txTableName;
-    private static String _defaultTxTableName = "ArjunaTSTxTable";
+    private static String _defaultTxTableName = "JBossTSTxTable";
 
 }

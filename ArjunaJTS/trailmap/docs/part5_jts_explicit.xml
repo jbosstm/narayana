@@ -81,7 +81,7 @@ module arjuna {
 
 				<p>The following portion of code illustrates how a JTS transaction is started 
   and terminated when the client asks to transfer money from one account to another. 
-  This also describes what are ArjunaTS packages that need to be used in order 
+  This also describes what are JBossTS packages that need to be used in order 
   to obtain appropriate objects instances (such Current).</p>
 				<p>Note: The code below is a simplified view of the BankClient.java program. Only 
   the transfer operation is illustrated; other operations manage transactions 
@@ -104,7 +104,7 @@ public class BankClient
      try
       {
        //the following instruction asks a specific 
-       //ArjunaTS class to obtain a Current instance
+       //JBossTS class to obtain a Current instance
        <strong>Current current = OTSManager.get_current(); </strong>
        System.out.println(&quot;Beginning a User transaction to get balance&quot;);
        <strong>current.begin()</strong>;
@@ -123,7 +123,7 @@ public class BankClient
    }</pre>
 					<p>Since JTS is used invocations against an ORB are needed, such ORB and Object 
     Adapter instantiation and initialisation. To ensure a better portability, 
-    the <a class="linkscoloured" href="ArjunaTS_ORBPortability.html"> ORB Portability API</a> provides a set of 
+    the <a class="linkscoloured" href="JBossTS_ORBPortability.html"> ORB Portability API</a> provides a set of 
     methods that can be used as described below. </p>
 <pre>public static void main( String [] args )
 {

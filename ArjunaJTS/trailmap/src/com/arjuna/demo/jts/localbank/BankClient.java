@@ -36,7 +36,7 @@ import org.omg.CosTransactions.Current;
 import java.io.IOException;
 
 /**
- * The <CODE>BankClient</CODE> application is an interactive CLI that allows the user of the Arjuna Transactions product
+ * The <CODE>BankClient</CODE> application is an interactive CLI that allows the user of the JBoss Transactions product
  * to manipulate a database backed bank under transactional control.
  */
 public class BankClient
@@ -440,26 +440,26 @@ public class BankClient
     }
 
     /**
-     * This is the entry point into the Arjuna Transaction product trailmap sample that uses a <CODE>Hashtable</CODE> to
+     * This is the entry point into the JBoss Transaction product trailmap sample that uses a <CODE>Hashtable</CODE> to
      * store the bank accounts repository. It is part of the JTS trailmap when using local objects.
      *
      * @param args Not used in this example.
      */
     public static void main(String[] args)
     {
-        // Define an ORB suitable for use by the Arjuna Transactions product ORB portability layer.
+        // Define an ORB suitable for use by the JBoss Transactions product ORB portability layer.
         ORB myORB = null;
-        // Define an object adapter suitable for use by the Arjuna Transactions product ORB portability layer.
+        // Define an object adapter suitable for use by the JBoss Transactions product ORB portability layer.
         RootOA myOA = null;
         try
         {
-            // Initialize the ORB reference using the Arjuna Transactions product ORB portability layer.
+            // Initialize the ORB reference using the JBoss Transactions product ORB portability layer.
             myORB = ORB.getInstance("test");
-            // Initialize the object adapter reference using the Arjuna Transactions product ORB portability layer.
+            // Initialize the object adapter reference using the JBoss Transactions product ORB portability layer.
             myOA = OA.getRootOA(myORB);
-            // Initialize the ORB using the Arjuna Transactions product ORB portability layer.
+            // Initialize the ORB using the JBoss Transactions product ORB portability layer.
             myORB.initORB(args, null);
-            // Initialize the object adapter reference using the Arjuna Transactions product ORB portability layer.
+            // Initialize the object adapter reference using the JBoss Transactions product ORB portability layer.
             myOA.initOA();
         }
         catch (Exception e)

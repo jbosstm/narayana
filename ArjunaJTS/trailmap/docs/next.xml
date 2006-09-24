@@ -33,10 +33,10 @@
 		</navigation>
 		<area title="Where next?">
 			<html>
-				<p>     For further information, please consult the documentation sets for ArjunaTS </p>
+				<p>     For further information, please consult the documentation sets for JBossTS </p>
 				<ul>
 					<li>
-						<a class="linkscoloured" href="../../docs/user_guide/QuickStartGuide.pdf" target="_blank">ArjunaTS Quick Start Guide (pdf)</a> Additional documentation for the ArjunaTS product can be found in the <a class="linkscoloured" href="../../index.html" target="_blank">ArjunaTS documentation</a> directory.</li>
+						<a class="linkscoloured" href="../../docs/user_guide/QuickStartGuide.pdf" target="_blank">JBossTS Quick Start Guide (pdf)</a> Additional documentation for the JBossTS product can be found in the <a class="linkscoloured" href="../../index.html" target="_blank">JBossTS documentation</a> directory.</li>
 				</ul>
 				<p> Updates to the Arjuna products set, as well as additional sample material, are periodically made available via the Arjuna Technologies web site at <a class="linkscoloured" href="http://www.arjuna.com/" target="_blank">http://www.arjuna.com/</a> Please drop by from time to time to ensure you have the most comprehensive material available. If you experience difficulties using Arjuna products standalone or in conjunction with the JBoss platform, please contact <a class="linkscoloured" href="mailto:support@arjuna.com">support@arjuna.com</a>
 				</p>

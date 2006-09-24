@@ -34,10 +34,10 @@
 		</navigation>
 		<area title="Introduction">
 			<html>		
-				<p>Arjuna Transaction Service 4.0 (ATS 4.0) assures complete, accurate business 
+				<p>JBoss Transaction Service (JBossTS) assures complete, accurate business 
   transactions for any Java based applications, including those written for the 
   J2EE and EJB frameworks.</p>
-				<p>ArjunaTS is a 100% Java implementation of a 
+				<p>JBossTS is a 100% Java implementation of a 
 				<a class="linkscoloured" href="DTP.html">distributed transaction management system</a> 
   based on the Sun Microsystems J2EE Java Transaction Service (<a class="linkscoloured" href="jta_overview.html">JTS</a>) standard. 
   Our implementation of the JTS utilizes the Object Management Group's (OMG) Object 
@@ -46,7 +46,7 @@
   Java objects to participate in transactions, one of the key features of ATS 
   is it's 100% Java implementation. This allows ATS to support fully distributed 
   transactions that can be coordinated by distributed parties.
-<p>ArjunaTS runs can be run both as an embedded distributed service of an application 
+<p>JBossTS runs can be run both as an embedded distributed service of an application 
   server (e.g., HPAS. JBoss), affording the user all the added benefits of the 
   application server environment such as real-time load balancing, unlimited linear 
   scalability and unmatched fault tolerance that allows you to deliver an always-on 
@@ -108,9 +108,9 @@ as fully distributed transactions and ORB portability with POA support.</p>
                     It is structured as follows:</p>
 				<ul>
 					<li>
-						<a class="linkscoloured" href="part1.html">1. Installation Content</a>: This trail describes the content installed by the ArjunaTS distribution </li>
+						<a class="linkscoloured" href="part1.html">1. Installation Content</a>: This trail describes the content installed by the JBossTS distribution </li>
 					<li>
-						<a class="linkscoloured" href="part4.html">2. The Sample Application</a>: This trail describes via a set of examples how ArjunaTS is used to build transactional applications</li>
+						<a class="linkscoloured" href="part4.html">2. The Sample Application</a>: This trail describes via a set of examples how JBossTS is used to build transactional applications</li>
 					<li>
 						<a class="linkscoloured" href="part5.html">3. Deploying and testing the Sample Application</a>: This trail describes how to deploy and to test the sample application</li>
 					<li>

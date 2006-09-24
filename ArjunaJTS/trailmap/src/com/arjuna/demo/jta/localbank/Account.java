@@ -98,7 +98,7 @@ public class Account
      * Get access to the XA resource. The XA resource is the workhorse part of the account object. The tutorial provides
      * a sample XA-aware non-persistent object that can be used to manage an account transactionally.
      *
-     * @return                      The Arjuna Transactions product sample XA resource.
+     * @return                      The JBoss Transactions product sample XA resource.
      *
      * @throws SystemException      If the current transaction cannot be obtained.
      * @throws RollbackException    If the account is tried to be used after its transaction is marked for rollback.

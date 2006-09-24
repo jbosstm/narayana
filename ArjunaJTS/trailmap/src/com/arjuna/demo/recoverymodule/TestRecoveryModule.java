@@ -38,11 +38,11 @@ import com.arjuna.ats.arjuna.coordinator.AddOutcome;
  * Transactions product. Please see the ArjunaCore guide for more information about <CODE>RecoveryModule</CODE>s and
  * <CODE>AbstractRecord</CODE>s.
 
- * This is the entry point into the Arjuna Transactions product advanced trailmap regarding the implementation of a
+ * This is the entry point into the JBoss Transactions product advanced trailmap regarding the implementation of a
  * recovery module. It allows a user to create a record within the scope of a transaction and then to commit or
  * abort the transaction. The program is quite verbose and describes as it is running what is happening.
  *
- * The program illustrates the crash recovery capabilities of the Arjuna Transactions product. The record type it
+ * The program illustrates the crash recovery capabilities of the JBoss Transactions product. The record type it
  * defines allows us to crash the application during the commit of the resource. We can then see how the recovery
  * manager will (when the application recovers [restarts]) retry to commit the transaction.
  */
@@ -71,7 +71,7 @@ public class TestRecoveryModule
                 crash = true;
         }
 
-        // Create a new Arjuna transaction
+        // Create a new JBoss transaction
         AtomicAction tx = new AtomicAction();
         // Allocate space to monitor the transaction, this variable is overriden each time the transaction is used.
         int actionStatus = tx.begin(); // Top level begin

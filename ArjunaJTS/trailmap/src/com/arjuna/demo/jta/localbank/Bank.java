@@ -28,7 +28,7 @@
 package com.arjuna.demo.jta.localbank;
 
 /**
- * This is the in memory implementation of the Bank class used in the Arjuna Transactions product trailmap. As it is
+ * This is the in memory implementation of the Bank class used in the JBoss Transactions product trailmap. As it is
  * non-persistent, it is only used to perform the banking operations that all Bank implementations in the trailmap
  * provide, such as creating and accessing an account.
  */

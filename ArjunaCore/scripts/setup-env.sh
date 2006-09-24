@@ -19,7 +19,7 @@
 # @author JBoss Inc.
 #
 #
-# Arjuna Transaction Service
+# Arjuna Transaction Service (now JBoss Transaction Service)
 #
 # Arjuna Technologies Ltd.
 # Copyright 2004
@@ -35,10 +35,10 @@ then
 	
 else
 
-	if test "x$ARJUNATS_HOME" = "x"
+	if test "x$JBOSSTS_HOME" = "x"
 	then
 	
-		echo Please ensure the ARJUNATS_HOME environment variable is set
+		echo Please ensure the JBOSSTS_HOME environment variable is set
 		CONTINUE_SETUP=false
 			
 	fi
@@ -59,7 +59,7 @@ case `uname -a` in
     CYGWIN_* | Windows* )
         CPS=";"
 	JACORB_HOME=`echo $JACORB_HOME | sed -e 's;\\\;/;g'`
-	ARJUNATS_HOME=`echo $ARJUNATS_HOME | sed -e 's;\\\;/;g'`
+	JBOSSTS_HOME=`echo $JBOSSTS_HOME | sed -e 's;\\\;/;g'`
     ;;
 esac
 
@@ -68,21 +68,21 @@ esac
 
 echo Setting up environment
 
-PRODUCT_CLASSPATH="$ARJUNATS_HOME/lib/@PRODUCT_NAME@.jar"
-PRODUCT_CLASSPATH="$PRODUCT_CLASSPATH$CPS$ARJUNATS_HOME/lib/@PRODUCT_NAME@-jacorb.jar"
-PRODUCT_CLASSPATH="$PRODUCT_CLASSPATH$CPS$ARJUNATS_HOME/bin/tsmx-tools.jar"
-PRODUCT_CLASSPATH="$PRODUCT_CLASSPATH$CPS$ARJUNATS_HOME/etc/"
+PRODUCT_CLASSPATH="$JBOSSTS_HOME/lib/@PRODUCT_NAME@.jar"
+PRODUCT_CLASSPATH="$PRODUCT_CLASSPATH$CPS$JBOSSTS_HOME/lib/@PRODUCT_NAME@-jacorb.jar"
+PRODUCT_CLASSPATH="$PRODUCT_CLASSPATH$CPS$JBOSSTS_HOME/bin/tsmx-tools.jar"
+PRODUCT_CLASSPATH="$PRODUCT_CLASSPATH$CPS$JBOSSTS_HOME/etc/"
 
-EXT_CLASSPATH="$ARJUNATS_HOME/lib/ext/jbossts-common.jar"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$ARJUNATS_HOME/lib/ext/commons-logging.jar"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$ARJUNATS_HOME/lib/ext/connector-api.jar"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$ARJUNATS_HOME/lib/ext/jdbc2_0-stdext.jar"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$ARJUNATS_HOME/lib/ext/jmxri.jar"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$ARJUNATS_HOME/lib/ext/jndi.jar"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$ARJUNATS_HOME/lib/ext/jta-spec1_0_1.jar"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$ARJUNATS_HOME/lib/ext/log4j-1.2.8.jar"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$ARJUNATS_HOME/lib/ext/xercesImpl.jar"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$ARJUNATS_HOME/lib/ext/xmlParserAPIs.jar"
+EXT_CLASSPATH="$JBOSSTS_HOME/lib/ext/jbossts-common.jar"
+EXT_CLASSPATH="$EXT_CLASSPATH$CPS$JBOSSTS_HOME/lib/ext/commons-logging.jar"
+EXT_CLASSPATH="$EXT_CLASSPATH$CPS$JBOSSTS_HOME/lib/ext/connector-api.jar"
+EXT_CLASSPATH="$EXT_CLASSPATH$CPS$JBOSSTS_HOME/lib/ext/jdbc2_0-stdext.jar"
+EXT_CLASSPATH="$EXT_CLASSPATH$CPS$JBOSSTS_HOME/lib/ext/jmxri.jar"
+EXT_CLASSPATH="$EXT_CLASSPATH$CPS$JBOSSTS_HOME/lib/ext/jndi.jar"
+EXT_CLASSPATH="$EXT_CLASSPATH$CPS$JBOSSTS_HOME/lib/ext/jta-spec1_0_1.jar"
+EXT_CLASSPATH="$EXT_CLASSPATH$CPS$JBOSSTS_HOME/lib/ext/log4j-1.2.8.jar"
+EXT_CLASSPATH="$EXT_CLASSPATH$CPS$JBOSSTS_HOME/lib/ext/xercesImpl.jar"
+EXT_CLASSPATH="$EXT_CLASSPATH$CPS$JBOSSTS_HOME/lib/ext/xmlParserAPIs.jar"
 
 JACORB_CLASSPATH="$JACORB_HOME/lib/jacorb.jar"
 JACORB_CLASSPATH="$JACORB_CLASSPATH$CPS$JACORB_HOME/lib/idl.jar"

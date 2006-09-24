@@ -343,7 +343,7 @@ public class TransactionFactoryImple extends
 			catch (Exception e)
 			{
 				/*
-				 * Not an Arjuna transaction, so allocate any Uid.
+				 * Not a JBoss transaction, so allocate any Uid.
 				 */
 
 				theUid = new Uid();

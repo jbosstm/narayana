@@ -43,8 +43,8 @@ import javax.transaction.Transaction;
 import javax.transaction.UserTransaction;
 
 /**
- * The TestXAResourceRecovery class is used to run the Arjuna Transactions product trailmap example which demonstrates
- * the reliability of the Arjuna Transactions product. The test will use some XA resources which crash after returning
+ * The TestXAResourceRecovery class is used to run the JBoss Transactions product trailmap example which demonstrates
+ * the reliability of the JBoss Transactions product. The test will use some XA resources which crash after returning
  * PREPARE_OK to the transaction manager, i.e are in the ready to commit phase. Rerunning the test will then see the
  * resources recover and be committed.
  */
@@ -100,19 +100,19 @@ public class TestXAResourceRecovery
          }
       }
 
-      // Define an ORB suitable for use by the Arjuna Transactions product ORB portability layer.
+      // Define an ORB suitable for use by the JBoss Transactions product ORB portability layer.
       ORB myORB = null;
-      // Define an object adapter suitable for use by the Arjuna Transactions product ORB portability layer.
+      // Define an object adapter suitable for use by the JBoss Transactions product ORB portability layer.
       RootOA myOA = null;
       try
       {
-         // Initialize the ORB reference using the Arjuna Transactions product ORB portability layer.
+         // Initialize the ORB reference using the JBoss Transactions product ORB portability layer.
          myORB = ORB.getInstance("test");
-         // Initialize the object adapter reference using the Arjuna Transactions product ORB portability layer.
+         // Initialize the object adapter reference using the JBoss Transactions product ORB portability layer.
          myOA = OA.getRootOA(myORB);
-         // Initialize the ORB using the Arjuna Transactions product ORB portability layer.
+         // Initialize the ORB using the JBoss Transactions product ORB portability layer.
          myORB.initORB(args, null);
-         // Initialize the object adapter reference using the Arjuna Transactions product ORB portability layer.
+         // Initialize the object adapter reference using the JBoss Transactions product ORB portability layer.
          myOA.initOA();
       }
       catch (Exception e)

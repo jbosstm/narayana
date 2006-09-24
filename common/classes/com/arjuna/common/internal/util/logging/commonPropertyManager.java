@@ -25,7 +25,7 @@ package com.arjuna.common.internal.util.logging;
  *
  * The properties can originate either from a configuration file (by default CommonLogging.properties or
  * CommonLogging.xml) or it can be primed by using the class directly from an embedding product (such as
- * the Arjuna Transaction Service).
+ * the JBoss Transaction Service).
  *
  * The default file location can be overridden by setting the property
  * "com.arjuna.common.util.logging.propertiesFile"

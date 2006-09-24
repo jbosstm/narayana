@@ -34,9 +34,8 @@
 		<area title="Running The Banking application with JTS">
 			<html>
 				<p>The JTS version of the Banking application means that the Object Request Broker 
-  will be used. The ArjunaTS distribution is provided to works with JacOrb version 
-  2.1 that can be obtained from the <a class="linkscoloured" href="http://www.arjuna.com/products/arjunats/download/index.html">arjuna 
-  product page</a>.</p>
+  will be used. The JBossTS distribution is provided to works with JacOrb version 
+  2.1 that can be obtained from the same download location as JBossTS.</p>
 				<p>
 					<strong>Note</strong>: Ensure that the jacorb jar files are added in your CLASSPATH</p>
 					
@@ -129,7 +128,7 @@ minor code: 50001  completed: No
 </pre>
 				</blockquote>
 				<h4>Using a stand-alone Transaction Server</h4>
-				<p>By default ArjunaTS does not use a separate transaction manager server: transaction 
+				<p>By default JBossTS does not use a separate transaction manager server: transaction 
   managers are co-located with each application process to improve performance 
   and improve application fault-tolerance. When running applications which require 
   a separate transaction manager, you must set the com.arjuna.ats.jts.transactionManager 

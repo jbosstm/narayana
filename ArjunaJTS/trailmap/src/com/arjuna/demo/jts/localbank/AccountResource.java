@@ -28,7 +28,7 @@
 package com.arjuna.demo.jts.localbank;
 
 /**
- * The AccountResource shows a sample ResourcePOA implementation. It is provided as part of the Arjuna Transactions
+ * The AccountResource shows a sample ResourcePOA implementation. It is provided as part of the JBoss Transactions
  * product trailmap showing a sample bank application built using JTS.
  *
  * Although the class does not demonstrate it, of particular interest is the Heuristic exceptions that may be raised

@@ -55,19 +55,19 @@ public class BankServer
     public static void main(String[] args)
     {
         // 0. Define and create the ORB
-        // Define an ORB suitable for use by the Arjuna Transactions product ORB portability layer.
+        // Define an ORB suitable for use by the JBoss Transactions product ORB portability layer.
         ORB myORB = null;
-        // Define an object adapter suitable for use by the Arjuna Transactions product ORB portability layer.
+        // Define an object adapter suitable for use by the JBoss Transactions product ORB portability layer.
         RootOA myOA = null;
         try
         {
-            // Initialize the ORB reference using the Arjuna Transactions product ORB portability layer.
+            // Initialize the ORB reference using the JBoss Transactions product ORB portability layer.
             myORB = ORB.getInstance("ServerSide");
-            // Initialize the object adapter reference using the Arjuna Transactions product ORB portability layer.
+            // Initialize the object adapter reference using the JBoss Transactions product ORB portability layer.
             myOA = OA.getRootOA(myORB);
-            // Initialize the ORB using the Arjuna Transactions product ORB portability layer.
+            // Initialize the ORB using the JBoss Transactions product ORB portability layer.
             myORB.initORB(args, null);
-            // Initialize the object adapter reference using the Arjuna Transactions product ORB portability layer.
+            // Initialize the object adapter reference using the JBoss Transactions product ORB portability layer.
             myOA.initOA();
         }
         catch (Exception e)

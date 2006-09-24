@@ -37,10 +37,10 @@ import com.arjuna.ats.txoj.LockMode;
 import com.arjuna.ats.txoj.LockResult;
 
 /**
- * This account representation is provided as part of the Arjuna Transactions product trailmap. It illustrates the
+ * This account representation is provided as part of the JBoss Transactions product trailmap. It illustrates the
  * creation of a Transactional Object 4 Java (TXOJ). As a TXOJ, this class extends LockManager which provides it with
  * the standard TXOJ capabilities save_state and restore_state. This allows the object to participate in transactions
- * seamlessly with the Arjuna transaction service.
+ * seamlessly with the JBoss transaction service.
  *
  * The account provides standard banking operations as with all examples in the trailmap. The source code for these
  * operations indicates how the programmer can mediate their access to the state of the object without the need of

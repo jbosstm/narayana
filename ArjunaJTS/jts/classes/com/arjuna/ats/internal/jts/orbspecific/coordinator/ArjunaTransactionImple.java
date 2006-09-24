@@ -1929,7 +1929,7 @@ public class ArjunaTransactionImple extends
 	 * OTS lets a thread suspend/resume contexts at will. Potential for memory
 	 * leaks in C++ version, but not Java!!
 	 * 
-	 * Currently we assume that the hierarchy will be Arjuna transactions so we
+	 * Currently we assume that the hierarchy will be JBoss transactions so we
 	 * can get the parents of transactions. If it is not then we could simply
 	 * just call get_txcontext on the control!
 	 */
@@ -2042,7 +2042,7 @@ public class ArjunaTransactionImple extends
 						 * can't cope with mixed transaction types anyway! If we
 						 * got here then the root transaction must be an Arjuna
 						 * transaction, so the nested transactions *must* also
-						 * be Arjuna transactions!
+						 * be JBoss transactions!
 						 */
 
 						UidCoordinator uidCoord = Helper.getUidCoordinator(context.parents[index].coord);

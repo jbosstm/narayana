@@ -21,7 +21,7 @@ rem
 @echo off 
 
 rem
-rem Arjuna Transaction Service
+rem Arjuna Transaction Service (now JBoss Transaction Service)
 rem
 rem Arjuna Technologies Ltd.
 rem Copyright 2004
@@ -31,29 +31,29 @@ if "%JAVA_HOME%"=="" goto java_home_error
 
 echo Environment variable JAVA_HOME set to "%JAVA_HOME%"
 
-if "%ARJUNATS_HOME%"=="" goto jts_home_error
+if "%JBOSSTS_HOME%"=="" goto jts_home_error
 
-echo Environment variable ARJUNATS_HOME set to "%ARJUNATS_HOME%"
+echo Environment variable JBOSSTS_HOME set to "%JBOSSTS_HOME%"
 
 rem Setup EXT classpath
 
 echo Setting up environment
 
-set PRODUCT_CLASSPATH=%ARJUNATS_HOME%\lib\@PRODUCT_NAME@.jar
-set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%ARJUNATS_HOME%\lib\@PRODUCT_NAME@-jacorb.jar
-set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%ARJUNATS_HOME%\bin\tsmx-tools.jar
-set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%ARJUNATS_HOME%\etc\
+set PRODUCT_CLASSPATH=%JBOSSTS_HOME%\lib\@PRODUCT_NAME@.jar
+set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%JBOSSTS_HOME%\lib\@PRODUCT_NAME@-jacorb.jar
+set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%JBOSSTS_HOME%\bin\tsmx-tools.jar
+set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%JBOSSTS_HOME%\etc\
 
-set EXT_CLASSPATH=%ARJUNATS_HOME%\lib\ext\jbossts-common.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%ARJUNATS_HOME%\lib\ext\commons-logging.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%ARJUNATS_HOME%\lib\ext\connector-api.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%ARJUNATS_HOME%\lib\ext\jdbc2_0-stdext.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%ARJUNATS_HOME%\lib\ext\jmxri.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%ARJUNATS_HOME%\lib\ext\jndi.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%ARJUNATS_HOME%\lib\ext\jta-spec1_0_1.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%ARJUNATS_HOME%\lib\ext\log4j-1.2.8.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%ARJUNATS_HOME%\lib\ext\xercesImpl.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%ARJUNATS_HOME%\lib\ext\xmlParserAPIs.jar
+set EXT_CLASSPATH=%JBOSSTS_HOME%\lib\ext\jbossts-common.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\commons-logging.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\connector-api.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\jdbc2_0-stdext.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\jmxri.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\jndi.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\jta-spec1_0_1.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\log4j-1.2.8.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\xercesImpl.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\xmlParserAPIs.jar
 
 set JACORB_HOME=PUT_JACORB_HOME_HERE
 set JACORB_CLASSPATH=%JACORB_HOME%\lib\jacorb.jar
@@ -71,7 +71,7 @@ echo Environment variable JAVA_HOME not set
 goto end
 
 :jts_home_error
-echo Environment variable ARJUNATS_HOME not set
+echo Environment variable JBOSSTS_HOME not set
 goto end
 
 :end

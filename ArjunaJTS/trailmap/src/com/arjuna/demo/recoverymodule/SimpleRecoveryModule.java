@@ -34,7 +34,7 @@ import java.io.File;
 
 /**
  * BEWARE: Implementing a <CODE>RecoveryModule</CODE> is a very advanced feature of the transaction service. It should
- * only be performed by users familiar with the all the concepts used in the Arjuna Transactions product. Please see the
+ * only be performed by users familiar with the all the concepts used in the JBoss Transactions product. Please see the
  * ArjunaCore guide for more information about <CODE>AbstractRecord</CODE>s.
  *
  * This implementation of the recovery module indicates how to write a recovery module to detect if an object is in an

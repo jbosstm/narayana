@@ -27,11 +27,11 @@
 -->
 
 <!--
-    This is the build script for the Arjuna Transactions product trailmap
+    This is the build script for the JBoss Transactions product trailmap
     it has the capability to build the trailmap. Consult the trailmap
     itself for more information <ats_install_root>/trailmap/html/index.html
 -->
-<project name="ArjunaTS_TrailMap" default="buildjar" basedir=".">
+<project name="JBossTS_TrailMap" default="buildjar" basedir=".">
 
     <!-- Where the transaction has been installed to, this should not need changing by default -->
     <property name="jbosstshome" value=".."/>
@@ -118,7 +118,7 @@
             <arg value="${src}/com/arjuna/demo/jts/explicitremotebank/Bank.idl"/>
         </java>
 
-        <!-- Create the stub classes for the Arjuna Transactional-Objects for Java extension Bank sample -->
+        <!-- Create the stub classes for the JBoss Transactional-Objects for Java extension Bank sample -->
         <java classname="org.jacorb.idl.parser" fork="yes">
             <classpath>
                 <fileset dir="${jacorb-home}/lib" includes="*.jar"/>

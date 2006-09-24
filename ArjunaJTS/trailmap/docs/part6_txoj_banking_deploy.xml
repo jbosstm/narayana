@@ -42,9 +42,8 @@
 				<h4>Distributed Configuration </h4>
 				<p>The banking application with Transactional Object for Java (TXOJ) is configured 
   to use JTS interfaces as the API to create the transaction, then an ORB to deploy 
-  it. The ArjunaTS distribution is provided to works with JacOrb version 2.1 
-  that can be obtained from the <a class="linkscoloured" href="http://www.arjuna.com/products/arjunats/download/index.html">arjuna 
-  product page</a>.</p>
+  it. The JBossTS distribution is provided to works with JacOrb version 2.1 
+  that can be obtained from the same download location as JBossTS.</p>
 				<p>
 					<strong>Note</strong>: Ensure that the jacorb jar files are added in your CLASSPATH</p>
 				<h4>Delpoy the Application</h4>

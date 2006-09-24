@@ -41,8 +41,8 @@ if [ "a$JAVA_HOME" != a ]; then
 fi
 
 # Application
-APP_NAME="arjunats"
-APP_LONG_NAME="Arjuna Transaction Service - Transaction Service"
+APP_NAME="jbossts"
+APP_LONG_NAME="JBoss Transaction Service - Transaction Service"
 
 # Wrapper
 WRAPPER_CMD="./wrapper"

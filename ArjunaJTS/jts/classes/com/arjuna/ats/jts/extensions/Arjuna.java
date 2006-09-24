@@ -32,7 +32,7 @@
 package com.arjuna.ats.jts.extensions;
 
 /**
- * To get the formatID used to represent Arjuna transactions
+ * To get the formatID used to represent JBoss transactions
  * to the system.
  *
  * @author Mark Little (mark@arjuna.com)

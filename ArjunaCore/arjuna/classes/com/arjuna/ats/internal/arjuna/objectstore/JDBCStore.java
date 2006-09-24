@@ -779,7 +779,7 @@ public class JDBCStore extends ObjectStoreImple
     private JDBCAccess _jdbcAccess;
     private String _jdbcAccessClassName;
     private String _jdbcTableName;
-    private static String _defaultTableName = "ArjunaTSTable";
+    private static String _defaultTableName = "JBossTSTable";
 
     /*
      * Class data.

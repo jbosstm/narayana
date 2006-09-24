@@ -19,9 +19,9 @@
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<page title="Arjuna Technologies Limited: Trail map: Configuring the Arjuna Transaction Service" rootpath="../..">
+<page title="JBoss (a Division of Redhat): Trail map: Configuring the JBoss Transaction Service" rootpath="../..">
 	<header>
-        Trail map: ArjunaTS Configuration
+        Trail map: JBossTS Configuration
     </header>
 	<content>
 		<navigation>
@@ -35,8 +35,8 @@
 		<area title="Configuring the Arjuna Transaction Service">
 			<html>
 				<p>This trail provides information on the way to configure environmental variables
-  needed to define the behaviour of transactional applications managed with ArjunaTS.
-  Basically, the behaviour of the ArjunaTS product is configurable through property
+  needed to define the behaviour of transactional applications managed with JBossTS.
+  Basically, the behaviour of the JBossTS product is configurable through property
   attributes. Although these property attributes may be specified as command line
   arguments, it is more convenient to organise and initialise them through properties
   files. </p>
@@ -57,7 +57,7 @@
   to be defined and can be used with their default values. Basically the properties
   file that does not provide default values to all its properties is the arjuna-properties.xml.
   Indeed, the most important properties that must be provided are the licences
-  needed to execute ArjunaTS. </p>
+  needed to execute JBossTS. </p>
 				<p>The following table describes some properties in the arjuna-properties.xml, where:</p>
 				<ul>
 					<li>
@@ -108,7 +108,7 @@
 					</tr>
 					<tr>
 						<td>com.arjuna.ats.arjuna.common.varDir</td>
-						<td>ArjunaTS needs to be able to write temporary files to a well known location
+						<td>JBossTS needs to be able to write temporary files to a well known location
       during execution. By default this location is var. However, by setting the
       varDir property variable this can be overridden.</td>
 						<td>Directory name</td>
@@ -116,7 +116,7 @@
 					</tr>
 				</table>
 				<h4>ObjectStore management</h4>
-The ArjunaTS layer requires an object store for transaction management <a class="linkscoloured" href="DTP.html#RecoveryLog">logs</a>. Within 
+The JBossTS layer requires an object store for transaction management <a class="linkscoloured" href="DTP.html#RecoveryLog">logs</a>. Within 
 the transaction service installation, object store is updated regularly whenever 
 transactions are created, or when Transactional Objects for Java is used. In a 
 failure free environment, the only object states which should reside within the 
@@ -131,11 +131,11 @@ the object store assuming it is an exclusive resource.
 <p> The location of the ObjectStore is specified in via the properrty <font face="Courier New,Courier">com.arjuna.ats.arjuna.objectstore.objectStoreDir</font> 
   that can be passed with the java flag &quot;-D&quot;. For convenience this property 
   is defined in the properties file arjuna-properties.xml, and its value is set 
-  during the ArjunaTS installation. At any time, the location of the ObjectStore 
+  during the JBossTS installation. At any time, the location of the ObjectStore 
   may be changed.</p>
 				<h4>Configuring Output</h4>
 				<p>Sometimes it is desirable, mainly in case of debugging, to have some form of
-  output during execution to trace internal actions performed. ArjunaTS uses the
+  output during execution to trace internal actions performed. JBossTS uses the
   logging tracing mechanism provided by the Arjuna Common Logging Framework (CLF)
   version 2.4, which provides a high level interface that hides differences that
   exist between logging APIs such Jakarta log4j, JDK 1.4 logging API or dotnet
@@ -165,14 +165,14 @@ the object store assuming it is an exclusive resource.
 				</ul>
 				<p>According to these variables the Common Logging Framework defines three interfaces.
   A particular product may implement its own classes according to its own finer
-  granularity. ArjunaTS uses the default Debugging level and the default Visibility
+  granularity. JBossTS uses the default Debugging level and the default Visibility
   level provided by CLF, but it defines its own Facility Code. ArjunaJTS uses
   the default level assigned to its commonLoggers objects (DEBUG). However, it
   uses the finer debugging features to disable or enable debug messages. Finer
-  values used by the ArjunaTS are defined below:
+  values used by the JBossTS are defined below:
 </p>
 				<ul>
-					<li>Debugging level – ArjunaTS uses the default values defined in the class
+					<li>Debugging level – JBossTS uses the default values defined in the class
     com.arjuna.common.util.logging.CommonDebugLevel </li>
 				</ul>
 				<table width="83%" border="1">
@@ -280,7 +280,7 @@ the object store assuming it is an exclusive resource.
 					</tr>
 				</table>
 				<ul>
-					<li>Visibility level – ArjunaTS uses the default values defined in the class
+					<li>Visibility level – JBossTS uses the default values defined in the class
     com.arjuna.common.util.logging.CommonVisibilityLevel </li>
 				</ul>
 				<table width="83%" border="1">
@@ -345,7 +345,7 @@ the object store assuming it is an exclusive resource.
 					</tr>
 				</table>
 				<ul>
-					<li>Facility Code – ArjunaTS uses the following values </li>
+					<li>Facility Code – JBossTS uses the following values </li>
 				</ul>
 				<table width="83%" border="1">
 					<tr bgcolor="#8BD5FC">

@@ -19,9 +19,9 @@
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<page title="Arjuna Technologies Limited: Trail map: ArjunaTS Failure Recovery" rootpath="../..">
+<page title="JBoss (a Division of Redhat): Trail map: JBossTS Failure Recovery" rootpath="../..">
 	<header>
-        Trail map: ArjunaTS - Failure Recovery
+        Trail map: JBossTS - Failure Recovery
     </header>
 	<content>
 		<navigation>
@@ -32,9 +32,9 @@
 			</links>
 			<links include="includes/trailmap_additional.xml"/>
 		</navigation>
-		<area title="ArjunaTS Failure Recovery">
+		<area title="JBossTS Failure Recovery">
 			<html>
-				<p>The failure recovery subsystem of ArjunaTS will ensure that results of
+				<p>The failure recovery subsystem of JBossTS will ensure that results of
 a transaction are applied consistently to all resources affected by the
 transaction, even if any of the application processes or the machine hosting
 them crash or lose network connectivity. In the case of machine (system)
@@ -90,7 +90,7 @@ activators and recovery modules, which are then dynamically loaded.
 <br>Each recovery activator, which implements the 
 <font face="Courier New,Courier">com.arjuna.ats.arjuna.recovery.RecoveryActivator</font>
 interface, is used to instantiate a recovery class related to the underlying
-communication protocol. Indeed, since the version 3.0 of ArjunaTS, the
+communication protocol. Indeed, since the version 3.0 of JBossTS, the
 Recovery Manager is not specifically tied to an Object Request Broker or
 ORB, which is to specify a recovery instance able to manage the OTS recovery
 protocol the new interface RecoveryActivator is provided to identify specific
@@ -239,7 +239,7 @@ value is negative, the first scan is delayed until after the first interval
 							<font size="-6">The class name of the periodic recovery module </font>
 						</td>
 						<td>
-							<font size="-8">ArjunaTS provides a set classes given in the RecoveryManager-properties.xml file</font>
+							<font size="-8">JBossTS provides a set classes given in the RecoveryManager-properties.xml file</font>
 						</td>
 					</tr>
 					<tr>
@@ -255,7 +255,7 @@ value is negative, the first scan is delayed until after the first interval
 							<font size="-7">The class name of the periodic recovery activator</font>
 						</td>
 						<td>
-							<font size="-7">ArjunaTS provide one class that manages the recovery protocol specified 
+							<font size="-7">JBossTS provide one class that manages the recovery protocol specified 
       by the OTS specification </font>
 						</td>
 					</tr>
@@ -272,7 +272,7 @@ value is negative, the first scan is delayed until after the first interval
 							<font size="-7">Class name</font>
 						</td>
 						<td>
-							<font size="-7">ArjunaTS provides one class given in the RecoveryManager-properties.xml file</font>
+							<font size="-7">JBossTS provides one class given in the RecoveryManager-properties.xml file</font>
 						</td>
 					</tr>
 					<tr>

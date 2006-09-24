@@ -20,7 +20,7 @@
 # @author JBoss Inc.
 #
 
-# Setup the environment for the Arjuna Transaction Service
+# Setup the environment for the JBoss Transaction Service
 . "$@HOME_DIRECTORY@/bin/setup-env.sh"
 
 "$JAVA_HOME/bin/java" com.arjuna.ats.jts.TransactionServer -test

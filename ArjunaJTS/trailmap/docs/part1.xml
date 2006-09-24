@@ -36,24 +36,24 @@
 		<area title="Installation Content">
 			<html>
 				<h4>Verifying Installation</h4>
-By default, ArjunaTS is installed in the directory <font face="Courier New,Courier">/opt/arjuna/ats-4.0</font> 
+By default, JBossTS is installed in the directory <font face="Courier New,Courier">/opt/jboss/jbossts</font> 
 on Unix machines, and <font face="Courier New,Courier">C:\Program Files\Arjuna\ats-4.0</font> 
-on Windows, except if a different location has been specified during ArjunaTS 
-installation. When installed, the ArjunaTS should have the following structure. 
+on Windows, except if a different location has been specified during JBossTS 
+installation. When installed, the JBossTS should have the following structure. 
 <ul>
 					<li>
 						<font face="Courier New,Courier">/bin</font>: this directory contains commands 
     to run the OTS transaction manager server (if required) and the Recovery Manager, 
-    and scripts to configure environment variables needed to execute ArjunaTS.</li>
+    and scripts to configure environment variables needed to execute JBossTS.</li>
 					<li>
 						<font face="Courier New,Courier">/docs</font>: this directory contains 
     documentation on the way to installing, administering and programming ArjunaCore, 
-    ArjunaTA and ArjunaTS.</li>
+    ArjunaTA and JBossTS.</li>
 					<li> <font face="Courier New,Courier">/etc</font>: this directory contains appropriate
-    properties files that can be used to configure the behaviour of the Arjuna Transaction Service.</li>
+    properties files that can be used to configure the behaviour of the JBoss Transaction Service.</li>
 					<li>
 						<font face="Courier New,Courier">/htdocs</font>: this directory describes 
-    all APIs defined by ArjunaTS
+    all APIs defined by JBossTS
 					</li>
 					<li>
 						<font face="Courier New,Courier">/idl</font>: this directory contains the 
@@ -65,7 +65,7 @@ installation. When installed, the ArjunaTS should have the following structure.
 					</li>
 					<li>
 						<font face="Courier New,Courier">/lib</font>: this directory contains the 
-    jar files that contains packages defined by the ArjunaTS. These jar files 
+    jar files that contains packages defined by the JBossTS. These jar files 
     shall be added in the CLASSPATH
 					</li>
 					<li>
@@ -79,27 +79,27 @@ installation. When installed, the ArjunaTS should have the following structure.
 				</ul>
 				<h4>
 					<a name="TestInstall"/>Testing your installation</h4>
-				<p>To ensure that your ArjunaTS installation is fully operational, we will run the simple demo.</p>
+				<p>To ensure that your JBossTS installation is fully operational, we will run the simple demo.</p>
 				<p>Please follow these steps before running the transactional applications</p>
 				<ul>
 					<li>Ensure you have the Ant build system installed. Ant is a Java build tool, 
     similar to make. It is available for free from http://ant.apache.org/ The 
     sample application requires version 1.5.1 or later. </li>
 					<li>The PATH and CLASSPATH environment variables need to be set appropriately 
-    to use Arjuna Transaction Service. To make this easier, we provide a shell 
+    to use JBoss Transaction Service. To make this easier, we provide a shell 
     script <font face="Courier New, Courier, mono">setup_env.sh</font> (and for 
     Windows a batch file <font face="Courier New, Courier, mono">setup_env.bat</font>) 
-    in the directory <font face="Courier New, Courier, mono">&lt;arjunats_install_root&gt;/bin/</font>
+    in the directory <font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;/bin/</font>
 					</li>
 					<li>From a command prompt, cd to the directory containing the build.xml file 
-    (<font face="Courier New, Courier, mono">&lt;arjunats_install_root&gt;/trail_map</font>) 
-    and type 'ant'. This will compile a set of sources files located under <font face="Courier New, Courier, mono">&lt;arjunats_install_root&gt;/trail_map/src</font> 
-    then create an application .jar file named <em>arjunats-demo.jar</em>. under 
-    the directory <font face="Courier New, Courier, mono">&lt;arjunats_install_root&gt;/trail_map/lib</font>
+    (<font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;/trail_map</font>) 
+    and type 'ant'. This will compile a set of sources files located under <font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;/trail_map/src</font> 
+    then create an application .jar file named <em>jbossts-demo.jar</em>. under 
+    the directory <font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;/trail_map/lib</font>
 					</li>
 					<li>Add the generated jar file to the CLASSPATH environment variable.</li>
 					<li>Ensure that the jacorb (version 2.2.2) jar files are added in your CLASSPATH. <br/>
-					<b>Ensure that ArjunaTS jar files appear before jacorb jar files. </b></li>
+					<b>Ensure that JBossTS jar files appear before jacorb jar files. </b></li>
 				</ul>
 				<ul>
 					<li> Start the server.  <a class="linkscoloured" href="../src/com/arjuna/demo/simple/HelloServer.java">(HelloServer.java)</a> (<i>Note: The source code for the trailmap is fully documented and can often contain very useful tips and information that may not be reflected elsewhere in the trailmap</i>)</li> 
@@ -130,11 +130,11 @@ installation. When installed, the ArjunaTS should have the following structure.
      Hello - called within a scope of a transaction</pre>
 	
 				<h4>Setting properties</h4>
-The Arjuna Transaction Service has been designed to be highly configurable at runtime through the use of various 
+The JBoss Transaction Service has been designed to be highly configurable at runtime through the use of various 
 property attributes. Although these attributes can be provided at runtime on the 
 command line, it is possible (and may be more convenient) to specify them through the
 properties  file <font face="Courier New,Courier">arjunajts-properties.xml</font> located under the <font face="Courier New,Courier">/etc</font> directory of the ATS distribution.
-				<p>More details on the way to configure the behavior of ArjunaTS can be found <a class="linkscoloured" href="ArjunaTS_Configuration.html">here</a>. 
+				<p>More details on the way to configure the behavior of JBossTS can be found <a class="linkscoloured" href="JBossTS_Configuration.html">here</a>. 
 </p>
 				
 				<h4>Specifying the ORB to use</h4>
@@ -142,10 +142,10 @@ properties  file <font face="Courier New,Courier">arjunajts-properties.xml</font
   If using such a JDK in conjunction with another ORB it is necessary to tell 
   the JVM which ORB to use. This happens by specifying the org.omg.CORBA.ORBClass 
   <br/>
-  and org.omg.CORBA.ORBSingletonClass properties. In earlier versions of the ArjunaTS 
+  and org.omg.CORBA.ORBSingletonClass properties. In earlier versions of the JBossTS 
   it was necessary to specify these properties explicitly, either on the command 
   line of in the properties file. However, it is no longer a requirement to do 
-  this, as the <a class="linkscoloured" href="ArjunaTS_ORBPortability.html">ORB Portability</a> classes 
+  this, as the <a class="linkscoloured" href="JBossTS_ORBPortability.html">ORB Portability</a> classes 
   will ensure that these properties are automatically set when required. Of course 
   it is still possible to specify these values explicitly (and necessary if not 
   using the ORB initialization methods)</p>

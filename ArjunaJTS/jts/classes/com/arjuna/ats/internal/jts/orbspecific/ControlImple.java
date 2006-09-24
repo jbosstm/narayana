@@ -61,7 +61,7 @@ import org.omg.CORBA.SystemException;
  * size of all of the transaction objects, we keep the information
  * separate in the TransactionReaper. (Since it already needs to have this
  * information anyway this is no extra burden.) It also means that we can
- * support non-Arjuna transactions: if we were to add a new method to the
+ * support non-JBoss transactions: if we were to add a new method to the
  * control (get_timeout, say) then this would be Arjuna specific.
  */
 
@@ -462,7 +462,7 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 				catch (Exception e)
 				{
 					/*
-					 * Not an Arjuna transaction, so allocate any Uid.
+					 * Not an JBoss transaction, so allocate any Uid.
 					 */
 
 					_theUid = new Uid();

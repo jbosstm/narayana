@@ -143,7 +143,7 @@ public class Utility
 
     /*
      * Any need for the inverse operation?
-     * Could easily do it for Arjuna transactions only.
+     * Could easily do it for JBoss transactions only.
      */
 
     public static com.arjuna.ats.arjuna.xa.XID getXid (Uid uid, boolean branch) throws IllegalStateException
@@ -187,7 +187,7 @@ public class Utility
     }
 
     /**
-     * If this control refers to an Arjuna transaction then return its native
+     * If this control refers to an JBoss transaction then return its native
      * Uid representation. Otherwise return Uid.nullUid().
      */
 

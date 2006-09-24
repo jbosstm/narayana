@@ -67,7 +67,7 @@ public static ControlImple create (PropagationContext context) throws SystemExce
     
     /*
      * Assume that all actions in the imported hierarchy are of the same
-     * type, i.e., all Arjuna transactions.
+     * type, i.e., all JBoss transactions.
      *
      * Because of the way garbage collection works in the ORB we have to
      * run an explicit garbage collection phase for finished hierarchies.

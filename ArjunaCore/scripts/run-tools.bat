@@ -22,7 +22,7 @@ rem
 
 if "%@HOME_DIRECTORY@%"=="" goto atserror
 
-rem Setup the environment for the Arjuna Transaction Service
+rem Setup the environment for the JBoss Transaction Service
 call "%@HOME_DIRECTORY@%\bin\setup-env.bat"
 
 rem Add ext libraries required for tools

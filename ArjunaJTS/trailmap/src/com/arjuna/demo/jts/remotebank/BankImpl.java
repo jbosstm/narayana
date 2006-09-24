@@ -30,7 +30,7 @@ package com.arjuna.demo.jts.remotebank;
 import com.arjuna.orbportability.OA;
 
 /**
- * This is an in memory, remotely available implementation of the Bank class used in the Arjuna Transactions product
+ * This is an in memory, remotely available implementation of the Bank class used in the JBoss Transactions product
  * trailmap. As it is non-persistent, it is only used to perform the banking operations that all Bank implementations in
  * the trailmap provide, such as creating and accessing an account, though it is a CORBA object and as such can be
  * remotely accessed.

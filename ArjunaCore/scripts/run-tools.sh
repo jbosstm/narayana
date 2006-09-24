@@ -38,7 +38,7 @@ case `uname -a` in
     ;;
 esac
 
-# Setup the environment for the Arjuna Transaction Service
+# Setup the environment for the JBoss Transaction Service
 . "$@HOME_DIRECTORY@/bin/setup-env.sh"
 
 # Add ext libraries required for tools

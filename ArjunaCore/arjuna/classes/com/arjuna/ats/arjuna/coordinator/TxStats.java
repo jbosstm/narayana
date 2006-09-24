@@ -108,7 +108,7 @@ public class TxStats
 
     public static void printStatus (java.io.PrintWriter pw)
     {
-	pw.println("Arjuna Transaction Service statistics.");
+	pw.println("JBoss Transaction Service statistics.");
 	pw.println(java.util.Calendar.getInstance().getTime()+"\n");
 	
 	pw.println("Number of transactions: "+numberOfTransactions());

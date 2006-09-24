@@ -19,7 +19,7 @@
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<page title="Arjuna Technologies Limited: Trail map: Running and Testing Examples" rootpath="../..">
+<page title="JBoss (a Division of Redhat): Trail map: Running and Testing Examples" rootpath="../..">
 	<header>   Recovery From Failure   </header>
 	<content>
 		<navigation>
@@ -62,13 +62,13 @@
 				<p>
 				<i>This section provides only brief information on running the recovery manager from provided scripts. 
 				For complete information on the recovery manager (including how to configure it), click 
-				<a class="linkscoloured" href="ArjunaTS_Recovery.html">here</a>.</i></p>
+				<a class="linkscoloured" href="JBossTS_Recovery.html">here</a>.</i></p>
 				<h4>Windows</h4>
 				<p>
 				To run the Recovery Manager as a Windows NT service, simply:</p>
 				<ol>
 					<li>Open a command prompt</li>
-					<li>cd to the directory <font face="Courier New, Courier, mono">&lt;arjunats_install_root&gt;\services\bin\windows</font></li>
+					<li>cd to the directory <font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;\services\bin\windows</font></li>
 					<li>Type <font face="Courier New, Courier, mono">InstallRecoveryManagerService-NT.bat</font></li>
 				</ol>
 				<p>
@@ -77,7 +77,7 @@
 				To launch the Recovery Manager as a Windows process, simply:</p>
 				<ol>
 					<li>Open a command prompt</li>
-					<li>cd to the directory <font face="Courier New, Courier, mono">&lt;arjunats_install_root&gt;\services\bin\windows</font></li>
+					<li>cd to the directory <font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;\services\bin\windows</font></li>
 					<li>Type <font face="Courier New, Courier, mono">recoverymanagerservice.bat</font></li>
 				</ol>
 				<h4>UNIX</h4>
@@ -85,7 +85,7 @@
 				To launch the Recovery Manager on a UNIX platform, simply:</p>
 				<ol>
 					<li>Open a command prompt</li>
-					<li>cd to the directory <font face="Courier New, Courier, mono">&lt;arjunats_install_root&gt;\services\bin\[platform]</font></li>
+					<li>cd to the directory <font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;\services\bin\[platform]</font></li>
 					<li>Type <font face="Courier New, Courier, mono">recoverymanagerservice.sh start</font></li>
 				</ol>
 				<p>
@@ -164,7 +164,7 @@
 
 				<h4>Specify the transaction manager type to use</h4>
 				<p>
-				The recovery manager will work in the same manner for either the JTA or JTS implementation. By default the Arjuna Transaction Service 
+				The recovery manager will work in the same manner for either the JTA or JTS implementation. By default the JBoss Transaction Service 
 				is configured to use a JTS transaction manager, in order to configure it to use a JTA transaction manager a change must again be made 
 				to the arjunajts-properties.xml. <i>See <a class="linkscoloured" href="part5_testing_jta.html">here</a> for more information on how to configure 
 				the ATS transaction manager to use JTA rather than JTS.</i></p>
@@ -184,7 +184,7 @@
 				<p>To launch the Test Recovery Module, execute the following java program</p>
 				<ol>
 					<li>Open a command prompt</li>
-					<li>cd to the directory <font face="Courier New, Courier, mono">&lt;arjunats_install_root&gt;\trail_map</font></li>
+					<li>cd to the directory <font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;\trail_map</font></li>
 					<li>Type <font face="Courier New, Courier, mono">java com.arjuna.demo.recovery.xaresource.TestXAResourceRecovery</font></li>
 					<li>View the output noting the crash during commit.</li>
 					<li>Inspect the current working directory to note that the applications have created several log files which you may like to review.</li>
@@ -201,7 +201,7 @@
 			<html>
 				<p>
 				<b>WARNING: Implementing a RecoveryModule and AbstractRecord is a very advanced feature of the transaction service. It should only 
-				be performed by users familiar with the all the concepts used in the Arjuna Transactions product. Please see the ArjunaCore guide for more 
+				be performed by users familiar with the all the concepts used in the JBoss Transactions product. Please see the ArjunaCore guide for more 
 				information about RecoveryModules and AbstractRecords.</b></p>
 				<p>
 				The following sample gives an overview how the Recovery Manager invokes a module to recover from failure.
@@ -248,7 +248,7 @@
 Where &lt;i&gt; represent the new occurrence number that follows the last that already exists in the file. Once started, the Recovery Manager will automatically load the added Recovery module.
 
 			<h4>Starting the Recovery Manager</h4>
-			In a separate window launch the <a class="linkscoloured" href="ArjunaTS_Recovery.html">Recovery Manager</a>, 
+			In a separate window launch the <a class="linkscoloured" href="JBossTS_Recovery.html">Recovery Manager</a>, 
   as follow.
 					<pre>java com.arjuna.ats.arjuna.recovery.RecoveryManager -test</pre>
 			

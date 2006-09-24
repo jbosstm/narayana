@@ -36,10 +36,10 @@ import java.io.File;
 
 /**
  * ACHTUNG!: Implementing an <CODE>AbstractRecord</CODE> is a very advanced feature of the transaction service. It should
- * only be performed by users familiar with the all the concepts used in the Arjuna Transactions product. Please see the
+ * only be performed by users familiar with the all the concepts used in the JBoss Transactions product. Please see the
  * ArjunaCore guide for more information about <CODE>AbstractRecord</CODE>s.
  *
- * An <CODE>AbstractRecord</CODE> is more generic than an XAResource. In the Arjuna Transactions product an XAResource
+ * An <CODE>AbstractRecord</CODE> is more generic than an XAResource. In the JBoss Transactions product an XAResource
  * is wrapped by an <CODE>AbstractRecord</CODE>. Briefly a programmer may wish to implement their own
  * <CODE>AbstractRecord</CODE> for any of the following reasons:
  * <ol>

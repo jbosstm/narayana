@@ -19,7 +19,7 @@
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<page title="Arjuna Technologies Limited: Trail map: Running and Testing Examples" rootpath="../..">
+<page title="JBoss (a Division of Redhat): Trail map: Running and Testing Examples" rootpath="../..">
 	<header>         Trail map: Running and Testing Examples     </header>
 	<content>
 		<navigation>
@@ -36,7 +36,7 @@
 			<h4>Configuring ATS</h4>
 			<p>Program Applications that create transactions using te JTA interface may invoke as well local services as remote 
 services. When a remote invocation need to be performed, the current transactional context need to be propagated 
-to the remote service in order to involve it to the transaction in progress. Arjuna Transaction Service allows the 
+to the remote service in order to involve it to the transaction in progress. JBoss Transaction Service allows the 
 possibility to provide such feature using the facilities provided by JTS and ORB. More precisely ATS need to be configured 
 to determine in which type of transaction, local or distributed, the JTA interface is used.
 </p>

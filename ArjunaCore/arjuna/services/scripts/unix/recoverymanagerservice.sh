@@ -42,7 +42,7 @@ fi
 
 # Application
 APP_NAME="arjunarm"
-APP_LONG_NAME="Arjuna Transaction Service Recovery Manager"
+APP_LONG_NAME="JBoss Transaction Service Recovery Manager"
 
 # Wrapper
 WRAPPER_CMD="./wrapper"

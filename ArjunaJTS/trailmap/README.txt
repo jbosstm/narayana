@@ -28,12 +28,12 @@ tool, similar to make.
   The sample application requires version 1.5.1 or later. 
 
 - The PATH and CLASSPATH environment variables need to be set
-appropriately to use Arjuna Transaction Service. 
+appropriately to use JBoss Transaction Service. 
 
   To make this easier, we provide a shell script setup-env.sh (and for
   Windows a batch file setup-env.bat) which you  can either source, or
   use to input into your own environment. These scripts are located in
-  in the directory <arjunats_install_root>/bin/ 
+  in the directory <jbossts_install_root>/bin/ 
   
   JNDI is recommended way to use XADataSource because it isolates the application from the
   different jdbc implementations. The JNDI implementation, that the jdbcbank sample uses is fscontext.jar,
@@ -47,7 +47,7 @@ Important Note:
  From a command prompt,  go (or 'cd') to  the directory containing the
  build.xml file (<jbossjts_install_root>/trailmap) and type 'ant'.
 
- Add   the  generated file  named   arjunats-demo.jar and located under
+ Add   the  generated file  named   jbossts-demo.jar and located under
  <jbossjts_install_root>/trailmap/lib  in    you  CLASSPATH environment
  variable.
  

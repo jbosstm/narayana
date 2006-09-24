@@ -30,7 +30,7 @@ package com.arjuna.demo.jta.localbank;
 import java.io.IOException;
 
 /**
- * The <CODE>BankClient</CODE> application is an interactive CLI that allows the user of the Arjuna Transactions product
+ * The <CODE>BankClient</CODE> application is an interactive CLI that allows the user of the JBoss Transactions product
  * to manipulate a volatile hashtable-backed <CODE>Bank</CODE> under transactional control.
  */
 public class BankClient
@@ -508,7 +508,7 @@ public class BankClient
 
 
     /**
-     * This is the entry point into the Arjuna Transaction product trailmap sample that uses a <CODE>Hashtable</CODE> to
+     * This is the entry point into the JBoss Transaction product trailmap sample that uses a <CODE>Hashtable</CODE> to
      * store the bank accounts repository. It is part of the JTA trailmap when using local objects.
      *
      * @param args Not used in this example.

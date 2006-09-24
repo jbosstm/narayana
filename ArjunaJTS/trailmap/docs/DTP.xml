@@ -331,7 +331,7 @@ them has a particular role. Main components are described below. </p>
       environment. For this aim various distributed transaction processing 
       standards have been developed by international standards organizations. 
       Among these organizations, We list three of them which are mainly 
-      considered in the Arjuna Transaction Service product: </p>
+      considered in the JBoss Transaction Service product: </p>
 				<ul>
 					<li>
 							 The <a class="linkscoloured" href="xopen_overview.html">X/Open model </a> and its successful XA interface

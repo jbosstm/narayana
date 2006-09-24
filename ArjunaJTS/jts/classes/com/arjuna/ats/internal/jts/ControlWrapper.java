@@ -91,8 +91,8 @@ public class ControlWrapper implements Reapable
 		this(c, (Uid) null);
 
 		/*
-		 * Now get the Uid for this control or generate one if it isn't an
-		 * Arjuna transaction.
+		 * Now get the Uid for this control or generate one if it isn't a
+		 * JBoss transaction.
 		 */
 
 		try

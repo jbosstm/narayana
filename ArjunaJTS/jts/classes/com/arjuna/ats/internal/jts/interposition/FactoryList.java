@@ -87,7 +87,7 @@ class FactoryElement
 
 /*
  * Add the Arjuna OTS transaction recreator as a minimum, i.e., no special
- * action is required to know about Arjuna transactions.
+ * action is required to know about JBoss transactions.
  */
 
 /**

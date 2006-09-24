@@ -37,7 +37,7 @@ import java.lang.reflect.Method;
 import java.util.Hashtable;
 
 /**
- * The <CODE>BankClient</CODE> application is an interactive CLI that allows the user of the Arjuna Transactions product
+ * The <CODE>BankClient</CODE> application is an interactive CLI that allows the user of the JBoss Transactions product
  * to manipulate a database backed bank under transactional control.
  */
 public class BankClient
@@ -508,7 +508,7 @@ public class BankClient
     }
 
     /**
-     * This is the entry point into the Arjuna Transaction product trailmap sample that uses a JDBC database to store
+     * This is the entry point into the JBoss Transaction product trailmap sample that uses a JDBC database to store
      * the bank accounts repository. At minimum it should be invoked with the "-host [db_host] -port [db_port]" flags.
      *
      * @param args The arguments to configure this run of the JDBC backed trailmap example

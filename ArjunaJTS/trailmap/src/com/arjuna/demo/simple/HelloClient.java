@@ -38,7 +38,7 @@ import org.omg.CosTransactions.NoTransaction;
 import org.omg.CosTransactions.SubtransactionsUnavailable;
 
 /**
- * The <CODE>HelloClient</CODE> is used in the first stage of the Arjuna Transactions product trailmap. It is a trivial
+ * The <CODE>HelloClient</CODE> is used in the first stage of the JBoss Transactions product trailmap. It is a trivial
  * JTS client application which invokes a remote method within the scope of a transaction.
  */
 public class HelloClient
@@ -52,19 +52,19 @@ public class HelloClient
     public static void main(String[] args)
     {
         // 0. Define and create the ORB
-        // Define an ORB suitable for use by the Arjuna Transactions product ORB portability layer.
+        // Define an ORB suitable for use by the JBoss Transactions product ORB portability layer.
         ORB myORB = null;
-        // Define an object adapter suitable for use by the Arjuna Transactions product ORB portability layer.
+        // Define an object adapter suitable for use by the JBoss Transactions product ORB portability layer.
         RootOA myOA = null;
         try
         {
-            // Initialize the ORB reference using the Arjuna Transactions product ORB portability layer.
+            // Initialize the ORB reference using the JBoss Transactions product ORB portability layer.
             myORB = ORB.getInstance("ClientSide");
-            // Initialize the object adapter reference using the Arjuna Transactions product ORB portability layer.
+            // Initialize the object adapter reference using the JBoss Transactions product ORB portability layer.
             myOA = OA.getRootOA(myORB);
-            // Initialize the ORB using the Arjuna Transactions product ORB portability layer.
+            // Initialize the ORB using the JBoss Transactions product ORB portability layer.
             myORB.initORB(args, null);
-            // Initialize the object adapter reference using the Arjuna Transactions product ORB portability layer.
+            // Initialize the object adapter reference using the JBoss Transactions product ORB portability layer.
             myOA.initOA();
         }
         catch (Exception e)
@@ -77,7 +77,7 @@ public class HelloClient
         }
 
         // 1. Obtain a reference to the HelloImpl CORBA representation inorder to be able to use it to transactionally
-        // invoke a method to validate the installation of the Arjuna Transactions product
+        // invoke a method to validate the installation of the JBoss Transactions product
         // Define the reference to invoke
         Hello hello = null;
         // Obtain the reference for hello

@@ -39,7 +39,7 @@ import java.util.Properties;
 
 
 /**
- * This is the JDBC implementation of the Bank class used in the Arjuna Transactions product trailmap. It is used to
+ * This is the JDBC implementation of the Bank class used in the JBoss Transactions product trailmap. It is used to
  * create and clean the database that the example uses as well as perform the banking operations that all Bank
  * implementations in the trailmap provide, such as creating and accessing an account.
  */

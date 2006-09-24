@@ -42,7 +42,7 @@
   done in the indirect mode. </p>
 				<p> The following portion of code illustrates how a JTS transaction is started
   and terminated when the client asks to transfer money from one account to another.
-  This also describes what are ArjunaTS packages that need to be used in order
+  This also describes what are JBossTS packages that need to be used in order
   to obtain appropriate objects instances (such Current).</p>
 				<p>Note: The code below is a simplified view of the BankClient.java program. Only
   the transfer operation is illustrated; other operations manage transactions
@@ -81,7 +81,7 @@ import com.arjuna.ats.internal.jts.ORBManager;</strong>
 
      try
       {
-       //the following instruction asks a specific ArjunaTS class to obtain a Current instance
+       //the following instruction asks a specific JBossTS class to obtain a Current instance
        <strong>Current current = OTSManager.get_current(); </strong>
        System.out.println(&quot;Beginning a User transaction to get balance&quot;);
        <strong>current.begin()</strong>;
@@ -108,7 +108,7 @@ import com.arjuna.ats.internal.jts.ORBManager;</strong>
      myORB.initORB(args, null); //Initialise the ORB
      myOA.initOA(); //Initialise the POA
 
-     // The ORBManager is a class provided by ArjunaTS to facilitate the association
+     // The ORBManager is a class provided by JBossTS to facilitate the association
      // of the ORB/POA with the transaction service
      ORBManager.setORB(myORB);
      ORBManager.setPOA(myOA);</strong>

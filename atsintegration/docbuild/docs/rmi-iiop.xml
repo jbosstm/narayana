@@ -218,14 +218,14 @@
                                     <FONT FACE="Courier, monospace" SIZE="2">
 					jboss.home
 				    </FONT>
-                                The home directory of the JBoss server with Arjuna+JBoss
+                                The home directory of the JBoss server with Arjuna and JBoss
                                     installed (e.g. /opt/jboss-3.2.2/)</P>
                                 <P>
                                         <FONT FACE="Courier, monospace">
-                                            <FONT SIZE="2">arjunats.home</FONT>
+                                            <FONT SIZE="2">jbossts.home</FONT>
                                         </FONT>
-                                The home directory of the Arjuna Transaction Service
-                                    installation (e.g. /opt/arjuna/arjunajboss-1.0/ats-3.1/)</P>
+                                The home directory of the JBoss Transaction Service
+                                    installation (e.g. /opt/jbossts/)</P>
                                 <P>
                                         <FONT SIZE="2">
                                             <FONT FACE="Courier, monospace">

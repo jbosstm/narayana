@@ -21,7 +21,7 @@
 -->
 <!-- $Id: default-CommonLogging-properties.xml 2342 2006-03-30 13:06:17Z  $ -->
 <!--
-  These options are described in the ArjunaTS manual.
+  These options are described in the JBossTS manual.
   Defaults are provided here for convenience only.
  
   Please read through this file prior to using the system, and consider

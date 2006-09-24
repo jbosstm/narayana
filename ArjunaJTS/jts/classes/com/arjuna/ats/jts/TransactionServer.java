@@ -154,7 +154,7 @@ public class TransactionServer
 	    if (printReady)
 		System.out.println("Ready");
 	    else
-		System.out.println("ArjunaTS OTS Server startup.");
+		System.out.println("JBossTS OTS Server startup.");
 
 	    if (resolver == com.arjuna.orbportability.Services.BIND_CONNECT)
 		myOA.run(com.arjuna.orbportability.Services.transactionService);
@@ -166,7 +166,7 @@ public class TransactionServer
 	    System.err.println("TransactionServer caught exception "+e2);
 	}
     
-	System.out.println("ArjunaTS OTS Server shutdown");
+	System.out.println("JBossTS OTS Server shutdown");
 
 	theOTS = null;
 

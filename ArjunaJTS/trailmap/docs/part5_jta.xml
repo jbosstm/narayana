@@ -36,7 +36,7 @@
 				
 				<p>From an architectural point of view of <a class="linkscoloured" href="JTA_Overview.html">JTA</a>, the bank client is considered as 
  an application program able to manage transactions via the <a class="linkscoloured" href="JTA_Overview.html#UserTransaction">javax.transaction.UserTransaction </a> interface. The following portion of code illustrates how a JTA transaction is
- started and terminated when the client asks to transfer money from one account  to another. This also describes what are ArjunaTS packages that need to be used
+ started and terminated when the client asks to transfer money from one account  to another. This also describes what are JBossTS packages that need to be used
   in order to obtain appropriate objects instances (such UserTransaction).</p>
 				<p>Note: The code below is a simplified view of the BankClient.java program. Only the transfer operation is illustrated; other operations manage transactions in the same way. 
  (see for details the <a href="../src/com/arjuna/demo/jta/localbank/BankClient.java">BankClient.java</a>)</p>

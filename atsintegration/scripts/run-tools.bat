@@ -23,7 +23,7 @@ rem
 if "%@HOME_DIRECTORY@%"=="" goto atserror
 if "%JBOSS_HOME%"=="" goto jbosserror
 
-rem Setup the environment for the Arjuna Transaction Service
+rem Setup the environment for the JBoss Transaction Service
 call "%@HOME_DIRECTORY@%\bin\setup-env.bat"
 
 rem Setup the required JBoss classpath

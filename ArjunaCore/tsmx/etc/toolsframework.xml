@@ -22,7 +22,7 @@
 <tools-framework>
 
     <look-and-feel>
-		<title>Arjuna Transaction Service 4.0</title>
+		<title>JBoss Transaction Service</title>
 		<frame-properties width="800" height="600"/>
     </look-and-feel>
 

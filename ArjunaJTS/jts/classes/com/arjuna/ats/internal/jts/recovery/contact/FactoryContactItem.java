@@ -210,7 +210,7 @@ void markAsAlive()
 }
 
 /**
- *  Constructor used in normal Arjuna Transaction service application to
+ *  Constructor used in normal JBoss Transaction service application to
  *  identify the (or an) ArjunaFactory in this process
  */
  
