@@ -31,45 +31,21 @@
 
 package com.arjuna.ats.internal.jta.recovery.jts;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.ats.jta.logging.jtaLogger;
-import com.arjuna.ats.jta.*;
-import com.arjuna.ats.jta.common.jtaPropertyManager;
-import com.arjuna.ats.jta.common.Environment;
-import com.arjuna.ats.jta.recovery.*;
-import com.arjuna.ats.jta.utils.XAHelper;
-
-import com.arjuna.common.util.logging.*;
-
-import java.util.*;
-import java.sql.*;
-import javax.sql.*;
-import javax.transaction.*;
-import javax.transaction.xa.*;
-
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-
-import java.io.IOException;
-import java.sql.SQLException;
-import javax.transaction.xa.XAException;
-
 /**
  * Designed to be able to recover any XAResource.
  */
 
-public class XARecoveryModule extends com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule
+public class XARecoveryModule extends
+		com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule
 {
 
-    public XARecoveryModule ()
-    {
-	super(com.arjuna.ats.internal.jta.recovery.jts.XARecoveryResourceManagerImple.class.getName(), "JTS XARecoveryModule");
+	public XARecoveryModule ()
+	{
+		super(
+				com.arjuna.ats.internal.jta.recovery.jts.XARecoveryResourceManagerImple.class
+						.getName(), "JTS XARecoveryModule");
 
-	com.arjuna.ats.internal.jta.Implementationsx.initialise();
-    }
+		com.arjuna.ats.internal.jta.Implementationsx.initialise();
+	}
 
 }
