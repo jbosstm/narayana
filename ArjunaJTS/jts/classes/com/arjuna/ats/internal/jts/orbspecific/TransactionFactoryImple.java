@@ -179,7 +179,7 @@ public class TransactionFactoryImple extends
 			if (theTimeout == 0)
 				theTimeout = TransactionFactoryImple._defaultTimeout;
 
-			if (theTimeout != 0)
+			if (theTimeout > 0)
 			{
 				/*
 				 * Currently we do not remove controls from the list once they

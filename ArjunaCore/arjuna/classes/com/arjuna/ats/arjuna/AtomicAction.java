@@ -143,7 +143,7 @@ public class AtomicAction extends TwoPhaseCoordinator
 			if (_timeout == 0)
 				_timeout = TxControl.getDefaultTimeout();
 			
-			if (_timeout > AtomicAction.NO_TIMEOUT)
+			if (_timeout > 0)
 				TransactionReaper.transactionReaper(true).insert(this, _timeout);
 		}
 

@@ -213,8 +213,11 @@ public class BaseTransaction
 	public void setTransactionTimeout(int seconds)
 			throws javax.transaction.SystemException
 	{
-        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
-		_timeouts.put(threadId, new Integer(seconds));
+		if (seconds >= 0)
+		{
+	        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+			_timeouts.put(threadId, new Integer(seconds));
+		}
 	}
 
 	public int getTimeout() throws javax.transaction.SystemException

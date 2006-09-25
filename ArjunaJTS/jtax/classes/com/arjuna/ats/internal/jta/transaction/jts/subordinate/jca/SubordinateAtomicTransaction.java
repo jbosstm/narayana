@@ -52,7 +52,7 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		
 		// add this transaction to the reaper list.
 		
-		if (timeout != 0)
+		if (timeout > 0)
 		{
 			TransactionReaper reaper = TransactionReaper.transactionReaper(true);
 			
