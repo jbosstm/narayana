@@ -58,15 +58,6 @@ import com.arjuna.ats.arjuna.ArjunaNames;
 
 public class RecordType
 {
-
-    /**
-     * The following is for a one-phase aware resource that we enlist in
-     * a two-phase commit transaction using the last resource commit
-     * optimization. It's commit must go off before any other record.
-     */
-
-    public static final int LASTRESOURCE = 0;
-
     /**
      * The following values are provided for user-defined
      * records that should have operations invoked BEFORE the
@@ -133,6 +124,13 @@ public class RecordType
     public static final int UNTYPED = 453;
     public static final int NONE_RECORD = 463;
 
+    /**
+     * The following is for a one-phase aware resource that we enlist in
+     * a two-phase commit transaction using the last resource commit
+     * optimization. It's prepare must go off after all other records.
+     */
+    public static final int LASTRESOURCE = Integer.MAX_VALUE;
+    
     /**
      * @return the <code>ClassName</code> representing this type.
      * @see com.arjuna.ats.arjuna.gandiva.ClassName

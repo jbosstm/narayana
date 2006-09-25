@@ -35,16 +35,20 @@ import com.arjuna.ats.internal.jta.xa.TxInfo;
 import com.arjuna.ats.internal.jta.utils.*;
 import com.arjuna.ats.internal.jta.utils.arjunacore.StatusConverter;
 import com.arjuna.ats.internal.jta.resources.arjunacore.SynchronizationImple;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 
 import com.arjuna.ats.jta.common.Configuration;
 import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.resources.LastResourceCommitOptimisation;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XidImple;
 import com.arjuna.ats.jta.logging.*;
 import com.arjuna.ats.jta.xa.XAModifier;
 
+import com.arjuna.ats.arjuna.LastResourceRecord;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.AddOutcome;
@@ -78,6 +82,9 @@ import java.lang.IllegalStateException;
  * @message com.arjuna.ats.internal.jta.transaction.arjunacore.notatomicaction
  *          [com.arjuna.ats.internal.jta.transaction.arjunacore.notatomicaction]
  *          Current transaction is not an AtomicAction!
+ * @message com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface
+ * 			[com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface] - failed
+ *          to load Last Resource Optimisation Interface
  */
 
 public class TransactionImple implements javax.transaction.Transaction,
@@ -761,10 +768,18 @@ public class TransactionImple implements javax.transaction.Transaction,
 			 * gotten this far!
 			 */
 
-			XAResourceRecord res = new XAResourceRecord(this, xaRes, xid,
-					params);
+			final AbstractRecord record ;
+            if ((xaRes instanceof LastResourceCommitOptimisation) ||
+                ((LAST_RESOURCE_OPTIMISATION_INTERFACE != null) && LAST_RESOURCE_OPTIMISATION_INTERFACE.isInstance(xaRes)))
+			{
+				record = new LastResourceRecord(new XAOnePhaseResource(xaRes, xid, params)) ;
+			}
+			else
+			{
+				record = new XAResourceRecord(this, xaRes, xid, params);
+			}
 
-			if (_theTransaction.add(res) != AddOutcome.AR_ADDED)
+			if (_theTransaction.add(record) != AddOutcome.AR_ADDED)
 			{
 				markRollbackOnly();
 
@@ -1567,6 +1582,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private final boolean _xaTransactionTimeoutEnabled ;
 
 	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED ;
+	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE ;
 
 	static
 	{
@@ -1579,6 +1595,24 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 			XA_TRANSACTION_TIMEOUT_ENABLED = true ;
 		}
+		final String lastResourceOptimisationInterfaceName = jtaPropertyManager.propertyManager.getProperty(Environment.LAST_RESOURCE_OPTIMISATION_INTERFACE) ;
+		Class lastResourceOptimisationInterface = null ;
+		if (lastResourceOptimisationInterfaceName != null)
+		{
+			try
+			{
+				lastResourceOptimisationInterface = Thread.currentThread().getContextClassLoader().loadClass(lastResourceOptimisationInterfaceName) ;
+			}
+			catch (final Throwable th)
+			{
+				if (jtaLogger.loggerI18N.isWarnEnabled())
+				{
+					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface",
+						new Object[] {lastResourceOptimisationInterfaceName}, th);
+				}
+			}
+		}
+		LAST_RESOURCE_OPTIMISATION_INTERFACE = lastResourceOptimisationInterface ;
 	}
 
 	private static Hashtable _transactions = new Hashtable();

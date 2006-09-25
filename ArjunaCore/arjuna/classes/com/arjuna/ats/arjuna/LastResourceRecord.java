@@ -143,10 +143,12 @@ public class LastResourceRecord extends AbstractRecord
 
 		if (_lro != null)
 		{
-			return _lro.rollback();
+			return _lro.rollback() ;
 		}
-
-		return TwoPhaseOutcome.FINISH_ERROR;
+		else
+		{
+			return TwoPhaseOutcome.FINISH_OK;
+		}
 	}
 
 	public int topLevelCommit ()
@@ -157,12 +159,7 @@ public class LastResourceRecord extends AbstractRecord
 					+ order());
 		}
 
-		if (_lro != null)
-		{
-			return _lro.commit();
-		}
-
-		return TwoPhaseOutcome.FINISH_ERROR;
+		return TwoPhaseOutcome.FINISH_OK;
 	}
 
 	public int topLevelPrepare ()
@@ -173,7 +170,7 @@ public class LastResourceRecord extends AbstractRecord
 					+ order());
 		}
 
-		if (_lro != null)
+		if ((_lro != null) && (_lro.commit() == TwoPhaseOutcome.FINISH_OK))
 		{
 			return TwoPhaseOutcome.PREPARE_OK;
 		}
@@ -185,90 +182,6 @@ public class LastResourceRecord extends AbstractRecord
 	{
 		strm.println("LastResource for:");
 		super.print(strm);
-	}
-
-	public boolean doSave ()
-	{
-		return true;
-	}
-
-	/**
-	 * @message com.arjuna.ats.arjuna.LastResourceRecord_1
-	 *          [com.arjuna.ats.arjuna.LastResourceRecord_1]
-	 *          DisposeRecord::save_state - failed
-	 * @message com.arjuna.ats.arjuna.LastResourceRecord_2
-	 *          [com.arjuna.ats.arjuna.LastResourceRecord_2]
-	 *          DisposeRecord::save_state - no resource to save!
-	 */
-
-	public boolean save_state (OutputObjectState os, int ot)
-	{
-		boolean res = true;
-
-		if (_lro != null)
-		{
-			try
-			{
-				os.packString(OnePhaseResource.class.getName());
-
-				_lro.pack(os);
-			}
-			catch (IOException e)
-			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.LastResourceRecord_1");
-				res = false;
-			}
-		}
-		else
-		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.LastResourceRecord_2");
-
-			res = false;
-		}
-
-		return res;
-	}
-
-	/**
-	 * @message com.arjuna.ats.arjuna.LastResourceRecord_3
-	 *          [com.arjuna.ats.arjuna.LastResourceRecord_3]
-	 *          DisposeRecord::restore_state - failed to unpack.
-	 * @message com.arjuna.ats.arjuna.LastResourceRecord_4
-	 *          [com.arjuna.ats.arjuna.LastResourceRecord_4]
-	 *          DisposeRecord::restore_state - failed to recreate state {0}
-	 */
-
-	public boolean restore_state (InputObjectState os, int ot)
-	{
-		boolean res = true;
-
-		try
-		{
-			String classType = os.unpackString();
-
-			_lro = (OnePhaseResource) (Thread.currentThread().getContextClassLoader().loadClass(classType)).newInstance();
-
-			_lro.unpack(os);
-		}
-		catch (IOException e)
-		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.LastResourceRecord_3");
-
-			res = false;
-		}
-		catch (Exception ex)
-		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.LastResourceRecord_4", new Object[]
-				{ ex });
-
-			res = false;
-		}
-
-		return res;
 	}
 
 	public String type ()
@@ -334,6 +247,6 @@ public class LastResourceRecord extends AbstractRecord
 
 	private OnePhaseResource _lro;
 	
-	private static final Uid ONE_PHASE_RESOURCE_UID = new Uid("0:0:0:1");
+	private static final Uid ONE_PHASE_RESOURCE_UID = Uid.maxUid() ;
 
 }

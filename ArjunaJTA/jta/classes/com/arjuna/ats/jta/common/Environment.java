@@ -55,6 +55,7 @@ public class Environment
 
     public static final String XA_ERROR_HANDLER = "com.arjuna.ats.jta.xaErrorHandler";
     public static final String XA_TRANSACTION_TIMEOUT_ENABLED = "com.arjuna.ats.jta.xaTransactionTimeoutEnabled";
+    public static final String LAST_RESOURCE_OPTIMISATION_INTERFACE = "com.arjuna.ats.jta.lastResourceOptimisationInterface";
 
 }
 
