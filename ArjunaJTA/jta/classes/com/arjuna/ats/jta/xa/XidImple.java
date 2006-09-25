@@ -56,6 +56,7 @@ import java.io.IOException;
 
 public class XidImple implements javax.transaction.xa.Xid, Serializable
 {
+	private static final long serialVersionUID = -8922505475867377266L;
 
 	public XidImple ()
 	{
