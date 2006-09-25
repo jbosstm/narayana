@@ -92,10 +92,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 	public static final int XACONNECTION = 0;
 
-	private static final Uid START_XARESOURCE = new Uid("0:0:0:1");
+	private static final Uid START_XARESOURCE = Uid.minUid() ;
 
-	private static final Uid END_XARESOURCE = new Uid(
-			"7fffffff:7fffffff:7fffffff:7fffffff");
+	private static final Uid END_XARESOURCE = Uid.maxUid() ;
 
 	/**
 	 * The params represent specific parameters we need to recreate the

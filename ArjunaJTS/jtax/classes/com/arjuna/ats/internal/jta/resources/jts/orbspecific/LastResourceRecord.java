@@ -10,7 +10,6 @@
  */
 package com.arjuna.ats.internal.jta.resources.jts.orbspecific;
 
-import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
@@ -38,7 +37,7 @@ public class LastResourceRecord extends XAResourceRecord
     /**
      * The Uid for all last xa resource records.
      */
-    private static final String UID = Uid.maxUid().stringForm() ;
+    private static final String UID = Uid.lastResourceUid().stringForm() ;
     
     /**
      * Construct the record for last resource commit optimisation. 

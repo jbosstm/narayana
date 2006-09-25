@@ -84,6 +84,7 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 
 public class Uid implements Cloneable, Serializable
 {
+	private static final long serialVersionUID = 7808395904206530189L;
 
 	/**
 	 * Create a new instance.
@@ -425,10 +426,10 @@ public class Uid implements Cloneable, Serializable
 		if (this.equals(u))
 			return false ;
 		
-		if (MAX_UID.equals(this))
+		if (LAST_RESOURCE_UID.equals(this))
 			return false ;
 		
-		if (MAX_UID.equals(u))
+		if (LAST_RESOURCE_UID.equals(u))
 			return true ;
 		
 		if (hostAddr < u.hostAddr)
@@ -462,10 +463,10 @@ public class Uid implements Cloneable, Serializable
 		if (this.equals(u))
 			return false ;
 		
-		if (MAX_UID.equals(this))
+		if (LAST_RESOURCE_UID.equals(this))
 			return true ;
 		
-		if (MAX_UID.equals(u))
+		if (LAST_RESOURCE_UID.equals(u))
 			return false ;
 
 		if (hostAddr > u.hostAddr)
@@ -501,31 +502,33 @@ public class Uid implements Cloneable, Serializable
 	 * Return a null Uid (0:0:0:0)
 	 */
 
-	public static final synchronized Uid nullUid ()
+	public static final Uid nullUid ()
 	{
-		/*
-		 * Only create a single instance of this.
-		 */
-
-		if (NIL_UID == null)
-			NIL_UID = new Uid("0:0:0:0");
-
 		return NIL_UID;
 	}
 
 	/**
-	 * Return a max Uid (0:0:0:1)
+	 * Return a last resource Uid (0:0:0:1)
 	 */
-	public static final synchronized Uid maxUid ()
+	public static final Uid lastResourceUid ()
 	{
-		/*
-		 * Only create a single instance of this.
-		 */
+		return LAST_RESOURCE_UID;
+	}
 
-		if (MAX_UID == null)
-			MAX_UID = new Uid("0:0:0:1");
-
+	/**
+	 * Return the maximum Uid (7fffffff:7fffffff:7fffffff:7fffffff)
+	 */
+	public static final Uid maxUid ()
+	{
 		return MAX_UID;
+	}
+	
+	/**
+	 * Return the minimum Uid (-80000000:-80000000:-80000000:-80000000)
+	 */
+	public static final Uid minUid ()
+	{
+		return MIN_UID;
 	}
 
 	/*
@@ -679,7 +682,11 @@ public class Uid implements Cloneable, Serializable
 
 	private static char fileBreakChar = '_';
 
-	private static Uid NIL_UID ;
+	private static Uid NIL_UID = new Uid("0:0:0:0") ;
 
-	private static Uid MAX_UID ;
+	private static Uid LAST_RESOURCE_UID = new Uid("0:0:0:1") ;
+	
+	private static Uid MAX_UID = new Uid("7fffffff:7fffffff:7fffffff:7fffffff") ;
+	
+	private static Uid MIN_UID = new Uid("-80000000:-80000000:-80000000:-80000000") ;
 }

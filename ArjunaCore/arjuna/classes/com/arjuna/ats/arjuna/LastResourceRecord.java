@@ -36,11 +36,8 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 import java.io.PrintWriter;
-
-import java.io.IOException;
 
 import com.arjuna.common.util.logging.*;
 
@@ -247,6 +244,6 @@ public class LastResourceRecord extends AbstractRecord
 
 	private OnePhaseResource _lro;
 	
-	private static final Uid ONE_PHASE_RESOURCE_UID = Uid.maxUid() ;
+	private static final Uid ONE_PHASE_RESOURCE_UID = Uid.lastResourceUid() ;
 
 }
