@@ -295,13 +295,9 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
      */
     public void setTransactionTimeout(int timeout) throws javax.transaction.SystemException
     {
-        if (timeout >= 0)
+        if (timeout != 0)
         {
             jtsPropertyManager.propertyManager.setProperty(com.arjuna.ats.jts.common.Environment.DEFAULT_TIMEOUT, Integer.toString(timeout));
-        }
-        else
-        {
-            throw new javax.transaction.SystemException("Transaction Timeout < 0");
         }
     }
 

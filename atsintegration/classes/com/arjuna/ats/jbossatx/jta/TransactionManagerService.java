@@ -275,12 +275,10 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
      */
     public void setTransactionTimeout(int timeout) throws javax.transaction.SystemException
     {
-        if (timeout > 0)
+        if (timeout != 0)
         {
             TxControl.setDefaultTimeout(timeout);
         }
-        else
-            throw new javax.transaction.SystemException("Transaction Timeout < 0");
     }
 
     /**
