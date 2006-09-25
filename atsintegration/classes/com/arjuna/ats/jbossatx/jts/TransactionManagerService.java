@@ -35,6 +35,7 @@ import org.jboss.system.server.Server;
 import org.jboss.iiop.CorbaORBService;
 import org.jboss.mx.util.ObjectNameFactory;
 import org.jboss.tm.JBossXATerminator;
+import org.jboss.tm.LastResource;
 import org.jboss.tm.XAExceptionFormatter;
 import com.arjuna.ats.internal.jbossatx.jts.PropagationContextWrapper;
 import com.arjuna.ats.internal.jbossatx.jts.jca.XATerminator;
@@ -115,6 +116,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         LocalJBossAgentImpl.setLocalAgent(this.getServer());
         System.setProperty(com.arjuna.ats.tsmx.TransactionServiceMX.AGENT_IMPLEMENTATION_PROPERTY,
                 com.arjuna.ats.internal.jbossatx.agent.LocalJBossAgentImpl.class.getName());
+        System.setProperty(Environment.LAST_RESOURCE_OPTIMISATION_INTERFACE, LastResource.class.getName()) ;
 
         /** Register management plugin **/
         com.arjuna.ats.arjuna.common.arjPropertyManager.propertyManager.addManagementPlugin(new PropertyServiceJMXPlugin());
@@ -152,6 +154,13 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
             if (_runRM)
             {
                 registerNotification() ;
+                
+                this.getLog().info("Starting recovery manager");
+
+                RecoveryManager.delayRecoveryManagerThread() ;
+                _recoveryManager = RecoveryManager.manager() ;
+
+                this.getLog().info("Recovery manager started");
             }
             else
             {
@@ -189,11 +198,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
      */
     public void handleNotification(final Notification notification, final Object param)
     {
-        this.getLog().info("Starting recovery manager");
-
-        _recoveryManager = RecoveryManager.manager() ;
-
-        this.getLog().info("Recovery manager started");
+        _recoveryManager.startRecoveryManagerThread() ;
     }
 
     private boolean isRecoveryManagerRunning() throws Exception
@@ -362,7 +367,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 
     /**
      * Retrieves whether the statistics are enabled.
-     * @return
+     * @return true if enabled, false otherwise.
      */
     public boolean getStatisticsEnabled()
     {
@@ -391,7 +396,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 
     /**
      * Returns the number of active transactions
-     * @return
+     * @return The number of active transactions.
      */
     public long getTransactionCount()
     {
@@ -400,7 +405,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 
     /**
      * Returns the number of committed transactions
-     * @return
+     * @return The number of committed transactions.
      */
     public long getCommitCount()
     {
@@ -409,7 +414,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 
     /**
      * Returns the number of rolledback transactions
-     * @return
+     * @return The number of rolledback transactions.
      */
     public long getRollbackCount()
     {

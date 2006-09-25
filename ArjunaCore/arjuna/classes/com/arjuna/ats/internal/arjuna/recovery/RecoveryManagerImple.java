@@ -67,7 +67,7 @@ public class RecoveryManagerImple
    /**
     * Does the work of setting up crash recovery. 
     *
-    * @param boolean threaded if <code>true</code> then the manager will start
+    * @param threaded if <code>true</code> then the manager will start
     * a separate thread to run recovery periodically.
     *
     * @message com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1 [com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1] -  property io exception {0}
@@ -157,6 +157,14 @@ public class RecoveryManagerImple
     public final Vector getModules ()
     {
 	return _periodicRecovery.getModules();
+    }
+    
+    public void start()
+    {
+        if (!_periodicRecovery.isAlive())
+        {
+            _periodicRecovery.start() ;
+        }
     }
     
    public void stop ()

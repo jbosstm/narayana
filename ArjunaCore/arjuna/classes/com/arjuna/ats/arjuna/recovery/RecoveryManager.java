@@ -107,7 +107,7 @@ public class RecoveryManager
      * been created yet then it will be. The manager can be created in a
      * management mode defined by the parameter.
      *
-     * @param int mode the management mode for the manager.
+     * @param mode the management mode for the manager.
      *
      * @throw IllegalArgumentException thrown if the manager has already been
      * created in a different mode to that requested.
@@ -126,6 +126,14 @@ public class RecoveryManager
 	}
 	
 	return _recoveryManager;
+    }
+    
+    /**
+     * Delay the start of the recovery manager thread when creating an indirect recovery manager.
+     */
+    public static synchronized void delayRecoveryManagerThread()
+    {
+        delayRecoveryManagerThread = true ;
     }
 
     /**
@@ -162,6 +170,14 @@ public class RecoveryManager
     public final void stop ()
     {
 	_theImple.stop();
+    }
+    
+    /**
+     * Start the recovery manager thread.
+     */
+    public void startRecoveryManagerThread()
+    {
+        _theImple.start() ;
     }
 
     /**
@@ -233,7 +249,7 @@ public class RecoveryManager
 
     private RecoveryManager (int mode)
     {
-	if (mode == RecoveryManager.INDIRECT_MANAGEMENT)
+	if ((mode == RecoveryManager.INDIRECT_MANAGEMENT) && !delayRecoveryManagerThread)
 	    _theImple = new RecoveryManagerImple(true);
 	else
 	    _theImple = new RecoveryManagerImple(false);
@@ -245,5 +261,5 @@ public class RecoveryManager
     private int _mode;
     
     private static RecoveryManager _recoveryManager = null;
-    
+    private static boolean delayRecoveryManagerThread ;
 }
