@@ -550,9 +550,6 @@ public class XAResourceRecord extends AbstractRecord
 	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.opcnulltx
 	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.opcnulltx] {0} -
 	 *          null transaction!
-	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.opcxaerror
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.opcxaerror]
-	 *          {0} - xa error {1}
 	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.opcerror
 	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.opcerror] {0}
 	 *          caught: {1}
@@ -600,49 +597,20 @@ public class XAResourceRecord extends AbstractRecord
 						_theXAResource.end(_tranID, XAResource.TMSUCCESS);
 					}
 
-					try
-					{
-						_theXAResource.commit(_tranID, true);
-					}
-					catch (XAException xaex)
-					{
-						if (jtaLogger.loggerI18N.isWarnEnabled())
-						{
-							jtaLogger.loggerI18N
-									.warn(
-											"com.arjuna.ats.internal.jta.resources.arjunacore.opcxaerror",
-											new Object[]
-											{
-													"XAResourceRecord.commit_one_phase",
-													XAHelper
-															.printXAErrorCode(xaex) });
-						}
-						
-						if ((xaex.errorCode > XAException.XA_RBBASE)
-								&& (xaex.errorCode <= XAException.XA_RBEND))
-						{
-							return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
-						}
-
-						_theXAResource.rollback(_tranID);
-
-						throw xaex;
-					}
+					_theXAResource.commit(_tranID, true);
 				}
 				catch (XAException e1)
 				{
-					e1.printStackTrace();
-
 					/*
 					 * XA_HEURHAZ, XA_HEURCOM, XA_HEURRB, XA_HEURMIX,
 					 * XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
 					 * XAER_PROTO. XA_RB*
 					 */
 
-					if ((e1.errorCode > XAException.XA_RBBASE)
+					if ((e1.errorCode >= XAException.XA_RBBASE)
 							&& (e1.errorCode < XAException.XA_RBEND))
 					{
-						return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
+						return TwoPhaseOutcome.FINISH_ERROR;
 					}
 
 					switch (e1.errorCode)
@@ -652,10 +620,10 @@ public class XAResourceRecord extends AbstractRecord
 					case XAException.XA_HEURMIX:
 						return TwoPhaseOutcome.HEURISTIC_HAZARD;
 					case XAException.XA_HEURCOM:
+						forget() ;
 						break;
 					case XAException.XA_HEURRB:
-						// return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
-					case XAException.XA_RBROLLBACK:
+						forget() ;
 						return TwoPhaseOutcome.FINISH_ERROR;
 					case XAException.XAER_NOTA:
 					case XAException.XAER_PROTO:
@@ -706,6 +674,15 @@ public class XAResourceRecord extends AbstractRecord
 					"XAResourceRecord.forget for " + _tranID);
 		}
 
+		forget() ;
+
+		removeConnection();
+
+		return true;
+	}
+	
+	private void forget()
+	{
 		if ((_theXAResource != null) && (_tranID != null))
 		{
 			try
@@ -716,10 +693,6 @@ public class XAResourceRecord extends AbstractRecord
 			{
 			}
 		}
-
-		removeConnection();
-
-		return true;
 	}
 
 	/*

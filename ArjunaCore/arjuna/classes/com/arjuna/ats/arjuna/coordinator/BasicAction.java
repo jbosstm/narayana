@@ -2675,8 +2675,7 @@ public class BasicAction extends StateManager
 					}
 				}
 
-				if ((heuristicDecision == TwoPhaseOutcome.HEURISTIC_ROLLBACK) ||
-						(heuristicDecision == TwoPhaseOutcome.HEURISTIC_COMMIT))
+				if (heuristicDecision == TwoPhaseOutcome.HEURISTIC_ROLLBACK)
 				{
 					/*
 					 * Signal that the action outcome is the same as the
@@ -2689,6 +2688,11 @@ public class BasicAction extends StateManager
 																	// raised.
 
 					actionStatus = ActionStatus.ABORTED;
+				}
+				else if (heuristicDecision == TwoPhaseOutcome.HEURISTIC_COMMIT)
+				{
+					heuristicDecision = TwoPhaseOutcome.PREPARE_OK;
+					actionStatus = ActionStatus.COMMITTED;
 				}
 				else
 					actionStatus = ActionStatus.COMMITTED; // can't really say

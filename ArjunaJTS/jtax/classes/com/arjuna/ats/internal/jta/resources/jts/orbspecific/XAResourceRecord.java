@@ -685,51 +685,22 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						_theXAResource.end(_tranID, XAResource.TMSUCCESS);
 					}
 
-					try
-					{
-						_theXAResource.commit(_tranID, true);
-					}
-					catch (XAException xaex)
-					{
-						if (jtaLogger.loggerI18N.isWarnEnabled())
-						{
-							jtaLogger.loggerI18N
-									.warn(
-											"com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror",
-											new Object[]
-											{
-													"XAResourceRecord.commit_one_phase",
-													XAHelper
-															.printXAErrorCode(xaex) });
-						}
-						
-						if ((xaex.errorCode > XAException.XA_RBBASE)
-								&& (xaex.errorCode <= XAException.XA_RBEND))
-						{
-							throw new TRANSACTION_ROLLEDBACK();
-						}
-						
-						_theXAResource.rollback(_tranID);
-
-						throw xaex;
-					}
+					_theXAResource.commit(_tranID, true);
 				}
 				catch (XAException e1)
 				{
-					e1.printStackTrace();
-
 					/*
 					 * XA_HEURHAZ, XA_HEURCOM, XA_HEURRB, XA_HEURMIX,
 					 * XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
 					 * XAER_PROTO. XA_RB*
 					 */
 
-					if ((e1.errorCode > XAException.XA_RBBASE)
+					if ((e1.errorCode >= XAException.XA_RBBASE)
 							&& (e1.errorCode <= XAException.XA_RBEND))
 					{
 						throw new TRANSACTION_ROLLEDBACK();
 					}
-
+					
 					switch (e1.errorCode)
 					{
 					case XAException.XAER_RMERR:
@@ -739,10 +710,10 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 						throw new org.omg.CosTransactions.HeuristicHazard();
 					case XAException.XA_HEURCOM:
+						handleForget() ;
 						break;
 					case XAException.XA_HEURRB:
-						// throw new org.omg.CosTransactions.HeuristicHazard();
-					case XAException.XA_RBROLLBACK:
+						handleForget() ;
 						throw new TRANSACTION_ROLLEDBACK();
 					case XAException.XAER_NOTA:
 					case XAException.XAER_PROTO:
@@ -797,6 +768,15 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					"XAResourceRecord.forget for " + _tranID);
 		}
 
+		handleForget() ;
+
+		destroyState();
+
+		removeConnection();
+	}
+	
+	private void handleForget()
+	{
 		if ((_theXAResource != null) && (_tranID != null))
 		{
 			try
@@ -807,10 +787,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			{
 			}
 		}
-
-		destroyState();
-
-		removeConnection();
 	}
 
 	/**

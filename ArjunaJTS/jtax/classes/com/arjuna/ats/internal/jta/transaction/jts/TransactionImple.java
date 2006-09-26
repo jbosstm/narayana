@@ -296,11 +296,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 	}
 
 	/**
-	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed1
-	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed1]
+	 * @message com.arjuna.ats.internal.jta.transaction.jts.endsuspendfailed1
+	 *          [com.arjuna.ats.internal.jta.transaction.jts.endsuspendfailed1]
 	 *          Ending suspended RMs failed when rolling back the transaction!
-	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed2
-	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed2]
+	 * @message com.arjuna.ats.internal.jta.transaction.jts.endsuspendfailed2
+	 *          [com.arjuna.ats.internal.jta.transaction.jts.endsuspendfailed2]
 	 *          Ending suspended RMs failed when rolling back the transaction,
 	 *          but transaction rolled back.
 	 */
@@ -327,7 +327,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			{
 				if (jtaLogger.loggerI18N.isWarnEnabled())
 				{
-					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed1");
+					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.endsuspendfailed1");
 				}
 			}
 
@@ -365,7 +365,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 			if (endSuspendedFailed)
 				throw new IllegalStateException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed2"));
+						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.jts.endsuspendfailed2"));
 		}
 		else
 			throw new IllegalStateException(
@@ -711,7 +711,7 @@ public class TransactionImple implements javax.transaction.Transaction,
                                 {
                                     if (jtaLogger.loggerI18N.isWarnEnabled())
                                     {
-                                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.timeouterror", new Object[]
+                                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.timeouterror", new Object[]
                                         { "TransactionImple.enlistResource", XAHelper.printXAErrorCode(te), xid });
                                     }
                                 }
@@ -1386,8 +1386,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * If there are any suspended RMs then we should call end on them before the
 	 * transaction is terminated.
 	 * 
-	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.xaenderror
-	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.xaenderror]
+	 * @message com.arjuna.ats.internal.jta.transaction.jts.xaenderror
+	 *          [com.arjuna.ats.internal.jta.transaction.jts.xaenderror]
 	 *          Could not call end on a suspended resource!
 	 */
 
@@ -1433,7 +1433,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 				{
 					if (jtaLogger.loggerI18N.isWarnEnabled())
 					{
-						jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.xaenderror");
+						jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.xaenderror");
 					}
 
 					result = false;
