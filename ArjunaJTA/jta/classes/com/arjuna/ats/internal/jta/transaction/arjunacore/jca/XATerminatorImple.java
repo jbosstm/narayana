@@ -187,7 +187,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 	
 	/**
 	 * Return a list of indoubt transactions. This may include those
-	 * transactions that are currently in-flight and do not need recovery
+	 * transactions that are currently in-flight and running 2PC and do not need recovery
 	 * invoked on them.
 	 * 
 	 * @param flag either XAResource.TMSTARTRSCAN to indicate the start of
@@ -224,11 +224,11 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		try
 		{
 			ObjectStore objStore = new ObjectStore(TxControl.getActionStoreType());
-			InputObjectState states = null;
+			InputObjectState states = new InputObjectState();
 			
 			// only look in the JCA section of the object store
 			
-			if (objStore.allObjUids(SubordinateAtomicAction.getType(), states) && (states != null))
+			if (objStore.allObjUids(SubordinateAtomicAction.getType(), states) && (states.notempty()))
 			{
 				Stack values = new Stack();
 				boolean finished = false;

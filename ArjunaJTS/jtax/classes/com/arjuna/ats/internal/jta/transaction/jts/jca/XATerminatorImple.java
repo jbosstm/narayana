@@ -184,11 +184,11 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		try
 		{
 			ObjectStore objStore = new ObjectStore(TxControl.getActionStoreType());
-			InputObjectState states = null;
+			InputObjectState states = new InputObjectState();
 			
 			// only look in the JCA section of the object store
 			
-			if (objStore.allObjUids(ServerTransaction.getType(), states) && (states != null))
+			if (objStore.allObjUids(ServerTransaction.getType(), states) && (states.notempty()))
 			{
 				Stack values = new Stack();
 				boolean finished = false;
