@@ -46,12 +46,6 @@
 	</path>
 	<property name="com.hp.mwlabs.buildsystem.classpath" refid="com.hp.mwlabs.buildsystem.classpath"/>
 	
-	<!-- Files that need word substitutions -->
-	<property name="com.hp.mwlabs.buildsystem.info.src" value="${com.hp.mwlabs.buildsystem.src}/com/hp/mw/ts/buildsystem/Info.javatmpl"/>
-	<property name="com.hp.mwlabs.buildsystem.info.dest" value="${com.hp.mwlabs.buildsystem.src}/com/hp/mw/ts/buildsystem/Info.java"/>
-	<property name="com.hp.mwlabs.buildsystem.properties.src" value="${com.hp.mwlabs.buildsystem.src}/com/hp/mw/ts/buildsystem/common/Configuration.javatmpl"/>
-	<property name="com.hp.mwlabs.buildsystem.properties.dest" value="${com.hp.mwlabs.buildsystem.src}/com/hp/mw/ts/buildsystem/common/Configuration.java"/>
-
 	<!-- Initialisation -->
 	<target name="com.hp.mwlabs.buildsystem.init">
 		<!-- Define default build properties -->

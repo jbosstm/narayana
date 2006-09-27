@@ -54,9 +54,6 @@
 
 		<!-- Files that need word substitutions -->
 
-	<property name="com.hp.mwlabs.ts.jta.properties.src" value="${com.hp.mwlabs.ts.jta.src}/com/arjuna/ats/jta/common/Configuration.javatmpl"/>
-	<property name="com.hp.mwlabs.ts.jta.properties.dest"
-	value="${com.hp.mwlabs.ts.jta.src}/com/arjuna/ats/jta/common/Configuration.java"/>
         <property name="com.hp.mwlabs.ts.jta.resourcebundle"
 	value="jta_msg_en_US.properties"/>
 
@@ -133,18 +130,6 @@
 		<echo message="Property file name : ${com.hp.mwlabs.ts.jta.propertyfile}"/>
 		<echo message="Property directory : ${com.hp.mw.propertydirectory}"/>
 
-		<!-- Process the class that uses the property file -->
-		<copy
-			file="${com.hp.mwlabs.ts.jta.properties.src}"
-			tofile="${com.hp.mwlabs.ts.jta.properties.dest}"
-			overwrite="yes"
-		>
-			<filterset>
-				<filter token="JTA_VERSION" value="${com.hp.mw.version}"/>
-				<filter token="PROPERTIES_FILE" value="${com.hp.mwlabs.ts.jta.propertyfile}"/>
-			</filterset>
-		</copy>
-
 		<!-- Process the property file -->
 		<copy
 			file="${com.hp.mwlabs.ts.jta.etc}/default-${com.hp.mwlabs.ts.jta.propertyfile.tmpl}"
@@ -196,6 +181,12 @@
 			</classpath>
 		</javac>
 
+        <!-- Process the properties -->
+    	<property name="property.file" value="jta.properties"/>
+    	<propertyfile file="${com.hp.mwlabs.ts.jta.dest}/${property.file}">
+			<entry key="JTA_VERSION" value="${com.hp.mw.version}"/>
+			<entry key="PROPERTIES_FILE" value="${com.hp.mwlabs.ts.jta.propertyfile}"/>
+		</propertyfile>
 	</target>
 
 	<target name="com.hp.mwlabs.ts.jta.tests.jar" depends="com.hp.mwlabs.ts.jta.tests.compile" if="com.hp.mwlabs.ts.jta.tests.compile">
@@ -297,8 +288,6 @@
 		<delete dir="${com.hp.mwlabs.ts.jta.dest}"/>
 		<delete dir="${com.hp.mwlabs.ts.jta.jar.dest}"/>
 		<delete dir="${com.hp.mwlabs.ts.jta.tests.dest}"/>
-		<delete file="${com.hp.mwlabs.ts.jta.info.dest}"/>
-		<delete file="${com.hp.mwlabs.ts.jta.properties.dest}"/>
 		<delete file="${com.hp.mwlabs.ts.jta.propertyfile.src}"/>
 
 	</target>

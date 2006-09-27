@@ -19,41 +19,55 @@
  * @author JBoss Inc.
  */
 /*
- * Copyright (C) 2002,
+ * Copyright (C) 2001
  *
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
  * UK.
  *
- * $Id: Info.javatmpl 2342 2006-03-30 13:06:17Z  $
+ * $Id: RecoveryConfiguration.javatmpl 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.common;
+package com.arjuna.ats.arjuna.recovery;
 
-import java.util.Hashtable;
+import com.arjuna.ats.arjuna.common.Configuration;
 
 /**
- * Module specific implementation of the interface object.
+ * This class contains various run-time configuration options. Default
+ * values are provided at compile-time, and may be operating system
+ * specific.
  *
- * @author Richard Begg (richard_begg@hp.com)
- * @version $Id: Info.javatmpl 2342 2006-03-30 13:06:17Z  $
- * @since HPTS 3.0
  */
-public class Info
+public class RecoveryConfiguration
 {
-    public String toString()
-    {
-        StringBuffer moduleInfo = new StringBuffer();
 
-        moduleInfo.append("<module-info name=\"@MODULE@\">");
-        moduleInfo.append("<source-identifier>@SOURCEID@</source-identifier>");
-        moduleInfo.append("<build-information>@BUILDINFO@</build-information>");
-        moduleInfo.append("<version>@VERSION@</version>");
-        moduleInfo.append("<date>@DATE@</date>");
-        moduleInfo.append("<notes>@NOTES@</notes>");
-        moduleInfo.append("</module-info>");
+   /**
+    * @return the name of the RecoveryManager properties file to use.
+    * @since JTS 2.1.
+    */
+   public static synchronized final String recoveryManagerPropertiesFile()
+   {
+      return _rmPropertyFile;
+   }
 
-        return(moduleInfo.toString());
-    }
+   /**
+    * Set the name of the RecoveryManager properties file.
+    * @since JTS 2.1.
+    */
+
+   public static synchronized final void setRecoveryManagerPropertiesFile (String file)
+   {
+      _rmPropertyFile = file;
+   }
+
+   private static String _rmPropertyFile = Configuration.getBuildTimeProperty("RECOVERY_PROPERTIES_FILE")  ;
+
+   private RecoveryConfiguration()
+   {
+      // zero-ton class
+   }
 }
+
+
+

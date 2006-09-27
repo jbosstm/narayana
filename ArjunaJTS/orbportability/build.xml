@@ -46,8 +46,6 @@
 	<property name="com.hp.mwlabs.orbportability.buildroot" value="build"/>
 	<property name="com.hp.mwlabs.orbportability.builddir" location="${com.hp.mwlabs.orbportability.buildroot}/classes/"/>
     <property name="com.hp.mwlabs.orbportability.destdir" value="lib"/>
-	<property name="com.hp.mwlabs.orbportability.properties.src" value="${com.hp.mwlabs.orbportability.src}/com/arjuna/orbportability/common/Configuration.javatmpl"/>
-	<property name="com.hp.mwlabs.orbportability.properties.dest" value="${com.hp.mwlabs.orbportability.src}/com/arjuna/orbportability/common/Configuration.java"/>
     <property name="com.hp.mwlabs.orbportability.tests.src" value="tests/classes/"/>
     <property name="com.hp.mwlabs.orbportability.tests.build" value="${com.hp.mwlabs.orbportability.buildroot}/tests/"/>
     <property name="com.hp.mwlabs.orbportability.tests.destdir" value="${com.hp.mwlabs.orbportability.destdir}/tests/"/>
@@ -107,21 +105,6 @@
 		<mkdir	dir="${com.hp.mwlabs.orbportability.builddir}"/>
                 <mkdir	dir="${com.hp.mwlabs.orbportability.destdir}"/>
 
-		<copy
-			file="${com.hp.mwlabs.orbportability.src}/com/arjuna/orbportability/Info.javatmpl"
-			tofile="${com.hp.mwlabs.orbportability.src}/com/arjuna/orbportability/Info.java"
-			overwrite="yes"
-		>
-                    <filterset>
-                        <filter token="MODULE" value="${com.hp.mwlabs.modulename}"/>
-                        <filter token="SOURCEID" value="${com.hp.mw.sourceid}"/>
-                        <filter token="BUILDINFO" value="${com.hp.mw.builder}"/>
-                        <filter token="VERSION" value="${com.hp.mw.version}"/>
-                        <filter token="DATE" value="${com.hp.mw.date}"/>
-                        <filter token="NOTES" value="${com.hp.mw.notes}"/>
-                    </filterset>
-		</copy>
-
 		<!-- Set the module property file details -->
 		<property name="com.hp.mwlabs.orbportability.propertyfile" value="${com.hp.mwlabs.modulename}-properties.xml"/>
                 <property name="com.hp.mw.orbportability.configurationfile" value="defaultorb-configuration.xml"/>
@@ -129,20 +112,6 @@
 
 		<echo message="Property directory : ${com.hp.mw.propertydirectory}"/>
 		<echo message="Property file name : ${com.hp.mwlabs.orbportability.propertyfile}"/>
-		<!-- Process the class that uses the property file -->
-		<copy
-			file="${com.hp.mwlabs.orbportability.properties.src}"
-			tofile="${com.hp.mwlabs.orbportability.properties.dest}"
-			overwrite="yes"
-		>
-			<filterset>
-				<filter token="ORBPORTABILITY_VERSION" value="${com.hp.mw.version}"/>
-				<filter token="PROPERTIES_FILE" value="${com.hp.mwlabs.orbportability.propertyfile}"/>
-				<filter token="PROPERTIES_DIR" value="${com.hp.mw.propertydirectory}"/>
-                                <filter token="ORB_CONFIGURATION" value="${com.hp.mw.orbportability.configurationfile}"/>
-			</filterset>
-		</copy>
-
 	</target>
 
     <!-- If this build is part of a product build set the property files to the product property file -->
@@ -200,6 +169,21 @@
                     </classpath>
 
 		</javac>
+		
+        <!-- Process the properties -->
+    	<property name="property.file" value="orbportability.properties"/>
+    	<propertyfile file="${com.hp.mwlabs.orbportability.builddir}/${property.file}">
+            <entry key="MODULE" value="${com.hp.mwlabs.modulename}"/>
+            <entry key="SOURCEID" value="${com.hp.mw.sourceid}"/>
+            <entry key="BUILDINFO" value="${com.hp.mw.builder}"/>
+            <entry key="VERSION" value="${com.hp.mw.version}"/>
+            <entry key="DATE" value="${com.hp.mw.date}"/>
+            <entry key="NOTES" value="${com.hp.mw.notes}"/>
+			<entry key="ORBPORTABILITY_VERSION" value="${com.hp.mw.version}"/>
+			<entry key="PROPERTIES_FILE" value="${com.hp.mwlabs.orbportability.propertyfile}"/>
+            <entry key="ORB_CONFIGURATION" value="${com.hp.mw.orbportability.configurationfile}"/>
+		</propertyfile>
+
 
 	</target>
 
@@ -244,8 +228,6 @@
 		<delete dir="${com.hp.mwlabs.orbportability.buildroot}"/>
 		<delete dir="${com.hp.mwlabs.orbportability.destdir}"/>
 		<delete dir="${com.hp.mwlabs.orbportability.tests.build}"/>
-		<delete file="${com.hp.mwlabs.orbportability.src}/com/arjuna/orbportability/Info.java"/>
-		<delete file="${com.hp.mwlabs.orbportability.properties.dest}"/>
 
 	</target>
 

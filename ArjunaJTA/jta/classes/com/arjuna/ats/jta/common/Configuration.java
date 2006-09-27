@@ -29,13 +29,15 @@
  * $Id: Configuration.javatmpl 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.jdbc.common;
+package com.arjuna.ats.jta.common;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 
 import java.io.File;
+import java.io.InputStream;
 
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Runtime configuration class for this module.
@@ -66,7 +68,60 @@ public static synchronized final void setPropertiesFile (String file)
 	_propFile = file;
     }
 
-private static String _propFile = "@PROPERTIES_FILE@";
+    public static synchronized final Boolean getXATransactionTimeoutEnabled()
+    {
+        return _xaTransactionTimeoutEnabled ;
+    }
+
+    public static synchronized final void setXATransactionTimeoutEnabled(final Boolean xaTransactionTimeoutEnabled)
+    {
+        _xaTransactionTimeoutEnabled = xaTransactionTimeoutEnabled ;
+    }
+
+    /**
+     * Get a build time property.
+     * @param name The name of the build time property.
+     * @return The build time property value.
+     */
+    public static String getBuildTimeProperty(final String name)
+    {
+        if (PROPS == null)
+        {
+            return "" ;
+        }
+        else
+        {
+            return PROPS.getProperty(name, "") ;
+        }
+    }
+    
+    private static final Properties PROPS ;
+    
+    static
+    {
+        final InputStream is = Configuration.class.getResourceAsStream("/jta.properties") ;
+        if (is != null)
+        {
+            Properties props = new Properties() ;
+            try
+            {
+                props.load(is) ;
+            }
+            catch (final IOException ioe)
+            {
+                props = null ;
+            }
+            PROPS = props ;
+        }
+        else
+        {
+            PROPS = null ;
+        }
+    }
+
+private static String _lockStore = null;
+private static String _propFile = getBuildTimeProperty("PROPERTIES_FILE") ;
+private static Boolean _xaTransactionTimeoutEnabled ;
     
 }
 

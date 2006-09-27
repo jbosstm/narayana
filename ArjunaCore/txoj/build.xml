@@ -50,11 +50,6 @@
         <property name="com.hp.mwlabs.ts.txoj.tests.destdir" location="${com.hp.mwlabs.ts.txoj.jar.dest}/tests/"/>
 	<property name="com.hp.mwlabs.ts.txoj.utilities.src" location="bin"/>
 	<property name="com.hp.mwlabs.ts.txoj.utilities.dest" location="${com.hp.mwlabs.ts.txoj.destroot}/bin"/>
-		<!-- Files that need word substitutions -->
-	<property name="com.hp.mwlabs.ts.txoj.info.src" location="${com.hp.mwlabs.ts.txoj.src}/com/arjuna/ats/txoj/Info.javatmpl"/>
-	<property name="com.hp.mwlabs.ts.txoj.info.dest" location="${com.hp.mwlabs.ts.txoj.src}/com/arjuna/ats/txoj/Info.java"/>
-	<property name="com.hp.mwlabs.ts.txoj.properties.src" location="${com.hp.mwlabs.ts.txoj.src}/com/arjuna/ats/txoj/common/Configuration.javatmpl"/>
-	<property name="com.hp.mwlabs.ts.txoj.properties.dest" location="${com.hp.mwlabs.ts.txoj.src}/com/arjuna/ats/txoj/common/Configuration.java"/>
 
     <property name="com.hp.mwlabs.ts.txoj.resourcebundle" value="txoj_msg_en_US.properties"/>
 
@@ -118,22 +113,6 @@
 			<equals arg1="${com.hp.mw.ts.txoj.utilities.install}" arg2="yes"/>
 		</condition>
 
-		<!-- Process the info class -->
-		<copy
-			file="${com.hp.mwlabs.ts.txoj.info.src}"
-			tofile="${com.hp.mwlabs.ts.txoj.info.dest}"
-			overwrite="yes"
-		>
-			<filterset>
-				<filter token="MODULE" value="${com.hp.mwlabs.ts.modulename}"/>
-				<filter token="SOURCEID" value="${com.hp.mw.sourceid}"/>
-				<filter token="BUILDINFO" value="${com.hp.mw.builder}"/>
-				<filter token="VERSION" value="${com.hp.mw.version}"/>
-				<filter token="DATE" value="${com.hp.mw.date}"/>
-				<filter token="NOTES" value="${com.hp.mw.notes}"/>
-			</filterset>
-		</copy>
-
 		<!-- Set the module property file details -->
 		<property name="com.hp.mwlabs.ts.txoj.propertyfile" value="${com.hp.mwlabs.ts.modulename}-properties.xml"/>
 
@@ -141,18 +120,6 @@
 
 		<echo message="Property file name : ${com.hp.mwlabs.ts.txoj.propertyfile}"/>
 		<echo message="Property directory : ${com.hp.mw.propertydirectory}"/>
-
-		<!-- Process the class that uses the property file -->
-		<copy
-			file="${com.hp.mwlabs.ts.txoj.properties.src}"
-			tofile="${com.hp.mwlabs.ts.txoj.properties.dest}"
-			overwrite="yes"
-		>
-			<filterset>
-				<filter token="TXOJ_VERSION" value="${com.hp.mw.version}"/>
-				<filter token="PROPERTIES_FILE" value="${com.hp.mwlabs.ts.txoj.propertyfile}"/>
-			</filterset>
-		</copy>
 
 		<!-- Make the destination directory -->
 		<mkdir dir="${com.hp.mwlabs.ts.txoj.dest}"/>
@@ -192,6 +159,18 @@
 			</classpath>
 		</javac>
 
+        <!-- Process the properties -->
+    	<property name="property.file" value="txoj.properties"/>
+    	<propertyfile file="${com.hp.mwlabs.ts.txoj.dest}/${property.file}">
+			<entry key="MODULE" value="${com.hp.mwlabs.ts.modulename}"/>
+			<entry key="SOURCEID" value="${com.hp.mw.sourceid}"/>
+			<entry key="BUILDINFO" value="${com.hp.mw.builder}"/>
+			<entry key="VERSION" value="${com.hp.mw.version}"/>
+			<entry key="DATE" value="${com.hp.mw.date}"/>
+			<entry key="NOTES" value="${com.hp.mw.notes}"/>
+			<entry key="TXOJ_VERSION" value="${com.hp.mw.version}"/>
+			<entry key="PROPERTIES_FILE" value="${com.hp.mwlabs.ts.txoj.propertyfile}"/>
+		</propertyfile>
 	</target>
 
 	<target name="com.hp.mwlabs.ts.txoj.tests.jar" depends="com.hp.mwlabs.ts.txoj.tests.compile" if="com.hp.mwlabs.ts.txoj.tests.compile">
@@ -339,8 +318,6 @@
 		<echo message="Cleaning module"/>
 		<delete dir="${com.hp.mwlabs.ts.txoj.destroot}"/>
 		<delete dir="${com.hp.mwlabs.ts.txoj.jar.dest}"/>
-		<delete file="${com.hp.mwlabs.ts.txoj.info.dest}"/>
-		<delete file="${com.hp.mwlabs.ts.txoj.properties.dest}"/>
 
 	</target>
 

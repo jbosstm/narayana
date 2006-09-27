@@ -42,6 +42,8 @@ import java.io.File;
 
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * Module specific configuration object.
@@ -258,14 +260,55 @@ public static synchronized final void setBindDefault (int i)
 
 public static final String version ()
     {
-	return "@ORBPORTABILITY_VERSION@";
+	return getBuildTimeProperty("ORBPORTABILITY_VERSION") ;
     }
+    /**
+     * Get a build time property.
+     * @param name The name of the build time property.
+     * @return The build time property value.
+     */
+    public static String getBuildTimeProperty(final String name)
+    {
+        if (PROPS == null)
+        {
+            return "" ;
+        }
+        else
+        {
+            return PROPS.getProperty(name, "") ;
+        }
+    }
+    
+    private static final Properties PROPS ;
+    
+    static
+    {
+        final InputStream is = Configuration.class.getResourceAsStream("/arjuna.properties") ;
+        if (is != null)
+        {
+            Properties props = new Properties() ;
+            try
+            {
+                props.load(is) ;
+            }
+            catch (final IOException ioe)
+            {
+                props = null ;
+            }
+            PROPS = props ;
+        }
+        else
+        {
+            PROPS = null ;
+        }
+    }
+    
 
 private static String 	_configFile = "CosServices.cfg";
 private static String 	_configFileRoot = null;
 private static int    	_bindDefault = Services.CONFIGURATION_FILE;
 private static boolean 	_bindDefaultSet = false;
-private static String   _propFile = "@PROPERTIES_FILE@";
-private static String   _orbConfiguration = "@ORB_CONFIGURATION@";
+private static String   _propFile = getBuildTimeProperty("PROPERTIES_FILE") ;
+private static String   _orbConfiguration = getBuildTimeProperty("ORB_CONFIGURATION") ;
 
 }

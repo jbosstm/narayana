@@ -31,6 +31,10 @@
 
 package com.arjuna.ats.jts.common;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 /**
  * Build-time configuration information for the module.
  *
@@ -48,7 +52,7 @@ public class Configuration
 
 public static final String version ()
     {
-	return "@JTS_VERSION@";
+	return getBuildTimeProperty("JTS_VERSION") ;
     }
 
     /**
@@ -69,6 +73,47 @@ public static synchronized final void setPropertiesFile (String file)
 	_propFile = file;
     }
 
-private static String _propFile = "@PROPERTIES_FILE@";
+    /**
+     * Get a build time property.
+     * @param name The name of the build time property.
+     * @return The build time property value.
+     */
+    public static String getBuildTimeProperty(final String name)
+    {
+        if (PROPS == null)
+        {
+            return "" ;
+        }
+        else
+        {
+            return PROPS.getProperty(name, "") ;
+        }
+    }
+    
+    private static final Properties PROPS ;
+    
+    static
+    {
+        final InputStream is = Configuration.class.getResourceAsStream("/jts.properties") ;
+        if (is != null)
+        {
+            Properties props = new Properties() ;
+            try
+            {
+                props.load(is) ;
+            }
+            catch (final IOException ioe)
+            {
+                props = null ;
+            }
+            PROPS = props ;
+        }
+        else
+        {
+            PROPS = null ;
+        }
+    }
+
+private static String _propFile = getBuildTimeProperty("PROPERTIES_FILE") ;
 
 }

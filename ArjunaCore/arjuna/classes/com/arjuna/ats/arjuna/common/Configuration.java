@@ -31,14 +31,17 @@
 
 package com.arjuna.ats.arjuna.common;
 
+import com.arjuna.common.Info;
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.FileLocator;
 
 import java.io.File;
+import java.io.InputStream;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
 import java.io.IOException;
+import java.util.Properties;
 
 /*
  * When we have an installation utility (e.g., InstallShield) we can have
@@ -110,7 +113,7 @@ public static synchronized final String propertiesDir ()
 
 public static final String version ()
     {
-	return "@ARJUNA_VERSION@";
+	return getBuildTimeProperty("ARJUNA_VERSION");
     }
 
     /**
@@ -165,9 +168,50 @@ public static synchronized final void setAlternativeOrdering (boolean b)
 	_useAltOrder = b;
     }
 
+    /**
+     * Get a build time property.
+     * @param name The name of the build time property.
+     * @return The build time property value.
+     */
+    public static String getBuildTimeProperty(final String name)
+    {
+        if (PROPS == null)
+        {
+            return "" ;
+        }
+        else
+        {
+            return PROPS.getProperty(name, "") ;
+        }
+    }
+    
+    private static final Properties PROPS ;
+    
+    static
+    {
+        final InputStream is = Configuration.class.getResourceAsStream("/arjuna.properties") ;
+        if (is != null)
+        {
+            Properties props = new Properties() ;
+            try
+            {
+                props.load(is) ;
+            }
+            catch (final IOException ioe)
+            {
+                props = null ;
+            }
+            PROPS = props ;
+        }
+        else
+        {
+            PROPS = null ;
+        }
+    }
+
 private static String  _objectStore = null;
 private static boolean _useAltOrder = false;
-private static String  _propFile = "@PROPERTIES_FILE@";
+private static String  _propFile = getBuildTimeProperty("PROPERTIES_FILE");
 
 
 }

@@ -43,9 +43,6 @@
     <property name="com.arjuna.mwlabs.ts.tsmx.utilities.dest" location="${com.arjuna.mwlabs.ts.tsmx.destroot}/bin"/>
     <property name="com.arjuna.mwlabs.ts.tsmx.etc" location="etc"/>
 
-    <property name="com.arjuna.mwlabs.ts.tsmx.properties.src" location="${com.arjuna.mwlabs.ts.tsmx.src}/com/arjuna/ats/tsmx/common/Configuration.javatmpl"/>
-    <property name="com.arjuna.mwlabs.ts.tsmx.properties.dest" location="${com.arjuna.mwlabs.ts.tsmx.src}/com/arjuna/ats/tsmx/common/Configuration.java"/>
-
     <property name="com.arjuna.mw.ts.tsmx.tests.compile" value="no"/>
     <property name="com.arjuna.mw.ts.tsmx.tests.install" value="no"/>
     <property name="com.arjuna.mw.ts.tsmx.utilities.compile" value="yes"/>
@@ -123,20 +120,6 @@
 
         <!-- Make the destination directory -->
         <mkdir dir="${com.arjuna.mwlabs.ts.tsmx.dest}"/>
-
-        <!-- Process the classes that use the property file -->
-        <copy
-            file="${com.arjuna.mwlabs.ts.tsmx.properties.src}"
-            tofile="${com.arjuna.mwlabs.ts.tsmx.properties.dest}"
-            overwrite="yes"
-            >
-            <filterset>
-                <filter token="TSMX_VERSION" value="${com.arjuna.mw.version}"/>
-                <filter token="PROPERTIES_FILE" value="${com.arjuna.mwlabs.ts.tsmx.propertyfile}"/>
-                <filter token="PROPERTIES_DIR" value="${com.arjuna.mw.propertydirectory}"/>
-            </filterset>
-        </copy>
-
     </target>
 
     <target name="com.arjuna.mw.ts.tsmx.build" depends="com.arjuna.mw.ts.tsmx.jar, com.arjuna.mwlabs.ts.tsmx.utilities.jar, com.arjuna.mwlabs.ts.tsmx.tests.jar"/>
@@ -161,6 +144,12 @@
             </classpath>
         </javac>
 
+        <!-- Process the properties -->
+    	<property name="property.file" value="tsmx.properties"/>
+    	<propertyfile file="${com.arjuna.mwlabs.ts.tsmx.dest}/${property.file}">
+            <entry key="TSMX_VERSION" value="${com.arjuna.mw.version}"/>
+            <entry key="PROPERTIES_FILE" value="${com.arjuna.mwlabs.ts.tsmx.propertyfile}"/>
+        </propertyfile>
     </target>
 
     <!-- Jar targets -->

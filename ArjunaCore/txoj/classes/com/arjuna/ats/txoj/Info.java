@@ -19,9 +19,9 @@
  * @author JBoss Inc.
  */
 /*
- * Copyright (C) 2002,
+ * Copyright (C) 1998, 1999, 2000, 2001,
  *
- * Hewlett-Packard Arjuna Labs,
+ * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
  * UK.  
@@ -29,50 +29,36 @@
  * $Id: Info.javatmpl 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.jdbc;
+package com.arjuna.ats.txoj;
+
+import java.util.Hashtable;
+
+import com.arjuna.ats.txoj.common.Configuration;
 
 /**
- * Module specific implementation of the information object.
+ * Module specific implementation of the interface object.
  *
- * @author Mark Little (mark_little@hp.com)
+ * @author Richard Begg (richard_begg@hp.com)
  * @version $Id: Info.javatmpl 2342 2006-03-30 13:06:17Z  $
- * @since JTS 2.0.
+ * @since HPTS 3.0
  */
-
 public class Info
 {
-
     public String toString()
     {
-	String supportedVersions = "JNDI";
-	
-@IFDEF_BUILD_CLOUDSCAPE_3_6@
-	supportedVersions += ", Cloudscape_3_6";
-@ENDIF_BUILD_CLOUDSCAPE_3_6@
-
-@IFDEF_BUILD_ORACLE_8_1_6@
-	supportedVersions += ", Oracle_8_1_6";
-@ENDIF_BUILD_ORACLE_8_1_6@
-
-@IFDEF_BUILD_SEQUELINK_5_1@
-	supportedVersions += ", Sequelink_5_1";
-@ENDIF_BUILD_SEQUELINK_5_1@
-
         StringBuffer moduleInfo = new StringBuffer();
 
-        moduleInfo.append("<module-info name=\"@MODULE@\">");
-        moduleInfo.append("<source-identifier>@SOURCEID@</source-identifier>");
-        moduleInfo.append("<build-information>@BUILDINFO@</build-information>");
-        moduleInfo.append("<version>@VERSION@</version>");
-        moduleInfo.append("<date>@DATE@</date>");
-        moduleInfo.append("<notes>@NOTES@</notes>");
+        moduleInfo.append("<module-info name=\"" + Configuration.getBuildTimeProperty("MODULE") + "\">");
+        moduleInfo.append("<source-identifier>" + Configuration.getBuildTimeProperty("SOURCEID") + "</source-identifier>");
+        moduleInfo.append("<build-information>" + Configuration.getBuildTimeProperty("BUILDINFO") + "</build-information>");
+        moduleInfo.append("<version>" + Configuration.getBuildTimeProperty("VERSION") + "</version>");
+        moduleInfo.append("<date>" + Configuration.getBuildTimeProperty("DATE") + "</date>");
+        moduleInfo.append("<notes>" + Configuration.getBuildTimeProperty("NOTES") + "</notes>");
         moduleInfo.append("<configuration>");
-	moduleInfo.append("<supported-versions>\""+supportedVersions+"\"/>");
+	moduleInfo.append("<lock-store-root>"+com.arjuna.ats.txoj.common.Configuration.lockStoreRoot()+"</lock-store-root>");
         moduleInfo.append("</configuration>");
         moduleInfo.append("</module-info>");
 
         return(moduleInfo.toString());
     }
-
 }
-

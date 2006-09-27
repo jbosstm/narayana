@@ -19,7 +19,7 @@
  * @author JBoss Inc.
  */
 /*
- * Copyright (C) 1998, 1999, 2000, 2001,
+ * Copyright (C) 2001,
  *
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
@@ -29,9 +29,11 @@
  * $Id: Info.javatmpl 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.txoj;
+package com.arjuna.ats.arjuna;
 
 import java.util.Hashtable;
+
+import com.arjuna.ats.arjuna.common.Configuration;
 
 /**
  * Module specific implementation of the interface object.
@@ -40,23 +42,29 @@ import java.util.Hashtable;
  * @version $Id: Info.javatmpl 2342 2006-03-30 13:06:17Z  $
  * @since HPTS 3.0
  */
+
 public class Info
 {
     public String toString()
     {
         StringBuffer moduleInfo = new StringBuffer();
 
-        moduleInfo.append("<module-info name=\"@MODULE@\">");
-        moduleInfo.append("<source-identifier>@SOURCEID@</source-identifier>");
-        moduleInfo.append("<build-information>@BUILDINFO@</build-information>");
-        moduleInfo.append("<version>@VERSION@</version>");
-        moduleInfo.append("<date>@DATE@</date>");
-        moduleInfo.append("<notes>@NOTES@</notes>");
+        moduleInfo.append("<module-info name=\"" + Configuration.getBuildTimeProperty("MODULE") + "\">");
+        moduleInfo.append("<source-identifier>" + Configuration.getBuildTimeProperty("SOURCEID") + "</source-identifier>");
+        moduleInfo.append("<build-information>" + Configuration.getBuildTimeProperty("BUILDINFO") + "</build-information>");
+        moduleInfo.append("<version>" + Configuration.getBuildTimeProperty("VERSION") + "</version>");
+        moduleInfo.append("<date>" + Configuration.getBuildTimeProperty("DATE") + "</date>");
+        moduleInfo.append("<notes>" + Configuration.getBuildTimeProperty("NOTES") + "</notes>");
         moduleInfo.append("<configuration>");
-	moduleInfo.append("<lock-store-root>"+com.arjuna.ats.txoj.common.Configuration.lockStoreRoot()+"</lock-store-root>");
+        moduleInfo.append("<properties-file dir=\""+Configuration.propertiesDir()+"\">"+Configuration.propertiesFile()+"</properties-file>");
+	moduleInfo.append("<object-store-root>"+Configuration.objectStoreRoot()+"</object-store-root>");
         moduleInfo.append("</configuration>");
         moduleInfo.append("</module-info>");
 
         return(moduleInfo.toString());
     }
+    
 }
+
+
+

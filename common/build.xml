@@ -47,11 +47,11 @@
 	<property name="com.arjuna.buildsystem.build.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
 	
 	<property name="com.arjuna.common.src" location="classes"/>
+	<property name="com.arjuna.common.etc" location="etc"/>
     <property name="com.hp.mwlabs.ts.common.tests.src" location="tests/"/>
 	
     <property name="com.arjuna.common.destroot" location="build"/>
     <property name="com.hp.mwlabs.ts.common.jar.dest" location="${com.arjuna.common.destroot}/lib"/>
-    <property name="com.hp.mwlabs.ts.common.src.dest" location="${com.arjuna.common.destroot}/src"/>
     <property name="com.hp.mwlabs.ts.common.dest" location="${com.arjuna.common.destroot}/classes"/>
     <property name="com.hp.mwlabs.ts.common.htdocs.dest" value="${com.arjuna.common.destroot}/htdocs"/>
     <property name="com.hp.mwlabs.ts.common.tests.dest" location="${com.arjuna.common.destroot}/tests"/>
@@ -125,20 +125,6 @@
         <!-- Build htdocs for which package? -->
         <property name="com.arjuna.common.htdocs.list" value="com.arjuna.common.logging.*"/>
 
-        <!-- Process the info class -->
-        <copy todir="${com.hp.mwlabs.ts.common.src.dest}" overwrite="yes">
-                       <fileset dir="${com.arjuna.common.src}" includes="**/*.javatmpl"/>
-                       <mapper type="glob" from="*.javatmpl" to="*.java"/>
-            <filterset>
-                <filter token="MODULE" value="${com.arjuna.common.modulename}"/>
-                <filter token="SOURCEID" value="${com.hp.mw.ts.common.sourceid}"/>
-                <filter token="BUILDINFO" value="${com.arjuna.common.builder}"/>
-                <filter token="VERSION" value="${com.hp.mw.ts.common.version}"/>
-                <filter token="DATE" value="${com.hp.mw.ts.common.date}"/>
-                <filter token="NOTES" value="${com.hp.mw.ts.common.notes}"/>
-            </filterset>
-        </copy>
-
         <!-- Set the module property file details -->
         <taskdef name="version-to-property" classname="com.hp.mw.buildsystem.ant.VersToProp" classpath="${com.arjuna.buildsystem.classpath}"/>
         <version-to-property version="${com.hp.mw.ts.common.version}" property="com.hp.mwlabs.ts.common.propertyversion"/>
@@ -151,7 +137,6 @@
 
         <!-- Make the destination directories -->
         <mkdir dir="${com.arjuna.common.destroot}"/>
-        <mkdir dir="${com.hp.mwlabs.ts.common.src.dest}"/>
         <mkdir dir="${com.hp.mwlabs.ts.common.dest}"/>
     </target>
 
@@ -164,7 +149,7 @@
 
         <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
 
-        <javac srcdir="${com.arjuna.common.src}:${com.hp.mwlabs.ts.common.src.dest}"
+        <javac srcdir="${com.arjuna.common.src}"
             destdir="${com.hp.mwlabs.ts.common.dest}"
             classpath="${com.arjuna.common.src}"
             excludes="${com.arjuna.common.compile.excludes}"
@@ -174,6 +159,18 @@
                 <path path="${com.arjuna.common.src}"/>
             </classpath>
         </javac>
+    	
+        <!-- Process the properties -->
+    	<property name="property.file" value="common.properties"/>
+    	<propertyfile file="${com.hp.mwlabs.ts.common.dest}/${property.file}">
+            <entry key="MODULE" value="${com.arjuna.common.modulename}"/>
+            <entry key="SOURCEID" value="${com.hp.mw.ts.common.sourceid}"/>
+            <entry key="BUILDINFO" value="${com.arjuna.common.builder}"/>
+            <entry key="VERSION" value="${com.hp.mw.ts.common.version}"/>
+            <entry key="DATE" value="${com.hp.mw.ts.common.date}"/>
+            <entry key="NOTES" value="${com.hp.mw.ts.common.notes}"/>
+        </propertyfile>
+
     </target>
 
     <!-- Jar targets -->

@@ -64,13 +64,6 @@
 <!--
 	<property name="com.hp.mwlabs.ts.arjuna.compile.excludes" value="**/jdbc/**/*.java"/>
 -->
-		<!-- Files that need word substitutions -->
-	<property name="com.hp.mwlabs.ts.arjuna.info.src" location="${com.hp.mwlabs.ts.arjuna.src}/com/arjuna/ats/arjuna/Info.javatmpl"/>
-	<property name="com.hp.mwlabs.ts.arjuna.info.dest" location="${com.hp.mwlabs.ts.arjuna.src}/com/arjuna/ats/arjuna/Info.java"/>
-	<property name="com.hp.mwlabs.ts.arjuna.properties.src" location="${com.hp.mwlabs.ts.arjuna.src}/com/arjuna/ats/arjuna/common/Configuration.javatmpl"/>
-	<property name="com.hp.mwlabs.ts.arjuna.properties.dest" location="${com.hp.mwlabs.ts.arjuna.src}/com/arjuna/ats/arjuna/common/Configuration.java"/>
-	<property name="com.hp.mwlabs.ts.arjuna.recoveryproperties.src" location="${com.hp.mwlabs.ts.arjuna.src}/com/arjuna/ats/arjuna/recovery/RecoveryConfiguration.javatmpl"/>
-	<property name="com.hp.mwlabs.ts.arjuna.recoveryproperties.dest" location="${com.hp.mwlabs.ts.arjuna.src}/com/arjuna/ats/arjuna/recovery/RecoveryConfiguration.java"/>
 
     <property name="com.hp.mwlabs.ts.arjuna.propertyfile.src" value="${com.hp.mwlabs.ts.modulename}-properties.xml"/>
     <property name="com.hp.mwlabs.ts.arjuna.recoverypropertyfile.src" value="RecoveryManager-properties.xml"/>
@@ -148,22 +141,6 @@
             <equals arg1="${com.hp.mw.ts.arjuna.services.install}" arg2="yes"/>
         </condition>
 
-		<!-- Process the info class -->
-		<copy
-			file="${com.hp.mwlabs.ts.arjuna.info.src}"
-			tofile="${com.hp.mwlabs.ts.arjuna.info.dest}"
-			overwrite="yes"
-		>
-			<filterset>
-				<filter token="MODULE" value="${com.hp.mwlabs.ts.modulename}"/>
-				<filter token="SOURCEID" value="${com.hp.mw.sourceid}"/>
-				<filter token="BUILDINFO" value="${com.hp.mw.builder}"/>
-				<filter token="VERSION" value="${com.hp.mw.version}"/>
-				<filter token="DATE" value="${com.hp.mw.date}"/>
-				<filter token="NOTES" value="${com.hp.mw.notes}"/>
-			</filterset>
-		</copy>
-
 		<!-- Set the module property files details -->
 
         <!-- Set the module property files details -->
@@ -179,28 +156,6 @@
 		<echo message="Recovery property file name : ${com.hp.mwlabs.ts.arjuna.recoverypropertyfile}"/>
 		<echo message="Commong logging property file name : ${com.hp.mwlabs.ts.arjuna.loggingpropertyfile}"/>
 		<echo message="Property directory : ${com.hp.mw.propertydirectory}"/>
-
-		<!-- Process the classes that use the property file -->
-		<copy
-			file="${com.hp.mwlabs.ts.arjuna.properties.src}"
-			tofile="${com.hp.mwlabs.ts.arjuna.properties.dest}"
-			overwrite="yes"
-		>
-			<filterset>
-				<filter token="ARJUNA_VERSION" value="${com.hp.mw.version}"/>
-				<filter token="PROPERTIES_FILE" value="${com.hp.mwlabs.ts.arjuna.propertyfile}"/>
-				<filter token="PROPERTIES_DIR" value="${com.hp.mw.propertydirectory}"/>
-			</filterset>
-		</copy>
-		<copy
-			file="${com.hp.mwlabs.ts.arjuna.recoveryproperties.src}"
-			tofile="${com.hp.mwlabs.ts.arjuna.recoveryproperties.dest}"
-			overwrite="yes"
-		>
-			<filterset>
-				<filter token="RECOVERY_PROPERTIES_FILE" value="${com.hp.mwlabs.ts.arjuna.recoverypropertyfile}"/>
-			</filterset>
-		</copy>
 
 		<!-- Make the destination directory -->
 		<mkdir dir="${com.hp.mwlabs.ts.arjuna.dest}"/>
@@ -239,6 +194,20 @@
 				<path path="${com.hp.mwlabs.ts.arjuna.src}"/>
 			</classpath>
 		</javac>
+
+        <!-- Process the properties -->
+    	<property name="property.file" value="arjuna.properties"/>
+    	<propertyfile file="${com.hp.mwlabs.ts.arjuna.dest}/${property.file}">
+			<entry key="MODULE" value="${com.hp.mwlabs.ts.modulename}"/>
+			<entry key="SOURCEID" value="${com.hp.mw.sourceid}"/>
+			<entry key="BUILDINFO" value="${com.hp.mw.builder}"/>
+			<entry key="VERSION" value="${com.hp.mw.version}"/>
+			<entry key="DATE" value="${com.hp.mw.date}"/>
+			<entry key="NOTES" value="${com.hp.mw.notes}"/>
+			<entry key="ARJUNA_VERSION" value="${com.hp.mw.version}"/>
+			<entry key="PROPERTIES_FILE" value="${com.hp.mwlabs.ts.arjuna.propertyfile}"/>
+			<entry key="RECOVERY_PROPERTIES_FILE" value="${com.hp.mwlabs.ts.arjuna.recoverypropertyfile}"/>
+		</propertyfile>
 
 	</target>
 
@@ -554,10 +523,6 @@
 		<echo message="Cleaning module"/>
 		<delete dir="${com.hp.mwlabs.ts.arjuna.destroot}"/>
 		<delete dir="${com.hp.mwlabs.ts.arjuna.jar.dest}"/>
-		<delete file="${com.hp.mwlabs.ts.arjuna.info.dest}"/>
-		<delete file="${com.hp.mwlabs.ts.arjuna.properties.dest}"/>
-		<delete file="${com.hp.mwlabs.ts.arjuna.recoveryproperties.dest}"/>
-		<delete file="${com.hp.mwlabs.ts.arjuna.brandings.dest}"/>
 	</target>
 
 	<target name="com.hp.mwlabs.ts.arjuna.tests.clean">

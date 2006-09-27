@@ -51,12 +51,12 @@ public class Info
     {
         StringBuffer moduleInfo = new StringBuffer();
 
-        moduleInfo.append("<module-info name=\"@MODULE@\">");
-        moduleInfo.append("<source-identifier>@SOURCEID@</source-identifier>");
-        moduleInfo.append("<build-information>@BUILDINFO@</build-information>");
-        moduleInfo.append("<version>@VERSION@</version>");
-        moduleInfo.append("<date>@DATE@</date>");
-        moduleInfo.append("<notes>@NOTES@</notes>");
+        moduleInfo.append("<module-info name=\"" + Configuration.getBuildTimeProperty("MODULE") + "\">");
+        moduleInfo.append("<source-identifier>" + Configuration.getBuildTimeProperty("SOURCEID") + "</source-identifier>");
+        moduleInfo.append("<build-information>" + Configuration.getBuildTimeProperty("BUILDINFO") + "</build-information>");
+        moduleInfo.append("<version>" + Configuration.getBuildTimeProperty("VERSION") + "</version>");
+        moduleInfo.append("<date>" + Configuration.getBuildTimeProperty("DATE") + "</date>");
+        moduleInfo.append("<notes>" + Configuration.getBuildTimeProperty("NOTES") + "</notes>");
         moduleInfo.append("<configuration>");
         moduleInfo.append("<config-file>"+Configuration.configFile()+"</config-file>");
         moduleInfo.append("<config-file-root>"+Configuration.configFileRoot()+"</config-file-root>");

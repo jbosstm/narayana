@@ -57,13 +57,6 @@
 	<property name="com.hp.mwlabs.ts.jdbc.tests.destdir" location="${com.hp.mwlabs.ts.jdbc.jar.dest}/tests/"/>
 		<!-- Relative path for files to exclude in main compile -->
 	<property name="com.hp.mwlabs.ts.jdbc.compile.excludes" value="**/oracle_8*.java, **/oracle_9*.java, **/sequelink*.java, **/cloudscape*.java"/>
-		<!-- Files that need word substitutions -->
-	<property name="com.hp.mwlabs.ts.jdbc.properties.src" location="${com.hp.mwlabs.ts.jdbc.src}/com/arjuna/ats/jdbc/common/Configuration.javatmpl"/>
-	<property name="com.hp.mwlabs.ts.jdbc.properties.dest"
-	location="${com.hp.mwlabs.ts.jdbc.src}/com/arjuna/ats/jdbc/common/Configuration.java"/>
-	<property name="com.hp.mwlabs.ts.jdbc.info.src" location="${com.hp.mwlabs.ts.jdbc.src}/com/arjuna/ats/jdbc/Info.javatmpl"/>
-	<property name="com.hp.mwlabs.ts.jdbc.info.dest"
-		location="${com.hp.mwlabs.ts.jdbc.src}/com/arjuna/ats/jdbc/Info.java"/>
         <property name="com.hp.mwlabs.ts.jdbc.resourcebundle"
 	value="jdbc_msg_en_US.properties"/>
 
@@ -137,76 +130,25 @@
 
 		<!--Set the properties we need to preprocess files.-->
 
-		<condition property="com.hp.mwlabs.ts.jdbc.sequelink51.ifdef" value=" ">
+		<condition property="sequelink51" value=", Sequelink_5_1">
 			<equals arg1="${com.hp.mw.ts.jdbc.sequelink51.compile}" arg2="yes"/>
 		</condition>
-		<property name="com.hp.mwlabs.ts.jdbc.sequelink51.ifdef" value="/*"/>
+		<property name="sequelink51" value=""/>
 
-		<condition property="com.hp.mwlabs.ts.jdbc.sequelink51.endif" value=" ">
-			<equals arg1="${com.hp.mw.ts.jdbc.sequelink51.compile}" arg2="yes"/>
-		</condition>
-		<property name="com.hp.mwlabs.ts.jdbc.sequelink51.endif" value="*/"/>
-
-		<condition property="com.hp.mwlabs.ts.jdbc.oracle81.ifdef" value=" ">
+		<condition property="oracle81" value=", Oracle_8_1_6">
 			<equals arg1="${com.hp.mw.ts.jdbc.oracle81.compile}" arg2="yes"/>
 		</condition>
-		<property name="com.hp.mwlabs.ts.jdbc.oracle81.ifdef" value="/*"/>
+		<property name="oracle81" value=""/>
 
-		<condition property="com.hp.mwlabs.ts.jdbc.oracle81.endif" value=" ">
-			<equals arg1="${com.hp.mw.ts.jdbc.oracle81.compile}" arg2="yes"/>
-		</condition>
-		<property name="com.hp.mwlabs.ts.jdbc.oracle81.endif"
-		value="*/"/>
-
-		<condition property="com.hp.mwlabs.ts.jdbc.oracle90.ifdef" value=" ">
+		<condition property="oracle90" value=", Oracle_9_0">
 			<equals arg1="${com.hp.mw.ts.jdbc.oracle90.compile}" arg2="yes"/>
 		</condition>
-		<property name="com.hp.mwlabs.ts.jdbc.oracle90.ifdef" value="/*"/>
+		<property name="oracle90" value=""/>
 
-		<condition property="com.hp.mwlabs.ts.jdbc.oracle90.endif" value=" ">
-			<equals arg1="${com.hp.mw.ts.jdbc.oracle90.compile}" arg2="yes"/>
-		</condition>
-		<property name="com.hp.mwlabs.ts.jdbc.oracle90.endif" value="*/"/>
-
-		<condition property="com.hp.mwlabs.ts.jdbc.cloudscape36.ifdef" value=" ">
+		<condition property="cloudscape36" value=", Cloudscape_3_6">
 			<equals arg1="${com.hp.mw.ts.jdbc.cloudscape36.compile}" arg2="yes"/>
 		</condition>
-		<property name="com.hp.mwlabs.ts.jdbc.cloudscape36.ifdef" value="/*"/>
-
-		<condition property="com.hp.mwlabs.ts.jdbc.cloudscape36.endif" value=" ">
-			<equals arg1="${com.hp.mw.ts.jdbc.cloudscape36.compile}" arg2="yes"/>
-		</condition>
-		<property name="com.hp.mwlabs.ts.jdbc.cloudscape36.endif" value="*/"/>
-
-		<!-- Process the info class -->
-		<copy
-			file="${com.hp.mwlabs.ts.jdbc.info.src}"
-			tofile="${com.hp.mwlabs.ts.jdbc.info.dest}"
-			overwrite="yes"
-		>
-			<filterset>
-				<filter token="IFDEF_BUILD_SEQUELINK_5_1" value="${com.hp.mwlabs.ts.jdbc.sequelink51.ifdef}"/>
-				<filter
-				token="ENDIF_BUILD_SEQUELINK_5_1"
-				value="${com.hp.mwlabs.ts.jdbc.sequelink51.endif}"/>
-				<filter token="IFDEF_BUILD_CLOUDSCAPE_3_6" value="${com.hp.mwlabs.ts.jdbc.cloudscape36.ifdef}"/>
-				<filter
-				token="ENDIF_BUILD_CLOUDSCAPE_3_6"
-				value="${com.hp.mwlabs.ts.jdbc.cloudscape36.endif}"/>
-				<filter token="IFDEF_BUILD_ORACLE_8_1_6" value="${com.hp.mwlabs.ts.jdbc.oracle81.ifdef}"/>
-				<filter
-				token="ENDIF_BUILD_ORACLE_8_1_6"
-				value="${com.hp.mwlabs.ts.jdbc.oracle81.endif}"/>
-				<filter token="IFDEF_BUILD_ORACLE_9_0" value="${com.hp.mwlabs.ts.jdbc.oracle90.ifdef}"/>
-				<filter token="ENDIF_BUILD_ORACLE_9_0" value="${com.hp.mwlabs.ts.jdbc.oracle90.endif}"/>
-				<filter token="MODULE" value="${com.hp.mwlabs.ts.modulename}"/>
-				<filter token="SOURCEID" value="${com.hp.mw.sourceid}"/>
-				<filter token="BUILDINFO" value="${com.hp.mw.builder}"/>
-				<filter token="VERSION" value="${com.hp.mw.version}"/>
-				<filter token="DATE" value="${com.hp.mw.date}"/>
-				<filter token="NOTES" value="${com.hp.mw.notes}"/>
-			</filterset>
-		</copy>
+		<property name="cloudscape36" value=""/>
 
 		<!-- Set the module property file details -->
 
@@ -216,18 +158,6 @@
 
 		<echo message="Property file name : ${com.hp.mwlabs.ts.jdbc.propertyfile}"/>
 		<echo message="Property directory : ${com.hp.mw.propertydirectory}"/>
-
-		<!-- Process the class that uses the property file -->
-		<copy
-			file="${com.hp.mwlabs.ts.jdbc.properties.src}"
-			tofile="${com.hp.mwlabs.ts.jdbc.properties.dest}"
-			overwrite="yes"
-		>
-			<filterset>
-				<filter token="JDBC_VERSION" value="${com.hp.mw.version}"/>
-				<filter token="PROPERTIES_FILE" value="${com.hp.mwlabs.ts.jdbc.propertyfile}"/>
-			</filterset>
-		</copy>
 
 		<!-- Make the destination directory -->
 		<mkdir dir="${com.hp.mwlabs.ts.jdbc.dest}"/>
@@ -269,6 +199,19 @@
 			</classpath>
 		</javac>
 
+        <!-- Process the properties -->
+    	<property name="property.file" value="jdbc.properties"/>
+    	<propertyfile file="${com.hp.mwlabs.ts.jdbc.dest}/${property.file}">
+			<entry key="MODULE" value="${com.hp.mwlabs.ts.modulename}"/>
+			<entry key="SOURCEID" value="${com.hp.mw.sourceid}"/>
+			<entry key="BUILDINFO" value="${com.hp.mw.builder}"/>
+			<entry key="VERSION" value="${com.hp.mw.version}"/>
+			<entry key="DATE" value="${com.hp.mw.date}"/>
+			<entry key="NOTES" value="${com.hp.mw.notes}"/>
+		    <entry key="SUPPORTED_VERSIONS" value="JNDI${cloudscape36}${oracle81}${oracle90}${sequelink51}"/>
+			<entry key="JDBC_VERSION" value="${com.hp.mw.version}"/>
+			<entry key="PROPERTIES_FILE" value="${com.hp.mwlabs.ts.jdbc.propertyfile}"/>
+		</propertyfile>
 	</target>
 
 	<!-- Non-specific objectstore files -->
@@ -467,8 +410,6 @@
 		<delete dir="${com.hp.mwlabs.ts.jdbc.destroot}"/>
 		<delete dir="${com.hp.mwlabs.ts.jdbc.jar.dest}"/>
 		<delete dir="${com.hp.mwlabs.ts.jdbc.tests.dest}"/>
-		<delete file="${com.hp.mwlabs.ts.jdbc.info.dest}"/>
-		<delete file="${com.hp.mwlabs.ts.jdbc.properties.dest}"/>
 
 	</target>
 

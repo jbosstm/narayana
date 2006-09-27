@@ -19,9 +19,9 @@
  * @author JBoss Inc.
  */
 /*
- * Copyright (C) 2001,
+ * Copyright (C) 2002,
  *
- * Arjuna Solutions Limited,
+ * Hewlett-Packard Arjuna Labs,
  * Newcastle upon Tyne,
  * Tyne and Wear,
  * UK.  
@@ -29,40 +29,38 @@
  * $Id: Info.javatmpl 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.arjuna;
+package com.arjuna.ats.jdbc;
 
-import java.util.Hashtable;
+import com.arjuna.ats.jdbc.common.Configuration;
 
 /**
- * Module specific implementation of the interface object.
+ * Module specific implementation of the information object.
  *
- * @author Richard Begg (richard_begg@hp.com)
+ * @author Mark Little (mark_little@hp.com)
  * @version $Id: Info.javatmpl 2342 2006-03-30 13:06:17Z  $
- * @since HPTS 3.0
+ * @since JTS 2.0.
  */
 
 public class Info
 {
+
     public String toString()
     {
         StringBuffer moduleInfo = new StringBuffer();
 
-        moduleInfo.append("<module-info name=\"@MODULE@\">");
-        moduleInfo.append("<source-identifier>@SOURCEID@</source-identifier>");
-        moduleInfo.append("<build-information>@BUILDINFO@</build-information>");
-        moduleInfo.append("<version>@VERSION@</version>");
-        moduleInfo.append("<date>@DATE@</date>");
-        moduleInfo.append("<notes>@NOTES@</notes>");
+        moduleInfo.append("<module-info name=\"" + Configuration.getBuildTimeProperty("MODULE") + "\">");
+        moduleInfo.append("<source-identifier>" + Configuration.getBuildTimeProperty("SOURCEID") + "</source-identifier>");
+        moduleInfo.append("<build-information>" + Configuration.getBuildTimeProperty("BUILDINFO") + "</build-information>");
+        moduleInfo.append("<version>" + Configuration.getBuildTimeProperty("VERSION") + "</version>");
+        moduleInfo.append("<date>" + Configuration.getBuildTimeProperty("DATE") + "</date>");
+        moduleInfo.append("<notes>" + Configuration.getBuildTimeProperty("NOTES") + "</notes>");
         moduleInfo.append("<configuration>");
-        moduleInfo.append("<properties-file dir=\""+com.arjuna.ats.arjuna.common.Configuration.propertiesDir()+"\">"+com.arjuna.ats.arjuna.common.Configuration.propertiesFile()+"</properties-file>");
-	moduleInfo.append("<object-store-root>"+com.arjuna.ats.arjuna.common.Configuration.objectStoreRoot()+"</object-store-root>");
+	moduleInfo.append("<supported-versions>" + Configuration.getBuildTimeProperty("SUPPORTED_VERSIONS") + "</supported-versions>");
         moduleInfo.append("</configuration>");
         moduleInfo.append("</module-info>");
 
         return(moduleInfo.toString());
     }
-    
+
 }
-
-
 

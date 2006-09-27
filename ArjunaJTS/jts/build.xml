@@ -58,11 +58,6 @@
     <property name="com.hp.mwlabs.ts.jts.services.dest" value="${com.hp.mwlabs.ts.jts.buildroot}/services/"/>
     <property name="com.hp.mwlabs.ts.jts.services.destdir" value="${com.hp.mwlabs.ts.jts.jar.dest}/services/"/>
 
-		<!-- Files that need word substitutions -->
-	<property name="com.hp.mwlabs.ts.jts.info.src" location="${com.hp.mwlabs.ts.jts.src}/com/arjuna/ats/jts/Info.javatmpl"/>
-	<property name="com.hp.mwlabs.ts.jts.info.dest" location="${com.hp.mwlabs.ts.jts.src}/com/arjuna/ats/jts/Info.java"/>
-	<property name="com.hp.mwlabs.ts.jts.properties.src" location="${com.hp.mwlabs.ts.jts.src}/com/arjuna/ats/jts/common/Configuration.javatmpl"/>
-	<property name="com.hp.mwlabs.ts.jts.properties.dest" location="${com.hp.mwlabs.ts.jts.src}/com/arjuna/ats/jts/common/Configuration.java"/>
         <property name="com.hp.mwlabs.ts.jts.resourcebundle"
 	value="jts_msg_en_US.properties"/>
 
@@ -122,21 +117,6 @@
             <equals arg1="${com.hp.mw.ts.jts.services.install}" arg2="yes"/>
         </condition>
 
-		<!-- Process the info class -->
-		<copy
-			file="${com.hp.mwlabs.ts.jts.info.src}"
-			tofile="${com.hp.mwlabs.ts.jts.info.dest}"
-		>
-			<filterset>
-				<filter token="MODULE" value="${com.hp.mwlabs.ts.modulename}"/>
-				<filter token="SOURCEID" value="${com.hp.mw.sourceid}"/>
-				<filter token="BUILDINFO" value="${com.hp.mw.builder}"/>
-				<filter token="VERSION" value="${com.hp.mw.version}"/>
-				<filter token="DATE" value="${com.hp.mw.date}"/>
-				<filter token="NOTES" value="${com.hp.mw.notes}"/>
-			</filterset>
-		</copy>
-
 		<!-- Set the module property file details -->
 		<property name="com.hp.mwlabs.ts.jts.propertyfile" value="${com.hp.mwlabs.ts.modulename}-properties.xml"/>
                 <property name="com.hp.mwlabs.ts.jts.recoverymanager.propertyfile" value="RecoveryManager-properties.xml"/>
@@ -148,18 +128,6 @@
 
 		<property name="com.hp.mw.idldirectory" location="${com.hp.mwlabs.installationdirectory}/idl"/>
 		<echo message="IDL directory : ${com.hp.mw.idldirectory}"/>
-
-		<!-- Process the class that uses the property file -->
-		<copy
-			file="${com.hp.mwlabs.ts.jts.properties.src}"
-			tofile="${com.hp.mwlabs.ts.jts.properties.dest}"
-		>
-			<filterset>
-				<filter token="JTS_VERSION" value="${com.hp.mw.ts.version}"/>
-				<filter token="PROPERTIES_FILE" value="${com.hp.mwlabs.ts.jts.propertyfile}"/>
-				<filter token="PROPERTIES_DIR" value="${com.hp.mw.propertydirectory}"/>
-			</filterset>
-		</copy>
 
 		<!-- Make the destination directory -->
 		<mkdir dir="${com.hp.mwlabs.ts.jts.dest}"/>
@@ -236,7 +204,19 @@
 				<path path="${com.hp.mwlabs.ts.jts.src}"/>
 			</classpath>
 		</javac>
-
+		
+        <!-- Process the properties -->
+    	<property name="property.file" value="jts.properties"/>
+    	<propertyfile file="${com.hp.mwlabs.ts.jts.dest}/${property.file}">
+			<entry key="MODULE" value="${com.hp.mwlabs.ts.modulename}"/>
+			<entry key="SOURCEID" value="${com.hp.mw.sourceid}"/>
+			<entry key="BUILDINFO" value="${com.hp.mw.builder}"/>
+			<entry key="VERSION" value="${com.hp.mw.version}"/>
+			<entry key="DATE" value="${com.hp.mw.date}"/>
+			<entry key="NOTES" value="${com.hp.mw.notes}"/>
+			<entry key="JTS_VERSION" value="${com.hp.mw.ts.version}"/>
+			<entry key="PROPERTIES_FILE" value="${com.hp.mwlabs.ts.jts.propertyfile}"/>
+		</propertyfile>
 	</target>
 
     <target name="com.hp.mwlabs.ts.jts.services.install" depends="com.hp.mwlabs.ts.jts.services.jar" if="com.hp.mwlabs.ts.jts.services.install">
@@ -440,9 +420,6 @@
 		<echo message="Cleaning module"/>
 		<delete dir="${com.hp.mwlabs.ts.jts.dest}"/>
 		<delete dir="${com.hp.mwlabs.ts.jts.jar.dest}"/>
-		<delete file="${com.hp.mwlabs.ts.jts.info.dest}"/>
-		<delete file="${com.hp.mwlabs.ts.jts.properties.dest}"/>
-
 	</target>
 
 	<target name="com.hp.mwlabs.ts.jts.tests.clean">

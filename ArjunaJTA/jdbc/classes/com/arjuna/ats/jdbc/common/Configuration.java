@@ -29,12 +29,15 @@
  * $Id: Configuration.javatmpl 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.txoj.common;
+package com.arjuna.ats.jdbc.common;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
+
 import java.io.File;
+import java.io.InputStream;
 
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Runtime configuration class for this module.
@@ -66,39 +69,47 @@ public static synchronized final void setPropertiesFile (String file)
     }
 
     /**
-     * Used to get the root of the object store.
-     *
-     * @return <code>path</code> to lock store.
+     * Get a build time property.
+     * @param name The name of the build time property.
+     * @return The build time property value.
      */
-
-public static synchronized final String lockStoreRoot ()
+    public static String getBuildTimeProperty(final String name)
     {
-	if (_lockStore == null)
-	    /* Set default location under current directory */
-	    _lockStore = System.getProperty("user.dir") + File.separator + "LockStore";
-
-System.err.println("Returning lockstore location of: " + _lockStore);
-	return _lockStore;
+        if (PROPS == null)
+        {
+            return "" ;
+        }
+        else
+        {
+            return PROPS.getProperty(name, "") ;
+        }
+    }
+    
+    private static final Properties PROPS ;
+    
+    static
+    {
+        final InputStream is = Configuration.class.getResourceAsStream("/jdbc.properties") ;
+        if (is != null)
+        {
+            Properties props = new Properties() ;
+            try
+            {
+                props.load(is) ;
+            }
+            catch (final IOException ioe)
+            {
+                props = null ;
+            }
+            PROPS = props ;
+        }
+        else
+        {
+            PROPS = null ;
+        }
     }
 
-    /**
-     * Used to set the root of the lock store. Changes will
-     * take effect the next time the root is queried. Existing
-     * lock store instances will not be effected.
-     */
-
-public static synchronized final void setLockStoreRoot (String s)
-    {
-	_lockStore = s;
-    }
-
-public static final String version ()
-    {
-	return "@TXOJ_VERSION@";
-    }
-
-private static String _lockStore = null;
-private static String _propFile = "@PROPERTIES_FILE@";
+private static String _propFile = getBuildTimeProperty("PROPERTIES_FILE") ;
     
 }
 
