@@ -1162,23 +1162,22 @@ public class TransactionImple implements javax.transaction.Transaction,
 			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.commitAndDisassociate");
 		}
 
-		if (_theTransaction != null)
-		{
-			switch (_theTransaction.status())
-			{
-			case ActionStatus.RUNNING:
-			case ActionStatus.ABORT_ONLY:
-				break;
-			default:
-				throw new IllegalStateException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
-			}
-		}
-
-		try
-		{
-			if (_theTransaction != null)
-			{
+        try
+        {
+    		if (_theTransaction != null)
+    		{
+    			switch (_theTransaction.status())
+    			{
+    			case ActionStatus.RUNNING:
+    			case ActionStatus.ABORT_ONLY:
+    				break;
+                case ActionStatus.ABORTED:
+                    _theTransaction.abort() ;
+    			default:
+    				throw new IllegalStateException(
+    						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+    			}
+                
 				switch (_theTransaction.commit(true))
 				{
 				case ActionStatus.COMMITTED:
@@ -1199,18 +1198,6 @@ public class TransactionImple implements javax.transaction.Transaction,
 			else
 				throw new IllegalStateException(
 						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
-		}
-		catch (javax.transaction.HeuristicMixedException ex)
-		{
-			throw ex;
-		}
-		catch (RollbackException ex)
-		{
-			throw ex;
-		}
-		catch (IllegalStateException ex)
-		{
-			throw ex;
 		}
 		finally
 		{
