@@ -214,6 +214,9 @@ public class XAResourceRecord extends AbstractRecord
 	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.preparenulltx
 	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.preparenulltx]
 	 *          {0} - null transaction!
+	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.preparefailed
+	 * 			[com.arjuna.ats.internal.jta.resources.arjunacore.preparefailed]
+	 * 			{0} - prepare failed with exception {1}
 	 */
 
 	public int topLevelPrepare()
@@ -267,6 +270,16 @@ public class XAResourceRecord extends AbstractRecord
 		}
 		catch (XAException e1)
 		{
+			if (jtaLogger.loggerI18N.isWarnEnabled())
+			{
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.resources.arjunacore.preparefailed",
+								new Object[]
+								{ "XAResourceRecord.prepare", XAHelper
+										.printXAErrorCode(e1) });
+			}
+			
 			/*
 			 * XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
 			 * XAER_PROTO.
@@ -279,10 +292,14 @@ public class XAResourceRecord extends AbstractRecord
 		}
 		catch (Exception e2)
 		{
-			/*
-			 * XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
-			 * XAER_PROTO.
-			 */
+			if (jtaLogger.loggerI18N.isWarnEnabled())
+			{
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.resources.arjunacore.preparefailed",
+								new Object[]
+								{ "XAResourceRecord.prepare", e2 });
+			}
 
 			if (_rollbackOptimization) // won't have rollback called on it
 				removeConnection();

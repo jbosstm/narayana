@@ -184,6 +184,12 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		return _tranID;
 	}
 
+	/**
+	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed
+	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed]
+	 *          XAResource prepare failed with: {1}
+	 */
+	
 	public org.omg.CosTransactions.Vote prepare() throws HeuristicMixed,
 			HeuristicHazard, org.omg.CORBA.SystemException
 	{
@@ -261,6 +267,16 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 		catch (XAException e1)
 		{
+			if (jtaLogger.loggerI18N.isWarnEnabled())
+			{
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed",
+								new Object[]
+								{ XAHelper
+										.printXAErrorCode(e1) });
+			}
+			
 			/*
 			 * XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
 			 * XAER_PROTO.
@@ -273,10 +289,14 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 		catch (Exception e2)
 		{
-			/*
-			 * XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
-			 * XAER_PROTO.
-			 */
+			if (jtaLogger.loggerI18N.isWarnEnabled())
+			{
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed",
+								new Object[]
+								{ e2 });
+			}
 
 			if (_rollbackOptimization) // won't have rollback called on it
 				removeConnection();
