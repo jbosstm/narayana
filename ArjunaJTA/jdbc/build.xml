@@ -407,7 +407,7 @@
 	<target name="com.hp.mw.ts.jdbc.clean" depends="com.hp.mwlabs.ts.jdbc.tests.clean">
 
 		<echo message="Cleaning module"/>
-		<delete dir="${com.hp.mwlabs.ts.jdbc.destroot}"/>
+		<delete dir="${com.hp.mwlabs.ts.jdbc.dest}"/>
 		<delete dir="${com.hp.mwlabs.ts.jdbc.jar.dest}"/>
 		<delete dir="${com.hp.mwlabs.ts.jdbc.tests.dest}"/>
 
