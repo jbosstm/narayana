@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, JBoss Inc., and others contributors as indicated 
- * by the @authors tag. All rights reserved. 
+ * Copyright 2006, JBoss Inc., and others contributors as indicated
+ * by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -434,7 +434,7 @@ public class ConnectionImple implements java.sql.Connection
     public void setTransactionIsolation (int iso) throws SQLException
     {
 	checkTransaction();
-	
+
 	/*
 	if (iso != Connection.TRANSACTION_SERIALIZABLE)
 	    throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.stateerror")+"Connection.TRANSACTION_SERIALIZABLE");
@@ -622,7 +622,7 @@ public class ConnectionImple implements java.sql.Connection
 	return (ConnectionControl) _recoveryConnection;
     }
 
-    private final boolean transactionRunning () throws SQLException
+    protected final boolean transactionRunning () throws SQLException
     {
 	try
 	{
@@ -657,7 +657,7 @@ public class ConnectionImple implements java.sql.Connection
      * @message com.arjuna.ats.internal.jdbc.alreadyassociated Connection is already associated with a different transaction! Obtain a new connection for this transaction.
      */
 
-    private final synchronized void registerDatabase () throws SQLException
+    protected final synchronized void registerDatabase () throws SQLException
     {
 	if (jdbcLogger.logger.isDebugEnabled())
 	{
@@ -757,7 +757,7 @@ public class ConnectionImple implements java.sql.Connection
      * @message com.arjuna.ats.internal.jdbc.infoerror Could not get transaction information.
      */
 
-    private final void checkTransaction () throws SQLException
+    protected final void checkTransaction () throws SQLException
     {
 	if (jdbcLogger.logger.isDebugEnabled())
 	{
@@ -858,6 +858,6 @@ public class ConnectionImple implements java.sql.Connection
 	    }
 	}
     }
-    
+
 }
 

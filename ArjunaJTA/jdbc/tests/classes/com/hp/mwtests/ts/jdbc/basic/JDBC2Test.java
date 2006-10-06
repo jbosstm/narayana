@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, JBoss Inc., and others contributors as indicated 
- * by the @authors tag. All rights reserved. 
+ * Copyright 2006, JBoss Inc., and others contributors as indicated
+ * by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -45,19 +45,23 @@ public class JDBC2Test extends Test
     public static final int SEQUELINK = 2;
     public static final int JNDI = 3;
 
-    public void run(String[] args)
+	protected Connection conn = null;
+	protected Connection conn2 = null;
+	protected boolean commit = false;
+	protected boolean nested = false;
+	protected boolean reuseconn = false;
+	protected Properties dbProperties = null;
+	protected String url = null;
+
+	protected void setup(String[] args)
     {
         int dbType = JNDI;
-        boolean commit = false;
-        boolean nested = false;
-        boolean reuseconn = false;
-        String url = null;
         String user = null;//"test";
         String password = null;//"test";
         String dynamicClass = null; //"com.arjuna.ats.internal.jdbc.drivers.jndi";
         String host = null;
         String port = null;
-	
+
         for (int i = 0; i < args.length; i++)
         {
             if (args[i].compareTo("-oracle") == 0)
@@ -96,7 +100,7 @@ public class JDBC2Test extends Test
 	    if (args[i].equalsIgnoreCase("-user"))
 		user = args[i+1];
 	    if (args[i].equalsIgnoreCase("-password"))
-		password = args[i+1];	
+		password = args[i+1];
             if (args[i].compareTo("-help") == 0)
             {
                 System.out.println("Usage: JDBCTest2 [-commit] [-nested] [-reuseconn] [-oracle] [-sequelink] [-cloudscape] [-url] [-dynamicClass]");
@@ -164,14 +168,8 @@ public class JDBC2Test extends Test
             assertFailure();
         }
 
-        Connection conn = null;
-        Connection conn2 = null;
-        Statement stmt = null;  // non-tx statement
-        Statement stmtx = null;	// will be a tx-statement
-        Properties dbProperties = new Properties();
+        dbProperties = new Properties();
 
-        try
-        {
             System.out.println("\nCreating connection to database: " + url);
 
 	    if ( user != null )
@@ -183,15 +181,36 @@ public class JDBC2Test extends Test
 	    if ( dynamicClass != null )
             	dbProperties.put(TransactionalDriver.dynamicClass, dynamicClass);
 
-            conn = DriverManager.getConnection(url, dbProperties);
+		try
+		{
+			conn = DriverManager.getConnection(url, dbProperties);
             conn2 = DriverManager.getConnection(url, dbProperties);
-            stmt = conn.createStatement();  // non-tx statement
+		} catch(SQLException e) {
+			e.printStackTrace();
+			assertFailure();
+		}
+	}
+
+	public void run(String[] args)
+	{
+		setup(args);
+
+		Statement stmt = null;  // non-tx statement
+		Statement stmtx = null;	// will be a tx-statement
+
+		if(conn == null || conn2 == null) {
+			return;
+		}
+
+		try
+		{
+			stmt = conn.createStatement();  // non-tx statement
 
             try
             {
                 stmt.executeUpdate("DROP TABLE test_table");
                 stmt.executeUpdate("DROP TABLE test_table2");
-	    } 
+	    }
             catch (Exception e)
 	    {
 		// Ignore
@@ -363,11 +382,11 @@ public class JDBC2Test extends Test
 
             System.out.println("\nNow checking state of table 1.");
 
-            tx.begin();
+			tx.begin();
 
             if (!reuseconn)
             {
-                conn = DriverManager.getConnection(url, dbProperties);
+				conn = DriverManager.getConnection(url, dbProperties);
             }
 
             stmtx = conn.createStatement();
