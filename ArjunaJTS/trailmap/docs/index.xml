@@ -120,9 +120,12 @@ as fully distributed transactions and ORB portability with POA support.</p>
 					<li>
 						<a class="linkscoloured" href="next.html">6. Where Next?</a>: This trail indicates where to find additional information</li>
 				</ul>
+				<p>
 					In addition to the trails listed above, a set of trails giving more explanation on concept around 
 					transaction processing and standards, and also a quick access to section explaining how to configure ATS 
-					are listed in the section "Additional Trails".
+					are listed in the section "Additional Trails".</p>
+					<p><b>Note:</b>When running the local JTS transactions part of the trailmap, you will need to start
+the recovery manager: java com.arjuna.ats.arjuna.recovery.RecoveryManager -test</p>
 			</html>
 		</area>
 	</content>
