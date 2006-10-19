@@ -110,21 +110,21 @@ public class AddressingInterceptorHandler implements InterceptorHandler
                     {
                         return processInvocation(chain, soapService, soapDetails, context, responseContext, action, in) ;
                     }
-                    TaskManager.getManager().queueTask(new Task() {
-                        public void executeTask()
-                        {
-                            try
-                            {
-                                processInvocation(chain, soapService, soapDetails, context, responseContext, action, in) ;
-                            }
-                            catch (final SoapFault soapFault)
-                            {
-                                WSCLogger.arjLoggerI18N.error("com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_3", soapFault) ;
-                            }
-                        }
-                    }) ;
-                    return null ;
                 }
+                TaskManager.getManager().queueTask(new Task() {
+                    public void executeTask()
+                    {
+                        try
+                        {
+                            processInvocation(chain, soapService, soapDetails, context, responseContext, action, in) ;
+                        }
+                        catch (final SoapFault soapFault)
+                        {
+                            WSCLogger.arjLoggerI18N.error("com.arjuna.webservices.wsaddr2005.handlers.AddressingInterceptorHandler_3", soapFault) ;
+                        }
+                    }
+                }) ;
+                return null ;
             }
         }
         return processInvocation(chain, soapService, soapDetails, context, responseContext, action, in) ;
