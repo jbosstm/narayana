@@ -33,9 +33,8 @@ package com.arjuna.mwlabs.wst.at.local;
 
 import com.arjuna.mw.wstx.logging.wstxLogger;
 
+import com.arjuna.webservices.wsat.AtomicTransactionConstants;
 import com.arjuna.wst.*;
-
-import com.arjuna.mw.wst.common.Protocols;
 
 import com.arjuna.wsc.AlreadyRegisteredException;
 
@@ -66,7 +65,7 @@ public class TransactionManagerImple extends TransactionManager
 	{
 		try
 		{
-			_registrar.register(tpp, Protocols.DurableTwoPhaseCommit);
+			_registrar.register(tpp, AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC);
 		}
 		catch (com.arjuna.wsc.InvalidProtocolException ex)
 		{
@@ -88,7 +87,7 @@ public class TransactionManagerImple extends TransactionManager
 	{
 		try
 		{
-			_registrar.register(tpp, Protocols.VolatileTwoPhaseCommit);
+			_registrar.register(tpp, AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC);
 		}
 		catch (com.arjuna.wsc.InvalidProtocolException ex)
 		{

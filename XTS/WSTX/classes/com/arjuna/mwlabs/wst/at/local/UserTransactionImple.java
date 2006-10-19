@@ -32,9 +32,9 @@
 package com.arjuna.mwlabs.wst.at.local;
 
 import com.arjuna.mw.wst.UserTransaction;
-import com.arjuna.mw.wst.common.Protocols;
 import com.arjuna.mwlabs.wst.at.context.TxContextImple;
 import com.arjuna.mwlabs.wst.at.participants.CompletionCoordinatorImple;
+import com.arjuna.webservices.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices.wscoor.CoordinationContextType;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
@@ -71,7 +71,7 @@ public class UserTransactionImple extends UserTransaction
 			if (_contextManager.currentTransaction() != null)
 				throw new WrongStateException();
 
-			final CoordinationContextType ctx = _factory.create(Protocols.AtomicTransaction, null, null);
+			final CoordinationContextType ctx = _factory.create(AtomicTransactionConstants.WSAT_PROTOCOL, null, null);
 
 			TxContextImple theContext = new TxContextImple(ctx);
 

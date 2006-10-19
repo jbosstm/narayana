@@ -35,7 +35,6 @@ import com.arjuna.mw.wsas.context.DeploymentContext;
 import com.arjuna.mw.wsas.context.DeploymentContextFactory;
 import com.arjuna.mw.wscf.model.twophase.CoordinatorManagerFactory;
 import com.arjuna.mw.wscf.model.twophase.api.CoordinatorManager;
-import com.arjuna.mw.wst.common.Protocols;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wst.at.context.ArjunaContextImple;
 import com.arjuna.webservices.SoapRegistry;
@@ -43,6 +42,7 @@ import com.arjuna.webservices.stax.URI;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
 import com.arjuna.webservices.wsaddr.EndpointReferenceType;
 import com.arjuna.webservices.wsarj.InstanceIdentifier;
+import com.arjuna.webservices.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices.wscoor.AttributedUnsignedIntType;
 import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.webservices.wscoor.CoordinationContextType;
@@ -105,7 +105,7 @@ public class LocalContextFactoryImple implements ContextFactory
             final Long expires, final CoordinationContextType currentContext)
 			throws InvalidCreateParametersException
 	{
-		if (coordinationTypeURI.equals(Protocols.AtomicTransaction))
+		if (coordinationTypeURI.equals(AtomicTransactionConstants.WSAT_PROTOCOL))
 		{
 			try
 			{
@@ -155,12 +155,12 @@ public class LocalContextFactoryImple implements ContextFactory
 		else
 		{
 			wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.at.local.LocalContextFactoryImple_1", new Object[]
-			{ Protocols.AtomicTransaction, coordinationTypeURI });
+			{ AtomicTransactionConstants.WSAT_PROTOCOL, coordinationTypeURI });
 
 			throw new InvalidCreateParametersException(
 					wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wst.at.local.LocalContextFactoryImple_11"
 							+ " <"
-							+ Protocols.AtomicTransaction
+							+ AtomicTransactionConstants.WSAT_PROTOCOL
 							+ ", "
 							+ coordinationTypeURI + " >"));
 		}

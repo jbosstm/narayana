@@ -34,7 +34,6 @@ package com.arjuna.mwlabs.wst.at.remote;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst.TransactionManager;
 import com.arjuna.mw.wst.TxContext;
-import com.arjuna.mw.wst.common.Protocols;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wst.at.context.TxContextImple;
 import com.arjuna.webservices.SoapFault;
@@ -75,7 +74,7 @@ public class TransactionManagerImple extends TransactionManager
 	{
 		try
 		{
-			registerParticipant(getParticipant(id) , Protocols.DurableTwoPhaseCommit);
+			registerParticipant(getParticipant(id) , AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC);
 
 			ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(tpp), id) ;
 		}
@@ -99,7 +98,7 @@ public class TransactionManagerImple extends TransactionManager
 	{
 		try
 		{
-			registerParticipant(getParticipant(id), Protocols.VolatileTwoPhaseCommit);
+			registerParticipant(getParticipant(id), AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC);
 
             ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(tpp), id) ;
 		}
@@ -168,7 +167,7 @@ public class TransactionManagerImple extends TransactionManager
 			if (currentTx == null)
 				throw new com.arjuna.wsc.NoActivityException();
 
-			return registerParticipant(participantEndpoint, Protocols.Completion);
+			return registerParticipant(participantEndpoint, AtomicTransactionConstants.WSAT_SUB_PROTOCOL_COMPLETION);
 		}
 		catch (com.arjuna.wsc.InvalidProtocolException ex)
 		{

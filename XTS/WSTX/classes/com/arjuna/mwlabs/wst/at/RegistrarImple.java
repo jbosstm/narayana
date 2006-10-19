@@ -39,7 +39,6 @@ import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
 import com.arjuna.mw.wscf.model.twophase.CoordinatorManagerFactory;
 import com.arjuna.mw.wscf.model.twophase.api.CoordinatorManager;
-import com.arjuna.mw.wst.common.Protocols;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
@@ -86,9 +85,9 @@ public class RegistrarImple implements Registrar
 		// register with mapper using tx id as protocol identifier.
         final RegistrarMapper mapper = RegistrarMapper.getFactory() ;
 
-		mapper.addRegistrar(Protocols.DurableTwoPhaseCommit, this);
-		mapper.addRegistrar(Protocols.VolatileTwoPhaseCommit, this);
-		mapper.addRegistrar(Protocols.Completion, this);
+		mapper.addRegistrar(AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC, this);
+		mapper.addRegistrar(AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC, this);
+		mapper.addRegistrar(AtomicTransactionConstants.WSAT_SUB_PROTOCOL_COMPLETION, this);
 	}
 
 	/**
@@ -171,7 +170,7 @@ public class RegistrarImple implements Registrar
 
 		// TODO check for AlreadyRegisteredException
 
-		if (Protocols.DurableTwoPhaseCommit.equals(protocolIdentifier))
+		if (AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC.equals(protocolIdentifier))
 		{
 			// enlist participant that wraps the requester URI.
 			final String participantId = new Uid().stringForm();
@@ -190,7 +189,7 @@ public class RegistrarImple implements Registrar
 				throw new InvalidStateException();
 			}
 		}
-		else if (Protocols.VolatileTwoPhaseCommit.equals(protocolIdentifier))
+		else if (AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC.equals(protocolIdentifier))
 		{
 			// enlist participant that wraps the requester URI.
 			final String participantId = new Uid().stringForm();
@@ -209,7 +208,7 @@ public class RegistrarImple implements Registrar
 				throw new InvalidStateException();
 			}
 		}
-		else if (Protocols.Completion.equals(protocolIdentifier))
+		else if (AtomicTransactionConstants.WSAT_SUB_PROTOCOL_COMPLETION.equals(protocolIdentifier))
 		{
 			try
 			{
@@ -230,7 +229,7 @@ public class RegistrarImple implements Registrar
 		else
 		{
 			wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.at.RegistrarImple_1", new Object[]
-			{ Protocols.AtomicTransaction, protocolIdentifier });
+			{ AtomicTransactionConstants.WSAT_PROTOCOL, protocolIdentifier });
 
 			throw new InvalidProtocolException();
 		}
@@ -278,7 +277,7 @@ public class RegistrarImple implements Registrar
 			throws AlreadyRegisteredException, InvalidProtocolException,
 			InvalidStateException, NoActivityException
     {
-		if (Protocols.DurableTwoPhaseCommit.equals(protocolIdentifier))
+		if (AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC.equals(protocolIdentifier))
 		{
 			// enlist participant that wraps the requester URI.
             final String participantId = new Uid().stringForm();
@@ -295,7 +294,7 @@ public class RegistrarImple implements Registrar
                 throw new InvalidStateException();
             }
 		}
-		else if (Protocols.VolatileTwoPhaseCommit.equals(protocolIdentifier))
+		else if (AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC.equals(protocolIdentifier))
 		{
 			// enlist participant that wraps the requester URI.
             final String participantId = new Uid().stringForm();
@@ -312,7 +311,7 @@ public class RegistrarImple implements Registrar
                 throw new InvalidStateException();
             }
 		}
-		else if (Protocols.Completion.equals(protocolIdentifier))
+		else if (AtomicTransactionConstants.WSAT_SUB_PROTOCOL_COMPLETION.equals(protocolIdentifier))
 		{
 			// not allowed for subordinate transactions!
 			
@@ -321,7 +320,7 @@ public class RegistrarImple implements Registrar
 		else
 		{
 			wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.at.RegistrarImple_1", new Object[]
-			{ Protocols.AtomicTransaction, protocolIdentifier });
+			{ AtomicTransactionConstants.WSAT_PROTOCOL, protocolIdentifier });
 
 			throw new InvalidProtocolException();
 		}

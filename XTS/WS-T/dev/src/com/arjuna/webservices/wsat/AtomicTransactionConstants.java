@@ -198,4 +198,21 @@ public interface AtomicTransactionConstants
      * The InconsistentInternalState error code QName.
      */
     public QName WSAT_ERROR_CODE_INCONSISTENT_INTERNAL_STATE_QNAME = new QName(WSAT_NAMESPACE, WSAT_ERROR_CODE_INCONSISTENT_INTERNAL_STATE, WSAT_PREFIX) ;
+    
+    /**
+     * The atomic transaction protocol.
+     */
+    public String WSAT_PROTOCOL = WSAT_NAMESPACE ;
+    /**
+     * The atomic transaction completion protocol.
+     */
+    public String WSAT_SUB_PROTOCOL_COMPLETION = WSAT_NAMESPACE + "/Completion" ;
+    /**
+     * The atomic transaction durable 2PC protocol.
+     */
+    public String WSAT_SUB_PROTOCOL_DURABLE_2PC = WSAT_NAMESPACE + "/Durable2PC" ;
+    /**
+     * The atomic transaction volatile 2PC protocol.
+     */
+    public String WSAT_SUB_PROTOCOL_VOLATILE_2PC = WSAT_NAMESPACE + "/Volatile2PC" ;
 }

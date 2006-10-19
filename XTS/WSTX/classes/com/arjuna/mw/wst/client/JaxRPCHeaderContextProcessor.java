@@ -52,9 +52,10 @@ import com.arjuna.mw.wst.TransactionManager;
 import com.arjuna.mw.wst.TransactionManagerFactory;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wst.common.CoordinationContextHelper;
-import com.arjuna.mw.wst.common.Protocols;
 import com.arjuna.mw.wst.common.SOAPUtil;
 import com.arjuna.mw.wstx.logging.wstxLogger;
+import com.arjuna.webservices.wsat.AtomicTransactionConstants;
+import com.arjuna.webservices.wsba.BusinessActivityConstants;
 import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.webservices.wscoor.CoordinationContextType;
 
@@ -232,12 +233,12 @@ public class JaxRPCHeaderContextProcessor implements Handler
                     if (cc != null)
                     {
                         final String coordinationType = cc.getCoordinationType().getValue() ;
-                        if (Protocols.AtomicTransaction.equals(coordinationType))
+                        if (AtomicTransactionConstants.WSAT_PROTOCOL.equals(coordinationType))
                         {
                             final TxContext txContext = new com.arjuna.mwlabs.wst.at.context.TxContextImple(cc) ;
                             TransactionManagerFactory.transactionManager().resume(txContext) ;
                         }
-                        else if (Protocols.BusinessActivityAtomic.equals(coordinationType))
+                        else if (BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME.equals(coordinationType))
                         {
                             final TxContext txContext = new com.arjuna.mwlabs.wst.ba.context.TxContextImple(cc);
                             BusinessActivityManagerFactory.businessActivityManager().resume(txContext) ;

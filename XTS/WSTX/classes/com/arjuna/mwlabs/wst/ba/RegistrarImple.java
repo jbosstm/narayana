@@ -39,7 +39,6 @@ import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
 import com.arjuna.mw.wscf.model.sagas.CoordinatorManagerFactory;
 import com.arjuna.mw.wscf.model.sagas.api.CoordinatorManager;
-import com.arjuna.mw.wst.common.Protocols;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wst.ba.participants.BusinessAgreementWithCoordinatorCompletionImple;
 import com.arjuna.mwlabs.wst.ba.participants.BusinessAgreementWithParticipantCompletionImple;
@@ -49,8 +48,6 @@ import com.arjuna.webservices.wsaddr.EndpointReferenceType;
 import com.arjuna.webservices.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices.wsba.BusinessActivityConstants;
-import com.arjuna.webservices.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
-import com.arjuna.webservices.wsba.processors.ParticipantCompletionCoordinatorProcessor;
 import com.arjuna.wsc.AlreadyRegisteredException;
 import com.arjuna.wsc.InvalidProtocolException;
 import com.arjuna.wsc.InvalidStateException;
@@ -74,10 +71,10 @@ public class RegistrarImple implements Registrar
 		final RegistrarMapper mapper = RegistrarMapper.getFactory();
 
 		mapper.addRegistrar(
-				Protocols.BusinessAgreementWithParticipantCompletion, this);
+			BusinessActivityConstants.WSBA_SUB_PROTOCOL_PARTICIPANT_COMPLETION, this);
 		mapper.addRegistrar(
-				Protocols.BusinessAgreementWithCoordinatorCompletion, this);
-		mapper.addRegistrar(Protocols.BusinessAgreementTermination, this);
+			BusinessActivityConstants.WSBA_SUB_PROTOCOL_COORDINATOR_COMPLETION, this);
+		mapper.addRegistrar(ArjunaTXConstants.WSARJTX_PROTOCOL_TERMINATION, this);
 	}
 
 	/**
@@ -149,7 +146,7 @@ public class RegistrarImple implements Registrar
 
 		// TODO check for AlreadyRegisteredException
 
-		if (Protocols.BusinessAgreementWithParticipantCompletion
+		if (BusinessActivityConstants.WSBA_SUB_PROTOCOL_PARTICIPANT_COMPLETION
 				.equals(protocolIdentifier))
 		{
 			// enlist participant that wraps the requester URI.
@@ -176,7 +173,7 @@ public class RegistrarImple implements Registrar
 			}
 		}
 		else
-			if (Protocols.BusinessAgreementWithCoordinatorCompletion
+			if (BusinessActivityConstants.WSBA_SUB_PROTOCOL_COORDINATOR_COMPLETION
 					.equals(protocolIdentifier))
 			{
 				final String id = new Uid().stringForm();
@@ -201,8 +198,7 @@ public class RegistrarImple implements Registrar
 				}
 			}
 			else
-				if (Protocols.BusinessAgreementTermination
-						.equals(protocolIdentifier))
+				if (ArjunaTXConstants.WSARJTX_PROTOCOL_TERMINATION.equals(protocolIdentifier))
 				{
 					try
 					{
@@ -220,7 +216,7 @@ public class RegistrarImple implements Registrar
 					wstxLogger.arjLoggerI18N
 							.warn(
 									"com.arjuna.mwlabs.wst.ba.RegistrarImple_1",
-									new Object[] { Protocols.BusinessActivityAtomic, protocolIdentifier });
+									new Object[] { BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, protocolIdentifier });
 
 					throw new InvalidProtocolException();
 				}

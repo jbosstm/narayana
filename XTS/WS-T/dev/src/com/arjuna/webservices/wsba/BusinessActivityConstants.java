@@ -250,4 +250,21 @@ public interface BusinessActivityConstants
      * The InconsistentInternalState error code QName.
      */
     public QName WSBA_ERROR_CODE_INCONSISTENT_INTERNAL_STATE_QNAME = new QName(WSBA_NAMESPACE, WSBA_ERROR_CODE_INCONSISTENT_INTERNAL_STATE, WSBA_PREFIX) ;
+    
+    /**
+     * The business activity atomic outcome protocol.
+     */
+    public String WSBA_PROTOCOL_ATOMIC_OUTCOME = WSBA_NAMESPACE + "/AtomicOutcome" ;
+    /**
+     * The business activity mixed outcome protocol.
+     */
+    public String WSBA_PROTOCOL_MIXED_OUTCOME = WSBA_NAMESPACE + "/MixedOutcome" ;
+    /**
+     * The participant completion protocol.
+     */
+    public String WSBA_SUB_PROTOCOL_PARTICIPANT_COMPLETION = WSBA_NAMESPACE + "/ParticipantCompletion" ;
+    /**
+     * The coordinator completion protocol.
+     */
+    public String WSBA_SUB_PROTOCOL_COORDINATOR_COMPLETION = WSBA_NAMESPACE + "/CoordinatorCompletion" ;
 }

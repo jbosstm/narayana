@@ -43,9 +43,10 @@ import com.arjuna.mw.wsas.context.ContextManager;
 import com.arjuna.mw.wsas.context.soap.SOAPContext;
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wscf.utils.DomUtil;
-import com.arjuna.mw.wst.common.Protocols;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
+import com.arjuna.webservices.wsat.AtomicTransactionConstants;
+import com.arjuna.webservices.wscoor.CoordinationConstants;
 
 /**
  * On demand this class creates the SOAP context information necessary to
@@ -163,7 +164,7 @@ public class ArjunaContextImple implements SOAPContext
                 _context.appendChild(expires);
 
                 org.w3c.dom.Element coordinationType = doc.createElement("wscoor:CoordinationType");
-                coordinationType.appendChild(doc.createTextNode(Protocols.AtomicTransaction));
+                coordinationType.appendChild(doc.createTextNode(AtomicTransactionConstants.WSAT_PROTOCOL));
     
                 _context.appendChild(coordinationType);
                 
@@ -247,12 +248,11 @@ public class ArjunaContextImple implements SOAPContext
     private String[] _identifierValues ;
     private int[] _expiresValues ;
 
-	private static final String _wscoorNamespace = "http://schemas.xmlsoap.org/ws/2004/10/wscoor";
+	private static final String _wscoorNamespace = CoordinationConstants.WSCOOR_NAMESPACE;
 	private static final String _wsuNamespace = "http://schemas.xmlsoap.org/ws/2002/07/utility";
 	private static final String _arjunaNamespace = "http://arjuna.com/schemas/wsc/2003/01/extension";
-	private static final String _contextName = "CoordinationContext";
-	private static final String _identifier = "Identifier";
-	private static final String _expires = "Expires";
-	private static final String _coordinationType = "CoordinationType";
+	private static final String _contextName = CoordinationConstants.WSCOOR_ELEMENT_COORDINATION_CONTEXT;
+	private static final String _identifier = CoordinationConstants.WSCOOR_ELEMENT_IDENTIFIER;
+	private static final String _expires = CoordinationConstants.WSCOOR_ELEMENT_EXPIRES;
 
 }

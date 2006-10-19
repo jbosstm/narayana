@@ -39,9 +39,8 @@ import com.arjuna.mw.wscf.model.twophase.api.CoordinatorManager;
 
 import com.arjuna.mwlabs.wst.at.participants.*;
 
+import com.arjuna.webservices.wsat.AtomicTransactionConstants;
 import com.arjuna.wst.*;
-
-import com.arjuna.mw.wst.common.Protocols;
 
 import com.arjuna.wsc.AlreadyRegisteredException;
 import com.arjuna.wsc.InvalidProtocolException;
@@ -101,7 +100,7 @@ public class LocalRegistrarImple
 	{
 		// TODO check for AlreadyRegisteredException
 
-		if (protocolIdentifier.equals(Protocols.DurableTwoPhaseCommit))
+		if (protocolIdentifier.equals(AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC))
 		{
 			// enlist participant that wraps the requester URI.
 
@@ -118,7 +117,7 @@ public class LocalRegistrarImple
 		}
 		else
 		{
-			if (protocolIdentifier.equals(Protocols.VolatileTwoPhaseCommit))
+			if (protocolIdentifier.equals(AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC))
 			{
 				try
 				{
@@ -133,7 +132,7 @@ public class LocalRegistrarImple
 			else
 			{
 				wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.at.local.LocalRegistrarImple_1", new Object[]
-				{ Protocols.AtomicTransaction, protocolIdentifier });
+				{ AtomicTransactionConstants.WSAT_PROTOCOL, protocolIdentifier });
 
 				throw new InvalidProtocolException();
 			}

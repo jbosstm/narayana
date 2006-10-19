@@ -31,28 +31,23 @@
 
 package com.arjuna.mwlabs.wst.ba.local;
 
+import com.arjuna.mw.wsas.context.DeploymentContext;
+import com.arjuna.mw.wsas.context.DeploymentContextFactory;
+import com.arjuna.mw.wscf.model.sagas.CoordinatorManagerFactory;
+import com.arjuna.mw.wscf.model.sagas.api.CoordinatorManager;
 import com.arjuna.mw.wstx.logging.wstxLogger;
-
 import com.arjuna.mwlabs.wst.at.context.ArjunaContextImple;
-
-import com.arjuna.mw.wst.common.Protocols;
-
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.stax.URI;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
 import com.arjuna.webservices.wsaddr.EndpointReferenceType;
 import com.arjuna.webservices.wsarj.InstanceIdentifier;
+import com.arjuna.webservices.wsba.BusinessActivityConstants;
 import com.arjuna.webservices.wscoor.AttributedUnsignedIntType;
 import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.webservices.wscoor.CoordinationContextType;
 import com.arjuna.wsc.ContextFactory;
 import com.arjuna.wsc.InvalidCreateParametersException;
-
-import com.arjuna.mw.wsas.context.DeploymentContext;
-import com.arjuna.mw.wsas.context.DeploymentContextFactory;
-
-import com.arjuna.mw.wscf.model.sagas.CoordinatorManagerFactory;
-import com.arjuna.mw.wscf.model.sagas.api.CoordinatorManager;
 
 public class LocalContextFactoryImple implements ContextFactory
 {
@@ -101,7 +96,7 @@ public class LocalContextFactoryImple implements ContextFactory
         final CoordinationContextType currentContext)
         throws InvalidCreateParametersException
     {
-    	if (Protocols.BusinessActivityAtomic.equals(coordinationTypeURI))
+    	if (BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME.equals(coordinationTypeURI))
     	{
     	    try
     	    {
@@ -151,9 +146,9 @@ public class LocalContextFactoryImple implements ContextFactory
     	else
     	{
     	    wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.ba.local.LocalContextFactoryImple_1",
-    					  new Object[]{Protocols.BusinessActivityAtomic, coordinationTypeURI});
+    					  new Object[]{BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, coordinationTypeURI});
     
-    	    throw new InvalidCreateParametersException(wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wst.ba.local.LocalContextFactoryImple_11"+" <"+Protocols.BusinessActivityAtomic+", "+coordinationTypeURI+" >"));
+    	    throw new InvalidCreateParametersException(wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wst.ba.local.LocalContextFactoryImple_11"+" <"+BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME+", "+coordinationTypeURI+" >"));
     	}
     
     	return null;

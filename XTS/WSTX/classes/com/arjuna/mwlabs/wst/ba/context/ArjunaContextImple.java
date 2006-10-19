@@ -43,9 +43,9 @@ import com.arjuna.mw.wsas.context.ContextManager;
 import com.arjuna.mw.wsas.context.soap.SOAPContext;
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wscf.utils.DomUtil;
-import com.arjuna.mw.wst.common.Protocols;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator;
+import com.arjuna.webservices.wsba.BusinessActivityConstants;
 
 /**
  * On demand this class creates the SOAP context information necessary to
@@ -163,7 +163,7 @@ public class ArjunaContextImple implements SOAPContext
                 _context.appendChild(expires);
                 
                 org.w3c.dom.Element coordinationType = doc.createElement("wscoor:CoordinationType");
-                coordinationType.appendChild(doc.createTextNode(Protocols.BusinessActivityAtomic));
+                coordinationType.appendChild(doc.createTextNode(BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME));
         
                 _context.appendChild(coordinationType);
                 

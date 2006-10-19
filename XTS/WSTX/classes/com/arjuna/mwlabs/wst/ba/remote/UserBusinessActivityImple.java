@@ -34,7 +34,6 @@ package com.arjuna.mwlabs.wst.ba.remote;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst.UserBusinessActivity;
 import com.arjuna.mw.wst.common.Environment;
-import com.arjuna.mw.wst.common.Protocols;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wst.ba.ContextImple;
 import com.arjuna.mwlabs.wst.ba.context.TxContextImple;
@@ -42,8 +41,10 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
 import com.arjuna.webservices.wsaddr.EndpointReferenceType;
+import com.arjuna.webservices.wsarj.ArjunaConstants;
 import com.arjuna.webservices.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
+import com.arjuna.webservices.wsba.BusinessActivityConstants;
 import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.webservices.wscoor.CoordinationContextType;
 import com.arjuna.wsc.ActivationCoordinator;
@@ -257,7 +258,7 @@ public class UserBusinessActivityImple extends UserBusinessActivity
             final Long expires = (timeout > 0 ? new Long(timeout) : null) ;
             final String messageId = new Uid().stringForm() ;
             final CoordinationContextType coordinationContext = ActivationCoordinator.createCoordinationContext(
-                    _activationCoordinatorService, messageId, Protocols.BusinessActivityAtomic, expires, null) ;
+                    _activationCoordinatorService, messageId, BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, expires, null) ;
             if (coordinationContext == null)
             {
                 throw new SystemException(
@@ -287,7 +288,7 @@ public class UserBusinessActivityImple extends UserBusinessActivity
         try
         {
             return RegistrationCoordinator.register(coordinationContext, messageId,
-                getParticipantProtocolService(ctx.identifier()), Protocols.BusinessAgreementTermination) ;
+                getParticipantProtocolService(ctx.identifier()), ArjunaConstants.WSARJ_PROTOCOL_TERMINATION) ;
         }
         catch (final Throwable th)
         {

@@ -31,14 +31,15 @@
 
 package com.arjuna.mwlabs.wst.ba.local;
 
-import com.arjuna.wst.*;
-
-import com.arjuna.mw.wst.common.Protocols;
-
-import com.arjuna.wsc.AlreadyRegisteredException;
-
 import com.arjuna.mw.wst.BusinessActivityManager;
 import com.arjuna.mw.wst.TxContext;
+import com.arjuna.webservices.wsba.BusinessActivityConstants;
+import com.arjuna.wsc.AlreadyRegisteredException;
+import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
+import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
+import com.arjuna.wst.SystemException;
+import com.arjuna.wst.UnknownTransactionException;
+import com.arjuna.wst.WrongStateException;
 
 /**
  * This is the interface that the core exposes in order to allow different
@@ -63,7 +64,7 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
     {
 	try
 	{
-	    _registrar.register(pzp, Protocols.BusinessAgreementWithParticipantCompletion, id);
+	    _registrar.register(pzp, BusinessActivityConstants.WSBA_SUB_PROTOCOL_PARTICIPANT_COMPLETION, id);
 
 	    return new BAParticipantManagerImple(id);
 	}
@@ -85,7 +86,7 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
     {
 	try
 	{
-	    _registrar.register(tpp, Protocols.BusinessAgreementWithCoordinatorCompletion, id);
+	    _registrar.register(tpp, BusinessActivityConstants.WSBA_SUB_PROTOCOL_COORDINATOR_COMPLETION, id);
 
 	    return new BAParticipantManagerImple(id);
 	}

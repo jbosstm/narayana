@@ -37,7 +37,6 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst.TransactionManager;
 import com.arjuna.mw.wst.UserTransaction;
 import com.arjuna.mw.wst.common.Environment;
-import com.arjuna.mw.wst.common.Protocols;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wst.at.ContextImple;
 import com.arjuna.mwlabs.wst.at.context.TxContextImple;
@@ -216,7 +215,7 @@ public class UserTransactionImple extends UserTransaction
             final Long expires = (timeout > 0 ? new Long(timeout) : null) ;
             final String messageId = new Uid().stringForm() ;
             final CoordinationContextType coordinationContext = ActivationCoordinator.createCoordinationContext(
-                    _activationCoordinatorService, messageId, Protocols.AtomicTransaction, expires, null) ;
+                    _activationCoordinatorService, messageId, AtomicTransactionConstants.WSAT_PROTOCOL, expires, null) ;
             if (coordinationContext == null)
             {
                 throw new SystemException(

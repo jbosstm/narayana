@@ -31,15 +31,15 @@
 
 package com.arjuna.mwlabs.wst.ba.local;
 
-import com.arjuna.mwlabs.wst.ba.context.*;
-
 import com.arjuna.mw.wst.UserBusinessActivity;
-import com.arjuna.mw.wst.common.Protocols;
-
+import com.arjuna.mwlabs.wst.ba.context.TxContextImple;
+import com.arjuna.mwlabs.wst.ba.participants.TerminationCoordinatorImple;
+import com.arjuna.webservices.wsba.BusinessActivityConstants;
 import com.arjuna.webservices.wscoor.CoordinationContextType;
-import com.arjuna.wst.*;
-
-import com.arjuna.mwlabs.wst.ba.participants.*;
+import com.arjuna.wst.SystemException;
+import com.arjuna.wst.TransactionRolledBackException;
+import com.arjuna.wst.UnknownTransactionException;
+import com.arjuna.wst.WrongStateException;
 
 /**
  * This is the interface that allows transactions to be started and terminated.
@@ -69,7 +69,7 @@ public class UserBusinessActivityImple extends UserBusinessActivity
     	    if (_contextManager.currentTransaction() != null)
     		throw new WrongStateException();
     	    
-    	    CoordinationContextType ctx = _factory.create(Protocols.BusinessActivityAtomic, null, null);
+    	    CoordinationContextType ctx = _factory.create(BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, null, null);
     
     	    TxContextImple theContext = new TxContextImple(ctx);
     

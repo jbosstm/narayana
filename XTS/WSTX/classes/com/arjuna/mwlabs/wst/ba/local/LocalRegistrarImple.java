@@ -31,20 +31,16 @@
 
 package com.arjuna.mwlabs.wst.ba.local;
 
-import com.arjuna.mw.wstx.logging.wstxLogger;
-
+import com.arjuna.mw.wscf.model.sagas.CoordinatorManagerFactory;
 import com.arjuna.mw.wscf.model.sagas.api.CoordinatorManager;
-
-import com.arjuna.wst.*;
-
-import com.arjuna.mw.wst.common.Protocols;
-
+import com.arjuna.mw.wstx.logging.wstxLogger;
+import com.arjuna.webservices.wsba.BusinessActivityConstants;
 import com.arjuna.wsc.AlreadyRegisteredException;
 import com.arjuna.wsc.InvalidProtocolException;
 import com.arjuna.wsc.InvalidStateException;
 import com.arjuna.wsc.NoActivityException;
-
-import com.arjuna.mw.wscf.model.sagas.CoordinatorManagerFactory;
+import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
+import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
 
 /**
  * This class simulates the use of the real RegistrarImple, which we can't
@@ -92,7 +88,7 @@ public class LocalRegistrarImple
     {
 	// TODO check for AlreadyRegisteredException
 	
-	if (protocolIdentifier.equals(Protocols.BusinessAgreementWithParticipantCompletion))
+	if (protocolIdentifier.equals(BusinessActivityConstants.WSBA_SUB_PROTOCOL_PARTICIPANT_COMPLETION))
 	{
 	    // enlist participant that wraps the requester URI.
 
@@ -107,7 +103,7 @@ public class LocalRegistrarImple
 	}
 	else
 	{
-	    if (protocolIdentifier.equals(Protocols.BusinessAgreementWithCoordinatorCompletion))
+	    if (protocolIdentifier.equals(BusinessActivityConstants.WSBA_SUB_PROTOCOL_COORDINATOR_COMPLETION))
 	    {
 		try
 		{
@@ -121,7 +117,7 @@ public class LocalRegistrarImple
 	    else
 	    {
 		wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.ba.local.LocalRegistrarImple_1",
-					      new Object[]{Protocols.BusinessActivityAtomic, protocolIdentifier});
+					      new Object[]{BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, protocolIdentifier});
 
 		throw new InvalidProtocolException();
 	    }

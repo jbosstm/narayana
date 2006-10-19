@@ -34,7 +34,6 @@ package com.arjuna.mwlabs.wst.ba.remote;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst.BusinessActivityManager;
 import com.arjuna.mw.wst.TxContext;
-import com.arjuna.mw.wst.common.Protocols;
 import com.arjuna.mwlabs.wst.ba.context.TxContextImple;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapRegistry;
@@ -77,7 +76,7 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
         final EndpointReferenceType participant = getParticipant(BusinessActivityConstants.SERVICE_PARTICIPANT_COMPLETION_PARTICIPANT, id) ;
     	try
     	{
-            EndpointReferenceType baPMEndpoint = registerParticipant(participant, Protocols.BusinessAgreementWithParticipantCompletion);
+            EndpointReferenceType baPMEndpoint = registerParticipant(participant, BusinessActivityConstants.WSBA_SUB_PROTOCOL_PARTICIPANT_COMPLETION);
             final ParticipantCompletionParticipantEngine engine = new ParticipantCompletionParticipantEngine(id, baPMEndpoint, bap) ;
             ParticipantCompletionParticipantProcessor.getProcessor().activateParticipant(engine, id) ;
     
@@ -108,7 +107,7 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
         final EndpointReferenceType participant = getParticipant(BusinessActivityConstants.SERVICE_COORDINATOR_COMPLETION_PARTICIPANT, id) ;
     	try
     	{
-    	    EndpointReferenceType baPMEndpoint = registerParticipant(participant, Protocols.BusinessAgreementWithCoordinatorCompletion);
+    	    EndpointReferenceType baPMEndpoint = registerParticipant(participant, BusinessActivityConstants.WSBA_SUB_PROTOCOL_COORDINATOR_COMPLETION);
             final CoordinatorCompletionParticipantEngine engine = new CoordinatorCompletionParticipantEngine(id, baPMEndpoint, bawcp) ;
             CoordinatorCompletionParticipantProcessor.getProcessor().activateParticipant(engine, id) ;
         
