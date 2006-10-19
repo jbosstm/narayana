@@ -41,7 +41,7 @@ public abstract class CoordinatorProcessor
      * Get the processor singleton.
      * @return The singleton.
      */
-    public static CoordinatorProcessor getProcessor()
+    public static synchronized CoordinatorProcessor getProcessor()
     {
         return PROCESSOR ;
     }
@@ -51,7 +51,7 @@ public abstract class CoordinatorProcessor
      * @param processor The processor.
      * @return The previous singleton.
      */
-    public static CoordinatorProcessor setProcessor(final CoordinatorProcessor processor)
+    public static synchronized CoordinatorProcessor setProcessor(final CoordinatorProcessor processor)
     {
         final CoordinatorProcessor origProcessor = PROCESSOR ;
         PROCESSOR = processor ;

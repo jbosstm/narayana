@@ -40,7 +40,7 @@ public abstract class CompletionCoordinatorProcessor
      * Get the processor.
      * @return The processor.
      */
-    public static CompletionCoordinatorProcessor getProcessor()
+    public static synchronized CompletionCoordinatorProcessor getProcessor()
     {
         return PROCESSOR ;
     }
@@ -50,7 +50,7 @@ public abstract class CompletionCoordinatorProcessor
      * @param processor The processor.
      * @return The previous processor.
      */
-    public static CompletionCoordinatorProcessor setProcessor(final CompletionCoordinatorProcessor processor)
+    public static synchronized CompletionCoordinatorProcessor setProcessor(final CompletionCoordinatorProcessor processor)
     {
         final CompletionCoordinatorProcessor origProcessor = PROCESSOR ;
         PROCESSOR = processor ;

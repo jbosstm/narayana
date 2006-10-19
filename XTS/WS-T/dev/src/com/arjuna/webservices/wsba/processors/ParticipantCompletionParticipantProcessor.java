@@ -43,7 +43,7 @@ public abstract class ParticipantCompletionParticipantProcessor
      * Get the processor.
      * @return The processor.
      */
-    public static ParticipantCompletionParticipantProcessor getProcessor()
+    public static synchronized ParticipantCompletionParticipantProcessor getProcessor()
     {
         return PROCESSOR ;
     }
@@ -53,7 +53,7 @@ public abstract class ParticipantCompletionParticipantProcessor
      * @param processor The processor.
      * @return The previous processor.
      */
-    public static ParticipantCompletionParticipantProcessor setProcessor(final ParticipantCompletionParticipantProcessor processor)
+    public static synchronized ParticipantCompletionParticipantProcessor setProcessor(final ParticipantCompletionParticipantProcessor processor)
     {
         final ParticipantCompletionParticipantProcessor origProcessor = PROCESSOR ;
         PROCESSOR = processor ;

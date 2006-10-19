@@ -44,7 +44,7 @@ public abstract class ParticipantCompletionCoordinatorProcessor
      * Get the processor.
      * @return The processor.
      */
-    public static ParticipantCompletionCoordinatorProcessor getProcessor()
+    public static synchronized ParticipantCompletionCoordinatorProcessor getProcessor()
     {
         return PROCESSOR ;
     }
@@ -54,7 +54,7 @@ public abstract class ParticipantCompletionCoordinatorProcessor
      * @param processor The processor.
      * @return The previous processor.
      */
-    public static ParticipantCompletionCoordinatorProcessor setProcessor(final ParticipantCompletionCoordinatorProcessor processor)
+    public static synchronized ParticipantCompletionCoordinatorProcessor setProcessor(final ParticipantCompletionCoordinatorProcessor processor)
     {
         final ParticipantCompletionCoordinatorProcessor origProcessor = PROCESSOR ;
         PROCESSOR = processor ;
