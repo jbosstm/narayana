@@ -41,7 +41,6 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
 import com.arjuna.webservices.wsaddr.EndpointReferenceType;
-import com.arjuna.webservices.wsarj.ArjunaConstants;
 import com.arjuna.webservices.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices.wsba.BusinessActivityConstants;
@@ -288,7 +287,7 @@ public class UserBusinessActivityImple extends UserBusinessActivity
         try
         {
             return RegistrationCoordinator.register(coordinationContext, messageId,
-                getParticipantProtocolService(ctx.identifier()), ArjunaConstants.WSARJ_PROTOCOL_TERMINATION) ;
+                getParticipantProtocolService(ctx.identifier()), ArjunaTXConstants.WSARJTX_PROTOCOL_TERMINATION) ;
         }
         catch (final Throwable th)
         {
