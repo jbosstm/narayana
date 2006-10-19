@@ -31,8 +31,6 @@
 
 package com.arjuna.wst;
 
-import com.arjuna.webservices.wsat.Participant;
-
 /**
  * The Durable2PCParticipant. Unlike all traditional TP implementations, the
  * one-phase commit optimisation is not supported. It was in the 1.0

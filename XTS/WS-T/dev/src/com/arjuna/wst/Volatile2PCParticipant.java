@@ -31,8 +31,6 @@
 
 package com.arjuna.wst;
 
-import com.arjuna.webservices.wsat.Participant;
-
 /**
  * The Volatile2PCParticipant. This is the equivalent of the traditional
  * synchronization protocol (the old PhaseZero and OutcomeNotification

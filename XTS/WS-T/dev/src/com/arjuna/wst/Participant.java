@@ -18,7 +18,7 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package com.arjuna.webservices.wsat;
+package com.arjuna.wst;
 
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.Vote;
