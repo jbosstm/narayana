@@ -22,7 +22,7 @@ package com.arjuna.webservices.wsarjtx.processors;
 
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsarj.ArjunaContext;
-import com.arjuna.webservices.wsat.NotificationType;
+import com.arjuna.webservices.wsarjtx.NotificationType;
 import com.arjuna.wst.BusinessActivityTerminator;
 
 /**

@@ -24,7 +24,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.base.processors.Callback;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsarj.ArjunaContext;
-import com.arjuna.webservices.wsat.NotificationType;
+import com.arjuna.webservices.wsarjtx.NotificationType;
 
 /**
  * The Terminator Coordinator callback.

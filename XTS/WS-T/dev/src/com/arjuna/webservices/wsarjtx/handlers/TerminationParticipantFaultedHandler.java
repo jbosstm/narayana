@@ -32,8 +32,8 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.soap.SoapDetails;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsarj.ArjunaContext;
+import com.arjuna.webservices.wsarjtx.NotificationType;
 import com.arjuna.webservices.wsarjtx.processors.TerminationParticipantProcessor;
-import com.arjuna.webservices.wsat.NotificationType;
 
 /**
  * The participant manager coordinator faulted handler.
