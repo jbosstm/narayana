@@ -84,7 +84,7 @@ public class URI extends ElementContent
      */
     public void setValue(final String value)
     {
-        this.value = value ;
+        this.value = (value == null ? null : value.trim()) ;
     }
     
     /**

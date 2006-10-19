@@ -90,7 +90,7 @@ public class AttributedURIType extends AnyAttributeSupport
      */
     public void setValue(final String value)
     {
-        this.value = value ;
+        this.value = (value == null ? null : value.trim()) ;
     }
     
     /**
