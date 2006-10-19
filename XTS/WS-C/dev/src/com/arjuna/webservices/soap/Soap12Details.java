@@ -71,6 +71,10 @@ public class Soap12Details implements SoapDetails
      * The SOAP 1.2 last role.
      */
     private final static String LAST_ROLE = NAMESPACE_URI + "/role/ultimateReceiver" ;
+    /**
+     * The SOAP 1.2 must understand value.
+     */
+    private final static String MUST_UNDERSTAND_VALUE = "true" ;
     
     /**
      * The qualified SOAP 1.2 MustUnderstand name.
@@ -222,6 +226,15 @@ public class Soap12Details implements SoapDetails
     public QName getMustUnderstandQName()
     {
         return QNAME_MUST_UNDERSTAND ;
+    }
+    
+    /**
+     * Get the value of the must understand attribute.
+     * @return The must understand value.
+     */
+    public String getMustUnderstandValue()
+    {
+        return MUST_UNDERSTAND_VALUE ;
     }
     
     /**

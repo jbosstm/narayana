@@ -88,9 +88,15 @@ public interface SoapDetails
     
     /**
      * Get the qualified name of the must understand attribute.
-     * @return The must understand qualified name,
+     * @return The must understand qualified name.
      */
     public QName getMustUnderstandQName() ;
+    
+    /**
+     * Get the value of the must understand attribute.
+     * @return The must understand value.
+     */
+    public String getMustUnderstandValue() ;
     
     /**
      * Write SOAP fault headers to the stream.

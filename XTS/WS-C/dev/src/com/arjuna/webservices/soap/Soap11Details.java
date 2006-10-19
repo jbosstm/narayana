@@ -64,6 +64,10 @@ public class Soap11Details implements SoapDetails
      * The SOAP 1.1 last role.
      */
     private static final String LAST_ROLE = null ;
+    /**
+     * The SOAP 1.1 must understand value.
+     */
+    private final static String MUST_UNDERSTAND_VALUE = "1" ;
     
     /**
      * The qualified SOAP 1.1 MustUnderstand name.
@@ -172,11 +176,20 @@ public class Soap11Details implements SoapDetails
     
     /**
      * Get the qualified name of the must understand attribute.
-     * @return The must understand qualified name,
+     * @return The must understand qualified name.
      */
     public QName getMustUnderstandQName()
     {
         return QNAME_MUST_UNDERSTAND ;
+    }
+    
+    /**
+     * Get the value of the must understand attribute.
+     * @return The must understand value.
+     */
+    public String getMustUnderstandValue()
+    {
+        return MUST_UNDERSTAND_VALUE ;
     }
     
     /**
