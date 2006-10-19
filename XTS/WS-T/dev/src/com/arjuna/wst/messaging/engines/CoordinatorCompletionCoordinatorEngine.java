@@ -112,9 +112,6 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * 
      * Active -> Active (invalid state)
      * Canceling -> Ended
-     * Canceling-Active -> 
-     * Canceling-Completing -> 
-     * Completing -> 
      * Canceling-Active -> Ended
      * Canceling-Completing -> Ended
      * Completing -> Completing (invalid state)
