@@ -539,7 +539,7 @@ public class ParticipantRecord extends
 						{
 							((ParticipantWithComplete) _resourceHandle)
 									.complete();
-							// _completed = true;
+							 _completed = true;
 						}
 
 						result = true;
