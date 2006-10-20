@@ -141,16 +141,11 @@ public class HttpServiceMultiplexorServlet extends HttpServlet implements SoapSe
                 initialiseContext(messageContext, request) ;
                 final MessageContext messageResponseContext = new MessageContext() ;
                 final Reader input = request.getReader() ;
-                final Reader reader ;
+                final String contents = HttpUtils.readAll(input) ;
+                final Reader reader = new StringReader(contents) ;
                 if (logPackets)
                 {
-                    final String contents = HttpUtils.readAll(input) ;
                     SoapMessageLogging.appendThreadLog(contents) ;
-                    reader = new StringReader(contents) ;
-                }
-                else
-                {
-                    reader = input ;
                 }
                 final SoapMessage soapResponse ;
                 try
