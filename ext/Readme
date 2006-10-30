@@ -34,7 +34,7 @@ jmxri.jar		JMX reference implementation
 jndi.jar		JNDI
 jta-spec1_0_1.jar	JTA specification 1.0.1
 log4j-1.2.8.jar		LOG4j version 1.2.8	
-wrapper.jar		Java Service Wrapper 3.0.5
+wrapper.jar		Java Service Wrapper 3.2.3
 xalan.jar
 xercesImpl.jar		Xerces 2.3.0
 xmlParserAPIs.jar	Xerces 2.3.0
