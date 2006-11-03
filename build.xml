@@ -30,6 +30,8 @@
    <property name="jta.dir" location="ArjunaJTA"/>
    <property name="jts.dir" location="ArjunaJTS"/>
    <property name="integration.dir" location="atsintegration"/>
+	
+   <property name="jboss.eula" location="JBossORG-EULA.txt"/>
 
    <available property="jts.present" file="${jts.dir}" type="dir"/>
 
@@ -85,6 +87,7 @@ Targets supported in this build.xml file
 
    <target name="install_core" depends="clean, init_core, init, build_common">
       <ant dir="${core.dir}" target="install-all"/>
+      <copy file="${jboss.eula}" todir="${com.hp.mw.installationdirectory}"/>
    </target>
 
    <target name="install_integration">
