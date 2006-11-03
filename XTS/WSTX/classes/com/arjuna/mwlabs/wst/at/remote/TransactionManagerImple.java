@@ -74,9 +74,9 @@ public class TransactionManagerImple extends TransactionManager
 	{
 		try
 		{
-			registerParticipant(getParticipant(id) , AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC);
+			final EndpointReferenceType coordinator = registerParticipant(getParticipant(id) , AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC);
 
-			ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(tpp), id) ;
+			ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(tpp, id, coordinator), id) ;
 		}
 		catch (com.arjuna.wsc.InvalidProtocolException ex)
 		{
@@ -98,9 +98,9 @@ public class TransactionManagerImple extends TransactionManager
 	{
 		try
 		{
-			registerParticipant(getParticipant(id), AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC);
+			final EndpointReferenceType coordinator = registerParticipant(getParticipant(id), AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC);
 
-            ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(tpp), id) ;
+			ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(tpp, id, coordinator), id) ;
 		}
 		catch (com.arjuna.wsc.InvalidProtocolException ex)
 		{

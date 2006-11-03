@@ -65,8 +65,8 @@ public class ParticipantClient extends BaseWSAddrClient
     /**
      * The SOAP fault action.
      */
-    private final AttributedURIType soapFaultAction =
-        new AttributedURIType(AtomicTransactionConstants.WSAT_ACTION_SOAP_FAULT) ;
+    private final AttributedURIType faultAction =
+        new AttributedURIType(AtomicTransactionConstants.WSAT_ACTION_FAULT) ;
     
     /**
      * The SOAP service representing the client.
@@ -155,7 +155,7 @@ public class ParticipantClient extends BaseWSAddrClient
         throws SoapFault, IOException
     {
         final EndpointReferenceType endpointReference = getEndpointReference(identifier) ;
-        sendSoapFault(soapFault, addressingContext, soapService, endpointReference, soapFaultAction) ;
+        sendSoapFault(soapFault, addressingContext, soapService, endpointReference, faultAction) ;
     }
     
     /**

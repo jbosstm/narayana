@@ -72,7 +72,12 @@ public class TxContextImple implements TxContext
 
 	public final String identifier ()
 	{
-		return _context.getCoordinationContext().getIdentifier().getValue();
+	    final String value = _context.getCoordinationContext().getIdentifier().getValue();
+	    if ((value != null) && value.startsWith("urn:"))
+	    {
+		return value.substring(4) ;
+	    }
+	    return value ;
 	}
 
 	public final com.arjuna.mw.wsc.context.Context context ()

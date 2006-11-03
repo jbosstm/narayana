@@ -20,10 +20,9 @@
  */
 package com.arjuna.wst.messaging.engines;
 
-import javax.xml.namespace.QName;
+import java.util.TimerTask;
 
 import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.util.TransportTimer;
 import com.arjuna.webservices.wsaddr.AddressingContext;
@@ -35,8 +34,10 @@ import com.arjuna.webservices.wsba.ParticipantCompletionParticipantInboundEvents
 import com.arjuna.webservices.wsba.State;
 import com.arjuna.webservices.wsba.StatusType;
 import com.arjuna.webservices.wsba.client.ParticipantCompletionCoordinatorClient;
+import com.arjuna.webservices.wsba.processors.ParticipantCompletionParticipantProcessor;
 import com.arjuna.wsc.messaging.MessageId;
 import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
+import com.arjuna.wst.FaultedException;
 
 /**
  * The participant completion participant state engine
@@ -64,6 +65,10 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * The current state.
      */
     private State state ;
+    /**
+     * The associated timer task or null.
+     */
+    private TimerTask timerTask ;
     
     /**
      * Construct the initial engine for the participant.
@@ -184,6 +189,10 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         
         if (current == State.STATE_COMPLETED)
         {
+            if (timerTask != null)
+            {
+                timerTask.cancel() ;
+            }
             executeClose() ;
         }
         else if (current == State.STATE_ENDED)
@@ -227,6 +236,10 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         
         if (current == State.STATE_COMPLETED)
         {
+            if (timerTask != null)
+            {
+                timerTask.cancel() ;
+            }
             executeCompensate() ;
         }
         else if (current == State.STATE_FAULTING_COMPENSATING)
@@ -268,7 +281,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
             }
             else if (current == State.STATE_EXITING)
             {
-                changeState(State.STATE_ENDED) ;
+                ended() ;
             }
         }
     }
@@ -299,7 +312,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
             if ((current == State.STATE_FAULTING) || (current == State.STATE_FAULTING_ACTIVE) ||
                 (current == State.STATE_FAULTING_COMPENSATING))
             {
-                changeState(State.STATE_ENDED) ;
+                ended() ;
             }
         }
     }
@@ -314,7 +327,12 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      */
     public void getStatus(final NotificationType getStatus, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
-        // KEV - implement
+	final State current ;
+	synchronized(this)
+	{
+	    current = state ;
+	}
+	sendStatus(current) ;
     }
     
     /**
@@ -333,18 +351,15 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * @param soapFault The soap fault.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
-     * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantCompletionParticipantEngine.soapFault_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionParticipantEngine.soapFault_1] - Unexpected SOAP fault for participant {0}: {1} {2}
      */
     public void soapFault(final SoapFault soapFault, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
-        if (WSTLogger.arjLoggerI18N.isDebugEnabled())
-        {
-            final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
-            final SoapFaultType soapFaultType = soapFault.getSoapFaultType() ;
-            final QName subCode = soapFault.getSubcode() ;
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantCompletionParticipantEngine.soapFault_1", new Object[] {instanceIdentifier, soapFaultType, subCode}) ;
-        }
+	ended() ;
+	try
+	{
+	    participant.error() ;
+	}
+	catch (final Throwable th) {} // ignore
     }
     
     /**
@@ -459,6 +474,25 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     }
     
     /**
+     * Handle the comms timeout event.
+     * 
+     * Completed -> Completed (resend Completed)
+     */
+    private void commsTimeout()
+    {
+        final State current ;
+        synchronized(this)
+        {
+            current = state ;
+        }
+        
+        if (current == State.STATE_COMPLETED)
+        {
+            sendCompleted() ;
+        }
+    }
+    
+    /**
      * Send the exit message.
      * 
      * @message com.arjuna.wst.messaging.engines.ParticipantCompletionParticipantEngine.sendExit_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionParticipantEngine.sendExit_1] - Unexpected exception while sending Exit
@@ -498,6 +532,8 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantCompletionParticipantEngine.sendCompleted_1", th) ;
             }
         }
+        
+        initiateTimer() ;
     }
     
     /**
@@ -581,6 +617,28 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
             if (WSTLogger.arjLoggerI18N.isDebugEnabled())
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantCompletionParticipantEngine.sendCompensated_1", th) ;
+            }
+        }
+    }
+    
+    /**
+     * Send the status message.
+     * @param state The state.
+     * 
+     * @message com.arjuna.wst.messaging.engines.ParticipantCompletionParticipantEngine.sendStatus_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionParticipantEngine.sendStatus_1] - Unexpected exception while sending Status
+     */
+    private void sendStatus(final State state)
+    {
+        final AddressingContext addressingContext = createContext() ;
+        try
+        {
+            ParticipantCompletionCoordinatorClient.getClient().sendStatus(addressingContext, instanceIdentifier, state) ;
+        }
+        catch (final Throwable th)
+        {
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantCompletionParticipantEngine.sendStatus_1", th) ;
             }
         }
     }
@@ -673,6 +731,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
             return ;
         }
         sendCancelled() ;
+        ended() ;
     }
 
     /**
@@ -695,6 +754,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
             return ;
         }
         sendClosed() ;
+        ended() ;
     }
     
     /**
@@ -708,15 +768,80 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         {
             participant.compensate() ;
         }
+        catch (final FaultedException fe)
+        {
+            fault() ;
+        }
         catch (final Throwable th)
         {
+            final State current ;
+            synchronized (this)
+            {
+                current = state ;
+                if (current == State.STATE_COMPENSATING)
+                {
+                    changeState(State.STATE_COMPLETED) ;
+                }
+            }
+            if (current == State.STATE_COMPENSATING)
+            {
+                initiateTimer() ;
+            }
+            
             if (WSTLogger.arjLoggerI18N.isDebugEnabled())
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantCompletionParticipantEngine.executeClose_1", th) ;
             }
             return ;
         }
-        sendCompensated() ;
+        
+        final State current ;
+        synchronized (this)
+        {
+            current = state ;
+            if (current == State.STATE_COMPENSATING)
+            {
+                ended() ;
+            }
+        }
+        if (current == State.STATE_COMPENSATING)
+        {
+            sendCompensated() ;
+        }
+    }
+    
+    /**
+     * End the current participant.
+     */
+    private void ended()
+    {
+	changeState(State.STATE_ENDED) ;
+        ParticipantCompletionParticipantProcessor.getProcessor().deactivateParticipant(this) ;
+    }
+    
+    /**
+     * Initiate the timer.
+     */
+    private synchronized void initiateTimer()
+    {
+        if (timerTask != null)
+        {
+            timerTask.cancel() ;
+        }
+        
+        if (state == State.STATE_COMPLETED)
+        {
+            timerTask = new TimerTask() {
+                public void run() {
+                    commsTimeout() ;
+                }
+            } ;
+            TransportTimer.getTimer().schedule(timerTask, TransportTimer.getTransportPeriod()) ;
+        }
+        else
+        {
+            timerTask = null ;
+        }
     }
     
     /**

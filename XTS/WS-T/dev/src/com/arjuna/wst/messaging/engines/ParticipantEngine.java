@@ -29,6 +29,7 @@ import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.util.TransportTimer;
 import com.arjuna.webservices.wsaddr.AddressingContext;
+import com.arjuna.webservices.wsaddr.EndpointReferenceType;
 import com.arjuna.webservices.wsarj.ArjunaContext;
 import com.arjuna.webservices.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsat.NotificationType;
@@ -36,11 +37,13 @@ import com.arjuna.webservices.wsat.ParticipantInboundEvents;
 import com.arjuna.webservices.wsat.State;
 import com.arjuna.webservices.wsat.client.CoordinatorClient;
 import com.arjuna.webservices.wsat.processors.ParticipantProcessor;
+import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.wsc.messaging.MessageId;
 import com.arjuna.wst.Aborted;
 import com.arjuna.wst.Participant;
 import com.arjuna.wst.Prepared;
 import com.arjuna.wst.ReadOnly;
+import com.arjuna.wst.SystemException;
 import com.arjuna.wst.Vote;
 
 /**
@@ -54,6 +57,14 @@ public class ParticipantEngine implements ParticipantInboundEvents
      */
     private final Participant participant ;
     /**
+     * The participant id.
+     */
+    private final String id ;
+    /**
+     * The coordinator endpoint reference.
+     */
+    private final EndpointReferenceType coordinator ;
+    /**
      * The current state.
      */
     private State state ;
@@ -65,21 +76,27 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Construct the initial engine for the participant.
      * @param participant The participant.
+     * @param id The participant id.
+     * @param coordinator The coordinator endpoint reference.
      */
-    public ParticipantEngine(final Participant participant)
+    public ParticipantEngine(final Participant participant, final String id, final EndpointReferenceType coordinator)
     {
-        this(participant, State.STATE_ACTIVE) ;
+        this(participant, id, State.STATE_ACTIVE, coordinator) ;
     }
     
     /**
      * Construct the engine for the participant in a specified state.
      * @param participant The participant.
+     * @param id The participant id.
      * @param state The initial state.
+     * @param coordinator The coordinator endpoint reference.
      */
-    public ParticipantEngine(final Participant participant, final State state)
+    public ParticipantEngine(final Participant participant, final String id, final State state, final EndpointReferenceType coordinator)
     {
         this.participant = participant ;
+        this.id = id ;
         this.state = state ;
+        this.coordinator = coordinator ;
     }
     
     /**
@@ -104,6 +121,10 @@ public class ParticipantEngine implements ParticipantInboundEvents
             if (current == State.STATE_PREPARED_SUCCESS)
             {
                 state = State.STATE_COMMITTING ;
+                if (timerTask != null)
+                {
+                    timerTask.cancel() ;
+                }
             }
             else if ((current == State.STATE_ACTIVE) || (current == State.STATE_PREPARING))
             {
@@ -113,11 +134,11 @@ public class ParticipantEngine implements ParticipantInboundEvents
         
         if (current == State.STATE_PREPARED_SUCCESS)
         {
-            executeCommit(addressingContext, arjunaContext) ;
+            executeCommit() ;
         }
         else if (current == null)
         {
-            sendCommitted(addressingContext, arjunaContext) ;
+            sendCommitted() ;
         }
     }
     
@@ -148,15 +169,15 @@ public class ParticipantEngine implements ParticipantInboundEvents
         
         if (current == State.STATE_ACTIVE)
         {
-            executePrepare(addressingContext, arjunaContext) ;
+            executePrepare() ;
         }
         else if (current == State.STATE_PREPARED_SUCCESS)
         {
-            sendPrepared(addressingContext, arjunaContext) ;
+            sendPrepared() ;
         }
         else if ((current == State.STATE_ABORTING) || (current == null))
         {
-            sendAborted(addressingContext, arjunaContext) ;
+            sendAborted() ;
             forget() ;
         }
     }
@@ -192,16 +213,71 @@ public class ParticipantEngine implements ParticipantInboundEvents
             if ((current == State.STATE_ACTIVE) || (current == State.STATE_PREPARING) ||
                 (current == State.STATE_PREPARED_SUCCESS))
             {
-                executeRollback(addressingContext, arjunaContext) ;
+                if (!executeRollback())
+                {
+                    return ;
+                }
             }
             
-            sendAborted(addressingContext, arjunaContext) ;
+            sendAborted() ;
             
             if (current != null)
             {
                 forget() ;
             }
         }
+    }
+    
+    /**
+     * Handle the early rollback event.
+     * 
+     * None -> None
+     * Active -> Aborting (execute rollback, send aborted and forget)
+     * Preparing -> Aborting (execute rollback, send aborted and forget)
+     * PreparedSuccess -> PreparedSuccess
+     * Committing -> Committing
+     * Aborting -> Aborting
+     */
+    public void earlyRollback()
+    {
+        rollbackDecision() ;
+    }
+    
+    /**
+     * Handle the early readonly event.
+     * 
+     * None -> None
+     * Active -> None (send ReadOnly)
+     * Preparing -> None (send ReadOnly)
+     * PreparedSuccess -> PreparedSuccess
+     * Committing -> Committing
+     * Aborting -> Aborting
+     */
+    public void earlyReadonly()
+    {
+        readOnlyDecision() ;
+    }
+    
+    /**
+     * Handle the recovery event.
+     * 
+     * None -> None
+     * Active -> Active
+     * Preparing -> Preparing
+     * PreparedSuccess -> PreparedSuccess
+     * Committing -> PreparedSuccess (resend Prepared)
+     * Aborting -> Aborting
+     */
+    public void recovery()
+    {
+	synchronized(this)
+	{
+	    if (timerTask != null)
+	    {
+                timerTask.cancel() ;
+	    }
+	}
+        sendReplay() ;
     }
     
     /**
@@ -221,17 +297,20 @@ public class ParticipantEngine implements ParticipantInboundEvents
             final QName subCode = soapFault.getSubcode() ;
             WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.soapFault_1", new Object[] {instanceIdentifier, soapFaultType, subCode}) ;
         }
+        
+        if (CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME.equals(soapFault.getSubcode()))
+        {
+            forget() ;
+        }
     }
     
     /**
      * Handle the commit decision event.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
      * 
      * Preparing -> PreparedSuccess (send Prepared)
      * Committing -> Committing (send committed and forget)
      */
-    private void commitDecision(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    private void commitDecision()
     {
         final State current ;
         synchronized(this)
@@ -245,71 +324,71 @@ public class ParticipantEngine implements ParticipantInboundEvents
         
         if (current == State.STATE_PREPARING)
         {
-            sendPrepared(addressingContext, arjunaContext) ;
+            sendPrepared() ;
         }
         else if (current == State.STATE_COMMITTING)
         {
-            sendCommitted(addressingContext, arjunaContext) ;
+            sendCommitted() ;
             forget() ;
         }
     }
     
     /**
      * Handle the readOnly decision event.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
      * 
+     * Active -> None (send ReadOnly)
      * Preparing -> None (send ReadOnly)
      */
-    private void readOnlyDecision(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    private void readOnlyDecision()
     {
         final State current ;
         synchronized(this)
         {
             current = state ;
+            if ((current == State.STATE_ACTIVE) || (current == State.STATE_PREPARING))
+            {
+        	state = null ;
+            }
         }
         
-        if (current == State.STATE_PREPARING)
+        if ((current == State.STATE_ACTIVE) || (current == State.STATE_PREPARING))
         {
-            sendReadOnly(addressingContext, arjunaContext) ;
+            sendReadOnly() ;
             forget() ;
         }
     }
     
     /**
      * Handle the rollback decision event.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
      * 
+     * Active -> Aborting (send aborted)
      * Preparing -> Aborting (send aborted)
      */
-    private void rollbackDecision(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    private void rollbackDecision()
     {
         final State current ;
         synchronized(this)
         {
             current = state ;
-            if (current == State.STATE_PREPARING)
+            if ((current == State.STATE_PREPARING) || (current == State.STATE_ACTIVE))
             {
                 state = State.STATE_ABORTING ;
             }
         }
         
-        if (current == State.STATE_PREPARING)
+        if ((current == State.STATE_PREPARING) || (current == State.STATE_ACTIVE))
         {
-            sendAborted(addressingContext, arjunaContext) ;
+            sendAborted() ;
             forget() ;
         }
     }
     
     /**
      * Handle the comms timeout event.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
      * 
      * PreparedSuccess -> PreparedSuccess (resend Prepared)
      */
-    private void commsTimeout(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    private void commsTimeout()
     {
         final State current ;
         synchronized(this)
@@ -317,28 +396,33 @@ public class ParticipantEngine implements ParticipantInboundEvents
             current = state ;
         }
         
-        if (current == State.STATE_PREPARING)
+        if (current == State.STATE_PREPARED_SUCCESS)
         {
-            sendPrepared(addressingContext, arjunaContext) ;
+            sendPrepared() ;
         }
     }
     
     /**
      * Execute the commit transition.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
      * 
      * @message com.arjuna.wst.messaging.engines.ParticipantEngine.executeCommit_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.executeCommit_1] - Unexpected exception from participant commit
      */
-    private void executeCommit(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    private void executeCommit()
     {
         try
         {
             participant.commit() ;
-            commitDecision(addressingContext, arjunaContext) ;
+            commitDecision() ;
         }
         catch (final Throwable th)
         {
+            synchronized(this)
+            {
+                if (state == State.STATE_COMMITTING)
+                {
+            	    state = State.STATE_PREPARED_SUCCESS ;
+                }
+            }
             if (WSTLogger.arjLoggerI18N.isDebugEnabled())
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.executeCommit_1", th) ;
@@ -348,16 +432,18 @@ public class ParticipantEngine implements ParticipantInboundEvents
     
     /**
      * Execute the rollback transition.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
      * 
      * @message com.arjuna.wst.messaging.engines.ParticipantEngine.executeRollback_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.executeRollback_1] - Unexpected exception from participant rollback
      */
-    private void executeRollback(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    private boolean executeRollback()
     {
         try
         {
             participant.rollback() ;
+        }
+        catch (final SystemException se)
+        {
+            return false ;
         }
         catch (final Throwable th)
         {
@@ -366,22 +452,29 @@ public class ParticipantEngine implements ParticipantInboundEvents
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.executeRollback_1", th) ;
             }
         }
+        return true ;
     }
     
     /**
      * Execute the prepare transition.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
      * 
      * @message com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_1] - Unexpected exception from participant prepare
      * @message com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_2 [com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_2] - Unexpected result from participant prepare: {0}
      */
-    private void executePrepare(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    private void executePrepare()
     {
         final Vote vote ;
         try
         {
             vote = participant.prepare();
+        }
+        catch (final SystemException se)
+        {
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_1", se) ;
+            }
+            return ;
         }
         catch (final Throwable th)
         {
@@ -389,21 +482,21 @@ public class ParticipantEngine implements ParticipantInboundEvents
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_1", th) ;
             }
-            rollbackDecision(addressingContext, arjunaContext) ;
+            rollbackDecision() ;
             return ;
         }
         
         if (vote instanceof Prepared)
         {
-            commitDecision(addressingContext, arjunaContext) ;
+            commitDecision() ;
         }
         else if (vote instanceof ReadOnly)
         {
-            readOnlyDecision(addressingContext, arjunaContext) ;
+            readOnlyDecision() ;
         }
         else if (vote instanceof Aborted)
         {
-            rollbackDecision(addressingContext, arjunaContext) ;
+            rollbackDecision() ;
         }
         else
         {
@@ -411,7 +504,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.executePrepare_2", new Object[] {(vote == null ? "null" : vote.getClass().getName())}) ;
             }
-            rollbackDecision(addressingContext, arjunaContext) ;
+            rollbackDecision() ;
         }
     }
     
@@ -429,15 +522,13 @@ public class ParticipantEngine implements ParticipantInboundEvents
     
     /**
      * Send the committed message.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
      * 
      * @message com.arjuna.wst.messaging.engines.ParticipantEngine.sendCommitted_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendCommitted_1] - Unexpected exception while sending Committed
      */
-    private void sendCommitted(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    private void sendCommitted()
     {
-        final AddressingContext responseAddressingContext = createResponseContext(addressingContext) ;
-        final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
+        final AddressingContext responseAddressingContext = createContext() ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier(id) ;
         try
         {
             CoordinatorClient.getClient().sendCommitted(responseAddressingContext, instanceIdentifier) ;
@@ -453,15 +544,13 @@ public class ParticipantEngine implements ParticipantInboundEvents
     
     /**
      * Send the prepared message.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
      * 
      * @message com.arjuna.wst.messaging.engines.ParticipantEngine.sendPrepared_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendPrepared_1] - Unexpected exception while sending Prepared
      */
-    private void sendPrepared(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    private void sendPrepared()
     {
-        final AddressingContext responseAddressingContext = createResponseContext(addressingContext) ;
-        final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
+        final AddressingContext responseAddressingContext = createContext() ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier(id) ;
         try
         {
             CoordinatorClient.getClient().sendPrepared(responseAddressingContext, instanceIdentifier) ;
@@ -474,20 +563,18 @@ public class ParticipantEngine implements ParticipantInboundEvents
             }
         }
         
-        initiateTimer(addressingContext, arjunaContext) ;
+        initiateTimer() ;
     }
     
     /**
      * Send the aborted message.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
      * 
      * @message com.arjuna.wst.messaging.engines.ParticipantEngine.sendAborted_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendAborted_1] - Unexpected exception while sending Aborted
      */
-    private void sendAborted(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    private void sendAborted()
     {
-        final AddressingContext responseAddressingContext = createResponseContext(addressingContext) ;
-        final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
+        final AddressingContext responseAddressingContext = createContext() ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier(id) ;
         try
         {
             CoordinatorClient.getClient().sendAborted(responseAddressingContext, instanceIdentifier) ;
@@ -503,15 +590,13 @@ public class ParticipantEngine implements ParticipantInboundEvents
     
     /**
      * Send the read only message.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
      * 
      * @message com.arjuna.wst.messaging.engines.ParticipantEngine.sendReadOnly_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendReadOnly_1] - Unexpected exception while sending ReadOnly
      */
-    private void sendReadOnly(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    private void sendReadOnly()
     {
-        final AddressingContext responseAddressingContext = createResponseContext(addressingContext) ;
-        final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
+        final AddressingContext responseAddressingContext = createContext() ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier(id) ;
         try
         {
             CoordinatorClient.getClient().sendReadOnly(responseAddressingContext, instanceIdentifier) ;
@@ -526,21 +611,42 @@ public class ParticipantEngine implements ParticipantInboundEvents
     }
     
     /**
-     * Initiate the timer.
-     * @param addressingContext The addressing context.
-     * @param arjunaContext The arjuna context.
+     * Send the replay message.
+     * 
+     * @message com.arjuna.wst.messaging.engines.ParticipantEngine.sendReplay_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendReplay_1] - Unexpected exception while sending Replay
      */
-    private synchronized void initiateTimer(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    private void sendReplay()
+    {
+        final AddressingContext responseAddressingContext = createContext() ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier(id) ;
+        try
+        {
+            CoordinatorClient.getClient().sendReplay(responseAddressingContext, instanceIdentifier) ;
+        }
+        catch (final Throwable th)
+        {
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.sendReplay_1", th) ;
+            }
+        }
+    }
+    
+    /**
+     * Initiate the timer.
+     */
+    private synchronized void initiateTimer()
     {
         if (timerTask != null)
         {
             timerTask.cancel() ;
         }
-        if (state == State.STATE_PREPARING)
+        
+        if (state == State.STATE_PREPARED_SUCCESS)
         {
             timerTask = new TimerTask() {
                 public void run() {
-                    commsTimeout(addressingContext, arjunaContext) ;
+                    commsTimeout() ;
                 }
             } ;
             TransportTimer.getTimer().schedule(timerTask, TransportTimer.getTransportPeriod()) ;
@@ -553,12 +659,11 @@ public class ParticipantEngine implements ParticipantInboundEvents
     
     /**
      * Create a response context from the incoming context.
-     * @param addressingContext The incoming addressing context.
-     * @return The response addressing context.
+     * @return The addressing context.
      */
-    private AddressingContext createResponseContext(final AddressingContext addressingContext)
+    private AddressingContext createContext()
     {
         final String messageId = MessageId.getMessageId() ;
-        return AddressingContext.createNotificationContext(addressingContext, messageId) ;
+        return AddressingContext.createRequestContext(coordinator, messageId) ;
     }
 }

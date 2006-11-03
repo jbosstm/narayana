@@ -236,11 +236,6 @@ public interface BusinessActivityConstants
      * The Status Action.
      */
     public String WSBA_ACTION_STATUS = WSBA_NAMESPACE + "/" + WSBA_ELEMENT_STATUS ;
-
-    /**
-     * The SoapFault Action.
-     */
-    public String WSBA_ACTION_SOAP_FAULT = WSBA_NAMESPACE + "/soapFault" ;
     
     /**
      * The InconsistentInternalState error code.

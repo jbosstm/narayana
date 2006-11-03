@@ -29,7 +29,9 @@ import com.arjuna.webservices.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsba.NotificationType;
 import com.arjuna.webservices.wsba.ParticipantCompletionParticipantInboundEvents;
 import com.arjuna.webservices.wsba.StatusType;
+import com.arjuna.webservices.wsba.client.ParticipantCompletionCoordinatorClient;
 import com.arjuna.webservices.wsba.processors.ParticipantCompletionParticipantProcessor;
+import com.arjuna.wsc.messaging.MessageId;
 
 
 /**
@@ -101,9 +103,13 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
                 }
             }
         }
-        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        else
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.cancel_2", new Object[] {instanceIdentifier}) ;
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.cancel_2", new Object[] {instanceIdentifier}) ;
+            }
+            sendCancelled(addressingContext, arjunaContext) ;
         }
     }
 
@@ -135,9 +141,13 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
                 }
             }
         }
-        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        else
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.close_2", new Object[] {instanceIdentifier}) ;
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.close_2", new Object[] {instanceIdentifier}) ;
+            }
+            sendClosed(addressingContext, arjunaContext) ;
         }
     }
     
@@ -169,9 +179,13 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
                 }
             }
         }
-        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        else
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.compensate_2", new Object[] {instanceIdentifier}) ;
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.compensate_2", new Object[] {instanceIdentifier}) ;
+            }
+            sendCompensated(addressingContext, arjunaContext) ;
         }
     }
     
@@ -343,6 +357,84 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
         else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
         {
             WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.soapFault_2", new Object[] {instanceIdentifier}) ;
+        }
+    }
+    
+    /**
+     * Send a cancelled message.
+     * 
+     * @param addressingContext The addressing context.
+     * @param arjunaContext The arjuna context.
+     * 
+     * @message com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.sendCancelled_1 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.sendCancelled_1] - Unexpected exception while sending Cancelled
+     */
+    private void sendCancelled(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    {
+        // KEV add check for recovery
+        final String messageId = MessageId.getMessageId() ;
+        final AddressingContext responseAddressingContext = AddressingContext.createRequestContext(addressingContext.getFrom(), messageId) ;
+        try
+        {
+            ParticipantCompletionCoordinatorClient.getClient().sendCancelled(responseAddressingContext, arjunaContext.getInstanceIdentifier()) ;
+        }
+        catch (final Throwable th)
+        {
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.sendCancelled_1", th) ;
+            }
+        }
+    }
+    
+    /**
+     * Send a closed message.
+     * 
+     * @param addressingContext The addressing context.
+     * @param arjunaContext The arjuna context.
+     * 
+     * @message com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.sendClosed_1 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.sendClosed_1] - Unexpected exception while sending Closed
+     */
+    private void sendClosed(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    {
+        // KEV add check for recovery
+        final String messageId = MessageId.getMessageId() ;
+        final AddressingContext responseAddressingContext = AddressingContext.createRequestContext(addressingContext.getFrom(), messageId) ;
+        try
+        {
+            ParticipantCompletionCoordinatorClient.getClient().sendClosed(responseAddressingContext, arjunaContext.getInstanceIdentifier()) ;
+        }
+        catch (final Throwable th)
+        {
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.sendClosed_1", th) ;
+            }
+        }
+    }
+    
+    /**
+     * Send a compensated message.
+     * 
+     * @param addressingContext The addressing context.
+     * @param arjunaContext The arjuna context.
+     * 
+     * @message com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.sendCompensated_1 [com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.sendCompensated_1] - Unexpected exception while sending Compensated
+     */
+    private void sendCompensated(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    {
+        // KEV add check for recovery
+        final String messageId = MessageId.getMessageId() ;
+        final AddressingContext responseAddressingContext = AddressingContext.createRequestContext(addressingContext.getFrom(), messageId) ;
+        try
+        {
+            ParticipantCompletionCoordinatorClient.getClient().sendCompensated(responseAddressingContext, arjunaContext.getInstanceIdentifier()) ;
+        }
+        catch (final Throwable th)
+        {
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionParticipantProcessorImpl.sendCompensated_1", th) ;
+            }
         }
     }
 }

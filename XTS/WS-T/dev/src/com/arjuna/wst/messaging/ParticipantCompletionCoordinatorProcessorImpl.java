@@ -30,7 +30,9 @@ import com.arjuna.webservices.wsba.ExceptionType;
 import com.arjuna.webservices.wsba.NotificationType;
 import com.arjuna.webservices.wsba.ParticipantCompletionCoordinatorInboundEvents;
 import com.arjuna.webservices.wsba.StatusType;
+import com.arjuna.webservices.wsba.client.ParticipantCompletionParticipantClient;
 import com.arjuna.webservices.wsba.processors.ParticipantCompletionCoordinatorProcessor;
+import com.arjuna.wsc.messaging.MessageId;
 
 
 /**
@@ -239,9 +241,13 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
                 }
             }
         }
-        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        else
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.exit_2", new Object[] {instanceIdentifier}) ;
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.exit_2", new Object[] {instanceIdentifier}) ;
+            }
+            sendExited(addressingContext, arjunaContext) ;
         }
     }
     
@@ -274,9 +280,13 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
                 }
             }
         }
-        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        else
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.fault_2", new Object[] {instanceIdentifier}) ;
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.fault_2", new Object[] {instanceIdentifier}) ;
+            }
+            sendFaulted(addressingContext, arjunaContext) ;
         }
     }
     
@@ -380,6 +390,58 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
         else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
         {
             WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.soapFault_2", new Object[] {instanceIdentifier}) ;
+        }
+    }
+    
+    /**
+     * Send an exited message.
+     * 
+     * @param addressingContext The addressing context.
+     * @param arjunaContext The arjuna context.
+     * 
+     * @message com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendExited_1 [com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendExited_1] - Unexpected exception while sending Exited
+     */
+    private void sendExited(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    {
+        // KEV add check for recovery
+        final String messageId = MessageId.getMessageId() ;
+        final AddressingContext responseAddressingContext = AddressingContext.createRequestContext(addressingContext.getFrom(), messageId) ;
+        try
+        {
+            ParticipantCompletionParticipantClient.getClient().sendExited(responseAddressingContext, arjunaContext.getInstanceIdentifier()) ;
+        }
+        catch (final Throwable th)
+        {
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendExited_1", th) ;
+            }
+        }
+    }
+    
+    /**
+     * Send a faulted message.
+     * 
+     * @param addressingContext The addressing context.
+     * @param arjunaContext The arjuna context.
+     * 
+     * @message com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendFaulted_1 [com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendFaulted_1] - Unexpected exception while sending Faulted
+     */
+    private void sendFaulted(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    {
+        // KEV add check for recovery
+        final String messageId = MessageId.getMessageId() ;
+        final AddressingContext responseAddressingContext = AddressingContext.createRequestContext(addressingContext.getFrom(), messageId) ;
+        try
+        {
+            ParticipantCompletionParticipantClient.getClient().sendFaulted(responseAddressingContext, arjunaContext.getInstanceIdentifier()) ;
+        }
+        catch (final Throwable th)
+        {
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendFailed_1", th) ;
+            }
         }
     }
 }

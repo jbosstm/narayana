@@ -29,7 +29,9 @@ import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.util.TransportTimer;
 import com.arjuna.webservices.wsaddr.AddressingContext;
+import com.arjuna.webservices.wsaddr.AttributedURIType;
 import com.arjuna.webservices.wsaddr.EndpointReferenceType;
+import com.arjuna.webservices.wsaddr.RelationshipType;
 import com.arjuna.webservices.wsarj.ArjunaContext;
 import com.arjuna.webservices.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsat.CoordinatorInboundEvents;
@@ -37,6 +39,7 @@ import com.arjuna.webservices.wsat.NotificationType;
 import com.arjuna.webservices.wsat.State;
 import com.arjuna.webservices.wsat.client.ParticipantClient;
 import com.arjuna.webservices.wsat.processors.CoordinatorProcessor;
+import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.wsc.messaging.MessageId;
 
 /**
@@ -186,14 +189,20 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
         {
             sendCommit() ;
         }
-        else if (current == State.STATE_ABORTING)
+        else if ((current == State.STATE_ABORTING) || ((current == null) && !readOnly))
         {
-            sendRollback() ;
-            forget() ;
-        }
-        else if ((current == null) && durable && !readOnly)
-        {
-            sendRollback() ;
+            if (durable)
+            {
+                sendRollback() ;
+            }
+            else
+            {
+        	sendInvalidState(addressingContext, arjunaContext) ;
+            }
+            if (current != null)
+            {
+        	forget() ;
+            }
         }
     }
     
@@ -306,7 +315,20 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
             sendPrepare() ;
         }
         
-        return waitForState(State.STATE_PREPARING, TransportTimer.getTransportTimeout()) ;
+        final State result = waitForState(State.STATE_PREPARING, TransportTimer.getTransportTimeout()) ;
+        if (result != State.STATE_PREPARING)
+        {
+            return result ;
+        }
+        
+        synchronized(this)
+        {
+            if ((state == State.STATE_PREPARING) && (timerTask != null))
+            {
+        	timerTask.cancel() ;
+            }
+            return state ;
+        }
     }
     
     /**
@@ -333,10 +355,23 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
         
         if ((current == State.STATE_PREPARED_SUCCESS) || (current == State.STATE_COMMITTING))
         {
-            sendPrepare() ;
+            sendCommit() ;
         }
         
-        return waitForState(State.STATE_COMMITTING, TransportTimer.getTransportTimeout()) ;
+        final State result = waitForState(State.STATE_COMMITTING, TransportTimer.getTransportTimeout()) ;
+        if (result != State.STATE_COMMITTING)
+        {
+            return result ;
+        }
+        
+        synchronized(this)
+        {
+            if ((state == State.STATE_COMMITTING) && (timerTask != null))
+            {
+        	timerTask.cancel() ;
+            }
+            return state ;
+        }
     }
     
     /**
@@ -366,6 +401,10 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
             (current == State.STATE_PREPARED_SUCCESS))
         {
             sendRollback() ;
+        }
+        else if (current == State.STATE_ABORTING)
+        {
+            forget() ;
         }
         
         return waitForState(State.STATE_ABORTING, TransportTimer.getTransportTimeout()) ;
@@ -496,7 +535,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
         {
             if (WSTLogger.arjLoggerI18N.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.CoordinatorEngine.sendRollback_1", th) ;
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.CoordinatorEngine.sendPrepare_1", th) ;
             }
         }
         
@@ -541,6 +580,37 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
             if (WSTLogger.arjLoggerI18N.isDebugEnabled())
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.CoordinatorEngine.sendRollback_1", th) ;
+            }
+        }
+    }
+    
+    /**
+     * Send the InvalidState message.
+     * 
+     * @message com.arjuna.wst.messaging.engines.CoordinatorEngine.sendInvalidState_1 [com.arjuna.wst.messaging.engines.CoordinatorEngine.sendInvalidState_1] - Inconsistent internal state.
+     * @message com.arjuna.wst.messaging.engines.CoordinatorEngine.sendInvalidState_2 [com.arjuna.wst.messaging.engines.CoordinatorEngine.sendInvalidState_2] - Unexpecting exception while sending InvalidState
+     */
+    private void sendInvalidState(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    {
+        try
+        {
+            final AddressingContext responseContext = createContext() ;
+            final AttributedURIType messageId = addressingContext.getMessageID() ;
+            final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
+            if (messageId != null)
+            {
+                responseContext.addRelatesTo(new RelationshipType(messageId.getValue())) ;
+            }
+            
+            final String message = WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.engines.CoordinatorEngine.sendInvalidState_1") ;
+            final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME, message) ;
+            ParticipantClient.getClient().sendSoapFault(responseContext, soapFault, instanceIdentifier) ;
+        }
+        catch (final Throwable th)
+        {
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.CoordinatorEngine.sendInvalidState_2", th) ;
             }
         }
     }

@@ -145,7 +145,7 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
                 
                 final CoordinationContextType coordinationContext = new CoordinationContextType() ;
                 coordinationContext.setCoordinationType(new URI(coordinationTypeURI)) ;
-                coordinationContext.setIdentifier(new AttributedURIType(arjunaContext.getTransactionIdentifier())) ;
+                coordinationContext.setIdentifier(new AttributedURIType("urn:"+arjunaContext.getTransactionIdentifier())) ;
                 final int transactionExpires = arjunaContext.getTransactionExpires() ;
                 if (transactionExpires > 0)
                 {

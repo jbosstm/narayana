@@ -90,11 +90,6 @@ public class ParticipantCompletionCoordinatorClient extends BaseWSAddrClient
      */
     private final AttributedURIType statusAction =
         new AttributedURIType(BusinessActivityConstants.WSBA_ACTION_STATUS) ;
-    /**
-     * The soapFault action.
-     */
-    private final AttributedURIType soapFaultAction =
-        new AttributedURIType(BusinessActivityConstants.WSBA_ACTION_SOAP_FAULT) ;
     
     /**
      * The SOAP service representing the client.
@@ -249,20 +244,6 @@ public class ParticipantCompletionCoordinatorClient extends BaseWSAddrClient
         sendOneWay(new StatusType(state), addressingContext, soapService, endpointReference,
                 endpointReference, BusinessActivityConstants.WSBA_ELEMENT_STATUS_QNAME,
             statusAction) ;
-    }
-
-    /**
-     * Send a fault.
-     * @param addressingContext The addressing context.
-     * @param soapFault The SOAP fault.
-     * @throws SoapFault For any errors.
-     * @throws IOException for any transport errors.
-     */
-    public void sendSoapFault(final AddressingContext addressingContext, final SoapFault soapFault, final InstanceIdentifier identifier)
-        throws SoapFault, IOException
-    {
-        final EndpointReferenceType endpointReference = getEndpointReference(identifier) ;
-        sendSoapFault(soapFault, addressingContext, soapService, endpointReference, soapFaultAction) ;
     }
     
     /**

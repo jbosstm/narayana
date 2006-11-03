@@ -173,7 +173,7 @@ public class RegistrarImple implements Registrar
 		if (AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC.equals(protocolIdentifier))
 		{
 			// enlist participant that wraps the requester URI.
-			final String participantId = new Uid().stringForm();
+			final String participantId = "D" + new Uid().stringForm();
 
 			try
 			{
@@ -192,7 +192,7 @@ public class RegistrarImple implements Registrar
 		else if (AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC.equals(protocolIdentifier))
 		{
 			// enlist participant that wraps the requester URI.
-			final String participantId = new Uid().stringForm();
+			final String participantId = "V" + new Uid().stringForm();
 
 			try
 			{
@@ -280,7 +280,7 @@ public class RegistrarImple implements Registrar
 		if (AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC.equals(protocolIdentifier))
 		{
 			// enlist participant that wraps the requester URI.
-            final String participantId = new Uid().stringForm();
+            final String participantId = "D" + new Uid().stringForm();
 
             try
             {
@@ -297,7 +297,7 @@ public class RegistrarImple implements Registrar
 		else if (AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC.equals(protocolIdentifier))
 		{
 			// enlist participant that wraps the requester URI.
-            final String participantId = new Uid().stringForm();
+            final String participantId = "V" + new Uid().stringForm();
 
             try
             {

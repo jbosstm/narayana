@@ -157,21 +157,9 @@ public interface AtomicTransactionConstants
      */
     public String WSAT_ACTION_REPLAY = WSAT_NAMESPACE + "/" + WSAT_ELEMENT_REPLAY ;
     /**
-     * The PrepareResponse element.
-     */
-    public String WSAT_ELEMENT_PREPARE_RESPONSE = "PrepareResponse" ;
-    /**
-     * The PrepareResponse QName.
-     */
-    public QName WSAT_ELEMENT_PREPARE_RESPONSE_QNAME = new QName(WSAT_NAMESPACE, WSAT_ELEMENT_PREPARE_RESPONSE, WSAT_PREFIX) ;
-    /**
      * The Fault Action.
      */
     public String WSAT_ACTION_FAULT = WSAT_NAMESPACE + "/fault" ;
-    /**
-     * The SOAP Fault Action.
-     */
-    public String WSAT_ACTION_SOAP_FAULT = WSAT_NAMESPACE + "/soapFault" ;
     
     /**
      * The vote attribute.

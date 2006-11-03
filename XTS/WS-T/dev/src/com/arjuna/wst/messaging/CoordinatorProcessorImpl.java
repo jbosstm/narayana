@@ -21,15 +21,19 @@
 package com.arjuna.wst.messaging;
 
 import com.arjuna.webservices.SoapFault;
+import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.wsaddr.AddressingContext;
+import com.arjuna.webservices.wsaddr.AttributedURIType;
+import com.arjuna.webservices.wsaddr.RelationshipType;
 import com.arjuna.webservices.wsarj.ArjunaContext;
 import com.arjuna.webservices.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsat.NotificationType;
 import com.arjuna.webservices.wsat.CoordinatorInboundEvents;
 import com.arjuna.webservices.wsat.client.ParticipantClient;
 import com.arjuna.webservices.wsat.processors.CoordinatorProcessor;
+import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.wsc.messaging.MessageId;
 
 /**
@@ -115,7 +119,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param arjunaContext The arjuna context.
      * 
      * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_1] - Unexpected exception thrown from committed:
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_2] - Aborted called on unknown coordinator: {0}
+     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_2] - Committed called on unknown coordinator: {0}
      */
     public void committed(final NotificationType committed, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -150,7 +154,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param arjunaContext The arjuna context.
      * 
      * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_1] - Unexpected exception thrown from prepared:
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_2] - Aborted called on unknown coordinator: {0}
+     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_2] - Prepared called on unknown coordinator: {0}
      */
     public void prepared(final NotificationType prepared, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -178,8 +182,16 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             {
                 WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_2", new Object[] {instanceIdentifier}) ; 
             }
-            // Assume participant is durable
-            sendRollback(addressingContext, arjunaContext) ;
+            
+            final String identifierValue = instanceIdentifier.getInstanceIdentifier() ;
+            if ((identifierValue != null) && (identifierValue.length() > 0) && (identifierValue.charAt(0) == 'D'))
+            {
+        	sendRollback(addressingContext, arjunaContext) ;
+            }
+            else
+            {
+                sendInvalidState(addressingContext, arjunaContext) ;
+            }
         }
     }
     
@@ -190,7 +202,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param arjunaContext The arjuna context.
      * 
      * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.readOnly_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.readOnly_1] - Unexpected exception thrown from readOnly:
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.readOnly_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.readOnly_2] - Aborted called on unknown coordinator: {0}
+     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.readOnly_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.readOnly_2] - ReadOnly called on unknown coordinator: {0}
      */
     public void readOnly(final NotificationType readOnly, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -225,7 +237,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param arjunaContext The arjuna context.
      * 
      * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.replay_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.replay_1] - Unexpected exception thrown from replay:
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.replay_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.replay_2] - Aborted called on unknown coordinator: {0}
+     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.replay_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.replay_2] - Replay called on unknown coordinator: {0}
      */
     public void replay(final NotificationType replay, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -253,8 +265,17 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             {
                 WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.replay_2", new Object[] {instanceIdentifier}) ; 
             }
-            // Assume participant is durable
-            sendRollback(addressingContext, arjunaContext) ;
+
+            
+            final String identifierValue = instanceIdentifier.getInstanceIdentifier() ;
+            if ((identifierValue != null) && (identifierValue.length() > 0) && (identifierValue.charAt(0) == 'D'))
+            {
+        	sendRollback(addressingContext, arjunaContext) ;
+            }
+            else
+            {
+                sendInvalidState(addressingContext, arjunaContext) ;
+            }
         }
     }
 
@@ -292,6 +313,43 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             if (WSTLogger.arjLoggerI18N.isWarnEnabled())
             {
                 WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.soapFault_2", new Object[] {instanceIdentifier}) ;
+            }
+        }
+    }
+    
+    /**
+     * Send an unknown transaction fault.
+     * 
+     * @param addressingContext The addressing context.
+     * @param arjunaContext The arjuna context.
+     * 
+     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_1] - Unknown Transaction.
+     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_2] - Unexpecting exception while sending InvalidState
+     */
+    private void sendInvalidState(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    {
+        // KEV add check for recovery
+        final String responseMessageId = MessageId.getMessageId() ;
+        final AddressingContext responseAddressingContext = AddressingContext.createRequestContext(addressingContext.getFrom(), responseMessageId) ;
+        final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
+        
+        final AttributedURIType requestMessageId = addressingContext.getMessageID() ;
+        if (requestMessageId != null)
+        {
+            responseAddressingContext.addRelatesTo(new RelationshipType(requestMessageId.getValue())) ;
+        }
+        
+        try
+        {
+            final String message = WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_1") ;
+            final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME, message) ;
+            ParticipantClient.getClient().sendSoapFault(responseAddressingContext, soapFault, instanceIdentifier) ;
+        }
+        catch (final Throwable th)
+        {
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorProcessorImpl.sendInvalidState_2", th) ;
             }
         }
     }
