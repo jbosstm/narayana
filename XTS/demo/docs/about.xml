@@ -36,7 +36,7 @@
             <html>
                 <p>
                     The sample application features some simple transactional Web services, a client application, deployment metadata files and a build script.
-                    The application is designed to introduce some of the key features of the XML Transaction component of ATS 4.1 and help you get started with writing your own transactional Web services applications.
+                    The application is designed to introduce some of the key features of the XML Transaction component of JBossTS 4.2.2 and help you get started with writing your own transactional Web services applications.
                 </p>
                 <p>
                     The application is based around a simple booking scenario. The services provide the ability to transactionally reserve resources,

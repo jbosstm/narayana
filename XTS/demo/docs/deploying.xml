@@ -41,6 +41,20 @@
                     To proceed, you will need to install ant (<a class="linkscoloured" href="http://ant.apache.org/" target="_blank">http://ant.apache.org/</a>) to take advantage of the supplied build file. Version 1.6.1 or later of ant is recommended for this application. The application may not function correctly with versions prior to 1.5.
                 </p>
                 <p>
+					Deploying into JBoss.
+				</p>
+				<p>
+					This release has been tested against JBoss 4.0.3SP1, 4.0.4GA and 4.0.5GA.
+			    </p>
+                <ol>
+                    <li><p>Install JBoss.</p>
+                    </li>
+                    <li><p>Edit the <code>&lt;xts-home&gt;/demo/jboss.properties</code> file, replacing the <code>JBOSS_HOSTNAME</code>, <code>JBOSS_PORT</code>, <code>JBOSS_URLSTUB</code>, <code>JBOSS_DEPLOY_DIR</code> and <code>JBOSS_HOME</code> variables to reflect the location of your JBoss installation</p></li>
+                    <li><p>Compile the application source, build the application archive file and deploy it into JBoss deploy directory by typing '<code>build.sh jboss clean deploy</code>' on Unix or '<code>build.bat jboss clean deploy</code>' on Windows</p></li>
+                    <li><p>Run the application server by using the run.sh or run.bat command.</p></li>
+                    <li><p>Invoke the demo client by browsing the URL (e.g.): <code>http://hostname:port/xts-demo/</code></p></li>
+                </ol>
+                <p>
 					Deploying into webMethods.
 				</p>
 				<p>
@@ -53,7 +67,6 @@
                     <li><p>Install webMethods.</p>
                     </li>
                     <li><p>Edit the <code>&lt;xts-home&gt;/demo/webmethods.properties</code> file, replacing the <code>WEBMETHODS_HOSTNAME</code>, <code>WEBMETHODS_PORT</code>, <code>WEBMETHODS_URLSTUB</code>, <code>WEBMETHODS_DEPLOY_DIR</code> and <code>WEBMETHODS_HOME</code> variables to reflect the location of your webMethods installation</p></li>
-                        <p><b>Note</b>: You will not have to do this part if you chose to initialise this information during install.</p>
                     <li><p>Compile the application source, build the application archive file and deploy it into webMethods deploy directory by typing '<code>build.sh webmethods clean deploy</code>' on Unix or '<code>build.bat webmethods clean deploy</code>' on Windows</p></li>
                     <li><p>Run the application from the deploy directory by using the webMethods runapp command.</p></li>
                     <li><p>Invoke the demo client by browsing the URL (e.g.): <code>http://hostname:port/xts-demo/</code></p></li>

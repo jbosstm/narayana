@@ -35,7 +35,7 @@
         <area title="Source code overview">
             <html>
                 <p>
-                    You can begin experimenting with the XML Transaction component of ATS 4.1 by editing the sample application source code, which is heavily commented to assist your understanding. The source code can be found in the &lt;ats 4.1 install&gt;/wst/demo/src directory.
+                    You can begin experimenting with the XML Transaction component of JBoss 4.2.2 by editing the sample application source code, which is heavily commented to assist your understanding. The source code can be found in the &lt;jbossts 4.2.2 install&gt;/wst/demo/src directory.
                 </p>
                 <p>
                     It is structured as follows:
