@@ -30,7 +30,7 @@
 		<jaxrpc-mapping-file>WEB-INF/jaxrpc-mapping.xml</jaxrpc-mapping-file>
 		<port-component>
 			<port-component-name>RestaurantServiceAT</port-component-name>
-			<wsdl-port>RestaurantServiceAT</wsdl-port>
+			<wsdl-port xmlns:rest="http://www.jboss.com/jbosstm/xts/demo/Restaurant">rest:RestaurantServiceAT</wsdl-port>
 			<service-endpoint-interface>com.arjuna.xts.nightout.services.Restaurant.IRestaurantService</service-endpoint-interface>
 			<service-impl-bean>
 				<servlet-link>RestaurantServiceAT</servlet-link>
@@ -49,7 +49,7 @@
 		<jaxrpc-mapping-file>WEB-INF/jaxrpc-mapping.xml</jaxrpc-mapping-file>
 		<port-component>
 			<port-component-name>RestaurantServiceBA</port-component-name>
-			<wsdl-port>RestaurantServiceBA</wsdl-port>
+			<wsdl-port xmlns:rest="http://www.jboss.com/jbosstm/xts/demo/Restaurant">rest:RestaurantServiceBA</wsdl-port>
 			<service-endpoint-interface>com.arjuna.xts.nightout.services.Restaurant.IRestaurantServiceBA</service-endpoint-interface>
 			<service-impl-bean>
 				<servlet-link>RestaurantServiceBA</servlet-link>
@@ -68,7 +68,7 @@
 		<jaxrpc-mapping-file>WEB-INF/jaxrpc-mapping.xml</jaxrpc-mapping-file>
 		<port-component>
 			<port-component-name>TheatreServiceAT</port-component-name>
-			<wsdl-port>TheatreServiceAT</wsdl-port>
+			<wsdl-port xmlns:theatre="http://www.jboss.com/jbosstm/xts/demo/Theatre">theatre:TheatreServiceAT</wsdl-port>
 			<service-endpoint-interface>com.arjuna.xts.nightout.services.Theatre.ITheatreService</service-endpoint-interface>
 			<service-impl-bean>
 				<servlet-link>TheatreServiceAT</servlet-link>
@@ -87,7 +87,7 @@
 		<jaxrpc-mapping-file>WEB-INF/jaxrpc-mapping.xml</jaxrpc-mapping-file>
 		<port-component>
 			<port-component-name>TheatreServiceBA</port-component-name>
-			<wsdl-port>TheatreServiceBA</wsdl-port>
+			<wsdl-port xmlns:theatre="http://www.jboss.com/jbosstm/xts/demo/Theatre">theatre:TheatreServiceBA</wsdl-port>
 			<service-endpoint-interface>com.arjuna.xts.nightout.services.Theatre.ITheatreServiceBA</service-endpoint-interface>
 			<service-impl-bean>
 				<servlet-link>TheatreServiceBA</servlet-link>
@@ -106,7 +106,7 @@
 		<jaxrpc-mapping-file>WEB-INF/jaxrpc-mapping.xml</jaxrpc-mapping-file>
 		<port-component>
 			<port-component-name>TaxiServiceAT</port-component-name>
-			<wsdl-port>TaxiServiceAT</wsdl-port>
+			<wsdl-port xmlns:taxi="http://www.jboss.com/jbosstm/xts/demo/Taxi">taxi:TaxiServiceAT</wsdl-port>
 			<service-endpoint-interface>com.arjuna.xts.nightout.services.Taxi.ITaxiService</service-endpoint-interface>
 			<service-impl-bean>
 				<servlet-link>TaxiServiceAT</servlet-link>
@@ -125,7 +125,7 @@
 		<jaxrpc-mapping-file>WEB-INF/jaxrpc-mapping.xml</jaxrpc-mapping-file>
 		<port-component>
 			<port-component-name>TaxiServiceBA</port-component-name>
-			<wsdl-port>TaxiServiceBA</wsdl-port>
+			<wsdl-port xmlns:taxi="http://www.jboss.com/jbosstm/xts/demo/Taxi">taxi:TaxiServiceBA</wsdl-port>
 			<service-endpoint-interface>com.arjuna.xts.nightout.services.Taxi.ITaxiServiceBA</service-endpoint-interface>
 			<service-impl-bean>
 				<servlet-link>TaxiServiceBA</servlet-link>
