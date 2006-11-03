@@ -1,28 +1,22 @@
-Installing JBossJTA into JBoss 4.0.3SP1
----------------------------------------
+Installing JBossJTA into JBoss 4.0.3SP1, 4.0.4GA and 4.0.5GA
+------------------------------------------------------------
 
-The installation of JBossJTA into JBoss 4.0.3SP1 is currently a manual process.
+The installation of JBossJTA into JBoss AS is currently a manual process.
 We hope to release an installer in the near future that will automate this
 process.
 
 The following steps are required
 
- - download the tar or zip version of JBoss 4.0.3SP1
+ - download the tar or zip version of the application server
  - extract the distribution into an installation directory
 
  - copy the following jars from the JBossJTA installation into the
-   server/XXX/lib directory of the JBoss 4.0.3 SP1 installation
+   server/XXX/lib directory of the application server installation
    - lib/jbossjta.jar
    - lib/jbossjta-integration.jar
    - lib/ext/jbossts-common.jar
-   - jboss/jboss.jar
-   - jboss/jboss-hibernate.jar
- - copy the following jar from the JBossJTA installation into the
-   server/XXX/deploy/jboss-aop.deployer directory of the JBoss 4.0.3 SP1
-   installation
-   - jboss/jboss-aspect-library.jar
  - copy the following configuration file from the JBossJTA installation into
-   the server/XXX/conf directory of the JBoss 4.0.3 SP1 installation
+   the server/XXX/conf directory of the application server installation
    - etc/jbossjta-properties.xml
  - edit the server/XXX/conf/jboss-service.xml file and replace the
    jboss:service=TransactionManager mbean declaration with the following
@@ -31,6 +25,16 @@ The following steps are required
       name="jboss:service=TransactionManager">
       <attribute name="TransactionTimeout">300</attribute>
    </mbean>
+
+Application Server Library Modifications
+----------------------------------------
+
+The JBoss 4.0.3SP1 and 4.0.4GA application servers require some modified
+librarires before JBossJTA can be used as a replacement.  These are detailed
+in the appropriate subdirectory of the jboss directory within this installation.
+
+No modifications are required if you are running JBoss 4.0.5GA or a cumulative
+patch for JBoss 4.0.4GA.
 
 The application server will now be configured to use the JBossJTA transaction
 manager instead of the JBoss Transaction Manager.

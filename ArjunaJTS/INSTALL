@@ -1,34 +1,31 @@
-Installing JBossJTS into JBoss 4.0.3SP1
----------------------------------------
+Installing JBossJTS into JBoss 4.0.3SP1, 4.0.4GA and 4.0.5GA
+------------------------------------------------------------
 
-The installation of JBossJTS into JBoss 4.0.3SP1 is currently a manual process.
+The installation of JBossJTS into JBoss AS is currently a manual process.
 We hope to release an installer in the near future that will automate this
 process.
 
 The following steps are required
 
- - download the tar or zip version of JBoss 4.0.3SP1
+ - download the tar or zip version of the application server
  - extract the distribution into an installation directory
 
  - copy the following jars from the JBossJTS installation into the
-   server/XXX/lib directory of the JBoss 4.0.3 SP1 installation
+   server/XXX/lib directory of the application server installation
    - lib/jbossjts.jar
    - lib/jbossjts-jacorb.jar
    - lib/jbossjts-integration.jar
    - lib/ext/jbossts-common.jar
-   - jboss/jboss.jar
-   - jboss/jboss-iiop.jar
-   - jboss/jboss-hibernate.jar
- - copy the following jar from the JBossJTS installation into the
-   server/XXX/deploy/jboss-aop.deployer directory of the JBoss 4.0.3 SP1
-   installation
-   - jboss/jboss-aspect-library.jar
  - copy the following configuration file from the JBossJTS installation into
-   the server/XXX/conf directory of the JBoss 4.0.3 SP1 installation
+   the server/XXX/conf directory of the application server installation
    - etc/jbossjts-properties.xml
-   - edit the properties file to remove either the arjunacore XARecoveryModule or the jts
-   XARecoveryModule, depending upon whether you are using JTS or local JTA, respectively.
-   
+ - edit the server/default/conf/jbossjts-properties.xml file and remove the
+   recovery extension property containing the value
+   "com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule"
+ - edit the server/all/conf/jbossjts-properties.xml file and remove the
+   recovery extension property containing the value
+   "com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule"
+
  - Edit the server/all/conf/jboss-service.xml file and replace the
    jboss:service=TransactionManager mbean declaration with the following
 
@@ -67,8 +64,21 @@ Replace jacorb.jar in client and server/all/lib with the jacorb.jar located in t
 For each deployment of JacORB, you will need to ensure that the jacorb.implname in the jacorb.properties
 file is unique.
 
+Application Server Library Modifications
+----------------------------------------
+
+The JBoss 4.0.3SP1 and 4.0.4GA application servers require some modified
+librarires before JBossJTA can be used as a replacement.  These are detailed
+in the appropriate subdirectory of the jboss directory within this installation.
+
+No modifications are required if you are running JBoss 4.0.5GA or a cumulative
+patch for JBoss 4.0.4GA.
+
 The application server will now be configured to use the JBossJTS transaction
 manager instead of the JBoss Transaction Manager.
+
+Web Services Transactions
+-------------------------
 
 For the Web Services Transactions component (also known as the XML Transaction Service, or XTS),
 in order to create a stand-alone coordinator:
@@ -93,7 +103,7 @@ deployment to add
 
 	    <property
 	    name="com.arjuna.mw.wst.ba.terminatorURL"
-	    value="http://@hostname@:@port@/xts/soap/BusinessActivityTerminatorParticipant"/>
+	    value="http://@hostname@:@port@/xts/soap/TerminatorParticipant"/>
 
 where hostname and port are replaced with the appropriate values.
 
@@ -103,15 +113,11 @@ services that may want to use it.
 We recommend that you run through the XTS trailmap in order to understand how to build and use
 transaction-aware Web Services, before deciding whether or not to use a stand-alone coordinator service.
 
-Note, the following issues exist with the trailmap shipped with JBossTS (http://www.jboss.org/index.html?module=bb&op=viewtopic&t=82879):
+Note, the following issues exist with the XTS trailmap shipped with JBossTS
 
-(i) it talks about ArjunaTS and the arjunats-properties.xml file. This was the old name for JBossTS. The
-new properties file is the jbossjts-properties.xml.
+(i) The XTS trailmap demo application generates warning messages on the
+application server console if it is run in JBoss 4.0.4GA or 4.0.5GA.  These
+warnings do not affect the funtionality of the demo application.
 
-(ii) when running the local JTS transactions part of the trailmap, you will need to start
-the recovery manager: java com.arjuna.ats.arjuna.recovery.RecoveryManager -test
-
-(iii) you will need a jacorb.properties file to run the distributed JTS tests.
-
-(iv) the XTS trailmap talks about webMethods deployments. Obviously it is intended to be deployed
-with JBossAS 4.0.3SP1 as well!
+The warning is:
+  [JSR109ServerMetaDataBuilder] Cannot obtain SEI mapping for:

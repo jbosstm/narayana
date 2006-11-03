@@ -1,0 +1,17 @@
+Installing JBossJTS into JBoss 4.0.3SP1
+---------------------------------------
+
+A number of files within the JBoss 4.0.3SP1 application server must be updated 
+JBossJTS can successfully run.
+
+The following steps are required
+
+ - copy the following jars into the server/XXX/lib directory of the
+   JBoss 4.0.3 SP1 installation
+   - jboss/jboss.jar
+   - jboss/jboss-iiop.jar
+   - jboss/jboss-hibernate.jar
+ - copy the following jar into the server/XXX/deploy/jboss-aop.deployer
+   directory of the JBoss 4.0.3 SP1 installation
+   installation
+   - jboss/jboss-aspect-library.jar

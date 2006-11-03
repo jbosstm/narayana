@@ -32,6 +32,8 @@
    <property name="integration.dir" location="atsintegration"/>
 	
    <property name="jboss.eula" location="JBossORG-EULA.txt"/>
+   <property name="jboss.libdir" location="jboss"/>
+   <property name="jboss.install.libdir" location="${com.hp.mw.installationdirectory}/jboss"/>
 
    <available property="jts.present" file="${jts.dir}" type="dir"/>
 
@@ -92,6 +94,9 @@ Targets supported in this build.xml file
 
    <target name="install_integration">
       <ant dir="${integration.dir}" target="install"/>
+      <copy todir="${jboss.install.libdir}">
+         <fileset dir="${jboss.libdir}"/>
+      </copy>
    </target>
 
    <target name="build_jts" depends="init_jts, init, build_jta">
