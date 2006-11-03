@@ -1,7 +1,7 @@
 rem
 rem JBoss, Home of Professional Open Source
-rem Copyright 2006, JBoss Inc., and individual contributors as indicated
-rem by the @authors tag.  All rights reserved. 
+rem Copyright 2006, Red Hat Middleware LLC, and individual contributors
+rem as indicated by the @author tags. 
 rem See the copyright.txt in the distribution for a full listing 
 rem of individual contributors.
 rem This copyrighted material is made available to anyone wishing to use,
