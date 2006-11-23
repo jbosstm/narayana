@@ -1,0 +1,11 @@
+Installing JBossJTS into JBoss 4.0.5GA
+--------------------------------------
+
+A number of files within the JBoss 4.0.5GA application server must be updated 
+JBossJTS can successfully run.
+
+The following steps are required
+
+ - copy the following jar into the server/XXX/lib directory of the
+   JBoss 4.0.5 GA installation
+   - jboss/jboss.jar

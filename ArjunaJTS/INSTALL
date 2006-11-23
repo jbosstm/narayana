@@ -46,8 +46,6 @@ The following steps are required
  - Edit the server/all/conf/jacorb.properies as follows.
   - change the jacorb.poa.thread_pool_max property to 32
 
-org.omg.PortableInterceptor.ORBInitializerClass.com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition.InterpositionORBInitializerImpl=com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition.InterpositionORBInitializerImpl
-
  - Edit the server/all/deploy/iiop-service.xml and modify the
    PortableInterceptorInitializers attribute as follows.
   - remove the following lines
@@ -67,12 +65,13 @@ file is unique.
 Application Server Library Modifications
 ----------------------------------------
 
-The JBoss 4.0.3SP1 and 4.0.4GA application servers require some modified
-librarires before JBossJTA can be used as a replacement.  These are detailed
-in the appropriate subdirectory of the jboss directory within this installation.
+The JBoss 4.0.3SP1, 4.0.4GA and 4.0.5GA application servers require some
+modified librarires before JBossJTA can be used as a replacement.  These
+are detailed in the appropriate subdirectory of the jboss directory within
+this installation.
 
-No modifications are required if you are running JBoss 4.0.5GA or a cumulative
-patch for JBoss 4.0.4GA.
+No modifications are required if you are running a cumulative patch for
+JBoss 4.0.4GA.
 
 The application server will now be configured to use the JBossJTS transaction
 manager instead of the JBoss Transaction Manager.

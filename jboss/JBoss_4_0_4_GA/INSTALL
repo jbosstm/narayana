@@ -7,9 +7,9 @@ JBossJTS can successfully run.
 The following steps are required
 
  - copy the following jar into the server/XXX/lib directory of the
-   JBoss 4.0.3 SP1 installation
+   JBoss 4.0.4 GA installation
    - jboss/jboss.jar
  - copy the following jar into the server/XXX/deploy/jboss-aop.deployer
-   directory of the JBoss 4.0.3 SP1 installation
+   directory of the JBoss 4.0.4 GA installation
    installation
    - jboss/jboss-aspect-library.jar

@@ -29,12 +29,13 @@ The following steps are required
 Application Server Library Modifications
 ----------------------------------------
 
-The JBoss 4.0.3SP1 and 4.0.4GA application servers require some modified
-librarires before JBossJTA can be used as a replacement.  These are detailed
-in the appropriate subdirectory of the jboss directory within this installation.
+The JBoss 4.0.3SP1, 4.0.4GA and 4.0.5GA application servers require some
+modified librarires before JBossJTA can be used as a replacement.  These
+are detailed in the appropriate subdirectory of the jboss directory within
+this installation.
 
-No modifications are required if you are running JBoss 4.0.5GA or a cumulative
-patch for JBoss 4.0.4GA.
+No modifications are required if you are running a cumulative patch for
+JBoss 4.0.4GA.
 
 The application server will now be configured to use the JBossJTA transaction
 manager instead of the JBoss Transaction Manager.
