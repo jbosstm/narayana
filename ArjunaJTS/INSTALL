@@ -21,10 +21,10 @@ The following steps are required
    - etc/jbossjts-properties.xml
  - edit the server/default/conf/jbossjts-properties.xml file and remove the
    recovery extension property containing the value
-   "com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule"
+   "com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule"
  - edit the server/all/conf/jbossjts-properties.xml file and remove the
    recovery extension property containing the value
-   "com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule"
+   "com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule"
 
  - Edit the server/all/conf/jboss-service.xml file and replace the
    jboss:service=TransactionManager mbean declaration with the following
