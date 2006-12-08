@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -54,6 +54,7 @@ import com.arjuna.ats.internal.tsmx.mbeans.PropertyServiceJMXPlugin;
 import com.arjuna.ats.internal.jts.recovery.RecoveryORBManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 import com.arjuna.common.util.propertyservice.PropertyManager;
+import com.arjuna.common.util.logging.LogFactory;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.Notification;
@@ -78,6 +79,17 @@ import java.io.PrintStream;
  */
 public class TransactionManagerService extends ServiceMBeanSupport implements TransactionManagerServiceMBean, NotificationListener
 {
+	static {
+		/*
+		 * Override the defualt logging config, force use of the plugin that rewrites log levels to reflect app server level semantics.
+		 * This must be done before the loading of anything that uses the logging, otherwise it's too late to take effect.
+		 * Hence the static initializer block.
+		 * see also http://jira.jboss.com/jira/browse/JBTM-20
+		 */
+		com.arjuna.ats.arjuna.common.arjPropertyManager.propertyManager.setProperty(LogFactory.LOGGER_PROPERTY, "log4j_releveler");
+		//System.setProperty(LogFactory.LOGGER_PROPERTY, "log4j_releveler") ;
+	}
+
     public final static String PROPAGATE_FULL_CONTEXT_PROPERTY = "com.arjuna.ats.jbossatx.jts.propagatefullcontext";
 
     private final static String SERVICE_NAME = "TransactionManagerService";
@@ -121,7 +133,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         /** Register management plugin **/
         com.arjuna.ats.arjuna.common.arjPropertyManager.propertyManager.addManagementPlugin(new PropertyServiceJMXPlugin());
 
-        /** Register propagation context manager **/
+		/** Register propagation context manager **/
         try
         {
             /** Bind the propagation context manager **/
@@ -154,7 +166,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
             if (_runRM)
             {
                 registerNotification() ;
-                
+
                 this.getLog().info("Starting recovery manager");
 
                 RecoveryManager.delayRecoveryManagerThread() ;
@@ -190,7 +202,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 
         JNDIManager.bindJTATransactionManagerImplementation();
     }
-    
+
     /**
      * Handle JMX notification.
      * @param notification The JMX notification event.
@@ -310,10 +322,10 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
     {
         return com.arjuna.ats.jta.TransactionManager.transactionManager();
     }
-    
+
     /**
      * Get the XA Terminator
-     * 
+     *
      * @return the XA Terminator
      */
     public JBossXATerminator getXATerminator()
@@ -427,15 +439,15 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
     {
         _runRM = runRM;
     }
-    
+
     private void registerNotification()
         throws InstanceNotFoundException
     {
         final NotificationFilterSupport notificationFilter = new NotificationFilterSupport() ;
         notificationFilter.enableType(Server.START_NOTIFICATION_TYPE) ;
-        
+
         final ObjectName serverName = ObjectNameFactory.create("jboss.system:type=Server") ;
-        
+
         getServer().addNotificationListener(serverName, this, notificationFilter, null) ;
     }
 

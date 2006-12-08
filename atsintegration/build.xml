@@ -1,20 +1,20 @@
 <!--
   JBoss, Home of Professional Open Source
-  Copyright 2006, Red Hat Middleware LLC, and individual contributors 
-  as indicated by the @author tags. 
+  Copyright 2006, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
   See the copyright.txt in the distribution for a
-  full listing of individual contributors. 
+  full listing of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
   of the GNU Lesser General Public License, v. 2.1.
-  This program is distributed in the hope that it will be useful, but WITHOUT A 
-  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
   PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
   You should have received a copy of the GNU Lesser General Public License,
   v.2.1 along with this distribution; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
-  
+
   (C) 2005-2006,
   @author JBoss Inc.
 -->
@@ -31,7 +31,7 @@
     <property file="${com.arjuna.mw.ts.properties}"/>
 
     <property environment="env"/>
-	
+
 	<!-- configure dependencies -->
 	<property name="com.arjuna.buildsystem.dir" location="${buildsystem.dir}"/>
 	<property name="com.arjuna.buildsystem.build.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
@@ -97,7 +97,7 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
             <fileset dir="${com.arjuna.buildsystem.build.lib}"/>
         </path>
         <property name="com.arjuna.buildsystem.classpath" refid="com.arjuna.buildsystem.classpath"/>
-    	
+
         <!-- Installation directory -->
         <property name="com.arjuna.mwlabs.installationdirectory"
             location="${com.hp.mw.installationdirectory}"/>
@@ -118,8 +118,9 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
         <!-- Make the destination directory -->
         <mkdir dir="${com.arjuna.mwlabs.ts.jbossatx.dest}"/>
 
-        <!-- libs from JBoss App Server installation -->
-        <property name="jboss.libs" value="jboss-common.jar jboss-system.jar jboss-jmx.jar"/>
+        <!-- libs from JBoss App Server installation. Note: these jars were refactored between
+          AS 4.x and AS 5.0. The list below is a hybrid to allow building against either version. -->
+        <property name="jboss.libs" value="jboss-common.jar jboss-system.jar jboss-jmx.jar jboss-logging-spi.jar jboss-common-core.jar jboss-j2se.jar jboss-system-jmx.jar"/>
         <property name="jboss.server.jta.libs" value="jmx-adaptor-plugin.jar jboss-transaction.jar"/>
         <property name="jboss.server.jts.libs" value="jboss-iiop.jar jacorb.jar"/>
         <condition property="jboss.server.libs" value="${jboss.server.jta.libs} ${jboss.server.jts.libs}">
@@ -162,7 +163,7 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
     </target>
 
     <!-- Jar targets -->
-    <target name="com.arjuna.mw.ts.jbossatx.jar" 
+    <target name="com.arjuna.mw.ts.jbossatx.jar"
         depends="com.arjuna.mwlabs.ts.jbossatx.service.compile">
 
         <echo message="Building jar file"/>
@@ -185,9 +186,9 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
                 <include name="**/*.jpg"/>
             </fileset>
         </copy>
-        <style processor="trax" 
-               style="${com.arjuna.mwlabs.ts.jbossatx.docs.src}/xsl/ATL_LookAndFeel.xsl" 
-               basedir="${com.arjuna.mwlabs.ts.jbossatx.docs.src}/docs/" 
+        <style processor="trax"
+               style="${com.arjuna.mwlabs.ts.jbossatx.docs.src}/xsl/ATL_LookAndFeel.xsl"
+               basedir="${com.arjuna.mwlabs.ts.jbossatx.docs.src}/docs/"
                includes="*.xml" destdir="${com.arjuna.mwlabs.ts.jbossatx.docs.dest}" extension=".html">
            <param name="rootpath" expression="."/>
         </style>
