@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -31,6 +31,7 @@ package com.arjuna.common.util.logging;
 import com.arjuna.common.internal.util.logging.*;
 import com.arjuna.common.internal.util.logging.simpleLog.SimpleLogFactory;
 import com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory;
+import com.arjuna.common.internal.util.logging.jakarta.JakartaRelevelingLogFactory;
 import com.arjuna.common.util.exceptions.LogConfigurationException;
 
 /**
@@ -138,8 +139,9 @@ public class LogFactory {
     private static final String SIMPLE = "simple";
     private static final String NOOP = "noop";
     //private static final String AVALON = "avalon";
+	private static final String RELEVELER = "log4j_releveler";
 
-    /**
+	/**
      * Interface that encapsulates the underlying, log-system-specific log factory.
      */
     private static LogFactoryInterface m_logFactory = null;
@@ -383,7 +385,14 @@ public class LogFactory {
 
             }
 
-            // USE JAKARTA COMMONS LOGGINGS OWN DISCOVERY MECHANISM
+			// we use a slightly modified wrapper to do log statement level modification
+			// for support of JBossAS log level semantics, see JakartaRelevelingLogger javadoc
+			else if (logSystem.equals(RELEVELER)) {
+				System.setProperty(JCL_LOG_CONFIGURATION, "org.apache.commons.logging.impl.Log4JLogger");
+				m_logFactory = new JakartaRelevelingLogFactory();
+			}
+
+			// USE JAKARTA COMMONS LOGGINGS OWN DISCOVERY MECHANISM
             else if (logSystem.equals(JAKARTA_LOGGER)) {
                 m_logFactory = new JakartaLogFactory();
             }
