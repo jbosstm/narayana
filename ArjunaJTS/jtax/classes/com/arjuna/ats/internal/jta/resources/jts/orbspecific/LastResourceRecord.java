@@ -124,6 +124,6 @@ public class LastResourceRecord extends XAResourceRecord
 
 	public boolean saveRecord() throws SystemException
 	{
-		return true;
+		return false;
 	}
 }
