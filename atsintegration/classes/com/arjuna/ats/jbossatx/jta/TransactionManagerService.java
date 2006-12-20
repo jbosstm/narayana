@@ -40,6 +40,7 @@ import org.jboss.tm.XAExceptionFormatter;
 import com.arjuna.ats.internal.jbossatx.jta.jca.XATerminator;
 import com.arjuna.ats.internal.jbossatx.agent.LocalJBossAgentImpl;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple;
 import com.arjuna.ats.jta.utils.JNDIManager;
 import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -61,7 +62,6 @@ import javax.naming.Reference;
 import javax.naming.InitialContext;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
-import javax.transaction.TransactionSynchronizationRegistry;
 import java.net.Socket;
 import java.net.InetAddress;
 import java.io.BufferedReader;
@@ -180,7 +180,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 
         jtaPropertyManager.propertyManager.setProperty(Environment.JTA_TM_IMPLEMENTATION, TransactionManagerDelegate.class.getName());
         jtaPropertyManager.propertyManager.setProperty(Environment.JTA_UT_IMPLEMENTATION, UserTransactionImple.class.getName());
-		jtaPropertyManager.propertyManager.setProperty(Environment.JTA_TSR_IMPLEMENTATION, TransactionSynchronizationRegistry.class.getName());
+		jtaPropertyManager.propertyManager.setProperty(Environment.JTA_TSR_IMPLEMENTATION, TransactionSynchronizationRegistryImple.class.getName());
 
         JNDIManager.bindJTATransactionManagerImplementation();
 		JNDIManager.bindJTATransactionSynchronizationRegistryImplementation();
