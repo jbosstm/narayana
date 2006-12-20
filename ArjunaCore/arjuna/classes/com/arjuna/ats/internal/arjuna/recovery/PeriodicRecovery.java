@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -59,7 +59,7 @@ import com.arjuna.common.util.logging.*;
  * modules. These modules are dynamically loaded. The modules to load
  * are specified by properties beginning with "RecoveryExtension"
  * <P>
- * @author 
+ * @author
  * @version $Id: PeriodicRecovery.java 2342 2006-03-30 13:06:17Z  $
  *
  * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_1 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_1] - Attempt to load recovery module with null class name!
@@ -157,7 +157,7 @@ public class PeriodicRecovery extends Thread
    public void run ()
    {
        boolean finished = false;
-       
+
        do
        {
 	   finished = doWork(true);
@@ -180,18 +180,18 @@ public class PeriodicRecovery extends Thread
     public final boolean doWork (boolean periodic)
     {
 	boolean interrupted = false;
-	  
-	tsLogger.arjLogger.info("Periodic recovery - first pass <" + 
+
+	tsLogger.arjLogger.info("Periodic recovery - first pass <" +
 				_theTimestamper.format(new Date()) + ">" );
-	  
+
 	Enumeration modules = _recoveryModules.elements();
-	
+
 	while (modules.hasMoreElements())
 	{
 	    RecoveryModule m = (RecoveryModule) modules.nextElement();
 
 	    m.periodicWorkFirstPass();
-            
+
 	    if (tsLogger.arjLogger.isDebugEnabled())
 	    {
 		tsLogger.arjLogger.debug( DebugLevel.FUNCTIONS,
@@ -207,7 +207,7 @@ public class PeriodicRecovery extends Thread
 
 	    _workerService.signalDone();
 	}
-	     
+
 	// wait for a bit to avoid catching (too many) transactions etc. that
 	// are really progressing quite happily
 
@@ -224,18 +224,18 @@ public class PeriodicRecovery extends Thread
 	{
 	    return true;
 	}
-   	 	 
+
 	tsLogger.arjLogger.info("Periodic recovery - second pass <"+
 				_theTimestamper.format(new Date()) + ">" );
-         
+
 	modules = _recoveryModules.elements();
-         
+
 	while (modules.hasMoreElements())
 	{
 	    RecoveryModule m = (RecoveryModule) modules.nextElement();
-            
+
 	    m.periodicWorkSecondPass();
-            
+
 	    if (tsLogger.arjLogger.isDebugEnabled())
 	    {
 		tsLogger.arjLogger.debug ( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_CRASH_RECOVERY, " " );
@@ -259,7 +259,7 @@ public class PeriodicRecovery extends Thread
 
 	return false; // keep going
     }
-    
+
     /**
      * Add the specified module to the end of the recovery module list.
      * There is no way to specify relative ordering of recovery modules
@@ -281,7 +281,7 @@ public class PeriodicRecovery extends Thread
     {
 	return _recoveryModules;
     }
-    
+
     /**
      * Load recovery modules prior to starting to recovery. The property
      * name of each module is used to indicate relative ordering.
@@ -307,7 +307,7 @@ public class PeriodicRecovery extends Thread
                int position = 0;
 
                while ( position < moduleNames.size() &&
-                       attrName.compareTo( moduleNames.elementAt(position)) > 0 )
+                       attrName.compareTo( (String)moduleNames.elementAt(position)) > 0 )
                {
                   position++;
                }
@@ -336,7 +336,7 @@ public class PeriodicRecovery extends Thread
 				   "Loading recovery module "+
 				   className );
        }
-       
+
       if (className == null)
       {
   	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
@@ -405,24 +405,24 @@ public class PeriodicRecovery extends Thread
 
    // back off period is the time between the first and second pass.
    // recovery period is the time between the second pass and the start
-   // of the first pass.   
+   // of the first pass.
    private static int _backoffPeriod = 0;
    private static int _recoveryPeriod = 0;
-   
+
    // default values for the above
    private static final int _defaultBackoffPeriod = 10;
    private static final int _defaultRecoveryPeriod = 120;
 
    // exit thread flag
    private static boolean _terminate = false;
-   
+
    private static SimpleDateFormat _theTimestamper = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 
     private static ServerSocket _socket = null;
 
     private static Listener _listener = null;
     private static WorkerService _workerService = null;
-    
+
    /*
     * Read the system properties to set the configurable options
     *
@@ -434,7 +434,7 @@ public class PeriodicRecovery extends Thread
    {
       _recoveryPeriod = _defaultRecoveryPeriod;
 
-      String recoveryPeriodString = 
+      String recoveryPeriodString =
          arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.PERIODIC_RECOVERY_PERIOD );
 
       if ( recoveryPeriodString != null )
@@ -447,7 +447,7 @@ public class PeriodicRecovery extends Thread
 	    if (tsLogger.arjLogger.isDebugEnabled())
 	    {
                tsLogger.arjLogger.debug
-                  ( DebugLevel.FUNCTIONS, 
+                  ( DebugLevel.FUNCTIONS,
                     VisibilityLevel.VIS_PRIVATE,
                     FacilityCode.FAC_CRASH_RECOVERY,
                     "com.arjuna.ats.arjuna.recovery.PeriodicRecovery" +
@@ -480,7 +480,7 @@ public class PeriodicRecovery extends Thread
 	    if (tsLogger.arjLogger.isDebugEnabled())
 	    {
                tsLogger.arjLogger.debug
-                  ( DebugLevel.FUNCTIONS, 
+                  ( DebugLevel.FUNCTIONS,
                     VisibilityLevel.VIS_PRIVATE,
                     FacilityCode.FAC_CRASH_RECOVERY,
                     "PeriodicRecovery" +

@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -58,16 +58,16 @@ public class RecActivatorLoader
    public RecActivatorLoader()
    {
        initialise();
-       
+
        // Load the Recovery Activators
        loadRecoveryActivators();
-       
+
        startRecoveryActivators();
-       
+
    }
-    
+
   /**
-   * Start the RecoveryActivator 
+   * Start the RecoveryActivator
    */
 
   public void startRecoveryActivators()
@@ -85,31 +85,31 @@ public class RecActivatorLoader
 	      RecoveryActivator acti = (RecoveryActivator) activators.nextElement();
 	      acti.startRCservice();
 	  }
-      
+
       return;
-      
+
   }
-    
+
   private static void loadRecoveryActivators ()
   {
       // scan the relevant properties so as to get them into sort order
       Properties properties = arjPropertyManager.propertyManager.getProperties();
-      
+
       if (properties != null)
 	  {
 	      Vector activatorNames = new Vector();
 	      Enumeration names = properties.propertyNames();
-	      
+
 	      while (names.hasMoreElements())
 		  {
 		      String attrName = (String) names.nextElement();
-		      
+
 		      if (attrName.startsWith(RecoveryEnvironment.ACTIVATOR_PROPERTY_PREFIX) )
 			  {
 			      // this is one of ours - put it in the right place
 			      int position = 0;
 			      while ( position < activatorNames.size() &&
-				      attrName.compareTo( activatorNames.elementAt(position)) > 0 )
+				      attrName.compareTo( (String)activatorNames.elementAt(position)) > 0 )
 				  {
 				      position++;
 				  }
@@ -118,16 +118,16 @@ public class RecActivatorLoader
 		  }
          // now go through again and load them
 	      names = activatorNames.elements();
-	      
+
 	      while (names.hasMoreElements())
 		  {
 		  String attrName = (String) names.nextElement();
 		  loadActivator(properties.getProperty(attrName));
 		  }
-	      
+
 	  }
   }
-    
+
   private static void loadActivator (String className)
   {
       if (tsLogger.arjLogger.isDebugEnabled())
@@ -138,12 +138,12 @@ public class RecActivatorLoader
 					  "Loading recovery activator "+
 					  className ) ;
 	    }
-      
+
       if (className == null)
 	  {
 	      if (tsLogger.arjLoggerI18N.isWarnEnabled())
 		  tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_1");
-	      
+
 	      return;
 	  }
       else
@@ -151,7 +151,7 @@ public class RecActivatorLoader
 	      try
 		  {
 		      Class c = Thread.currentThread().getContextClassLoader().loadClass( className ) ;
-		      
+
 		      try
 			  {
 			      RecoveryActivator ra = (RecoveryActivator) c.newInstance() ;
@@ -181,7 +181,7 @@ public class RecActivatorLoader
 						    new Object[]{ie});
 		    }
             }
-		      
+
 		      c = null;
 		  }
 	      catch ( ClassNotFoundException cnfe )
@@ -194,16 +194,16 @@ public class RecActivatorLoader
 		  }
       }
   }
-    
+
     private final void initialise ()
    {
        _recoveryActivators = new Vector();
    }
-    
+
     // this refers to the recovery activators specified in the recovery manager
     // property file which are dynamically loaded.
     private static Vector _recoveryActivators = null ;
-    
+
 }
 
 
