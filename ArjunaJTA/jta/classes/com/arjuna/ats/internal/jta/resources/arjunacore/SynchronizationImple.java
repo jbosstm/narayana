@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: SynchronizationImple.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -45,6 +45,7 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.common.util.logging.*;
 
 import java.util.Hashtable;
+import java.util.Comparator;
 
 import javax.transaction.*;
 
@@ -67,16 +68,22 @@ import java.lang.NullPointerException;
  * @since JTS 1.2.4.
  */
 
-public class SynchronizationImple implements SynchronizationRecord
+public class SynchronizationImple implements SynchronizationRecord, Comparable
 {
-    
+
     public SynchronizationImple (javax.transaction.Synchronization ptr)
     {
 	_theSynch = ptr;
 	_theUid = new Uid();
     }
 
-    public void finalize ()
+	public SynchronizationImple (javax.transaction.Synchronization ptr, boolean isInterposed) {
+		_theSynch = ptr;
+		_theUid = new Uid();
+		_isInterposed = isInterposed;
+	}
+
+	public void finalize ()
     {
 	_theSynch = null;
 
@@ -93,7 +100,7 @@ public class SynchronizationImple implements SynchronizationRecord
     {
 	return _theUid;
     }
-    
+
     public boolean beforeCompletion ()
     {
 	if (jtaLogger.logger.isDebugEnabled())
@@ -146,7 +153,39 @@ public class SynchronizationImple implements SynchronizationRecord
 	    return false; // should not cause any affect!
     }
 
-    private javax.transaction.Synchronization _theSynch;
+	/*
+	 * SyncronizationsImples are ordered first according to the isInterposed property and then by Uid.
+	 * Interposed synchronizations must come after non-interposed ones  (see TwoPhaseCoordinator and
+	 * TransactionSynchronizationRegistry)  The ordering within the interposed/non-interposed categories
+	 * is arbitrary but must be defined for correct functioning of the sort. Just don't rely on it in
+	 * application level code.
+	 *
+	 * @param object
+	 * @return
+	 */
+	public int compareTo(Object object)
+	{
+		SynchronizationImple other = (SynchronizationImple)object;
+
+		if(this._isInterposed && (!other._isInterposed))
+		{
+			return 1;
+		}
+		else if((!this._isInterposed) && other._isInterposed)
+		{
+			return -1;
+		}
+		else if(this._theUid.equals(other._theUid))
+		{
+			return 0;
+		}
+		else
+		{
+			return this._theUid.lessThan(other._theUid) ? -1 : 1;
+		}
+	}
+
+	private javax.transaction.Synchronization _theSynch;
     private Uid _theUid;
-    
+	private boolean _isInterposed;
 }

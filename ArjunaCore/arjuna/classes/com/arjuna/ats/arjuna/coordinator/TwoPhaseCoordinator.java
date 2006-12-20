@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Hewlett-Packard Arjuna Labs,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: TwoPhaseCoordinator.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -35,14 +35,17 @@ import com.arjuna.ats.arjuna.common.Uid;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
-import com.arjuna.ats.internal.arjuna.template.*;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.Iterator;
+import java.util.Stack;
 
 /**
  * Adds support for synchronizations to BasicAction. It does not change thread
  * associations either. It also allows any thread to terminate a transaction,
  * even if it is not the transaction that is marked as current for the thread
  * (unlike the BasicAction default).
- * 
+ *
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: TwoPhaseCoordinator.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 3.0.
@@ -109,12 +112,12 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 	}
 
 	public int addSynchronization (SynchronizationRecord sr)
-	{		
+	{
 		if (sr == null)
 			return AddOutcome.AR_REJECTED;
 
 		int result = AddOutcome.AR_REJECTED;
-		
+
 		if (parent() != null)
 			return AddOutcome.AR_REJECTED;
 
@@ -123,10 +126,15 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 			case ActionStatus.RUNNING:
 			{
 				if (_synchs == null)
-					_synchs = new HashList(10);
-	
+				{
+					// Synchronizations should be stored (or at least iterated) in their natural order
+					_synchs = new TreeSet();
+				}
+
 				if (_synchs.add(sr))
+				{
 					result = AddOutcome.AR_ADDED;
+				}
 			}
 			break;
 		default:
@@ -185,20 +193,23 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 		if (_synchs != null)
 		{
-			HashListIterator iterator = new HashListIterator(_synchs);
-			SynchronizationRecord record = (SynchronizationRecord) iterator.iterate();
+			Iterator iterator = _synchs.iterator();
 
 			/*
 			 * We must always call afterCompletion() methods, so just catch (and
 			 * log) any exceptions/errors from beforeCompletion() methods.
+			 *
+			 * If one of the Syncs throws an error the Record wrapper returns false
+			 * and we will rollback. Hence we don't then bother to call beforeCompletion
+			 * on the remaining records (it's not done for rollabcks anyhow).
 			 */
-			while ((record != null) && !problem)
+			while(iterator.hasNext() && !problem)
 			{
+				SynchronizationRecord record = (SynchronizationRecord)iterator.next();
+
 				try
 				{
 					problem = !record.beforeCompletion();
-
-					record = (SynchronizationRecord) iterator.iterate();
 				}
 				catch (Exception ex)
 				{
@@ -255,16 +266,23 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 		if (_synchs != null)
 		{
-			HashListIterator iterator = new HashListIterator(_synchs);
-			SynchronizationRecord record = (SynchronizationRecord) iterator.iterate();
+			// afterCompletions should run in reverse order compared to beforeCompletions
+			Stack stack = new Stack();
+			Iterator iterator = _synchs.iterator();
+			while(iterator.hasNext()) {
+				stack.push(iterator.next());
+			}
+
+			iterator = stack.iterator();
 
 			/*
 			 * Regardless of failures, we must tell all synchronizations what
 			 * happened.
 			 */
-
-			while (record != null)
+			while(!stack.isEmpty())
 			{
+				SynchronizationRecord record = (SynchronizationRecord)stack.pop();
+
 				try
 				{
 					if (!record.afterCompletion(myStatus))
@@ -287,8 +305,6 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 					{ record });
 					problem = true;
 				}
-
-				record = (SynchronizationRecord) iterator.iterate();
 			}
 
 			_synchs = null;
@@ -297,6 +313,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 		return !problem;
 	}
 
-	private HashList _synchs;
+	//private HashList _synchs;
+	private SortedSet _synchs;
 
 }

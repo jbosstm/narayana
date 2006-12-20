@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -58,8 +58,7 @@ import com.arjuna.common.util.logging.*;
 
 import javax.transaction.xa.*;
 
-import java.util.Hashtable;
-import java.util.Enumeration;
+import java.util.*;
 
 import javax.transaction.RollbackException;
 import java.lang.IllegalStateException;
@@ -173,7 +172,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * HeuristicRollback from a resource, and can successfully rollback the
 	 * other resources, this is then the same as having simply been forced to
 	 * rollback the transaction during phase 1.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate]
 	 *          Invalid transaction state
@@ -368,18 +367,26 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 
 		if (sync == null)
+		{
 			throw new javax.transaction.SystemException(
 					"TransactionImple.registerSynchronization - "
 							+ jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.nullparam"));
+		}
 
+		registerSynchronizationImple(new SynchronizationImple(sync, false));
+	}
+
+	// package-private method also for use by TransactionSynchronizationRegistryImple
+	void registerSynchronizationImple(SynchronizationImple synchronizationImple)
+			throws javax.transaction.RollbackException,
+			java.lang.IllegalStateException, javax.transaction.SystemException
+	{
 		if (_theTransaction != null)
 		{
-			SynchronizationImple s = new SynchronizationImple(sync);
-
-			if (_theTransaction.addSynchronization(s) != AddOutcome.AR_ADDED)
+			if (_theTransaction.addSynchronization(synchronizationImple) != AddOutcome.AR_ADDED)
 			{
 				int status = _theTransaction.status();
-				
+
 				switch (status)
 				{
 				case ActionStatus.ABORTED:
@@ -403,7 +410,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * know that your XAResource and family are truly compliant implementations.
 	 * If they aren't then we may fail gracefully (e.g., some versions of Oracle
 	 * don't work with arbitrary Xid implementations!)
-	 * 
+	 *
 	 * If the family isn't compliant, then you should use the other method and
 	 * pass through a relevant XAModifier, which should address the issues we
 	 * have already come across.
@@ -448,7 +455,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 							+ jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.nullres"));
 
 		int status = getStatus();
-	
+
 		switch (status)
 		{
 		case javax.transaction.Status.STATUS_MARKED_ROLLBACK:
@@ -630,9 +637,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 				 * another server, since we keep track of our own registrations.
 				 * So, if this happens we create a new transaction branch and
 				 * try again.
-				 * 
+				 *
 				 * To save time we could always just create branches by default.
-				 * 
+				 *
 				 * Is there a benefit to a zero branch?
 				 */
 
@@ -1097,11 +1104,27 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 	}
 
+	// get a key-value pair from a transaction specific Map
+	Object getTxLocalResource(Object key) {
+		if(txLocalResources == null) {
+			return null;
+		}
+		return txLocalResources.get(key);
+	}
+
+	// store a key-value pair in the scope of the transaction.
+	void putTxLocalResource(Object key, Object value) {
+		if(txLocalResources == null) {
+			txLocalResources = Collections.synchronizedMap(new HashMap());
+		}
+		txLocalResources.put(key, value);
+	}
+
 	protected TransactionImple ()
 	{
 		this(null);
-	}	
-	
+	}
+
 	/**
 	 * Create a new TransactionImple representation of a specified
 	 * transaction.
@@ -1136,7 +1159,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			_resources = null;
 			_duplicateResources = null;
 		}
-		
+
 		_suspendCount = 0;
 		_xaTransactionTimeoutEnabled = getXATransactionTimeoutEnabled() ;
 	}
@@ -1177,7 +1200,7 @@ public class TransactionImple implements javax.transaction.Transaction,
     				throw new IllegalStateException(
     						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
     			}
-                
+
 				switch (_theTransaction.commit(true))
 				{
 				case ActionStatus.COMMITTED:
@@ -1208,16 +1231,16 @@ public class TransactionImple implements javax.transaction.Transaction,
 	/**
 	 * If this is an imported transaction (via JCA) then this will be the Xid
 	 * we are pretending to be. Otherwise, it will be null.
-	 * 
+	 *
 	 * @return null if we are a local transaction, a valid Xid if we have been
 	 * imported.
 	 */
-	
+
 	protected Xid baseXid ()
 	{
 		return null;
 	}
-	
+
 	/**
 	 * Does the same as rollback, but also changes the thread-to-tx association.
 	 */
@@ -1278,7 +1301,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	/**
 	 * If there are any suspended RMs then we should call end on them before the
 	 * transaction is terminated.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.xaenderror
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.xaenderror]
 	 *          Could not call end on a suspended resource!
@@ -1415,7 +1438,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	/**
 	 * isNewRM returns an existing TxInfo for the same RM, if present. Null
 	 * otherwise.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.newtmerror
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.newtmerror]
 	 *          {0} caught XAException: {0}
@@ -1488,10 +1511,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private final Xid createXid(boolean branch, XAModifier theModifier)
 	{
 		Xid xid = baseXid();
-		
+
 		if (xid != null)
 			return xid;
-		
+
 		xid = new XidImple(_theTransaction, branch);
 
 		if (theModifier != null)
@@ -1566,7 +1589,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private Hashtable _resources;
 	private Hashtable _duplicateResources;
 	private int _suspendCount;
-	private final boolean _xaTransactionTimeoutEnabled ;
+	private final boolean _xaTransactionTimeoutEnabled;
+	private Map txLocalResources;
 
 	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED ;
 	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE ;

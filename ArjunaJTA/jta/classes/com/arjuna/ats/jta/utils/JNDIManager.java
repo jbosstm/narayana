@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -50,6 +50,7 @@ public class JNDIManager
 	{
 		bindJTATransactionManagerImplementation(ctx);
 		bindJTAUserTransactionImplementation(ctx);
+		bindJTATransactionSynchronizationRegistryImplementation(ctx);
 	}
 
     /**
@@ -60,7 +61,8 @@ public class JNDIManager
     {
         bindJTATransactionManagerImplementation();
         bindJTAUserTransactionImplementation();
-    }
+		bindJTATransactionSynchronizationRegistryImplementation();
+	}
 
 	public static String getTransactionManagerImplementationClassname()
 	{
@@ -72,7 +74,12 @@ public class JNDIManager
 		return jtaPropertyManager.propertyManager.getProperty(Environment.JTA_UT_IMPLEMENTATION, DEFAULT_UT_IMPLEMENTATION);
 	}
 
-    /**
+	public static String getTransactionSynchronizationRegistryImplementationClassname()
+	{
+		return jtaPropertyManager.propertyManager.getProperty(Environment.JTA_TSR_IMPLEMENTATION, DEFAULT_TSR_IMPLEMENTATION);
+	}
+
+	/**
      * Bind the currently configured transaction manager implementation to the default
      * JNDI context.
      * @throws javax.naming.NamingException
@@ -124,6 +131,32 @@ public class JNDIManager
         initialContext.rebind(getUserTransactionJNDIName(), ref);
 	}
 
+	/**
+	 * Bind the currently configured TransactionSynchronizationRegistry implementation to the default JNDI
+	 * context.
+	 * @throws javax.naming.NamingException
+	 */
+	public static void bindJTATransactionSynchronizationRegistryImplementation() throws javax.naming.NamingException
+	{
+		bindJTATransactionSynchronizationRegistryImplementation(new InitialContext());
+	}
+
+	/**
+     * Bind the currently configured TransactionSynchronizationRegistry implementation to the passed in
+     * JNDI context.
+     * @param initialContext
+     * @throws javax.naming.NamingException
+     */
+	public static void bindJTATransactionSynchronizationRegistryImplementation(InitialContext initialContext) throws javax.naming.NamingException
+	{
+        /** Look up and instantiate an instance of the configured TransactionSynchronizationRegistry implementation **/
+        String tsrImplementation = getTransactionSynchronizationRegistryImplementationClassname();
+
+        /** Bind the TransactionSynchronizationRegistry to the appropriate JNDI context **/
+        Reference ref = new Reference(tsrImplementation, tsrImplementation, null);
+        initialContext.rebind(getTransactionSynchronizationRegistryJNDIName(), ref);
+	}
+
 	public final static String getTransactionManagerJNDIName()
 	{
 		return jtaPropertyManager.propertyManager.getProperty(Environment.TM_JNDI_CONTEXT, DEFAULT_TM_JNDI_CONTEXT);
@@ -134,9 +167,16 @@ public class JNDIManager
 		return jtaPropertyManager.propertyManager.getProperty(Environment.UT_JNDI_CONTEXT, DEFAULT_UT_JNDI_CONTEXT);
 	}
 
+	private final static String getTransactionSynchronizationRegistryJNDIName()
+	{
+		return jtaPropertyManager.propertyManager.getProperty(Environment.TSR_JNDI_CONTEXT, DEFAULT_TSR_JNDI_CONTEXT);
+	}
+
 	private static final String DEFAULT_TM_JNDI_CONTEXT = "java:/TransactionManager";
 	private static final String DEFAULT_UT_JNDI_CONTEXT = "java:/UserTransaction";
+	private static final String DEFAULT_TSR_JNDI_CONTEXT = "java:comp/TransactionSynchronizationRegistry";
 
 	private static final String DEFAULT_UT_IMPLEMENTATION = "com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple";
 	private static final String DEFAULT_TM_IMPLEMENTATION = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple";
+	private static final String DEFAULT_TSR_IMPLEMENTATION = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple";
 }
