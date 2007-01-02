@@ -180,9 +180,13 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 
         jtaPropertyManager.propertyManager.setProperty(Environment.JTA_TM_IMPLEMENTATION, TransactionManagerDelegate.class.getName());
         jtaPropertyManager.propertyManager.setProperty(Environment.JTA_UT_IMPLEMENTATION, UserTransactionImple.class.getName());
-		jtaPropertyManager.propertyManager.setProperty(Environment.JTA_TSR_IMPLEMENTATION, TransactionSynchronizationRegistryImple.class.getName());
 
-        JNDIManager.bindJTATransactionManagerImplementation();
+		jtaPropertyManager.propertyManager.setProperty(Environment.JTA_TSR_IMPLEMENTATION, TransactionSynchronizationRegistryImple.class.getName());
+		// When running inside the app server, we bind TSR in the JNDI root, not its normal location.
+		// It's the job of individual components (EJB3, web, etc) to copy the ref to the java:/comp space)
+		jtaPropertyManager.propertyManager.setProperty(Environment.TSR_JNDI_CONTEXT, "TransactionSynchronizationRegistry");
+
+		JNDIManager.bindJTATransactionManagerImplementation();
 		JNDIManager.bindJTATransactionSynchronizationRegistryImplementation();
 	}
 
