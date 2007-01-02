@@ -125,10 +125,13 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 		{
 			case ActionStatus.RUNNING:
 			{
-				if (_synchs == null)
+				synchronized (this)
 				{
-					// Synchronizations should be stored (or at least iterated) in their natural order
-					_synchs = new TreeSet();
+					if (_synchs == null)
+					{
+						// Synchronizations should be stored (or at least iterated) in their natural order
+						_synchs = new TreeSet();
+					}
 				}
 
 				if (_synchs.add(sr))
