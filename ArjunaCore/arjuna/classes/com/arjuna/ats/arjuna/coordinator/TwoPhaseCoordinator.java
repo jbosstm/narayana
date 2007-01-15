@@ -253,7 +253,13 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 	 *          transaction!
 	 * @message com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4
 	 *          [com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4]
-	 *          TwoPhaseCoordinator.afterCompletion - failed for {0}
+	 *          TwoPhaseCoordinator.afterCompletion - returned failure for {0}
+	 * @message com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4a
+	 *          [com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4a]
+	 *          TwoPhaseCoordinator.afterCompletion - failed for {0} with exception {1}
+	 * @message com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4b
+	 *          [com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4b]
+	 *          TwoPhaseCoordinator.afterCompletion - failed for {0} with error {1}
 	 */
 
 	protected boolean afterCompletion (int myStatus)
@@ -298,14 +304,14 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 				}
 				catch (Exception ex)
 				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4", new Object[]
-					{ record });
+					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4a", new Object[]
+					{ record, ex });
 					problem = true;
 				}
 				catch (Error er)
 				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4", new Object[]
-					{ record });
+					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4b", new Object[]
+					{ record, ex });
 					problem = true;
 				}
 			}
