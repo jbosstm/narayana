@@ -134,6 +134,17 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 					}
 				}
 
+				// disallow addition of Synchronizations that would appear
+				// earlier in sequence than any that has already been called
+				// during the pre-commmit phase. This generic support is required for
+				// JTA Synchronization ordering behaviour
+				if(sr instanceof Comparable && _currentRecord != null) {
+					Comparable c = (Comparable)sr;
+					if(c.compareTo(_currentRecord) != 1) {
+						return AddOutcome.AR_REJECTED;
+					}
+				}
+
 				if (_synchs.add(sr))
 				{
 					result = AddOutcome.AR_ADDED;
@@ -196,8 +207,6 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 		if (_synchs != null)
 		{
-			Iterator iterator = _synchs.iterator();
-
 			/*
 			 * We must always call afterCompletion() methods, so just catch (and
 			 * log) any exceptions/errors from beforeCompletion() methods.
@@ -205,25 +214,42 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 			 * If one of the Syncs throws an error the Record wrapper returns false
 			 * and we will rollback. Hence we don't then bother to call beforeCompletion
 			 * on the remaining records (it's not done for rollabcks anyhow).
+			 *
+			 * Since Synchronizations may add register other Synchronizations, we can't simply
+			 * iterate the collection. Instead we work from an ordered copy, which we periodically
+			 * check for freshness. The addSynchronization method uses _currentRecord to disallow
+			 * adding records in the part of the array we have already traversed, thus all
+			 * Synchronization will be called and the (jta only) rules on ordering of interposed
+			 * Synchronization will be respected.
 			 */
-			while(iterator.hasNext() && !problem)
-			{
-				SynchronizationRecord record = (SynchronizationRecord)iterator.next();
+
+			int lastIndexProcessed = -1;
+			SynchronizationRecord[] copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
+
+			while( (lastIndexProcessed < _synchs.size()-1) && !problem) {
+
+				// if new Synchronization have been registered, refresh our copy of the collection:
+				if(copiedSynchs.length != _synchs.size()) {
+					copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
+				}
+
+				lastIndexProcessed = lastIndexProcessed+1;
+				_currentRecord = copiedSynchs[lastIndexProcessed];
 
 				try
 				{
-					problem = !record.beforeCompletion();
+					problem = !_currentRecord.beforeCompletion();
 				}
 				catch (Exception ex)
 				{
 					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_2", new Object[]
-					{ record });
+					{ _currentRecord });
 					problem = true;
 				}
 				catch (Error er)
 				{
 					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_2", new Object[]
-					{ record });
+					{ _currentRecord });
 					problem = true;
 				}
 			}
@@ -311,7 +337,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 				catch (Error er)
 				{
 					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4b", new Object[]
-					{ record, ex });
+					{ record, er });
 					problem = true;
 				}
 			}
@@ -324,5 +350,6 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 	//private HashList _synchs;
 	private SortedSet _synchs;
+	private SynchronizationRecord _currentRecord; // the most recently processed Synchronization.
 
 }

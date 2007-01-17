@@ -243,7 +243,7 @@ public class TransactionSynchronizationRegistryImple // implements TransactionSy
 		{
 			throw new IllegalStateException();
 		}
-		
+
 		return transactionImple;
 	}
 }
