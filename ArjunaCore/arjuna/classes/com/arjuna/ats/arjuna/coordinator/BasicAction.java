@@ -1072,7 +1072,7 @@ public class BasicAction extends StateManager
 	public String toString ()
 	{
 		return new String("BasicAction: " + get_uid() + " status: "
-				+ actionStatus);
+				+ ActionStatus.stringForm(actionStatus));
 	}
 
 	/**
