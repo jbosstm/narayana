@@ -63,6 +63,7 @@ import org.omg.CosTransactions.*;
 import com.arjuna.ArjunaOTS.*;
 
 import javax.transaction.xa.*;
+
 import java.io.*;
 
 import org.omg.CosTransactions.NotPrepared;
@@ -281,9 +282,12 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			 * XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
 			 * XAER_PROTO.
 			 */
-
+			
 			if (_rollbackOptimization) // won't have rollback called on it
 				removeConnection();
+			
+			if ((e1.errorCode == XAException.XAER_RMERR) || (e1.errorCode == XAException.XAER_RMFAIL))
+				throw new HeuristicHazard();
 
 			return Vote.VoteRollback;
 		}
@@ -403,9 +407,15 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 							updateState(TwoPhaseOutcome.HEURISTIC_MIXED);
 
 							throw new org.omg.CosTransactions.HeuristicMixed();
-						case XAException.XA_HEURRB:
+						case XAException.XA_HEURRB: // forget?
 						case XAException.XA_RBROLLBACK:
 						case XAException.XA_RBEND:
+						case XAException.XA_RBCOMMFAIL:
+						case XAException.XA_RBDEADLOCK:
+						case XAException.XA_RBINTEGRITY:
+						case XAException.XA_RBOTHER:
+						case XAException.XA_RBPROTO:
+						case XAException.XA_RBTIMEOUT:
 							destroyState();
 							break;
 						default:
@@ -517,18 +527,27 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						 * XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
 						 * XAER_PROTO.
 						 */
-
+						
 						switch (e1.errorCode)
 						{
-						case XAException.XAER_RMERR:
+						
 						case XAException.XA_HEURHAZ:
 							updateState(TwoPhaseOutcome.HEURISTIC_HAZARD);
 
 							throw new org.omg.CosTransactions.HeuristicHazard();
-						case XAException.XA_HEURCOM:
+						case XAException.XA_HEURCOM:  // what about forget? OTS doesn't support this code here.
 							destroyState();
 							break;
 						case XAException.XA_HEURRB:
+						case XAException.XA_RBROLLBACK:
+						case XAException.XA_RBCOMMFAIL:
+						case XAException.XA_RBDEADLOCK:
+						case XAException.XA_RBINTEGRITY:
+						case XAException.XA_RBOTHER:
+						case XAException.XA_RBPROTO:
+						case XAException.XA_RBTIMEOUT:
+						case XAException.XA_RBTRANSIENT:
+						case XAException.XAER_RMERR:
 							updateState(TwoPhaseOutcome.HEURISTIC_ROLLBACK);
 
 							throw new org.omg.CosTransactions.HeuristicRollback();
