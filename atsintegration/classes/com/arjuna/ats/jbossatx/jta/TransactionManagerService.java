@@ -96,6 +96,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 
 	private RecoveryManager _recoveryManager;
     private boolean _runRM = true;
+    private int timeout ;
 
     /**
      * Use the short class name as the default for the service name.
@@ -125,6 +126,11 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         System.setProperty(com.arjuna.ats.tsmx.TransactionServiceMX.AGENT_IMPLEMENTATION_PROPERTY,
                 com.arjuna.ats.internal.jbossatx.agent.LocalJBossAgentImpl.class.getName());
         System.setProperty(Environment.LAST_RESOURCE_OPTIMISATION_INTERFACE, LastResource.class.getName()) ;
+        
+        if (timeout != 0)
+        {
+            TxControl.setDefaultTimeout(timeout);
+        }
 
         /** Register management plugin **/
         com.arjuna.ats.arjuna.common.arjPropertyManager.propertyManager.addManagementPlugin(new PropertyServiceJMXPlugin());
@@ -295,10 +301,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
      */
     public void setTransactionTimeout(int timeout) throws javax.transaction.SystemException
     {
-        if (timeout != 0)
-        {
-            TxControl.setDefaultTimeout(timeout);
-        }
+        this.timeout = timeout ;
     }
 
     /**
@@ -425,6 +428,15 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
     public void setRunInVMRecoveryManager(boolean runRM)
     {
         _runRM = runRM;
+    }
+    
+    /**
+     * Set the object store directory.
+     * @param objectStoreDir The object store directory.
+     */
+    public void setObjectStoreDir(final String objectStoreDir)
+    {
+	System.setProperty(com.arjuna.ats.arjuna.common.Environment.OBJECTSTORE_DIR, objectStoreDir) ;
     }
 
     private void registerNotification()

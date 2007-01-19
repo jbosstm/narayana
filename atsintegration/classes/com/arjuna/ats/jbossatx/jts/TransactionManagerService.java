@@ -440,6 +440,15 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
     {
         _runRM = runRM;
     }
+    
+    /**
+     * Set the object store directory.
+     * @param objectStoreDir The object store directory.
+     */
+    public void setObjectStoreDir(final String objectStoreDir)
+    {
+	System.setProperty(com.arjuna.ats.arjuna.common.Environment.OBJECTSTORE_DIR, objectStoreDir) ;
+    }
 
     private void registerNotification()
         throws InstanceNotFoundException

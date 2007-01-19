@@ -138,5 +138,11 @@ public interface TransactionManagerServiceMBean extends org.jboss.system.Service
      * @param runRM
      */
     public void setRunInVMRecoveryManager(boolean runRM);
+    
+    /**
+     * Set the object store directory.
+     * @param objectStoreDir The object store directory.
+     */
+    public void setObjectStoreDir(final String objectStoreDir) ;
 }
 
