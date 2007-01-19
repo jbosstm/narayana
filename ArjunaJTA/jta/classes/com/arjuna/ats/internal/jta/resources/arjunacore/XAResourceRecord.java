@@ -534,8 +534,9 @@ public class XAResourceRecord extends AbstractRecord
 						case XAException.XAER_NOTA:
 						case XAException.XAER_PROTO:
 							break;
-						case XAException.XAER_INVAL:
 						case XAException.XA_RETRY:
+							return TwoPhaseOutcome.FINISH_ERROR;
+						case XAException.XAER_INVAL:
 						case XAException.XAER_RMFAIL: // resource manager
 													  // failed, did it
 													  // rollback?
@@ -650,7 +651,6 @@ public class XAResourceRecord extends AbstractRecord
 
 					switch (e1.errorCode)
 					{
-					case XAException.XAER_RMERR:
 					case XAException.XA_HEURHAZ:
 					case XAException.XA_HEURMIX:
 						return TwoPhaseOutcome.HEURISTIC_HAZARD;
@@ -658,6 +658,15 @@ public class XAResourceRecord extends AbstractRecord
 						forget() ;
 						break;
 					case XAException.XA_HEURRB:
+					case XAException.XA_RBROLLBACK:
+					case XAException.XA_RBCOMMFAIL:
+					case XAException.XA_RBDEADLOCK:
+					case XAException.XA_RBINTEGRITY:
+					case XAException.XA_RBOTHER:
+					case XAException.XA_RBPROTO:
+					case XAException.XA_RBTIMEOUT:
+					case XAException.XA_RBTRANSIENT:
+					case XAException.XAER_RMERR:
 						forget() ;
 						return TwoPhaseOutcome.FINISH_ERROR;
 					case XAException.XAER_NOTA:
