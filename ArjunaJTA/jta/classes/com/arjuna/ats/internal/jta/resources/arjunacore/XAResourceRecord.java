@@ -288,6 +288,9 @@ public class XAResourceRecord extends AbstractRecord
 			if (_rollbackOptimization) // won't have rollback called on it
 				removeConnection();
 
+			if ((e1.errorCode == XAException.XAER_RMERR) || (e1.errorCode == XAException.XAER_RMFAIL))
+				return TwoPhaseOutcome.HEURISTIC_HAZARD;
+			
 			return TwoPhaseOutcome.PREPARE_NOTOK;
 		}
 		catch (Exception e2)
@@ -403,9 +406,15 @@ public class XAResourceRecord extends AbstractRecord
 							return TwoPhaseOutcome.HEURISTIC_COMMIT;
 						case XAException.XA_HEURMIX:
 							return TwoPhaseOutcome.HEURISTIC_MIXED;
-						case XAException.XA_HEURRB:
+						case XAException.XA_HEURRB: // forget?
 						case XAException.XA_RBROLLBACK:
 						case XAException.XA_RBEND:
+						case XAException.XA_RBCOMMFAIL:
+						case XAException.XA_RBDEADLOCK:
+						case XAException.XA_RBINTEGRITY:
+						case XAException.XA_RBOTHER:
+						case XAException.XA_RBPROTO:
+						case XAException.XA_RBTIMEOUT:
 							break;
 						default:
 							return TwoPhaseOutcome.FINISH_ERROR;
@@ -505,12 +514,20 @@ public class XAResourceRecord extends AbstractRecord
 					
 						switch (e1.errorCode)
 						{
-						case XAException.XAER_RMERR:
 						case XAException.XA_HEURHAZ:
 							return TwoPhaseOutcome.HEURISTIC_HAZARD;
-						case XAException.XA_HEURCOM:
+						case XAException.XA_HEURCOM:  // what about forget? OTS doesn't support this code here.
 							break;
 						case XAException.XA_HEURRB:
+						case XAException.XA_RBROLLBACK:
+						case XAException.XA_RBCOMMFAIL:
+						case XAException.XA_RBDEADLOCK:
+						case XAException.XA_RBINTEGRITY:
+						case XAException.XA_RBOTHER:
+						case XAException.XA_RBPROTO:
+						case XAException.XA_RBTIMEOUT:
+						case XAException.XA_RBTRANSIENT:
+						case XAException.XAER_RMERR:
 							return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
 						case XAException.XA_HEURMIX:
 							return TwoPhaseOutcome.HEURISTIC_MIXED;
@@ -518,6 +535,7 @@ public class XAResourceRecord extends AbstractRecord
 						case XAException.XAER_PROTO:
 							break;
 						case XAException.XAER_INVAL:
+						case XAException.XA_RETRY:
 						case XAException.XAER_RMFAIL: // resource manager
 													  // failed, did it
 													  // rollback?
