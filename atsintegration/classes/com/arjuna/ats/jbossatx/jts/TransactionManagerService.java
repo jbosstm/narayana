@@ -90,8 +90,6 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 		//System.setProperty(LogFactory.LOGGER_PROPERTY, "log4j_releveler") ;
 	}
 
-    public final static String PROPAGATE_FULL_CONTEXT_PROPERTY = "com.arjuna.ats.jbossatx.jts.propagatefullcontext";
-
     private final static String SERVICE_NAME = "TransactionManagerService";
     private final static String PROPAGATION_CONTEXT_IMPORTER_JNDI_REFERENCE = "java:/TransactionPropagationContextImporter";
     private final static String PROPAGATION_CONTEXT_EXPORTER_JNDI_REFERENCE = "java:/TransactionPropagationContextExporter";
@@ -99,7 +97,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 
     private RecoveryManager _recoveryManager;
     private boolean _runRM = true;
-
+    private boolean alwaysPropagateContext = true ;
     /**
      * Use the short class name as the default for the service name.
      */
@@ -129,6 +127,9 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         System.setProperty(com.arjuna.ats.tsmx.TransactionServiceMX.AGENT_IMPLEMENTATION_PROPERTY,
                 com.arjuna.ats.internal.jbossatx.agent.LocalJBossAgentImpl.class.getName());
         System.setProperty(Environment.LAST_RESOURCE_OPTIMISATION_INTERFACE, LastResource.class.getName()) ;
+        
+        final String alwaysPropagateProperty = alwaysPropagateContext ? "YES" : "NO" ;
+        System.setProperty(com.arjuna.ats.jts.common.Environment.ALWAYS_PROPAGATE_CONTEXT, alwaysPropagateProperty);
 
         /** Register management plugin **/
         com.arjuna.ats.arjuna.common.arjPropertyManager.propertyManager.addManagementPlugin(new PropertyServiceJMXPlugin());
@@ -456,5 +457,14 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
     {
         Reference ref = new Reference(className, className, null);
         new InitialContext().bind(jndiName, ref);
+    }
+
+    /**
+     * Set the flag indicating whether the propagation context should always be propagated.
+     * @param alwaysPropagateContext true if the context should always be propagated, false if only propagated to OTS transactional objects.
+     */
+    public void setAlwaysPropagateContext(final boolean alwaysPropagateContext)
+    {
+	this.alwaysPropagateContext = alwaysPropagateContext ;
     }
 }

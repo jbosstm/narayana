@@ -31,26 +31,29 @@
 
 package com.arjuna.ats.jts.orbspecific.jacorb.interceptors.context;
 
-import com.arjuna.ats.jts.*;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.ats.jts.common.Defaults;
-import com.arjuna.ats.jts.logging.*;
-
 import com.arjuna.ats.internal.jts.ControlWrapper;
-import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.OTSImpleManager;
+import com.arjuna.ats.jts.OTSManager;
+import com.arjuna.ats.jts.common.InterceptorInfo;
+import com.arjuna.ats.jts.logging.jtsLogger;
+import com.arjuna.common.util.logging.DebugLevel;
+import com.arjuna.common.util.logging.VisibilityLevel;
 
-import com.arjuna.common.util.logging.*;
-
-import org.omg.CosTransactions.*;
-import org.omg.CORBA.*;
-import org.omg.PortableInterceptor.*; 
-import org.omg.IOP.*;
-
-import org.omg.CORBA.SystemException;
+import org.omg.CORBA.Any;
+import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.BAD_PARAM;
-import org.omg.CORBA.UNKNOWN;
+import org.omg.CORBA.LocalObject;
+import org.omg.CORBA.SystemException;
+import org.omg.CORBA.TCKind;
 import org.omg.CORBA.TRANSACTION_REQUIRED;
+import org.omg.CORBA.UNKNOWN;
+import org.omg.CosTransactions.TransactionalObjectHelper;
+import org.omg.IOP.Codec;
+import org.omg.IOP.ServiceContext;
+import org.omg.PortableInterceptor.InvalidSlot;
+import org.omg.PortableInterceptor.ServerRequestInfo;
+import org.omg.PortableInterceptor.ServerRequestInterceptor;
 
 /**
  * PortableInterceptor::ServerRequestInterceptor implementation which checks 
@@ -124,7 +127,7 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
 	{
 	    try
 	    {
-		if (!ContextServerRequestInterceptorImpl.otsAlwaysPropagate)
+		if (!InterceptorInfo.getAlwaysPropagate())
 		{
 		    if (!request_info.target_is_a(TransactionalObjectHelper.id()))
 			throw new BAD_PARAM();
@@ -171,7 +174,7 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
 		     * context and we require one.
 		     */
 	    
-		    if (otsNeedTranContext)
+		    if (InterceptorInfo.getNeedTranContext())
 			throw new TRANSACTION_REQUIRED();
 		}
 	    }
@@ -375,34 +378,5 @@ private void suspendContext (ServerRequestInfo request_info) throws SystemExcept
 
 private Codec _codec;
 private int   _dataSlot;
-
-private static boolean otsNeedTranContext = Defaults.needTransactionContext;
-private static boolean otsAlwaysPropagate = Defaults.alwaysPropagateContext;
-private static boolean otsHaveChecked = false;
-    
-    static
-    {
-	if (!otsHaveChecked)
-	{
-	    String env = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.NEED_TRAN_CONTEXT, null);
-
-	    if (env != null)
-	    {
-		if (env.compareTo("YES") == 0)
-		    otsNeedTranContext = true;
-	    }
-
-	    env = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.ALWAYS_PROPAGATE_CONTEXT, null);
-
-	    if (env != null)
-	    {
-		if (env.compareTo("YES") == 0)
-		    otsAlwaysPropagate = true;
-	    }
-	    
-	    otsHaveChecked = true;
-	}
-    }
-
 }
 

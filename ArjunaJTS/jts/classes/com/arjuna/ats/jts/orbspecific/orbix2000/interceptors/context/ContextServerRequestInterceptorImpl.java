@@ -37,6 +37,7 @@ import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.ats.jts.*;
 import com.arjuna.ats.jts.exceptions.ExceptionCodes;
+import com.arjuna.ats.jts.common.InterceptorInfo;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.common.Defaults;
 import com.arjuna.ats.jts.logging.*;
@@ -136,7 +137,7 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
 	{
 	    try
 	    {
-		if (!ContextServerRequestInterceptorImpl.otsAlwaysPropagate)
+		if (!InterceptorInfo.getAlwaysPropagate())
 		{
 		    if (!request_info.target_is_a(org.omg.CosTransactions.TransactionalObjectHelper.id()))
 			throw new BAD_PARAM();
@@ -183,7 +184,7 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
 		     * context and we require one.
 		     */
 	    
-		    if (otsNeedTranContext)
+		    if (InterceptorInfo.getNeedTranContext())
 			throw new TRANSACTION_REQUIRED();
 		}
 	    }
@@ -382,34 +383,5 @@ private void suspendContext (ServerRequestInfo request_info) throws SystemExcept
     
 private Codec _codec;
 private int   _dataSlot;
-
-private static boolean otsNeedTranContext = Defaults.needTransactionContext;
-private static boolean otsAlwaysPropagate = Defaults.alwaysPropagateContext;
-private static boolean otsHaveChecked = false;
-    
-    static
-    {
-	if (!otsHaveChecked)
-	{
-	    String env = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.NEED_TRAN_CONTEXT, null);
-
-	    if (env != null)
-	    {
-		if (env.compareTo("YES") == 0)
-		    otsNeedTranContext = true;
-	    }
-
-	    env = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.ALWAYS_PROPAGATE_CONTEXT, null);
-
-	    if (env != null)
-	    {
-		if (env.compareTo("YES") == 0)
-		    otsAlwaysPropagate = true;
-	    }
-	    
-	    otsHaveChecked = true;
-	}
-    }
-
 }
 

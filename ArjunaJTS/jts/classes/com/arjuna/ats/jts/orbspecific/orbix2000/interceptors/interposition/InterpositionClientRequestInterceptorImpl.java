@@ -37,6 +37,7 @@ import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.ats.jts.*;
 import com.arjuna.ats.jts.common.Environment;
+import com.arjuna.ats.jts.common.InterceptorInfo;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.common.Defaults;
 import com.arjuna.ats.jts.logging.*;
@@ -140,14 +141,28 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 	if (systemCall(request_info))
 	    return;
 
+	final boolean otsAlwaysPropagate = InterceptorInfo.getAlwaysPropagate() ;
 	try
 	{
-	    if (!InterpositionClientRequestInterceptorImpl.otsAlwaysPropagate)
+	    if (!otsAlwaysPropagate)
 	    {
 		TransactionalObject ptr = org.omg.CosTransactions.TransactionalObjectHelper.narrow(request_info.target());
 	    
 		if (ptr == null)
 		    throw new BAD_PARAM();
+	    }
+	    else
+	    {
+		/** If we are set to always propagate then ensure we're not already in use **/
+	        /** If the value is not null then we are currently in use **/
+                if ( _inUse.get() != null )
+                {
+            	    return;
+                }
+                else
+                {
+            	    _inUse.set(_inUse);
+                }
 	    }
 
 	    try
@@ -227,7 +242,7 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 		     * context and we require one.
 		     */
 	    
-		    if (otsNeedTranContext)
+		    if (InterceptorInfo.getNeedTranContext())
 			throw new TRANSACTION_REQUIRED();
 		}
 		    
@@ -248,6 +263,14 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 	    {
 		throw new UNKNOWN(ex.toString());
 	    }
+            finally
+            {
+                /** If we are set to always propagate then ensure we clear the inuse flag **/
+                if (otsAlwaysPropagate)
+                {
+                        _inUse.set(null);
+                }
+            }
 	}
 	catch (BAD_PARAM ex)
 	{
@@ -319,34 +342,6 @@ private final boolean systemCall (ClientRequestInfo request_info)
 
 private int   _localSlot;
 private Codec _codec;
-
-private static boolean otsNeedTranContext = Defaults.needTransactionContext;
-private static boolean otsAlwaysPropagate = Defaults.alwaysPropagateContext;
-private static boolean otsHaveChecked = false;
-    
-    static
-    {
-	if (!otsHaveChecked)
-	{
-	    String env = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.NEED_TRAN_CONTEXT, null);
-
-	    if (env != null)
-	    {
-		if (env.compareTo("YES") == 0)
-		    otsNeedTranContext = true;
-	    }
-
-	    env = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.ALWAYS_PROPAGATE_CONTEXT, null);
-
-	    if (env != null)
-	    {
-		if (env.compareTo("YES") == 0)
-		    otsAlwaysPropagate = true;
-	    }
-	    
-	    otsHaveChecked = true;
-	}
-    }
-
+private ThreadLocal _inUse = new ThreadLocal();
 }
 

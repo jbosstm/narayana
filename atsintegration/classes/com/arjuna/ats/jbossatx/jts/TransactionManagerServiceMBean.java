@@ -137,5 +137,11 @@ public interface TransactionManagerServiceMBean extends org.jboss.system.Service
      * @param runRM
      */
     public void setRunInVMRecoveryManager(boolean runRM);
+
+    /**
+     * Set the flag indicating whether the propagation context should always be propagated.
+     * @param alwaysPropagateContext true if the context should always be propagated, false if only propagated to OTS transactional objects.
+     */
+    public void setAlwaysPropagateContext(final boolean alwaysPropagateContext) ;
 }
 
