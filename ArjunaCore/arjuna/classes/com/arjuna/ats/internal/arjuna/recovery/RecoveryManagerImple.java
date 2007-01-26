@@ -32,15 +32,9 @@
 package com.arjuna.ats.internal.arjuna.recovery;
 
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Properties;
 import java.util.Vector;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
-import com.arjuna.common.util.logging.*;
-import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
@@ -53,158 +47,175 @@ import com.arjuna.ats.internal.arjuna.Implementations;
 import com.arjuna.ats.internal.arjuna.utils.SocketProcessId;
 
 /**
- * The RecoveryManagerImple - does the real work.
- * Currently we can have only one of these per node, so
- * each instance checks it's the only one running. If it isn't
- * it will kill itself before doing any work.
+ * The RecoveryManagerImple - does the real work. Currently we can have only one
+ * of these per node, so each instance checks it's the only one running. If it
+ * isn't it will kill itself before doing any work.
  */
 
 public class RecoveryManagerImple
 {
-    private PeriodicRecovery _periodicRecovery = null;
-    private RecActivatorLoader _recActivatorLoader = null; 
+	private PeriodicRecovery _periodicRecovery = null;
 
-   /**
-    * Does the work of setting up crash recovery. 
-    *
-    * @param threaded if <code>true</code> then the manager will start
-    * a separate thread to run recovery periodically.
-    *
-    * @message com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1 [com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1] -  property io exception {0}
-    * @message com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2 [com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2] -  socket io exception {0}
-    */
+	private RecActivatorLoader _recActivatorLoader = null;
 
-   public RecoveryManagerImple (boolean threaded)
-   {
-      String rmPropertyFile = RecoveryConfiguration.recoveryManagerPropertiesFile();
+	/**
+	 * Does the work of setting up crash recovery.
+	 * 
+	 * @param threaded
+	 *            if <code>true</code> then the manager will start a separate
+	 *            thread to run recovery periodically.
+	 * 
+	 * @message com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1
+	 *          [com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1] -
+	 *          property io exception {0}
+	 * @message com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2
+	 *          [com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2] -
+	 *          socket io exception {0}
+	 * @message com.arjuna.ats.internal.arjuna.recovery.ready
+	 *          [com.arjuna.ats.internal.arjuna.recovery.ready]
+	 *          RecoveryManagerImple is ready on port {0}
+	 */
 
-      try
-      {
-         arjPropertyManager.propertyManager = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
-      }
-      catch ( Exception ex )
-      {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	  {
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1",
-					  new Object[]{ex});
-	  }
-      }
+	public RecoveryManagerImple (boolean threaded)
+	{
+		String rmPropertyFile = RecoveryConfiguration
+				.recoveryManagerPropertiesFile();
 
-      // force normal recovery trace on
-      tsLogger.arjLogger.mergeFacilityCode(FacilityCode.FAC_RECOVERY_NORMAL);
-      tsLogger.arjLoggerI18N.mergeFacilityCode(FacilityCode.FAC_RECOVERY_NORMAL);
+		try
+		{
+			arjPropertyManager.propertyManager = PropertyManagerFactory
+					.getPropertyManager("com.arjuna.ats.propertymanager",
+							"recoverymanager");
+		}
+		catch (Exception ex)
+		{
+			if (tsLogger.arjLoggerI18N.isWarnEnabled())
+			{
+				tsLogger.arjLoggerI18N
+						.warn(
+								"com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1",
+								new Object[] { ex });
+			}
+		}
 
-      /*
-       * This next would force debugging on, but separate recovery mgr file
-       * makes this unnecessary.
-       */
-  
-       Implementations.initialise();
+		// force normal recovery trace on
+		tsLogger.arjLogger.mergeFacilityCode(FacilityCode.FAC_RECOVERY_NORMAL);
+		tsLogger.arjLoggerI18N
+				.mergeFacilityCode(FacilityCode.FAC_RECOVERY_NORMAL);
 
-      /*
-       * Check whether there is a recovery daemon running - only allow
-       * one per machine (currently!)
-       */
+		/*
+		 * This next would force debugging on, but separate recovery mgr file
+		 * makes this unnecessary.
+		 */
 
-      if ( activeRecoveryManager() )
-      {
-         throw new FatalError("Recovery manager already active!");
-      }
+		Implementations.initialise();
 
-      // start the expiry scanners
+		/*
+		 * Check whether there is a recovery daemon running - only allow one per
+		 * machine (currently!)
+		 */
 
-      //start the activator recovery loader
+		if (activeRecoveryManager())
+		{
+			throw new FatalError("Recovery manager already active!");
+		}
 
-      _recActivatorLoader = new RecActivatorLoader();
+		// start the expiry scanners
 
-      // start the expiry scanners
+		// start the activator recovery loader
 
-      ExpiredEntryMonitor.startUp();
+		_recActivatorLoader = new RecActivatorLoader();
 
-       // start the periodic recovery thread
-      //  (don't start this until just about to go on to the other stuff)
+		// start the expiry scanners
 
-      _periodicRecovery = new PeriodicRecovery(threaded);
+		ExpiredEntryMonitor.startUp();
 
-      try
-      {
-	  if (tsLogger.arjLogger.isInfoEnabled())
-	  {
-	      tsLogger.arjLogger.info("RecoveryManagerImple is ready on port "+_periodicRecovery.getServerSocket().getLocalPort());
-	  }
-      }
-      catch ( IOException ex )
-      {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	  {
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2",
-					  new Object[]{ex});
-	  }
-      }
-   }
+		// start the periodic recovery thread
+		// (don't start this until just about to go on to the other stuff)
 
-    public final void scan ()
-    {
-	_periodicRecovery.doWork(false);
-    }
-    
-    public final void addModule (RecoveryModule module)
-    {
-	_periodicRecovery.addModule(module);
-    }
-    
-    public final Vector getModules ()
-    {
-	return _periodicRecovery.getModules();
-    }
-    
-    public void start()
-    {
-        if (!_periodicRecovery.isAlive())
-        {
-            _periodicRecovery.start() ;
-        }
-    }
-    
-   public void stop ()
-   {
-      _periodicRecovery.shutdown();
+		_periodicRecovery = new PeriodicRecovery(threaded);
 
-      // TODO why?
+		try
+		{
+			if (tsLogger.arjLogger.isInfoEnabled())
+			{
+				tsLogger.arjLoggerI18N.info(
+						"com.arjuna.ats.internal.arjuna.recovery.ready",
+						new Object[] { new Integer(_periodicRecovery
+								.getServerSocket().getLocalPort()) });
+			}
+		}
+		catch (IOException ex)
+		{
+			if (tsLogger.arjLoggerI18N.isWarnEnabled())
+			{
+				tsLogger.arjLoggerI18N
+						.warn(
+								"com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2",
+								new Object[] { ex });
+			}
+		}
+	}
 
-      //ExpiredEntryMonitor.shutdown();
-   }
-    
-   public void finalize ()
-   {
-      stop();
-   }
-    
-   private final boolean activeRecoveryManager ()
-   {
-       // we should be checking for the port in use or something!
+	public final void scan ()
+	{
+		_periodicRecovery.doWork(false);
+	}
 
-       SocketProcessId socket = null;
-       boolean active = false;
-       
-       try
-       {
-	   socket = new SocketProcessId();
+	public final void addModule (RecoveryModule module)
+	{
+		_periodicRecovery.addModule(module);
+	}
 
-	   if (socket.getpid() == -1)
-	       active = true;
-       }
-       catch (FatalError ex)
-       {
-	   // already active on that port
+	public final Vector getModules ()
+	{
+		return _periodicRecovery.getModules();
+	}
 
-	   active = true;
-       }
+	public void start ()
+	{
+		if (!_periodicRecovery.isAlive())
+		{
+			_periodicRecovery.start();
+		}
+	}
 
-       return active;
-   }
-    
+	public void stop ()
+	{
+		_periodicRecovery.shutdown();
+
+		// TODO why?
+
+		// ExpiredEntryMonitor.shutdown();
+	}
+
+	public void finalize ()
+	{
+		stop();
+	}
+
+	private final boolean activeRecoveryManager ()
+	{
+		// we should be checking for the port in use or something!
+
+		SocketProcessId socket = null;
+		boolean active = false;
+
+		try
+		{
+			socket = new SocketProcessId();
+
+			if (socket.getpid() == -1) 
+				active = true;
+		}
+		catch (FatalError ex)
+		{
+			// already active on that port
+
+			active = true;
+		}
+
+		return active;
+	}
+
 }
-
-
