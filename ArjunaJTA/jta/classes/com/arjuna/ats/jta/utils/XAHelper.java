@@ -101,6 +101,8 @@ public class XAHelper
 				return "XAException.XAER_DUPID";
 			case XAException.XAER_OUTSIDE:
 				return "XAException.XAER_OUTSIDE";
+			case XAException.XA_RETRY:
+				return "XAException.XA_RETRY";
 			default:
 				return jtaLogger.logMesg.getString("com.arjuna.ats.jta.utils.unknownerrorcode")
 						+ e.errorCode;
