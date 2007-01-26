@@ -67,6 +67,8 @@ public class XARecoveryModule implements RecoveryModule
 
 	public static final String XARecoveryPropertyNamePrefixOld = "XAConnectionRecovery";
 
+    // why not in Environment?
+
 	public static final String XARecoveryPropertyNamePrefix = "com.arjuna.ats.jta.recovery.XAResourceRecovery";
 
 	private static final String RECOVER_ALL_NODES = "*";
