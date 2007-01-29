@@ -250,7 +250,10 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 					
 					if (uid.notEquals(Uid.nullUid()))
 					{
-						values.push(uid);
+						TransactionImple tx = TxImporter.recoverTransaction(uid);
+						
+						if (tx != null)
+							values.push(tx);
 					}
 					else
 						finished = true;
@@ -265,9 +268,9 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 								
 					while (!values.empty())
 					{
-						Uid id = (Uid) values.pop();
+						com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple tx = (com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple) values.pop();
 						
-						indoubt[index] = new XidImple(id);
+						indoubt[index] = tx.baseXid();
 					}
 				}
 			}
