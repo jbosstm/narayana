@@ -37,6 +37,7 @@ import javax.transaction.xa.*;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
+import com.arjuna.ats.jta.xa.XidImple;
 
 public class TxImporter
 {
@@ -85,7 +86,7 @@ public class TxImporter
 		{	
 			imported = new TransactionImple(timeout, xid);
 			
-			_transactions.put(xid, imported);
+			_transactions.put(new XidImple(xid), imported);
 		}
 		
 		return imported;
@@ -144,7 +145,7 @@ public class TxImporter
 		if (xid == null)
 			throw new IllegalArgumentException();
 		
-		return (TransactionImple) _transactions.get(xid);
+		return (TransactionImple) _transactions.get(new XidImple(xid));
 	}
 	
 	/**
@@ -160,7 +161,7 @@ public class TxImporter
 		if (xid == null)
 			throw new IllegalArgumentException();
 		
-		_transactions.remove(xid);
+		_transactions.remove(new XidImple(xid));
 	}
 	
 	private static HashMap _transactions = new HashMap();
