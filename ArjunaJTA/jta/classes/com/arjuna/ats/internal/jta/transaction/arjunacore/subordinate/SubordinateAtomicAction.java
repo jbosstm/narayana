@@ -29,6 +29,7 @@
 package com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate;
 
 import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
@@ -205,6 +206,17 @@ public class SubordinateAtomicAction extends
 	public void doForget ()
 	{
 		super.forgetHeuristics();
+	}
+	
+	/**
+	 * For crash recovery purposes.
+	 * 
+	 * @param actId the identifier to recover.
+	 */
+	
+	protected SubordinateAtomicAction (Uid actId)
+	{
+		super(actId);
 	}
 	
 	/**
