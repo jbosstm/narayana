@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import javax.transaction.xa.Xid;
 
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.jta.xa.XidImple;
@@ -56,6 +57,13 @@ public class SubordinateAtomicAction extends
 		start();
 	}
 
+	public SubordinateAtomicAction (Uid actId)
+	{
+		super(actId);
+		
+		activate(); // if this fails, we'll retry later.
+	}
+	
 	public SubordinateAtomicAction (int timeout, Xid xid)
 	{
 		super(timeout);
@@ -75,8 +83,6 @@ public class SubordinateAtomicAction extends
 	 *         logs in the transaction object store.
 	 */
 
-	// TODO crash recovery!!!!
-	
 	public String type ()
 	{
 		return getType();
