@@ -36,7 +36,10 @@ import java.util.HashMap;
 
 import javax.transaction.xa.*;
 
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
+import com.arjuna.ats.jta.utils.XAHelper;
+import com.arjuna.ats.jta.xa.XidImple;
 
 public class TxImporter
 {
@@ -73,7 +76,7 @@ public class TxImporter
 	public static TransactionImple importTransaction (Xid xid, int timeout) throws XAException
 	{
 		if (xid == null)
-			throw new InvalidParameterException();
+			throw new IllegalArgumentException();
 		
 		/*
 		 * Check to see if we haven't already imported this thing.
@@ -85,12 +88,31 @@ public class TxImporter
 		{	
 			imported = new TransactionImple(timeout, xid);
 			
-			_transactions.put(xid, imported);
+			_transactions.put(new XidImple(xid), imported);
 		}
 		
 		return imported;
 	}
 
+	public static TransactionImple recoverTransaction (Uid actId) throws XAException
+	{
+		if (actId == null)
+			throw new IllegalArgumentException();
+		
+		TransactionImple recovered = new TransactionImple(actId);
+		TransactionImple tx = (TransactionImple) _transactions.get(recovered.baseXid());
+
+		if (tx == null)
+		{
+			recovered.recordTransaction();
+
+			_transactions.put(recovered.baseXid(), recovered);
+			
+			return recovered;
+		}
+		else
+			return tx;
+	}
 	/**
 	 * Get the subordinate (imported) transaction associated with the
 	 * global transaction.
@@ -106,9 +128,9 @@ public class TxImporter
 	public static TransactionImple getImportedTransaction (Xid xid) throws XAException
 	{
 		if (xid == null)
-			throw new InvalidParameterException();
+			throw new IllegalArgumentException();
 		
-		return (TransactionImple) _transactions.get(xid);
+		return (TransactionImple) _transactions.get(new XidImple(xid));
 	}
 
 	/**
@@ -122,9 +144,9 @@ public class TxImporter
 	public static void removeImportedTransaction (Xid xid) throws XAException
 	{
 		if (xid == null)
-			throw new InvalidParameterException();
-		
-		_transactions.remove(xid);
+			throw new IllegalArgumentException();
+
+		_transactions.remove(new XidImple(xid));
 	}
 	
 	private static HashMap _transactions = new HashMap();
