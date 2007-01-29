@@ -70,7 +70,7 @@ public class ArjunaContextImple implements SOAPContext
 	initialiseContext(currentCoordinator);
     }
 
-    public void initialiseContext(Object param) throws java.security.InvalidParameterException
+    public void initialiseContext(Object param)
     {
 	try
 	{
@@ -97,7 +97,7 @@ public class ArjunaContextImple implements SOAPContext
 	}
 	catch (Exception ex)
 	{
-	    throw new java.security.InvalidParameterException(ex.toString());
+	    throw new java.lang.IllegalArgumentException(ex.toString());
 	}
     }
     
