@@ -623,13 +623,13 @@ public class ServerTransaction extends ArjunaTransactionImple
 	 * this transaction's log is stored in. It is not the identity of the
 	 * transaction!
 	 * 
-	 * Therefore pass nullUid to the base transaction and rely on activating the
+	 * Therefore you may pass nullUid to the base transaction and rely on activating the
 	 * transaction state to set up the transaction id.
 	 */
 
 	protected ServerTransaction (Uid recoveringActUid)
 	{
-		super(new Uid(Uid.nullUid()));
+	    super(recoveringActUid);
 
 		if (jtsLogger.logger.isDebugEnabled())
 		{
