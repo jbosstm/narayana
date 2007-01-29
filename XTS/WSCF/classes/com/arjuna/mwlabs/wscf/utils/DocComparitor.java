@@ -35,16 +35,13 @@ import com.arjuna.mw.wscf.logging.wscfLogger;
 
 import com.arjuna.mw.wscf.utils.CoordinationXML;
 
-import java.security.InvalidParameterException;
-
 /**
- * The DocComparitor takes two XML documents describing a coordinator's
- * protocol and tests for equality. Two documents are equal if the have
- * exactly the same elements and attributes, no matter what the order of
- * occurrence.
- *
+ * The DocComparitor takes two XML documents describing a coordinator's protocol
+ * and tests for equality. Two documents are equal if the have exactly the same
+ * elements and attributes, no matter what the order of occurrence.
+ * 
  * The comapritor may be extended to allow subset or superset comparisons.
- *
+ * 
  * @author Mark Little (mark.little@arjuna.com)
  * @version $Id: DocComparitor.java,v 1.4 2005/05/19 12:13:39 nmcl Exp $
  * @since 1.0.
@@ -53,31 +50,37 @@ import java.security.InvalidParameterException;
 public class DocComparitor
 {
 
-    public DocComparitor ()
-    {
-    }
+	public DocComparitor ()
+	{
+	}
 
-    /**
-     * Are the two documents equal? We assume that the protocol names are
-     * unique, so can check for equality simply on that. If we want to check
-     * individual elements and attributes then we could.
-     *
-     * @message com.arjuna.mwlabs.wscf.utils.DocComparitor_1 [com.arjuna.mwlabs.wscf.utils.DocComparitor_1] - First parameter is null!
-     * @message com.arjuna.mwlabs.wscf.utils.DocComparitor_2 [com.arjuna.mwlabs.wscf.utils.DocComparitor_2] - Second parameter is null!
-     */
+	/**
+	 * Are the two documents equal? We assume that the protocol names are
+	 * unique, so can check for equality simply on that. If we want to check
+	 * individual elements and attributes then we could.
+	 * 
+	 * @message com.arjuna.mwlabs.wscf.utils.DocComparitor_1
+	 *          [com.arjuna.mwlabs.wscf.utils.DocComparitor_1] - First parameter
+	 *          is null!
+	 * @message com.arjuna.mwlabs.wscf.utils.DocComparitor_2
+	 *          [com.arjuna.mwlabs.wscf.utils.DocComparitor_2] - Second
+	 *          parameter is null!
+	 */
 
-    public boolean equals (org.w3c.dom.Document doc1, org.w3c.dom.Document doc2) throws InvalidParameterException
-    {
-	if (doc1 == null)
-	    throw new InvalidParameterException(wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.utils.DocComparitor_1"));
-	
-	if (doc2 == null)
-	    throw new InvalidParameterException(wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.utils.DocComparitor_2"));
+	public boolean equals (org.w3c.dom.Document doc1, org.w3c.dom.Document doc2)
+	{
+		if (doc1 == null)
+			throw new IllegalArgumentException(wscfLogger.log_mesg
+					.getString("com.arjuna.mwlabs.wscf.utils.DocComparitor_1"));
 
-	CoordinationXML protocol1 = new CoordinationXML(doc1);
-	CoordinationXML protocol2 = new CoordinationXML(doc2);
-	
-	return protocol1.equals(protocol2);
-    }
+		if (doc2 == null)
+			throw new IllegalArgumentException(wscfLogger.log_mesg
+					.getString("com.arjuna.mwlabs.wscf.utils.DocComparitor_2"));
+
+		CoordinationXML protocol1 = new CoordinationXML(doc1);
+		CoordinationXML protocol2 = new CoordinationXML(doc2);
+
+		return protocol1.equals(protocol2);
+	}
 
 }
