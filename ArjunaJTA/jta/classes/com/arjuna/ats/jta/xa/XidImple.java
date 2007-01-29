@@ -316,6 +316,8 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 			_theXid.bqual_length = os.unpackInt();
 			_theXid.data = os.unpackBytes();
 
+			hashCode = getHash(_theXid);
+
 			result = true;
 		}
 		catch (Exception e)
@@ -453,5 +455,5 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
     }
     
 	private XID _theXid;
-    private final int hashCode ;
+    private int hashCode ;
 }
