@@ -82,7 +82,7 @@ public class ArjunaContextImple implements SOAPContext
 	}
     }
     
-    public void initialiseContext(Object param) throws java.security.InvalidParameterException
+    public void initialiseContext(Object param)
     {
     }
     
