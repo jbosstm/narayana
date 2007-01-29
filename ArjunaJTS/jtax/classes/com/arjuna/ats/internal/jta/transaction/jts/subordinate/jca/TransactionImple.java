@@ -59,6 +59,27 @@ public class TransactionImple extends
 	}
 
 	/**
+	 * For crash recovery purposes.
+	 * 
+	 * @param actId the transaction to recover.
+	 */
+	
+	public TransactionImple (Uid actId)
+	{
+		super(new SubordinateAtomicTransaction(actId));
+	}
+	
+	/**
+	 * Only to be used by crash recovery. Should not be called directly by any
+	 * other classes.
+	 */
+	
+	public final void recordTransaction ()
+	{
+		TransactionImple.putTransaction(this);
+	}
+	
+	/**
 	 * Overloads Object.equals()
 	 */
 
@@ -102,7 +123,7 @@ public class TransactionImple extends
 	 * imported.
 	 */
 	
-	protected Xid baseXid ()
+	public Xid baseXid ()
 	{
 		return ((SubordinateAtomicTransaction) _theTransaction).getXid();
 	}
