@@ -47,6 +47,7 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction;
+import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XidImple;
 
 /**
@@ -170,9 +171,20 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		switch (flag)
 		{
 		case XAResource.TMSTARTRSCAN: // check the object store
+			if (_recoveryStarted)
+				throw new XAException(XAException.XAER_PROTO);
+			else
+				_recoveryStarted = true;
 			break;
 		case XAResource.TMENDRSCAN: // null op for us
+			if (_recoveryStarted)
+				_recoveryStarted = false;
+			else
+				throw new XAException(XAException.XAER_PROTO);
 			return null;
+		case XAResource.TMNOFLAGS:
+			if (_recoveryStarted)
+				break;
 		default:
 			throw new XAException(XAException.XAER_PROTO);
 		}
@@ -187,7 +199,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 			InputObjectState states = new InputObjectState();
 			
 			// only look in the JCA section of the object store
-			
+
 			if (objStore.allObjUids(ServerTransaction.getType(), states) && (states.notempty()))
 			{
 				Stack values = new Stack();
@@ -207,16 +219,18 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 
 						finished = true;
 					}
-					
+
 					if (uid.notEquals(Uid.nullUid()))
 					{
-						values.push(uid);
+						TransactionImple tx = TxImporter.recoverTransaction(uid);
+
+						values.push(tx);
 					}
 					else
 						finished = true;
 					
 				} while (!finished);
-				
+
 				if (values.size() > 0)
 				{
 					int index = 0;
@@ -225,9 +239,11 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 								
 					while (!values.empty())
 					{
-						Uid id = (Uid) values.pop();
-						
-						indoubt[index] = new XidImple(id);
+						TransactionImple id = (TransactionImple) values.pop();
+
+						indoubt[index] = id.baseXid();
+
+						index++;
 					}
 				}
 			}
@@ -236,7 +252,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		{
 			ex.printStackTrace();
 		}
-			
+
 		return indoubt;
 	}
 
@@ -245,10 +261,10 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		try
 		{
 			TransactionImple tx = TxImporter.getImportedTransaction(xid);
-			
+
 			if (tx == null)
 				throw new XAException(XAException.XAER_INVAL);
-			
+
 			tx.doRollback();
 			
 			TxImporter.removeImportedTransaction(xid);
@@ -274,4 +290,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 			throw new XAException(XAException.XAER_RMERR);
 		}
 	}
+	
+	private boolean _recoveryStarted = false;
+	
 }
