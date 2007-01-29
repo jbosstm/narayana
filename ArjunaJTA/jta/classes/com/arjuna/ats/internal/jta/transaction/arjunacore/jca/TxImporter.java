@@ -31,11 +31,11 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
-import java.security.InvalidParameterException;
 import java.util.HashMap;
 
 import javax.transaction.xa.*;
 
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
 
 public class TxImporter
@@ -73,7 +73,7 @@ public class TxImporter
 	public static TransactionImple importTransaction (Xid xid, int timeout) throws XAException
 	{
 		if (xid == null)
-			throw new InvalidParameterException();
+			throw new IllegalArgumentException();
 		
 		/*
 		 * Check to see if we haven't already imported this thing.
@@ -92,6 +92,42 @@ public class TxImporter
 	}
 	
 	/**
+	 * Used to recover an imported transaction.
+	 * 
+	 * @param actId the state to recover.
+	 * @return the recovered transaction object.
+	 * @throws XAException
+	 */
+	
+	public static TransactionImple recoverTransaction (Uid actId) throws XAException
+	{
+		if (actId == null)
+			throw new IllegalArgumentException();
+		
+		TransactionImple recovered = new TransactionImple(actId);
+
+		/*
+		 * Is the transaction already in the list? This may be the case
+		 * because we scan the object store periodically and may get Uids to
+		 * recover for transactions that are progressing normally, i.e., do
+		 * not need recovery. In which case, we need to ignore them.
+		 */
+		
+		TransactionImple tx = (TransactionImple) _transactions.get(recovered.baseXid());
+		
+		if (tx == null)
+		{
+			_transactions.put(recovered.baseXid(), recovered);
+		
+			recovered.recordTransaction();
+			
+			return recovered;
+		}
+		else
+			return tx;
+	}
+	
+	/**
 	 * Get the subordinate (imported) transaction associated with the
 	 * global transaction.
 	 * 
@@ -106,7 +142,7 @@ public class TxImporter
 	public static TransactionImple getImportedTransaction (Xid xid) throws XAException
 	{
 		if (xid == null)
-			throw new InvalidParameterException();
+			throw new IllegalArgumentException();
 		
 		return (TransactionImple) _transactions.get(xid);
 	}
@@ -122,7 +158,7 @@ public class TxImporter
 	public static void removeImportedTransaction (Xid xid) throws XAException
 	{
 		if (xid == null)
-			throw new InvalidParameterException();
+			throw new IllegalArgumentException();
 		
 		_transactions.remove(xid);
 	}
