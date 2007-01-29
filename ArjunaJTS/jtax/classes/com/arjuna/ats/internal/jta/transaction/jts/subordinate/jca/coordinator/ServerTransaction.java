@@ -66,6 +66,13 @@ public class ServerTransaction extends com.arjuna.ats.internal.jts.orbspecific.i
 		_theXid = new XidImple(xid);
 	}
 
+	public ServerTransaction (Uid actId)
+	{
+		super(actId);
+		
+		activate();  // if this fails we'll retry recovery periodically.
+	}
+	
 	public final Xid getXid ()
 	{
 		return _theXid;
