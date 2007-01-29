@@ -210,9 +210,20 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		switch (flag)
 		{
 		case XAResource.TMSTARTRSCAN: // check the object store
+			if (_recoveryStarted)
+				throw new XAException(XAException.XAER_PROTO);
+			else
+				_recoveryStarted = true;
 			break;
 		case XAResource.TMENDRSCAN: // null op for us
+			if (_recoveryStarted)
+				_recoveryStarted = false;
+			else
+				throw new XAException(XAException.XAER_PROTO);
 			return null;
+		case XAResource.TMNOFLAGS:
+			if (_recoveryStarted)
+				break;
 		default:
 			throw new XAException(XAException.XAER_PROTO);
 		}
@@ -271,6 +282,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 						com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple tx = (com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple) values.pop();
 						
 						indoubt[index] = tx.baseXid();
+						index++;
 					}
 				}
 			}
@@ -325,4 +337,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 			throw new XAException(XAException.XAER_RMERR);
 		}
 	}
+	
+	private boolean _recoveryStarted = false;
+	
 }
