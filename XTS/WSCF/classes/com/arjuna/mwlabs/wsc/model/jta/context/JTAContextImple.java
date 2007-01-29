@@ -87,7 +87,7 @@ public class JTAContextImple implements SOAPContext
         return context ;
     }
 
-    public void initialiseContext(Object param) throws java.security.InvalidParameterException
+    public void initialiseContext(Object param)
     {
     	try
     	{
@@ -111,7 +111,7 @@ public class JTAContextImple implements SOAPContext
         }
         catch (final ClassCastException cce)
         {
-            throw new java.security.InvalidParameterException();
+            throw new java.lang.IllegalArgumentException();
         }
     }
     
