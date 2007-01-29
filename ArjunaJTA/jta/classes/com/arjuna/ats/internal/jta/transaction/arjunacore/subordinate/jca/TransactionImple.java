@@ -33,6 +33,7 @@ package com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca;
 
 import com.arjuna.common.util.logging.*;
 
+import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.jta.logging.*;
 
 import javax.transaction.xa.Xid;
@@ -44,7 +45,6 @@ public class TransactionImple extends
 	/**
 	 * Create a new transaction with the specified timeout.
 	 */
-
 
 	public TransactionImple (int timeout)
 	{
@@ -58,6 +58,24 @@ public class TransactionImple extends
 		TransactionImple.putTransaction(this);
 	}
 
+	/**
+	 * Used for failure recovery.
+	 * 
+	 * @param actId the transaction state to recover.
+	 */
+	
+	public TransactionImple (Uid actId)
+	{
+		super(new SubordinateAtomicAction(actId));
+		
+		// don't put it into list here: it may already be there!
+	}
+	
+	public final void recordTransaction ()
+	{
+		TransactionImple.putTransaction(this);
+	}
+	
 	/**
 	 * Overloads Object.equals()
 	 */
@@ -102,7 +120,7 @@ public class TransactionImple extends
 	 * imported.
 	 */
 	
-	protected Xid baseXid ()
+	public final Xid baseXid ()
 	{
 		return ((SubordinateAtomicAction) _theTransaction).getXid();
 	}
