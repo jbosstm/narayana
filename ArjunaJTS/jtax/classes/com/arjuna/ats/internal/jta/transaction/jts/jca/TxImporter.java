@@ -31,14 +31,12 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts.jca;
 
-import java.security.InvalidParameterException;
 import java.util.HashMap;
 
 import javax.transaction.xa.*;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
-import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XidImple;
 
 public class TxImporter
