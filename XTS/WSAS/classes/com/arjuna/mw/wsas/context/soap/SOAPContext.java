@@ -50,5 +50,5 @@ public interface SOAPContext extends Context
     /**
      * Initialise the implementation using the parameter provided.
      */
-    public void initialiseContext(Object obj) throws java.security.InvalidParameterException;
+    public void initialiseContext(Object obj);
 }
