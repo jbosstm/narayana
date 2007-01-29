@@ -49,7 +49,6 @@ import com.arjuna.mw.wscf.exceptions.ProtocolAlreadyRegisteredException;
 import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
 import com.arjuna.mw.wscf.exceptions.UnknownProtocolImplementationException;
 
-import java.security.InvalidParameterException;
 import java.lang.ExceptionInInitializerError;
 
 import java.util.Vector;
@@ -82,16 +81,16 @@ public class ProtocolManager
 	 * @exception ProtocolAlreadyRegisteredException
 	 *                Thrown if the exact same protocol definition has already
 	 *                been registered.
-	 * @exception InvalidParameterException
+	 * @exception IllegalArgumentException
 	 *                Thrown if either of the parameters is invalid.
 	 */
 
 	public void addProtocol (org.w3c.dom.Document protocol, Object className)
 			throws ProtocolAlreadyRegisteredException,
-			InvalidParameterException
+			IllegalArgumentException
 	{
 		if ((protocol == null) || (className == null))
-			throw new InvalidParameterException();
+			throw new IllegalArgumentException();
 
 		if (present(protocol))
 			throw new ProtocolAlreadyRegisteredException();
@@ -123,12 +122,12 @@ public class ProtocolManager
 	 * @exception ProtocolNotRegisteredException
 	 *                Thrown if the protocol to be removed has not been
 	 *                registered.
-	 * @exception InvalidParameterException
+	 * @exception IllegalArgumentException
 	 *                Thrown if either of the parameters is invalid.
 	 */
 
 	public void replaceProtocol (org.w3c.dom.Document protocol, Object className)
-			throws ProtocolNotRegisteredException, InvalidParameterException
+			throws ProtocolNotRegisteredException, IllegalArgumentException
 	{
 		synchronized (this)
 		{
@@ -154,7 +153,7 @@ public class ProtocolManager
 						}
 						catch (Exception ex)
 						{
-							throw new InvalidParameterException(ex.toString());
+							throw new IllegalArgumentException(ex.toString());
 						}
 
 						found = true;
@@ -174,7 +173,7 @@ public class ProtocolManager
 	 * @exception ProtocolNotRegisteredException
 	 *                Thrown if the requested coordination protocol has not been
 	 *                registered.
-	 * @exception InvalidParameterException
+	 * @exception IllegalArgumentException
 	 *                Thrown if the parameter is invalid.
 	 * 
 	 * @return The class that implements the specified coordination protocol.
@@ -185,7 +184,7 @@ public class ProtocolManager
 	 */
 
 	public Object getProtocolImplementation (org.w3c.dom.Document protocol)
-			throws ProtocolNotRegisteredException, InvalidParameterException
+			throws ProtocolNotRegisteredException, IllegalArgumentException
 	{
 		/*
 		 * Only checks the coordination-type via the hashtable. Now we need to
@@ -229,7 +228,7 @@ public class ProtocolManager
 	 */
 
 	public Object removeProtocol (org.w3c.dom.Document protocol)
-			throws ProtocolNotRegisteredException, InvalidParameterException
+			throws ProtocolNotRegisteredException, IllegalArgumentException
 	{
 		CoordinationXML protocolDef = new CoordinationXML(protocol);
 		Vector impls = (Vector) _protocols.get(protocolDef.protocolType());
@@ -266,7 +265,7 @@ public class ProtocolManager
 	 * @exception UnknownProtocolImplementationException
 	 *                Thrown if the specified implementation class has not been
 	 *                registered.
-	 * @exception InvalidParameterException
+	 * @exception IllegalArgumentException
 	 *                Thrown if the parameter is invalid.
 	 * 
 	 * @return the protocol implementation removed.
@@ -274,7 +273,7 @@ public class ProtocolManager
 
 	public Object removeProtocolImplementation (Object className)
 			throws UnknownProtocolImplementationException,
-			InvalidParameterException
+			IllegalArgumentException
 	{
 		throw new UnknownProtocolImplementationException();
 	}
@@ -286,7 +285,7 @@ public class ProtocolManager
 	 * @param org.w3c.dom.Document
 	 *            protocol The XML definition of the coordination protocol.
 	 * 
-	 * @exception InvalidParameterException
+	 * @exception IllegalArgumentException
 	 *                Thrown if the parameter is invalid (e.g., null).
 	 * 
 	 * @return <code>true</code> if there is an exact match for the specified
@@ -294,7 +293,7 @@ public class ProtocolManager
 	 */
 
 	public final boolean present (org.w3c.dom.Document protocol)
-			throws InvalidParameterException
+			throws IllegalArgumentException
 	{
 		/*
 		 * Only checks the coordination-type via the hashtable. Now we need to
@@ -326,7 +325,7 @@ public class ProtocolManager
 	 * @param org.w3c.dom.Document
 	 *            protocol The XML definition of the coordination protocol.
 	 * 
-	 * @exception InvalidParameterException
+	 * @exception IllegalArgumentException
 	 *                Thrown if the parameter is invalid (e.g., null).
 	 * 
 	 * @return <code>true</code> if there is at match for the specified
@@ -334,7 +333,7 @@ public class ProtocolManager
 	 */
 
 	public final boolean presentWithDifferentName (org.w3c.dom.Document protocol)
-			throws InvalidParameterException
+			throws IllegalArgumentException
 	{
 		/*
 		 * Check the registered protocols and if the types are the same but
