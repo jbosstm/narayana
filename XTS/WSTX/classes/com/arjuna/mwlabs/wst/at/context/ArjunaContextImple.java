@@ -84,7 +84,6 @@ public class ArjunaContextImple implements SOAPContext
     }
 
 	public void initialiseContext(Object param)
-			throws java.security.InvalidParameterException
 	{
 		try
 		{
@@ -127,7 +126,7 @@ public class ArjunaContextImple implements SOAPContext
 		}
 		catch (ClassCastException ex)
 		{
-			throw new java.security.InvalidParameterException();
+			throw new java.lang.IllegalArgumentException();
 		}
 	}
     
