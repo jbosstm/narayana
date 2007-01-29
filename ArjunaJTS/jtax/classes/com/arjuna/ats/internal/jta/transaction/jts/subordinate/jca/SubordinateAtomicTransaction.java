@@ -60,6 +60,17 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		}
 	}
 	
+	/**
+	 * Failure recovery constructor.
+	 * 
+	 * @param actId transaction to be recovered.
+	 */
+	
+	public SubordinateAtomicTransaction (Uid actId)
+	{
+		super(new ServerControlWrapper(new ServerControl(new ServerTransaction(actId))));
+	}
+	
 	public final Xid getXid ()
 	{
 		try
