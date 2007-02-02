@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.jts.orbspecific.hporb.interceptors.interposition;
 
+import com.arjuna.ats.arjuna.utils.ThreadUtil;
 import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
@@ -182,7 +183,7 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 			throw new UNKNOWN("Invalid PI tx parameter!");
 		}
 		else
-		    threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+		    threadId = ThreadUtil.getThreadId() ;
 		
 		if (threadId != null)
 		{

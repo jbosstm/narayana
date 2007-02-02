@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
+import com.arjuna.ats.arjuna.utils.ThreadUtil;
 import com.arjuna.ats.jta.common.*;
 import com.arjuna.ats.jta.logging.*;
 
@@ -83,8 +84,8 @@ public class BaseTransaction
 			}
 		}
 
-        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
-		Integer value = (Integer) _timeouts.get(threadId);
+
+		Integer value = (Integer) _timeouts.get(ThreadUtil.getThreadId());
 		int v = 0; // if not set then assume 0. What else can we do?
 
 		if (value != null)
@@ -215,15 +216,13 @@ public class BaseTransaction
 	{
 		if (seconds >= 0)
 		{
-	        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
-			_timeouts.put(threadId, new Integer(seconds));
+			_timeouts.put(ThreadUtil.getThreadId(), new Integer(seconds));
 		}
 	}
 
 	public int getTimeout() throws javax.transaction.SystemException
 	{
-        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
-		Integer value = (Integer) _timeouts.get(threadId);
+		Integer value = (Integer) _timeouts.get(ThreadUtil.getThreadId());
 
 		if (value != null)
 		{
@@ -266,8 +265,7 @@ public class BaseTransaction
 			throw new javax.transaction.SystemException(e2.toString());
 		}
 		
-        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
-		Integer value = (Integer) _timeouts.get(threadId);
+		Integer value = (Integer) _timeouts.get(ThreadUtil.getThreadId());
 		int v = 0; // if not set then assume 0. What else can we do?
 		
 		if (value != null)

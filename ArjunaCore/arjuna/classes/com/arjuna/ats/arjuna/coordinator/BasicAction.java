@@ -39,6 +39,7 @@ import com.arjuna.ats.arjuna.gandiva.ObjectName;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.utils.ThreadUtil;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.internal.arjuna.thread.*;
 import java.util.*;
@@ -849,8 +850,7 @@ public class BasicAction extends StateManager
 				if (_childThreads == null)
 					_childThreads = new Hashtable();
 
-                final String threadId = Integer.toHexString(System.identityHashCode(t)) ;
-				_childThreads.put(threadId, t); // makes sure so we don't get
+				_childThreads.put(ThreadUtil.getThreadId(t), t); // makes sure so we don't get
 												   // duplicates
 
 				result = true;
@@ -881,8 +881,7 @@ public class BasicAction extends StateManager
 
 	public final boolean removeChildThread () // current thread
 	{
-        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
-		return removeChildThread(threadId);
+		return removeChildThread(ThreadUtil.getThreadId());
 	}
 
 	/**

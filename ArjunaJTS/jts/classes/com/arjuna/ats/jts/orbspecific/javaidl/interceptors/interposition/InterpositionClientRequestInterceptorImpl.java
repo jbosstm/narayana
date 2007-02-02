@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.jts.orbspecific.javaidl.interceptors.interposition;
 
+import com.arjuna.ats.arjuna.utils.ThreadUtil;
 import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
@@ -204,7 +205,7 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 			throw new UNKNOWN(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.interposition.invalidparam"));
 		}
 		else
-		    threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+		    threadId = ThreadUtil.getThreadId() ;
 		
 		if (threadId != null)
 		{

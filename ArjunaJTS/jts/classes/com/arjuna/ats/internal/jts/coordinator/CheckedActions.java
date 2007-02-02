@@ -32,6 +32,7 @@
 package com.arjuna.ats.internal.jts.coordinator;
 
 import com.arjuna.ats.arjuna.coordinator.CheckedAction;
+import com.arjuna.ats.arjuna.utils.ThreadUtil;
 
 import java.util.Hashtable;
 
@@ -42,16 +43,14 @@ public class CheckedActions
 
     public static final synchronized void remove () throws SystemException
     {
-        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
-        otsCheckedAction.remove(threadId);
+        otsCheckedAction.remove(ThreadUtil.getThreadId());
     }
     
     public static final synchronized CheckedAction get () throws SystemException
     {
     	if (otsCheckedAction != null)
         {
-            final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
-    	    return (CheckedAction) otsCheckedAction.get(threadId);
+    	    return (CheckedAction) otsCheckedAction.get(ThreadUtil.getThreadId());
         }
     	else
     	    return null;
@@ -62,8 +61,7 @@ public class CheckedActions
     	if (otsCheckedAction == null)
     	    otsCheckedAction = new Hashtable();
     
-        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
-    	otsCheckedAction.put(threadId, ca);
+    	otsCheckedAction.put(ThreadUtil.getThreadId(), ca);
     }
 
     private static Hashtable otsCheckedAction = null;

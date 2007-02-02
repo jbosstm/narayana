@@ -34,6 +34,7 @@ package com.arjuna.ats.jts.orbspecific.orbix2000.interceptors.context;
 import com.arjuna.common.util.propertyservice.PropertyManager;
 
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.utils.ThreadUtil;
 
 import com.arjuna.ats.jts.*;
 import com.arjuna.ats.jts.common.InterceptorInfo;
@@ -193,7 +194,7 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 			throw new UNKNOWN(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.orbix2000.interceptors.context.invalidparam"));
 		}
 		else
-		    threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
+		    threadId = ThreadUtil.getThreadId() ;
 
 		if (threadId != null)
 		{

@@ -32,6 +32,8 @@
 package com.arjuna.ats.internal.arjuna.thread;
 
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.utils.ThreadUtil;
+
 import java.lang.Thread;
 import java.util.Stack;
 import java.util.Vector;
@@ -145,15 +147,13 @@ public class ThreadActionData
 
 	public static BasicAction popAction () throws EmptyStackException
 	{
-        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
-		return popAction(threadId, true);
+		return popAction(ThreadUtil.getThreadId(), true);
 	}
 
 	public static BasicAction popAction (boolean unregister)
 			throws EmptyStackException
 	{
-        final String threadId = Integer.toHexString(System.identityHashCode(Thread.currentThread())) ;
-		return popAction(threadId, unregister);
+		return popAction(ThreadUtil.getThreadId(), unregister);
 	}
 
 	public static BasicAction popAction (String threadId)
@@ -209,8 +209,7 @@ public class ThreadActionData
 	{
 		if ((act != null) && (unregister))
         {
-            final String threadId = Integer.toHexString(System.identityHashCode(t)) ;
-			act.removeChildThread(threadId);
+			act.removeChildThread(ThreadUtil.getThreadId(t));
         }
 
 		Stack txs = (Stack) _threadList.get();
@@ -252,8 +251,7 @@ public class ThreadActionData
 
 					if (act != null)
                     {
-                        final String threadId = Integer.toHexString(System.identityHashCode(t)) ;
-						act.removeChildThread(threadId);
+						act.removeChildThread(ThreadUtil.getThreadId(t));
                     }
 				}
 			}

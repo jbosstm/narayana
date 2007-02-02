@@ -32,6 +32,8 @@
 package com.arjuna.ats.arjuna.thread;
 
 import com.arjuna.ats.arjuna.coordinator.*;
+import com.arjuna.ats.arjuna.utils.ThreadUtil;
+
 import java.util.Hashtable;
 import java.lang.Thread;
 
@@ -56,8 +58,7 @@ public void finalize ()
     {
 	if (action != null)
 	{
-        final String threadId = Integer.toHexString(System.identityHashCode(this)) ;
-	    action.removeChildThread(threadId);
+	    action.removeChildThread(ThreadUtil.getThreadId(this));
 	    action = null;
 	}
     }
@@ -69,7 +70,7 @@ public static void create (Thread thread) throws IllegalArgumentException
 	 * should work!
 	 */
 
-    final String threadId = Integer.toHexString(System.identityHashCode(thread)) ;
+    final String threadId = ThreadUtil.getThreadId(thread) ;
 	if (actions.get(threadId) == null)
 	{
 	    BasicAction currentAction = BasicAction.Current();
@@ -88,7 +89,7 @@ public static void create (Thread thread) throws IllegalArgumentException
 
 public static void destroy (Thread thread) throws IllegalArgumentException
     {
-    final String threadId = Integer.toHexString(System.identityHashCode(thread)) ;
+    final String threadId = ThreadUtil.getThreadId(thread) ;
 	BasicAction currentAction = (BasicAction) actions.remove(threadId);
 
 	if (currentAction != null)
