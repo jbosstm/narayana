@@ -50,8 +50,18 @@ public interface TransactionManagerServiceMBean extends org.jboss.system.Service
      *
      * @param timeout The default timeout in seconds for all transactions created
      * using this transaction manager.
+     * 
+     * @throws IllegalStateException if the MBean has already started.
      */
-    public void setTransactionTimeout(int timeout) throws javax.transaction.SystemException;
+    public void setTransactionTimeout(int timeout) throws IllegalStateException ;
+
+    /**
+     * Get the default transaction timeout used by this transaction manager.
+     *
+     * @return The default timeout in seconds for all transactions created
+     * using this transaction manager.
+     */
+    public int getTransactionTimeout() ;
 
     /**
      * Sets whether the transaction service should collate transaction service statistics.
@@ -132,17 +142,37 @@ public interface TransactionManagerServiceMBean extends org.jboss.system.Service
     public long getRollbackCount();
 
     /**
-     * Returns whether the recovery manager should be ran in the same VM as
+     * Set whether the recovery manager should be ran in the same VM as
      * JBoss.  If this is false the Recovery Manager is already expected to
      * be running when JBoss starts.
      * @param runRM
+     * 
+     * @throws IllegalStateException If the MBean has already started.
      */
-    public void setRunInVMRecoveryManager(boolean runRM);
-    
+    public void setRunInVMRecoveryManager(boolean runRM) throws IllegalStateException ;
+
+    /**
+     * Get whether the recovery manager should be ran in the same VM as
+     * JBoss.  If this is false the Recovery Manager is already expected to
+     * be running when JBoss starts.
+     * 
+     * @return true if the recover manager is running in the same VM, false otherwise.
+     */
+    public boolean getRunInVMRecoveryManager() ;
+
     /**
      * Set the object store directory.
      * @param objectStoreDir The object store directory.
+     * 
+     * @throws IllegalStateException if the MBean has already started.
      */
-    public void setObjectStoreDir(final String objectStoreDir) ;
+    public void setObjectStoreDir(final String objectStoreDir) throws IllegalStateException ;
+    
+    
+    /**
+     * Get the object store directory.
+     * @return objectStoreDir The object store directory.
+     */
+    public String getObjectStoreDir() ;
 }
 
