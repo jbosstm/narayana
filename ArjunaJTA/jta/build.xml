@@ -271,7 +271,7 @@
                                   merge="${com.hp.mwlabs.ts.jta.etc}/processed-${com.hp.mwlabs.ts.jta.propertyfile.src}"/>
 
             <merge-property-files master="${com.hp.mw.propertydirectory}/${com.hp.mwlabs.ts.jta.propertyfile}"
-                                  merge="${com.hp.mwlabs.ts.jta.etc}/default-${com.hp.mwlabs.ts.jta.recoverymanagerpropertyfile.src}" override="false"/>
+                                  merge="${com.hp.mwlabs.ts.jta.etc}/default-${com.hp.mwlabs.ts.jta.recoverymanagerpropertyfile.src}" override="true"/>
     </target>
 
 
