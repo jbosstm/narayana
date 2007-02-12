@@ -22,6 +22,19 @@
  */
 
 /*
+ * Modified by Jonathan Halliday (jonathan.halliday@redhat.com), February 2007.
+ * We can't keep shipping this code in its original package (org.apache.commons.logging.impl)
+ * as it creates classloader ordering hassle and prevents patching of the apache
+ * commons-logging code. See http://jira.jboss.com/jira/browse/JBTM-200
+ * However, we still need the functionality, specifically the FQCN setting,
+ * in order to get correct class names and line number in the logging output.
+ * Therefore, the code is moved to our own namespace and loaded using
+ *   org.apache.commons.logging.LogFactory.getFactory().setAttribute(
+ *     "org.apache.commons.logging.Log", Log4JLogger.class.getName());
+ * instead of relying on the classloader search order.
+ */
+
+/*
  * Header: /home/cvspublic/jakarta-commons/logging/src/java/org/apache/commons/logging/impl/Log4JLogger.java,v 1.3 2003/04/02 01:29:38 craigmcc Exp
  * Revision: 1.3
  * Date: 2003/04/02 01:29:38
@@ -83,7 +96,7 @@
  */
 
 
-package org.apache.commons.logging.impl;
+package com.arjuna.common.internal.util.logging.jakarta;
 
 import org.apache.log4j.*;
 import org.apache.commons.logging.Log;

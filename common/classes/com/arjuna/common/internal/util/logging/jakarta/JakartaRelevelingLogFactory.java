@@ -45,8 +45,10 @@ public class JakartaRelevelingLogFactory implements LogFactoryInterface
    {
       try
       {
-         // get a new logger from the log subsystem's factory and wrap it into a LogInterface
-         return new JakartaRelevelingLogger(org.apache.commons.logging.LogFactory.getLog(clazz));
+         // configure the underlying apache factory
+         setupLogger();
+		 // get a new logger from the log subsystem's factory and wrap it into a LogInterface
+		 return new JakartaRelevelingLogger(org.apache.commons.logging.LogFactory.getLog(clazz));
       }
       catch (org.apache.commons.logging.LogConfigurationException lce)
       {
@@ -69,6 +71,8 @@ public class JakartaRelevelingLogFactory implements LogFactoryInterface
    {
       try
       {
+         // configure the underlying apache factory
+         setupLogger();
          // get a new logger from the log subsystem's factory and wrap it into a LogInterface
          return new JakartaRelevelingLogger(org.apache.commons.logging.LogFactory.getLog(name));
       }
@@ -76,5 +80,13 @@ public class JakartaRelevelingLogFactory implements LogFactoryInterface
       {
          throw new LogConfigurationException(lce.getMessage());
       }
+   }
+
+   /**
+    * Install our custom logger by setting the factory attribute
+    */
+   private void setupLogger()
+   {
+	   org.apache.commons.logging.LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", Log4JLogger.class.getName());
    }
 }
