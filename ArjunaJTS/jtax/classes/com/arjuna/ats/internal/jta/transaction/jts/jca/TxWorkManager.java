@@ -47,7 +47,7 @@ public class TxWorkManager
 
 	/*
 	 * Although we allow multiple units of work per transaction, currently
-	 * JCA only allows one. Might not be worth the hassle of maintaing this
+	 * JCA only allows one. Might not be worth the hassle of maintaining this
 	 * support.
 	 */
 	
