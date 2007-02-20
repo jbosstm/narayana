@@ -142,6 +142,9 @@ public class TransactionImple extends
 		{
 			SubordinateAtomicTransaction subAct = (SubordinateAtomicTransaction) super._theTransaction;
 
+			if (!endSuspendedRMs())
+				_theTransaction.rollbackOnly();
+			
 			int res = subAct.doPrepare();
 			
 			switch (res)
@@ -242,6 +245,14 @@ public class TransactionImple extends
 		{
 			SubordinateAtomicTransaction subAct = (SubordinateAtomicTransaction) super._theTransaction;
 
+			if (!endSuspendedRMs())
+			{
+				if (jtaLogger.loggerI18N.isWarnEnabled())
+				{
+					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed1");
+				}
+			}
+			
 			int res = subAct.doRollback();
 			
 			switch (res)
@@ -287,6 +298,9 @@ public class TransactionImple extends
 		{
 			SubordinateAtomicTransaction subAct = (SubordinateAtomicTransaction) super._theTransaction;
 
+			if (!endSuspendedRMs())
+				_theTransaction.rollbackOnly();
+			
 			int status = subAct.doOnePhaseCommit();
 
 			TransactionImple.removeTransaction(this);
