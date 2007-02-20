@@ -1391,7 +1391,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 *          Could not call end on a suspended resource!
 	 */
 
-	private boolean endSuspendedRMs ()
+	protected boolean endSuspendedRMs ()
 	{
 		boolean result = true;
 
