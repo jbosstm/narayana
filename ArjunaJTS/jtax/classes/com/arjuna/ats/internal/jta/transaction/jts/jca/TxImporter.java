@@ -147,6 +147,22 @@ public class TxImporter
 		_transactions.remove(new XidImple(xid));
 	}
 	
+	/**
+	 * Recover an imported transaction.
+	 */
+	
+	public static TransactionImple recoverImportedTransaction (Uid id)
+	{
+		if (id == null)
+			throw new InvalidParameterException();
+		
+		TransactionImple recovered = new TransactionImple(id);
+		
+		_transactions.put(recovered.baseXid(), recovered);
+		
+		return recovered;
+	}
+	
 	private static HashMap _transactions = new HashMap();
 	
 }
