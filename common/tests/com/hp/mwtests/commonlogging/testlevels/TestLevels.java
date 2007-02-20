@@ -22,21 +22,31 @@ package com.hp.mwtests.commonlogging.testlevels;
 
 import com.arjuna.common.util.logging.Logi18n;
 import com.arjuna.common.util.logging.LogFactory;
+import com.arjuna.common.internal.util.logging.commonPropertyManager;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
-public class TestLevels
+import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+/**
+ * JUnit test that verifies log statments made through the CLF appear at the expexted log level.
+ * It does this by replacing System.out with a memory backed buffer, writing some log messages
+ * and then checking the buffer contents for the expected regexps.
+ *
+ * Note: due to the way logging is initialized, this is somewhat fragile.
+ * In general you can run only one such test in a given JVM without risking interference.
+ */
+public class TestLevels extends TestCase
 {
    /**
     * for logging purposes.
     */
    public static final String CLASS = TestLevels.class.getName();
-
-   /**
-    * CLF logger for this class
-    *
-    * the resource bundle to use is the fully qualified class name if no additional parameters are given.
-    */
-   private static Logi18n log = LogFactory.getLogi18n(CLASS, "TestLevels");
 
    /**
     *
@@ -49,13 +59,54 @@ public class TestLevels
 	   // CommonLogging-properties.xml: <common><properties><property name= value=>
 	   // cd common/install/lib
 	   // java -cp jbossts-common.jar:tests/common_tests.jar:../../../ext/commons-logging.jar:../../../ext/log4j-1.2.8.jar:../../etc/ com.hp.mwtests.commonlogging.testlevels.TestLevels
+	   junit.textui.TestRunner.run(suite());
+	}
 
-	   System.out.println("running test");
-	  log.debug("testMessage", new Object[] {"1st", "debug"});
-      log.info("testMessage", new Object[] {"1st", "info"});
-      log.warn("testMessage", new Object[] {"1st", "warn"});
-      log.error("testMessage", new Object[] {"1st", "error"});
-      log.fatal("testMessage", new Object[] {"1st", "fatal"});
-   }
+	public static Test suite() {
+		return new TestSuite(TestLevels.class);
+	}
+
+
+	public void testLog4j() {
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		PrintStream bufferedStream = new PrintStream(buffer);
+		PrintStream originalStream = System.out;
+
+		// test the releveling for AS integration:
+		// TODO: how to configure this on a per-test (not per-JVM) basis?
+		commonPropertyManager.propertyManager.setProperty(LogFactory.LOGGER_PROPERTY, "log4j_releveler");
+
+		System.setOut(bufferedStream);
+		writeLogMessages();
+		System.setOut(originalStream);
+		verifyResult(buffer.toString(), true);
+	}
+
+	public static void writeLogMessages() {
+		// Don't init the log in a member variable - it must be done AFTER System.out is changed.
+		// TODO: this needs to be cleaner, or we need each test in it's own JVM!
+		Logi18n log = LogFactory.getLogi18n(CLASS, "TestLevels");
+		log.debug("testMessage", new Object[] {"1st", "debug"});
+		log.info("testMessage", new Object[] {"1st", "info"});
+		log.warn("testMessage", new Object[] {"1st", "warn"});
+		log.error("testMessage", new Object[] {"1st", "error"});
+		log.fatal("testMessage", new Object[] {"1st", "fatal"});
+	}
+
+	public static void verifyResult(String result, boolean expectReleveling) {
+		String[] lines = result.split("[\r\n]+?");
+		assertNotNull(lines);
+		assertEquals(5, lines.length);
+		assertTrue("Got actual value: "+lines[0], lines[0].matches("\\s*DEBUG \\[main\\] \\(TestLevels.java.*"));
+
+		if(expectReleveling) {
+			assertTrue("Got actual value: "+lines[1], lines[1].matches("\\s*DEBUG \\[main\\] \\(TestLevels.java.*"));
+		} else {
+			assertTrue("Got actual value: "+lines[1], lines[1].matches("\\s*INFO \\[main\\] \\(TestLevels.java.*"));
+		}
+		assertTrue("Got actual value: "+lines[2], lines[2].matches("\\s*WARN \\[main\\] \\(TestLevels.java.*"));
+		assertTrue("Got actual value: "+lines[3], lines[3].matches("\\s*ERROR \\[main\\] \\(TestLevels.java.*"));
+		assertTrue("Got actual value: "+lines[4], lines[4].matches("\\s*FATAL \\[main\\] \\(TestLevels.java.*"));
+	}
 }
 
