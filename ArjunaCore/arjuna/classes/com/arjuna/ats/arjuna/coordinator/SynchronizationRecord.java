@@ -31,17 +31,7 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
-import com.arjuna.ats.arjuna.StateManager;
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
-import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
-
 import com.arjuna.ats.internal.arjuna.template.ListElement;
-
-import java.io.PrintWriter;
-
-import java.io.IOException;
 
 /*
  * @author Mark Little (mark@arjuna.com)
