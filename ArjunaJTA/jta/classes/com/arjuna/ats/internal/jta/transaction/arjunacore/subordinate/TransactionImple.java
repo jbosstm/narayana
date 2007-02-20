@@ -60,7 +60,6 @@ public class TransactionImple extends
 	 * Create a new transaction with the specified timeout.
 	 */
 
-
 	public TransactionImple (int timeout)
 	{
 		this(new SubordinateAtomicAction(timeout));
@@ -135,6 +134,9 @@ public class TransactionImple extends
 		{
 			SubordinateAtomicAction subAct = (SubordinateAtomicAction) super._theTransaction;
 
+			if (!endSuspendedRMs())
+				_theTransaction.preventCommit();
+			
 			int res = subAct.doPrepare();
 
 			switch (res)
@@ -205,6 +207,14 @@ public class TransactionImple extends
 		{
 			SubordinateAtomicAction subAct = (SubordinateAtomicAction) super._theTransaction;
 
+			if (!endSuspendedRMs())
+			{
+				if (jtaLogger.loggerI18N.isWarnEnabled())
+				{
+					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed1");
+				}
+			}
+			
 			int res = subAct.doRollback();
 
 			switch (res)
@@ -257,6 +267,9 @@ public class TransactionImple extends
 		{
 			SubordinateAtomicAction subAct = (SubordinateAtomicAction) super._theTransaction;
 
+			if (endSuspendedRMs())
+				_theTransaction.preventCommit();
+			
 			int status = subAct.doOnePhaseCommit();		
 
 			switch (status)
