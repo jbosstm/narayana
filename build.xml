@@ -37,6 +37,24 @@
 
    <available property="jts.present" file="${jts.dir}" type="dir"/>
 
+   <property name="junit.jar" location="ext/junit.jar"/>
+   <macrodef name="runant">
+      <attribute name="target"/>
+      <sequential>
+         <java classname="org.apache.tools.ant.launch.Launcher"
+            classpath="${ant.library.dir}/ant-launcher.jar"
+            fork="true" failonerror="true">
+            <sysproperty key="ant.home" value="${ant.home}"/>
+            <sysproperty key="ant.library.dir" value="${ant.library.dir}"/>
+            <arg value="-cp"/>
+            <arg value="${junit.jar}"/>
+            <arg value="-f"/>
+            <arg value="${ant.file}"/>
+            <arg value="@{target}"/>
+         </java>
+      </sequential>
+   </macrodef>
+
    <target name="help">
       <echo>
 Targets supported in this build.xml file
@@ -49,21 +67,45 @@ Targets supported in this build.xml file
       </echo>
    </target>
 
-   <target name="jts" if="jts.present">
+   <target name="jts">
+      <runant target="run_jts"/>
+   </target>
+
+   <target name="jta">
+      <runant target="run_jta"/>
+   </target>
+
+   <target name="core">
+      <runant target="run_core"/>
+   </target>
+
+   <target name="jbossjts">
+      <runant target="run_jbossjts"/>
+   </target>
+
+   <target name="jbossjta">
+      <runant target="run_jbossjta"/>
+   </target>
+
+   <target name="clean">
+      <runant target="run_clean"/>
+   </target>
+
+   <target name="run_jts" if="jts.present">
       <antcall target="install_jts"/>
    </target>
 
-   <target name="jta" depends="install_jta"/>
+   <target name="run_jta" depends="install_jta"/>
 
-   <target name="core" depends="install_core"/>
+   <target name="run_core" depends="install_core"/>
 
-   <target name="jbossjts" if="jts.present" depends="init_integration, install_jts">
+   <target name="run_jbossjts" if="jts.present" depends="init_integration, install_jts">
       <antcall target="install_integration"/>
    </target>
 
-   <target name="jbossjta" depends="init_integration, install_jta, install_integration"/>
+   <target name="run_jbossjta" depends="init_integration, install_jta, install_integration"/>
 
-   <target name="clean" depends="clean_jts">
+   <target name="run_clean" depends="clean_jts">
       <delete dir="${com.hp.mw.installationdirectory}"/>
       <ant dir="${jta.dir}" target="clean"/>
       <ant dir="${core.dir}" target="clean"/>
@@ -112,7 +154,7 @@ Targets supported in this build.xml file
    </target>
 
    <target name="build_common" depends="build_buildsystem">
-      <ant dir="${common.dir}" target="jar"/>
+      <ant dir="${common.dir}" target="tests"/>
    </target>
 
    <target name="build_buildsystem">

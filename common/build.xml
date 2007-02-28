@@ -55,6 +55,7 @@
     <property name="com.hp.mwlabs.ts.common.dest" location="${com.arjuna.common.destroot}/classes"/>
     <property name="com.hp.mwlabs.ts.common.htdocs.dest" value="${com.arjuna.common.destroot}/htdocs"/>
     <property name="com.hp.mwlabs.ts.common.tests.dest" location="${com.arjuna.common.destroot}/tests"/>
+    <property name="com.hp.mwlabs.ts.common.reports.dest" location="${com.arjuna.common.destroot}/reports"/>
     <property name="com.hp.mwlabs.ts.common.tests.destdir" location="${com.hp.mwlabs.ts.common.jar.dest}/tests/"/>
 
 
@@ -218,31 +219,29 @@
             debug="${com.hp.mwlabs.ts.common.debug}">
             <classpath>
                 <path location="${com.hp.mwlabs.ts.common.dest}"/>
-				<path location="../ext/junit.jar"/>
-			</classpath>
+            </classpath>
         </javac>
 
     </target>
 
-	<target name="com.hp.mw.ts.common.tests.run" depends="com.hp.mw.ts.common.tests.compile">
-		<!-- if this taskdef is blowing up, it's probably because you need ant 1.7.0 in order to use
-				the embedded classpath method of finding junit.jar. -->
-		<junit haltonerror="yes" haltonfailure="yes" fork="yes"
-				printsummary="yes">
-			<formatter type="plain"/>
-			<test name="com.hp.mwtests.commonlogging.testlevels.TestLevels"/>
-			<classpath>
-				<pathelement location="${com.hp.mwlabs.ts.common.tests.dest}"/>
-				<pathelement location="../ext/junit.jar"/>
-				<path location="${com.hp.mwlabs.ts.common.dest}"/>
-				<pathelement path="${build.classpath}"/>
-				<pathelement location="etc"/>
-			</classpath>
-		</junit>
-	</target>
+    <target name="com.hp.mw.ts.common.tests.run" depends="com.hp.mw.ts.common.tests.compile" if="com.hp.mwlabs.ts.common.tests.compile">
+        <mkdir dir="${com.hp.mwlabs.ts.common.reports.dest}"/>
+        <junit printsummary="yes">
+            <formatter type="plain"/>
+            <classpath>
+                <pathelement location="${com.hp.mwlabs.ts.common.tests.dest}"/>
+                <path location="${com.hp.mwlabs.ts.common.dest}"/>
+                <pathelement path="${build.classpath}"/>
+                <pathelement location="etc"/>
+            </classpath>
+            <batchtest haltonerror="yes" haltonfailure="yes" fork="yes"
+                todir="${com.hp.mwlabs.ts.common.reports.dest}">
+                <fileset dir="${com.hp.mwlabs.ts.common.tests.src}" includes="**/TestLevels.java"/>
+            </batchtest>
+        </junit>
+    </target>
 
-
-	<target name="com.hp.mwlabs.ts.common.tests.jar" depends="com.hp.mw.ts.common.tests.run" if="com.hp.mwlabs.ts.common.tests.compile">
+    <target name="com.hp.mwlabs.ts.common.tests.jar" depends="com.hp.mw.ts.common.tests.run" if="com.hp.mwlabs.ts.common.tests.compile">
 
         <mkdir dir="${com.hp.mwlabs.ts.common.tests.destdir}"/>
         <jar basedir="${com.hp.mwlabs.ts.common.tests.dest}"
@@ -340,8 +339,8 @@
 
 	<!-- Short target names -->
     <target name="compile" depends="com.arjuna.common.compile"/>
-    <target name="jar" depends="com.arjuna.common.build"/>
-	<!-- <target name="jar" depends="com.hp.mw.ts.common.jar"/> -->
+    <target name="jar" depends="com.hp.mw.ts.common.jar"/>
+    <target name="tests" depends="com.arjuna.common.build"/>
     <target name="clean" depends="com.hp.mw.ts.common.clean"/>
     <target name="htdocs" depends="com.hp.mw.ts.common.htdocs"/>
     <target name="install" depends="com.hp.mw.ts.common.install"/>
