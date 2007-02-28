@@ -172,6 +172,7 @@ public class JaxRPCHeaderContextProcessor implements Handler
                 final Name name = env.createName(CoordinationConstants.WSCOOR_ELEMENT_COORDINATION_CONTEXT, CoordinationConstants.WSCOOR_PREFIX, CoordinationConstants.WSCOOR_NAMESPACE) ;
                 final SOAPHeaderElement headerElement = header.addHeaderElement(name) ;
                 headerElement.addNamespaceDeclaration(CoordinationConstants.WSCOOR_PREFIX, CoordinationConstants.WSCOOR_NAMESPACE) ;
+                headerElement.setMustUnderstand(true) ;
                 CoordinationContextHelper.serialise(env, headerElement, coordinationContext) ;
             }
         }

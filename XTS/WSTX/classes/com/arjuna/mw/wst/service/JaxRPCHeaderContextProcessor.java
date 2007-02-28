@@ -41,6 +41,7 @@ import javax.xml.rpc.handler.soap.SOAPMessageContext;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
@@ -113,7 +114,8 @@ public class JaxRPCHeaderContextProcessor implements Handler
             try
             {
                 final SOAPEnvelope soapEnvelope = soapMessage.getSOAPPart().getEnvelope() ;
-                final SOAPHeaderElement soapHeaderElement = getHeaderElement(soapEnvelope, CoordinationConstants.WSCOOR_NAMESPACE, CoordinationConstants.WSCOOR_ELEMENT_COORDINATION_CONTEXT) ;
+                final SOAPHeader soapHeader = soapEnvelope.getHeader() ;
+                final SOAPHeaderElement soapHeaderElement = getHeaderElement(soapHeader, CoordinationConstants.WSCOOR_NAMESPACE, CoordinationConstants.WSCOOR_ELEMENT_COORDINATION_CONTEXT) ;
                 
                 if (soapHeaderElement != null)
                 {
@@ -123,11 +125,13 @@ public class JaxRPCHeaderContextProcessor implements Handler
                     {
                         final TxContext txContext = new com.arjuna.mwlabs.wst.at.context.TxContextImple(cc) ;
                         TransactionManagerFactory.transactionManager().resume(txContext) ;
+                        clearMustUnderstand(soapHeader, soapHeaderElement) ;
                     }
                     else if (BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME.equals(coordinationType))
                     {
                         final TxContext txContext = new com.arjuna.mwlabs.wst.ba.context.TxContextImple(cc);
                         BusinessActivityManagerFactory.businessActivityManager().resume(txContext) ;
+                        clearMustUnderstand(soapHeader, soapHeaderElement) ;
                     }
                     else
                     {
@@ -209,15 +213,14 @@ public class JaxRPCHeaderContextProcessor implements Handler
 
     /**
      * Retrieve the first header matching the uri and name.
-     * @param soapEnvelope The soap envelope containing the header.
+     * @param soapHeader The soap header containing the header element.
      * @param uri The uri of the header element.
      * @param name The name of the header element.
      * @return The header element or null if not found.
      */
-    private SOAPHeaderElement getHeaderElement(final SOAPEnvelope soapEnvelope, final String uri, final String name)
+    private SOAPHeaderElement getHeaderElement(final SOAPHeader soapHeader, final String uri, final String name)
         throws SOAPException
     {
-        final SOAPHeader soapHeader = soapEnvelope.getHeader() ;
         if (soapHeader != null)
         {
             final Iterator headerIter = SOAPUtil.getChildElements(soapHeader) ;
@@ -252,5 +255,21 @@ public class JaxRPCHeaderContextProcessor implements Handler
         {
             return lhs.equals(rhs) ;
         }
+    }
+    
+    /**
+     * Clear the soap MustUnderstand.
+     * @param soapHeader The SOAP header.
+     * @param soapHeaderElement The SOAP header element.
+     */
+    private void clearMustUnderstand(final SOAPHeader soapHeader, final SOAPHeaderElement soapHeaderElement)
+    	throws SOAPException
+    {
+	final Name headerName = soapHeader.getElementName() ;
+	
+	final SOAPFactory factory = SOAPFactory.newInstance() ;
+	final Name attributeName = factory.createName("mustUnderstand", headerName.getPrefix(), headerName.getURI()) ;
+	
+	soapHeaderElement.removeAttribute(attributeName) ;
     }
 }
