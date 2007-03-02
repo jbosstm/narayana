@@ -84,6 +84,20 @@ import java.lang.IllegalStateException;
  * @message com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface
  * 			[com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface] - failed
  *          to load Last Resource Optimisation Interface
+ * 
+ * @message com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning
+ *          [com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning]
+ *          Multiple last resources have been added to the current transaction.
+ *          This is transactionally unsafe and should not be relied upon.
+ *          Current resource is {0}
+ * @message com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.disallow
+ *          [com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.disallow]
+ *          Adding multiple last resources is disallowed.
+ *          Current resource is {0}
+ * @message com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.startupWarning
+ *          [com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.startupWarning]
+ *          You have chosen to enable multiple last resources in the transaction manager.
+ *          This is transactionally unsafe and should not be relied upon.
  */
 
 public class TransactionImple implements javax.transaction.Transaction,
@@ -776,17 +790,39 @@ public class TransactionImple implements javax.transaction.Transaction,
 			 */
 
 			final AbstractRecord record ;
-            if ((xaRes instanceof LastResourceCommitOptimisation) ||
-                ((LAST_RESOURCE_OPTIMISATION_INTERFACE != null) && LAST_RESOURCE_OPTIMISATION_INTERFACE.isInstance(xaRes)))
+                        if ((xaRes instanceof LastResourceCommitOptimisation) ||
+                                ((LAST_RESOURCE_OPTIMISATION_INTERFACE != null) && LAST_RESOURCE_OPTIMISATION_INTERFACE.isInstance(xaRes)))
 			{
-				record = new LastResourceRecord(new XAOnePhaseResource(xaRes, xid, params)) ;
+                            if (lastResourceCount == 1)
+                            {
+                                if (jtaLogger.loggerI18N.isWarnEnabled())
+                                {
+                                    if (ALLOW_MULTIPLE_LAST_RESOURCES)
+                                    {
+                                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning", new Object[] {xaRes});
+                                    }
+                                    else
+                                    {
+                                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.disallow", new Object[] {xaRes});
+                                    }
+                                }
+                            }
+                            
+                            if ((lastResourceCount++ == 0) || ALLOW_MULTIPLE_LAST_RESOURCES)
+                            {
+                                record = new LastResourceRecord(new XAOnePhaseResource(xaRes, xid, params)) ;
+                            }
+                            else
+                            {
+                                record = null ;
+                            }
 			}
 			else
 			{
-				record = new XAResourceRecord(this, xaRes, xid, params);
+                            record = new XAResourceRecord(this, xaRes, xid, params);
 			}
 
-			if (_theTransaction.add(record) != AddOutcome.AR_ADDED)
+			if ((record == null) || (_theTransaction.add(record) != AddOutcome.AR_ADDED))
 			{
 				markRollbackOnly();
 
@@ -1591,6 +1627,16 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private int _suspendCount;
 	private final boolean _xaTransactionTimeoutEnabled;
 	private Map txLocalResources;
+        
+        /**
+         * Count of last resources seen in this transaction.
+         */
+        private int lastResourceCount ;
+
+        /**
+         * Do we allow multiple last resources?
+         */
+        private static final boolean ALLOW_MULTIPLE_LAST_RESOURCES ;
 
 	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED ;
 	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE ;
@@ -1624,6 +1670,13 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 		}
 		LAST_RESOURCE_OPTIMISATION_INTERFACE = lastResourceOptimisationInterface ;
+                
+                final String allowMultipleLastResources = jtaPropertyManager.getPropertyManager().getProperty(Environment.ALLOW_MULTIPLE_LAST_RESOURCES) ;
+                ALLOW_MULTIPLE_LAST_RESOURCES = (allowMultipleLastResources == null ? false : Boolean.valueOf(allowMultipleLastResources).booleanValue()) ;
+                if (ALLOW_MULTIPLE_LAST_RESOURCES && jtaLogger.loggerI18N.isWarnEnabled())
+                {
+                    jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.startupWarning");
+                }
 	}
 
 	private static Hashtable _transactions = new Hashtable();

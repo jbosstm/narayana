@@ -45,7 +45,6 @@ import com.arjuna.ats.jta.utils.XAHelper;
 import org.omg.CosTransactions.*;
 
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.OnePhaseResource;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator;
 
 import com.arjuna.ats.jta.xa.*;
@@ -111,6 +110,20 @@ import org.omg.CORBA.UNKNOWN;
  * @message com.arjuna.ats.internal.jta.transaction.jts.lastResourceOptimisationInterface
  * 			[com.arjuna.ats.internal.jta.transaction.jts.lastResourceOptimisationInterface] - failed
  *          to load Last Resource Optimisation Interface
+ * 
+ * @message com.arjuna.ats.internal.jta.transaction.jts.lastResource.multipleWarning
+ *          [com.arjuna.ats.internal.jta.transaction.jts.lastResource.multipleWarning]
+ *          Multiple last resources have been added to the current transaction.
+ *          This is transactionally unsafe and should not be relied upon.
+ *          Current resource is {0}
+ * @message com.arjuna.ats.internal.jta.transaction.jts.lastResource.disallow
+ *          [com.arjuna.ats.internal.jta.transaction.jts.lastResource.disallow]
+ *          Adding multiple last resources is disallowed.
+ *          Current resource is {0}
+ * @message com.arjuna.ats.internal.jta.transaction.jts.lastResource.startupWarning
+ *          [com.arjuna.ats.internal.jta.transaction.jts.lastResource.startupWarning]
+ *          You have chosen to enable multiple last resources in the transaction manager.
+ *          This is transactionally unsafe and should not be relied upon.
  */
 
 public class TransactionImple implements javax.transaction.Transaction,
@@ -826,17 +839,40 @@ public class TransactionImple implements javax.transaction.Transaction,
 			 */
 
 			final XAResourceRecord res ;
-            if ((xaRes instanceof LastResourceCommitOptimisation) ||
-                ((LAST_RESOURCE_OPTIMISATION_INTERFACE != null) && LAST_RESOURCE_OPTIMISATION_INTERFACE.isInstance(xaRes)))
-            {
-                res = new LastResourceRecord(this, xaRes, xid,
-                        params) ;
-            }
-            else
-            {
-                res = new XAResourceRecord(this, xaRes, xid,
-                        params);
-            }
+                        if ((xaRes instanceof LastResourceCommitOptimisation) ||
+                                ((LAST_RESOURCE_OPTIMISATION_INTERFACE != null) && LAST_RESOURCE_OPTIMISATION_INTERFACE.isInstance(xaRes)))
+                        {
+                            if (lastResourceCount == 1)
+                            {
+                                if (jtaLogger.loggerI18N.isWarnEnabled())
+                                {
+                                    if (ALLOW_MULTIPLE_LAST_RESOURCES)
+                                    {
+                                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.lastResource.multipleWarning", new Object[] {xaRes});
+                                    }
+                                    else
+                                    {
+                                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.lastResource.disallow", new Object[] {xaRes});
+                                    }
+                                }
+                            }
+                            
+                            if ((lastResourceCount++ == 0) || ALLOW_MULTIPLE_LAST_RESOURCES)
+                            {
+                                res = new LastResourceRecord(this, xaRes, xid,
+                                        params) ;
+                            }
+                            else
+                            {
+                                markRollbackOnly() ;
+                                return false ;
+                            }
+                        }
+                        else
+                        {
+                            res = new XAResourceRecord(this, xaRes, xid,
+                                    params);
+                        }
 
 			RecoveryCoordinator recCoord = _theTransaction.registerResource(res.getResource());
 
@@ -849,8 +885,6 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
-
 			/*
 			 * Some exceptional condition arose and we probably could not enlist
 			 * the resouce. So, for safety mark the transaction as rollback
@@ -1681,6 +1715,16 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private Hashtable _duplicateResources;
 	private int _suspendCount;
 	private final boolean _xaTransactionTimeoutEnabled ;
+        
+        /**
+         * Count of last resources seen in this transaction.
+         */
+        private int lastResourceCount ;
+
+        /**
+         * Do we allow multiple last resources?
+         */
+        private static final boolean ALLOW_MULTIPLE_LAST_RESOURCES ;
 
 	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED ;
 	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE ;
@@ -1714,6 +1758,13 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 		}
 		LAST_RESOURCE_OPTIMISATION_INTERFACE = lastResourceOptimisationInterface ;
+                
+                final String allowMultipleLastResources = jtsPropertyManager.getPropertyManager().getProperty(Environment.ALLOW_MULTIPLE_LAST_RESOURCES) ;
+                ALLOW_MULTIPLE_LAST_RESOURCES = (allowMultipleLastResources == null ? false : Boolean.valueOf(allowMultipleLastResources).booleanValue()) ;
+                if (ALLOW_MULTIPLE_LAST_RESOURCES && jtaLogger.loggerI18N.isWarnEnabled())
+                {
+                    jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.lastResource.startupWarning");
+                }
 	}
 	
 	private static Hashtable _transactions = new Hashtable();

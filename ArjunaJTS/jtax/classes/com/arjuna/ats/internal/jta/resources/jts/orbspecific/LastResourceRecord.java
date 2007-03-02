@@ -41,6 +41,7 @@ import org.omg.CosTransactions.HeuristicRollback;
 import org.omg.CosTransactions.NotPrepared;
 import org.omg.CosTransactions.Vote;
 
+import com.arjuna.ArjunaOTS.OTSAbstractRecord;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
@@ -126,4 +127,9 @@ public class LastResourceRecord extends XAResourceRecord
 	{
 		return false;
 	}
+    
+    public boolean shouldAdd(OTSAbstractRecord record) throws SystemException
+    {
+        return (record.type_id() == type_id()) ;
+    }
 }

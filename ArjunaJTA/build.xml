@@ -275,7 +275,7 @@
 	</target>
 
 	<target name="com.hp.mwlabs.ts.product.jta.jar">
-		<ant dir="jta" target="com.hp.mw.ts.jta.jar" />
+		<ant dir="jta" target="com.hp.mw.ts.jta.build" />
 	</target>
 
 	<target name="com.hp.mwlabs.ts.product.jdbc.jar">

@@ -47,8 +47,9 @@
 		location="build"/>
 	<property name="com.hp.mwlabs.ts.jta.builddir" location="${com.hp.mwlabs.ts.jta.buildroot}/classes/"/>
 	<property name="com.hp.mwlabs.ts.jta.dest" location="${com.hp.mwlabs.ts.jta.buildroot}/classes"/>
-	<property name="com.hp.mwlabs.ts.jta.tests.src" location="tests"/>
+	<property name="com.hp.mwlabs.ts.jta.tests.src" location="tests/classes"/>
 	<property name="com.hp.mwlabs.ts.jta.tests.dest" location="${com.hp.mwlabs.ts.jta.buildroot}/tests"/>
+	<property name="com.hp.mwlabs.ts.jta.reports.dest" location="${com.hp.mwlabs.ts.jta.buildroot}/reports"/>
 	<property name="com.hp.mwlabs.ts.jta.jar.dest" location="lib"/>
 	<property name="com.hp.mwlabs.ts.jta.tests.destdir" location="${com.hp.mwlabs.ts.jta.jar.dest}/tests/"/>
 
@@ -189,7 +190,24 @@
 		</propertyfile>
 	</target>
 
-	<target name="com.hp.mwlabs.ts.jta.tests.jar" depends="com.hp.mwlabs.ts.jta.tests.compile" if="com.hp.mwlabs.ts.jta.tests.compile">
+	<target name="com.hp.mwlabs.ts.jta.tests.run" depends="com.hp.mwlabs.ts.jta.tests.compile" if="com.hp.mwlabs.ts.jta.tests.compile">
+            <mkdir dir="${com.hp.mwlabs.ts.jta.reports.dest}"/>
+            <junit printsummary="yes">
+                <formatter type="plain"/>
+                <classpath>
+                    <pathelement location="${com.hp.mwlabs.ts.jta.tests.dest}"/>
+                    <path location="${com.hp.mwlabs.ts.jta.dest}"/>
+                    <pathelement path="${build.classpath}"/>
+                    <pathelement location="etc"/>
+                </classpath>
+                <batchtest haltonerror="yes" haltonfailure="yes" fork="yes"
+                    todir="${com.hp.mwlabs.ts.jta.reports.dest}">
+                    <fileset dir="${com.hp.mwlabs.ts.jta.tests.src}" includes="**/LastResource*TestCase.java"/>
+                </batchtest>
+            </junit>
+	</target>
+
+	<target name="com.hp.mwlabs.ts.jta.tests.jar" depends="com.hp.mwlabs.ts.jta.tests.run" if="com.hp.mwlabs.ts.jta.tests.compile">
 
 		<mkdir dir="${com.hp.mwlabs.ts.jta.tests.destdir}"/>
 		<jar	basedir="${com.hp.mwlabs.ts.jta.tests.dest}"
@@ -299,18 +317,10 @@
 	</target>
 
 	<!-- Short target names -->
-
-	<target name="jar" depends="com.hp.mw.ts.jta.jar">
-
-	</target>
-
-	<target name="install" depends="com.hp.mw.ts.jta.install">
-
-	</target>
-
-	<target name="clean" depends="com.hp.mw.ts.jta.clean">
-
-	</target>
+	<target name="jar" depends="com.hp.mw.ts.jta.jar"/>
+	<target name="tests" depends="com.hp.mw.ts.jta.build"/>
+	<target name="install" depends="com.hp.mw.ts.jta.install"/>
+	<target name="clean" depends="com.hp.mw.ts.jta.clean"/>
 
         <target name="com.hp.mwlabs.jta.generateresourcebundle">
 

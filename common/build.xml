@@ -60,7 +60,7 @@
 
 
     <property name="com.hp.mw.ts.common.tests.compile" value="yes"/>
-    <property name="com.hp.mw.ts.common.tests.install" value="yes"/>
+    <property name="com.hp.mw.ts.common.tests.install" value="no"/>
 
     <property name="com.hp.mw.ts.common.log4j.compile" value="yes"/>
     <property name="com.hp.mw.ts.common.csf.compile" value="yes"/>

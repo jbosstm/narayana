@@ -188,10 +188,7 @@ public class LastResourceRecord extends AbstractRecord
 
 	public boolean shouldAdd (AbstractRecord a)
 	{
-		if (a instanceof LastResourceRecord)
-			return false;
-		else
-			return true;
+            return (a.typeIs() == typeIs()) ;
 	}
 
 	public boolean shouldMerge (AbstractRecord a)
@@ -245,5 +242,4 @@ public class LastResourceRecord extends AbstractRecord
 	private OnePhaseResource _lro;
 	
 	private static final Uid ONE_PHASE_RESOURCE_UID = Uid.lastResourceUid() ;
-
 }

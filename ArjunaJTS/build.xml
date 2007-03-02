@@ -375,7 +375,7 @@
 	</target>
 
 	<target name="com.hp.mwlabs.ts.product.jtax.jar">
-		<ant dir="jtax" target="com.hp.mw.ts.jtax.jar" />
+		<ant dir="jtax" target="com.hp.mw.ts.jtax.build" />
 	</target>
 
 	<target name="com.hp.mwlabs.ts.product.tsmx.jar">
