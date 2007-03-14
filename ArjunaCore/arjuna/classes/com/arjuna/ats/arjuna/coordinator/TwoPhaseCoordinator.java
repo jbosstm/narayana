@@ -343,6 +343,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 			}
 
 			_synchs = null;
+			_currentRecord = null;
 		}
 
 		return !problem;
