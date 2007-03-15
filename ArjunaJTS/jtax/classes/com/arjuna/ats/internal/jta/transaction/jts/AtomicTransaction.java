@@ -35,6 +35,7 @@ import com.arjuna.ats.internal.jts.ControlWrapper;
 
 import com.arjuna.ats.jta.logging.*;
 
+import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.xa.XID;
 
 import com.arjuna.common.util.logging.*;
@@ -139,6 +140,12 @@ public class AtomicTransaction extends
 
 			throw e;
 		}
+		finally
+		{
+			// now remove it from the reaper
+			
+			TransactionReaper.transactionReaper().remove(_theAction);
+		}
 	}
 
 	/**
@@ -180,6 +187,12 @@ public class AtomicTransaction extends
 			_theStatus = getStatus();
 
 			throw e;
+		}
+		finally
+		{
+			// now remove it from the reaper
+			
+			TransactionReaper.transactionReaper().remove(_theAction);
 		}
 	}
 
