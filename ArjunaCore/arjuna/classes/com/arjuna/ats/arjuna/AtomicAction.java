@@ -211,6 +211,34 @@ public class AtomicAction extends TwoPhaseCoordinator
 		return status;
 	}
 
+	public int end (boolean report_heuristics)
+	{
+		int outcome = super.end(report_heuristics);
+
+		/*
+		 * Now remove this thread from the reaper. Leave
+		 * the thread-to-tx association though.
+		 */
+
+		TransactionReaper.create().remove(this);
+
+		return outcome;
+	}
+
+	public int cancel ()
+	{
+		int outcome = super.cancel();
+
+		/*
+		 * Now remove this thread from the reaper. Leave
+		 * the thread-to-tx association though.
+		 */
+
+		TransactionReaper.create().remove(this);
+
+		return outcome;
+	}
+	
 	/*
 	 * @return the timeout associated with this instance.
 	 */
