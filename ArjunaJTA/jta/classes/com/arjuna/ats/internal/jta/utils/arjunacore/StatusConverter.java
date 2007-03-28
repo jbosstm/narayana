@@ -58,6 +58,8 @@ public class StatusConverter
 			return javax.transaction.Status.STATUS_UNKNOWN;
 		case ActionStatus.ABORTING:
 			return javax.transaction.Status.STATUS_ROLLING_BACK;
+		case ActionStatus.PREPARING:
+			return javax.transaction.Status.STATUS_PREPARING;
 		default:
 			return javax.transaction.Status.STATUS_UNKNOWN;
 		}
