@@ -49,6 +49,12 @@ public static int convert (org.omg.CosTransactions.Status status)
 	{
 	case org.omg.CosTransactions.Status._StatusActive:
 	    return javax.transaction.Status.STATUS_ACTIVE;
+	case org.omg.CosTransactions.Status._StatusCommitting:
+		return javax.transaction.Status.STATUS_COMMITTING;	
+	case org.omg.CosTransactions.Status._StatusRollingBack:
+		return javax.transaction.Status.STATUS_ROLLING_BACK;
+	case org.omg.CosTransactions.Status._StatusPreparing:
+		return javax.transaction.Status.STATUS_PREPARING;
 	case org.omg.CosTransactions.Status._StatusCommitted:
 	    return javax.transaction.Status.STATUS_COMMITTED;
 	case org.omg.CosTransactions.Status._StatusMarkedRollback:
