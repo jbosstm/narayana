@@ -44,6 +44,8 @@ public class StatusConverter
 			return javax.transaction.Status.STATUS_ACTIVE;
 		case ActionStatus.COMMITTED:
 			return javax.transaction.Status.STATUS_COMMITTED;
+		case ActionStatus.COMMITTING:
+			return javax.transaction.Status.STATUS_COMMITTING;
 		case ActionStatus.ABORT_ONLY:
 			return javax.transaction.Status.STATUS_MARKED_ROLLBACK;
 		case ActionStatus.NO_ACTION:
@@ -54,6 +56,8 @@ public class StatusConverter
 			return javax.transaction.Status.STATUS_ROLLEDBACK;
 		case ActionStatus.INVALID:
 			return javax.transaction.Status.STATUS_UNKNOWN;
+		case ActionStatus.ABORTING:
+			return javax.transaction.Status.STATUS_ROLLING_BACK;
 		default:
 			return javax.transaction.Status.STATUS_UNKNOWN;
 		}
