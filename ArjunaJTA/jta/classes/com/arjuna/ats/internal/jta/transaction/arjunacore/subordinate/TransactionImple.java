@@ -267,7 +267,7 @@ public class TransactionImple extends
 		{
 			SubordinateAtomicAction subAct = (SubordinateAtomicAction) super._theTransaction;
 
-			if (endSuspendedRMs())
+			if (!endSuspendedRMs())
 				_theTransaction.preventCommit();
 			
 			int status = subAct.doOnePhaseCommit();		
