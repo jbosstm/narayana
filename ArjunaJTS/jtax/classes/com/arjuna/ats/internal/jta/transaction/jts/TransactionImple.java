@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -78,11 +78,11 @@ import org.omg.CORBA.UNKNOWN;
 
 /**
  * An implementation of javax.transaction.Transaction.
- * 
+ *
  * @author Mark Little (mark_little@hp.com)
  * @version $Id: TransactionImple.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.2.4.
- * 
+ *
  * @message com.arjuna.ats.internal.jta.transaction.jts.xaerror
  *          [com.arjuna.ats.internal.jta.transaction.jts.xaerror] {0} caught XA
  *          exception: {1}
@@ -110,7 +110,7 @@ import org.omg.CORBA.UNKNOWN;
  * @message com.arjuna.ats.internal.jta.transaction.jts.lastResourceOptimisationInterface
  * 			[com.arjuna.ats.internal.jta.transaction.jts.lastResourceOptimisationInterface] - failed
  *          to load Last Resource Optimisation Interface
- * 
+ *
  * @message com.arjuna.ats.internal.jta.transaction.jts.lastResource.multipleWarning
  *          [com.arjuna.ats.internal.jta.transaction.jts.lastResource.multipleWarning]
  *          Multiple last resources have been added to the current transaction.
@@ -283,7 +283,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (TRANSACTION_ROLLEDBACK e4)
 			{
-				throw new RollbackException();
+				throw new RollbackException(e4.toString());
 			}
 			catch (org.omg.CORBA.NO_PERMISSION e5)
 			{
@@ -468,7 +468,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (TRANSACTION_ROLLEDBACK e2)
 			{
-				throw new javax.transaction.RollbackException();
+				throw new javax.transaction.RollbackException(e2.toString());
 			}
 			catch (org.omg.CosTransactions.Inactive e3)
 			{
@@ -508,6 +508,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * @message com.arjuna.ats.internal.jta.transaction.jts.regerror
 	 *          [com.arjuna.ats.internal.jta.transaction.jts.regerror] {0} could
 	 *          not register transaction: {1}
+	 * @message com.arjuna.ats.internal.jta.transaction.jts.markedrollback
+	 * 			[com.arjuna.ats.internal.jta.transaction.jts.markedrollback] Could not
+	 * 			enlist resource because the transaction is marked for rollback.
 	 */
 
 	public boolean enlistResource (XAResource xaRes, Object[] params)
@@ -530,7 +533,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 		switch (status)
 		{
 		case javax.transaction.Status.STATUS_MARKED_ROLLBACK:
-			throw new RollbackException();
+			throw new RollbackException("TransactionImple.enlistResource - "
+										+ jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.markedrollback"));
 		case javax.transaction.Status.STATUS_ACTIVE:
 			break;
 		default:
@@ -700,9 +704,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 				 * another server, since we keep track of our own registrations.
 				 * So, if this happens we create a new transaction branch and
 				 * try again.
-				 * 
+				 *
 				 * To save time we could always just create branches by default.
-				 * 
+				 *
 				 * Is there a benefit to a zero branch?
 				 */
 
@@ -856,7 +860,7 @@ public class TransactionImple implements javax.transaction.Transaction,
                                     }
                                 }
                             }
-                            
+
                             if ((lastResourceCount++ == 0) || ALLOW_MULTIPLE_LAST_RESOURCES)
                             {
                                 res = new LastResourceRecord(this, xaRes, xid,
@@ -1156,7 +1160,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	/**
 	 * Creates if does not exist and adds to our internal mapping table.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.transaction.jts.nottximple
 	 *          [com.arjuna.ats.internal.jta.transaction.jts.nottximple] Current
 	 *          transaction is not a TransactionImple
@@ -1316,7 +1320,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (TRANSACTION_ROLLEDBACK e4)
 			{
-				throw new RollbackException();
+				throw new RollbackException(e4.toString());
 			}
 			catch (org.omg.CORBA.NO_PERMISSION e5)
 			{
@@ -1393,15 +1397,15 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * If this is an imported JCA transaction, then this method will return the
 	 * Xid we should pretend to be. Otherwise it'll return null and we will generate
 	 * our own Xid.
-	 * 
+	 *
 	 * @return null for a pure ATS transaction, otherwise a valid JCA imported Xid.
 	 */
-	
+
 	protected Xid baseXid ()
 	{
 		return null;
 	}
-	
+
 	/*
 	 * Add and remove transactions from list.
 	 */
@@ -1419,7 +1423,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	/**
 	 * If there are any suspended RMs then we should call end on them before the
 	 * transaction is terminated.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.transaction.jts.xaenderror
 	 *          [com.arjuna.ats.internal.jta.transaction.jts.xaenderror]
 	 *          Could not call end on a suspended resource!
@@ -1485,7 +1489,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * don't use this copy. For some databases it would actually be ok for us to
 	 * use the resource (at least to do an xa_start equivalent on it), but for
 	 * Oracle 8.1.6 it causes their JDBC driver to crash!
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.transaction.jts.threaderror
 	 *          [com.arjuna.ats.internal.jta.transaction.jts.threaderror] Active
 	 *          thread error:
@@ -1549,7 +1553,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	/**
 	 * isNewRM returns an existing TxInfo for the same RM, if present. Null
 	 * otherwise.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.transaction.jts.rmerror
 	 *          [com.arjuna.ats.internal.jta.transaction.jts.rmerror] An error
 	 *          occurred while checking if this is a new resource manager:
@@ -1618,10 +1622,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private final Xid createXid (boolean branch, XAModifier theModifier)
 	{
 		Xid jtaXid = baseXid();
-		
+
 		if (jtaXid != null)
 			return jtaXid;
-		
+
 		try
 		{
 			com.arjuna.ats.arjuna.xa.XID jtsXid = _theTransaction.get_xid(branch);
@@ -1661,7 +1665,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * and issues a warning. We use this in places wherew we need to force the
 	 * outcome of the transaction but already have an exception to throw back to
 	 * the application, so a failure here will only be masked.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.transaction.jts.rollbackerror
 	 *          [com.arjuna.ats.internal.jta.transaction.jts.rollbackerror] {0}
 	 *          could not mark the transaction as rollback only: {1}
@@ -1715,7 +1719,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private Hashtable _duplicateResources;
 	private int _suspendCount;
 	private final boolean _xaTransactionTimeoutEnabled ;
-        
+
         /**
          * Count of last resources seen in this transaction.
          */
@@ -1758,7 +1762,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 		}
 		LAST_RESOURCE_OPTIMISATION_INTERFACE = lastResourceOptimisationInterface ;
-                
+
                 final String allowMultipleLastResources = jtsPropertyManager.getPropertyManager().getProperty(Environment.ALLOW_MULTIPLE_LAST_RESOURCES) ;
                 ALLOW_MULTIPLE_LAST_RESOURCES = (allowMultipleLastResources == null ? false : Boolean.valueOf(allowMultipleLastResources).booleanValue()) ;
                 if (ALLOW_MULTIPLE_LAST_RESOURCES && jtaLogger.loggerI18N.isWarnEnabled())
@@ -1766,7 +1770,7 @@ public class TransactionImple implements javax.transaction.Transaction,
                     jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.lastResource.startupWarning");
                 }
 	}
-	
+
 	private static Hashtable _transactions = new Hashtable();
 
 }

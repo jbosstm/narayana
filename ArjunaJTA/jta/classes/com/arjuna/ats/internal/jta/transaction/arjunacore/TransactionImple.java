@@ -84,7 +84,7 @@ import java.lang.IllegalStateException;
  * @message com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface
  * 			[com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface] - failed
  *          to load Last Resource Optimisation Interface
- * 
+ *
  * @message com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning
  *          [com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning]
  *          Multiple last resources have been added to the current transaction.
@@ -190,6 +190,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate]
 	 *          Invalid transaction state
+	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted
+	 * 			[com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted]
+	 * 			Can't commit because the transaction is in aborted state
 	 */
 
 	public void commit() throws javax.transaction.RollbackException,
@@ -240,7 +243,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 				throw new javax.transaction.HeuristicMixedException();
 			case ActionStatus.H_ROLLBACK:
 			case ActionStatus.ABORTED:
-				throw new RollbackException();
+				throw new RollbackException(
+						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted"));
 			default:
 				throw new IllegalStateException(
 						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate"));
@@ -391,6 +395,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 	}
 
 	// package-private method also for use by TransactionSynchronizationRegistryImple
+	/*
+	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.syncwhenaborted
+	 * 			[com.arjuna.ats.internal.jta.transaction.arjunacore.syncwhenaborted]
+	 * 			Can't register synchronization because the transaction is in aborted state
+	 */
 	void registerSynchronizationImple(SynchronizationImple synchronizationImple)
 			throws javax.transaction.RollbackException,
 			java.lang.IllegalStateException, javax.transaction.SystemException
@@ -404,7 +413,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 				switch (status)
 				{
 				case ActionStatus.ABORTED:
-					throw new javax.transaction.RollbackException();
+					throw new javax.transaction.RollbackException(
+							jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.syncwhenaborted"));
 				case ActionStatus.CREATED:
 					throw new IllegalStateException(
 							jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
@@ -451,8 +461,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.xastart
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.xastart] {0} -
 	 *          caught: {1} for {2}
+	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.elistwhenmarkedrollback
+	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.elistwhenmarkedrollback]
+	 * 			Can't enlist the resource because the transaction is marked for rollback
 	 */
-
 	public boolean enlistResource(XAResource xaRes, Object[] params)
 			throws RollbackException, IllegalStateException,
 			javax.transaction.SystemException
@@ -473,7 +485,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 		switch (status)
 		{
 		case javax.transaction.Status.STATUS_MARKED_ROLLBACK:
-			throw new RollbackException();
+			throw new RollbackException("TransactionImple.enlistResource - "
+							+ jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.nullres"));
 		case javax.transaction.Status.STATUS_ACTIVE:
 			break;
 		default:
@@ -807,7 +820,7 @@ public class TransactionImple implements javax.transaction.Transaction,
                                     }
                                 }
                             }
-                            
+
                             if ((lastResourceCount++ == 0) || ALLOW_MULTIPLE_LAST_RESOURCES)
                             {
                                 record = new LastResourceRecord(new XAOnePhaseResource(xaRes, xid, params)) ;
@@ -1208,7 +1221,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 	/**
 	 * Does the same as commit, but also changes the thread-to-tx association.
 	 */
-
+	/* @message com.arjuna.ats.internal.jta.transaction.arjunacore.ressuspended
+	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.ressuspended]
+	 *          resource already suspended.
+	 */
 	protected void commitAndDisassociate()
 			throws javax.transaction.RollbackException,
 			javax.transaction.HeuristicMixedException,
@@ -1248,7 +1264,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 					throw new javax.transaction.HeuristicMixedException();
 				case ActionStatus.H_ROLLBACK:
 				case ActionStatus.ABORTED:
-					throw new RollbackException();
+					throw new RollbackException(
+							jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted"));
 				default:
 					throw new IllegalStateException(
 							jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate"));
@@ -1627,7 +1644,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private int _suspendCount;
 	private final boolean _xaTransactionTimeoutEnabled;
 	private Map txLocalResources;
-        
+
         /**
          * Count of last resources seen in this transaction.
          */
@@ -1670,7 +1687,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 		}
 		LAST_RESOURCE_OPTIMISATION_INTERFACE = lastResourceOptimisationInterface ;
-                
+
                 final String allowMultipleLastResources = jtaPropertyManager.getPropertyManager().getProperty(Environment.ALLOW_MULTIPLE_LAST_RESOURCES) ;
                 ALLOW_MULTIPLE_LAST_RESOURCES = (allowMultipleLastResources == null ? false : Boolean.valueOf(allowMultipleLastResources).booleanValue()) ;
                 if (ALLOW_MULTIPLE_LAST_RESOURCES && jtaLogger.loggerI18N.isWarnEnabled())
