@@ -1,20 +1,20 @@
 <!--
   JBoss, Home of Professional Open Source
-  Copyright 2006, Red Hat Middleware LLC, and individual contributors 
-  as indicated by the @author tags. 
+  Copyright 2006, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
   See the copyright.txt in the distribution for a
-  full listing of individual contributors. 
+  full listing of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
   of the GNU Lesser General Public License, v. 2.1.
-  This program is distributed in the hope that it will be useful, but WITHOUT A 
-  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
   PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
   You should have received a copy of the GNU Lesser General Public License,
   v.2.1 along with this distribution; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
-  
+
   (C) 2005-2006,
   @author JBoss Inc.
 -->
@@ -29,15 +29,15 @@
 
 	<!-- Load Build Properties File -->
 	<property file="${com.hp.mw.ts.properties}"/>
-	
+
 	<!-- configure dependencies -->
 	<property name="com.arjuna.buildsystem.dir" location="${buildsystem.dir}"/>
 	<property name="com.arjuna.ext.dir" location="${ext.dir}"/>
 	<property name="com.arjuna.common.dir" location="${common.dir}"/>
 	<property name="com.arjuna.arjunacore.dir" location="${core.dir}"/>
-	
+
 	<property name="com.arjuna.buildsystem.build.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
-	
+
 	<property name="com.arjuna.common.build.lib" location="${com.arjuna.common.dir}/build/lib"/>
 	<property name="com.arjuna.arjunacore.build.lib" location="${com.arjuna.arjunacore.dir}/lib"/>
 
@@ -61,14 +61,17 @@
 		<format property="com.hp.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
 	  	</tstamp>
 
-		<condition property="JDK_1.4">
-			<equals arg1="${java.specification.version}" arg2="1.4"/>
+		<condition property="JDK_VERSION_OK">
+			<or>
+				<equals arg1="${java.specification.version}" arg2="1.4"/>
+				<equals arg1="${java.specification.version}" arg2="1.5"/>
+			</or>
 		</condition>
 
-	    <fail unless="JDK_1.4">
-	      The ArjunaJTS build currently requires jdk1.4 to build.
-	    </fail>
-		
+		<fail unless="JDK_VERSION_OK">
+			JBossTS JTA currently requires jdk1.4 or jdk1.5 to build.
+		</fail>
+
 		<property name="com.hp.mw.installationdirectory" location="install"/>
 		<property name="com.hp.mw.sourceid" value="unknown"/>
 		<property name="com.hp.mw.version" value="unknown"/>
@@ -82,7 +85,7 @@
 		<echo message="Builder   = ${com.hp.mw.builder}"/>
 		<echo message="Date      = ${com.hp.mw.date}"/>
 		<echo message="Notes     = ${com.hp.mw.notes}"/>
-	
+
                 <path id="com.arjuna.buildsystem.classpath">
                     <fileset dir="${com.arjuna.buildsystem.build.lib}"/>
                 </path>
@@ -166,6 +169,15 @@
 				<include name="jdbc/lib/*.jar"/>
 			</fileset>
 		</module-to-product>
+
+		<touch file="built_using_java_${java.specification.version}"/>
+		<jar destfile="${com.hp.mwlabs.ts.product.jar.dest}/${com.hp.mw.ts.module.name.lowercase}.jar" update="true">
+			<fileset dir=".">
+				<filename name="built_using_java_${java.specification.version}"/>
+			</fileset>
+		</jar>
+		<delete file="built_using_java_${java.specification.version}"/>
+
 	</target>
 
 	<target name="com.hp.mw.ts.product.tests.dojar">
@@ -227,6 +239,9 @@
             <echo message="Installation directory : ${com.hp.mwlabs.installationdirectory}"/>
 
             <mkdir dir="${com.hp.mwlabs.installationdirectory}/lib"/>
+
+			<touch file="${com.hp.mwlabs.installationdirectory}/lib/built_using_java_${java.specification.version}"/>
+
             <copy todir="${com.hp.mwlabs.installationdirectory}/lib">
                 <fileset dir="${com.hp.mwlabs.ts.product.jar.dest}" includes="${com.hp.mw.ts.module.name.lowercase}.jar"/>
             </copy>

@@ -162,7 +162,9 @@
             </classpath>
         </javac>
 
-        <!-- Process the properties -->
+		<touch file="${com.hp.mwlabs.ts.common.dest}/built_using_java_${java.specification.version}"/>
+
+		<!-- Process the properties -->
     	<property name="property.file" value="common.properties"/>
     	<propertyfile file="${com.hp.mwlabs.ts.common.dest}/${property.file}">
             <entry key="MODULE" value="${com.arjuna.common.modulename}"/>

@@ -64,13 +64,16 @@
 		<format property="com.hp.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
 	  	</tstamp>
 
-		<condition property="JDK_1.4">
-			<equals arg1="${java.specification.version}" arg2="1.4"/>
+		<condition property="JDK_VERSION_OK">
+			<or>
+				<equals arg1="${java.specification.version}" arg2="1.4"/>
+				<equals arg1="${java.specification.version}" arg2="1.5"/>
+			</or>
 		</condition>
 
-	    <fail unless="JDK_1.4">
-	      The ArjunaJTS build currently requires jdk1.4 to build.
-	    </fail>
+		<fail unless="JDK_VERSION_OK">
+			JBossTS JTS currently requires jdk1.4 or jdk1.5 to build.
+		</fail>
 
 		<property name="com.hp.mw.installationdirectory" location="install"/>
 		<property name="com.hp.mw.sourceid" value="unknown"/>
@@ -180,7 +183,21 @@
 			</fileset>
 		</module-to-product>
 
-        <mkdir dir="${com.hp.mwlabs.ts.product.services.jar.dest}"/>
+		<touch file="built_using_java_${java.specification.version}"/>
+		<jar destfile="${com.hp.mwlabs.ts.product.jar.dest}/${com.hp.mw.ts.product.name.lowercase}.jar" update="true">
+			<fileset dir=".">
+				<filename name="built_using_java_${java.specification.version}"/>
+			</fileset>
+		</jar>
+		<!-- TODO: clean ugly hardcoding of orb name -->
+		<jar destfile="${com.hp.mwlabs.ts.product.jar.dest}/${com.hp.mw.ts.product.name.lowercase}-jacorb.jar" update="true">
+			<fileset dir=".">
+				<filename name="built_using_java_${java.specification.version}"/>
+			</fileset>
+		</jar>
+		<delete file="built_using_java_${java.specification.version}"/>
+
+		<mkdir dir="${com.hp.mwlabs.ts.product.services.jar.dest}"/>
         <module-to-product destdir="${com.hp.mwlabs.ts.product.services.jar.dest}" destfile="${com.hp.mw.ts.product.name}-services" ignoreorb="true">
             <fileset dir="${com.arjuna.arjunacore.dir}/services"/>
             <fileset dir=".">
@@ -257,6 +274,9 @@
             <echo message="Installation directory : ${com.hp.mwlabs.installationdirectory}"/>
 
             <mkdir dir="${com.hp.mwlabs.installationdirectory}/lib"/>
+
+			<touch file="${com.hp.mwlabs.installationdirectory}/lib/built_using_java_${java.specification.version}"/>
+
             <copy todir="${com.hp.mwlabs.installationdirectory}/lib">
                 <fileset dir="${com.hp.mwlabs.ts.product.jar.dest}" excludes="*-tests.jar"/>
             </copy>

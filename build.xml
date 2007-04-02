@@ -1,20 +1,20 @@
 <!--
   JBoss, Home of Professional Open Source
-  Copyright 2006, Red Hat Middleware LLC, and individual contributors 
-  as indicated by the @author tags. 
+  Copyright 2006, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
   See the copyright.txt in the distribution for a
-  full listing of individual contributors. 
+  full listing of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
   of the GNU Lesser General Public License, v. 2.1.
-  This program is distributed in the hope that it will be useful, but WITHOUT A 
-  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
   PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
   You should have received a copy of the GNU Lesser General Public License,
   v.2.1 along with this distribution; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
-  
+
   (C) 2005-2006,
   @author JBoss Inc.
 -->
@@ -30,7 +30,7 @@
    <property name="jta.dir" location="ArjunaJTA"/>
    <property name="jts.dir" location="ArjunaJTS"/>
    <property name="integration.dir" location="atsintegration"/>
-	
+
    <property name="jboss.eula" location="JBossORG-EULA.txt"/>
    <property name="jboss.libdir" location="jboss"/>
    <property name="jboss.install.libdir" location="${com.hp.mw.installationdirectory}/jboss"/>
@@ -211,14 +211,17 @@ Targets supported in this build.xml file
          <format property="com.hp.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
       </tstamp>
 
-      <condition property="JDK_1.4">
-         <equals arg1="${java.specification.version}" arg2="1.4"/>
+      <condition property="JDK_VERSION_OK">
+		  <or>
+			  <equals arg1="${java.specification.version}" arg2="1.4"/>
+			  <equals arg1="${java.specification.version}" arg2="1.5"/>
+		  </or>
       </condition>
 
-      <fail unless="JDK_1.4">
-         The JBossJTS build currently requires jdk1.4 to build.
+      <fail unless="JDK_VERSION_OK">
+         JBossTS currently requires jdk1.4 or jdk1.5 to build.
       </fail>
-      
+
       <property name="com.hp.mw.ts.product.propertyfile" value="${com.hp.mw.ts.product.name.lowercase}-properties.xml"/>
 
       <property name="com.hp.mw.sourceid" value="unknown"/>

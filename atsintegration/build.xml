@@ -129,9 +129,11 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
         <property name="jboss.server.libs" value="${jboss.server.jta.libs}"/>
         <!-- Classpath -->
         <path id="build.classpath">
-            <fileset dir="${com.arjuna.mwlabs.installation.lib.directory}"
-                includes="**/*.jar"/>
-            <filelist dir="${jboss.lib.dir}" files="${jboss.libs}"/>
+            <fileset dir="${com.arjuna.mwlabs.installation.lib.directory}">
+				<include name="**/*.jar"/>
+				<include name="**/*.zip"/>
+			</fileset>
+			<filelist dir="${jboss.lib.dir}" files="${jboss.libs}"/>
             <filelist dir="${jboss.server.lib.dir}" files="${jboss.server.libs}"/>
         </path>
         <property name="build.classpath" refid="build.classpath"/>
@@ -160,7 +162,9 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
             classpathref="build.classpath"
             />
 
-    </target>
+		<touch file="${com.arjuna.mwlabs.ts.jbossatx.dest}/built_using_java_${java.specification.version}"/>		
+
+	</target>
 
     <!-- Jar targets -->
     <target name="com.arjuna.mw.ts.jbossatx.jar"
