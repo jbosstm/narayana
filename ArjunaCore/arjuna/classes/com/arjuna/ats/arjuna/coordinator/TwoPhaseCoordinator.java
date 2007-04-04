@@ -177,6 +177,14 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 		return "/StateManager/BasicAction/AtomicAction/TwoPhaseCoordinator";
 	}
 
+	/**
+	 * Get any Throwable that was caught during commit processing but not directly rethrown.
+	 * @return
+	 */
+	public Throwable getDeferredThrowable() {
+		return _deferredThrowable;
+	}
+
 	protected TwoPhaseCoordinator (int at)
 	{
 		super(at);
@@ -239,17 +247,28 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 				try
 				{
 					problem = !_currentRecord.beforeCompletion();
+
+					// if something goes wrong, we can't just throw the exception, we need to continue to
+					// complete the transaction. However, the exception may have interesting information that
+					// we want later, so we keep a reference to it as well as logging it.
+
 				}
 				catch (Exception ex)
 				{
 					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_2", new Object[]
 					{ _currentRecord }, ex);
+					if(_deferredThrowable == null) {
+						_deferredThrowable = ex;
+					}
 					problem = true;
 				}
 				catch (Error er)
 				{
 					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_2", new Object[]
 					{ _currentRecord }, er);
+					if(_deferredThrowable == null) {
+						_deferredThrowable = er;
+					}
 					problem = true;
 				}
 			}
@@ -352,5 +371,5 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 	//private HashList _synchs;
 	private SortedSet _synchs;
 	private SynchronizationRecord _currentRecord; // the most recently processed Synchronization.
-
+	private Throwable _deferredThrowable;
 }

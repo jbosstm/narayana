@@ -48,10 +48,7 @@ import com.arjuna.ats.jta.logging.*;
 import com.arjuna.ats.jta.xa.XAModifier;
 
 import com.arjuna.ats.arjuna.LastResourceRecord;
-import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.AddOutcome;
+import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.common.util.logging.*;
@@ -243,8 +240,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 				throw new javax.transaction.HeuristicMixedException();
 			case ActionStatus.H_ROLLBACK:
 			case ActionStatus.ABORTED:
-				throw new RollbackException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted"));
+				RollbackException rollbackException = new RollbackException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted"));
+				if(_theTransaction.getDeferredThrowable() != null) {
+					rollbackException.initCause(_theTransaction.getDeferredThrowable());
+				}
+				throw rollbackException;
 			default:
 				throw new IllegalStateException(
 						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate"));
@@ -1264,8 +1264,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 					throw new javax.transaction.HeuristicMixedException();
 				case ActionStatus.H_ROLLBACK:
 				case ActionStatus.ABORTED:
-					throw new RollbackException(
-							jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted"));
+					RollbackException rollbackException = new RollbackException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted"));
+					if(_theTransaction.getDeferredThrowable() != null) {
+						rollbackException.initCause(_theTransaction.getDeferredThrowable());
+					}
+					throw rollbackException;
 				default:
 					throw new IllegalStateException(
 							jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate"));

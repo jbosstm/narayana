@@ -111,16 +111,9 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
 
 	if (_theSynch != null)
 	{
-	    try
-	    {
 		_theSynch.beforeCompletion();
-
 		return true;
-	    }
-	    catch (Exception e)
-	    {
-		return false;
-	    }
+		// Don't catch and swallow unchecked exceptions here, they may be useful to the caller.
 	}
 	else
 	    return false;
