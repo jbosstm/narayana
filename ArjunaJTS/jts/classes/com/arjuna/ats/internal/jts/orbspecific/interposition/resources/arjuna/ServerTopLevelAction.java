@@ -335,7 +335,8 @@ public void rollback () throws HeuristicCommit, HeuristicMixed, HeuristicHazard,
 	}
 	else
 	{
-	    if (actionStatus == ActionStatus.RUNNING)
+	    if ((actionStatus == ActionStatus.RUNNING) ||
+                (actionStatus == ActionStatus.ABORT_ONLY))
 	    {
 		try
 		{
