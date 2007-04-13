@@ -174,7 +174,7 @@ public class JNDIManager
 
 	private static final String DEFAULT_TM_JNDI_CONTEXT = "java:/TransactionManager";
 	private static final String DEFAULT_UT_JNDI_CONTEXT = "java:/UserTransaction";
-	private static final String DEFAULT_TSR_JNDI_CONTEXT = "java:comp/TransactionSynchronizationRegistry";
+	private static final String DEFAULT_TSR_JNDI_CONTEXT = "java:/TransactionSynchronizationRegistry";
 
 	private static final String DEFAULT_UT_IMPLEMENTATION = "com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple";
 	private static final String DEFAULT_TM_IMPLEMENTATION = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple";

@@ -34,7 +34,7 @@ import javax.transaction.*;
  *
  * @author jonathan.halliday@jboss.com
  */
-public class TransactionSynchronizationRegistryImple // implements TransactionSynchronizationRegistry
+public class TransactionSynchronizationRegistryImple implements TransactionSynchronizationRegistry
 {
 	/*
 	 * http://java.sun.com/javaee/5/docs/api/javax/transaction/TransactionSynchronizationRegistry.html

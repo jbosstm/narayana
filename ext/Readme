@@ -32,7 +32,7 @@ connector-api.jar
 jdbc2_0-stdext.jar	JDBC 2.0
 jmxri.jar		JMX reference implementation
 jndi.jar		JNDI
-jta-spec1_0_1.jar	JTA specification 1.0.1
+jta-1_1-classes.zip	JTA specification 1.1
 junit.jar		JUnit test framework, 3.8.2
 log4j-1.2.8.jar		LOG4j version 1.2.8
 wrapper.jar		Java Service Wrapper 3.2.3
