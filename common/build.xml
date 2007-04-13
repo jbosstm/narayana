@@ -155,7 +155,8 @@
             destdir="${com.hp.mwlabs.ts.common.dest}"
             classpath="${com.arjuna.common.src}"
             excludes="${com.arjuna.common.compile.excludes}"
-            debug="${com.hp.mwlabs.ts.common.debug}">
+            debug="${com.hp.mwlabs.ts.common.debug}"
+			deprecation="${com.hp.mw.deprecation}">
             <classpath>
                 <path path="${build.classpath}"/>
                 <path path="${com.arjuna.common.src}"/>

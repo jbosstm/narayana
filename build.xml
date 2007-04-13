@@ -35,6 +35,9 @@
    <property name="jboss.libdir" location="jboss"/>
    <property name="jboss.install.libdir" location="${com.hp.mw.installationdirectory}/jboss"/>
 
+   <property name="com.hp.mw.deprecation" value="yes"/>
+   <property name="com.arjuna.mw.deprecation" value="yes"/>
+
    <available property="jts.present" file="${jts.dir}" type="dir"/>
 
    <property name="junit.jar" location="ext/junit.jar"/>
