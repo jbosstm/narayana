@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -63,9 +63,9 @@ import com.arjuna.webservices.wscoor.CoordinationContextType;
  * The class is used to perform WS-Transaction context insertion
  * and extraction for application level SOAP messages using JaxRPC.
  *
- * @message com.arjuna.mw.wst.service.JaxRPCHCP_1 [com.arjuna.mw.wst.service.JaxRPCHCP_1] - Error in: 
- * @message com.arjuna.mw.wst.service.JaxRPCHCP_2 [com.arjuna.mw.wst.service.JaxRPCHCP_2] - Stack trace: 
- * @message com.arjuna.mw.wst.service.JaxRPCHCP_3 [com.arjuna.mw.wst.service.JaxRPCHCP_3] - Unknown context type: 
+ * @message com.arjuna.mw.wst.service.JaxRPCHCP_1 [com.arjuna.mw.wst.service.JaxRPCHCP_1] - Error in:
+ * @message com.arjuna.mw.wst.service.JaxRPCHCP_2 [com.arjuna.mw.wst.service.JaxRPCHCP_2] - Stack trace:
+ * @message com.arjuna.mw.wst.service.JaxRPCHCP_3 [com.arjuna.mw.wst.service.JaxRPCHCP_3] - Unknown context type:
  */
 
 public class JaxRPCHeaderContextProcessor implements Handler
@@ -74,7 +74,7 @@ public class JaxRPCHeaderContextProcessor implements Handler
      * The handler information.
      */
     private HandlerInfo handlerInfo ;
-    
+
     /**
      * Initialise the handler information.
      * @param handlerInfo The handler information.
@@ -83,32 +83,32 @@ public class JaxRPCHeaderContextProcessor implements Handler
     {
         this.handlerInfo = handlerInfo ;
     }
-    
+
     /**
      * Destroy the handler.
      */
     public void destroy()
     {
     }
-    
+
     /**
      * Get the headers.
      * @return the headers.
      */
     public QName[] getHeaders()
     {
-        return handlerInfo.getHeaders() ;
+		return new QName[] {new QName(CoordinationConstants.WSCOOR_NAMESPACE, CoordinationConstants.WSCOOR_ELEMENT_COORDINATION_CONTEXT)};
     }
-    
+
     /**
      * Handle the request.
      * @param messageContext The current message context.
      */
     public boolean handleRequest(final MessageContext messageContext)
     {
-        final SOAPMessageContext soapMessageContext = (SOAPMessageContext)messageContext ;
+		final SOAPMessageContext soapMessageContext = (SOAPMessageContext)messageContext ;
         final SOAPMessage soapMessage = soapMessageContext.getMessage() ;
-        
+
         if (soapMessage != null)
         {
             try
@@ -116,7 +116,7 @@ public class JaxRPCHeaderContextProcessor implements Handler
                 final SOAPEnvelope soapEnvelope = soapMessage.getSOAPPart().getEnvelope() ;
                 final SOAPHeader soapHeader = soapEnvelope.getHeader() ;
                 final SOAPHeaderElement soapHeaderElement = getHeaderElement(soapHeader, CoordinationConstants.WSCOOR_NAMESPACE, CoordinationConstants.WSCOOR_ELEMENT_COORDINATION_CONTEXT) ;
-                
+
                 if (soapHeaderElement != null)
                 {
                     final CoordinationContextType cc = CoordinationContextHelper.deserialise(soapEnvelope, soapHeaderElement) ;
@@ -143,7 +143,7 @@ public class JaxRPCHeaderContextProcessor implements Handler
                     }
                 }
             }
-            catch (final Throwable th) 
+            catch (final Throwable th)
             {
         		wstxLogger.arjLoggerI18N.warn("com.arjuna.mw.wst.service.JaxRPCHCP_1",
                     new Object[]{"com.arjuna.mw.wst.service.JaxRPCHeaderContextProcessor.handleRequest(MessageContext context)"});
@@ -164,7 +164,7 @@ public class JaxRPCHeaderContextProcessor implements Handler
         suspendTransaction() ;
         return true ;
     }
-    
+
     /**
      * Handle the fault.
      * @param messageContext The current message context.
@@ -174,13 +174,13 @@ public class JaxRPCHeaderContextProcessor implements Handler
         suspendTransaction() ;
         return true ;
     }
-    
+
     /**
      * Suspend the current transaction.
      */
     private void suspendTransaction()
     {
-        try 
+        try
         {
             /*
              * There should either be an Atomic Transaction *or* a Business Activity
@@ -193,13 +193,13 @@ public class JaxRPCHeaderContextProcessor implements Handler
             {
                 transactionManager.suspend() ;
             }
-            
+
             if (businessActivityManager != null)
             {
                 businessActivityManager.suspend() ;
             }
         }
-        catch (final Throwable th) 
+        catch (final Throwable th)
         {
 	    wstxLogger.arjLoggerI18N.warn("com.arjuna.mw.wst.service.JaxRPCHCP_1",
 					  new Object[]{"com.arjuna.mw.wst.service.JaxRPCHeaderContextProcessor.suspendTransaction()"});
@@ -238,7 +238,7 @@ public class JaxRPCHeaderContextProcessor implements Handler
         }
         return null ;
     }
-    
+
     /**
      * Do the two references match?
      * @param lhs The first reference.
@@ -256,7 +256,7 @@ public class JaxRPCHeaderContextProcessor implements Handler
             return lhs.equals(rhs) ;
         }
     }
-    
+
     /**
      * Clear the soap MustUnderstand.
      * @param soapHeader The SOAP header.
@@ -266,10 +266,10 @@ public class JaxRPCHeaderContextProcessor implements Handler
     	throws SOAPException
     {
 	final Name headerName = soapHeader.getElementName() ;
-	
+
 	final SOAPFactory factory = SOAPFactory.newInstance() ;
 	final Name attributeName = factory.createName("mustUnderstand", headerName.getPrefix(), headerName.getURI()) ;
-	
+
 	soapHeaderElement.removeAttribute(attributeName) ;
     }
 }
