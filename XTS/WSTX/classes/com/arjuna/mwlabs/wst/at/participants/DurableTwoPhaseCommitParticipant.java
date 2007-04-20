@@ -201,7 +201,11 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 				v = new VoteCancel();
 			}
 				
-			if (v instanceof VoteCancel)
+                        if (v instanceof com.arjuna.wst.ReadOnly)
+                        {
+                            _readonly = true;
+                        }
+                        else if (v instanceof VoteCancel)
 			{
 				_rolledback = false;
 
