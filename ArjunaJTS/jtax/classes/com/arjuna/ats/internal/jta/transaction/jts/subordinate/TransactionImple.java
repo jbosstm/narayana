@@ -307,13 +307,16 @@ public class TransactionImple extends
 		{
 			SubordinateAtomicTransaction subAct = (SubordinateAtomicTransaction) super._theTransaction;
 
-			try
+			if (!endSuspendedRMs())
 			{
-				_theTransaction.rollbackOnly();
-			}
-			catch (org.omg.CosTransactions.NoTransaction ex)
-			{
-				// shouldn't happen! ignore because commit will fail next anyway.
+        			try
+        			{
+        				_theTransaction.rollbackOnly();
+        			}
+        			catch (org.omg.CosTransactions.NoTransaction ex)
+        			{
+        				// shouldn't happen! ignore because commit will fail next anyway.
+        			}
 			}
 			
 			int status = subAct.doOnePhaseCommit();
