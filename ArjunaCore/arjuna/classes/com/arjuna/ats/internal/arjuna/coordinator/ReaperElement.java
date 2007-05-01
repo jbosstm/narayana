@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -39,7 +39,7 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.internal.arjuna.template.OrderedListElement;
 
-public class ReaperElement implements OrderedListElement
+public class ReaperElement implements Comparable
 {
 
 	/*
@@ -81,49 +81,42 @@ public class ReaperElement implements OrderedListElement
 		_control = null;
 	}
 
-	public final boolean equals(OrderedListElement e)
-	{
-		if (tsLogger.arjLogger.debugAllowed())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.OPERATORS,
-					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
-					"ReaperElement.equals ()");
-		}
 
-		if (e instanceof ReaperElement)
-			return (_absoluteTimeout == ((ReaperElement) e)._absoluteTimeout);
-		else
-			return false;
+	public boolean equals(Object obj)
+	{
+		return (this.compareTo(obj) == 0 ? true : false);
 	}
 
-	public final boolean lessThan(OrderedListElement e)
+	public int hashCode()
 	{
-		if (tsLogger.arjLogger.debugAllowed())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.OPERATORS,
-					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
-					"ReaperElement.lessThan ()");
-		}
-
-		if (e instanceof ReaperElement)
-			return (_absoluteTimeout < ((ReaperElement) e)._absoluteTimeout);
-		else
-			return false;
+		int hashCode = _control.get_uid().hashCode();
+		hashCode ^= _absoluteTimeout;
+		return hashCode;
 	}
 
-	public final boolean greaterThan(OrderedListElement e)
+	/**
+	 * Order by absoluteTimeout first, then by Uid.
+	 * This is required so that the set maintained by the TransactionReaper
+	 * is in timeout order for efficient processing.
+	 *
+	 * @param o
+	 * @return
+	 */
+	public int compareTo(Object o)
 	{
-		if (tsLogger.arjLogger.debugAllowed())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.OPERATORS,
-					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
-					"ReaperElement.greaterThan ()");
-		}
+		ReaperElement other = (ReaperElement)o;
 
-		if (e instanceof ReaperElement)
-			return (_absoluteTimeout > ((ReaperElement) e)._absoluteTimeout);
-		else
-			return false;
+		if(_absoluteTimeout == other._absoluteTimeout) {
+			if(_control.get_uid().equals(other._control.get_uid())) {
+				return 0;
+			} else if (_control.get_uid().greaterThan(other._control.get_uid())) {
+				return 1;
+			} else {
+				return -1;
+			}
+		} else {
+			return (_absoluteTimeout > other._absoluteTimeout) ? 1 : -1;
+		}
 	}
 
 	public Reapable _control;
@@ -131,5 +124,4 @@ public class ReaperElement implements OrderedListElement
 	public long _absoluteTimeout;
 
 	public int _timeout;
-
 }
