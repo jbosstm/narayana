@@ -521,7 +521,7 @@ public class TransactionReaper
 	}
 
 	private SortedSet _transactions = Collections.synchronizedSortedSet(new TreeSet()); // C of ReaperElement
-	private Map _timeouts = new WeakHashMap(); // key = Reapable, value = Integer
+	private Map _timeouts = Collections.synchronizedMap(new WeakHashMap()); // key = Reapable, value = Integer
 
 	private long _checkPeriod = 0;
 
