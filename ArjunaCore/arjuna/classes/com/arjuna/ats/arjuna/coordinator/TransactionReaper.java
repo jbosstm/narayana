@@ -36,8 +36,6 @@ import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.Reapable;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 
-import com.arjuna.ats.internal.arjuna.template.OrderedList;
-import com.arjuna.ats.internal.arjuna.template.OrderedListIterator;
 import com.arjuna.ats.internal.arjuna.coordinator.*;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -125,11 +123,12 @@ public class TransactionReaper
 	{
 		if (_dynamic)
 		{
+                    try
+                    {
 			final ReaperElement head = (ReaperElement) _transactions.first();  //_list.peak();
-			if (head != null)
-			{
-				return head._absoluteTimeout - System.currentTimeMillis();
-			}
+			return head._absoluteTimeout - System.currentTimeMillis();
+                    }
+                    catch (final NoSuchElementException nsee) {} // fall through
 		}
 		return _checkPeriod;
 	}
@@ -154,25 +153,28 @@ public class TransactionReaper
 					"TransactionReaper::check ()");
 		}
 
-		if (_transactions.size() == 0)
-			return true;
+		do {
+			final ReaperElement e ;
+                        try
+                        {
+                            e = (ReaperElement)_transactions.first();
+                        }
+                        catch (final NoSuchElementException nsee)
+                        {
+                            return true ;
+                        }
 
-		synchronized(_transactions) {
-			Iterator iter = _transactions.iterator();
-			while (iter.hasNext()) {
-				ReaperElement e = (ReaperElement)iter.next();
-
-				if (tsLogger.arjLoggerI18N.debugAllowed())
-				{
-					tsLogger.arjLoggerI18N
-							.debug(
-									DebugLevel.FUNCTIONS,
-									VisibilityLevel.VIS_PUBLIC,
-									FacilityCode.FAC_ATOMIC_ACTION,
-									"com.arjuna.ats.arjuna.coordinator.TransactionReaper_2",
-									new Object[]
-									{ Long.toString(e._absoluteTimeout) });
-				}
+			if (tsLogger.arjLoggerI18N.debugAllowed())
+			{
+				tsLogger.arjLoggerI18N
+						.debug(
+								DebugLevel.FUNCTIONS,
+								VisibilityLevel.VIS_PUBLIC,
+								FacilityCode.FAC_ATOMIC_ACTION,
+								"com.arjuna.ats.arjuna.coordinator.TransactionReaper_2",
+								new Object[]
+								{ Long.toString(e._absoluteTimeout) });
+			}
 
 			final long now = System.currentTimeMillis();
 			if (now >= e._absoluteTimeout)
@@ -270,14 +272,13 @@ public class TransactionReaper
 					}
 				}
 
-				iter.remove();
+				_transactions.remove(e) ;
 			}
 			else
 			{
 				break;
 			}
-		}
-		}
+		} while(true) ;
 
 		return true;
 	}
@@ -320,13 +321,8 @@ public class TransactionReaper
 		 * Ignore if it's already in the list with a different timeout.
 		 * (This should never happen)
 		 */
-
-		Integer oldTimeout = (Integer)_timeouts.get(control);
-		if(oldTimeout != null) {
-			ReaperElement key = new ReaperElement((Reapable)control, oldTimeout.intValue());
-			if(_transactions.contains(key)) {
-				return false;
-			}
+		if(_transactions.contains(e)) {
+			return false;
 		}
 
 		synchronized (this)

@@ -37,8 +37,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.coordinator.Reapable;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
-import com.arjuna.ats.internal.arjuna.template.OrderedListElement;
-
 public class ReaperElement implements Comparable
 {
 
@@ -84,7 +82,7 @@ public class ReaperElement implements Comparable
 
 	public boolean equals(Object obj)
 	{
-		return (this.compareTo(obj) == 0 ? true : false);
+		return (compareTo(obj) == 0);
 	}
 
 	public int hashCode()
@@ -106,14 +104,10 @@ public class ReaperElement implements Comparable
 	{
 		ReaperElement other = (ReaperElement)o;
 
-		if(_absoluteTimeout == other._absoluteTimeout) {
-			if(_control.get_uid().equals(other._control.get_uid())) {
-				return 0;
-			} else if (_control.get_uid().greaterThan(other._control.get_uid())) {
-				return 1;
-			} else {
-				return -1;
-			}
+                if(_control.get_uid().equals(other._control.get_uid())) {
+                        return 0;
+                } else if(_absoluteTimeout == other._absoluteTimeout) {
+			return (_control.get_uid().greaterThan(other._control.get_uid()) ? 1 : -1) ;
 		} else {
 			return (_absoluteTimeout > other._absoluteTimeout) ? 1 : -1;
 		}

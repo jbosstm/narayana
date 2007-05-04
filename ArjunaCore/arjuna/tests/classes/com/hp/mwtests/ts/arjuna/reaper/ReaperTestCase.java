@@ -46,7 +46,7 @@ public class ReaperTestCase extends TestCase
 		// test set+readback of interval
 		TransactionReaper.create(100);
 		TransactionReaper reaper = TransactionReaper.transactionReaper();
-		assertTrue(reaper.checkingPeriod() == 100);
+		assertEquals(100, reaper.checkingPeriod());
 
 
 		Reapable reapable = new MockReapable(new Uid());
@@ -74,30 +74,30 @@ public class ReaperTestCase extends TestCase
 		// test that duplicate insertion fails
 		assertTrue(reaper.insert(reapable, 10));
 		assertFalse(reaper.insert(reapable, 10));
-		assertTrue(reaper.numberOfTransactions() == 1);
+		assertEquals(1, reaper.numberOfTransactions());
 		assertTrue(reaper.remove(reapable));
-		assertTrue(reaper.numberOfTransactions() == 0);
+		assertEquals(0, reaper.numberOfTransactions());
 
 		// test that timeout change fails
 		assertTrue(reaper.insert(reapable, 10));
 		assertFalse(reaper.insert(reapable, 20));
-		assertTrue(reaper.numberOfTransactions() == 1);
-		assertTrue(reaper.getTimeout(reapable) == 10);
+		assertEquals(1, reaper.numberOfTransactions());
+                assertEquals(10, reaper.getTimeout(reapable));
 		assertTrue(reaper.remove(reapable));
-		assertTrue(reaper.numberOfTransactions() == 0);
+                assertEquals(0, reaper.numberOfTransactions());
 
 		// test reaping
 		reaper.insert(reapable, 1); // seconds
 		reaper.insert(reapable2, 5);
-		assertTrue(reaper.numberOfTransactions() == 2);
+                assertEquals(2, reaper.numberOfTransactions());
 		reaper.check();
-		assertTrue(reaper.numberOfTransactions() == 2);
+                assertEquals(2, reaper.numberOfTransactions());
 		Thread.sleep(2*1000);
 		reaper.check();
-		assertTrue(reaper.numberOfTransactions() == 1);
+                assertEquals(1, reaper.numberOfTransactions());
 		Thread.sleep(4*1000);
 		reaper.check();
-		assertTrue(reaper.numberOfTransactions() == 0);
+                assertEquals(0, reaper.numberOfTransactions());
 
 	}
 
