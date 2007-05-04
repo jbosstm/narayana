@@ -79,19 +79,6 @@ public class ReaperElement implements Comparable
 		_control = null;
 	}
 
-
-	public boolean equals(Object obj)
-	{
-		return (compareTo(obj) == 0);
-	}
-
-	public int hashCode()
-	{
-		int hashCode = _control.get_uid().hashCode();
-		hashCode ^= _absoluteTimeout;
-		return hashCode;
-	}
-
 	/**
 	 * Order by absoluteTimeout first, then by Uid.
 	 * This is required so that the set maintained by the TransactionReaper
@@ -104,10 +91,14 @@ public class ReaperElement implements Comparable
 	{
 		ReaperElement other = (ReaperElement)o;
 
-                if(_control.get_uid().equals(other._control.get_uid())) {
+                if(_absoluteTimeout == other._absoluteTimeout) {
+                    if(_control.get_uid().equals(other._control.get_uid())) {
                         return 0;
-                } else if(_absoluteTimeout == other._absoluteTimeout) {
-			return (_control.get_uid().greaterThan(other._control.get_uid()) ? 1 : -1) ;
+			} else if (_control.get_uid().greaterThan(other._control.get_uid())) {
+				return 1;
+                    } else {
+				return -1;
+                    }
 		} else {
 			return (_absoluteTimeout > other._absoluteTimeout) ? 1 : -1;
 		}

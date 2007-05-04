@@ -119,7 +119,7 @@ public class TransactionReaper
 		_transactions = null;
 	}
 
-	public final synchronized long checkingPeriod()
+	public final long checkingPeriod()
 	{
 		if (_dynamic)
 		{
@@ -272,7 +272,11 @@ public class TransactionReaper
 					}
 				}
 
-				_transactions.remove(e) ;
+                                synchronized(this)
+                                {
+                                    _timeouts.remove(e._control) ;
+                                    _transactions.remove(e) ;
+                                }
 			}
 			else
 			{
@@ -292,6 +296,15 @@ public class TransactionReaper
 	{
 		return _transactions.size();
 	}
+
+        /**
+         * Return the number of timeouts registered.
+         * @return The number of timeouts registered.
+         */
+        public final long numberOfTimeouts()
+        {
+                return _timeouts.size();
+        }
 
 	/**
 	 * timeout is given in seconds, but we work in milliseconds.
@@ -315,15 +328,15 @@ public class TransactionReaper
 		if (timeout == 0)
 			return true;
 
-		ReaperElement e = new ReaperElement(control, timeout);
-
 		/**
 		 * Ignore if it's already in the list with a different timeout.
 		 * (This should never happen)
 		 */
-		if(_transactions.contains(e)) {
+                if (_timeouts.containsKey(control)) {
 			return false;
 		}
+
+                ReaperElement e = new ReaperElement(control, timeout);
 
 		synchronized (this)
 		{
@@ -348,8 +361,11 @@ public class TransactionReaper
 		 * Can release the lock because the collection is internally synchronized.
 		 */
 
-		_timeouts.put(control, new Integer(timeout));
-		return _transactions.add(e);
+                synchronized (this)
+                {
+                    _timeouts.put(control, e);
+                    return _transactions.add(e);
+                }
 	}
 
 	public final boolean remove(java.lang.Object control)
@@ -364,12 +380,14 @@ public class TransactionReaper
 		if (control == null)
 			return false;
 
-		Integer timeout = (Integer)_timeouts.get(control);
-		if(timeout == null) {
-			return false;
-		}
-		ReaperElement key = new ReaperElement((Reapable)control, timeout.intValue());
-		return _transactions.remove(key);
+                synchronized(this)
+                {
+                    ReaperElement key = (ReaperElement)_timeouts.remove(control);
+                    if(key == null) {
+                            return false;
+                    }
+                    return _transactions.remove(key);
+                }
 	}
 
 	/**
@@ -395,11 +413,14 @@ public class TransactionReaper
 			return 0;
 		}
 
-		Integer timeout = (Integer)_timeouts.get(control);
+		final ReaperElement reaperElement = (ReaperElement)_timeouts.get(control);
 
-		if(timeout == null) {
+                final Integer timeout ;
+		if(reaperElement == null) {
 			timeout = new Integer(0);
-		}
+		} else {
+		        timeout = new Integer(reaperElement._timeout) ;
+                }
 
 		tsLogger.arjLoggerI18N
 				.debug(
@@ -517,7 +538,7 @@ public class TransactionReaper
 	}
 
 	private SortedSet _transactions = Collections.synchronizedSortedSet(new TreeSet()); // C of ReaperElement
-	private Map _timeouts = Collections.synchronizedMap(new WeakHashMap()); // key = Reapable, value = Integer
+	private Map _timeouts = Collections.synchronizedMap(new HashMap()); // key = Reapable, value = ReaperElement
 
 	private long _checkPeriod = 0;
 

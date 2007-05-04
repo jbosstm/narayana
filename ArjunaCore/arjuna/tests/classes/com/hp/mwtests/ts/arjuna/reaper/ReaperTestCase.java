@@ -63,41 +63,49 @@ public class ReaperTestCase extends TestCase
 		sortedSet.add(reaperElement3);
 		sortedSet.add(reaperElement2);
 
-		assertTrue(sortedSet.first() == reaperElement3);
-		assertTrue(sortedSet.last() == reaperElement);
+		assertEquals(sortedSet.first(), reaperElement3);
+		assertEquals(sortedSet.last(), reaperElement);
 
 		// test insertion of timeout=0 is a nullop
 		assertTrue(reaper.insert(reapable, 0));
-		assertTrue(reaper.numberOfTransactions() == 0);
+		assertEquals(0, reaper.numberOfTransactions());
+                assertEquals(0, reaper.numberOfTimeouts());
 		assertFalse(reaper.remove(reapable));
 
 		// test that duplicate insertion fails
 		assertTrue(reaper.insert(reapable, 10));
 		assertFalse(reaper.insert(reapable, 10));
 		assertEquals(1, reaper.numberOfTransactions());
+                assertEquals(1, reaper.numberOfTimeouts());
 		assertTrue(reaper.remove(reapable));
 		assertEquals(0, reaper.numberOfTransactions());
+                assertEquals(0, reaper.numberOfTimeouts());
 
 		// test that timeout change fails
 		assertTrue(reaper.insert(reapable, 10));
 		assertFalse(reaper.insert(reapable, 20));
 		assertEquals(1, reaper.numberOfTransactions());
+                assertEquals(1, reaper.numberOfTimeouts());
                 assertEquals(10, reaper.getTimeout(reapable));
 		assertTrue(reaper.remove(reapable));
                 assertEquals(0, reaper.numberOfTransactions());
+                assertEquals(0, reaper.numberOfTimeouts());
 
 		// test reaping
 		reaper.insert(reapable, 1); // seconds
 		reaper.insert(reapable2, 5);
                 assertEquals(2, reaper.numberOfTransactions());
+                assertEquals(2, reaper.numberOfTimeouts());
 		reaper.check();
                 assertEquals(2, reaper.numberOfTransactions());
 		Thread.sleep(2*1000);
 		reaper.check();
                 assertEquals(1, reaper.numberOfTransactions());
+                assertEquals(1, reaper.numberOfTimeouts());
 		Thread.sleep(4*1000);
 		reaper.check();
                 assertEquals(0, reaper.numberOfTransactions());
+                assertEquals(0, reaper.numberOfTimeouts());
 
 	}
 
