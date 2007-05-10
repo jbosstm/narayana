@@ -35,8 +35,8 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.utils.ThreadUtil;
 
 import java.lang.Thread;
+import java.util.ArrayList;
 import java.util.Stack;
-import java.util.Vector;
 
 import java.util.NoSuchElementException;
 import java.util.EmptyStackException;
@@ -258,21 +258,43 @@ public class ThreadActionData
 		}
 	}
 
+	/**
+	 * Add a per thread setup object to the global list. This should only
+	 * happen before the transaction service really begins, or you risk having
+	 * some threads see one view of the list that is different to other threads.
+	 * 
+	 * @param s the setup to add.
+	 */
+	
 	public static void addSetup (ThreadSetup s)
 	{
-		_threadSetups.addElement(s);
+		synchronized (_threadSetups)
+		{
+			_threadSetups.add(s);
+		}
 	}
 
+	/**
+	 * Remove a per thread setup object to the global list. This should only
+	 * happen after the transaction service really ends, or you risk having
+	 * some threads see one view of the list that is different to other threads.
+	 * 
+	 * @param s the setup to add.
+	 */
+	
 	public static boolean removeSetup (ThreadSetup s)
 	{
-		return _threadSetups.removeElement(s);
+		synchronized (_threadSetups)
+		{
+			return _threadSetups.remove(s);
+		}
 	}
 
 	private static void setup ()
 	{
 		for (int i = 0; i < _threadSetups.size(); i++)
 		{
-			ThreadSetup s = (ThreadSetup) _threadSetups.elementAt(i);
+			ThreadSetup s = (ThreadSetup) _threadSetups.get(i);
 
 			if (s != null)
 				s.setup();
@@ -281,6 +303,6 @@ public class ThreadActionData
 
 	private static ThreadLocal _threadList = new ThreadLocal();
 
-	private static Vector _threadSetups = new Vector();
+	private static ArrayList _threadSetups = new ArrayList();
 
 }
