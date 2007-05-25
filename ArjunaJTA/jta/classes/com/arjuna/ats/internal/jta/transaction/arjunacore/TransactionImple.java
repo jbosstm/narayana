@@ -60,6 +60,8 @@ import java.util.*;
 import javax.transaction.RollbackException;
 import java.lang.IllegalStateException;
 
+import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
+
 /*
  * Is given an AtomicAction, but uses the TwoPhaseCoordinator aspects of it
  * to ensure that the thread association continues.
@@ -1247,6 +1249,7 @@ public class TransactionImple implements javax.transaction.Transaction,
     			case ActionStatus.ABORT_ONLY:
     				break;
                 case ActionStatus.ABORTED:
+                case ActionStatus.ABORTING:
                     _theTransaction.abort() ;
     			default:
     				throw new IllegalStateException(
@@ -1264,6 +1267,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					throw new javax.transaction.HeuristicMixedException();
 				case ActionStatus.H_ROLLBACK:
 				case ActionStatus.ABORTED:
+				case ActionStatus.ABORTING:
 					RollbackException rollbackException = new RollbackException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted"));
 					if(_theTransaction.getDeferredThrowable() != null) {
 						rollbackException.initCause(_theTransaction.getDeferredThrowable());
@@ -1699,6 +1703,10 @@ public class TransactionImple implements javax.transaction.Transaction,
                 }
 	}
 
-	private static Hashtable _transactions = new Hashtable();
+    //	private static Hashtable _transactions = new Hashtable();
+
+    //    private static ConcurrentHashMap _transactions = new ConcurrentHashMap();
+
+        private static java.util.Map _transactions = java.util.Collections.synchronizedMap(new java.util.HashMap());
 
 }
