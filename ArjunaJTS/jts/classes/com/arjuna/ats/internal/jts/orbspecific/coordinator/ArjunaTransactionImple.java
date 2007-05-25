@@ -404,6 +404,7 @@ public class ArjunaTransactionImple extends
 		case ActionStatus.COMMITTING: // in case asynchronous commit!
 			return;
 		case ActionStatus.ABORTED:
+		case ActionStatus.ABORTING:  // in case of asynchronous abort!
 		case ActionStatus.H_ROLLBACK:
 			throw new TRANSACTION_ROLLEDBACK(ExceptionCodes.FAILED_TO_COMMIT,
 					CompletionStatus.COMPLETED_NO);
