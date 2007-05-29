@@ -1703,10 +1703,6 @@ public class TransactionImple implements javax.transaction.Transaction,
                 }
 	}
 
-    //	private static Hashtable _transactions = new Hashtable();
-
-    //    private static ConcurrentHashMap _transactions = new ConcurrentHashMap();
-
-        private static java.util.Map _transactions = java.util.Collections.synchronizedMap(new java.util.HashMap());
+    private static ConcurrentHashMap _transactions = new ConcurrentHashMap();
 
 }
