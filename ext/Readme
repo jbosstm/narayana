@@ -39,3 +39,4 @@ wrapper.jar		Java Service Wrapper 3.2.3
 xalan.jar
 xercesImpl.jar		Xerces 2.3.0
 xmlParserAPIs.jar	Xerces 2.3.0
+concurrent.jar	Build of Doug Lea's concurrent utilities for JDK 1.4.
