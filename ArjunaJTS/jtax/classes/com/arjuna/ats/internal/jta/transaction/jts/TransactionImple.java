@@ -64,6 +64,8 @@ import javax.transaction.xa.*;
 
 import com.arjuna.ats.arjuna.common.*;
 
+import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
+
 import java.util.Hashtable;
 import java.util.Enumeration;
 
@@ -1771,6 +1773,6 @@ public class TransactionImple implements javax.transaction.Transaction,
                 }
 	}
 
-	private static Hashtable _transactions = new Hashtable();
+    private static ConcurrentHashMap _transactions = new ConcurrentHashMap();
 
 }
