@@ -26,6 +26,7 @@ import com.arjuna.common.internal.util.logging.commonPropertyManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.io.File;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -94,7 +95,7 @@ public class TestLevels extends TestCase
 	}
 
 	public static void verifyResult(String result, boolean expectReleveling) {
-		String[] lines = result.split("[\r\n]+?");
+        String[] lines = result.split("\r?\n");
 		assertNotNull(lines);
 		assertEquals(5, lines.length);
 		assertTrue("Got actual value: "+lines[0], lines[0].matches("\\s*DEBUG \\[main\\] \\(TestLevels.java.*"));
