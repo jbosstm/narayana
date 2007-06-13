@@ -65,7 +65,7 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TxWorkManager;
  * @message com.arjuna.ats.jbossatx.jta.jca.inactive [message
  *          com.arjuna.ats.jbossatx.jta.jca.inactive] Transaction is inactive!
  * @message com.arjuna.ats.jbossatx.jta.jca.completing [message
- *          com.arjuna.ats.jbossatx.jta.jca.completion] Transaction is
+ *          com.arjuna.ats.jbossatx.jta.jca.completing] Transaction is
  *          completing!
  * @message com.arjuna.ats.jbossatx.jta.jca.unknown [message
  *          com.arjuna.ats.jbossatx.jta.jca.unknown] Unexpected error!
