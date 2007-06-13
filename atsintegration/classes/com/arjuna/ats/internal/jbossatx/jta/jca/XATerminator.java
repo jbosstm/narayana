@@ -91,7 +91,7 @@ public class XATerminator extends XATerminatorImple implements
 	 *            the lifetime of the transaction.
 	 * 
 	 * @throws WorkCompletedException
-	 *             thrown if the work cannot be associated with the transactin.
+	 *             thrown if the work cannot be associated with the transaction.
 	 * 
 	 * 
 	 */
