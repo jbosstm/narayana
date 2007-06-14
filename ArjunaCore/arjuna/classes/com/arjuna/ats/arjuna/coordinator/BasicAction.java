@@ -147,7 +147,7 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
  * @message com.arjuna.ats.arjuna.coordinator.BasicAction_29
  *          [com.arjuna.ats.arjuna.coordinator.BasicAction_29] -
  *          BasicAction.Begin of action {0} ignored - incorrect invocation
- *          sequence
+ *          sequence {1}
  * @message com.arjuna.ats.arjuna.coordinator.BasicAction_30
  *          [com.arjuna.ats.arjuna.coordinator.BasicAction_30] -
  *          BasicAction.Begin of action {0} ignored - no parent and set as
@@ -1650,13 +1650,13 @@ public class BasicAction extends StateManager
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::Begin() for action-id "
 					+ get_uid());
 		}
-
+		
 		if (actionStatus != ActionStatus.CREATED)
 		{
 			if (tsLogger.arjLoggerI18N.isWarnEnabled())
 			{
 				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_29", new Object[]
-				{ get_uid() });
+				{ get_uid(), ActionStatus.stringForm(actionStatus) });
 			}
 		}
 		else
