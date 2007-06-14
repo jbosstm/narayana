@@ -751,7 +751,8 @@ public class AtomicTransaction
 	}
 
 	/**
-	 * Allow action commit to be supressed.
+	 * Allow action commit to be supressed. Although the OTS would require an InactiveException
+	 * if the transaction is not active, we ignore that via this route.
 	 */
 
 	public void rollbackOnly () throws SystemException, NoTransaction
