@@ -52,9 +52,7 @@ public class SubordinateAtomicAction extends
 
 	public SubordinateAtomicAction ()
 	{
-		super();
-		
-		start();
+		super();  // does start for us
 	}
 
 	public SubordinateAtomicAction (Uid actId)
@@ -66,9 +64,7 @@ public class SubordinateAtomicAction extends
 	
 	public SubordinateAtomicAction (int timeout, Xid xid)
 	{
-		super(timeout);
-		
-		start();
+		super(timeout); // implicit start (done in base class)
 		
 		_theXid = new XidImple(xid);
 	}
