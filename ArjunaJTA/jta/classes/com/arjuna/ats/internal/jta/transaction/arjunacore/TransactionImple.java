@@ -397,7 +397,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	}
 
 	// package-private method also for use by TransactionSynchronizationRegistryImple
-	/*
+	/**
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.syncwhenaborted
 	 * 			[com.arjuna.ats.internal.jta.transaction.arjunacore.syncwhenaborted]
 	 * 			Can't register synchronization because the transaction is in aborted state
@@ -1223,10 +1223,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	/**
 	 * Does the same as commit, but also changes the thread-to-tx association.
 	 */
-	/* @message com.arjuna.ats.internal.jta.transaction.arjunacore.ressuspended
-	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.ressuspended]
-	 *          resource already suspended.
-	 */
+
 	protected void commitAndDisassociate()
 			throws javax.transaction.RollbackException,
 			javax.transaction.HeuristicMixedException,
