@@ -70,8 +70,6 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 	public int start (BasicAction parentAction)
 	{
-		int status = ActionStatus.INVALID;
-
 		if (parentAction != null)
 			parentAction.addChildAction(this);
 
