@@ -63,8 +63,8 @@ import java.lang.IllegalStateException;
 import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
 
 /*
- * Is given an AtomicAction, but uses the TwoPhaseCoordinator aspects of it
- * to ensure that the thread association continues.
+ * Is given an AtomicAction, but uses the TwoPhaseCoordinator aspects of it to
+ * ensure that the thread association continues.
  */
 
 /**
@@ -81,9 +81,9 @@ import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
  *          [com.arjuna.ats.internal.jta.transaction.arjunacore.notatomicaction]
  *          Current transaction is not an AtomicAction!
  * @message com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface
- * 			[com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface] - failed
- *          to load Last Resource Optimisation Interface
- *
+ *          [com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface] -
+ *          failed to load Last Resource Optimisation Interface
+ * 
  * @message com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning
  *          [com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning]
  *          Multiple last resources have been added to the current transaction.
@@ -91,12 +91,13 @@ import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
  *          Current resource is {0}
  * @message com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.disallow
  *          [com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.disallow]
- *          Adding multiple last resources is disallowed.
- *          Current resource is {0}
+ *          Adding multiple last resources is disallowed. Current resource is
+ *          {0}
  * @message com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.startupWarning
  *          [com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.startupWarning]
- *          You have chosen to enable multiple last resources in the transaction manager.
- *          This is transactionally unsafe and should not be relied upon.
+ *          You have chosen to enable multiple last resources in the transaction
+ *          manager. This is transactionally unsafe and should not be relied
+ *          upon.
  */
 
 public class TransactionImple implements javax.transaction.Transaction,
@@ -120,7 +121,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		_resources = new Hashtable();
 		_duplicateResources = new Hashtable();
 		_suspendCount = 0;
-		_xaTransactionTimeoutEnabled = getXATransactionTimeoutEnabled() ;
+		_xaTransactionTimeoutEnabled = getXATransactionTimeoutEnabled();
 	}
 
 	/**
@@ -131,7 +132,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		if (jtaLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.equals");
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"TransactionImple.equals");
 		}
 
 		if (obj == null)
@@ -185,13 +189,13 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * HeuristicRollback from a resource, and can successfully rollback the
 	 * other resources, this is then the same as having simply been forced to
 	 * rollback the transaction during phase 1.
-	 *
+	 * 
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate]
 	 *          Invalid transaction state
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted
-	 * 			[com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted]
-	 * 			Can't commit because the transaction is in aborted state
+	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted]
+	 *          Can't commit because the transaction is in aborted state
 	 */
 
 	public void commit() throws javax.transaction.RollbackException,
@@ -202,7 +206,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		if (jtaLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.commit");
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"TransactionImple.commit");
 		}
 
 		if (_theTransaction != null)
@@ -214,7 +221,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 				break;
 			default:
 				throw new IllegalStateException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+						jtaLogger.logMesg
+								.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 			}
 
 			/*
@@ -242,19 +250,25 @@ public class TransactionImple implements javax.transaction.Transaction,
 				throw new javax.transaction.HeuristicMixedException();
 			case ActionStatus.H_ROLLBACK:
 			case ActionStatus.ABORTED:
-				RollbackException rollbackException = new RollbackException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted"));
-				if(_theTransaction.getDeferredThrowable() != null) {
-					rollbackException.initCause(_theTransaction.getDeferredThrowable());
+				RollbackException rollbackException = new RollbackException(
+						jtaLogger.logMesg
+								.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted"));
+				if (_theTransaction.getDeferredThrowable() != null)
+				{
+					rollbackException.initCause(_theTransaction
+							.getDeferredThrowable());
 				}
 				throw rollbackException;
 			default:
 				throw new IllegalStateException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate"));
+						jtaLogger.logMesg
+								.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate"));
 			}
 		}
 		else
 			throw new IllegalStateException(
-					jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+					jtaLogger.logMesg
+							.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 	}
 
 	/**
@@ -275,7 +289,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		if (jtaLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.rollback");
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"TransactionImple.rollback");
 		}
 
 		if (_theTransaction != null)
@@ -287,7 +304,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 				break;
 			default:
 				throw new IllegalStateException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+						jtaLogger.logMesg
+								.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 			}
 
 			/*
@@ -302,7 +320,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 			{
 				if (jtaLogger.loggerI18N.isWarnEnabled())
 				{
-					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed1");
+					jtaLogger.loggerI18N
+							.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed1");
 				}
 			}
 
@@ -319,17 +338,20 @@ public class TransactionImple implements javax.transaction.Transaction,
 				break;
 			default:
 				throw new IllegalStateException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.rollbackstatus")
+						jtaLogger.logMesg
+								.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.rollbackstatus")
 								+ ActionStatus.stringForm(outcome));
 			}
 
 			if (endSuspendedFailed)
 				throw new IllegalStateException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed2"));
+						jtaLogger.logMesg
+								.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed2"));
 		}
 		else
 			throw new IllegalStateException(
-					jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+					jtaLogger.logMesg
+							.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 	}
 
 	public void setRollbackOnly() throws java.lang.IllegalStateException,
@@ -337,25 +359,42 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		if (jtaLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.setRollbackOnly");
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"TransactionImple.setRollbackOnly");
 		}
 
 		if (_theTransaction != null)
 		{
 			if (!_theTransaction.preventCommit())
-				throw new IllegalStateException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+			{
+				switch (_theTransaction.status())
+				{
+				case ActionStatus.ABORTED:
+				case ActionStatus.ABORTING:
+					break;
+				default:
+					throw new IllegalStateException(
+							jtaLogger.logMesg
+									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+				}
+			}
 		}
 		else
 			throw new IllegalStateException(
-					jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+					jtaLogger.logMesg
+							.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 	}
 
-	public int getStatus () throws javax.transaction.SystemException
+	public int getStatus() throws javax.transaction.SystemException
 	{
 		if (jtaLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.getStatus");
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"TransactionImple.getStatus");
 		}
 
 		int status = javax.transaction.Status.STATUS_NO_TRANSACTION;
@@ -383,24 +422,30 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		if (jtaLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.registerSynchronization");
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"TransactionImple.registerSynchronization");
 		}
 
 		if (sync == null)
 		{
 			throw new javax.transaction.SystemException(
 					"TransactionImple.registerSynchronization - "
-							+ jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.nullparam"));
+							+ jtaLogger.logMesg
+									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.nullparam"));
 		}
 
 		registerSynchronizationImple(new SynchronizationImple(sync, false));
 	}
 
-	// package-private method also for use by TransactionSynchronizationRegistryImple
+	// package-private method also for use by
+	// TransactionSynchronizationRegistryImple
 	/**
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.syncwhenaborted
-	 * 			[com.arjuna.ats.internal.jta.transaction.arjunacore.syncwhenaborted]
-	 * 			Can't register synchronization because the transaction is in aborted state
+	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.syncwhenaborted]
+	 *          Can't register synchronization because the transaction is in
+	 *          aborted state
 	 */
 	void registerSynchronizationImple(SynchronizationImple synchronizationImple)
 			throws javax.transaction.RollbackException,
@@ -416,19 +461,23 @@ public class TransactionImple implements javax.transaction.Transaction,
 				{
 				case ActionStatus.ABORTED:
 					throw new javax.transaction.RollbackException(
-							jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.syncwhenaborted"));
+							jtaLogger.logMesg
+									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.syncwhenaborted"));
 				case ActionStatus.CREATED:
 					throw new IllegalStateException(
-							jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+							jtaLogger.logMesg
+									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 				default:
 					throw new IllegalStateException(
-							jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.syncsnotallowed"));
+							jtaLogger.logMesg
+									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.syncsnotallowed"));
 				}
 			}
 		}
 		else
 			throw new IllegalStateException(
-					jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+					jtaLogger.logMesg
+							.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 	}
 
 	/**
@@ -436,7 +485,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * know that your XAResource and family are truly compliant implementations.
 	 * If they aren't then we may fail gracefully (e.g., some versions of Oracle
 	 * don't work with arbitrary Xid implementations!)
-	 *
+	 * 
 	 * If the family isn't compliant, then you should use the other method and
 	 * pass through a relevant XAModifier, which should address the issues we
 	 * have already come across.
@@ -465,7 +514,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 *          caught: {1} for {2}
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.elistwhenmarkedrollback
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.elistwhenmarkedrollback]
-	 * 			Can't enlist the resource because the transaction is marked for rollback
+	 *          Can't enlist the resource because the transaction is marked for
+	 *          rollback
 	 */
 	public boolean enlistResource(XAResource xaRes, Object[] params)
 			throws RollbackException, IllegalStateException,
@@ -473,27 +523,33 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		if (jtaLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.enlistResource ( "
-					+ xaRes + " )");
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"TransactionImple.enlistResource ( " + xaRes + " )");
 		}
 
 		if (xaRes == null)
 			throw new javax.transaction.SystemException(
 					"TransactionImple.enlistResource - "
-							+ jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.nullres"));
+							+ jtaLogger.logMesg
+									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.nullres"));
 
 		int status = getStatus();
 
 		switch (status)
 		{
 		case javax.transaction.Status.STATUS_MARKED_ROLLBACK:
-			throw new RollbackException("TransactionImple.enlistResource - "
-							+ jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.nullres"));
+			throw new RollbackException(
+					"TransactionImple.enlistResource - "
+							+ jtaLogger.logMesg
+									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.nullres"));
 		case javax.transaction.Status.STATUS_ACTIVE:
 			break;
 		default:
 			throw new IllegalStateException(
-					jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+					jtaLogger.logMesg
+							.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 		}
 
 		XAModifier theModifier = null;
@@ -555,7 +611,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 						 */
 
 						int xaStartResume = ((theModifier == null) ? XAResource.TMRESUME
-								: theModifier.xaStartParameters(XAResource.TMRESUME));
+								: theModifier
+										.xaStartParameters(XAResource.TMRESUME));
 
 						xaRes.start(info.xid(), xaStartResume);
 
@@ -584,7 +641,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 						 */
 
 						int xaStartJoin = ((theModifier == null) ? XAResource.TMJOIN
-								: theModifier.xaStartParameters(XAResource.TMJOIN));
+								: theModifier
+										.xaStartParameters(XAResource.TMJOIN));
 
 						xaRes.start(info.xid(), xaStartJoin);
 
@@ -599,7 +657,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 						throw new IllegalStateException(
 								"TransactionImple.enlistResource - "
-										+ jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.illresstate")
+										+ jtaLogger.logMesg
+												.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.illresstate")
 										+ ":" + info.getState());
 					}
 					}
@@ -616,15 +675,19 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 				if (jtaLogger.loggerI18N.isWarnEnabled())
 				{
-					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.enlisterror", new Object[]
-					{ "TransactionImple.enlistResource", XAHelper.printXAErrorCode(exp) });
+					jtaLogger.loggerI18N
+							.warn(
+									"com.arjuna.ats.internal.jta.transaction.arjunacore.enlisterror",
+									new Object[]
+									{ "TransactionImple.enlistResource",
+											XAHelper.printXAErrorCode(exp) });
 				}
 
 				return false;
 			}
 
-			//	    if (threadIsActive(xaRes))
-			//		return true; // this thread has already registered a resource for
+			// if (threadIsActive(xaRes))
+			// return true; // this thread has already registered a resource for
 			// this db
 
 			/*
@@ -649,7 +712,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					if (_resources.size() == 0)// first ever, so no need for
 					// branch
 					{
-						//branchRequired = false;
+						// branchRequired = false;
 						branchRequired = true;
 					}
 				}
@@ -666,9 +729,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 				 * another server, since we keep track of our own registrations.
 				 * So, if this happens we create a new transaction branch and
 				 * try again.
-				 *
+				 * 
 				 * To save time we could always just create branches by default.
-				 *
+				 * 
 				 * Is there a benefit to a zero branch?
 				 */
 
@@ -676,29 +739,37 @@ public class TransactionImple implements javax.transaction.Transaction,
 				{
 					try
 					{
-                        if (_xaTransactionTimeoutEnabled)
-                        {
-                            int timeout = _theTransaction.getTimeout();
+						if (_xaTransactionTimeoutEnabled)
+						{
+							int timeout = _theTransaction.getTimeout();
 
-                            if (timeout > 0)
-                            {
-                                try
-                                {
-                                    xaRes.setTransactionTimeout(timeout);
-                                }
-                                catch (XAException te)
-                                {
-                                    if (jtaLogger.loggerI18N.isWarnEnabled())
-                                    {
-                                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.timeouterror", new Object[]
-                                        { "TransactionImple.enlistResource", XAHelper.printXAErrorCode(te), xid });
-                                    }
-                                }
-                            }
-                        }
+							if (timeout > 0)
+							{
+								try
+								{
+									xaRes.setTransactionTimeout(timeout);
+								}
+								catch (XAException te)
+								{
+									if (jtaLogger.loggerI18N.isWarnEnabled())
+									{
+										jtaLogger.loggerI18N
+												.warn(
+														"com.arjuna.ats.internal.jta.transaction.arjunacore.timeouterror",
+														new Object[]
+														{
+																"TransactionImple.enlistResource",
+																XAHelper
+																		.printXAErrorCode(te),
+																xid });
+									}
+								}
+							}
+						}
 
 						int xaStartNormal = ((theModifier == null) ? XAResource.TMNOFLAGS
-								: theModifier.xaStartParameters(XAResource.TMNOFLAGS));
+								: theModifier
+										.xaStartParameters(XAResource.TMNOFLAGS));
 
 						xaRes.start(xid, xaStartNormal);
 
@@ -727,8 +798,15 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 							if (jtaLogger.loggerI18N.isWarnEnabled())
 							{
-								jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.enliststarterror", new Object[]
-								{ "TransactionImple.enlistResource", XAHelper.printXAErrorCode(e), xid });
+								jtaLogger.loggerI18N
+										.warn(
+												"com.arjuna.ats.internal.jta.transaction.arjunacore.enliststarterror",
+												new Object[]
+												{
+														"TransactionImple.enlistResource",
+														XAHelper
+																.printXAErrorCode(e),
+														xid });
 							}
 
 							markRollbackOnly();
@@ -740,15 +818,23 @@ public class TransactionImple implements javax.transaction.Transaction,
 						{
 							if (jtaLogger.loggerI18N.isWarnEnabled())
 							{
-								jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.enliststarterror", new Object[]
-                                { "TransactionImple.enlistResource", XAHelper.printXAErrorCode(e), xid });
+								jtaLogger.loggerI18N
+										.warn(
+												"com.arjuna.ats.internal.jta.transaction.arjunacore.enliststarterror",
+												new Object[]
+												{
+														"TransactionImple.enlistResource",
+														XAHelper
+																.printXAErrorCode(e),
+														xid });
 							}
 
 							markRollbackOnly();
 
 							throw new javax.transaction.SystemException(
 									"TransactionImple.enlistResource - XAResource.start "
-											+ jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.couldnotregister")
+											+ jtaLogger.logMesg
+													.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.couldnotregister")
 											+ ": " + xid);
 						}
 					}
@@ -780,8 +866,14 @@ public class TransactionImple implements javax.transaction.Transaction,
 				{
 					if (jtaLogger.loggerI18N.isWarnEnabled())
 					{
-						jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.xastart", new Object[]
-						{ "TransactionImple.enlistResource - xa_start ", XAHelper.printXAErrorCode(ex), xid });
+						jtaLogger.loggerI18N
+								.warn(
+										"com.arjuna.ats.internal.jta.transaction.arjunacore.xastart",
+										new Object[]
+										{
+												"TransactionImple.enlistResource - xa_start ",
+												XAHelper.printXAErrorCode(ex),
+												xid });
 					}
 
 					markRollbackOnly();
@@ -804,40 +896,51 @@ public class TransactionImple implements javax.transaction.Transaction,
 			 * gotten this far!
 			 */
 
-			final AbstractRecord record ;
-                        if ((xaRes instanceof LastResourceCommitOptimisation) ||
-                                ((LAST_RESOURCE_OPTIMISATION_INTERFACE != null) && LAST_RESOURCE_OPTIMISATION_INTERFACE.isInstance(xaRes)))
+			final AbstractRecord record;
+			if ((xaRes instanceof LastResourceCommitOptimisation)
+					|| ((LAST_RESOURCE_OPTIMISATION_INTERFACE != null) && LAST_RESOURCE_OPTIMISATION_INTERFACE
+							.isInstance(xaRes)))
 			{
-                            if (lastResourceCount == 1)
-                            {
-                                if (jtaLogger.loggerI18N.isWarnEnabled())
-                                {
-                                    if (ALLOW_MULTIPLE_LAST_RESOURCES)
-                                    {
-                                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning", new Object[] {xaRes});
-                                    }
-                                    else
-                                    {
-                                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.disallow", new Object[] {xaRes});
-                                    }
-                                }
-                            }
+				if (lastResourceCount == 1)
+				{
+					if (jtaLogger.loggerI18N.isWarnEnabled())
+					{
+						if (ALLOW_MULTIPLE_LAST_RESOURCES)
+						{
+							jtaLogger.loggerI18N
+									.warn(
+											"com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning",
+											new Object[]
+											{ xaRes });
+						}
+						else
+						{
+							jtaLogger.loggerI18N
+									.warn(
+											"com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.disallow",
+											new Object[]
+											{ xaRes });
+						}
+					}
+				}
 
-                            if ((lastResourceCount++ == 0) || ALLOW_MULTIPLE_LAST_RESOURCES)
-                            {
-                                record = new LastResourceRecord(new XAOnePhaseResource(xaRes, xid, params)) ;
-                            }
-                            else
-                            {
-                                record = null ;
-                            }
+				if ((lastResourceCount++ == 0) || ALLOW_MULTIPLE_LAST_RESOURCES)
+				{
+					record = new LastResourceRecord(new XAOnePhaseResource(
+							xaRes, xid, params));
+				}
+				else
+				{
+					record = null;
+				}
 			}
 			else
 			{
-                            record = new XAResourceRecord(this, xaRes, xid, params);
+				record = new XAResourceRecord(this, xaRes, xid, params);
 			}
 
-			if ((record == null) || (_theTransaction.add(record) != AddOutcome.AR_ADDED))
+			if ((record == null)
+					|| (_theTransaction.add(record) != AddOutcome.AR_ADDED))
 			{
 				markRollbackOnly();
 
@@ -887,14 +990,17 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		if (jtaLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.delistResource ( "
-					+ xaRes + " )");
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"TransactionImple.delistResource ( " + xaRes + " )");
 		}
 
 		if (xaRes == null)
 			throw new javax.transaction.SystemException(
 					"TransactionImple.delistResource - "
-							+ jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.nullres"));
+							+ jtaLogger.logMesg
+									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.nullres"));
 
 		int status = getStatus();
 
@@ -906,7 +1012,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 			break;
 		default:
 			throw new IllegalStateException(
-					jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+					jtaLogger.logMesg
+							.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 		}
 
 		TxInfo info = null;
@@ -925,8 +1032,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 			{
 				if (jtaLogger.loggerI18N.isWarnEnabled())
 				{
-					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.unknownresource", new Object[]
-					{ "TransactionImple.delistResource" });
+					jtaLogger.loggerI18N
+							.warn(
+									"com.arjuna.ats.internal.jta.transaction.arjunacore.unknownresource",
+									new Object[]
+									{ "TransactionImple.delistResource" });
 				}
 
 				return false;
@@ -1016,7 +1126,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 							throw new IllegalStateException(
 									"TransactionImple.delistResource - "
-											+ jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.ressuspended"));
+											+ jtaLogger.logMesg
+													.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.ressuspended"));
 						}
 						else
 						{
@@ -1036,7 +1147,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 					if (!optimizedRollback)
 						throw new IllegalStateException(
 								"TransactionImple.delistResource - "
-										+ jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.illresstate")
+										+ jtaLogger.logMesg
+												.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.illresstate")
 										+ ":" + info.getState());
 				}
 				}
@@ -1063,8 +1175,12 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 			if (jtaLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.delistresource", new Object[]
-				{ "TransactionImple.delistResource", XAHelper.printXAErrorCode(exp) });
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.transaction.arjunacore.delistresource",
+								new Object[]
+								{ "TransactionImple.delistResource",
+										XAHelper.printXAErrorCode(exp) });
 			}
 
 			return false;
@@ -1073,8 +1189,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 			if (jtaLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.delistgeneral", new Object[]
-				{ "TransactionImple.delistResource", e });
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.transaction.arjunacore.delistgeneral",
+								new Object[]
+								{ "TransactionImple.delistResource", e });
 			}
 
 			/*
@@ -1127,14 +1246,14 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		TransactionImple tx = null;
 
-        final BasicAction current = BasicAction.Current() ;
-        if (current != null)
-        {
-            final Uid txid = current.get_uid();
+		final BasicAction current = BasicAction.Current();
+		if (current != null)
+		{
+			final Uid txid = current.get_uid();
 
 			tx = (TransactionImple) _transactions.get(txid);
-            if (tx == null)
-                tx = new TransactionImple(current) ;
+			if (tx == null)
+				tx = new TransactionImple(current);
 		}
 
 		return tx;
@@ -1156,38 +1275,42 @@ public class TransactionImple implements javax.transaction.Transaction,
 	}
 
 	// get a key-value pair from a transaction specific Map
-	Object getTxLocalResource(Object key) {
-		if(txLocalResources == null) {
+	Object getTxLocalResource(Object key)
+	{
+		if (txLocalResources == null)
+		{
 			return null;
 		}
 		return txLocalResources.get(key);
 	}
 
 	// store a key-value pair in the scope of the transaction.
-	void putTxLocalResource(Object key, Object value) {
-		if(txLocalResources == null) {
+	void putTxLocalResource(Object key, Object value)
+	{
+		if (txLocalResources == null)
+		{
 			txLocalResources = Collections.synchronizedMap(new HashMap());
 		}
 		txLocalResources.put(key, value);
 	}
 
-	protected TransactionImple ()
+	protected TransactionImple()
 	{
 		this(null);
 	}
 
 	/**
-	 * Create a new TransactionImple representation of a specified
-	 * transaction.
+	 * Create a new TransactionImple representation of a specified transaction.
 	 */
 
-	protected TransactionImple (BasicAction curr)
+	protected TransactionImple(BasicAction curr)
 	{
 		try
 		{
 			if (curr == null)
 			{
-				_theTransaction = (com.arjuna.ats.arjuna.AtomicAction) BasicAction.Current();
+				_theTransaction = (com.arjuna.ats.arjuna.AtomicAction) BasicAction
+						.Current();
 			}
 			else
 				_theTransaction = (com.arjuna.ats.arjuna.AtomicAction) curr;
@@ -1196,7 +1319,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 			if (jtaLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.notatomicaction");
+				jtaLogger.loggerI18N
+						.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.notatomicaction");
 			}
 		}
 
@@ -1212,7 +1336,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 
 		_suspendCount = 0;
-		_xaTransactionTimeoutEnabled = getXATransactionTimeoutEnabled() ;
+		_xaTransactionTimeoutEnabled = getXATransactionTimeoutEnabled();
 	}
 
 	final com.arjuna.ats.arjuna.AtomicAction getAtomicAction()
@@ -1233,25 +1357,29 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		if (jtaLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.commitAndDisassociate");
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"TransactionImple.commitAndDisassociate");
 		}
 
-        try
-        {
-    		if (_theTransaction != null)
-    		{
-    			switch (_theTransaction.status())
-    			{
-    			case ActionStatus.RUNNING:
-    			case ActionStatus.ABORT_ONLY:
-    				break;
-                case ActionStatus.ABORTED:
-                case ActionStatus.ABORTING:
-                    _theTransaction.abort() ;
-    			default:
-    				throw new IllegalStateException(
-    						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
-    			}
+		try
+		{
+			if (_theTransaction != null)
+			{
+				switch (_theTransaction.status())
+				{
+				case ActionStatus.RUNNING:
+				case ActionStatus.ABORT_ONLY:
+					break;
+				case ActionStatus.ABORTED:
+				case ActionStatus.ABORTING:
+					_theTransaction.abort();
+				default:
+					throw new IllegalStateException(
+							jtaLogger.logMesg
+									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+				}
 
 				switch (_theTransaction.commit(true))
 				{
@@ -1265,19 +1393,25 @@ public class TransactionImple implements javax.transaction.Transaction,
 				case ActionStatus.H_ROLLBACK:
 				case ActionStatus.ABORTED:
 				case ActionStatus.ABORTING:
-					RollbackException rollbackException = new RollbackException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted"));
-					if(_theTransaction.getDeferredThrowable() != null) {
-						rollbackException.initCause(_theTransaction.getDeferredThrowable());
+					RollbackException rollbackException = new RollbackException(
+							jtaLogger.logMesg
+									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted"));
+					if (_theTransaction.getDeferredThrowable() != null)
+					{
+						rollbackException.initCause(_theTransaction
+								.getDeferredThrowable());
 					}
 					throw rollbackException;
 				default:
 					throw new IllegalStateException(
-							jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate"));
+							jtaLogger.logMesg
+									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate"));
 				}
 			}
 			else
 				throw new IllegalStateException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+						jtaLogger.logMesg
+								.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 		}
 		finally
 		{
@@ -1286,14 +1420,14 @@ public class TransactionImple implements javax.transaction.Transaction,
 	}
 
 	/**
-	 * If this is an imported transaction (via JCA) then this will be the Xid
-	 * we are pretending to be. Otherwise, it will be null.
-	 *
+	 * If this is an imported transaction (via JCA) then this will be the Xid we
+	 * are pretending to be. Otherwise, it will be null.
+	 * 
 	 * @return null if we are a local transaction, a valid Xid if we have been
-	 * imported.
+	 *         imported.
 	 */
 
-	protected Xid baseXid ()
+	protected Xid baseXid()
 	{
 		return null;
 	}
@@ -1308,7 +1442,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		if (jtaLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.rollbackAndDisassociate");
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"TransactionImple.rollbackAndDisassociate");
 		}
 
 		if (_theTransaction != null)
@@ -1320,7 +1457,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 				break;
 			default:
 				throw new IllegalStateException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+						jtaLogger.logMesg
+								.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 			}
 		}
 
@@ -1337,13 +1475,15 @@ public class TransactionImple implements javax.transaction.Transaction,
 					break;
 				default:
 					throw new IllegalStateException(
-							jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.rollbackstatus")
+							jtaLogger.logMesg
+									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.rollbackstatus")
 									+ ActionStatus.stringForm(outcome));
 				}
 			}
 			else
 				throw new IllegalStateException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+						jtaLogger.logMesg
+								.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 		}
 		catch (IllegalStateException ex)
 		{
@@ -1358,7 +1498,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	/**
 	 * If there are any suspended RMs then we should call end on them before the
 	 * transaction is terminated.
-	 *
+	 * 
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.xaenderror
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.xaenderror]
 	 *          Could not call end on a suspended resource!
@@ -1410,7 +1550,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 				{
 					if (jtaLogger.loggerI18N.isWarnEnabled())
 					{
-						jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.xaenderror");
+						jtaLogger.loggerI18N
+								.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.xaenderror");
 					}
 
 					result = false;
@@ -1482,8 +1623,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 			if (jtaLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.threadexception", new Object[]
-				{ e });
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.transaction.arjunacore.threadexception",
+								new Object[]
+								{ e });
 			}
 
 			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
@@ -1495,7 +1639,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	/**
 	 * isNewRM returns an existing TxInfo for the same RM, if present. Null
 	 * otherwise.
-	 *
+	 * 
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.newtmerror
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.newtmerror]
 	 *          {0} caught XAException: {0}
@@ -1545,8 +1689,12 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 			if (jtaLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.newtmerror", new Object[]
-				{ "TransactionImple.isNewRM", XAHelper.printXAErrorCode(ex) });
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.transaction.arjunacore.newtmerror",
+								new Object[]
+								{ "TransactionImple.isNewRM",
+										XAHelper.printXAErrorCode(ex) });
 			}
 
 			throw new com.arjuna.ats.arjuna.exceptions.FatalError(ex.toString());
@@ -1555,8 +1703,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 			if (jtaLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.newtmerror", new Object[]
-				{ e });
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.transaction.arjunacore.newtmerror",
+								new Object[]
+								{ e });
 			}
 
 			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
@@ -1591,7 +1742,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	/*
 	 * This method calls setRollbackOnly and catches any exceptions it may throw
-	 * and issues a warning. We use this in places wherew we need to force the
+	 * and issues a warning. We use this in places where we need to force the
 	 * outcome of the transaction but already have an exception to throw back to
 	 * the application, so a failure here will only be masked.
 	 */
@@ -1604,15 +1755,20 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	private final void markRollbackOnly()
 	{
-		if (_theTransaction != null)
+		try
 		{
-			if (!_theTransaction.preventCommit())
+			setRollbackOnly();
+		}
+		catch (Exception ex)
+		{
+			if (jtaLogger.loggerI18N.isWarnEnabled())
 			{
-				if (jtaLogger.loggerI18N.isWarnEnabled())
-				{
-					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.markrollback", new Object[]
-					{ "TransactionImple.markRollbackOnly", _theTransaction });
-				}
+				jtaLogger.loggerI18N
+						.warn(
+								"com.arjuna.ats.internal.jta.transaction.arjunacore.markrollback",
+								new Object[]
+								{ "TransactionImple.markRollbackOnly",
+										_theTransaction });
 			}
 		}
 	}
@@ -1633,73 +1789,93 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	private static boolean getXATransactionTimeoutEnabled()
 	{
-		final Boolean xaTransactionTimeoutEnabled = Configuration.getXATransactionTimeoutEnabled() ;
+		final Boolean xaTransactionTimeoutEnabled = Configuration
+				.getXATransactionTimeoutEnabled();
 		if (xaTransactionTimeoutEnabled != null)
 		{
-			return xaTransactionTimeoutEnabled.booleanValue() ;
+			return xaTransactionTimeoutEnabled.booleanValue();
 		}
-		return XA_TRANSACTION_TIMEOUT_ENABLED ;
+		return XA_TRANSACTION_TIMEOUT_ENABLED;
 	}
 
 	protected com.arjuna.ats.arjuna.AtomicAction _theTransaction;
 
 	private Hashtable _resources;
+
 	private Hashtable _duplicateResources;
+
 	private int _suspendCount;
+
 	private final boolean _xaTransactionTimeoutEnabled;
+
 	private Map txLocalResources;
 
-        /**
-         * Count of last resources seen in this transaction.
-         */
-        private int lastResourceCount ;
+	/**
+	 * Count of last resources seen in this transaction.
+	 */
+	private int lastResourceCount;
 
-        /**
-         * Do we allow multiple last resources?
-         */
-        private static final boolean ALLOW_MULTIPLE_LAST_RESOURCES ;
+	/**
+	 * Do we allow multiple last resources?
+	 */
+	private static final boolean ALLOW_MULTIPLE_LAST_RESOURCES;
 
-	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED ;
-	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE ;
+	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED;
+
+	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE;
 
 	static
 	{
-		final String xaTransactionTimeoutEnabled = jtaPropertyManager.propertyManager.getProperty(Environment.XA_TRANSACTION_TIMEOUT_ENABLED) ;
+		final String xaTransactionTimeoutEnabled = jtaPropertyManager.propertyManager
+				.getProperty(Environment.XA_TRANSACTION_TIMEOUT_ENABLED);
 		if (xaTransactionTimeoutEnabled != null)
 		{
-			XA_TRANSACTION_TIMEOUT_ENABLED = Boolean.valueOf(xaTransactionTimeoutEnabled).booleanValue() ;
+			XA_TRANSACTION_TIMEOUT_ENABLED = Boolean.valueOf(
+					xaTransactionTimeoutEnabled).booleanValue();
 		}
 		else
 		{
-			XA_TRANSACTION_TIMEOUT_ENABLED = true ;
+			XA_TRANSACTION_TIMEOUT_ENABLED = true;
 		}
-		final String lastResourceOptimisationInterfaceName = jtaPropertyManager.propertyManager.getProperty(Environment.LAST_RESOURCE_OPTIMISATION_INTERFACE) ;
-		Class lastResourceOptimisationInterface = null ;
+		final String lastResourceOptimisationInterfaceName = jtaPropertyManager.propertyManager
+				.getProperty(Environment.LAST_RESOURCE_OPTIMISATION_INTERFACE);
+		Class lastResourceOptimisationInterface = null;
 		if (lastResourceOptimisationInterfaceName != null)
 		{
 			try
 			{
-				lastResourceOptimisationInterface = Thread.currentThread().getContextClassLoader().loadClass(lastResourceOptimisationInterfaceName) ;
+				lastResourceOptimisationInterface = Thread.currentThread()
+						.getContextClassLoader().loadClass(
+								lastResourceOptimisationInterfaceName);
 			}
 			catch (final Throwable th)
 			{
 				if (jtaLogger.loggerI18N.isWarnEnabled())
 				{
-					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface",
-						new Object[] {lastResourceOptimisationInterfaceName}, th);
+					jtaLogger.loggerI18N
+							.warn(
+									"com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface",
+									new Object[]
+									{ lastResourceOptimisationInterfaceName },
+									th);
 				}
 			}
 		}
-		LAST_RESOURCE_OPTIMISATION_INTERFACE = lastResourceOptimisationInterface ;
+		LAST_RESOURCE_OPTIMISATION_INTERFACE = lastResourceOptimisationInterface;
 
-                final String allowMultipleLastResources = jtaPropertyManager.getPropertyManager().getProperty(Environment.ALLOW_MULTIPLE_LAST_RESOURCES) ;
-                ALLOW_MULTIPLE_LAST_RESOURCES = (allowMultipleLastResources == null ? false : Boolean.valueOf(allowMultipleLastResources).booleanValue()) ;
-                if (ALLOW_MULTIPLE_LAST_RESOURCES && jtaLogger.loggerI18N.isWarnEnabled())
-                {
-                    jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.startupWarning");
-                }
+		final String allowMultipleLastResources = jtaPropertyManager
+				.getPropertyManager().getProperty(
+						Environment.ALLOW_MULTIPLE_LAST_RESOURCES);
+		ALLOW_MULTIPLE_LAST_RESOURCES = (allowMultipleLastResources == null ? false
+				: Boolean.valueOf(allowMultipleLastResources).booleanValue());
+		if (ALLOW_MULTIPLE_LAST_RESOURCES
+				&& jtaLogger.loggerI18N.isWarnEnabled())
+		{
+			jtaLogger.loggerI18N
+					.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.startupWarning");
+		}
 	}
 
-    private static ConcurrentHashMap _transactions = new ConcurrentHashMap();
+	private static ConcurrentHashMap _transactions = new ConcurrentHashMap();
 
 }
