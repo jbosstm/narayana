@@ -45,6 +45,7 @@ import com.arjuna.ats.jta.utils.JNDIManager;
 import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
+import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.coordinator.TxStats;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.orbportability.ORB;
@@ -141,6 +142,9 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         /** Register management plugin **/
         com.arjuna.ats.arjuna.common.arjPropertyManager.propertyManager.addManagementPlugin(new PropertyServiceJMXPlugin());
 
+        // Associate transaction reaper with our context classloader.
+        TransactionReaper.create() ;
+        
 		/** Register propagation context manager **/
         try
         {
