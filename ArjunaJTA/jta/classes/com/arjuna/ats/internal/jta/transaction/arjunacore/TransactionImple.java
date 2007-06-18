@@ -83,7 +83,7 @@ import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
  * @message com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface
  *          [com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface] -
  *          failed to load Last Resource Optimisation Interface
- * 
+ *
  * @message com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning
  *          [com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning]
  *          Multiple last resources have been added to the current transaction.
@@ -189,7 +189,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * HeuristicRollback from a resource, and can successfully rollback the
 	 * other resources, this is then the same as having simply been forced to
 	 * rollback the transaction during phase 1.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate]
 	 *          Invalid transaction state
@@ -485,7 +485,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * know that your XAResource and family are truly compliant implementations.
 	 * If they aren't then we may fail gracefully (e.g., some versions of Oracle
 	 * don't work with arbitrary Xid implementations!)
-	 * 
+	 *
 	 * If the family isn't compliant, then you should use the other method and
 	 * pass through a relevant XAModifier, which should address the issues we
 	 * have already come across.
@@ -729,9 +729,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 				 * another server, since we keep track of our own registrations.
 				 * So, if this happens we create a new transaction branch and
 				 * try again.
-				 * 
+				 *
 				 * To save time we could always just create branches by default.
-				 * 
+				 *
 				 * Is there a benefit to a zero branch?
 				 */
 
@@ -1357,10 +1357,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		if (jtaLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"TransactionImple.commitAndDisassociate");
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.commitAndDisassociate");
 		}
 
 		try
@@ -1369,49 +1366,44 @@ public class TransactionImple implements javax.transaction.Transaction,
 			{
 				switch (_theTransaction.status())
 				{
-				case ActionStatus.RUNNING:
-				case ActionStatus.ABORT_ONLY:
-					break;
-				case ActionStatus.ABORTED:
-				case ActionStatus.ABORTING:
-					_theTransaction.abort();
-				default:
-					throw new IllegalStateException(
-							jtaLogger.logMesg
-									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+					case ActionStatus.ABORTED:
+					case ActionStatus.ABORTING:
+						_theTransaction.abort(); // assure thread disassociation
+						throw new IllegalStateException(
+								jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+
+					case ActionStatus.COMMITTED:
+					case ActionStatus.COMMITTING: // in case of async commit
+						_theTransaction.commit(true); // assure thread disassociation
+						throw new IllegalStateException(
+								jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 				}
 
 				switch (_theTransaction.commit(true))
 				{
-				case ActionStatus.COMMITTED:
-				case ActionStatus.COMMITTING: // in case of async commit
-					break;
-				case ActionStatus.H_MIXED:
-					throw new javax.transaction.HeuristicMixedException();
-				case ActionStatus.H_HAZARD:
-					throw new javax.transaction.HeuristicMixedException();
-				case ActionStatus.H_ROLLBACK:
-				case ActionStatus.ABORTED:
-				case ActionStatus.ABORTING:
-					RollbackException rollbackException = new RollbackException(
-							jtaLogger.logMesg
-									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted"));
-					if (_theTransaction.getDeferredThrowable() != null)
-					{
-						rollbackException.initCause(_theTransaction
-								.getDeferredThrowable());
-					}
-					throw rollbackException;
-				default:
-					throw new IllegalStateException(
-							jtaLogger.logMesg
-									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate"));
+					case ActionStatus.COMMITTED:
+					case ActionStatus.COMMITTING: // in case of async commit
+						break;
+					case ActionStatus.H_MIXED:
+						throw new javax.transaction.HeuristicMixedException();
+					case ActionStatus.H_HAZARD:
+						throw new javax.transaction.HeuristicMixedException();
+					case ActionStatus.H_ROLLBACK:
+					case ActionStatus.ABORTED:
+					case ActionStatus.ABORTING:
+						RollbackException rollbackException = new RollbackException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted"));
+						if(_theTransaction.getDeferredThrowable() != null) {
+							rollbackException.initCause(_theTransaction.getDeferredThrowable());
+						}
+						throw rollbackException;
+					default:
+						throw new IllegalStateException(
+								jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate"));
 				}
 			}
 			else
 				throw new IllegalStateException(
-						jtaLogger.logMesg
-								.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 		}
 		finally
 		{
@@ -1422,7 +1414,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	/**
 	 * If this is an imported transaction (via JCA) then this will be the Xid we
 	 * are pretending to be. Otherwise, it will be null.
-	 * 
+	 *
 	 * @return null if we are a local transaction, a valid Xid if we have been
 	 *         imported.
 	 */
@@ -1442,52 +1434,38 @@ public class TransactionImple implements javax.transaction.Transaction,
 	{
 		if (jtaLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"TransactionImple.rollbackAndDisassociate");
-		}
-
-		if (_theTransaction != null)
-		{
-			switch (_theTransaction.status())
-			{
-			case ActionStatus.RUNNING:
-			case ActionStatus.ABORT_ONLY:
-				break;
-			default:
-				throw new IllegalStateException(
-						jtaLogger.logMesg
-								.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
-			}
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.rollbackAndDisassociate");
 		}
 
 		try
 		{
+			boolean statusIsValid = false;
+
 			if (_theTransaction != null)
 			{
-				int outcome = _theTransaction.abort();
+				if(_theTransaction.status() == ActionStatus.RUNNING || _theTransaction.status() == ActionStatus.ABORT_ONLY) {
+					// in these cases we may be able to finish without throwing an exception, if nothing else goes wrong...
+					statusIsValid = true;
+				}
+
+				int outcome = _theTransaction.abort(); // assure thread disassociation, even if tx is already done.
 
 				switch (outcome)
 				{
-				case ActionStatus.ABORTED:
-				case ActionStatus.ABORTING: // in case of async rollback
-					break;
-				default:
-					throw new IllegalStateException(
-							jtaLogger.logMesg
-									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.rollbackstatus")
-									+ ActionStatus.stringForm(outcome));
+					case ActionStatus.ABORTED:
+					case ActionStatus.ABORTING: // in case of async rollback
+						break;
+					default:
+						throw new IllegalStateException(
+								jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.rollbackstatus")
+										+ ActionStatus.stringForm(outcome));
 				}
 			}
-			else
+
+			if(_theTransaction == null || !statusIsValid) {
 				throw new IllegalStateException(
-						jtaLogger.logMesg
-								.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
-		}
-		catch (IllegalStateException ex)
-		{
-			throw ex;
+						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+			}
 		}
 		finally
 		{
@@ -1498,7 +1476,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	/**
 	 * If there are any suspended RMs then we should call end on them before the
 	 * transaction is terminated.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.xaenderror
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.xaenderror]
 	 *          Could not call end on a suspended resource!
@@ -1639,7 +1617,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	/**
 	 * isNewRM returns an existing TxInfo for the same RM, if present. Null
 	 * otherwise.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.newtmerror
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.newtmerror]
 	 *          {0} caught XAException: {0}
