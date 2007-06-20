@@ -123,12 +123,15 @@ public class TransactionReaper
 	{
 		if (_dynamic)
 		{
-                    try
-                    {
-			final ReaperElement head = (ReaperElement) _transactions.first();  //_list.peak();
-			return head._absoluteTimeout - System.currentTimeMillis();
-                    }
-                    catch (final NoSuchElementException nsee) {} // fall through
+			try
+			{
+				final ReaperElement head = (ReaperElement) _transactions.first();  //_list.peak();
+				return head._absoluteTimeout - System.currentTimeMillis();
+			}
+			catch (final NoSuchElementException nsee)
+			{
+				return Long.MAX_VALUE; // list is empty, so we can sleep until something is inserted.
+			}
 		}
 		return _checkPeriod;
 	}
@@ -332,40 +335,26 @@ public class TransactionReaper
 		 * Ignore if it's already in the list with a different timeout.
 		 * (This should never happen)
 		 */
-                if (_timeouts.containsKey(control)) {
+		if (_timeouts.containsKey(control)) {
 			return false;
 		}
 
-                ReaperElement e = new ReaperElement(control, timeout);
+		ReaperElement e = new ReaperElement(control, timeout);
 
 		synchronized (this)
 		{
 			TransactionReaper._lifetime += timeout;
 
-			/*
-			 * If the timeout for this transaction is less than the current
-			 * timeout for the reaper thread (or one is not set for the reaper
-			 * thread) then use that timeout and interrupt the thread to get it
-			 * to recheck.
-			 */
+			_timeouts.put(control, e);
+			boolean rtn = _transactions.add(e);
 
-			final long timeoutms = timeout * 1000;
-			if ((timeoutms < _checkPeriod) || (_checkPeriod == Long.MAX_VALUE))
+			if(_dynamic)
 			{
-				_checkPeriod = timeoutms; // convert to milliseconds!
-				notify();
+				notify(); // force recalc of next wakeup time, taking into account the newly inserted element
 			}
+
+			return rtn;
 		}
-
-		/*
-		 * Can release the lock because the collection is internally synchronized.
-		 */
-
-                synchronized (this)
-                {
-                    _timeouts.put(control, e);
-                    return _transactions.add(e);
-                }
 	}
 
 	public final boolean remove(java.lang.Object control)
