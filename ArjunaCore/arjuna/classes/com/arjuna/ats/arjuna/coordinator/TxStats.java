@@ -32,141 +32,221 @@
 package com.arjuna.ats.arjuna.coordinator;
 
 /**
- * This class is used to maintain statistics on transactions that
- * have been created. This includes the number of transactions, their
- * termination status (committed or rolled back), ...
- *
+ * This class is used to maintain statistics on transactions that have been
+ * created. This includes the number of transactions, their termination status
+ * (committed or rolled back), ...
+ * 
  * @author Mark Little (mark@arjuna.com)
- * @version $Id: TxStats.java 2342 2006-03-30 13:06:17Z  $
+ * @version $Id: TxStats.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 2.1.
  */
 
 public class TxStats
 {
 
-    /**
-     * @return the number of transactions (top-level and nested)
-     * created so far.
-     */
+	/**
+	 * @return the number of transactions (top-level and nested) created so far.
+	 */
 
-    public static int numberOfTransactions ()
-    {
-	synchronized (_ntxLock)
+	public static int numberOfTransactions()
 	{
-	    return _numberOfTransactions;
+		synchronized (_ntxLock)
+		{
+			return _numberOfTransactions;
+		}
 	}
-    }
 
-    /**
-     * @return the number of nested (sub) transactions created so far.
-     */
+	/**
+	 * @return the number of nested (sub) transactions created so far.
+	 */
 
-    public static int numberOfNestedTransactions ()
-    {
-	synchronized (_nntxLock)
+	public static int numberOfNestedTransactions()
 	{
-	    return _numberOfNestedTransactions;
+		synchronized (_nntxLock)
+		{
+			return _numberOfNestedTransactions;
+		}
 	}
-    }
-    
-    /**
-     * @return the number of transactions which have terminated with
-     * heuristic outcomes.
-     */
 
-    public static int numberOfHeuristics ()
-    {
-	synchronized (_nhLock)
+	/**
+	 * @return the number of transactions which have terminated with heuristic
+	 *         outcomes.
+	 */
+
+	public static int numberOfHeuristics()
 	{
-	    return _numberOfHeuristics;
+		synchronized (_nhLock)
+		{
+			return _numberOfHeuristics;
+		}
 	}
-    }
 
-    /**
-     * @return the number of committed transactions.
-     */
+	/**
+	 * @return the number of committed transactions.
+	 */
 
-    public static int numberOfCommittedTransactions ()
-    {
-	synchronized (_ncmLock)
+	public static int numberOfCommittedTransactions()
 	{
-	    return _numberOfCommittedTransactions;
+		synchronized (_ncmLock)
+		{
+			return _numberOfCommittedTransactions;
+		}
 	}
-    }
 
-    /**
-     * @return the number of transactions which have rolled back.
-     */
+	/**
+	 * @return the total number of transactions which have rolled back.
+	 */
 
-    public static int numberOfAbortedTransactions ()
-    {
-	synchronized (_nabLock)
+	public static int numberOfAbortedTransactions()
 	{
-	    return _numberOfAbortedTransactions;
+		synchronized (_nabLock)
+		{
+			return _numberOfAbortedTransactions;
+		}
 	}
-    }
-
-    public static void printStatus (java.io.PrintWriter pw)
-    {
-	pw.println("JBoss Transaction Service statistics.");
-	pw.println(java.util.Calendar.getInstance().getTime()+"\n");
 	
-	pw.println("Number of transactions: "+numberOfTransactions());
-	pw.println("Number of nested transactions: "+numberOfNestedTransactions());
-	pw.println("Number of heuristics: "+numberOfHeuristics());
-	pw.println("Number of committed transactions: "+numberOfCommittedTransactions());
-	pw.println("Number of rolled back transactions: "+numberOfAbortedTransactions());
-    }
-    
-    static void incrementTransactions ()
-    {
-	synchronized (_ntxLock)
+	public static int numberOfCreatedTransactions ()
 	{
-	    _numberOfTransactions++;
+		return numberOfTransactions() + numberOfNestedTransactions(); 
 	}
-    }
+	
+	/**
+	 * @return total number of inflight (active) transactions.
+	 */
+	
+	public static int numberOfInflightTransactions ()
+	{
+		return ActionManager.manager().inflightTransactions().size();
+	}
 
-    static void incrementNestedTransactions ()
-    {
-	synchronized (_nntxLock)
+	public static int numberOfTimedOutTransactions ()
 	{
-	    _numberOfNestedTransactions++;
+		synchronized (_notLock)
+		{
+			return _numberOfTimeouts;
+		}
 	}
-    }
+	
+	public static int numberOfApplicationRollbacks ()
+	{
+		synchronized (_noaaLock)
+		{
+			return _numberOfApplicationAborts;
+		}
+	}
+	
+	public static int numberOfResourceRollbacks ()
+	{
+		synchronized (_noraLock)
+		{
+			return _numberOfResourceAborts;
+		}
+	}
+	
+	public static void printStatus(java.io.PrintWriter pw)
+	{
+		pw.println("JBoss Transaction Service statistics.");
+		pw.println(java.util.Calendar.getInstance().getTime() + "\n");
 
-    static void incrementAbortedTransactions ()
-    {
-	synchronized (_nabLock)
-	{
-	    _numberOfAbortedTransactions++;
+		pw.println("Number of transactions: " + numberOfTransactions());
+		pw.println("Number of nested transactions: "
+				+ numberOfNestedTransactions());
+		pw.println("Number of heuristics: " + numberOfHeuristics());
+		pw.println("Number of committed transactions: "
+				+ numberOfCommittedTransactions());
+		pw.println("Number of rolled back transactions: "
+				+ numberOfAbortedTransactions());
+		pw.println("Number of created transactions: "
+				+ numberOfCreatedTransactions());
+		pw.println("Number of inflight transactions: "
+				+ numberOfInflightTransactions());
+		pw.println("Number of timed-out transactions: "
+				+ numberOfTimedOutTransactions());
+		pw.println("Number of application rolled back transactions: "
+				+ numberOfApplicationRollbacks());
+		pw.println("Number of resource rolled back transactions: "
+				+ numberOfResourceRollbacks());
 	}
-    }
 
-    static void incrementCommittedTransactions ()
-    {
-	synchronized (_ncmLock)
+	static void incrementTransactions()
 	{
-	    _numberOfCommittedTransactions++;
+		synchronized (_ntxLock)
+		{
+			_numberOfTransactions++;
+		}
 	}
-    }
 
-    static void incrementHeuristics ()
-    {
-	synchronized (_nhLock)
+	static void incrementNestedTransactions()
 	{
-	    _numberOfHeuristics++;
+		synchronized (_nntxLock)
+		{
+			_numberOfNestedTransactions++;
+		}
 	}
-    }
-    
-    private static int _numberOfTransactions = 0;
-    private static java.lang.Object _ntxLock = new Object();
-    private static int _numberOfNestedTransactions = 0;
-    private static java.lang.Object _nntxLock = new Object();
-    private static int _numberOfCommittedTransactions = 0;
-    private static java.lang.Object _ncmLock = new Object();
-    private static int _numberOfAbortedTransactions = 0;
-    private static java.lang.Object _nabLock = new Object();
-    private static int _numberOfHeuristics = 0;
-    private static java.lang.Object _nhLock = new Object();
-    
+
+	static void incrementAbortedTransactions()
+	{
+		synchronized (_nabLock)
+		{
+			_numberOfAbortedTransactions++;
+		}
+	}
+
+	static void incrementCommittedTransactions()
+	{
+		synchronized (_ncmLock)
+		{
+			_numberOfCommittedTransactions++;
+		}
+	}
+
+	static void incrementHeuristics()
+	{
+		synchronized (_nhLock)
+		{
+			_numberOfHeuristics++;
+		}
+	}
+	
+	static void incrementTimeouts ()
+	{
+		synchronized (_notLock)
+		{
+			_numberOfTimeouts++;
+		}
+	}
+
+	static void incrementApplicationRollbacks ()
+	{
+		synchronized (_noaaLock)
+		{
+			_numberOfApplicationAborts++;
+		}
+	}
+	
+	static void incrementResourceRollbacks ()
+	{
+		synchronized (_noraLock)
+		{
+			_numberOfResourceAborts++;
+		}
+	}
+	
+	private static int _numberOfTransactions = 0;
+	private static java.lang.Object _ntxLock = new Object();
+	private static int _numberOfNestedTransactions = 0;
+	private static java.lang.Object _nntxLock = new Object();
+	private static int _numberOfCommittedTransactions = 0;
+	private static java.lang.Object _ncmLock = new Object();
+	private static int _numberOfAbortedTransactions = 0;
+	private static java.lang.Object _nabLock = new Object();
+	private static int _numberOfHeuristics = 0;
+	private static java.lang.Object _nhLock = new Object();
+	private static int _numberOfTimeouts = 0;
+	private static final java.lang.Object _notLock = new Object();
+	private static int _numberOfApplicationAborts = 0;
+	private static final java.lang.Object _noaaLock = new Object();
+	private static int _numberOfResourceAborts = 0;
+	private static final java.lang.Object _noraLock = new Object();
+	
 }
