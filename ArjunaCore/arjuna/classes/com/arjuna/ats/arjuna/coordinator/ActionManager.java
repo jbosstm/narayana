@@ -33,42 +33,87 @@ package com.arjuna.ats.arjuna.coordinator;
 
 import com.arjuna.ats.arjuna.common.Uid;
 
+import java.util.Collection;
 import java.util.Hashtable;
 
 /*
  * @author Mark Little (mark_little@hp.com)
- * @version $Id: ActionManager.java 2342 2006-03-30 13:06:17Z  $
+ * 
+ * @version $Id: ActionManager.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 3.0
  */
 
 public class ActionManager
 {
 
-    public static final ActionManager manager ()
-    {
-	return _theManager;
-    }
-    
-    public void put (BasicAction act)
-    {
-	_allActions.put(act.get_uid(), act);
-    }
-    
-    public BasicAction get (Uid id)
-    {
-	return (BasicAction) _allActions.get(id);
-    }
-    
-    public void remove (Uid id)
-    {
- 	_allActions.remove(id);
-    }
-    
-    private ActionManager ()
-    {
-    }
-    
-    private static ActionManager _theManager = new ActionManager();
-    private static Hashtable     _allActions = new Hashtable();
+	class Lifetime
+	{
+		public Lifetime (BasicAction act)
+		{
+			theAction = act;
+			timeAdded = System.currentTimeMillis();
+		}
+		
+		public BasicAction getAction ()
+		{
+			return theAction;
+		}
+		
+		public long getTimeAdded ()
+		{
+			return timeAdded;
+		}
+		
+		private BasicAction theAction;
+		private long timeAdded;
+	}
+	
+	public static final ActionManager manager()
+	{
+		return _theManager;
+	}
+
+	public void put(BasicAction act)
+	{
+		_allActions.put(act.get_uid(), new Lifetime(act));
+	}
+
+	public BasicAction get(Uid id)
+	{
+		Lifetime lt = (Lifetime) _allActions.get(id);
+		
+		if (lt != null)
+			return lt.getAction();
+		else
+			return null;
+	}
+
+	public long getTimeAdded (Uid id)
+	{
+		Lifetime lt = (Lifetime) _allActions.get(id);
+		
+		if (lt != null)
+			return lt.getTimeAdded();
+		else
+			return 0;
+	}
+	
+	public void remove(Uid id)
+	{
+		_allActions.remove(id);
+	}
+
+	public Collection inflightTransactions ()
+	{
+		return _allActions.values();
+	}
+	
+	private ActionManager()
+	{
+	}
+
+	private static final ActionManager _theManager = new ActionManager();
+
+	private static final Hashtable _allActions = new Hashtable();
 
 }
