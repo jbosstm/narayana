@@ -191,10 +191,10 @@ public class TransactionReaper
 
 					boolean problem = false;
 
-					//if (TxControl.enableStatistics)
-					//{
-					//	TxStats.incrementTimeouts();
-					//}
+					if (TxControl.enableStatistics)
+					{
+						TxStats.incrementTimeouts();
+					}
 
 					try
 					{
