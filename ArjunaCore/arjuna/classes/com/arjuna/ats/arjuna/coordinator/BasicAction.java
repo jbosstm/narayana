@@ -2228,6 +2228,14 @@ public class BasicAction extends StateManager
 					   // here!
 
 		criticalEnd();
+		
+		/*
+		 * To get to this stage we had to try to commit, which means that we're
+		 * rolling back because of a resource problem.
+		 */
+		
+		if (TxControl.enableStatistics)
+			TxStats.incrementResourceRollbacks();
 	}
 
 	/**
