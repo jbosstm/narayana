@@ -105,6 +105,10 @@ public class TxStats
 		}
 	}
 	
+	/**
+	 * @return the total number of transactions created.
+	 */
+	
 	public static int numberOfCreatedTransactions ()
 	{
 		return numberOfTransactions() + numberOfNestedTransactions(); 
