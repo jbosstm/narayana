@@ -106,15 +106,6 @@ public class TxStats
 	}
 	
 	/**
-	 * @return the total number of transactions created.
-	 */
-	
-	public static int numberOfCreatedTransactions ()
-	{
-		return numberOfTransactions() + numberOfNestedTransactions(); 
-	}
-	
-	/**
 	 * @return total number of inflight (active) transactions.
 	 */
 	
@@ -152,7 +143,7 @@ public class TxStats
 		pw.println("JBoss Transaction Service statistics.");
 		pw.println(java.util.Calendar.getInstance().getTime() + "\n");
 
-		pw.println("Number of transactions: " + numberOfTransactions());
+		pw.println("Number of created transactions: " + numberOfTransactions());
 		pw.println("Number of nested transactions: "
 				+ numberOfNestedTransactions());
 		pw.println("Number of heuristics: " + numberOfHeuristics());
@@ -160,8 +151,6 @@ public class TxStats
 				+ numberOfCommittedTransactions());
 		pw.println("Number of rolled back transactions: "
 				+ numberOfAbortedTransactions());
-		pw.println("Number of created transactions: "
-				+ numberOfCreatedTransactions());
 		pw.println("Number of inflight transactions: "
 				+ numberOfInflightTransactions());
 		pw.println("Number of timed-out transactions: "
