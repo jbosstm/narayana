@@ -114,6 +114,10 @@ public class TxStats
 		return ActionManager.manager().inflightTransactions().size();
 	}
 
+	/**
+	 * @return the number of transactions that have rolled back due to timeout.
+	 */
+	
 	public static int numberOfTimedOutTransactions ()
 	{
 		synchronized (_notLock)
@@ -121,6 +125,10 @@ public class TxStats
 			return _numberOfTimeouts;
 		}
 	}
+	
+	/**
+	 * @return the number of transactions that been rolled back by the application.
+	 */
 	
 	public static int numberOfApplicationRollbacks ()
 	{
@@ -130,6 +138,10 @@ public class TxStats
 		}
 	}
 	
+	/**
+	 * @return the number of transactions that have been rolled back by participants.
+	 */
+	
 	public static int numberOfResourceRollbacks ()
 	{
 		synchronized (_noraLock)
@@ -137,6 +149,12 @@ public class TxStats
 			return _numberOfResourceAborts;
 		}
 	}
+	
+	/**
+	 * Print all of the current statistics information.
+	 * 
+	 * @param pw the writer to use.
+	 */
 	
 	public static void printStatus(java.io.PrintWriter pw)
 	{
