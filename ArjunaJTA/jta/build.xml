@@ -203,6 +203,7 @@
                 <batchtest haltonerror="yes" haltonfailure="yes" fork="yes"
                     todir="${com.hp.mwlabs.ts.jta.reports.dest}">
                     <fileset dir="${com.hp.mwlabs.ts.jta.tests.src}" includes="**/LastResource*TestCase.java"/>
+                    <fileset dir="${com.hp.mwlabs.ts.jta.tests.src}" includes="**/SubordinateTestCase.java"/>
                 </batchtest>
             </junit>
 	</target>

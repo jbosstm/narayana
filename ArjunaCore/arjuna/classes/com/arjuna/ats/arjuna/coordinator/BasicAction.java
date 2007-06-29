@@ -1777,6 +1777,8 @@ public class BasicAction extends StateManager
 			if (doOnePhase())
 			{
 				onePhaseCommit(reportHeuristics);
+				
+				ActionManager.manager().remove(get_uid());
 			}
 			else
 			{			
@@ -1821,7 +1823,11 @@ public class BasicAction extends StateManager
 			}
 		}
 		else
+		{
+			ActionManager.manager().remove(get_uid());
+		
 			actionStatus = ActionStatus.COMMITTED;
+		}
 
 		boolean returnCurrentStatus = false;
 
