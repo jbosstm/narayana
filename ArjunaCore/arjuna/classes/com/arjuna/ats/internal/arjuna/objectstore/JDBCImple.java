@@ -31,22 +31,17 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.gandiva.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreImple;
 import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 
-import java.io.*;
 import java.sql.*;
 import java.util.Hashtable;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreError;
 import java.io.IOException;
 
 /**
