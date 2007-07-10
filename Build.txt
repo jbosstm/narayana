@@ -1,0 +1,15 @@
+ant jta	
+
+will build the standalone JTA version 
+
+ant jts	
+
+will build the standalone JTS version 
+
+ant jbossjta	
+
+will build the JTA version with AS integration 
+
+ant jbossjts	
+
+will build the JTS version with AS integration 
