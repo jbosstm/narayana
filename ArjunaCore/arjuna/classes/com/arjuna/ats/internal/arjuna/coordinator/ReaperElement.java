@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2007, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -15,7 +15,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  *
- * (C) 2005-2006,
+ * (C) 2005-2007,
  * @author JBoss Inc.
  */
 /*
@@ -58,6 +58,8 @@ public class ReaperElement implements Comparable
 
 		_control = control;
 		_timeout = timeout;
+		_status = RUN;
+                _worker = null;
 
 		/*
 		 * Given a timeout period in seconds, calculate its absolute value from
@@ -109,4 +111,148 @@ public class ReaperElement implements Comparable
 	public long _absoluteTimeout;
 
 	public int _timeout;
+
+        /*
+         * status field to track the progress of the reaper worker which is
+         * attempting to cancel the associated TX. this is necessary to ensure
+         * that the the reaper only interrupts the worker in the windows where
+         * it may be exposed to being wedged by client code and is sure to be
+         * able to catch and handle an interrupt without dying. all accesses
+         * to this field must be synchronized on the containing element.
+         *
+         * this field is always initialised to RUN, indicating that
+         * the element is associated with a running transaction. the
+         * following transitions can occur, performed either by the
+         * reaper (R) or the worker (W)
+         *
+         * RUN --> SCHEDULE_CANCEL (R)
+         *
+         * SCHEDULE_CANCEL --> CANCEL (W)
+         *
+         * CANCEL --> COMPLETE (W)
+         *
+         * CANCEL --> FAIL (W)
+         *
+         * CANCEL --> CANCEL_INTERRUPTED (R)
+         *
+         * CANCEL_INTERRUPTED --> COMPLETE (W)
+         *
+         * CANCEL_INTERRUPTED --> FAIL (W)
+         *
+         * CANCEL_INTERRUPTED --> ZOMBIE (R)
+         */
+
+        public int _status;
+
+        /*
+         * the reaper worker which is attempting to cancel the associated TX
+         */
+
+        public Thread _worker;
+
+        /*
+         * status values for progressing reaper element from default
+         * RUN status through stages of cancellation from
+         * SCHEDULE_CANCEL to ZOMBIE. the reaper thread can only
+         * interrupt a reaper worker thread if it is wedged while
+         * the element is in state CANCEL.
+         */
+
+        /*
+         * status of a reaper element for a TX which has not yet timed out
+         */
+
+        public static final int RUN = 0;
+
+        /*
+         * status of a reaper element which has been queued for
+         * cancellation by a reaper worker
+         */
+
+        public static final int SCHEDULE_CANCEL = 1;
+
+        /*
+         * status of a reaper element while the reaper worker is under
+         * a call  to the TX cancel operation  and, hence, potentially
+         * exposed to  being wedged. the reaper may safely interrupt
+         * the worker when it is in this state
+         */
+
+        public static final int CANCEL = 2;
+
+
+        /*
+         * status of a reaper element if the reaper thread has
+         * interrupted the worker during the CANCEL state. if the
+         * reaper discovers the thread is still in this state
+         * following a suitable delay then the thread is seriously
+         * wedged (possibly on a non-interruptible i/o) and requires
+         * notice of termination (by resetting the state to ZOMBIE)
+         * and replacement by a new worker thread.
+         */
+
+        public static final int CANCEL_INTERRUPTED = 3;
+
+        /*
+         * status of a reaper element if the reaper worker has been
+         * unable to cancel the TX and has failed to mark it as
+         * rollback only. it is safe for the reaper to remove the
+         * element from the transactions list if it is in this state
+         * (modulo synchronization) although the worker should do so
+         * with minimal delay.
+         */
+
+        public static final int FAIL = 4;
+
+        /*
+         * status of a reaper element if the reaper worker has been
+         * able to cancel the tx or has marked it as rollback only. it
+         * is safe for the reaper to remove the element from the
+         * transactions list if it is in this state (modulo
+         * synchronization) although the worker should do so with
+         * minimal delay.
+         */
+
+        public static final int COMPLETE = 5;
+
+        /*
+         * status of a reaper element if the worker got so wedged it
+         * failed to respond to an interrupt either during
+         * cancellation or marking as rollback only. if the worker
+         * wakes up and finds the element in this state then it must
+         * exit. the reaper will have ensured that the failure to
+         * cancel and rollback the transaction has been logged and
+         * will have removed the element from the transactions list.
+         */
+
+        public static final int ZOMBIE = 6;
+
+        /*
+         * convenience method to provide printable string for current status
+         * for use in debugging/logging. should only be called while
+         * synchronized.
+         */
+
+         public final String statusName()
+         {
+              switch (_status)
+              {
+              case RUN:
+                   return "RUN";
+              case SCHEDULE_CANCEL:
+                   return "SCHEDULE_CANCEL";
+              case CANCEL:
+                   return "CANCEL";
+              case CANCEL_INTERRUPTED:
+                   return "CANCEL_INTERRUPTED";
+              case FAIL:
+                   return "FAIL";
+              case COMPLETE:
+                   return "COMPLETE";
+              case ZOMBIE:
+                   return "ZOMBIE";
+              default:
+                   return "UNKNOWN";
+              }
+         }
 }

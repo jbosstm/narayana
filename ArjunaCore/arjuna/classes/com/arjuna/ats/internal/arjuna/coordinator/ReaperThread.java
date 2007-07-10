@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
+ * Copyright 2007, Red Hat Middleware LLC, and individual contributors 
  * as indicated by the @author tags. 
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors. 
@@ -15,7 +15,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  * 
- * (C) 2005-2006,
+ * (C) 2005-2007,
  * @author JBoss Inc.
  */
 /*
@@ -70,6 +70,8 @@ public void run ()
     				     FacilityCode.FAC_ATOMIC_ACTION, "ReaperThread.run ()");
     	}
     	
+        if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : started");
+
     	for (;;)
     	{
     	    /*
@@ -80,27 +82,37 @@ public void run ()
     
             synchronized(reaperObject)
             {
-        		sleepPeriod = reaperObject.checkingPeriod();
+		sleepPeriod = reaperObject.checkingPeriod();
         
                 if (sleepPeriod > 0)
                 {
-            		try
-            		{
-            		    if (tsLogger.arjLoggerI18N.isDebugEnabled())
-            		    {
-            		        tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-            						     FacilityCode.FAC_ATOMIC_ACTION,
-            						     "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_1", 
-            						     new Object[]{Thread.currentThread(),
-            								  Long.toString(sleepPeriod)});
-            		    }
-            
-            		    reaperObject.wait(sleepPeriod);
-            		}
-            		catch (InterruptedException e1) {}
+                     try
+                     {
+                          if (tsLogger.arjLoggerI18N.isDebugEnabled())
+                          {
+                               tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                                            FacilityCode.FAC_ATOMIC_ACTION,
+                                                            "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_1", 
+                                                            new Object[]{Thread.currentThread(),
+                                                                         Long.toString(sleepPeriod)});
+                          }
+
+                          if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : sleeping " + Long.toString(sleepPeriod));
+
+                          reaperObject.wait(sleepPeriod);
+                     }
+                     catch (InterruptedException e1) {}
                 }
             }
     
+            if (tsLogger.arjLogger.debugAllowed())
+            {
+                 tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                          FacilityCode.FAC_ATOMIC_ACTION, "ReaperThread.run ()");
+            }
+    	
+            if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : woke up");
+
     	    if (_shutdown)
     	        return;
     

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2007, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -15,7 +15,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  *
- * (C) 2005-2006,
+ * (C) 2005-2007,
  * @author JBoss Inc.
  */
 /*
@@ -64,16 +64,46 @@ import java.util.*;
  *          TransactionReaper::check - comparing {0}
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_3
  *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_3] -
- *          TransactionReaper::check - rollback for {0}
+ *          TransactionReaper::getTimeout for {0} returning {1}
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_4
  *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_4] -
- *          TransactionReaper failed to force rollback on {0}
+ *          TransactionReaper::check interrupting cancel in progress for {0}
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_5
  *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_5] -
- *          TransactionReaper failed to force rollback_only on {0}
+ *          TransactionReaper::check worker zombie count {0] exceeds specified limit 
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_6
  *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_6] -
- *          TransactionReaper::getTimeout for {0} returning {1}
+ *          TransactionReaper::check worker {0} not responding to interrupt when cancelling TX {1} -- worker marked as zombie and TX scheduled for mark-as-rollback
+ * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_7
+ *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_7] -
+ *          TransactionReaper::doCancellations worker {0} successfuly cancelled TX {1}
+ * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_8
+ *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_8] -
+ *          TransactionReaper::doCancellations worker {0} failed to cancel TX {1} -- rescheduling for mark-as-rollback
+ * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_9
+ *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_9] -
+ *          TransactionReaper::doCancellations worker {0} exception during cancel of TX {1} -- rescheduling for mark-as-rollback
+ * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_10
+ *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_10] -
+ *          TransactionReaper::check successfuly marked TX {0} as rollback only
+ * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_11
+ *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_11] -
+ *          TransactionReaper::check failed to mark TX {0}  as rollback only
+ * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_12
+ *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_12] -
+ *          TransactionReaper::check exception while marking TX {0} as rollback only
+ * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_13
+ *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_13] -
+ *          TransactionReaper::doCancellations worker {0} missed interrupt when cancelling TX {1} -- exiting as zombie (zombie count decremented to {2})
+ * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_14
+ *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_14] -
+ *          TransactionReaper::doCancellations worker {0} successfuly marked TX {1} as rollback only
+ * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_15
+ *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_15] -
+ *          TransactionReaper::doCancellations worker {0} failed to mark TX {1}  as rollback only
+ * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_16
+ *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_16] -
+ *          TransactionReaper::doCancellations worker {0} exception while marking TX {1} as rollback only
  */
 
 public class TransactionReaper
@@ -133,162 +163,631 @@ public class TransactionReaper
 				return Long.MAX_VALUE; // list is empty, so we can sleep until something is inserted.
 			}
 		}
-		return _checkPeriod;
+		else
+		{
+                     // if we have a cancel in progress which needs
+                     // checking up on then we have to wake up in time
+                     // for it whether we are using a static or
+                     // dynamic model
+
+                     try
+                     {
+                          final ReaperElement head = (ReaperElement) _transactions.first();  //_list.peak();
+                          if (head._status != ReaperElement.RUN) {
+                               long waitTime = head._absoluteTimeout - System.currentTimeMillis();
+                               if (waitTime < _checkPeriod)
+                               {
+                                    return head._absoluteTimeout - System.currentTimeMillis();
+                               }
+                          }
+                     }
+                    catch (final NoSuchElementException nsee) {}
+
+		    return _checkPeriod;
+		}
 	}
 
-	/*
-	 * Should be no need to protect with a mutex since only one thread is ever
-	 * doing the work.
-	 */
-
 	/**
-	 * Only check for one at a time to prevent starvation.
+         * process all entries in the timeout queue which have
+         * expired. entries for newly expired transactions are passed
+         * to a worker thread for cancellation and requeued for
+         * subsequent progress checks. the worker is given a kick if
+         * such checks find it is wedged.
 	 *
 	 * Timeout is given in milliseconds.
 	 */
 
 	public final boolean check()
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+	    if (tsLogger.arjLogger.debugAllowed())
+	    {
+		tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
+					 VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
+					 "TransactionReaper::check ()");
+	    }
+
+	    do
+	    {
+		final ReaperElement e ;
+		try
 		{
-			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
-					"TransactionReaper::check ()");
+		    e = (ReaperElement)_transactions.first();
+		}
+		catch (final NoSuchElementException nsee)
+		{
+		    return true ;
 		}
 
-		do {
-			final ReaperElement e ;
-                        try
-                        {
-                            e = (ReaperElement)_transactions.first();
-                        }
-                        catch (final NoSuchElementException nsee)
-                        {
-                            return true ;
-                        }
+		if (tsLogger.arjLoggerI18N.isDebugEnabled())
+		{
+		    tsLogger.arjLoggerI18N
+			.debug(
+			    DebugLevel.FUNCTIONS,
+			    VisibilityLevel.VIS_PUBLIC,
+			    FacilityCode.FAC_ATOMIC_ACTION,
+			    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_2",
+			    new Object[]
+			    { Long.toString(e._absoluteTimeout) });
+		}
 
-			if (tsLogger.arjLoggerI18N.debugAllowed())
+		if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : checking " + e._control.get_uid());
+
+		final long now = System.currentTimeMillis();
+		if (now < e._absoluteTimeout)
+		{
+		    // go back to sleep
+
+		    if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : ms wait " + (e._absoluteTimeout - now));
+		    break;
+		}
+
+		if (tsLogger.arjLogger.debugAllowed())
+		{
+		    tsLogger.arjLogger
+			.debug(
+			    DebugLevel.FUNCTIONS,
+			    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
+			    "Reaper timeout for TX " + e._control.get_uid() + " state " + e.statusName());
+		}
+
+		if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : timeout " + e._control.get_uid());
+
+		// if we have to synchronize on multiple objects we always
+		// do so in a fixed order ReaperElement before Reaper and
+		// ReaperElement before Reaper._cancelQueue in order to
+		// ensure we don't deadlock. We never sychronize on the
+		// reaper and the cancel queue at the same time.
+
+		synchronized(e) {
+		    switch (e._status)
+		    {
+		    case ReaperElement.RUN:
+		    {
+			// this tx has just timed out. remove it from the
+			// TX list, update the timeout to take account of
+			// cancellation period and reinsert as a cancelled
+			// TX. this ensures we process it again if it does
+			// not get cancelled in time
+
+			e._status = ReaperElement.SCHEDULE_CANCEL;
+
+			synchronized (this)
 			{
-				tsLogger.arjLoggerI18N
-						.debug(
-								DebugLevel.FUNCTIONS,
-								VisibilityLevel.VIS_PUBLIC,
-								FacilityCode.FAC_ATOMIC_ACTION,
-								"com.arjuna.ats.arjuna.coordinator.TransactionReaper_2",
-								new Object[]
-								{ Long.toString(e._absoluteTimeout) });
+			    _transactions.remove(e);
+
+			    e._absoluteTimeout =
+				(System.currentTimeMillis() + _cancelWaitPeriod);
+			    _transactions.add(e);
 			}
 
-			final long now = System.currentTimeMillis();
-			if (now >= e._absoluteTimeout)
+			if (tsLogger.arjLogger.debugAllowed())
 			{
-				if (e._control.running())
+			    tsLogger.arjLogger
+				.debug(
+				    DebugLevel.FUNCTIONS,
+				    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
+				    "Reaper scheduling TX for cancellation " + e._control.get_uid());
+			}
+
+			// insert into cancellation queue for a worker
+			// thread to process and then make sure a worker
+			// thread is awake
+
+			synchronized (_workQueue)
+			{
+			    _workQueue.add(e);
+			    _workQueue.notify();
+			}
+		    }
+		    break;
+		    case ReaperElement.SCHEDULE_CANCEL:
+		    {
+			// hmm, a worker is taking its time to
+			// start processing this scheduled entry.
+			// we may just be running slow ... but the
+			// worker may be wedged under a cancel for
+			// some other TX. add an extra delay to
+			// give the worker more time to complete
+			// its current task and progress this
+			// entry to the CANCEL state. if the
+			// worker *is* wedged then this will
+			// ensure the wedged TX entry comes to the
+			// front of the queue.
+
+			synchronized (this)
+			{
+			    _transactions.remove(e);
+
+			    e._absoluteTimeout =
+				(System.currentTimeMillis() + _cancelWaitPeriod);
+
+			    _transactions.add(e);
+			}
+
+			if (tsLogger.arjLogger.debugAllowed())
+			{
+			    tsLogger.arjLogger
+				.debug(
+				    DebugLevel.FUNCTIONS,
+				    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
+				    "Reaper deferring interrupt for TX scheduled for cancel " + e._control.get_uid());
+			}
+
+			if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : deferring interrupt for TX scheduled for cancel " + e._control.get_uid());
+		    }
+		    break;
+		    case ReaperElement.CANCEL:
+		    {
+			// ok, the worker must be wedged under a
+			// call to cancel() -- kick the thread and
+			// reschedule the element for a later
+			// check to ensure the thread responded to
+			// the kick
+
+			e._status = ReaperElement.CANCEL_INTERRUPTED;
+
+			e._worker.interrupt();
+
+			synchronized (this)
+			{
+			    _transactions.remove(e);
+
+			    e._absoluteTimeout =
+				(System.currentTimeMillis() + _cancelFailWaitPeriod);
+
+			    _transactions.add(e);
+			}
+
+			// log that we interrupted cancel()
+
+			if (tsLogger.arjLoggerI18N.isDebugEnabled())
+			{
+			    tsLogger.arjLoggerI18N
+				.debug(
+				    DebugLevel.FUNCTIONS,
+				    VisibilityLevel.VIS_PUBLIC,
+				    FacilityCode.FAC_ATOMIC_ACTION,
+				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_4", 
+				    new Object[]{e._control.get_uid()});
+			}
+			if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : interrupting cancel in progress for " + e._control.get_uid());
+		    }
+		    break;
+		    case ReaperElement.CANCEL_INTERRUPTED:
+		    {
+			// cancellation got truly wedged -- mark
+			// the element as a zombie so the worker
+			// exits when (if?) it wakes up and create
+			// a new worker thread to handle further
+			// cancellations. then mark the
+			// transaction as rollback only.
+
+			e._status = ReaperElement.ZOMBIE;
+
+			synchronized(this)
+			{
+			    _zombieCount++;
+
+			    if (tsLogger.arjLoggerI18N.isDebugEnabled())
+			    {
+				tsLogger.arjLoggerI18N
+				    .debug(
+					DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					FacilityCode.FAC_ATOMIC_ACTION, "Reaper " + Thread.currentThread() + " got a zombie " + e._worker + " (zombie count now " + _zombieCount + ") cancelling "  + e._control.get_uid());
+			    }
+			    if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " got a zombie " + e._worker + " (zombie count now " + _zombieCount + ") cancealling "  + e._control.get_uid());
+
+			    if (_zombieCount == _zombieMax)
+			    {
+				// log zombie overflow error call()
+
+				if (tsLogger.arjLoggerI18N.isDebugEnabled())
 				{
-					/*
-					 * If this is a local transaction, then we can roll it back
-					 * completely. Otherwise, just mark it as rollback only.
-					 */
-
-					boolean problem = false;
-
-					if (TxControl.enableStatistics)
-					{
-						TxStats.incrementTimeouts();
-					}
-
-					try
-					{
-						if (e._control.cancel() == ActionStatus.ABORTED)
-						{
-							if (tsLogger.arjLoggerI18N.debugAllowed())
-							{
-								tsLogger.arjLoggerI18N
-										.debug(
-												DebugLevel.FUNCTIONS,
-												VisibilityLevel.VIS_PUBLIC,
-												FacilityCode.FAC_ATOMIC_ACTION,
-												"com.arjuna.ats.arjuna.coordinator.TransactionReaper_3",
-												new Object[]
-												{ e._control.get_uid() });
-							}
-						}
-						else
-							problem = true;
-					}
-					catch (Exception ex2)
-					{
-						if (tsLogger.arjLoggerI18N.isWarnEnabled())
-						{
-							tsLogger.arjLoggerI18N
-									.warn(
-											"com.arjuna.ats.arjuna.coordinator.TransactionReaper_4",
-											new Object[]
-											{ e._control });
-						}
-
-						problem = true;
-					}
-
-					if (problem)
-					{
-						boolean error = false;
-						boolean printDebug = tsLogger.arjLoggerI18N
-								.isWarnEnabled();
-
-						try
-						{
-							error = !e._control.preventCommit();
-						}
-						catch (Exception ex3)
-						{
-							error = true;
-						}
-
-						if (error || printDebug)
-						{
-							if (error)
-							{
-								if (tsLogger.arjLoggerI18N.isWarnEnabled())
-								{
-									tsLogger.arjLoggerI18N
-											.warn(
-													"com.arjuna.ats.arjuna.coordinator.TransactionReaper_5",
-													new Object[]
-													{ e._control });
-								}
-							}
-							else
-							{
-								if (tsLogger.arjLoggerI18N.debugAllowed())
-								{
-									tsLogger.arjLoggerI18N
-											.debug(
-													DebugLevel.FUNCTIONS,
-													VisibilityLevel.VIS_PUBLIC,
-													FacilityCode.FAC_ATOMIC_ACTION,
-													"com.arjuna.ats.arjuna.coordinator.TransactionReaper_3",
-													new Object[]
-													{ e._control });
-								}
-							}
-						}
-					}
+				    tsLogger.arjLoggerI18N
+					.debug(
+					    DebugLevel.ERROR_MESSAGES,
+					    VisibilityLevel.VIS_PUBLIC,
+					    FacilityCode.FAC_ATOMIC_ACTION,
+					    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_5", 
+					    new Object[]{new Integer(_zombieCount)});
 				}
 
-                                synchronized(this)
-                                {
-                                    _timeouts.remove(e._control) ;
-                                    _transactions.remove(e) ;
-                                }
+				if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " too many zombies (" + _zombieCount + ")! " + e._control.get_uid());
+			    }
+			}
+
+			_reaperWorkerThread = new ReaperWorkerThread(TransactionReaper._theReaper);
+			_reaperWorkerThread.setDaemon(true);
+
+			_reaperWorkerThread.start();
+
+			// log a failed cancel()
+
+			if (tsLogger.arjLoggerI18N.isDebugEnabled())
+			{
+			    tsLogger.arjLoggerI18N
+				.debug(
+				    DebugLevel.ERROR_MESSAGES,
+				    VisibilityLevel.VIS_PUBLIC,
+				    FacilityCode.FAC_ATOMIC_ACTION,
+				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_6", 
+				    new Object[]{e._worker,
+						 e._control.get_uid()});
+			}
+
+			if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : thread " + e._worker + " executing cancel did not respond to interrupt -- scheduling for rollback! " + e._control.get_uid());
+			// ok, since the worker was wedged we need to
+			// remove the entry from the timeouts and
+			// transactions lists then mark this tx as
+			// rollback only. we have to log a message
+			// whether we succeed, fail or get interrupted
+
+			synchronized(this)
+			{
+			    _timeouts.remove(e._control);
+			    _transactions.remove(e);
+			}
+
+			try
+			{
+			    if (e._control.preventCommit()) {
+
+				// log a successful preventCommit()
+
+				if (tsLogger.arjLoggerI18N.isDebugEnabled())
+				{
+				    tsLogger.arjLoggerI18N
+					.debug(
+					    DebugLevel.FUNCTIONS,
+					    VisibilityLevel.VIS_PUBLIC,
+					    FacilityCode.FAC_ATOMIC_ACTION,
+					    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_10",
+					    new Object[]{e._control.get_uid()});
+				}
+				if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " successfully marked TX " + e._control.get_uid() + " as rollback only");
+			    }
+			    else
+			    {
+				// log a failed preventCommit()
+
+				if (tsLogger.arjLoggerI18N.isDebugEnabled())
+				{
+				    tsLogger.arjLoggerI18N
+					.debug(DebugLevel.ERROR_MESSAGES,
+					       VisibilityLevel.VIS_PUBLIC,
+					       FacilityCode.FAC_ATOMIC_ACTION,
+					       "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_11",
+					       new Object[]{e._control.get_uid()});
+				}
+				if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " failed to mark TX " + e._control.get_uid() + " as rollback only");
+			    }
+			}
+			catch(Exception e1)
+			{
+			    // log an exception under preventCommit()
+
+			    if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+				tsLogger.arjLoggerI18N
+				    .debug(
+					DebugLevel.ERROR_MESSAGES,
+					VisibilityLevel.VIS_PUBLIC,
+					FacilityCode.FAC_ATOMIC_ACTION,
+					"com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_12",
+					new Object[]{e._control.get_uid()});
+			    }
+			    if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " exception during mark-as-rollback of TX " + e._control.get_uid());
+			}
+		    }
+		    break;
+		    case ReaperElement.FAIL:
+		    case ReaperElement.COMPLETE:
+		    {
+			// ok, the worker should remove the tx
+			// from the transactions queue very soon
+			// but we need to progress to the next
+			// entry so we will steal in and do it
+			// first
+
+			synchronized(this)
+			{
+			    _timeouts.remove(e._control);
+			    _transactions.remove(e);
+			}
+		    }
+		    break;
+
+		    }
+		}
+	    } while(true) ;
+     
+	    return true;
+	}
+
+        public final void waitForCancellations()
+        {
+             synchronized(_workQueue)
+             {
+                  try
+                  {
+                       while (_workQueue.isEmpty())
+                       {
+                            _workQueue.wait();
+                       }
+                  }
+                  catch (InterruptedException e)
+                  {
+                  }
+             }
+        }
+
+	public final void doCancellations()
+        {
+	    for (;;)
+	    {
+		ReaperElement e;
+
+		// see if we have any cancellations to process
+
+		synchronized(_workQueue)
+		{
+		    try
+		    {
+			e = (ReaperElement)_workQueue.remove(0);
+		    }
+		    catch (IndexOutOfBoundsException ioobe) {break;}
+		}
+
+
+		// ok, current status must be SCHEDULE_CANCEL.
+		// progress state to CANCEL and call cancel()
+
+
+		if (tsLogger.arjLogger.debugAllowed())
+		{
+		    tsLogger.arjLogger
+			.debug(
+			    DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+			    FacilityCode.FAC_ATOMIC_ACTION, "Reaper Worker " + Thread.currentThread() + " attempting to cancel "  + e._control.get_uid());
+		}
+		if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " : attempting to cancel " + e._control.get_uid());
+
+		boolean cancelled = false;
+		boolean excepted = false;
+
+		synchronized(e)
+		{
+		    e._worker = Thread.currentThread();
+		    e._status = ReaperElement.CANCEL;
+		    e.notify();
+		}
+
+		// we are now exposed to at most one interrupt from
+		// the reaper. test for running and try the cancel if
+		// required
+
+		try
+		{
+		    if (e._control.running()) {
+
+			// try to cancel the transaction
+
+			if (e._control.cancel() == ActionStatus.ABORTED)
+			{
+			    cancelled = true;
+			}
+		    }
+		}
+		catch (Exception e1)
+		{
+		    excepted = true;
+		}
+
+		// ok, close the interrupt window by resetting the
+		// state -- unless we have been told to go away by
+		// being set to ZOMBIE
+
+		synchronized (e)
+		{
+		    if (e._status == ReaperElement.ZOMBIE)
+		    {
+			// we need to decrement the zombie count and
+			// force an immediate thread exit. the reaper
+			// will have removed the entry from the
+			// transactions list and started another
+			// worker thread.
+
+			ReaperWorkerThread worker = (ReaperWorkerThread)Thread.currentThread();
+			worker.shutdown();
+
+			synchronized(this)
+			{
+			    _zombieCount--;
+			}
+
+			if (tsLogger.arjLoggerI18N.isDebugEnabled())
+			{
+			    tsLogger.arjLoggerI18N
+				.debug(
+				    DebugLevel.ERROR_MESSAGES,
+				    VisibilityLevel.VIS_PUBLIC,
+				    FacilityCode.FAC_ATOMIC_ACTION,
+				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_13",
+				    new Object[]{Thread.currentThread(),
+						 e._control.get_uid(),
+						 new Integer(_zombieCount)});
+			}
+
+			if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker" + Thread.currentThread() + " failed to respond to interrupt trying to cancel or mark as rollback only TX " + e._control.get_uid() + " -- exiting as zombie (zombie count decremented to " + _zombieCount + ")");
+
+			// this gets us out of the for(;;) loop and
+			// the shutdown call above makes sure we exit
+			// after returning
+
+			break;
+		    }
+		    else if (cancelled &&
+			     e._status == ReaperElement.CANCEL_INTERRUPTED)
+		    {
+			// ok the call to cancel() returned true but
+			// we cannot trust it because the reaper sent
+			// the thread an interrupt
+
+			cancelled = false;
+			e._status = ReaperElement.FAIL;
+			e.notify();
+		    }
+		    else
+		    {
+			e._status = (cancelled
+				     ? ReaperElement.COMPLETE
+				     : ReaperElement.FAIL);
+			e.notify();
+		    }
+		}
+
+		// log a message notifying success, failure or
+		// exception during cancel(), remove the element from
+		// the transactions queue and mark TX as rollback only
+
+		if (cancelled)
+		{
+		    if (tsLogger.arjLoggerI18N.isDebugEnabled())
+		    {
+			tsLogger.arjLoggerI18N
+			    .debug(
+				DebugLevel.FUNCTIONS,
+				VisibilityLevel.VIS_PUBLIC,
+				FacilityCode.FAC_ATOMIC_ACTION,
+				"com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_7",
+				new Object[]{Thread.currentThread(),
+					     e._control.get_uid()});
+		    }
+
+		    if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " successfully cancelled TX " + e._control.get_uid());
+
+		    synchronized(this)
+		    {
+			_timeouts.remove(e._control);
+			_transactions.remove(e);
+		    }
+		}
+		else
+		{
+		    if (excepted)
+		    {
+			if (tsLogger.arjLoggerI18N.isDebugEnabled())
+			{
+			    tsLogger.arjLoggerI18N
+				.debug(
+				    DebugLevel.FUNCTIONS,
+				    VisibilityLevel.VIS_PUBLIC,
+				    FacilityCode.FAC_ATOMIC_ACTION,
+				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_9",
+				    new Object[]{Thread.currentThread(),
+						 e._control.get_uid()});
+			}
+
+			if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " exception during cancel of TX " + e._control.get_uid() + " -- rescheduling for mark-as-rollback");
+		    }
+		    else
+		    {
+			if (tsLogger.arjLoggerI18N.isDebugEnabled())
+			{
+			    tsLogger.arjLoggerI18N
+				.debug(
+				    DebugLevel.FUNCTIONS,
+				    VisibilityLevel.VIS_PUBLIC,
+				    FacilityCode.FAC_ATOMIC_ACTION,
+				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_8",
+				    new Object[]{Thread.currentThread(),
+						 e._control.get_uid()});
+			}
+
+			if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " failed to cancel TX " + e._control.get_uid() + " rescheduling for mark-as-rollback");
+		    }
+
+		    synchronized(this)
+		    {
+			_timeouts.remove(e._control);
+			_transactions.remove(e);
+		    }
+
+		    try
+		    {
+			if (e._control.preventCommit()) {
+			    // log a successful preventCommit()
+
+			    if (tsLogger.arjLoggerI18N.isDebugEnabled())
+			    {
+				tsLogger.arjLoggerI18N
+				    .debug(
+					DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					FacilityCode.FAC_ATOMIC_ACTION,
+					"com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_14",
+					new Object[]{Thread.currentThread(),
+						     e._control.get_uid()});
+			    }
+			    if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " successfully marked TX " + e._control.get_uid() + " as rollback only");
 			}
 			else
 			{
-				break;
-			}
-		} while(true) ;
+			    // log a failed preventCommit()
 
-		return true;
-	}
+			    if (tsLogger.arjLoggerI18N.isDebugEnabled())
+			    {
+				tsLogger.arjLoggerI18N
+				    .debug(
+					DebugLevel.ERROR_MESSAGES,
+					VisibilityLevel.VIS_PUBLIC,
+					FacilityCode.FAC_ATOMIC_ACTION,
+					"com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_15",
+					new Object[]{Thread.currentThread(),
+						     e._control.get_uid()});
+			    }
+			    if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " failed to mark TX " + e._control.get_uid() + " as rollback only");
+			}
+		    }
+		    catch(Exception e1)
+		    {
+			// log an exception under preventCommit()
+
+			if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+			    tsLogger.arjLoggerI18N
+				.debug(
+				    DebugLevel.ERROR_MESSAGES,
+				    VisibilityLevel.VIS_PUBLIC,
+				    FacilityCode.FAC_ATOMIC_ACTION,
+				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_16",
+				    new Object[]{Thread.currentThread(),
+						 e._control.get_uid()});
+			}
+			if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " exception during mark-as-rollback of TX " + e._control.get_uid());
+		    }
+		}
+	    }
+        }
 
 	/**
 	 * @return the number of items in the reaper's list.
@@ -369,13 +868,39 @@ public class TransactionReaper
 		if (control == null)
 			return false;
 
+		ReaperElement key;
+
                 synchronized(this)
                 {
-                    ReaperElement key = (ReaperElement)_timeouts.remove(control);
+                    key = (ReaperElement)_timeouts.remove(control);
                     if(key == null) {
                             return false;
                     }
-                    return _transactions.remove(key);
+		}
+
+		// if a cancellation is in progress then we have to
+		// see it through as we have to ensure that the worker
+		// thread does not get wedged. so we have to tell the
+		// control has gone away. in order to test the status
+		// we need to synchronize on the element before we
+		// synchronize on this so we can ensure that we don't
+		// deadlock ourselves.
+
+		synchronized(key)
+		{
+                    if (key._status != ReaperElement.RUN)
+                    {
+                         // we are cancelling this TX anyway and need
+                         // to track the progress of the cancellation
+                         // using this entry so we cnanot remove it
+
+                         return false;
+                    }
+
+		    synchronized(this)
+		    {
+			return _transactions.remove(key);
+		    }
                 }
 	}
 
@@ -416,7 +941,7 @@ public class TransactionReaper
 						DebugLevel.FUNCTIONS,
 						VisibilityLevel.VIS_PUBLIC,
 						FacilityCode.FAC_ATOMIC_ACTION,
-						"com.arjuna.ats.arjuna.coordinator.TransactionReaper_6",
+						"com.arjuna.ats.arjuna.coordinator.TransactionReaper_3",
 						new Object[]
 								{ control, timeout });
 
@@ -476,12 +1001,98 @@ public class TransactionReaper
 
 			TransactionReaper._theReaper = new TransactionReaper(checkPeriod);
 
+			String cancelWait = arjPropertyManager.propertyManager
+					.getProperty(Environment.TX_REAPER_CANCEL_WAIT_PERIOD);
+			if (cancelWait != null)
+			{
+                             try
+                             {
+				 TransactionReaper._theReaper._cancelWaitPeriod = Long.valueOf(cancelWait).longValue();
+                             }
+                             catch (NumberFormatException e)
+                             {
+                                  TransactionReaper._theReaper._cancelWaitPeriod = defaultCancelWaitPeriod;
+                             }
+
+			     // must give TX at least 10 millisecs to
+			     // respond to cancel
+
+                             if (TransactionReaper._theReaper._cancelWaitPeriod < 10) {
+                                  TransactionReaper._theReaper._cancelWaitPeriod = 10;
+                             }
+			}
+                        else
+                        {
+                             TransactionReaper._theReaper._cancelWaitPeriod = defaultCancelWaitPeriod;
+                        }
+                        
+			String cancelFailWait = arjPropertyManager.propertyManager
+					.getProperty(Environment.TX_REAPER_CANCEL_FAIL_WAIT_PERIOD);
+			if (cancelFailWait != null)
+			{
+                             try
+                             {
+                                  TransactionReaper._theReaper._cancelFailWaitPeriod = Long.valueOf(cancelFailWait).longValue();
+                             }
+                             catch (NumberFormatException e)
+                             {
+                                  TransactionReaper._theReaper._cancelFailWaitPeriod = defaultCancelFailWaitPeriod;
+                             }
+
+			     // must give TX at least 10 millisecs to
+			     // respond to cancel
+
+                             if (TransactionReaper._theReaper._cancelFailWaitPeriod < 10) {
+                                  TransactionReaper._theReaper._cancelFailWaitPeriod = 10;
+                             }
+			}
+                        else
+                        {
+                             TransactionReaper._theReaper._cancelFailWaitPeriod = defaultCancelFailWaitPeriod;
+                        }
+
+			String zombieMax = arjPropertyManager.propertyManager
+					.getProperty(Environment.TX_REAPER_ZOMBIE_MAX);
+			if (zombieMax != null)
+			{
+                             try
+                             {
+                                  TransactionReaper._theReaper._zombieMax = Integer.valueOf(zombieMax).intValue();
+                             }
+                             catch (NumberFormatException e)
+                             {
+                                  TransactionReaper._theReaper._zombieMax = defaultZombieMax;
+                             }
+			     // we start bleating if the zombie count
+			     // reaches zombieMax so it has to be at
+			     // least 1
+
+                             if (TransactionReaper._theReaper._zombieMax <= 0) {
+                                  TransactionReaper._theReaper._zombieMax = 1;
+                             }
+			}
+                        else
+                        {
+                             TransactionReaper._theReaper._zombieMax = defaultZombieMax;
+                        }
+
+                        // use defaults for now
+
+                        TransactionReaper._theReaper._cancelWaitPeriod = defaultCancelWaitPeriod;
+                        TransactionReaper._theReaper._cancelFailWaitPeriod = defaultCancelFailWaitPeriod;
+                        TransactionReaper._theReaper._zombieMax = defaultZombieMax;
+
 			_reaperThread = new ReaperThread(TransactionReaper._theReaper);
 			// _reaperThread.setPriority(Thread.MIN_PRIORITY);
 
 			_reaperThread.setDaemon(true);
 
+			_reaperWorkerThread = new ReaperWorkerThread(TransactionReaper._theReaper);
+			_reaperWorkerThread.setDaemon(true);
+
 			_reaperThread.start();
+
+			_reaperWorkerThread.start();
 		}
 
 		return TransactionReaper._theReaper;
@@ -520,6 +1131,9 @@ public class TransactionReaper
 	}
 
 	public static final long defaultCheckPeriod = 120000; // in milliseconds
+	public static final long defaultCancelWaitPeriod = 500; // in milliseconds
+	public static final long defaultCancelFailWaitPeriod = 500; // in milliseconds
+	public static final int defaultZombieMax = 8;
 
 	static final void reset()
 	{
@@ -529,14 +1143,41 @@ public class TransactionReaper
 	private SortedSet _transactions = Collections.synchronizedSortedSet(new TreeSet()); // C of ReaperElement
 	private Map _timeouts = Collections.synchronizedMap(new HashMap()); // key = Reapable, value = ReaperElement
 
+	private List _workQueue = new LinkedList(); // C of ReaperElement
+
 	private long _checkPeriod = 0;
+
+        /**
+	 * number of millisecs delay afer a cancel() is scheduled
+	 * before the reaper tries to interrupt the worker thread
+	 * executing the cancel()
+	 */
+	private long _cancelWaitPeriod = 0;
+
+        /**
+	 * number of millisecs delay afer a worker thread is
+	 * interrupted before the reaper writes the it off as a zombie
+	 * and starts a new thread
+	 */
+	private long _cancelFailWaitPeriod = 0;
+
+        /**
+	 * threshold for count of non-exited zombies at which system
+	 * starts logging error messages
+	 */
+	private int _zombieMax = 0;
 
 	private static TransactionReaper _theReaper = null;
 
 	private static ReaperThread _reaperThread = null;
 
+	private static ReaperWorkerThread _reaperWorkerThread = null;
+
 	private static boolean _dynamic = false;
 
 	private static long _lifetime = 0;
 
+	private static int _zombieCount = 0;
+
+        public final static boolean printTestOutput = false;
 }

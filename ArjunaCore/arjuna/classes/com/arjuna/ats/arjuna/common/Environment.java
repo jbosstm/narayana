@@ -74,6 +74,9 @@ package com.arjuna.ats.arjuna.common;
  * <li> RECOVERY_BACKOFF_PERIOD = com.arjuna.ats.arjuna.recovery.recoveryBackoffPeriod
  * <li> TX_REAPER_MODE = com.arjuna.ats.arjuna.coordinator.txReaperMode
  * <li> TX_REAPER_TIMEOUT = com.arjuna.ats.arjuna.coordinator.txReaperTimeout
+ * <li> TX_REAPER_CANCEL_WAIT_PERIOD = com.arjuna.ats.arjuna.coordinator.txReaperCancelWaitPeriod
+ * <li> TX_REAPER_CANCEL_FAIL_WAIT_PERIOD = com.arjuna.ats.arjuna.coordinator.txReapercancelFailWaitPeriod
+ * <li> TX_REAPER_ZOMBIE_MAX = com.arjuna.ats.arjuna.coordinator.txReaperZombieMax
  * <li> OBJECTSTORE_SHARE = com.arjuna.ats.arjuna.objectstore.share
  * <li> OBJECTSTORE_HIERARCHY_RETRY = com.arjuna.ats.arjuna.objectstore.hierarchyRetry
  * <li> OBJECTSTORE_HIERARCHY_TIMEOUT = com.arjuna.ats.arjuna.objectstore.hierarchyTimeout
@@ -128,6 +131,9 @@ public class Environment
     public static final String RECOVERY_BACKOFF_PERIOD = "com.arjuna.ats.arjuna.recovery.recoveryBackoffPeriod" ;
     public static final String TX_REAPER_MODE = "com.arjuna.ats.arjuna.coordinator.txReaperMode";
     public static final String TX_REAPER_TIMEOUT = "com.arjuna.ats.arjuna.coordinator.txReaperTimeout";
+    public static final String TX_REAPER_CANCEL_WAIT_PERIOD = "com.arjuna.ats.arjuna.coordinator.txReaperCancelWaitPeriod";
+    public static final String TX_REAPER_CANCEL_FAIL_WAIT_PERIOD = "com.arjuna.ats.arjuna.coordinator.txReaperCancelFailWaitPeriod";
+    public static final String TX_REAPER_ZOMBIE_MAX = "com.arjuna.ats.arjuna.coordinator.txReaperZombieMax";
     public static final String OBJECTSTORE_SHARE = "com.arjuna.ats.arjuna.objectstore.share";
     public static final String OBJECTSTORE_HIERARCHY_RETRY = "com.arjuna.ats.arjuna.objectstore.hierarchyRetry";
     public static final String OBJECTSTORE_HIERARCHY_TIMEOUT = "com.arjuna.ats.arjuna.objectstore.hierarchyTimeout";

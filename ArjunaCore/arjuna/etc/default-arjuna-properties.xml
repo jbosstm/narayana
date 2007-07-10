@@ -44,6 +44,24 @@
         name="com.arjuna.ats.arjuna.coordinator.txReaperMode"
         value="NORMAL"/>
       <!--
+        Transaction Reaper Cancel Wait Period (default is 500 ms, min is 10 msecs).
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.coordinator.txReaperCancelWaitPeriod"
+        value="500"/>
+      <!--
+        Transaction Reaper Cancel Fail Wait Period (default is 500 ms, min is 10 msecs).
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.coordinator.txReaperCancelFailWaitPeriod"
+        value="500"/>
+      <!--
+        Transaction Reaper Zombie Max (default is 8).
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.coordinator.txReaperZombieMax"
+        value="8"/>
+      <!--
         (default is NO)
       -->
       <property
