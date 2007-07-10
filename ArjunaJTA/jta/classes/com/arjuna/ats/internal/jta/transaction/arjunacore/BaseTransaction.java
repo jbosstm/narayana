@@ -76,7 +76,7 @@ public class BaseTransaction
 			}
 			catch (IllegalStateException e1)
 			{
-				throw new NotSupportedException();
+				throw new NotSupportedException(e1.getMessage());
 			}
 			catch (Exception e2)
 			{
