@@ -1448,9 +1448,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 			if (el != null)
 			{
-				try
+				while (el.hasMoreElements())
 				{
-					while (el.hasMoreElements())
+					try
 					{
 						/*
 						 * Get the XAResource in case we have to call end on it.
@@ -1468,15 +1468,15 @@ public class TransactionImple implements javax.transaction.Transaction,
 							info.setState(TxInfo.NOT_ASSOCIATED);
 						}
 					}
-				}
-				catch (XAException ex)
-				{
-					if (jtaLogger.loggerI18N.isWarnEnabled())
+					catch (XAException ex)
 					{
-						jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.xaenderror");
-					}
+					        if (jtaLogger.loggerI18N.isWarnEnabled())
+						{
+						        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.xaenderror");
+						}
 
-					result = false;
+						result = false;
+					}
 				}
 			}
 
