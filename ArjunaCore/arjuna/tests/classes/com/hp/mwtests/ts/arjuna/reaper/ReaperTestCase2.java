@@ -63,7 +63,7 @@ public class ReaperTestCase2 extends TestCase
 	SlowReapable reapable1 = new SlowReapable(new Uid(), 2000, 0, true, true);
 	SlowReapable reapable2 = new SlowReapable(new Uid(), 0, 0, true, true);
 	SlowReapable reapable3 = new SlowReapable(new Uid(), 100, 2000, false, true);
-	SlowReapable reapable4 = new SlowReapable(new Uid(), 0, 0, false, false);
+	SlowReapable reapable4 = new SlowReapable(new Uid(), 1000, 1000, false, false);
 
 	// insert reapables so they timeout at 1 second intervals then
 	// check progress of cancellations and rollbacks
@@ -172,6 +172,23 @@ public class ReaperTestCase2 extends TestCase
 
 	assertTrue(reapable4.getCancelTried());
 	assertTrue(reapable4.getRollbackTried());
+
+	// we should have a zombie worker so check that the thread
+	// which tried the cancel is still runnning then sleep a bit
+	// to give it time to complete and check it has exited
+
+	Thread worker = reapable4.getCancelThread();
+
+	assertTrue(worker.isAlive());
+
+	count = 0;
+
+	while (worker.isAlive() && count < 30) {
+	    count++;
+	    Thread.sleep(100);
+	}
+
+	assertTrue(count < 30);
     }
 
     public class SlowReapable implements Reapable
@@ -205,6 +222,11 @@ public class ReaperTestCase2 extends TestCase
 	    boolean interrupted = false;
 
 	    setCancelTried();
+
+	    // track the worker trying to do the cancel so we can
+	    // detect if it becomes a zombie
+
+	    setCancelThread(Thread.currentThread());
 
 	    if (callDelay > 0) {
 		try {
@@ -241,6 +263,7 @@ public class ReaperTestCase2 extends TestCase
 	private boolean cancelTried;
 	private boolean rollbackTried;
 	private boolean running;
+	private Thread cancelThread;
 
 	public synchronized void setCancelTried()
 	{
@@ -249,6 +272,14 @@ public class ReaperTestCase2 extends TestCase
 	public synchronized boolean getCancelTried()
 	{
 	    return cancelTried;
+	}
+	public synchronized void setCancelThread(Thread cancelThread)
+	{
+	    this.cancelThread = cancelThread;
+	}
+	public synchronized Thread getCancelThread()
+	{
+	    return cancelThread;
 	}
 	public synchronized void setRollbackTried()
 	{
