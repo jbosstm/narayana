@@ -115,7 +115,7 @@ public class BaseTransaction
 			}
 			catch (IllegalStateException e1)
 			{
-				throw new NotSupportedException();
+				throw new NotSupportedException(e1.getMessage());
 			}
 			catch (org.omg.CORBA.SystemException e2)
 			{
@@ -131,7 +131,7 @@ public class BaseTransaction
 		{
 			// shouldn't happen if we get here from the previous checks!
 
-			throw new NotSupportedException();
+			throw new NotSupportedException(e3.getMessage());
 		}
 		catch (org.omg.CORBA.SystemException e4)
 		{
