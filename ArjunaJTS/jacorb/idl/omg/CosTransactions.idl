@@ -20,9 +20,9 @@ module CosTransactions {
 	interface Resource;
 	interface Synchronization;
 	interface SubtransactionAwareResource;
-	interface TransactionalObject; 
+	interface TransactionalObject;
 
-	// DATATYPES 
+	// DATATYPES
 	enum Status {
 		StatusActive,
 		StatusMarkedRollback,
@@ -75,8 +75,8 @@ module CosTransactions {
 	exception InvalidControl {};
 	exception Unavailable {};
 	exception SynchronizationUnavailable {};
-	
-	// Current transaction 
+
+	// Current transaction
 	interface Current : CORBA::Current {
 		void begin()
 			raises(SubtransactionsUnavailable);
@@ -193,7 +193,7 @@ module CosTransactions {
 
 	interface Synchronization : TransactionalObject {
 		void before_completion();
-		void after_completion(in CosTransactions::Status status);
+		void after_completion(in CosTransactions::Status status_);
 	};
 
 	interface SubtransactionAwareResource : Resource {

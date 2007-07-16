@@ -7,15 +7,15 @@
 
 #include <SecurityLevel2.idl>
 
-module SecurityReplaceable 
+module SecurityReplaceable
 {
 
     interface SecurityContext;
     interface ClientSecurityContext;
     interface ServerSecurityContext;
 
-    interface Vault 
-    {                            
+    interface Vault
+    {
 	    // Locality Constrained
 
 	Security::AuthenticationMethodList get_supported_authen_methods(
@@ -52,7 +52,7 @@ module SecurityReplaceable
 		out Security::OpaqueBuffer        security_token,
 		out ClientSecurityContext         security_context
 		);
-	
+
 	Security::AssociationStatus accept_security_context (
 		in SecurityLevel2::CredentialsList creds_list,
 		in Security::Opaque                chan_bindings,
@@ -64,14 +64,14 @@ module SecurityReplaceable
 	Security::MechandOptionsList get_supported_mechs ();
     };
 
-    interface SecurityContext 
+    interface SecurityContext
     {              // Locality Constrained
 
-	readonly attribute Security::SecurityContextType    context_type; 
-	readonly attribute Security::SecurityContextState   context_state; 
-	readonly attribute Security::MechanismType          mechanism; 
-	readonly attribute boolean                          supports_refresh; 
-	readonly attribute Security::Opaque                 chan_binding; 
+	readonly attribute Security::SecurityContextType    context_type;
+	readonly attribute Security::SecurityContextState   context_state;
+	readonly attribute Security::MechanismType          mechanism;
+	readonly attribute boolean                          supports_refresh;
+	readonly attribute Security::Opaque                 chan_binding;
 	readonly attribute SecurityLevel2::ReceivedCredentials received_credentials;
 
 	Security::AssociationStatus continue_security_context (
@@ -82,7 +82,7 @@ module SecurityReplaceable
 
 	void protect_message (
 		in      Security::OpaqueBuffer message,
-		in      Security::QOP                       qop,
+		in      Security::QOP                       qop_,
 		out     Security::OpaqueBuffer              text_buffer,
 		out     Security::OpaqueBuffer              token
 		);
@@ -90,7 +90,7 @@ module SecurityReplaceable
 	boolean reclaim_message (
 		in      Security::OpaqueBuffer text_buffer,
 		in      Security::OpaqueBuffer token,
-		out     Security::QOP                       qop,
+		out     Security::QOP                       qop_,
 		out     Security::OpaqueBuffer message
 		);
 
@@ -116,26 +116,26 @@ module SecurityReplaceable
     };
 
 
-    interface ClientSecurityContext : SecurityContext 
+    interface ClientSecurityContext : SecurityContext
     {
 	// Locality Constrained
-	readonly attribute Security::AssociationOptions  association_options_used; 
-	readonly attribute Security::DelegationMode      delegation_mode; 
-	readonly attribute Security::Opaque              mech_data; 
-	readonly attribute SecurityLevel2::Credentials         client_credentials; 
-	readonly attribute Security::AssociationOptions  server_options_supported; 
+	readonly attribute Security::AssociationOptions  association_options_used;
+	readonly attribute Security::DelegationMode      delegation_mode;
+	readonly attribute Security::Opaque              mech_data;
+	readonly attribute SecurityLevel2::Credentials         client_credentials;
+	readonly attribute Security::AssociationOptions  server_options_supported;
 	readonly attribute Security::Opaque server_security_name;
     };
 
-    interface ServerSecurityContext : SecurityContext 
+    interface ServerSecurityContext : SecurityContext
     {
 	// Locality Constrained
 	readonly attribute Security::AssociationOptions
-	    association_options_used; 
+	    association_options_used;
 	readonly attribute Security::DelegationMode
-	    delegation_mode; 
-	readonly attribute SecurityLevel2::Credentials server_credentials; 
-	readonly attribute Security::AssociationOptions  server_options_supported; 
+	    delegation_mode;
+	readonly attribute SecurityLevel2::Credentials server_credentials;
+	readonly attribute Security::AssociationOptions  server_options_supported;
 	readonly attribute Security::Opaque server_security_name;
     };
 };

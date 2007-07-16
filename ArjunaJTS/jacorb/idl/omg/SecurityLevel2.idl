@@ -1,4 +1,4 @@
-// $Id: SecurityLevel2.idl,v 1.2 2002/05/08 14:49:08 gerald Exp $
+// $Id: SecurityLevel2.idl,v 1.3 2006/07/11 14:16:07 nick.cross Exp $
 
 #ifndef _SECURITY_LEVEL_2_IDL
 #define _SECURITY_LEVEL_2_IDL
@@ -6,7 +6,7 @@
 #pragma prefix "omg.org"
 #include <SecurityLevel1.idl>
 
-module SecurityLevel2 
+module SecurityLevel2
 {
     // Forward declaration of interfaces
     interface PrincipalAuthenticator;
@@ -14,9 +14,9 @@ module SecurityLevel2
     interface Current;
 
 
-    interface PrincipalAuthenticator 
+    interface PrincipalAuthenticator
     {
-	
+
 	// Locality Constrained
 
 	Security::AuthenticationMethodList get_supported_authen_methods(
@@ -33,7 +33,7 @@ module SecurityLevel2
 		out Security::Opaque              continuation_data,
 		out Security::Opaque              auth_specific_data
 		);
-	
+
 	Security::AuthenticationStatus continue_authentication (
 		in    Security::Opaque            response_data,
 		in    Credentials                 creds,
@@ -41,12 +41,12 @@ module SecurityLevel2
 		out  Security::Opaque             auth_specific_data
 		);
     };
-    
 
-    interface Credentials 
+
+    interface Credentials
     {
 	// Locality Constrained
-	
+
 
 	Credentials copy ();
 
@@ -85,10 +85,10 @@ module SecurityLevel2
 
     typedef sequence <Credentials>                          CredentialsList;
 
-    interface ReceivedCredentials : Credentials 
+    interface ReceivedCredentials : Credentials
     {
 	// Locality Constrained
-	
+
 
 	readonly attribute Credentials  accepting_credentials;
 	readonly attribute Security::AssociationOptions association_options_used;
@@ -117,28 +117,28 @@ module SecurityLevel2
     };
 
     // interface audit channel
-    interface AuditChannel 
+    interface AuditChannel
     {
 	// Locality Constrained
-	
+
 
 	void audit_write (
 		in     Security::AuditEventType                               event_type,
-		in     CredentialsList                                        creds,  
+		in     CredentialsList                                        creds,
 		in     Security::UtcT                                         time,
 		in     Security::SelectorValueList                            descriptors,
 		in     Security::Opaque                                       event_specific_data
 		);
-	
+
 	readonly attribute Security::AuditChannelId  audit_channel_id;
     };
 
-    // interface for Audit Decision 
+    // interface for Audit Decision
 
-    interface AuditDecision 
+    interface AuditDecision
     {
 	// Locality Constrained
-	
+
 
 	boolean audit_needed (
 		in Security::AuditEventType                                   event_type,
@@ -148,10 +148,10 @@ module SecurityLevel2
 	readonly attribute AuditChannel audit_channel;
     };
 
-    interface AccessDecision 
+    interface AccessDecision
     {
 	// Locality Constrained
-	
+
 
 	boolean access_allowed (
 		in     SecurityLevel2::CredentialsList cred_list,
@@ -163,54 +163,54 @@ module SecurityLevel2
 
     // Policy interfaces to control bindings
 
-    interface QOPPolicy : CORBA::Policy 
+    interface QOPPolicy : CORBA::Policy
     {
 	// Locality Constrained
-	
+
 	readonly attribute Security::QOP                 qop;
     };
 
 
-    interface MechanismPolicy : CORBA::Policy 
+    interface MechanismPolicy : CORBA::Policy
     {
 	// Locality Constrained
-	
+
 	readonly attribute Security::MechanismTypeList mechanisms;
     };
 
-    interface InvocationCredentialsPolicy : CORBA::Policy 
+    interface InvocationCredentialsPolicy : CORBA::Policy
     {
 	// Locality Constrained
-	
+
 	readonly attribute CredentialsList                          creds;
     };
 
-    interface EstablishTrustPolicy : CORBA::Policy 
+    interface EstablishTrustPolicy : CORBA::Policy
     {
 	// Locality Constrained
-	
+
 	readonly attribute Security::EstablishTrust                 trust;
     };
 
-    interface DelegationDirectivePolicy : CORBA::Policy 
-    { 
+    interface DelegationDirectivePolicy : CORBA::Policy
+    {
 	// Locality Constrained
-	
+
 	readonly attribute Security::DelegationDirective  delegation_directive;
     };
 
     enum DelegationMode { Delegate, NoDelegate };
 
 
-    // Interface Current derived from SecurityLevel1::Current  providing 
-    // additional operations on Current at this security level. 
+    // Interface Current derived from SecurityLevel1::Current  providing
+    // additional operations on Current at this security level.
     // This is implemented by the ORB
 
-    interface Current : SecurityLevel1::Current 
+    interface Current : SecurityLevel1::Current
     {
 	// Locality Constrained
-	
-	   
+
+
 	// Thread specific
 
 	readonly attribute ReceivedCredentials received_credentials;
@@ -230,7 +230,7 @@ module SecurityLevel2
 		 );
 
 	void remove_own_credentials(
-      	         in      Credentials                         credentials
+      	         in      Credentials                         credentials_
 		 );
 
 	    // Process/Capsule/ORB Instance specific operations
@@ -249,7 +249,7 @@ module SecurityLevel2
 
 	// Factory operations for local policies controlling bindings
 	QOPPolicy create_qop_policy(
-	        in    Security::QOP                          qop
+	        in    Security::QOP                          qop_
 		);
 
 	MechanismPolicy create_mechanism_policy(

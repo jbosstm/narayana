@@ -48,13 +48,16 @@ module ETF
                in unsigned long offset,
                in unsigned long length,
                in TimeBase::TimeT time_out);
-    void read(inout Buffer data,
-              in unsigned long offset,
-              in unsigned long min_length,
-              in unsigned long max_length,
-              in TimeBase::TimeT time_out);
-    // transport needs to set data.length() to
-    // offset + number of bytes actually read
+    unsigned long read(inout Buffer data,
+                       in unsigned long offset,
+                       in unsigned long min_length,
+                       in unsigned long max_length,
+                       in TimeBase::TimeT time_out);
+    // The ETF spec suggests that data.value.length()
+    // should be called to indicate the number of bytes
+    // actually read, but that won't work in Java.
+    // So we use the return value to report the
+    // actual number of bytes in JacORB.
     void flush();
     void connect(in Profile server_profile,
                  in TimeBase::TimeT time_out);

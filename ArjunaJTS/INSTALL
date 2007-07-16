@@ -1,54 +1,69 @@
-Installing JBossJTS into JBoss 4.0.3SP1, 4.0.4GA and 4.0.5GA
+
+Note to users of JBoss 4.0.3SP1, 4.0.4GA and 4.0.5GA:
+
+This version of JBossTS no longer supports these older
+JBossAS releases. You probably need JBossTS 4.2.3 instead.
+
+
+Installing JBossTS 4.4 into JBossAS 4.2
 ------------------------------------------------------------
 
-The installation of JBossJTS into JBoss AS is currently a manual process.
-We hope to release an installer in the near future that will automate this
-process.
+Starting with JBossAS 4.2, the application server ships with
+JBossTS JTA as a default component. You do not need to take
+any action if you want JTA support only.
 
-The following steps are required
+
+To change the JTA to the full JTS in JBossAS 4.2, follow these steps:
 
  - download the tar or zip version of the application server
  - extract the distribution into an installation directory
 
- - copy the following jars from the JBossJTS installation into the
-   server/XXX/lib directory of the application server installation
-   - lib/jbossjts.jar
-   - lib/jbossjts-jacorb.jar
-   - lib/jbossjts-integration.jar
-   - lib/ext/jbossts-common.jar
- - copy the following configuration file from the JBossJTS installation into
-   the server/XXX/conf directory of the application server installation
-   - etc/jbossjts-properties.xml
- - edit the server/default/conf/jbossjts-properties.xml file and remove the
+ - Remove from JBossAS:
+    server/XXX/lib/jbossjta.jar
+    server/XXX/lib/jbossjta-integration.jar
+    server/XXX/lib/jbossts-common.jar
+
+ - Copy the following from JBossTS into server/XXX/lib:
+    jbossjts.jar
+    jbossjts-integration.jar
+    jbossjts-jacorb.jar
+    jbossts-common.jar
+
+ - Remove:
+    server/XXX/conf/jbossjta-properties.xml
+ - Replace it with
+    jbossjts-properties.xml
+
+ - edit the server/XXX/conf/jbossjts-properties.xml file and remove the
    recovery extension property containing the value
       "com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule"
-   also remove the recovery activator property named
-      "com.arjuna.ats.arjuna.recovery.recoveryActivator_1"
- - edit the server/all/conf/jbossjts-properties.xml file and remove the
+
+ - edit the server/XXX/conf/jbossjts-properties.xml file and remove the
    recovery extension property containing the value
    "com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule"
 
- - Edit the server/all/conf/jboss-service.xml file and replace the
-   jboss:service=TransactionManager mbean declaration with the following
+ - Edit the server/XXX/conf/jboss-service.xml file and modify the
+   jboss:service=TransactionManager mbean declaration:
 
+   <!-- for JTA (comment this out) -->
+   <mbean code="com.arjuna.ats.jbossatx.jta.TransactionManagerService"
+      name="jboss:service=TransactionManager">
+      <attribute name="TransactionTimeout">300</attribute>
+      <attribute name="ObjectStoreDir">${jboss.server.data.dir}/tx-object-store</attribute>
+   </mbean>
+
+   <!-- for JTS -->
    <mbean code="com.arjuna.ats.jbossatx.jts.TransactionManagerService"
       name="jboss:service=TransactionManager">
       <depends>jboss:service=CorbaORB</depends>
       <attribute name="TransactionTimeout">300</attribute>
+      <attribute name="ObjectStoreDir">${jboss.server.data.dir}/tx-object-store</attribute>
    </mbean>
 
- - Edit the server/default/conf/jboss-service.xml file and replace the
-   jboss:service=TransactionManager mbean declaration with the following
-
-   <mbean code="com.arjuna.ats.jbossatx.jta.TransactionManagerService"
-      name="jboss:service=TransactionManager">
-      <attribute name="TransactionTimeout">300</attribute>
-   </mbean>
-
- - Edit the server/all/conf/jacorb.properies as follows.
+ - Edit the server/XXX/conf/jacorb.properies as follows.
   - change the jacorb.poa.thread_pool_max property to 32
 
- - Edit the server/all/deploy/iiop-service.xml and modify the
+ - Edit the server/XXX/deploy/iiop-service.xml and modify the
    PortableInterceptorInitializers attribute as follows.
   - remove the following lines
          <!-- comment out to disable null transaction propagation over IIOP -->
@@ -59,24 +74,18 @@ The following steps are required
          <!-- JBoss TS interceptor -->
          <initializer>com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition.InterpositionORBInitializerImpl</initializer>
 
-Replace jacorb.jar in client and server/all/lib with the jacorb.jar located in the jacorb directory.
-
 For each deployment of JacORB, you will need to ensure that the jacorb.implname in the jacorb.properties
 file is unique.
 
-Application Server Library Modifications
-----------------------------------------
+If running an external recovery manager, edit jbossjts-properties.xml to remove
+the recovery activator property named "com.arjuna.ats.arjuna.recovery.recoveryActivator_1".
+This may be necessary in cluster setups where the ObjectStore is shared, as
+there should be only one recovery manager per ObjectStore.
 
-The JBoss 4.0.3SP1, 4.0.4GA and 4.0.5GA application servers require some
-modified librarires before JBossJTA can be used as a replacement.  These
-are detailed in the appropriate subdirectory of the jboss directory within
-this installation.
+Finally, note that starting with JBossAS 4.2, the application server binds to the
+localhost address by default. This is inappropriate for distributed transactions,
+so please ensure the server is bound to a alternative address.
 
-No modifications are required if you are running a cumulative patch for
-JBoss 4.0.4GA.
-
-The application server will now be configured to use the JBossJTS transaction
-manager instead of the JBoss Transaction Manager.
 
 Web Services Transactions
 -------------------------
@@ -118,7 +127,7 @@ Note, the following issues exist with the XTS trailmap shipped with JBossTS
 
 (i) The XTS trailmap demo application generates warning messages on the
 application server console if it is run in JBoss 4.0.4GA or 4.0.5GA.  These
-warnings do not affect the funtionality of the demo application.
+warnings do not affect the functionality of the demo application.
 
 The warning is:
   [JSR109ServerMetaDataBuilder] Cannot obtain SEI mapping for:

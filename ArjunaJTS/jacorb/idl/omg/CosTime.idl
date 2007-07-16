@@ -16,7 +16,7 @@ module CosTime {
   	* For IntervalC comparaison, two UTOs are deemedto contain the same time only if the Time attribute of the two objects are equal and the Inaccuracy
   	* attributes of both the objects are zero.
   	*/
- 	enum TimeComparison {	
+ 	enum TimeComparison {
  		TCEqualTo,
  		TCLessThan,
  		TCGreaterThan,
@@ -29,8 +29,8 @@ module CosTime {
   	* MidC comparaison just compare the base times. A Midc comparaison can never return TCIndeterminate.
   	*/
  	enum ComparisonType{
- 		IntervalC,		
- 		MidC		
+ 		IntervalC,
+ 		MidC
  	};
 
  	/**
@@ -53,9 +53,9 @@ module CosTime {
   	* the required security assusrance.
   	*/
  	exception TimeUnavailable {};
-	
+
 	 interface TIO;		// forward declaration
- 
+
  	/**
   	* The Uto provides various operations on basic time. These include the following groups of operations:
   	* - Construction of a UTO from piece parts, and extraction of piece parts from a UTO
@@ -64,7 +64,7 @@ module CosTime {
   	* Of these, the first operation is required for completenesss,since in its absence it would be difficult to provide
   	* a time input to the timer event handler, for example. The second operation is required by the RFP, and the third is
   	* required for completeness and usability.
-  	* 
+  	*
   	* The Uto interface corresponds to an object that contains utc time,and is the means for manipulating the time contained in
   	* the object. This interface has opearations for getting a UtcT type data structure containing the current value of time in the object,
   	* as well as operations for getting the values of individual fields of utc time, getting absolute time from relative time, and comparing
@@ -79,38 +79,38 @@ module CosTime {
   		UTO absolute_time();
   		TimeComparison compare_time(
   			in	ComparisonType	comparison_type,
-  			in	CosTime::UTO    uto
+  			in	CosTime::UTO    uto_
   		);
   		TIO time_to_interval(
-  			in	CosTime::UTO	uto);
+  			in	CosTime::UTO	uto_);
   		TIO interval();
   };
-	
+
  	/**
   	* The TIO represents a time interval and contains operations relevant to time intervals
   	*/
  	interface TIO {
-   	
+
    	/**
     	* This attribute returns an IntervalT structure with the value of its fields filled in with the corresponding values from
     	* the TIO
     	*/
   		readonly attribute TimeBase::IntervalT 	time_interval;
-   	
+
    	/**
     	* This operation returns a value of type OverlapType depending on how the interval in the object and the time range
-    	* represented by the parameter UTO overlap. The interval in the object is interval A and the interval in the parameter 
+    	* represented by the parameter UTO overlap. The interval in the object is interval A and the interval in the parameter
     	* UTO is interval B. If OverlapType is not OTNoOverLap, then the out parameter overlap contains the overlap interval, otherwise
     	* the out parameter contains the gap between the two intervals. The exception CORBA::BAD_PARAM is raised if the UTO passed in is invalid
-    	*/	
+    	*/
   		OverlapType spans (
   			in	UTO			time,
   			out TIO			overlap);
-  	
+
    	/**
     	* This operation returns a value of type OverlapType depending on how the interval in the object and interval in the parameter TIO
     	* overlap. The interval in the object is interval A and the interval in the parameter TOI is interval B. If OverlapType is not
-    	* OTNoOverlap, then the out parameter overlap contains the overlap interval, otherwise the out parameter contains the gap between the 
+    	* OTNoOverlap, then the out parameter overlap contains the overlap interval, otherwise the out parameter contains the gap between the
     	* two interval. The exception CORBA::BAD_PARAM is raised if the TOI passed in is invalid.
     	*/
   		OverlapType overlaps (
@@ -124,7 +124,7 @@ module CosTime {
   	* attribute, and constructing a TIO wuth specified upped and lower bounds.
   	*/
  	interface TimeService {
- 	
+
  	/**
   	* The universal_time operation returns the current time and an estimate of inaccuracy in a UTO. It raises TimeUnavailable exceptions
   	* to indicate failure of an underlying time provider. The time returned in the UTO by this operation is not guaranteed to be secure
@@ -140,15 +140,15 @@ module CosTime {
   	*/
  	UTO secure_universal_time()
  			raises(TimeUnavailable);
-			
+
 		UTO new_universal_time(
  			in TimeBase::TimeT			time,
  			in TimeBase::InaccuracyT	inaccuracy,
  			in TimeBase::TdfT			tdf);
-		
+
 		UTO uto_from_utc(
 			 in TimeBase::UtcT			utc);
-		
+
 		TIO new_interval(
  			in TimeBase::TimeT			lower,
  			in TimeBase::TimeT			upper);

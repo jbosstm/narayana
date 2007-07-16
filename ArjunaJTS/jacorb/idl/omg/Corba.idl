@@ -3,10 +3,10 @@
  * by the OMG's standard Java mapping files. We need the classes
  * generated from this file, but it is not suitable to be
  * included in user-defined IDL files!
- * 
+ *
  * DO NOT INCLUDE THIS FILE, INCLUDE <orb.idl> instead!
  *
- * $Id: Corba.idl,v 1.10 2004/02/11 07:19:50 gerald Exp $
+ * $Id: Corba.idl,v 1.11 2006/05/15 14:35:52 alphonse.bendt Exp $
  */
 
 #ifndef _MYORB_IDL
@@ -15,17 +15,17 @@
 
 #pragma prefix "omg.org"
 
-module CORBA 
+module CORBA
 {
 
     typedef unsigned long PolicyType;
 
     interface Policy
-	{
-	    readonly attribute PolicyType policy_type;
-	    Policy copy();
-	    void destroy();
-	};
+    {
+        readonly attribute PolicyType policy_type;
+        Policy copy();
+        void destroy();
+    };
 
     typedef sequence <Policy> PolicyList;
     typedef sequence <PolicyType> PolicyTypeSeq;
@@ -33,7 +33,7 @@ module CORBA
 
     local interface DomainManager
     {
-	Policy get_domain_policy(in PolicyType policy_type);
+    Policy get_domain_policy(in PolicyType policy_type);
     };
 
 
@@ -41,12 +41,12 @@ module CORBA
 
     interface ConstructionPolicy: Policy
     {
-	void make_domain_manager(in InterfaceDef object_type,
-				 in boolean constr_policy);
+    void make_domain_manager(in InterfaceDef object_type,
+                 in boolean constr_policy);
     };
 
     typedef sequence <DomainManager> DomainManagersList;
-	
+
 
     typedef short PolicyErrorCode;
     const PolicyErrorCode BAD_POLICY = 0;
@@ -57,12 +57,12 @@ module CORBA
 
     exception PolicyError
     {
-	PolicyErrorCode reason;
+    PolicyErrorCode reason;
     };
 
     enum SetOverrideType {SET_OVERRIDE, ADD_OVERRIDE};
 
-    local interface PolicyManager 
+    local interface PolicyManager
     {
         PolicyList get_policy_overrides(in PolicyTypeSeq ts);
 
@@ -109,7 +109,7 @@ module CORBA
     interface ModuleDef;
     interface NativeDef;
     interface OperationDef;
-    interface PrimitiveDef; 
+    interface PrimitiveDef;
     interface Repository;
     interface SequenceDef;
     interface StringDef;
@@ -136,14 +136,14 @@ module CORBA
         dk_Value,       dk_ValueBox,    dk_ValueMember,
         dk_Native
     };
-    
+
     interface IRObject {
         // read interface
         readonly attribute  DefinitionKind  def_kind;
         // write interface
         void                destroy ();
     };
-    
+
     typedef string VersionSpec;
 
     interface Contained : IRObject {
@@ -159,8 +159,8 @@ module CORBA
 
         struct Description {
             DefinitionKind  kind;
-            any             value; 
-        }; 
+            any             value;
+        };
 
         Description         describe ();
 
@@ -174,7 +174,7 @@ module CORBA
     typedef sequence <InterfaceDef> InterfaceDefSeq;
     typedef sequence <ValueDef> ValueDefSeq;
     typedef sequence <Contained> ContainedSeq;
-    
+
     struct StructMember {
         Identifier          name;
         TypeCode            type;
@@ -208,15 +208,15 @@ module CORBA
                                in boolean                      exclude_inherited
                                );
         ContainedSeq lookup_name (
-                                  in Identifier                   search_name, 
-                                  in long                         levels_to_search, 
+                                  in Identifier                   search_name,
+                                  in long                         levels_to_search,
                                   in DefinitionKind               limit_type,
                                   in boolean                      exclude_inherited
                                   );
         struct Description {
-            Contained                       contained_object; 
+            Contained                       contained_object;
             DefinitionKind                  kind;
-            any                             value; 
+            any                             value;
         };
 
         typedef sequence<Description> DescriptionSeq;
@@ -309,14 +309,14 @@ module CORBA
         pk_null,    pk_void,      pk_short,     pk_long,   pk_ushort, pk_ulong,
         pk_float,   pk_double,    pk_boolean,   pk_char,   pk_octet,
         pk_any,     pk_TypeCode,  pk_Principal, pk_string, pk_objref,
-        pk_longlong,pk_ulonglong, pk_longdouble, 
+        pk_longlong,pk_ulonglong, pk_longdouble,
         pk_wchar,   pk_wstring,   pk_value_base
     };
-    
+
     interface Repository : Container {
         // read interface
         Contained   lookup_id               (in RepositoryId    search_id);
-        TypeCode    get_canonical_typecode  (in TypeCode        tc); 
+        TypeCode    get_canonical_typecode  (in TypeCode        tc);
         PrimitiveDef get_primitive          (in PrimitiveKind   kind);
         // write interface
         StringDef   create_string           (in unsigned long   bound);
@@ -336,10 +336,10 @@ module CORBA
 
     interface ModuleDef : Container, Contained {
     };
-    
+
     struct ModuleDescription {
-        Identifier                      name; 
-        RepositoryId                    id; 
+        Identifier                      name;
+        RepositoryId                    id;
         RepositoryId                    defined_in;
         VersionSpec                     version;
     };
@@ -350,29 +350,29 @@ module CORBA
         attribute any                   value;
     };
     struct ConstantDescription {
-        Identifier                      name; 
-        RepositoryId                    id; 
-        RepositoryId                    defined_in; 
+        Identifier                      name;
+        RepositoryId                    id;
+        RepositoryId                    defined_in;
         VersionSpec                     version;
-        TypeCode                        type; 
-        any                             value; 
+        TypeCode                        type;
+        any                             value;
     };
-    
+
     interface TypedefDef : Contained, IDLType {
     };
-    
+
     struct TypeDescription {
-        Identifier                      name; 
-        RepositoryId                    id; 
-        RepositoryId                    defined_in; 
+        Identifier                      name;
+        RepositoryId                    id;
+        RepositoryId                    defined_in;
         VersionSpec                     version;
-        TypeCode                        type; 
+        TypeCode                        type;
     };
-    
+
     interface StructDef : TypedefDef, Container {
         attribute StructMemberSeq       members;
     };
-    
+
     interface UnionDef : TypedefDef, Container {
         readonly attribute TypeCode     discriminator_type;
         attribute IDLType               discriminator_type_def;
@@ -415,11 +415,11 @@ module CORBA
         attribute StructMemberSeq       members;
     };
     struct ExceptionDescription {
-        Identifier                      name; 
-        RepositoryId                    id; 
-        RepositoryId                    defined_in; 
+        Identifier                      name;
+        RepositoryId                    id;
+        RepositoryId                    defined_in;
         VersionSpec                     version;
-        TypeCode                        type; 
+        TypeCode                        type;
     };
     enum AttributeMode {ATTR_NORMAL, ATTR_READONLY};
     interface AttributeDef : Contained {
@@ -428,18 +428,18 @@ module CORBA
         attribute AttributeMode         mode;
     };
     struct AttributeDescription {
-        Identifier                      name; 
-        RepositoryId                    id; 
-        RepositoryId                    defined_in; 
+        Identifier                      name;
+        RepositoryId                    id;
+        RepositoryId                    defined_in;
         VersionSpec                     version;
         TypeCode                        type;
-        AttributeMode                   mode; 
+        AttributeMode                   mode;
     };
     enum OperationMode {OP_NORMAL, OP_ONEWAY};
     enum ParameterMode {PARAM_IN, PARAM_OUT, PARAM_INOUT};
     struct ParameterDescription {
-        Identifier                      name; 
-        TypeCode                        type; 
+        Identifier                      name;
+        TypeCode                        type;
         IDLType                         type_def;
         ParameterMode                   mode;
     };
@@ -448,31 +448,31 @@ module CORBA
     typedef sequence <ContextIdentifier>    ContextIdSeq;
     typedef sequence <ExceptionDef>         ExceptionDefSeq;
     typedef sequence <ExceptionDescription> ExcDescriptionSeq;
-    
+
     interface OperationDef : Contained {
         readonly attribute TypeCode     result;
         attribute IDLType               result_def;
         attribute ParDescriptionSeq     params;
-        attribute OperationMode         mode; 
+        attribute OperationMode         mode;
         attribute ContextIdSeq          contexts;
         attribute ExceptionDefSeq       exceptions;
     };
-    
+
     struct OperationDescription {
-        Identifier                      name; 
-        RepositoryId                    id; 
-        RepositoryId                    defined_in; 
+        Identifier                      name;
+        RepositoryId                    id;
+        RepositoryId                    defined_in;
         VersionSpec                     version;
-        TypeCode                        result; 
-        OperationMode                   mode; 
-        ContextIdSeq                    contexts; 
+        TypeCode                        result;
+        OperationMode                   mode;
+        ContextIdSeq                    contexts;
         ParDescriptionSeq               parameters;
         ExcDescriptionSeq               exceptions;
     };
     typedef sequence <RepositoryId>         RepositoryIdSeq;
     typedef sequence <OperationDescription> OpDescriptionSeq;
     typedef sequence <AttributeDescription> AttrDescriptionSeq;
-    
+
     interface InterfaceDef : Container, Contained, IDLType {
 
         // read/write interface
@@ -506,12 +506,12 @@ module CORBA
                                        in IDLType                  type,
                                        in AttributeMode            mode
                                        );
-        OperationDef create_operation ( 
+        OperationDef create_operation (
                                        in RepositoryId             id,
                                        in Identifier               name,
                                        in VersionSpec              version,
                                        in IDLType                  result,
-                                       in OperationMode            mode, 
+                                       in OperationMode            mode,
                                        in ParDescriptionSeq        params,
                                        in ExceptionDefSeq          exceptions,
                                        in ContextIdSeq             contexts
@@ -519,9 +519,9 @@ module CORBA
     };
 
     struct InterfaceDescription {
-        Identifier                      name; 
-        RepositoryId                    id; 
-        RepositoryId                    defined_in; 
+        Identifier                      name;
+        RepositoryId                    id;
+        RepositoryId                    defined_in;
         VersionSpec                     version;
         RepositoryIdSeq                 base_interfaces;
         boolean                         is_abstract;
@@ -530,7 +530,7 @@ module CORBA
     typedef short Visibility;
     const Visibility PRIVATE_MEMBER = 0;
     const Visibility PUBLIC_MEMBER  = 1;
-    
+
     struct ValueMember {
         Identifier                      name;
         RepositoryId                    id;
@@ -538,7 +538,7 @@ module CORBA
         VersionSpec                     version;
         TypeCode                        type;
         IDLType                         type_def;
-        Visibility                      access; 
+        Visibility                      access;
     };
 
     typedef sequence <ValueMember> ValueMemberSeq;
@@ -617,7 +617,7 @@ module CORBA
         RepositoryIdSeq                 supported_interfaces;
         RepositoryIdSeq                 abstract_base_values;
         boolean                         is_truncatable;
-        RepositoryId                    base_value; 
+        RepositoryId                    base_value;
     };
 
     interface ValueBoxDef : TypedefDef {
@@ -625,11 +625,11 @@ module CORBA
     };
 
     enum TCKind {                               // PIDL
-        tk_null,    tk_void, 
-        tk_short,   tk_long,        tk_ushort,  tk_ulong, 
-        tk_float,   tk_double,      tk_boolean, tk_char, 
-        tk_octet,   tk_any,         tk_TypeCode,tk_Principal, tk_objref, 
-        tk_struct,  tk_union,       tk_enum,    tk_string, 
+        tk_null,    tk_void,
+        tk_short,   tk_long,        tk_ushort,  tk_ulong,
+        tk_float,   tk_double,      tk_boolean, tk_char,
+        tk_octet,   tk_any,         tk_TypeCode,tk_Principal, tk_objref,
+        tk_struct,  tk_union,       tk_enum,    tk_string,
         tk_sequence,tk_array,       tk_alias,   tk_except,
         tk_longlong,tk_ulonglong,   tk_longdouble,
         tk_wchar,   tk_wstring,     tk_fixed,
@@ -649,30 +649,30 @@ module CORBA
         exception   BadKind {};
         // for all TypeCode kinds
         boolean     equal       (in TypeCode tc);
-        boolean     equivalent  (in TypeCode tc); 
-        TypeCode    get_compact_typecode(); 
+        boolean     equivalent  (in TypeCode tc);
+        TypeCode    get_compact_typecode();
         TCKind      kind ();
-        // for tk_objref, tk_struct,    tk_union,  tk_enum, tk_alias, 
+        // for tk_objref, tk_struct,    tk_union,  tk_enum, tk_alias,
         //     tk_value,  tk_value_box, tk_native, tk_abstract_interface
         // and tk_except
         RepositoryId    id () raises (BadKind);
-        // for tk_objref, tk_struct,    tk_union,  tk_enum, tk_alias, 
+        // for tk_objref, tk_struct,    tk_union,  tk_enum, tk_alias,
         //     tk_value,  tk_value_box, tk_native, tk_abstract_interface
         // and tk_except
         Identifier name () raises (BadKind);
-        // for tk_struct, tk_union, tk_enum, tk_value, 
+        // for tk_struct, tk_union, tk_enum, tk_value,
         // and tk_except
         unsigned long   member_count () raises (BadKind);
-        Identifier      member_name (in unsigned long index) 
+        Identifier      member_name (in unsigned long index)
             raises (BadKind, Bounds);
         // for tk_struct, tk_union, tk_value, and tk_except
-        TypeCode        member_type (in unsigned long index) 
+        TypeCode        member_type (in unsigned long index)
             raises (BadKind, Bounds);
         // for tk_union
-        any             member_label (in unsigned long index) 
+        any             member_label (in unsigned long index)
             raises (BadKind, Bounds);
         TypeCode        discriminator_type ()   raises (BadKind);
-        long            default_index ()        raises (BadKind); 
+        long            default_index ()        raises (BadKind);
         // for tk_string, tk_sequence, and tk_array
         unsigned long   length ()               raises (BadKind);
         // for tk_sequence, tk_array, tk_value_box, and tk_alias
@@ -689,28 +689,28 @@ module CORBA
 
 
 
-    /* this is the original PIDL from the lang. mapping, 
+    /* this is the original PIDL from the lang. mapping,
        but we do not use it! Instead...
 
     pseudo interface Principal
-    { 
-	attribute sequence<octet> name;
+    {
+    attribute sequence<octet> name;
     };
     */
 
-    /* ... we use this little hack. It saves us fiddling with 
-       the generated code that uses  Principals. Actually, we 
+    /* ... we use this little hack. It saves us fiddling with
+       the generated code that uses  Principals. Actually, we
        should not be doing this....
     */
 
     typedef sequence<octet> Principal;
 
-    
+
     //need to have this because the OMG supplied helper classes for
     //these exceptions always throw NO_IMPLEMENT
-    interface ORB 
+    interface ORB
     {
-       exception InvalidName {}; 
+       exception InvalidName {};
        exception InconsistentTypeCode {};
     };
 
@@ -728,12 +728,11 @@ module CORBA
     typedef sequence<wchar> WCharSeq;
 
 
-   valuetype WStringValue {
-      public wstring value;
-   };
+   // Taken from 04-03-12 CORBA 3.0.3
+   valuetype StringValue string;
+   valuetype WStringValue wstring;
 
-
-
+   exception WrongTransaction {};
 };
 
 
