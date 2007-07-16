@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -50,7 +50,7 @@ import com.arjuna.mw.wscf.model.twophase.participants.Synchronization;
 
 public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.SynchronizationRecord
 {
-    
+
     /**
      * Constructor.
      *
@@ -64,7 +64,7 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
     {
 	_resourceHandle = theResource;
 	_id = new CoordinatorIdImple(id);
-	
+
 	if (_resourceHandle == null)
 	    wscfLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_1",
 					  new Object[]{_id});
@@ -82,7 +82,7 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
 	    try
 	    {
 		_resourceHandle.beforeCompletion();
-		
+
 		return true;
 	    }
 	    catch (Exception ex)
@@ -105,7 +105,7 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
 	    catch (Exception ex)
 	    {
 	    }
-	    
+
 	    return true;
         }
 
@@ -116,7 +116,16 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
     {
 	return _id;
     }
-    
+
+    public int compareTo(Object o) {
+        SynchronizationRecord sr = (SynchronizationRecord)o;
+        if(_id.equals(sr.get_uid())) {
+            return 0;
+        } else {
+            return _id.lessThan(sr.get_uid()) ? -1 : 1;
+        }
+    }
+
     private final int convertStatus (int result)
     {
 	switch (result)
@@ -130,8 +139,8 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
 	    return CoordinationResult.CANCELLED;
 	}
     }
-    
+
     private Synchronization    _resourceHandle;
     private CoordinatorIdImple _id;
-    
+
 }

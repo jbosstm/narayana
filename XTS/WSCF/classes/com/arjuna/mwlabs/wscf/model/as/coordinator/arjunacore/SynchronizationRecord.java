@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -58,7 +58,7 @@ import com.arjuna.mw.wscf.common.Qualifier;
 
 public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.SynchronizationRecord
 {
-    
+
     /**
      * Constructor.
      *
@@ -74,7 +74,7 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
 	_priority = priority;
 	_quals = quals;
 	_id = new CoordinatorIdImple(id);
-	
+
 	if (_resourceHandle == null)
 	    wscfLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.SynchronizationRecord_1",
 					  new Object[]{_id});
@@ -97,7 +97,7 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
             if (_resourceHandle != null)
             {
 		Outcome res = _resourceHandle.processMessage(new BeforeCompletion(_id));
-		
+
 		if (res != null)
 		{
 		    if (res instanceof CoordinationOutcome)
@@ -137,7 +137,7 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
             if (_resourceHandle != null)
             {
 		Outcome res = _resourceHandle.processMessage(new AfterCompletion(_id, convertStatus(status)));
-		
+
 		if (res != null)
 		{
 		    if (res instanceof CoordinationOutcome)
@@ -169,7 +169,16 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
     {
 	return _id;
     }
-    
+
+    public int compareTo(Object o) {
+        SynchronizationRecord sr = (SynchronizationRecord)o;
+        if(_id.equals(sr.get_uid())) {
+            return 0;
+        } else {
+            return _id.lessThan(sr.get_uid()) ? -1 : 1;
+        }
+    }
+
     private final CompletionStatus convertStatus (int result)
     {
 	switch (result)
@@ -183,10 +192,10 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
 	    return Failure.instance();
 	}
     }
-    
+
     private Participant        _resourceHandle;
     private int                _priority;
     private Qualifier[]        _quals;
     private CoordinatorIdImple _id;
-    
+
 }
