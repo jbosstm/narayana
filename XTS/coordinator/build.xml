@@ -1,20 +1,20 @@
 <!--
   JBoss, Home of Professional Open Source
   Copyright 2006, Red Hat Middleware LLC, and individual contributors
-  as indicated by the @author tags. 
-  See the copyright.txt in the distribution for a full listing 
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a full listing
   of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
   of the GNU General Public License, v. 2.0.
-  This program is distributed in the hope that it will be useful, but WITHOUT A 
-  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
   PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   You should have received a copy of the GNU General Public License,
   v. 2.0 along with this distribution; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
-  
+
   (C) 2005-2006,
   @author JBoss Inc.
 -->
@@ -34,7 +34,7 @@
     <!-- The properties to override are the following:                      -->
     <!--    hostname (defaults to localhost)                                -->
     <!--    port (defaults to 8080 for jboss)                               -->
-    
+
     <!--    deploy.dir The deployment directory for the ear                 -->
     <!--    xts.home The installation directory for AXTS                   -->
     <!-- ================================================================== -->
@@ -47,8 +47,8 @@
 
     <property name="lib.dir" location="${xts.home}/lib"/>
     <property name="ext.dir" location="${lib.dir}/ext"/>
-    
-    <property name="ext.package" value="jbossjts.jar jbossts-common.jar commons-logging.jar stax-api-1.0.jar wstx-asl-2.0.3.jar"/>
+
+    <property name="ext.package" value="jbossjta.jar jbossts-common.jar commons-logging.jar stax-api-1.0.jar wstx-asl-2.0.3.jar"/>
 
     <!-- ================================================================== -->
 
@@ -59,7 +59,7 @@
     <property name="build.dd.dir"      value="${build.dir}/dd"/>
     <property name="build.webapps.dir" value="${build.dir}/webapps"/>
     <property name="build.webmethods.dir" value="${build.dir}/webmethods"/>
- 
+
     <target name="clean">
         <delete dir="${build.dir}"/>
         <delete>
@@ -89,7 +89,7 @@
             tofile="${build.webapps.dir}/tmp/ws-c/WEB-INF/web.xml" filtering="true" overwrite="true"/>
 
         <jar destfile="${build.webapps.dir}/ws-c.war" basedir="${build.webapps.dir}/tmp/ws-c" manifest="${build.webapps.dir}/tmp/ws-c/META-INF/MANIFEST.MF"/>
-        
+
         <delete dir="${build.webapps.dir}/tmp/ws-c"/>
 
         <unjar src="${webapps.dir}/ws-t.war" dest="${build.webapps.dir}/tmp/ws-t"/>
@@ -98,37 +98,37 @@
             tofile="${build.webapps.dir}/tmp/ws-t/WEB-INF/web.xml" filtering="true" overwrite="true"/>
 
         <jar destfile="${build.webapps.dir}/ws-t.war" basedir="${build.webapps.dir}/tmp/ws-t" manifest="${build.webapps.dir}/tmp/ws-t/META-INF/MANIFEST.MF"/>
-        
+
         <delete dir="${build.webapps.dir}/tmp/ws-t"/>
-        
+
         <jar destfile="${build.dir}/config.jar" basedir="${xts.home}/conf"/>
      </target>
-     
+
      <target name="webmethods-build" depends="init">
        <property name="webinf.dir" location="${build.webmethods.dir}/WEB-INF"/>
        <property name="webinf.lib.dir" location = "${webinf.dir}/lib"/>
-       
+
        <mkdir dir="${build.webmethods.dir}"/>
        <mkdir dir="${webinf.dir}"/>
        <mkdir dir="${webinf.lib.dir}"/>
-       
+
        <filter token="hostname" value="${hostname}"/>
        <filter token="port" value="${port}"/>
        <filter token="urlstub" value="${webmethods.urlstub}"/>
-       
+
        <copy file="${xts.coord.dd.dir}/webMethods-web-app.xml"
            tofile="${webinf.dir}/web.xml" filtering="true"/>
        <copy file="${xts.coord.dd.dir}/glue-config.xml"
            todir="${webinf.dir}"/>
        <jar destfile="${build.dir}/config.jar" basedir="config"/>
-       
+
        <copy todir="${webinf.lib.dir}">
          <fileset dir="${lib.dir}" includes="*.jar"/>
          <fileset dir="${ext.dir}" includes="${ext.package}"/>
          <fileset dir="${build.dir}" includes="config.jar"/>
        </copy>
      </target>
-  
+
      <target name="jboss-ear" depends="webapps">
         <ear earfile="${build.webapps.dir}/xts-coordinator_jboss.ear" appxml="${dd.dir}/xts-coord_application.xml">
             <fileset dir="${lib.dir}" includes="*.jar"/>
@@ -138,7 +138,7 @@
             <fileset dir="${build.webapps.dir}" includes="ws-c.war ws-t.war"/>
         </ear>
     </target>
-    
+
     <target name="weblogic-ear" depends="webapps">
         <copy todir="${build.dir}/APP-INF/lib">
             <fileset dir="${lib.dir}" includes="*.jar"/>
@@ -170,11 +170,11 @@
     <target name="undeploy-weblogic">
         <delete file="${deploy.dir}/xts-coordinator.ear"/>
     </target>
-    
+
     <target name="undeploy-jboss">
         <delete file="${deploy.dir}/xts-coordinator.ear"/>
     </target>
-    
+
     <target name="undeploy-webmethods">
         <delete dir="${deploy.dir}/${webmethods.urlstub}"/>
     </target>

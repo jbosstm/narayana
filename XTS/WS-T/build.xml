@@ -1,20 +1,20 @@
 <!--
   JBoss, Home of Professional Open Source
   Copyright 2006, Red Hat Middleware LLC, and individual contributors
-  as indicated by the @author tags. 
-  See the copyright.txt in the distribution for a full listing 
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a full listing
   of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
   of the GNU General Public License, v. 2.0.
-  This program is distributed in the hope that it will be useful, but WITHOUT A 
-  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
   PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   You should have received a copy of the GNU General Public License,
   v. 2.0 along with this distribution; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
-  
+
   (C) 2005-2006,
   @author JBoss Inc.
 -->
@@ -54,31 +54,31 @@
 
     <property name="com.arjuna.buildsystem.dir" location="../../antbuildsystem"/>
     <property name="com.arjuna.jta.install" location="../../install"/>
-	
+
     <property name="com.arjuna.buildsystem.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
     <property name="com.arjuna.jta.install.lib" location="${com.arjuna.jta.install}/lib"/>
     <property name="com.arjuna.jta.install.ext" location="${com.arjuna.jta.install.lib}/ext"/>
     <property name="com.arjuna.xts.ext" location="../ext"/>
-	
+
     <property name="ws-c.build.dev.lib.dir"  value="${ws-c.home}/build/dev/lib"/>
-	
+
     <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
-	
-    <property name="jta.lib.jars" value="jbossjts.jar"/>
+
+    <property name="jta.lib.jars" value="jbossjta.jar"/>
     <property name="jta.ext.jars" value="jbossts-common.jar commons-logging.jar"/>
     <property name="xts.ext.jars" value="stax-api-1.0.jar wstx-asl-2.0.3.jar"/>
     <property name="xts.ext.compile.jars" value="servlet.jar"/>
- 
+
     <property name="tests.libs"              value="junit.jar"/>
     <property name="ws-c.libs"               value="ws-c.jar"/>
-    
+
     <property name="javac.debug"             value="on"/>
     <property name="javac.optimize"          value="off"/>
 
     <path id="ws-c.path">
         <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c.libs}"/>
     </path>
-    
+
     <path id="lib.ext.path">
         <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
         <fileset dir="${com.arjuna.xts.ext}" includes="${xts.ext.jars} ${xts.ext.compile.jars}"/>
@@ -88,7 +88,7 @@
     <path id="tests.lib.path">
         <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
     </path>
-	
+
 	<!-- name of the resource bundle -->
     <property name="com.arjuna.mwlabs.wst.resourcebundle"
 	      value="wst_msg_en_US.properties"/>
@@ -157,9 +157,9 @@
              </doclet>
         </javadoc>
     </target>
-	
+
     <target name="dev-jars" depends="dev-compile, dev-resourcebundle" >
-        <jar jarfile="${build.dev.lib.dir}/ws-t.jar"> 
+        <jar jarfile="${build.dev.lib.dir}/ws-t.jar">
             <fileset dir="${build.dev.classes.dir}"/>
             <manifest>
                 <attribute name="Class-Path" value="${ws-c.libs}"/>
@@ -177,7 +177,7 @@
         <war warfile="${build.dev.webapps.dir}/ws-t.war" webxml="${build.dev.dd.dir}/web-app.xml">
             <manifest>
                 <attribute name="Class-Path" value="ws-t.jar"/>
-            </manifest>   
+            </manifest>
         </war>
     </target>
 
