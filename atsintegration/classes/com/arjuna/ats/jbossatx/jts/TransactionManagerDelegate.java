@@ -45,7 +45,7 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
      */
     public TransactionManagerDelegate()
     {
-        super(new TransactionManagerImple());
+        super(getTransactionManager());
     }
     
     /**
