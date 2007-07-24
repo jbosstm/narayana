@@ -28,15 +28,18 @@ import com.arjuna.common.util.logging.DebugLevel;
 import com.arjuna.common.util.logging.VisibilityLevel;
 
 import javax.transaction.*;
+import java.io.Serializable;
 
 /**
  * Implementation of the TransactionSynchronizationRegistry interface, in line with the JTA 1.1 specification.
  *
  * @author jonathan.halliday@jboss.com
  */
-public class TransactionSynchronizationRegistryImple implements TransactionSynchronizationRegistry
-{
-	/*
+public class TransactionSynchronizationRegistryImple implements TransactionSynchronizationRegistry, Serializable {
+    // This Imple is stateless and just delegates the work down to the transaction maanger.
+    // It's Serilizable so it can be shoved into the app server JNDI.
+
+    /*
 	 * http://java.sun.com/javaee/5/docs/api/javax/transaction/TransactionSynchronizationRegistry.html
 	 * http://jcp.org/aboutJava/communityprocess/maintenance/jsr907/907ChangeLog.html
 	 */

@@ -33,9 +33,12 @@ package com.arjuna.ats.jta.utils;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 
 import com.arjuna.ats.jta.common.Environment;
+import com.arjuna.ats.jta.logging.jtaLogger;
 
 import javax.naming.InitialContext;
 import javax.naming.Reference;
+import javax.naming.NamingException;
+import javax.naming.ConfigurationException;
 
 public class JNDIManager
 {
@@ -146,16 +149,25 @@ public class JNDIManager
      * JNDI context.
      * @param initialContext
      * @throws javax.naming.NamingException
+     *
+     * @message com.arjuna.ats.jta.utils.JNDIManager.tsr1 [message com.arjuna.ats.jta.utils.JNDIManager] Unable to instantiate TransactionSynchronizationRegistry implementation class!
      */
 	public static void bindJTATransactionSynchronizationRegistryImplementation(InitialContext initialContext) throws javax.naming.NamingException
 	{
         /** Look up and instantiate an instance of the configured TransactionSynchronizationRegistry implementation **/
         String tsrImplementation = getTransactionSynchronizationRegistryImplementationClassname();
+        Object tsr = null;
+        try {
+            tsr = Class.forName(tsrImplementation).newInstance();
+        } catch(Exception e) {
+            NamingException namingException = new ConfigurationException(jtaLogger.logMesg.getString("com.arjuna.ats.jta.utils.JNDIManager.tsr1"));
+            namingException.setRootCause(e);
+            throw namingException;
+        }
 
         /** Bind the TransactionSynchronizationRegistry to the appropriate JNDI context **/
-        Reference ref = new Reference(tsrImplementation, tsrImplementation, null);
-        initialContext.rebind(getTransactionSynchronizationRegistryJNDIName(), ref);
-	}
+        initialContext.rebind(getTransactionSynchronizationRegistryJNDIName(), tsr);
+    }
 
 	public final static String getTransactionManagerJNDIName()
 	{
