@@ -58,8 +58,6 @@ public void run ()
                                        FacilityCode.FAC_ATOMIC_ACTION, "ReaperWorkerThread.run ()");
          }
     	
-        if (TransactionReaper.printTestOutput) System.out.println("Worker " + this + " : started");
-
         for (;;)
     	{
              // wait for the reaper thread to queue some TXs for
@@ -72,8 +70,6 @@ public void run ()
                                                "com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_1", 
                                                new Object[]{Thread.currentThread()});
              }
-
-             if (TransactionReaper.printTestOutput) System.out.println("Worker " + this + " : waiting");
 
              _theReaper.waitForCancellations();
 
@@ -91,8 +87,6 @@ public void run ()
                                                "com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_2", 
                                                new Object[]{Thread.currentThread()});
              }
-
-             if (TransactionReaper.printTestOutput) System.out.println("Worker " + this + " : doing cancellations");
 
              _theReaper.doCancellations();
 

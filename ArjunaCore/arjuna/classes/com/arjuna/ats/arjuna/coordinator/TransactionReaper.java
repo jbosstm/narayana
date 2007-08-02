@@ -230,14 +230,11 @@ public class TransactionReaper
 			    { Long.toString(e._absoluteTimeout) });
 		}
 
-		if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : checking " + e._control.get_uid());
-
 		final long now = System.currentTimeMillis();
 		if (now < e._absoluteTimeout)
 		{
 		    // go back to sleep
 
-		    if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : ms wait " + (e._absoluteTimeout - now));
 		    break;
 		}
 
@@ -249,8 +246,6 @@ public class TransactionReaper
 			    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
 			    "Reaper timeout for TX " + e._control.get_uid() + " state " + e.statusName());
 		}
-
-		if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : timeout " + e._control.get_uid());
 
 		// if we have to synchronize on multiple objects we always
 		// do so in a fixed order ReaperElement before Reaper and
@@ -332,8 +327,6 @@ public class TransactionReaper
 				    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
 				    "Reaper deferring interrupt for TX scheduled for cancel " + e._control.get_uid());
 			}
-
-			if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : deferring interrupt for TX scheduled for cancel " + e._control.get_uid());
 		    }
 		    break;
 		    case ReaperElement.CANCEL:
@@ -370,7 +363,6 @@ public class TransactionReaper
 				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_4", 
 				    new Object[]{e._control.get_uid()});
 			}
-			if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : interrupting cancel in progress for " + e._control.get_uid());
 		    }
 		    break;
 		    case ReaperElement.CANCEL_INTERRUPTED:
@@ -396,7 +388,6 @@ public class TransactionReaper
 					VisibilityLevel.VIS_PUBLIC,
 					FacilityCode.FAC_ATOMIC_ACTION, "Reaper " + Thread.currentThread() + " got a zombie " + e._worker + " (zombie count now " + _zombieCount + ") cancelling "  + e._control.get_uid());
 			    }
-			    if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " got a zombie " + e._worker + " (zombie count now " + _zombieCount + ") cancealling "  + e._control.get_uid());
 
 			    if (_zombieCount == _zombieMax)
 			    {
@@ -412,8 +403,6 @@ public class TransactionReaper
 					    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_5", 
 					    new Object[]{new Integer(_zombieCount)});
 				}
-
-				if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " too many zombies (" + _zombieCount + ")! " + e._control.get_uid());
 			    }
 			}
 
@@ -436,7 +425,6 @@ public class TransactionReaper
 						 e._control.get_uid()});
 			}
 
-			if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : thread " + e._worker + " executing cancel did not respond to interrupt -- scheduling for rollback! " + e._control.get_uid());
 			// ok, since the worker was wedged we need to
 			// remove the entry from the timeouts and
 			// transactions lists then mark this tx as
@@ -465,7 +453,6 @@ public class TransactionReaper
 					    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_10",
 					    new Object[]{e._control.get_uid()});
 				}
-				if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " successfully marked TX " + e._control.get_uid() + " as rollback only");
 			    }
 			    else
 			    {
@@ -480,7 +467,6 @@ public class TransactionReaper
 					       "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_11",
 					       new Object[]{e._control.get_uid()});
 				}
-				if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " failed to mark TX " + e._control.get_uid() + " as rollback only");
 			    }
 			}
 			catch(Exception e1)
@@ -496,7 +482,6 @@ public class TransactionReaper
 					"com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_12",
 					new Object[]{e._control.get_uid()});
 			    }
-			    if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " exception during mark-as-rollback of TX " + e._control.get_uid());
 			}
 		    }
 		    break;
@@ -570,7 +555,6 @@ public class TransactionReaper
 			    DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 			    FacilityCode.FAC_ATOMIC_ACTION, "Reaper Worker " + Thread.currentThread() + " attempting to cancel "  + e._control.get_uid());
 		}
-		if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " : attempting to cancel " + e._control.get_uid());
 
 		boolean cancelled = false;
 		boolean excepted = false;
@@ -638,8 +622,6 @@ public class TransactionReaper
 						 new Integer(_zombieCount)});
 			}
 
-			if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker" + Thread.currentThread() + " failed to respond to interrupt trying to cancel or mark as rollback only TX " + e._control.get_uid() + " -- exiting as zombie (zombie count decremented to " + _zombieCount + ")");
-
 			// this gets us out of the for(;;) loop and
 			// the shutdown call above makes sure we exit
 			// after returning
@@ -684,8 +666,6 @@ public class TransactionReaper
 					     e._control.get_uid()});
 		    }
 
-		    if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " successfully cancelled TX " + e._control.get_uid());
-
 		    synchronized(this)
 		    {
 			_timeouts.remove(e._control);
@@ -707,8 +687,6 @@ public class TransactionReaper
 				    new Object[]{Thread.currentThread(),
 						 e._control.get_uid()});
 			}
-
-			if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " exception during cancel of TX " + e._control.get_uid() + " -- rescheduling for mark-as-rollback");
 		    }
 		    else
 		    {
@@ -723,8 +701,6 @@ public class TransactionReaper
 				    new Object[]{Thread.currentThread(),
 						 e._control.get_uid()});
 			}
-
-			if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " failed to cancel TX " + e._control.get_uid() + " rescheduling for mark-as-rollback");
 		    }
 
 		    synchronized(this)
@@ -749,7 +725,6 @@ public class TransactionReaper
 					new Object[]{Thread.currentThread(),
 						     e._control.get_uid()});
 			    }
-			    if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " successfully marked TX " + e._control.get_uid() + " as rollback only");
 			}
 			else
 			{
@@ -766,7 +741,6 @@ public class TransactionReaper
 					new Object[]{Thread.currentThread(),
 						     e._control.get_uid()});
 			    }
-			    if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " failed to mark TX " + e._control.get_uid() + " as rollback only");
 			}
 		    }
 		    catch(Exception e1)
@@ -783,7 +757,6 @@ public class TransactionReaper
 				    new Object[]{Thread.currentThread(),
 						 e._control.get_uid()});
 			}
-			if (TransactionReaper.printTestOutput) System.out.println("Reaper Worker " + Thread.currentThread() + " exception during mark-as-rollback of TX " + e._control.get_uid());
 		    }
 		}
 	    }
@@ -1178,6 +1151,4 @@ public class TransactionReaper
 	private static long _lifetime = 0;
 
 	private static int _zombieCount = 0;
-
-        public final static boolean printTestOutput = false;
 }

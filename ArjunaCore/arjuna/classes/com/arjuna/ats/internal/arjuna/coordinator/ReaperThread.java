@@ -69,8 +69,6 @@ public void run ()
     	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
     				     FacilityCode.FAC_ATOMIC_ACTION, "ReaperThread.run ()");
     	}
-    	
-        if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : started");
 
     	for (;;)
     	{
@@ -97,8 +95,6 @@ public void run ()
                                                                          Long.toString(sleepPeriod)});
                           }
 
-                          if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : sleeping " + Long.toString(sleepPeriod));
-
                           reaperObject.wait(sleepPeriod);
                      }
                      catch (InterruptedException e1) {}
@@ -110,8 +106,6 @@ public void run ()
                  tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                                           FacilityCode.FAC_ATOMIC_ACTION, "ReaperThread.run ()");
             }
-    	
-            if (TransactionReaper.printTestOutput) System.out.println("Reaper " + Thread.currentThread() + " : woke up");
 
     	    if (_shutdown)
     	        return;
