@@ -101,6 +101,10 @@ public class XATerminator extends XATerminatorImple implements
 	{
 		try
 		{
+			/*
+			 * Remember to conver timeout to seconds.
+			 */
+			
 			TransactionImple tx = TxImporter.importTransaction(xid, (int) timeout);
 
 			switch (tx.getStatus())
