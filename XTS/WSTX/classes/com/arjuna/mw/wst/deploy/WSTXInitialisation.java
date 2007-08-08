@@ -63,9 +63,9 @@ public class WSTXInitialisation implements ServletContextListener
     {
         try
         {
-            configure();
-
             Configuration.initialise("/wstx.xml");
+
+            configure();
             // Start recovery
 //            RecoveryManager.manager() ;
         }
@@ -101,7 +101,7 @@ public class WSTXInitialisation implements ServletContextListener
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance() ;
         final DocumentBuilder builder = factory.newDocumentBuilder() ;
         final Document doc = builder.parse(is);
-        
+
         if (doc == null)
         {
             final String pattern = wstxLogger.log_mesg.getString("com.arjuna.mw.wst.deploy.WSTXI_22") ;
