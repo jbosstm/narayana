@@ -80,13 +80,13 @@
 
 		<condition property="JDK_VERSION_OK">
 			<or>
-				<equals arg1="${java.specification.version}" arg2="1.4"/>
 				<equals arg1="${java.specification.version}" arg2="1.5"/>
 			</or>
 		</condition>
 
-		<fail unless="JDK_VERSION_OK">
-			JBossTS XTS currently requires jdk1.4 or jdk1.5 to build.
+        <!-- jaxws-api pre-req is not available in a jdk1.4 flavor -->
+        <fail unless="JDK_VERSION_OK">
+			JBossTS XTS currently requires jdk1.5 to build.
 		</fail>
 
 		<property name="com.arjuna.mw.installationdirectory" location="xts-install"/>
