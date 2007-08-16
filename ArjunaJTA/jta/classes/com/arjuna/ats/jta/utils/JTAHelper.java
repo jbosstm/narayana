@@ -31,9 +31,6 @@
 
 package com.arjuna.ats.jta.utils;
 
-import javax.transaction.*;
-import javax.transaction.xa.*;
-
 /**
  * Some useful utility routines.
  */

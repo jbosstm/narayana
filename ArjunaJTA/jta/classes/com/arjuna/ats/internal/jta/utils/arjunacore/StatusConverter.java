@@ -43,6 +43,9 @@ public class StatusConverter
 		case ActionStatus.RUNNING:
 			return javax.transaction.Status.STATUS_ACTIVE;
 		case ActionStatus.COMMITTED:
+		case ActionStatus.H_COMMIT:
+		case ActionStatus.H_HAZARD:  // not exactly true, but ...
+		case ActionStatus.H_MIXED:
 			return javax.transaction.Status.STATUS_COMMITTED;
 		case ActionStatus.COMMITTING:
 			return javax.transaction.Status.STATUS_COMMITTING;
@@ -53,6 +56,7 @@ public class StatusConverter
 		case ActionStatus.PREPARED:
 			return javax.transaction.Status.STATUS_PREPARED;
 		case ActionStatus.ABORTED:
+		case ActionStatus.H_ROLLBACK:
 			return javax.transaction.Status.STATUS_ROLLEDBACK;
 		case ActionStatus.INVALID:
 			return javax.transaction.Status.STATUS_UNKNOWN;
