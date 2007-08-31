@@ -80,7 +80,10 @@ abstract class SoapMessageBase implements SoapMessage
     {
         try
         {
-            writeEnvelope(SoapUtils.getXMLStreamWriter(writer)) ;
+            final XMLStreamWriter xmlWriter = SoapUtils.getXMLStreamWriter(writer);
+
+            writeEnvelope(xmlWriter);
+            xmlWriter.flush();
         }
         catch (final XMLStreamException xmlse)
         {
