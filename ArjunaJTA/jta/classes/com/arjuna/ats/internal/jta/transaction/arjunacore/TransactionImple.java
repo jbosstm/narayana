@@ -122,7 +122,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 		_duplicateResources = new Hashtable();
 		_suspendCount = 0;
 		_xaTransactionTimeoutEnabled = getXATransactionTimeoutEnabled();
-	}
+
+        _txLocalResources = Collections.synchronizedMap(new HashMap());
+    }
 
 	/**
 	 * Overloads Object.equals()
@@ -1275,23 +1277,15 @@ public class TransactionImple implements javax.transaction.Transaction,
 	}
 
 	// get a key-value pair from a transaction specific Map
-	Object getTxLocalResource(Object key)
+	public Object getTxLocalResource(Object key)
 	{
-		if (txLocalResources == null)
-		{
-			return null;
-		}
-		return txLocalResources.get(key);
+		return _txLocalResources.get(key);
 	}
 
 	// store a key-value pair in the scope of the transaction.
-	void putTxLocalResource(Object key, Object value)
+	public void putTxLocalResource(Object key, Object value)
 	{
-		if (txLocalResources == null)
-		{
-			txLocalResources = Collections.synchronizedMap(new HashMap());
-		}
-		txLocalResources.put(key, value);
+		_txLocalResources.put(key, value);
 	}
 
 	protected TransactionImple()
@@ -1786,7 +1780,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	private final boolean _xaTransactionTimeoutEnabled;
 
-	private Map txLocalResources;
+	private Map _txLocalResources;
 
 	/**
 	 * Count of last resources seen in this transaction.
