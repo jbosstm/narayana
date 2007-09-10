@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -56,7 +56,7 @@ public class ParticipantStub implements Participant, PersistableParticipant
 {
     private static final QName QNAME_TWO_PC_PARTICIPANT = new QName("twoPCParticipant") ;
     private CoordinatorEngine coordinator ;
-    
+
     public ParticipantStub(final String id, final boolean durable, final EndpointReferenceType twoPCParticipant)
         throws Exception
     {
@@ -122,7 +122,10 @@ public class ParticipantStub implements Participant, PersistableParticipant
         {
             if (state == State.STATE_COMMITTING)
             {
-                throw new SystemException() ;
+                // typically means no response from the remote end.
+                // throw a comm exception to distinguish this case from the
+                // one where the remote end itself threw a SystemException.
+                throw new SystemCommunicationException();
             }
             else
             {
@@ -172,7 +175,7 @@ public class ParticipantStub implements Participant, PersistableParticipant
         }
         catch (final WrongStateException wse) {} // ignore
     }
-    
+
     /**
      * @message com.arjuna.wst.stub.ParticipantStub_1 [com.arjuna.wst.stub.ParticipantStub_1] - Error persisting participant state
      */
@@ -182,16 +185,19 @@ public class ParticipantStub implements Participant, PersistableParticipant
         {
             oos.packString(coordinator.getId()) ;
             oos.packBoolean(coordinator.isDurable()) ;
-            
+
             final StringWriter sw = new StringWriter() ;
             final XMLStreamWriter writer = SoapUtils.getXMLStreamWriter(sw) ;
             StreamHelper.writeStartElement(writer, QNAME_TWO_PC_PARTICIPANT) ;
             coordinator.getParticipant().writeContent(writer) ;
             StreamHelper.writeEndElement(writer, null, null) ;
             writer.close() ;
-            
-            oos.packString(writer.toString()) ;
-            
+            sw.close();
+
+            String tmp = writer.toString();
+            String swString = sw.toString();
+            oos.packString(swString) ;
+
             return true ;
         }
         catch (final Throwable th)
@@ -200,7 +206,7 @@ public class ParticipantStub implements Participant, PersistableParticipant
             return false ;
         }
     }
-    
+
     /**
      * @message com.arjuna.wst.stub.ParticipantStub_2 [com.arjuna.wst.stub.ParticipantStub_2] - Error restoring participant state
      */
@@ -211,11 +217,11 @@ public class ParticipantStub implements Participant, PersistableParticipant
             final String id = ios.unpackString() ;
             final boolean durable = ios.unpackBoolean() ;
             final String eprValue = ios.unpackString() ;
-            
+
             final XMLStreamReader reader = SoapUtils.getXMLStreamReader(new StringReader(eprValue)) ;
             StreamHelper.checkNextStartTag(reader, QNAME_TWO_PC_PARTICIPANT) ;
             final EndpointReferenceType endpointReferenceType = new EndpointReferenceType(reader) ;
-            
+
             coordinator = new CoordinatorEngine(id, durable, endpointReferenceType, State.STATE_PREPARED_SUCCESS) ;
             return true ;
         }

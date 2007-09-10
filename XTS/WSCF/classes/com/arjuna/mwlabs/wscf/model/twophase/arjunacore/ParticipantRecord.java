@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -51,7 +51,7 @@ import java.io.PrintWriter;
 
 /**
  * Arjuna abstract record to handle two-phase participants.
- * 
+ *
  * @author Mark Little (mark.little@arjuna.com)
  * @version $Id: ParticipantRecord.java,v 1.11 2005/06/09 09:41:27 nmcl Exp $
  */
@@ -62,10 +62,10 @@ public class ParticipantRecord extends
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param theResource
 	 *            is the proxy that allows us to call out to the object.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_1
 	 *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_1] -
 	 *          ParticipantRecord {0} - null participant provided!
@@ -107,7 +107,7 @@ public class ParticipantRecord extends
 	public int typeIs ()
 	{
 		// TODO add specific record type.
-		
+
 		return RecordType.USER_DEF_FIRST0;
 	}
 
@@ -131,7 +131,7 @@ public class ParticipantRecord extends
 
 	/**
 	 * Set the internal value. Not allowed for this class.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_2
 	 *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_2] -
 	 *          ParticipantRecord.setValue() called illegally.
@@ -144,7 +144,7 @@ public class ParticipantRecord extends
 
 	/**
 	 * The record is being driven through nested rollback.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_3
 	 *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_3] -
 	 *          ParticipantRecord.nestedAbort {0} caught: {1}
@@ -175,7 +175,7 @@ public class ParticipantRecord extends
 
 	/**
 	 * The record is being driven through nested commit.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_4
 	 *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_4] -
 	 *          ParticipantRecord.nestedCommit {0} caught: {1}
@@ -205,7 +205,7 @@ public class ParticipantRecord extends
 
 	/**
 	 * The record is being driven through nested prepare.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_5
 	 *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_5] -
 	 *          ParticipantRecord.nestedPrepare {0} caught: {1}
@@ -235,7 +235,7 @@ public class ParticipantRecord extends
 
 	/**
 	 * The record is being driven through top-level rollback.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_6
 	 *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_6] -
 	 *          ParticipantRecord.topLevelAbort {0} caught: {1}
@@ -295,7 +295,7 @@ public class ParticipantRecord extends
 
 	/**
 	 * The record is being driven through top-level commit.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_7
 	 *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_7] -
 	 *          ParticipantRecord.topLevelCommit {0} caught: {1}
@@ -321,7 +321,7 @@ public class ParticipantRecord extends
 				}
 				catch (WrongStateException ex)
 				{
-					return TwoPhaseOutcome.NOT_PREPARED;
+					return TwoPhaseOutcome.NOT_PREPARED; // should be HEURISTIC_HAZARD?
 				}
 				catch (HeuristicHazardException ex)
 				{
@@ -335,7 +335,11 @@ public class ParticipantRecord extends
 				{
 					return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
 				}
-				catch (SystemException ex)
+                catch(SystemCommunicationException ex)
+                {
+                    return TwoPhaseOutcome.FINISH_ERROR;
+                }
+                catch (SystemException ex)
 				{
 					return TwoPhaseOutcome.HEURISTIC_HAZARD;
 				}
@@ -358,14 +362,14 @@ public class ParticipantRecord extends
 
 	/**
 	 * The record is being driven through top-level prepare.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_8
 	 *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_8] -
 	 *          ParticipantRecord.topLevelPrepare {0} caught: {1}
 	 */
 
 	public int topLevelPrepare ()
-	{	
+	{
 		try
 		{
 			if (_resourceHandle != null)
@@ -438,7 +442,7 @@ public class ParticipantRecord extends
 	/**
 	 * The record is being driven through nested commit and is the only
 	 * resource.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_9
 	 *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_9] -
 	 *          ParticipantRecord.nestedOnePhaseCommit {0} caught: {1}
@@ -469,18 +473,18 @@ public class ParticipantRecord extends
 	/**
 	 * The record is being driven through top-level commit and is the only
 	 * resource.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_10
 	 *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_10] -
 	 *          ParticipantRecord.topLevelOnePhaseCommit {0} caught: {1}
 	 */
 
 	public int topLevelOnePhaseCommit ()
-	{	
+	{
 		try
-		{		
+		{
 			if (_resourceHandle != null)
-			{			
+			{
 				if (_rolledback)
 					return TwoPhaseOutcome.FINISH_ERROR;
 
@@ -504,7 +508,7 @@ public class ParticipantRecord extends
 					return TwoPhaseOutcome.HEURISTIC_HAZARD;
 				}
 				catch (HeuristicMixedException ex)
-				{					
+				{
 					return TwoPhaseOutcome.HEURISTIC_MIXED;
 				}
 				catch (HeuristicCancelException ex)
@@ -539,7 +543,7 @@ public class ParticipantRecord extends
 
 	/**
 	 * The record generated a heuristic and can now forget about it.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_11
 	 *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_11] -
 	 *          ParticipantRecord.forgetHeuristic for {0} called without a
@@ -623,8 +627,11 @@ public class ParticipantRecord extends
 		{
 			try
 			{
-				result = _resourceHandle.restore_state(os);
-				
+                String resourcehandleImplClassName = os.unpackString();
+                _resourceHandle = (Participant)Class.forName(resourcehandleImplClassName).newInstance();
+
+                result = _resourceHandle.restore_state(os);
+
 				if (result)
 					_timeout = os.unpackLong();
 
@@ -658,8 +665,9 @@ public class ParticipantRecord extends
 		{
 			try
 			{
-				result = _resourceHandle.save_state(os);
-				
+                os.packString(_resourceHandle.getClass().getName()); // TODO: a shorter value whould be more efficient.
+                result = _resourceHandle.save_state(os);
+
 				if (result)
 					os.packLong(_timeout);
 

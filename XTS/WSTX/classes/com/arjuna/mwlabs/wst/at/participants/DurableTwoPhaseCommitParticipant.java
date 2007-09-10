@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -43,6 +43,7 @@ import com.arjuna.mw.wscf.exceptions.*;
 
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wsas.exceptions.WrongStateException;
+import com.arjuna.mw.wsas.exceptions.SystemCommunicationException;
 import com.arjuna.mwlabs.wst.util.PersistableParticipantHelper;
 
 /**
@@ -54,8 +55,11 @@ import com.arjuna.mwlabs.wst.util.PersistableParticipantHelper;
 
 public class DurableTwoPhaseCommitParticipant implements Participant
 {
+    // default ctor for crash recovery
+    public DurableTwoPhaseCommitParticipant() {
+    }
 
-	public DurableTwoPhaseCommitParticipant (Durable2PCParticipant resource, String identifier)
+    public DurableTwoPhaseCommitParticipant (Durable2PCParticipant resource, String identifier)
 	{
 		_resource = resource;
 		_id = identifier;
@@ -64,13 +68,13 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 	public Vote prepare () throws InvalidParticipantException,
 			WrongStateException, HeuristicHazardException,
 			HeuristicMixedException, SystemException
-	{		
+	{
 		try
 		{
 			if (_resource != null)
 			{
 				com.arjuna.wst.Vote vt = _resource.prepare();
-			
+
 				if (vt instanceof com.arjuna.wst.ReadOnly)
 				{
 					_readonly = true;
@@ -113,13 +117,13 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 	public void confirm () throws InvalidParticipantException,
 			WrongStateException, HeuristicHazardException,
 			HeuristicMixedException, HeuristicCancelException, SystemException
-	{	
+	{
 		if (_resource != null)
 		{
 			try
-			{				
+			{
 				if (!_readonly)
-				{			
+				{
 					_resource.commit();
 				}
 			}
@@ -139,8 +143,12 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			//	    catch (com.arjuna.mw.wst.exceptions.SystemException ex)
 			catch (com.arjuna.wst.SystemException ex)
 			{
-				throw new SystemException(ex.toString());
-			}
+				if(ex instanceof com.arjuna.wst.stub.SystemCommunicationException) {
+                    throw new SystemCommunicationException(ex.toString());
+                } else {
+                    throw new SystemException(ex.toString());
+                }
+            }
 		}
 		else
 			throw new InvalidParticipantException();
@@ -181,7 +189,7 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 	}
 
 	// TODO mark ParticipantCancelledException explicitly?
-	
+
 	public void confirmOnePhase () throws InvalidParticipantException,
 			WrongStateException, HeuristicHazardException,
 			HeuristicMixedException, HeuristicCancelException, SystemException
@@ -197,10 +205,10 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			catch (Exception ex)
 			{
 				ex.printStackTrace();
-				
+
 				v = new VoteCancel();
 			}
-				
+
                         if (v instanceof VoteReadOnly)
                         {
                             _readonly = true;
@@ -210,13 +218,13 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 				_rolledback = false;
 
 				// TODO only do this if we didn't return VoteCancel
-				
+
 				cancel();
 
 				throw new ParticipantCancelledException();
 			}
 			else
-			{			
+			{
 				if (v instanceof VoteConfirm)
 				{
 					try
@@ -236,14 +244,14 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 						throw ex;
 					}
 					catch (Exception ex)
-					{						
+					{
 						throw new HeuristicHazardException();
 					}
 				}
 				else
 				{
 					cancel(); // TODO error
-					
+
 					throw new HeuristicHazardException();
 				}
 			}
@@ -282,13 +290,13 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 	{
         return PersistableParticipantHelper.save_state(os, _resource) ;
 	}
-	
+
 	public boolean restore_state (InputObjectState os)
 	{
         _resource = (Durable2PCParticipant)PersistableParticipantHelper.restore_state(os) ;
         return true ;
 	}
-	
+
 	private Durable2PCParticipant _resource;
 	private String _id;
 	private boolean _readonly;

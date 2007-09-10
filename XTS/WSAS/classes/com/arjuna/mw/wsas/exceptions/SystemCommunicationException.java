@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2007, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
@@ -15,32 +15,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  *
- * (C) 2005-2006,
- * @author JBoss Inc.
+ * (C) 2007,
+ * @author JBoss, a division of Red Hat.
  */
-/*
- * Copyright (c) 2003, 2004,
- *
- * Arjuna Technologies Limited.
- *
- * $Id: Durable2PCStub.java,v 1.1.2.3 2004/06/18 15:06:09 nmcl Exp $
+package com.arjuna.mw.wsas.exceptions;
+
+/**
+ * Marker interface for exceptions e.g. timeouts, in the client/server communication.
  */
+public class SystemCommunicationException extends SystemException {
 
-package com.arjuna.wst.stub;
+	public SystemCommunicationException ()
+	{
+		super();
+	}
 
-import com.arjuna.webservices.wsaddr.EndpointReferenceType;
-import com.arjuna.wst.Durable2PCParticipant;
+	public SystemCommunicationException (String s)
+	{
+		super(s);
+	}
 
-public class Durable2PCStub extends ParticipantStub implements Durable2PCParticipant
-{
-    // default ctor for crash recovery
-    public Durable2PCStub() throws Exception {
-        super(null, true, null);
-    }
+	public SystemCommunicationException (String s, int errorcode)
+	{
+		super(s, errorcode);
+	}
 
-    public Durable2PCStub(final String id, final EndpointReferenceType twoPCParticipant)
-        throws Exception
-    {
-        super(id, true, twoPCParticipant) ;
-    }
+	public SystemCommunicationException (String reason, Object obj)
+	{
+		super(reason, obj);
+	}
+
+	public SystemCommunicationException (Object ex)
+	{
+		super(ex);
+	}
+
 }

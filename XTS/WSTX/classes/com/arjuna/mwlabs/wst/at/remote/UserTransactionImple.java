@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -32,6 +32,7 @@
 package com.arjuna.mwlabs.wst.at.remote;
 
 import java.util.Hashtable;
+import java.io.InputStream;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst.TransactionManager;
@@ -105,7 +106,7 @@ public class UserTransactionImple extends UserTransaction
 			com.arjuna.mw.wsc.context.Context ctx = startTransaction(timeout);
 
 			_ctxManager.resume(new TxContextImple(ctx));
-			
+
 			enlistCompletionParticipants();
 		}
 		catch (com.arjuna.wsc.InvalidCreateParametersException ex)
@@ -192,12 +193,12 @@ public class UserTransactionImple extends UserTransaction
 			SystemException
 	{
 		try
-		{		
+		{
 			TransactionManagerImple tm = (TransactionManagerImple) TransactionManager.getTransactionManager();
 
 			final String id = ((TxContextImple) tm.currentTransaction()).identifier();
 			final EndpointReferenceType completionCoordinator = tm.enlistForCompletion(getCompletionParticipant(id));
-			
+
 			_completionCoordinators.put(id, completionCoordinator);
 		}
 		catch (com.arjuna.wsc.AlreadyRegisteredException ex)
@@ -212,6 +213,10 @@ public class UserTransactionImple extends UserTransaction
 	{
 		try
 		{
+            // TODO: tricks for per app _activationCoordinatorService config, perhaps:
+            //InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("/foo.properties");
+
+            
             final Long expires = (timeout > 0 ? new Long(timeout) : null) ;
             final String messageId = new Uid().stringForm() ;
             final CoordinationContextType coordinationContext = ActivationCoordinator.createCoordinationContext(
@@ -243,12 +248,12 @@ public class UserTransactionImple extends UserTransaction
 	{
 		TxContextImple ctx = null;
 		String id = null;
-		
+
 		try
-		{			
-			ctx = (TxContextImple) _ctxManager.suspend();			
+		{
+			ctx = (TxContextImple) _ctxManager.suspend();
 			id = ctx.identifier();
-			
+
 			/*
 			 * By default the completionParticipantURL won't be set for an interposed (imported)
 			 * bridged transaction. This is fine, because you shouldn't be able to commit that
@@ -257,9 +262,9 @@ public class UserTransactionImple extends UserTransaction
 			 * and throw the exception from the remote coordinator side (see enlistCompletionParticipants
 			 * for how to do this).
 			 */
-			
+
 			final EndpointReferenceType completionCoordinator = (EndpointReferenceType) _completionCoordinators.get(id);
-			
+
 			if (completionCoordinator == null)
 				throw new SecurityException();
 
@@ -286,7 +291,7 @@ public class UserTransactionImple extends UserTransaction
 		catch (Exception ex)
 		{
 			ex.printStackTrace();
-			
+
 			throw new SystemException(ex.toString());
 		}
 		finally
@@ -300,7 +305,7 @@ public class UserTransactionImple extends UserTransaction
 			{
 				ex.printStackTrace();
 			}
-			
+
 			if (id != null)
 				_completionCoordinators.remove(id);
 		}
@@ -311,12 +316,12 @@ public class UserTransactionImple extends UserTransaction
 	{
 		TxContextImple ctx = null;
 		String id = null;
-		
+
 		try
 		{
 			ctx = (TxContextImple) _ctxManager.suspend();
 			id = ctx.identifier();
-			
+
 			/*
 			 * By default the completionParticipantURL won't be set for an interposed (imported)
 			 * bridged transaction. This is fine, because you shouldn't be able to commit that
@@ -325,9 +330,9 @@ public class UserTransactionImple extends UserTransaction
 			 * and throw the exception from the remote coordinator side (see enlistCompletionParticipants
 			 * for how to do this).
 			 */
-			
+
 			EndpointReferenceType completionCoordinator = (EndpointReferenceType) _completionCoordinators.get(id);
-			
+
 			if (completionCoordinator == null)
 				throw new SecurityException();
 
@@ -362,7 +367,7 @@ public class UserTransactionImple extends UserTransaction
 			{
 				ex.printStackTrace();
 			}
-			
+
 			if (id != null)
 				_completionCoordinators.remove(id);
 		}
