@@ -127,6 +127,13 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
     // TransactionLocalDelegate implementation methods. This part is basically
     // stateless, we just delegate down to the object storage on the TransactionImple
 
+    // Note this has some interesting effects around Transaction termination. The TransactionImple instance
+    // lifetime is up to tx termination only. After that getTransaction() on the tm returns a new instance
+    // representing the same tx. Hence TransactionLocal state goes away magically at tx termination time
+    // since it's part of the TransactionImple instance. That's what we want and saves writing cleanup code.
+    // On the down side, since locks use the same storage they go away too. This causes us to have to
+    // jump through some hoops to deal with locks vanishing and maybe never getting unlocked, see below.
+
     /**
      * Does the specified transaction contain a value for the transaction local.
      *
@@ -136,7 +143,11 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
      */
     public boolean containsValue(final TransactionLocal transactionLocal, final Transaction transaction) {
         TransactionImple transactionImple = (TransactionImple) transaction;
-        return (transactionImple.getTxLocalResource(transactionLocal) != null ? true : false);
+        if(transactionImple.isAlive()) {
+            return (transactionImple.getTxLocalResource(transactionLocal) != null ? true : false);
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -148,7 +159,11 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
      */
     public Object getValue(final TransactionLocal transactionLocal, final Transaction transaction) {
         TransactionImple transactionImple = (TransactionImple) transaction;
-        return transactionImple.getTxLocalResource(transactionLocal);
+        if(transactionImple.isAlive()) {
+            return transactionImple.getTxLocalResource(transactionLocal);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -161,7 +176,11 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
     public void storeValue(final TransactionLocal transactionLocal, final Transaction transaction,
                            final Object value) {
         TransactionImple transactionImple = (TransactionImple) transaction;
-        transactionImple.putTxLocalResource(transactionLocal, value);
+        if(transactionImple.isAlive()) {
+            transactionImple.putTxLocalResource(transactionLocal, value);
+        } else {
+            throw new IllegalStateException("Can't store value in a TransactionLocal after the Transaction has ended");
+        }
     }
 
     /**
@@ -172,8 +191,18 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
      */
     public void lock(final TransactionLocal local, final Transaction transaction)
             throws InterruptedException {
-        TransactionLocalLock lock = findLock(local, transaction);
-        lock.lock();
+        TransactionImple transactionImple = (TransactionImple) transaction;
+        if(transactionImple.isAlive()) {
+            // There is a race here, as the transaction may terminate between the check
+            // and the lock attempt. See lock() implementation below.
+            // It's still possible to lock a dead transaction, but that does no real harm.
+            TransactionLocalLock lock = findLock(local, transaction);
+            if(lock.lock(transactionImple)) {
+                return;
+            }
+        }
+
+        throw new IllegalStateException("Can't lock a TransactionLocal after the Transaction has ended");
     }
 
     /**
@@ -184,11 +213,12 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
         lock.unlock();
     }
 
-    // Lock implementaion: This used to use a Synchronization for lock storage, but
-    // we need to be able to create locks after transactions end, at which point
-    // registration of Synchronizations is no longer permitted. Hence we now
-    // store locks in the general object storage Map on the TransactionImple, using this
-    // as the key under which the map of TransactionLocals to locks is stored.
+    // Lock implementation: This used to use a Synchronization for lock storage, but
+    // we need to be able to lock things in some states where registration of
+    // Synchronizations is not permitted. Besides, the JTA 1.1 work gives us a nice
+    // general object storage mechanism on a TransactionImple, so we use that.
+
+    // This is the key under which the map of TransactionLocals to locks is stored.
     // Bad things will probably happen if users ever use this key themselves
     private final String LOCKS_MAP = "__LOCKS_MAP";
 
@@ -197,14 +227,14 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
     private TransactionLocalLock findLock(final TransactionLocal local, final Transaction transaction) {
 
         TransactionImple transactionImple = (TransactionImple) transaction;
-        Map<TransactionLocal, TransactionLocalLock> locks;
+        Map locks; // <TransactionLocal, TransactionLocalLock>
         // ideally for performance we should sync on the tx instance itself but that may have nasty
         // side effects so we use something else as the lock object for the sync block
         synchronized (LOCKS_MAP) {
             // ensure there is a holder for lock storage on the given tx instance.
             locks = (Map) transactionImple.getTxLocalResource(LOCKS_MAP);
             if (locks == null) {
-                locks = new HashMap<TransactionLocal, TransactionLocalLock>();
+                locks = new HashMap(); // <TransactionLocal, TransactionLocalLock>
                 transactionImple.putTxLocalResource(LOCKS_MAP, locks);
             }
         }
@@ -212,7 +242,7 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
         TransactionLocalLock transactionLocalLock;
         synchronized (locks) {
             // ensure there is a lock for the specified local+tx tuple
-            transactionLocalLock = locks.get(local);
+            transactionLocalLock = (TransactionLocalLock)locks.get(local);
             if (transactionLocalLock == null) {
                 transactionLocalLock = new TransactionLocalLock();
                 locks.put(local, transactionLocalLock);
@@ -240,46 +270,71 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
         private byte[] lock = new byte[0] ;
 
         /**
-         * Lock the transaction local within the curren thread context.
+         * Lock the transaction local within the current thread context.
+         * true on lock acquired, false otherwise
          */
-        public void lock()
+        public boolean lock(TransactionImple tx)
         {
-        	    // The current code in the app server locks the transaction for all, we follow that practice
-        	    synchronized(lock)
-        	    {
+            // The current code in the app server locks the transaction for all, we follow that practice
+            synchronized(lock)
+            {
                 final Thread currentThread = Thread.currentThread() ;
                 if (currentThread == lockingThread)
                 {
                     lockCount++ ;
-                    return ;
+                    return true;
                 }
 
                 while (lockingThread != null)
                 {
                     try
                     {
-                        lock.wait();
+                        // lock object instances get thrown away at Transaction termination. That makes it impossible
+                        // to call unlock() on them. Searching through them and unlocking them from the transaction
+                        // termination code is a pain and finalizers suck.
+                        // Hence we need to make sure we don't wait forever for a notify
+                        // that will never come. Probably the only thing that will terminate a Transaction in another
+                        // Thread is the transaction reaper, so we wait not longer than the tx timeout plus a fudge factor.
+                        long timeout = 0;
+                        try {
+                            timeout = getTransactionTimeout();
+                        } catch(SystemException e) {}
+
+                        lock.wait(timeout+1000);
+                        if(!tx.isAlive()) {
+                            // transaction is dead, can't be locked, cleanup
+                            lockingThread = null;
+                            lockCount = 0;
+                            return false;
+                        }
                     }
                     catch (final InterruptedException ie) {}
                 }
 
                 lockingThread = currentThread ;
                 lockCount ++ ;
-        	    }
+                return true;
+            }
         }
 
         /**
-         * Unlock the transaction local within the curren thread context.
+         * Unlock the transaction local within the current thread context.
          */
         public void unlock()
         {
-        	    synchronized(lock)
-        	    {
+            synchronized(lock)
+            {
+                if(lockCount == 0 && lockingThread == null) {
+                    // the lock was probably reset by a transaction termination.
+                    // we fail silent to save the caller having to deal with race condition.
+                    return;
+                }
+
                 final Thread currentThread = Thread.currentThread() ;
                 if (currentThread != lockingThread)
                 {
                     throw new IllegalStateException("Unlock called from wrong thread.  Locking thread: " + lockingThread +
-                        ", current thread: " + currentThread) ;
+                            ", current thread: " + currentThread) ;
                 }
 
                 if (--lockCount == 0)

@@ -1288,7 +1288,19 @@ public class TransactionImple implements javax.transaction.Transaction,
 		_txLocalResources.put(key, value);
 	}
 
-	protected TransactionImple()
+
+    /*
+     * For JBossAS integration TransactionLocal implementation, we need to know if a tx has been
+     * resolved yet or not. We could use getStatus() and a case stmt, but since an instance is
+     * removed from _transactions on completion this is just as effective.
+     * @param tx
+     * @return
+     */
+    public boolean isAlive() {
+        return _transactions.contains(this);
+    }
+
+    protected TransactionImple()
 	{
 		this(null);
 	}
@@ -1322,6 +1334,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 			_resources = new Hashtable();
 			_duplicateResources = new Hashtable();
+            _txLocalResources = Collections.synchronizedMap(new HashMap());
 		}
 		else
 		{
