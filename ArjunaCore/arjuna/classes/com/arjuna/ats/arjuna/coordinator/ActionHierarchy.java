@@ -107,19 +107,6 @@ public class ActionHierarchy
 	}
     }
 
-    public void finalize ()
-    {
-	if (tsLogger.arjLogger.debugAllowed())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.DESTRUCTORS,
-				     VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ATOMIC_ACTION, "ActionHierarchy::~ActionHierarchy()");
-	}
-	
-	if (hierarchy != null)
-	    hierarchy = null;
-    }
-
     /**
      * Print out the transaction hierarchy.
      */

@@ -73,20 +73,6 @@ public class Mutex
 	_recursiveCalls = 0;
     }
     
-    public void finalize ()
-    {
-	if (_users != 0)
-	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.common.Mutex_1");
-	}
-
-	synchronized (_lock)
-	{
-	    _lock.notifyAll();
-	}
-    }
-
     /**
      * Classic mutex operations.
      */

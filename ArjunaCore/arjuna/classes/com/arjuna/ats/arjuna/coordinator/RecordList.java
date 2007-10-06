@@ -85,18 +85,6 @@ public class RecordList
 	noEntries = copy.noEntries;
     }
     
-    public void finalize ()
-    {
-	AbstractRecord temp;
-	int count = noEntries;
-	
-	for (int i = 0; i < count; i++)
-	    {
-		temp = getFront();
-		temp = null;
-	    }
-    }
-
     /**
      * Remove and return the element at the front of the list.
      *

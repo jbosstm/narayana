@@ -83,19 +83,6 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
 		_isInterposed = isInterposed;
 	}
 
-	public void finalize ()
-    {
-	_theSynch = null;
-
-	try
-	{
-	    super.finalize();
-	}
-	catch (Throwable e)
-	{
-	}
-    }
-
     public Uid get_uid ()
     {
 	return _theUid;

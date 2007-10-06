@@ -69,18 +69,6 @@ public class ReaperElement implements Comparable
 		_absoluteTimeout = timeout * 1000 + System.currentTimeMillis();
 	}
 
-	public void finalize()
-	{
-		if (tsLogger.arjLogger.debugAllowed())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.DESTRUCTORS,
-					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
-					"ReaperElement.finalize ()");
-		}
-
-		_control = null;
-	}
-
 	/**
 	 * Order by absoluteTimeout first, then by Uid.
 	 * This is required so that the set maintained by the TransactionReaper
