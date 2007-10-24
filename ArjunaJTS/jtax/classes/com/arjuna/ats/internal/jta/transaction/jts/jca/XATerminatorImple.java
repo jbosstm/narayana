@@ -45,6 +45,7 @@ import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TxImporter;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction;
 import com.arjuna.ats.jta.utils.XAHelper;
@@ -69,17 +70,27 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 			if (tx == null)
 				throw new XAException(XAException.XAER_INVAL);
 			
-			if (onePhase)
-				tx.doOnePhaseCommit();
+			if (tx.baseXid() != null)  // activate failed?
+			{
+				if (onePhase)
+					tx.doOnePhaseCommit();
+				else
+					tx.doCommit();
+				
+				TxImporter.removeImportedTransaction(xid);
+			}
 			else
-				tx.doCommit();
-			
-			TxImporter.removeImportedTransaction(xid);
+				throw new XAException(XAException.XA_RETRY);
 		}
 		catch (XAException ex)
 		{
-			TxImporter.removeImportedTransaction(xid);
+			// resource hasn't had a chance to recover yet
 			
+			if (ex.errorCode != XAException.XA_RETRY)
+			{
+				TxImporter.removeImportedTransaction(xid);
+			}
+
 			throw ex;
 		}
 		catch (HeuristicRollbackException ex)
@@ -265,14 +276,24 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 			if (tx == null)
 				throw new XAException(XAException.XAER_INVAL);
 
-			tx.doRollback();
-			
-			TxImporter.removeImportedTransaction(xid);
+			if (tx.baseXid() != null)
+			{
+				tx.doRollback();
+				
+				TxImporter.removeImportedTransaction(xid);
+			}
+			else
+				throw new XAException(XAException.XA_RETRY);
 		}
 		catch (XAException ex)
 		{
-			TxImporter.removeImportedTransaction(xid);
+			// resource hasn't had a chance to recover yet
 			
+			if (ex.errorCode != XAException.XA_RETRY)
+			{
+				TxImporter.removeImportedTransaction(xid);
+			}
+
 			throw ex;
 		}
 		catch (HeuristicCommitException ex)

@@ -70,7 +70,10 @@ public class ServerTransaction extends com.arjuna.ats.internal.jts.orbspecific.i
 	{
 		super(actId);
 		
-		activate();  // if this fails we'll retry recovery periodically.
+		if (!activate())  // if this fails we'll retry recovery periodically.\
+		{
+			_theXid = null; // should be the case anyway if activate fails, but ...
+		}
 	}
 	
 	public final Xid getXid ()

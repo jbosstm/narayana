@@ -53,13 +53,15 @@ public class SubordinateAtomicAction extends
 	public SubordinateAtomicAction ()
 	{
 		super();  // does start for us
+
+		_activated = true;
 	}
 
 	public SubordinateAtomicAction (Uid actId)
 	{
 		super(actId);
 		
-		activate(); // if this fails, we'll retry later.
+		_activated = activate(); // if this fails, we'll retry later.
 	}
 	
 	public SubordinateAtomicAction (int timeout, Xid xid)
@@ -67,6 +69,7 @@ public class SubordinateAtomicAction extends
 		super(timeout); // implicit start (done in base class)
 		
 		_theXid = new XidImple(xid);
+		_activated = true;
 	}
 	
 	/**
@@ -133,7 +136,12 @@ public class SubordinateAtomicAction extends
 		
 		return super.restore_state(os, t);
 	}
-	
+
+    public boolean activated ()
+    {
+    	return _activated;
+    }
+
 	private Xid _theXid;
-	
+    private boolean _activated;
 }

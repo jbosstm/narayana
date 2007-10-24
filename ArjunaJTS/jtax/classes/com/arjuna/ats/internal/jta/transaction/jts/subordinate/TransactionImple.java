@@ -379,7 +379,7 @@ public class TransactionImple extends
 					+ super._theTransaction.get_uid() + " >";
 		}
 	}
-
+	
 	protected void commitAndDisassociate ()
 			throws javax.transaction.RollbackException,
 			javax.transaction.HeuristicMixedException,

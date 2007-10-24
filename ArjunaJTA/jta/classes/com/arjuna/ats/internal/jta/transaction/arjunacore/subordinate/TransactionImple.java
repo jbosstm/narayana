@@ -334,5 +334,17 @@ public class TransactionImple extends
 
 		throw new IllegalStateException();
 	}
+
+	/**
+	 * Because of recovery, it is possible that a transaction may not be able to
+	 * activate itself from the log initially, forcing us to retry later.
+	 * 
+	 * @return <code>true</code> if the transaction was activated, <code>false</code>
+	 * otherwise.
+	 */
 	
+    public boolean activated ()
+    {
+    	return true;
+    }
 }

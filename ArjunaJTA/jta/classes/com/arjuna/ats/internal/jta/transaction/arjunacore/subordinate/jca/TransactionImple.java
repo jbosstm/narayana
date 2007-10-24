@@ -124,5 +124,33 @@ public class TransactionImple extends
 	{
 		return ((SubordinateAtomicAction) _theTransaction).getXid();
 	}
+
+	/**
+	 * Has the transaction been activated successfully? If not, we wait
+	 * and try again later.
+	 */
 	
+    public boolean activated ()
+    {
+    	return ((SubordinateAtomicAction) _theTransaction).activated();
+    }
+
+    /**
+     * Force this transaction to try to recover itself again.
+     */
+    
+    public void recover ()
+    {
+		Uid actId = _theTransaction.get_uid();
+
+		/*
+		 * Get a new subordinate instance. This will force activate to
+		 * be called again. Calling _theTransaction.activate should work,
+		 * but this is cleaner and guarantees the instance is in the right
+		 * state for recovery. Performance should not be an issue during
+		 * recovery either.
+		 */
+		
+		_theTransaction = new SubordinateAtomicAction(actId);
+    }
 }

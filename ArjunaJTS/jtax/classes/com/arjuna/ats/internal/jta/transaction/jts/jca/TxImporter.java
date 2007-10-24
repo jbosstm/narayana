@@ -128,7 +128,24 @@ public class TxImporter
 		if (xid == null)
 			throw new IllegalArgumentException();
 		
-		return (TransactionImple) _transactions.get(new XidImple(xid));
+		TransactionImple tx = (TransactionImple) _transactions.get(new XidImple(xid));
+		
+		if (tx == null)
+			return null;
+
+		if (tx.baseXid() == null)
+		{
+			/*
+			 * Try recovery again. If it fails we'll throw a RETRY to the caller who
+			 * should try again later.
+			 */
+			
+			tx.getControlWrapper().getImple().getImplHandle().activate();
+
+			return tx;
+		}
+		else
+			return tx;
 	}
 
 	/**

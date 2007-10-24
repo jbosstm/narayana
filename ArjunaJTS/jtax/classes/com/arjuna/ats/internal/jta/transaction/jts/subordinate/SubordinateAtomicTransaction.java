@@ -115,12 +115,10 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		try
 		{
 			if (stx != null)
-				return stx.doPhase2Commit(false);  // TODO why not doCommit?
-//				return doOnePhaseCommit();
+				return stx.doPhase2Commit(false);
 		}
 		catch (Exception ex)
 		{
-//			ex.printStackTrace();
 		}
 		
 		// TODO error
@@ -145,7 +143,6 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		}
 		catch (Exception ex)
 		{
-//			ex.printStackTrace();
 		}
 			
 		// TODO error
