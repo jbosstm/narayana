@@ -145,9 +145,9 @@ public class XAHelper
 					return false;
 
 				byte[] bqual1 = x1.getBranchQualifier();
-                final int bqual1Len = (bqual1 == null ? 0 : bqual1.length) ;
+				final int bqual1Len = (bqual1 == null ? 0 : bqual1.length) ;
 				byte[] bqual2 = x2.getBranchQualifier();
-                final int bqual2Len = (bqual2 == null ? 0 : bqual2.length) ;
+				final int bqual2Len = (bqual2 == null ? 0 : bqual2.length) ;
 
 				if (bqual1Len == bqual2Len)
 				{
@@ -174,22 +174,20 @@ public class XAHelper
 
 	public static String xidToString (Xid xid)
 	{
-		String globalTranId = new String(xid.getGlobalTransactionId()); // could
-																		// be
-																		// garbage!
-        final byte[] qualifier = xid.getBranchQualifier() ;
+	    byte[] gid = xid.getGlobalTransactionId();
+	    byte[] bqual = xid.getBranchQualifier();
+	    String toReturn = "< " + xid.getFormatId() + ", " + gid.length + ", "
+				+ bqual.length + ", ";
 
-        if ((qualifier != null) && (qualifier.length > 0))
-        {
-            String branchQualifier = new String(qualifier); // and
-            // this
-    		return new String("< " + xid.getFormatId() + ", " + globalTranId + ", "
-    				+ branchQualifier + " >");
-        }
-        else
-        {
-            return new String("< " + xid.getFormatId() + ", " + globalTranId + " >");
-        }
+	    for (int i = 0; i < gid.length; i++)
+		toReturn += gid[i];
+
+	    for (int j = 0; j < bqual.length; j++)
+		toReturn += bqual[j];
+
+	    toReturn += " >";
+
+	    return toReturn;
 	}
 
 }
