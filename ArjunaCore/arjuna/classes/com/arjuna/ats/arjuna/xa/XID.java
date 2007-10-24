@@ -139,8 +139,18 @@ public class XID implements Serializable
 
 	public String toString ()
 	{
-		return new String("< " + formatID + ", " + gtrid_length + ", "
-				+ bqual_length + ", " + new String(data) + " >");
+	    String toReturn = "< " + formatID + ", " + gtrid_length + ", "
+				+ bqual_length + ", ";
+
+	    for (int i = 0; i < gtrid_length; i++)
+		toReturn += data[i];
+
+	    for (int j = 0; j < bqual_length; j++)
+		toReturn += data[gtrid_length+j];
+
+	    toReturn += " >";
+
+	    return toReturn;
 	}
 
 	public int formatID; /* format identifier (0 for OSI) */
