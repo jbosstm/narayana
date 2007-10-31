@@ -79,7 +79,7 @@ public interface UserActivity
      * with the thread then it will be nested. If the activity is still
      * active when the specified timeout elapses, it will be terminated.
      *
-     * @param int timeout The timeout associated with the activity (in
+     * @param timeout The timeout associated with the activity (in
      * seconds). If the activity has not been terminated by the time this
      * period elapses, then it will automatically be terminated.
      * @exception WrongStateException Thrown if the currently associated
@@ -134,7 +134,7 @@ public interface UserActivity
      * not have permission to terminate the transaction.
      * @exception SystemException Thrown if some other error occurred.
      *
-     * @param CompletionStatus cs The CompletionStatus to use.
+     * @param cs The CompletionStatus to use.
      *
      * @return the result of completing the activity. Null is valid and must
      * be interpreted within the context of any HLS that may exist.
@@ -147,7 +147,7 @@ public interface UserActivity
     /**
      * Set the termination status for the current activity, if any.
      *
-     * @param CompletionStatus endStatus The state in which the activity
+     * @param endStatus The state in which the activity
      * should attempt to terminate. This may be one of the default values
      * provided by WSAS or may be extended in an implementation specific
      * manner by an HLS.
@@ -190,7 +190,7 @@ public interface UserActivity
      * each thread and this means that no application specified timeout is
      * set for activities.
      *
-     * @param int timeout The timeout (in seconds) to associate with all
+     * @param timeout The timeout (in seconds) to associate with all
      * subsequently created activities. This value must be 0 or greater.
      *
      * @exception InvalidTimeoutException Thrown if the timeout value provided
@@ -255,7 +255,7 @@ public interface UserActivity
      * activities that it may already be associated with. If the parameter is
      * null then the thread is associated with no activity.
      *
-     * @param ActivityHierarchy tx The activity to associate with this thread. This
+     * @param tx The activity to associate with this thread. This
      * may be null in which case the current thread becomes associated with
      * no activity.
      *

@@ -55,7 +55,7 @@ public interface CoordinatorManager extends UserCoordinator
      * Enrol the specified participant with the coordinator associated with
      * the current thread.
      *
-     * @param Participant act The participant.
+     * @param act The participant.
      *
      * @exception NoActivityException Thrown if there is no activity associated
      * with the current thread.
@@ -74,7 +74,7 @@ public interface CoordinatorManager extends UserCoordinator
      * Remove the specified participant from the coordinator associated with
      * the current thread.
      *
-     * @param Participant act The participant to remove.
+     * @param participantId The participant to remove.
      *
      * @exception NoActivityException Thrown if there is no activity associated
      * with the current thread.
@@ -90,7 +90,7 @@ public interface CoordinatorManager extends UserCoordinator
      * The participant has completed its work and it ready to compensate
      * if necessary.
      *
-     * @param Participant act The participant.
+     * @param participantId The participant.
      *
      * @exception NoActivityException Thrown if there is no activity associated
      * with the current thread.
@@ -107,7 +107,7 @@ public interface CoordinatorManager extends UserCoordinator
      * The saga will attempt to undo. The WS-T specification is a little
      * vague here - we assume the entire transaction has to undo.
      *
-     * @param Participant act The participant.
+     * @param participantId The participant.
      *
      * @exception NoActivityException Thrown if there is no activity associated
      * with the current thread.

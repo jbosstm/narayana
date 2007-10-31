@@ -67,7 +67,7 @@ public interface TransactionManager
      * It is illegal to call this method when no transaction is associated
      * with the thread.
      *
-     * @param Participant participant The participant to enrol.
+     * @param participant The participant to enrol.
      *
      * @exception WrongStateException Thrown if the transaction is not in a state
      * whereby participants can be enrolled.
@@ -93,7 +93,7 @@ public interface TransactionManager
      * that no state changes have been made that should be controlled by
      * the specified participant.
      *
-     * @param Participant participant The participant to resign.
+     * @param participant The participant to resign.
      *
      * @exception InvalidTransactionException Thrown if the transaction associated with
      * the thread is invalid.
@@ -113,7 +113,7 @@ public interface TransactionManager
      * do not receive the two-phase commit messages but instead are invoked
      * prior to its start and after it has completed.
      *
-     * @param Synchronization participant The synchronization to enroll.
+     * @param participant The synchronization to enroll.
      *
      * @exception WrongStateException Thrown if the transaction state is such
      * that synchronizations cannot be enrolled.
@@ -133,7 +133,7 @@ public interface TransactionManager
     /**
      * Remove the specified synchronization participant from the transaction.
      *
-     * @param Synchronization participant The participant to remove.
+     * @param participant The participant to remove.
      *
      * @exception InvalidTransactionException Thrown if the transaction is not
      * top-level.

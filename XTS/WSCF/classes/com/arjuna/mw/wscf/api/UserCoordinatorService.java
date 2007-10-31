@@ -75,7 +75,7 @@ public interface UserCoordinatorService
      * the currently enlisted participants at any time prior to the termination
      * of the coordination scope.
      *
-     * @param CompletionStatus cs The completion status to use when determining
+     * @param cs The completion status to use when determining
      * how to execute the protocol.
      *
      * @exception WrongStateException Thrown if the coordinator is in a state

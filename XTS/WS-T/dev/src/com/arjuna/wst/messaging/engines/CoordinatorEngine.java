@@ -246,7 +246,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * Committing -> Committing (send commit)
      * Aborting -> Aborting (send rollback)
      */
-    public void replay(final NotificationType aborted, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
+    public void replay(final NotificationType replay, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
         final State current ;
         synchronized(this)

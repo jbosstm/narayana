@@ -97,7 +97,7 @@ public interface UserCoordinator extends UserActivity
      * associated with the invoking thread.
      * @exception SystemException Thrown if some other error occurred.
      *
-     * @param CompletionStatus cs The CompletionStatus to use.
+     * @param cs The CompletionStatus to use.
      *
      * @return the result of completing the activity. Null is valid and must
      * be interpreted within the context of any HLS that may exist.

@@ -66,7 +66,7 @@ public interface Participant
     /**
      * Prepare the participant.
      *
-     * @param Qualifier[] qualifiers Any additional information.
+     * @param qualifiers Any additional information.
      *
      * @exception InvalidParticipantException Thrown if the participant identity is invalid
      *            (e.g., refers to an unknown participant.)
@@ -89,7 +89,7 @@ public interface Participant
     /**
      * Commit the participant.
      *
-     * @param Qualifier[] qualifiers Any additional information.
+     * @param qualifiers Any additional information.
      *
      * @exception InvalidParticipantException Thrown if the participant identity is invalid
      *            (e.g., refers to an unknown participant.)
@@ -112,7 +112,7 @@ public interface Participant
     /**
      * Rollback the participant.
      *
-     * @param Qualifier[] qualifiers Any additional information.
+     * @param qualifiers Any additional information.
      *
      * @exception InvalidParticipantException Thrown if the participant identity is invalid
      *            (e.g., refers to an unknown participant.)
@@ -135,7 +135,7 @@ public interface Participant
     /**
      * Commit the participant in a single phase.
      *
-     * @param Qualifier[] qualifiers Any additional information.
+     * @param qualifiers Any additional information.
      *
      * @exception InvalidParticipantException Thrown if the participant identity is invalid
      *            (e.g., refers to an unknown participant.)
@@ -158,7 +158,7 @@ public interface Participant
     /**
      * Inform the participant that is can forget the heuristic result.
      *
-     * @param Qualifier[] qualifiers Any additional qualifiers that may affect
+     * @param qualifiers Any additional qualifiers that may affect
      *                    the operation.
      * @exception InvalidParticipantException Thrown if the participant identity is invalid.
      * @exception WrongStateException Thrown if the participant is in an invalid state.
@@ -168,7 +168,7 @@ public interface Participant
     public void forget (Qualifier[] qualifiers) throws InvalidParticipantException, WrongStateException, SystemException;
 
     /**
-     * @param Qualifier[] qualifiers Any additional qualifiers that may affect
+     * @param qualifiers Any additional qualifiers that may affect
      *                    the operation.
      * @exception InvalidParticipantException Thrown if the participant identity is invalid.
      * @exception SystemException Thrown in the event of a general error.

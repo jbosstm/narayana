@@ -79,7 +79,7 @@ public interface UserCoordinator
      * with the thread then it will be nested. If the activity is still
      * active when the specified timeout elapses, it will be terminated.
      *
-     * @param int timeout The timeout associated with the activity (in
+     * @param timeout The timeout associated with the activity (in
      * seconds). If the activity has not been terminated by the time this
      * period elapses, then it will automatically be terminated.
      * @exception WrongStateException Thrown if the currently associated
@@ -104,9 +104,6 @@ public interface UserCoordinator
      * @exception NoPermissionException Thrown if the invoking thread does
      * not have permission to terminate the transaction.
      * @exception SystemException Thrown if some other error occurred.
-     *
-     * @return the result of completing the activity. Null is valid and must
-     * be interpreted within the context of any HLS that may exist.
      */
 
     public void confirm () throws InvalidActivityException, WrongStateException, ProtocolViolationException, NoCoordinatorException, CoordinatorCancelledException, HeuristicMixedException, HeuristicHazardException, NoPermissionException, SystemException;
@@ -124,11 +121,6 @@ public interface UserCoordinator
      * @exception NoPermissionException Thrown if the invoking thread does
      * not have permission to terminate the transaction.
      * @exception SystemException Thrown if some other error occurred.
-     *
-     * @param CompletionStatus cs The CompletionStatus to use.
-     *
-     * @return the result of completing the activity. Null is valid and must
-     * be interpreted within the context of any HLS that may exist.
      *
      * @see com.arjuna.mw.wsas.activity.Outcome
      */
@@ -162,7 +154,7 @@ public interface UserCoordinator
      * each thread and this means that no application specified timeout is
      * set for activities.
      *
-     * @param int timeout The timeout (in seconds) to associate with all
+     * @param timeout The timeout (in seconds) to associate with all
      * subsequently created activities. This value must be 0 or greater.
      *
      * @exception InvalidTimeoutException Thrown if the timeout value provided
@@ -215,7 +207,7 @@ public interface UserCoordinator
      * activities that it may already be associated with. If the parameter is
      * null then the thread is associated with no activity.
      *
-     * @param ActivityHierarchy tx The activity to associate with this thread. This
+     * @param tx The activity to associate with this thread. This
      * may be null in which case the current thread becomes associated with
      * no activity.
      *

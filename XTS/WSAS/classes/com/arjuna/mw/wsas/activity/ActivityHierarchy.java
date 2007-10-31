@@ -59,7 +59,7 @@ public interface ActivityHierarchy
     public boolean valid ();
 
     /**
-     * @param the specific activity in the stack.
+     * @param index index of the specific activity in the stack.
      * @exception IndexOutOfBoundsException Thrown if the activity number
      * is too large or small.
      * @return the activity handle.

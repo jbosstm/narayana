@@ -72,10 +72,8 @@ public class ProtocolManager
 	 * implementation may provide the same protocol. They may differ by
 	 * coordinator-name only.
 	 * 
-	 * @param org.w3c.dom.Document
-	 *            protocol The XML definition of the protocol.
-	 * @param String
-	 *            className The name of the class that implements the specified
+	 * @param     protocol The XML definition of the protocol.
+	 * @param     className The name of the class that implements the specified
 	 *            protocol.
 	 * 
 	 * @exception ProtocolAlreadyRegisteredException
@@ -113,10 +111,8 @@ public class ProtocolManager
 	/**
 	 * Replace a specific protocol implementation in the factory.
 	 * 
-	 * @param org.w3c.dom.Document
-	 *            protocol The XML definition of the protocol.
-	 * @param String
-	 *            className The name of the class that implements the specified
+	 * @param     protocol The XML definition of the protocol.
+	 * @param     className The name of the class that implements the specified
 	 *            protocol.
 	 * 
 	 * @exception ProtocolNotRegisteredException
@@ -167,8 +163,7 @@ public class ProtocolManager
 	}
 
 	/**
-	 * @param org.wc3.dom.Document
-	 *            protocol The XML definition of the coordination protocol.
+	 * @param     protocol The XML definition of the coordination protocol.
 	 * 
 	 * @exception ProtocolNotRegisteredException
 	 *                Thrown if the requested coordination protocol has not been
@@ -215,8 +210,7 @@ public class ProtocolManager
 	/**
 	 * Remove the specified protocol definition from the factory.
 	 * 
-	 * @param org.w3c.dom.Document
-	 *            protocol The XML definition of the coordination protocol.
+	 * @param     protocol The XML definition of the coordination protocol.
 	 * 
 	 * @exception ProtocolNotRegisteredException
 	 *                Thrown if the protocol to be removed has not been
@@ -259,8 +253,7 @@ public class ProtocolManager
 	 * Remove the specified coordination protocol implementation class from the
 	 * factory.
 	 * 
-	 * @param String
-	 *            className The class to remove.
+	 * @param     className The class to remove.
 	 * 
 	 * @exception UnknownProtocolImplementationException
 	 *                Thrown if the specified implementation class has not been
@@ -282,8 +275,7 @@ public class ProtocolManager
 	 * Is the document present exactly as it appears, i.e., even the name is the
 	 * same?
 	 * 
-	 * @param org.w3c.dom.Document
-	 *            protocol The XML definition of the coordination protocol.
+	 * @param     protocol The XML definition of the coordination protocol.
 	 * 
 	 * @exception IllegalArgumentException
 	 *                Thrown if the parameter is invalid (e.g., null).
@@ -322,8 +314,7 @@ public class ProtocolManager
 	/**
 	 * Is the document present but with a different name?
 	 * 
-	 * @param org.w3c.dom.Document
-	 *            protocol The XML definition of the coordination protocol.
+	 * @param     protocol The XML definition of the coordination protocol.
 	 * 
 	 * @exception IllegalArgumentException
 	 *                Thrown if the parameter is invalid (e.g., null).

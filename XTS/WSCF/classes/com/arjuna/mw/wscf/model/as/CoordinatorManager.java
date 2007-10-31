@@ -62,10 +62,10 @@ public interface CoordinatorManager
      * qualifiers that are to be associated with the participant are also
      * provided
      *
-     * @param Participant act The participant.
-     * @param int priority The priority to associate with the participant in
+     * @param act The participant.
+     * @param priority The priority to associate with the participant in
      * the coordinator's list.
-     * @param Qualifier[] quals Any qualifiers to be associated with the
+     * @param quals Any qualifiers to be associated with the
      * participant.
      *
      * @exception NoActivityException Thrown if there is no activity associated
@@ -85,7 +85,7 @@ public interface CoordinatorManager
      * Remove the specified participant from the coordinator associated with
      * the current thread.
      *
-     * @param Participant act The participant to remove.
+     * @param act The participant to remove.
      *
      * @exception NoActivityException Thrown if there is no activity associated
      * with the current thread.
@@ -110,11 +110,11 @@ public interface CoordinatorManager
      * not to produce such a message, then the action taken by the participant
      * is invalid and hence so is the response.
      *
-     * @param String id the unique participant identification.
-     * @param Message notification the message the participant got/assumed
+     * @param id the unique participant identification.
+     * @param notification the message the participant got/assumed
      * when producing the response.
-     * @param Outcome response the actual response.
-     * @param Qualifier[] quals any qualifiers associated with the response.
+     * @param response the actual response.
+     * @param quals any qualifiers associated with the response.
      *
      * @exception InvalidParticipantException Thrown if the coordinator has no
      * knowledge of the participant.

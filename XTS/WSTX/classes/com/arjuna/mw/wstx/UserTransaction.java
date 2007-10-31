@@ -154,7 +154,7 @@ public interface UserTransaction
      * Associate this thread with the specified context. Any current
      * associations are lost.
      *
-     * @param TxContext tx The context representation to associate (may be
+     * @param tx The context representation to associate (may be
      * null).
      *
      * @exception InvalidTransactionException Thrown if the context is invalid.
@@ -212,7 +212,7 @@ public interface UserTransaction
      * each thread and this means that no application specified timeout is
      * set for activities.
      *
-     * @param int timeout The timeout (in seconds) to associate with all
+     * @param timeout The timeout (in seconds) to associate with all
      * subsequently created activities. This value must be 0 or greater.
      *
      * @exception InvalidTimeoutException Thrown if the timeout value provided

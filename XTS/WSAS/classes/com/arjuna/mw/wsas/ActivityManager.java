@@ -57,7 +57,7 @@ public interface ActivityManager
     /**
      * Register the specified HLS with the activity service.
      *
-     * @param HLS service The HLS to register.
+     * @param service The HLS to register.
      *
      * @exception InvalidHLSException Thrown if the HLS is invalid in the
      * current execution environment.
@@ -69,7 +69,7 @@ public interface ActivityManager
     /**
      * Unregister the specified HLS with the activity service.
      *
-     * @param HLS service The HLS to unregister.
+     * @param service The HLS to unregister.
      *
      * @exception InvalidHLSException Thrown if the HLS is invalid in the
      * current execution environment.
@@ -97,7 +97,7 @@ public interface ActivityManager
      * application may provide an OutcomeManager to do this work rather than
      * use the default provided by the system.
      *
-     * @param OutcomeManager om The manager to use. If null is specified, then
+     * @param om The manager to use. If null is specified, then
      * the default manager will be used.
      *
      * @exception SystemException Thrown if any error occurs.

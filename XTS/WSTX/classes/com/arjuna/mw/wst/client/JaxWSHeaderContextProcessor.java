@@ -42,7 +42,7 @@ public class JaxWSHeaderContextProcessor extends JaxBaseHeaderContextProcessor i
      * Process a message. Determines if it is inbound or outbound and dispatches accordingly.
      *
      * @param msgContext
-     * @return
+     * @return true
      */
     public boolean handleMessage(MessageContext msgContext)
     {
@@ -57,7 +57,7 @@ public class JaxWSHeaderContextProcessor extends JaxBaseHeaderContextProcessor i
      * Tidy up the Transaction/Thread association.
      *
      * @param messageContext
-     * @return
+     * @return true
      */
     public boolean handleFault(MessageContext messageContext)
     {
@@ -95,7 +95,7 @@ public class JaxWSHeaderContextProcessor extends JaxBaseHeaderContextProcessor i
      * Tidy up the Transaction/Thread association before control is returned to the user.
      *
      * @param messageContext
-     * @return
+     * @return true
      */
     protected boolean handleInbound(MessageContext messageContext)
     {
@@ -109,8 +109,8 @@ public class JaxWSHeaderContextProcessor extends JaxBaseHeaderContextProcessor i
     /**
      * Process the tx thread context and attach serialized version as msg header
      *
-     * @param msgContext
-     * @return
+     * @param messageContext
+     * @return true
      */
     protected boolean handleOutbound(MessageContext messageContext)
     {

@@ -72,10 +72,6 @@ public abstract class Vote
 	_qualifiers = quals;
     }
 
-    /**
-     * @return a printable version of the vote.
-     */
-
     protected Qualifier[] _qualifiers;
 
 }

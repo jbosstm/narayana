@@ -50,7 +50,7 @@ class JaxBaseHeaderContextProcessor
 {
     /**
      * Handle the request.
-     * @param messageContext The current message context.
+     * @param soapMessage The current message context.
      */
 
     public boolean handleOutboundMessage(final SOAPMessage soapMessage)

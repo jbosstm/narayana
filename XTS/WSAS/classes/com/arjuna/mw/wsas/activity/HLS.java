@@ -66,7 +66,7 @@ public interface HLS
     /**
      * The current activity is completing with the specified completion status.
      *
-     * @param CompletionStatus cs The completion status to use.
+     * @param cs The completion status to use.
      *
      * @exception SystemException Thrown if an error occurs. Any error
      * will cause the activity to be failed.

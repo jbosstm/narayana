@@ -67,7 +67,7 @@ public interface Participant
      * Process the message from the coordinator and return a response, which
      * may be null - validity is down to the specific coordinator.
      *
-     * @param Message notification The message to be processed.
+     * @param notification The message to be processed.
      *
      * @exception WrongStateException Thrown if the participant is not in a
      * state which is valid given the input message.

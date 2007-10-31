@@ -66,7 +66,7 @@ public interface CoordinatorManager extends UserCoordinator
      * Enrol the specified participant with the coordinator associated with
      * the current thread.
      *
-     * @param Participant act The participant.
+     * @param act The participant.
      *
      * @exception NoActivityException Thrown if there is no activity associated
      * with the current thread.
@@ -85,7 +85,7 @@ public interface CoordinatorManager extends UserCoordinator
      * Remove the specified participant from the coordinator associated with
      * the current thread.
      *
-     * @param Participant act The participant to remove.
+     * @param act The participant to remove.
      *
      * @exception NoActivityException Thrown if there is no activity associated
      * with the current thread.
@@ -101,7 +101,7 @@ public interface CoordinatorManager extends UserCoordinator
      * Enrol the specified synchronization with the coordinator associated with
      * the current thread.
      *
-     * @param Synchronization act The synchronization to add.
+     * @param act The synchronization to add.
      *
      * @exception NoActivityException Thrown if there is no activity associated
      * with the current thread.
@@ -120,7 +120,7 @@ public interface CoordinatorManager extends UserCoordinator
      * Remove the specified synchronization from the coordinator associated
      * with the current thread.
      *
-     * @param Synchronization act The synchronization to remove.
+     * @param act The synchronization to remove.
      *
      * @exception NoActivityException Thrown if there is no activity associated
      * with the current thread.
@@ -135,7 +135,7 @@ public interface CoordinatorManager extends UserCoordinator
     /**
      * The participant has rolled back. Mark the transaction as rolled back.
      *
-     * @param Participant act The participant.
+     * @param participantId The participant.
      *
      * @exception NoActivityException Thrown if there is no activity associated
      * with the current thread.
@@ -150,7 +150,7 @@ public interface CoordinatorManager extends UserCoordinator
     /**
      * A participant is readonly. Remove it from the list.
      *
-     * @param Participant act The participant.
+     * @param participantId The participant.
      *
      * @exception NoActivityException Thrown if there is no activity associated
      * with the current thread.

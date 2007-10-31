@@ -59,7 +59,7 @@ public interface TransactionHierarchy
     public boolean valid ();
 
     /**
-     * @param the specific transaction in the stack.
+     * @param index index of the specific transaction in the stack.
      * @exception IndexOutOfBoundsException Thrown if the transaction number
      * is too large or small.
      * @return the transaction handle.

@@ -43,7 +43,7 @@ public interface Registrar
     /**
      * Registers the interest of participant in a particular protocol.
      *
-     * @param participantProtocolServiceAddress the port reference of the participant protocol service
+     * @param participantProtocolService the port reference of the participant protocol service
      * @param protocolIdentifier the protocol identifier
      * @param instanceIdentifier the instance identifier, this may be null
      *
@@ -65,7 +65,6 @@ public interface Registrar
      * registrar is removed from multiple register mappers or from the same register mapper with different protocol
      * identifiers.
      *
-     * @param serviceAddress the address of the service
      * @param protocolIdentifier the protocol identifier
      */
     public void uninstall(final String protocolIdentifier);

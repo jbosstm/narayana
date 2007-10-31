@@ -281,7 +281,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
 
     /**
      * SOAP Fault.
-     * @param soapFault The SOAP fault notification.
+     * @param fault The SOAP fault notification.
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      * 

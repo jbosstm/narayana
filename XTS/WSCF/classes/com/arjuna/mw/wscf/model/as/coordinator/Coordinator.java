@@ -79,11 +79,11 @@ public interface Coordinator
     /**
      * Register the specified participant with the coordinator.
      *
-     * @param Participant act The participant to enroll with the coordinator.
-     * @param int priority If the coordinator allows prioritisation of
+     * @param act The participant to enroll with the coordinator.
+     * @param priority If the coordinator allows prioritisation of
      * participants, this priority is used to ensure participant invocations
      * occur in a specific order.
-     * @param Qualifier[] quals Any qualifiers associated with the participant
+     * @param quals Any qualifiers associated with the participant
      * for this registration.
      *
      * @exception WrongStateException Thrown if the coordinator is not in
@@ -99,7 +99,7 @@ public interface Coordinator
     /**
      * Unregister the specified participant from the coordinator.
      *
-     * @param Participant act The participant to remove.
+     * @param act The participant to remove.
      *
      * @exception InvalidParticipantException Thrown if the partcipant is not known
      * of by the coordinator.
@@ -115,12 +115,12 @@ public interface Coordinator
      * decisions based upon their current state and assumptions about which
      * notifications a coordinator may send them.
      *
-     * @param String id The unique participant name.
-     * @param Message notification The notification that the participant has
+     * @param id The unique participant name.
+     * @param notification The notification that the participant has
      * based the response on. For example, the response is related to a
      * "prepare" notification.
-     * @param Outcome response The response to the assumed notification.
-     * @param Qualifier[] quals Any qualifiers associated with the response.
+     * @param response The response to the assumed notification.
+     * @param quals Any qualifiers associated with the response.
      *
      * @exception WrongStateException Thrown if the coordinator is not in
      * a state that is compatible with the received response.

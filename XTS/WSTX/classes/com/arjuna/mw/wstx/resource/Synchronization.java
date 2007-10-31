@@ -64,7 +64,7 @@ public interface Synchronization
      * The transaction that the instance is enrolled with has completed and
      * the state in which is completed is passed as a parameter.
      *
-     * @param CompletionStatus cs The state in which the transaction completed.
+     * @param cs The state in which the transaction completed.
      *
      * @exception SystemException Thrown if any error occurs. This has no
      * affect on the outcome of the transaction.

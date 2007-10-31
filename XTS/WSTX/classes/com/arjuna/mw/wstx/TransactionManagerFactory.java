@@ -103,7 +103,7 @@ public class TransactionManagerFactory
      * Obtain a reference to a coordinator that implements the specified
      * protocol.
      *
-     * @param org.w3c.dom.Document protocol The XML definition of the type of
+     * @param protocol The XML definition of the type of
      * coordination protocol required.
      *
      * @exception ProtocolNotRegisteredException Thrown if the requested
