@@ -87,4 +87,8 @@
         </jar>
     </target>
 
+    <target name="deploy" depends="sar">
+        <copy file="${build.dir}/jbossxts.sar" todir="${jbossas.home}/server/default/deploy"/>
+    </target>
+
 </project>

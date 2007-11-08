@@ -104,18 +104,6 @@ public class XTSService extends ServiceMBeanSupport implements XTSServiceMBean {
     {
         getLog().info("JBossTS XTS Transaction Service - starting");
 
-        InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("/jjh.properties");
-                    if(inputStream != null) {
-                        System.out.println("jjh found it (sar).");
-                    }
-
-                InputStream inputStream2 = this.getClass().getResourceAsStream("/jjh.properties");
-                    if(inputStream2 != null) {
-                        System.out.println("jjh found it (sar) local.");
-                    }
-
-
-
         // read unified properties file (replaces wscf.xml and wstx.xml)
         Configuration.initialise("/jbossxts.xml");
 
@@ -155,10 +143,10 @@ public class XTSService extends ServiceMBeanSupport implements XTSServiceMBean {
 
         WSTXInitialisation(); // com.arjuna.mw.wst.deploy.WSTXInitialisation : Initialise WSTX
 
-        ACCoordinatorRecoveryModule acCoordinatorRecoveryModule = new ACCoordinatorRecoveryModule();
+        //ACCoordinatorRecoveryModule acCoordinatorRecoveryModule = new ACCoordinatorRecoveryModule();
         // we assume the tx manager has started, hence initializing the recovery manager.
         // to guarantee this our mbean should depend on the tx mgr mbean. (but does that g/tee start or just load?)
-        RecoveryManager.manager().addModule(acCoordinatorRecoveryModule); // TODO thread safety.
+        //RecoveryManager.manager().addModule(acCoordinatorRecoveryModule); // TODO thread safety.
 
     }
 
