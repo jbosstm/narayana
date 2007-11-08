@@ -1,0 +1,90 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2007, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a full listing
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  (C) 2007,
+  @author JBoss Inc.
+-->
+
+<project name="sar" default="sar" basedir=".">
+
+    <!-- ================================================================== -->
+
+    <!-- The properties to override are the following:                      -->
+    <!--    hostname (defaults to localhost)                                -->
+    <!--    port (defaults to 8080 for jboss)                               -->
+
+    <!--    deploy.dir The deployment directory for the ear                 -->
+    <!--    xts.home The installation directory for AXTS                   -->
+    <!-- ================================================================== -->
+
+    <!-- the directory in which XTS resides -->
+    <!-- devs: run 'ant jta; cd XTS; ant install' after svn checkout -->
+    <property name="xts.home" value="../xts-install"/>
+
+    <!-- the directory in which your app server resides (version 4.2.1 expected) -->
+    <property name="jbossas.home" value="/home/jhalli/IdeaProjects/jboss/jbossas421ga/build/output/jboss-4.2.1.GA"/>
+
+
+    <property name="lib.dir" location="${xts.home}/lib"/>
+    <property name="ext.dir" location="${lib.dir}/ext"/>
+
+    <property name="build.dir"         value="build"/>
+
+    <target name="init">
+        <delete dir="${build.dir}"/>
+        <mkdir dir="${build.dir}"/>
+    </target>
+
+    <!-- TODO are the xts engine and its WS stack conceptually separate deployments? at what level do they integrate? spi or jax-ws?-->
+    <target name="sar" depends="init">
+
+        <javac srcdir="src" destdir="${build.dir}">
+            <classpath>
+                <!-- logging -->
+                <pathelement location="${jbossas.home}/lib/jboss-common.jar"/>
+                <!-- mbean -->
+                <pathelement location="${jbossas.home}/lib/jboss-system.jar"/>
+                <pathelement location="${jbossas.home}/lib/jboss-jmx.jar"/>
+                <!-- XTS -->
+                <fileset dir="${lib.dir}" includes="*.jar"/>
+                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossts-common.jar"/>
+            </classpath>
+        </javac>
+
+        <!-- TODO: how to enforce startup ordering? -->
+
+        <jar jarfile="${build.dir}/jbossxts.war">
+            <fileset dir="." includes="WEB-INF/web.xml"/>
+        </jar>
+
+        <jar jarfile="${build.dir}/jbossxts.sar">
+            <fileset dir="${lib.dir}" includes="*.jar"/>
+
+            <fileset dir="." includes="META-INF/jboss-service.xml"/>
+            <fileset dir="${build.dir}" includes="**/*.class"/>
+
+            <fileset dir="${build.dir}" includes="jbossxts.war"/>
+
+            <!-- AS /lib supplies servlet.jar, jbossjta.jar, commons-logging.jar, jbossts-common.jar
+                saaj-api.jar, jaxrpc.jar.  stax is in jbossws.sar but not server /lib    -->
+            <fileset dir="${ext.dir}" includes="stax-api-1.0.jar wstx-asl-2.0.3.jar"/>
+
+            <fileset dir="." includes="jbossxts.xml"/>
+        </jar>
+    </target>
+
+</project>

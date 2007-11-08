@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Id$ -->
+
+<server>
+
+   <mbean name="jboss.xts:service=XTSService" code="org.jboss.transactions.XTSService">
+       <depends>jboss.web:service=WebServer</depends>
+   </mbean>
+
+</server>
