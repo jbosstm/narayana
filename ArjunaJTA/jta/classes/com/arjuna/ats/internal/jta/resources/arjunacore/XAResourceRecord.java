@@ -74,6 +74,13 @@ import javax.transaction.xa.XAException;
  * @author Mark Little (mark_little@hp.com)
  * @version $Id: XAResourceRecord.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.2.4.
+ *
+ * @message com.arjuna.ats.internal.jta.resources.arjunacore.noresource
+ *          [com.arjuna.ats.internal.jta.resources.arjunacore.noresource]
+ *          No XAResource to recover {0}
+ * @message com.arjuna.ats.internal.jta.resources.arjunacore.assumecomplete
+ *          [com.arjuna.ats.internal.jta.resources.arjunacore.assumecomplete]
+ *          Being told to assume complete on Xid {0}
  */
 
 public class XAResourceRecord extends AbstractRecord
@@ -105,7 +112,7 @@ public class XAResourceRecord extends AbstractRecord
 					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
 					"XAResourceRecord.XAResourceRecord ( " + xid + " )");
 		}
-
+		
 		_theXAResource = res;
 		_recoveryObject = null;
 		_tranID = xid;
@@ -343,7 +350,7 @@ public class XAResourceRecord extends AbstractRecord
 
 			return TwoPhaseOutcome.FINISH_OK;
 		}
-
+		
 		if (_tranID == null)
 		{
 			if (jtaLogger.loggerI18N.isWarnEnabled())
@@ -410,6 +417,9 @@ public class XAResourceRecord extends AbstractRecord
 							return TwoPhaseOutcome.HEURISTIC_COMMIT;
 						case XAException.XA_HEURMIX:
 							return TwoPhaseOutcome.HEURISTIC_MIXED;
+						case XAException.XAER_NOTA:
+						    if (_recovered)
+							break; // rolled back previously and recovery completed
 						case XAException.XA_HEURRB: // forget?
 						case XAException.XA_RBROLLBACK:
 						case XAException.XA_RBEND:
@@ -438,7 +448,30 @@ public class XAResourceRecord extends AbstractRecord
 				}
 			}
 			else
+			{
+			    if (jtaLogger.loggerI18N.isWarnEnabled())
+			    {
+				jtaLogger.loggerI18N
+				    .warn(
+					  "com.arjuna.ats.internal.jta.resources.arjunacore.noresource",
+					  new Object[] {_tranID});
+			    }
+
+			    if (XAResourceRecord._assumedComplete)
+			    {
+				if (jtaLogger.loggerI18N.isInfoEnabled())
+				{
+				    jtaLogger.loggerI18N
+					.info(
+					      "com.arjuna.ats.internal.jta.resources.arjunacore.assumecomplete",
+					      new Object[] {_tranID});
+				}
+
+				return TwoPhaseOutcome.FINISH_OK;
+			    }
+			    else
 				return TwoPhaseOutcome.FINISH_ERROR;
+			}
 		}
 
 		return TwoPhaseOutcome.FINISH_OK;
@@ -541,8 +574,9 @@ public class XAResourceRecord extends AbstractRecord
 						case XAException.XA_HEURMIX:
 							return TwoPhaseOutcome.HEURISTIC_MIXED;
 						case XAException.XAER_NOTA:
+						    if (_recovered)
+							break; // committed previously and recovery completed
 						case XAException.XAER_PROTO:
-							break;
 						case XAException.XA_RETRY:
 							return TwoPhaseOutcome.FINISH_ERROR;
 						case XAException.XAER_INVAL:
@@ -565,7 +599,30 @@ public class XAResourceRecord extends AbstractRecord
 				}
 			}
 			else
+			{
+			    if (jtaLogger.loggerI18N.isWarnEnabled())
+			    {
+				jtaLogger.loggerI18N
+				    .warn(
+					  "com.arjuna.ats.internal.jta.resources.arjunacore.noresource",
+					  new Object[] {_tranID});
+			    }
+
+			    if (XAResourceRecord._assumedComplete)
+			    {
+				if (jtaLogger.loggerI18N.isInfoEnabled())
+				{
+				    jtaLogger.loggerI18N
+					.info(
+					      "com.arjuna.ats.internal.jta.resources.arjunacore.assumecomplete",
+					      new Object[] {_tranID});
+				}
+
+				return TwoPhaseOutcome.FINISH_OK;
+			    }
+			    else
 				return TwoPhaseOutcome.FINISH_ERROR;
+			}
 		}
 
 		return TwoPhaseOutcome.FINISH_OK;
@@ -679,16 +736,14 @@ public class XAResourceRecord extends AbstractRecord
 						forget();
 						return TwoPhaseOutcome.FINISH_ERROR;
 					case XAException.XAER_NOTA:
+						return TwoPhaseOutcome.HEURISTIC_HAZARD; // something committed or rolled back without asking us!
 					case XAException.XAER_PROTO:
-						break;
 					case XAException.XAER_INVAL:
 					case XAException.XAER_RMFAIL: // resource manager failed,
 						// did it rollback?
 						return TwoPhaseOutcome.FINISH_ERROR;
-						// return TwoPhaseOutcome.HEURISTIC_HAZARD;
 					default:
 						return TwoPhaseOutcome.FINISH_ERROR;
-						// return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
 					}
 				}
 				catch (Exception e2)
@@ -947,7 +1002,13 @@ public class XAResourceRecord extends AbstractRecord
 										new Object[]
 										{ _tranID });
 
-						return false;
+						/*
+						 * Don't prevent tx from activating because there may be
+						 * other participants that can still recover. Plus, we will
+						 * try to get a new XAResource later for this instance.
+						 */
+						
+						return true;
 					}
 				}
 			}
@@ -1041,6 +1102,7 @@ public class XAResourceRecord extends AbstractRecord
 		_heuristic = TwoPhaseOutcome.FINISH_OK;
 		_valid = true;
 		_theTransaction = null;
+		_recovered = true;
 	}
 
 	protected XAResourceRecord(Uid u)
@@ -1054,6 +1116,7 @@ public class XAResourceRecord extends AbstractRecord
 		_heuristic = TwoPhaseOutcome.FINISH_OK;
 		_valid = true;
 		_theTransaction = null;
+		_recovered = true;
 	}
 
 	/**
@@ -1090,6 +1153,10 @@ public class XAResourceRecord extends AbstractRecord
 
 				if (m instanceof XARecoveryModule)
 				{
+				    /*
+				     * Blaargh! There are better ways to do this!
+				     */
+
 					return ((XARecoveryModule) m).getNewXAResource(_tranID);
 				}
 			}
@@ -1143,7 +1210,6 @@ public class XAResourceRecord extends AbstractRecord
 	protected XAResource _theXAResource;
 
 	private RecoverableXAConnection _recoveryObject;
-
 	private Xid _tranID;
 
 	private boolean _prepared;
@@ -1153,8 +1219,10 @@ public class XAResourceRecord extends AbstractRecord
 	private int _heuristic;
 
 	private TransactionImple _theTransaction;
+    private boolean _recovered = false;
 
 	private static boolean _rollbackOptimization = false;
+    private static boolean _assumedComplete = false;
 
 	static
 	{
@@ -1163,6 +1231,25 @@ public class XAResourceRecord extends AbstractRecord
 
 		if (optimization.equals("ON"))
 			_rollbackOptimization = true;
+
+		/*
+		 * WARNING: USE WITH EXTEREME CARE!!
+		 *
+		 * This assumes that if there is no XAResource that can deal with an Xid
+		 * after recovery, then we failed after successfully committing the transaction
+		 * but before updating the log. In which case we just need to ignore this
+		 * resource and remove the entry from the log.
+		 *
+		 * BUT if not all XAResourceRecovery instances are correctly implemented
+		 * (or present) we may end up removing participants that have not been dealt
+		 * with. Hence USE WITH EXTREME CARE!!
+		 */
+
+		String assumedComplete = jtaPropertyManager.propertyManager.getProperty(
+				Environment.XA_ASSUME_RECOVERY_COMPLETE, "FALSE");
+
+		if (assumedComplete.equalsIgnoreCase("true"))
+			_assumedComplete = true;
 	}
 
 }

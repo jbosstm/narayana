@@ -41,6 +41,8 @@ public class RecoveryEnvironment
     public static final String EXPIRY_SCAN_INTERVAL    = "com.arjuna.ats.arjuna.recovery.expiryScanInterval" ;
     public static final String TRANSACTION_STATUS_MANAGER_EXPIRY_TIME = 
 	"com.arjuna.ats.arjuna.recovery.transactionStatusManagerExpiryTime";
+    public static final String TRANSACTION_EXPIRY_TIME = 
+	"com.arjuna.ats.arjuna.recovery.transactionExpiryTime";
     public static final String ACTIVATOR_PROPERTY_PREFIX  = "com.arjuna.ats.arjuna.recovery.recoveryActivator" ;
     
    /** Not used */

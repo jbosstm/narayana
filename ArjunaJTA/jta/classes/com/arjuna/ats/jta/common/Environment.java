@@ -52,6 +52,7 @@ public class Environment
     public static final String XA_BACKOFF_PERIOD = "com.arjuna.ats.jta.xaBackoffPeriod";
     public static final String XA_RECOVERY_NODE = "com.arjuna.ats.jta.xaRecoveryNode";
     public static final String XA_ROLLBACK_OPTIMIZATION = "com.arjuna.ats.jta.xaRollbackOptimization";
+    public static final String XA_ASSUME_RECOVERY_COMPLETE = "com.arjuna.ats.jta.xaAssumeRecoveryComplete";
 
     public static final String UT_JNDI_CONTEXT = "com.arjuna.ats.jta.utils.UTJNDIContext";
     public static final String TM_JNDI_CONTEXT = "com.arjuna.ats.jta.utils.TMJNDIContext";

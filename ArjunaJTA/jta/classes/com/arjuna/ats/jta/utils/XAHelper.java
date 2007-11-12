@@ -168,6 +168,47 @@ public class XAHelper
 	}
 
 	/**
+	 * Compares two Xid instances at the gtid level only.
+	 * 
+	 * @param Xid
+	 *            x1 first Xid
+	 * @param Xid
+	 *            x2 second Xid
+	 * 
+	 * @return <code>true</code> if the two instances are the same,
+	 *         <code>false</code> otherwise.
+	 */
+
+	public static boolean sameTransaction (Xid x1, Xid x2)
+	{
+		if (x1 == x2)
+			return true;
+		else
+		{
+			if (x1.getFormatId() == x2.getFormatId())
+			{
+				byte[] gtrid1 = x1.getGlobalTransactionId();
+				byte[] gtrid2 = x2.getGlobalTransactionId();
+
+				if (gtrid1.length == gtrid2.length)
+				{
+					for (int i = 0; i < gtrid1.length; i++)
+					{
+						if (gtrid1[i] != gtrid2[i])
+							return false;
+					}
+
+					return true;
+				}
+				else
+					return false;
+			}
+			else
+			    return false;
+		}
+	}
+
+	/**
 	 * get a string representing anyones Xid similar too, but not the same as
 	 * OTS_Transaction/xa/XID.toString()
 	 */

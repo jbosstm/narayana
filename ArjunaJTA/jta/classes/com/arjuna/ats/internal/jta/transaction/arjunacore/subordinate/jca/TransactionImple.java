@@ -38,7 +38,8 @@ import com.arjuna.ats.jta.logging.*;
 
 import javax.transaction.xa.Xid;
 
-public class TransactionImple extends
+public class TransactionImple
+		extends
 		com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.TransactionImple
 {
 
@@ -46,12 +47,12 @@ public class TransactionImple extends
 	 * Create a new transaction with the specified timeout.
 	 */
 
-	public TransactionImple (int timeout)
+	public TransactionImple(int timeout)
 	{
 		this(timeout, null);
 	}
-	
-	public TransactionImple (int timeout, Xid importedXid)
+
+	public TransactionImple(int timeout, Xid importedXid)
 	{
 		super(new SubordinateAtomicAction(timeout, importedXid));
 
@@ -61,30 +62,34 @@ public class TransactionImple extends
 	/**
 	 * Used for failure recovery.
 	 * 
-	 * @param actId the transaction state to recover.
+	 * @param actId
+	 *            the transaction state to recover.
 	 */
-	
-	public TransactionImple (Uid actId)
+
+	public TransactionImple(Uid actId)
 	{
 		super(new SubordinateAtomicAction(actId));
-		
+
 		// don't put it into list here: it may already be there!
 	}
-	
-	public final void recordTransaction ()
+
+	public final void recordTransaction()
 	{
 		TransactionImple.putTransaction(this);
 	}
-	
+
 	/**
 	 * Overloads Object.equals()
 	 */
 
-	public boolean equals (Object obj)
+	public boolean equals(Object obj)
 	{
 		if (jtaLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.equals");
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					VisibilityLevel.VIS_PUBLIC,
+					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+					"TransactionImple.equals");
 		}
 
 		if (obj == null)
@@ -101,7 +106,7 @@ public class TransactionImple extends
 		return false;
 	}
 
-	public String toString ()
+	public String toString()
 	{
 		if (super._theTransaction == null)
 			return "TransactionImple < jca-subordinate, NoTransaction >";
@@ -113,44 +118,34 @@ public class TransactionImple extends
 	}
 
 	/**
-	 * If this is an imported transaction (via JCA) then this will be the Xid
-	 * we are pretending to be. Otherwise, it will be null.
+	 * If this is an imported transaction (via JCA) then this will be the Xid we
+	 * are pretending to be. Otherwise, it will be null.
 	 * 
 	 * @return null if we are a local transaction, a valid Xid if we have been
-	 * imported.
+	 *         imported.
 	 */
-	
-	public final Xid baseXid ()
+
+	public final Xid baseXid()
 	{
 		return ((SubordinateAtomicAction) _theTransaction).getXid();
 	}
 
 	/**
-	 * Has the transaction been activated successfully? If not, we wait
-	 * and try again later.
+	 * Force this transaction to try to recover itself again.
 	 */
-	
-    public boolean activated ()
-    {
-    	return ((SubordinateAtomicAction) _theTransaction).activated();
-    }
 
-    /**
-     * Force this transaction to try to recover itself again.
-     */
-    
-    public void recover ()
-    {
-		Uid actId = _theTransaction.get_uid();
+	public void recover()
+	{
+		_theTransaction.activate();
+	}
 
-		/*
-		 * Get a new subordinate instance. This will force activate to
-		 * be called again. Calling _theTransaction.activate should work,
-		 * but this is cleaner and guarantees the instance is in the right
-		 * state for recovery. Performance should not be an issue during
-		 * recovery either.
-		 */
-		
-		_theTransaction = new SubordinateAtomicAction(actId);
-    }
+	/**
+	 * Has the transaction been activated successfully? If not, we wait and try
+	 * again later.
+	 */
+
+	public boolean activated()
+	{
+		return ((SubordinateAtomicAction) _theTransaction).activated();
+	}
 }
