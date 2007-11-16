@@ -461,6 +461,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 				switch (status)
 				{
+				case ActionStatus.ABORT_ONLY:
 				case ActionStatus.ABORTED:
 					throw new javax.transaction.RollbackException(
 							jtaLogger.logMesg
