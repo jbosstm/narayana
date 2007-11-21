@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -124,9 +124,9 @@ public void finalize () throws Throwable
 	    txojLogger.aitLogger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				       FacilityCode.FAC_CONCURRENCY_CONTROL, "LockManager.finalize()");
 	}
-	
+
 	boolean doSignal = false;
-	
+
 	cleanUp();
 
 	if (mutex != null)
@@ -139,21 +139,21 @@ public void finalize () throws Throwable
 	locksHeld = null;
 	lockStore = null;
 	conflictManager = null;
-	
+
 	if (doSignal)  // mutex must be set
 	    mutex.unlock();
-	
+
 	mutex = null;
 
 	super.finalize();
     }
-    
+
     /**
      * Change lock ownership as nested action commits. All
      * locks owned by the committing action have their owners changed to be
      * the parent of the committing action. BasicAction ensures this is only
      * called at nested commit. This function works by copying the old LockList
-     * pointer and then creating a new held lock list. Locks are then moved 
+     * pointer and then creating a new held lock list. Locks are then moved
      * from the old to the new, propagating en route.
      */
 
@@ -162,10 +162,10 @@ public final boolean propagate (Uid from, Uid to)
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_CONCURRENCY_CONTROL, 
+				     FacilityCode.FAC_CONCURRENCY_CONTROL,
 				       "LockManager::propagate("+from+", "+to+")");
 	}
-	
+
 	boolean result = false;
 	int retryCount = 10;
 
@@ -173,29 +173,29 @@ public final boolean propagate (Uid from, Uid to)
 	{
 	    try
 	    {
-		synchronized (locksHeld)
+		synchronized (locksHeldLockObject)
 		{
 		    if (loadState())
 		    {
 			LockList oldlist = locksHeld;
 			Lock current = null;
-		
+
 			locksHeld = new LockList();	/* create a new one */
-	    
+
 			if (locksHeld != null)
 			{
 			    /*
 			     * scan through old list of held locks and
 			     * propagate to parent.
 			     */
-		    
+
 			    while ((current = oldlist.pop()) != null)
 			    {
 				if (current.getCurrentOwner().equals(from))
 				{
 				    current.propagate();
 				}
-		    
+
 				if (!locksHeld.insert(current))
 				{
 				    current = null;
@@ -218,7 +218,7 @@ public final boolean propagate (Uid from, Uid to)
 			    throw new NullPointerException();
 			}
 		    }
-		    
+
 		    if (result)
 			result = unloadState();
 		}
@@ -238,8 +238,8 @@ public final boolean propagate (Uid from, Uid to)
 		{
 		}
 	    }
-		
-	} while ((!result) && (--retryCount > 0));	    
+
+	} while ((!result) && (--retryCount > 0));
 
 	if (!result)
 	{
@@ -247,8 +247,8 @@ public final boolean propagate (Uid from, Uid to)
 	    {
 		txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockManager_1");
 	    }
-		
-	    synchronized (locksHeld)
+
+	    synchronized (locksHeldLockObject)
 	    {
 		freeState();
 	    }
@@ -268,10 +268,10 @@ public final boolean releaseAll (Uid actionUid)
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_CONCURRENCY_CONTROL, 
+				     FacilityCode.FAC_CONCURRENCY_CONTROL,
 				       "LockManager::releaseAll("+actionUid+")");
 	}
-	
+
 	return doRelease(actionUid, true);
     }
 
@@ -287,7 +287,7 @@ public final boolean releaselock (Uid lockUid)
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				       FacilityCode.FAC_CONCURRENCY_CONTROL, "LockManager::releaseLock("+lockUid+")");
 	}
-	
+
 	return doRelease(lockUid, false);
     }
 
@@ -329,13 +329,13 @@ public final int setlock (Lock toSet, int retry)
      *
      * @return <code>LockResult</code> indicating outcome.
      */
-    
+
 public final int setlock (Lock toSet, int retry, int sleepTime)
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_CONCURRENCY_CONTROL, 
+				     FacilityCode.FAC_CONCURRENCY_CONTROL,
 				       "LockManager::setlock("+toSet+", "+retry+", "+sleepTime+")");
 	}
 
@@ -351,10 +351,10 @@ public final int setlock (Lock toSet, int retry, int sleepTime)
 	    {
 		txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockManager_2");
 	    }
-	    
+
 	    return LockResult.REFUSED;
 	}
-    
+
 	currAct = BasicAction.Current();
 
 	if (currAct != null)
@@ -369,25 +369,25 @@ public final int setlock (Lock toSet, int retry, int sleepTime)
 		{
 		    txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockManager_3");
 		}
-		
+
 		toSet = null;
-		
+
 		return LockResult.REFUSED;
 	    }
 	}
-	
+
 	if (super.loadObjectState())
 	    super.setupStore();
 
 	while ((conflict == ConflictType.CONFLICT) && ((retry >= 0) || (retry == LockManager.waitTotalTimeout)))
 	{
-	    synchronized (locksHeld)
-	    {
+	    synchronized (locksHeldLockObject)
+        {
 		conflict = ConflictType.CONFLICT;
-	
+
 		if (loadState())
 		{
-		    conflict = lockConflict(toSet);
+            conflict = lockConflict(toSet);
 		}
 		else
 		{
@@ -396,7 +396,7 @@ public final int setlock (Lock toSet, int retry, int sleepTime)
 			txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockManager_4");
 		    }
 		}
-		    
+
 		if (conflict != ConflictType.CONFLICT)
 		{
 		    /*
@@ -407,9 +407,9 @@ public final int setlock (Lock toSet, int retry, int sleepTime)
 		    /* no conflict so set lock */
 
 		    modifyRequired = toSet.modifiesObject();
-		    
+
 		    /* trigger object load from store */
-		    
+
 		    if (super.activate())
 		    {
 			returnStatus = LockResult.GRANTED;
@@ -421,33 +421,33 @@ public final int setlock (Lock toSet, int retry, int sleepTime)
 			    if (currAct != null)
 			    {
 				/* add new lock record to action list */
-				
+
 				newLockR = new LockRecord(this, (modifyRequired ? false : true), currAct);
-				
+
 				if ((lrStatus = currAct.add(newLockR)) != AddOutcome.AR_ADDED)
 				{
 				    newLockR = null;
-				    
+
 				    if (lrStatus == AddOutcome.AR_REJECTED)
 					returnStatus = LockResult.REFUSED;
 				}
 			    }
-		    
+
 			    if (returnStatus == LockResult.GRANTED)
 			    {
 				locksHeld.insert(toSet); /* add to local lock list */
-			    }
+                }
 			}
 		    }
 		    else
 		    {
 			/* activate failed - refuse request */
-			    
+
 			if (txojLogger.aitLoggerI18N.isWarnEnabled())
 			{
 			    txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockManager_5");
 			}
-			    
+
 			returnStatus = LockResult.REFUSED;
 		    }
 		}
@@ -467,7 +467,7 @@ public final int setlock (Lock toSet, int retry, int sleepTime)
 			{
 			    txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockManager_6");
 			}
-			    
+
 			returnStatus = LockResult.REFUSED;
 		    }
 		}
@@ -480,7 +480,7 @@ public final int setlock (Lock toSet, int retry, int sleepTime)
 		 * invokes save_state that routine may set another lock
 		 * without blocking.
 		 */
-		    
+
 		if (returnStatus == LockResult.GRANTED)
 		{
 		    if (modifyRequired)
@@ -503,7 +503,7 @@ public final int setlock (Lock toSet, int retry, int sleepTime)
 		if (conflict == ConflictType.CONFLICT)
 		    freeState();
 	    }
-	    
+
 	    if (conflict == ConflictType.CONFLICT)
 	    {
 		if (retry != 0)
@@ -542,7 +542,7 @@ public void print (PrintWriter strm)
 	    if (locksHeld != null)
 	    {
 		strm.println("\tCurrently holding : "+locksHeld.entryCount()+" locks");
-		
+
 		while ((current = next.iterate()) != null)
 		    current.print(strm);
 	    }
@@ -556,7 +556,7 @@ public void print (PrintWriter strm)
 
 public synchronized void printState (PrintWriter strm)
     {
-	synchronized (locksHeld)
+	synchronized (locksHeldLockObject)
 	    {
 		boolean iDeleteState = false;
 
@@ -593,12 +593,12 @@ public Object attributes ()
     {
 	return lmAttributes;
     }
-    
+
     /*
      * Pass on some args to StateManager and initialise
      * internal state.
      * The lock store and semaphore are set up lazily since they depend
-     * upon the result of the type() operation which if run in the 
+     * upon the result of the type() operation which if run in the
      * constructor always give the same answer!
      */
 
@@ -610,8 +610,8 @@ protected LockManager (Uid storeUid)
 protected LockManager (Uid storeUid, ObjectName attr)
     {
 	this(storeUid, ObjectType.ANDPERSISTENT, attr);
-    }    
-    
+    }
+
 protected LockManager (Uid storeUid, int ot)
     {
 	this(storeUid, ot, null);
@@ -624,12 +624,12 @@ protected LockManager (Uid storeUid, int ot, ObjectName attr)
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
 	    txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_CONCURRENCY_CONTROL, 
+				     FacilityCode.FAC_CONCURRENCY_CONTROL,
 				       "LockManager::LockManager("+storeUid+")");
 	}
 
 	parseObjectName();
-	
+
 	systemKey = null;
 	locksHeld = new LockList();
 	lockStore = null;
@@ -638,13 +638,13 @@ protected LockManager (Uid storeUid, int ot, ObjectName attr)
 	hasBeenLocked = false;
 	objectLocked = false;
 	conflictManager = new LockConflictManager();
-    }    
+    }
 
     /*
      * Pass on some args to StateManager and initialise
      * internal state.
      * The lock store and semaphore are set up lazily since they depend
-     * upon the result of the type() operation which if run in the 
+     * upon the result of the type() operation which if run in the
      * constructor always give the same answer!
      */
 
@@ -668,8 +668,8 @@ protected LockManager (int ot, ObjectName attr)
 				       FacilityCode.FAC_CONCURRENCY_CONTROL, "LockManager::LockManager("+ot+")");
 	}
 
-	parseObjectName();	
-	
+	parseObjectName();
+
 	systemKey = null;
 	locksHeld = new LockList();
 	lockStore = null;
@@ -691,7 +691,7 @@ protected void terminate ()
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_CONCURRENCY_CONTROL, 
+				     FacilityCode.FAC_CONCURRENCY_CONTROL,
 				       "LockManager::terminate() for object-id "+get_uid());
 	}
 
@@ -704,10 +704,10 @@ private final synchronized void cleanUp ()
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-				     FacilityCode.FAC_CONCURRENCY_CONTROL, 
+				     FacilityCode.FAC_CONCURRENCY_CONTROL,
 				       "LockManager::cleanUp() for object-id "+get_uid());
 	}
-	
+
 	if (hasBeenLocked)
 	{
 	    if ((super.smAttributes.objectModel == ObjectModel.MULTIPLE) &&
@@ -715,7 +715,7 @@ private final synchronized void cleanUp ()
 	    {
 		initialise();
 	    }
-	    
+
 	    /*
 	     * Unlike in the original version of Arjuna, we don't check
 	     * to see if the invoking thread is within a transaction. We
@@ -728,16 +728,16 @@ private final synchronized void cleanUp ()
 		    if (super.usingActions != null)
 		    {
 			Enumeration e = super.usingActions.keys();
-		
+
 			while (e.hasMoreElements())
 			{
 			    BasicAction action = (BasicAction) e.nextElement();
-		
+
 			    while (action != null)
 			    {
 				/*
 				 * Pop actions off using list.
-				 * 
+				 *
 				 * Don't check if action is running below so
 				 * that cadavers can be created in commit
 				 * protocol too.
@@ -748,9 +748,9 @@ private final synchronized void cleanUp ()
 				 * maintain the locks because this object is
 				 * being deleted.
 				 */
-		
+
 				AbstractRecord A = new CadaverLockRecord(lockStore, this, action);
-				
+
 				if (action.add(A) != AddOutcome.AR_ADDED)
 				    A = null;
 			    }
@@ -758,7 +758,7 @@ private final synchronized void cleanUp ()
 		    }
 		}
 
-	    hasBeenLocked = false;	    
+	    hasBeenLocked = false;
 	}
     }
 
@@ -776,20 +776,20 @@ private final boolean doRelease (Uid u, boolean all)
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-				     FacilityCode.FAC_CONCURRENCY_CONTROL, 
+				     FacilityCode.FAC_CONCURRENCY_CONTROL,
 				       "LockManager::doRelease("+u+", "+all+")");
 	}
-	
+
 	Lock previous = null;
 	Lock current = null;
 	boolean deleted = false;
 	boolean result = false;
 	int retryCount = 10;
 	boolean loaded = false;
-	
+
 	do
 	{
-	    synchronized (locksHeld)
+	    synchronized (locksHeldLockObject)
 		{
 		    if (loadState())
 		    {
@@ -799,7 +799,7 @@ private final boolean doRelease (Uid u, boolean all)
 			 * Must declare iterator after loadstate or it sees an
 			 * empty list!
 			 */
-	    
+
 			LockListIterator next = new LockListIterator(locksHeld);
 
 			/*
@@ -808,9 +808,9 @@ private final boolean doRelease (Uid u, boolean all)
 			 * owner (oneOrAll = ALL_LOCKS) or the uid of the
 			 * actual lock itself (oneOrAll = SINGLE_LOCK).
 			 */
-	    
+
 			previous = null;
-	    
+
 			while ((current = next.iterate()) != null)
 			{
 			    Uid checkUid = null;
@@ -829,7 +829,7 @@ private final boolean doRelease (Uid u, boolean all)
 				locksHeld.forgetNext(previous);
 				current = null;
 				deleted = true;
-				
+
 				if (!all)
 				{
 				    break;
@@ -838,7 +838,7 @@ private final boolean doRelease (Uid u, boolean all)
 			    else
 				previous = current;
 			}
-		
+
 			result = true;
 		    }
 		    else
@@ -846,9 +846,9 @@ private final boolean doRelease (Uid u, boolean all)
 			/*
 			 * Free state while we still have the lock.
 			 */
-		     
+
 			freeState();
-			
+
 			result = false;
 		    }
 		}
@@ -867,7 +867,7 @@ private final boolean doRelease (Uid u, boolean all)
 	} while ((!result) && (--retryCount > 0));
 
 	boolean releasedOK = false;
-	
+
 	//	if (!stateLoaded)
 	if (!loaded)
 	{
@@ -884,14 +884,14 @@ private final boolean doRelease (Uid u, boolean all)
 		if (txojLogger.aitLogger.isDebugEnabled())
 		{
 		    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-					     FacilityCode.FAC_CONCURRENCY_CONTROL, 
+					     FacilityCode.FAC_CONCURRENCY_CONTROL,
 					       " *** CANNOT locate locks  ***");
 		}
 	    }
 
 	    retryCount = 10;
 
-	    synchronized (locksHeld)
+	    synchronized (locksHeldLockObject)
 	    {
 		do
 		{
@@ -902,7 +902,7 @@ private final boolean doRelease (Uid u, boolean all)
 		    }
 		    else
 			releasedOK = true;
-	    
+
 		} while ((--retryCount > 0) && (!releasedOK));
 	    }
 	}
@@ -913,7 +913,7 @@ private final boolean doRelease (Uid u, boolean all)
 	 */
 
 	conflictManager.signal();
-    
+
 	return releasedOK;
     }
 
@@ -932,7 +932,7 @@ private final void freeState ()
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
 				       FacilityCode.FAC_CONCURRENCY_CONTROL, "LockManager::freeState()");
 	}
-	
+
 	if (mutex != null)
 	{
 	    /*
@@ -943,9 +943,9 @@ private final void freeState ()
 	    if (super.smAttributes.objectModel != ObjectModel.SINGLE)
 	    {
 		/* clear out the existing list */
-	
+
 		while (locksHeld.pop() != null) ;
-    
+
 		stateLoaded = false;
 
 		if (objectLocked)
@@ -964,14 +964,14 @@ private final void freeState ()
 	    objectLocked = false;
 	}
     }
-    
+
     /*
      * Don't need to protect with a synchronization as this routine can only
      * be called from within other protected methods.
      *
      * Only called if multiple object model is used.
      */
-    
+
 private final boolean initialise ()
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
@@ -979,7 +979,7 @@ private final boolean initialise ()
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
 				       FacilityCode.FAC_CONCURRENCY_CONTROL, "LockManager::initialise()");
 	}
-	
+
 	boolean result = false;
 
 	if (systemKey == null)
@@ -994,27 +994,27 @@ private final boolean initialise ()
 	    if (mutex != null)
 	    {
 		if (mutex.lock() == Semaphore.SM_LOCKED)
-		{	    
+		{
 		    if (lockStore == null)
 		    {
 			Object[] param = new Object[3];
-		
+
 			param[0] = lmAttributes.lockStoreType;
 			param[1] = new Integer(ObjectModel.MULTIPLE);
 			param[2] = systemKey;
-		    
+
 			lockStore = new LockStore(param);
 
 			param = null;
 		    }
 		}
-		
+
 		mutex.unlock();
 	    }
 	}
-	
+
 	result = (lockStore != null);
-	
+
 	return result;
     }
 
@@ -1023,10 +1023,10 @@ private final boolean isAncestorOf (Lock heldLock)
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-				     FacilityCode.FAC_CONCURRENCY_CONTROL, 
+				     FacilityCode.FAC_CONCURRENCY_CONTROL,
 				       "LockManager::isAncestorOf("+heldLock.getCurrentOwner()+")");
 	}
-	
+
 	BasicAction action = BasicAction.Current();
 
 	if (action == null)
@@ -1054,7 +1054,7 @@ private final boolean loadState ()
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
 				       FacilityCode.FAC_CONCURRENCY_CONTROL, "LockManager::loadState()");
 	}
-	
+
 	if (super.smAttributes.objectModel == ObjectModel.SINGLE)
 	{
 	    stateLoaded = true;
@@ -1064,7 +1064,7 @@ private final boolean loadState ()
 	else
 	{
 	    InputObjectState S = null;
-	
+
 	    if ((systemKey == null) && !initialise())
 	    {
 		return false;			/* init failed */
@@ -1098,21 +1098,21 @@ private final boolean loadState ()
 		    try
 		    {
 			count = S.unpackInt();
-			
+
 			boolean cleanLoad = true;
 
 			if (txojLogger.aitLogger.isDebugEnabled())
 			{
 			    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-						     FacilityCode.FAC_CONCURRENCY_CONTROL, 
+						     FacilityCode.FAC_CONCURRENCY_CONTROL,
 						       "LockManager::loadState() loading " +count+" lock(s)");
 			}
-			
+
 			/*
 			 * Carefully rebuild the internal state - if we fail
 			 * throw it away and return.
 			 */
-		
+
 			for (int i = 0; (i < count) && cleanLoad; i++)
 			{
 			    try
@@ -1152,7 +1152,7 @@ private final boolean loadState ()
 		    catch (IOException e)
 		    {
 		    }
-	    
+
 		    S = null;
 		}
 		else
@@ -1180,7 +1180,7 @@ private final int lockConflict (Lock otherLock)
 	if (txojLogger.aitLogger.isDebugEnabled())
 	{
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-				     FacilityCode.FAC_CONCURRENCY_CONTROL, 
+				     FacilityCode.FAC_CONCURRENCY_CONTROL,
 				       "LockManager::lockConflict("+otherLock.get_uid()+")");
 	}
 
@@ -1216,7 +1216,7 @@ private final int lockConflict (Lock otherLock)
      * Unload the state by writing all the locks to the repository
      * and then freeing the semaphore.
      */
-    
+
 private final boolean unloadState ()
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
@@ -1224,12 +1224,12 @@ private final boolean unloadState ()
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
 				       FacilityCode.FAC_CONCURRENCY_CONTROL, "LockManager::unloadState()");
 	}
-	
+
 	/*
 	 * Single object model means we don't need a lock
 	 * store at all.
 	 */
-	
+
 	if (super.smAttributes.objectModel == ObjectModel.SINGLE)
 	{
 	    stateLoaded = false;
@@ -1250,7 +1250,7 @@ private final boolean unloadState ()
 	    if (txojLogger.aitLogger.isDebugEnabled())
 	    {
 		txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-					 FacilityCode.FAC_CONCURRENCY_CONTROL, 
+					 FacilityCode.FAC_CONCURRENCY_CONTROL,
 					 "LockManager::unloadState() unloading "
 					   +lockCount+" lock(s)");
 	    }
@@ -1275,7 +1275,7 @@ private final boolean unloadState ()
 		try
 		{
 		    /* generate new state */
-	    
+
 		    S.packInt(lockCount);
 
 		    while ((current = locksHeld.pop()) != null)
@@ -1286,12 +1286,12 @@ private final boolean unloadState ()
 			{
 			    if (txojLogger.aitLoggerI18N.isWarnEnabled())
 			    {
-				txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockManager_11", 
+				txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockManager_11",
 							    new Object[]{current});
 			    }
 			    unloadOk = false;
 			}
-			
+
 			current = null;
 		    }
 
@@ -1316,7 +1316,7 @@ private final boolean unloadState ()
 		catch (IOException e)
 		{
 		    unloadOk = false;
-		    
+
 		    if (txojLogger.aitLoggerI18N.isWarnEnabled())
 		    {
 			txojLogger.aitLoggerI18N.warn("com.arjuna.ats.txoj.LockManager_13",
@@ -1324,13 +1324,13 @@ private final boolean unloadState ()
 		    }
 		}
 	    }
-    
+
 	    stateLoaded = false;
-	
+
 	    if (objectLocked)
 	    {
 		objectLocked = false;
-		
+
 		if (mutex != null)   // means object model != SINGLE
 		    mutex.unlock();  // and exit mutual exclusion
 	    }
@@ -1342,7 +1342,7 @@ private final boolean unloadState ()
 private void parseObjectName ()
     {
 	lmAttributes = new LockManagerAttribute();
-	
+
 	if (super.objectName != null)
 	{
 	    try
@@ -1350,7 +1350,7 @@ private void parseObjectName ()
 		/*
 		 * Use same attribute name as environment.
 		 */
-		
+
 		lmAttributes.lockStoreType = super.objectName.getClassNameAttribute(Environment.LOCKSTORE_TYPE);
 	    }
 	    catch (Exception e)
@@ -1366,6 +1366,7 @@ protected LockManagerAttribute lmAttributes;
 
 private String              systemKey;/* used in accessing system resources */
 private LockList            locksHeld;	/* the actual list of locks set */
+private final Object        locksHeldLockObject = new Object(); //  mutex for sync on locksHeld. Can't use locksHeld itself, it's mutable.
 private LockStore           lockStore;	/* locks held in shared memory */
 private boolean             stateLoaded;
 private boolean             hasBeenLocked;/* Locked at least once */
@@ -1379,7 +1380,7 @@ private static boolean   nestedLocking = true;
     static
     {
 	String nl = txojPropertyManager.propertyManager.getProperty(Environment.ALLOW_NESTED_LOCKING);
-       
+
 	if (nl != null)
 	{
 	    if (nl.equals("NO"))
