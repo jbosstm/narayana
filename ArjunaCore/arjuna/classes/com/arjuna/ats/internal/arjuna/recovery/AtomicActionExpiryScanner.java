@@ -19,7 +19,7 @@
  * @author JBoss Inc.
  */
 
-package ArjunaCore.arjuna.classes.com.arjuna.ats.internal.arjuna.recovery;
+package com.arjuna.ats.internal.arjuna.recovery;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 
