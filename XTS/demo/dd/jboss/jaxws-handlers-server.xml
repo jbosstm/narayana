@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   JBoss, Home of Professional Open Source
   Copyright 2006, Red Hat Middleware LLC, and individual contributors
@@ -15,10 +16,21 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
   MA  02110-1301, USA.
   
-  (C) 2005-2006,
+  (C) 2007,
   @author JBoss Inc.
 -->
-<wsdd:type-mapping  xmlns:wsdd="http://www.bea.com/servers/wls70"
-  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
-</wsdd:type-mapping>
+
+<handler-chains xmlns="http://java.sun.com/xml/ns/javaee"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:schemaLocation="http://java.sun.com/xml/ns/javaee javaee_web_services_1_2.xsd">
+
+	<handler-chain>
+		<protocol-bindings>##SOAP11_HTTP</protocol-bindings>
+
+		<handler>
+			<handler-name>WebServicesTxContextHandler</handler-name>
+			<handler-class>com.arjuna.mw.wst.service.JaxWSHeaderContextProcessor</handler-class>
+		</handler>
+
+	</handler-chain>
+</handler-chains>

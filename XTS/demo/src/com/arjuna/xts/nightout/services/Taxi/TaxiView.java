@@ -284,7 +284,7 @@ public class TaxiView extends javax.swing.JFrame
         {
             singletonInstance = new TaxiView(TaxiManager.getSingletonInstance());
         }
-        singletonInstance.show();
+        singletonInstance.setVisible(true);
         return singletonInstance;
     }
 

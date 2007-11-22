@@ -415,7 +415,7 @@ public class RestaurantView extends javax.swing.JFrame
             singletonInstance = new RestaurantView(RestaurantManager.getSingletonInstance());
         }
 
-        singletonInstance.show();
+        singletonInstance.setVisible(true);
         return singletonInstance;
     }
 

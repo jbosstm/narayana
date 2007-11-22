@@ -23,44 +23,6 @@
 	version="1.1">
 
 	<webservice-description>
-		<webservice-description-name>RestaurantServiceAT</webservice-description-name>
-
-		<wsdl-file>WEB-INF/wsdl/RestaurantServiceAT.wsdl</wsdl-file>
-
-		<jaxrpc-mapping-file>WEB-INF/jaxrpc-mapping.xml</jaxrpc-mapping-file>
-		<port-component>
-			<port-component-name>RestaurantServiceAT</port-component-name>
-			<wsdl-port xmlns:rest="http://www.jboss.com/jbosstm/xts/demo/Restaurant">rest:RestaurantServiceAT</wsdl-port>
-			<service-endpoint-interface>com.arjuna.xts.nightout.services.Restaurant.IRestaurantService</service-endpoint-interface>
-			<service-impl-bean>
-				<servlet-link>RestaurantServiceAT</servlet-link>
-			</service-impl-bean>
-			<handler>
-				<handler-name>serverHandler</handler-name>
-				<handler-class>com.arjuna.mw.wst.service.JaxRPCHeaderContextProcessor</handler-class>
-			</handler>
-		</port-component>
-	</webservice-description>
-	<webservice-description>
-		<webservice-description-name>RestaurantServiceBA</webservice-description-name>
-
-		<wsdl-file>WEB-INF/wsdl/RestaurantServiceBA.wsdl</wsdl-file>
-
-		<jaxrpc-mapping-file>WEB-INF/jaxrpc-mapping.xml</jaxrpc-mapping-file>
-		<port-component>
-			<port-component-name>RestaurantServiceBA</port-component-name>
-			<wsdl-port xmlns:rest="http://www.jboss.com/jbosstm/xts/demo/Restaurant">rest:RestaurantServiceBA</wsdl-port>
-			<service-endpoint-interface>com.arjuna.xts.nightout.services.Restaurant.IRestaurantServiceBA</service-endpoint-interface>
-			<service-impl-bean>
-				<servlet-link>RestaurantServiceBA</servlet-link>
-			</service-impl-bean>
-			<handler>
-				<handler-name>serverHandler</handler-name>
-				<handler-class>com.arjuna.mw.wst.service.JaxRPCHeaderContextProcessor</handler-class>
-			</handler>
-		</port-component>
-	</webservice-description>
-	<webservice-description>
 		<webservice-description-name>TheatreServiceAT</webservice-description-name>
 
 		<wsdl-file>WEB-INF/wsdl/TheatreServiceAT.wsdl</wsdl-file>

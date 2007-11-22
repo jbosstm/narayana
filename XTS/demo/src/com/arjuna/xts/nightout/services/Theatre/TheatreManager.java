@@ -15,7 +15,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  * 
- * (C) 2005-2006,
+ * (C) 2005-2007,
  * @author JBoss Inc.
  */
 /*
@@ -60,7 +60,7 @@ public class TheatreManager
     public void bookSeats(Object txID, int nSeats, int area)
     {
         // locate any pre-existing request for the same transaction
-        Integer[] requests = (Integer[]) unpreparedTransactions.get(txID);
+        Integer[] requests = unpreparedTransactions.get(txID);
         if (requests == null)
         {
             // this is the first request for this transaction
@@ -91,7 +91,7 @@ public class TheatreManager
         int[] nSeats = new int[NUM_SEAT_AREAS];
 
         // ensure that we have seen this transaction before
-        Integer[] requests = (Integer[]) unpreparedTransactions.get(txID);
+        Integer[] requests = unpreparedTransactions.get(txID);
         if (requests == null)
         {
             return false; // error: transaction not registered
@@ -184,7 +184,7 @@ public class TheatreManager
         if (preparedTransactions.containsKey(txID))
         {
             // undo the prepare operations
-            Integer[] requests = (Integer[]) preparedTransactions.remove(txID);
+            Integer[] requests = preparedTransactions.remove(txID);
             for (int i = 0; i < NUM_SEAT_AREAS; i++)
             {
                 nFreeSeats[i] += requests[i].intValue();
@@ -196,7 +196,7 @@ public class TheatreManager
         else if (unpreparedTransactions.containsKey(txID))
         {
             // undo the booking operations
-            Integer[] requests = (Integer[]) unpreparedTransactions.remove(txID);
+            Integer[] requests = unpreparedTransactions.remove(txID);
             for (int i = 0; i < NUM_SEAT_AREAS; i++)
             {
                 nBookedSeats[i] -= requests[i].intValue();
@@ -227,7 +227,7 @@ public class TheatreManager
         {
 
             // complete the prepared transaction
-            Integer[] requests = (Integer[]) preparedTransactions.remove(txID);
+            Integer[] requests = preparedTransactions.remove(txID);
             for (int i = 0; i < NUM_SEAT_AREAS; i++)
             {
                 nCommittedSeats[i] += requests[i].intValue();
@@ -239,7 +239,7 @@ public class TheatreManager
         else if (unpreparedTransactions.containsKey(txID))
         {
             // use one phase commit optimisation, skipping prepare
-            Integer[] requests = (Integer[]) unpreparedTransactions.remove(txID);
+            Integer[] requests = unpreparedTransactions.remove(txID);
             for (int i = 0; i < NUM_SEAT_AREAS; i++)
             {
                 nCommittedSeats[i] += requests[i].intValue();
@@ -495,12 +495,12 @@ public class TheatreManager
     /**
      * The transactions we know about but which have not been prepared.
      */
-    private Hashtable unpreparedTransactions;
+    private Hashtable<Object,Integer[]> unpreparedTransactions;
 
     /**
      * The transactions we know about and are prepared to commit.
      */
-    private Hashtable preparedTransactions;
+    private Hashtable<Object,Integer[]> preparedTransactions;
 
     /**
      * Constant (array index) used for the seating area CIRCLE.

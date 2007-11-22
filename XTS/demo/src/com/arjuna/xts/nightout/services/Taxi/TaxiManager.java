@@ -15,7 +15,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  * 
- * (C) 2005-2006,
+ * (C) 2005-2007,
  * @author JBoss Inc.
  */
 /*
@@ -58,7 +58,7 @@ public class TaxiManager
     public void bookTaxi(Object txID)
     {
         // locate any pre-existing request for the same transaction
-        Integer request = (Integer) unpreparedTransactions.get(txID);
+        Integer request = unpreparedTransactions.get(txID);
         if (request == null)
         {
             // this is the first request for this
@@ -79,7 +79,7 @@ public class TaxiManager
     public boolean prepareTaxi(Object txID)
     {
         // ensure that we have seen this transaction before
-        Integer request = (Integer) unpreparedTransactions.get(txID);
+        Integer request = unpreparedTransactions.get(txID);
         if (request == null)
         {
             return false; // error: transaction not registered
@@ -311,12 +311,12 @@ public class TaxiManager
     /**
      * The transactions we know about but which have not been prepared.
      */
-    private Hashtable unpreparedTransactions;
+    private Hashtable<Object,Integer> unpreparedTransactions;
 
     /**
      * The transactions we know about and are prepared to commit.
      */
-    private Hashtable preparedTransactions;
+    private Hashtable<Object,Integer> preparedTransactions;
 
     /**
      * The auto commit mode.

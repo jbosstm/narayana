@@ -75,7 +75,7 @@ public class TaxiServiceBA implements ITaxiServiceBA
 
         taxiView.addMessage("******************************");
 
-        taxiView.addPrepareMessage("id:" + transactionId.toString() + ". Received a taxi booking request");
+        taxiView.addPrepareMessage("id:" + transactionId + ". Received a taxi booking request");
         taxiView.updateFields();
 
         // invoke the backend business logic:

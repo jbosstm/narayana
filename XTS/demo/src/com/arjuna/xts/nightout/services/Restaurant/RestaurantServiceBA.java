@@ -15,7 +15,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  * 
- * (C) 2005-2006,
+ * (C) 2005-2007,
  * @author JBoss Inc.
  */
 /*
@@ -34,13 +34,19 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst.BusinessActivityManager;
 import com.arjuna.mw.wst.BusinessActivityManagerFactory;
 
+import javax.jws.WebService;
+import javax.jws.HandlerChain;
+import javax.jws.soap.SOAPBinding;
 /**
  * An adapter class that exposes the RestaurantManager business API as a
  * transactional Web Service. Also logs events to a RestaurantView object.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
+@WebService(serviceName="RestaurantServiceBA",targetNamespace="http://www.jboss.com/jbosstm/xts/demo/Restaurant")
+@SOAPBinding(style = SOAPBinding.Style.RPC)
+@HandlerChain(file = "jaxws-handlers-server.xml")
 public class RestaurantServiceBA implements IRestaurantServiceBA
 {
     /**

@@ -15,7 +15,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  * 
- * (C) 2005-2006,
+ * (C) 2005-2007,
  * @author JBoss Inc.
  */
 /*
@@ -59,7 +59,7 @@ public class RestaurantManager
     public void bookSeats(Object txID, int nSeats)
     {
         // locate any pre-existing request for the same transaction
-        Integer request = (Integer) unpreparedTransactions.get(txID);
+        Integer request = unpreparedTransactions.get(txID);
         if (request == null)
         {
             // this is the first request for this transaction
@@ -84,7 +84,7 @@ public class RestaurantManager
     public boolean prepareSeats(Object txID)
     {
         // ensure that we have seen this transaction before
-        Integer request = (Integer) unpreparedTransactions.get(txID);
+        Integer request = unpreparedTransactions.get(txID);
         if (request == null)
         {
             return false; // error: transaction not registered
@@ -161,7 +161,7 @@ public class RestaurantManager
         if (preparedTransactions.containsKey(txID))
         {
             // undo the prepare operations
-            Integer request = (Integer) preparedTransactions.remove(txID);
+            Integer request = preparedTransactions.remove(txID);
             nFreeSeats += request.intValue();
             nPreparedSeats -= request.intValue();
             nBookedSeats -= request.intValue();
@@ -170,7 +170,7 @@ public class RestaurantManager
         else if (unpreparedTransactions.containsKey(txID))
         {
             // undo the booking operations
-            Integer request = (Integer) unpreparedTransactions.remove(txID);
+            Integer request = unpreparedTransactions.remove(txID);
             nBookedSeats -= request.intValue();
             success = true;
         }
@@ -197,7 +197,7 @@ public class RestaurantManager
         if (preparedTransactions.containsKey(txID))
         {
             // complete the prepared transaction
-            Integer request = (Integer) preparedTransactions.remove(txID);
+            Integer request = preparedTransactions.remove(txID);
             nCommittedSeats += request.intValue();
             nPreparedSeats -= request.intValue();
             nBookedSeats -= request.intValue();
@@ -206,7 +206,7 @@ public class RestaurantManager
         else if (unpreparedTransactions.containsKey(txID))
         {
             // use one phase commit optimisation, skipping prepare
-            Integer request = (Integer) unpreparedTransactions.remove(txID);
+            Integer request = unpreparedTransactions.remove(txID);
             nCommittedSeats += request.intValue();
             nFreeSeats -= request.intValue();
             nBookedSeats -= request.intValue();
@@ -363,8 +363,8 @@ public class RestaurantManager
         nBookedSeats = 0;
         nPreparedSeats = 0;
         nCommittedSeats = 0;
-        preparedTransactions = new Hashtable();
-        unpreparedTransactions = new Hashtable();
+        preparedTransactions = new Hashtable<Object,Integer>();
+        unpreparedTransactions = new Hashtable<Object,Integer>();
         autoCommitMode = true;
         preparation = new Object();
         isPreparationWaiting = false;
@@ -442,12 +442,12 @@ public class RestaurantManager
     /**
      * The transactions we know about but which have not been prepared.
      */
-    private Hashtable unpreparedTransactions;
+    private Hashtable<Object,Integer> unpreparedTransactions;
 
     /**
      * The transactions we know about and are prepared to commit.
      */
-    private Hashtable preparedTransactions;
+    private Hashtable<Object,Integer> preparedTransactions;
 
     /**
      * The default initial capacity of each seating area.

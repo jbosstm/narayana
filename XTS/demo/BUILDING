@@ -15,18 +15,29 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
 # MA  02110-1301, USA.
 # 
-# (C) 2005-2006,
+# (C) 2007,
 # @author JBoss Inc.
 #
 
-This demo has been written for, and tested on, JBoss4.0.3SP1.  Please download
-and install this app server from the JBoss website.
+This demo has been written for, and tested on, JBoss Application Server 4.2.1.GA.  
+Please download and install this app server from the JBoss website. This demo has
+been tested on JBoss Transaction Service 4.4.
 
 Follow these steps to build the demo for JBoss
- - edit jboss.properties and replace variables as directed in the comments
- - add java and ant to your path
- - execute 'sh build.sh jboss clean build' on unix or
-   'build.bat jboss clean build' on windows
- - deploy the generated ear file into an instance of JBoss4.0.3SP 1
 
-Open a browser and enter the xts-demo url (e.g. http://localhost:8080/xts-demo)
+1) Add 'java' and 'ant' to your path
+
+2) Edit 'build.xml' and replace properties as directed in the comments
+
+3) Execute 'ant build'
+   This compiles necessary classes and produces the 'xts-demo.ear' file.
+
+4) Execute 'ant deploy'
+   This deploys the generated ear file into an instance of the JBoss Application
+   Server
+
+To start using the demo application open a browser and enter the xts-demo url 
+(e.g. http://localhost:8080/xts-demo)
+
+To undeploy the demo application execute 'ant undeploy' - this deletes the
+'xts-demo.ear' file from the deployment directory of the JBoss AS.
