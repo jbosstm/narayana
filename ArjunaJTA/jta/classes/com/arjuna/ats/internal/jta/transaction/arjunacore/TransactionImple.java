@@ -197,7 +197,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 *          Invalid transaction state
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted]
-	 *          Can't commit because the transaction is in aborted state
+	 *          Could not commit transaction.
 	 */
 
 	public void commit() throws javax.transaction.RollbackException,
