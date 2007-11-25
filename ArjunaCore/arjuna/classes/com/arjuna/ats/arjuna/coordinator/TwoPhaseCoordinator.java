@@ -369,7 +369,6 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 		return !problem;
 	}
 
-	//private HashList _synchs;
 	private SortedSet _synchs;
 	private SynchronizationRecord _currentRecord; // the most recently processed Synchronization.
 	private Throwable _deferredThrowable;
