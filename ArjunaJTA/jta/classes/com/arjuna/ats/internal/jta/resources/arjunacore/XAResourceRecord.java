@@ -295,11 +295,25 @@ public class XAResourceRecord extends AbstractRecord
 			if (_rollbackOptimization) // won't have rollback called on it
 				removeConnection();
 
-			if ((e1.errorCode == XAException.XAER_RMERR)
-					|| (e1.errorCode == XAException.XAER_RMFAIL))
-				return TwoPhaseOutcome.HEURISTIC_HAZARD;
-
-			return TwoPhaseOutcome.PREPARE_NOTOK;
+			switch (e1.errorCode)
+			{
+			case XAException.XAER_RMERR:
+			case XAException.XAER_RMFAIL:
+			case XAException.XA_RBROLLBACK:
+			case XAException.XA_RBEND:
+			case XAException.XA_RBCOMMFAIL:
+			case XAException.XA_RBDEADLOCK:
+			case XAException.XA_RBINTEGRITY:
+			case XAException.XA_RBOTHER:
+			case XAException.XA_RBPROTO:
+			case XAException.XA_RBTIMEOUT:
+			case XAException.XAER_INVAL:
+			case XAException.XAER_PROTO:
+			case XAException.XAER_NOTA: // resource may have arbitrarily rolled back (shouldn't, but ...)
+				return TwoPhaseOutcome.PREPARE_NOTOK;
+			default:
+				return TwoPhaseOutcome.HEURISTIC_HAZARD; // we're not really sure (shouldn't get here though).
+			}
 		}
 		catch (Exception e2)
 		{
@@ -1009,6 +1023,8 @@ public class XAResourceRecord extends AbstractRecord
 						 */
 						
 						return true;
+						
+						//return false;
 					}
 				}
 			}
@@ -1143,6 +1159,8 @@ public class XAResourceRecord extends AbstractRecord
 		RecoveryManager recMan = RecoveryManager.manager();
 		Vector recoveryModules = recMan.getModules();
 
+		System.err.println("**recoveryModules "+recoveryModules);
+		
 		if (recoveryModules != null)
 		{
 			Enumeration modules = recoveryModules.elements();

@@ -286,10 +286,25 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			if (_rollbackOptimization) // won't have rollback called on it
 				removeConnection();
 			
-			if ((e1.errorCode == XAException.XAER_RMERR) || (e1.errorCode == XAException.XAER_RMFAIL))
-				throw new HeuristicHazard();
-
-			return Vote.VoteRollback;
+			switch (e1.errorCode)
+			{
+			case XAException.XAER_RMERR:
+			case XAException.XAER_RMFAIL:
+			case XAException.XA_RBROLLBACK:
+			case XAException.XA_RBEND:
+			case XAException.XA_RBCOMMFAIL:
+			case XAException.XA_RBDEADLOCK:
+			case XAException.XA_RBINTEGRITY:
+			case XAException.XA_RBOTHER:
+			case XAException.XA_RBPROTO:
+			case XAException.XA_RBTIMEOUT:
+			case XAException.XAER_INVAL:
+			case XAException.XAER_PROTO:
+			case XAException.XAER_NOTA: // resource may have arbitrarily rolled back (shouldn't, but ...)
+				return Vote.VoteRollback;
+			default:
+				throw new HeuristicHazard(); // we're not really sure (shouldn't get here though).
+			}
 		}
 		catch (Exception e2)
 		{
