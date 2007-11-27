@@ -479,6 +479,11 @@ public class BasicAction extends StateManager
 
 	public final boolean preventCommit ()
 	{
+		if (tsLogger.arjLogger.debugAllowed())
+		{
+			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::preventCommit( "+this+")");
+		}
+		
 		boolean res = false;
 
 		//	if (lockMutex())
