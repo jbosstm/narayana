@@ -210,81 +210,99 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 	{
 		boolean problem = false;
 
-		/*
-		 * If we have a synchronization list then we must be top-level.
-		 */
-
-		if (_synchs != null)
+		synchronized (_syncLock)
 		{
-			/*
-			 * We must always call afterCompletion() methods, so just catch (and
-			 * log) any exceptions/errors from beforeCompletion() methods.
-			 *
-			 * If one of the Syncs throws an error the Record wrapper returns false
-			 * and we will rollback. Hence we don't then bother to call beforeCompletion
-			 * on the remaining records (it's not done for rollabcks anyhow).
-			 *
-			 * Since Synchronizations may add register other Synchronizations, we can't simply
-			 * iterate the collection. Instead we work from an ordered copy, which we periodically
-			 * check for freshness. The addSynchronization method uses _currentRecord to disallow
-			 * adding records in the part of the array we have already traversed, thus all
-			 * Synchronization will be called and the (jta only) rules on ordering of interposed
-			 * Synchronization will be respected.
-			 */
-
-			int lastIndexProcessed = -1;
-			SynchronizationRecord[] copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
-
-			while( (lastIndexProcessed < _synchs.size()-1) && !problem) {
-
-				// if new Synchronization have been registered, refresh our copy of the collection:
-				if(copiedSynchs.length != _synchs.size()) {
-					copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
-				}
-
-				lastIndexProcessed = lastIndexProcessed+1;
-				_currentRecord = copiedSynchs[lastIndexProcessed];
-
-				try
-				{
-					problem = !_currentRecord.beforeCompletion();
-
-					// if something goes wrong, we can't just throw the exception, we need to continue to
-					// complete the transaction. However, the exception may have interesting information that
-					// we want later, so we keep a reference to it as well as logging it.
-
-				}
-				catch (Exception ex)
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_2", new Object[]
-					{ _currentRecord }, ex);
-					if(_deferredThrowable == null) {
-						_deferredThrowable = ex;
-					}
-					problem = true;
-				}
-				catch (Error er)
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_2", new Object[]
-					{ _currentRecord }, er);
-					if(_deferredThrowable == null) {
-						_deferredThrowable = er;
-					}
-					problem = true;
-				}
-			}
-
-			if (problem)
+			if (!_beforeCalled)
 			{
-				if (!preventCommit())
+				_beforeCalled = true;
+		
+				/*
+				 * If we have a synchronization list then we must be top-level.
+				 */
+
+				if (_synchs != null)
 				{
 					/*
-					 * This should not happen. If it does, continue with commit
-					 * to tidy-up.
+					 * We must always call afterCompletion() methods, so just catch (and
+					 * log) any exceptions/errors from beforeCompletion() methods.
+					 *
+					 * If one of the Syncs throws an error the Record wrapper returns false
+					 * and we will rollback. Hence we don't then bother to call beforeCompletion
+					 * on the remaining records (it's not done for rollabcks anyhow).
+					 *
+					 * Since Synchronizations may add register other Synchronizations, we can't simply
+					 * iterate the collection. Instead we work from an ordered copy, which we periodically
+					 * check for freshness. The addSynchronization method uses _currentRecord to disallow
+					 * adding records in the part of the array we have already traversed, thus all
+					 * Synchronization will be called and the (jta only) rules on ordering of interposed
+					 * Synchronization will be respected.
 					 */
 
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_1");
+					int lastIndexProcessed = -1;
+					SynchronizationRecord[] copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
+
+					while( (lastIndexProcessed < _synchs.size()-1) && !problem) {
+
+						// if new Synchronization have been registered, refresh our copy of the collection:
+						if(copiedSynchs.length != _synchs.size()) {
+							copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
+						}
+
+						lastIndexProcessed = lastIndexProcessed+1;
+						_currentRecord = copiedSynchs[lastIndexProcessed];
+
+						try
+						{
+							problem = !_currentRecord.beforeCompletion();
+
+							// if something goes wrong, we can't just throw the exception, we need to continue to
+							// complete the transaction. However, the exception may have interesting information that
+							// we want later, so we keep a reference to it as well as logging it.
+
+						}
+						catch (Exception ex)
+						{
+							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_2", new Object[]
+							                                                                                                  { _currentRecord }, ex);
+							if(_deferredThrowable == null) {
+								_deferredThrowable = ex;
+							}
+							problem = true;
+						}
+						catch (Error er)
+						{
+							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_2", new Object[]
+							                                                                                                  { _currentRecord }, er);
+							if(_deferredThrowable == null) {
+								_deferredThrowable = er;
+							}
+							problem = true;
+						}
+					}
+
+					if (problem)
+					{
+						if (!preventCommit())
+						{
+							/*
+							 * This should not happen. If it does, continue with commit
+							 * to tidy-up.
+							 */
+
+							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_1");
+						}
+					}
 				}
+			}
+			else
+			{
+				/*
+				 * beforeCompletions already called. Assume everything is alright
+				 * to proceed to commit. The TM instance will flag the outcome. If
+				 * it's rolling back, then we'll get an exception. If it's committing
+				 * then we'll be blocked until the commit (assuming we're still the
+				 * slower thread).
+				 */
 			}
 		}
 
@@ -319,51 +337,64 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 		boolean problem = false;
 
-		if (_synchs != null)
+		synchronized (_syncLock)
 		{
-			// afterCompletions should run in reverse order compared to beforeCompletions
-			Stack stack = new Stack();
-			Iterator iterator = _synchs.iterator();
-			while(iterator.hasNext()) {
-				stack.push(iterator.next());
-			}
-
-			iterator = stack.iterator();
-
-			/*
-			 * Regardless of failures, we must tell all synchronizations what
-			 * happened.
-			 */
-			while(!stack.isEmpty())
+			if (!_afterCalled)
 			{
-				SynchronizationRecord record = (SynchronizationRecord)stack.pop();
+				_afterCalled = true;
 
-				try
+				if (_synchs != null)
 				{
-					if (!record.afterCompletion(myStatus))
-					{
-						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4", new Object[]
-						{ record });
-
-						problem = true;
+					// afterCompletions should run in reverse order compared to
+					// beforeCompletions
+					Stack stack = new Stack();
+					Iterator iterator = _synchs.iterator();
+					while(iterator.hasNext()) {
+						stack.push(iterator.next());
 					}
-				}
-				catch (Exception ex)
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4a", new Object[]
-					{ record, ex });
-					problem = true;
-				}
-				catch (Error er)
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4b", new Object[]
-					{ record, er });
-					problem = true;
+		
+					iterator = stack.iterator();
+		
+					/*
+					 * Regardless of failures, we must tell all synchronizations what
+					 * happened.
+					 */
+					while(!stack.isEmpty())
+					{
+						SynchronizationRecord record = (SynchronizationRecord)stack.pop();
+		
+						try
+						{
+							if (!record.afterCompletion(myStatus))
+							{
+								tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4", new Object[]
+								{ record });
+		
+								problem = true;
+							}
+						}
+						catch (Exception ex)
+						{
+							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4a", new Object[]
+							{ record, ex });
+							problem = true;
+						}
+						catch (Error er)
+						{
+							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4b", new Object[]
+							{ record, er });
+							problem = true;
+						}
+					}
+		
+					_synchs = null;
+					_currentRecord = null;
 				}
 			}
-
-			_synchs = null;
-			_currentRecord = null;
+			else
+			{
+				
+			}
 		}
 
 		return !problem;
@@ -372,4 +403,9 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 	private SortedSet _synchs;
 	private SynchronizationRecord _currentRecord; // the most recently processed Synchronization.
 	private Throwable _deferredThrowable;
+	
+	private Object _syncLock = new Object();
+	
+	private boolean _beforeCalled = false;
+	private boolean _afterCalled = false;
 }
