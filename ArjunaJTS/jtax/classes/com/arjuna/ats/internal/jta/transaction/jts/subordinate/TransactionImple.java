@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -105,7 +105,7 @@ public class TransactionImple extends
 	{
 		/*
 		 * throw new IllegalStateException(
-		 * jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
+		 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
 		 */
 
 		throw new IllegalStateException();
@@ -121,7 +121,7 @@ public class TransactionImple extends
 	{
 		/*
 		 * throw new IllegalStateException(
-		 * jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
+		 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
 		 */
 
 		throw new IllegalStateException();
@@ -130,12 +130,12 @@ public class TransactionImple extends
 	/**
 	 * Drive the subordinate transaction through the prepare phase. Any
 	 * enlisted participants will also be prepared as a result.
-	 * 
+	 *
 	 * @return a TwoPhaseOutcome representing the result.
-	 * 
+	 *
 	 * @throws SystemException thrown if any error occurs.
 	 */
-	
+
 	public int doPrepare () throws SystemException
 	{
 		try
@@ -153,9 +153,9 @@ public class TransactionImple extends
 					// shouldn't happen! ignore because prepare will fail next anyway.
 				}
 			}
-			
+
 			int res = subAct.doPrepare();
-			
+
 			switch (res)
 			{
 			case TwoPhaseOutcome.PREPARE_READONLY:
@@ -173,7 +173,7 @@ public class TransactionImple extends
 		catch (Exception ex)
 		{
 			ex.printStackTrace();
-			
+
 			throw new SystemException();
 		}
 	}
@@ -181,7 +181,7 @@ public class TransactionImple extends
 	/**
 	 * Drive the subordinate transaction to commit. It must have previously
 	 * been prepared.
-	 * 
+	 *
 	 * @throws IllegalStateException thrown if the transaction has not been prepared
 	 * or is unknown.
 	 * @throws HeuristicMixedException thrown if a heuristic mixed outcome occurs
@@ -189,7 +189,7 @@ public class TransactionImple extends
 	 * @throws HeuristicRollbackException thrown if the transaction rolled back.
 	 * @throws SystemException thrown if some other error occurs.
 	 */
-	
+
 	public void doCommit () throws IllegalStateException,
 			HeuristicMixedException, HeuristicRollbackException,
 			SystemException
@@ -199,7 +199,7 @@ public class TransactionImple extends
 			SubordinateAtomicTransaction subAct = (SubordinateAtomicTransaction) super._theTransaction;
 
 			int res = subAct.doCommit();
-			
+
 			switch (res)
 			{
 			case ActionStatus.COMMITTED:
@@ -216,7 +216,7 @@ public class TransactionImple extends
 				throw new HeuristicMixedException();
 			case ActionStatus.INVALID:
 				throw new IllegalStateException();
-			default:			
+			default:
 				throw new HeuristicMixedException(); // not sure what happened,
 			// so err on the safe side!
 			}
@@ -236,7 +236,7 @@ public class TransactionImple extends
 	/**
 	 * Drive the subordinate transaction to roll back. It need not have been previously
 	 * prepared.
-	 * 
+	 *
 	 * @throws IllegalStateException thrown if the transaction is not known by the
 	 * system or has been previously terminated.
 	 * @throws HeuristicMixedException thrown if a heuristic mixed outcome occurs
@@ -246,7 +246,7 @@ public class TransactionImple extends
 	 * happen if it was previously prepared).
 	 * @throws SystemException thrown if any other error occurs.
 	 */
-	
+
 	public void doRollback () throws IllegalStateException,
 			HeuristicMixedException, HeuristicCommitException, SystemException
 	{
@@ -261,9 +261,9 @@ public class TransactionImple extends
 					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed1");
 				}
 			}
-			
+
 			int res = subAct.doRollback();
-			
+
 			switch (res)
 			{
 			case ActionStatus.ABORTED:
@@ -275,7 +275,7 @@ public class TransactionImple extends
 			case ActionStatus.H_HAZARD:
 			case ActionStatus.H_MIXED:
 				throw new HeuristicMixedException();
-			default:			
+			default:
 				throw new HeuristicMixedException();
 			}
 		}
@@ -294,12 +294,12 @@ public class TransactionImple extends
 	/**
 	 * Drive the transaction to commit. It should not have been previously
 	 * prepared and will be the only resource in the global transaction.
-	 * 
+	 *
 	 * @throws IllegalStateException if the transaction has already terminated
 	 * @throws javax.transaction.HeuristicRollbackException thrown if the transaction
 	 * rolls back.
 	 */
-	
+
 	public void doOnePhaseCommit () throws IllegalStateException,
 			javax.transaction.HeuristicRollbackException
 	{
@@ -318,7 +318,7 @@ public class TransactionImple extends
         				// shouldn't happen! ignore because commit will fail next anyway.
         			}
 			}
-			
+
 			int status = subAct.doOnePhaseCommit();
 
 			TransactionImple.removeTransaction(this);
@@ -345,14 +345,14 @@ public class TransactionImple extends
 			throw new IllegalStateException();
 		}
 	}
-	
+
 	/**
 	 * Called to tell the transaction to forget any heuristics.
-	 * 
+	 *
 	 * @throws IllegalStateException thrown if the transaction cannot
 	 * be found.
 	 */
-	
+
 	public void doForget () throws IllegalStateException
 	{
 		try
@@ -379,7 +379,7 @@ public class TransactionImple extends
 					+ super._theTransaction.get_uid() + " >";
 		}
 	}
-	
+
 	protected void commitAndDisassociate ()
 			throws javax.transaction.RollbackException,
 			javax.transaction.HeuristicMixedException,
@@ -389,7 +389,7 @@ public class TransactionImple extends
 	{
 		/*
 		 * throw new IllegalStateException(
-		 * jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
+		 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
 		 */
 
 		throw new IllegalStateException();
@@ -401,7 +401,7 @@ public class TransactionImple extends
 	{
 		/*
 		 * throw new IllegalStateException(
-		 * jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
+		 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
 		 */
 
 		throw new IllegalStateException();

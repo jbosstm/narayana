@@ -380,7 +380,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 			if (endSuspendedFailed)
 				throw new IllegalStateException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.jts.endsuspendfailed2"));
+						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.endsuspendfailed2"));
 		}
 		else
 			throw new IllegalStateException(
