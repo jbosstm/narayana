@@ -66,8 +66,7 @@ import com.arjuna.ats.arjuna.common.*;
 
 import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
 
-import java.util.Hashtable;
-import java.util.Enumeration;
+import java.util.*;
 
 import javax.transaction.RollbackException;
 import java.lang.SecurityException;
@@ -445,12 +444,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 *          [com.arjuna.ats.internal.jta.transaction.jts.syncerror]
 	 *          Synchronizations are not allowed!
 	 */
-
 	public void registerSynchronization (javax.transaction.Synchronization sync)
 			throws javax.transaction.RollbackException,
 			java.lang.IllegalStateException, javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+        if (jtaLogger.logger.isDebugEnabled())
 		{
 			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.registerSynchronization");
 		}
@@ -460,13 +458,26 @@ public class TransactionImple implements javax.transaction.Transaction,
 					"TransactionImple.registerSynchronization - "
 							+ jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.nullparam"));
 
+        registerSynchronizationImple(new SynchronizationImple(sync));
+	}
+
+	// package-private method also for use by
+	// TransactionSynchronizationRegistryImple
+	/**
+	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.syncwhenaborted
+	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.syncwhenaborted]
+	 *          Can't register synchronization because the transaction is in
+	 *          aborted state
+	 */
+	void registerSynchronizationImple(SynchronizationImple synchronizationImple)
+			throws javax.transaction.RollbackException,
+			java.lang.IllegalStateException, javax.transaction.SystemException
+	{
 		if (_theTransaction != null)
 		{
 			try
 			{
-				SynchronizationImple s = new SynchronizationImple(sync);
-
-				_theTransaction.registerSynchronization(s.getSynchronization());
+                _theTransaction.registerSynchronization(synchronizationImple.getSynchronization());
 			}
 			catch (TRANSACTION_ROLLEDBACK e2)
 			{
@@ -497,7 +508,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 					jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
 	}
 
-	public boolean enlistResource (XAResource xaRes) throws RollbackException,
+
+    public boolean enlistResource (XAResource xaRes) throws RollbackException,
 			IllegalStateException, javax.transaction.SystemException
 	{
 		return enlistResource(xaRes, null);
@@ -1222,7 +1234,32 @@ public class TransactionImple implements javax.transaction.Transaction,
 		removeTransaction(this);
 	}
 
-	protected TransactionImple (AtomicTransaction tx)
+    // get a key-value pair from a transaction specific Map
+	public Object getTxLocalResource(Object key)
+	{
+		return _txLocalResources.get(key);
+	}
+
+	// store a key-value pair in the scope of the transaction.
+	public void putTxLocalResource(Object key, Object value)
+	{
+		_txLocalResources.put(key, value);
+	}
+
+
+    /*
+     * For JBossAS integration TransactionLocal implementation, we need to know if a tx has been
+     * resolved yet or not. We could use getStatus() and a case stmt, but since an instance is
+     * removed from _transactions on completion this is just as effective.
+     * @param tx
+     * @return
+     */
+    public boolean isAlive() {
+        return _transactions.contains(this);
+    }
+
+
+    protected TransactionImple (AtomicTransaction tx)
 	{
 		_theTransaction = tx;
 
@@ -1230,7 +1267,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 			_resources = new Hashtable();
 			_duplicateResources = new Hashtable();
-		}
+            _txLocalResources = Collections.synchronizedMap(new HashMap());
+        }
 		else
 		{
 			_resources = null;
@@ -1282,7 +1320,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.syncproblem", ex);
 		}
 		_xaTransactionTimeoutEnabled = getXATransactionTimeoutEnabled() ;
-	}
+    }
 
 	protected void commitAndDisassociate ()
 			throws javax.transaction.RollbackException,
@@ -1761,6 +1799,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private Hashtable _duplicateResources;
 	private int _suspendCount;
 	private final boolean _xaTransactionTimeoutEnabled ;
+    private Map _txLocalResources;
 
         /**
          * Count of last resources seen in this transaction.

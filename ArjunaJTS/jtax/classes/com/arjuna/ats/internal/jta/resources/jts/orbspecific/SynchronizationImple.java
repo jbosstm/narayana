@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -47,6 +47,7 @@ import com.arjuna.orbportability.*;
 import com.arjuna.ats.internal.jts.ORBManager;
 
 import com.arjuna.common.util.logging.*;
+import com.arjuna.ArjunaOTS.JTAInterposedSynchronizationHelper;
 
 import org.omg.CosTransactions.*;
 
@@ -79,9 +80,9 @@ import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
  * @since JTS 1.2.4.
  */
 
-public class SynchronizationImple extends org.omg.CosTransactions.SynchronizationPOA 
+public class SynchronizationImple implements org.omg.CosTransactions.SynchronizationOperations
 {
-    
+
     public SynchronizationImple (javax.transaction.Synchronization ptr)
     {
 	_theSynch = ptr;
@@ -103,16 +104,18 @@ public class SynchronizationImple extends org.omg.CosTransactions.Synchronizatio
 
     public final org.omg.CosTransactions.Synchronization getSynchronization ()
     {
-	if (_theReference == null)
-	{
-	    ORBManager.getPOA().objectIsReady(this);
-	    
-	    _theReference = org.omg.CosTransactions.SynchronizationHelper.narrow(ORBManager.getPOA().corbaReference(this));
-	}
-	
-	return _theReference;
+        if (_theReference == null)
+        {
+            _thePOATie = getPOATie();
+
+            ORBManager.getPOA().objectIsReady(_thePOATie);
+
+            _theReference = org.omg.CosTransactions.SynchronizationHelper.narrow(ORBManager.getPOA().corbaReference(_thePOATie));
+        }
+
+        return _theReference;
     }
- 
+
     public void before_completion () throws org.omg.CORBA.SystemException
     {
 	if (jtaLogger.logger.isDebugEnabled())
@@ -153,14 +156,14 @@ public class SynchronizationImple extends org.omg.CosTransactions.Synchronizatio
 		_theSynch.afterCompletion(s);
 
 		if (_theReference != null)
-		    ORBManager.getPOA().shutdownObject(this);
+		    ORBManager.getPOA().shutdownObject(_thePOATie);
 	    }
 	    catch (Exception e)
 	    {
 		e.printStackTrace();
-		
+
 		if (_theReference != null)
-		    ORBManager.getPOA().shutdownObject(this);
+		    ORBManager.getPOA().shutdownObject(_thePOATie);
 
 		throw new UNKNOWN(); // should not cause any affect!
 	    }
@@ -169,7 +172,14 @@ public class SynchronizationImple extends org.omg.CosTransactions.Synchronizatio
 	    throw new UNKNOWN(); // should not cause any affect!
     }
 
+    // this is used to allow subclasses to override the Tie type provided.
+    // the Tie classes do not inherit from one another even if the business interfaces
+    // they correspond to do in the idl. Hence Servant is the only common parent.
+    protected org.omg.PortableServer.Servant getPOATie() {
+        return new org.omg.CosTransactions.SynchronizationPOATie(this);
+    }
+
     private javax.transaction.Synchronization       _theSynch;
     private org.omg.CosTransactions.Synchronization _theReference;
-
+    private org.omg.PortableServer.Servant _thePOATie;
 }

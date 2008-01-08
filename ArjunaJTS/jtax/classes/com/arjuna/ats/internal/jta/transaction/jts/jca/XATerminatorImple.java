@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -45,7 +45,6 @@ import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TxImporter;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction;
 import com.arjuna.ats.jta.utils.XAHelper;
@@ -53,7 +52,7 @@ import com.arjuna.ats.jta.xa.XidImple;
 
 /**
  * The XATerminator implementation.
- * 
+ *
  * @author mcl
  *
  */
@@ -66,17 +65,17 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		try
 		{
 			TransactionImple tx = TxImporter.getImportedTransaction(xid);
-			
+
 			if (tx == null)
 				throw new XAException(XAException.XAER_INVAL);
-			
+
 			if (tx.baseXid() != null)  // activate failed?
 			{
 				if (onePhase)
 					tx.doOnePhaseCommit();
 				else
 					tx.doCommit();
-				
+
 				TxImporter.removeImportedTransaction(xid);
 			}
 			else
@@ -85,7 +84,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		catch (XAException ex)
 		{
 			// resource hasn't had a chance to recover yet
-			
+
 			if (ex.errorCode != XAException.XA_RETRY)
 			{
 				TxImporter.removeImportedTransaction(xid);
@@ -104,20 +103,20 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		catch (SystemException ex)
 		{
 			TxImporter.removeImportedTransaction(xid);
-			
+
 			throw new XAException(XAException.XAER_RMERR);
 		}
 	}
-	
+
 	public void forget (Xid xid) throws XAException
 	{
 		try
 		{
 			TransactionImple tx = TxImporter.getImportedTransaction(xid);
-			
+
 			if (tx == null)
 				throw new XAException(XAException.XAER_INVAL);
-			
+
 			tx.doForget();
 		}
 		catch (Exception ex)
@@ -129,25 +128,25 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 			TxImporter.removeImportedTransaction(xid);
 		}
 	}
-	
+
 	public int prepare (Xid xid) throws XAException
 	{
 		try
 		{
 			TransactionImple tx = TxImporter.getImportedTransaction(xid);
-			
+
 			if (tx == null)
 				throw new XAException(XAException.XAER_INVAL);
-			
+
 			switch (tx.doPrepare())
 			{
 			case TwoPhaseOutcome.PREPARE_READONLY:
 				TxImporter.removeImportedTransaction(xid);
-				
-				return XAResource.XA_RDONLY;				
+
+				return XAResource.XA_RDONLY;
 			case TwoPhaseOutcome.PREPARE_NOTOK:
 				TxImporter.removeImportedTransaction(xid);  // TODO check if rollback is going to be called first
-				
+
 				throw new XAException(XAException.XA_RBROLLBACK);
 			case TwoPhaseOutcome.PREPARE_OK:
 				return XAResource.XA_OK;
@@ -164,7 +163,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 			throw ex;
 		}
 	}
-	
+
 	public Xid[] recover (int flag) throws XAException
 	{
 		/*
@@ -172,13 +171,13 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		 * transactions. Our own crash recovery takes care of transactions imported
 		 * via CORBA, Web Services etc.
 		 */
-		
+
 		/*
 		 * Requires going through the objectstore for the states of imported
 		 * transactions. Our own crash recovery takes care of transactions imported
 		 * via CORBA, Web Services etc.
 		 */
-		
+
 		switch (flag)
 		{
 		case XAResource.TMSTARTRSCAN: // check the object store
@@ -199,23 +198,23 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		default:
 			throw new XAException(XAException.XAER_PROTO);
 		}
-		
+
 		// if we are here, then check the object store
-		
+
 		Xid[] indoubt = null;
-		
+
 		try
 		{
 			ObjectStore objStore = new ObjectStore(TxControl.getActionStoreType());
 			InputObjectState states = new InputObjectState();
-			
+
 			// only look in the JCA section of the object store
 
 			if (objStore.allObjUids(ServerTransaction.getType(), states) && (states.notempty()))
 			{
 				Stack values = new Stack();
 				boolean finished = false;
-				
+
 				do
 				{
 					Uid uid = new Uid(Uid.nullUid());
@@ -239,7 +238,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 					}
 					else
 						finished = true;
-					
+
 				} while (!finished);
 
 				if (values.size() > 0)
@@ -247,7 +246,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 					int index = 0;
 
 					indoubt = new Xid[values.size()];
-								
+
 					while (!values.empty())
 					{
 						TransactionImple id = (TransactionImple) values.pop();
@@ -279,7 +278,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 			if (tx.baseXid() != null)
 			{
 				tx.doRollback();
-				
+
 				TxImporter.removeImportedTransaction(xid);
 			}
 			else
@@ -288,7 +287,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		catch (XAException ex)
 		{
 			// resource hasn't had a chance to recover yet
-			
+
 			if (ex.errorCode != XAException.XA_RETRY)
 			{
 				TxImporter.removeImportedTransaction(xid);
@@ -307,11 +306,11 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		catch (SystemException ex)
 		{
 			TxImporter.removeImportedTransaction(xid);
-			
+
 			throw new XAException(XAException.XAER_RMERR);
 		}
 	}
-	
+
 	private boolean _recoveryStarted = false;
-	
+
 }

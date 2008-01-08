@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -74,7 +74,8 @@ import org.omg.CosTransactions.*;
 import com.arjuna.ArjunaOTS.*;
 
 import org.omg.CORBA.CompletionStatus;
-import java.util.Enumeration;
+
+import java.util.*;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import org.omg.CORBA.SystemException;
@@ -88,17 +89,17 @@ import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 
 /**
  * OTS implementation class.
- * 
+ *
  * Implements both the Coordinator & Terminator interfaces of OTS as a single
  * class.
- * 
+ *
  * Note, because Java does not support multiple inheritance we must make use of
  * the tie facility (uuuggghhhh!!!!)
- * 
+ *
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: ArjunaTransactionImple.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
- * 
+ *
  * @message com.arjuna.ats.internal.jts.orbspecific.coordinator.generror {0}
  *          caught exception: {1}
  * @message com.arjuna.ats.internal.jts.orbspecific.coordinator.rbofail {0}
@@ -170,14 +171,14 @@ public class ArjunaTransactionImple extends
 			 * Fully checked transactions only allow the thread which began the
 			 * transaction to terminate it. We get the id of the beginning
 			 * thread here.
-			 * 
+			 *
 			 * The spec. says nothing about crash recovery, so we better assume
 			 * it can always complete a transaction!
-			 * 
+			 *
 			 * If the creating thread dies before terminating the transaction
 			 * then we have a problem. Requires change to Thread class to abort
 			 * outstanding transactions in this case.
-			 * 
+			 *
 			 * Also, transaction timeouts cause abortion of the transaction by a
 			 * *different* thread! This must work even in the presence of
 			 * checked transactions!
@@ -322,7 +323,7 @@ public class ArjunaTransactionImple extends
 	 * example) then we do nothing - could throw TransactionRequired or
 	 * INVALID_TRANSACTION. However, if it was rolledback then we throw
 	 * TRANSACTION_ROLLEDBACK. Seems like an inconsistency.
-	 * 
+	 *
 	 * report_heuristics is ignored if we are a subtransaction.
 	 */
 
@@ -793,7 +794,7 @@ public class ArjunaTransactionImple extends
 	 * Resources are only registered with the current transaction, whereas
 	 * subtransaction aware resources are registered with their parents when the
 	 * current transaction ends.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jts.orbspecific.coordinator.rccreate
 	 *          Creation of RecoveryCoordinator for {0} threw: {1}
 	 * @message com.arjuna.ats.internal.jts.orbspecific.coordinator.rcnotcreated
@@ -1239,12 +1240,35 @@ public class ArjunaTransactionImple extends
 				synchronized (this)
 				{
 					if (_synchs == null)
-						_synchs = new HashList(10);
+                    {
+                        // Synchronizations should be stored (or at least iterated) in their natural order
+						_synchs = new TreeSet();
+                    }
 				}
 
-				SynchronizationRecord otsSync = new SynchronizationRecord(sync);
+                SynchronizationRecord otsSync;
 
-				if (!_synchs.add(otsSync))
+                if(sync._is_a(JTAInterposedSynchronizationHelper.id()))
+                {
+                    otsSync = new SynchronizationRecord(sync, true);
+                }
+                else
+                {
+                    otsSync = new SynchronizationRecord(sync);
+                }
+
+                // disallow addition of Synchronizations that would appear
+				// earlier in sequence than any that has already been called
+				// during the pre-commmit phase. This is required for
+				// JTA 1.1 Synchronization ordering behaviour
+				if(_currentRecord != null) {
+					Comparable c = (Comparable)otsSync;
+					if(c.compareTo(_currentRecord) != 1) {
+						throw new UNKNOWN(ExceptionCodes.ADD_FAILED, CompletionStatus.COMPLETED_NO);
+					}
+				}
+
+                if (!_synchs.add(otsSync))
 				{
 					otsSync = null;
 					throw new UNKNOWN(ExceptionCodes.ADD_FAILED,
@@ -1414,7 +1438,7 @@ public class ArjunaTransactionImple extends
 	}
 
 	protected void doBeforeCompletion () throws SystemException
-	{		
+	{
 		if (jtsLogger.logger.isDebugEnabled())
 		{
 			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::doBeforeCompletion for "
@@ -1427,11 +1451,8 @@ public class ArjunaTransactionImple extends
 		/*
 		 * If we have a synchronization list then we must be top-level.
 		 */
-
-		if (_synchs != null)
+        if (_synchs != null)
 		{
-			HashListIterator iterator = new HashListIterator(_synchs);
-			SynchronizationRecord value = (SynchronizationRecord) iterator.iterate();
 			boolean doSuspend = false;
 			ControlWrapper cw = null;
 
@@ -1474,13 +1495,29 @@ public class ArjunaTransactionImple extends
 					 */
 				}
 
-				while (value != null)
-				{
-					Synchronization c = value.contents();
+               /*
+                * Since Synchronizations may add register other Synchronizations, we can't simply
+                * iterate the collection. Instead we work from an ordered copy, which we periodically
+                * check for freshness. The addSynchronization method uses _currentRecord to disallow
+                * adding records in the part of the array we have already traversed, thus all
+                * Synchronization will be called and the (jta only) rules on ordering of interposed
+                * Synchronization will be respected.
+                */
+               int lastIndexProcessed = -1;
+               SynchronizationRecord[] copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
 
+               while( (lastIndexProcessed < _synchs.size()-1) && !problem) {
+
+                   // if new Synchronization have been registered, refresh our copy of the collection:
+                   if(copiedSynchs.length != _synchs.size()) {
+                       copiedSynchs = (SynchronizationRecord[])_synchs.toArray(new SynchronizationRecord[] {});
+                   }
+
+                   lastIndexProcessed = lastIndexProcessed+1;
+                   _currentRecord = copiedSynchs[lastIndexProcessed];
+
+					Synchronization c = _currentRecord.contents();
 					c.before_completion();
-
-					value = (SynchronizationRecord) iterator.iterate();
 				}
 			}
 			catch (SystemException e)
@@ -1583,8 +1620,6 @@ public class ArjunaTransactionImple extends
 
 		if (_synchs != null)
 		{
-			HashListIterator iterator = new HashListIterator(_synchs);
-			SynchronizationRecord value = (SynchronizationRecord) iterator.iterate();
 			ControlWrapper cw = null;
 			boolean doSuspend = false;
 
@@ -1624,8 +1659,22 @@ public class ArjunaTransactionImple extends
 			 * happened.
 			 */
 
-			while (value != null)
+			// afterCompletions should run in reverse order compared to beforeCompletions
+			Stack stack = new Stack();
+			Iterator iterator = _synchs.iterator();
+			while(iterator.hasNext()) {
+				stack.push(iterator.next());
+			}
+
+			iterator = stack.iterator();
+
+			/*
+			 * Regardless of failures, we must tell all synchronizations what
+			 * happened.
+			 */
+			while(!stack.isEmpty())
 			{
+				SynchronizationRecord value = (SynchronizationRecord)stack.pop();
 				Synchronization c = value.contents();
 
 				try
@@ -1651,8 +1700,6 @@ public class ArjunaTransactionImple extends
 					if (exp == null)
 						exp = e;
 				}
-
-				value = (SynchronizationRecord) iterator.iterate();
 			}
 
 			if (doSuspend)
@@ -1825,7 +1872,7 @@ public class ArjunaTransactionImple extends
 		 * If the resource is an ArjunaOTS.OTSAbstractRecord or an
 		 * ArjunaOTS.ArjunaSubtranAwareResource then we can do better record
 		 * manipulation, and proper nested actions.
-		 * 
+		 *
 		 * Based on the type of resource we create the right abstract record to
 		 * handle it, rather than a single abstract record which switches
 		 * protocols internally.
@@ -1922,14 +1969,14 @@ public class ArjunaTransactionImple extends
 
 	/*
 	 * The caller should delete the context.
-	 * 
+	 *
 	 * The propagation context is specified on a per client thread basis.
 	 * Therefore, at the server side we must maintain a hierarchy for each
 	 * thread. However, the server cannot simply tear down this hierarchy
 	 * whenever it receives a completely new one from the same thread, since the
 	 * OTS lets a thread suspend/resume contexts at will. Potential for memory
 	 * leaks in C++ version, but not Java!!
-	 * 
+	 *
 	 * Currently we assume that the hierarchy will be JBoss transactions so we
 	 * can get the parents of transactions. If it is not then we could simply
 	 * just call get_txcontext on the control!
@@ -2279,9 +2326,10 @@ public class ArjunaTransactionImple extends
 
 	private BasicAction rootAction;
 
-	private HashList _synchs;
+	private SortedSet _synchs;
+    private SynchronizationRecord _currentRecord; // the most recently processed Synchronization.
 
-	static int _ipType = Arjuna.XID();
+    static int _ipType = Arjuna.XID();
 
 	static boolean _subtran = true;
 
