@@ -17,7 +17,7 @@
   <tr>
     <td width="20">&nbsp;</td>
     <td align="center" width="170" bgcolor="#ffffff">
-      <img src="images/jboss.gif" alt="jboss logo" border="0">
+      <img src="images/JBoss_DivOfRH_RGB.gif" alt="arjuna logo" border="0">
     </td>
     <td width="20">&nbsp;</td>
     <td valign="middle" align="left" width="530" bgcolor="#ffffff">
@@ -93,7 +93,7 @@
 <TD colspan="3" height="20" bgcolor="#ffffff">&nbsp;</TD>
 </TR>
 <TR>
-<TD valign="top" align="left" width="10" bgcolor="#336699"><IMG src="images/tl_corner_10.gif" alt="" border="0"></TD><TD valign="middle" align="left" width="510" bgcolor="#336699"><FONT size="2" color="#ffffff" style="font-family: Arial, Helvetica, sans-serif"><B>Transaction type</B></FONT></TD><TD valign="top" align="right" width="10" bgcolor="#336699"><IMG src="images/tr_corner_10.gif" alt="" border="0"></TD>
+<TD valign="top" align="left" width="10" bgcolor="#336699"><IMG src="images/tl_corner_10.gif" alt="" border="0"></TD><TD valign="middle" align="left" width="510" bgcolor="#336699"><FONT size="2" color="#ffffff" style="font-family: Arial, Helvetica, sans-serif"><B>Restaurant Service - Booking Form</B></FONT></TD><TD valign="top" align="right" width="10" bgcolor="#336699"><IMG src="images/tr_corner_10.gif" alt="" border="0"></TD>
 </TR>
 <TR>
 <TD width="10" bgcolor="#e3e3e3">&nbsp;</TD><TD width="510" bgcolor="#e3e3e3">

@@ -541,7 +541,7 @@ public class TheatreView extends javax.swing.JFrame
             singletonInstance = new TheatreView(TheatreManager.getSingletonInstance());
         }
 
-        singletonInstance.setVisible(true);
+        singletonInstance.show();
         return singletonInstance;
     }
 

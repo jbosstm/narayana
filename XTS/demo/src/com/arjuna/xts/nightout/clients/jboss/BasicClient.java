@@ -1,21 +1,21 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags.
- * See the copyright.txt in the distribution for a full listing
+ * as indicated by the @author tags. 
+ * See the copyright.txt in the distribution for a full listing 
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
- *
- * (C) 2005-2007,
+ * 
+ * (C) 2005-2006,
  * @author JBoss Inc.
  */
 /*
@@ -43,15 +43,6 @@ import javax.xml.rpc.Service;
 import javax.xml.rpc.ServiceException;
 import javax.xml.rpc.Stub;
 
-import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.handler.Handler;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.arjuna.mw.wst.client.JaxWSHeaderContextProcessor;
 import com.arjuna.mw.wst.UserBusinessActivity;
 import com.arjuna.mw.wst.UserBusinessActivityFactory;
 import com.arjuna.mw.wst.UserTransaction;
@@ -107,7 +98,7 @@ public class BasicClient extends HttpServlet
      * The local context name for the BA Taxi webservice.
      */
     private static final String TAXI_SERVICE_BA = "java:comp/env/service/TaxiServiceBA" ;
-
+    
     /**
      * The atomic transaction restaurant stub.
      */
@@ -162,7 +153,7 @@ public class BasicClient extends HttpServlet
      * The initialised flag.
      */
     private boolean initialised ;
-
+    
     /**
      * Initialise the servlet.
      * @param servletConfig The servlet configuration.
@@ -170,18 +161,14 @@ public class BasicClient extends HttpServlet
     public void init(final ServletConfig config)
         throws ServletException
     {
-	// Location of JAX-RPC Web services
-        final String jaxRPCBaseURL = "http://localhost:8080/xtsdemowebservices/" ;
-        
-	// Location of JAX-WS Web services
-	final String jaxWSBaseURL = "http://localhost:8080/xtsdemojaxwswebservices/" ;
-        
-        restaurantATURL = jaxWSBaseURL + "RestaurantServiceAT?wsdl" ;
-        restaurantBAURL = jaxWSBaseURL + "RestaurantServiceBA?wsdl" ;
-        taxiATURL = getURL(config, "taxiATURL", jaxRPCBaseURL + "TaxiServiceAT") ;
-        taxiBAURL = getURL(config, "taxiBAURL", jaxRPCBaseURL + "TaxiServiceBA") ;
-        theatreATURL = getURL(config, "theatreATURL", jaxRPCBaseURL + "TheatreServiceAT") ;
-        theatreBAURL = getURL(config, "theatreBAURL", jaxRPCBaseURL + "TheatreServiceBA") ;
+        final String baseURL = "http://localhost:8080/xtsdemowebservices/" ;
+
+        restaurantATURL = getURL(config, "restaurantATURL", baseURL + "RestaurantServiceAT") ;
+        restaurantBAURL = getURL(config, "restaurantBAURL", baseURL + "RestaurantServiceBA") ;
+        taxiATURL = getURL(config, "taxiATURL", baseURL + "TaxiServiceAT") ;
+        taxiBAURL = getURL(config, "taxiBAURL", baseURL + "TaxiServiceBA") ;
+        theatreATURL = getURL(config, "theatreATURL", baseURL + "TheatreServiceAT") ;
+        theatreBAURL = getURL(config, "theatreBAURL", baseURL + "TheatreServiceBA") ;
 
         context = config.getServletContext();
     }
@@ -196,11 +183,8 @@ public class BasicClient extends HttpServlet
         {
             try
             {
-                // JAX-WS
-                restaurantAT = getPortRestaurantServiceAT(restaurantATURL);
-                restaurantBA = getPortRestaurantServiceBA(restaurantBAURL);
-
-                // JAX-RPC
+                restaurantAT = (IRestaurantServiceAT)getService(RESTAURANT_SERVICE_AT, restaurantATURL, IRestaurantServiceAT.class) ;
+                restaurantBA = (IRestaurantServiceBA)getService(RESTAURANT_SERVICE_BA, restaurantBAURL, IRestaurantServiceBA.class) ;
                 taxiAT = (ITaxiServiceAT)getService(TAXI_SERVICE_AT, taxiATURL, ITaxiServiceAT.class) ;
                 taxiBA = (ITaxiServiceBA)getService(TAXI_SERVICE_BA, taxiBAURL, ITaxiServiceBA.class) ;
                 theatreAT = (ITheatreServiceAT)getService(THEATRE_SERVICE_AT, theatreATURL, ITheatreServiceAT.class) ;
@@ -234,7 +218,7 @@ public class BasicClient extends HttpServlet
         int theatreSeats = Integer.parseInt(request.getParameter("theatrecount"));
         int theatreArea = Integer.parseInt(request.getParameter("theatrearea"));
         int taxiCount = Integer.parseInt(request.getParameter("taxi"));
-        boolean bookTaxi = (taxiCount >= 1);
+        boolean bookTaxi = (taxiCount >= 1 ? true : false);
 
         String result = "Transaction finished OK.";
         String txType = request.getParameter("txType");
@@ -366,16 +350,16 @@ public class BasicClient extends HttpServlet
      * @param config The servlet config
      * @param property The property name
      * @param defautlValue The default value.
-     * @return The initialisation property value or the default value if not present.
+     * @return The initialisation property value or the default value if not present. 
      */
     private String getURL(final ServletConfig config, final String property, final String defaultValue)
     {
         final String value = config.getInitParameter(property) ;
         return (value == null ? defaultValue : value) ;
     }
-
+    
     /**
-     * Get the service proxy for the specified service endpoint.
+     * Get the service proxy for the specified service endpoing.
      * @param jndiName The JNDI location of the service.
      * @param url The URL of the service.
      * @param portClass The port class type.
@@ -391,39 +375,5 @@ public class BasicClient extends HttpServlet
         final Stub stub = (Stub)service.getPort(portClass) ;
         stub._setProperty(Stub.ENDPOINT_ADDRESS_PROPERTY, url) ;
         return stub ;
-    }
-
-    private IRestaurantServiceAT getPortRestaurantServiceAT(String url)
-            throws MalformedURLException
-    {
-        URL wsdlLocation = new URL(url);
-        QName serviceName = new QName("http://www.jboss.com/jbosstm/xts/demo/Restaurant","RestaurantServiceAT");
-        javax.xml.ws.Service service = javax.xml.ws.Service.create(wsdlLocation, serviceName);
-        IRestaurantServiceAT port =  service.getPort(IRestaurantServiceAT.class);
-
-        // Insert client handler
-        BindingProvider bindingProvider = (BindingProvider)port;
-        List<Handler> handlerChain = new ArrayList<Handler>();
-        handlerChain.add(new JaxWSHeaderContextProcessor());
-        bindingProvider.getBinding().setHandlerChain(handlerChain);
-
-        return port;
-    }
-
-    private IRestaurantServiceBA getPortRestaurantServiceBA(String url)
-            throws MalformedURLException
-    {
-        URL wsdlLocation = new URL(url);
-        QName serviceName = new QName("http://www.jboss.com/jbosstm/xts/demo/Restaurant","RestaurantServiceBA");
-        javax.xml.ws.Service service = javax.xml.ws.Service.create(wsdlLocation, serviceName);
-        IRestaurantServiceBA port =  service.getPort(IRestaurantServiceBA.class);
-
-        // Insert client handler
-        BindingProvider bindingProvider = (BindingProvider)port;
-        List<Handler> handlerChain = new ArrayList<Handler>();
-        handlerChain.add(new JaxWSHeaderContextProcessor());
-        bindingProvider.getBinding().setHandlerChain(handlerChain);
-
-        return port;
     }
 }

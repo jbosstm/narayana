@@ -15,7 +15,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
   MA  02110-1301, USA.
   
-  (C) 2005-2007,
+  (C) 2005-2006,
   @author JBoss Inc.
 -->
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
@@ -23,6 +23,14 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
 	version="2.4">
 
+	<servlet>
+		<servlet-name>RestaurantServiceAT</servlet-name>
+		<servlet-class>com.arjuna.xts.nightout.services.Restaurant.RestaurantServiceAT</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>RestaurantServiceBA</servlet-name>
+		<servlet-class>com.arjuna.xts.nightout.services.Restaurant.RestaurantServiceBA</servlet-class>
+	</servlet>
 	<servlet>
 		<servlet-name>TheatreServiceAT</servlet-name>
 		<servlet-class>com.arjuna.xts.nightout.services.Theatre.TheatreServiceAT</servlet-class>
@@ -40,7 +48,14 @@
 		<servlet-class>com.arjuna.xts.nightout.services.Taxi.TaxiServiceBA</servlet-class>
 	</servlet>
 
-
+	<servlet-mapping>
+		<servlet-name>RestaurantServiceAT</servlet-name>
+		<url-pattern>/RestaurantServiceAT</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>RestaurantServiceBA</servlet-name>
+		<url-pattern>/RestaurantServiceBA</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>TheatreServiceAT</servlet-name>
 		<url-pattern>/TheatreServiceAT</url-pattern>

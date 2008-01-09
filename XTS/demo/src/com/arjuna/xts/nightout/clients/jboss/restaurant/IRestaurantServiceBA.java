@@ -15,16 +15,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  * 
- * (C) 2005-2007,
+ * (C) 2005-2006,
  * @author JBoss Inc.
  */
 package com.arjuna.xts.nightout.clients.jboss.restaurant ;
 
-import javax.jws.WebService;
 import java.rmi.Remote;
 import java.rmi.RemoteException ;
 
-@WebService
 public interface IRestaurantServiceBA extends Remote
 {
 

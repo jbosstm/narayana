@@ -15,7 +15,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
   MA  02110-1301, USA.
   
-  (C) 2005-2007,
+  (C) 2005-2006,
   @author JBoss Inc.
 -->
 
@@ -28,7 +28,6 @@
 
     <description>XML Transaction Service Demo</description>
 
-    <!--
     <module>
         <web>
             <web-uri>ws-c.war</web-uri>
@@ -54,14 +53,6 @@
         <web>
             <web-uri>wstx.war</web-uri>
             <context-root>/wstx</context-root>
-        </web>
-    </module>
-    -->
-    
-    <module>
-        <web>
-            <web-uri>xts-demo-jaxws-webservices.war</web-uri>
-            <context-root>/xtsdemojaxwswebservices</context-root>
         </web>
     </module>
 

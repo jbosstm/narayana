@@ -30,6 +30,14 @@
         <servlet-name>Basic Client Servlet</servlet-name>
         <servlet-class>com.arjuna.xts.nightout.clients.jboss.BasicClient</servlet-class>
         <init-param>
+            <param-name>restaurantATURL</param-name>
+            <param-value>@restaurantATURL@</param-value>
+        </init-param>
+        <init-param>
+            <param-name>restaurantBAURL</param-name>
+            <param-value>@restaurantBAURL@</param-value>
+        </init-param>
+        <init-param>
             <param-name>taxiATURL</param-name>
             <param-value>@taxiATURL@</param-value>
         </init-param>
@@ -52,6 +60,34 @@
         <url-pattern>/basicclient</url-pattern>
     </servlet-mapping>
     
+    <service-ref>
+        <service-ref-name>service/RestaurantServiceAT</service-ref-name>
+        <service-interface>javax.xml.rpc.Service</service-interface>
+        <wsdl-file>WEB-INF/wsdl/RestaurantServiceAT.wsdl</wsdl-file>
+        <jaxrpc-mapping-file>WEB-INF/client-jaxrpc-mapping.xml</jaxrpc-mapping-file>
+        <service-qname xmlns:demo="http://www.jboss.com/jbosstm/xts/demo/Restaurant">demo:IRestaurantServiceService</service-qname>
+        <port-component-ref>
+            <service-endpoint-interface>com.arjuna.xts.nightout.clients.jboss.restaurant.IRestaurantServiceAT</service-endpoint-interface>
+        </port-component-ref>
+        <handler>
+            <handler-name>XTSClientHandler</handler-name>
+            <handler-class>com.arjuna.mw.wst.client.JaxRPCHeaderContextProcessor</handler-class>
+        </handler>
+    </service-ref>
+    <service-ref>
+        <service-ref-name>service/RestaurantServiceBA</service-ref-name>
+        <service-interface>javax.xml.rpc.Service</service-interface>
+        <wsdl-file>WEB-INF/wsdl/RestaurantServiceBA.wsdl</wsdl-file>
+        <jaxrpc-mapping-file>WEB-INF/client-jaxrpc-mapping.xml</jaxrpc-mapping-file>
+        <service-qname xmlns:demo="http://www.jboss.com/jbosstm/xts/demo/Restaurant">demo:IRestaurantServiceBAService</service-qname>
+        <port-component-ref>
+            <service-endpoint-interface>com.arjuna.xts.nightout.clients.jboss.restaurant.IRestaurantServiceBA</service-endpoint-interface>
+        </port-component-ref>
+        <handler>
+            <handler-name>XTSClientHandler</handler-name>
+            <handler-class>com.arjuna.mw.wst.client.JaxRPCHeaderContextProcessor</handler-class>
+        </handler>
+    </service-ref>
     <service-ref>
         <service-ref-name>service/TaxiServiceAT</service-ref-name>
         <service-interface>javax.xml.rpc.Service</service-interface>

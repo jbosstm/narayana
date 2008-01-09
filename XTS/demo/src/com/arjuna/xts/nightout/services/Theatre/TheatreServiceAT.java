@@ -78,7 +78,7 @@ public class TheatreServiceAT implements ITheatreService
 
         theatreView.addMessage("******************************");
 
-        theatreView.addMessage("id:" + transactionId + ". Received a theatre booking request for " + how_many + " seats in area " + which_area);
+        theatreView.addMessage("id:" + transactionId.toString() + ". Received a theatre booking request for " + how_many + " seats in area " + which_area);
 
         TheatreManager.getSingletonInstance().bookSeats(transactionId, how_many, which_area);
 

@@ -76,7 +76,7 @@ public class TaxiServiceAT implements ITaxiService
 
         taxiView.addMessage("******************************");
 
-        taxiView.addMessage("id:" + transactionId + ". Received a taxi booking request");
+        taxiView.addMessage("id:" + transactionId.toString() + ". Received a taxi booking request");
 
         TaxiManager.getSingletonInstance().bookTaxi(transactionId);
 
