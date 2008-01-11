@@ -76,6 +76,7 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
         </fail>
 
         <property name="jboss.lib.dir" location="${jboss.home}/lib"/>
+        <property name="jboss.client.lib.dir" location="${jboss.home}/client"/>
         <property name="jboss.server.dir" location="${jboss.home}/server/${jboss.server}"/>
         <property name="jboss.server.lib.dir" location="${jboss.server.dir}/lib"/>
 
@@ -120,9 +121,28 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
 
         <!-- libs from JBoss App Server installation. Note: these jars were refactored between
           AS 4.x and AS 5.0. The list below is a hybrid to allow building against either version. -->
+	<!--
         <property name="jboss.libs" value="jboss-common.jar jboss-system.jar jboss-jmx.jar jboss-logging-spi.jar jboss-common-core.jar jboss-j2se.jar jboss-system-jmx.jar"/>
         <property name="jboss.server.jta.libs" value="jmx-adaptor-plugin.jar jboss-transaction.jar"/>
         <property name="jboss.server.jts.libs" value="jboss-iiop.jar jacorb.jar"/>
+	-->
+	<!--
+	    as a jbossas component we would like to use just the
+	    integration jar here. however it does not contain some
+	    stuff we need e.g. rmi, system, logger classes etc, so we
+	    pick up jbossall-client instead. also, pending some
+	    refactoring in the AS we still depend upon class
+	    org.jboss.system.ServiceMBeanSupport which is not in the
+	    integration/client jars. we can find it in the lib dir in
+	    jboss-system-jmx.jar. finally, for a jts build we still
+	    need the jacorb and iiop libs which are in server/all/lib
+	-->
+
+        <property name="jboss.libs" value="jboss-system-jmx.jar"/>
+        <property name="jboss.client.libs" value="jbossall-client.jar"/>
+        <property name="jboss.server.jta.libs" value=""/>
+        <property name="jboss.server.jts.libs" value="jboss-iiop.jar jacorb.jar"/>
+
         <condition property="jboss.server.libs" value="${jboss.server.jta.libs} ${jboss.server.jts.libs}">
             <isset property="com.hp.mwlabs.ts.build.jts"/>
         </condition>
@@ -134,6 +154,7 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
 				<include name="**/*.zip"/>
 			</fileset>
 			<filelist dir="${jboss.lib.dir}" files="${jboss.libs}"/>
+			<filelist dir="${jboss.client.lib.dir}" files="${jboss.client.libs}"/>
             <filelist dir="${jboss.server.lib.dir}" files="${jboss.server.libs}"/>
         </path>
         <property name="build.classpath" refid="build.classpath"/>
