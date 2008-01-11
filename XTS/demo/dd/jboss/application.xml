@@ -30,34 +30,6 @@
 
     <module>
         <web>
-            <web-uri>ws-c.war</web-uri>
-            <context-root>/xts</context-root>
-        </web>
-    </module>
-    
-    <module>
-        <web>
-            <web-uri>ws-t.war</web-uri>
-            <context-root>/ws-t</context-root>
-        </web>
-    </module>
-
-    <module>
-        <web>
-            <web-uri>wscf.war</web-uri>
-            <context-root>/wscf</context-root>
-        </web>
-    </module>
-
-    <module>
-        <web>
-            <web-uri>wstx.war</web-uri>
-            <context-root>/wstx</context-root>
-        </web>
-    </module>
-
-    <module>
-        <web>
             <web-uri>xts-demo-webservices.war</web-uri>
             <context-root>/xtsdemowebservices</context-root>
         </web>

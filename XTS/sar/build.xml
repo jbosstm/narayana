@@ -64,7 +64,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
 	  integration jar here. however it does not contain some stuff
 	  we need e.g. rmi, system, logger classes etc, so we pick up
 	  jbossall-client instead. also, pending some refactoring in
-	  teh AS we still depend upon class
+	  the AS we still depend upon class
 	  org.jboss.system.ServiceMBeanSupport which is not in the
 	  integration/client jars. we can find it in the lib dir in
 	  jboss-system-jmx.jar.

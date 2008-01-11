@@ -33,18 +33,25 @@
 
     <!-- ================================================================== -->
 
-    <!-- Specify weblogic.home if you want a WebLogic build,                -->
-    <!-- webmethods.home for a webMethods build otherwise a JBoss build     -->
-    <!-- will be generated.                                                 -->
+    <!-- n.b. run this via the build.sh script to ensure that the property  -->
+    <!-- settings in jboss.properties are set automatically                 -->
 
     <!-- The properties to override are the following:                      -->
     <!--    hostname (defaults to localhost)                                -->
-    <!--    port (defaults to 8080 for jboss, 7001 for WebLogic and         -->
-    <!--          8004 for webMethods)                                      -->
-    <!--    urlstub (defaults to xtsdemowebservices for JBoss and WebLogic  -->
-    <!--          and xts-demo for webMethods)                              -->
+    <!--    port (defaults to 8080 for jboss)                               -->
+    <!--    urlstub (defaults to xtsdemowebservices for JBoss)              -->
 
     <!--    deploy.dir The deployment directory for the ear                 -->
+
+    <!--  default target build will build an ear file for the demo app for  -->
+    <!--  use in a JBoss server with XTS deployed as a JBoss service        -->
+    <!--  archive                                                           -->
+
+    <!--  target sa-build will build an ear file for the demo app for use   -->
+    <!--  with a remote coordinator. this contains the XTS code and config  -->
+    <!--  files bundled into an ear file to provide the client side         -->
+    <!--   services.                                                        -->
+
     <!-- ================================================================== -->
 
     <xmlproperty file="${xmlpropertyfile}" keeproot="false"/>
@@ -68,14 +75,10 @@
     <property name="web.dir" location="web"/>
     <property name="dd.dir" location="dd"/>
     <property name="jboss.dd.dir" location="${dd.dir}/jboss"/>
-    <property name="webmethods.dd.dir" location="${dd.dir}/webmethods"/>
-    <property name="weblogic.dd.dir" location="${dd.dir}/weblogic"/>
     <property name="build.config" location="${build.dir}/config"/>
     <property name="build.soapconfig" location="${build.dir}/soapconfig"/>
     <property name="appinf.dir" location="${build.dir}/APP-INF"/>
     <property name="appinflib.dir" location="${appinf.dir}/lib"/>
-
-    <property name="webmethods.build.dir" location="${build.dir}/xts-demo"/>
 
     <property name="javac.debug"             value="on"/>
     <property name="javac.optimize"          value="off"/>
@@ -109,41 +112,7 @@
         </delete>
     </target>
 
-    <target name="init-build">
-        <condition property="jboss.build">
-            <not>
-                <or>
-                    <isset property="weblogic.home"/>
-                    <isset property="webmethods.home"/>
-                </or>
-            </not>
-        </condition>
-    </target>
-
-    <target name="init-properties-weblogic" depends="init-build" if="weblogic.home">
-        <property name="hostname" value="localhost"/>
-        <property name="port" value="7001"/>
-        <property name="urlstub" value="xtsdemowebservices"/>
-        <path id="compile.path">
-            <path refid="lib.path"/>
-            <path refid="ext.path"/>
-            <fileset dir="${weblogic.home}/server/lib" includes="webservices.jar"/>
-        </path>
-    </target>
-
-    <target name="init-properties-webmethods" depends="init-build" if="webmethods.home">
-        <property name="hostname" value="localhost"/>
-        <property name="port" value="8004"/>
-        <property name="urlstub" value="xts-demo"/>
-        <path id="compile.path">
-            <path refid="lib.path"/>
-            <path refid="ext.path"/>
-            <pathelement location="${webmethods.home}/lib/glue.jar"/>
-        </path>
-        <property name="webmethods.deploy.dir" location="${deploy.dir}/xts-demo"/>
-    </target>
-
-    <target name="init-properties" depends="init-build" if="jboss.build">
+    <target name="init-properties">
         <property name="hostname" value="localhost"/>
         <property name="port" value="8080"/>
         <property name="urlstub" value="xtsdemowebservices"/>
@@ -153,7 +122,7 @@
         </path>
     </target>
 
-    <target name="init" depends="init-properties-weblogic,init-properties-webmethods,init-properties">
+    <target name="init" depends="init-properties">
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.dir}/classes"/>
         <mkdir dir="${build.config}"/>
@@ -170,15 +139,22 @@
             </classpath>
             <src path="${src.dir}"/>
             <patternset>
-                <include name="com/arjuna/xts/nightout/clients/jboss/**" if="jboss.build"/>
-                <include name="com/arjuna/xts/nightout/clients/weblogic/**" if="weblogic.home"/>
-                <include name="com/arjuna/xts/nightout/clients/webmethods/**" if="webmethods.home"/>
+                <include name="com/arjuna/xts/nightout/clients/jboss/**"/>
                 <include name="com/arjuna/xts/nightout/services/**"/>
             </patternset>
         </javac>
     </target>
 
     <!-- the server side elements -->
+    <target name="jboss-webservices" depends="compile">
+        <war destfile="${build.dir}/xts-demo-webservices.war" webxml="${jboss.dd.dir}/service-web-app.xml">
+            <webinf dir="${jboss.dd.dir}" excludes="client-web-app.xml service-web-app.xml application-sa.xml application.xml"/>
+            <classes dir="${build.dir}/classes">
+                <include name="com/arjuna/xts/nightout/services/**"/>
+            </classes>
+        </war>
+    </target>
+
     <target name="config" depends="insertcfg">
         <filter token="hostname" value="${hostname}"/>
         <filter token="port" value="${port}"/>
@@ -188,27 +164,12 @@
         <jar destfile="${build.dir}/config.jar" basedir="${build.config}"/>
     </target>
 
-    <target name="weblogic-webservices" depends="compile" if="weblogic.home">
-        <copy file="${weblogic.dd.dir}/web-services.xml" tofile="${build.dir}/web-services.xml"/>
-        <war destfile="${build.dir}/xts-demo-webservices.war" webxml="${weblogic.dd.dir}/web.xml">
-            <webinf dir="${build.dir}">
-                <include name="web-services.xml"/>
-            </webinf>
+    <target name="jboss-sa-webservices" depends="compile">
+        <war destfile="${build.dir}/xts-sa-demo-webservices.war" webxml="${jboss.dd.dir}/service-web-app.xml">
+            <webinf dir="${jboss.dd.dir}" excludes="client-web-app.xml service-web-app.xml application-sa.xml application.xml"/>
             <classes dir="${build.dir}/classes">
-                <include name="com/arjuna/xts/nightout/services/**/*"/>
-            </classes>
-            <manifest>
-                <attribute name="Class-Path" value="${lib.libs} ${ext.libs}"/>
-            </manifest>
-        </war>
-    </target>
-
-    <target name="jboss-webservices" depends="compile" if="jboss.build">
-        <war destfile="${build.dir}/xts-demo-webservices.war" webxml="${jboss.dd.dir}/service-web-app.xml">
-            <webinf dir="${jboss.dd.dir}" excludes="client-web-app.xml service-web-app.xml"/>
-            <fileset dir="${build.dir}/classes">
                 <include name="com/arjuna/xts/nightout/services/**"/>
-            </fileset>
+            </classes>
             <manifest>
                 <attribute name="Class-Path" value="${lib.libs} ${ext.libs}"/>
             </manifest>
@@ -216,33 +177,12 @@
     </target>
 
     <!-- the client side elements -->
-    <target name="weblogic-webapp" depends="compile" if="weblogic.home">
-        <copy tofile="${build.dir}/client-web-app.xml" file="${weblogic.dd.dir}/web-app.xml">
-            <filterset refid="webxml.filter"/>
-        </copy>
-
-        <!-- move resources into the classes directory -->
-        <copy todir="${build.dir}/classes/">
-            <fileset dir="${src.dir}" includes="com/arjuna/xts/nightout/clients/weblogic/**/*.xml"/>
-        </copy>
-
-        <war warfile="${build.dir}/xts-demo.war" webxml="${build.dir}/client-web-app.xml">
-            <classes dir="${build.dir}/classes">
-                <exclude name="com/arjuna/xts/nightout/services/**/*"/>
-            </classes>
-            <fileset dir="${web.dir}"/>
-            <manifest>
-                <attribute name="Class-Path" value="wstx.jar"/>
-            </manifest>
-        </war>
-    </target>
-
-    <target name="jboss-webapp" depends="compile" if="jboss.build">
+    <target name="jboss-sa-webapp" depends="compile">
         <copy tofile="${build.dir}/client-web-app.xml" file="${jboss.dd.dir}/client-web-app.xml">
             <filterset refid="webxml.filter"/>
         </copy>
 
-        <war warfile="${build.dir}/xts-demo.war" webxml="${build.dir}/client-web-app.xml">
+        <war warfile="${build.dir}/xts-sa-demo.war" webxml="${build.dir}/client-web-app.xml">
             <classes dir="${build.dir}/classes">
                 <exclude name="com/arjuna/xts/nightout/services/**/*"/>
             </classes>
@@ -254,81 +194,41 @@
         </war>
     </target>
 
-    <target name="weblogic-ear" depends="weblogic-webservices, weblogic-webapp, config" if="weblogic.home">
-        <copy todir="${appinflib.dir}">
-	        <fileset dir="${xts.home}/lib" includes="*.jar"/>
-	        <fileset dir="${xts.home}/lib/ext" includes="${ext.package}"/>
-            <fileset dir="${build.dir}" includes="config.jar"/>
+    <target name="jboss-webapp" depends="compile">
+        <copy tofile="${build.dir}/client-web-app.xml" file="${jboss.dd.dir}/client-web-app.xml">
+            <filterset refid="webxml.filter"/>
         </copy>
-        <ear earfile="${build.dir}/xts-demo.ear" appxml="${weblogic.dd.dir}/application.xml">
-            <fileset dir="${xts.home}/webapps" includes="*.war" excludes="ws-t.war ws-c.war"/>
-            <fileset dir="${build.dir}" includes="xts-demo-webservices.war xts-demo.war ws-t.war ws-c.war"/>
-            <fileset dir="${build.dir}" includes="APP-INF/**"/>
+
+        <war warfile="${build.dir}/xts-demo.war" webxml="${build.dir}/client-web-app.xml">
+            <classes dir="${build.dir}/classes">
+                <exclude name="com/arjuna/xts/nightout/services/**/*"/>
+            </classes>
+            <fileset dir="${web.dir}"/>
+            <webinf dir="${jboss.dd.dir}" includes="wsdl/**, client-jaxrpc-mapping.xml"/>
+        </war>
+    </target>
+
+    <!-- the ear files -->
+    <target name="jboss-ear" depends="jboss-webservices, jboss-webapp">
+        <ear earfile="${build.dir}/xts-demo.ear"
+            appxml="${jboss.dd.dir}/application.xml">
+            <fileset dir="${build.dir}" includes="xts-demo-webservices.war xts-demo.war"/>
         </ear>
     </target>
 
-    <target name="jboss-ear" depends="jboss-webservices, jboss-webapp, config" if="jboss.build">
-        <ear earfile="${build.dir}/xts-demo.ear"
-            appxml="${jboss.dd.dir}/application.xml">
-            <fileset dir="${build.dir}" includes="xts-demo-webservices.war xts-demo.war config.jar ws-t.war ws-c.war"/>
+    <target name="jboss-sa-ear" depends="jboss-sa-webservices, jboss-sa-webapp, config">
+        <ear earfile="${build.dir}/xts-sa-demo.ear"
+            appxml="${jboss.dd.dir}/application-sa.xml">
+            <fileset dir="${build.dir}" includes="xts-sa-demo-webservices.war xts-sa-demo.war config.jar ws-t.war ws-c.war"/>
 	        <fileset dir="${xts.home}/lib" includes="*.jar"/>
 	        <fileset dir="${xts.home}/lib/ext" includes="${ext.package}"/>
 	        <fileset dir="${xts.home}/webapps" includes="*.war" excludes="ws-t.war ws-c.war"/>
         </ear>
     </target>
 
-    <target name="webmethods-app" depends="config" if="webmethods.home">
-        <mkdir dir="${webmethods.build.dir}"/>
-        <property name="webmethods.webinf.dir" location="${webmethods.build.dir}/WEB-INF"/>
-        <property name="webmethods.classes.dir" location="${webmethods.webinf.dir}/classes"/>
-        <property name="webmethods.lib.dir" location="${webmethods.webinf.dir}/lib"/>
-        <property name="webmethods.services.dir" location="${webmethods.webinf.dir}/services"/>
+    <target name="build" depends="jboss-ear"/>
 
-        <mkdir dir="${webmethods.webinf.dir}"/>
-        <mkdir dir="${webmethods.classes.dir}"/>
-        <mkdir dir="${webmethods.lib.dir}"/>
-        <mkdir dir="${webmethods.services.dir}"/>
-        <mkdir dir="${build.soapconfig}/services"/>
-
-        <copy todir="${webmethods.build.dir}">
-            <fileset dir="${web.dir}"/>
-        </copy>
-        <copy todir="${webmethods.webinf.dir}" file="${webmethods.dd.dir}/glue-config.xml">
-          <filterset>
-            <filter token="hostname" value="${hostname}"/>
-            <filter token="port" value="${port}"/>
-          </filterset>
-        </copy>
-        <copy tofile="${webmethods.webinf.dir}/web.xml" file="${webmethods.dd.dir}/web-app.xml">
-          <filterset refid="webxml.filter"/>
-        </copy>
-
-        <copy todir="${webmethods.classes.dir}">
-          <fileset dir="${build.dir}/classes"/>
-        </copy>
-
-        <copy todir="${build.soapconfig}/services">
-            <fileset dir="${webmethods.dd.dir}" includes="javax.*"/>
-        </copy>
-        <jar file="${build.dir}/soapconfig.jar">
-             <metainf dir="${build.soapconfig}"/>
-        </jar>
-
-        <copy todir="${webmethods.lib.dir}">
-          <fileset dir="${xts.home}/lib" includes="*.jar"/>
-          <fileset dir="${xts.home}/lib/ext" includes="${ext.package}"/>
-          <fileset dir="${build.dir}" includes="config.jar soapconfig.jar"/>
-	    </copy>
-
-        <copy todir="${webmethods.services.dir}">
-            <fileset dir="${webmethods.dd.dir}">
-                <include name="*AT.xml"/>
-                <include name="*BA.xml"/>
-            </fileset>
-        </copy>
-    </target>
-
-    <target name="build" depends="jboss-ear, weblogic-ear, webmethods-app"/>
+    <target name="sa-build" depends="jboss-sa-ear"/>
 
     <target name="insertcfg" depends="init">
         <filter token="hostname" value="${hostname}"/>
@@ -354,26 +254,19 @@
         <delete dir="${build.dir}/tmp/ws-t"/>
     </target>
 
-    <target name="deploy" depends="deploy-ears, deploy-exploded"/>
-
-    <target name="deploy-ears" depends="build, undeploy" unless="webmethods.home">
+    <target name="deploy" depends="build, undeploy">
         <copy file="${build.dir}/xts-demo.ear" tofile="${deploy.dir}/xts-demo.ear"/>
     </target>
 
-    <target name="deploy-exploded" depends="build, undeploy" if="webmethods.home">
-        <mkdir dir="${webmethods.deploy.dir}"/>
-        <copy todir="${webmethods.deploy.dir}">
-             <fileset dir="${webmethods.build.dir}"/>
-        </copy>
-    </target>
-
-    <target name="undeploy" depends="undeploy-ears, undeploy-exploded"/>
-
-    <target name="undeploy-ears" unless="webmethods.home">
+    <target name="undeploy">
         <delete file="${deploy.dir}/xts-demo.ear"/>
     </target>
 
-    <target name="undeploy-exploded" if="webmethods.home">
-        <delete dir="${webmethods.deploy.dir}"/>
+    <target name="sa-deploy" depends="sa-build, undeploy">
+        <copy file="${build.dir}/xts-sa-demo.ear" tofile="${deploy.dir}/xts-sa-demo.ear"/>
+    </target>
+
+    <target name="sa-undeploy">
+        <delete file="${deploy.dir}/xts-sa-demo.ear"/>
     </target>
 </project>

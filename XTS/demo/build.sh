@@ -21,7 +21,7 @@
 #!/bin/sh
 ###############################################################################
 # Wrapper script for building and deploying xts-demo                          #
-# Usage: build.sh [weblogic|jboss] <target>                                   #
+# Usage: build.sh [jboss] <target>                                            #
 ###############################################################################
 
 if [ $# -ge 1 ]
@@ -34,5 +34,5 @@ then
   fi
 fi
 
-echo "Usage: `basename $0` [weblogic|jboss|webmethods] <target>"
+echo "Usage: `basename $0` [jboss] <target>"
 exit 1
