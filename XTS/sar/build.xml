@@ -35,9 +35,16 @@
     <!-- devs: run 'ant jta; cd XTS; ant install' after svn checkout -->
     <property name="xts.home" value="../xts-install"/>
 
-    <!-- the directory in which your app server resides (version 4.2.1 expected) -->
-    <property name="jbossas.home" value="/home/jhalli/IdeaProjects/jboss/jbossas421ga/build/output/jboss-4.2.1.GA"/>
+    <!-- the directory in which your installed app server resides -->
+    <property environment="env"/>
 
+    <condition property="jbossas.home" value="${env.JBOSS_HOME}">
+      <isset property="env.JBOSS_HOME"/>
+    </condition>
+
+    <fail unless="jbossas.home">
+The JBoss installation directory must be specified with the JBOSS_HOME environment variable or the jboss.home property.
+    </fail>
 
     <property name="lib.dir" location="${xts.home}/lib"/>
     <property name="ext.dir" location="${lib.dir}/ext"/>
@@ -52,13 +59,31 @@
     <!-- TODO are the xts engine and its WS stack conceptually separate deployments? at what level do they integrate? spi or jax-ws?-->
     <target name="sar" depends="init">
 
+      <!--
+	  as a jbossas component we would like to use just the
+	  integration jar here. however it does not contain some stuff
+	  we need e.g. rmi, system, logger classes etc, so we pick up
+	  jbossall-client instead. also, pending some refactoring in
+	  teh AS we still depend upon class
+	  org.jboss.system.ServiceMBeanSupport which is not in the
+	  integration/client jars. we can find it in the lib dir in
+	  jboss-system-jmx.jar.
+      -->
+      <!--
         <javac srcdir="src" destdir="${build.dir}">
             <classpath>
-                <!-- logging -->
                 <pathelement location="${jbossas.home}/lib/jboss-common.jar"/>
-                <!-- mbean -->
                 <pathelement location="${jbossas.home}/lib/jboss-system.jar"/>
                 <pathelement location="${jbossas.home}/lib/jboss-jmx.jar"/>
+                <fileset dir="${lib.dir}" includes="*.jar"/>
+                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossts-common.jar"/>
+            </classpath>
+        </javac>
+	-->
+        <javac srcdir="src" destdir="${build.dir}">
+            <classpath>
+                <pathelement location="${jbossas.home}/client/jbossall-client.jar"/>
+                <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
                 <!-- XTS -->
                 <fileset dir="${lib.dir}" includes="*.jar"/>
                 <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossts-common.jar"/>
@@ -89,6 +114,10 @@
 
     <target name="deploy" depends="sar">
         <copy file="${build.dir}/jbossxts.sar" todir="${jbossas.home}/server/default/deploy"/>
+    </target>
+
+    <target name="undeploy">
+        <delete file="${jbossas.home}/server/default/deploy/jbossxts.sar"/>
     </target>
 
 </project>
