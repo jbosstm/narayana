@@ -41,6 +41,7 @@ import com.arjuna.ats.internal.jbossatx.jts.PropagationContextWrapper;
 import com.arjuna.ats.internal.jbossatx.jts.jca.XATerminator;
 import com.arjuna.ats.internal.jbossatx.agent.LocalJBossAgentImpl;
 import com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple;
+import com.arjuna.ats.internal.jta.transaction.jts.TransactionSynchronizationRegistryImple;
 import com.arjuna.ats.jta.utils.JNDIManager;
 import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -123,7 +124,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 	{
 	    started = true ;
 	}
-	
+
         ORB orb = null;
 
         this.getLog().info("JBossTS Transaction Service - JBoss Inc.");
@@ -135,7 +136,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         System.setProperty(com.arjuna.ats.tsmx.TransactionServiceMX.AGENT_IMPLEMENTATION_PROPERTY,
                 com.arjuna.ats.internal.jbossatx.agent.LocalJBossAgentImpl.class.getName());
         System.setProperty(Environment.LAST_RESOURCE_OPTIMISATION_INTERFACE, LastResource.class.getName()) ;
-        
+
         final String alwaysPropagateProperty = alwaysPropagateContext ? "YES" : "NO" ;
         System.setProperty(com.arjuna.ats.jts.common.Environment.ALWAYS_PROPAGATE_CONTEXT, alwaysPropagateProperty);
 
@@ -144,7 +145,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 
         // Associate transaction reaper with our context classloader.
         TransactionReaper.create() ;
-        
+
 		/** Register propagation context manager **/
         try
         {
@@ -206,13 +207,19 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
             throw e;
         }
 
-        /** Bind the transaction manager JNDI reference **/
+        /** Bind the transaction manager and tsr JNDI reference **/
         this.getLog().info("Binding TransactionManager JNDI Reference");
 
         jtaPropertyManager.propertyManager.setProperty(Environment.JTA_TM_IMPLEMENTATION, TransactionManagerDelegate.class.getName());
         jtaPropertyManager.propertyManager.setProperty(Environment.JTA_UT_IMPLEMENTATION, UserTransactionImple.class.getName());
 
+        jtaPropertyManager.propertyManager.setProperty(Environment.JTA_TSR_IMPLEMENTATION, TransactionSynchronizationRegistryImple.class.getName());
+        // When running inside the app server, we bind TSR in the JNDI java:/ space, not its required location.
+        // It's the job of individual components (EJB3, web, etc) to copy the ref to the java:/comp space)
+        jtaPropertyManager.propertyManager.setProperty(Environment.TSR_JNDI_CONTEXT, "java:/TransactionSynchronizationRegistry");
+
         JNDIManager.bindJTATransactionManagerImplementation();
+		JNDIManager.bindJTATransactionSynchronizationRegistryImplementation();
     }
 
     /**
@@ -316,7 +323,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
      *
      * @param timeout The default timeout in seconds for all transactions created
      * using this transaction manager.
-     * 
+     *
      * @throws IllegalStateException if the mbean has already started.
      */
     public void setTransactionTimeout(int timeout) throws IllegalStateException
@@ -337,7 +344,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
             }
         }
     }
-    
+
 
     /**
      * Get the default transaction timeout used by this transaction manager.
@@ -480,7 +487,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
      * JBoss.  If this is false the Recovery Manager is already expected to
      * be running when JBoss starts.
      * @param runRM
-     * 
+     *
      * @throws IllegalStateException If the MBean has already started.
      */
     public void setRunInVMRecoveryManager(boolean runRM)
@@ -506,7 +513,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
      * Get whether the recovery manager should be ran in the same VM as
      * JBoss.  If this is false the Recovery Manager is already expected to
      * be running when JBoss starts.
-     * 
+     *
      * @return true if the recover manager is running in the same VM, false otherwise.
      */
     public boolean getRunInVMRecoveryManager()
@@ -516,11 +523,11 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 	    return _runRM ;
 	}
     }
-    
+
     /**
      * Set the object store directory.
      * @param objectStoreDir The object store directory.
-     * 
+     *
      * @throws IllegalStateException if the MBean has already started
      */
     public void setObjectStoreDir(final String objectStoreDir)
@@ -543,7 +550,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
             }
         }
     }
-    
+
     /**
      * Get the object store directory.
      * @return objectStoreDir The object store directory.
@@ -574,7 +581,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
     /**
      * Set the flag indicating whether the propagation context should always be propagated.
      * @param alwaysPropagateContext true if the context should always be propagated, false if only propagated to OTS transactional objects.
-     * 
+     *
      * @throws IllegalStateException If the MBean has already started.
      */
     public void setAlwaysPropagateContext(final boolean alwaysPropagateContext)
