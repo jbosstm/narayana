@@ -73,6 +73,7 @@ To change the JTA to the full JTS in JBossAS 4.2, follow these steps:
   - add the following lines
          <!-- JBoss TS interceptor -->
          <initializer>com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition.InterpositionORBInitializerImpl</initializer>
+         <initializer>com.arjuna.ats.jbossatx.jts.InboundTransactionCurrentInitializer</initializer>
 
 For each deployment of JacORB, you will need to ensure that the jacorb.implname in the jacorb.properties
 file is unique.
