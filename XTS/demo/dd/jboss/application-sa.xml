@@ -58,14 +58,14 @@
 
     <module>
         <web>
-            <web-uri>xts-demo-webservices.war</web-uri>
+            <web-uri>xts-sa-demo-webservices.war</web-uri>
             <context-root>/xtsdemowebservices</context-root>
         </web>
     </module>
 
     <module>
         <web>
-            <web-uri>xts-demo.war</web-uri>
+            <web-uri>xts-sa-demo.war</web-uri>
             <context-root>/xts-demo</context-root>
         </web>
     </module>
