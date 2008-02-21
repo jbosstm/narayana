@@ -5,10 +5,8 @@
 <server>
 
    <mbean name="jboss.xts:service=XTSService" code="org.jboss.transactions.XTSService">
-     <!--
-	 this dependency no longer works in AS5.0!
        <depends>jboss.web:service=WebServer</depends>
-     -->
+       <depends>jboss:service=TransactionManager</depends>
    </mbean>
 
 </server>
