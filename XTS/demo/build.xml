@@ -86,10 +86,10 @@
         <copy todir="${selected-distrib-dir}">
             <fileset dir=".">
                 <include name="src/**"/>
-                <include name="srcws/**"/>
+                <include name="srcrpc/**"/>
                 <include name="html/**"/>
                 <include name="dd/**"/>
-                <include name="ddws/**"/>
+                <include name="ddrpc/**"/>
                 <include name="web/**"/>
                 <include name="*.properties"/>
                 <include name="build.sh"/>

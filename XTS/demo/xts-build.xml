@@ -41,10 +41,15 @@
     <!--    port (defaults to 8080 for jboss)                               -->
     <!--    urlstub (defaults to xtsdemowebservices for JBoss)              -->
 
-    <!--    deploy.dir The deployment directory for the ear                 -->
+    <!-- the demo needs to be linked against the client libraries           -->
+    <!-- installed jboss directory                                          -->
 
     <property environment="env"/>
-    <property name="deploy.dir" location="${env.JBOSS_HOME}/server/default/deploy"/>
+    <property name="jboss.home" value="${env.JBOSS_HOME}"/>
+
+    <!--    deploy.dir The deployment directory for the ear                 -->
+
+    <property name="deploy.dir" location="${jboss.home}/server/default/deploy"/>
 
     <!--  default target build will build an ear file for the demo app for  -->
     <!--  use in a JBoss server with XTS deployed as a JBoss service        -->
@@ -67,9 +72,6 @@
 
     <xmlproperty file="${xmlpropertyfile}" keeproot="false"/>
 
-    <property environment="env"/>
-
-    <property name="jboss.home" value="${env.JBOSS_HOME}"/>
     <property name="xts.home" value=".."/>
     <property name="conf.dir" location="${xts.home}/conf"/>
 
