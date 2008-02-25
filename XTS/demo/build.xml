@@ -29,74 +29,21 @@
 <!--                                                                        -->
 <!-- ====================================================================== -->
 
-<project name="xts-demo" default="build" basedir=".">
+<project name="xts-demo" default="distribution" basedir=".">
 
-    <!-- ================================================================== -->
-
-    <!-- The properties to override are the following:                      -->
-    <!--    hostname (defaults to localhost)                                -->
-    <!--    port (defaults to 8080 for jboss)                               -->
-    <!--    urlstub (defaults to xtsdemowebservices for JBoss)              -->
-
-    <!--    deploy.dir The deployment directory for the ear                 -->
     <!-- ================================================================== -->
 
     <property name="xtsinstalled.home" location="../xts-install" />
     <property name="distrib.dir" location="${xtsinstalled.home}/demo"/>
-    <property name="conf.dir" location="${xtsinstalled.home}/conf"/>
-
-    <property name="lib.dir" location="${xtsinstalled.home}/lib"/>
-    <property name="ext.dir" location="${lib.dir}/ext"/>
-
-    <property name="lib.libs" value="wstx.jar ws-t.jar ws-c.jar"/>
-    <property name="ext.libs" value="jbossjta.jar"/>
-    <property name="ext.compile" value="${ext.libs} jaxrpc.jar servlet.jar"/>
-
-    <property name="ext.package" value="${ext.libs} jbossts-common.jar commons-logging.jar stax-api-1.0.jar wstx-asl-2.0.3.jar"/>
-
-    <!-- ================================================================== -->
-
-    <property name="build.dir" location="build"/>
-    <property name="src.dir" location="src"/>
-    <property name="web.dir" location="web"/>
-    <property name="dd.dir" location="dd"/>
-    <property name="jboss.dd.dir" location="${dd.dir}/jboss"/>
-    <property name="build.config" location="${build.dir}/config"/>
-    <property name="build.soapconfig" location="${build.dir}/soapconfig"/>
-    <property name="appinf.dir" location="${build.dir}/APP-INF"/>
-    <property name="appinflib.dir" location="${appinf.dir}/lib"/>
-
 
     <property name="docs.dir" location="docs"/>
     <property name="xsl.dir"  location="xsl"/>
     <property name="html.dir" location="html"/>
     <property name="xsl.file" value="ATL_LookAndFeel.xsl"/>
 
-    <property name="javac.debug"        value="on"/>
-    <property name="javac.optimize"     value="off"/>
-    <property name="javac.deprecation"  value="on"/>
-
-    <path id="lib.path">
-        <fileset dir="${lib.dir}" includes="${lib.libs}"/>
-    </path>
-    <path id="ext.path">
-        <fileset dir="${ext.dir}" includes="${ext.compile}"/>
-    </path>
-
-    <filterset id="webxml.filter">
-        <filter token="restaurantATURL" value="${restaurantATURL}"/>
-        <filter token="restaurantBAURL" value="${restaurantBAURL}"/>
-        <filter token="taxiATURL" value="${taxiATURL}"/>
-        <filter token="taxiBAURL" value="${taxiBAURL}"/>
-        <filter token="theatreATURL" value="${theatreATURL}"/>
-        <filter token="theatreBAURL" value="${theatreBAURL}"/>
-        <filter token="hostname" value="${hostname}"/>
-        <filter token="port" value="${port}"/>
-        <filter token="urlstub" value="${urlstub}"/>
-    </filterset>
+    <!-- ================================================================== -->
 
     <target name="clean">
-        <delete dir="${build.dir}"/>
         <delete dir="${html.dir}"/>
         <delete>
             <fileset dir="." includes="**/*.bak" defaultexcludes="no"/>
@@ -106,80 +53,9 @@
         </delete>
     </target>
 
-    <target name="init-properties">
-        <property name="hostname" value="localhost"/>
-        <property name="port" value="8080"/>
-        <property name="urlstub" value="xtsdemowebservices"/>
-        <path id="compile.path">
-            <path refid="lib.path"/>
-            <path refid="ext.path"/>
-        </path>
-    </target>
-
-    <target name="init" depends="init-properties">
-        <mkdir dir="${build.dir}"/>
-        <mkdir dir="${build.dir}/classes"/>
-        <mkdir dir="${build.config}"/>
-        <mkdir dir="${build.soapconfig}"/>
-        <mkdir dir="${appinf.dir}"/>
-        <mkdir dir="${appinflib.dir}"/>
+    <target name="init">
         <mkdir dir="${html.dir}"/>
     </target>
-
-    <target name="compile" depends="init">
-        <javac destdir="${build.dir}/classes" debug="${javac.debug}"
-            optimize="${javac.optimize}" deprecation="${javac.deprecation}" >
-            <classpath>
-                <path refid="compile.path"/>
-            </classpath>
-            <src path="${src.dir}"/>
-            <patternset>
-                <include name="com/arjuna/xts/nightout/clients/jboss/**"/>
-                <include name="com/arjuna/xts/nightout/services/**"/>
-            </patternset>
-        </javac>
-    </target>
-
-    <!-- the server side elements -->
-    <target name="config">
-        <filter token="hostname" value="${hostname}"/>
-        <filter token="port" value="${port}"/>
-        <copy todir="${build.config}" filtering="true">
-            <fileset dir="${conf.dir}" includes="wscf.xml wstx.xml wst.xml"/>
-        </copy>
-        <jar destfile="${build.dir}/config.jar" basedir="${build.config}"/>
-    </target>
-
-    <!-- the client side elements -->
-    <target name="jboss-webapp" depends="compile">
-        <copy tofile="${build.dir}/client-web-app.xml" file="${jboss.dd.dir}/client-web-app.xml">
-            <filterset refid="webxml.filter"/>
-        </copy>
-
-        <war warfile="${build.dir}/xts-demo.war" webxml="${build.dir}/client-web-app.xml">
-            <classes dir="${build.dir}/classes">
-                <exclude name="com/arjuna/xts/nightout/services/**/*"/>
-            </classes>
-            <fileset dir="${web.dir}"/>
-            <manifest>
-                <attribute name="Class-Path" value="wstx.jar"/>
-            </manifest>
-            <webinf dir="${jboss.dd.dir}" includes="wsdl/**, client-jaxrpc-mapping.xml"/>
-        </war>
-    </target>
-
-    <target name="jboss-ear" depends="jboss-webapp, config">
-        <ear earfile="${build.dir}/xts-demo.ear"
-            appxml="${jboss.dd.dir}/application.xml">
-            <fileset dir="${build.dir}" includes="xts-demo-webservices.war xts-demo.war config.jar"/>
-	        <fileset dir="${xtsinstalled.home}/lib" includes="*.jar"/>
-	        <fileset dir="${xtsinstalled.home}/lib/ext" includes="${ext.package}"/>
-	        <fileset dir="${xtsinstalled.home}/webapps" includes="*.war"/>
-        </ear>
-    </target>
-
-
-    <target name="build" depends="jboss-ear"/>
 
     <target name="docs" depends="init">
         <copy todir="${html.dir}">
@@ -190,13 +66,6 @@
             </fileset>
         </copy>
         <style processor="trax" style="${xsl.dir}/${xsl.file}" basedir="${docs.dir}" includes="*.xml" destdir="${html.dir}" extension=".html">
-            <param name="rootpath" expression="."/>
-        </style>
-    </target>
-
-    <target name="xml2jsp" depends="init">
-        <style processor="trax" style="${xsl.dir}/${xsl.file}" basedir="${src.dir}/com/arjuna/xts/nightout/clients"
-            includes="*.xml" destdir="${src.dir}/com/arjuna/xts/nightout/clients" extension=".html">
             <param name="rootpath" expression="."/>
         </style>
     </target>
@@ -217,8 +86,10 @@
         <copy todir="${selected-distrib-dir}">
             <fileset dir=".">
                 <include name="src/**"/>
+                <include name="srcws/**"/>
                 <include name="html/**"/>
                 <include name="dd/**"/>
+                <include name="ddws/**"/>
                 <include name="web/**"/>
                 <include name="*.properties"/>
                 <include name="build.sh"/>
@@ -228,13 +99,5 @@
         </copy>
         <!-- remove our dirty laundry -->
         <copy file="xts-build.xml" tofile="${selected-distrib-dir}/build.xml"/>
-    </target>
-
-    <target name="deploy" depends="build, undeploy">
-        <copy file="${build.dir}/xts-demo.ear" tofile="${deploy.dir}/xts-demo.ear"/>
-    </target>
-
-    <target name="undeploy">
-        <delete file="${deploy.dir}/xts-demo.ear"/>
     </target>
 </project>
