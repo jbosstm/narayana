@@ -238,7 +238,7 @@
 
     <target name="jboss-webservicesrpc" depends="compilerpc">
         <war destfile="${buildrpc.dir}/xts-demo-webservices.war" webxml="${jboss.ddrpc.dir}/service-web-app.xml">
-            <webinf dir="${jboss.ddrpc.dir}" excludes="client-web-app.xml service-web-app.xml application-sa.xml application.xml"/>
+            <webinf dir="${jboss.ddrpc.dir}" excludes="client-web-app.xml service-web-app.xml application-sa.xml application.xml client-jaxrpc-mapping.xml"/>
             <classes dir="${buildrpc.dir}/classes">
                 <include name="com/arjuna/xts/nightout/services/**"/>
             </classes>
@@ -256,7 +256,7 @@
 
     <target name="jboss-sa-webservicesrpc" depends="compilerpc">
         <war destfile="${buildrpc.dir}/xts-sa-demo-webservices.war" webxml="${jboss.ddrpc.dir}/service-web-app.xml">
-            <webinf dir="${jboss.ddrpc.dir}" excludes="client-web-app.xml service-web-app.xml application-sa.xml application.xml"/>
+            <webinf dir="${jboss.ddrpc.dir}" excludes="client-web-app.xml service-web-app.xml application-sa.xml application.xml client-jaxrpc-mapping.xml"/>
             <classes dir="${buildrpc.dir}/classes">
                 <include name="com/arjuna/xts/nightout/services/**"/>
             </classes>
@@ -308,7 +308,7 @@
                 <exclude name="com/arjuna/xts/nightout/services/**/*"/>
             </classes>
             <fileset dir="${web.dir}"/>
-            <webinf dir="${jboss.ddrpc.dir}" includes="wsdl/**"/>
+            <webinf dir="${jboss.ddrpc.dir}" includes="client-jaxrpc-mapping.xml wsdl/**"/>
         </war>
     </target>
 
@@ -325,7 +325,7 @@
             <manifest>
                 <attribute name="Class-Path" value="wstx.jar"/>
             </manifest>
-            <webinf dir="${jboss.ddrpc.dir}" includes="wsdl/**"/>
+            <webinf dir="${jboss.ddrpc.dir}" includes="wsdl/** client-jaxrpc-mapping.xml"/>
         </war>
     </target>
 
