@@ -25,6 +25,8 @@ and install this app server from the JBoss website.
 Follow these steps to build the demo for JBoss
  - edit jboss.properties and replace variables as directed in the comments
  - add java and ant to your path
+ - set environment variable JBOSS_HOME to point to the root directory of an
+   instance of JBoss5.0Beta4
  - execute 'sh build.sh jboss clean build' on unix or
    'build.bat jboss clean build' on windows
  - deploy the generated ear file into an instance of JBoss5.0Beta4
