@@ -112,6 +112,10 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         </jar>
     </target>
 
+    <target name="clean">
+      <delete dir="${build.dir}"/>
+    </target>
+
     <target name="deploy" depends="sar">
         <copy file="${build.dir}/jbossxts.sar" todir="${jbossas.home}/server/default/deploy"/>
     </target>
