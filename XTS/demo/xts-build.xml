@@ -206,10 +206,11 @@
 	      file="${jboss.dd.dir}/context-handlers.xml"/>
         <war destfile="${build.dir}/xts-demo-webservices.war" webxml="${jboss.dd.dir}/service-web-app.xml" >
             <webinf dir="${jboss.dd.dir}" includes="wsdl/*.wsdl"/>
-	    <webinf dir="${build.dir}/classes"
-		    includes="com/jboss/jbosstm/xts/demo/services/**/*"/>
+	    <classes dir="${build.dir}/classes">
+		 <include name="com/jboss/jbosstm/xts/demo/services/**/*"/>
+	    </classes>
             <manifest>
-                <attribute name="Class-Path" value="/WEB-INF ${lib.libs}"/>
+                <attribute name="Class-Path" value="${lib.libs}"/>
             </manifest>
         </war>
     </target>
@@ -228,10 +229,14 @@
 	      file="${jboss.dd.dir}/context-handlers.xml"/>
 	<war destfile="${build.dir}/xts-sa-demo-webservices.war" webxml="${jboss.dd.dir}/service-web-app.xml" >
             <webinf dir="${jboss.dd.dir}" includes="webservices.xml wsdl/*.wsdl"/>
-	    <webinf dir="${buildws.dir}/classes"
-		    includes="com/jboss/jbosstm/xts/demo/services/**/*"/>
+	    <classes dir="${build.dir}/classes">
+	         <include name="com/jboss/jbosstm/xts/demo/services/**/*"/>
+	         <include name="com/jboss/jbosstm/xts/demo/restaurant/**/*"/>
+	         <include name="com/jboss/jbosstm/xts/demo/theatre/**/*"/>
+	         <include name="com/jboss/jbosstm/xts/demo/taxi/**/*"/>
+	    </classes>
             <manifest>
-                <attribute name="Class-Path" value="/WEB-INF ${lib.libs} ${ext.libs}"/>
+                <attribute name="Class-Path" value="${lib.libs} ${ext.libs}"/>
             </manifest>
         </war>
     </target>
@@ -401,7 +406,7 @@
         <filter token="port" value="${port}"/>
         <filter token="urlstub" value="${urlstub}"/>
 
-        <unjar src="${xts.home}/webapps/ws-c.war" dest="${build.dir}/tmp/ws-c"/>
+        <unjar src="${xts.home}/webapps/ws-c.war" dest="${buildrpc.dir}/tmp/ws-c"/>
 
         <copy file="${xts.home}/coordinator/dd/ws-c_web-app.xml"
             tofile="${buildrpc.dir}/tmp/ws-c/WEB-INF/web.xml" filtering="true" overwrite="true"/>
@@ -410,7 +415,7 @@
 
         <delete dir="${buildrpc.dir}/tmp/ws-c"/>
 
-        <unjar src="${xts.home}/webapps/ws-t.war" dest="${build.dir}/tmp/ws-t"/>
+        <unjar src="${xts.home}/webapps/ws-t.war" dest="${buildrpc.dir}/tmp/ws-t"/>
 
         <copy file="${xts.home}/coordinator/dd/ws-t_web-app.xml"
             tofile="${buildrpc.dir}/tmp/ws-t/WEB-INF/web.xml" filtering="true" overwrite="true"/>
