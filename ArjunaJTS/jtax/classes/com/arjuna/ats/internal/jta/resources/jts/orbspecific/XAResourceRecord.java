@@ -382,7 +382,27 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 							_theXAResource.end(_tranID, XAResource.TMSUCCESS);
 						}
 					}
-
+				}
+				catch (XAException e1)
+				{
+				    if ((e1.errorCode >= XAException.XA_RBBASE)
+						&& (e1.errorCode < XAException.XA_RBEND))
+				    {
+					/*
+					 * Has been marked as rollback-only. We still
+					 * need to call rollback.
+					 */
+				    }
+				    else
+				    {
+					removeConnection();
+					
+					throw new UNKNOWN();
+				    }
+				}
+				
+				try
+				{
 					_theXAResource.rollback(_tranID);
 				}
 				catch (XAException e1)
@@ -736,9 +756,29 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					 * common to other RM implementations?
 					 */
 					
-					if (endAssociation())
+					boolean commit = true;
+					
+					try
 					{
-						_theXAResource.end(_tranID, XAResource.TMSUCCESS);
+        					if (endAssociation())
+        					{
+        						_theXAResource.end(_tranID, XAResource.TMSUCCESS);
+        					}
+					}
+					catch (XAException e1)
+					{
+					    if ((e1.errorCode >= XAException.XA_RBBASE)
+							&& (e1.errorCode < XAException.XA_RBEND))
+					    {
+						/*
+						 * Has been marked as rollback-only. We still
+						 * need to call rollback.
+						 */
+						
+						commit = false;
+					    }
+					    else
+						throw new UNKNOWN();
 					}
 
 					_theXAResource.commit(_tranID, true);
