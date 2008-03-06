@@ -2122,13 +2122,18 @@ public class ArjunaTransactionImple extends
 						 */
 
 						/*
-						 * Currently send over the original timeout, and not
-						 * what is remaining. Will make this configurable until
-						 * the specification is clarified.
+						 * By default we send over the time remaining (in seconds), since that
+						 * is what OTS 1.2 requires. For backward compatibility with earlier
+						 * versions, there's a configurable option.
 						 */
 
 						if (TransactionReaper.transactionReaper() != null)
+						{
+						    if (_propagateRemainingTimeout)
+							context.timeout = TransactionReaper.transactionReaper().getRemainingTimeout(control);
+						    else
 							context.timeout = TransactionReaper.transactionReaper().getTimeout(control);
+						}
 						else
 							context.timeout = 0;
 					}
@@ -2338,6 +2343,8 @@ public class ArjunaTransactionImple extends
 	static boolean _checkedTransactions = false;
 
 	static boolean _propagateTerminator = false;
+	
+	static boolean _propagateRemainingTimeout = true;  // OTS 1.2 onwards supported this.
 
 	/**
 	 * @message com.arjuna.ats.internal.jts.orbspecific.coordinator.ipunknown
@@ -2394,6 +2401,14 @@ public class ArjunaTransactionImple extends
 		{
 			if (propTerm.compareTo("YES") == 0)
 				_propagateTerminator = true;
+		}
+		
+		String propRemainingTimeout = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.OTS_1_0_TIMEOUT_PROPAGATION);
+
+		if (propRemainingTimeout != null)
+		{
+			if (propTerm.compareTo("NO") == 0)
+				_propagateRemainingTimeout = false;
 		}
 	}
 
