@@ -310,7 +310,7 @@ public class XAResourceRecord extends AbstractRecord
 			case XAException.XAER_INVAL:
 			case XAException.XAER_PROTO:
 			case XAException.XAER_NOTA: // resource may have arbitrarily rolled back (shouldn't, but ...)
-				return TwoPhaseOutcome.PREPARE_NOTOK;
+				return TwoPhaseOutcome.PREPARE_NOTOK;  // will not call rollback
 			default:
 				return TwoPhaseOutcome.HEURISTIC_HAZARD; // we're not really sure (shouldn't get here though).
 			}
@@ -397,7 +397,27 @@ public class XAResourceRecord extends AbstractRecord
 							_theXAResource.end(_tranID, XAResource.TMSUCCESS);
 						}
 					}
-
+				}
+				catch (XAException e1)
+				{
+				    if ((e1.errorCode >= XAException.XA_RBBASE)
+						&& (e1.errorCode < XAException.XA_RBEND))
+				    {
+					/*
+					 * Has been marked as rollback-only. We still
+					 * need to call rollback.
+					 */
+				    }
+				    else
+				    {
+					removeConnection();
+					
+					return TwoPhaseOutcome.FINISH_ERROR;
+				    }
+				}
+				
+				try
+				{
 					_theXAResource.rollback(_tranID);
 				}
 				catch (XAException e1)
@@ -536,6 +556,11 @@ public class XAResourceRecord extends AbstractRecord
 				if (_heuristic != TwoPhaseOutcome.FINISH_OK)
 					return _heuristic;
 
+				/*
+				 * No need for end call here since we can only get to this
+				 * point by going through prepare.
+				 */
+				
 				try
 				{
 					_theXAResource.commit(_tranID, false);
@@ -701,6 +726,8 @@ public class XAResourceRecord extends AbstractRecord
 				if (_heuristic != TwoPhaseOutcome.FINISH_OK)
 					return _heuristic;
 
+				boolean commit = true;
+				
 				try
 				{
 					/*
@@ -712,8 +739,38 @@ public class XAResourceRecord extends AbstractRecord
 					{
 						_theXAResource.end(_tranID, XAResource.TMSUCCESS);
 					}
-
+				}
+				catch (XAException e1)
+				{
+				    if ((e1.errorCode >= XAException.XA_RBBASE)
+						&& (e1.errorCode < XAException.XA_RBEND))
+				    {
+					/*
+					 * Has been marked as rollback-only. We still
+					 * need to call rollback.
+					 */
+					
+					commit = false;
+				    }
+				    else
+				    {
+					removeConnection();
+					
+					return TwoPhaseOutcome.FINISH_ERROR;
+				    }
+				}
+				
+				try
+				{
+				    /*
+				     * Not strictly necessary since calling commit will
+				     * do the rollback if end failed as above.
+				     */
+				    
+				    if (commit)
 					_theXAResource.commit(_tranID, true);
+				    else
+					_theXAResource.rollback(_tranID);
 				}
 				catch (XAException e1)
 				{
@@ -722,12 +779,6 @@ public class XAResourceRecord extends AbstractRecord
 					 * XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
 					 * XAER_PROTO. XA_RB*
 					 */
-
-					if ((e1.errorCode >= XAException.XA_RBBASE)
-							&& (e1.errorCode < XAException.XA_RBEND))
-					{
-						return TwoPhaseOutcome.FINISH_ERROR;
-					}
 
 					switch (e1.errorCode)
 					{
