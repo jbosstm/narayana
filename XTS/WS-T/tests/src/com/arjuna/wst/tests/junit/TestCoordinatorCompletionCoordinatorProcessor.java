@@ -26,7 +26,11 @@ import java.util.Map;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsarj.ArjunaContext;
 import com.arjuna.webservices.wsba.NotificationType;
+import com.arjuna.webservices.wsba.CoordinatorCompletionCoordinatorInboundEvents;
+import com.arjuna.webservices.wsba.ExceptionType;
+import com.arjuna.webservices.wsba.StatusType;
 import com.arjuna.webservices.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
+import com.arjuna.webservices.SoapFault;
 
 
 public class TestCoordinatorCompletionCoordinatorProcessor extends CoordinatorCompletionCoordinatorProcessor
@@ -62,6 +66,67 @@ public class TestCoordinatorCompletionCoordinatorProcessor extends CoordinatorCo
         throw new NullPointerException("Timeout occurred waiting for id: " + messageId) ;
     }
 
+    /**
+     * Activate the coordinator.
+     *
+     * @param coordinatorState The coordinator.
+     * @param identifier       The identifier.
+     */
+    public void activateCoordinator(CoordinatorCompletionCoordinatorInboundEvents coordinator, String identifier) {
+    }
+
+    /**
+     * Deactivate the coordinator.
+     *
+     * @param coordinator The coordinator.
+     */
+    public void deactivateCoordinator(CoordinatorCompletionCoordinatorInboundEvents coordinator) {
+    }
+
+    /**
+     * Cancelled.
+     *
+     * @param cancelled         The cancelled notification.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext     The arjuna context.
+     */
+    public void cancelled(NotificationType cancelled, AddressingContext addressingContext, ArjunaContext arjunaContext) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Closed.
+     *
+     * @param closed            The closed notification.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext     The arjuna context.
+     */
+    public void closed(NotificationType closed, AddressingContext addressingContext, ArjunaContext arjunaContext) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Compensated.
+     *
+     * @param compensated       The compensated notification.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext     The arjuna context.
+     */
+    public void compensated(NotificationType compensated, AddressingContext addressingContext, ArjunaContext arjunaContext) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Completed.
+     *
+     * @param completed         The completed notification.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext     The arjuna context.
+     */
+    public void completed(NotificationType completed, AddressingContext addressingContext, ArjunaContext arjunaContext) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void exit(NotificationType exit, AddressingContext addressingContext, ArjunaContext arjunaContext)
     {
         final String messageId = addressingContext.getMessageID().getValue() ;
@@ -73,6 +138,17 @@ public class TestCoordinatorCompletionCoordinatorProcessor extends CoordinatorCo
             messageIdMap.put(messageId, details) ;
             messageIdMap.notifyAll() ;
         }
+    }
+
+    /**
+     * Fault.
+     *
+     * @param fault             The fault exception.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext     The arjuna context.
+     */
+    public void fault(ExceptionType fault, AddressingContext addressingContext, ArjunaContext arjunaContext) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void getStatus(NotificationType getStatus, AddressingContext addressingContext, ArjunaContext arjunaContext)
@@ -87,14 +163,43 @@ public class TestCoordinatorCompletionCoordinatorProcessor extends CoordinatorCo
             messageIdMap.notifyAll() ;
         }
     }
-    
+
+    /**
+     * Status.
+     *
+     * @param status            The status.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext     The arjuna context.
+     */
+    public void status(StatusType status, AddressingContext addressingContext, ArjunaContext arjunaContext) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * SOAP fault.
+     *
+     * @param soapFault         The SOAP fault.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext     The arjuna context.
+     */
+    public void soapFault(SoapFault soapFault, AddressingContext addressingContext, ArjunaContext arjunaContext) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public static class CoordinatorCompletionCoordinatorDetails
     {
         private final AddressingContext addressingContext ;
         private final ArjunaContext arjunaContext ;
+        private boolean closed ;
+        private boolean cancelled ;
+        private boolean compensated ;
+        private ExceptionType fault ;
+        private boolean completed ;
+        private StatusType status ;
+        private SoapFault soapFault ;
         private boolean exit ;
         private boolean getStatus ;
-        
+
         CoordinatorCompletionCoordinatorDetails(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
         {
             this.addressingContext = addressingContext ;
@@ -129,6 +234,61 @@ public class TestCoordinatorCompletionCoordinatorProcessor extends CoordinatorCo
         void setGetStatus(final boolean getStatus)
         {
             this.getStatus = getStatus ;
+        }
+        public boolean hasClosed() {
+            return closed;
+        }
+
+        public void setClosed(boolean closed) {
+            this.closed = closed;
+        }
+
+        public boolean hasCancelled() {
+            return cancelled;
+        }
+
+        public void setCancelled(boolean cancelled) {
+            this.cancelled = cancelled;
+        }
+
+        public boolean hasCompensated() {
+            return compensated;
+        }
+
+        public void setCompensated(boolean compensated) {
+            this.compensated = compensated;
+        }
+
+        public ExceptionType hasFault() {
+            return fault;
+        }
+
+        public void setFault(ExceptionType fault) {
+            this.fault = fault;
+        }
+
+        public boolean hasCompleted() {
+            return completed;
+        }
+
+        public void setCompleted(boolean completed) {
+            this.completed = completed;
+        }
+
+        public StatusType hasStatus() {
+            return status;
+        }
+
+        public void setStatus(StatusType status) {
+            this.status = status;
+        }
+
+        public SoapFault hasSoapFault() {
+            return soapFault;
+        }
+
+        public void setSoapFault(SoapFault soapFault) {
+            this.soapFault = soapFault;
         }
     }
 }

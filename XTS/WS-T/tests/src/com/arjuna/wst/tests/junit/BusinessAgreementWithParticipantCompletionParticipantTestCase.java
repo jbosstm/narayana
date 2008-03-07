@@ -58,7 +58,7 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
     protected void setUp()
         throws Exception
     {
-        origParticipantCompletionCoordinatorProcessor = ParticipantCompletionCoordinatorProcessor.setCoordinator(testParticipantCompletionCoordinatorProcessor) ;
+        origParticipantCompletionCoordinatorProcessor = ParticipantCompletionCoordinatorProcessor.setProcessor(testParticipantCompletionCoordinatorProcessor) ;
         final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
         participantCompletionCoordinatorServiceURI = soapRegistry.getServiceURI(BusinessActivityConstants.SERVICE_PARTICIPANT_COMPLETION_COORDINATOR) ;
         participantCompletionParticipantServiceURI = soapRegistry.getServiceURI(BusinessActivityConstants.SERVICE_PARTICIPANT_COMPLETION_PARTICIPANT) ;
@@ -67,315 +67,222 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
     public void testSendClosed()
         throws Exception
     {
-        final String messageId = "123456" ;
-        final String instanceIdentifier = "testSendClosed" ;
-        final EndpointReferenceType participantCompletionCoordinatorService = new EndpointReferenceType(new AttributedURIType(participantCompletionCoordinatorServiceURI)) ;
-        InstanceIdentifier.setEndpointInstanceIdentifier(participantCompletionCoordinatorService, instanceIdentifier) ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(participantCompletionCoordinatorService, messageId) ;
-        
-        final TestParticipantCompletionCoordinatorCallback callback = new TestParticipantCompletionCoordinatorCallback() {
-            public void closed(final NotificationType closed, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-            {
-                assertEquals(addressingContext.getTo().getValue(), participantCompletionCoordinatorServiceURI);
-                assertEquals(addressingContext.getFrom().getAddress().getValue(), participantCompletionParticipantServiceURI);
-                assertNull(addressingContext.getReplyTo());
-                assertEquals(addressingContext.getMessageID().getValue(), messageId);
-                
-                assertNotNull(arjunaContext.getInstanceIdentifier()) ;
-                assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
-            }
-        };
-        final ParticipantCompletionCoordinatorProcessor coordinator = ParticipantCompletionCoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(instanceIdentifier, callback) ;
-        
-        try
-        {
-            ParticipantCompletionCoordinatorClient.getClient().sendClosed(addressingContext, new InstanceIdentifier("sender")) ;
-            callback.waitUntilTriggered() ;
-        }
-        finally
-        {
-            coordinator.removeCallback(instanceIdentifier) ;
-        }
-        
-        assertTrue(callback.hasTriggered()) ;
-        assertFalse(callback.hasFailed()) ;
+        final String messageId = "testSendClosed" ;
+        AttributedURIType address = new AttributedURIType(participantCompletionCoordinatorServiceURI);
+        EndpointReferenceType epr = new EndpointReferenceType(address);
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("1") ;
+        InstanceIdentifier.setEndpointInstanceIdentifier(epr, instanceIdentifier);
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(epr, messageId) ;
+
+        ParticipantCompletionCoordinatorClient.getClient().sendClosed(addressingContext, new InstanceIdentifier("sender")) ;
+
+        final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
+
+        assertTrue(details.hasClosed()) ;
+
+        checkDetails(details, false, messageId, instanceIdentifier);
     }
 
     public void testSendCancelled()
         throws Exception
     {
-        final String messageId = "123456" ;
-        final String instanceIdentifier = "testSendCancelled" ;
-        final EndpointReferenceType participantCompletionCoordinatorService = new EndpointReferenceType(new AttributedURIType(participantCompletionCoordinatorServiceURI)) ;
-        InstanceIdentifier.setEndpointInstanceIdentifier(participantCompletionCoordinatorService, instanceIdentifier) ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(participantCompletionCoordinatorService, messageId) ;
-        
-        final TestParticipantCompletionCoordinatorCallback callback = new TestParticipantCompletionCoordinatorCallback() {
-            public void cancelled(final NotificationType cancelled, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-            {
-                assertEquals(addressingContext.getTo().getValue(), participantCompletionCoordinatorServiceURI);
-                assertEquals(addressingContext.getFrom().getAddress().getValue(), participantCompletionParticipantServiceURI);
-                assertNull(addressingContext.getReplyTo());
-                assertEquals(addressingContext.getMessageID().getValue(), messageId);
-                
-                assertNotNull(arjunaContext.getInstanceIdentifier()) ;
-                assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
-            }
-        };
-        final ParticipantCompletionCoordinatorProcessor coordinator = ParticipantCompletionCoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(instanceIdentifier, callback) ;
-        
-        try
-        {
-            ParticipantCompletionCoordinatorClient.getClient().sendCancelled(addressingContext, new InstanceIdentifier("sender")) ;
-            callback.waitUntilTriggered() ;
-        }
-        finally
-        {
-            coordinator.removeCallback(instanceIdentifier) ;
-        }
-        
-        assertTrue(callback.hasTriggered()) ;
-        assertFalse(callback.hasFailed()) ;
+        final String messageId = "testSendCancelled" ;
+        AttributedURIType address = new AttributedURIType(participantCompletionCoordinatorServiceURI);
+        EndpointReferenceType epr = new EndpointReferenceType(address);
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("2") ;
+        InstanceIdentifier.setEndpointInstanceIdentifier(epr, instanceIdentifier);
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(epr, messageId) ;
+
+        ParticipantCompletionCoordinatorClient.getClient().sendCancelled(addressingContext, new InstanceIdentifier("sender")); ;
+
+        final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
+
+        assertTrue(details.hasCancelled()) ;
+
+        checkDetails(details, false, messageId, instanceIdentifier);
     }
 
     public void testSendCompensated()
         throws Exception
     {
-        final String messageId = "123456" ;
-        final String instanceIdentifier = "testSendCompensated" ;
-        final EndpointReferenceType participantCompletionCoordinatorService = new EndpointReferenceType(new AttributedURIType(participantCompletionCoordinatorServiceURI)) ;
-        InstanceIdentifier.setEndpointInstanceIdentifier(participantCompletionCoordinatorService, instanceIdentifier) ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(participantCompletionCoordinatorService, messageId) ;
-        
-        final TestParticipantCompletionCoordinatorCallback callback = new TestParticipantCompletionCoordinatorCallback() {
-            public void compensated(final NotificationType compensated, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-            {
-                assertEquals(addressingContext.getTo().getValue(), participantCompletionCoordinatorServiceURI);
-                assertEquals(addressingContext.getFrom().getAddress().getValue(), participantCompletionParticipantServiceURI);
-                assertNull(addressingContext.getReplyTo());
-                assertEquals(addressingContext.getMessageID().getValue(), messageId);
-                
-                assertNotNull(arjunaContext.getInstanceIdentifier()) ;
-                assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
-            }
-        };
-        final ParticipantCompletionCoordinatorProcessor coordinator = ParticipantCompletionCoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(instanceIdentifier, callback) ;
-        
-        try
-        {
-            ParticipantCompletionCoordinatorClient.getClient().sendCompensated(addressingContext, new InstanceIdentifier("sender")) ;
-            callback.waitUntilTriggered() ;
-        }
-        finally
-        {
-            coordinator.removeCallback(instanceIdentifier) ;
-        }
-        
-        assertTrue(callback.hasTriggered()) ;
-        assertFalse(callback.hasFailed()) ;
+        final String messageId = "testSendCompensated" ;
+        AttributedURIType address = new AttributedURIType(participantCompletionCoordinatorServiceURI);
+        EndpointReferenceType epr = new EndpointReferenceType(address);
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("3") ;
+        InstanceIdentifier.setEndpointInstanceIdentifier(epr, instanceIdentifier);
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(epr, messageId) ;
+
+        ParticipantCompletionCoordinatorClient.getClient().sendCompensated(addressingContext, new InstanceIdentifier("sender")) ;
+
+        final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
+
+        assertTrue(details.hasCompensated()) ;
+
+        checkDetails(details, false, messageId, instanceIdentifier);
     }
 
     public void testSendCompleted()
         throws Exception
     {
-        final String messageId = "123456" ;
-        final String instanceIdentifier = "testSendCompleted" ;
-        final EndpointReferenceType participantCompletionCoordinatorService = new EndpointReferenceType(new AttributedURIType(participantCompletionCoordinatorServiceURI)) ;
-        InstanceIdentifier.setEndpointInstanceIdentifier(participantCompletionCoordinatorService, instanceIdentifier) ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(participantCompletionCoordinatorService, messageId) ;
-        
-        final TestParticipantCompletionCoordinatorCallback callback = new TestParticipantCompletionCoordinatorCallback() {
-            public void completed(final NotificationType completed, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-            {
-                assertEquals(addressingContext.getTo().getValue(), participantCompletionCoordinatorServiceURI);
-                assertEquals(addressingContext.getFrom().getAddress().getValue(), participantCompletionParticipantServiceURI);
-                assertEquals(addressingContext.getReplyTo().getAddress().getValue(), participantCompletionParticipantServiceURI);
-                assertEquals(addressingContext.getMessageID().getValue(), messageId);
-                
-                assertNotNull(arjunaContext.getInstanceIdentifier()) ;
-                assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
-            }
-        };
-        final ParticipantCompletionCoordinatorProcessor coordinator = ParticipantCompletionCoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(instanceIdentifier, callback) ;
-        
-        try
-        {
-            ParticipantCompletionCoordinatorClient.getClient().sendCompleted(addressingContext, new InstanceIdentifier("sender")) ;
-            callback.waitUntilTriggered() ;
-        }
-        finally
-        {
-            coordinator.removeCallback(instanceIdentifier) ;
-        }
-        
-        assertTrue(callback.hasTriggered()) ;
-        assertFalse(callback.hasFailed()) ;
+        final String messageId = "testSendCompleted" ;
+        AttributedURIType address = new AttributedURIType(participantCompletionCoordinatorServiceURI);
+        EndpointReferenceType epr = new EndpointReferenceType(address);
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("4") ;
+        InstanceIdentifier.setEndpointInstanceIdentifier(epr, instanceIdentifier);
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(epr, messageId) ;
+
+        ParticipantCompletionCoordinatorClient.getClient().sendCompleted(addressingContext, new InstanceIdentifier("sender")) ;
+
+        final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
+
+        assertTrue(details.hasCompleted()) ;
+
+        checkDetails(details, true, messageId, instanceIdentifier);
     }
 
     public void testSendStatus()
         throws Exception
     {
-        final String messageId = "123456" ;
-        final String instanceIdentifier = "testSendStatus" ;
-        final EndpointReferenceType participantCompletionCoordinatorService = new EndpointReferenceType(new AttributedURIType(participantCompletionCoordinatorServiceURI)) ;
-        InstanceIdentifier.setEndpointInstanceIdentifier(participantCompletionCoordinatorService, instanceIdentifier) ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(participantCompletionCoordinatorService, messageId) ;
-        
+        final String messageId = "testSendStatus" ;
+        AttributedURIType address = new AttributedURIType(participantCompletionCoordinatorServiceURI);
+        EndpointReferenceType epr = new EndpointReferenceType(address);
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("5") ;
+        InstanceIdentifier.setEndpointInstanceIdentifier(epr, instanceIdentifier);
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(epr, messageId) ;
+
         final State state = State.STATE_ENDED ;
-        
-        final TestParticipantCompletionCoordinatorCallback callback = new TestParticipantCompletionCoordinatorCallback() {
-            public void status(final StatusType status, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-            {
-                assertEquals(addressingContext.getTo().getValue(), participantCompletionCoordinatorServiceURI);
-                assertEquals(addressingContext.getFrom().getAddress().getValue(), participantCompletionParticipantServiceURI);
-                assertEquals(addressingContext.getReplyTo().getAddress().getValue(), participantCompletionParticipantServiceURI);
-                assertEquals(addressingContext.getMessageID().getValue(), messageId);
-                
-                assertEquals(state, status.getState()) ;
-                
-                assertNotNull(arjunaContext.getInstanceIdentifier()) ;
-                assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
-            }
-        };
-        final ParticipantCompletionCoordinatorProcessor coordinator = ParticipantCompletionCoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(instanceIdentifier, callback) ;
-        
-        try
-        {
-            ParticipantCompletionCoordinatorClient.getClient().sendStatus(addressingContext, new InstanceIdentifier("sender"), state) ;
-            callback.waitUntilTriggered() ;
-        }
-        finally
-        {
-            coordinator.removeCallback(instanceIdentifier) ;
-        }
-        
-        assertTrue(callback.hasTriggered()) ;
-        assertFalse(callback.hasFailed()) ;
+
+        ParticipantCompletionCoordinatorClient.getClient().sendStatus(addressingContext, new InstanceIdentifier("sender"), state) ;
+
+        final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
+
+        assertNotNull(details.hasStatus()); ;
+        assertEquals(details.hasStatus().getState(), state) ;
+
+        checkDetails(details, true, messageId, instanceIdentifier);
     }
+
+    /*
+     * cannot test this any longer as client does not provide API to send soap fault
 
     public void testSendError()
         throws Exception
     {
-        final String messageId = "123456" ;
+        final String messageId = "testSendError" ;
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(participantCompletionCoordinatorServiceURI, messageId) ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("6") ;
         final String reason = "testSendErrorReason" ;
-        final String instanceIdentifier = "testSendError" ;
-        final EndpointReferenceType participantCompletionCoordinatorService = new EndpointReferenceType(new AttributedURIType(participantCompletionCoordinatorServiceURI)) ;
-        InstanceIdentifier.setEndpointInstanceIdentifier(participantCompletionCoordinatorService, instanceIdentifier) ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(participantCompletionCoordinatorService, messageId) ;
-        
         final SoapFaultType soapFaultType = SoapFaultType.FAULT_SENDER ;
         final QName subcode = ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME ;
         final SoapFault soapFault = new SoapFault(soapFaultType, subcode, reason) ;
-        
-        final TestParticipantCompletionCoordinatorCallback callback = new TestParticipantCompletionCoordinatorCallback() {
-            public void soapFault(final SoapFault soapFault, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-            {
-                assertEquals(addressingContext.getTo().getValue(), participantCompletionCoordinatorServiceURI);
-                assertEquals(addressingContext.getFrom().getAddress().getValue(), participantCompletionParticipantServiceURI);
-                assertNull(addressingContext.getReplyTo());
-                assertEquals(addressingContext.getMessageID().getValue(), messageId);
-                
-                assertNotNull(soapFault) ;
-                assertEquals(soapFaultType, soapFault.getSoapFaultType()) ;
-                assertEquals(subcode, soapFault.getSubcode()) ;
-                assertEquals(reason, soapFault.getReason()) ;
-                
-                assertNotNull(arjunaContext.getInstanceIdentifier()) ;
-                assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
-            }
-        };
-        final ParticipantCompletionCoordinatorProcessor coordinator = ParticipantCompletionCoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(instanceIdentifier, callback) ;
-        
-        try
-        {
-            ParticipantCompletionCoordinatorClient.getClient().sendSoapFault(addressingContext, soapFault, new InstanceIdentifier("sender")) ;
-            callback.waitUntilTriggered() ;
-        }
-        finally
-        {
-            coordinator.removeCallback(instanceIdentifier) ;
-        }
-        
-        assertTrue(callback.hasTriggered()) ;
-        assertFalse(callback.hasFailed()) ;
-    }
 
+        ParticipantCompletionCoordinatorClient.getClient().sendSoapFault(addressingContext, instanceIdentifier, soapFault) ;
+
+        final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
+
+        assertNotNull(details.hasSoapFault()) ;
+        assertEquals(details.hasSoapFault().getSoapFaultType(), soapFault.getSoapFaultType()) ;
+        assertEquals(details.hasSoapFault().getSubcode(), soapFault.getSubcode()) ;
+        assertEquals(details.hasSoapFault().getReason(), soapFault.getReason()) ;
+
+        checkDetails(details, false, messageId, instanceIdentifier);
+    }
+    */
+    
     public void testSendExit()
         throws Exception
     {
         final String messageId = "testSendExit" ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(participantCompletionCoordinatorServiceURI, messageId) ;
-        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("2") ;
-        ParticipantCompletionCoordinatorClient.getClient().sendExit(addressingContext, instanceIdentifier) ;
+        AttributedURIType address = new AttributedURIType(participantCompletionCoordinatorServiceURI);
+        EndpointReferenceType epr = new EndpointReferenceType(address);
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("7") ;
+        InstanceIdentifier.setEndpointInstanceIdentifier(epr, instanceIdentifier);
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(epr, messageId) ;
+
+        ParticipantCompletionCoordinatorClient.getClient().sendExit(addressingContext, new InstanceIdentifier("sender")) ;
         
         final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
         
         assertTrue(details.hasExit()) ;
+
+        checkDetails(details, true, messageId, instanceIdentifier);
     }
 
     public void testSendFault()
         throws Exception
     {
-        final String messageId = "123456" ;
-        final String instanceIdentifier = "testSendFault" ;
+        final String messageId = "testSendFault" ;
+        AttributedURIType address = new AttributedURIType(participantCompletionCoordinatorServiceURI);
+        EndpointReferenceType epr = new EndpointReferenceType(address);
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("8") ;
+        InstanceIdentifier.setEndpointInstanceIdentifier(epr, instanceIdentifier);
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(epr, messageId) ;
+
         final String exceptionIdentifier = "testSendFaultExceptionIdentifier" ;
-        final EndpointReferenceType participantCompletionCoordinatorService = new EndpointReferenceType(new AttributedURIType(participantCompletionCoordinatorServiceURI)) ;
-        InstanceIdentifier.setEndpointInstanceIdentifier(participantCompletionCoordinatorService, instanceIdentifier) ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(participantCompletionCoordinatorService, messageId) ;
-        
-        final TestParticipantCompletionCoordinatorCallback callback = new TestParticipantCompletionCoordinatorCallback() {
-            public void fault(final ExceptionType fault, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-            {
-                assertEquals(addressingContext.getTo().getValue(), participantCompletionCoordinatorServiceURI);
-                assertEquals(addressingContext.getFrom().getAddress().getValue(), participantCompletionParticipantServiceURI);
-                assertEquals(addressingContext.getReplyTo().getAddress().getValue(), participantCompletionParticipantServiceURI);
-                assertEquals(addressingContext.getMessageID().getValue(), messageId);
-                
-                assertEquals(exceptionIdentifier, fault.getExceptionIdentifier()) ;
-                
-                assertNotNull(arjunaContext.getInstanceIdentifier()) ;
-                assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
-            }
-        };
-        final ParticipantCompletionCoordinatorProcessor coordinator = ParticipantCompletionCoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(instanceIdentifier, callback) ;
-        
-        try
-        {
-            ParticipantCompletionCoordinatorClient.getClient().sendFault(addressingContext, new InstanceIdentifier("sender"), exceptionIdentifier) ;
-            callback.waitUntilTriggered() ;
-        }
-        finally
-        {
-            coordinator.removeCallback(instanceIdentifier) ;
-        }
-        
-        assertTrue(callback.hasTriggered()) ;
-        assertFalse(callback.hasFailed()) ;
+
+        ParticipantCompletionCoordinatorClient.getClient().sendFault(addressingContext, new InstanceIdentifier("sender"), exceptionIdentifier); ;
+
+        final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
+
+        assertNotNull(details.hasFault()); ;
+        assertEquals(details.hasFault().getExceptionIdentifier(), exceptionIdentifier) ;
+
+        checkDetails(details, true, messageId, instanceIdentifier);
     }
 
     public void testSendGetStatus()
         throws Exception
     {
         final String messageId = "testSendGetStatus" ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(participantCompletionCoordinatorServiceURI, messageId) ;
-        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("2") ;
-        ParticipantCompletionCoordinatorClient.getClient().sendGetStatus(addressingContext, instanceIdentifier) ;
+        AttributedURIType address = new AttributedURIType(participantCompletionCoordinatorServiceURI);
+        EndpointReferenceType epr = new EndpointReferenceType(address);
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("9") ;
+        InstanceIdentifier.setEndpointInstanceIdentifier(epr, instanceIdentifier);
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(epr, messageId) ;
+
+        ParticipantCompletionCoordinatorClient.getClient().sendGetStatus(addressingContext, new InstanceIdentifier("sender")) ;
         
         final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
         
         assertTrue(details.hasGetStatus()) ;
+
+        checkDetails(details, true, messageId, instanceIdentifier);
     }
 
     protected void tearDown()
         throws Exception
     {
-        ParticipantCompletionCoordinatorProcessor.setCoordinator(origParticipantCompletionCoordinatorProcessor) ;
+        ParticipantCompletionCoordinatorProcessor.setProcessor(origParticipantCompletionCoordinatorProcessor) ;
+    }
+
+    /**
+     * check the message details to see that they have the correct to and from address and message id, a null
+     * reply to address and an arjuna context containing the correct instannce identifier
+     * @param details
+     * @param replyTo
+     * @param messageId
+     * @param instanceIdentifier
+     */
+
+    private void checkDetails(ParticipantCompletionCoordinatorDetails details, boolean replyTo, String messageId, InstanceIdentifier instanceIdentifier)
+    {
+        AddressingContext inAddressingContext = details.getAddressingContext();
+        ArjunaContext inArjunaContext = details.getArjunaContext();
+
+        assertEquals(inAddressingContext.getTo().getValue(), participantCompletionCoordinatorServiceURI);
+        assertEquals(inAddressingContext.getFrom().getAddress().getValue(), participantCompletionParticipantServiceURI);
+        if (replyTo) {
+            assertEquals(inAddressingContext.getReplyTo().getAddress().getValue(), participantCompletionParticipantServiceURI);
+        } else {
+            assertNull(inAddressingContext.getReplyTo());
+        }
+        assertEquals(inAddressingContext.getMessageID().getValue(), messageId);
+
+        if (instanceIdentifier == null) {
+            assertNull(inArjunaContext.getInstanceIdentifier());
+        } else {
+            assertNotNull(inArjunaContext.getInstanceIdentifier()) ;
+            assertEquals(instanceIdentifier.getInstanceIdentifier(), inArjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
+        }
     }
 }

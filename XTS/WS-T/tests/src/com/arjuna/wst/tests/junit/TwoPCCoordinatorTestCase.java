@@ -37,6 +37,7 @@ import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsarj.InstanceIdentifier;
+import com.arjuna.webservices.wsarj.ArjunaContext;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices.wsat.client.ParticipantClient;
@@ -48,67 +49,79 @@ public class TwoPCCoordinatorTestCase extends TestCase
     private ParticipantProcessor origParticipantProcessor ;
     
     private TestParticipantProcessor testParticipantProcessor = new TestParticipantProcessor() ;
-    private String participantService ;
+    private String participanURIService;
+    private String coordinatorServiceURI;
 
     protected void setUp()
         throws Exception
     {
-        origParticipantProcessor = ParticipantProcessor.setParticipant(testParticipantProcessor) ;
+        origParticipantProcessor = ParticipantProcessor.setProcessor(testParticipantProcessor) ;
         final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
-        participantService = soapRegistry.getServiceURI(AtomicTransactionConstants.SERVICE_PARTICIPANT) ;
+        participanURIService = soapRegistry.getServiceURI(AtomicTransactionConstants.SERVICE_PARTICIPANT) ;
+        coordinatorServiceURI = soapRegistry.getServiceURI(AtomicTransactionConstants.SERVICE_COORDINATOR) ;
     }
 
     public void testSendPrepare()
         throws Exception
     {
         final String messageId = "testSendPrepare" ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(participantService, messageId) ;
-        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("2") ;
-        ParticipantClient.getClient().sendPrepare(addressingContext, instanceIdentifier) ;
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(participanURIService, messageId) ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("1") ;
+
+        ParticipantClient.getClient().sendPrepare(addressingContext, new InstanceIdentifier("sender")) ;
         
         final ParticipantDetails details = testParticipantProcessor.getParticipantDetails(messageId, 10000) ;
         
         assertTrue(details.hasPrepare()) ;
+        // expect reply to address but don't expect identifier
+        checkDetails(details, true, messageId, null);
     }
 
     public void testSendCommit()
         throws Exception
     {
         final String messageId = "testSendCommit" ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(participantService, messageId) ;
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(participanURIService, messageId) ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("2") ;
-        ParticipantClient.getClient().sendCommit(addressingContext, instanceIdentifier) ;
+
+        ParticipantClient.getClient().sendCommit(addressingContext, new InstanceIdentifier("sender")) ;
         
         final ParticipantDetails details = testParticipantProcessor.getParticipantDetails(messageId, 10000) ;
         
         assertTrue(details.hasCommit()) ;
+        // expect reply to address but don't expect identifier
+        checkDetails(details, true, messageId, null);
     }
 
     public void testSendRollback()
         throws Exception
     {
         final String messageId = "testSendRollback" ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(participantService, messageId) ;
-        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("2") ;
-        ParticipantClient.getClient().sendRollback(addressingContext, instanceIdentifier) ;
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(participanURIService, messageId) ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("3") ;
+
+        ParticipantClient.getClient().sendRollback(addressingContext, new InstanceIdentifier("sender")) ;
         
         final ParticipantDetails details = testParticipantProcessor.getParticipantDetails(messageId, 10000) ;
         
         assertTrue(details.hasRollback()) ;
+        // expect reply to address but don't expect identifier
+        checkDetails(details, true, messageId, null);
     }
 
     public void testSendError()
         throws Exception
     {
         final String messageId = "testSendError" ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(participantService, messageId) ;
-        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("2") ;
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(participanURIService, messageId) ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("4") ;
         
         final String reason = "testSendErrorReason" ;
         final SoapFaultType soapFaultType = SoapFaultType.FAULT_SENDER ;
         final QName subcode = ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME ;
         final SoapFault soapFault = new SoapFault(soapFaultType, subcode, reason) ;
-        ParticipantClient.getClient().sendSoapFault(addressingContext, soapFault, instanceIdentifier) ;
+        
+        ParticipantClient.getClient().sendSoapFault(addressingContext, soapFault, new InstanceIdentifier("sender")) ;
         
         final ParticipantDetails details = testParticipantProcessor.getParticipantDetails(messageId, 10000) ;
         final SoapFault receivedSoapFault = details.getSoapFault() ;
@@ -117,11 +130,43 @@ public class TwoPCCoordinatorTestCase extends TestCase
         assertEquals(soapFaultType, receivedSoapFault.getSoapFaultType()) ;
         assertEquals(subcode, receivedSoapFault.getSubcode()) ;
         assertEquals(reason, receivedSoapFault.getReason()) ;
+        // don't expect reply to address or identifier
+        checkDetails(details, false, messageId, null);
     }
 
     protected void tearDown()
         throws Exception
     {
-        ParticipantProcessor.setParticipant(origParticipantProcessor) ;
+        ParticipantProcessor.setProcessor(origParticipantProcessor) ;
+    }
+    /**
+     * check the message details to see that they have the correct to and from address and message id, a null
+     * reply to address and an arjuna context containing the correct instannce identifier
+     * @param details
+     * @param replyTo
+     * @param messageId
+     * @param instanceIdentifier
+     */
+
+    private void checkDetails(ParticipantDetails details, boolean replyTo, String messageId, InstanceIdentifier instanceIdentifier)
+    {
+        AddressingContext inAddressingContext = details.getAddressingContext();
+        ArjunaContext inArjunaContext = details.getArjunaContext();
+
+        assertEquals(inAddressingContext.getTo().getValue(), participanURIService);
+        assertEquals(inAddressingContext.getFrom().getAddress().getValue(), coordinatorServiceURI);
+        if (replyTo) {
+            assertEquals(inAddressingContext.getReplyTo().getAddress().getValue(), coordinatorServiceURI);
+        } else {
+            assertNull(inAddressingContext.getReplyTo());
+        }
+        assertEquals(inAddressingContext.getMessageID().getValue(), messageId);
+
+        if (instanceIdentifier == null) {
+            assertNull(inArjunaContext.getInstanceIdentifier());
+        } else {
+            assertNotNull(inArjunaContext.getInstanceIdentifier()) ;
+            assertEquals(instanceIdentifier.getInstanceIdentifier(), inArjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
+        }
     }
 }

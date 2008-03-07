@@ -45,12 +45,19 @@ import com.arjuna.webservices.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices.wsat.NotificationType;
 import com.arjuna.webservices.wsat.client.CoordinatorClient;
 import com.arjuna.webservices.wsat.processors.CoordinatorProcessor;
+import com.arjuna.wst.tests.junit.TestCoordinatorProcessor.CoordinatorDetails;
 
 public class TwoPCParticipantTestCase extends TestCase
 {
+    private CoordinatorProcessor origCoordinatorProcessor ;
+    private TestCoordinatorProcessor testCoordinatorProcessor = new TestCoordinatorProcessor();
+
     protected void setUp()
         throws Exception
     {
+        origCoordinatorProcessor = CoordinatorProcessor.getProcessor();
+        CoordinatorProcessor.setProcessor(testCoordinatorProcessor);
+
         final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
         coordinatorServiceURI = soapRegistry.getServiceURI(AtomicTransactionConstants.SERVICE_COORDINATOR) ;
         participantServiceURI = soapRegistry.getServiceURI(AtomicTransactionConstants.SERVICE_PARTICIPANT) ;
@@ -59,244 +66,150 @@ public class TwoPCParticipantTestCase extends TestCase
     public void testSendPrepared()
         throws Exception
     {
-        final String messageId = "123456" ;
-        final String instanceIdentifier = "testSendPrepared" ;
-        final EndpointReferenceType coordinatorService = new EndpointReferenceType(new AttributedURIType(coordinatorServiceURI)) ;
-        InstanceIdentifier.setEndpointInstanceIdentifier(coordinatorService, instanceIdentifier) ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(coordinatorService, messageId) ;
-        
-        final TestCoordinatorCallback callback = new TestCoordinatorCallback() {
-            public void prepared(final NotificationType prepared, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-            {
-                assertEquals(addressingContext.getTo().getValue(), coordinatorServiceURI);
-                assertEquals(addressingContext.getFrom().getAddress().getValue(), participantServiceURI);
-                assertEquals(addressingContext.getReplyTo().getAddress().getValue(), participantServiceURI);
-                assertEquals(addressingContext.getMessageID().getValue(), messageId);
-                
-                assertNotNull(arjunaContext.getInstanceIdentifier()) ;
-                assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
-            }
-        };
-        final CoordinatorProcessor coordinator = CoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(instanceIdentifier, callback) ;
-        
-        try
-        {
-            CoordinatorClient.getClient().sendPrepared(addressingContext, new InstanceIdentifier("sender")) ;
-            callback.waitUntilTriggered() ;
-        }
-        finally
-        {
-            coordinator.removeCallback(instanceIdentifier) ;
-        }
-        
-        assertTrue(callback.hasTriggered()) ;
-        assertFalse(callback.hasFailed()) ;
+        final String messageId = "testSendPrepared" ;
+        AttributedURIType address = new AttributedURIType(coordinatorServiceURI);
+        EndpointReferenceType epr = new EndpointReferenceType(address);
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("1") ;
+        InstanceIdentifier.setEndpointInstanceIdentifier(epr, instanceIdentifier);
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(epr, messageId) ;
+
+        CoordinatorClient.getClient().sendPrepared(addressingContext, new InstanceIdentifier("sender"));
+
+        CoordinatorDetails details = testCoordinatorProcessor.getCoordinatorDetails(messageId, 10000);
+        assertTrue(details.hasPrepared());
+        // expect reply to address and identifier
+        checkDetails(details, true, messageId, instanceIdentifier);
     }
 
     public void testSendAborted()
         throws Exception
     {
-        final String messageId = "123456" ;
-        final String instanceIdentifier = "testSendAborted" ;
-        final EndpointReferenceType coordinatorService = new EndpointReferenceType(new AttributedURIType(coordinatorServiceURI)) ;
-        InstanceIdentifier.setEndpointInstanceIdentifier(coordinatorService, instanceIdentifier) ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(coordinatorService, messageId) ;
-        
-        final TestCoordinatorCallback callback = new TestCoordinatorCallback() {
-            public void aborted(final NotificationType aborted, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-            {
-                assertEquals(addressingContext.getTo().getValue(), coordinatorServiceURI);
-                assertEquals(addressingContext.getFrom().getAddress().getValue(), participantServiceURI);
-                assertNull(addressingContext.getReplyTo());
-                assertEquals(addressingContext.getMessageID().getValue(), messageId);
-                
-                assertNotNull(arjunaContext.getInstanceIdentifier()) ;
-                assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
-            }
-        };
-        final CoordinatorProcessor coordinator = CoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(instanceIdentifier, callback) ;
-        
-        try
-        {
-            CoordinatorClient.getClient().sendAborted(addressingContext, new InstanceIdentifier("sender")) ;
-            callback.waitUntilTriggered() ;
-        }
-        finally
-        {
-            coordinator.removeCallback(instanceIdentifier) ;
-        }
-        
-        assertTrue(callback.hasTriggered()) ;
-        assertFalse(callback.hasFailed()) ;
-    }
+        final String messageId = "testSendAborted" ;
+        AttributedURIType address = new AttributedURIType(coordinatorServiceURI);
+        EndpointReferenceType epr = new EndpointReferenceType(address);
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("2") ;
+        InstanceIdentifier.setEndpointInstanceIdentifier(epr, instanceIdentifier);
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(epr, messageId) ;
+
+        CoordinatorClient.getClient().sendAborted(addressingContext, new InstanceIdentifier("sender"));
+
+        CoordinatorDetails details = testCoordinatorProcessor.getCoordinatorDetails(messageId, 10000);
+        assertTrue(details.hasAborted());
+        // don't expect reply to address but do expect identifier
+        checkDetails(details, false, messageId, instanceIdentifier);
+   }
 
     public void testSendReadOnly()
         throws Exception
     {
-        final String messageId = "123456" ;
-        final String instanceIdentifier = "testSendReadOnly" ;
-        final EndpointReferenceType coordinatorService = new EndpointReferenceType(new AttributedURIType(coordinatorServiceURI)) ;
-        InstanceIdentifier.setEndpointInstanceIdentifier(coordinatorService, instanceIdentifier) ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(coordinatorService, messageId) ;
-        
-        final TestCoordinatorCallback callback = new TestCoordinatorCallback() {
-            public void readOnly(final NotificationType readOnly, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-            {
-                assertEquals(addressingContext.getTo().getValue(), coordinatorServiceURI);
-                assertEquals(addressingContext.getFrom().getAddress().getValue(), participantServiceURI);
-                assertNull(addressingContext.getReplyTo());
-                assertEquals(addressingContext.getMessageID().getValue(), messageId);
-                
-                assertNotNull(arjunaContext.getInstanceIdentifier()) ;
-                assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
-            }
-        };
-        final CoordinatorProcessor coordinator = CoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(instanceIdentifier, callback) ;
-        
-        try
-        {
-            CoordinatorClient.getClient().sendReadOnly(addressingContext, new InstanceIdentifier("sender")) ;
-            callback.waitUntilTriggered() ;
-        }
-        finally
-        {
-            coordinator.removeCallback(instanceIdentifier) ;
-        }
-        
-        assertTrue(callback.hasTriggered()) ;
-        assertFalse(callback.hasFailed()) ;
+        final String messageId = "testSendReadOnly" ;
+        AttributedURIType address = new AttributedURIType(coordinatorServiceURI);
+        EndpointReferenceType epr = new EndpointReferenceType(address);
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("3") ;
+        InstanceIdentifier.setEndpointInstanceIdentifier(epr, instanceIdentifier);
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(epr, messageId) ;
+
+        CoordinatorClient.getClient().sendReadOnly(addressingContext, new InstanceIdentifier("sender"));
+
+        CoordinatorDetails details = testCoordinatorProcessor.getCoordinatorDetails(messageId, 10000);
+        assertTrue(details.hasReadOnly());
+        // don't expect reply to address but do expect identifier
+        checkDetails(details, false, messageId, instanceIdentifier);
     }
 
     public void testSendCommitted()
         throws Exception
     {
-        final String messageId = "123456" ;
-        final String instanceIdentifier = "testSendCommitted" ;
-        final EndpointReferenceType coordinatorService = new EndpointReferenceType(new AttributedURIType(coordinatorServiceURI)) ;
-        InstanceIdentifier.setEndpointInstanceIdentifier(coordinatorService, instanceIdentifier) ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(coordinatorService, messageId) ;
-        
-        final TestCoordinatorCallback callback = new TestCoordinatorCallback() {
-            public void committed(final NotificationType committed, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-            {
-                assertEquals(addressingContext.getTo().getValue(), coordinatorServiceURI);
-                assertEquals(addressingContext.getFrom().getAddress().getValue(), participantServiceURI);
-                assertNull(addressingContext.getReplyTo());
-                assertEquals(addressingContext.getMessageID().getValue(), messageId);
-                
-                assertNotNull(arjunaContext.getInstanceIdentifier()) ;
-                assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
-            }
-        };
-        final CoordinatorProcessor coordinator = CoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(instanceIdentifier, callback) ;
-        
-        try
-        {
-            CoordinatorClient.getClient().sendCommitted(addressingContext, new InstanceIdentifier("sender")) ;
-            callback.waitUntilTriggered() ;
-        }
-        finally
-        {
-            coordinator.removeCallback(instanceIdentifier) ;
-        }
-        
-        assertTrue(callback.hasTriggered()) ;
-        assertFalse(callback.hasFailed()) ;
+        final String messageId = "testSendCommitted" ;
+        AttributedURIType address = new AttributedURIType(coordinatorServiceURI);
+        EndpointReferenceType epr = new EndpointReferenceType(address);
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("4") ;
+        InstanceIdentifier.setEndpointInstanceIdentifier(epr, instanceIdentifier);
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(epr, messageId) ;
+
+        CoordinatorClient.getClient().sendCommitted(addressingContext, new InstanceIdentifier("sender"));
+
+        CoordinatorDetails details = testCoordinatorProcessor.getCoordinatorDetails(messageId, 10000);
+        assertTrue(details.hasCommitted());
+        // don't expect reply to address but do expect identifier
+        checkDetails(details, false, messageId, instanceIdentifier);
     }
 
     public void testSendReplay()
         throws Exception
     {
-        final String messageId = "123456" ;
-        final String instanceIdentifier = "testSendReplay" ;
-        final EndpointReferenceType coordinatorService = new EndpointReferenceType(new AttributedURIType(coordinatorServiceURI)) ;
-        InstanceIdentifier.setEndpointInstanceIdentifier(coordinatorService, instanceIdentifier) ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(coordinatorService, messageId) ;
-        
-        final TestCoordinatorCallback callback = new TestCoordinatorCallback() {
-            public void replay(final NotificationType replay, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-            {
-                assertEquals(addressingContext.getTo().getValue(), coordinatorServiceURI);
-                assertEquals(addressingContext.getFrom().getAddress().getValue(), participantServiceURI);
-                assertEquals(addressingContext.getReplyTo().getAddress().getValue(), participantServiceURI);
-                assertEquals(addressingContext.getMessageID().getValue(), messageId);
-                
-                assertNotNull(arjunaContext.getInstanceIdentifier()) ;
-                assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
-            }
-        };
-        final CoordinatorProcessor coordinator = CoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(instanceIdentifier, callback) ;
-        
-        try
-        {
-            CoordinatorClient.getClient().sendReplay(addressingContext, new InstanceIdentifier("sender")) ;
-            callback.waitUntilTriggered() ;
-        }
-        finally
-        {
-            coordinator.removeCallback(instanceIdentifier) ;
-        }
-        
-        assertTrue(callback.hasTriggered()) ;
-        assertFalse(callback.hasFailed()) ;
+        final String messageId = "testSendReplay" ;
+        AttributedURIType address = new AttributedURIType(coordinatorServiceURI);
+        EndpointReferenceType epr = new EndpointReferenceType(address);
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("5") ;
+        InstanceIdentifier.setEndpointInstanceIdentifier(epr, instanceIdentifier);
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(epr, messageId) ;
+
+        CoordinatorClient.getClient().sendReplay(addressingContext, new InstanceIdentifier("sender"));
+
+        CoordinatorDetails details = testCoordinatorProcessor.getCoordinatorDetails(messageId, 10000);
+        assertTrue(details.hasReplay());
+        // expect reply to address and identifier
+        checkDetails(details, true, messageId, instanceIdentifier);
     }
 
     public void testSendError()
         throws Exception
     {
-        final String messageId = "123456" ;
+        final String messageId = "testSendReplay" ;
+        final AddressingContext addressingContext = AddressingContext.createRequestContext(coordinatorServiceURI, messageId);
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("5");
         final String reason = "testSendErrorReason" ;
-        final String instanceIdentifier = "testSendError" ;
-        final EndpointReferenceType coordinatorService = new EndpointReferenceType(new AttributedURIType(coordinatorServiceURI)) ;
-        InstanceIdentifier.setEndpointInstanceIdentifier(coordinatorService, instanceIdentifier) ;
-        final AddressingContext addressingContext = AddressingContext.createRequestContext(coordinatorService, messageId) ;
-        
         final SoapFaultType soapFaultType = SoapFaultType.FAULT_SENDER ;
         final QName subcode = ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME ;
         final SoapFault soapFault = new SoapFault(soapFaultType, subcode, reason) ;
-        
-        final TestCoordinatorCallback callback = new TestCoordinatorCallback() {
-            public void soapFault(final SoapFault soapFault, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
-            {
-                assertEquals(addressingContext.getTo().getValue(), coordinatorServiceURI);
-                assertEquals(addressingContext.getFrom().getAddress().getValue(), participantServiceURI);
-                assertNull(addressingContext.getReplyTo());
-                assertEquals(addressingContext.getMessageID().getValue(), messageId);
-                
-                assertNotNull(soapFault) ;
-                assertEquals(soapFaultType, soapFault.getSoapFaultType()) ;
-                assertEquals(subcode, soapFault.getSubcode()) ;
-                assertEquals(reason, soapFault.getReason()) ;
-                
-                assertNotNull(arjunaContext.getInstanceIdentifier()) ;
-                assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
-            }
-        };
-        final CoordinatorProcessor coordinator = CoordinatorProcessor.getCoordinator() ;
-        coordinator.registerCallback(instanceIdentifier, callback) ;
-        
-        try
-        {
-            CoordinatorClient.getClient().sendSoapFault(addressingContext, soapFault, new InstanceIdentifier("sender")) ;
-            callback.waitUntilTriggered() ;
-        }
-        finally
-        {
-            coordinator.removeCallback(instanceIdentifier) ;
-        }
-        
-        assertTrue(callback.hasTriggered()) ;
-        assertFalse(callback.hasFailed()) ;
+
+        CoordinatorClient.getClient().sendSoapFault(addressingContext, soapFault, new InstanceIdentifier("sender"));
+
+        CoordinatorDetails details = testCoordinatorProcessor.getCoordinatorDetails(messageId, 10000);
+        assertNotNull(details.hasSoapFault());
+        assertEquals(details.hasSoapFault().getSoapFaultType(), soapFault.getSoapFaultType());
+        assertEquals(details.hasSoapFault().getReason(), soapFault.getReason());
+        assertEquals(details.hasSoapFault().getSubcode(), soapFault.getSubcode());
+        // don't expect reply to address but do expect identifier
+        checkDetails(details, false, messageId, null);
     }
 
     protected void tearDown()
         throws Exception
     {
+        CoordinatorProcessor.setProcessor(origCoordinatorProcessor);
+    }
+
+    /**
+     * check the message details to see that they have the correct to and from address and message id, a null
+     * reply to address and an arjuna context containing the correct instannce identifier
+     * @param details
+     * @param replyTo
+     * @param messageId
+     * @param instanceIdentifier
+     */
+
+    private void checkDetails(CoordinatorDetails details, boolean replyTo, String messageId, InstanceIdentifier instanceIdentifier)
+    {
+        AddressingContext inAddressingContext = details.getAddressingContext();
+        ArjunaContext inArjunaContext = details.getArjunaContext();
+
+        assertEquals(inAddressingContext.getTo().getValue(), coordinatorServiceURI);
+        assertEquals(inAddressingContext.getFrom().getAddress().getValue(), participantServiceURI);
+        if (replyTo) {
+            assertEquals(inAddressingContext.getReplyTo().getAddress().getValue(), participantServiceURI);
+        } else {
+            assertNull(inAddressingContext.getReplyTo());
+        }
+        assertEquals(inAddressingContext.getMessageID().getValue(), messageId);
+
+        if (instanceIdentifier == null) {
+            assertNull(inArjunaContext.getInstanceIdentifier());
+        } else {
+            assertNotNull(inArjunaContext.getInstanceIdentifier()) ;
+            assertEquals(instanceIdentifier.getInstanceIdentifier(), inArjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
+        }
     }
 
     private String coordinatorServiceURI ;

@@ -27,7 +27,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsarj.ArjunaContext;
 import com.arjuna.webservices.wsat.NotificationType;
-import com.arjuna.webservices.wsat.Participant;
+import com.arjuna.webservices.wsat.ParticipantInboundEvents;
 import com.arjuna.webservices.wsat.processors.ParticipantProcessor;
 
 public class TestParticipantProcessor extends ParticipantProcessor
@@ -61,6 +61,25 @@ public class TestParticipantProcessor extends ParticipantProcessor
             }
         }
         throw new NullPointerException("Timeout occurred waiting for id: " + messageId) ;
+    }
+
+    /**
+     * Activate the participant.
+     *
+     * @param participant The participant.
+     * @param identifier  The identifier.
+     */
+    public void activateParticipant(ParticipantInboundEvents participant, String identifier) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Deactivate the participant.
+     *
+     * @param participant The participant.
+     */
+    public void deactivateParticipant(ParticipantInboundEvents participant) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void commit(NotificationType commit,
@@ -117,15 +136,6 @@ public class TestParticipantProcessor extends ParticipantProcessor
             messageIdMap.put(messageId, details) ;
             messageIdMap.notifyAll() ;
         }
-    }
-    
-    public void activateParticipant(Participant participant,
-            String identifier)
-    {
-    }
-
-    public void deactivateParticipant(Participant participant)
-    {
     }
     
     public static class ParticipantDetails

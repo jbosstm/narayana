@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   JBoss, Home of Professional Open Source
   Copyright 2006, Red Hat Middleware LLC, and individual contributors
@@ -31,7 +32,9 @@
 
     <!-- ================================================================== -->
 
-    <property name="deploy.dir"              value="c:/jwsdp-1.0"/>
+    <property environment="env"/>
+    <property name="jboss.dir" value="${env.JBOSS_HOME}"/>
+    <property name="deploy.dir" value="${jboss.dir}/server/default/deploy"/>
     <property name="hostname" value="localhost"/>
     <property name="port" value="8080"/>
     <property name="ws-c.home"               value="../WS-C"/>
@@ -66,8 +69,12 @@
 
     <property name="jta.lib.jars" value="jbossjta.jar"/>
     <property name="jta.ext.jars" value="jbossts-common.jar commons-logging.jar"/>
+    <!--
     <property name="xts.ext.jars" value="stax-api-1.0.jar wstx-asl-2.0.3.jar"/>
     <property name="xts.ext.compile.jars" value="servlet.jar"/>
+    -->
+    <property name="xts.ext.jars" value=""/>
+    <property name="xts.ext.compile.jars" value="stax-api-1.0.jar wstx-asl-2.0.3.jar servlet.jar"/>
 
     <property name="tests.libs"              value="junit.jar"/>
     <property name="ws-c.libs"               value="ws-c.jar"/>

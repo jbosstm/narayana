@@ -26,7 +26,10 @@ import java.util.Map;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsarj.ArjunaContext;
 import com.arjuna.webservices.wsba.NotificationType;
+import com.arjuna.webservices.wsba.CoordinatorCompletionParticipantInboundEvents;
+import com.arjuna.webservices.wsba.StatusType;
 import com.arjuna.webservices.wsba.processors.CoordinatorCompletionParticipantProcessor;
+import com.arjuna.webservices.SoapFault;
 import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 
 
@@ -61,6 +64,23 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
             }
         }
         throw new NullPointerException("Timeout occurred waiting for id: " + messageId) ;
+    }
+
+    /**
+     * Activate the participant.
+     *
+     * @param participant The participant.
+     * @param identifier  The identifier.
+     */
+    public void activateParticipant(CoordinatorCompletionParticipantInboundEvents participant, String identifier) {
+    }
+
+    /**
+     * Deactivate the participant.
+     *
+     * @param participant The participant.
+     */
+    public void deactivateParticipant(CoordinatorCompletionParticipantInboundEvents participant) {
     }
 
     public void cancel(NotificationType cancel, AddressingContext addressingContext, ArjunaContext arjunaContext)
@@ -115,6 +135,44 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
         }
     }
 
+    /**
+     * Exited.
+     *
+     * @param exited            The exited notification.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext     The arjuna context.
+     */
+    public void exited(NotificationType exited, AddressingContext addressingContext, ArjunaContext arjunaContext) {
+        final String messageId = addressingContext.getMessageID().getValue() ;
+        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(addressingContext, arjunaContext) ;
+        details.setExited(true) ;
+
+        synchronized(messageIdMap)
+        {
+            messageIdMap.put(messageId, details) ;
+            messageIdMap.notifyAll() ;
+        }
+    }
+
+    /**
+     * Faulted.
+     *
+     * @param faulted           The faulted notification.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext     The arjuna context.
+     */
+    public void faulted(NotificationType faulted, AddressingContext addressingContext, ArjunaContext arjunaContext) {
+        final String messageId = addressingContext.getMessageID().getValue() ;
+        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(addressingContext, arjunaContext) ;
+        details.setFaulted(true) ;
+
+        synchronized(messageIdMap)
+        {
+            messageIdMap.put(messageId, details) ;
+            messageIdMap.notifyAll() ;
+        }
+    }
+
     public void getStatus(NotificationType getStatus, AddressingContext addressingContext, ArjunaContext arjunaContext)
     {
         final String messageId = addressingContext.getMessageID().getValue() ;
@@ -127,7 +185,45 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
             messageIdMap.notifyAll() ;
         }
     }
-    
+
+    /**
+     * Status.
+     *
+     * @param status            The status.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext     The arjuna context.
+     */
+    public void status(StatusType status, AddressingContext addressingContext, ArjunaContext arjunaContext) {
+        final String messageId = addressingContext.getMessageID().getValue() ;
+        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(addressingContext, arjunaContext) ;
+        details.setStatus(status) ;
+
+        synchronized(messageIdMap)
+        {
+            messageIdMap.put(messageId, details) ;
+            messageIdMap.notifyAll() ;
+        }
+    }
+
+    /**
+     * SOAP fault.
+     *
+     * @param soapFault         The SOAP fault.
+     * @param addressingContext The addressing context.
+     * @param arjunaContext     The arjuna context.
+     */
+    public void soapFault(SoapFault soapFault, AddressingContext addressingContext, ArjunaContext arjunaContext) {
+        final String messageId = addressingContext.getMessageID().getValue() ;
+        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(addressingContext, arjunaContext) ;
+        details.setSoapFault(soapFault) ;
+
+        synchronized(messageIdMap)
+        {
+            messageIdMap.put(messageId, details) ;
+            messageIdMap.notifyAll() ;
+        }
+    }
+
     public void activateParticipant(BusinessAgreementWithCoordinatorCompletionParticipant participant, String identifier)
     {
     }
@@ -144,8 +240,12 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
         private boolean close ;
         private boolean compensate ;
         private boolean complete ;
+        private boolean faulted ;
+        private boolean exited ;
+        private StatusType status ;
         private boolean getStatus ;
-        
+        private SoapFault soapFault ;
+
         CoordinatorCompletionParticipantDetails(final AddressingContext addressingContext, final ArjunaContext arjunaContext)
         {
             this.addressingContext = addressingContext ;
@@ -210,6 +310,37 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
         void setGetStatus(final boolean getStatus)
         {
             this.getStatus = getStatus ;
+        }
+        public boolean hasFaulted() {
+            return faulted;
+        }
+
+        public void setFaulted(boolean faulted) {
+            this.faulted = faulted;
+        }
+
+        public boolean hasExited() {
+            return exited;
+        }
+
+        public void setExited(boolean exited) {
+            this.exited = exited;
+        }
+
+        public StatusType hasStatus() {
+            return status;
+        }
+
+        public void setStatus(StatusType status) {
+            this.status = status;
+        }
+
+        public SoapFault hasSoapFault() {
+            return soapFault;
+        }
+
+        public void setSoapFault(SoapFault soapFault) {
+            this.soapFault = soapFault;
         }
     }
 }

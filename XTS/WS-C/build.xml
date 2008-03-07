@@ -31,7 +31,9 @@
 
     <!-- ================================================================== -->
 
-    <property name="deploy.dir"              value="deploy"/>
+    <property environment="env"/>
+    <property name="jboss.dir" value="${env.JBOSS_HOME}"/>
+    <property name="deploy.dir" value="${jboss.dir}/server/default/deploy"/>
     <property name="hostname" value="localhost"/>
     <property name="port" value="8080"/>
 
@@ -63,8 +65,11 @@
 
     <property name="jta.lib.jars" value="jbossjta.jar"/>
     <property name="jta.ext.jars" value="jbossts-common.jar commons-logging.jar"/>
+    <!--
     <property name="xts.ext.jars" value="stax-api-1.0.jar wstx-asl-2.0.3.jar"/>
-    <property name="xts.ext.compile.jars" value="servlet.jar saaj-api.jar"/>
+    -->
+    <property name="xts.ext.jars" value=""/>
+    <property name="xts.ext.compile.jars" value="stax-api-1.0.jar wstx-asl-2.0.3.jar servlet.jar saaj-api.jar"/>
 
     <property name="tests.libs" value="junit.jar"/>
 

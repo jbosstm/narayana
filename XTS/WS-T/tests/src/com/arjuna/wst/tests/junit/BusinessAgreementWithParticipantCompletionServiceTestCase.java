@@ -37,6 +37,7 @@ import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
 import com.arjuna.wst.FaultedException;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.WrongStateException;
+import com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine;
 import com.arjuna.wst.stub.BusinessAgreementWithParticipantCompletionStub;
 import com.arjuna.wst.tests.TestUtil;
 
@@ -63,10 +64,23 @@ public class BusinessAgreementWithParticipantCompletionServiceTestCase extends T
         EndpointReferenceType faultedExceptionBusinessAgreementWithParticipantCompletionCoordinator = new EndpointReferenceType(new AttributedURIType(participantCompletionParticipantServiceURI));
         InstanceIdentifier.setEndpointInstanceIdentifier(faultedExceptionBusinessAgreementWithParticipantCompletionCoordinator, TestUtil.FAULTEDEXCEPTION_PARTICIPANT_IDENTIFIER);
 
-        _noExceptionBusinessAgreementWithParticipantCompletionStub                    = new BusinessAgreementWithParticipantCompletionStub("businessAgreementWithParticipantCompletionCoordinator", noExceptionBusinessAgreementWithParticipantCompletionCoordinator);
-        _wrongStateExceptionBusinessAgreementWithParticipantCompletionStub            = new BusinessAgreementWithParticipantCompletionStub("businessAgreementWithParticipantCompletionCoordinator", wrongStateExceptionBusinessAgreementWithParticipantCompletionCoordinator);
-        _systemExceptionBusinessAgreementWithParticipantCompletionStub                = new BusinessAgreementWithParticipantCompletionStub("businessAgreementWithParticipantCompletionCoordinator", systemExceptionBusinessAgreementWithParticipantCompletionCoordinator);
-        _faultedExceptionBusinessAgreementWithParticipantCompletionStub                = new BusinessAgreementWithParticipantCompletionStub("businessAgreementWithParticipantCompletionCoordinator", faultedExceptionBusinessAgreementWithParticipantCompletionCoordinator);
+        ParticipantCompletionCoordinatorEngine _noExceptionBusinessAgreementWithParticipantCompletionEngine
+                = new ParticipantCompletionCoordinatorEngine("businessAgreementWithParticipantCompletionCoordinator", noExceptionBusinessAgreementWithParticipantCompletionCoordinator);
+        ParticipantCompletionCoordinatorEngine _wrongStateExceptionBusinessAgreementWithParticipantCompletionEngine
+                = new ParticipantCompletionCoordinatorEngine("businessAgreementWithParticipantCompletionCoordinator", wrongStateExceptionBusinessAgreementWithParticipantCompletionCoordinator);
+        ParticipantCompletionCoordinatorEngine _systemExceptionBusinessAgreementWithParticipantCompletionEngine
+                = new ParticipantCompletionCoordinatorEngine("businessAgreementWithParticipantCompletionCoordinator", systemExceptionBusinessAgreementWithParticipantCompletionCoordinator);
+        ParticipantCompletionCoordinatorEngine _faultedExceptionBusinessAgreementWithParticipantCompletionEngine
+                = new ParticipantCompletionCoordinatorEngine("businessAgreementWithParticipantCompletionCoordinator", faultedExceptionBusinessAgreementWithParticipantCompletionCoordinator);
+
+        _noExceptionBusinessAgreementWithParticipantCompletionStub
+                = new BusinessAgreementWithParticipantCompletionStub(_noExceptionBusinessAgreementWithParticipantCompletionEngine);
+        _wrongStateExceptionBusinessAgreementWithParticipantCompletionStub
+                = new BusinessAgreementWithParticipantCompletionStub(_wrongStateExceptionBusinessAgreementWithParticipantCompletionEngine);
+        _systemExceptionBusinessAgreementWithParticipantCompletionStub
+                = new BusinessAgreementWithParticipantCompletionStub(_systemExceptionBusinessAgreementWithParticipantCompletionEngine);
+        _faultedExceptionBusinessAgreementWithParticipantCompletionStub
+                = new BusinessAgreementWithParticipantCompletionStub(_faultedExceptionBusinessAgreementWithParticipantCompletionEngine);
     }
 
     public void testCloseWithNoException()

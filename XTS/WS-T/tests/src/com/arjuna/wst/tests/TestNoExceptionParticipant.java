@@ -28,7 +28,7 @@
 
 package com.arjuna.wst.tests;
 
-import com.arjuna.webservices.wsat.Participant;
+import com.arjuna.wst.Participant;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.Vote;

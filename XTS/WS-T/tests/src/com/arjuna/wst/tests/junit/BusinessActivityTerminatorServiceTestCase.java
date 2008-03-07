@@ -45,7 +45,7 @@ public class BusinessActivityTerminatorServiceTestCase extends TestCase
         throws Exception
     {
         final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
-        final String businessActivityTerminatorParticipantServiceURI = soapRegistry.getServiceURI(ArjunaTXConstants.SERVICE_TERMINATOR_PARTICIPANT);
+        final String businessActivityTerminatorParticipantServiceURI = soapRegistry.getServiceURI(ArjunaTXConstants.SERVICE_TERMINATION_PARTICIPANT);
 
         EndpointReferenceType noExceptionBusinessActivityTerminatorCoordinator = new EndpointReferenceType(new AttributedURIType(businessActivityTerminatorParticipantServiceURI));
         InstanceIdentifier.setEndpointInstanceIdentifier(noExceptionBusinessActivityTerminatorCoordinator, TestUtil.NOEXCEPTION_PARTICIPANT_IDENTIFIER);

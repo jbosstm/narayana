@@ -46,7 +46,7 @@ public class CompletionParticipantTestCase extends TestCase
     protected void setUp()
         throws Exception
     {
-        origCompletionCoordinatorProcessor = CompletionCoordinatorProcessor.setCoordinator(testCompletionCoordinatorProcessor) ;
+        origCompletionCoordinatorProcessor = CompletionCoordinatorProcessor.setProcessor(testCompletionCoordinatorProcessor) ;
         final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
         completionCoordinatorService = soapRegistry.getServiceURI(AtomicTransactionConstants.SERVICE_COMPLETION_COORDINATOR) ;
     }
@@ -80,6 +80,6 @@ public class CompletionParticipantTestCase extends TestCase
     protected void tearDown()
         throws Exception
     {
-        CompletionCoordinatorProcessor.setCoordinator(origCompletionCoordinatorProcessor) ;
+        CompletionCoordinatorProcessor.setProcessor(origCompletionCoordinatorProcessor) ;
     }
 }

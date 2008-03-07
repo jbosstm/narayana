@@ -35,7 +35,7 @@ import com.arjuna.webservices.wsaddr.AttributedURIType;
 import com.arjuna.webservices.wsaddr.EndpointReferenceType;
 import com.arjuna.webservices.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsat.AtomicTransactionConstants;
-import com.arjuna.webservices.wsat.Participant;
+import com.arjuna.wst.Participant;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.Vote;
 import com.arjuna.wst.WrongStateException;
@@ -71,13 +71,13 @@ public class TwoPCServiceTestCase extends TestCase
         EndpointReferenceType nonexistentCoordinator = new EndpointReferenceType(new AttributedURIType(participantServiceURI));
         InstanceIdentifier.setEndpointInstanceIdentifier(nonexistentCoordinator, TestUtil.NONEXISTENT_PARTICIPANT_IDENTIFIER);
 
-        _preparedVoteStub                   = new ParticipantStub("twoPCCoordinator", preparedVoteCoordinator);
-        _abortedVoteStub                    = new ParticipantStub("twoPCCoordinator", abortedVoteCoordinator);
-        _readOnlyVoteStub                   = new ParticipantStub("twoPCCoordinator", readOnlyVoteCoordinator);
-        _noExceptionStub                    = new ParticipantStub("twoPCCoordinator", noExceptionCoordinator);
-        _wrongStateExceptionStub            = new ParticipantStub("twoPCCoordinator", wrongStateExceptionCoordinator);
-        _systemExceptionStub                = new ParticipantStub("twoPCCoordinator", systemExceptionCoordinator);
-        _nonexistentStub                    = new ParticipantStub("twoPCCoordinator", nonexistentCoordinator);
+        _preparedVoteStub                   = new ParticipantStub("twoPCCoordinator", false, preparedVoteCoordinator);
+        _abortedVoteStub                    = new ParticipantStub("twoPCCoordinator", false, abortedVoteCoordinator);
+        _readOnlyVoteStub                   = new ParticipantStub("twoPCCoordinator", false, readOnlyVoteCoordinator);
+        _noExceptionStub                    = new ParticipantStub("twoPCCoordinator", false, noExceptionCoordinator);
+        _wrongStateExceptionStub            = new ParticipantStub("twoPCCoordinator", false, wrongStateExceptionCoordinator);
+        _systemExceptionStub                = new ParticipantStub("twoPCCoordinator", false, systemExceptionCoordinator);
+        _nonexistentStub                    = new ParticipantStub("twoPCCoordinator", false, nonexistentCoordinator);
     }
 
     public void testPrepareWithPreparedVote()

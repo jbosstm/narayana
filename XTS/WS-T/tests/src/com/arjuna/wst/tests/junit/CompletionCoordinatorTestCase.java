@@ -75,7 +75,7 @@ public class CompletionCoordinatorTestCase extends TestCase
                 assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
             }
         };
-        final CompletionInitiatorProcessor initiator = CompletionInitiatorProcessor.getInitiator() ;
+        final CompletionInitiatorProcessor initiator = CompletionInitiatorProcessor.getProcessor() ;
         initiator.registerCallback(instanceIdentifier, callback) ;
         
         try
@@ -113,7 +113,7 @@ public class CompletionCoordinatorTestCase extends TestCase
                 assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
             }
         };
-        final CompletionInitiatorProcessor initiator = CompletionInitiatorProcessor.getInitiator() ;
+        final CompletionInitiatorProcessor initiator = CompletionInitiatorProcessor.getProcessor() ;
         initiator.registerCallback(instanceIdentifier, callback) ;
         
         try
@@ -161,7 +161,7 @@ public class CompletionCoordinatorTestCase extends TestCase
                 assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
             }
         };
-        final CompletionInitiatorProcessor initiator = CompletionInitiatorProcessor.getInitiator() ;
+        final CompletionInitiatorProcessor initiator = CompletionInitiatorProcessor.getProcessor() ;
         initiator.registerCallback(instanceIdentifier, callback) ;
         
         try
