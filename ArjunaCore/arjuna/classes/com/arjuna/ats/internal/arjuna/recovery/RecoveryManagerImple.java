@@ -189,6 +189,24 @@ public class RecoveryManagerImple
 		// ExpiredEntryMonitor.shutdown();
 	}
 
+	/**
+	 * Suspend the recovery manager. If the recovery manager is in the process of
+	 * doing recovery scans then it will be suspended afterwards, in order to
+	 * preserve data integrity.
+	 * 
+	 * @param async wait for the recovery manager to finish any scans before returning.
+	 */
+	
+	public void suspendScan (boolean async)
+	{
+	    _periodicRecovery.suspendScan(async);
+	}
+	
+	public void resumeScan ()
+	{
+	    _periodicRecovery.resumeScan();
+	}
+	
 	public void finalize ()
 	{
 		stop();

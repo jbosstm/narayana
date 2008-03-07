@@ -40,16 +40,12 @@ import java.util.Vector;
 import java.net.*;
 import java.io.*;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
-
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.recovery.RecoveryEnvironment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-
-import com.arjuna.ats.internal.arjuna.utils.SocketProcessId;
 
 import com.arjuna.common.util.logging.*;
 
@@ -109,11 +105,50 @@ public class PeriodicRecovery extends Thread
 
    public void shutdown ()
    {
-      _terminate = true;
+      _currentState = State.terminated;
 
       this.interrupt();
    }
 
+   public void suspendScan (boolean async)
+   {
+       synchronized (_signal)
+       {
+	   _currentState = State.suspended;
+	   
+	   this.interrupt();
+	   
+	   if (!async)
+	   {
+	       try
+	       {
+		   _signal.wait();
+	       }
+	       catch (InterruptedException ex)
+	       {
+	       }
+	   }
+       }
+   }
+   
+   public void resumeScan ()
+   {
+       /*
+        * If it's suspended, then it has to be blocked
+        * on the lock.
+        */
+       
+       if (_currentState == State.suspended)
+       {
+           _currentState = State.active;
+           
+           synchronized (_suspendLock)
+           {
+               _suspendLock.notify();
+           }
+       }
+   }
+   
    /**
     * Return the port specified by the property
     * com.arjuna.ats.internal.arjuna.recovery.recoveryPort,
@@ -220,9 +255,33 @@ public class PeriodicRecovery extends Thread
 	    interrupted = true;
 	}
 
-	if ( _terminate )
+	if (_currentState == State.terminated)
 	{
 	    return true;
+	}
+	else
+	{
+	    if (_currentState == State.suspended)
+	    {
+		synchronized (_signal)
+		{
+		    _signal.notify();
+		}
+
+		while (_currentState == State.suspended)
+		{
+		    try
+		    {
+			synchronized (_suspendLock)
+			{
+			    _suspendLock.wait();
+			}
+		    }
+		    catch (InterruptedException ex)
+		    {
+		    }
+		}
+	    }
 	}
 
 	tsLogger.arjLogger.info("Periodic recovery - second pass <"+
@@ -252,9 +311,30 @@ public class PeriodicRecovery extends Thread
 	    interrupted = true;
 	}
 
-	if ( _terminate )
+	if (_currentState == State.terminated)
 	{
 	    return true;
+	}
+	else
+	{
+	    synchronized (_signal)
+	    {
+		_signal.notify();
+	    }
+
+	    while (_currentState == State.suspended)
+	    {
+		try
+		{
+		    synchronized (_suspendLock)
+		    {
+			_suspendLock.wait();
+		    }
+		}
+		catch (InterruptedException ex)
+		{
+		}
+	    }
 	}
 
 	return false; // keep going
@@ -396,9 +476,14 @@ public class PeriodicRecovery extends Thread
    private final void initialise ()
    {
       _recoveryModules = new Vector();
-      _terminate = false;
+      _currentState = State.active;
    }
 
+   private static enum State
+   {
+       created, active, terminated, suspended
+   }
+   
    // this refers to the modules specified in the recovery manager
    // property file which are dynamically loaded.
    private static Vector _recoveryModules = null;
@@ -414,7 +499,7 @@ public class PeriodicRecovery extends Thread
    private static final int _defaultRecoveryPeriod = 120;
 
    // exit thread flag
-   private static boolean _terminate = false;
+   private static State _currentState = State.created;
 
    private static SimpleDateFormat _theTimestamper = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 
@@ -422,7 +507,10 @@ public class PeriodicRecovery extends Thread
 
     private static Listener _listener = null;
     private static WorkerService _workerService = null;
-
+    
+    private Object _suspendLock = new Object();
+    private Object _signal = new Object();
+    
    /*
     * Read the system properties to set the configurable options
     *

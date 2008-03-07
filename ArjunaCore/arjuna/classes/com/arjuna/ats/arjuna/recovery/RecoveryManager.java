@@ -31,12 +31,8 @@
 
 package com.arjuna.ats.arjuna.recovery;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Properties;
 import java.util.Vector;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple;
 
 class ScanThread extends Thread
@@ -172,6 +168,24 @@ public class RecoveryManager
 	_theImple.stop();
     }
     
+    /**
+     * Suspend the recovery manager. If the recovery manager is in the process of
+     * doing recovery scans then it will be suspended afterwards, in order to
+     * preserve data integrity.
+     * 
+     * @param async wait for the recovery manager to finish any scans before returning.
+     */
+
+    public void suspendScan (boolean async)
+    {
+	_theImple.suspendScan(async);
+    }
+
+    public void resumeScan ()
+    {
+	_theImple.resumeScan();
+    }
+	
     /**
      * Start the recovery manager thread.
      */

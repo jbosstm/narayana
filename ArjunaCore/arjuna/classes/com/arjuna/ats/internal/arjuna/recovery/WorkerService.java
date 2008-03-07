@@ -31,7 +31,6 @@
  
 package com.arjuna.ats.internal.arjuna.recovery;
 
-import com.arjuna.ats.arjuna.logging.FacilityCode ;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.recovery.Service;
 
