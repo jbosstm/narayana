@@ -1,27 +1,11 @@
 /*
  * This file has been copied from the Apache Commons Logging project
+ * release version 1.1.0 and then modified.
  *
- * Header: /home/cvspublic/jakarta-commons/logging/src/java/org/apache/commons/logging/impl/Log4JLogger.java,v 1.3 2003/04/02 01:29:38 craigmcc Exp
- * Revision: 1.3
- * Date: 2003/04/02 01:29:38
- */
-/*
- * $Header$
- * $Id: Log4JLogger.java 2344 2006-03-30 13:58:07Z  $s
- *
- * Modified by Thomas Rischbeck
- * Arjuna Technologies Ltd.
- * 02-July-2003, 14:19
- *
- * NOTE:
- *
+ * Modified by Thomas Rischbeck Arjuna Technologies Ltd. 02-July-2003, 14:19
  * This class replaces the Log4j wrapper of the jakarta-commons logging framework.
  * This is necessary so that log4j is printing out correct location information.
- * It is important that this class appears in the classpath before the rest of the
- * jakarta-commons-logging classes!!!
- */
-
-/*
+ *
  * Modified by Jonathan Halliday (jonathan.halliday@redhat.com), February 2007.
  * We can't keep shipping this code in its original package (org.apache.commons.logging.impl)
  * as it creates classloader ordering hassle and prevents patching of the apache
@@ -35,97 +19,103 @@
  */
 
 /*
- * Header: /home/cvspublic/jakarta-commons/logging/src/java/org/apache/commons/logging/impl/Log4JLogger.java,v 1.3 2003/04/02 01:29:38 craigmcc Exp
- * Revision: 1.3
- * Date: 2003/04/02 01:29:38
+ * Copyright 2001-2004 The Apache Software Foundation.
  *
- * ====================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The Apache Software License, Version 1.1
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Copyright (c) 1999-2003 The Apache Software Foundation.  All rights
- * reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:
- *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowlegement may appear in the software itself,
- *    if and wherever such third-party acknowlegements normally appear.
- *
- * 4. The names "The Jakarta Project", "Commons", and "Apache Software
- *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written
- *    permission, please contact apache@apache.org.
- *
- * 5. Products derived from this software may not be called "Apache"
- *    nor may "Apache" appear in their names without prior written
- *    permission of the Apache Group.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * ====================================================================
- *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 
-package com.arjuna.common.internal.util.logging.jakarta;
+//package org.apache.commons.logging.impl; // apache version
+package com.arjuna.common.internal.util.logging.jakarta; // Red Hat modification
 
-import org.apache.log4j.*;
+import java.io.Serializable;
 import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
+import org.apache.log4j.Level;
 
 import com.arjuna.common.internal.util.logging.LogImpl;
 
 /**
- * <p>Implementation of {@link Log} that maps directly to a Log4J
- * <strong>Logger</strong>.  Initial configuration of the corresponding
- * Logger instances should be done in the usual manner, as outlined in
- * the Log4J documentation.</p>
+ * Implementation of {@link Log} that maps directly to a
+ * <strong>Logger</strong> for log4J version 1.2.
+ * <p>
+ * Initial configuration of the corresponding Logger instances should be done
+ * in the usual manner, as outlined in the Log4J documentation.
+ * <p>
+ * The reason this logger is distinct from the 1.3 logger is that in version 1.2
+ * of Log4J:
+ * <ul>
+ * <li>class Logger takes Priority parameters not Level parameters.
+ * <li>class Level extends Priority
+ * </ul>
+ * Log4J1.3 is expected to change Level so it no longer extends Priority, which is
+ * a non-binary-compatible change. The class generated by compiling this code against
+ * log4j 1.2 will therefore not run against log4j 1.3.
  *
  * @author <a href="mailto:sanders@apache.org">Scott Sanders</a>
  * @author Rod Waldhoff
  * @author Robert Burrell Donkin
- * @version $Id: Log4JLogger.java 2344 2006-03-30 13:58:07Z  $
+ * @version (apache version) Id: Log4JLogger.java 370672 2006-01-19 23:52:23Z skitching
  */
-public final class Log4JLogger implements Log {
 
+public class Log4JLogger implements Log, Serializable {
 
     // ------------------------------------------------------------- Attributes
 
     /** The fully qualified name of the Log4JLogger class. */
-    //private static final String FQCN = Log4JLogger.class.getName();
-   //TR !!! changed to support the Arjuna CLF wrapper:
-   private static final String FQCN = LogImpl.class.getName();
+    //private static final String FQCN = Log4JLogger.class.getName(); // apache version
+    private static final String FQCN = LogImpl.class.getName(); // Red Hat modification
 
     /** Log to this logger */
-    private Logger logger = null;
+    private transient Logger logger = null;
+
+    /** Logger name */
+    private String name = null;
+
+    private static Priority traceLevel;
+
+    // ------------------------------------------------------------
+    // Static Initializer.
+    //
+    // Note that this must come after the static variable declarations
+    // otherwise initialiser expressions associated with those variables
+    // will override any settings done here.
+    //
+    // Verify that log4j is available, and that it is version 1.2.
+    // If an ExceptionInInitializerError is generated, then LogFactoryImpl
+    // will treat that as meaning that the appropriate underlying logging
+    // library is just not present - if discovery is in progress then
+    // discovery will continue.
+    // ------------------------------------------------------------
+
+    static {
+        if (!Priority.class.isAssignableFrom(Level.class)) {
+            // nope, this is log4j 1.3, so force an ExceptionInInitializerError
+            throw new InstantiationError("Log4J 1.2 not available");
+        }
+
+        // Releases of log4j1.2 >= 1.2.12 have Priority.TRACE available, earlier
+        // versions do not. If TRACE is not available, then we have to map
+        // calls to Log.trace(...) onto the DEBUG level.
+
+        try {
+            traceLevel = (Priority) Level.class.getDeclaredField("TRACE").get(null);
+        } catch(Exception ex) {
+            // ok, trace not available
+            traceLevel = Priority.DEBUG;
+        }
+    }
 
 
     // ------------------------------------------------------------ Constructor
@@ -135,116 +125,177 @@ public final class Log4JLogger implements Log {
 
 
     /**
-     * Base constructor
+     * Base constructor.
      */
     public Log4JLogger(String name) {
-        this.logger=Logger.getLogger(name);
+        this.name = name;
+        this.logger = getLogger();
     }
 
-    /** For use with a log4j factory
+    /** For use with a log4j factory.
      */
     public Log4JLogger(Logger logger ) {
+        this.name = logger.getName();
         this.logger=logger;
     }
 
 
-    // ---------------------------------------------------------- Implmentation
+    // ---------------------------------------------------------
+    // Implementation
+    //
+    // Note that in the methods below the Priority class is used to define
+    // levels even though the Level class is supported in 1.2. This is done
+    // so that at compile time the call definitely resolves to a call to
+    // a method that takes a Priority rather than one that takes a Level.
+    //
+    // The Category class (and hence its subclass Logger) in version 1.2 only
+    // has methods that take Priority objects. The Category class (and hence
+    // Logger class) in version 1.3 has methods that take both Priority and
+    // Level objects. This means that if we use Level here, and compile
+    // against log4j 1.3 then calls would be bound to the versions of
+    // methods taking Level objects and then would fail to run against
+    // version 1.2 of log4j.
+    // ---------------------------------------------------------
 
 
     /**
-     * Log a message to the Log4j Logger with <code>TRACE</code> priority.
-     * Currently logs to <code>DEBUG</code> level in Log4J.
+     * Logs a message with <code>org.apache.log4j.Priority.TRACE</code>.
+     * When using a log4j version that does not support the <code>TRACE</code>
+     * level, the message will be logged at the <code>DEBUG</code> level.
+     *
+     * @param message to log
+     * @see org.apache.commons.logging.Log#trace(Object)
      */
     public void trace(Object message) {
-        logger.log(FQCN, Priority.DEBUG, message, null);
+        getLogger().log(FQCN, traceLevel, message, null );
     }
 
 
     /**
-     * Log an error to the Log4j Logger with <code>TRACE</code> priority.
-     * Currently logs to <code>DEBUG</code> level in Log4J.
+     * Logs a message with <code>org.apache.log4j.Priority.TRACE</code>.
+     * When using a log4j version that does not support the <code>TRACE</code>
+     * level, the message will be logged at the <code>DEBUG</code> level.
+     *
+     * @param message to log
+     * @param t log this cause
+     * @see org.apache.commons.logging.Log#trace(Object, Throwable)
      */
     public void trace(Object message, Throwable t) {
-        logger.log(FQCN, Priority.DEBUG, message, t );
+        getLogger().log(FQCN, traceLevel, message, t );
     }
 
 
     /**
-     * Log a message to the Log4j Logger with <code>DEBUG</code> priority.
+     * Logs a message with <code>org.apache.log4j.Priority.DEBUG</code>.
+     *
+     * @param message to log
+     * @see org.apache.commons.logging.Log#debug(Object)
      */
     public void debug(Object message) {
-        logger.log(FQCN, Priority.DEBUG, message, null);
+        getLogger().log(FQCN, Priority.DEBUG, message, null );
     }
 
     /**
-     * Log an error to the Log4j Logger with <code>DEBUG</code> priority.
+     * Logs a message with <code>org.apache.log4j.Priority.DEBUG</code>.
+     *
+     * @param message to log
+     * @param t log this cause
+     * @see org.apache.commons.logging.Log#debug(Object, Throwable)
      */
     public void debug(Object message, Throwable t) {
-        logger.log(FQCN, Priority.DEBUG, message, t );
+        getLogger().log(FQCN, Priority.DEBUG, message, t );
     }
 
 
     /**
-     * Log a message to the Log4j Logger with <code>INFO</code> priority.
+     * Logs a message with <code>org.apache.log4j.Priority.INFO</code>.
+     *
+     * @param message to log
+     * @see org.apache.commons.logging.Log#info(Object)
      */
     public void info(Object message) {
-        logger.log(FQCN, Priority.INFO, message, null );
+        getLogger().log(FQCN, Priority.INFO, message, null );
     }
 
 
     /**
-     * Log an error to the Log4j Logger with <code>INFO</code> priority.
+     * Logs a message with <code>org.apache.log4j.Priority.INFO</code>.
+     *
+     * @param message to log
+     * @param t log this cause
+     * @see org.apache.commons.logging.Log#info(Object, Throwable)
      */
     public void info(Object message, Throwable t) {
-        logger.log(FQCN, Priority.INFO, message, t );
+        getLogger().log(FQCN, Priority.INFO, message, t );
     }
 
 
     /**
-     * Log a message to the Log4j Logger with <code>WARN</code> priority.
+     * Logs a message with <code>org.apache.log4j.Priority.WARN</code>.
+     *
+     * @param message to log
+     * @see org.apache.commons.logging.Log#warn(Object)
      */
     public void warn(Object message) {
-        logger.log(FQCN, Priority.WARN, message, null );
+        getLogger().log(FQCN, Priority.WARN, message, null );
     }
 
 
     /**
-     * Log an error to the Log4j Logger with <code>WARN</code> priority.
+     * Logs a message with <code>org.apache.log4j.Priority.WARN</code>.
+     *
+     * @param message to log
+     * @param t log this cause
+     * @see org.apache.commons.logging.Log#warn(Object, Throwable)
      */
     public void warn(Object message, Throwable t) {
-        logger.log(FQCN, Priority.WARN, message, t );
+        getLogger().log(FQCN, Priority.WARN, message, t );
     }
 
 
     /**
-     * Log a message to the Log4j Logger with <code>ERROR</code> priority.
+     * Logs a message with <code>org.apache.log4j.Priority.ERROR</code>.
+     *
+     * @param message to log
+     * @see org.apache.commons.logging.Log#error(Object)
      */
     public void error(Object message) {
-        logger.log(FQCN, Priority.ERROR, message, null );
+        getLogger().log(FQCN, Priority.ERROR, message, null );
     }
 
 
     /**
-     * Log an error to the Log4j Logger with <code>ERROR</code> priority.
+     * Logs a message with <code>org.apache.log4j.Priority.ERROR</code>.
+     *
+     * @param message to log
+     * @param t log this cause
+     * @see org.apache.commons.logging.Log#error(Object, Throwable)
      */
     public void error(Object message, Throwable t) {
-        logger.log(FQCN, Priority.ERROR, message, t );
+        getLogger().log(FQCN, Priority.ERROR, message, t );
     }
 
 
     /**
-     * Log a message to the Log4j Logger with <code>FATAL</code> priority.
+     * Logs a message with <code>org.apache.log4j.Priority.FATAL</code>.
+     *
+     * @param message to log
+     * @see org.apache.commons.logging.Log#fatal(Object)
      */
     public void fatal(Object message) {
-        logger.log(FQCN, Priority.FATAL, message, null );
+        getLogger().log(FQCN, Priority.FATAL, message, null );
     }
 
 
     /**
-     * Log an error to the Log4j Logger with <code>FATAL</code> priority.
+     * Logs a message with <code>org.apache.log4j.Priority.FATAL</code>.
+     *
+     * @param message to log
+     * @param t log this cause
+     * @see org.apache.commons.logging.Log#fatal(Object, Throwable)
      */
     public void fatal(Object message, Throwable t) {
-        logger.log(FQCN, Priority.FATAL, message, t );
+        getLogger().log(FQCN, Priority.FATAL, message, t );
     }
 
 
@@ -252,6 +303,9 @@ public final class Log4JLogger implements Log {
      * Return the native Logger instance we are using.
      */
     public Logger getLogger() {
+        if (logger == null) {
+            logger = Logger.getLogger(name);
+        }
         return (this.logger);
     }
 
@@ -260,7 +314,7 @@ public final class Log4JLogger implements Log {
      * Check whether the Log4j Logger used is enabled for <code>DEBUG</code> priority.
      */
     public boolean isDebugEnabled() {
-        return logger.isDebugEnabled();
+        return getLogger().isDebugEnabled();
     }
 
 
@@ -268,7 +322,7 @@ public final class Log4JLogger implements Log {
      * Check whether the Log4j Logger used is enabled for <code>ERROR</code> priority.
      */
     public boolean isErrorEnabled() {
-        return logger.isEnabledFor(Priority.ERROR);
+        return getLogger().isEnabledFor(Priority.ERROR);
     }
 
 
@@ -276,7 +330,7 @@ public final class Log4JLogger implements Log {
      * Check whether the Log4j Logger used is enabled for <code>FATAL</code> priority.
      */
     public boolean isFatalEnabled() {
-        return logger.isEnabledFor(Priority.FATAL);
+        return getLogger().isEnabledFor(Priority.FATAL);
     }
 
 
@@ -284,22 +338,23 @@ public final class Log4JLogger implements Log {
      * Check whether the Log4j Logger used is enabled for <code>INFO</code> priority.
      */
     public boolean isInfoEnabled() {
-        return logger.isInfoEnabled();
+        return getLogger().isInfoEnabled();
     }
 
 
     /**
      * Check whether the Log4j Logger used is enabled for <code>TRACE</code> priority.
-     * For Log4J, this returns the value of <code>isDebugEnabled()</code>
+     * When using a log4j version that does not support the TRACE level, this call
+     * will report whether <code>DEBUG</code> is enabled or not.
      */
     public boolean isTraceEnabled() {
-        return logger.isDebugEnabled();
+        return getLogger().isEnabledFor(traceLevel);
     }
 
     /**
      * Check whether the Log4j Logger used is enabled for <code>WARN</code> priority.
      */
     public boolean isWarnEnabled() {
-        return logger.isEnabledFor(Priority.WARN);
+        return getLogger().isEnabledFor(Priority.WARN);
     }
 }

@@ -84,7 +84,7 @@
     <property name="jboss.client.libs" value="jbossall-client.jar jboss-jaxws.jar"/>
     <property name="ext.compile" value="${ext.libs} wstx-asl-2.0.3.jar jaxrpc.jar servlet.jar"/>
 
-    <property name="ext.package" value="${ext.libs} jbossts-common.jar commons-logging.jar stax-api-1.0.jar"/>
+    <property name="ext.package" value="${ext.libs} jbossts-common.jar commons-logging-1.1.jar stax-api-1.0.jar"/>
 
     <!-- ================================================================== -->
 

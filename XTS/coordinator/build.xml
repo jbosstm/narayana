@@ -48,7 +48,7 @@
     <property name="lib.dir" location="${xts.home}/lib"/>
     <property name="ext.dir" location="${lib.dir}/ext"/>
 
-    <property name="ext.package" value="jbossjta.jar jbossts-common.jar commons-logging.jar stax-api-1.0.jar wstx-asl-2.0.3.jar"/>
+    <property name="ext.package" value="jbossjta.jar jbossts-common.jar commons-logging-1.1.jar stax-api-1.0.jar wstx-asl-2.0.3.jar"/>
 
     <!-- ================================================================== -->
 

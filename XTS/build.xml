@@ -42,7 +42,7 @@
 
     <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
     <property name="com.arjuna.jta.install.lib.jars" value="jbossjta.jar"/>
-    <property name="com.arjuna.jta.install.ext.jars" value="jbossts-common.jar commons-logging.jar"/>
+    <property name="com.arjuna.jta.install.ext.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
     <property name="com.arjuna.xts.ext.jars" value="jaxrpc.jar saaj-api.jar servlet.jar stax-api-1.0.jar wstx-asl-2.0.3.jar"/>
 
 	<!-- Set internal property defaults -->

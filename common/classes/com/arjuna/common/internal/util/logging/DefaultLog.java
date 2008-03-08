@@ -1,74 +1,38 @@
 /*
  * This file has been copied from the Apache Commons Logging project
- * and was formerly called org.apache.commons.logging.impl.SimpleLog.
+ * release version 1.1.0 and then modified.
+ * It was formerly called org.apache.commons.logging.impl.SimpleLog.
  *
- * It was added into the source on 13th January 2004.
+ * Apart from the package and class name changes, the modifications
+ * relate to configuration properties and use of a file rather than
+ * System.out for default logging.
  */
+
+
 /*
- * $Header$
- * $Revision: 2344 $
- * $Date: 2006-03-30 14:58:07 +0100 (Thu, 30 Mar 2006) $
+ * Copyright 2001-2004 The Apache Software Foundation.
  *
- * ====================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The Apache Software License, Version 1.1
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Copyright (c) 1999-2003 The Apache Software Foundation.  All rights
- * reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:
- *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowlegement may appear in the software itself,
- *    if and wherever such third-party acknowlegements normally appear.
- *
- * 4. The names "The Jakarta Project", "Commons", and "Apache Software
- *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written
- *    permission, please contact apache@apache.org.
- *
- * 5. Products derived from this software may not be called "Apache"
- *    nor may "Apache" appear in their names without prior written
- *    permission of the Apache Group.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * ====================================================================
- *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 
-package com.arjuna.common.internal.util.logging;
+//package org.apache.commons.logging.impl;  // apache version
+package com.arjuna.common.internal.util.logging; // Red Hat modification
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.AccessController;
@@ -98,11 +62,17 @@ import org.apache.commons.logging.LogConfigurationException;
  *     Set to <code>true</code> if you want the Log instance name to be
  *     included in output messages. Defaults to <code>false</code>.</li>
  * <li><code>org.apache.commons.logging.simplelog.showShortLogname</code> -
- *     Set to <code>true</code> if you want the last componet of the name to be
+ *     Set to <code>true</code> if you want the last component of the name to be
  *     included in output messages. Defaults to <code>true</code>.</li>
  * <li><code>org.apache.commons.logging.simplelog.showdatetime</code> -
  *     Set to <code>true</code> if you want the current date and time
- *     to be included in output messages. Default is false.</li>
+ *     to be included in output messages. Default is <code>false</code>.</li>
+ * <li><code>org.apache.commons.logging.simplelog.dateTimeFormat</code> -
+ *     The date and time format to be used in the output messages.
+ *     The pattern describing the date and time format is the same that is
+ *     used in <code>java.text.SimpleDateFormat</code>. If the format is not
+ *     specified or is invalid, the default format is used.
+ *     The default format is <code>yyyy/MM/dd HH:mm:ss:SSS zzz</code>.</li>
  * </ul>
  *
  * <p>In addition to looking for system properties with the names specified
@@ -114,71 +84,48 @@ import org.apache.commons.logging.LogConfigurationException;
  * @author Rod Waldhoff
  * @author Robert Burrell Donkin
  *
- * @version $Id: DefaultLog.java 2344 2006-03-30 13:58:07Z  $
+ * @version (apache version) Id: SimpleLog.java 399221 2006-05-03 09:20:24Z dennisl
  */
-public class DefaultLog implements Log {
+public class DefaultLog implements Log, Serializable {
 
 
     // ------------------------------------------------------- Class Attributes
 
-    /** All system properties used by <code>Simple</code> start with this */
+    /** All system properties used by <code>SimpleLog</code> start with this */
     //static protected final String systemPrefix =
-    //    "com.arjuna.common.util.logging.";
+    //    "org.apache.commons.logging.simplelog.";
 
-   static final String LOG_ENABLED_PROPERTY = "com.arjuna.common.util.logging.default";
-   static final String LOG_LEVEL = "com.arjuna.common.util.logging.default.level";
-   static final String SHOW_LOG_NAME = "com.arjuna.common.util.logging.default.showLogName";
-   static final String SHOW_SHORT_LOG_NAME = "com.arjuna.common.util.logging.default.showShortLogName";
-   static final String SHOW_DATE = "com.arjuna.common.util.logging.default.showDate";
-   static final String LOG_FILE = "com.arjuna.common.util.logging.default.logFile";
-   static final String LOG_FILE_APPEND = "com.arjuna.common.util.logging.default.logFileAppend";
-   static final String LOG_FILE_DEFAULT = "error.log";
-
+    static final String LOG_ENABLED_PROPERTY = "com.arjuna.common.util.logging.default";
+    static final String LOG_LEVEL = "com.arjuna.common.util.logging.default.level";
+    static final String SHOW_LOG_NAME = "com.arjuna.common.util.logging.default.showLogName";
+    static final String SHOW_SHORT_LOG_NAME = "com.arjuna.common.util.logging.default.showShortLogName";
+    static final String SHOW_DATE = "com.arjuna.common.util.logging.default.showDate";
+    static final String LOG_FILE = "com.arjuna.common.util.logging.default.logFile";
+    static final String LOG_FILE_APPEND = "com.arjuna.common.util.logging.default.logFileAppend";
+    static final String LOG_FILE_DEFAULT = "error.log";
 
     /** Properties loaded from simplelog.properties */
     static protected final Properties simpleLogProps = new Properties();
 
+    /** The default format to use when formating dates */
+    static protected final String DEFAULT_DATE_TIME_FORMAT =
+        "yyyy/MM/dd HH:mm:ss:SSS zzz";
+
     /** Include the instance name in the log message? */
     static protected boolean showLogName = false;
     /** Include the short name ( last component ) of the logger in the log
-        message. Default to true - otherwise we'll be lost in a flood of
-        messages without knowing who sends them.
-    */
+     *  message. Defaults to true - otherwise we'll be lost in a flood of
+     *  messages without knowing who sends them.
+     */
     static protected boolean showShortName = true;
     /** Include the current time in the log message */
     static protected boolean showDateTime = true;
+    /** The date and time format to use in the log message */
+    static protected String dateTimeFormat = DEFAULT_DATE_TIME_FORMAT;
     /** Used to format times */
     static protected DateFormat dateFormatter = null;
 
     static PrintStream defaultLogFile = null;
-
-   static {
-       showLogName = getBooleanProperty( SHOW_LOG_NAME, showLogName);
-        showShortName = getBooleanProperty( SHOW_SHORT_LOG_NAME, showShortName);
-        showDateTime = getBooleanProperty( SHOW_DATE, showDateTime);
-        showLogName = getBooleanProperty( SHOW_LOG_NAME, showLogName);
-
-        //if(showDateTime) {
-            dateFormatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss:SSS zzz");
-        //}
-      String fileName = getStringProperty(LOG_FILE, LOG_FILE_DEFAULT);
-       boolean fileAppend = getBooleanProperty(LOG_FILE_APPEND, true);
-      try {
-         //File f = new File(fileName);
-         FileOutputStream fOut = new FileOutputStream(fileName, fileAppend);
-         defaultLogFile = new PrintStream(fOut, true);
-          defaultLogFile.println();
-          defaultLogFile.println();
-          defaultLogFile.println("---------------------------------------------------------------");
-          defaultLogFile.println("DEFAULT LOG, started " + dateFormatter.format(new Date()));
-          defaultLogFile.println("---------------------------------------------------------------");
-      }
-      catch (Exception e)
-      {
-         System.err.println("cannot set up default log for error messages to file " + fileName + ": " + e.getMessage());
-         e.printStackTrace();
-      }
-   }
 
     // ---------------------------------------------------- Log Level Constants
 
@@ -205,14 +152,14 @@ public class DefaultLog implements Log {
     // ------------------------------------------------------------ Initializer
 
     private static String getStringProperty(String name) {
-       String prop = commonPropertyManager.propertyManager.getProperty(name);
-            // if the property manager has no info set, use the system property
-            // and if this isn't set either, default to JAKARTA simple logging.
-            if (prop == null) {
-                prop = System.getProperty(name);
-            }
+        String prop = commonPropertyManager.propertyManager.getProperty(name);
+        // if the property manager has no info set, use the system property
+        // and if this isn't set either, default to JAKARTA simple logging.
+        if (prop == null) {
+            prop = System.getProperty(name);
+        }
         return (prop == null) ? simpleLogProps.getProperty(name) : prop;
-    }
+	}
 
     private static String getStringProperty(String name, String dephault) {
         String prop = getStringProperty(name);
@@ -224,22 +171,32 @@ public class DefaultLog implements Log {
         return (prop == null) ? dephault : "true".equalsIgnoreCase(prop);
     }
 
-    // initialize class attributes
-    // load properties file, if found.
-    // override with system properties.
+    // Initialize class attributes.
+    // Load properties file, if found.
+    // Override with system properties.
     static {
-        // add props from the resource simplelog.properties
-//        InputStream in = getResourceAsStream("simplelog.properties");
-//        if(null != in) {
-//            try {
-//                simpleLogProps.load(in);
-//                in.close();
-//            } catch(java.io.IOException e) {
-//                // ignored
-//            }
-//        }
 
+        showLogName = getBooleanProperty( SHOW_LOG_NAME, showLogName);
+        showShortName = getBooleanProperty( SHOW_SHORT_LOG_NAME, showShortName);
+        showDateTime = getBooleanProperty( SHOW_DATE, showDateTime);
+        dateFormatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss:SSS zzz");
 
+        String fileName = getStringProperty(LOG_FILE, LOG_FILE_DEFAULT);
+        boolean fileAppend = getBooleanProperty(LOG_FILE_APPEND, true);
+        try {
+            FileOutputStream fOut = new FileOutputStream(fileName, fileAppend);
+            defaultLogFile = new PrintStream(fOut, true);
+            defaultLogFile.println();
+            defaultLogFile.println();
+            defaultLogFile.println("---------------------------------------------------------------");
+            defaultLogFile.println("DEFAULT LOG, started " + dateFormatter.format(new Date()));
+            defaultLogFile.println("---------------------------------------------------------------");
+        }
+        catch (Exception e)
+        {
+            System.err.println("cannot set up default log for error messages to file " + fileName + ": " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 
@@ -249,8 +206,8 @@ public class DefaultLog implements Log {
     protected String logName = null;
     /** The current log level */
     protected int currentLogLevel;
-
-    private String prefix=null;
+    /** The short name of this simple log instance */
+    private String shortLogName = null;
 
 
     // ------------------------------------------------------------ Constructor
@@ -264,30 +221,16 @@ public class DefaultLog implements Log {
 
         logName = name;
 
-        // set initial log level
+        // Set initial log level
         // Used to be: set default log level to ERROR
         // IMHO it should be lower, but at least info ( costin ).
-        setLevel(DefaultLog.LOG_LEVEL_DEBUG);
+        setLevel(DefaultLog.LOG_LEVEL_INFO);
 
-        // set log level from properties
-        /*String lvl = getStringProperty(systemPrefix + "log." + logName);
-        int i = String.valueOf(name).lastIndexOf(".");
-        while(null == lvl && i > -1) {
-            name = name.substring(0,i);
-            lvl = getStringProperty(systemPrefix + "log." + name);
-            i = String.valueOf(name).lastIndexOf(".");
-        }
-
+        // Set log level from properties
+        String lvl = commonPropertyManager.propertyManager.getProperty(LOG_LEVEL, null);
         if(null == lvl) {
-            lvl =  getStringProperty(systemPrefix + "defaultlog");
+            lvl =  System.getProperty(LOG_LEVEL + "info");
         }
-        */
-       String lvl = commonPropertyManager.propertyManager.getProperty(LOG_LEVEL, null);
-      // if the property manager has no info set, use the system property
-      // and if this isn't set either, default to false.
-      if (lvl == null) {
-                lvl = System.getProperty(LOG_LEVEL, "info");
-            }
 
         if("all".equalsIgnoreCase(lvl)) {
             setLevel(DefaultLog.LOG_LEVEL_ALL);
@@ -339,19 +282,23 @@ public class DefaultLog implements Log {
     /**
      * <p> Do the actual logging.
      * This method assembles the message
-     * and then prints to a file.
+     * and then calls <code>write()</code> to cause it to be written.</p>
+     *
+     * @param type One of the LOG_LEVEL_XXX constants defining the log level
+     * @param message The message itself (typically a String)
+     * @param t The exception whose stack trace should be logged
      */
     protected void log(int type, Object message, Throwable t) {
-        // use a string buffer for better performance
+        // Use a string buffer for better performance
         StringBuffer buf = new StringBuffer();
 
-        // append date-time if so configured
+        // Append date-time if so configured
         if(showDateTime) {
             buf.append(dateFormatter.format(new Date()));
             buf.append(" ");
         }
 
-        // append a readable representation of the log leve
+        // Append a readable representation of the log level
         switch(type) {
             case DefaultLog.LOG_LEVEL_TRACE: buf.append("[TRACE] "); break;
             case DefaultLog.LOG_LEVEL_DEBUG: buf.append("[DEBUG] "); break;
@@ -361,22 +308,23 @@ public class DefaultLog implements Log {
             case DefaultLog.LOG_LEVEL_FATAL: buf.append("[FATAL] "); break;
         }
 
-        // append the name of the log instance if so configured
+        // Append the name of the log instance if so configured
  	if( showShortName) {
-            if( prefix==null ) {
-                // cut all but the last component of the name for both styles
-                prefix = logName.substring( logName.lastIndexOf(".") +1) + " - ";
-                prefix = prefix.substring( prefix.lastIndexOf("/") +1) + "-";
+            if( shortLogName==null ) {
+                // Cut all but the last component of the name for both styles
+                shortLogName = logName.substring(logName.lastIndexOf(".") + 1);
+                shortLogName =
+                    shortLogName.substring(shortLogName.lastIndexOf("/") + 1);
             }
-            buf.append( prefix );
+            buf.append(String.valueOf(shortLogName)).append(" - ");
         } else if(showLogName) {
             buf.append(String.valueOf(logName)).append(" - ");
         }
 
-        // append the message
+        // Append the message
         buf.append(String.valueOf(message));
 
-        // append stack trace if not null
+        // Append stack trace if not null
         if(t != null) {
             buf.append(" <");
             buf.append(t.toString());
@@ -389,8 +337,25 @@ public class DefaultLog implements Log {
             buf.append(sw.toString());
         }
 
+        // Print to the appropriate destination
+        write(buf);
+
+    }
+
+
+    /**
+     * <p>Write the content of the message accumulated in the specified
+     * <code>StringBuffer</code> to the appropriate output destination.  The
+     * default implementation writes to <code>System.err</code>.</p>
+     *
+     * @param buffer A <code>StringBuffer</code> containing the accumulated
+     *  text to be logged
+     */
+    protected void write(StringBuffer buffer) {
+
         // print to log file.
-        defaultLogFile.println(buf.toString());
+        defaultLogFile.println(buffer.toString());
+
     }
 
 
@@ -410,7 +375,11 @@ public class DefaultLog implements Log {
 
 
     /**
-     * <p> Log a message with debug log level.</p>
+     * Logs a message with
+     * <code>org.apache.commons.logging.impl.SimpleLog.LOG_LEVEL_DEBUG</code>.
+     *
+     * @param message to log
+     * @see org.apache.commons.logging.Log#debug(Object)
      */
     public final void debug(Object message) {
 
@@ -421,7 +390,12 @@ public class DefaultLog implements Log {
 
 
     /**
-     * <p> Log an error with debug log level.</p>
+     * Logs a message with
+     * <code>org.apache.commons.logging.impl.SimpleLog.LOG_LEVEL_DEBUG</code>.
+     *
+     * @param message to log
+     * @param t log this cause
+     * @see org.apache.commons.logging.Log#debug(Object, Throwable)
      */
     public final void debug(Object message, Throwable t) {
 
@@ -432,7 +406,11 @@ public class DefaultLog implements Log {
 
 
     /**
-     * <p> Log a message with debug log level.</p>
+     * Logs a message with
+     * <code>org.apache.commons.logging.impl.SimpleLog.LOG_LEVEL_TRACE</code>.
+     *
+     * @param message to log
+     * @see org.apache.commons.logging.Log#trace(Object)
      */
     public final void trace(Object message) {
 
@@ -443,7 +421,12 @@ public class DefaultLog implements Log {
 
 
     /**
-     * <p> Log an error with debug log level.</p>
+     * Logs a message with
+     * <code>org.apache.commons.logging.impl.SimpleLog.LOG_LEVEL_TRACE</code>.
+     *
+     * @param message to log
+     * @param t log this cause
+     * @see org.apache.commons.logging.Log#trace(Object, Throwable)
      */
     public final void trace(Object message, Throwable t) {
 
@@ -454,7 +437,11 @@ public class DefaultLog implements Log {
 
 
     /**
-     * <p> Log a message with info log level.</p>
+     * Logs a message with
+     * <code>org.apache.commons.logging.impl.SimpleLog.LOG_LEVEL_INFO</code>.
+     *
+     * @param message to log
+     * @see org.apache.commons.logging.Log#info(Object)
      */
     public final void info(Object message) {
 
@@ -465,7 +452,12 @@ public class DefaultLog implements Log {
 
 
     /**
-     * <p> Log an error with info log level.</p>
+     * Logs a message with
+     * <code>org.apache.commons.logging.impl.SimpleLog.LOG_LEVEL_INFO</code>.
+     *
+     * @param message to log
+     * @param t log this cause
+     * @see org.apache.commons.logging.Log#info(Object, Throwable)
      */
     public final void info(Object message, Throwable t) {
 
@@ -476,7 +468,11 @@ public class DefaultLog implements Log {
 
 
     /**
-     * <p> Log a message with warn log level.</p>
+     * Logs a message with
+     * <code>org.apache.commons.logging.impl.SimpleLog.LOG_LEVEL_WARN</code>.
+     *
+     * @param message to log
+     * @see org.apache.commons.logging.Log#warn(Object)
      */
     public final void warn(Object message) {
 
@@ -487,7 +483,12 @@ public class DefaultLog implements Log {
 
 
     /**
-     * <p> Log an error with warn log level.</p>
+     * Logs a message with
+     * <code>org.apache.commons.logging.impl.SimpleLog.LOG_LEVEL_WARN</code>.
+     *
+     * @param message to log
+     * @param t log this cause
+     * @see org.apache.commons.logging.Log#warn(Object, Throwable)
      */
     public final void warn(Object message, Throwable t) {
 
@@ -498,7 +499,11 @@ public class DefaultLog implements Log {
 
 
     /**
-     * <p> Log a message with error log level.</p>
+     * Logs a message with
+     * <code>org.apache.commons.logging.impl.SimpleLog.LOG_LEVEL_ERROR</code>.
+     *
+     * @param message to log
+     * @see org.apache.commons.logging.Log#error(Object)
      */
     public final void error(Object message) {
 
@@ -509,7 +514,12 @@ public class DefaultLog implements Log {
 
 
     /**
-     * <p> Log an error with error log level.</p>
+     * Logs a message with
+     * <code>org.apache.commons.logging.impl.SimpleLog.LOG_LEVEL_ERROR</code>.
+     *
+     * @param message to log
+     * @param t log this cause
+     * @see org.apache.commons.logging.Log#error(Object, Throwable)
      */
     public final void error(Object message, Throwable t) {
 
@@ -520,7 +530,11 @@ public class DefaultLog implements Log {
 
 
     /**
-     * <p> Log a message with fatal log level.</p>
+     * Log a message with
+     * <code>org.apache.commons.logging.impl.SimpleLog.LOG_LEVEL_FATAL</code>.
+     *
+     * @param message to log
+     * @see org.apache.commons.logging.Log#fatal(Object)
      */
     public final void fatal(Object message) {
 
@@ -531,7 +545,12 @@ public class DefaultLog implements Log {
 
 
     /**
-     * <p> Log an error with fatal log level.</p>
+     * Logs a message with
+     * <code>org.apache.commons.logging.impl.SimpleLog.LOG_LEVEL_FATAL</code>.
+     *
+     * @param message to log
+     * @param t log this cause
+     * @see org.apache.commons.logging.Log#fatal(Object, Throwable)
      */
     public final void fatal(Object message, Throwable t) {
 
@@ -636,11 +655,13 @@ public class DefaultLog implements Log {
         if (classLoader == null) {
             try {
                 // Are we running on a JDK 1.2 or later system?
-                Method method = Thread.class.getMethod("getContextClassLoader", (Class[])null);
+                Method method = Thread.class.getMethod("getContextClassLoader",
+                        (Class[]) null);
 
                 // Get the thread context class loader (if there is one)
                 try {
-                    classLoader = (ClassLoader)method.invoke(Thread.currentThread(), (Object[])null);
+                    classLoader = (ClassLoader)method.invoke(Thread.currentThread(),
+                            (Object[]) null);
                 } catch (IllegalAccessException e) {
                     ;  // ignore
                 } catch (InvocationTargetException e) {

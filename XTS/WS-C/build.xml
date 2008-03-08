@@ -64,7 +64,7 @@
     <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
 
     <property name="jta.lib.jars" value="jbossjta.jar"/>
-    <property name="jta.ext.jars" value="jbossts-common.jar commons-logging.jar"/>
+    <property name="jta.ext.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
     <!--
     <property name="xts.ext.jars" value="stax-api-1.0.jar wstx-asl-2.0.3.jar"/>
     -->

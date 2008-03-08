@@ -45,7 +45,7 @@ set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%JBOSSTS_HOME%\bin\tsmx-tools.jar
 set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%JBOSSTS_HOME%\etc\
 
 set EXT_CLASSPATH=%JBOSSTS_HOME%\lib\ext\jbossts-common.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\commons-logging.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\commons-logging-1.1.jar
 set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\concurrent.jar
 set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\connector-api.jar
 set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\jdbc2_0-stdext.jar

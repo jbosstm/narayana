@@ -49,7 +49,7 @@
 
     <property name="jta.lib.jars" value="jbossjta.jar"/>
     <property name="jta.ext.jars" value="jbossts-common.jar"/>
-    <property name="jta.ext.compile.jars" value="commons-logging.jar jta-1_1-classes.zip"/>
+    <property name="jta.ext.compile.jars" value="commons-logging-1.1.jar jta-1_1-classes.zip"/>
     <property name="xts.ext.compile.jars" value="servlet.jar stax-api-1.0.jar"/>
 
     <property name="wsas.libs" value="wsas.jar"/>
