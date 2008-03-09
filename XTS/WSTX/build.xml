@@ -28,14 +28,28 @@
 	<!-- Load Build Properties File -->
 	<property file="${com.arjuna.mw.wstx.properties}"/>
 
-	<!-- Set internal property defaults -->
+	<!-- Set hostname and port property defaults -->
+	<property environment="env"/>
+	<property name="jboss.dir" value="${env.JBOSS_HOME}"/>
+	<property name="deploy.dir" value="${jboss.dir}/server/default/deploy"/>
+	<property name="hostname" value="localhost"/>
+	<property name="port" value="8080"/>
+
 	<!-- Path names -->
 	<property name="com.arjuna.mwlabs.wstx.src" value="classes"/>
 	<property name="com.arjuna.mwlabs.wstx.dest.root" value="build"/>
 	<property name="com.arjuna.mwlabs.wstx.dest" value="build/classes"/>
-	<property name="com.arjuna.mwlabs.wstx.war.dest" value="build/webapps"/>
+	<property name="com.arjuna.mwlabs.wstx.webapps.dest" value="build/webapps"/>
 	<property name="com.arjuna.mwlabs.wstx.jar.dest" value="build/lib"/>
 	<property name="com.arjuna.mwlabs.wstx.htdocs.dest" value="build/htdocs"/>
+
+	<property name="com.arjuna.mwlabs.wstx.tests.src" value="tests/classes"/>
+	<property name="com.arjuna.mwlabs.wstx.tests.dd" value="tests/dd"/>
+	<property name="com.arjuna.mwlabs.wstx.tests.dest.root" value="tests/build"/>
+	<property name="com.arjuna.mwlabs.wstx.tests.dest" value="tests/build/classes"/>
+	<property name="com.arjuna.mwlabs.wstx.tests.dd.dest" value="tests/build/dd"/>
+	<property name="com.arjuna.mwlabs.wstx.tests.webapps.dest" value="tests/build/webapps"/>
+	<property name="com.arjuna.mwlabs.wstx.tests.jar.dest" value="tests/build/lib"/>
 
     <property name="com.arjuna.buildsystem.dir" location="../../antbuildsystem"/>
     <property name="com.arjuna.jta.install" location="../../install"/>
@@ -56,6 +70,17 @@
     <property name="wsc.libs" value="ws-c.jar"/>
     <property name="wscf.libs" value="wscf.jar"/>
     <property name="wst.libs" value="ws-t.jar"/>
+    <property name="wstx.libs" value="${com.arjuna.mwlabs.ts.modulename}.jar"/>
+
+    <property name="tests.libs" value="junit.jar"/>
+    <!-- can we not just get away with wstx and junit?
+    <property name="tests.all.libs" value="${wsas.libs} ${wsc.libs} ${wscf.libs} ${wst.libs} ${wstx.libs} ${tests.libs} "/>
+    -->
+    <property name="tests.all.libs" value="${wsas.libs} ${wsc.libs} ${wscf.libs} ${wst.libs} ${wstx.libs} ${tests.libs} "/>
+
+    <path id="com.arjuna.mwlabs.wstx.tests.lib.path">
+        <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
+    </path>
 
     <!-- Define classpath builder task -->
     <path id="com.arjuna.buildsystem.classpath">
@@ -77,7 +102,7 @@
 	<property name="com.arjuna.mwlabs.wscf.jar.dest" value="../WSCF/build/lib"/>
 	<property name="com.arjuna.mwlabs.wst.jar.dest" value="../WS-T/build/dev/lib"/>
 
-	<path id="com.arjuna.mwlabs.wstx.lib.classpath">
+    <path id="com.arjuna.mwlabs.wstx.lib.classpath">
         <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
         <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars} ${jta.ext.compile.jars}"/>
         <fileset dir="${com.arjuna.xts.ext}" includes="${xts.ext.compile.jars}"/>
@@ -95,7 +120,7 @@
 		</tstamp>
 		<!-- Make the destination directory -->
 		<mkdir dir="${com.arjuna.mwlabs.wstx.dest}"/>
-		<mkdir dir="${com.arjuna.mwlabs.wstx.war.dest}"/>
+		<mkdir dir="${com.arjuna.mwlabs.wstx.webapps.dest}"/>
 	</target>
 
 	<!-- Compilation targets -->
@@ -126,7 +151,7 @@
 	<property name="com.arjuna.mwlabs.wstx.htdocs.list" value="com.arjuna.mw.*"/>
 
 	<target name="com.arjuna.mw.wstx.war" depends="com.arjuna.mw.wstx.jar">
-	  <war warfile="${com.arjuna.mwlabs.wstx.war.dest}/${com.arjuna.mwlabs.ts.modulename}.war" webxml="xml/wstx_web-app.xml">
+	  <war warfile="${com.arjuna.mwlabs.wstx.webapps.dest}/${com.arjuna.mwlabs.ts.modulename}.war" webxml="xml/wstx_web-app.xml">
         <manifest>
             <attribute name="Class-Path" value="${com.arjuna.mwlabs.ts.modulename}.jar"/>
         </manifest>
@@ -198,6 +223,67 @@
 
         </target>
 
+	<target name="com.arjuna.mwlabs.wstx.tests.init" depends="com.arjuna.mw.wstx.clean">
+		<!-- make the test destination directories -->
+		<mkdir dir="${com.arjuna.mwlabs.wstx.tests.dest.root}"/>
+		<mkdir dir="${com.arjuna.mwlabs.wstx.tests.dest}"/>
+		<mkdir dir="${com.arjuna.mwlabs.wstx.tests.dd.dest}"/>
+		<mkdir dir="${com.arjuna.mwlabs.wstx.tests.webapps.dest}"/>
+		<mkdir dir="${com.arjuna.mwlabs.wstx.tests.jar.dest}"/>
+	</target>
+
+	<target name="com.arjuna.mwlabs.wstx.tests.compile" depends="com.arjuna.mwlabs.wstx.tests.init, com.arjuna.mw.wstx.war">
+	  <javac destdir="${com.arjuna.mwlabs.wstx.tests.dest}" debug="yes" optimize="no">
+	    <classpath>
+	      <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
+	      <path refid="com.arjuna.mwlabs.wstx.tests.lib.path"/>
+	      <path refid="com.arjuna.mwlabs.wstx.lib.classpath"/>
+	    </classpath>
+	    <src path="${com.arjuna.mwlabs.wstx.tests.src}"/>
+	  </javac>
+	</target>
+
+	<target name="com.arjuna.mwlabs.wstx.tests.webapps" depends="com.arjuna.mwlabs.wstx.tests.compile">
+	  <copy file="${com.arjuna.mwlabs.wstx.tests.dd}/wstx-tests_web-app.xml" tofile="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app.xml">
+	    <filterset>
+	      <filter token="hostname" value="${hostname}"/>
+	      <filter token="port" value="${port}"/>
+	    </filterset>
+	  </copy>
+	  <war warfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.war" webxml="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app.xml">
+	    <manifest>
+	      <attribute name="Class-Path" value="${tests.all.libs}"/>
+	    </manifest>
+	    <classes dir="${com.arjuna.mwlabs.wstx.tests.dest}"/>
+	  </war>
+	  <ear earfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.ear" appxml="${com.arjuna.mwlabs.wstx.tests.dd}/wstx-tests_application.xml">
+	    <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
+	    <fileset dir="${com.arjuna.xts.ext}" includes="${xts.ext.jars} ${tests.libs}"/>
+	    <!-- we don't need to include these libs if we are
+	         deploying to JBossAs. The XTS libs are already
+	         deployed as a sar and the JTA lib is in the app
+	         server lib directory
+
+
+	    <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
+	    <fileset dir="${com.arjuna.mwlabs.wsas.jar.dest}" includes="${wsas.libs}"/>
+	    <fileset dir="${com.arjuna.mwlabs.wsc.jar.dest}" includes="${wsc.libs}"/>
+	    <fileset dir="${com.arjuna.mwlabs.wscf.jar.dest}" includes="${wscf.libs}"/>
+	    <fileset dir="${com.arjuna.mwlabs.wst.jar.dest}" includes="${wst.libs}"/>
+	    <fileset dir="${com.arjuna.mwlabs.wstx.jar.dest}" includes="${wstx.libs}"/>
+	    -->
+	    <fileset dir="${com.arjuna.mwlabs.wstx.tests.webapps.dest}" includes="wstx-tests.war"/>
+	  </ear>
+	</target>
+
+	<target name="com.arjuna.mwlabs.wstx.tests.deploy" depends="com.arjuna.mwlabs.wstx.tests.webapps, com.arjuna.mwlabs.wstx.tests.undeploy">
+	  <copy file="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.ear" tofile="${deploy.dir}/wstx-tests.ear"/>
+	</target>
+
+	<target name="com.arjuna.mwlabs.wstx.tests.undeploy">
+	  <delete file="${deploy.dir}/wstx-tests.ear"/>
+	</target>
+
 	<!-- Clean targets -->
 	<target name="com.arjuna.mw.wstx.clean">
 		<echo message="Cleaning module"/>
@@ -206,6 +292,8 @@
 		<delete dir="${com.arjuna.mwlabs.wstx.htdocs.dest}"/>
 		<delete file="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
 		<delete file="${com.arjuna.mwlabs.wstx.info.dest}"/>
+		<!-- delete the test destination directories -->
+		<delete dir="${com.arjuna.mwlabs.wstx.tests.dest.root}"/>
 	</target>
 
 	<!-- Short target names -->
@@ -213,4 +301,7 @@
 	<target name="jar" depends="com.arjuna.mw.wstx.jar"/>
 	<target name="war" depends="com.arjuna.mw.wstx.war"/>
 	<target name="clean" depends="com.arjuna.mw.wstx.clean"/>
+	<target name="tests-webapps" depends="com.arjuna.mwlabs.wstx.tests.webapps"/>
+	<target name="tests-deploy" depends="com.arjuna.mwlabs.wstx.tests.deploy"/>
+	<target name="tests-undeploy" depends="com.arjuna.mwlabs.wstx.tests.undeploy"/>
 </project>

@@ -19,20 +19,17 @@
   @author JBoss Inc.
 -->
 
-<test-definitions>
-	<test name="com.arjuna.wst.tests.junit.basic.NullCommitTransaction">
-		<parameters/>
-	</test>
-	<test name="com.arjuna.wst.tests.junit.basic.NullRollbackTransaction">
-		<parameters/>
-	</test>
-	<test name="com.arjuna.wst.tests.junit.basic.NestedTransaction">
-		<parameters/>
-	</test>
-	<test name="com.arjuna.wst.tests.junit.basic.SingleParticipant">
-		<parameters/>
-	</test>
-	<test name="com.arjuna.wst.tests.junit.basic.SynchronizationTransaction">
-		<parameters/>
-	</test>
-</test-definitions>
+<!DOCTYPE application PUBLIC "-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN" "http://java.sun.com/dtd/application_1_3.dtd">
+
+<application>
+    <display-name>Arjuna WSTX Tests</display-name>
+
+    <description>Arjuna WSTX Tests</description>
+
+    <module>
+        <web>
+            <web-uri>wstx-tests.war</web-uri>
+            <context-root>/wstx-tests</context-root>
+        </web>
+    </module>
+</application>
