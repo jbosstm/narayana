@@ -252,7 +252,10 @@ public class UserTransactionImple extends UserTransaction
 		try
 		{
 			ctx = (TxContextImple) _ctxManager.suspend();
-			id = ctx.identifier();
+            if (ctx == null) {
+                throw new UnknownTransactionException();
+            }
+            id = ctx.identifier();
 
 			/*
 			 * By default the completionParticipantURL won't be set for an interposed (imported)
