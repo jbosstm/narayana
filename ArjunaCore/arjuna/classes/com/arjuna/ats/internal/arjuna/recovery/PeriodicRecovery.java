@@ -67,10 +67,16 @@ import com.arjuna.common.util.logging.*;
  * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_7 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_7] - {0} has inappropriate value ( {1} )
  * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_8 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_8] - Invalid port specified {0}
  * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_9 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_9] - Could not create recovery listener {0}
-*/
+ * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_10 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_10] - Ignoring request to scan because RecoveryManager state is: {0}
+ */
 
 public class PeriodicRecovery extends Thread
 {
+
+   public static enum State
+   {
+       created, active, terminated, suspended, scanning
+   }
 
    public PeriodicRecovery (boolean threaded)
    {
@@ -103,9 +109,25 @@ public class PeriodicRecovery extends Thread
       _listener.start();
    }
 
+    public State getStatus ()
+    {
+	synchronized (_currentState)
+	    {
+		return _currentState;
+	    }
+    }
+
+    public void setStatus (State s)
+    {
+	synchronized (_currentState)
+	    {
+		_currentState = s;
+	    }
+    }
+
    public void shutdown ()
    {
-      _currentState = State.terminated;
+       setStatus(State.terminated);
 
       this.interrupt();
    }
@@ -114,7 +136,7 @@ public class PeriodicRecovery extends Thread
    {
        synchronized (_signal)
        {
-	   _currentState = State.suspended;
+	   setStatus(State.suspended);
 	   
 	   this.interrupt();
 	   
@@ -138,9 +160,9 @@ public class PeriodicRecovery extends Thread
         * on the lock.
         */
        
-       if (_currentState == State.suspended)
+       if (getStatus() == State.suspended)
        {
-           _currentState = State.active;
+           setStatus(State.active);
            
            synchronized (_suspendLock)
            {
@@ -195,6 +217,8 @@ public class PeriodicRecovery extends Thread
 
        do
        {
+	   checkSuspended();
+
 	   finished = doWork(true);
 
        } while (!finished);
@@ -212,9 +236,28 @@ public class PeriodicRecovery extends Thread
      * <code>false</code> otherwise.
      */
 
-    public final boolean doWork (boolean periodic)
+    public final synchronized boolean doWork (boolean periodic)
     {
 	boolean interrupted = false;
+
+	/*
+	 * If we're suspended or already scanning, then ignore.
+	 */
+	
+	synchronized (_currentState)
+	{
+	    if (getStatus() != State.active)
+	    {
+		if (tsLogger.arjLoggerI18N.isInfoEnabled())
+		{
+		    tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_10", new Object[]{getStatus()});
+		}
+
+		return false;
+	    }
+
+	    setStatus(State.scanning);
+	}
 
 	tsLogger.arjLogger.info("Periodic recovery - first pass <" +
 				_theTimestamper.format(new Date()) + ">" );
@@ -255,33 +298,15 @@ public class PeriodicRecovery extends Thread
 	    interrupted = true;
 	}
 
-	if (_currentState == State.terminated)
+	if (getStatus() == State.terminated)
 	{
 	    return true;
 	}
 	else
 	{
-	    if (_currentState == State.suspended)
-	    {
-		synchronized (_signal)
-		{
-		    _signal.notify();
-		}
+	    checkSuspended();
 
-		while (_currentState == State.suspended)
-		{
-		    try
-		    {
-			synchronized (_suspendLock)
-			{
-			    _suspendLock.wait();
-			}
-		    }
-		    catch (InterruptedException ex)
-		    {
-		    }
-		}
-	    }
+	    setStatus(State.scanning);
 	}
 
 	tsLogger.arjLogger.info("Periodic recovery - second pass <"+
@@ -311,30 +336,17 @@ public class PeriodicRecovery extends Thread
 	    interrupted = true;
 	}
 
-	if (_currentState == State.terminated)
+	if (getStatus() == State.terminated)
 	{
 	    return true;
 	}
 	else
 	{
-	    synchronized (_signal)
-	    {
-		_signal.notify();
-	    }
+	    checkSuspended();
 
-	    while (_currentState == State.suspended)
-	    {
-		try
-		{
-		    synchronized (_suspendLock)
-		    {
-			_suspendLock.wait();
-		    }
-		}
-		catch (InterruptedException ex)
-		{
-		}
-	    }
+	    // make sure we're scanning again.
+
+	    setStatus(State.active);
 	}
 
 	return false; // keep going
@@ -473,15 +485,37 @@ public class PeriodicRecovery extends Thread
       }
    }
 
+    private void checkSuspended ()
+    {
+	synchronized (_signal)
+	{
+	    _signal.notify();
+	}
+
+	if (getStatus() == State.suspended)
+	{
+	    while (getStatus() == State.suspended)
+	    {
+		try
+		{
+		    synchronized (_suspendLock)
+		    {
+			_suspendLock.wait();
+		    }
+		}
+		catch (InterruptedException ex)
+		{
+		}
+	    }
+
+	    setStatus(State.active);
+	}
+    }
+
    private final void initialise ()
    {
-      _recoveryModules = new Vector();
-      _currentState = State.active;
-   }
-
-   private static enum State
-   {
-       created, active, terminated, suspended
+       _recoveryModules = new Vector();
+       setStatus(State.active);
    }
    
    // this refers to the modules specified in the recovery manager
