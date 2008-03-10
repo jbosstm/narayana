@@ -88,43 +88,66 @@ localhost address by default. This is inappropriate for distributed transactions
 so please ensure the server is bound to a alternative address.
 
 
-Web Services Transactions
--------------------------
+                         Web Services Transactions
+                         -------------------------
 
-For the Web Services Transactions component (also known as the XML Transaction Service, or XTS),
-in order to create a stand-alone coordinator:
+Deployment
+----------
 
-(1) create a separate installation of your application server to the one you
-will use for your clients/services.
+JBossAS 4.2
 
-(2) edit the build.xml to point to this installation.
+The Web Services Transactions component (also known as the XML
+Transaction Service, or XTS) currently has to be deployed into JBossAS
+4.2 embedded in an application ear file. The XTS demo application
+provides an example of how to deploy XTS in this manner. See file
+demo/BUILDING in the installed XTS tree for instructions on how to
+build the demo for JBossAS 4.2. Read ant script demo/build.xml to
+identify how the XTS code is packaged in the demo ear.
 
-You need to set hostname, port and deploy.dir parameters to those for the
-application server used for the stand-alone coordinator.
+When deploying into JBossAS 4.2 it is possible to factor out the
+coordinator component of XTS to run in a separate application server.
+However, in this case the XTS code must still be packaged with the
+application so that it can invoke the XTS service remote APIs and
+implement the client-side services to which the coordinator and other
+XTS services reply. See the coordinator sub directory of the XTS
+installed tree for details of how to build and deploy a stand alone
+coordinator.
 
-(3) run ant with the deploy target that matches your application server
-(deploy-webmethods, deploy-weblogic or deploy-jboss).
+JBossAS 5.0
 
-(4) when running clients and services, edit the wstx.xml file in their
-deployment to add
+In JBossAS 5.0 XTS is deployed as a service archive (sar). Follow the
+steps listed below in order to build and deploy this sar
 
-	    <property
-	    name="com.arjuna.mw.wst.coordinatorURL"
-	    value="http://@hostname@:@port@/xts/soap/ActivationCoordinator"/>
+(1) set environment variable JBOSS_HOME to point to the root firectory
+of your JBossAS5.0 installation.
 
-	    <property
-	    name="com.arjuna.mw.wst.ba.terminatorURL"
-	    value="http://@hostname@:@port@/xts/soap/TerminatorParticipant"/>
+(2) change to the sar subdirectory in the XTS source tree
 
-where hostname and port are replaced with the appropriate values.
+(3) execute ant deploy
 
-(5) make sure you start  your coordinator deployment before any clients or
-services that may want to use it.
+(n.b. the instructions above assume you have first built the rest of
+the XTS code by executing command 'ant clean install' in the XTS
+source root directory).
 
-We recommend that you run through the XTS trailmap in order to understand how to build and use
-transaction-aware Web Services, before deciding whether or not to use a stand-alone coordinator service.
+Note that use of a stand alone coordinator is not currently supported
+in JbossAS 5.0Beta4 although it should be possible to modify the sar
+build script to generate a local (application) client-side sar and a
+stand alone service-side sar. Study the instructions and build script
+in the coordinator subdirectory of the XTS installed tree for hints as
+to how to achieve this.
 
-Note, the following issues exist with the XTS trailmap shipped with JBossTS
+
+XTS Trailmap Documentation
+--------------------------
+
+We recommend that you run through the XTS trailmap in order to
+understand how to build and use transaction-aware Web Services, before
+deciding whether or not to use a stand alone coordinator service. The
+trail map web pages are located in the htdocs subdirectory of the XTS
+installed tree.
+
+Note, the  following issues exist  with the XTS trailmap  shipped with
+JBossTS
 
 (i) The XTS trailmap demo application generates warning messages on the
 application server console if it is run in JBoss 4.0.4GA or 4.0.5GA.  These
