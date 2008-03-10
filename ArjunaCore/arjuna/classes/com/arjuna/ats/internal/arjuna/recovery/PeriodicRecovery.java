@@ -72,12 +72,26 @@ import com.arjuna.common.util.logging.*;
 
 public class PeriodicRecovery extends Thread
 {
-
+    
+/*
+ * TODO uncomment for JDK 1.5.
+ * 
    public static enum State
    {
        created, active, terminated, suspended, scanning
    }
-
+*/
+    public class State
+    {
+        public static final int created = 0;
+        public static final int active = 1;
+        public static final int terminated = 2;
+        public static final int suspended = 3;
+        public static final int scanning  = 4;
+        
+        private State () {}
+    }
+    
    public PeriodicRecovery (boolean threaded)
    {
       initialise();
@@ -109,17 +123,17 @@ public class PeriodicRecovery extends Thread
       _listener.start();
    }
 
-    public State getStatus ()
+    public int getStatus ()
     {
-	synchronized (_currentState)
+	synchronized (_stateLock)
 	    {
 		return _currentState;
 	    }
     }
 
-    public void setStatus (State s)
+    public void setStatus (int s)
     {
-	synchronized (_currentState)
+	synchronized (_stateLock)
 	    {
 		_currentState = s;
 	    }
@@ -244,7 +258,7 @@ public class PeriodicRecovery extends Thread
 	 * If we're suspended or already scanning, then ignore.
 	 */
 	
-	synchronized (_currentState)
+	synchronized (_stateLock)
 	{
 	    if (getStatus() != State.active)
 	    {
@@ -533,8 +547,9 @@ public class PeriodicRecovery extends Thread
    private static final int _defaultRecoveryPeriod = 120;
 
    // exit thread flag
-   private static State _currentState = State.created;
-
+   private static int _currentState = State.created;
+   private static Object _stateLock = new Object();
+   
    private static SimpleDateFormat _theTimestamper = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 
     private static ServerSocket _socket = null;
