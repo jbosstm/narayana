@@ -76,6 +76,7 @@ public class MultiClose extends TestCase
         } catch (SystemException ex) {
             // we should get here
             assertTrue(p.passed());
+            return;
         } catch (Exception eouter) {
             try {
                 uba.cancel();

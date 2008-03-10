@@ -68,8 +68,8 @@ public class MultiCancel extends TestCase
 	    try {
 	    uba.cancel();
         } catch (SystemException ex) {
-            // we should get here
-            assertTrue(p.passed());
+            // failure will result in heuristic hazard warning message but wil not throw an exception
+            throw ex;
         } catch (Exception eouter) {
             try {
                 uba.cancel();
@@ -77,6 +77,6 @@ public class MultiCancel extends TestCase
             }
             throw eouter;
         }
-        fail("expected SystemError");
+        assertTrue(p.passed());
     }
 }
