@@ -138,9 +138,9 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
 	    need the jacorb and iiop libs which are in server/all/lib
 	-->
 
-        <property name="jboss.libs" value="jboss-system-jmx.jar"/>
+        <property name="jboss.libs" value="jboss-common.jar jboss-system.jar jboss-jmx.jar jboss-logging-spi.jar jboss-common-core.jar jboss-j2se.jar jboss-system-jmx.jar"/>
         <property name="jboss.client.libs" value="jbossall-client.jar"/>
-        <property name="jboss.server.jta.libs" value=""/>
+        <property name="jboss.server.jta.libs" value="jmx-adaptor-plugin.jar jboss-transaction.jar"/>
         <property name="jboss.server.jts.libs" value="jboss-iiop.jar jacorb.jar"/>
 
         <condition property="jboss.server.libs" value="${jboss.server.jta.libs} ${jboss.server.jts.libs}">
@@ -183,7 +183,7 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
             classpathref="build.classpath"
             />
 
-		<touch file="${com.arjuna.mwlabs.ts.jbossatx.dest}/built_using_java_${java.specification.version}"/>		
+		<touch file="${com.arjuna.mwlabs.ts.jbossatx.dest}/built_using_java_${java.specification.version}"/>
 
 	</target>
 
