@@ -104,31 +104,6 @@
         <jar destfile="${build.dir}/config.jar" basedir="${xts.home}/conf"/>
      </target>
 
-     <target name="webmethods-build" depends="init">
-       <property name="webinf.dir" location="${build.webmethods.dir}/WEB-INF"/>
-       <property name="webinf.lib.dir" location = "${webinf.dir}/lib"/>
-
-       <mkdir dir="${build.webmethods.dir}"/>
-       <mkdir dir="${webinf.dir}"/>
-       <mkdir dir="${webinf.lib.dir}"/>
-
-       <filter token="hostname" value="${hostname}"/>
-       <filter token="port" value="${port}"/>
-       <filter token="urlstub" value="${webmethods.urlstub}"/>
-
-       <copy file="${xts.coord.dd.dir}/webMethods-web-app.xml"
-           tofile="${webinf.dir}/web.xml" filtering="true"/>
-       <copy file="${xts.coord.dd.dir}/glue-config.xml"
-           todir="${webinf.dir}"/>
-       <jar destfile="${build.dir}/config.jar" basedir="config"/>
-
-       <copy todir="${webinf.lib.dir}">
-         <fileset dir="${lib.dir}" includes="*.jar"/>
-         <fileset dir="${ext.dir}" includes="${ext.package}"/>
-         <fileset dir="${build.dir}" includes="config.jar"/>
-       </copy>
-     </target>
-
      <target name="jboss-ear" depends="webapps">
         <ear earfile="${build.webapps.dir}/xts-coordinator_jboss.ear" appxml="${dd.dir}/xts-coord_application.xml">
             <fileset dir="${lib.dir}" includes="*.jar"/>
@@ -139,43 +114,11 @@
         </ear>
     </target>
 
-    <target name="weblogic-ear" depends="webapps">
-        <copy todir="${build.dir}/APP-INF/lib">
-            <fileset dir="${lib.dir}" includes="*.jar"/>
-            <fileset dir="${ext.dir}" includes="${ext.package}"/>
-            <fileset dir="${build.dir}" includes="config.jar"/>
-        </copy>
-        <ear earfile="${build.webapps.dir}/xts-coordinator_weblogic.ear" appxml="${dd.dir}/xts-coord_application.xml">
-            <fileset dir="${webapps.dir}" includes="wscf.war wstx.war"/>
-            <fileset dir="${build.webapps.dir}" includes="ws-c.war ws-t.war"/>
-            <fileset dir="${build.dir}" includes="APP-INF/**"/>
-        </ear>
-    </target>
-
-    <target name="deploy-webmethods" depends="webmethods-build, undeploy-webmethods">
-        <mkdir dir="${deploy.dir}/${webmethods.urlstub}"/>
-        <copy todir="${deploy.dir}/${webmethods.urlstub}">
-          <fileset dir="${build.webmethods.dir}"/>
-        </copy>
-    </target>
-
-    <target name="deploy-weblogic" depends="weblogic-ear, undeploy-weblogic">
-        <copy file="${build.webapps.dir}/xts-coordinator_weblogic.ear" tofile="${deploy.dir}/xts-coordinator.ear"/>
-    </target>
-
     <target name="deploy-jboss" depends="jboss-ear, undeploy-jboss">
         <copy file="${build.webapps.dir}/xts-coordinator_jboss.ear" tofile="${deploy.dir}/xts-coordinator.ear"/>
     </target>
 
-    <target name="undeploy-weblogic">
-        <delete file="${deploy.dir}/xts-coordinator.ear"/>
-    </target>
-
     <target name="undeploy-jboss">
         <delete file="${deploy.dir}/xts-coordinator.ear"/>
-    </target>
-
-    <target name="undeploy-webmethods">
-        <delete dir="${deploy.dir}/${webmethods.urlstub}"/>
     </target>
 </project>

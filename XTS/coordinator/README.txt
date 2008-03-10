@@ -28,8 +28,7 @@ will use for your clients/services.
 You need to set hostname, port and deploy.dir parameters to those for the
 application server used for the stand-alone coordinator.
 
-(3) run ant with the deploy target that matches your application server
-(deploy-webmethods, deploy-weblogic or deploy-jboss).
+(3) run ant with the deploy target deploy -jboss.
 
 (4) when running clients and services, edit the wstx.xml file in their
 deployment to add
