@@ -72,10 +72,10 @@ import com.arjuna.common.util.logging.*;
 
 public class PeriodicRecovery extends Thread
 {
-    
+
 /*
  * TODO uncomment for JDK 1.5.
- * 
+ *
    public static enum State
    {
        created, active, terminated, suspended, scanning
@@ -88,10 +88,10 @@ public class PeriodicRecovery extends Thread
         public static final int terminated = 2;
         public static final int suspended = 3;
         public static final int scanning  = 4;
-        
+
         private State () {}
     }
-    
+
    public PeriodicRecovery (boolean threaded)
    {
       initialise();
@@ -151,9 +151,9 @@ public class PeriodicRecovery extends Thread
        synchronized (_signal)
        {
 	   setStatus(State.suspended);
-	   
+
 	   this.interrupt();
-	   
+
 	   if (!async)
 	   {
 	       try
@@ -166,25 +166,25 @@ public class PeriodicRecovery extends Thread
 	   }
        }
    }
-   
+
    public void resumeScan ()
    {
        /*
         * If it's suspended, then it has to be blocked
         * on the lock.
         */
-       
+
        if (getStatus() == State.suspended)
        {
            setStatus(State.active);
-           
+
            synchronized (_suspendLock)
            {
                _suspendLock.notify();
            }
        }
    }
-   
+
    /**
     * Return the port specified by the property
     * com.arjuna.ats.internal.arjuna.recovery.recoveryPort,
@@ -257,14 +257,14 @@ public class PeriodicRecovery extends Thread
 	/*
 	 * If we're suspended or already scanning, then ignore.
 	 */
-	
+
 	synchronized (_stateLock)
 	{
 	    if (getStatus() != State.active)
 	    {
 		if (tsLogger.arjLoggerI18N.isInfoEnabled())
 		{
-		    tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_10", new Object[]{getStatus()});
+		    tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_10", new Object[]{new Integer(getStatus())});
 		}
 
 		return false;
@@ -531,7 +531,7 @@ public class PeriodicRecovery extends Thread
        _recoveryModules = new Vector();
        setStatus(State.active);
    }
-   
+
    // this refers to the modules specified in the recovery manager
    // property file which are dynamically loaded.
    private static Vector _recoveryModules = null;
@@ -549,17 +549,17 @@ public class PeriodicRecovery extends Thread
    // exit thread flag
    private static int _currentState = State.created;
    private static Object _stateLock = new Object();
-   
+
    private static SimpleDateFormat _theTimestamper = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 
     private static ServerSocket _socket = null;
 
     private static Listener _listener = null;
     private static WorkerService _workerService = null;
-    
+
     private Object _suspendLock = new Object();
     private Object _signal = new Object();
-    
+
    /*
     * Read the system properties to set the configurable options
     *
