@@ -49,11 +49,13 @@ public class Close extends TestCase
     {
 	    UserBusinessActivity uba = UserBusinessActivity.getUserBusinessActivity();
         BusinessActivityManager bam = BusinessActivityManager.getBusinessActivityManager();
-	    DemoBusinessParticipant p = new DemoBusinessParticipant(DemoBusinessParticipant.CLOSE, "1235");
+	    com.arjuna.wst.BAParticipantManager bpm = null;
+        DemoBusinessParticipant p = new DemoBusinessParticipant(DemoBusinessParticipant.CLOSE, "1235");
 	    try {
 	    uba.begin();
 	    
-	    bam.enlistForBusinessAgreementWithParticipantCompletion(p, p.identifier());
+	    bpm = bam.enlistForBusinessAgreementWithParticipantCompletion(p, p.identifier());
+        bpm.completed();
         } catch (Exception eouter) {
             try {
                 uba.cancel();

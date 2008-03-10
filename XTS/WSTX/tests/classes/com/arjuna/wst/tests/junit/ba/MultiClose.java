@@ -52,14 +52,18 @@ public class MultiClose extends TestCase
 	    UserBusinessActivity uba = UserBusinessActivity.getUserBusinessActivity();
 
         BusinessActivityManager bam = BusinessActivityManager.getBusinessActivityManager();
-	    DemoBusinessParticipant p = new DemoBusinessParticipant(DemoBusinessParticipant.CLOSE, "1240");
+        com.arjuna.wst.BAParticipantManager bpm1 = null;
+        com.arjuna.wst.BAParticipantManager bpm2 = null;
+        DemoBusinessParticipant p = new DemoBusinessParticipant(DemoBusinessParticipant.CLOSE, "1240");
 	    FailureBusinessParticipant fp = new FailureBusinessParticipant(FailureBusinessParticipant.FAIL_IN_CLOSE, "5679");
 	    
         try {
 	    uba.begin();
 	    
-	    bam.enlistForBusinessAgreementWithParticipantCompletion(p, "1240");
-	    bam.enlistForBusinessAgreementWithParticipantCompletion(fp, "5679");
+	    bpm1 = bam.enlistForBusinessAgreementWithParticipantCompletion(p, "1240");
+	    bpm2 = bam.enlistForBusinessAgreementWithParticipantCompletion(fp, "5679");
+        bpm1.completed();
+        bpm2.completed();
         } catch (Exception eouter) {
             try {
                 uba.cancel();

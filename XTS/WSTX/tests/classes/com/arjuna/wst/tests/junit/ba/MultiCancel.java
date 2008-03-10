@@ -66,7 +66,7 @@ public class MultiCancel extends TestCase
             throw eouter;
         }
 	    try {
-	    uba.close();
+	    uba.cancel();
         } catch (SystemException ex) {
             // we should get here
             assertTrue(p.passed());

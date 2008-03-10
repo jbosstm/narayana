@@ -39,7 +39,7 @@ public class TestSuite extends junit.framework.TestSuite
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.NullRollbackTransaction.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.PrintTransaction.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.ResumeNullTransaction.class));
-        // this test will probably fail because the rollback is tried forever instead of an exception being generated
+        // this test fails because the rollback is tried forever instead of an exception being generated
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.RollbackExceptionInRollback.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SingleParticipant.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SuspendCommitTransaction.class));
@@ -52,16 +52,11 @@ public class TestSuite extends junit.framework.TestSuite
 
         // wst BA tests
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.Cancel.class));
-        // this test errors with an unepected RollbackException from the close!
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.Close.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.Compensate.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.ConfirmWithComplete.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.Exit.class));
-        // this test gets the expected SystemException under cancel but the participant does not
-        // see the cancel message
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.MultiCancel.class));
-        // this test gets the expected SystemException under close but the participant does not
-        // see the close message
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.MultiClose.class));
         // this test fails because the compensate is retried forever instead of an exception being generated
         //addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.MultiCompensate.class));
