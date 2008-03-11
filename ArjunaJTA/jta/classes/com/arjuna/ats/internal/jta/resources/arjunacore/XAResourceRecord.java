@@ -727,6 +727,7 @@ public class XAResourceRecord extends AbstractRecord
 					return _heuristic;
 
 				boolean commit = true;
+				XAException endHeuristic = null;
 				
 				try
 				{
@@ -741,22 +742,47 @@ public class XAResourceRecord extends AbstractRecord
 					}
 				}
 				catch (XAException e1)
-				{
-				    if ((e1.errorCode >= XAException.XA_RBBASE)
-						&& (e1.errorCode < XAException.XA_RBEND))
+				{    
+				    /*
+				     * Now it's not legal to return a heuristic from end, but
+				     * apparently Oracle does (http://jira.jboss.com/jira/browse/JBTM-343)
+				     * Since this is 1PC we can call forget: the outcome of the
+				     * transaction is the outcome of the participant.
+				     */
+
+				    switch (e1.errorCode)
 				    {
+				    case XAException.XA_HEURHAZ:
+				    case XAException.XA_HEURMIX:
+				    case XAException.XA_HEURCOM:
+				    case XAException.XA_HEURRB:
+					endHeuristic = e1;
+					break;
+				    case XAException.XA_RBROLLBACK:
+				    case XAException.XA_RBCOMMFAIL:
+				    case XAException.XA_RBDEADLOCK:
+				    case XAException.XA_RBINTEGRITY:
+				    case XAException.XA_RBOTHER:
+				    case XAException.XA_RBPROTO:
+				    case XAException.XA_RBTIMEOUT:
+				    case XAException.XA_RBTRANSIENT:
 					/*
 					 * Has been marked as rollback-only. We still
 					 * need to call rollback.
 					 */
 					
 					commit = false;
-				    }
-				    else
+					break;
+				    case XAException.XAER_RMERR:
+				    case XAException.XAER_NOTA:
+				    case XAException.XAER_PROTO:
+				    case XAException.XAER_INVAL:
+				    case XAException.XAER_RMFAIL:
+				    default:
 				    {
 					removeConnection();
-					
 					return TwoPhaseOutcome.FINISH_ERROR;
+				    }
 				    }
 				}
 				
@@ -766,6 +792,9 @@ public class XAResourceRecord extends AbstractRecord
 				     * Not strictly necessary since calling commit will
 				     * do the rollback if end failed as above.
 				     */
+				    
+				    if (endHeuristic != null) // catch those RMs that terminate in end rather than follow the spec
+					throw endHeuristic;
 				    
 				    if (commit)
 					_theXAResource.commit(_tranID, true);
