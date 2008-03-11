@@ -33,7 +33,7 @@
         <area title="Introduction">
             <html>
                 <p>
-                    Welcome to the &quot;Night Out&quot; sample application for the XML Transaction component of JBossTS 4.2.2.
+                    Welcome to the &quot;Night Out&quot; sample application for the XML Transaction component of JBossTS 4.3.0.
                 </p>
                 <p>
                     This documentation will help you get started with using the JBossTS Web services transactioning product.

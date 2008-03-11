@@ -35,7 +35,9 @@
         <area title="Source code overview">
             <html>
                 <p>
-                    You can begin experimenting with the XML Transaction component of JBoss 4.2.2 by editing the sample application source code, which is heavily commented to assist your understanding. The source code can be found in the &lt;jbossts 4.2.2 install&gt;/wst/demo/src directory.
+                    You can begin experimenting with the XML Transaction component of JBoss 4.3.0 by editing the sample application source code, which is heavily commented to assist your understanding.
+                    The source code can be found in the &lt;jbossts 4.3.0 install&gt;demo/src directory. Deployment descriptors for the application can be found iin directory &lt;jbossts 4.3.0 install&gt;demo/dd.
+                    (corresponding files for the JaxRPC implementation are in directories &lt;jbossts 4.3.0 install&gt;demo/srcrpc and &lt;jbossts 4.3.0 install&gt;demo/ddrpc). 
                 </p>
                 <p>
                     It is structured as follows:
@@ -44,61 +46,70 @@
                     <ul>
                         <li>
                             <p>
-                                com/arjuna/xts/nightout/clients/
+                                com/jboss/jbosstm/xts/demo/
                             </p>
                             <ul>
                                 <li>
                                     <p>
-                                        jboss/BasicClient.java: A servlet that processes the form input and runs either an Atomic Transaction or Business Activity to make the bookings.
+                                        client/BasicClient.java:
                                     </p>
                                     <p>
-                                        This servlet uses the JBoss JAX-RPC implementation as the SOAP transport library.
+                                        A servlet that processes the form input and runs either an Atomic Transaction (AT) or Business Activity (BA) to make the bookings.
+                                    </p>
+                                    <p>
+                                        This servlet uses the JBossWS JaxWS implementation as the SOAP transport library.
+                                    </p>
+                                    <p>
+                                        Method configureClientHandler installs the JBoss handler on the JaxWS service endpoint proxies. This ensurs that the client's AT or BA transaction
+                                        context is propagated to the web services when their remote methods are invoked.
                                     </p>
                                 </li>
                                 <li>
                                     <p>
-                                        jboss/restaurant/* : JBoss JAX-RPC client interfaces for accessing the restaurant web services.
+                                        restaurant/* :
+                                    </p>
+                                    <p>
+                                        JaxWS client interfaces for accessing the remote restaurant web services via JaxWS service proxies.
                                     </p>
                                 </li>
                                 <li>
                                     <p>
-                                        jboss/taxi/* : JBoss JAX-RPC client interfaces for accessing the taxi web services.
+                                        taxi/* :
+                                    </p>
+                                    <p>
+                                        JaxWS client interfaces for accessing the remote taxi web services via JaxWS service proxies.
                                     </p>
                                 </li>
                                 <li>
                                     <p>
-                                        jboss/theatre/* : JBoss JAX-RPC client interfaces for accessing the theatre web services.
+                                        theatre/* :
+                                    </p>
+                                    <p>
+                                        JaxWS client interfaces for accessing the remote theatre web services via JaxWS service proxies.
                                     </p>
                                 </li>
                                 <li>
                                     <p>
-                                        weblogic/BasicClient.java: A servlet that processes the form input and runs either an Atomic Transaction or Business Activity to make the bookings.
+                                        services/[restuarant|taxi|theatre]/* :
                                     </p>
                                     <p>
-                                        This servlet uses the WebLogic JAX-RPC implementation as the SOAP transport library.
+                                        JaxWS service endpoint implementation classes
                                     </p>
-                                </li>
-                                <li>
-                                    <p>
-                                        weblogic/proxies/* : WebLogic JAX-RPC client side code for accessing the Web services. This is automatically generated code.
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>
-                                        webmethods/BasicClient.java: A servlet that processes the form input and runs either an Atomic Transaction or Business Activity to make the bookings.
-                                    </p>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <p>
-                                com/arjuna/xts/nightout/services/[Restuarant|Taxi|Theatre]/
-                            </p>
-                            <ul>
-                                <li>
                                     <p>Each of these three Web services has similar structure, featuring a *Manager.java class (the transactional business logic, knowing nothing of Web services),
-                                    a *View.java file (the GUI component, largely tool generated), and the files that expose the business logic as transactional Web services.
-                                    In the filenames, AT denotes Atomic Transaction, whilst BA is for Business Activities. The *Service.java file is the business interface, whilst the *Participant.java file has the transaction management code.
+                                    a *View.java file (the GUI component, largely tool generated), and the files that expose the business logic as transactional JaxWS Web services.
+                                    </p>
+                                    <p>
+                                    In the filenames, AT denotes Atomic Transaction, whilst BA is for Business Activities.
+                                    </p>
+                                    <p>
+                                    The *ServiceAT/BA.java file is the business interface, whilst the *Participant.java file has the transaction management code.
+                                    </p>
+                                    <p>
+                                    The *ServiceAT/BA classes expose their JaxWS SEI methods using '<code>javax.jws.WebService</code>' and '<code>javax.jws.WebMethod</code>' annotations.
+                                    </p>
+                                    <p>
+                                    A '<code>javax.jws.HandlerChain</code>' annotation identifies a handler chain deployment descriptor file deployed with the demo applciation. This decriptor configures
+                                    the services with handlers that run SEI method invocations in the transaction context propagated from the client.
                                     </p>
                                 </li>
                             </ul>

@@ -35,46 +35,51 @@
         <area title="Deploying the sample application">
             <html>
                 <p>
-                    To run the demonstration application, you must compile the source code; bundle it, along with the required metadata files, into appropriate deployment constructs and then deploy these into the application container. This process is somewhat involved, but fortunately is completely automated by an ant build script.
+                    To run the sample application, you must compile the source code; bundle it, along with the required metadata files, into appropriate deployment constructs and then deploy these into the application container. This process is somewhat involved, but fortunately is completely automated by an ant build script.
                 </p>
                 <p>
                     To proceed, you will need to install ant (<a class="linkscoloured" href="http://ant.apache.org/" target="_blank">http://ant.apache.org/</a>) to take advantage of the supplied build file. Version 1.6.1 or later of ant is recommended for this application. The application may not function correctly with versions prior to 1.5.
                 </p>
                 <p>
-					Deploying into JBoss.
+                    This release has been tested against JBoss 4.2.2.GA and JBoss 5.0.Beta4.
+                </p>
+                <p>
+					Deploying into JBoss 4.2.
 				</p>
-				<p>
-					This release has been tested against JBoss 4.0.3SP1, 4.0.4GA and 4.0.5GA.
-			    </p>
                 <ol>
-                    <li><p>Install JBoss.</p>
+                    <li><p>Install JBoss 4.2.</p>
                     </li>
                     <li><p>Edit the <code>&lt;xts-home&gt;/demo/jboss.properties</code> file, replacing the <code>JBOSS_HOSTNAME</code>, <code>JBOSS_PORT</code>, <code>JBOSS_URLSTUB</code>, <code>JBOSS_DEPLOY_DIR</code> and <code>JBOSS_HOME</code> variables to reflect the location of your JBoss installation</p></li>
-                    <li><p>Compile the application source, build the application archive file and deploy it into JBoss deploy directory by typing '<code>build.sh jboss clean deploy</code>' on Unix or '<code>build.bat jboss clean deploy</code>' on Windows</p></li>
+                    <li><p>Compile the application source, build the application archive file and deploy it into JBoss deploy directory by typing '<code>build.sh jboss clean sa-deploy</code>' on Unix or '<code>build.bat jboss clean sa-deploy</code>' on Windows</p></li>
                     <li><p>Run the application server by using the run.sh or run.bat command.</p></li>
                     <li><p>Invoke the demo client by browsing the URL (e.g.): <code>http://hostname:port/xts-demo/</code></p></li>
                 </ol>
                 <p>
-					Deploying into webMethods.
-				</p>
-				<p>
-					This release has been tested against webMethods 5.0.2.
-			    </p>
-			    <p>
-					N.B. The classpath used to run webMethods must be modified so that the stax-api.1.0.jar contained within this distribution is encountered prior to all other webMethods jars.
+                    n.b. the JaxRPC based version of the demo can be built and deployed by substituting target '<code>sa-deploy</code>' in the commands listed above with the alternative target '<code>sa-deployrpc</code>'
                 </p>
-                <ol>
-                    <li><p>Install webMethods.</p>
-                    </li>
-                    <li><p>Edit the <code>&lt;xts-home&gt;/demo/webmethods.properties</code> file, replacing the <code>WEBMETHODS_HOSTNAME</code>, <code>WEBMETHODS_PORT</code>, <code>WEBMETHODS_URLSTUB</code>, <code>WEBMETHODS_DEPLOY_DIR</code> and <code>WEBMETHODS_HOME</code> variables to reflect the location of your webMethods installation</p></li>
-                    <li><p>Compile the application source, build the application archive file and deploy it into webMethods deploy directory by typing '<code>build.sh webmethods clean deploy</code>' on Unix or '<code>build.bat webmethods clean deploy</code>' on Windows</p></li>
-                    <li><p>Run the application from the deploy directory by using the webMethods runapp command.</p></li>
-                    <li><p>Invoke the demo client by browsing the URL (e.g.): <code>http://hostname:port/xts-demo/</code></p></li>
-                </ol>
                 <p>
                 This release of the demo application includes the ability to run the client against a mixture of backend webservices. The property files contain the URLs of the webservices, which can be changed to exercise any combination and demonstrate a distributed transaction.
                 The services are started using the same mechanism as above. Each platform will be running its own copy of the webservices but the deployed client will access those services configured in the relevant property file.
                 </p>
+            <p>
+                Deploying into JBoss 5.0.Beta4.
+            </p>
+            <p>
+                Note that at present JBoss JTS and XTS must be manually deployed into JBoss 5.0. In full 5.0 releases the XTS component should be bundled into the release as a service archive.
+            </p>
+            <ol>
+                <li><p>Install JBoss 5.0.</p>
+                </li>
+                <li><p>Build and deploy JBoss JTS and JBoss XTS service archive (execute '<code>ant jbossjts</code>' in the JBossTS source tree and follow the deployment instructions in file INSTALL of the resulting JBossTS install tree).</p>
+                </li>
+                <li><p>Edit the <code>&lt;xts-home&gt;/demo/jboss.properties</code> file, replacing the <code>JBOSS_HOSTNAME</code>, <code>JBOSS_PORT</code>, <code>JBOSS_URLSTUB</code>, <code>JBOSS_DEPLOY_DIR</code> and <code>JBOSS_HOME</code> variables to reflect the location of your JBoss installation</p></li>
+                <li><p>Compile the application source, build the application archive file and deploy it into JBoss deploy directory by typing '<code>build.sh jboss clean deploy</code>' on Unix or '<code>build.bat jboss clean deploy</code>' on Windows</p></li>
+                <li><p>Run the application server by using the run.sh or run.bat command.</p></li>
+                <li><p>Invoke the demo client by browsing the URL (e.g.): <code>http://hostname:port/xts-demo/</code></p></li>
+            </ol>
+            <p>
+                n.b. the JaxRPC based version of the demo can be built and deployed by substituting target '<code>deploy</code>' in the commands listed above with the alternative target '<code>deployrpc</code>'
+            </p>
                 <p>Using the application</p>
                 <ul>
                     <li><p>When invoked, the client will attempt to begin a transaction, reserve theatre tickets, a restaurant table and a taxi according to the parameters you have selected, then commit the transaction. It will log each step of its activity to the console window. As the transaction proceeds, each of the Web Services will pop up a window of its own in which its state and activity log can be seen. Some events in the service code are also logged to the console.</p></li>

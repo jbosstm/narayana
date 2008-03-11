@@ -34,7 +34,7 @@
         <area title="Installation Content">
             <html>
                 <p>
-                    The installer should have installed the following directories under &lt;jbosst 4.2.2 install&gt;/wst directory:
+                    The installer should have installed the following directories under &lt;jbosst 4.3.0 install&gt;/wst directory:
                     <ul>
                         <p>conf: product configuration files.</p>
                         <p>coordinator: an application independent version of the transaction coordinator.</p>
@@ -46,13 +46,13 @@
                 </p>
                 <p>
                     In addition, you will require a Web services platform on which to deploy and run the product.
-				    This release of the XML Transaction component of JBossTS 4.2.2 is designed to run within JBoss and webMethods.
+				    This release of the XML Transaction component of JBossTS 4.3.0 is designed to run within JBoss.
 				</p>
 				<p>
-    				This release has been tested on JBoss 4.0.3SP1, 4.0.4GA, 4.0.5GA and webMethods 5.0.2.
+    				This release has been tested on JBoss 4.2.2.GA and JBoss 5.0.Beta4.
                 </p>
                 <p>
-                    To compile, deploy and run the sample application we also recommend using java SDK 1.4.2 and Apache ant 1.6.1 or later.
+                    To compile, deploy and run the sample application we also recommend using java SDK 1.5 and Apache ant 1.6.1 or later.
                     If you do not already have these, you can download them from <a class="linkscoloured" href="http://java.sun.com/">java website</a> and the <a class="linkscoloured" href="http://ant.apache.org/">ant website</a>.
                 </p>
             </html>
