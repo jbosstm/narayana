@@ -97,7 +97,7 @@
         <servlet-class>com.arjuna.qa.junit.WSTXTestRunnerServlet</servlet-class>
         <init-param>
             <param-name>TestSuiteClassName</param-name>
-            <param-value>com.arjuna.wst.tests.TestSuite</param-value>
+            <param-value>com.arjuna.wst.tests.WSTXTestSuite</param-value>
         </init-param>
         <load-on-startup>4</load-on-startup>
     </servlet>

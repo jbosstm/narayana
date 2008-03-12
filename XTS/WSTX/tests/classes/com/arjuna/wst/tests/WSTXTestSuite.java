@@ -24,9 +24,9 @@
 
 package com.arjuna.wst.tests;
 
-public class TestSuite extends junit.framework.TestSuite
+public class WSTXTestSuite extends junit.framework.TestSuite
 {
-    public TestSuite()
+    public WSTXTestSuite()
     {
         // wst basic tests
         // this test fails because the commit is retried forever instead of an exception being generated
