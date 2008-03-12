@@ -26,60 +26,31 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: Timeout.java,v 1.2 2005/05/19 12:13:19 nmcl Exp $
+ * $Id: StartEnd.java,v 1.1 2002/11/25 10:51:47 nmcl Exp $
  */
 
-package com.arjuna.mwtests.wsas.basic;
+package com.arjuna.wsas.tests.junit.basic;
 
 import com.arjuna.mw.wsas.UserActivity;
 import com.arjuna.mw.wsas.UserActivityFactory;
-
-import com.arjuna.mw.wsas.status.*;
-
-import com.arjuna.mw.wsas.completionstatus.*;
+import com.arjuna.wsas.tests.WSASTestUtils;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
- * @version $Id: Timeout.java,v 1.2 2005/05/19 12:13:19 nmcl Exp $
+ * @version $Id: StartEnd.java,v 1.1 2002/11/25 10:51:47 nmcl Exp $
  * @since 1.0.
  */
 
-public class Timeout
+public class StartEnd extends TestCase
 {
 
-    public static void main (String[] args)
+    public static void testStartEnd()
+            throws Exception
     {
-	boolean passed = false;
-	
-	try
-	{
 	    UserActivity ua = UserActivityFactory.userActivity();
-	
-	    ua.setTimeout(1);
-
 	    ua.start();
-	    
-	    Thread.currentThread().sleep(2000);
-
-	    if (ua.status() instanceof Completed)
-	    {
-		if (ua.getCompletionStatus() instanceof Failure)
-		    passed = true;
-		else
-		    System.out.println("Activity completed with: "+ua.getCompletionStatus());
-	    }
-	    else
-		System.out.println("Activity status: "+ua.status());
-	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
-	}
 	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+	    ua.end();
     }
-
 }

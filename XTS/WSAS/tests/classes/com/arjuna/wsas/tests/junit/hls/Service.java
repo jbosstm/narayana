@@ -26,48 +26,62 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: NullEnd.java,v 1.1 2002/11/25 10:51:46 nmcl Exp $
+ * $Id: Service.java,v 1.1 2002/11/25 10:51:47 nmcl Exp $
  */
 
-package com.arjuna.mwtests.wsas.basic;
+package com.arjuna.wsas.tests.junit.hls;
 
 import com.arjuna.mw.wsas.UserActivity;
 import com.arjuna.mw.wsas.UserActivityFactory;
+import com.arjuna.mw.wsas.ActivityManagerFactory;
 
-import com.arjuna.mw.wsas.exceptions.NoActivityException;
+import com.arjuna.wsas.tests.DemoHLS;
+import com.arjuna.wsas.tests.WSASTestUtils;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
- * @version $Id: NullEnd.java,v 1.1 2002/11/25 10:51:46 nmcl Exp $
+ * @version $Id: Service.java,v 1.1 2002/11/25 10:51:47 nmcl Exp $
  * @since 1.0.
  */
 
-public class NullEnd
+public class Service extends TestCase
 {
 
-    public static void main (String[] args)
+    public static void testService()
+            throws Exception
     {
-	boolean passed = false;
-	
+        UserActivity ua = UserActivityFactory.userActivity();
+        DemoHLS demoHLS = new DemoHLS();
 	try
 	{
-	    UserActivity ua = UserActivityFactory.userActivity();
-	
+	    ActivityManagerFactory.activityManager().addHLS(demoHLS);
+	    
+	    ua.start();
+	    
+	    System.out.println("Started: "+ua.activityName());
+
+	    ua.start();
+	    
+	    System.out.println("Started: "+ua.activityName());
+
+	    ua.end();
+	    
 	    ua.end();
 	}
-	catch (NoActivityException ex)
-	{
-	    passed = true;
-	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+    catch (Exception ex)
+    {
+        WSASTestUtils.cleanup(ua);
+        throw ex;
+    } finally {
+        try {
+            if (demoHLS != null) {
+                ActivityManagerFactory.activityManager().removeHLS(demoHLS);
+            }
+        } catch (Exception ex) {
+            // ignore this
+        }
+    }
     }
 
 }

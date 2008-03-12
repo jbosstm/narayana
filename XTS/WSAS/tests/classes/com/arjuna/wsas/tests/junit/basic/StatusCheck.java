@@ -26,75 +26,49 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: Hierarchy.java,v 1.1 2002/11/25 10:51:46 nmcl Exp $
+ * $Id: StatusCheck.java,v 1.2 2005/05/19 12:13:19 nmcl Exp $
  */
 
-package com.arjuna.mwtests.wsas.basic;
+package com.arjuna.wsas.tests.junit.basic;
 
 import com.arjuna.mw.wsas.UserActivity;
 import com.arjuna.mw.wsas.UserActivityFactory;
-import com.arjuna.mw.wsas.activity.ActivityHierarchy;
 
-import com.arjuna.mw.wsas.exceptions.NoActivityException;
+import com.arjuna.mw.wsas.activity.Outcome;
+
+import com.arjuna.mw.wsas.status.NoActivity;
+import com.arjuna.mw.wsas.status.Active;
+
+import com.arjuna.mw.wsas.completionstatus.Failure;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
- * @version $Id: Hierarchy.java,v 1.1 2002/11/25 10:51:46 nmcl Exp $
+ * @version $Id: StatusCheck.java,v 1.2 2005/05/19 12:13:19 nmcl Exp $
  * @since 1.0.
  */
 
-public class Hierarchy
+public class StatusCheck extends TestCase
 {
 
-    public static void main (String[] args)
+    public static void testStatusCheck()
+            throws Exception
     {
-	boolean passed = false;
-	
-	try
-	{
 	    UserActivity ua = UserActivityFactory.userActivity();
 	
-	    ua.start();
-	    
-	    System.out.println("Started: "+ua.activityName());
-	    
-	    ua.start();
+	    if (ua.status() != NoActivity.instance()) {
+            fail("Status should be NoActivity " + ua.status());
+        }
 
-	    System.out.println("Started: "+ua.activityName());
+        ua.start();
+		
+		if (ua.status() != Active.instance()) {
+            fail("Status should be Active " + ua.status());
+        }
+        Outcome res = ua.end();
 
-	    ActivityHierarchy ctx = ua.currentActivity();
-	    
-	    System.out.println("\nHierarchy: "+ctx);
-
-	    if (ctx == null)
-		passed = false;
-	    else
-	    {
-		ua.end();
-
-		System.out.println("\nCurrent: "+ua.activityName());
-	    
-		ua.end();
-
-		System.out.println("\nCurrent: "+ua.activityName());
-
-		if (ua.activityName() == null)
-		    passed = true;
-	    }
-	}
-	catch (NoActivityException ex)
-	{
-	    passed = true;
-	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+        if (!res.completedStatus().equals(Failure.instance())) {
+            fail("Completed status should be Failure " + res.completedStatus());
+        }
     }
-
 }

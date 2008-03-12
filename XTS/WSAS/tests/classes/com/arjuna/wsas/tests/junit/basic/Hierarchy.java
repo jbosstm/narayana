@@ -26,75 +26,68 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: NestedActivity.java,v 1.1 2002/11/25 10:51:46 nmcl Exp $
+ * $Id: Hierarchy.java,v 1.1 2002/11/25 10:51:46 nmcl Exp $
  */
 
-package com.arjuna.mwtests.wsas.basic;
+package com.arjuna.wsas.tests.junit.basic;
 
 import com.arjuna.mw.wsas.UserActivity;
 import com.arjuna.mw.wsas.UserActivityFactory;
-
 import com.arjuna.mw.wsas.exceptions.NoActivityException;
+import com.arjuna.mw.wsas.activity.ActivityHierarchy;
+
+import com.arjuna.wsas.tests.WSASTestUtils;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
- * @version $Id: NestedActivity.java,v 1.1 2002/11/25 10:51:46 nmcl Exp $
+ * @version $Id: Hierarchy.java,v 1.1 2002/11/25 10:51:46 nmcl Exp $
  * @since 1.0.
  */
 
-public class NestedActivity
+public class Hierarchy extends TestCase
 {
 
-    public static void main (String[] args)
+    public static void testHierarchy()
+            throws Exception
     {
-	boolean passed = false;
-	
+        UserActivity ua = UserActivityFactory.userActivity();
+
 	try
 	{
-	    UserActivity ua = UserActivityFactory.userActivity();
-	
 	    ua.start();
 	    
 	    System.out.println("Started: "+ua.activityName());
 	    
 	    ua.start();
 
-	    String nested = ua.activityName();
-	    
-	    System.out.println("Started: "+nested);
+	    System.out.println("Started: "+ua.activityName());
 
-	    System.out.println("\nEnding: "+nested);
+	    ActivityHierarchy ctx = ua.currentActivity();
 	    
-	    ua.end();
+	    System.out.println("\nHierarchy: "+ctx);
 
-	    String parent = ua.activityName();
-	    
-	    System.out.println("\nCurrent: "+parent);
-	    
-	    System.out.println("\nEnding: "+parent);
-	    
-	    ua.end();
+	    if (ctx == null) {
+            fail("current activity should not be null");
+        } else {
+            ua.end();
 
-	    System.out.println("\nCurrent: "+ua.activityName());
-
-	    System.out.println("\nEnded.");
+            System.out.println("\nCurrent: "+ua.activityName());
 	    
-	    if (ua.activityName() == null)
-		passed = true;
-	}
-	catch (NoActivityException ex)
-	{
-	    passed = true;
-	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+            ua.end();
+
+            try {
+                if (ua.activityName() != null) {
+                    fail("activity name should be null but is " + ua.activityName());
+                }
+            } catch (NoActivityException ex) {
+                // ok if we get here
+            }
+        }
+    } catch (Exception ex) {
+        WSASTestUtils.cleanup(ua);
+        throw ex;
+    }
     }
 
 }

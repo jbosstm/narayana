@@ -26,63 +26,51 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: Service.java,v 1.1 2002/11/25 10:51:47 nmcl Exp $
+ * $Id: Context.java,v 1.2 2005/05/19 12:13:19 nmcl Exp $
  */
 
-package com.arjuna.mwtests.wsas.hls;
+package com.arjuna.wsas.tests.junit.basic;
 
 import com.arjuna.mw.wsas.UserActivity;
 import com.arjuna.mw.wsas.UserActivityFactory;
-import com.arjuna.mw.wsas.ActivityManagerFactory;
-import com.arjuna.mw.wsas.ActivityManager;
 
-import com.arjuna.mw.wsas.activity.ActivityHierarchy;
+import com.arjuna.mw.wsas.context.ContextManager;
 
-import com.arjuna.mw.wsas.exceptions.NoActivityException;
-
-import com.arjuna.mwtests.wsas.common.DemoHLS;
+import com.arjuna.wsas.tests.WSASTestUtils;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
- * @version $Id: Service.java,v 1.1 2002/11/25 10:51:47 nmcl Exp $
+ * @version $Id: Context.java,v 1.2 2005/05/19 12:13:19 nmcl Exp $
  * @since 1.0.
  */
 
-public class Service
+public class Context extends TestCase
 {
 
-    public static void main (String[] args)
+    public static void testContext()
+            throws Exception
     {
-	boolean passed = false;
-	
+        UserActivity ua = UserActivityFactory.userActivity();
+
 	try
 	{
-	    UserActivity ua = UserActivityFactory.userActivity();
-	    ActivityManagerFactory.activityManager().addHLS(new DemoHLS());
-	    
 	    ua.start();
 	    
 	    System.out.println("Started: "+ua.activityName());
-
+	    
 	    ua.start();
-	    
-	    System.out.println("Started: "+ua.activityName());
 
-	    ua.end();
+	    System.out.println("Started: "+ua.activityName());
 	    
-	    ua.end();
+	    ContextManager manager = new ContextManager();
+	    com.arjuna.mw.wsas.context.Context[] contexts = manager.contexts();
 	    
-	    passed = true;
-	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+	    if ((contexts != null) && (contexts.length != 0)) {
+            fail("Contexts not null: "+contexts);
+        }
+    } finally {
+        WSASTestUtils.cleanup(ua);
     }
-
+    }
 }

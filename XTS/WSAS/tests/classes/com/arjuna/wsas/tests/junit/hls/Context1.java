@@ -26,10 +26,10 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: Context2.java,v 1.3.24.1 2005/11/22 10:31:41 kconner Exp $
+ * $Id: Context1.java,v 1.2.24.1 2005/11/22 10:31:41 kconner Exp $
  */
 
-package com.arjuna.mwtests.wsas.hls;
+package com.arjuna.wsas.tests.junit.hls;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -42,33 +42,31 @@ import com.arjuna.mw.wsas.context.DeploymentContext;
 import com.arjuna.mw.wsas.context.DeploymentContextFactory;
 import com.arjuna.mw.wsas.context.soap.SOAPContext;
 import com.arjuna.mwlabs.wsas.util.XMLUtils;
-import com.arjuna.mwtests.wsas.common.DemoHLS;
-import com.arjuna.mwtests.wsas.common.FailureHLS;
+import com.arjuna.wsas.tests.DemoHLS;
+import com.arjuna.wsas.tests.WSASTestUtils;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
- * @version $Id: Context2.java,v 1.3.24.1 2005/11/22 10:31:41 kconner Exp $
+ * @version $Id: Context1.java,v 1.2.24.1 2005/11/22 10:31:41 kconner Exp $
  * @since 1.0.
  */
 
-public class Context2
+public class Context1 extends TestCase
 {
 
-    public static void main (String[] args)
+    public static void testContext1()
+            throws Exception
     {
-	boolean passed = false;
-	
-	try
+        UserActivity ua = UserActivityFactory.userActivity();
+        DemoHLS demoHLS = new DemoHLS();
+    try
 	{
-	    UserActivity ua = UserActivityFactory.userActivity();
-
-	    ActivityManagerFactory.activityManager().addHLS(new DemoHLS());
-	    ActivityManagerFactory.activityManager().addHLS(new FailureHLS());
-
+	    ActivityManagerFactory.activityManager().addHLS(demoHLS);
 	    DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 	    DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 	    org.w3c.dom.Document factory = docBuilder.newDocument();
-	    org.w3c.dom.Element root = factory.createElement("Context2-test");
+	    org.w3c.dom.Element root = factory.createElement("Context1-test");
 	    
 	    ua.start();
 	    
@@ -78,29 +76,30 @@ public class Context2
 	    
 	    System.out.println("Started: "+ua.activityName()+"\n");
 
-	    DeploymentContext manager = DeploymentContextFactory.deploymentContext();
+        // this no longer works because DeploymentContextFactory has changed
+        DeploymentContext manager = DeploymentContextFactory.deploymentContext();
 	    Context theContext = manager.context();
 
         ((SOAPContext)theContext).serialiseToElement(root);
 	    
 	    org.w3c.dom.Document doc = docBuilder.newDocument();
 	    doc.appendChild(root);
-
-	    System.out.println(XMLUtils.writeToString(doc));
 	    
+	    System.out.println(XMLUtils.writeToString(doc));
+
 	    ua.end();
 
 	    System.out.println("\nFinished child activity.\n");
 
 	    theContext = manager.context();
 
-	    root = factory.createElement("Context2-test");
+	    root = factory.createElement("Context1-test");
 
         ((SOAPContext)theContext).serialiseToElement(root);
 	    
 	    doc = docBuilder.newDocument();
 	    doc.appendChild(root);
-	    
+
 	    System.out.println(XMLUtils.writeToString(doc));
 
 	    ua.end();
@@ -109,26 +108,27 @@ public class Context2
 
 	    theContext = manager.context();
 
-	    root = factory.createElement("Context2-test");
+	    root = factory.createElement("Context1-test");
 
         ((SOAPContext)theContext).serialiseToElement(root);
 	    
 	    doc = docBuilder.newDocument();
 	    doc.appendChild(root);
-	    
-	    System.out.println(XMLUtils.writeToString(doc));
 
-	    passed = true;
+	    System.out.println(XMLUtils.writeToString(doc));
 	}
 	catch (Exception ex)
 	{
-	    ex.printStackTrace();
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+        WSASTestUtils.cleanup(ua);
+        throw ex;
+    } finally {
+        try {
+            if (demoHLS != null) {
+                ActivityManagerFactory.activityManager().removeHLS(demoHLS);
+            }
+        } catch (Exception ex) {
+            // ignore this
+        }
     }
-
+    }
 }

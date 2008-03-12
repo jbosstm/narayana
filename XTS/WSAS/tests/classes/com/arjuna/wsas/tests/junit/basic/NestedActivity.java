@@ -26,64 +26,71 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: Context.java,v 1.2 2005/05/19 12:13:19 nmcl Exp $
+ * $Id: NestedActivity.java,v 1.1 2002/11/25 10:51:46 nmcl Exp $
  */
 
-package com.arjuna.mwtests.wsas.basic;
+package com.arjuna.wsas.tests.junit.basic;
 
 import com.arjuna.mw.wsas.UserActivity;
 import com.arjuna.mw.wsas.UserActivityFactory;
-
-import com.arjuna.mw.wsas.context.ContextManager;
-
 import com.arjuna.mw.wsas.exceptions.NoActivityException;
+
+import com.arjuna.wsas.tests.WSASTestUtils;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
- * @version $Id: Context.java,v 1.2 2005/05/19 12:13:19 nmcl Exp $
+ * @version $Id: NestedActivity.java,v 1.1 2002/11/25 10:51:46 nmcl Exp $
  * @since 1.0.
  */
 
-public class Context
+public class NestedActivity extends TestCase
 {
 
-    public static void main (String[] args)
+    public static void testNestedActivity()
+            throws Exception
     {
-	boolean passed = false;
-	
-	try
-	{
 	    UserActivity ua = UserActivityFactory.userActivity();
 	
+        try
+        {
 	    ua.start();
 	    
 	    System.out.println("Started: "+ua.activityName());
 	    
 	    ua.start();
 
-	    System.out.println("Started: "+ua.activityName());
+	    String nested = ua.activityName();
 	    
-	    ContextManager manager = new ContextManager();
-	    com.arjuna.mw.wsas.context.Context[] contexts = manager.contexts();
+	    System.out.println("Started: "+nested);
+
+	    System.out.println("\nEnding: "+nested);
 	    
-	    if ((contexts == null) || (contexts.length == 0))
-		passed = true;
-	    else
-		System.err.println("Contexts not null: "+contexts);
+	    ua.end();
+
+	    String parent = ua.activityName();
+	    
+	    System.out.println("\nCurrent: "+parent);
+	    
+	    System.out.println("\nEnding: "+parent);
+	    
+	    ua.end();
+
+        try {
+            if (ua.activityName() != null) {
+                fail("activity name should be null but is " + ua.activityName());
+            }
+        } catch (NoActivityException ex) {
+            // ok if we get here
+        }
+
+        System.out.println("\nEnded.");
+
 	}
-	catch (NoActivityException ex)
-	{
-	    passed = true;
-	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+    catch (Exception ex)
+    {
+        WSASTestUtils.cleanup(ua);
+        throw ex;
     }
-
+    }
 }

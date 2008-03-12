@@ -29,7 +29,7 @@
  * $Id: DemoSOAPContextImple.java,v 1.5.4.1 2005/11/22 10:31:42 kconner Exp $
  */
 
-package com.arjuna.mwtests.wsas.common;
+package com.arjuna.wsas.tests;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -53,9 +53,9 @@ public class DemoSOAPContextImple implements SOAPContext
     	    DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
     	
     	    org.w3c.dom.Document doc = docBuilder.newDocument();
-    
+
     	    _context = doc.createElement(id);
-    
+
     	    _context.appendChild(doc.createTextNode("urn:mycomputer.org:"+id+":foo:bar"));
     	}
     	catch (Exception ex)
@@ -92,5 +92,5 @@ public class DemoSOAPContextImple implements SOAPContext
     }
     
     private org.w3c.dom.Element _context;
-    
+
 }

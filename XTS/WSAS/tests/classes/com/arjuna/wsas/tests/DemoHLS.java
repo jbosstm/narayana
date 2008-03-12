@@ -29,7 +29,7 @@
  * $Id: DemoHLS.java,v 1.2 2005/05/19 12:13:19 nmcl Exp $
  */
 
-package com.arjuna.mwtests.wsas.common;
+package com.arjuna.wsas.tests;
 
 import com.arjuna.mw.wsas.context.Context;
 
