@@ -123,7 +123,14 @@ of your JBossAS5.0 installation.
 
 (2) change to the sar subdirectory in the XTS source tree
 
-(3) execute ant deploy
+(3) execute 'ant deploy'
+
+    the build.xml script assumes that the desired web listener hostname
+    and port are "localhost" and "8080". if JBossAS is using an alternative
+    port or host name e.g. server www.example.com and port 9090, override
+    these defaults on the commmand line e.g.
+
+(3) execute 'ant -Dhostname="www.example.com" -Dport="9090"
 
 (n.b. the instructions above assume you have first built the rest of
 the XTS code by executing command 'ant clean install' in the XTS
