@@ -22,18 +22,25 @@
 <project name="sar" default="sar" basedir=".">
 
     <!-- ================================================================== -->
+    <!-- build and install the XTS component as a service archive           -->
 
     <!-- The properties to override are the following:                      -->
     <!--    hostname (defaults to localhost)                                -->
     <!--    port (defaults to 8080 for jboss)                               -->
-
-    <!--    deploy.dir The deployment directory for the ear                 -->
-    <!--    xts.home The installation directory for AXTS                   -->
+    <!--    xts.home The installation directory for XTS                     -->
+    <!--    server deployment directory (set via env var JBOSS_HOME)        -->
     <!-- ================================================================== -->
 
-    <!-- the directory in which XTS resides -->
     <!-- devs: run 'ant jta; cd XTS; ant install' after svn checkout -->
+
+    <!-- the directory in which XTS resides -->
     <property name="xts.home" value="../xts-install"/>
+
+    <!-- the name of the host running JBOSS -->
+    <property name="hostname" value="localhost"/>
+
+    <!-- the name of the port used by the JBoss web listener -->
+    <property name="port" value="8080"/>
 
     <!-- the directory in which your installed app server resides -->
     <property environment="env"/>
@@ -49,11 +56,14 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <property name="lib.dir" location="${xts.home}/lib"/>
     <property name="ext.dir" location="${lib.dir}/ext"/>
 
+    <property name="webinf.dir"         value="WEB-INF"/>
     <property name="build.dir"         value="build"/>
+    <property name="build.webinf.dir"       value="${build.dir}/WEB-INF"/>
 
     <target name="init">
         <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dd.dir}"/>
     </target>
 
     <!-- TODO are the xts engine and its WS stack conceptually separate deployments? at what level do they integrate? spi or jax-ws?-->
@@ -90,10 +100,15 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             </classpath>
         </javac>
 
-        <!-- TODO: how to enforce startup ordering? -->
+	<!-- substitute host and port in deployment descriptor -->
+        <filter token="hostname" value="${hostname}"/>
+        <filter token="port" value="${port}"/>
+	<copy file="${webinf.dir}/web.xml" tofile="${build.webinf.dir}/web.xml" filtering="true"/>
+
+	<!-- build the war containing the XTS HTTP multiplexor -->
 
         <jar jarfile="${build.dir}/jbossxts.war">
-            <fileset dir="." includes="WEB-INF/web.xml"/>
+            <fileset dir="." includes="${build.webinf.dir}/web.xml"/>
         </jar>
 
         <jar jarfile="${build.dir}/jbossxts.sar">

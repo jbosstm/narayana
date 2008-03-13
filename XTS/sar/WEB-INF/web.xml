@@ -12,12 +12,12 @@
      -->
     <init-param>
         <param-name>BaseHttpURI</param-name>
-        <param-value>http://localhost:8080/jbossxts/soap/</param-value>
+        <param-value>http://@hostname@:@port@/jbossxts/soap/</param-value>
     </init-param>
     <!--
     <init-param>
         <param-name>BaseHttpsURI</param-name>
-        <param-value>https://localhost:8080/xts/soap/</param-value>
+        <param-value>https://@hostname@:@port@/xts/soap/</param-value>
     </init-param>
     <init-param>
         <param-name>LogPackets</param-name>
