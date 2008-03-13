@@ -39,10 +39,8 @@ public class WSASTestSuite extends junit.framework.TestSuite
         addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.basic.Suspend.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.basic.Timeout.class));
         // wsas hls tests
-        // this test fails because the deployment context factory code has changed
-        //addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.hls.Context1.class));
-        // this test fails because the deployment context factory code has changed
-        //addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.hls.Context2.class));
+        addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.hls.Context1.class));
+        addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.hls.Context2.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wsas.tests.junit.hls.Service.class));
     }
 }

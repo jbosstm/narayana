@@ -40,10 +40,12 @@ import com.arjuna.mw.wsas.UserActivityFactory;
 import com.arjuna.mw.wsas.context.Context;
 import com.arjuna.mw.wsas.context.DeploymentContext;
 import com.arjuna.mw.wsas.context.DeploymentContextFactory;
+import com.arjuna.mw.wsas.context.ContextManager;
 import com.arjuna.mw.wsas.context.soap.SOAPContext;
 import com.arjuna.mwlabs.wsas.util.XMLUtils;
 import com.arjuna.wsas.tests.DemoHLS;
 import com.arjuna.wsas.tests.WSASTestUtils;
+import com.arjuna.wsas.tests.DemoSOAPContextImple;
 import junit.framework.TestCase;
 
 /**
@@ -65,8 +67,9 @@ public class Context1 extends TestCase
 	    ActivityManagerFactory.activityManager().addHLS(demoHLS);
 	    DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 	    DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-	    org.w3c.dom.Document factory = docBuilder.newDocument();
-	    org.w3c.dom.Element root = factory.createElement("Context1-test");
+	    org.w3c.dom.Document doc = docBuilder.newDocument();
+	    org.w3c.dom.Element root = doc.createElement("Context1-test");
+        doc.appendChild(root);
 	    
 	    ua.start();
 	    
@@ -76,46 +79,64 @@ public class Context1 extends TestCase
 	    
 	    System.out.println("Started: "+ua.activityName()+"\n");
 
-        // this no longer works because DeploymentContextFactory has changed
-        DeploymentContext manager = DeploymentContextFactory.deploymentContext();
-	    Context theContext = manager.context();
+        ContextManager contextManager = new ContextManager();
+        Context[] contexts = contextManager.contexts();
+        Context theContext = null;
+
+        for (int i = 0; i < contexts.length; i++) {
+            if (contexts[i] != null) {
+                theContext = contexts[i];
+                break;
+            }
+        }
+
+        if (theContext == null) {
+            fail("Demo context not found");
+        }
+
+        if (!(theContext instanceof DemoSOAPContextImple)) {
+            fail("Demo context not found");
+        }
 
         ((SOAPContext)theContext).serialiseToElement(root);
 	    
-	    org.w3c.dom.Document doc = docBuilder.newDocument();
-	    doc.appendChild(root);
-	    
-	    System.out.println(XMLUtils.writeToString(doc));
+        System.out.println("Context is " + root.getTextContent());
 
 	    ua.end();
 
 	    System.out.println("\nFinished child activity.\n");
 
-	    theContext = manager.context();
+        contexts = contextManager.contexts();
+        theContext = null;
 
-	    root = factory.createElement("Context1-test");
+        for (int i = 0; i < contexts.length; i++) {
+            if (contexts[i] != null) {
+                theContext = contexts[i];
+                break;
+            }
+        }
+
+        if (theContext == null) {
+            fail("Demo context not found");
+        }
+
+        if (!(theContext instanceof DemoSOAPContextImple)) {
+            fail("Demo context not found");
+        }
+
+        doc = docBuilder.newDocument();
+	    root = doc.createElement("Context1-test");
+        doc.appendChild(root);
+
 
         ((SOAPContext)theContext).serialiseToElement(root);
 	    
-	    doc = docBuilder.newDocument();
-	    doc.appendChild(root);
-
-	    System.out.println(XMLUtils.writeToString(doc));
+        System.out.println("Context is " + root.getTextContent());
 
 	    ua.end();
 
 	    System.out.println("\nFinished parent activity.\n");
 
-	    theContext = manager.context();
-
-	    root = factory.createElement("Context1-test");
-
-        ((SOAPContext)theContext).serialiseToElement(root);
-	    
-	    doc = docBuilder.newDocument();
-	    doc.appendChild(root);
-
-	    System.out.println(XMLUtils.writeToString(doc));
 	}
 	catch (Exception ex)
 	{

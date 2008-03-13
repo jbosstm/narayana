@@ -44,6 +44,8 @@ import com.arjuna.mw.wsas.completionstatus.CompletionStatus;
 
 import com.arjuna.mw.wsas.exceptions.*;
 
+import java.util.Stack;
+
 /**
  * @author Mark Little (mark.little@arjuna.com)
  * @version $Id: FailureHLS.java,v 1.2 2005/05/19 12:13:19 nmcl Exp $
@@ -52,6 +54,7 @@ import com.arjuna.mw.wsas.exceptions.*;
 
 public class FailureHLS implements HLS
 {
+    private Stack<GlobalId> _id;
 
     public static final int BEGUN_FAIL = 0;
     public static final int COMPLETE_FAIL = 1;
@@ -69,6 +72,7 @@ public class FailureHLS implements HLS
     public FailureHLS (int failPoint)
     {
 	_failPoint = failPoint;
+    _id = new Stack<GlobalId>();
     }
     
     /**
@@ -84,7 +88,9 @@ public class FailureHLS implements HLS
 	{
 	    GlobalId activityId = UserActivityFactory.userActivity().activityId();
 
-	    System.out.println("FailureHLS.begun "+activityId);
+        _id.push(activityId);
+
+        System.out.println("FailureHLS.begun "+activityId);
 	}
 	catch (Exception ex)
 	{
@@ -95,7 +101,7 @@ public class FailureHLS implements HLS
     /**
      * The current activity is completing with the specified completion status.
      *
-     * @param CompletionStatus cs The completion status to use.
+     * @param cs cs The completion status to use.
      *
      * @return The result of terminating the relationship of this HLS and
      * the current activity.
@@ -108,7 +114,7 @@ public class FailureHLS implements HLS
 
 	try
 	{
-	    System.out.println("FailureHLS.complete ( "+cs+" ) "+UserActivityFactory.userActivity().activityId());
+	    System.out.println("FailureHLS.complete ( "+cs+" ) "+ UserActivityFactory.userActivity().activityId());
 	}
 	catch (Exception ex)
 	{
@@ -155,7 +161,10 @@ public class FailureHLS implements HLS
 
 	try
 	{
-	    System.out.println("FailureHLS.completed "+UserActivityFactory.userActivity().activityName());
+	    System.out.println("FailureHLS.completed " + UserActivityFactory.userActivity().activityId());
+        if (!_id.isEmpty()) {
+            _id.pop();
+        }
 	}
 	catch (NoActivityException ex)
 	{
@@ -192,10 +201,6 @@ public class FailureHLS implements HLS
      * Return the context augmentation for this HLS, if any on the current
      * activity.
      *
-     * @param ActivityHierarchy current The handle on the current activity
-     * hierarchy. The HLS may use this when determining what information to
-     * place in its context data.
-     *
      * @return a context object or null if no augmentation is necessary.
      */
 
@@ -204,7 +209,17 @@ public class FailureHLS implements HLS
 	if (_failPoint == FailureHLS.CONTEXT_FAIL)
 	    throw new SystemException();
 
-	return new DemoSOAPContextImple(identity());
+    if (_id.isEmpty()) {
+        throw new SystemException("request for context when inactive");
+    }
+
+    try {
+    System.out.println("DemoHLS.context "+ UserActivityFactory.userActivity().activityId());
+    } catch (Exception ex) {
+        ex.printStackTrace();
+    }
+
+	return new DemoSOAPContextImple(identity() + "_" + _id.size());
     }
 
     private int _failPoint;

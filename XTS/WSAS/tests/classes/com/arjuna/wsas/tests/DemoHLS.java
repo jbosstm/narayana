@@ -44,6 +44,8 @@ import com.arjuna.mw.wsas.completionstatus.CompletionStatus;
 
 import com.arjuna.mw.wsas.exceptions.*;
 
+import java.util.*;
+
 /**
  * @author Mark Little (mark.little@arjuna.com)
  * @version $Id: DemoHLS.java,v 1.2 2005/05/19 12:13:19 nmcl Exp $
@@ -52,6 +54,12 @@ import com.arjuna.mw.wsas.exceptions.*;
 
 public class DemoHLS implements HLS
 {
+    private Stack<GlobalId> _id;
+
+    public DemoHLS()
+    {
+        _id = new Stack<GlobalId>();
+    }
 
     /**
      * An activity has begun and is active on the current thread.
@@ -63,7 +71,9 @@ public class DemoHLS implements HLS
 	{
 	    GlobalId activityId = UserActivityFactory.userActivity().activityId();
 
-	    System.out.println("DemoHLS.begun "+activityId);
+        _id.push(activityId);
+
+        System.out.println("DemoHLS.begun "+activityId);
 	}
 	catch (Exception ex)
 	{
@@ -74,8 +84,6 @@ public class DemoHLS implements HLS
     /**
      * The current activity is completing with the specified completion status.
      *
-     * @param CompletionStatus cs The completion status to use.
-     *
      * @return The result of terminating the relationship of this HLS and
      * the current activity.
      */
@@ -84,8 +92,8 @@ public class DemoHLS implements HLS
     {
 	try
 	{
-	    System.out.println("DemoHLS.complete ( "+cs+" ) "+UserActivityFactory.userActivity().activityId());
-	}
+	    System.out.println("DemoHLS.complete ( "+cs+" ) " + UserActivityFactory.userActivity().activityId());
+    }
 	catch (Exception ex)
 	{
 	    ex.printStackTrace();
@@ -101,7 +109,7 @@ public class DemoHLS implements HLS
 
     public void suspended () throws SystemException
     {
-	System.out.println("DemoHLS.suspended");
+    System.out.println("DemoHLS.suspended");
     }	
 
     /**
@@ -110,7 +118,7 @@ public class DemoHLS implements HLS
 
     public void resumed () throws SystemException
     {
-	System.out.println("DemoHLS.resumed");
+    System.out.println("DemoHLS.resumed");
     }	
 
     /**
@@ -120,15 +128,15 @@ public class DemoHLS implements HLS
 
     public void completed () throws SystemException
     {
-	try
-	{
-	    System.out.println("DemoHLS.completed "+UserActivityFactory.userActivity().activityName());
-	}
-	catch (NoActivityException ex)
-	{
-	    ex.printStackTrace();
-	}
-    }		
+        try {
+        System.out.println("DemoHLS.completed "+ UserActivityFactory.userActivity().activityId());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        if (!_id.isEmpty()) {
+            _id.pop();
+        }
+    }
 
     /**
      * The HLS name.
@@ -164,7 +172,16 @@ public class DemoHLS implements HLS
 
     public Context context () throws SystemException
     {
-	return new DemoSOAPContextImple(identity());
+        if (_id.isEmpty()) {
+            throw new SystemException("request for context when inactive");
+        }
+    try {
+        System.out.println("DemoHLS.context "+ UserActivityFactory.userActivity().activityId());
+    } catch (Exception ex) {
+        ex.printStackTrace();
+    }
+
+        return new DemoSOAPContextImple(identity() + "_" + _id.size());
     }
 
 }

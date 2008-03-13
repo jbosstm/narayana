@@ -40,11 +40,13 @@ import com.arjuna.mw.wsas.UserActivityFactory;
 import com.arjuna.mw.wsas.context.Context;
 import com.arjuna.mw.wsas.context.DeploymentContext;
 import com.arjuna.mw.wsas.context.DeploymentContextFactory;
+import com.arjuna.mw.wsas.context.ContextManager;
 import com.arjuna.mw.wsas.context.soap.SOAPContext;
 import com.arjuna.mwlabs.wsas.util.XMLUtils;
 import com.arjuna.wsas.tests.DemoHLS;
 import com.arjuna.wsas.tests.FailureHLS;
 import com.arjuna.wsas.tests.WSASTestUtils;
+import com.arjuna.wsas.tests.DemoSOAPContextImple;
 import junit.framework.TestCase;
 
 /**
@@ -61,7 +63,7 @@ public class Context2 extends TestCase
     {
         UserActivity ua = UserActivityFactory.userActivity();
         DemoHLS demoHLS = new DemoHLS();
-        FailureHLS failureHLS = new FailureHLS();
+        FailureHLS failureHLS = new FailureHLS(); // this constructor means it will lnto fail
     try
 	{
 	    ActivityManagerFactory.activityManager().addHLS(demoHLS);
@@ -69,9 +71,10 @@ public class Context2 extends TestCase
 
 	    DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 	    DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-	    org.w3c.dom.Document factory = docBuilder.newDocument();
-	    org.w3c.dom.Element root = factory.createElement("Context2-test");
-	    
+	    org.w3c.dom.Document doc = docBuilder.newDocument();
+	    org.w3c.dom.Element root = doc.createElement("Context2-test");
+        doc.appendChild(root);
+
 	    ua.start();
 	    
 	    System.out.println("Started: "+ua.activityName());
@@ -80,46 +83,79 @@ public class Context2 extends TestCase
 	    
 	    System.out.println("Started: "+ua.activityName()+"\n");
 
-        // this no longer works because DeploymentContextFactory has changed
-	    DeploymentContext manager = DeploymentContextFactory.deploymentContext();
-	    Context theContext = manager.context();
+        ContextManager contextManager = new ContextManager();
+        Context[] contexts = contextManager.contexts();
+        Context theContext1 = null;
+        Context theContext2 = null;
+        int numContexts = (contexts != null ? contexts.length : 0);
 
-        ((SOAPContext)theContext).serialiseToElement(root);
-	    
-	    org.w3c.dom.Document doc = docBuilder.newDocument();
-	    doc.appendChild(root);
+        for (int i = 0; i < numContexts; i++) {
+            if (contexts[i] != null) {
+                if (theContext1 == null) {
+                    theContext1 = contexts[i];
+                } else {
+                    theContext2 = contexts[i];
+                    break;
+                }
+            }
+        }
 
-	    System.out.println(XMLUtils.writeToString(doc));
-	    
+        if (theContext1 == null || theContext2 == null) {
+            fail("Demo contexts not found");
+        }
+
+        if (!(theContext1 instanceof DemoSOAPContextImple) ||
+                !(theContext1 instanceof DemoSOAPContextImple)) {
+            fail("Demo contexts not found");
+        }
+
+        ((SOAPContext)theContext1).serialiseToElement(root);
+        ((SOAPContext)theContext2).serialiseToElement(root);
+
+        System.out.println("Context is " + root.getTextContent());
+
 	    ua.end();
 
 	    System.out.println("\nFinished child activity.\n");
 
-	    theContext = manager.context();
+	    contexts = contextManager.contexts();
+        theContext1 = null;
+        theContext2 = null;
+        numContexts = (contexts != null ? contexts.length : 0);
 
-	    root = factory.createElement("Context2-test");
+        for (int i = 0; i < numContexts; i++) {
+            if (contexts[i] != null) {
+                if (theContext1 == null) {
+                    theContext1 = contexts[i];
+                } else {
+                    theContext2 = contexts[i];
+                    break;
+                }
+            }
+        }
 
-        ((SOAPContext)theContext).serialiseToElement(root);
-	    
-	    doc = docBuilder.newDocument();
-	    doc.appendChild(root);
-	    
-	    System.out.println(XMLUtils.writeToString(doc));
+        if (theContext1 == null || theContext2 == null) {
+            fail("Demo contexts not found");
+        }
+
+        if (!(theContext1 instanceof DemoSOAPContextImple) ||
+                !(theContext1 instanceof DemoSOAPContextImple)) {
+            fail("Demo contexts not found");
+        }
+
+        doc = docBuilder.newDocument();
+	    root = doc.createElement("Context2-test");
+        doc.appendChild(root);
+
+
+        ((SOAPContext)theContext1).serialiseToElement(root);
+        ((SOAPContext)theContext2).serialiseToElement(root);
+
+        System.out.println("Context is " + root.getTextContent());
 
 	    ua.end();
 
 	    System.out.println("\nFinished parent activity.\n");
-
-	    theContext = manager.context();
-
-	    root = factory.createElement("Context2-test");
-
-        ((SOAPContext)theContext).serialiseToElement(root);
-	    
-	    doc = docBuilder.newDocument();
-	    doc.appendChild(root);
-	    
-	    System.out.println(XMLUtils.writeToString(doc));
 	}
     catch (Exception ex)
     {

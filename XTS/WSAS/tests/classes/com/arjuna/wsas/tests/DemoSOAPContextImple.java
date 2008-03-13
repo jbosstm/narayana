@@ -35,6 +35,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
 import com.arjuna.mw.wsas.context.soap.SOAPContext;
 import com.arjuna.mwlabs.wsas.util.XMLUtils;
@@ -53,10 +54,9 @@ public class DemoSOAPContextImple implements SOAPContext
     	    DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
     	
     	    org.w3c.dom.Document doc = docBuilder.newDocument();
+            _context = doc.createElement(id);
 
-    	    _context = doc.createElement(id);
-
-    	    _context.appendChild(doc.createTextNode("urn:mycomputer.org:"+id+":foo:bar"));
+            _context.appendChild(doc.createTextNode("urn:mycomputer.org:"+id+":foo:bar"));
     	}
     	catch (Exception ex)
     	{
@@ -77,8 +77,12 @@ public class DemoSOAPContextImple implements SOAPContext
      */
     public Element serialiseToElement(final Element element)
     {
-        element.appendChild(_context) ;
-        return _context ;
+        Document document = element.getOwnerDocument();
+        // copy the context structure into the document
+        Element context = document.createElement(_context.getTagName());
+        context.appendChild(document.createTextNode(_context.getTextContent()));
+        element.appendChild(context);
+        return context;
     }
     
     public String identifier ()
