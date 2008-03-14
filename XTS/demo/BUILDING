@@ -18,21 +18,25 @@
 # @author JBoss Inc.
 #
 
-This demo has been written for, and tested on, JBoss5.0Beta4.  Please download
-and install this app server from the JBoss website.
+This demo has been written for, and tested on, JBoss4.2.2.GA and
+JBoss5.0Beta4. Please download and install one fo these app servers
+from the JBoss website.
 
 Follow these steps to build the demo for JBoss
  - edit jboss.properties and replace variables as directed in the comments
  - add java and ant to your path
  - set environment variable JBOSS_HOME to point to the root directory of an
-   instance of JBoss5.0Beta4
- - execute 'sh build.sh jboss clean build' on unix or
-   'build.bat jboss clean build' on windows
- - deploy the generated ear file into an instance of JBoss5.0Beta4
+   instance of JBoss4.2 or JBoss5.0Beta4
+ - for JBoss5.0Beta4 execute 'sh build.sh jboss clean deploy' on unix or
+   'build.bat jboss clean deploy' on windows
+ - for JBoss4.2 execute 'sh build.sh jboss clean sa-deploy' on unix or
+   'build.bat jboss clean sa-deploy' on windows
 
 Open a browser and enter the xts-demo url (e.g. http://localhost:8080/xts-demo)
 
 An alternative version of the demo can be built using JaxRPC instead
-of JaxWS. Thsi can be built by supplying the argument 'buildrpc' in
-place of 'build' on the 'execute' command line detailed above. Deploy
-and access using the same url.
+of JaxWS. For JBoss5.0.Beta4 this can be built by supplying the
+argument 'deployrpc' in place of 'deploy' on the 'execute' command
+line detailed above. For JBoss4.2 it can be built by supplying the
+argument 'sa-deployrpc' in place of 'sa-deploy'. Access the demo using
+the same url.
