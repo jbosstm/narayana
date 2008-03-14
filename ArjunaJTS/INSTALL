@@ -125,23 +125,14 @@ of your JBossAS5.0 installation.
 
 (3) execute 'ant deploy'
 
-    the build.xml script assumes that the desired web listener hostname
-    and port are "localhost" and "8080". if JBossAS is using an alternative
-    port or host name e.g. server www.example.com and port 9090, override
-    these defaults on the commmand line e.g.
-
-(3) execute 'ant -Dhostname="www.example.com" -Dport="9090" deploy
-
-(n.b. the instructions above assume you have first built the rest of
+(the instructions above assume you have first built the rest of
 the XTS code by executing command 'ant clean install' in the XTS
 source root directory).
 
-Note that use of a stand alone coordinator is not currently supported
-in JbossAS 5.0Beta4 although it should be possible to modify the sar
-build script to generate a local (application) client-side sar and a
-stand alone service-side sar. Study the instructions and build script
-in the coordinator subdirectory of the XTS installed tree for hints as
-to how to achieve this.
+n.b. XTS sar deployment to JbossAS 5.0Beta4 requires the web listener
+hostname and port to be "localhost" and "8080". this restriction will
+be lifted in future releases. use of a stand alone coordinator is also
+not currently supported in JbossAS 5.0Beta4.
 
 
 XTS Trailmap Documentation
