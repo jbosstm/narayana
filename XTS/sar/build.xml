@@ -108,7 +108,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
 	<!-- build the war containing the XTS HTTP multiplexor -->
 
         <jar jarfile="${build.dir}/jbossxts.war">
-            <fileset dir="." includes="${build.webinf.dir}/web.xml"/>
+            <fileset dir="${build.dir}" includes="WEB-INF/web.xml"/>
         </jar>
 
         <jar jarfile="${build.dir}/jbossxts.sar">
