@@ -19,7 +19,7 @@
 #
 
 This demo has been written for, and tested on, JBoss4.2.2.GA and
-JBoss5.0Beta4. Please download and install one fo these app servers
+JBoss5.0Beta4. Please download and install one of these app servers
 from the JBoss website.
 
 Follow these steps to build the demo for JBoss
@@ -40,3 +40,11 @@ argument 'deployrpc' in place of 'deploy' on the 'execute' command
 line detailed above. For JBoss4.2 it can be built by supplying the
 argument 'sa-deployrpc' in place of 'sa-deploy'. Access the demo using
 the same url.
+
+n.b. deployment of the demo to JbossAS 5.0Beta4 assumes that the XTS
+has already been deployed as a service archive (sar). See the INSTALL
+file in your ArjunaJTS install tree for instructions on how to perform
+this deployment. XTS sar deployment currently requires the web
+listener hostname and port to be "localhost" and "8080". This
+restriction will be lifted in future releases. Use of a stand alone
+coordinator is also not currently supported in JbossAS 5.0Beta4.
