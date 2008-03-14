@@ -82,9 +82,9 @@
     <property name="lib.libs" value="wstx.jar ws-t.jar ws-c.jar"/>
     <property name="ext.libs" value="jbossjta.jar"/>
     <property name="jboss.client.libs" value="jbossall-client.jar jboss-jaxws.jar"/>
-    <property name="ext.compile" value="${ext.libs} wstx-asl-2.0.3.jar jaxrpc.jar servlet.jar"/>
+    <property name="ext.compile" value="${ext.libs} jaxrpc.jar servlet.jar"/>
 
-    <property name="ext.package" value="${ext.libs} jbossts-common.jar commons-logging-1.1.jar stax-api-1.0.jar"/>
+    <property name="ext.package" value="${ext.libs} jbossts-common.jar commons-logging-1.1.jar wstx-asl-2.0.3.jar stax-api-1.0.jar"/>
 
     <!-- ================================================================== -->
 
@@ -236,7 +236,7 @@
 	         <include name="com/jboss/jbosstm/xts/demo/taxi/**/*"/>
 	    </classes>
             <manifest>
-                <attribute name="Class-Path" value="${lib.libs} ${ext.libs}"/>
+                <attribute name="Class-Path" value="${lib.libs} ${ext.package}"/>
             </manifest>
         </war>
     </target>
@@ -266,7 +266,7 @@
                 <include name="com/arjuna/xts/nightout/services/**"/>
             </classes>
             <manifest>
-                <attribute name="Class-Path" value="${lib.libs} ${ext.libs}"/>
+                <attribute name="Class-Path" value="${lib.libs} ${ext.package}"/>
             </manifest>
         </war>
     </target>
@@ -297,7 +297,7 @@
             </classes>
             <fileset dir="${web.dir}"/>
             <manifest>
-                <attribute name="Class-Path" value="wstx.jar"/>
+                <attribute name="Class-Path" value="${ext.package}"/>
             </manifest>
             <webinf dir="${jboss.dd.dir}" includes="wsdl/**"/>
         </war>
@@ -328,7 +328,7 @@
             </classes>
             <fileset dir="${web.dir}"/>
             <manifest>
-                <attribute name="Class-Path" value="wstx.jar"/>
+                <attribute name="Class-Path" value="${ext.package}"/>
             </manifest>
             <webinf dir="${jboss.ddrpc.dir}" includes="wsdl/** client-jaxrpc-mapping.xml"/>
         </war>
