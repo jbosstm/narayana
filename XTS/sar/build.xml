@@ -63,7 +63,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <target name="init">
         <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
-        <mkdir dir="${build.dd.dir}"/>
+        <mkdir dir="${build.webinf.dir}"/>
     </target>
 
     <!-- TODO are the xts engine and its WS stack conceptually separate deployments? at what level do they integrate? spi or jax-ws?-->
