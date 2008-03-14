@@ -83,7 +83,6 @@
 	<!-- tests library and path to library -->
 	<property name="tests.libs" value="junit.jar"/>
 	<property name="tests.depend.libs" value="${tests.libs} ${com.arjuna.mwlabs.ts.modulename}.jar"/>
-	<property name="tests.depend.libs" value="${tests.libs} ${com.arjuna.mwlabs.ts.modulename}.jar"/>
 	<property name="tests.ext.libs" value="servlet.jar"/>
 
 	<path id="com.arjuna.mwlabs.wsas.tests.lib.path">
