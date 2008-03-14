@@ -17,7 +17,7 @@
   <tr>
     <td width="20">&nbsp;</td>
     <td align="center" width="170" bgcolor="#ffffff">
-      <img src="images/JBoss_DivOfRH_RGB.gif" alt="arjuna logo" border="0">
+      <img src="images/JBoss_DivOfRH_RGB.gif" alt="jboss logo" border="0">
     </td>
     <td width="20">&nbsp;</td>
     <td valign="middle" align="left" width="530" bgcolor="#ffffff">
