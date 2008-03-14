@@ -49,7 +49,8 @@
                 <ol>
                     <li><p>Install JBoss 4.2.</p>
                     </li>
-                    <li><p>Edit the <code>&lt;xts-home&gt;/demo/jboss.properties</code> file, replacing the <code>JBOSS_HOSTNAME</code>, <code>JBOSS_PORT</code>, <code>JBOSS_URLSTUB</code>, <code>JBOSS_DEPLOY_DIR</code> and <code>JBOSS_HOME</code> variables to reflect the location of your JBoss installation</p></li>
+                    <li><p>Edit the <code>&lt;xts-home&gt;/demo/jboss.properties</code> file, replacing the <code>JBOSS_HOSTNAME</code> and <code>JBOSS_PORT</code> with the values used by your JBoss server web listener. Replace <code>JBOSS_URLSTUB</code> with a path used as the location for the demo application web services</p></li>
+                    <li><p>Set environment variable <code>JBOSS_HOME</code> to point to the root directory of your JBoss installation.</p></li>
                     <li><p>Compile the application source, build the application archive file and deploy it into JBoss deploy directory by typing '<code>build.sh jboss clean sa-deploy</code>' on Unix or '<code>build.bat jboss clean sa-deploy</code>' on Windows</p></li>
                     <li><p>Run the application server by using the run.sh or run.bat command.</p></li>
                     <li><p>Invoke the demo client by browsing the URL (e.g.): <code>http://hostname:port/xts-demo/</code></p></li>
@@ -72,7 +73,8 @@
                 </li>
                 <li><p>Build and deploy JBoss JTS and JBoss XTS service archive (execute '<code>ant jbossjts</code>' in the JBossTS source tree and follow the deployment instructions in file INSTALL of the resulting JBossTS install tree).</p>
                 </li>
-                <li><p>Edit the <code>&lt;xts-home&gt;/demo/jboss.properties</code> file, replacing the <code>JBOSS_HOSTNAME</code>, <code>JBOSS_PORT</code>, <code>JBOSS_URLSTUB</code>, <code>JBOSS_DEPLOY_DIR</code> and <code>JBOSS_HOME</code> variables to reflect the location of your JBoss installation</p></li>
+                    <li><p>Edit the <code>&lt;xts-home&gt;/demo/jboss.properties</code> file, replacing the <code>JBOSS_HOSTNAME</code> and <code>JBOSS_PORT</code> with the values used by your JBoss server web listener. Replace <code>JBOSS_URLSTUB</code> with a path used as the location for the demo application web services. (n.b. at present the hostname and port must be supplied as <code>localhost</code> and <code>8080</code></p></li>
+                    <li><p>Set environment variable <code>JBOSS_HOME</code> to point to the root directory of your JBoss installation.</p></li>
                 <li><p>Compile the application source, build the application archive file and deploy it into JBoss deploy directory by typing '<code>build.sh jboss clean deploy</code>' on Unix or '<code>build.bat jboss clean deploy</code>' on Windows</p></li>
                 <li><p>Run the application server by using the run.sh or run.bat command.</p></li>
                 <li><p>Invoke the demo client by browsing the URL (e.g.): <code>http://hostname:port/xts-demo/</code></p></li>
