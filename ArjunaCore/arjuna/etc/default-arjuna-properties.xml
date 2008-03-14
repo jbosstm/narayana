@@ -38,11 +38,12 @@
         name="com.arjuna.ats.arjuna.coordinator.txReaperTimeout"
         value="120000"/>
       <!--
-        Transaction Reaper Mode, can be: NORMAL or DYNAMIC (default is NORMAL).
+        Transaction Reaper Mode, can be: NORMAL or DYNAMIC
+        (default is NORMAL but DYNAMIC is recommended for most usage).
       -->
       <property
         name="com.arjuna.ats.arjuna.coordinator.txReaperMode"
-        value="NORMAL"/>
+        value="DYNAMIC"/>
       <!--
         Transaction Reaper Cancel Wait Period (default is 500 ms, min is 10 msecs).
       -->
