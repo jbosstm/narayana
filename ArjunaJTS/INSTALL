@@ -130,7 +130,7 @@ of your JBossAS5.0 installation.
     port or host name e.g. server www.example.com and port 9090, override
     these defaults on the commmand line e.g.
 
-(3) execute 'ant -Dhostname="www.example.com" -Dport="9090"
+(3) execute 'ant -Dhostname="www.example.com" -Dport="9090" deploy
 
 (n.b. the instructions above assume you have first built the rest of
 the XTS code by executing command 'ant clean install' in the XTS
