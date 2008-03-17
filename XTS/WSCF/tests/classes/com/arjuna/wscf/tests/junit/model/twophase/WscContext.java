@@ -36,6 +36,8 @@ import com.arjuna.mw.wsas.context.DeploymentContext;
 import com.arjuna.mw.wsas.context.DeploymentContextFactory;
 import com.arjuna.mw.wscf.model.twophase.UserCoordinatorFactory;
 import com.arjuna.mw.wscf.model.twophase.api.UserCoordinator;
+import com.arjuna.wscf.tests.WSCFTestUtils;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -43,17 +45,18 @@ import com.arjuna.mw.wscf.model.twophase.api.UserCoordinator;
  * @since 1.0.
  */
 
-public class WscContext
+public class WscContext extends TestCase
 {
 
-    public static void main (String[] args)
+    public void testWscContext()
+            throws Exception
     {
-	boolean passed = false;
-	
+        System.out.println("Running test : " + this.getClass().getName());
+
+        UserCoordinator ua = UserCoordinatorFactory.userCoordinator();
+
 	try
 	{
-	    UserCoordinator ua = UserCoordinatorFactory.userCoordinator();
-	    
 	    ua.begin();
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
@@ -64,20 +67,12 @@ public class WscContext
 	    System.out.println(theContext);
 	    
 	    ua.cancel();
-
-	    passed = true;
 	}
 	catch (Exception ex)
 	{
-	    ex.printStackTrace();
+        WSCFTestUtils.cleanup(ua);
 
-	    passed = false;
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+        throw ex;
     }
-
+    }
 }

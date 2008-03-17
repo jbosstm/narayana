@@ -36,6 +36,8 @@ import com.arjuna.mw.wsas.context.DeploymentContext;
 import com.arjuna.mw.wsas.context.DeploymentContextFactory;
 import com.arjuna.mw.wscf.model.twophase.UserCoordinatorFactory;
 import com.arjuna.mw.wscf.model.twophase.api.UserCoordinator;
+import com.arjuna.wscf.tests.WSCFTestUtils;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -43,17 +45,18 @@ import com.arjuna.mw.wscf.model.twophase.api.UserCoordinator;
  * @since 1.0.
  */
 
-public class WscNestedContext
+public class WscNestedContext extends TestCase
 {
 
-    public static void main (String[] args)
+    public void testWscNestedContext()
+            throws Exception
     {
-	boolean passed = false;
-	
+        System.out.println("Running test : " + this.getClass().getName());
+
+        UserCoordinator ua = UserCoordinatorFactory.userCoordinator();
+
 	try
 	{
-	    UserCoordinator ua = UserCoordinatorFactory.userCoordinator();
-	    
 	    ua.begin();
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
@@ -69,27 +72,29 @@ public class WscNestedContext
 	    DeploymentContext manager = DeploymentContextFactory.deploymentContext();
 	    Context theContext = manager.context();
 
-	    System.out.println(theContext);
+	    System.out.println("Context: " + theContext);
 	    
 	    ua.cancel();
 
-	    ua.cancel();
-	    
+        System.out.println("Cancelled");
+
+        System.out.println("Context: " + theContext);
+
 	    ua.cancel();
 
-	    passed = true;
-	}
+        System.out.println("Cancelled");
+
+        System.out.println("Context: " + theContext);
+
+	    ua.cancel();
+
+        System.out.println("Cancelled");
+    }
 	catch (Exception ex)
 	{
-	    ex.printStackTrace();
+        WSCFTestUtils.cleanup(ua);
 
-	    passed = false;
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+        throw ex;
     }
-
+    }
 }

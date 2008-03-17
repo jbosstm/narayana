@@ -39,6 +39,8 @@ import com.arjuna.mw.wsas.activity.*;
 
 import com.arjuna.wscf.tests.TwoPhaseParticipant;
 import com.arjuna.wscf.tests.TwoPhaseSynchronization;
+import com.arjuna.wscf.tests.WSCFTestUtils;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -46,21 +48,22 @@ import com.arjuna.wscf.tests.TwoPhaseSynchronization;
  * @since 1.0.
  */
 
-public class SuspendParticipant
+public class SuspendParticipant extends TestCase
 {
 
-    public static void main (String[] args)
+    public void testSuspendParticipant()
+            throws Exception
     {
-	boolean passed = false;
-	
+        System.out.println("Running test : " + this.getClass().getName());
+
+        CoordinatorManager cm = CoordinatorManagerFactory.coordinatorManager();
+
 	try
 	{
-	    CoordinatorManager cm = CoordinatorManagerFactory.coordinatorManager();
-	    
 	    cm.begin();
 
-	    cm.enlistParticipant(new TwoPhaseParticipant(null));
-	    cm.enlistParticipant(new TwoPhaseParticipant(null));
+	    cm.enlistParticipant(new TwoPhaseParticipant("p1"));
+	    cm.enlistParticipant(new TwoPhaseParticipant("p2"));
 	    cm.enlistSynchronization(new TwoPhaseSynchronization());
 	    
 	    System.out.println("Started: "+cm.identifier()+"\n");
@@ -71,32 +74,21 @@ public class SuspendParticipant
 
 	    if (cm.currentActivity() != null)
 	    {
-		System.out.println("Hierarchy still active.");
+            WSCFTestUtils.cleanup(cm);
 
-		cm.cancel();
+            fail("Hierarchy still active.");
 	    }
-	    else
-	    {
-		System.out.println("Resumed: "+hier+"\n");
-		
 		cm.resume(hier);
 		
-		cm.confirm();
+        System.out.println("Resumed: "+hier+"\n");
 
-		passed = true;
-	    }
+		cm.confirm();
 	}
 	catch (Exception ex)
 	{
-	    ex.printStackTrace();
+	    WSCFTestUtils.cleanup(cm);
 
-	    passed = false;
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+        throw ex;
     }
-
+    }
 }

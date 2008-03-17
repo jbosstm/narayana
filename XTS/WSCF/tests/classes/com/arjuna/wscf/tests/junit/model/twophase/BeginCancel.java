@@ -34,6 +34,7 @@ package com.arjuna.wscf.tests.junit.model.twophase;
 import com.arjuna.mw.wscf.model.twophase.api.UserCoordinator;
 
 import com.arjuna.mw.wscf.model.twophase.UserCoordinatorFactory;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -41,34 +42,22 @@ import com.arjuna.mw.wscf.model.twophase.UserCoordinatorFactory;
  * @since 1.0.
  */
 
-public class BeginCancel
+public class BeginCancel extends TestCase
 {
 
-    public static void main (String[] args)
+    public void testBeginCancel()
+            throws Exception
     {
-	boolean passed = false;
-	
-	try
-	{
-	    UserCoordinator ua = UserCoordinatorFactory.userCoordinator();
-	    
+        System.out.println("Running test : " + this.getClass().getName());
+
+        UserCoordinator ua = UserCoordinatorFactory.userCoordinator();
+
 	    ua.begin();
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
 
 	    ua.cancel();
 
-	    passed = true;
-	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+        System.out.println("Cancelled");
     }
-
 }

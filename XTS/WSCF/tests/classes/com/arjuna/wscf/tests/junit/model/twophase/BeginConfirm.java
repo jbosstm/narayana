@@ -34,6 +34,8 @@ package com.arjuna.wscf.tests.junit.model.twophase;
 import com.arjuna.mw.wscf.model.twophase.api.UserCoordinator;
 
 import com.arjuna.mw.wscf.model.twophase.UserCoordinatorFactory;
+import com.arjuna.wscf.tests.WSCFTestUtils;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -41,34 +43,28 @@ import com.arjuna.mw.wscf.model.twophase.UserCoordinatorFactory;
  * @since 1.0.
  */
 
-public class BeginConfirm
+public class BeginConfirm extends TestCase
 {
 
-    public static void main (String[] args)
+    public void testBeginConfirm()
+            throws Exception
     {
-	boolean passed = false;
-	
+        System.out.println("Running test : " + this.getClass().getName());
+
+        UserCoordinator ua = UserCoordinatorFactory.userCoordinator();
+
 	try
 	{
-	    UserCoordinator ua = UserCoordinatorFactory.userCoordinator();
-	    
 	    ua.begin();
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
 
 	    ua.confirm();
-
-	    passed = true;
 	}
 	catch (Exception ex)
 	{
-	    ex.printStackTrace();
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+	    WSCFTestUtils.cleanup(ua);
+        throw ex;
     }
-
+    }
 }

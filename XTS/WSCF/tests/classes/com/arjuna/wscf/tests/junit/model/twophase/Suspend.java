@@ -38,6 +38,8 @@ import com.arjuna.mw.wscf.model.twophase.UserCoordinatorFactory;
 import com.arjuna.mw.wsas.activity.*;
 
 import com.arjuna.mw.wscf.exceptions.*;
+import com.arjuna.wscf.tests.WSCFTestUtils;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -45,17 +47,18 @@ import com.arjuna.mw.wscf.exceptions.*;
  * @since 1.0.
  */
 
-public class Suspend
+public class Suspend extends TestCase
 {
 
-    public static void main (String[] args)
+    public void testSuspend()
+            throws Exception
     {
-	boolean passed = false;
-	
+        System.out.println("Running test : " + this.getClass().getName());
+
+        UserCoordinator ua = UserCoordinatorFactory.userCoordinator();
+
 	try
 	{
-	    UserCoordinator ua = UserCoordinatorFactory.userCoordinator();
-	    
 	    ua.begin();
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
@@ -64,27 +67,19 @@ public class Suspend
 	    
 	    System.out.println("Suspended: "+hier+"\n");
 	    
-	    if (ua.currentActivity() != null)
-		System.out.println("Hierarchy still active.");
-	    else
-		passed = true;
-
-	    ua.cancel();
+	    if (ua.currentActivity() != null) {
+            WSCFTestUtils.cleanup(ua);
+            fail("Hierarchy still active.");
+        }
 	}
 	catch (NoCoordinatorException ex)
 	{
-	}
+        // why is it ok to get here?
+    }
 	catch (Exception ex)
 	{
-	    ex.printStackTrace();
-
-	    passed = false;
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+        WSCFTestUtils.cleanup(ua);
+        throw ex;
     }
-
+    }
 }

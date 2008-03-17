@@ -91,7 +91,15 @@ public class TestCoordinatorCompletionCoordinatorProcessor extends CoordinatorCo
      * @param arjunaContext     The arjuna context.
      */
     public void cancelled(NotificationType cancelled, AddressingContext addressingContext, ArjunaContext arjunaContext) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        final String messageId = addressingContext.getMessageID().getValue() ;
+        final CoordinatorCompletionCoordinatorDetails details = new CoordinatorCompletionCoordinatorDetails(addressingContext, arjunaContext) ;
+        details.setCancelled(true); ;
+
+        synchronized(messageIdMap)
+        {
+            messageIdMap.put(messageId, details) ;
+            messageIdMap.notifyAll() ;
+        }
     }
 
     /**
@@ -102,7 +110,15 @@ public class TestCoordinatorCompletionCoordinatorProcessor extends CoordinatorCo
      * @param arjunaContext     The arjuna context.
      */
     public void closed(NotificationType closed, AddressingContext addressingContext, ArjunaContext arjunaContext) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        final String messageId = addressingContext.getMessageID().getValue() ;
+        final CoordinatorCompletionCoordinatorDetails details = new CoordinatorCompletionCoordinatorDetails(addressingContext, arjunaContext) ;
+        details.setClosed(true); ;
+
+        synchronized(messageIdMap)
+        {
+            messageIdMap.put(messageId, details) ;
+            messageIdMap.notifyAll() ;
+        }
     }
 
     /**
@@ -113,7 +129,15 @@ public class TestCoordinatorCompletionCoordinatorProcessor extends CoordinatorCo
      * @param arjunaContext     The arjuna context.
      */
     public void compensated(NotificationType compensated, AddressingContext addressingContext, ArjunaContext arjunaContext) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        final String messageId = addressingContext.getMessageID().getValue() ;
+        final CoordinatorCompletionCoordinatorDetails details = new CoordinatorCompletionCoordinatorDetails(addressingContext, arjunaContext) ;
+        details.setCompensated(true); ;
+
+        synchronized(messageIdMap)
+        {
+            messageIdMap.put(messageId, details) ;
+            messageIdMap.notifyAll() ;
+        }
     }
 
     /**
@@ -124,7 +148,15 @@ public class TestCoordinatorCompletionCoordinatorProcessor extends CoordinatorCo
      * @param arjunaContext     The arjuna context.
      */
     public void completed(NotificationType completed, AddressingContext addressingContext, ArjunaContext arjunaContext) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        final String messageId = addressingContext.getMessageID().getValue() ;
+        final CoordinatorCompletionCoordinatorDetails details = new CoordinatorCompletionCoordinatorDetails(addressingContext, arjunaContext) ;
+        details.setCompleted(true); ;
+
+        synchronized(messageIdMap)
+        {
+            messageIdMap.put(messageId, details) ;
+            messageIdMap.notifyAll() ;
+        }
     }
 
     public void exit(NotificationType exit, AddressingContext addressingContext, ArjunaContext arjunaContext)
@@ -148,6 +180,15 @@ public class TestCoordinatorCompletionCoordinatorProcessor extends CoordinatorCo
      * @param arjunaContext     The arjuna context.
      */
     public void fault(ExceptionType fault, AddressingContext addressingContext, ArjunaContext arjunaContext) {
+        final String messageId = addressingContext.getMessageID().getValue() ;
+        final CoordinatorCompletionCoordinatorDetails details = new CoordinatorCompletionCoordinatorDetails(addressingContext, arjunaContext) ;
+        details.setFault(fault); ;
+
+        synchronized(messageIdMap)
+        {
+            messageIdMap.put(messageId, details) ;
+            messageIdMap.notifyAll() ;
+        }
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -172,7 +213,15 @@ public class TestCoordinatorCompletionCoordinatorProcessor extends CoordinatorCo
      * @param arjunaContext     The arjuna context.
      */
     public void status(StatusType status, AddressingContext addressingContext, ArjunaContext arjunaContext) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        final String messageId = addressingContext.getMessageID().getValue() ;
+        final CoordinatorCompletionCoordinatorDetails details = new CoordinatorCompletionCoordinatorDetails(addressingContext, arjunaContext) ;
+        details.setStatus(status); ;
+
+        synchronized(messageIdMap)
+        {
+            messageIdMap.put(messageId, details) ;
+            messageIdMap.notifyAll() ;
+        }
     }
 
     /**
@@ -183,7 +232,15 @@ public class TestCoordinatorCompletionCoordinatorProcessor extends CoordinatorCo
      * @param arjunaContext     The arjuna context.
      */
     public void soapFault(SoapFault soapFault, AddressingContext addressingContext, ArjunaContext arjunaContext) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        final String messageId = addressingContext.getMessageID().getValue() ;
+        final CoordinatorCompletionCoordinatorDetails details = new CoordinatorCompletionCoordinatorDetails(addressingContext, arjunaContext) ;
+        details.setSoapFault(soapFault); ;
+
+        synchronized(messageIdMap)
+        {
+            messageIdMap.put(messageId, details) ;
+            messageIdMap.notifyAll() ;
+        }
     }
 
     public static class CoordinatorCompletionCoordinatorDetails

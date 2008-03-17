@@ -42,6 +42,8 @@ import com.arjuna.mw.wscf.model.twophase.outcomes.*;
 import com.arjuna.mw.wsas.activity.*;
 
 import com.arjuna.mw.wsas.exceptions.NoActivityException;
+import com.arjuna.wscf.tests.WSCFTestUtils;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -49,34 +51,27 @@ import com.arjuna.mw.wsas.exceptions.NoActivityException;
  * @since 1.0.
  */
 
-public class StartEnd
+public class StartEnd extends TestCase
 {
 
-    public static void main (String[] args)
+    public  void testStartEnd()
+            throws Exception
     {
-	boolean passed = false;
+        System.out.println("Running test : " + this.getClass().getName());
+
 	String className = "com.arjuna.mwlabs.wscf.model.twophase.arjunacore.TwoPhaseHLSImple";
 	org.w3c.dom.Document implementationDoc = null;
 	
 	//	System.setProperty("com.arjuna.mw.wscf.protocolImplementation", className);
 	
-	try
-	{
 	    ProtocolLocator pl = new ProtocolLocator(className);
 
 	    implementationDoc = pl.getProtocol();
-	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
-	    
-	    System.exit(0);
-	}
-	
-	try
-	{
+
 	    UserCoordinator ua = UserCoordinatorFactory.userCoordinator(implementationDoc);
-	
+
+    try
+    {
 	    ua.start();
 
 	    System.out.println("Started: "+ua.activityName()+"\n");
@@ -86,26 +81,20 @@ public class StartEnd
 	    if (res instanceof CoordinationOutcome)
 	    {
 		CoordinationOutcome co = (CoordinationOutcome) res;
-		
-		if (co.result() == TwoPhaseResult.CANCELLED)
-		    passed = true;
+        int result = co.result();
+
+        if (result != TwoPhaseResult.CANCELLED)
+		    fail("expected result \"CANCELLED\" (" + TwoPhaseResult.CANCELLED + ") but got " + result);
 	    }
-	    else
-		System.out.println("Result is: "+res);
 	}
 	catch (NoActivityException ex)
 	{
-	    passed = true;
+	    // why is it ok to get here?;
 	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+    catch (Exception ex)
+    {
+        WSCFTestUtils.cleanup(ua);
+        throw ex;
     }
-
+    }
 }

@@ -36,6 +36,8 @@ import com.arjuna.mw.wscf.model.twophase.api.CoordinatorManager;
 import com.arjuna.mw.wscf.model.twophase.CoordinatorManagerFactory;
 
 import com.arjuna.wscf.tests.TwoPhaseParticipant;
+import com.arjuna.wscf.tests.WSCFTestUtils;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -43,17 +45,18 @@ import com.arjuna.wscf.tests.TwoPhaseParticipant;
  * @since 1.0.
  */
 
-public class AddParticipant
+public class AddParticipant extends TestCase
 {
 
-    public static void main (String[] args)
+    public void testAddParticipant()
+            throws Exception
     {
-	boolean passed = false;
-	
+        System.out.println("Running test : " + this.getClass().getName());
+
+        CoordinatorManager cm = CoordinatorManagerFactory.coordinatorManager();
+
 	try
 	{
-	    CoordinatorManager cm = CoordinatorManagerFactory.coordinatorManager();
-	    
 	    cm.begin();
 
 	    cm.enlistParticipant(new TwoPhaseParticipant(null));
@@ -61,18 +64,11 @@ public class AddParticipant
 	    System.out.println("Started: "+cm.identifier()+"\n");
 
 	    cm.confirm();
-
-	    passed = true;
 	}
 	catch (Exception ex)
 	{
-	    ex.printStackTrace();
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+	    WSCFTestUtils.cleanup(cm);
+        throw ex;
     }
-
+    }
 }

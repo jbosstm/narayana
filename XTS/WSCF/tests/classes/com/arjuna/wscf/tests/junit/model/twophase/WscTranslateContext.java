@@ -42,6 +42,8 @@ import com.arjuna.mw.wsas.context.soap.SOAPContext;
 import com.arjuna.mw.wscf.model.twophase.UserCoordinatorFactory;
 import com.arjuna.mw.wscf.model.twophase.api.UserCoordinator;
 import com.arjuna.mw.wscf.utils.DomUtil;
+import com.arjuna.wscf.tests.WSCFTestUtils;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -49,17 +51,18 @@ import com.arjuna.mw.wscf.utils.DomUtil;
  * @since 1.0.
  */
 
-public class WscTranslateContext
+public class WscTranslateContext extends TestCase
 {
 
-    public static void main (String[] args)
+    public void testWscTranslateContext()
+            throws Exception
     {
-	boolean passed = false;
-	
+        System.out.println("Running test : " + this.getClass().getName());
+
+        UserCoordinator ua = UserCoordinatorFactory.userCoordinator();
+
 	try
 	{
-	    UserCoordinator ua = UserCoordinatorFactory.userCoordinator();
-	    
 	    ua.begin();
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
@@ -80,26 +83,17 @@ public class WscTranslateContext
 	    System.out.println("\nNow got "+DomUtil.nodeAsString(wscCtx));
 
 	    ua.cancel();
-
-	    passed = true;
 	}
 	catch (Exception ex)
 	{
-	    ex.printStackTrace();
-
-	    passed = false;
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+	    WSCFTestUtils.cleanup(ua);
+        throw ex;
+    }
     }
 
     static private org.w3c.dom.Element translate (org.w3c.dom.Element ctx)
+            throws Exception
     {
-	try
-	{
 	    org.w3c.dom.Document doc = ctx.getOwnerDocument();
 	    
 	    org.w3c.dom.Element regServiceElement = doc.createElement("wscoor:RegistrationService");
@@ -112,15 +106,5 @@ public class WscTranslateContext
 	    ctx.appendChild(regServiceElement);
 	    
 	    return ctx;
-	}
-	catch (Exception ex)
-	{
-	    // TODO deal with correctly!
-
-	    ex.printStackTrace();
-	}
-	
-	return null;
     }
-	
 }

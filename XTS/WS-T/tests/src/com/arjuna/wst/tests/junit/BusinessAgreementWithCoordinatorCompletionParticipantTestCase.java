@@ -159,7 +159,7 @@ public class BusinessAgreementWithCoordinatorCompletionParticipantTestCase exten
 
         assertTrue(details.hasCompleted());
 
-        checkDetails(details, false, messageId, instanceIdentifier);
+        checkDetails(details, true, messageId, instanceIdentifier);
     }
 
     public void testSendStatus()

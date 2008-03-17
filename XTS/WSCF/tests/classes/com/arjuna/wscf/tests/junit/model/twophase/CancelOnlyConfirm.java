@@ -36,6 +36,8 @@ import com.arjuna.mw.wscf.model.twophase.api.UserCoordinator;
 import com.arjuna.mw.wscf.model.twophase.UserCoordinatorFactory;
 
 import com.arjuna.mw.wscf.model.twophase.exceptions.*;
+import com.arjuna.wscf.tests.WSCFTestUtils;
+import junit.framework.TestCase;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -43,17 +45,18 @@ import com.arjuna.mw.wscf.model.twophase.exceptions.*;
  * @since 1.0.
  */
 
-public class CancelOnlyConfirm
+public class CancelOnlyConfirm extends TestCase
 {
 
-    public static void main (String[] args)
+    public void testCancelOnlyConfirm()
+            throws Exception
     {
-	boolean passed = false;
-	
+        System.out.println("Running test : " + this.getClass().getName());
+
+        UserCoordinator ua = UserCoordinatorFactory.userCoordinator();
+
 	try
 	{
-	    UserCoordinator ua = UserCoordinatorFactory.userCoordinator();
-	    
 	    ua.begin();
 
 	    System.out.println("Started: "+ua.identifier()+"\n");
@@ -61,20 +64,18 @@ public class CancelOnlyConfirm
 	    ua.setCancelOnly();
 	    
 	    ua.confirm();
-	}
+
+        fail("Confirm succeeded after setCancelOnly");
+    }
 	catch (CoordinatorCancelledException ex)
 	{
-	    passed = true;
-	}
+	    // we should get here
+        WSCFTestUtils.cleanup(ua);
+    }
 	catch (Exception ex)
 	{
-	    ex.printStackTrace();
-	}
-	
-	if (passed)
-	    System.out.println("\nPassed.");
-	else
-	    System.out.println("\nFailed.");
+	    WSCFTestUtils.cleanup(ua);
+        throw ex;
     }
-
+    }
 }

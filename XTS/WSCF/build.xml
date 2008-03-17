@@ -28,6 +28,13 @@
 	<!-- Load Build Properties File -->
 	<property file="${com.arjuna.mw.wscf.properties}"/>
 
+	<!-- Set hostname and port property defaults -->
+	<property environment="env"/>
+	<property name="jboss.dir" value="${env.JBOSS_HOME}"/>
+	<property name="deploy.dir" value="${jboss.dir}/server/default/deploy"/>
+	<property name="hostname" value="localhost"/>
+	<property name="port" value="8080"/>
+
 	<!-- Set internal property defaults -->
 	<!-- Path names -->
 	<property name="com.arjuna.mwlabs.wscf.src" value="classes"/>
@@ -36,6 +43,15 @@
 	<property name="com.arjuna.mwlabs.wscf.jar.dest" value="build/lib"/>
 	<property name="com.arjuna.mwlabs.wscf.war.dest" value="build/webapps"/>
 	<property name="com.arjuna.mwlabs.wscf.htdocs.dest" value="build/htdocs"/>
+
+	<!-- test path names -->
+	<property name="com.arjuna.mwlabs.wscf.tests.src" value="tests/classes"/>
+	<property name="com.arjuna.mwlabs.wscf.tests.dd" value="tests/dd"/>
+	<property name="com.arjuna.mwlabs.wscf.tests.dest.root" value="tests/build"/>
+	<property name="com.arjuna.mwlabs.wscf.tests.dest" value="tests/build/classes"/>
+	<property name="com.arjuna.mwlabs.wscf.tests.dd.dest" value="tests/build/dd"/>
+	<property name="com.arjuna.mwlabs.wscf.tests.webapps.dest" value="tests/build/webapps"/>
+	<property name="com.arjuna.mwlabs.wscf.tests.jar.dest" value="tests/build/lib"/>
 
     <property name="com.arjuna.buildsystem.dir" location="../../antbuildsystem"/>
     <property name="com.arjuna.jta.install" location="../../install"/>
@@ -80,6 +96,16 @@
         <fileset dir="${com.arjuna.mwlabs.wsas.jar.dest}" includes="${wsas.libs}"/>
         <fileset dir="${com.arjuna.mwlabs.wsc.jar.dest}" includes="${wsc.libs}"/>
     </path>
+
+	<!-- tests library and path to library -->
+	<property name="tests.libs" value="junit.jar"/>
+	<property name="tests.depend.libs" value="${tests.libs} ${com.arjuna.mwlabs.ts.modulename}.jar"/>
+	<property name="tests.depend.libs" value="${tests.libs} ${com.arjuna.mwlabs.ts.modulename}.jar"/>
+	<property name="tests.ext.libs" value="servlet.jar"/>
+
+	<path id="com.arjuna.mwlabs.wscf.tests.lib.path">
+	  <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs} ${tests.ext.libs}"/>
+	</path>
 
 	<!-- Initialisation -->
 	<target name="com.arjuna.mwlabs.wscf.init">
@@ -193,6 +219,59 @@
 
         </target>
 
+	<!-- test targets -->
+	<target name="com.arjuna.mwlabs.wscf.tests.init" depends="com.arjuna.mw.wscf.clean">
+		<!-- make the test destination directories -->
+		<mkdir dir="${com.arjuna.mwlabs.wscf.tests.dest.root}"/>
+		<mkdir dir="${com.arjuna.mwlabs.wscf.tests.dest}"/>
+		<mkdir dir="${com.arjuna.mwlabs.wscf.tests.dd.dest}"/>
+		<mkdir dir="${com.arjuna.mwlabs.wscf.tests.webapps.dest}"/>
+		<mkdir dir="${com.arjuna.mwlabs.wscf.tests.jar.dest}"/>
+	</target>
+
+	<target name="com.arjuna.mwlabs.wscf.tests.compile" depends="com.arjuna.mwlabs.wscf.tests.init, com.arjuna.mw.wscf.jar">
+	  <javac destdir="${com.arjuna.mwlabs.wscf.tests.dest}" debug="yes" optimize="no">
+	    <classpath>
+	      <pathelement path="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
+	      <path refid="com.arjuna.mwlabs.wscf.tests.lib.path"/>
+	      <path refid="com.arjuna.mwlabs.wscf.lib.classpath"/>
+	    </classpath>
+	    <src path="${com.arjuna.mwlabs.wscf.tests.src}"/>
+	  </javac>
+	</target>
+
+	<target name="com.arjuna.mwlabs.wscf.tests.webapps" depends="com.arjuna.mwlabs.wscf.tests.compile">
+	  <copy file="${com.arjuna.mwlabs.wscf.tests.dd}/wscf-tests_web-app.xml" tofile="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app.xml">
+	    <filterset>
+	      <filter token="hostname" value="${hostname}"/>
+	      <filter token="port" value="${port}"/>
+	    </filterset>
+	  </copy>
+	  <war warfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.war" webxml="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app.xml">
+	    <manifest>
+	      <attribute name="Class-Path" value="${tests.depend.libs}"/>
+	    </manifest>
+	    <classes dir="${com.arjuna.mwlabs.wscf.tests.dest}"/>
+	  </war>
+	  <ear earfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.ear" appxml="${com.arjuna.mwlabs.wscf.tests.dd}/wscf-tests_application.xml">
+	    <!-- we only need to deploy the ext test libs (junit) and
+	         the tests war in JBoss AS 5.0. the rest of the XTS
+	         code is deployed as a sar and the TS code is deployed
+	         in the server lib
+	    -->
+	    <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
+	    <fileset dir="${com.arjuna.mwlabs.wscf.tests.webapps.dest}" includes="wscf-tests.war"/>
+	  </ear>
+	</target>
+
+	<target name="com.arjuna.mwlabs.wscf.tests.deploy" depends="com.arjuna.mwlabs.wscf.tests.webapps, com.arjuna.mwlabs.wscf.tests.undeploy">
+	  <copy file="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.ear" tofile="${deploy.dir}/wscf-tests.ear"/>
+	</target>
+
+	<target name="com.arjuna.mwlabs.wscf.tests.undeploy">
+	  <delete file="${deploy.dir}/wscf-tests.ear"/>
+	</target>
+
 	<!-- Clean targets -->
 	<target name="com.arjuna.mw.wscf.clean">
 		<echo message="Cleaning module"/>
@@ -201,6 +280,8 @@
 		<delete dir="${com.arjuna.mwlabs.wscf.htdocs.dest}"/>
 		<delete file="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
 		<delete file="${com.arjuna.mwlabs.wscf.info.dest}"/>
+		<!-- delete the test destination directories -->
+		<delete dir="${com.arjuna.mwlabs.wscf.tests.dest.root}"/>
 	</target>
 
 	<!-- Short target names -->
@@ -208,4 +289,7 @@
 	<target name="jar" depends="com.arjuna.mw.wscf.jar"/>
 	<target name="war" depends="com.arjuna.mw.wscf.war"/>
 	<target name="clean" depends="com.arjuna.mw.wscf.clean"/>
+	<target name="tests-webapps" depends="com.arjuna.mwlabs.wscf.tests.webapps"/>
+	<target name="tests-deploy" depends="com.arjuna.mwlabs.wscf.tests.deploy"/>
+	<target name="tests-undeploy" depends="com.arjuna.mwlabs.wscf.tests.undeploy"/>
 </project>

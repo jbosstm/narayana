@@ -44,6 +44,8 @@ import com.arjuna.mw.wscf.model.twophase.participants.Participant;
 import com.arjuna.mw.wscf.model.twophase.vote.Vote;
 import com.arjuna.mw.wscf.model.twophase.vote.VoteConfirm;
 
+import java.io.IOException;
+
 /**
  * @author Mark Little (mark.little@arjuna.com)
  * @version $Id: TwoPhaseParticipant.java,v 1.3 2005/01/15 21:21:06 kconner Exp $
@@ -91,12 +93,22 @@ public class TwoPhaseParticipant implements Participant
     
     public boolean save_state(OutputObjectState os)
     {
-        return false ;
+        try {
+            os.packString(_id);
+        } catch (IOException ioe) {
+            return false;
+        }
+        return true ;
     }
     
     public boolean restore_state(InputObjectState os)
     {
-        return false ;
+        try {
+            _id = os.unpackString();
+        } catch (IOException e) {
+            return false;
+        }
+        return true ;
     }
 
     private String _id;
