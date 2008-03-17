@@ -1,19 +1,19 @@
 
-Note to users of JBoss 4.0.3SP1, 4.0.4GA and 4.0.5GA:
+Installing JBossJTA into JBoss 4.0.3SP1, 4.0.4GA and 4.0.5GA
+------------------------------------------------------------
 
 This version of JBossTS no longer supports these older
 JBossAS releases. You probably need JBossTS 4.2.3 instead.
 
 
-Installing JBossTS 4.4 into JBossAS 4.2
+Installing JBossTS 4.3 into JBossAS 4.2 or JBossAS 5.0
 ------------------------------------------------------------
 
 Starting with JBossAS 4.2, the application server ships with
 JBossTS JTA as a default component. You do not need to take
 any action if you want JTA support only.
 
-
-To change the JTA to the full JTS in JBossAS 4.2, follow these steps:
+To change the JTA to the full JTS in JBossAS 4.2 or 5.0, follow these steps:
 
  - download the tar or zip version of the application server
  - extract the distribution into an installation directory
@@ -70,9 +70,10 @@ To change the JTA to the full JTS in JBossAS 4.2, follow these steps:
          <initializer>org.jboss.tm.iiop.TxServerClientInterceptorInitializer</initializer>
          <!-- comment out to disable transaction demarcation over IIOP -->
          <initializer>org.jboss.tm.iiop.TxServerInterceptorInitializer</initializer>
-  - add the following lines
-         <!-- JBoss TS interceptor -->
+  - add the following lines, according to the version of JBossAS you are running
+         <!-- JBoss TS interceptor. Use with AS 4.2 and AS 5.0 -->
          <initializer>com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition.InterpositionORBInitializerImpl</initializer>
+         <!-- RMI/IIOP tx context interceptor, use with AS 5.0 only, comment out in AS 4.2 -->
          <initializer>com.arjuna.ats.jbossatx.jts.InboundTransactionCurrentInitializer</initializer>
 
 For each deployment of JacORB, you will need to ensure that the jacorb.implname in the jacorb.properties
@@ -83,9 +84,23 @@ the recovery activator property named "com.arjuna.ats.arjuna.recovery.recoveryAc
 This may be necessary in cluster setups where the ObjectStore is shared, as
 there should be only one recovery manager per ObjectStore.
 
+Note that JBossTS 4.3 provides a JTA 1.1 implementation, whereas JBossAS
+4.2 ships the JTA 1.0.1b API files. You may therefore also need to copy
+the JTA 1.1 API into the application server's server/XXX/lib dir
+  - lib/ext/jta-1_1-classes.zip
+
+Due to issues with statup ordering, of some versions of AS 5.0 you may need to
+move the mbeans in deploy/iiop-service.xml into conf/jboss-service.xml
+
+If building the JTS To AS integration code from source, you must build against
+a JBOSS_HOME for AS 5.0, even if you intend to run the resulting binaries on AS 4.2
+
 Finally, note that starting with JBossAS 4.2, the application server binds to the
 localhost address by default. This is inappropriate for distributed transactions,
 so please ensure the server is bound to a alternative address.
+
+JBossTS 4.3 is the last JBossTS release that will support JBossAS 4.2.
+Future releases of JBossTS (4.4 onwards) will integrate with JBossAS 5.0 only.
 
 
                          Web Services Transactions
