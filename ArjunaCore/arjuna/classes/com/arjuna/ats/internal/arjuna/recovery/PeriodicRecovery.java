@@ -55,6 +55,8 @@ import com.arjuna.common.util.logging.*;
  * modules. These modules are dynamically loaded. The modules to load
  * are specified by properties beginning with "RecoveryExtension"
  * <P>
+ * n.b. recovery scans may be performed by this object (it is a thread and may be started as a background task)
+ * and by other ad hoc threads
  * @author
  * @version $Id: PeriodicRecovery.java 2342 2006-03-30 13:06:17Z  $
  *
@@ -72,24 +74,67 @@ import com.arjuna.common.util.logging.*;
 
 public class PeriodicRecovery extends Thread
 {
+   /***** public API *****/
 
 /*
  * TODO uncomment for JDK 1.5.
  *
-   public static enum State
+   public static enum Status
    {
-       created, active, terminated, suspended, scanning
+       INACTIVE, SCANNING
+   }
+
+   public static enum Mode
+   {
+       ENABLED, SUSPENDED, TERMINATED
    }
 */
-    public class State
+    /**
+     *  state values indicating whether or not some thread is currently scanning. used to define values of field
+     * {@link PeriodicRecovery#_currentStatus}
+     */
+    public class Status
     {
-        public static final int created = 0;
-        public static final int active = 1;
-        public static final int terminated = 2;
-        public static final int suspended = 3;
-        public static final int scanning  = 4;
+        /**
+         * state value indicating that no thread is scanning
+         */
+        public static final int INACTIVE = 0;
+        /**
+         * state value indicating that some thread is scanning.
+         * n.b. the scanning thread may not be the singleton PeriodicRecovery thread instance
+         */
+        public static final int SCANNING = 1;
 
-        private State () {}
+        private Status() { }
+    }
+
+    /**
+     * state values indicating operating mode of scanning process for ad hoc threads and controlling behaviour of
+     * singleton periodic recovery thread. used to define values of field {@link PeriodicRecovery#_currentMode}
+     *
+     * n.b. {@link PeriodicRecovery#_currentStatus} may not transition to state SCANNING when
+     * {@link PeriodicRecovery#_currentStatus} is in state SUSPENDED or TERMINATED. However, if a scan is in
+     * progress when {@link PeriodicRecovery#_currentMode} transitions to state SUSPENDED or TERMINATED
+     * {@link PeriodicRecovery#_currentStatus} may (temporarily) remain in state SCANNING before transitioning
+     * to state INACTIVE.
+     */
+    public class Mode
+    {
+        /**
+         * state value indicating that new scans may proceed
+         */
+        public static final int ENABLED = 0;
+        /**
+         * state value indicating that new scans may not proceed and the periodic recovery thread should suspend
+         */
+        public static final int SUSPENDED = 1;
+        /**
+         * state value indicating that new scans may not proceed and that the singleton
+         * PeriodicRecovery thread instance should exit if it is still running
+         */
+        public static final int TERMINATED = 2;
+
+        private Mode() { }
     }
 
    public PeriodicRecovery (boolean threaded)
@@ -117,70 +162,134 @@ public class PeriodicRecovery extends Thread
 
       if (threaded)
       {
+          if (tsLogger.arjLogger.isDebugEnabled())
+          {
+                 tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                         FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: starting background scanner thread" );
+          }
 	  start();
       }
+
+       if (tsLogger.arjLogger.isDebugEnabled())
+       {
+              tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                      FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: starting listener worker thread" );
+       }
 
       _listener.start();
    }
 
-    public int getStatus ()
-    {
-	synchronized (_stateLock)
-	    {
-		return _currentState;
-	    }
-    }
-
-    public void setStatus (int s)
-    {
-	synchronized (_stateLock)
-	    {
-		_currentState = s;
-	    }
-    }
-
-   public void shutdown ()
+    /**
+     * initiate termination of the periodic recovery thread and stop any subsequent scan requests from proceeding.
+     *
+     * this switches the recovery operation mode to TERMINATED. if a scan is in progress when this method is called
+     * and has not yet started phase 2 of its scan it will be forced to return before completing phase 2.
+     *
+     * @param async false if the calling thread should wait for any in-progress scan to complete before returning
+     */
+   public void shutdown (boolean async)
    {
-       setStatus(State.terminated);
+       synchronized (_stateLock) {
+           if (getMode() != Mode.TERMINATED) {
+               if (tsLogger.arjLogger.isDebugEnabled())
+               {
+                      tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                              FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: Mode <== TERMINATED" );
+               }
+               setMode(Mode.TERMINATED);
+               _stateLock.notifyAll();
+           }
 
-      this.interrupt();
-   }
-
-   public void suspendScan (boolean async)
-   {
-       synchronized (_signal)
-       {
-	   setStatus(State.suspended);
-
-	   this.interrupt();
-
-	   if (!async)
-	   {
-	       try
-	       {
-		   _signal.wait();
-	       }
-	       catch (InterruptedException ex)
-	       {
-	       }
-	   }
+           if (!async) {
+               // synchronous, so we keep waiting until the currently active scan stops or scanning
+               // changes to TERMINATED
+               while (getStatus() == Status.SCANNING) {
+                   try {
+                       if (tsLogger.arjLogger.isDebugEnabled())
+                       {
+                              tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                      FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: shutdown waiting for scan to end" );
+                       }
+                       _stateLock.wait();
+                   } catch(InterruptedException ie) {
+                       // just ignore and retest condition
+                   }
+               }
+               if (tsLogger.arjLogger.isDebugEnabled())
+               {
+                      tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                              FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: shutdown scan wait complete" );
+               }
+           }
        }
    }
 
+    /**
+     * make all scanning operations suspend.
+     *
+     * This switches the recovery operation mode to SUSPENDED. Any attempt to start a new scan either by an ad hoc
+     * threads or by the periodic recovery thread will suspend its thread until the mode changes. If a scan is in
+     * progress when this method is called it will complete its scan without suspending.
+     *
+     * @param async false if the calling thread should wait for any in-progress scan to complete before returning
+     */
+
+   public void suspendScan (boolean async)
+   {
+       synchronized (_stateLock)
+       {
+           // only switch and kick everyone if we are currently ENABLED
+
+           if (getMode() == Mode.ENABLED) {
+               if (tsLogger.arjLogger.isDebugEnabled())
+               {
+                   tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                           FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: Mode <== SUSPENDED" );
+               }
+               setMode(Mode.SUSPENDED);
+               _stateLock.notifyAll();
+           }
+           if (!async) {
+               // synchronous, so we keep waiting until the currently active scan stops
+               while (getStatus() == Status.SCANNING) {
+                   try {
+                       if (tsLogger.arjLogger.isDebugEnabled())
+                       {
+                              tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                      FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: suspendScan waiting for scan to end" );
+                       }
+                       _stateLock.wait();
+                   } catch(InterruptedException ie) {
+                       // just ignore and retest condition
+                   }
+                   if (tsLogger.arjLogger.isDebugEnabled())
+                   {
+                          tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                  FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: suspendScan scan wait compelete" );
+                   }
+               }
+           }
+       }
+   }
+
+    /**
+     * resume scanning operations
+     *
+     * This switches the recovery operation mode from SUSPENDED to RESUMED. Any threads which suspended when
+     * they tried to start a scan will be woken up by this transition.
+     */
    public void resumeScan ()
    {
-       /*
-        * If it's suspended, then it has to be blocked
-        * on the lock.
-        */
-
-       if (getStatus() == State.suspended)
+       synchronized (_stateLock)
        {
-           setStatus(State.active);
-
-           synchronized (_suspendLock)
-           {
-               _suspendLock.notify();
+           if (getMode() == Mode.SUSPENDED) {
+               if (tsLogger.arjLogger.isDebugEnabled())
+               {
+                      tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                              FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: Mode <== ENABLED" );
+               }
+               setMode(Mode.ENABLED);
+               _stateLock.notifyAll();
            }
        }
    }
@@ -191,7 +300,7 @@ public class PeriodicRecovery extends Thread
     * otherwise return a default port.
     */
 
-    public static final ServerSocket getServerSocket () throws IOException
+    public static ServerSocket getServerSocket () throws IOException
     {
 	    if (_socket == null)
 	    {
@@ -222,7 +331,7 @@ public class PeriodicRecovery extends Thread
     }
 
    /**
-    * Start the background thread to perform the periodic recovery
+    * Implements the background thread which performs the periodic recovery
     */
 
    public void run ()
@@ -231,139 +340,203 @@ public class PeriodicRecovery extends Thread
 
        do
        {
-	   checkSuspended();
+           boolean workToDo = false;
+           // ok, get to the point where we are ready to start a scan
+           synchronized(_stateLock) {
+               if (getStatus() == Status.SCANNING) {
+                   // need to wait for some other scan to finish
+                   if (tsLogger.arjLogger.isDebugEnabled())
+                   {
+                          tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                  FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread waiting on other scan" );
+                   }
+                   doScanningWait();
+                   if (getMode() == Mode.ENABLED) {
+                       // the last guy just finished scanning so we ought to wait a bit rather than just
+                       // pile straight in to do some work
+                       if (tsLogger.arjLogger.isDebugEnabled())
+                       {
+                              tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                      FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread backing off" );
+                       }
+                       doPeriodicWait();
+                       // if we got told to stop then do so
+                       finished = (getMode() == Mode.TERMINATED);
+                   }
+               } else {
+                   // status == INACTIVE so we can go ahead and scan if scanning is enabled
+                   switch (getMode()) {
+                       case Mode.ENABLED:
+                           // ok grab our chance to be the scanning thread
+                           if (tsLogger.arjLogger.isDebugEnabled())
+                           {
+                                  tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                          FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread Status <== SCANNING" );
+                           }
+                           setStatus(Status.SCANNING);
+                           workToDo = true;
+                           break;
+                       case Mode.SUSPENDED:
+                           // we need to wait while we are suspended
+                           if (tsLogger.arjLogger.isDebugEnabled())
+                           {
+                                  tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                          FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread wait while SUSPENDED" );
+                           }
+                           doSuspendedWait();
+                           // we come out of here with the lock and either ENABLED or TERMINATED
+                           finished = (getMode() == Mode.TERMINATED);
+                           break;
+                       case Mode.TERMINATED:
+                           finished = true;
+                           break;
+                   }
+               }
+           }
 
-	   finished = doWork(true);
+           // its ok to start work if requested -- we cannot be stopped now by a mode change to SUSPEND
+           // or TERMINATE until we get through phase 1 and maybe phase 2 if we are lucky
 
+           if (workToDo) {
+               // we are in state SCANNING so actually do the scan
+               if (tsLogger.arjLogger.isDebugEnabled())
+               {
+                      tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                              FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread scanning");
+               }
+               doWorkInternal();
+               // clear the SCANNING state now we have done
+               synchronized(_stateLock) {
+                   if (tsLogger.arjLogger.isDebugEnabled())
+                   {
+                          tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                  FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread Status <== INACTIVE");
+                   }
+                   setStatus(Status.INACTIVE);
+                   // check if we need to notify the listener worker that we just finsihsed  a scan
+                   notifyWorker();
+
+                   if (getMode() == Mode.ENABLED) {
+                       // we managed a full scan and scanning is still enabled
+                       // so wait a bit before the next attempt
+                       if (tsLogger.arjLogger.isDebugEnabled())
+                       {
+                              tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                      FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread backing off" );
+                       }
+                       doPeriodicWait();
+                   }
+                   finished = (getMode() == Mode.TERMINATED);
+               }
+           }
        } while (!finished);
+
+       if (tsLogger.arjLogger.isDebugEnabled())
+       {
+              tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                      FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread exiting" );
+       }
    }
 
     /**
-     * Perform the recovery scans on all registered modules.
+     * Perform a recovery scan on all registered modules.
      *
-     * @param boolean periodic If <code>true</code> then this is being called
-     * as part of the normal periodic running of the manager and we'll sleep
-     * after phase 2 work. Otherwise, we're being called directly and there should
-     * be no sleep after phase 2.
-     *
-     * @return <code>true</code> if the manager has been instructed to finish,
-     * <code>false</code> otherwise.
+     * @caveats if a scan is already in progress this method will wait for it to complete otherwise it will
+     * perform its own scan before returning. If scanning is suspended this will require waiting for scanning
+     * to resume.
      */
 
-    public final synchronized boolean doWork (boolean periodic)
+    public final void doWork ()
     {
-	boolean interrupted = false;
+        boolean workToDo = false;
 
-	/*
-	 * If we're suspended or already scanning, then ignore.
-	 */
+        synchronized(_stateLock) {
+            if (getMode() == Mode.SUSPENDED) {
+                if (tsLogger.arjLogger.isDebugEnabled())
+                {
+                       tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                               FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: ad hoc thread wait while SUSPENDED" );
+                }
+                doSuspendedWait();
+            }
 
-	synchronized (_stateLock)
-	{
-	    if (getStatus() != State.active)
-	    {
-		if (tsLogger.arjLoggerI18N.isInfoEnabled())
-		{
-		    tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_10", new Object[]{new Integer(getStatus())});
-		}
+            // no longer SUSPENDED --  retest in case we got TERMINATED
 
-		return false;
-	    }
+            if (getMode() == Mode.TERMINATED) {
+                if (tsLogger.arjLogger.isDebugEnabled())
+                {
+                       tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                               FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: ad hoc thread scan TERMINATED" );
+                }
+            } else {
 
-	    setStatus(State.scanning);
-	}
+                // ok scanning must be enabled -- see if we can start a scan or whether we have to wait on another one
 
-	tsLogger.arjLogger.info("Periodic recovery - first pass <" +
-				_theTimestamper.format(new Date()) + ">" );
+                if (getStatus() == Status.SCANNING) {
+                    // just wait for the other scan to finish
+                    if (tsLogger.arjLogger.isDebugEnabled())
+                    {
+                        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: ad hoc thread waiting on other scan" );
+                    }
+                    doScanningWait();
+                } else {
 
-	Enumeration modules = _recoveryModules.elements();
+                    // ok grab our chance to start a scan
+                    setStatus(Status.SCANNING);
+                    if (tsLogger.arjLogger.isDebugEnabled())
+                    {
+                        tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: ad hoc thread Status <== SCANNING" );
+                    }
+                    workToDo = true;
+                }
+            }
+        }
 
-	while (modules.hasMoreElements())
-	{
-	    RecoveryModule m = (RecoveryModule) modules.nextElement();
+        if (workToDo) {
+            // ok to start work -- we cannot be stopped now by a mode change to SUSPEND or TERMINATE
+            // until we get through phase 1 and maybe phase 2 if we are lucky
+            if (tsLogger.arjLogger.isDebugEnabled())
+            {
+                   tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                           FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: ad hoc thread scanning");
+            }
+            doWorkInternal();
 
-	    m.periodicWorkFirstPass();
+            // clear the scan for some other thread to have a go
+            synchronized(_stateLock) {
+                if (tsLogger.arjLogger.isDebugEnabled())
+                {
+                       tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                               FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: ad hoc thread Status <== INACTIVE");
+                }
+                setStatus(Status.INACTIVE);
+                // check if we need to notify the listener worker that we just finsihsed  a scan
+                notifyWorker();
+            }
+        }
+    }
 
-	    if (tsLogger.arjLogger.isDebugEnabled())
-	    {
-		tsLogger.arjLogger.debug( DebugLevel.FUNCTIONS,
-					  VisibilityLevel.VIS_PUBLIC,
-					  FacilityCode.FAC_CRASH_RECOVERY,
-					  " " );
-	    }
-	}
+    /**
+     * called by the listener worker to wake the periodic recovery thread and get it to start a scan if one
+     * is not already in progress
+     */
 
-	if (interrupted)
-	{
-	    interrupted = false;
-
-	    _workerService.signalDone();
-	}
-
-	// wait for a bit to avoid catching (too many) transactions etc. that
-	// are really progressing quite happily
-
-	try
-	{
-	    Thread.sleep( _backoffPeriod * 1000 );
-	}
-	catch ( InterruptedException ie )
-	{
-	    interrupted = true;
-	}
-
-	if (getStatus() == State.terminated)
-	{
-	    return true;
-	}
-	else
-	{
-	    checkSuspended();
-
-	    setStatus(State.scanning);
-	}
-
-	tsLogger.arjLogger.info("Periodic recovery - second pass <"+
-				_theTimestamper.format(new Date()) + ">" );
-
-	modules = _recoveryModules.elements();
-
-	while (modules.hasMoreElements())
-	{
-	    RecoveryModule m = (RecoveryModule) modules.nextElement();
-
-	    m.periodicWorkSecondPass();
-
-	    if (tsLogger.arjLogger.isDebugEnabled())
-	    {
-		tsLogger.arjLogger.debug ( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_CRASH_RECOVERY, " " );
-	    }
-	}
-
-	try
-	{
-	    if (!interrupted && periodic)
-		Thread.sleep( _recoveryPeriod * 1000 );
-	}
-	catch ( InterruptedException ie )
-	{
-	    interrupted = true;
-	}
-
-	if (getStatus() == State.terminated)
-	{
-	    return true;
-	}
-	else
-	{
-	    checkSuspended();
-
-	    // make sure we're scanning again.
-
-	    setStatus(State.active);
-	}
-
-	return false; // keep going
+    public void wakeUp()
+    {
+        synchronized (_stateLock) {
+            _workerScanRequested = true;
+            // wake up the periodic recovery thread if no scan is in progress
+            if (getStatus() != Status.SCANNING) {
+                if (tsLogger.arjLogger.isDebugEnabled())
+                {
+                    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                            FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: listener worker interrupts background thread");
+                }
+                this.interrupt();
+            }
+        }
     }
 
     /**
@@ -371,21 +544,254 @@ public class PeriodicRecovery extends Thread
      * There is no way to specify relative ordering of recovery modules
      * with respect to modules loaded via the property file.
      *
-     * @param RecoveryModule module The module to append.
+     * @param module The module to append.
      */
 
     public final void addModule (RecoveryModule module)
     {
-	_recoveryModules.add(module);
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: adding module " + module.getClass().getName());
+        }
+        _recoveryModules.add(module);
     }
 
     /**
-     * @return the recovery modules.
+     * remove a recovery module from the recovery modules list
+     * @param module the module to be removed
+     */
+    public final void removeModule (RecoveryModule module)
+    {
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: removing module " + module.getClass().getName());
+        }
+        _recoveryModules.remove(module);
+    }
+
+    /**
+     * return a copy of the current recovery modules list
+     *
+     * @return a copy of the the recovery modules list.
      */
 
     public final Vector getModules ()
     {
-	return _recoveryModules;
+        // return a copy of the modules list so that clients are not affected by dynamic modifications to the list
+        // synchronize so that we don't copy in the middle of an add or remove
+
+        synchronized (_recoveryModules) {
+            return new Vector(_recoveryModules);
+        }
+    }
+
+    /***** private implementation *****/
+
+    /**
+     * fetch the current activity status either INACTIVE or SCANNING
+     *
+     * @caveats must only be called while synchronized on {@link PeriodicRecovery#_stateLock}
+     * @return INACTIVE if no scan is in progress or SCANNING if some thread is performing a scan
+     */
+    private int getStatus ()
+    {
+        return _currentStatus;
+    }
+
+    /**
+     * fetch the current recovery operation mode either ENABLED, SUSPENDED or TERMINATED
+     *
+     * @caveats must only be called while synchronized on {@link PeriodicRecovery#_stateLock}
+     * @return the current recovery operation mode
+     */
+    private int getMode ()
+    {
+        return _currentMode;
+    }
+
+    /**
+     * set the current activity status
+     * @param status the new status to be used
+     */
+    private void setStatus (int status)
+    {
+        _currentStatus = status;
+    }
+
+    /**
+     * set the current recovery operation mode
+     * @param mode the new mode to be used
+     */
+    private void setMode (int mode)
+    {
+        _currentMode = mode;
+    }
+
+    /**
+     * wait for the required backoff period or less if the scanning status or scan mode changes
+     *
+     * @caveats this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} and when
+     * _currentStatus is SCANNING and _currentMode is ENABLED
+     */
+    private void doBackoffWait()
+    {
+        try {
+            _stateLock.wait(_backoffPeriod * 1000);
+        } catch (InterruptedException e) {
+            // we can ignore this exception
+        }
+    }
+
+    /**
+     * wait for the required recovery period or less if the scanning status or scan mode changes
+     *
+     * @caveats this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} and when
+     * _currentStatus is INACTIVE and _currentMode is ENABLED
+     */
+    private void doPeriodicWait()
+    {
+        try {
+            _stateLock.wait(_recoveryPeriod * 1000);
+        } catch (InterruptedException e) {
+            // we can ignore this exception
+        }
+    }
+
+    /**
+     * wait until the we move out of SUSPENDED mode
+     *
+     * @caveats this must only be called when synchronized on {@link PeriodicRecovery#_stateLock}
+     */
+    private void doSuspendedWait()
+    {
+        while (getMode() == Mode.SUSPENDED) {
+            try {
+                _stateLock.wait();
+            } catch (InterruptedException e) {
+                // we can ignore this exception
+            }
+        }
+    }
+
+    /**
+     * wait until some other thread stops scanning
+     *
+     * @caveats this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} and when
+     * _currentStatus is SCANNING
+     */
+    private void doScanningWait()
+    {
+        while (getStatus() == Status.SCANNING) {
+            try {
+                _stateLock.wait();
+            } catch (InterruptedException e) {
+                // we can ignore this exception
+            }
+        }
+    }
+
+    /**
+     * start performing a scan continuing to completion unless we are terminating
+     *
+     * @caveats this must only be called when _currentStatus is SCANNING. on return _currentStatus is always
+     * still SCANNING
+     */
+
+    private void doWorkInternal()
+    {
+        // n.b. we only get here if status is SCANNING
+
+        tsLogger.arjLogger.info("Periodic recovery - first pass <" +
+                _theTimestamper.format(new Date()) + ">" );
+
+        // n.b. this works on a copy of the modules list so it is not affected by
+        // dynamic updates in the middle of a scan
+
+        Enumeration modules = getModules().elements();
+
+        while (modules.hasMoreElements())
+        {
+            RecoveryModule m = (RecoveryModule) modules.nextElement();
+
+            m.periodicWorkFirstPass();
+
+            if (tsLogger.arjLogger.isDebugEnabled())
+            {
+                tsLogger.arjLogger.debug( DebugLevel.FUNCTIONS,
+                        VisibilityLevel.VIS_PUBLIC,
+                        FacilityCode.FAC_CRASH_RECOVERY,
+                        " " );
+            }
+        }
+
+        // take the lock again so we can do a backoff wait on it
+
+        synchronized (_stateLock) {
+            // we have to wait for a bit to avoid catching (too many)
+            // transactions etc. that are really progressing quite happily
+
+            doBackoffWait();
+
+            // we carry on scanning even if scanning is SUSPENDED because the suspending thread
+            // might be waiting on us to complete and we don't want to risk deadlocking it by waiting
+            // here for a resume.
+            // if we have been TERMINATED we bail out now
+            // n.b. if we give up here the caller is responsible for clearing the active scan
+
+            if (getMode() == Mode.TERMINATED) {
+                if (tsLogger.arjLogger.isDebugEnabled())
+                {
+                    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                            FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: scan TERMINATED at phase 1");
+                }
+                return;
+            }
+        }
+
+        // move on to phase 2
+
+        tsLogger.arjLogger.info("Periodic recovery - second pass <"+
+                _theTimestamper.format(new Date()) + ">" );
+
+        modules = _recoveryModules.elements();
+
+        while (modules.hasMoreElements())
+        {
+            RecoveryModule m = (RecoveryModule) modules.nextElement();
+
+            m.periodicWorkSecondPass();
+
+            if (tsLogger.arjLogger.isDebugEnabled())
+            {
+                tsLogger.arjLogger.debug ( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_CRASH_RECOVERY, " " );
+            }
+        }
+
+        // n.b. the caller is responsible for clearing the active scan
+    }
+
+    /**
+     * notify the listener worker that a scan has completed
+     *
+     * @caveats this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} at the point
+     * where Status transitions from SCANNING to INACTIVE 
+     */
+
+    private void notifyWorker()
+    {
+        // if the listener is still waiting on a wakeup then notify it
+
+        if (_workerScanRequested) {
+            if (tsLogger.arjLogger.isDebugEnabled())
+            {
+                tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                        FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: scan thread signals listener worker");
+            }
+            _workerService.signalDone();
+            _workerScanRequested = false;
+        }
     }
 
     /**
@@ -393,7 +799,7 @@ public class PeriodicRecovery extends Thread
      * name of each module is used to indicate relative ordering.
      */
 
-   private final static void loadModules ()
+   private static void loadModules ()
    {
       // scan the relevant properties so as to get them into sort order
        Properties properties = arjPropertyManager.propertyManager.getProperties();
@@ -432,7 +838,12 @@ public class PeriodicRecovery extends Thread
       }
    }
 
-   private final static void loadModule (String className)
+    /**
+     * load a specific recovery module and add it to the recovery modules list
+     *
+     * @param className
+     */
+   private static void loadModule (String className)
    {
        if (tsLogger.arjLogger.isDebugEnabled())
        {
@@ -499,66 +910,84 @@ public class PeriodicRecovery extends Thread
       }
    }
 
-    private void checkSuspended ()
-    {
-	synchronized (_signal)
-	{
-	    _signal.notify();
-	}
-
-	if (getStatus() == State.suspended)
-	{
-	    while (getStatus() == State.suspended)
-	    {
-		try
-		{
-		    synchronized (_suspendLock)
-		    {
-			_suspendLock.wait();
-		    }
-		}
-		catch (InterruptedException ex)
-		{
-		}
-	    }
-
-	    setStatus(State.active);
-	}
-    }
-
-   private final void initialise ()
+    /**
+     * initialise the periodic recovery instance to a suitable initial state
+     */
+   private void initialise ()
    {
        _recoveryModules = new Vector();
-       setStatus(State.active);
+       setStatus(Status.INACTIVE);
+       setMode(Mode.ENABLED);
    }
 
    // this refers to the modules specified in the recovery manager
    // property file which are dynamically loaded.
+   /**
+    * list of instances of RecoiveryModule either loaded during startup as specified in the recovery manager
+    * property file or added dynamically by calls to addModule
+    */
    private static Vector _recoveryModules = null;
 
-   // back off period is the time between the first and second pass.
-   // recovery period is the time between the second pass and the start
-   // of the first pass.
+   /**
+    * time in seconds between the first and second pass in any given scan
+    */
    private static int _backoffPeriod = 0;
+
+    /**
+     * time in seconds for which the periodic recovery thread waits between scan attempts
+     */
    private static int _recoveryPeriod = 0;
 
-   // default values for the above
-   private static final int _defaultBackoffPeriod = 10;
+    /**
+     *  default value for _backoffPeriod if not specified via property {@link com.arjuna.ats.arjuna.common.Environment#RECOVERY_BACKOFF_PERIOD}
+     */
+    private static final int _defaultBackoffPeriod = 10;
+
+    /**
+     *  default value for _recoveryPeriod if not specified via property {@link com.arjuna.ats.arjuna.common.Environment#PERIODIC_RECOVERY_PERIOD}
+     */
    private static final int _defaultRecoveryPeriod = 120;
 
-   // exit thread flag
-   private static int _currentState = State.created;
-   private static Object _stateLock = new Object();
+    /**
+     * lock controlling access to {@link PeriodicRecovery#_currentStatus}, {@link PeriodicRecovery#_currentMode} and
+     * {@link PeriodicRecovery#_workerScanRequested}
+     */
+   private static final Object _stateLock = new Object();
 
-   private static SimpleDateFormat _theTimestamper = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+    /**
+     * activity status indicating whether we IDLING or some thread is SCANNING
+     */
+   private static int _currentStatus;
 
+    /**
+     * operating mode indicating whether scanning is ENABLED, SUSPENDED or TERMINATED
+     */
+   private static int _currentMode;
+
+    /**
+     *  flag indicating whether the listener has prodded the recovery thread
+     */
+    private boolean _workerScanRequested = false;
+
+    /**
+     * format for printing dates in log messages
+     */
+    private static SimpleDateFormat _theTimestamper = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+
+    /**
+     * socket used by listener worker thread
+     */
     private static ServerSocket _socket = null;
 
+    /**
+     * listener thread running worker service
+     */
     private static Listener _listener = null;
-    private static WorkerService _workerService = null;
 
-    private Object _suspendLock = new Object();
-    private Object _signal = new Object();
+    /**
+     * the worker service which handles requests via the listener socket
+     */
+    private static WorkerService _workerService = null;
 
    /*
     * Read the system properties to set the configurable options

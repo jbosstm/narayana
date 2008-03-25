@@ -160,20 +160,30 @@ public class RecoveryManager
     }
     
     /**
-     * Stop the periodic recovery manager.
+     * Stop the periodic recovery manager waiting for any recovery scan in progress to complete
      */
 
     public final void stop ()
     {
-	_theImple.stop();
+        stop(false);
     }
-    
+
+    /**
+     * Stop the periodic recovery manager.
+     * @param async false means wait for any recovery scan in progress to complete
+     */
+
+
+    public final void stop (boolean async)
+    {
+        _theImple.stop(async);
+    }
     /**
      * Suspend the recovery manager. If the recovery manager is in the process of
      * doing recovery scans then it will be suspended afterwards, in order to
      * preserve data integrity.
      * 
-     * @param async wait for the recovery manager to finish any scans before returning.
+     * @param async false means wait for the recovery manager to finish any scans before returning.
      */
 
     public void suspendScan (boolean async)
@@ -204,6 +214,22 @@ public class RecoveryManager
     {
 	_theImple.addModule(module);
     }
+
+    /**
+     * Remove a recovery module from the system.
+     *
+     * @param module The module to add.
+     */
+
+    public final void removeModule (RecoveryModule module)
+    {
+	_theImple.removeModule(module);
+    }
+
+    /**
+     * Obtain a snapshot list of available recovery modules.
+     * @return a snapshot list of the currently installed recovery modules
+     */
 
     public final Vector getModules ()
     {

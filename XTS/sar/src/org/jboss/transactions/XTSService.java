@@ -22,6 +22,7 @@ package org.jboss.transactions;
 
 import org.jboss.system.ServiceMBeanSupport;
 import org.jboss.logging.Logger;
+import org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule;
 
 import com.arjuna.mw.wsas.utils.Configuration;
 import com.arjuna.mw.wst.deploy.WSTXInitialisation;
@@ -72,6 +73,7 @@ import com.arjuna.webservices.wscoor.processors.RegistrationCoordinatorProcessor
 import com.arjuna.webservices.wsaddr.policy.AddressingPolicy;
 import com.arjuna.wst.messaging.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 
 import java.io.InputStream;
 
@@ -83,6 +85,8 @@ public class XTSService extends ServiceMBeanSupport implements XTSServiceMBean {
     // TODO expose as bean properties
     private int taskManagerMinWorkerCount = 0;
     private int taskManagerMaxWorkerCount = 10;
+
+    private ACCoordinatorRecoveryModule acCoordinatorRecoveryModule = null;
 
     // TODO: how to use a (per application) remote coordinator?
     // does the http servlet param indicate its own location and the
@@ -143,10 +147,10 @@ public class XTSService extends ServiceMBeanSupport implements XTSServiceMBean {
 
         WSTXInitialisation(); // com.arjuna.mw.wst.deploy.WSTXInitialisation : Initialise WSTX
 
-        //ACCoordinatorRecoveryModule acCoordinatorRecoveryModule = new ACCoordinatorRecoveryModule();
+        acCoordinatorRecoveryModule = new ACCoordinatorRecoveryModule();
         // we assume the tx manager has started, hence initializing the recovery manager.
         // to guarantee this our mbean should depend on the tx mgr mbean. (but does that g/tee start or just load?)
-        //RecoveryManager.manager().addModule(acCoordinatorRecoveryModule); // TODO thread safety.
+        RecoveryManager.manager().addModule(acCoordinatorRecoveryModule);
 
     }
 
@@ -154,6 +158,9 @@ public class XTSService extends ServiceMBeanSupport implements XTSServiceMBean {
     {
         getLog().info("JBossTS XTS Transaction Service - stopping");
 
+        if (acCoordinatorRecoveryModule != null) {
+            RecoveryManager.manager().removeModule(acCoordinatorRecoveryModule);             
+        }
         TaskManager.getManager().shutdown() ; // com.arjuna.services.framework.admin.TaskManagerInitialisation
 
         // HttpClientInitialisation

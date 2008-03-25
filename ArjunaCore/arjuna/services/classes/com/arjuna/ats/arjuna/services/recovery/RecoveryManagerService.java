@@ -75,7 +75,7 @@ public class RecoveryManagerService implements WrapperListener
     {
         if ( _rm != null )
         {
-            _rm.stop();
+            _rm.stop(false);
         }
 
         return exitCode;

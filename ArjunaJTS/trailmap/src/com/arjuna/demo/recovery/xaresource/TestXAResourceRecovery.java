@@ -227,7 +227,7 @@ public class TestXAResourceRecovery
          // If the Recovery manager was ran in this VM
          if( rcm != null )
          {
-            rcm.stop();
+            rcm.stop(true);
          }
       }
    }

@@ -159,13 +159,18 @@ public class RecoveryManagerImple
 
 	public final void scan ()
 	{
-		_periodicRecovery.doWork(false);
+		_periodicRecovery.doWork();
 	}
 
 	public final void addModule (RecoveryModule module)
 	{
 		_periodicRecovery.addModule(module);
 	}
+
+    public final void removeModule (RecoveryModule module)
+    {
+        _periodicRecovery.removeModule(module);
+    }
 
 	public final Vector getModules ()
 	{
@@ -180,9 +185,13 @@ public class RecoveryManagerImple
 		}
 	}
 
-	public void stop ()
+    /**
+     * stop the recovery manager
+     * @param async false means wait for any recovery scan in progress to complete
+     */
+	public void stop (boolean async)
 	{
-		_periodicRecovery.shutdown();
+		_periodicRecovery.shutdown(async);
 
 		// TODO why?
 
@@ -194,7 +203,7 @@ public class RecoveryManagerImple
 	 * doing recovery scans then it will be suspended afterwards, in order to
 	 * preserve data integrity.
 	 * 
-	 * @param async wait for the recovery manager to finish any scans before returning.
+	 * @param async false means wait for the recovery manager to finish any scans before returning.
 	 */
 	
 	public void suspendScan (boolean async)
@@ -209,7 +218,7 @@ public class RecoveryManagerImple
 	
 	public void finalize ()
 	{
-		stop();
+		stop(true);
 	}
 
 	private final boolean activeRecoveryManager ()

@@ -66,7 +66,7 @@ public class WorkerService implements Service
         else
 	    if (request.equals("SCAN") || (request.equals("ASYNC_SCAN")))
 	    {
-		_periodicRecovery.interrupt();
+		_periodicRecovery.wakeUp();
 
 		tsLogger.arjLogger.info("com.arjuna.ats.internal.arjuna.recovery.WorkerService_3");
 
