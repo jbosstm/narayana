@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -56,12 +56,12 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TxWorkManager;
 /**
  * The implementation of JBossXATerminator using the purely local (ArjunaCore)
  * implementation of the JTA.
- * 
+ *
  * The JBossXATerminator is the way in JBoss 4.x for adding work to an inflowed
  * transaction. JCA 1.5 has the concept of a WorkManager.
- * 
+ *
  * @author mcl
- * 
+ *
  * @message com.arjuna.ats.jbossatx.jta.jca.inactive [message
  *          com.arjuna.ats.jbossatx.jta.jca.inactive] Transaction is inactive!
  * @message com.arjuna.ats.jbossatx.jta.jca.completing [message
@@ -84,18 +84,18 @@ public class XATerminator extends XATerminatorImple implements
 	 * thread-to-transaction association is not changed yet. Basically this
 	 * operation only lets the transaction system know about the work and
 	 * nothing else.
-	 * 
+	 *
 	 * @param work
 	 *            the work to associate with the transaction.
 	 * @param xid
 	 *            the transaction within which the work will be performed.
 	 * @param timeout
 	 *            the lifetime of the transaction.
-	 * 
+	 *
 	 * @throws WorkCompletedException
 	 *             thrown if the work cannot be associated with the transaction.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 
 	public void registerWork (Work work, Xid xid, long timeout)
@@ -104,10 +104,10 @@ public class XATerminator extends XATerminatorImple implements
 		try
 		{
 			/*
-			 * Remember to conver timeout to seconds.
+			 * Remember to convert timeout to seconds.
 			 */
-			
-			TransactionImple tx = TxImporter.importTransaction(xid, (int) timeout);
+
+			TransactionImple tx = TxImporter.importTransaction(xid, (int) timeout/1000);
 
 			switch (tx.getStatus())
 			{
@@ -130,7 +130,7 @@ public class XATerminator extends XATerminatorImple implements
 			 * TODO currently means one synchronization per work item and that
 			 * instance isn't removed when/if the work item is cancelled and
 			 * another work item is later added.
-			 * 
+			 *
 			 * Synchronizations are pretty lightweight and this add/remove/add
 			 * scenario will hopefully not happen that much. So, we don't
 			 * optimise for it at the moment. Re-evaluate if it does become an
@@ -162,13 +162,13 @@ public class XATerminator extends XATerminatorImple implements
 	 * 4.x, they assume that the work has already been registered, so we do
 	 * likewise, i.e., we don't do a register if it hasn't, but we will throw an
 	 * exception (which is more than JBoss does).
-	 * 
+	 *
 	 * @param work the Work to start
 	 * @param xid the transaction to associate with the current thread.
-	 * 
+	 *
 	 * @throws WorkCompletedException thrown if there are any errors.
 	 */
-	
+
 	public void startWork (Work work, Xid xid) throws WorkCompletedException
 	{
 		try
@@ -207,11 +207,11 @@ public class XATerminator extends XATerminatorImple implements
 	 * Disassociate the thread from the transaction and remove the
 	 * work from the transaction pool of workers. This assumes that
 	 * the invoking thread is the one doing the work.
-	 * 
+	 *
 	 * @param work the Work unit to remove.
 	 * @param xid the transaction to remove the work from.
 	 */
-	
+
 	public void endWork (Work work, Xid xid)
 	{
 		try
@@ -231,11 +231,11 @@ public class XATerminator extends XATerminatorImple implements
 	/**
 	 * Remove the associated work from the transaction. Do not do
 	 * any thread-to-transaction disassociation.
-	 * 
+	 *
 	 * @param work the unit of work to remove.
 	 * @param xid the transaction from which it should be disassociated.
 	 */
-	
+
 	public void cancelWork (Work work, Xid xid)
 	{
 		try
