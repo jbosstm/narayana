@@ -560,8 +560,9 @@ public class PeriodicRecovery extends Thread
     /**
      * remove a recovery module from the recovery modules list
      * @param module the module to be removed
+     * @param waitOnScan true if the remove operation should wait for any in-progress scan to complete
      */
-    public final void removeModule (RecoveryModule module)
+    public final void removeModule (RecoveryModule module, boolean waitOnScan)
     {
         if (tsLogger.arjLogger.isDebugEnabled())
         {
@@ -569,6 +570,13 @@ public class PeriodicRecovery extends Thread
                     FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: removing module " + module.getClass().getName());
         }
         _recoveryModules.remove(module);
+
+        if (waitOnScan) {
+            // make sure any scan which might be using the module has completed
+            synchronized (_stateLock) {
+                    doScanningWait();
+            }
+        }
     }
 
     /**
@@ -715,7 +723,15 @@ public class PeriodicRecovery extends Thread
         {
             RecoveryModule m = (RecoveryModule) modules.nextElement();
 
+            // we need to ensure we use the class loader context of the recovery module while we are executing
+            // its methods
+
+            ClassLoader cl = switchClassLoader(m);
+            try {
             m.periodicWorkFirstPass();
+            } finally {
+                restoreClassLoader(cl);
+            }
 
             if (tsLogger.arjLogger.isDebugEnabled())
             {
@@ -761,7 +777,12 @@ public class PeriodicRecovery extends Thread
         {
             RecoveryModule m = (RecoveryModule) modules.nextElement();
 
+            ClassLoader cl = switchClassLoader(m);
+            try {
             m.periodicWorkSecondPass();
+            } finally {
+                restoreClassLoader(cl);
+            }
 
             if (tsLogger.arjLogger.isDebugEnabled())
             {
@@ -792,6 +813,41 @@ public class PeriodicRecovery extends Thread
             _workerService.signalDone();
             _workerScanRequested = false;
         }
+    }
+
+    /**
+     * install the classloader associated with some specific recovery module as the current thread's class loader
+     *
+     * this avoids a problem where the background periodic recovery thread can see the same class as the recovery
+     * module's class loader, specifically where a the recovery module resides in a sar (e.g. the XTS code).
+     * If class with name "A" is loaded via the background thread class loader as A' and used to create instance
+     * a' then a cast expression in th erecovery code of the form (A)a' will try to resolve a' against version
+     * A'' loaded via the sar loader and get a class cast exception.
+     *
+     * @param rm the recovery module whose class loader is to be installed as the new thread class loader
+     * @return the class loader currently installed as the thread class loader
+     */
+    
+    private ClassLoader switchClassLoader(RecoveryModule rm)
+    {
+        Thread currentThread = Thread.currentThread();
+        ClassLoader cl = currentThread.getContextClassLoader();
+
+        currentThread.setContextClassLoader(rm.getClass().getClassLoader());
+        return cl;
+    }
+
+    /**
+     * restore the current thread's classloader
+     *
+     * @param cl the class loader to be set as the current thread class loader
+     */
+
+    private void restoreClassLoader(ClassLoader cl)
+    {
+        Thread currentThread = Thread.currentThread();
+
+        currentThread.setContextClassLoader(cl);
     }
 
     /**

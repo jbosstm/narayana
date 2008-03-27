@@ -151,7 +151,23 @@ public synchronized void addToList (InventoryElement creator)
 	else
 	    _imple.addToList(creator);
     }
-    
+
+    /**
+     * @message com.arjuna.ats.arjuna.gandiva.inventory.Inventory_2 [com.arjuna.ats.arjuna.gandiva.inventory.Inventory_2] - Inventory.removeFromList error - no implementation!
+     */
+public synchronized InventoryElement removeFromList (ClassName creatorClassName)
+    {
+	if (_imple == null)
+	{
+	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
+		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.gandiva.inventory.Inventory_2");
+
+        return null;
+    }
+	else
+	    return _imple.removeFromList(creatorClassName);
+    }
+
 public synchronized void printList (PrintStream toUse)
     {
 	if (_imple == null)

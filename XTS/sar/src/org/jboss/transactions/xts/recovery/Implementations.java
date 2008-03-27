@@ -33,31 +33,25 @@ import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
  */
 public class Implementations {
 
-    public static synchronized boolean added ()
+    static ParticipantRecordSetup _inventoryItem = null;
+
+    public static synchronized void install ()
     {
-        return _added;
+        if (_inventoryItem == null)  {
+            _inventoryItem = new ParticipantRecordSetup();
+            // WS-AT Participant records.
+            Inventory.inventory().addToList(_inventoryItem);
+        }
     }
 
-    public static synchronized void initialise ()
+    public static synchronized void uninstall()
     {
-        if (!_added)
-        {
-            // WS-AT Participant records.
-            Inventory.inventory().addToList(new ParticipantRecordSetup());
-
-            _added = true;
+        if (_inventoryItem != null) {
+            Inventory.inventory().removeFromList(_inventoryItem.className());
         }
     }
 
     private Implementations ()
     {
     }
-
-    private static boolean _added = false;
-
-    static
-    {
-        initialise();
-    }
-
 }

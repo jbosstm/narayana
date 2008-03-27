@@ -46,6 +46,7 @@ import com.arjuna.mw.wscf.model.twophase.exceptions.*;
 import com.arjuna.mw.wsas.exceptions.*;
 
 import com.arjuna.mw.wscf.exceptions.*;
+import com.arjuna.webservices.util.ClassLoaderHelper;
 
 import java.io.PrintWriter;
 
@@ -628,7 +629,8 @@ public class ParticipantRecord extends
 			try
 			{
                 String resourcehandleImplClassName = os.unpackString();
-                _resourceHandle = (Participant)Class.forName(resourcehandleImplClassName).newInstance();
+                Class clazz = ClassLoaderHelper.forName(ParticipantRecord.class, resourcehandleImplClassName);
+                _resourceHandle = (Participant)clazz.newInstance();
 
                 result = _resourceHandle.restore_state(os);
 

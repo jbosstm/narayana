@@ -158,7 +158,43 @@ public synchronized void addToList (InventoryElement creator)
 	    }
 	}
     }
-    
+
+    /**
+     * remove an inventory element with some given class name from the list
+     *
+     * this is required in order to support dynamic registration and deregistration of recovery modules.
+     * strictly we want the insertion of the recovery module into the recovery manager list and the
+     * insertion of the inventory element into this list to happen atomically but the two lists are
+     * currently independently managed. This needs resolving in the recovery module itself.
+     * @param creatorClassName
+     * @return the inventory element which has been removed or null if it is not found
+     */
+    public synchronized InventoryElement removeFromList(ClassName creatorClassName)
+    {
+        InventoryElement element = null;
+
+        if (creatorClassName != null)
+        {
+            InventoryList marker = headOfList, trail = null;
+
+            while (marker != null && !creatorClassName.equals(marker._instance.className())) {
+                trail = marker;
+                marker = marker._next;
+            }
+
+            if (marker != null) {
+                element = marker._instance;
+                if (trail != null) {
+                    trail._next = marker._next;
+                } else {
+                     headOfList = marker._next;
+                }
+            }
+        }
+
+        return element;
+    }
+
 public synchronized void printList (PrintStream toUse)
     {
 	InventoryList marker = headOfList;

@@ -218,12 +218,13 @@ public class RecoveryManager
     /**
      * Remove a recovery module from the system.
      *
-     * @param module The module to add.
+     * @param module The module to remove.
+     * @param waitOnScan true if the remove operation should wait for any in-progress scan to complete 
      */
 
-    public final void removeModule (RecoveryModule module)
+    public final void removeModule (RecoveryModule module, boolean waitOnScan)
     {
-	_theImple.removeModule(module);
+	_theImple.removeModule(module, waitOnScan);
     }
 
     /**

@@ -148,6 +148,11 @@ public class XTSService extends ServiceMBeanSupport implements XTSServiceMBean {
         WSTXInitialisation(); // com.arjuna.mw.wst.deploy.WSTXInitialisation : Initialise WSTX
 
         acCoordinatorRecoveryModule = new ACCoordinatorRecoveryModule();
+
+        // ensure Implementations are installed into the inventory before we register the module
+
+        acCoordinatorRecoveryModule.install();
+
         // we assume the tx manager has started, hence initializing the recovery manager.
         // to guarantee this our mbean should depend on the tx mgr mbean. (but does that g/tee start or just load?)
         RecoveryManager.manager().addModule(acCoordinatorRecoveryModule);
@@ -159,7 +164,10 @@ public class XTSService extends ServiceMBeanSupport implements XTSServiceMBean {
         getLog().info("JBossTS XTS Transaction Service - stopping");
 
         if (acCoordinatorRecoveryModule != null) {
-            RecoveryManager.manager().removeModule(acCoordinatorRecoveryModule);             
+            // remove the module, making sure no any scan which might be using it has completed
+            RecoveryManager.manager().removeModule(acCoordinatorRecoveryModule, true);
+            // ok, now it is safe to get the recovery manager to uninstall its Implementations from the inventory
+            acCoordinatorRecoveryModule.uninstall();
         }
         TaskManager.getManager().shutdown() ; // com.arjuna.services.framework.admin.TaskManagerInitialisation
 

@@ -60,6 +60,10 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <property name="build.dir"         value="build"/>
     <property name="build.webinf.dir"       value="${build.dir}/WEB-INF"/>
 
+    <!-- enable debugging of XTS service code -->
+
+    <property name="javac.debug" value="on"/>
+
     <target name="init">
         <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
@@ -80,7 +84,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
 	  jboss-system-jmx.jar.
       -->
       <!--
-        <javac srcdir="src" destdir="${build.dir}">
+        <javac srcdir="src" destdir="${build.dir}" debug="${javac.debug}">
             <classpath>
                 <pathelement location="${jbossas.home}/lib/jboss-common.jar"/>
                 <pathelement location="${jbossas.home}/lib/jboss-system.jar"/>
@@ -90,7 +94,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             </classpath>
         </javac>
 	-->
-        <javac srcdir="src" destdir="${build.dir}">
+        <javac srcdir="src" destdir="${build.dir}" debug="${javac.debug}">
             <classpath>
                 <pathelement location="${jbossas.home}/client/jbossall-client.jar"/>
                 <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>

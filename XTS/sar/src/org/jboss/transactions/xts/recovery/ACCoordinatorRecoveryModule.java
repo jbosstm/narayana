@@ -74,8 +74,24 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
         }
 
         _transactionStatusConnectionMgr = new TransactionStatusConnectionManager() ;
+    }
 
-        Implementations.initialise();
+    /**
+     * called by the service startup code before the recovery module is added to the recovery managers
+     * module list
+     */
+    public void install()
+    {
+        Implementations.install();
+    }
+
+    /**
+     * called by the service shutdown code after the recovery module is removed from the recovery managers
+     * module list in order to allow the implementations list to be purged of this module's implementations
+     */
+    public void uninstall()
+    {
+        Implementations.uninstall();
     }
 
     /**

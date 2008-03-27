@@ -95,6 +95,7 @@ public abstract Object createObjectNameResources (ClassName typeName,
 						  Object[] paramResources);
     
 public abstract void addToList (InventoryElement creator);
+public abstract InventoryElement removeFromList (ClassName creatorClassName);
 public abstract void printList (PrintStream toUse);
 
 public ClassName className ()

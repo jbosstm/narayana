@@ -73,6 +73,11 @@ public synchronized void addToList (InventoryElement creator)
 	_staticInventory.addToList(creator);
     }
 
+    public synchronized InventoryElement removeFromList (ClassName creatorClassName)
+    {
+        return _staticInventory.removeFromList(creatorClassName);
+    }
+
 public ClassName className ()
     {
 	return ArjunaNames.Implementation_Inventory_DynamicInventory();

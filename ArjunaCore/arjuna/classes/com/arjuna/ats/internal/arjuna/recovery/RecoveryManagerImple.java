@@ -167,9 +167,9 @@ public class RecoveryManagerImple
 		_periodicRecovery.addModule(module);
 	}
 
-    public final void removeModule (RecoveryModule module)
+    public final void removeModule (RecoveryModule module, boolean waitOnScan)
     {
-        _periodicRecovery.removeModule(module);
+        _periodicRecovery.removeModule(module, waitOnScan);
     }
 
 	public final Vector getModules ()
