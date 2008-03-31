@@ -48,6 +48,7 @@ import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.internal.jts.PseudoControlWrapper;
 import com.arjuna.ats.internal.jts.utils.Helper;
 
 import org.omg.CosTransactions.*;
@@ -163,7 +164,9 @@ public class OTSManager
 						   com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "OTS::destroyControl - removing control from reaper.");
 			}
 
-			TransactionReaper.transactionReaper().remove(control.get_uid());
+            // wrap the control so it gets compared against reaper list entries using the correct test
+            PseudoControlWrapper wrapper = new PseudoControlWrapper(control);
+			TransactionReaper.transactionReaper().remove(wrapper);
 		    }
 		}
 		catch (Exception e)
@@ -239,9 +242,12 @@ public class OTSManager
 		{
 		    try
 		    {
-			if (coord.is_top_level_transaction())
-			    TransactionReaper.transactionReaper().remove(control);
-		    }
+			if (coord.is_top_level_transaction()) {
+                // wrap the control so it gets compared against reaper list entries using the correct test
+                PseudoControlWrapper wrapper = new PseudoControlWrapper(control);
+                TransactionReaper.transactionReaper().remove(wrapper);
+            }
+            }
 		    catch (Exception e)
 		    {
 		    }
