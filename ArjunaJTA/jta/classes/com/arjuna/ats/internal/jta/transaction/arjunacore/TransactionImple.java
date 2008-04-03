@@ -415,7 +415,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 *          null synchronization parameter!
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.syncsnotallowed
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.syncsnotallowed]
-	 *          Synchronizations are not allowed!
+	 *          Synchronizations are not allowed! Transaction status is 
 	 */
 
 	public void registerSynchronization(javax.transaction.Synchronization sync)
@@ -473,7 +473,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 				default:
 					throw new IllegalStateException(
 							jtaLogger.logMesg
-									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.syncsnotallowed"));
+									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.syncsnotallowed")+ActionStatus.stringForm(status));
 				}
 			}
 		}
