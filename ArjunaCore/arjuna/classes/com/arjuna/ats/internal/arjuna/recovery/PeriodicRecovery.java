@@ -374,6 +374,8 @@ public class PeriodicRecovery extends Thread
                                           FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread Status <== SCANNING" );
                            }
                            setStatus(Status.SCANNING);
+                           // must kick any other waiting threads
+                           _stateLock.notifyAll();
                            workToDo = true;
                            break;
                        case Mode.SUSPENDED:
@@ -413,6 +415,8 @@ public class PeriodicRecovery extends Thread
                                   FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread Status <== INACTIVE");
                    }
                    setStatus(Status.INACTIVE);
+                   // must kick any other waiting threads
+                   _stateLock.notifyAll();
                    // check if we need to notify the listener worker that we just finsihsed  a scan
                    notifyWorker();
 
@@ -484,6 +488,8 @@ public class PeriodicRecovery extends Thread
 
                     // ok grab our chance to start a scan
                     setStatus(Status.SCANNING);
+                    // must kick any other waiting threads
+                    _stateLock.notifyAll();
                     if (tsLogger.arjLogger.isDebugEnabled())
                     {
                         tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
@@ -512,6 +518,8 @@ public class PeriodicRecovery extends Thread
                                FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: ad hoc thread Status <== INACTIVE");
                 }
                 setStatus(Status.INACTIVE);
+                // must kick any other waiting threads
+                _stateLock.notifyAll();
                 // check if we need to notify the listener worker that we just finsihsed  a scan
                 notifyWorker();
             }
