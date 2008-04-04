@@ -42,10 +42,12 @@ import java.io.*;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.recovery.RecoveryEnvironment;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.utils.Utility;
 
 import com.arjuna.common.util.logging.*;
 
@@ -70,6 +72,9 @@ import com.arjuna.common.util.logging.*;
  * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_8 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_8] - Invalid port specified {0}
  * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_9 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_9] - Could not create recovery listener {0}
  * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_10 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_10] - Ignoring request to scan because RecoveryManager state is: {0}
+ * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_11 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_11] - Invalid host specified {0}
+ * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_12 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_12] - Could not create recovery listener
+ * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_13 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_13] - Recovery manager listening on endpoint {0}:{1}
  */
 
 public class PeriodicRecovery extends Thread
@@ -151,6 +156,13 @@ public class PeriodicRecovery extends Thread
 
 	  _listener = new Listener(getServerSocket(), _workerService);
 	  _listener.setDaemon(true);
+
+      if (tsLogger.arjLoggerI18N.isInfoEnabled())
+          tsLogger.arjLoggerI18N.info(
+                  "com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_13",
+                  new Object[] {
+                          _socket.getInetAddress().getHostAddress(), _socket.getLocalPort()
+                  });
       }
       catch (Exception ex)
       {
@@ -294,40 +306,20 @@ public class PeriodicRecovery extends Thread
        }
    }
 
-   /**
-    * Return the port specified by the property
-    * com.arjuna.ats.internal.arjuna.recovery.recoveryPort,
-    * otherwise return a default port.
-    */
-
+    /**
+     *
+     * @return a bound server socket corresponding to the recovery manager
+     * @throws IOException if the host name is unknown or the endpoint has already been bound
+     */
     public static ServerSocket getServerSocket () throws IOException
     {
-	    if (_socket == null)
-	    {
-		// TODO these properties should be documented!!
+        synchronized (PeriodicRecovery._socketLock)
+        {
+            if (_socket == null)
+                _socket = new ServerSocket(RecoveryManager.getRecoveryManagerPort(), Utility.BACKLOG, RecoveryManager.getRecoveryManagerHost(true));
 
-		String tsmPortStr = arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_PORT);
-		int port = 0;
-
-		if (tsmPortStr != null)
-		{
-		    try
-		    {
-			port = Integer.parseInt( tsmPortStr );
-		    }
-		    catch (Exception ex)
-		    {
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-			    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_8", new Object[]{ex});
-			}
-		    }
-		}
-
-		_socket = new ServerSocket(port);
-	    }
-
-	return _socket;
+            return _socket;
+        }
     }
 
    /**
@@ -1042,6 +1034,7 @@ public class PeriodicRecovery extends Thread
      * socket used by listener worker thread
      */
     private static ServerSocket _socket = null;
+    private static final Object _socketLock = new Object();
 
     /**
      * listener thread running worker service

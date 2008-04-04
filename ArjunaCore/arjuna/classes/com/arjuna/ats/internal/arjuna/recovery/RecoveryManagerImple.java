@@ -40,6 +40,7 @@ import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.recovery.RecoveryConfiguration;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
@@ -74,6 +75,9 @@ public class RecoveryManagerImple
 	 * @message com.arjuna.ats.internal.arjuna.recovery.ready
 	 *          [com.arjuna.ats.internal.arjuna.recovery.ready]
 	 *          RecoveryManagerImple is ready on port {0}
+     * @message com.arjuna.ats.internal.arjuna.recovery.fail
+	 *          [com.arjuna.ats.internal.arjuna.recovery.fail]
+	 *          RecoveryManagerImple: cannot bind to socket on address {0} and port {1}
 	 */
 
 	public RecoveryManagerImple (boolean threaded)
@@ -112,12 +116,34 @@ public class RecoveryManagerImple
 
 		/*
 		 * Check whether there is a recovery daemon running - only allow one per
-		 * machine (currently!)
+		 * object store
 		 */
 
-		if (activeRecoveryManager())
+		if (isRecoveryManagerEndPointInUse())
 		{
-			throw new FatalError("Recovery manager already active!");
+            if (tsLogger.arjLoggerI18N.isFatalEnabled())
+            {
+                try
+                {
+                    tsLogger.arjLoggerI18N.fatal(
+                            "com.arjuna.ats.internal.arjuna.recovery.fail",
+                            new Object[] {
+                                    RecoveryManager.getRecoveryManagerHost(true), RecoveryManager.getRecoveryManagerPort()
+                            }
+                    );
+                }
+                catch (Throwable t)
+                {
+                    tsLogger.arjLoggerI18N.fatal(
+                            "com.arjuna.ats.internal.arjuna.recovery.fail",
+                            new Object[] {
+                                    "unknown", "unknown"
+                            }
+                    );
+                }
+            }
+
+            throw new FatalError("Recovery manager already active (or recovery port and address are in use)!");
 		}
 
 		// start the expiry scanners
@@ -221,28 +247,30 @@ public class RecoveryManagerImple
 		stop(true);
 	}
 
-	private final boolean activeRecoveryManager ()
+    /**
+     * Test whether the recovery manager (RM) port and address are available - if not assume that another
+     * recovery manager is already active.
+     *
+     * Ideally this method needs to discover whether or not another RM is already monitoring the object store
+     *
+     * @return true if the RM port and address are in use
+     */
+    private final boolean isRecoveryManagerEndPointInUse ()
 	{
-		// we should be checking for the port in use or something!
+        try
+        {
+            /*
+             * attempt to create the server socket. If an exception is thrown then some other
+             * process is using the RM endpoint
+             */
+            PeriodicRecovery.getServerSocket();
 
-		SocketProcessId socket = null;
-		boolean active = false;
-
-		try
-		{
-			socket = new SocketProcessId();
-
-			if (socket.getpid() == -1) 
-				active = true;
-		}
-		catch (FatalError ex)
-		{
-			// already active on that port
-
-			active = true;
-		}
-
-		return active;
+            return false;
+        }
+        catch (Throwable e)
+        {
+            return true;
+        }
 	}
 
 }

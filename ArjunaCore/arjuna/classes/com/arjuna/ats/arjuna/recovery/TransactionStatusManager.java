@@ -33,19 +33,15 @@ package com.arjuna.ats.arjuna.recovery ;
 
 import java.io.* ;
 import java.net.* ;
-import java.util.* ;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.ats.arjuna.utils.Utility ;
 import com.arjuna.ats.internal.arjuna.recovery.Listener ;
 import com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem ;
-import com.arjuna.ats.internal.arjuna.utils.SocketProcessId;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.*;
+import com.arjuna.common.util.propertyservice.PropertyManager;
+import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 
 /**
  * This implementation is tied closely with the socket/port version of
@@ -60,39 +56,40 @@ import com.arjuna.common.util.logging.*;
  *
  * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_1 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_1] - Starting service {0} on port {1}
  * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_2 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_2] - Listener failed
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_3 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_3] - TransactionStatusManager started on port {0} with service {1}
+ * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_3 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_3] - TransactionStatusManager started on port {0} and host {1} with service {2}
  * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_4 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_4] - Class not found: {0}
  * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_5 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_5] - Failed to instantiate service class: {0}
  * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_6 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_6] - Illegal access to service class: {0}
  * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_7 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_7] - Failed to create server socket on port: {0}
  * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_8 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_8] - Invalid port specified {0}
  * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_9 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_9] - Could not get unique port.
+ * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_10 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_10] - Unknown host {0}
+ * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_11 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_11] - Invalid port specified
+ * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_12 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_12] - Unknown host specified
+ * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_13 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_13] - Invalid host or port
+ * @message com.arjuna.ats.arjuna.recovery.TransactionStatusManager_14 [com.arjuna.ats.arjuna.recovery.TransactionStatusManager_14] - Failed to create server socket on address {0} and port: {1}
  */
 
 public class TransactionStatusManager
 {
    public TransactionStatusManager()
    {
-      int port = getTsmPort();
-
-      start( _defaultTsmService, port ) ;
+      start( _defaultTsmService, null, -1 ) ;
    }
    
    public TransactionStatusManager( int port )
    {
-      start( _defaultTsmService, port ) ;
+      start( _defaultTsmService, null, port ) ;
    }
     
    public TransactionStatusManager( String serviceName )
    {
-      int port = getTsmPort();
-       
-      start( serviceName, port ) ;
+      start( serviceName, null, -1 ) ;
    }
     
    public TransactionStatusManager( String serviceName, int port  )
    {
-      start( serviceName, port ) ;
+      start( serviceName, null, port ) ;
    }
    
    /**
@@ -134,32 +131,28 @@ public class TransactionStatusManager
 	   TransactionStatusManagerItem.removeThis( Utility.getProcessUid() ) ;
       } 
    }
-   
+
    /**
     * Create service and Transaction status manager item.
     */
-   private void start( String serviceName, int port )
+   private void start( String serviceName, String host, int port )
    {
-      int localPort = 0;
-
       try
       {
          Class serviceClass = Thread.currentThread().getContextClassLoader().loadClass( serviceName ) ;
    
          Service service = (Service) serviceClass.newInstance() ;
             
-         ServerSocket socketServer = getTsmServerSocket(port);
-         
-         localPort = socketServer.getLocalPort();
+         ServerSocket socketServer = getTsmServerSocket(host, port);
 
          addService( service, socketServer ) ;
    
-         TransactionStatusManagerItem.createAndSave( socketServer.getLocalPort() ) ;
+         TransactionStatusManagerItem.createAndSave(socketServer.getInetAddress().getHostAddress(), socketServer.getLocalPort() ) ;
 
          if (tsLogger.arjLoggerI18N.isInfoEnabled())
 	 {
 	     tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_3", 
-					  new Object[]{Integer.toString(localPort), serviceName});
+					  new Object[]{Integer.toString(socketServer.getLocalPort()), socketServer.getInetAddress().getHostAddress(), serviceName});
 	 }
       }
       catch ( ClassNotFoundException ex )
@@ -190,69 +183,99 @@ public class TransactionStatusManager
       {
 	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
 	  {
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_7", 
-					  new Object[]{Integer.toString(localPort)});
+          tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_14", 
+					  new Object[]{getListenerHostName(), getListenerPort(-1)});
 	  }
 
 	  throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_9"));
       }
    }
-   
+
     /**
-     * If the socket based version of getpid is being used, then it will
-     * have already assigned a port and created a ServerSocket. We should
-     * use this - don't want too many ports assigned to a given process,
-     * especially if they aren't used. In which case, the port parameter
-     * is not used, because we got it from the getpid class anyway.
+     * Lookup the listener port for the transaction manager
+     * @param defValue the value to use if no valid port number can be found
+     * @return the listener port
      */
-
-private static final ServerSocket getTsmServerSocket (int port) throws IOException
+    private int getListenerPort(Integer defValue)
     {
-	ServerSocket socket = SocketProcessId.getSocket();
-	
-	return ((socket == null) ? new ServerSocket(port) : socket);
+        // has the port already been bound
+        if (_port > 0)
+            return _port;
+
+        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+        //pm = arjPropertyManager.propertyManager;
+
+        String portStr = pm.getProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_PORT);
+
+        if ( portStr == null || portStr.length() == 0)
+        {
+            return DEFAULT_TMS_PORT;
+        }
+        else
+        {
+            Integer port = Utility.lookupBoundedIntegerProperty(pm, com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_PORT, defValue,
+                    "com.arjuna.ats.arjuna.recovery.TransactionStatusManager_8",
+                    0, Utility.MAX_PORT);
+
+            if (port == null)
+                throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_11"));
+
+            return port;
+        }
+
     }
-    
-   /**
-    * Return the port specified by the property
-    * com.arjuna.ats.arjuna.recovery.TransactionStatusManagerPort,
-    * otherwise return a default port.
-    *
-    * If the socket based version of getpid is being used, then it will
-    * already have assigned our port, so use that.
-    */
 
-private static final int getTsmPort ()
-   {
-       if (SocketProcessId.getSocket() == null)
-       {
-	   int port = _defaultTsmPort ;
-	   
-	   // TODO these properties should be documented!!
+    private String getListenerHostName()
+    {
+        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+        //pm = arjPropertyManager.propertyManager;
 
-	   String tsmPortStr = arjPropertyManager.propertyManager.getProperty("com.arjuna.ats.arjuna.recovery.transactionStatusManagerPort" ) ;
-	   
-	   if ( tsmPortStr != null )
-	   {
-	       try
-	       {
-		   port = Integer.parseInt( tsmPortStr ) ;
-	       }
-	       catch ( Exception ex )
-	       {
-		   if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		   {
-		       tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_8", 
-						   new Object[]{ex});
-		   }
-	       }
-	   }
+        return Utility.getServerBindAddress(pm, com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_ADDRESS);
+    }
 
-	   return port ;
-       }
-       else
-	   return SocketProcessId.getSocket().getLocalPort();
-   }
+    /**
+     * Create a new listener socket. If the input paramters are invalid use the config properties
+     * to choose the desired address and port to bind the listener to. A port value of -1 is considered
+     * invalid.
+     *
+     * @param hostNameOverride override the config property for the hostname
+     * @param portOverride override the config property for the port
+     * @return a socket bound to the appropriate host and port
+     * @throws IOException if the host name is unknown
+     */
+    private ServerSocket getTsmServerSocket (String hostNameOverride, int portOverride) throws IOException
+    {
+        if (_socket != null)
+        {
+            // the socket has already been created
+            return _socket;
+        }
+
+        if (_port == -1)
+        {
+            // a previous attempt to create the socket failed
+            throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_13"));
+        }
+
+        try
+        {
+            String host = hostNameOverride == null ? getListenerHostName() : hostNameOverride;
+            InetAddress bindAddress = Utility.hostNameToInetAddress(host, "com.arjuna.ats.arjuna.recovery.TransactionStatusManager_10");
+
+            _port = portOverride == -1 ? getListenerPort(null) : portOverride;
+            _socket = new ServerSocket(_port, Utility.BACKLOG, bindAddress);
+
+            _port = _socket.getLocalPort();
+        }
+        catch (UnknownHostException ex)
+        {
+            _port = -1;
+
+            throw ex;
+        }
+
+        return _socket;
+    }
 
     /**
      * Listener thread.
@@ -263,17 +286,27 @@ private static final int getTsmPort ()
      * Default service run on listener thread.
      */ 
     private static final String _defaultTsmService = "com.arjuna.ats.arjuna.recovery.ActionStatusService" ;
-    
-    /**
-     * Default port is any free port.
-     */
-    private static final int _defaultTsmPort = 0 ;
-    
+
     /**
      * Flag used to ensure finalize gets called just once.
      */ 
     private boolean _finalizeCalled = false ;
 
+    /**
+     * The listener socket
+     */
+    private ServerSocket _socket;
+
+    /**
+     * Bound port for listener socket
+     * A value of -1 means that the attempt to create the socket failed
+     */
+    private int _port = 0;
+
+    /**
+     * Default bind port is any port
+     */
+    private int DEFAULT_TMS_PORT = 0;
 }
 
 

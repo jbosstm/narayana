@@ -116,6 +116,21 @@
       <property
         name="com.arjuna.ats.arjuna.recovery.transactionStatusManagerExpiryTime"
         value="12"/>
+
+      <!--
+        The port number on which the recovery manager listens.
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.recovery.recoveryPort"
+        value="4712"/>
+      <!--
+        The address on which the recovery manager listens.
+        If running within an AS then the address the AS is bound to (jboss.bind.address) takes precedence
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.recovery.recoveryAddress"
+        value=""/>
+
       <!--
         Use this to fix the port on which the TransactionStatusManager listens,
         The default behaviour is to use any free port.
@@ -123,6 +138,15 @@
       <property
         name="com.arjuna.ats.arjuna.recovery.transactionStatusManagerPort"
         value="0"/>
+
+      <!--
+        Use this to fix the address on which the TransactionStatusManager binds,
+        The default behaviour is to use the loopback address (ie localhost).
+        If running within an AS then the address the AS is bound to (jboss.bind.address) takes precedence
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.recovery.transactionStatusManagerAddress"
+        value=""/>
 
     </properties>
 </transaction-service>

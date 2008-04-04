@@ -56,5 +56,6 @@ public class Environment
     public static final String PROPAGATE_TERMINATOR = "com.arjuna.ats.jts.propagateTerminator";
     public static final String CONTEXT_PROP_MODE = "com.arjuna.ats.jts.contextPropMode";
     public static final String RECOVERY_MANAGER_PORT = "com.arjuna.ats.jts.recoveryManagerPort";
+    public static final String RECOVERY_MANAGER_ADDRESS = "com.arjuna.ats.jts.recoveryManagerAddress";
     public static final String OTS_1_0_TIMEOUT_PROPAGATION = "com.arjuna.ats.jts.ots_1_0.timeoutPropagation";
 }

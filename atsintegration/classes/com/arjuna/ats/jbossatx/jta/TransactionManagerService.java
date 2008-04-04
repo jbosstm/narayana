@@ -33,6 +33,7 @@ package com.arjuna.ats.jbossatx.jta;
 import org.jboss.mx.util.ObjectNameFactory;
 import org.jboss.system.ServiceMBeanSupport;
 import org.jboss.system.server.Server;
+import org.jboss.system.server.ServerConfig;
 import org.jboss.tm.JBossXATerminator;
 import org.jboss.tm.LastResource;
 import org.jboss.tm.XAExceptionFormatter;
@@ -133,7 +134,8 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         System.setProperty(com.arjuna.ats.tsmx.TransactionServiceMX.AGENT_IMPLEMENTATION_PROPERTY,
                 com.arjuna.ats.internal.jbossatx.agent.LocalJBossAgentImpl.class.getName());
         System.setProperty(Environment.LAST_RESOURCE_OPTIMISATION_INTERFACE, LastResource.class.getName()) ;
-
+        System.setProperty(com.arjuna.ats.arjuna.common.Environment.SERVER_BIND_ADDRESS, System.getProperty(ServerConfig.SERVER_BIND_ADDRESS));
+        
         if (timeout != 0)
         {
             TxControl.setDefaultTimeout(timeout);
@@ -219,38 +221,16 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
     private boolean isRecoveryManagerRunning() throws Exception
     {
         boolean active = false;
-        int port = 0;
         PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
 
         if ( pm != null )
         {
-            String portStr = pm.getProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_PORT);
-
-            if (portStr != null)
-            {
-                try
-                {
-                    port = Integer.parseInt(portStr);
-                }
-                catch (Exception ex)
-                {
-                    port = -1;
-                }
-            }
-            else
-            {
-                throw new Exception("The transaction status manager port is not set - please refer to the JBossTS documentation");
-            }
-
-
             BufferedReader in = null;
             PrintStream out = null;
 
             try
             {
-                getLog().info("Connecting to recovery manager on port "+port);
-
-                Socket sckt = new Socket(InetAddress.getLocalHost(),port);
+                Socket sckt = RecoveryManager.getClientSocket(getRunInVMRecoveryManager());
 
                 in = new BufferedReader(new InputStreamReader(sckt.getInputStream()));
                 out = new PrintStream(sckt.getOutputStream());

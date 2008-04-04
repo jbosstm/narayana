@@ -32,21 +32,15 @@
 package com.arjuna.ats.internal.arjuna.utils;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.common.util.propertyservice.PropertyManager;
+import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
-import com.arjuna.ats.arjuna.utils.Process;
 import com.arjuna.ats.arjuna.utils.Utility;
 
-import java.io.*;
 import java.net.*;
 
 import com.arjuna.ats.arjuna.exceptions.FatalError;
-import java.net.UnknownHostException;
-import java.lang.NumberFormatException;
-import java.lang.StringIndexOutOfBoundsException;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 
 /**
  * Obtains a unique value to represent the process id via sockets and
@@ -70,6 +64,7 @@ public class SocketProcessId implements com.arjuna.ats.arjuna.utils.Process
      *
      * @message com.arjuna.ats.internal.arjuna.utils.SocketProcessId_1 [com.arjuna.ats.internal.arjuna.utils.SocketProcessId_1]- Invalid port specified 
      * @message com.arjuna.ats.internal.arjuna.utils.SocketProcessId_2 [com.arjuna.ats.internal.arjuna.utils.SocketProcessId_2] - SocketProcessId.getpid could not get unique port.
+     * @message com.arjuna.ats.internal.arjuna.utils.SocketProcessId_3 [com.arjuna.ats.internal.arjuna.utils.SocketProcessId_3]- Invalid value for SocketProcessIdMaxPorts specified {0}
      */
     
     public int getpid ()
@@ -80,40 +75,32 @@ public class SocketProcessId implements com.arjuna.ats.arjuna.utils.Process
 	    {
 		if (_theSocket == null)
 		{
-		    int port = _defaultPort;
-      
-		    String portStr = arjPropertyManager.propertyManager.getProperty("com.arjuna.ats.arjuna.recovery.transactionStatusManagerPort");
+            Integer port = Utility.lookupBoundedIntegerProperty(arjPropertyManager.propertyManager, Environment.SOCKET_PROCESS_ID_PORT, _defaultPort,
+                        "com.arjuna.ats.internal.arjuna.utils.SocketProcessId_1",
+                        0, Utility.MAX_PORT);
+            Integer maxPorts = Utility.lookupBoundedIntegerProperty(arjPropertyManager.propertyManager, Environment.SOCKET_PROCESS_ID_MAX_PORTS, 1,
+                        "com.arjuna.ats.internal.arjuna.utils.SocketProcessId_3",
+                        0, Utility.MAX_PORT);
+            int maxPort;
+                          
+            if (maxPorts <= 1)
+            {
+                maxPort = port;
+            }
+            else if (Utility.MAX_PORT - maxPorts < port)
+            {
+                maxPort = Utility.MAX_PORT;
+            }
+            else
+            {
+                maxPort = port + maxPorts;
+            }
 
-		    if ( portStr != null )
-		    {
-			try
-			{
-			    port = Integer.parseInt(portStr);
-			}
-			catch (Exception ex)
-			{
-			    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.utils.SocketProcessId_1",ex);
-			    
-			    port = -1;
-			}
-		    }
-			
-		    if (port != -1)
-		    {
-			try
-			{
-			    _theSocket = new ServerSocket(port);
-			    
-			    _thePort = _theSocket.getLocalPort();
-			}
-			catch (Exception ex)
-			{
-			    _thePort = -1;
-			}
-		    }
-		    else
-			_thePort = -1;
+            do {
+                _theSocket = createSocket(port);
+            } while (_theSocket == null && ++port < maxPort);
+
+	    	_thePort = ((_theSocket == null) ? -1 : _theSocket.getLocalPort());
 		}
 	    }
 	}
@@ -124,7 +111,19 @@ public class SocketProcessId implements com.arjuna.ats.arjuna.utils.Process
 	return _thePort;
     }
 
-    public static final ServerSocket getSocket ()
+    private static ServerSocket createSocket(int port)
+    {
+        try
+        {
+            return new ServerSocket(port);
+        }
+        catch (IOException e)
+        {
+            return null;
+        }
+    }
+
+    public static ServerSocket getSocket ()
     {
 	synchronized (SocketProcessId._lock)
 	{
@@ -134,7 +133,7 @@ public class SocketProcessId implements com.arjuna.ats.arjuna.utils.Process
     
     private static int          _thePort = 0;
     private static ServerSocket _theSocket = null;
-    private static Object       _lock = new Object();
+    private static final Object       _lock = new Object();
 
     /**
      * Default port is any free port.

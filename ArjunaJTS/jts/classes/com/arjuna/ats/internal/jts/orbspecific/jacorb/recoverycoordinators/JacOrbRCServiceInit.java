@@ -55,6 +55,8 @@ import org.omg.CosTransactions.*;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
+import com.arjuna.ats.arjuna.utils.Utility;
+
 import java.io.IOException;
 import java.util.Properties;
 
@@ -70,7 +72,7 @@ import java.util.Properties;
  * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_3 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_3] - JacOrbRCServiceInit - Failed to start RC service
  * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_4 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_4] - Unable to create file ObjectId
  * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_5 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_5] - Unable to create file ObjectId - security problems
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6] - Staring RecoveryServer ORB on port {0}
+ * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6] - Starting RecoveryServer ORB on port {0} and address {1}
  * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6a [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6a] - Sharing RecoveryServer ORB on port {0}
  * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_7 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_7] - Failed to create orb and poa for transactional objects {1}
  */
@@ -105,19 +107,26 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 	    String poaName = POA_NAME_PREFIX + rcServiceName+domainName;
 	    boolean oaInit = true;
 	    String oaPort = "OAPort";
-	    String oldPort = System.getProperty(oaPort, "");
+        String oaAddr = "OAIAddr";
+        String oldPort = System.getProperty(oaPort, "");
+        String oldAddr = System.getProperty(oaAddr, "");
 
-	    /** If the ORB Manager hasn't been initialised then create our own ORB **/
+        /** If the ORB Manager hasn't been initialised then create our own ORB **/
 
 	    if ( !RecoveryORBManager.isInitialised() )
 	    {
 		_orb = com.arjuna.orbportability.internal.InternalORB.getInstance("RecoveryServer");
 		String[] params = null;
 		String recoveryManagerPort = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.RECOVERY_MANAGER_PORT, "4711");
+        String recoveryManagerAddr = Utility.getServerBindAddress(jtsPropertyManager.propertyManager, com.arjuna.ats.jts.common.Environment.RECOVERY_MANAGER_ADDRESS);
 
-		if (jtsLogger.loggerI18N.isInfoEnabled())
+        if (recoveryManagerAddr == null)
+            recoveryManagerAddr = "";
+
+        if (jtsLogger.loggerI18N.isInfoEnabled())
 		{
-		    jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6", new java.lang.Object[]{recoveryManagerPort});
+		    jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6",
+                    new java.lang.Object[]{recoveryManagerPort, recoveryManagerAddr});
 		}
 
 		final Properties p = new Properties();
@@ -139,15 +148,22 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
             }
         }
 		p.setProperty(oaPort, recoveryManagerPort);
-		_orb.initORB(params, p);
+
+        if (recoveryManagerAddr.length() != 0)
+        {
+            p.setProperty(oaAddr, recoveryManagerAddr);
+            System.setProperty(oaAddr, oldAddr);
+        }
+            
+        _orb.initORB(params, p);
 		_oa = OA.getRootOA(_orb);
 
 		if (oldPort == null)
 		    oldPort = "";
-			
-		System.setProperty(oaPort, oldPort);	// Remove property that JacORB added so future ORB's work.
 
-		RecoveryORBManager.setORB(_orb);
+        System.setProperty(oaPort, oldPort);	// Remove property that JacORB added so future ORB's work.
+
+        RecoveryORBManager.setORB(_orb);
 		RecoveryORBManager.setPOA(_oa);
 	    }
 	    else

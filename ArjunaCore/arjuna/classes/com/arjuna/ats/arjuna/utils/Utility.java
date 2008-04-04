@@ -35,16 +35,11 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.common.util.propertyservice.PropertyManager;
-import java.util.Properties;
-import java.io.*;
+
 import java.net.InetAddress;
 
-import com.arjuna.ats.arjuna.exceptions.FatalError;
 import java.net.UnknownHostException;
 import java.lang.NumberFormatException;
-import java.lang.StringIndexOutOfBoundsException;
-import java.io.IOException;
-import java.io.FileNotFoundException;
 
 /**
  * Various useful functions that we wrap in a single class.
@@ -193,6 +188,100 @@ public static synchronized int hostInetAddr () throws UnknownHostException
     }
 
     /**
+     * If the transaction service is running within a JBoss instance return the jboss bind port
+     *
+     * @param hostPropName the hostname property to use if running standalone (must not be null)
+     * @return the host name
+     */
+    public static final String getServerBindAddress(PropertyManager pm, String hostPropName)
+    {
+        String host = System.getProperty(Environment.SERVER_BIND_ADDRESS);
+
+        if (host == null)
+        {
+            host = pm.getProperty(hostPropName);
+        }
+
+        return host;
+    }
+    
+    /**
+     * Convert a host name into an InetAddress object
+     *
+     * @param host if empty or null then the loopback address is used
+     * @param messageKey message key to a report warning if host is unknown
+     * @return an InetAddress structure corresponding the desired host name
+     * @throws UnknownHostException if the hostname cannot be found
+     */
+    public static InetAddress hostNameToInetAddress(String host, String messageKey) throws UnknownHostException
+    {
+        try {
+            if (host == null || host.length() == 0)
+                return InetAddress.getLocalHost();
+            else
+                return InetAddress.getByName(host);
+        }
+        catch (UnknownHostException ex)
+        {
+            /*
+             * The hostname is unknown
+             */
+            if (tsLogger.arjLoggerI18N.isWarnEnabled() && messageKey != null)
+                tsLogger.arjLoggerI18N.warn(messageKey,ex);
+
+            throw ex;
+        }
+    }
+
+    /**
+     * Lookup and valid a port number.
+     *
+     * @param intProperty property name of an integer valued property
+     * @param defValue a value to return if intProperty is invalid. If a null value is used and intProperty is invalid then @com.arjuna.ats.arjuna.exceptions.FatalError
+     *      is thrown
+     * @param warnMsgKey message key to report a warning if property values is invalid
+     * @param minValue minimum value for the integer propertry
+     * @param maxValue maximum value for the integer propertry
+     * @return the integer value of property or the default value if the property does not represent an integer
+     */
+    public static Integer lookupBoundedIntegerProperty(PropertyManager pm, String intProperty, Integer defValue, String warnMsgKey, int minValue, int maxValue)
+    {
+        String intStr = pm.getProperty(intProperty);
+
+        // if the propery is not found or empty just return the default
+        if (intStr == null || intStr.length() == 0)
+        {
+            return defValue;
+        }
+
+        try
+        {
+            int i = Integer.parseInt(intStr);
+
+            if (i < minValue || i > maxValue)
+            {
+                // the value is an invalid number
+                if (warnMsgKey != null && tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    tsLogger.arjLoggerI18N.warn(warnMsgKey, new Object[]{intStr});
+                }
+            }
+            else
+            {
+                return i;
+            }
+        }
+        catch (Exception ex)
+        {
+            // the value is not a number
+            if (warnMsgKey != null && tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.arjLoggerI18N.warn(warnMsgKey,ex);
+        }
+
+        return defValue;
+    }
+
+    /**
      * @return the process id. This had better be unique between processes
      * on the same machine. If not we're in trouble!
      *
@@ -271,6 +360,14 @@ private static Process processHandle = null;
 private static final String hexStart = "0x";
 private static final String defaultProcessId = "com.arjuna.ats.internal.arjuna.utils.SocketProcessId";
 
- 
+    /**
+     * The maximum queue length for incoming connection indications (a request to connect)
+     */
+    public static final int BACKLOG = 50;
+
+    /**
+     * Maximum value for a socket port
+     */
+    public static final int MAX_PORT = 65535; 
 }
 

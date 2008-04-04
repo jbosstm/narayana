@@ -50,6 +50,20 @@
         name="com.arjuna.ats.arjuna.recovery.recoveryBackoffPeriod"
         value="10"/>
       <!--
+        The port number on which the recovery manager listens.
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.recovery.recoveryPort"
+        value="4712"/>
+      <!--
+        The address on which the recovery manager listens.
+        If running within an AS then the address the AS is bound to (jboss.bind.address) takes precedence
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.recovery.recoveryAddress"
+        value=""/>
+
+      <!--
         Periodic recovery modules to use.  Invoked in sort-order of names.
       -->
       <property
@@ -98,6 +112,15 @@
       <property
         name="com.arjuna.ats.arjuna.recovery.transactionStatusManagerPort"
         value="0"/>
+
+      <!--
+        Use this to fix the address on which the TransactionStatusManager binds,
+        The default behaviour is to use the loopback address (ie localhost).
+        If running within an AS then the address the AS is bound to (jboss.bind.address) takes precedence
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.recovery.transactionStatusManagerAddress"
+        value=""/>
 
     </properties>
 </transaction-service>

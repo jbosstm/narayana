@@ -74,7 +74,20 @@ public class TransactionStatusManagerItem
 	    }
 	return ret_status ;
     }
-    
+
+    public static boolean createAndSave(String hostAddress, int port )
+    {
+        boolean ret_status = true ;
+
+        if ( _singularItem == null )
+        {
+            _singularItem = new TransactionStatusManagerItem(hostAddress, port );
+
+            ret_status = _singularItem.saveThis();
+        }
+        return ret_status ;
+    }
+
     /**
      * Get a reference to the Object Store.
      */
@@ -343,7 +356,39 @@ public class TransactionStatusManagerItem
 	    }
 	}
     }
-    
+
+    /**
+     * Constructor which obtains the process uid for
+     * use with the specified host and port.
+     */
+    private TransactionStatusManagerItem (String host, int port )
+    {
+        _pidUid = Utility.getProcessUid() ;
+        _port = port ;
+
+        try
+        {
+            // make sure the passed in host is valid
+            Utility.hostNameToInetAddress(host, "com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_4");
+            _host = host;
+
+            if (tsLogger.arjLogger.isInfoEnabled())
+            {
+                tsLogger.arjLogger.info
+                        ( "TransactionStatusManagerItem - " + "host: " + _host +
+                                " port: " + _port ) ;
+            }
+        }
+        catch ( UnknownHostException ex )
+        {
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_4",
+                        new Object[]{ex});
+            }
+        }
+    }
+
     /**
      * Used by a Recovery Manager to recreate a Transaction
     * status manager contact item.

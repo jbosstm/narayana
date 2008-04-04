@@ -137,5 +137,13 @@
                 <property
                   name="com.arjuna.ats.jts.recoveryManagerPort"
                   value="4711"/>
+
+	<!--
+	  This property controls the address on which the Recovery ORB binds - defaults to the loopback connection
+          If running within an AS then the address the AS is bound to (jboss.bind.address) takes precedence
+	-->
+                <property
+                  name="com.arjuna.ats.jts.recoveryManagerAddress"
+                  value=""/>
     </properties>
 </transaction-service>

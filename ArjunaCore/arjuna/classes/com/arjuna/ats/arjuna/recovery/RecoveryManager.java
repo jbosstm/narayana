@@ -32,9 +32,24 @@
 package com.arjuna.ats.arjuna.recovery;
 
 import java.util.Vector;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.io.IOException;
 
 import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple;
+import com.arjuna.ats.arjuna.utils.Utility;
+import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.common.util.propertyservice.PropertyManager;
+import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 
+/**
+ * @message com.arjuna.ats.arjuna.recovery.RecoveryManager_1 [com.arjuna.ats.arjuna.recovery.RecoveryManager_1] - Invalid recovery manager port specified {0}
+ * @message com.arjuna.ats.arjuna.recovery.RecoveryManager_2 [com.arjuna.ats.arjuna.recovery.RecoveryManager_2] - Invalid recovery manager host specified {0}
+ * @message com.arjuna.ats.arjuna.recovery.RecoveryManager_3 [com.arjuna.ats.arjuna.recovery.RecoveryManager_3] - Recovery manager bound to {0}:{1}
+ * @message com.arjuna.ats.arjuna.recovery.RecoveryManager_4 [com.arjuna.ats.arjuna.recovery.RecoveryManager_4] - Connected to recovery manager on {0}:{1}
+ * @message com.arjuna.ats.arjuna.recovery.RecoveryManager_5 [com.arjuna.ats.arjuna.recovery.RecoveryManager_5] - Invalid recovery manager port specified
+ */
 class ScanThread extends Thread
 {
 
@@ -147,7 +162,7 @@ public class RecoveryManager
      * and will return immediately. Notification of completion of the
      * scan is done through the RecoveryScan object.
      *
-     * @param RecoveryScan callback The callback mechanism used to
+     * @param callback callback The callback mechanism used to
      * inform users that the scan has completed. If this is <code>null</code>
      * then no callback will happen and asynchronous scanning will occur.
      */
@@ -207,7 +222,7 @@ public class RecoveryManager
     /**
      * Add a recovery module to the system.
      *
-     * @param RecoveryModule module The module to add.
+     * @param module module The module to add.
      */
 
     public final void addModule (RecoveryModule module)
@@ -247,6 +262,70 @@ public class RecoveryManager
     public final int mode ()
     {
 	return _mode;
+    }
+
+    public static InetAddress getRecoveryManagerHost(boolean useASBindAddress) throws UnknownHostException
+    {
+        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+
+        if ( pm == null )
+            return InetAddress.getLocalHost();
+
+        String hostPropName = com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_ADDRESS;
+        String host = ((useASBindAddress) ? Utility.getServerBindAddress(pm, hostPropName) : pm.getProperty(hostPropName));
+
+        return Utility.hostNameToInetAddress(host, "com.arjuna.ats.arjuna.recovery.RecoveryManager_2");
+    }
+
+    public static int getRecoveryManagerPort()
+    {
+        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+
+        if (pm == null)
+            return 0;
+
+        String portPropName = com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_PORT;
+        Integer port = Utility.lookupBoundedIntegerProperty(pm, portPropName, null,
+                    "com.arjuna.ats.arjuna.recovery.RecoveryManager_1",
+                    0, Utility.MAX_PORT);
+
+        if (port == null)
+        {
+            String portStr = pm.getProperty(portPropName);
+
+           /*
+            * if the property files specified a value for the port which is invalid throw a fatal error. An empty value or no value
+            * corresponds to any port
+            */
+            if (portStr == null || portStr.length() == 0)
+                port = 0;
+            else
+                throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.recovery.RecoveryManager_5"));
+        }
+
+        return port;
+    }
+
+    /**
+     * Obtain a client connection to the recovery manager
+     * 
+     * @param useASBindAddress if true and the recovery manager is running within an appserver then
+     *  bind the socket to the same address that the AS is using. Otherwise use the environment config
+     *  to choose which address to bind to
+     * @return a bound client socket connection to the recovery manager
+     * @throws IOException
+     */
+    public static Socket getClientSocket (boolean useASBindAddress) throws IOException
+    {
+        Socket socket = new Socket(getRecoveryManagerHost(useASBindAddress), getRecoveryManagerPort());
+
+        if (tsLogger.arjLogger.isInfoEnabled())
+        {
+            tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.recovery.RecoveryManager_4",
+                    new Object[]{socket.getInetAddress().getHostAddress(), socket.getLocalPort()});
+        }
+
+        return socket;
     }
     
     /**
