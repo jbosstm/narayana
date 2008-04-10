@@ -46,10 +46,6 @@ import java.io.IOException;
  * Obtains a unique value to represent the process id via sockets and
  * ports.
  *
- * This implementation is tied closely with the socket/port version of
- * crash recovery, since that requires a thread to listen on a port for
- * incoming requests for a specific transaction's status.
- *
  * @author Mark Little (mark_little@hp.com)
  * @version $Id: SocketProcessId.java 2342 2006-03-30 13:06:17Z  $
  * @since HPTS 3.0.

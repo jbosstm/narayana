@@ -44,11 +44,6 @@ import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 
 /**
- * This implementation is tied closely with the socket/port version of
- * getpid. If a pid is obtained via a port, then this class will obtain
- * its socket/port from that implementation rather than create a new
- * port: since the socket/port version of getpid is guaranteed to be
- * executed first.
  *
  * @author Dave Elsworthy (david_elsworthy@hp.com)
  * @version $Id: TransactionStatusManager.java 2342 2006-03-30 13:06:17Z  $
