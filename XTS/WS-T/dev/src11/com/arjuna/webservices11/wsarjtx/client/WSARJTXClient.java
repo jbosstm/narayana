@@ -81,14 +81,9 @@ public class WSARJTXClient
         TerminationCoordinatorPortType port = service.getPort(endpointReference, TerminationCoordinatorPortType.class);
         BindingProvider bindingProvider = (BindingProvider)port;
         /*
-         * we need to configure an instance identifier handler for this port to pass the tx context either
-         * outgoing or returning.
+         * we have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
          */
         List<Handler> customHandlerChain = new ArrayList<Handler>();
-        customHandlerChain.add(new InstanceIdentifierHandler());
-        /*
-         * we also have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
-         */
 		customHandlerChain.add(new WSAddressingClientHandler());
 		bindingProvider.getBinding().setHandlerChain(customHandlerChain);
         // ok, JBossWS native has hacked this by pulling the address and reference parameters out of the endpoint
@@ -120,15 +115,9 @@ public class WSARJTXClient
         TerminationParticipantPortType port = service.getPort(endpointReference, TerminationParticipantPortType.class);
         BindingProvider bindingProvider = (BindingProvider)port;
         /*
-         * we need to configure an instance identifier handler for this port to pass the tx context either
-         * outgoing or returning.
-         * TODO - not sure about this?
+         * we have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
          */
         List<Handler> customHandlerChain = new ArrayList<Handler>();
-        customHandlerChain.add(new InstanceIdentifierHandler());
-        /*
-         * we also have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
-         */
 		customHandlerChain.add(new WSAddressingClientHandler());
 		bindingProvider.getBinding().setHandlerChain(customHandlerChain);
         // ok, JBossWS native has hacked this by pulling the address and reference parameters out of the endpoint

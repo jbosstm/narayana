@@ -111,14 +111,9 @@ public class WSBAClient
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port = service.getPort(endpointReference, BusinessAgreementWithParticipantCompletionCoordinatorPortType.class);
         BindingProvider bindingProvider = (BindingProvider)port;
         /*
-         * we need to configure an instance identifier handler for this port to pass the tx context either
-         * outgoing or returning.
+         * we have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
          */
         List<Handler> customHandlerChain = new ArrayList<Handler>();
-        customHandlerChain.add(new InstanceIdentifierHandler());
-        /*
-         * we also have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
-         */
 		customHandlerChain.add(new WSAddressingClientHandler());
 		bindingProvider.getBinding().setHandlerChain(customHandlerChain);
         // ok, JBossWS native has hacked this by pulling the address and reference parameters out of the endpoint
@@ -150,15 +145,9 @@ public class WSBAClient
         BusinessAgreementWithParticipantCompletionParticipantPortType port = service.getPort(endpointReference, BusinessAgreementWithParticipantCompletionParticipantPortType.class);
         BindingProvider bindingProvider = (BindingProvider)port;
         /*
-         * we need to configure an instance identifier handler for this port to pass the tx context either
-         * outgoing or returning.
-         * TODO - don't think this is correct here
+         * we have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
          */
         List<Handler> customHandlerChain = new ArrayList<Handler>();
-        customHandlerChain.add(new InstanceIdentifierHandler());
-        /*
-         * we also have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
-         */
 		customHandlerChain.add(new WSAddressingClientHandler());
 		bindingProvider.getBinding().setHandlerChain(customHandlerChain);
         // ok, JBossWS native has hacked this by pulling the address and reference parameters out of the endpoint
@@ -188,14 +177,9 @@ public class WSBAClient
         BusinessAgreementWithCoordinatorCompletionCoordinatorPortType port = service.getPort(endpointReference, BusinessAgreementWithCoordinatorCompletionCoordinatorPortType.class);
         BindingProvider bindingProvider = (BindingProvider)port;
         /*
-         * we need to configure an instance identifier handler for this port to pass the tx context either
-         * outgoing or returning.
+         * we have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
          */
         List<Handler> customHandlerChain = new ArrayList<Handler>();
-        customHandlerChain.add(new InstanceIdentifierHandler());
-        /*
-         * we also have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
-         */
 		customHandlerChain.add(new WSAddressingClientHandler());
 		bindingProvider.getBinding().setHandlerChain(customHandlerChain);
         // ok, JBossWS native has hacked this by pulling the address and reference parameters out of the endpoint
@@ -225,15 +209,9 @@ public class WSBAClient
         BusinessAgreementWithCoordinatorCompletionParticipantPortType port = service.getPort(endpointReference, BusinessAgreementWithCoordinatorCompletionParticipantPortType.class);
         BindingProvider bindingProvider = (BindingProvider)port;
         /*
-         * we need to configure an instance identifier handler for this port to pass the tx context either
-         * outgoing or returning.
-         * TODO - don't think this is correct here
+         * we have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
          */
         List<Handler> customHandlerChain = new ArrayList<Handler>();
-        customHandlerChain.add(new InstanceIdentifierHandler());
-        /*
-         * we also have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
-         */
 		customHandlerChain.add(new WSAddressingClientHandler());
 		bindingProvider.getBinding().setHandlerChain(customHandlerChain);
         // ok, JBossWS native has hacked this by pulling the address and reference parameters out of the endpoint

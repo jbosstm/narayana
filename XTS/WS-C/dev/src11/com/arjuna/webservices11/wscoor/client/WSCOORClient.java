@@ -110,13 +110,9 @@ public class WSCOORClient
         RegistrationPortType port = service.getPort(endpointReference, RegistrationPortType.class);
         BindingProvider bindingProvider = (BindingProvider)port;
         /*
-         * we need to configure an instance identifier handler for this port to pass the tx context
+         * we have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
          */
         List<Handler> customHandlerChain = new ArrayList<Handler>();
-        customHandlerChain.add(new InstanceIdentifierHandler());
-        /*
-         * we also have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
-         */
 		customHandlerChain.add(new WSAddressingClientHandler());
 		bindingProvider.getBinding().setHandlerChain(customHandlerChain);
 
