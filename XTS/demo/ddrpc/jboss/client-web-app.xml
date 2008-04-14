@@ -57,7 +57,7 @@
 
     <servlet-mapping>
         <servlet-name>Basic Client Servlet</servlet-name>
-        <url-pattern>/basicclient</url-pattern>
+        <url-pattern>/basicclientrpc</url-pattern>
     </servlet-mapping>
     
     <service-ref>

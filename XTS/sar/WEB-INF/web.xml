@@ -12,7 +12,7 @@
      -->
     <init-param>
         <param-name>BaseHttpURI</param-name>
-        <param-value>http://@hostname@:@port@/jbossxts/soap/</param-value>
+        <param-value>http://@hostname@:@port@/ws-c/soap/</param-value>
     </init-param>
     <!--
     <init-param>

@@ -1,10 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 
-<!-- $Id: index.jsp,v 1.6 2005/02/25 09:26:46 kconner Exp $ -->
+<!-- $Id:$ -->
 
 <head>
-<title>XML Transaction Service Demo Application Client</title>
+<title>XML Transaction Service 1.1 Demo Application Client</title>
 </head>
 
 <body topmargin="0" leftmargin="0" marginwidth="0" marginheight="0" vlink="#336699" alink="#003366" link="#003366" text="#000000" bgcolor="#ffffff">
@@ -17,13 +17,13 @@
   <tr>
     <td width="20">&nbsp;</td>
     <td align="center" width="170" bgcolor="#ffffff">
-      <img src="images/JBoss_DivOfRH_RGB.gif" alt="jboss logo" border="0">
+      <img src="images/JBoss_DivOfRH_RGB.gif" alt="arjuna logo" border="0">
     </td>
     <td width="20">&nbsp;</td>
     <td valign="middle" align="left" width="530" bgcolor="#ffffff">
       <br/>
       <font size="5" style="font-family: Arial, Helvetica, sans-serif">
-        XML Transaction Service Demonstrator Application
+        XML Transaction Service 1.1 Demonstrator Application
       </font>
     </td>
   </tr>

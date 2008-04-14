@@ -30,15 +30,15 @@
 
     <module>
         <web>
-            <web-uri>xts-demo-webservices.war</web-uri>
-            <context-root>/xtsdemowebservices</context-root>
+            <web-uri>xts-demo-webservicesrpc.war</web-uri>
+            <context-root>/@urlstub@</context-root>
         </web>
     </module>
 
     <module>
         <web>
-            <web-uri>xts-demo.war</web-uri>
-            <context-root>/xts-demo</context-root>
+            <web-uri>xts-demorpc.war</web-uri>
+            <context-root>/xts-demorpc</context-root>
         </web>
     </module>
 

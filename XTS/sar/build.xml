@@ -54,11 +54,15 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     </fail>
 
     <property name="lib.dir" location="${xts.home}/lib"/>
+    <property name="webapps.dir" location="${xts.home}/webapps"/>
+    <property name="conf.dir" location="${xts.home}/conf"/>
     <property name="ext.dir" location="${lib.dir}/ext"/>
 
     <property name="webinf.dir"         value="WEB-INF"/>
+    <property name="metainf.dir"         value="META-INF"/>
     <property name="build.dir"         value="build"/>
     <property name="build.webinf.dir"       value="${build.dir}/WEB-INF"/>
+    <property name="build.metainf.dir"       value="${build.dir}/META-INF"/>
 
     <!-- enable debugging of XTS service code -->
 
@@ -68,66 +72,179 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.webinf.dir}"/>
+        <mkdir dir="${build.metainf.dir}"/>
     </target>
 
     <!-- TODO are the xts engine and its WS stack conceptually separate deployments? at what level do they integrate? spi or jax-ws?-->
-    <target name="sar" depends="init">
 
-      <!--
-	  as a jbossas component we would like to use just the
-	  integration jar here. however it does not contain some stuff
-	  we need e.g. rmi, system, logger classes etc, so we pick up
-	  jbossall-client instead. also, pending some refactoring in
-	  the AS we still depend upon class
-	  org.jboss.system.ServiceMBeanSupport which is not in the
-	  integration/client jars. we can find it in the lib dir in
-	  jboss-system-jmx.jar.
-      -->
-      <!--
-        <javac srcdir="src" destdir="${build.dir}" debug="${javac.debug}">
-            <classpath>
-                <pathelement location="${jbossas.home}/lib/jboss-common.jar"/>
-                <pathelement location="${jbossas.home}/lib/jboss-system.jar"/>
-                <pathelement location="${jbossas.home}/lib/jboss-jmx.jar"/>
-                <fileset dir="${lib.dir}" includes="*.jar"/>
-                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossts-common.jar"/>
-            </classpath>
-        </javac>
-	-->
+    <!-- by default build XTS service archive supporting 1.1 WS-C/T protocols -->
+    <target name="sar" depends="sar-11"/>
+
+    <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
+    <target name="sar-both" depends="init">
+
+        <!--
+        as a jbossas component we would like to use just the
+	    integration jar here. however it does not contain some stuff
+	    we need e.g. rmi, system, logger classes etc, so we pick up
+	    jbossall-client instead. also, pending some refactoring in
+	    the AS we still depend upon class
+	    org.jboss.system.ServiceMBeanSupport which is not in the
+	    integration/client jars. we can find it in the lib dir in
+	    jboss-system-jmx.jar.
+        -->
         <javac srcdir="src" destdir="${build.dir}" debug="${javac.debug}">
             <classpath>
                 <pathelement location="${jbossas.home}/client/jbossall-client.jar"/>
                 <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
-                <!-- XTS -->
-                <fileset dir="${lib.dir}" includes="*.jar"/>
+                <!-- sar code only depends on generic XTS code -->
+                <fileset dir="${lib.dir}" includes="*.jar" excludes="*10.jar *11.jar"/>
                 <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossts-common.jar"/>
             </classpath>
         </javac>
 
-	<!-- substitute host and port in deployment descriptor -->
-        <filter token="hostname" value="${hostname}"/>
-        <filter token="port" value="${port}"/>
-	<copy file="${webinf.dir}/web.xml" tofile="${build.webinf.dir}/web.xml" filtering="true"/>
-
-	<!-- build the war containing the XTS HTTP multiplexor -->
-
-        <jar jarfile="${build.dir}/jbossxts.war">
-            <fileset dir="${build.dir}" includes="WEB-INF/web.xml"/>
+        <!-- create config jar containing conf files for 1.0 and 1.1 -->
+        <jar jarfile="${build.dir}/config.jar">
+            <fileset dir="${conf.dir}" includes="*.xml"/>
         </jar>
+        <!-- substitute host and port in ws-c/ws-t deployment descriptors -->
+        <!-- !! todo still need to do this a la insertcfg in old demo code !!  -->
 
+        <!-- copy 11 and 1.0 application.xml to build dir -->
+        <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application.xml"/>
+
+        <!-- pack everything in the service archive -->
         <jar jarfile="${build.dir}/jbossxts.sar">
+            <!-- include generic 1.0 and 1.1 jars -->
             <fileset dir="${lib.dir}" includes="*.jar"/>
 
+            <!-- include 1.0 and 1.1 web apps all config files are included -->
+            <!-- !! need to pick up substituted versions !! -->
+            <fileset dir="${webapps.dir}" includes="*.war"/>
+
+            <!-- include config jar -->
+            <fileset dir="${build.dir}" includes="config.jar"/>
+
+            <!-- include service def (e.g. dependencies) -->
             <fileset dir="." includes="META-INF/jboss-service.xml"/>
+
+            <!-- include web service config -->
+            <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
+
+            <!-- include sar boot and shutdown code -->
             <fileset dir="${build.dir}" includes="**/*.class"/>
+        </jar>
+    </target>
 
-            <fileset dir="${build.dir}" includes="jbossxts.war"/>
+    <!-- build XTS service archive supporting 1.1 WS-C/T protocols -->
+    <target name="sar-11" depends="init">
 
-            <!-- AS /lib supplies servlet.jar, jbossjta.jar, commons-logging.jar, jbossts-common.jar
-                saaj-api.jar, jaxrpc.jar.  stax is in jbossws.sar but not server /lib    -->
-            <fileset dir="${ext.dir}" includes="stax-api-1.0.jar wstx-asl-2.0.3.jar"/>
+        <!--
+        as a jbossas component we would like to use just the
+	    integration jar here. however it does not contain some stuff
+	    we need e.g. rmi, system, logger classes etc, so we pick up
+	    jbossall-client instead. also, pending some refactoring in
+	    the AS we still depend upon class
+	    org.jboss.system.ServiceMBeanSupport which is not in the
+	    integration/client jars. we can find it in the lib dir in
+	    jboss-system-jmx.jar.
+        -->
+        <javac srcdir="src" destdir="${build.dir}" debug="${javac.debug}">
+            <classpath>
+                <pathelement location="${jbossas.home}/client/jbossall-client.jar"/>
+                <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
+                <!-- sar code only depends on generic XTS code -->
+                <fileset dir="${lib.dir}" includes="*.jar" excludes="*10.jar *11.jar"/>
+                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossts-common.jar"/>
+            </classpath>
+        </javac>
 
-            <fileset dir="." includes="jbossxts.xml"/>
+        <!-- create config jar containing conf files for 1.1 -->
+        <jar jarfile="${build.dir}/config.jar">
+            <fileset dir="${conf.dir}" includes="*11.xml"/>
+        </jar>
+        <!-- substitute host and port in ws-c/ws-t deployment descriptors -->
+        <!-- !! todo still need to do this a la insertcfg in old demo code !!  -->
+
+        <!-- copy 11 application.xml to build dir -->
+        <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application11.xml"/>
+        
+        <!-- pack everything in the service archive -->
+        <jar jarfile="${build.dir}/jbossxts.sar">
+            <!-- include generic and 1.1 jars -->
+            <fileset dir="${lib.dir}" includes="*.jar" excludes="*10.jar"/>
+
+            <!-- include 1.1 web apps all config files are included -->
+            <!-- !! todo need to pick up substituted versions !! -->
+            <fileset dir="${webapps.dir}" includes="*11.war"/>
+
+            <!-- include config jar -->
+            <fileset dir="${build.dir}" includes="config.jar"/>
+
+            <!-- include service def (e.g. dependencies) -->
+            <fileset dir="." includes="META-INF/jboss-service.xml"/>
+
+            <!-- include web service config -->
+            <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
+
+            <!-- include sar boot and shutdown code -->
+            <fileset dir="${build.dir}" includes="**/*.class"/>
+        </jar>
+    </target>
+
+    <!-- build XTS service archive supporting 1.0 WS-C/T protocols -->
+    <target name="sar-10" depends="init">
+
+        <!--
+        as a jbossas component we would like to use just the
+	    integration jar here. however it does not contain some stuff
+	    we need e.g. rmi, system, logger classes etc, so we pick up
+	    jbossall-client instead. also, pending some refactoring in
+	    the AS we still depend upon class
+	    org.jboss.system.ServiceMBeanSupport which is not in the
+	    integration/client jars. we can find it in the lib dir in
+	    jboss-system-jmx.jar.
+        -->
+        <javac srcdir="src" destdir="${build.dir}" debug="${javac.debug}">
+            <classpath>
+                <pathelement location="${jbossas.home}/client/jbossall-client.jar"/>
+                <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
+                <!-- sar only depends on generic XTS code -->
+                <fileset dir="${lib.dir}" includes="*.jar" excludes="*10.jar *11.jar"/>
+                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossts-common.jar"/>
+            </classpath>
+        </javac>
+
+        <!-- create config jar containing conf files for 1.0 -->
+        <jar jarfile="${build.dir}/config.jar">
+            <fileset dir="${conf.dir}" includes="*.xml" excludes="*11.xml"/>
+        </jar>
+        <!-- substitute host and port in ws-c/ws-t deployment descriptors -->
+        <!-- !! todo still need to do this a la insertcfg in old demo code !!  -->
+
+        <!-- copy 10 application.xml to build dir -->
+        <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application10.xml"/>
+
+        <!-- pack everything in the servcie archive -->
+        <jar jarfile="${build.dir}/jbossxts.sar">
+            <!-- include generic and 1.0 jars -->
+            <fileset dir="${lib.dir}" includes="*.jar" excludes="*11.jar"/>
+
+            <!-- include 1.0 web apps all config files are included -->
+            <!-- !! need to pick up substituted versions !! -->
+            <fileset dir="${webapps.dir}" includes="*10.war"/>
+
+            <!-- include config jar -->
+            <fileset dir="${build.dir}" includes="config.jar"/>
+
+            <!-- include service def (e.g. dependencies) -->
+            <fileset dir="." includes="META-INF/jboss-service.xml"/>
+
+            <!-- include web service config -->
+            <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
+
+            <!-- include sar boot and shutdown code -->
+            <fileset dir="${build.dir}" includes="**/*.class"/>
         </jar>
     </target>
 
@@ -135,8 +252,20 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
       <delete dir="${build.dir}"/>
     </target>
 
-    <target name="deploy" depends="sar">
+    <target name="deploy11" depends="undeploy, sar-11">
         <copy file="${build.dir}/jbossxts.sar" todir="${jbossas.home}/server/default/deploy"/>
+    </target>
+
+    <target name="deploy10" depends="undeploy, sar-10">
+        <copy file="${build.dir}/jbossxts.sar" todir="${jbossas.home}/server/default/deploy"/>
+    </target>
+
+    <target name="deployboth" depends="undeploy,sar-both">
+        <copy file="${build.dir}/jbossxts.sar" todir="${jbossas.home}/server/default/deploy"/>
+    </target>
+
+    <!-- by default deploy sar implementing 1.1. WS-C/T protocols -->
+    <target name="deploy" depends="deploy11">
     </target>
 
     <target name="undeploy">

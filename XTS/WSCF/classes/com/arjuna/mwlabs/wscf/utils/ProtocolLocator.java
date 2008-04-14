@@ -55,9 +55,10 @@ import java.net.URL;
 public class ProtocolLocator
 {
 
-    public ProtocolLocator (String theType)
+    public ProtocolLocator (Class clazz)
     {
-	_className = theType.replace(_packageSeparator, _resourceSeparator);
+    _clazz = clazz;
+    _className = clazz.getName().replace(_packageSeparator, _resourceSeparator);
 	_xmlName = _className+".xml";
     }
 
@@ -70,7 +71,7 @@ public class ProtocolLocator
     {
 	try
 	{
-	    URL url = ProtocolLocator.class.getResource(_resourceSeparator+_xmlName);
+	    URL url = _clazz.getResource(_resourceSeparator+_xmlName);
 
 	    if (url == null)
 	    {
@@ -103,6 +104,11 @@ public class ProtocolLocator
 	}
     }
 
+    /**
+     * we load the protocol document as a resource via the associated class assuming that they are packaged in
+     * same archive using the same path and base file name but with extension xml in place of class.
+     */
+    private Class _clazz;
     private String _className;
     private String _xmlName;
     

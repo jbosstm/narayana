@@ -41,10 +41,14 @@
 
     <property name="build.dir"               value="build"/>
     <property name="dev.src.dir"             value="dev/src"/>
+    <property name="dev.src10.dir"             value="dev/src10"/>
+    <property name="dev.src11.dir"             value="dev/src11"/>
     <property name="dev.dd.dir"              value="dev/dd"/>
     <property name="tests.src.dir"           value="tests/src"/>
     <property name="tests.dd.dir"            value="tests/dd"/>
     <property name="build.dev.classes.dir"   value="${build.dir}/dev/classes"/>
+    <property name="build.dev.classes10.dir"   value="${build.dir}/dev/classes10/classes"/>
+    <property name="build.dev.classes11.dir"   value="${build.dir}/dev/classes11/classes"/>
     <property name="build.dev.lib.dir"       value="${build.dir}/dev/lib"/>
     <property name="build.dev.dd.dir"        value="${build.dir}/dev/dd"/>
     <property name="build.dev.webapps.dir"   value="${build.dir}/dev/webapps"/>
@@ -64,12 +68,12 @@
     <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
 
     <property name="jta.lib.jars" value="jbossjta.jar"/>
-    <property name="jta.ext.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
+    <property name="jta.ext.jars" value="jbossts-common.jar commons-logging.jar"/>
     <!--
     <property name="xts.ext.jars" value="stax-api-1.0.jar wstx-asl-2.0.3.jar"/>
     -->
     <property name="xts.ext.jars" value=""/>
-    <property name="xts.ext.compile.jars" value="stax-api-1.0.jar wstx-asl-2.0.3.jar servlet.jar saaj-api.jar"/>
+    <property name="xts.ext.compile.jars" value="jaxb-api.jar jboss-javaee.jar jboss-jaxrpc.jar jboss-jaxws-ext.jar jboss-jaxws.jar jbossws-client.jar jboss-saaj.jar"/>
 
     <property name="tests.libs" value="junit.jar"/>
 
@@ -77,10 +81,9 @@
     <property name="javac.optimize"          value="off"/>
 
     <path id="lib.ext.path">
-        <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars} ${jta.ext.compile.jars}"/>
+        <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
         <fileset dir="${com.arjuna.xts.ext}" includes="${xts.ext.jars} ${xts.ext.compile.jars}"/>
         <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
-        <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
     </path>
 
     <path id="tests.lib.path">
@@ -115,6 +118,8 @@
     <target name="init-dir">
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.dev.classes.dir}"/>
+        <mkdir dir="${build.dev.classes10.dir}"/>
+        <mkdir dir="${build.dev.classes11.dir}"/>
         <mkdir dir="${build.dev.lib.dir}"/>
         <mkdir dir="${build.dev.dd.dir}"/>
         <mkdir dir="${build.dev.webapps.dir}"/>
@@ -124,23 +129,50 @@
         <mkdir dir="${build.tests.webapps.dir}"/>
     </target>
 
-    <target name="dev-compile" depends="init">
+    <target name="dev-compile-generic" depends="init">
         <javac destdir="${build.dev.classes.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
             <classpath>
                 <path refid="lib.ext.path"/>
             </classpath>
             <src path="${dev.src.dir}"/>
         </javac>
+    </target>
+
+    <target name="dev-compile10" depends="dev-compile-generic">
+        <javac destdir="${build.dev.classes10.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
+            <classpath>
+                <path>
+                  <pathelement path="${build.dev.classes.dir}"/>
+                </path>
+                <path refid="lib.ext.path"/>
+            </classpath>
+            <src path="${dev.src10.dir}"/>
+        </javac>
     	<copy todir="${build.dev.classes.dir}">
-    		<fileset dir="${dev.src.dir}" excludes="**/*.java"/>
+    		<fileset dir="${dev.src10.dir}" excludes="**/*.java"/>
     	</copy>
     </target>
+
+    <target name="dev-compile11" depends="dev-compile-generic">
+        <javac destdir="${build.dev.classes11.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
+            <classpath>
+                <path>
+                  <pathelement path="${build.dev.classes.dir}"/>
+                </path>
+                <path refid="lib.ext.path"/>
+            </classpath>
+            <src path="${dev.src11.dir}"/>
+        </javac>
+    </target>
+
+    <target name="dev-compile" depends="dev-compile11, dev-compile10"/>
 
     <target name="dev-resourcebundle">
         <echo message="Generating WS-C Bundle"/>
 
         <classpath-builder filename="${com.arjuna.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
 
+        <!--
         <javadoc    sourcepath="${dev.src.dir}"
                     packagenames="com.arjuna.*"
                     failonerror="yes"
@@ -156,13 +188,65 @@
                 <param name="-resourcebundle" value="${com.arjuna.mwlabs.wsc.resourcebundle}"/>
              </doclet>
         </javadoc>
+        -->
+        <javadoc    packagenames="com.arjuna.*"
+                    failonerror="yes"
+                    private="yes"
+                    defaultexcludes="yes"
+                    classpath="${build.classpath}">
+
+            <packageset dir="${dev.src.dir}" defaultexcludes="yes">
+              <include name="com/arjuna/**"/>
+            </packageset>
+
+            <packageset dir="${dev.src10.dir}" defaultexcludes="yes">
+              <include name="com/arjuna/**"/>
+            </packageset>
+
+            <packageset dir="${dev.src11.dir}" defaultexcludes="yes">
+              <include name="com/arjuna/**"/>
+            </packageset>
+
+             <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
+                <path>
+                    <pathelement path="${com.arjuna.buildsystem.classpath}"/>
+                </path>
+                <param name="-basedir" value="${basedir}/${build.dev.classes.dir}"/>
+                <param name="-resourcebundle" value="${com.arjuna.mwlabs.wsc.resourcebundle}"/>
+             </doclet>
+        </javadoc>
     </target>
 
     <target name="dev-jars" depends="dev-compile, dev-resourcebundle" >
+        <!-- wsdl files for services - loaded as /WEB-INF/wsdl/... -->
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wscoor-activation-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wscoor-activation-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wscoor-registration-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wscoor-registration-binding.wsdl"/>
+
+        <!-- wsdl files for clients - loaded as <ClientClassDir>/wsdl/... -->
+        <mkdir dir="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wscoor/_2006/_06/wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wscoor-activation-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wscoor/_2006/_06/wsdl/wscoor-activation-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wscoor-registration-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wscoor/_2006/_06/wsdl/wscoor-registration-binding.wsdl"/>
         <jar jarfile="${build.dev.lib.dir}/ws-c.jar">
             <fileset dir="${build.dev.classes.dir}"/>
+            <!-- should not be needed now XTS is delivered as a sar
             <manifest>
                 <attribute name="Class-Path" value="${jta.ext.jars} ${xts.ext.jars} ${jta.lib.jars} ${jta.ext.jars}"/>
+            </manifest>
+            -->
+        </jar>
+        <jar jarfile="${build.dev.lib.dir}/ws-c10.jar">
+            <fileset dir="${build.dev.classes10.dir}"/>
+            <manifest>
+                <attribute name="Class-Path" value="ws-c.jar"/>
+            </manifest>
+        </jar>
+        <jar jarfile="${build.dev.lib.dir}/ws-c11.jar">
+            <fileset dir="${build.dev.classes11.dir}">
+                <exclude name="com/arjuna/webservices11/wscoor/sei/**"/>
+                <exclude name="handlers.xml"/>
+            </fileset>
+            <manifest>
+                <attribute name="Class-Path" value="ws-c.jar"/>
             </manifest>
         </jar>
     </target>
@@ -174,9 +258,23 @@
                 <filter token="port" value="${port}"/>
             </filterset>
         </copy>
-        <war warfile="${build.dev.webapps.dir}/ws-c.war" webxml="${build.dev.dd.dir}/web-app.xml">
+        <copy file="${dev.dd.dir}/ws-c11_web-app.xml" tofile="${build.dev.dd.dir}/web-app11.xml">
+            <filterset>
+                <filter token="hostname" value="${hostname}"/>
+                <filter token="port" value="${port}"/>
+            </filterset>
+        </copy>
+        <copy file="${dev.dd.dir}/ws-c_handlers.xml" tofile="${build.dev.classes11.dir}/handlers.xml"/>
+        <war warfile="${build.dev.webapps.dir}/ws-c10.war" webxml="${build.dev.dd.dir}/web-app.xml">
             <manifest>
-                <attribute name="Class-Path" value="ws-c.jar"/>
+                <attribute name="Class-Path" value="ws-c10.jar"/>
+            </manifest>
+        </war>
+        <war warfile="${build.dev.webapps.dir}/ws-c11.war" webxml="${build.dev.dd.dir}/web-app11.xml">
+            <webinf dir="${build.dir}/dev/classes11" includes="classes/com/arjuna/webservices11/wscoor/sei/* classes/handlers.xml"/>
+            <webinf dir="${build.dev.dd.dir}" includes="wsdl/**"/>
+            <manifest>
+                <attribute name="Class-Path" value="ws-c11.jar"/>
             </manifest>
         </war>
     </target>
@@ -185,6 +283,7 @@
         <javac destdir="${build.tests.classes.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
             <classpath>
                 <pathelement path="${build.dev.lib.dir}/ws-c.jar"/>
+                <pathelement path="${build.dev.lib.dir}/ws-c10.jar"/>
                 <path refid="tests.lib.path"/>
                 <path refid="lib.ext.path"/>
             </classpath>
@@ -201,7 +300,7 @@
         </copy>
         <war warfile="${build.tests.webapps.dir}/ws-c-tests.war" webxml="${build.tests.dd.dir}/web-app.xml">
             <manifest>
-                <attribute name="Class-Path" value="ws-c.jar ${tests.libs}"/>
+                <attribute name="Class-Path" value="ws-c10.jar ws-c.jar ${tests.libs}"/>
             </manifest>
             <classes dir="${build.tests.classes.dir}"/>
         </war>
@@ -209,7 +308,7 @@
             <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
             <fileset dir="${com.arjuna.xts.ext}" includes="${xts.ext.jars} ${tests.libs}"/>
             <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
-            <fileset dir="${build.dev.lib.dir}" includes="ws-c.jar"/>
+            <fileset dir="${build.dev.lib.dir}" includes="ws-c10.jar ws-c.jar"/>
             <fileset dir="${build.tests.webapps.dir}" includes="ws-c-tests.war"/>
         </ear>
     </target>

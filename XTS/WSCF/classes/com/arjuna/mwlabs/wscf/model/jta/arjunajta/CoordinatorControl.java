@@ -313,7 +313,7 @@ public class CoordinatorControl
 	return _theTransactionManagerImple;
     }
 
-    final javax.transaction.Transaction currentCoordinator () throws NoCoordinatorException, SystemException
+    public final javax.transaction.Transaction currentCoordinator () throws NoCoordinatorException, SystemException
     {
 	javax.transaction.Transaction tx = (javax.transaction.Transaction) _coordinators.get(currentActivity());
 

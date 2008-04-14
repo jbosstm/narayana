@@ -471,7 +471,7 @@ public class CoordinatorControl
 		}
 	}
 	
-	final ACCoordinator currentCoordinator () throws NoCoordinatorException,
+	public final ACCoordinator currentCoordinator () throws NoCoordinatorException,
 			SystemException
 	{
 		ACCoordinator coord = (ACCoordinator) _coordinators.get(currentActivity());

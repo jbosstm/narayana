@@ -7,7 +7,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee">
     <handler-chain>
 	<handler>
 		<handler-name>ContextHandler</handler-name>
-		<handler-class>com.arjuna.mw.wst.service.JaxWSHeaderContextProcessor</handler-class>
+		<handler-class>com.arjuna.mw.wst11.service.JaxWSHeaderContextProcessor</handler-class>
 	</handler>
     </handler-chain>
 </handler-chains>

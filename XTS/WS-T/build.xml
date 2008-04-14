@@ -43,10 +43,14 @@
 
     <property name="build.dir"               value="build"/>
     <property name="dev.src.dir"             value="dev/src"/>
+    <property name="dev.src10.dir"             value="dev/src10"/>
+    <property name="dev.src11.dir"             value="dev/src11"/>
     <property name="dev.dd.dir"              value="dev/dd"/>
     <property name="tests.src.dir"           value="tests/src"/>
     <property name="tests.dd.dir"            value="tests/dd"/>
     <property name="build.dev.classes.dir"   value="${build.dir}/dev/classes"/>
+    <property name="build.dev.classes10.dir"   value="${build.dir}/dev/classes10/classes"/>
+    <property name="build.dev.classes11.dir"   value="${build.dir}/dev/classes11/classes"/>
     <property name="build.dev.lib.dir"       value="${build.dir}/dev/lib"/>
     <property name="build.dev.dd.dir"        value="${build.dir}/dev/dd"/>
     <property name="build.dev.webapps.dir"   value="${build.dir}/dev/webapps"/>
@@ -74,16 +78,24 @@
     <property name="xts.ext.compile.jars" value="servlet.jar"/>
     -->
     <property name="xts.ext.jars" value=""/>
-    <property name="xts.ext.compile.jars" value="stax-api-1.0.jar wstx-asl-2.0.3.jar servlet.jar"/>
+    <property name="xts.ext.compile.jars" value="jaxb-api.jar jboss-javaee.jar jboss-jaxrpc.jar jboss-jaxws-ext.jar jboss-jaxws.jar jbossws-client.jar jboss-saaj.jar"/>
 
     <property name="tests.libs"              value="junit.jar"/>
     <property name="ws-c.libs"               value="ws-c.jar"/>
+    <property name="ws-c10.libs"               value="ws-c10.jar"/>
+    <property name="ws-c11.libs"               value="ws-c11.jar"/>
 
     <property name="javac.debug"             value="on"/>
     <property name="javac.optimize"          value="off"/>
 
     <path id="ws-c.path">
         <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c.libs}"/>
+    </path>
+    <path id="ws-c10.path">
+        <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c10.libs}"/>
+    </path>
+    <path id="ws-c11.path">
+        <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c11.libs}"/>
     </path>
 
     <path id="lib.ext.path">
@@ -124,6 +136,8 @@
     <target name="init-dir">
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.dev.classes.dir}"/>
+        <mkdir dir="${build.dev.classes10.dir}"/>
+        <mkdir dir="${build.dev.classes11.dir}"/>
         <mkdir dir="${build.dev.lib.dir}"/>
         <mkdir dir="${build.dev.dd.dir}"/>
         <mkdir dir="${build.dev.webapps.dir}"/>
@@ -133,7 +147,35 @@
         <mkdir dir="${build.tests.webapps.dir}"/>
     </target>
 
-    <target name="dev-compile" depends="init">
+    <target name="dev-compile" depends="dev-compile10, dev-compile11"/>
+
+    <target name="dev-compile10" depends="dev-compile-generic">
+        <javac destdir="${build.dev.classes10.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
+            <classpath>
+                <path>
+                    <pathelement path="${build.dev.classes.dir}"/>
+                </path>
+                <path refid="lib.ext.path"/>
+                <path refid="ws-c10.path"/>
+            </classpath>
+            <src path="${dev.src10.dir}"/>
+        </javac>
+    </target>
+
+    <target name="dev-compile11" depends="dev-compile-generic">
+        <javac destdir="${build.dev.classes11.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
+            <classpath>
+                <path>
+                    <pathelement path="${build.dev.classes.dir}"/>
+                </path>
+                <path refid="lib.ext.path"/>
+                <path refid="ws-c11.path"/>
+            </classpath>
+            <src path="${dev.src11.dir}"/>
+        </javac>
+    </target>
+
+    <target name="dev-compile-generic" depends="init">
         <javac destdir="${build.dev.classes.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
             <classpath>
                 <path refid="lib.ext.path"/>
@@ -148,12 +190,23 @@
 
         <classpath-builder filename="${com.arjuna.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
 
-        <javadoc    sourcepath="${dev.src.dir}"
-                    packagenames="com.arjuna.*"
+        <javadoc    packagenames="com.arjuna.*"
                     failonerror="yes"
                     private="yes"
                     defaultexcludes="yes"
                     classpath="${build.classpath}">
+
+            <packageset dir="${dev.src.dir}" defaultexcludes="yes">
+              <include name="com/arjuna/**"/>
+            </packageset>
+
+            <packageset dir="${dev.src10.dir}" defaultexcludes="yes">
+              <include name="com/arjuna/**"/>
+            </packageset>
+
+            <packageset dir="${dev.src11.dir}" defaultexcludes="yes">
+              <include name="com/arjuna/**"/>
+            </packageset>
 
              <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
                 <path>
@@ -166,10 +219,54 @@
     </target>
 
     <target name="dev-jars" depends="dev-compile, dev-resourcebundle" >
+        <!-- wsdl files for services -->
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-participant-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsat-participant-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-coordinator-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsat-coordinator-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-completion-initiator-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsat-completion-initiator-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-completion-coordinator-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsat-completion-coordinator-binding.wsdl"/>
+
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba-coordinator-completion-participant-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsba-coordinator-completion-participant-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba-participant-completion-coordinator-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsba-participant-completion-coordinator-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba-participant-completion-participant-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsba-participant-completion-participant-binding.wsdl"/>
+
+        <copy file="${dev.dd.dir}/wsarjtx/wsdl/wsarjtx.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsarjtx.wsdl"/>
+        <copy file="${dev.dd.dir}/wsarjtx/wsdl/wsarjtx-termination-coordinator-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsarjtx-termination-coordinator-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wsarjtx/wsdl/wsarjtx-termination-participant-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsarjtx-termination-participant-binding.wsdl"/>
+
+        <!-- wsdl files for clients  -->
+        <mkdir dir="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl"/>
+        <mkdir dir="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl"/>
+        <mkdir dir="${build.dev.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-participant-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat-participant-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-coordinator-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat-coordinator-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-completion-initiator-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat-completion-initiator-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-completion-coordinator-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat-completion-coordinator-binding.wsdl"/>
+
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba-coordinator-completion-participant-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/wsba-coordinator-completion-participant-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba-participant-completion-coordinator-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/wsba-participant-completion-coordinator-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba-participant-completion-participant-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/wsba-participant-completion-participant-binding.wsdl"/>
+
+        <copy file="${dev.dd.dir}/wsarjtx/wsdl/wsarjtx.wsdl" tofile="${build.dev.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl/wsarjtx.wsdl"/>
+        <copy file="${dev.dd.dir}/wsarjtx/wsdl/wsarjtx-termination-coordinator-binding.wsdl" tofile="${build.dev.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl/wsarjtx-termination-coordinator-binding.wsdl"/>
+        <copy file="${dev.dd.dir}/wsarjtx/wsdl/wsarjtx-termination-participant-binding.wsdl" tofile="${build.dev.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl/wsarjtx-termination-participant-binding.wsdl"/>
         <jar jarfile="${build.dev.lib.dir}/ws-t.jar">
             <fileset dir="${build.dev.classes.dir}"/>
             <manifest>
                 <attribute name="Class-Path" value="${ws-c.libs}"/>
+            </manifest>
+        </jar>
+        <jar jarfile="${build.dev.lib.dir}/ws-t10.jar">
+            <fileset dir="${build.dev.classes10.dir}"/>
+            <manifest>
+                <attribute name="Class-Path" value="ws-t.jar ${ws-c10.libs}"/>
+            </manifest>
+        </jar>
+        <jar jarfile="${build.dev.lib.dir}/ws-t11.jar">
+            <fileset dir="${build.dev.classes11.dir}" excludes="com/arjuna/webservices11/wsat/sei/* com/arjuna/webservices11/wsba/sei/* com/arjuna/webservices11/wsarjtx/sei/* handlers.xml"/>
+            <manifest>
+                <attribute name="Class-Path" value="ws-t.jar ${ws-c11.libs}"/>
             </manifest>
         </jar>
     </target>
@@ -181,9 +278,23 @@
                 <filter token="port" value="${port}"/>
             </filterset>
         </copy>
-        <war warfile="${build.dev.webapps.dir}/ws-t.war" webxml="${build.dev.dd.dir}/web-app.xml">
+        <copy file="${dev.dd.dir}/ws-t11_web-app.xml" tofile="${build.dev.dd.dir}/web-app11.xml">
+            <filterset>
+                <filter token="hostname" value="${hostname}"/>
+                <filter token="port" value="${port}"/>
+            </filterset>
+        </copy>
+        <copy file="${dev.dd.dir}/ws-t_handlers.xml" tofile="${build.dev.classes11.dir}/handlers.xml"/>
+        <war warfile="${build.dev.webapps.dir}/ws-t10.war" webxml="${build.dev.dd.dir}/web-app.xml">
             <manifest>
-                <attribute name="Class-Path" value="ws-t.jar"/>
+                <attribute name="Class-Path" value="ws-t10.jar ws-t.jar"/>
+            </manifest>
+        </war>
+        <war warfile="${build.dev.webapps.dir}/ws-t11.war" webxml="${build.dev.dd.dir}/web-app11.xml">
+            <webinf dir="${build.dir}/dev/classes11" includes="classes/com/arjuna/webservices11/wsat/sei/* classes/com/arjuna/webservices11/wsba/sei/* classes/com/arjuna/webservices11/wsarjtx/sei/* classes/handlers.xml"/>
+            <webinf dir="${build.dev.dd.dir}" includes="wsdl/**"/>
+            <manifest>
+                <attribute name="Class-Path" value="WEB-INF/classes ws-c.jar ws-t11.jar ws-t.jar"/>
             </manifest>
         </war>
     </target>

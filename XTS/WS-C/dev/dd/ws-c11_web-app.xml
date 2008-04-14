@@ -1,0 +1,68 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+    <display-name>WS-Coordination 1.1 Services</display-name>
+
+    <description>WS-Coordination 1.1 Services</description>
+
+    <!-- base URL for location of Coordination 1.1 services -->
+    <context-param>
+        <param-name>BaseURI</param-name>
+	<param-value>http://@hostname@:@port@/ws-c11</param-value>
+    </context-param>
+    <!-- Initialise WS Coord 1.1 services -->
+    <listener>
+        <listener-class>com.arjuna.webservices11.wscoor.server.ActivationCoordinatorInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.webservices11.wscoor.server.RegistrationCoordinatorInitialisation</listener-class>
+    </listener>
+
+    <!-- Initialise WS-C 1.1  -->
+    <listener>
+        <listener-class>com.arjuna.wsc11.messaging.deploy.CoordinationInitialisation</listener-class>
+    </listener>
+
+    <!-- Define WSCOOR 1.1 JaxWS Server Endpoints -->
+    <servlet>
+      <servlet-name>Activation Service</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wscoor.sei.ActivationPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+      <servlet-name>Registration Service</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wscoor.sei.RegistrationPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- Define WSCOOR 1.1 JaxWS Server Endpoint Mappings -->
+    <servlet-mapping>
+      <servlet-name>Activation Service</servlet-name>
+      <url-pattern>/ActivationService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>Registration Service</servlet-name>
+      <url-pattern>/RegistrationService</url-pattern>
+    </servlet-mapping>
+</web-app>

@@ -30,9 +30,9 @@
 package com.jboss.jbosstm.xts.demo.services.restaurant;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.mw.wst.BusinessActivityManagerFactory;
-import com.arjuna.mw.wst.BusinessActivityManager;
-import com.arjuna.wst.BAParticipantManager;
+import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
+import com.arjuna.mw.wst11.BusinessActivityManager;
+import com.arjuna.wst11.BAParticipantManager;
 import com.arjuna.wst.SystemException;
 import com.jboss.jbosstm.xts.demo.restaurant.IRestaurantServiceBA;
 

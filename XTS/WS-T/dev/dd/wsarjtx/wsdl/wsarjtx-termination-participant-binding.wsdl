@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2007 JBoss -->
+<wsdl:definitions name="WSARJTX"
+		  targetNamespace="http://schemas.arjuna.com/ws/2005/10/wsarjtx"
+		  xmlns="http://schemas.xmlsoap.org/wsdl/" 
+		  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+		  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+		  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		  xmlns:wsarjtx="http://schemas.arjuna.com/ws/2005/10/wsarjtx">
+    <wsdl:import
+        namespace="http://schemas.arjuna.com/ws/2005/10/wsarjtx"
+        location="wsarjtx.wsdl" />
+
+	<!-- SOAP bindings for termination participant port -->
+	<wsdl:binding name="TerminationParticipant_SOAPBinding" type="wsarjtx:TerminationParticipantPortType">
+	        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="CompletedOperation">
+		    <soap:operation soapAction="http://schemas.arjuna.com/ws/2005/10/wsarjtx/Completed" style="document"/>
+		    <wsdl:input name="Completed">
+		        <soap:body use="literal"/>
+		    </wsdl:input>
+		</wsdl:operation>
+
+		<wsdl:operation name="ClosedOperation">
+		    <soap:operation soapAction="http://schemas.arjuna.com/ws/2005/10/wsarjtx/Closed" style="document"/>
+			<wsdl:input name="Closed">
+		            <soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+
+		<wsdl:operation name="CancelledOperation">
+		    <soap:operation soapAction="http://schemas.arjuna.com/ws/2005/10/wsarjtx/Cancelled" style="document"/>
+			<wsdl:input name="Cancelled">
+		            <soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+
+		<wsdl:operation name="FaultedOperation">
+		    <soap:operation soapAction="http://schemas.arjuna.com/ws/2005/10/wsarjtx/Faulted" style="document"/>
+			<wsdl:input name="Faulted">
+		            <soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+
+		<wsdl:operation name="FaultOperation">
+		    <soap:operation soapAction="http://schemas.arjuna.com/ws/2005/10/wsarjtx/Fault" style="document"/>
+			<wsdl:input name="Fault">
+		            <soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>
+	<!-- termination participant service definition -->
+	<wsdl:service name="TerminationParticipantService">
+	    <wsdl:port binding="wsarjtx:TerminationParticipant_SOAPBinding" name="TerminationParticipantPortType">
+                <soap:address location="http://localhost:9000/wst11/TerminationParticipantService"/>
+	    </wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

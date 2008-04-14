@@ -27,6 +27,8 @@
     <description>Arjuna Web Services and WS-Coordination</description>
 
     <!--  Initialise the Task Manager -->
+    <!-- overridden now - this is done in the sar on behalf of either WS-C 1.0 or 1.1 or both -->
+    <!--
     <context-param>
         <param-name>TaskManager.minWorkerCount</param-name>
         <param-value>0</param-value>
@@ -38,7 +40,8 @@
     <listener>
         <listener-class>com.arjuna.services.framework.admin.TaskManagerInitialisation</listener-class>
     </listener>
-    
+    -->
+
     <!-- Initialise WS-C services -->
     <listener>
         <listener-class>com.arjuna.webservices.wscoor.server.ActivationCoordinatorInitialisation</listener-class>
@@ -73,7 +76,7 @@
          -->
         <init-param>
             <param-name>BaseHttpURI</param-name>
-            <param-value>http://@hostname@:@port@/xts/soap/</param-value>
+            <param-value>http://@hostname@:@port@/ws-c10/soap/</param-value>
         </init-param>
         <!--
         <init-param>

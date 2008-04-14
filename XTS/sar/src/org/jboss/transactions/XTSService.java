@@ -25,55 +25,55 @@ import org.jboss.logging.Logger;
 import org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule;
 
 import com.arjuna.mw.wsas.utils.Configuration;
-import com.arjuna.mw.wst.deploy.WSTXInitialisation;
-import com.arjuna.mw.wst.UserTransaction;
-import com.arjuna.mw.wst.TransactionManager;
-import com.arjuna.mw.wst.UserBusinessActivity;
-import com.arjuna.mw.wst.BusinessActivityManager;
-import com.arjuna.wsc.ContextFactoryMapper;
-import com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl;
-import com.arjuna.wsc.messaging.RegistrationCoordinatorProcessorImpl;
-import com.arjuna.mwlabs.wsc.ContextFactoryMapperImple;
+//import com.arjuna.mw.wst.deploy.WSTXInitialisation;
+//import com.arjuna.mw.wst.UserTransaction;
+//import com.arjuna.mw.wst.TransactionManager;
+//import com.arjuna.mw.wst.UserBusinessActivity;
+//import com.arjuna.mw.wst.BusinessActivityManager;
+//import com.arjuna.wsc.ContextFactoryMapper;
+//import com.arjuna.wsc.messaging.ActivationCoordinatorProcessorImpl;
+//import com.arjuna.wsc.messaging.RegistrationCoordinatorProcessorImpl;
+//import com.arjuna.mwlabs.wsc.ContextFactoryMapperImple;
 import com.arjuna.services.framework.task.TaskManager;
-import com.arjuna.webservices.HandlerRegistry;
-import com.arjuna.webservices.SoapRegistry;
-import com.arjuna.webservices.SoapService;
-import com.arjuna.webservices.SoapClient;
-import com.arjuna.webservices.util.ClassLoaderHelper;
-import com.arjuna.webservices.wsba.policy.CoordinatorCompletionCoordinatorPolicy;
-import com.arjuna.webservices.wsba.policy.CoordinatorCompletionParticipantPolicy;
-import com.arjuna.webservices.wsba.policy.ParticipantCompletionCoordinatorPolicy;
-import com.arjuna.webservices.wsba.policy.ParticipantCompletionParticipantPolicy;
-import com.arjuna.webservices.wsba.BusinessActivityConstants;
-import com.arjuna.webservices.wsba.processors.CoordinatorCompletionParticipantProcessor;
-import com.arjuna.webservices.wsba.processors.ParticipantCompletionParticipantProcessor;
-import com.arjuna.webservices.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
-import com.arjuna.webservices.wsba.processors.ParticipantCompletionCoordinatorProcessor;
-import com.arjuna.webservices.wsat.policy.CompletionCoordinatorPolicy;
-import com.arjuna.webservices.wsat.policy.CompletionInitiatorPolicy;
-import com.arjuna.webservices.wsat.policy.CoordinatorPolicy;
-import com.arjuna.webservices.wsat.policy.ParticipantPolicy;
-import com.arjuna.webservices.wsat.AtomicTransactionConstants;
-import com.arjuna.webservices.wsat.processors.CompletionCoordinatorProcessor;
-import com.arjuna.webservices.wsat.processors.ParticipantProcessor;
-import com.arjuna.webservices.wsat.processors.CoordinatorProcessor;
-import com.arjuna.webservices.wsarjtx.policy.TerminationParticipantPolicy;
-import com.arjuna.webservices.wsarjtx.policy.TerminationCoordinatorPolicy;
-import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
-import com.arjuna.webservices.wsarjtx.processors.TerminationCoordinatorProcessor;
-import com.arjuna.webservices.transport.http.HttpClient;
-import com.arjuna.webservices.wsarj.policy.ArjunaPolicy;
-import com.arjuna.webservices.wscoor.policy.ActivationCoordinatorPolicy;
-import com.arjuna.webservices.wscoor.policy.ActivationRequesterPolicy;
-import com.arjuna.webservices.wscoor.policy.RegistrationCoordinatorPolicy;
-import com.arjuna.webservices.wscoor.policy.RegistrationRequesterPolicy;
-import com.arjuna.webservices.wscoor.CoordinationConstants;
-import com.arjuna.webservices.wscoor.processors.ActivationCoordinatorProcessor;
-import com.arjuna.webservices.wscoor.processors.RegistrationCoordinatorProcessor;
-import com.arjuna.webservices.wsaddr.policy.AddressingPolicy;
-import com.arjuna.wst.messaging.*;
+//import com.arjuna.webservices.HandlerRegistry;
+//import com.arjuna.webservices.SoapRegistry;
+//import com.arjuna.webservices.SoapService;
+//import com.arjuna.webservices.SoapClient;
+//import com.arjuna.webservices.util.ClassLoaderHelper;
+//import com.arjuna.webservices.wsba.policy.CoordinatorCompletionCoordinatorPolicy;
+//import com.arjuna.webservices.wsba.policy.CoordinatorCompletionParticipantPolicy;
+//import com.arjuna.webservices.wsba.policy.ParticipantCompletionCoordinatorPolicy;
+//import com.arjuna.webservices.wsba.policy.ParticipantCompletionParticipantPolicy;
+//import com.arjuna.webservices.wsba.BusinessActivityConstants;
+//import com.arjuna.webservices.wsba.processors.CoordinatorCompletionParticipantProcessor;
+//import com.arjuna.webservices.wsba.processors.ParticipantCompletionParticipantProcessor;
+//import com.arjuna.webservices.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
+//import com.arjuna.webservices.wsba.processors.ParticipantCompletionCoordinatorProcessor;
+//import com.arjuna.webservices.wsat.policy.CompletionCoordinatorPolicy;
+//import com.arjuna.webservices.wsat.policy.CompletionInitiatorPolicy;
+//import com.arjuna.webservices.wsat.policy.CoordinatorPolicy;
+//import com.arjuna.webservices.wsat.policy.ParticipantPolicy;
+//import com.arjuna.webservices.wsat.AtomicTransactionConstants;
+//import com.arjuna.webservices.wsat.processors.CompletionCoordinatorProcessor;
+//import com.arjuna.webservices.wsat.processors.ParticipantProcessor;
+//import com.arjuna.webservices.wsat.processors.CoordinatorProcessor;
+//import com.arjuna.webservices.wsarjtx.policy.TerminationParticipantPolicy;
+//import com.arjuna.webservices.wsarjtx.policy.TerminationCoordinatorPolicy;
+//import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
+//import com.arjuna.webservices.wsarjtx.processors.TerminationCoordinatorProcessor;
+//import com.arjuna.webservices.transport.http.HttpClient;
+//import com.arjuna.webservices.wsarj.policy.ArjunaPolicy;
+//import com.arjuna.webservices.wscoor.policy.ActivationCoordinatorPolicy;
+//import com.arjuna.webservices.wscoor.policy.ActivationRequesterPolicy;
+//import com.arjuna.webservices.wscoor.policy.RegistrationCoordinatorPolicy;
+//import com.arjuna.webservices.wscoor.policy.RegistrationRequesterPolicy;
+//import com.arjuna.webservices.wscoor.CoordinationConstants;
+//import com.arjuna.webservices.wscoor.processors.ActivationCoordinatorProcessor;
+//import com.arjuna.webservices.wscoor.processors.RegistrationCoordinatorProcessor;
+//import com.arjuna.webservices.wsaddr.policy.AddressingPolicy;
+//import com.arjuna.wst.messaging.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.arjuna.recovery.RecoveryModule;
+//import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 
 import java.io.InputStream;
 
@@ -106,11 +106,17 @@ public class XTSService extends ServiceMBeanSupport implements XTSServiceMBean {
 
     protected void startService() throws Exception
     {
-        getLog().info("JBossTS XTS Transaction Service - starting");
 
         // read unified properties file (replaces wscf.xml and wstx.xml)
-        Configuration.initialise("/jbossxts.xml");
+        // Configuration.initialise("/jbossxts.xml");
 
+        TaskManagerInitialisation(); // com.arjuna.services.framework.admin.TaskManagerInitialisation : initialise the Task Manager
+
+        /*
+         * initialisation is done by 1.0/1.1 war files so as to allow us to iunclude either WS-COOR/AT/BA 1.0 or 1.1
+         * or both
+         */
+        /*
         //// wscf.war:
 
         WSCFInitialisation();  // com.arjuna.mw.wsc.deploy.WSCFInitialisation: Initialise WSCF
@@ -146,6 +152,7 @@ public class XTSService extends ServiceMBeanSupport implements XTSServiceMBean {
         //// wstx.war:
 
         WSTXInitialisation(); // com.arjuna.mw.wst.deploy.WSTXInitialisation : Initialise WSTX
+        */
 
         acCoordinatorRecoveryModule = new ACCoordinatorRecoveryModule();
 
@@ -171,13 +178,24 @@ public class XTSService extends ServiceMBeanSupport implements XTSServiceMBean {
         }
         TaskManager.getManager().shutdown() ; // com.arjuna.services.framework.admin.TaskManagerInitialisation
 
+        /*
+         * this will be done by the servlet shutdown code
         // HttpClientInitialisation
         final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
         soapRegistry.removeSoapClient("http") ;
         soapRegistry.removeSoapClient("https") ;
+        */
     }
 
+    private void TaskManagerInitialisation()
+    {
+        final TaskManager taskManager = TaskManager.getManager() ;
+        taskManager.setMinimumWorkerCount(taskManagerMinWorkerCount) ;
+        taskManager.setMaximumWorkerCount(taskManagerMaxWorkerCount) ;
+    }
 
+    /*
+     * this is now done by war listeners -- see above for rationale
     ///////////////////////////////
 
     private void WSCFInitialisation() throws Exception
@@ -403,4 +421,5 @@ public class XTSService extends ServiceMBeanSupport implements XTSServiceMBean {
         final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
         soapRegistry.registerSoapService(serviceName, new SoapService(handlerRegistry)) ;
     }
+    */
 }

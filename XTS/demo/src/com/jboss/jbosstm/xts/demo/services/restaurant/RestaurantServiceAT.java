@@ -30,8 +30,8 @@
 package com.jboss.jbosstm.xts.demo.services.restaurant;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.mw.wst.TransactionManagerFactory;
-import com.arjuna.mw.wst.UserTransactionFactory;
+import com.arjuna.mw.wst11.TransactionManagerFactory;
+import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.jboss.jbosstm.xts.demo.restaurant.IRestaurantServiceAT;
 
 import javax.jws.HandlerChain;

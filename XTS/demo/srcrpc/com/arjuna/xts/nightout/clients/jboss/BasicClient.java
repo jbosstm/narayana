@@ -161,7 +161,7 @@ public class BasicClient extends HttpServlet
     public void init(final ServletConfig config)
         throws ServletException
     {
-        final String baseURL = "http://localhost:8080/xtsdemowebservices/" ;
+        final String baseURL = "http://localhost:8080/xtsdemowebservicesrpc/" ;
 
         restaurantATURL = getURL(config, "restaurantATURL", baseURL + "RestaurantServiceAT") ;
         restaurantBAURL = getURL(config, "restaurantBAURL", baseURL + "RestaurantServiceBA") ;

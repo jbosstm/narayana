@@ -29,11 +29,11 @@
 
 package com.jboss.jbosstm.xts.demo.client;
 
-import com.arjuna.mw.wst.UserBusinessActivity;
-import com.arjuna.mw.wst.UserBusinessActivityFactory;
-import com.arjuna.mw.wst.UserTransaction;
-import com.arjuna.mw.wst.UserTransactionFactory;
-import com.arjuna.mw.wst.client.JaxWSHeaderContextProcessor;
+import com.arjuna.mw.wst11.UserBusinessActivity;
+import com.arjuna.mw.wst11.UserBusinessActivityFactory;
+import com.arjuna.mw.wst11.UserTransaction;
+import com.arjuna.mw.wst11.UserTransactionFactory;
+import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.jboss.jbosstm.xts.demo.restaurant.IRestaurantServiceAT;
 import com.jboss.jbosstm.xts.demo.restaurant.IRestaurantServiceBA;

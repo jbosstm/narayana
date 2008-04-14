@@ -1,0 +1,176 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+    <display-name>Arjuna Web Services Transaction 1.1</display-name>
+
+    <description>Arjuna Web Services Transaction 1.1</description>
+
+    <!-- base URL for location of Web Services Transaction 1.1 services -->
+    <context-param>
+        <param-name>BaseURI</param-name>
+	<param-value>http://@hostname@:@port@/ws-t11</param-value>
+    </context-param>
+    <!-- Initialise Arjuna TX 1.1 services -->
+    <listener>
+        <listener-class>com.arjuna.webservices11.wsarjtx.server.TerminationParticipantInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.webservices11.wsarjtx.server.TerminationCoordinatorInitialisation</listener-class>
+    </listener>
+    
+    <!-- Initialise WS-AT 1.1 services -->
+    <listener>
+        <listener-class>com.arjuna.webservices11.wsat.server.CompletionCoordinatorInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.webservices11.wsat.server.CompletionInitiatorInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.webservices11.wsat.server.CoordinatorInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.webservices11.wsat.server.ParticipantInitialisation</listener-class>
+    </listener>
+    
+    <!-- Initialise WS-BA 1.1 services -->
+    <listener>
+        <listener-class>com.arjuna.webservices11.wsba.server.CoordinatorCompletionCoordinatorInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.webservices11.wsba.server.CoordinatorCompletionParticipantInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.webservices11.wsba.server.ParticipantCompletionCoordinatorInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.arjuna.webservices11.wsba.server.ParticipantCompletionParticipantInitialisation</listener-class>
+    </listener>
+    
+    <!-- Initialise WS-T  1.1 -->
+    <listener>
+        <listener-class>com.arjuna.wst11.messaging.deploy.TransactionInitialisation</listener-class>
+    </listener>
+
+    <!-- Define WSAT 1.1 JaxWS Server Endpoints -->
+    <servlet>
+      <servlet-name>Coordinator</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsat.sei.CoordinatorPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+      <servlet-name>Participant</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsat.sei.ParticipantPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+      <servlet-name>Completion Coordinator</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsat.sei.CompletionCoordinatorPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+      <servlet-name>Completion Initiator</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsat.sei.CompletionInitiatorPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- Define WSBA 1.1 JaxWS Server Endpoints -->
+    <servlet>
+      <servlet-name>Business Agreement With Coordinator Completion Coordinator</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsba.sei.BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+      <servlet-name>Business Agreement With Coordinator Completion Participant</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsba.sei.BusinessAgreementWithCoordinatorCompletionParticipantPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+      <servlet-name>Business Agreement With Participant Completion Coordinator</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsba.sei.BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+      <servlet-name>Business Agreement With Participant Completion Participant</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsba.sei.BusinessAgreementWithParticipantCompletionParticipantPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- Define WSArjTX JaxWS Server Endpoints -->
+    <servlet>
+      <servlet-name>Termination Coordinator</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsarjtx.sei.TerminationCoordinatorPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+      <servlet-name>Termination Participant</servlet-name>
+      <servlet-class>com.arjuna.webservices11.wsarjtx.sei.TerminationParticipantPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- Define WSAT 1.1 JaxWS Server Endpoint Mappings -->
+    <servlet-mapping>
+      <servlet-name>Coordinator</servlet-name>
+      <url-pattern>/CoordinatorService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>Participant</servlet-name>
+      <url-pattern>/ParticipantService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>Completion Coordinator</servlet-name>
+      <url-pattern>/CompletionCoordinatorService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>Completion Initiator</servlet-name>
+      <url-pattern>/CompletionInitiatorService</url-pattern>
+    </servlet-mapping>
+
+    <!-- Define WSBA 1.1 JaxWS Server Endpoint Mappings -->
+    <servlet-mapping>
+      <servlet-name>Business Agreement With Coordinator Completion Coordinator</servlet-name>
+      <url-pattern>/BusinessAgreementWithCoordinatorCompletionCoordinatorService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>Business Agreement With Coordinator Completion Participant</servlet-name>
+      <url-pattern>/BusinessAgreementWithCoordinatorCompletionParticipantService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>Business Agreement With Participant Completion Coordinator</servlet-name>
+      <url-pattern>/BusinessAgreementWithParticipantCompletionCoordinatorService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>Business Agreement With Participant Completion Participant</servlet-name>
+      <url-pattern>/BusinessAgreementWithParticipantCompletionParticipantService</url-pattern>
+    </servlet-mapping>
+
+    <!-- Define WSArjTX JaxWS Server Endpoint Mappings -->
+    <servlet-mapping>
+      <servlet-name>Termination Coordinator</servlet-name>
+      <url-pattern>/TerminationCoordinatorService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>Termination Participant</servlet-name>
+      <url-pattern>/TerminationParticipantService</url-pattern>
+    </servlet-mapping>
+</web-app>

@@ -347,7 +347,7 @@ public class CoordinatorControl
 	currentCoordinator().participantFaulted(participantId);
     }
     
-    final ACCoordinator currentCoordinator () throws NoCoordinatorException, SystemException
+    public final ACCoordinator currentCoordinator () throws NoCoordinatorException, SystemException
     {
 	ACCoordinator coord = (ACCoordinator) _coordinators.get(currentActivity());
 

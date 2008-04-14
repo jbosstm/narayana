@@ -64,7 +64,8 @@ public class StartEnd extends TestCase
 	
 	//	System.setProperty("com.arjuna.mw.wscf.protocolImplementation", className);
 	
-	    ProtocolLocator pl = new ProtocolLocator(className);
+        Class clazz = this.getClass().getClassLoader().loadClass(className);
+	    ProtocolLocator pl = new ProtocolLocator(clazz);
 
 	    implementationDoc = pl.getProtocol();
 

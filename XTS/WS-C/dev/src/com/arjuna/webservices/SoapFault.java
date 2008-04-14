@@ -20,13 +20,11 @@
  */
 package com.arjuna.webservices;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
-
-import com.arjuna.webservices.stax.NamedElement;
-import com.arjuna.webservices.stax.TextElement;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * Class representing a SOAP Fault
@@ -42,48 +40,44 @@ public class SoapFault extends Exception
     /**
      * The SOAP fault type.
      */
-    private SoapFaultType soapFaultType ;
+    protected SoapFaultType soapFaultType ;
     /**
      * The SOAP fault subcode.
      */
-    private QName subcode ;
+    protected QName subcode ;
     /**
      * The SOAP fault sub subcode.
      */
-    private QName subSubcode ;
+    protected QName subSubcode ;
     /**
      * The SOAP fault reason.
      */
-    private String reason ;
+    protected String reason ;
     /**
-     * The SOAP fault node ;
+     * The SOAP fault reason.
      */
-    private String node ;
+    protected String node ;
+    /**
+     * The SOAP fault detail as a string.
+     */
+    protected String detail ;
     /**
      * The SOAP fault role.
      */
-    private String role ;
-    /**
-     * The detail element.
-     */
-    private NamedElement detail ;
-    /**
-     * The header elements.
-     */
-    private NamedElement[] headerElements ;
+    protected String role ;
     /**
      * The header fault flag.
      */
-    private boolean headerFault ;
+    protected boolean headerFault ;
     /**
      * The associated action.
      */
-    private String action ;
+    protected String action ;
     
     /**
      * Default constructor. 
      */
-    public SoapFault()
+    protected SoapFault()
     {
     }
     
@@ -91,21 +85,9 @@ public class SoapFault extends Exception
      * Construct a SOAP fault based on a throwable.
      * @param th The throwable.
      */
-    public SoapFault(final Throwable th)
+    protected SoapFault(final Throwable th)
     {
-        this(SoapFaultType.FAULT_RECEIVER, null, th.toString(),
-            new NamedElement(null, new TextElement(generateStackTrace(th))), null) ;
-    }
-    
-    /**
-     * Construct a SOAP header fault based on a throwable.
-     * @param th The throwable.
-     * @param headerElements The header elements.
-     */
-    public SoapFault(final Throwable th, final NamedElement[] headerElements)
-    {
-        this(SoapFaultType.FAULT_RECEIVER, null, th.toString(),
-            null, headerElements) ;
+        this(SoapFaultType.FAULT_RECEIVER, null, th.toString(), generateStackTrace(th)) ;
     }
     
     /**
@@ -114,21 +96,31 @@ public class SoapFault extends Exception
      * @param subcode The fault subcode.
      * @param reason The fault reason.
      */
-    public SoapFault(final SoapFaultType soapFaultType, final QName subcode, final String reason)
+    protected SoapFault(final SoapFaultType soapFaultType, final QName subcode, final String reason)
     {
-        this(soapFaultType, subcode, reason, null, null) ;
+        this(soapFaultType, subcode, reason, null) ;
     }
     
     /**
      * Create a custom SOAP fault.
      * @param soapFaultType the soap fault type.
-     * @param subcode The fault subcode.
      * @param reason The fault reason.
-     * @param headerElements The header elements.
      */
-    public SoapFault(final SoapFaultType soapFaultType, final QName subcode, final String reason, final NamedElement[] headerElements)
+    protected SoapFault(final SoapFaultType soapFaultType, final String reason)
     {
-        this(soapFaultType, subcode, reason, null, headerElements) ;
+        this(soapFaultType, null, reason, null) ;
+    }
+    
+    /**
+     * Create a custom SOAP fault.
+     * @param soapFaultType the soap fault type.
+     * @param reason The fault reason.
+     * @param detail The fault detail.
+     */
+    protected SoapFault(final SoapFaultType soapFaultType,
+        final String reason, final String detail)
+    {
+        this(soapFaultType, null, reason, detail) ;
     }
     
     /**
@@ -138,49 +130,14 @@ public class SoapFault extends Exception
      * @param reason The fault reason.
      * @param detail The fault detail.
      */
-    public SoapFault(final SoapFaultType soapFaultType, final QName subcode, final String reason, final NamedElement detail)
-    {
-        this(soapFaultType, subcode, reason, detail, null) ;
-    }
-    
-    /**
-     * Create a custom SOAP fault.
-     * @param soapFaultType the soap fault type.
-     * @param reason The fault reason.
-     */
-    public SoapFault(final SoapFaultType soapFaultType, final String reason)
-    {
-        this(soapFaultType, null, reason, null, null) ;
-    }
-    
-    /**
-     * Create a custom SOAP fault.
-     * @param soapFaultType the soap fault type.
-     * @param reason The fault reason.
-     * @param detail The fault detail.
-     */
-    public SoapFault(final SoapFaultType soapFaultType,
-        final String reason, final NamedElement detail)
-    {
-        this(soapFaultType, null, reason, detail, null) ;
-    }
-    
-    /**
-     * Create a custom SOAP fault.
-     * @param soapFaultType the soap fault type.
-     * @param subcode The fault subcode.
-     * @param reason The fault reason.
-     * @param detail The fault detail.
-     * @param headerElements The fault header elements.
-     */
-    public SoapFault(final SoapFaultType soapFaultType, final QName subcode,
-        final String reason, final NamedElement detail, final NamedElement[] headerElements)
+
+    protected SoapFault(final SoapFaultType soapFaultType, final QName subcode,
+        final String reason, final String detail)
     {
         this.soapFaultType = soapFaultType ;
         this.subcode = subcode ;
         this.reason = reason ;
         this.detail = detail ;
-        this.headerElements = headerElements ;
     }
     
     /**
@@ -263,7 +220,7 @@ public class SoapFault extends Exception
     {
         return node ;
     }
-    
+
     /**
      * Set the SOAP fault node.
      * @param node The SOAP fault node.
@@ -272,8 +229,8 @@ public class SoapFault extends Exception
     {
         this.node = node ;
     }
-    
-    /**
+
+     /**
      * Get the SOAP fault role.
      * @return The SOAP fault role.
      */
@@ -295,7 +252,7 @@ public class SoapFault extends Exception
      * Get the SOAP fault detail.
      * @return The SOAP fault detail.
      */
-    public NamedElement getDetail()
+    public String getDetail()
     {
         return detail ;
     }
@@ -304,27 +261,9 @@ public class SoapFault extends Exception
      * Set the SOAP fault detail.
      * @param detail The SOAP fault detail.
      */
-    public void setDetail(final NamedElement detail)
+    public void setDetail(final String detail)
     {
         this.detail = detail ;
-    }
-    
-    /**
-     * Get the SOAP fault header elements.
-     * @return The SOAP fault header elements.
-     */
-    public NamedElement[] getHeaderElements()
-    {
-        return headerElements ;
-    }
-    
-    /**
-     * Set the SOAP fault header elements.
-     * @param headerElements The SOAP fault header elements.
-     */
-    public void setHeaderElements(final NamedElement[] headerElements)
-    {
-        this.headerElements = headerElements ;
     }
     
     /**
@@ -387,6 +326,12 @@ public class SoapFault extends Exception
             buffer.append(reason) ;
             buffer.append(']') ;
         }
+        if (detail != null)
+        {
+            buffer.append('[') ;
+            buffer.append(detail) ;
+            buffer.append(']') ;
+        }
         return buffer.toString() ;
     }
     
@@ -395,7 +340,7 @@ public class SoapFault extends Exception
      * @param th The throwable.
      * @return The stack trace.
      */
-    private static String generateStackTrace(final Throwable th)
+    public static String generateStackTrace(final Throwable th)
     {
         final StringWriter writer = new StringWriter() ;
         final PrintWriter pw = new PrintWriter(writer) ;

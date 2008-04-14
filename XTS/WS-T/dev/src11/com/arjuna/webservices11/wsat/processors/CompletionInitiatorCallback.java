@@ -1,0 +1,42 @@
+package com.arjuna.webservices11.wsat.processors;
+
+import com.arjuna.webservices.base.processors.Callback;
+import com.arjuna.webservices11.wsarj.ArjunaContext;
+import com.arjuna.webservices.SoapFault;
+import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
+
+import javax.xml.ws.addressing.AddressingProperties;
+
+/**
+ * The Completion Initiator callback.
+ * @author kevin
+ */
+public abstract class CompletionInitiatorCallback extends Callback
+{
+    /**
+     * An aborted response.
+     * @param aborted The aborted notification.
+     * @param addressingProperties The addressing context.
+     * @param arjunaContext The arjuna context.
+     */
+    public abstract void aborted(final Notification aborted, final AddressingProperties addressingProperties,
+        final ArjunaContext arjunaContext) ;
+
+    /**
+     * A committed response.
+     * @param committed The committed notification.
+     * @param addressingProperties The addressing context.
+     * @param arjunaContext The arjuna context.
+     */
+    public abstract void committed(final Notification committed, final AddressingProperties addressingProperties,
+        final ArjunaContext arjunaContext) ;
+
+    /**
+     * A SOAP fault response.
+     * @param soapFault The SOAP fault.
+     * @param addressingProperties The addressing context.
+     * @param arjunaContext The arjuna context.
+     */
+    public abstract void soapFault(final SoapFault soapFault, final AddressingProperties addressingProperties,
+        final ArjunaContext arjunaContext) ;
+}

@@ -70,7 +70,8 @@ public class TopLevel3
 	
 	try
 	{
-	    ProtocolLocator pl = new ProtocolLocator(className);
+        Class clazz = this.getClass().getClassLoader().loadClass(className);
+	    ProtocolLocator pl = new ProtocolLocator(clazz);
 
 	    implementationDoc = pl.getProtocol();
 	}
