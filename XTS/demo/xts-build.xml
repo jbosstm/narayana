@@ -76,8 +76,8 @@
     <property name="lib.libs" value="wscf.jar wstx.jar ws-t.jar ws-c.jar"/>
     <property name="lib10.libs" value="wscf10.jar wstx10.jar ws-t10.jar ws-c10.jar"/>
     <property name="lib11.libs" value="wscf11.jar wstx11.jar ws-t11.jar ws-c11.jar"/>
-    <property name="ext.libs" value="jbossjta.jar jbossts-common.jar commons-logging.jar jaxb-api.jar jboss-javaee.jar jboss-jaxrpc.jar jboss-jaxws-ext.jar jboss-jaxws.jar jbossws-client.jar jboss-saaj.jar"/>
-    <property name="jboss.client.libs" value="jbossall-client.jar jboss-jaxws.jar"/>
+    <property name="ext.libs" value="jbossjta.jar jbossts-common.jar commons-logging.jar"/>
+    <property name="jboss.client.libs" value="jaxb-api.jar jboss-javaee.jar jboss-jaxrpc.jar jboss-jaxws-ext.jar jboss-jaxws.jar jbossws-client.jar jboss-saaj.jar"/>
 
     <!-- ================================================================== -->
 

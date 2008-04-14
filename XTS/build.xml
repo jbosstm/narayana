@@ -30,6 +30,9 @@
 	<!-- Load Build Properties File -->
 	<property file="${com.arjuna.mw.xts.properties}"/>
 
+	<!-- need to locate env var setting for JBOSS_HOME -->
+	<property environment="env"/>
+
 	<!-- Configure dependencies -->
     <property name="com.arjuna.jta.dir" location=".."/>
     <property name="com.arjuna.buildsystem.dir" location="${com.arjuna.jta.dir}/antbuildsystem"/>
@@ -43,7 +46,29 @@
     <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
     <property name="com.arjuna.jta.install.lib.jars" value="jbossjta.jar"/>
     <property name="com.arjuna.jta.install.ext.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
-    <property name="com.arjuna.xts.ext.jars" value="jaxb-api.jar jboss-javaee.jar jboss-jaxrpc.jar jboss-jaxws-ext.jar jboss-jaxws.jar jbossws-client.jar jboss-saaj.jar"/>
+    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jboss-jaxrpc.jar jboss-jaxws-ext.jar jboss-jaxws.jar jbossws-client.jar jboss-saaj.jar"/>
+
+    <condition property="jboss.home" value="${env.JBOSS_HOME}">
+        <isset property="env.JBOSS_HOME"/>
+    </condition>
+
+    <fail unless="jboss.home">
+        The JBoss installation directory must be specified with the JBOSS_HOME environment variable or the jboss.home property.
+    </fail>
+
+    <property name="jboss.server" value="default"/>
+
+    <available property="jboss.server.exists" type="dir"
+	       file="${jboss.home}/server/${jboss.server}"/>
+
+    <fail unless="jboss.server.exists">
+        The JBoss server '${jboss.server}' does not appear to exist in the installation directory.  Please set jboss.server to the name of the JBoss server instance.
+    </fail>
+
+    <property name="jboss.lib.dir" location="${jboss.home}/lib"/>
+    <property name="jboss.client.lib.dir" location="${jboss.home}/client"/>
+    <property name="jboss.server.dir" location="${jboss.home}/server/${jboss.server}"/>
+    <property name="jboss.server.lib.dir" location="${jboss.server.dir}/lib"/>
 
 	<!-- Set internal property defaults -->
 
@@ -59,7 +84,7 @@
 	<path id="build.classpath">
 		<fileset dir="${com.arjuna.jta.install.lib}" includes="${com.arjuna.jta.install.lib.jars}"/>
 		<fileset dir="${com.arjuna.jta.install.ext}" includes="${com.arjuna.jta.install.ext.jars}"/>
-		<fileset dir="${com.arjuna.xts.ext}" includes="${com.arjuna.xts.ext.jars}"/>
+		<fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
 	</path>
 	<property name="build.classpath" refid="build.classpath"/>
 
@@ -176,7 +201,6 @@
 		<copy todir="${com.arjuna.mwlabs.installationdirectory}/lib/ext">
 			<fileset dir="${com.arjuna.jta.install.lib}" includes="${com.arjuna.jta.install.lib.jars}"/>
 			<fileset dir="${com.arjuna.jta.install.ext}" includes="${com.arjuna.jta.install.ext.jars}"/>
-			<fileset dir="${com.arjuna.xts.ext}" includes="${com.arjuna.xts.ext.jars}"/>
 		</copy>
 
 		<echo message="Installing webapps"/>
