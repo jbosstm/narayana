@@ -1,0 +1,2735 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2007, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<test_set>
+	<default_timeout value="480"/>
+	<description>AIT Resources Tests 01</description>
+
+
+	<test_group name="AITResources01">
+		<task_declaration>
+			<task id="com.arjuna.ats.arjuna.recovery.RecoveryManager"
+				  classname="com.arjuna.ats.arjuna.recovery.RecoveryManager" runner="JavaTaskRunner"
+				  type="expect_ready"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Servers.Server01"
+				  classname="org.jboss.jbossts.qa.AITResources01Servers.Server01" runner="JavaTaskRunner"
+				  type="expect_ready"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client01"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client01" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" classname="org.jboss.jbossts.qa.Utils.EmptyObjectStore"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore"
+				  classname="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Servers.Server02"
+				  classname="org.jboss.jbossts.qa.AITResources01Servers.Server02" runner="JavaTaskRunner"
+				  type="expect_ready"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Servers.Server03"
+				  classname="org.jboss.jbossts.qa.AITResources01Servers.Server03" runner="JavaTaskRunner"
+				  type="expect_ready"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Servers.Server04"
+				  classname="org.jboss.jbossts.qa.AITResources01Servers.Server04" runner="JavaTaskRunner"
+				  type="expect_ready"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Servers.Server05"
+				  classname="org.jboss.jbossts.qa.AITResources01Servers.Server05" runner="JavaTaskRunner"
+				  type="expect_ready"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Servers.Server06"
+				  classname="org.jboss.jbossts.qa.AITResources01Servers.Server06" runner="JavaTaskRunner"
+				  type="expect_ready"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client02"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client02" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client03"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client03" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client04"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client04" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Servers.Server07"
+				  classname="org.jboss.jbossts.qa.AITResources01Servers.Server07" runner="JavaTaskRunner"
+				  type="expect_ready"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client05"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client05" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client06"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client06" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Servers.Server08"
+				  classname="org.jboss.jbossts.qa.AITResources01Servers.Server08" runner="JavaTaskRunner"
+				  type="expect_ready"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client07"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client07" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client08"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client08" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client09"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client09" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Outcomes.Outcome01"
+				  classname="org.jboss.jbossts.qa.AITResources01Outcomes.Outcome01" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Outcomes.Outcome02"
+				  classname="org.jboss.jbossts.qa.AITResources01Outcomes.Outcome02" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client10"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client10" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client11"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client11" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client12"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client12" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client13"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client13" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Servers.Server09"
+				  classname="org.jboss.jbossts.qa.AITResources01Servers.Server09" runner="JavaTaskRunner"
+				  type="expect_ready"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Servers.Server10"
+				  classname="org.jboss.jbossts.qa.AITResources01Servers.Server10" runner="JavaTaskRunner"
+				  type="expect_ready"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client14"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client14" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client15"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client15" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client16"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client16" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client17"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client17" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Servers.Server11"
+				  classname="org.jboss.jbossts.qa.AITResources01Servers.Server11" runner="JavaTaskRunner"
+				  type="expect_ready"/>
+
+			<task id="org.jboss.jbossts.qa.AITResources01Clients.Client19"
+				  classname="org.jboss.jbossts.qa.AITResources01Clients.Client19" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+		</task_declaration>
+		<test_declaration id="AITResources01_Test001_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test001 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test002_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test002 (F)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test003_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test003 (F)'</description>
+			<configuration names_required="3"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<terminate_task runtime_id="server3"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test004_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test004 (F)'</description>
+			<configuration names_required="4"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server4">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<wait_for_task runtime_id="client3"/>
+				<terminate_task runtime_id="server4"/>
+				<terminate_task runtime_id="server3"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test005_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test005 (F)'</description>
+			<configuration names_required="4"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server02" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<wait_for_task runtime_id="client3"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test006_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test006 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test007_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test007 (F)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test008_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test008 (F)'</description>
+			<configuration names_required="3"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<terminate_task runtime_id="server3"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test009_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test009 (F)'</description>
+			<configuration names_required="4"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server4">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<wait_for_task runtime_id="client3"/>
+				<terminate_task runtime_id="server4"/>
+				<terminate_task runtime_id="server3"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test010_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test010 (F)'</description>
+			<configuration names_required="4"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server04" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<wait_for_task runtime_id="client3"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test011_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test011 (F)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server05" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test012_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test012 (F)'</description>
+			<configuration names_required="4"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server06" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client01" runtime_id="client3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<wait_for_task runtime_id="client3"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test013_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test013 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test014_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test014 (F)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test015_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test015 (F)'</description>
+			<configuration names_required="3"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<terminate_task runtime_id="server3"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test016_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test016 (F)'</description>
+			<configuration names_required="4"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server4">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<wait_for_task runtime_id="client3"/>
+				<terminate_task runtime_id="server4"/>
+				<terminate_task runtime_id="server3"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test017_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test017 (F)'</description>
+			<configuration names_required="4"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server02" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<wait_for_task runtime_id="client3"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test018_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test018 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test019_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test019 (F)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test020_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test020 (F)'</description>
+			<configuration names_required="3"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<terminate_task runtime_id="server3"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test021_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test021 (F)'</description>
+			<configuration names_required="4"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server4">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<wait_for_task runtime_id="client3"/>
+				<terminate_task runtime_id="server4"/>
+				<terminate_task runtime_id="server3"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test022_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test022 (F)'</description>
+			<configuration names_required="4"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server04" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<wait_for_task runtime_id="client3"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test023_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test023 (F)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server05" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test024_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test024 (F)'</description>
+			<configuration names_required="4"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server06" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<wait_for_task runtime_id="client3"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test025_(M)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test025 (M)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client03" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>1000</param>
+					<param>999</param>
+					<param>999</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test026_(M)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test026 (M)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client04" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>1000</param>
+					<param>999</param>
+					<param>999</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test027_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test027 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server07" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client05" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test028_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test028 (F)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server07" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server07" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client06" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test029_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test029 (F)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server08" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client06" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test030_(M)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test030 (M)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server07" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client07" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>10</param>
+					<param>999</param>
+					<param>999</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test031_(M)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test031 (M)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server07" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server07" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client08" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>10</param>
+					<param>999</param>
+					<param>999</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test032_(M)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test032 (M)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server08" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client08" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>10</param>
+					<param>999</param>
+					<param>999</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test033_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test033 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client09" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client09" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<perform_task id="org.jboss.jbossts.qa.AITResources01Outcomes.Outcome01">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>2000</param>
+					<param>$(1)</param>
+				</perform_task>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test034_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test034 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client09" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client09" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client09" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client09" runtime_id="client3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<wait_for_task runtime_id="client3"/>
+				<perform_task id="org.jboss.jbossts.qa.AITResources01Outcomes.Outcome01">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>4000</param>
+					<param>$(1)</param>
+				</perform_task>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test035_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test035 (F)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client09" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client09" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client09" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client09" runtime_id="client3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<wait_for_task runtime_id="client3"/>
+				<perform_task id="org.jboss.jbossts.qa.AITResources01Outcomes.Outcome02">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>2000</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test036_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test036 (F)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server05" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client09" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client09" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client09" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client09" runtime_id="client3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<wait_for_task runtime_id="client3"/>
+				<perform_task id="org.jboss.jbossts.qa.AITResources01Outcomes.Outcome02">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>2000</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test037_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test037 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server07" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client10" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test038_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test038 (F)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server07" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server07" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client11" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test039_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test039 (F)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server08" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client11" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test040_(M)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test040 (M)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server07" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client12" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>10</param>
+					<param>999</param>
+					<param>999</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test041_(M)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test041 (M)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server07" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server07" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client13" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>10</param>
+					<param>999</param>
+					<param>999</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test042_(M)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test042 (M)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server08" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client13" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>10</param>
+					<param>999</param>
+					<param>999</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test043_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test043 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server09" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test044_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test044 (F)'</description>
+			<configuration names_required="2"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server09" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server09" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test045_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test045 (F)'</description>
+			<configuration names_required="3"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server09" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server09" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server09" runtime_id="server3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<terminate_task runtime_id="server3"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test046_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test046 (F)'</description>
+			<configuration names_required="4"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server09" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server09" runtime_id="server2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server09" runtime_id="server3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server09" runtime_id="server4">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<wait_for_task runtime_id="client3"/>
+				<terminate_task runtime_id="server4"/>
+				<terminate_task runtime_id="server3"/>
+				<terminate_task runtime_id="server2"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test047_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test047 (F)'</description>
+			<configuration names_required="4"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server10" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(2)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client2">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(3)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client3">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(4)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<wait_for_task runtime_id="client1"/>
+				<wait_for_task runtime_id="client2"/>
+				<wait_for_task runtime_id="client3"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+					<param>$(2)</param>
+					<param>$(3)</param>
+					<param>$(4)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test048_(M)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test048 (M)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server09" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client04" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>1000</param>
+					<param>999</param>
+					<param>999</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test049_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test049 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client14" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>4</param>
+					<param>250</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test050_(M)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test050 (M)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client15" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>4</param>
+					<param>250</param>
+					<param>999</param>
+					<param>999</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test051_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test051 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client14" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>4</param>
+					<param>250</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test052_(M)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test052 (M)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client15" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>4</param>
+					<param>250</param>
+					<param>999</param>
+					<param>999</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test053_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test053 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client16" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>4</param>
+					<param>250</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test054_(M)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test054 (M)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client17" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>4</param>
+					<param>250</param>
+					<param>999</param>
+					<param>999</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test055_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test055 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client16" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>4</param>
+					<param>250</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test056_(M)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test056 (M)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server03" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client17" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>4</param>
+					<param>250</param>
+					<param>999</param>
+					<param>999</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test057_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test057 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server09" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client16" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>4</param>
+					<param>250</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test058_(M)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test058 (M)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server09" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client17" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+					<param>4</param>
+					<param>250</param>
+					<param>999</param>
+					<param>999</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test059_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test059 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server11" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client02" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="AITResources01_Test060_(F)" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'AITResources01 Test060 (F)'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Servers.Server01" runtime_id="server1">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.AITResources01Clients.Client19" runtime_id="client0">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>$(1)</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server1"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+					<param>$(1)</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+	</test_group>
+</test_set>

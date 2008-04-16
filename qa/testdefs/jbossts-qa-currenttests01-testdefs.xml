@@ -1,0 +1,795 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2007, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<test_set>
+	<default_timeout value="480"/>
+	<description>Current Tests 01</description>
+
+
+	<test_group name="CurrentTests01">
+		<task_declaration>
+			<task id="com.arjuna.ats.arjuna.recovery.RecoveryManager"
+				  classname="com.arjuna.ats.arjuna.recovery.RecoveryManager" runner="JavaTaskRunner"
+				  type="expect_ready"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test01" classname="org.jboss.jbossts.qa.CurrentTests01.Test01"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test02" classname="org.jboss.jbossts.qa.CurrentTests01.Test02"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test03" classname="org.jboss.jbossts.qa.CurrentTests01.Test03"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test04" classname="org.jboss.jbossts.qa.CurrentTests01.Test04"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test05" classname="org.jboss.jbossts.qa.CurrentTests01.Test05"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test06" classname="org.jboss.jbossts.qa.CurrentTests01.Test06"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test07" classname="org.jboss.jbossts.qa.CurrentTests01.Test07"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test08" classname="org.jboss.jbossts.qa.CurrentTests01.Test08"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test09" classname="org.jboss.jbossts.qa.CurrentTests01.Test09"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test10" classname="org.jboss.jbossts.qa.CurrentTests01.Test10"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test11" classname="org.jboss.jbossts.qa.CurrentTests01.Test11"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test12" classname="org.jboss.jbossts.qa.CurrentTests01.Test12"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test13" classname="org.jboss.jbossts.qa.CurrentTests01.Test13"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test14" classname="org.jboss.jbossts.qa.CurrentTests01.Test14"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test15" classname="org.jboss.jbossts.qa.CurrentTests01.Test15"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test16" classname="org.jboss.jbossts.qa.CurrentTests01.Test16"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test17" classname="org.jboss.jbossts.qa.CurrentTests01.Test17"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test18" classname="org.jboss.jbossts.qa.CurrentTests01.Test18"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test19" classname="org.jboss.jbossts.qa.CurrentTests01.Test19"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test20" classname="org.jboss.jbossts.qa.CurrentTests01.Test20"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test21" classname="org.jboss.jbossts.qa.CurrentTests01.Test21"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test22" classname="org.jboss.jbossts.qa.CurrentTests01.Test22"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test23" classname="org.jboss.jbossts.qa.CurrentTests01.Test23"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test24" classname="org.jboss.jbossts.qa.CurrentTests01.Test24"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test25" classname="org.jboss.jbossts.qa.CurrentTests01.Test25"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test26" classname="org.jboss.jbossts.qa.CurrentTests01.Test26"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test27" classname="org.jboss.jbossts.qa.CurrentTests01.Test27"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test28" classname="org.jboss.jbossts.qa.CurrentTests01.Test28"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test29" classname="org.jboss.jbossts.qa.CurrentTests01.Test29"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test30" classname="org.jboss.jbossts.qa.CurrentTests01.Test30"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test31" classname="org.jboss.jbossts.qa.CurrentTests01.Test31"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test32" classname="org.jboss.jbossts.qa.CurrentTests01.Test32"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test33" classname="org.jboss.jbossts.qa.CurrentTests01.Test33"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test34" classname="org.jboss.jbossts.qa.CurrentTests01.Test34"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test35" classname="org.jboss.jbossts.qa.CurrentTests01.Test35"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.CurrentTests01.Test36" classname="org.jboss.jbossts.qa.CurrentTests01.Test36"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" classname="org.jboss.jbossts.qa.Utils.EmptyObjectStore"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+			<task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore"
+				  classname="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+		</task_declaration>
+		<test_declaration id="CurrentTests01_Test001" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test001'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test01" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test002" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test002'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test02" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test003" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test003'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test03" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test004" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test004'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test04" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test005" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test005'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test05" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test006" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test006'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test06" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test007" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test007'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test07" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test008" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test008'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test08" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test009" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test009'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test09" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test010" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test010'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test10" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test011" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test011'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test11" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test012" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test012'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test12" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test013" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test013'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test13" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test014" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test014'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test14" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test015" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test015'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test15" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test016" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test016'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test16" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test017" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test017'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test17" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test018" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test018'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test18" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test019" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test019'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test19" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test020" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test020'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test20" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test021" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test021'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test21" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test022" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test022'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test22" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test023" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test023'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test23" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test024" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test024'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test24" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test025" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test025'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test25" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test026" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test026'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test26" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test027" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test027'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test27" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test028" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test028'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test28" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test029" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test029'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test29" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test030" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test030'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test30" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test031" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test031'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test31" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test032" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test032'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test32" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test033" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test033'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test33" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test034" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test034'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test34" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test035" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test035'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test35" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="CurrentTests01_Test036" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+			<description>This test was generated by QA-to-DTF for test 'CurrentTests01 Test036'</description>
+			<configuration/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+					<param>$(ORBFLAGS_1)</param>
+					<param>$(ORBFLAGS_2)</param>
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.CurrentTests01.Test36" runtime_id="client0">
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+			</action_list>
+		</test_declaration>
+
+	</test_group>
+</test_set>

@@ -1,0 +1,134 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2007, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<project name="JBossTS QA Suite Distribution" default="dist">
+
+	<!-- jta or jts. TODO: Should really be determied automatically by looking at content of ts.home -->
+	<property name="buildtype" value="jts"/>
+
+	<!-- set this property to the location of a JBossTS JTA/JTS build or installation -->
+<!--
+	<property name="org.jboss.jbossts.qa.ts.home" location="/home/jhalli/IdeaProjects/jboss/jbossts/install/"/>
+	/home/jhalli/javastuff/jbossts-full-4.2.3.sp3
+-->
+	<property name="org.jboss.jbossts.qa.ts.home" location="/home/jhalli/IdeaProjects/jboss/jbossts_trunk/install"/>
+
+	<!-- set this property to the location of a DTF TestingFramework.jar build -->
+	<property name="org.jboss.jbossts.qa.testingframework_location" location="/home/jhalli/IdeaProjects/jboss/jbossdtf/DTF_3_9/dist/lib/TestingFramework.jar"/>
+
+	<!-- TODO cd ArjunaJTS/orbportability; ant -f build-anttasks.xml -->
+	<property name="org.jboss.jbossts.qa.idlcompiler.lib"
+			  location="/home/jhalli/IdeaProjects/jboss/jbossts_trunk/ArjunaJTS/orbportability/lib/ext"/>
+
+	<!-- set these to the location(s) of the database drivers -->
+
+	<fileset id="oracle.drivers" dir="/oracle/product/10.2.0/db_1/jdbc/lib/">
+		<include name="ojdbc14.jar"/>
+	</fileset>
+
+	<fileset id="mssql.drivers.old" dir="/home/jhalli/javastuff/mssql2000jdbc/lib">
+		<include name="ms*.jar"/>
+	</fileset>
+
+	<fileset id="mssql.drivers" dir="/home/jhalli/javastuff/mssql2005_sqljdbc_1.1/enu/">
+		<include name="sqljdbc.jar"/>
+	</fileset>
+
+	<!-- 8.1.408 is broken, use something more recent. -->
+	<fileset id="pgsql.drivers" dir="/home/jhalli/IdeaProjects/jboss/pgsqldriver/pgjdbc/jars/">
+		<include name="postgresql.jar"/>
+	</fileset>
+
+	<!-- server version 5 is the first with XA support, do use anything less.
+	 		driver versions before 5.0.5 are broken, don't use them either. -->
+	<fileset id="mysql.drivers" dir="/home/jhalli/javastuff/mysql-connector-java-5.0-nightly-20070228/">
+		<include name="mysql-connector-java-5.0-nightly-20070228-bin.jar"/>
+	</fileset>
+
+	<fileset id="ibmdb2.drivers" dir="/home/jhalli/javastuff/db2driver/DB2_v9/">
+		<include name="db2jcc*.jar"/>
+	</fileset>
+
+	<fileset id="sybase.drivers" dir="/home/jhalli/javastuff/jConnect-5_5/classes/">
+		<include name="jconn2.jar"/>
+	</fileset>
+
+	<!-- you should not need to configure anything below here -->
+
+	<path id="database.drivers.path">
+		<fileset refid="oracle.drivers"/>
+		<fileset refid="mssql.drivers"/>
+		<fileset refid="pgsql.drivers"/>
+		<fileset refid="mysql.drivers"/>
+		<fileset refid="ibmdb2.drivers"/>
+		<fileset refid="sybase.drivers"/>
+	</path>
+
+	<property name="org.jboss.jbossts.qa.dist.buildroot" location="build"/>
+
+	<target name="clean">
+		<delete dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
+		<ant dir="tests" antfile="build-${buildtype}.xml" target="clean"/>
+	</target>
+
+	<target name="init">
+		<mkdir dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
+	</target>
+
+	<target name="dist" depends="clean, init">
+
+		<!-- build the test suite -->
+		<ant dir="tests" antfile="build-${buildtype}.xml">
+			<reference refid="database.drivers.path"/>
+		</ant>
+
+		<!-- prepare the content of the qa distribution, which is the product build
+			plus the qa stuff overlayed on it -->
+		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}">
+			<fileset dir="${org.jboss.jbossts.qa.ts.home}"/>
+		</copy>
+		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/jdbc_profiles">
+			<fileset dir="config/jdbc_profiles"/>
+		</copy>
+		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/memory_profiles">
+			<fileset dir="config/memory_profiles"/>
+		</copy>
+		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/lib">
+			<fileset file="${org.jboss.jbossts.qa.testingframework_location}"/>
+			<fileset file="tests/build/jbossts-${buildtype}-qa.jar"/>
+			<fileset refid="oracle.drivers"/>
+			<fileset refid="mssql.drivers"/>
+			<fileset refid="pgsql.drivers"/>
+			<fileset refid="mysql.drivers"/>
+			<fileset refid="ibmdb2.drivers"/>
+			<fileset refid="sybase.drivers"/>
+		</copy>
+		<!-- testing is done with some non-default properties: -->
+		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/etc" overwrite="true">
+			<fileset file="config/jboss${buildtype}-properties.xml"/>
+		</copy>
+
+		<!-- build the qa distribution installer package -->
+		<zip destfile="${org.jboss.jbossts.qa.dist.buildroot}/jbossts-${buildtype}-qa-distribution.zip"
+			basedir="${org.jboss.jbossts.qa.dist.buildroot}" excludes="jbossts-${buildtype}-qa-distribution.zip"/>
+
+	</target>
+
+</project>

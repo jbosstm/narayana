@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2007, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<product-configuration name="JBossTS_JTA_QA" permutationid="JTAQ">
+
+	<classpath-configurations>
+		<classpath name="main">
+
+			<jar name="$(PRODUCT.DIR)/lib/jbossjta.jar"/>
+
+			<directory name="$(PRODUCT.DIR)/etc/"/>
+			<jar name="$(PRODUCT.DIR)/lib/ext/*.jar"/>
+			<jar name="$(PRODUCT.DIR)/lib/ext/*.zip"/>
+
+			<jar name="$(PRODUCT.DIR)/qa/lib/*.jar"/>
+
+			<jar name="$(DTF_HOME)/lib/ext/fscontext.jar"/>
+			<jar name="$(DTF_HOME)/lib/ext/providerutil.jar"/>
+
+<!--
+			<jar name="$(PRODUCT.DIR)/lib/arjunajta.jar"/>
+			<jar name="$(PRODUCT.DIR)/qa/lib/*.zip"/>
+			<jar name="$(PRODUCT.DIR)/qa/lib/*.jar"/>
+			<jar name="$(DTF_HOME)/lib/*.jar"/>
+			<jar name="$(PRODUCT.DIR)/tests/*.jar"/>
+			<directory name="$(PRODUCT.DIR)/etc/"/>
+			<jar name="$(PRODUCT.DIR)/lib/ext/*.jar"/>
+-->
+		</classpath>
+	</classpath-configurations>
+
+	<node-configurations>
+
+		<node-configuration os="Linux">
+			<properties>
+				<property name="Context.INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
+				<property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles/"/>
+				<property name="Context.PROVIDER_URL" value="file://$(PRODUCT.DIR)"/>
+				<property name="qa.debug" value="false"/>
+				<property name="performanceprofilestore.dir" value="$(PRODUCT.DIR)/qa/perf_profiles/"/>
+				<property name="com.arjuna.common.util.propertyservice.verbosePropertyManager" value="OFF"/>
+				<property name="com.arjuna.ats.qa.Utils.ServerIORStore.plugin"
+						  value="com.arjuna.ats.qa.Utils.DistributedIORStorePlugin"/>
+				<property name="memorytestprofilestore.dir" value="$(PRODUCT.DIR)/qa/memory_profiles/"/>
+				<property name="org.jboss.jbossts.qa.Utils.nameserviceuri" value="//localhost:1099/NameService"/>
+			</properties>
+			<sets>
+				<set name="DTF_HOME" value="/services/DTF/"/>
+				<set name="LOCAL_PARAMETER" value="-local"/>
+				<set name="PRODUCTS_HOME" value="/services/DTF/products"/>
+				<set name="INSTALL.DIR" value="/services/DTF/JBossTS-JTA-QA/"/>
+				<set name="CALLS" value="100"/>
+				<set name="PRODUCT.DIR" value="/services/DTF/JBossTS-JTA-QA/"/>
+				<!-- TODO: should this really be ARJUNAJTS home even thoug it's JTA? -->
+				<set name="ARJUNAJTS_HOME" value="/services/DTF/JBossTS-JTA-QA/"/>
+			</sets>
+			<jvm id="1.4.2"/>
+			<default-classpath name="main"/>
+			<node-exclusions/>
+		</node-configuration>
+		<!--
+		<node-configuration os="Win2K">
+			<properties>
+				<property name="Context.INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
+				<property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles/"/>
+				<property name="qa.debug" value="true"/>
+				<property name="Context.PROVIDER_URL" value="file://$(PRODUCT.DIR)"/>
+				<property name="performanceprofilestore.dir" value="$(PRODUCT.DIR)/qa/perf_profiles/"/>
+				<property name="com.arjuna.ats.qa.Utils.ServerIORStore.plugin"
+						  value="com.arjuna.ats.qa.Utils.DistributedIORStorePlugin"/>
+				<property name="memorytestprofilestore.dir" value="$(PRODUCT.DIR)/qa/memory_profiles/"/>
+				<property name="com.arjuna.ats.qa.Utils.nameserviceuri" value="//dtf:1094/NameService"/>
+			</properties>
+			<sets>
+				<set name="DTF_HOME" value="c:/DTF/"/>
+				<set name="LOCAL_PARAMETER" value="-local"/>
+				<set name="PRODUCTS_HOME" value="c:/DTF/products/"/>
+				<set name="INSTALL.DIR" value="c:/DTF/products/ArjunaJTA-QA/"/>
+				<set name="CALLS" value="100"/>
+				<set name="ARJUNAJTS_HOME" value="c:/DTF/products/ArjunaJTA-QA/install/"/>
+				<set name="PRODUCT.DIR" value="c:/DTF/products/ArjunaJTA-QA/install/"/>
+			</sets>
+			<jvm id="1.4.2"/>
+			<default-classpath name="main"/>
+			<node-exclusions/>
+		</node-configuration>
+		<node-configuration os="SunOS">
+			<properties>
+				<property name="Context.INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
+				<property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles/"/>
+				<property name="qa.debug" value="false"/>
+				<property name="Context.PROVIDER_URL" value="file://$(PRODUCT.DIR)"/>
+				<property name="performanceprofilestore.dir" value="$(PRODUCT.DIR)/qa/perf_profiles/"/>
+				<property name="com.arjuna.ats.qa.Utils.ServerIORStore.plugin"
+						  value="com.arjuna.ats.qa.Utils.DistributedIORStorePlugin"/>
+				<property name="memorytestprofilestore.dir" value="$(PRODUCT.DIR)/qa/memory_profiles/"/>
+				<property name="com.arjuna.ats.qa.Utils.nameserviceuri" value="//dtf:1094/NameService"/>
+			</properties>
+			<sets>
+				<set name="DTF_HOME" value="/DTF/"/>
+				<set name="LOCAL_PARAMETER" value="-local"/>
+				<set name="PRODUCTS_HOME" value="/DTF/products/"/>
+				<set name="INSTALL.DIR" value="/DTF/products/ArjunaJTA-QA/"/>
+				<set name="CALLS" value="100"/>
+				<set name="ARJUNAJTS_HOME" value="/DTF/products/ArjunaJTA-QA/install/"/>
+				<set name="PRODUCT.DIR" value="/DTF/products/ArjunaJTA-QA/install/"/>
+			</sets>
+			<jvm id="1.4.2"/>
+			<default-classpath name="main"/>
+			<node-exclusions/>
+		</node-configuration>
+		<node-configuration os="HPUX">
+			<properties>
+				<property name="Context.INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
+				<property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles/"/>
+				<property name="Context.PROVIDER_URL" value="file://$(PRODUCT.DIR)"/>
+				<property name="qa.debug" value="true"/>
+				<property name="com.hp.mw.common.util.propertyservice.verbosePropertyManager" value="OFF"/>
+				<property name="performanceprofilestore.dir" value="$(PRODUCT.DIR)/qa/perf_profiles/"/>
+				<property name="com.arjuna.ats.qa.Utils.ServerIORStore.plugin"
+						  value="com.arjuna.ats.qa.Utils.DistributedIORStorePlugin"/>
+				<property name="memorytestprofilestore.dir" value="$(PRODUCT.DIR)/qa/memory_profiles/"/>
+				<property name="com.arjuna.ats.qa.Utils.nameserviceuri" value="//dtf:1094/NameService"/>
+			</properties>
+			<sets>
+				<set name="DTF_HOME" value="/home/DTF/"/>
+				<set name="LOCAL_PARAMETER" value="-local"/>
+				<set name="PRODUCTS_HOME" value="/home/DTF/products/"/>
+				<set name="INSTALL.DIR" value="/home/DTF/products/ArjunaJTA-QA/"/>
+				<set name="CALLS" value="100"/>
+				<set name="ARJUNAJTS_HOME" value="/home/DTF/products/ArjunaJTA-QA/install/"/>
+				<set name="PRODUCT.DIR" value="/home/DTF/products/ArjunaJTA-QA/install/"/>
+			</sets>
+			<jvm id="1.4.2"/>
+			<default-classpath name="main"/>
+			<node-exclusions/>
+		</node-configuration>
+		-->
+	</node-configurations>
+
+	<task-runner-definitions>
+		<task-runner name="UnitTestRunner" class="com.arjuna.mwlabs.testframework.testnode.UnitTestTaskRunner"
+					 log-to="http://dev31.qa.atl.jboss.com:8080/dtf/">
+			<param name="pass_on_wait_for" value="true"/>
+			<param name="fail_indicator" value="Failed"/>
+			<param name="wait_for_text" value="Ready"/>
+			<param name="pass_indicator" value="Passed"/>
+		</task-runner>
+		<task-runner name="ServiceRunner" class="com.arjuna.mwlabs.testframework.testnode.JavaTaskRunner"
+					 log-to="http://dev31.qa.atl.jboss.com:8080/dtf/">
+			<param name="pass_on_wait_for" value="true"/>
+			<param name="fail_indicator" value="Failed"/>
+			<param name="wait_for_text" value="Ready"/>
+			<param name="pass_indicator" value="Passed"/>
+		</task-runner>
+		<task-runner name="JavaTaskRunner" class="com.arjuna.mwlabs.testframework.testnode.JavaTaskRunner"
+					 log-to="http://dev31.qa.atl.jboss.com:8080/dtf/">
+			<param name="pass_on_wait_for" value="true"/>
+			<param name="fail_indicator" value="Failed"/>
+			<param name="wait_for_text" value="Ready"/>
+			<param name="pass_indicator" value="Passed"/>
+		</task-runner>
+	</task-runner-definitions>
+</product-configuration>

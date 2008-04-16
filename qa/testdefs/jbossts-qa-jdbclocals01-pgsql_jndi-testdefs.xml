@@ -1,0 +1,245 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2007, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<test_set>
+	<default_timeout value="480"/>
+	<description>JDBC Local Tests 01 - PostgreSQL JNDI</description>
+
+
+	<test_group name="JDBCLocals01-PostgreSQL-JNDI">
+		<task_declaration>
+			<task id="com.arjuna.ats.arjuna.recovery.RecoveryManager"
+				  classname="com.arjuna.ats.arjuna.recovery.RecoveryManager" runner="JavaTaskRunner"
+				  type="expect_ready"/>
+
+			<task id="org.jboss.jbossts.qa.JDBCLocals01Setups.Setup01"
+				  classname="org.jboss.jbossts.qa.JDBCLocals01Setups.Setup01" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.JDBCLocals01.Client01" classname="org.jboss.jbossts.qa.JDBCLocals01.Client01"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.JDBCLocals01.Client02" classname="org.jboss.jbossts.qa.JDBCLocals01.Client02"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.JDBCLocals01.Client03" classname="org.jboss.jbossts.qa.JDBCLocals01.Client03"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.JDBCLocals01.Client04" classname="org.jboss.jbossts.qa.JDBCLocals01.Client04"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.JDBCLocals01.Client05" classname="org.jboss.jbossts.qa.JDBCLocals01.Client05"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.JDBCLocals01.Client06" classname="org.jboss.jbossts.qa.JDBCLocals01.Client06"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.Utils.JNDIManager" classname="org.jboss.jbossts.qa.Utils.JNDIManager"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.JDBCLocals01Cleanups.Cleanup01"
+				  classname="org.jboss.jbossts.qa.JDBCLocals01Cleanups.Cleanup01" runner="JavaTaskRunner"
+				  type="expect_pass_fail"/>
+
+			<task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" classname="org.jboss.jbossts.qa.Utils.EmptyObjectStore"
+				  runner="JavaTaskRunner" type="expect_pass_fail"/>
+		</task_declaration>
+
+		<test_declaration id="JDBCLocals01-PostgreSQL-JNDI_Test001" descriptive_name="Local JDBC Test 01"
+						  author="Mark Little">
+			<description>Local JDBC Test 01 'JDBCLocals01-PostgreSQL-JNDI Test001'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" runtime_id="node">
+					<param>-local</param>
+				</perform_task>
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" location="node">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+				<perform_task id="org.jboss.jbossts.qa.JDBCLocals01Setups.Setup01" runtime_id="setup" location="node">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="node">
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.JDBCLocals01.Client01" runtime_id="client0" location="node">
+					<param>DB_PGSQL_JNDI</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.JDBCLocals01Cleanups.Cleanup01" location="node"
+							  runtime_id="cleanup">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="JDBCLocals01-PostgreSQL-JNDI_Test002" descriptive_name="Local JDBC Test 02"
+						  author="Mark Little">
+			<description>Local JDBC Test 01 'JDBCLocals01-PostgreSQL-JNDI Test002'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" runtime_id="node">
+					<param>-local</param>
+				</perform_task>
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" location=
+						"node">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+				<perform_task id="org.jboss.jbossts.qa.JDBCLocals01Setups.Setup01" runtime_id="setup" location="node">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="node">
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.JDBCLocals01.Client02" runtime_id="client0" location="node">
+					<param>DB_PGSQL_JNDI</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.JDBCLocals01Cleanups.Cleanup01" location="node"
+							  runtime_id="cleanup">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="JDBCLocals01-PostgreSQL-JNDI_Test003" descriptive_name="Local JDBC Test 03"
+						  author="Mark Little">
+			<description>Local JDBC Test 01 'JDBCLocals01-PostgreSQL-JNDI Test002'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" runtime_id="node">
+					<param>-local</param>
+				</perform_task>
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" location=
+						"node">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+				<perform_task id="org.jboss.jbossts.qa.JDBCLocals01Setups.Setup01" runtime_id="setup" location="node">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="node">
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.JDBCLocals01.Client03" runtime_id="client0" location="node">
+					<param>DB_PGSQL_JNDI</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.JDBCLocals01Cleanups.Cleanup01" location="node"
+							  runtime_id="cleanup">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="JDBCLocals01-PostgreSQL-JNDI_Test004" descriptive_name="Local JDBC Test 04"
+						  author="Mark Little">
+			<description>Local JDBC Test 01 'JDBCLocals01-PostgreSQL-JNDI Test004'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" runtime_id="node">
+					<param>-local</param>
+				</perform_task>
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" location=
+						"node">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+				<perform_task id="org.jboss.jbossts.qa.JDBCLocals01Setups.Setup01" runtime_id="setup" location="node">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="node">
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.JDBCLocals01.Client04" runtime_id="client0" location="node">
+					<param>DB_PGSQL_JNDI</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.JDBCLocals01Cleanups.Cleanup01" location="node"
+							  runtime_id="cleanup">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="JDBCLocals01-PostgreSQL-JNDI_Test005" descriptive_name="Local JDBC Test 05"
+						  author="Mark Little">
+			<description>Local JDBC Test 01 'JDBCLocals01-PostgreSQL-JNDI Test005'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" runtime_id="node">
+					<param>-local</param>
+				</perform_task>
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" location=
+						"node">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+				<perform_task id="org.jboss.jbossts.qa.JDBCLocals01Setups.Setup01" runtime_id="setup" location="node">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="node">
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.JDBCLocals01.Client05" runtime_id="client0" location="node">
+					<param>DB_PGSQL_JNDI</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.JDBCLocals01Cleanups.Cleanup01" location="node"
+							  runtime_id="cleanup">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+		<test_declaration id="JDBCLocals01-PostgreSQL-JNDI_Test006" descriptive_name="Local JDBC Test 06"
+						  author="Mark Little">
+			<description>Local JDBC Test 01 'JDBCLocals01-PostgreSQL-JNDI Test006'</description>
+			<configuration names_required="1"/>
+			<action_list>
+				<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" runtime_id="node">
+					<param>-local</param>
+				</perform_task>
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" location=
+						"node">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+				<perform_task id="org.jboss.jbossts.qa.JDBCLocals01Setups.Setup01" runtime_id="setup" location="node">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="node">
+					<param>-test</param>
+				</start_task>
+				<start_task id="org.jboss.jbossts.qa.JDBCLocals01.Client06" runtime_id="client0" location="node">
+					<param>DB_PGSQL_JNDI</param>
+				</start_task>
+				<wait_for_task runtime_id="client0"/>
+				<terminate_task runtime_id="server0"/>
+				<perform_task id="org.jboss.jbossts.qa.JDBCLocals01Cleanups.Cleanup01" location="node"
+							  runtime_id="cleanup">
+					<param>DB_PGSQL_JNDI</param>
+				</perform_task>
+			</action_list>
+		</test_declaration>
+
+	</test_group>
+</test_set>

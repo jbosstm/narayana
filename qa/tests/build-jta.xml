@@ -1,0 +1,105 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2007, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<project name="JBossTS JTA QA Suite" default="build">
+
+	<!-- set this property to the location of a JBossTS JTA build -->
+	<property name="org.jboss.jbossts.qa.ts.home" location="/home/jhalli/IdeaProjects/jboss/jbossts_trunk/install/"/>
+
+	<!-- set this property to the location of a DTF TestingFramework build -->
+	<property name="org.jboss.jbossts.qa.testingframework_location" location="/home/jhalli/IdeaProjects/jboss/jbossdtf/DTF_3_9/dist/lib/TestingFramework.jar"/>
+
+	<!-- set this to the location(s) of the database drivers -->
+	<path id="database.drivers.path">
+		<fileset dir="/oracle/product/10.2.0/db_1/jdbc/lib/">
+			<include name="ojdbc14.jar"/>
+		</fileset>
+		<fileset  dir="/home/jhalli/javastuff/mssql2000jdbc/lib">
+			<include name="ms*.jar"/>
+		</fileset>
+		<fileset id="pgsql.drivers" dir="/home/jhalli/installers/">
+			<include name="postgresql-8.1-408.jdbc3.jar"/>
+		</fileset>
+		<fileset id="mysql.drivers" dir="/home/jhalli/javastuff/mysql-connector-java-5.0.4">
+			<include name="mysql-connector-java-5.0.4-bin.jar"/>
+		</fileset>
+	</path>
+
+
+	<property name="org.jboss.jbossts.qa.buildroot" location="build"/>
+	<property name="org.jboss.jbossts.qa.build.classes" value="${org.jboss.jbossts.qa.buildroot}/classes/"/>
+	<property name="org.jboss.jbossts.qa.src" location="src"/>
+	<property name="org.jboss.jbossts.qa.lib" location="lib"/>
+
+	<path id="jta.classpath">
+		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/">
+			<include name="jbossjta.jar"/>
+		</fileset>
+		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
+			<include name="jbossts-common.jar"/>
+			<include name="jta-spec1_0_1.jar"/>
+			<include name="jta-1_1-classes.zip"/>
+		</fileset>
+	</path>
+
+	<target name="org.jboss.jbossts.qa.init">
+		<mkdir dir="${org.jboss.jbossts.qa.buildroot}"/>
+		<mkdir dir="${org.jboss.jbossts.qa.build.classes}"/>
+	</target>
+
+	<target name="org.jboss.jbossts.qa.clean">
+		<delete dir="${org.jboss.jbossts.qa.buildroot}"/>
+	</target>
+
+	<target name="org.jboss.jbossts.qa.compile" depends="org.jboss.jbossts.qa.clean, org.jboss.jbossts.qa.init">
+
+		<javac srcdir="${org.jboss.jbossts.qa.src}"
+			   destdir="${org.jboss.jbossts.qa.build.classes}"
+			   debug="on"
+			   excludes="org/jboss/jbossts/qa/ArjunaCore/Common/ClassPathParserTest.java">
+
+			<include name="**/org/jboss/jbossts/qa/Utils/*Store*.java"/>
+			<include name="**/org/jboss/jbossts/qa/Utils/BaseTestCase.java"/>
+			<include name="**/org/jboss/jbossts/qa/Utils/JVMStats.java"/>
+			<include name="**/org/jboss/jbossts/qa/Utils/JNDIManager.java"/>
+			<include name="**/ArjunaCore/**/*.java"/>
+			<include name="**/org/jboss/jbossts/qa/JDBCLocals*/*.java"/>
+			<include name="**/org/jboss/jbossts/qa/JTA01Tests/*.java"/>
+
+			<classpath>
+				<path refid="jta.classpath"/>
+				<path refid="database.drivers.path"/>
+				<pathelement location="${org.jboss.jbossts.qa.build.classes}"/>
+				<pathelement location="${org.jboss.jbossts.qa.testingframework_location}"/>
+			</classpath>
+
+		</javac>
+
+	</target>
+
+	<target name="org.jboss.jbossts.qa.jar" depends="org.jboss.jbossts.qa.compile">
+		<jar jarfile="${org.jboss.jbossts.qa.buildroot}/jbossts-jta-qa.jar"
+			 basedir="${org.jboss.jbossts.qa.build.classes}"/>
+	</target>
+
+	<target name="build" depends="org.jboss.jbossts.qa.jar"/>
+	<target name="clean" depends="org.jboss.jbossts.qa.clean"/>
+
+</project>
