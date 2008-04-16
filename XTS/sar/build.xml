@@ -37,7 +37,7 @@
     <property name="xts.home" value="../xts-install"/>
 
     <!-- the name of the host running JBOSS -->
-    <property name="hostname" value="localhost"/>
+    <property name="hostname" value="172.16.130.102"/>
 
     <!-- the name of the port used by the JBoss web listener -->
     <property name="port" value="8080"/>
@@ -71,6 +71,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <target name="init">
         <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dir}/tmp"/>
         <mkdir dir="${build.webinf.dir}"/>
         <mkdir dir="${build.metainf.dir}"/>
     </target>
@@ -81,7 +82,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <target name="sar" depends="sar-11"/>
 
     <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
-    <target name="sar-both" depends="init">
+    <target name="sar-both" depends="init, insertcfg10, insertcfg11">
 
         <!--
         as a jbossas component we would like to use just the
@@ -107,8 +108,6 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <jar jarfile="${build.dir}/config.jar">
             <fileset dir="${conf.dir}" includes="*.xml"/>
         </jar>
-        <!-- substitute host and port in ws-c/ws-t deployment descriptors -->
-        <!-- !! todo still need to do this a la insertcfg in old demo code !!  -->
 
         <!-- copy 11 and 1.0 application.xml to build dir -->
         <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application.xml"/>
@@ -119,8 +118,8 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <fileset dir="${lib.dir}" includes="*.jar"/>
 
             <!-- include 1.0 and 1.1 web apps all config files are included -->
-            <!-- !! need to pick up substituted versions !! -->
-            <fileset dir="${webapps.dir}" includes="*.war"/>
+            <fileset dir="${build.dir}" includes="ws-c11.war ws-c10.war ws-t11.war ws-t10.war"/>
+            <fileset dir="${webapps.dir}" includes="*.war" excludes="ws-c11.war ws-c10.war ws-t11.war ws-t10.war"/>
 
             <!-- include config jar -->
             <fileset dir="${build.dir}" includes="config.jar"/>
@@ -137,7 +136,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     </target>
 
     <!-- build XTS service archive supporting 1.1 WS-C/T protocols -->
-    <target name="sar-11" depends="init">
+    <target name="sar-11" depends="init, insertcfg11">
 
         <!--
         as a jbossas component we would like to use just the
@@ -163,8 +162,6 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <jar jarfile="${build.dir}/config.jar">
             <fileset dir="${conf.dir}" includes="*11.xml"/>
         </jar>
-        <!-- substitute host and port in ws-c/ws-t deployment descriptors -->
-        <!-- !! todo still need to do this a la insertcfg in old demo code !!  -->
 
         <!-- copy 11 application.xml to build dir -->
         <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application11.xml"/>
@@ -175,8 +172,8 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <fileset dir="${lib.dir}" includes="*.jar" excludes="*10.jar"/>
 
             <!-- include 1.1 web apps all config files are included -->
-            <!-- !! todo need to pick up substituted versions !! -->
-            <fileset dir="${webapps.dir}" includes="*11.war"/>
+            <fileset dir="${build.dir}" includes="ws-c11.war ws-t11.war"/>
+            <fileset dir="${webapps.dir}" includes="*11.war" excludes="ws-c11.war ws-t11.war"/>
 
             <!-- include config jar -->
             <fileset dir="${build.dir}" includes="config.jar"/>
@@ -193,7 +190,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     </target>
 
     <!-- build XTS service archive supporting 1.0 WS-C/T protocols -->
-    <target name="sar-10" depends="init">
+    <target name="sar-10" depends="init, insertcfg10">
 
         <!--
         as a jbossas component we would like to use just the
@@ -219,8 +216,6 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <jar jarfile="${build.dir}/config.jar">
             <fileset dir="${conf.dir}" includes="*.xml" excludes="*11.xml"/>
         </jar>
-        <!-- substitute host and port in ws-c/ws-t deployment descriptors -->
-        <!-- !! todo still need to do this a la insertcfg in old demo code !!  -->
 
         <!-- copy 10 application.xml to build dir -->
         <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application10.xml"/>
@@ -231,8 +226,8 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <fileset dir="${lib.dir}" includes="*.jar" excludes="*11.jar"/>
 
             <!-- include 1.0 web apps all config files are included -->
-            <!-- !! need to pick up substituted versions !! -->
-            <fileset dir="${webapps.dir}" includes="*10.war"/>
+            <fileset dir="${build.dir}" includes="ws-c10.war ws-t10.war"/>
+            <fileset dir="${webapps.dir}" includes="*10.war" excludes="ws-c10.war ws-t10.war"/>
 
             <!-- include config jar -->
             <fileset dir="${build.dir}" includes="config.jar"/>
@@ -246,6 +241,55 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <!-- include sar boot and shutdown code -->
             <fileset dir="${build.dir}" includes="**/*.class"/>
         </jar>
+    </target>
+
+    <!-- copy the ws-c11 and ws-t11 wars replacing any config files which have been substituted with the default
+      host and port with new versions substituted with the values defined in this build script
+    -->
+    <target name="insertcfg11">
+        <filter token="hostname" value="${hostname}"/>
+        <filter token="port" value="${port}"/>
+
+        <unjar src="${xts.home}/webapps/ws-c11.war" dest="${build.dir}/tmp/ws-c11"/>
+
+        <copy file="${xts.home}/coordinator/dd/ws-c11_web-app.xml"
+            tofile="${build.dir}/tmp/ws-c11/WEB-INF/web.xml" filtering="true" overwrite="true"/>
+
+        <jar destfile="${build.dir}/ws-c11.war" basedir="${build.dir}/tmp/ws-c11" manifest="${build.dir}/tmp/ws-c11/META-INF/MANIFEST.MF"/>
+
+        <delete dir="${build.dir}/tmp/ws-c11"/>
+
+        <unjar src="${xts.home}/webapps/ws-t11.war" dest="${build.dir}/tmp/ws-t11"/>
+
+        <copy file="${xts.home}/coordinator/dd/ws-t11_web-app.xml"
+            tofile="${build.dir}/tmp/ws-t11/WEB-INF/web.xml" filtering="true" overwrite="true"/>
+
+        <jar destfile="${build.dir}/ws-t11.war" basedir="${build.dir}/tmp/ws-t11" manifest="${build.dir}/tmp/ws-t11/META-INF/MANIFEST.MF"/>
+
+        <delete dir="${build.dir}/tmp/ws-t11"/>
+    </target>
+
+    <target name="insertcfg10">
+        <filter token="hostname" value="${hostname}"/>
+        <filter token="port" value="${port}"/>
+
+        <unjar src="${xts.home}/webapps/ws-c11.war" dest="${build.dir}/tmp/ws-c11"/>
+
+        <copy file="${xts.home}/coordinator/dd/ws-c11_web-app.xml"
+            tofile="${build.dir}/tmp/ws-c11/WEB-INF/web.xml" filtering="true" overwrite="true"/>
+
+        <jar destfile="${build.dir}/ws-c11.war" basedir="${build.dir}/tmp/ws-c11" manifest="${build.dir}/tmp/ws-c11/META-INF/MANIFEST.MF"/>
+
+        <delete dir="${build.dir}/tmp/ws-c11"/>
+
+        <unjar src="${xts.home}/webapps/ws-t11.war" dest="${build.dir}/tmp/ws-t11"/>
+
+        <copy file="${xts.home}/coordinator/dd/ws-t11_web-app.xml"
+            tofile="${build.dir}/tmp/ws-t11/WEB-INF/web.xml" filtering="true" overwrite="true"/>
+
+        <jar destfile="${build.dir}/ws-t11.war" basedir="${build.dir}/tmp/ws-t11" manifest="${build.dir}/tmp/ws-t11/META-INF/MANIFEST.MF"/>
+
+        <delete dir="${build.dir}/tmp/ws-t11"/>
     </target>
 
     <target name="clean">
