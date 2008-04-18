@@ -18,7 +18,6 @@
 -- @author JBoss Inc.
 --
 
-
 --  TestId, Name, URL, Description
 INSERT INTO `StoredTestdefs` VALUES (0,'jbossts-qa-ait01_otstransactionmanager-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-ait01_otstransactionmanager-testdefs.xml','AIT Tests 01 - OTSTransactionManager');
 INSERT INTO `StoredTestdefs` VALUES (1,'jbossts-qa-aitresources01-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-aitresources01-testdefs.xml','AIT Resources Tests 01');
@@ -29,7 +28,8 @@ INSERT INTO `StoredTestdefs` VALUES (75,'jbossts-qa-crashrecovery03-testdefs.xml
 INSERT INTO `StoredTestdefs` VALUES (76,'jbossts-qa-crashrecovery04-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-crashrecovery04-testdefs.xml','Crash Recovery Tests 04');
 INSERT INTO `StoredTestdefs` VALUES (77,'jbossts-qa-crashrecovery05_1-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-crashrecovery05_1-testdefs.xml','Crash Recovery Tests 05-1');
 INSERT INTO `StoredTestdefs` VALUES (78,'jbossts-qa-crashrecovery05_2-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-crashrecovery05_2-testdefs.xml','Crash Recovery Tests 05-2');
-INSERT INTO `StoredTestdefs` VALUES (9,'jbossts-qa-crashrecovery06-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-crashrecovery06-testdefs.xml','Crash Recovery Tests 06');
+INSERT INTO `StoredTestdefs` VALUES (79,'jbossts-qa-crashrecovery06-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-crashrecovery06-testdefs.xml','Crash Recovery Tests 06');
+
 INSERT INTO `StoredTestdefs` VALUES (80,'jbossts-qa-crashrecovery07-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-crashrecovery07-testdefs.xml','Crash Recovery Tests 07');
 INSERT INTO `StoredTestdefs` VALUES (81,'jbossts-qa-crashrecovery08-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-crashrecovery08-testdefs.xml','Crash Recovery Tests 08');
 INSERT INTO `StoredTestdefs` VALUES (146,'jbossts-qa-crashrecovery12-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-crashrecovery12-testdefs.xml','Crash Recovery Tests 12');
@@ -40,6 +40,7 @@ INSERT INTO `StoredTestdefs` VALUES (16,'jbossts-qa-jdbclocals01-oracle_jndi-tes
 INSERT INTO `StoredTestdefs` VALUES (137,'jbossts-qa-jdbcresources01-firstsql_jndi-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-jdbcresources01-firstsql_jndi-testdefs.xml','JDBC Resources Tests 01 - First SQL JNDI');
 INSERT INTO `StoredTestdefs` VALUES (119,'jbossts-qa-jdbcresources01_mssqlserver_jndi-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-jdbcresources01_mssqlserver_jndi-testdefs.xml','JDBC Resources Tests 01 - MSSQL Server JNDI');
 INSERT INTO `StoredTestdefs` VALUES (117,'jbossts-qa-jdbcresources01-oracle_thin_jndi-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-jdbcresources01-oracle_thin_jndi-testdefs.xml','JDBC Resources Tests 01 - Oracle thin JNDI');
+
 INSERT INTO `StoredTestdefs` VALUES (141,'jbossts-qa-jdbcresources02-firstsql_jndi-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-jdbcresources02-firstsql_jndi-testdefs.xml','JDBC Resources Tests 02 - First SQL JNDI');
 INSERT INTO `StoredTestdefs` VALUES (147,'jbossts-qa-jdbcresources02_mssqlserver_jndi-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-jdbcresources02_mssqlserver_jndi-testdefs.xml','JDBC Resources Tests 02 - MSSQL Server JNDI');
 INSERT INTO `StoredTestdefs` VALUES (85,'jbossts-qa-rawresources01_2-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-rawresources01_2-testdefs.xml','Raw Resources Tests 01-2');
@@ -50,6 +51,7 @@ INSERT INTO `StoredTestdefs` VALUES (89,'jbossts-qa-rawresources02_3-testdefs.xm
 INSERT INTO `StoredTestdefs` VALUES (90,'jbossts-qa-rawsubtransactionawareresources01_1-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-rawsubtransactionawareresources01_1-testdefs.xml','Raw Subtransaction Aware Resources Tests 01-1');
 INSERT INTO `StoredTestdefs` VALUES (138,'jbossts-qa-jdbcresources02-oracle_thin_jndi-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-jdbcresources02-oracle_thin_jndi-testdefs.xml','JDBC Resources Tests 02 - Oracle thin JNDI');
 INSERT INTO `StoredTestdefs` VALUES (23,'jbossts-qa-jdbcresources03-firstsql_jndi-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-jdbcresources03-firstsql_jndi-testdefs.xml','JDBC Resources Tests 03 - First SQL JNDI');
+
 INSERT INTO `StoredTestdefs` VALUES (24,'jbossts-qa-jdbcresources03-oracle_thin_jndi-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-jdbcresources03-oracle_thin_jndi-testdefs.xml','JDBC Resources Tests 03 - Oracle thin JNDI');
 INSERT INTO `StoredTestdefs` VALUES (25,'jbossts-qa-jdbcresources04-firstsql_jndi-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-jdbcresources04-firstsql_jndi-testdefs.xml','JDBC Resources Tests 04 - First SQL JNDI');
 INSERT INTO `StoredTestdefs` VALUES (26,'jbossts-qa-jdbcresources04-oracle_thin_jndi-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-jdbcresources04-oracle_thin_jndi-testdefs.xml','JDBC Resources Tests 04 - Oracle thin JNDI');
@@ -60,6 +62,7 @@ INSERT INTO `StoredTestdefs` VALUES (84,'jbossts-qa-rawresources01_1-testdefs.xm
 INSERT INTO `StoredTestdefs` VALUES (91,'jbossts-qa-rawsubtransactionawareresources01_2-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-rawsubtransactionawareresources01_2-testdefs.xml','Raw Subtransaction Aware Resources Tests 01-2');
 INSERT INTO `StoredTestdefs` VALUES (92,'jbossts-qa-rawsubtransactionawareresources01_3-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-rawsubtransactionawareresources01_3-testdefs.xml','Raw Subtransaction Aware Resources Tests 01-3');
 INSERT INTO `StoredTestdefs` VALUES (93,'jbossts-qa-rawsubtransactionawareresources02_1-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-rawsubtransactionawareresources02_1-testdefs.xml','Raw Subtransaction Aware Resources Tests 02-1');
+
 INSERT INTO `StoredTestdefs` VALUES (94,'jbossts-qa-rawsubtransactionawareresources02_2-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-rawsubtransactionawareresources02_2-testdefs.xml','Raw Subtransaction Aware Resources Tests 02-2');
 INSERT INTO `StoredTestdefs` VALUES (95,'jbossts-qa-rawsubtransactionawareresources02_3-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-rawsubtransactionawareresources02_3-testdefs.xml','Raw Subtransaction Aware Resources Tests 02-3');
 INSERT INTO `StoredTestdefs` VALUES (42,'jbossts-qa-txcore-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-txcore-testdefs.xml','Test Definitions merged');
@@ -80,7 +83,8 @@ INSERT INTO `StoredTestdefs` VALUES (209,'jbossts-qa-jdbclocals01-pgsql_jndi-tes
 INSERT INTO `StoredTestdefs` VALUES (210,'jbossts-qa-jdbclocals01-mysql_jndi-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-jdbclocals01-mysql_jndi-testdefs.xml','JDBC Local Tests 01 - MySQL JNDI');
 INSERT INTO `StoredTestdefs` VALUES (211,'jbossts-qa-jdbclocals01-sybase_jndi-testdefs.xml','http://localhost:8080/dtf/producttests/jbossts-qa-jdbclocals01-sybase_jndi-testdefs.xml','JDBC Local Tests 01 - Sybase JNDI');
 
--- TODO more here
+
+
 ---
 UPDATE NextTestId SET NextId=300;
 ---
@@ -95,6 +99,7 @@ INSERT INTO StoredTestSelections VALUES (147,'AJQ_Linux','JDBCResources02_MSSQLS
 INSERT INTO StoredTestSelections VALUES (66,'AJQ_Linux','CurrentTests01','http://localhost:8080/dtf/producttests/66_AJQ_Linux.xml','AJQ_Linux');
 INSERT INTO StoredTestSelections VALUES (70,'AJQ_Linux','JTATests01','http://localhost:8080/dtf/producttests/70_AJQ_Linux.xml','AJQ_Linux');
 INSERT INTO StoredTestSelections VALUES (71,'AJQ_Linux','OTSServer','http://localhost:8080/dtf/producttests/71_AJQ_Linux.xml','AJQ_Linux');
+
 INSERT INTO StoredTestSelections VALUES (72,'AJQ_Linux','CrashRecovery01','http://localhost:8080/dtf/producttests/72_AJQ_Linux.xml','AJQ_Linux');
 INSERT INTO StoredTestSelections VALUES (73,'AJQ_Linux','CrashRecovery02_1','http://localhost:8080/dtf/producttests/73_AJQ_Linux.xml','AJQ_Linux');
 INSERT INTO StoredTestSelections VALUES (74,'AJQ_Linux','CrashRecovery02_2','http://localhost:8080/dtf/producttests/74_AJQ_Linux.xml','AJQ_Linux');
@@ -105,6 +110,7 @@ INSERT INTO StoredTestSelections VALUES (78,'AJQ_Linux','CrashRecovery05_2','htt
 INSERT INTO StoredTestSelections VALUES (79,'AJQ_Linux','CrashRecovery06','http://localhost:8080/dtf/producttests/79_AJQ_Linux.xml','AJQ_Linux');
 INSERT INTO StoredTestSelections VALUES (80,'AJQ_Linux','CrashRecovery07','http://localhost:8080/dtf/producttests/80_AJQ_Linux.xml','AJQ_Linux');
 INSERT INTO StoredTestSelections VALUES (81,'AJQ_Linux','CrashRecovery08','http://localhost:8080/dtf/producttests/81_AJQ_Linux.xml','AJQ_Linux');
+
 INSERT INTO StoredTestSelections VALUES (84,'AJQ_Linux','RawResources01_1','http://localhost:8080/dtf/producttests/84_AJQ_Linux.xml','AJQ_Linux');
 INSERT INTO StoredTestSelections VALUES (85,'AJQ_Linux','RawResources01_2','http://localhost:8080/dtf/producttests/85_AJQ_Linux.xml','AJQ_Linux');
 INSERT INTO StoredTestSelections VALUES (86,'AJQ_Linux','RawResources01_3','http://localhost:8080/dtf/producttests/86_AJQ_Linux.xml','AJQ_Linux');
@@ -115,11 +121,30 @@ INSERT INTO StoredTestSelections VALUES (90,'AJQ_Linux','RawSubtransactionAwareR
 INSERT INTO StoredTestSelections VALUES (91,'AJQ_Linux','RawSubtransactionAwareResources01_2','http://localhost:8080/dtf/producttests/91_AJQ_Linux.xml','AJQ_Linux');
 INSERT INTO StoredTestSelections VALUES (92,'AJQ_Linux','RawSubtransactionAwareResources01_3','http://localhost:8080/dtf/producttests/92_AJQ_Linux.xml','AJQ_Linux');
 INSERT INTO StoredTestSelections VALUES (93,'AJQ_Linux','RawSubtransactionAwareResources02_1','http://localhost:8080/dtf/producttests/93_AJQ_Linux.xml','AJQ_Linux');
+
 INSERT INTO StoredTestSelections VALUES (94,'AJQ_Linux','RawSubtransactionAwareResources02_2','http://localhost:8080/dtf/producttests/94_AJQ_Linux.xml','AJQ_Linux');
 INSERT INTO StoredTestSelections VALUES (95,'AJQ_Linux','RawSubtransactionAwareResources02_3','http://localhost:8080/dtf/producttests/95_AJQ_Linux.xml','AJQ_Linux');
 
-INSERT INTO StoredTestSelections VALUES (43,'JTAQ_Linux','RawSubtransactionAwareResources02_3','http://localhost:8080/dtf/producttests/43_JTAQ_Linux.xml','JTAQ_Linux');
-INSERT INTO StoredTestSelections VALUES (70,'JTAQ_Linux','RawSubtransactionAwareResources02_3','http://localhost:8080/dtf/producttests/70_JTAQ_Linux.xml','JTAQ_Linux');
-INSERT INTO StoredTestSelections VALUES (131,'JTAQ_Linux','RawSubtransactionAwareResources02_3','http://localhost:8080/dtf/producttests/131_JTAQ_Linux.xml','JTAQ_Linux');
-INSERT INTO StoredTestSelections VALUES (132,'JTAQ_Linux','RawSubtransactionAwareResources02_3','http://localhost:8080/dtf/producttests/132_JTAQ_Linux.xml','JTAQ_Linux');
-INSERT INTO StoredTestSelections VALUES (144,'JTAQ_Linux','RawSubtransactionAwareResources02_3','http://localhost:8080/dtf/producttests/144_JTAQ_Linux.xml','JTAQ_Linux');
+INSERT INTO StoredTestSelections VALUES (43,'JTAQ_Linux','JBossTS JTA TxOJ QA','http://localhost:8080/dtf/producttests/43_JTAQ_Linux.xml','JTAQ_Linux');
+INSERT INTO StoredTestSelections VALUES (70,'JTAQ_Linux','JTA Tests 01','http://localhost:8080/dtf/producttests/70_JTAQ_Linux.xml','JTAQ_Linux');
+INSERT INTO StoredTestSelections VALUES (15,'JTAQ_Linux','JDBC Local Tests 01 - MSSQL Server JNDI','http://localhost:8080/dtf/producttests/15_JTAQ_Linux.xml','JTAQ_Linux'); -- was 131
+INSERT INTO StoredTestSelections VALUES (16,'JTAQ_Linux','JDBC Local Tests 01 - Oracle JNDI','http://localhost:8080/dtf/producttests/16_JTAQ_Linux.xml','JTAQ_Linux'); -- was 132
+INSERT INTO StoredTestSelections VALUES (14,'JTAQ_Linux','JDBC Local Tests 01 - Firstl SQL JNDI','http://localhost:8080/dtf/producttests/144_JTAQ_Linux.xml','JTAQ_Linux'); -- was 144
+
+INSERT INTO StoredTestSelections VALUES (42,'AJQ_Linux','ArjunaCore Tests','http://localhost:8080/dtf/producttests/42_AJQ_Linux.xml','AJQ_Linux');
+
+INSERT INTO StoredTestSelections VALUES (200,'AJQ_Linux','JDBC Resources Tests 01 - IBM DB2 JNDI','http://localhost:8080/dtf/producttests/200_AJQ_Linux.xml','AJQ_Linux');
+INSERT INTO StoredTestSelections VALUES (201,'AJQ_Linux','JDBC Resources Tests 01 - PostgreSQL JNDI','http://localhost:8080/dtf/producttests/201_AJQ_Linux.xml','AJQ_Linux');
+INSERT INTO StoredTestSelections VALUES (202,'AJQ_Linux','JDBC Resources Tests 01 - MySQL JNDI','http://localhost:8080/dtf/producttests/202_AJQ_Linux.xml','AJQ_Linux');
+INSERT INTO StoredTestSelections VALUES (203,'AJQ_Linux','JDBC Resources Tests 01 - Sybase JNDI','http://localhost:8080/dtf/producttests/203_AJQ_Linux.xml','AJQ_Linux');
+
+INSERT INTO StoredTestSelections VALUES (204,'AJQ_Linux','JDBC Resources Tests 02 - IBM DB2 JNDI','http://localhost:8080/dtf/producttests/204_AJQ_Linux.xml','AJQ_Linux');
+INSERT INTO StoredTestSelections VALUES (205,'AJQ_Linux','JDBC Resources Tests 02 - PostgreSQL JNDI','http://localhost:8080/dtf/producttests/205_AJQ_Linux.xml','AJQ_Linux');
+INSERT INTO StoredTestSelections VALUES (206,'AJQ_Linux','JDBC Resources Tests 02 - MySQL JNDI','http://localhost:8080/dtf/producttests/206_AJQ_Linux.xml','AJQ_Linux');
+INSERT INTO StoredTestSelections VALUES (207,'AJQ_Linux','JDBC Resources Tests 02 - Sybase JNDI','http://localhost:8080/dtf/producttests/207_AJQ_Linux.xml','AJQ_Linux');
+
+INSERT INTO StoredTestSelections VALUES (42,'JTAQ_Linux','ArjunaCore Tests','http://localhost:8080/dtf/producttests/42_JTAQ_Linux.xml','JTAQ_Linux');
+INSERT INTO StoredTestSelections VALUES (208,'JTAQ_Linux','JDBC Local Tests 01 - IBM DB2 JNDI','http://localhost:8080/dtf/producttests/208_JTAQ_Linux.xml','JTAQ_Linux');
+INSERT INTO StoredTestSelections VALUES (209,'JTAQ_Linux','JDBC Local Tests 01 - PostgreSQL JNDI','http://localhost:8080/dtf/producttests/209_JTAQ_Linux.xml','JTAQ_Linux');
+INSERT INTO StoredTestSelections VALUES (210,'JTAQ_Linux','JDBC Local Tests 01 - MySQL JNDI','http://localhost:8080/dtf/producttests/210_JTAQ_Linux.xml','JTAQ_Linux');
+INSERT INTO StoredTestSelections VALUES (211,'JTAQ_Linux','JDBC Local Tests 01 - Sybase JNDI','http://localhost:8080/dtf/producttests/211_JTAQ_Linux.xml','JTAQ_Linux');
