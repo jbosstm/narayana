@@ -37,7 +37,7 @@
     <property name="xts.home" value="../xts-install"/>
 
     <!-- the name of the host running JBOSS -->
-    <property name="hostname" value="172.16.130.102"/>
+    <property name="hostname" value="localhost"/>
 
     <!-- the name of the port used by the JBoss web listener -->
     <property name="port" value="8080"/>
