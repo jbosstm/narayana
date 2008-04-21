@@ -1,0 +1,421 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2007, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<test_selection>
+	<description></description>
+
+	<os id="RHEL4-32">
+		<product id="JBossTS_JTS_JacORB_QA">
+			<test_group id="StateManager-Restore">
+				<test id="Recovery_(Restore)_StateManager_Test002" selected="true"/>
+				<test id="Recovery_(Restore)_StateManager_Test001" selected="true"/>
+				<test id="Recovery_(Restore)_StateManager_Test004" selected="true"/>
+				<test id="Recovery_(Restore)_StateManager_Test003" selected="true"/>
+			</test_group>
+			<test_group id="AbstractRecord-MemoryTests">
+				<test id="AbstractRecord_Memory_Test008" selected="true"/>
+				<test id="AbstractRecord_Memory_Test007" selected="true"/>
+				<test id="AbstractRecord_Memory_Test006" selected="true"/>
+				<test id="AbstractRecord_Memory_Test005" selected="true"/>
+				<test id="AbstractRecord_Memory_Test004" selected="true"/>
+				<test id="AbstractRecord_Memory_Test003" selected="true"/>
+				<test id="AbstractRecord_Memory_Test002" selected="true"/>
+				<test id="AbstractRecord_Memory_Test001" selected="true"/>
+			</test_group>
+			<test_group id="Utility">
+				<test id="Utility_Test006" selected="true"/>
+				<test id="Utility_Test038" selected="true"/>
+				<test id="Utility_Test005" selected="true"/>
+				<test id="Utility_Test037" selected="true"/>
+				<test id="Utility_Test004" selected="true"/>
+				<test id="Utility_Test036" selected="true"/>
+				<test id="Utility_Test003" selected="true"/>
+				<test id="Utility_Test035" selected="true"/>
+				<test id="Utility_Test002" selected="true"/>
+				<test id="Utility_Test034" selected="true"/>
+				<test id="Utility_Test001" selected="true"/>
+				<test id="Utility_Test033" selected="true"/>
+				<test id="Utility_Test032" selected="true"/>
+				<test id="Utility_Test031" selected="true"/>
+				<test id="Utility_Test030" selected="true"/>
+				<test id="Utility_Test029" selected="true"/>
+				<test id="Utility_Test028" selected="true"/>
+				<test id="Utility_Test027" selected="true"/>
+				<test id="Utility_Test026" selected="true"/>
+				<test id="Utility_Test025" selected="true"/>
+				<test id="Utility_Test024" selected="true"/>
+				<test id="Utility_Test023" selected="true"/>
+				<test id="Utility_Test022" selected="true"/>
+				<test id="Utility_Test021" selected="true"/>
+				<test id="Utility_Test020" selected="true"/>
+				<test id="Utility_Test019" selected="true"/>
+				<test id="Utility_Test018" selected="true"/>
+				<test id="Utility_Test017" selected="true"/>
+				<test id="Utility_Test016" selected="true"/>
+				<test id="Utility_Test015" selected="true"/>
+				<test id="Utility_Test014" selected="true"/>
+				<test id="Utility_Test013" selected="true"/>
+				<test id="Utility_Test012" selected="true"/>
+				<test id="Utility_Test011" selected="true"/>
+				<test id="Utility_Test010" selected="true"/>
+				<test id="Utility_Test040" selected="true"/>
+				<test id="Utility_Test009" selected="true"/>
+				<test id="Utility_Test008" selected="true"/>
+				<test id="Utility_Test039" selected="true"/>
+				<test id="Utility_Test007" selected="true"/>
+			</test_group>
+			<test_group id="LockManager-Restore">
+				<test id="Recovery_(Restore)_LockManager_Test004" selected="true"/>
+				<test id="Recovery_(Restore)_LockManager_Test003" selected="true"/>
+				<test id="Recovery_(Restore)_LockManager_Test002" selected="true"/>
+				<test id="Recovery_(Restore)_LockManager_Test001" selected="true"/>
+			</test_group>
+			<test_group id="LockManager-ThreadedTests-MultipleNewLock">
+				<test id="LockRecord_Thread_Test029" selected="true"/>
+				<test id="LockRecord_Thread_Test028" selected="true"/>
+				<test id="LockRecord_Thread_Test027" selected="true"/>
+				<test id="LockRecord_Thread_Test026" selected="true"/>
+				<test id="LockRecord_Thread_Test025" selected="true"/>
+				<test id="LockRecord_Thread_Test024" selected="true"/>
+				<test id="LockRecord_Thread_Test023" selected="true"/>
+				<test id="LockRecord_Thread_Test022" selected="true"/>
+				<test id="LockRecord_Thread_Test021" selected="true"/>
+				<test id="LockRecord_Thread_Test020" selected="true"/>
+				<test id="LockRecord_Thread_Test019" selected="true"/>
+				<test id="LockRecord_Thread_Test018" selected="true"/>
+				<test id="LockRecord_Thread_Test017" selected="true"/>
+				<test id="LockRecord_Thread_Test016" selected="true"/>
+				<test id="LockRecord_Thread_Test048" selected="true"/>
+				<test id="LockRecord_Thread_Test047" selected="true"/>
+				<test id="LockRecord_Thread_Test015" selected="true"/>
+				<test id="LockRecord_Thread_Test046" selected="true"/>
+				<test id="LockRecord_Thread_Test014" selected="true"/>
+				<test id="LockRecord_Thread_Test013" selected="true"/>
+				<test id="LockRecord_Thread_Test045" selected="true"/>
+				<test id="LockRecord_Thread_Test012" selected="true"/>
+				<test id="LockRecord_Thread_Test044" selected="true"/>
+				<test id="LockRecord_Thread_Test011" selected="true"/>
+				<test id="LockRecord_Thread_Test043" selected="true"/>
+				<test id="LockRecord_Thread_Test010" selected="true"/>
+				<test id="LockRecord_Thread_Test042" selected="true"/>
+				<test id="LockRecord_Thread_Test041" selected="true"/>
+				<test id="LockRecord_Thread_Test040" selected="true"/>
+				<test id="LockRecord_Thread_Test009" selected="true"/>
+				<test id="LockRecord_Thread_Test008" selected="true"/>
+				<test id="LockRecord_Thread_Test007" selected="true"/>
+				<test id="LockRecord_Thread_Test039" selected="true"/>
+				<test id="LockRecord_Thread_Test006" selected="true"/>
+				<test id="LockRecord_Thread_Test038" selected="true"/>
+				<test id="LockRecord_Thread_Test037" selected="true"/>
+				<test id="LockRecord_Thread_Test005" selected="true"/>
+				<test id="LockRecord_Thread_Test004" selected="true"/>
+				<test id="LockRecord_Thread_Test036" selected="true"/>
+				<test id="LockRecord_Thread_Test035" selected="true"/>
+				<test id="LockRecord_Thread_Test003" selected="true"/>
+				<test id="LockRecord_Thread_Test034" selected="true"/>
+				<test id="LockRecord_Thread_Test002" selected="true"/>
+				<test id="LockRecord_Thread_Test001" selected="true"/>
+				<test id="LockRecord_Thread_Test033" selected="true"/>
+				<test id="LockRecord_Thread_Test032" selected="true"/>
+				<test id="LockRecord_Thread_Test031" selected="true"/>
+				<test id="LockRecord_Thread_Test030" selected="true"/>
+			</test_group>
+			<test_group id="AbstractRecord-Restore">
+				<test id="Recovery_(Restore)_AbstractRecord_Test004" selected="true"/>
+				<test id="Recovery_(Restore)_AbstractRecord_Test003" selected="true"/>
+				<test id="Recovery_(Restore)_AbstractRecord_Test002" selected="true"/>
+				<test id="Recovery_(Restore)_AbstractRecord_Test001" selected="true"/>
+			</test_group>
+			<test_group id="AbstractRecord-Fail">
+				<test id="Recovery_(Fail)_AbstractRecord_Test003" selected="true"/>
+				<test id="Recovery_(Fail)_AbstractRecord_Test002" selected="true"/>
+				<test id="Recovery_(Fail)_AbstractRecord_Test001" selected="true"/>
+				<test id="Recovery_(Fail)_AbstractRecord_Test004" selected="true"/>
+			</test_group>
+			<test_group id="LockManager-ThreadedTests-SingleNewLock">
+				<test id="LockRecord_Thread_Test029" selected="true"/>
+				<test id="LockRecord_Thread_Test028" selected="true"/>
+				<test id="LockRecord_Thread_Test027" selected="true"/>
+				<test id="LockRecord_Thread_Test026" selected="true"/>
+				<test id="LockRecord_Thread_Test025" selected="true"/>
+				<test id="LockRecord_Thread_Test024" selected="true"/>
+				<test id="LockRecord_Thread_Test023" selected="true"/>
+				<test id="LockRecord_Thread_Test022" selected="true"/>
+				<test id="LockRecord_Thread_Test021" selected="true"/>
+				<test id="LockRecord_Thread_Test020" selected="true"/>
+				<test id="LockRecord_Thread_Test019" selected="true"/>
+				<test id="LockRecord_Thread_Test018" selected="true"/>
+				<test id="LockRecord_Thread_Test017" selected="true"/>
+				<test id="LockRecord_Thread_Test016" selected="true"/>
+				<test id="LockRecord_Thread_Test048" selected="true"/>
+				<test id="LockRecord_Thread_Test015" selected="true"/>
+				<test id="LockRecord_Thread_Test047" selected="true"/>
+				<test id="LockRecord_Thread_Test014" selected="true"/>
+				<test id="LockRecord_Thread_Test046" selected="true"/>
+				<test id="LockRecord_Thread_Test045" selected="true"/>
+				<test id="LockRecord_Thread_Test013" selected="true"/>
+				<test id="LockRecord_Thread_Test012" selected="true"/>
+				<test id="LockRecord_Thread_Test044" selected="true"/>
+				<test id="LockRecord_Thread_Test043" selected="true"/>
+				<test id="LockRecord_Thread_Test011" selected="true"/>
+				<test id="LockRecord_Thread_Test010" selected="true"/>
+				<test id="LockRecord_Thread_Test042" selected="true"/>
+				<test id="LockRecord_Thread_Test041" selected="true"/>
+				<test id="LockRecord_Thread_Test040" selected="true"/>
+				<test id="LockRecord_Thread_Test009" selected="true"/>
+				<test id="LockRecord_Thread_Test008" selected="true"/>
+				<test id="LockRecord_Thread_Test007" selected="true"/>
+				<test id="LockRecord_Thread_Test039" selected="true"/>
+				<test id="LockRecord_Thread_Test006" selected="true"/>
+				<test id="LockRecord_Thread_Test038" selected="true"/>
+				<test id="LockRecord_Thread_Test005" selected="true"/>
+				<test id="LockRecord_Thread_Test037" selected="true"/>
+				<test id="LockRecord_Thread_Test004" selected="true"/>
+				<test id="LockRecord_Thread_Test036" selected="true"/>
+				<test id="LockRecord_Thread_Test035" selected="true"/>
+				<test id="LockRecord_Thread_Test003" selected="true"/>
+				<test id="LockRecord_Thread_Test002" selected="true"/>
+				<test id="LockRecord_Thread_Test034" selected="true"/>
+				<test id="LockRecord_Thread_Test001" selected="true"/>
+				<test id="LockRecord_Thread_Test033" selected="true"/>
+				<test id="LockRecord_Thread_Test032" selected="true"/>
+				<test id="LockRecord_Thread_Test031" selected="true"/>
+				<test id="LockRecord_Thread_Test030" selected="true"/>
+			</test_group>
+			<test_group id="LockManager-Crash">
+				<test id="Recovery_(Crash)_LockManager_Test008" selected="true"/>
+				<test id="Recovery_(Crash)_LockManager_Test007" selected="true"/>
+				<test id="Recovery_(Crash)_LockManager_Test006" selected="true"/>
+				<test id="Recovery_(Crash)_LockManager_Test005" selected="true"/>
+				<test id="Recovery_(Crash)_LockManager_Test004" selected="true"/>
+				<test id="Recovery_(Crash)_LockManager_Test003" selected="true"/>
+				<test id="Recovery_(Crash)_LockManager_Test002" selected="true"/>
+				<test id="Recovery_(Crash)_LockManager_Test001" selected="true"/>
+			</test_group>
+			<test_group id="UidTest">
+				<test id="Uid_Test001" selected="true"/>
+				<test id="Uid_Test012" selected="true"/>
+				<test id="Uid_Test011" selected="true"/>
+				<test id="Uid_Test009" selected="true"/>
+				<test id="Uid_Test010" selected="true"/>
+				<test id="Uid_Test008" selected="true"/>
+				<test id="Uid_Test007" selected="true"/>
+				<test id="Uid_Test006" selected="true"/>
+				<test id="Uid_Test005" selected="true"/>
+				<test id="Uid_Test004" selected="true"/>
+				<test id="Uid_Test003" selected="true"/>
+				<test id="Uid_Test002" selected="true"/>
+			</test_group>
+			<test_group id="TX-Stats">
+				<test id="TX_Statistics_Test004" selected="true"/>
+				<test id="TX_Statistics_Test003" selected="true"/>
+				<test id="TX_Statistics_Test002" selected="true"/>
+				<test id="TX_Statistics_Test001" selected="true"/>
+				<test id="TX_Statistics_Test016" selected="true"/>
+				<test id="TX_Statistics_Test015" selected="true"/>
+				<test id="TX_Statistics_Test014" selected="true"/>
+				<test id="TX_Statistics_Test013" selected="true"/>
+				<test id="TX_Statistics_Test012" selected="true"/>
+				<test id="TX_Statistics_Test011" selected="true"/>
+				<test id="TX_Statistics_Test009" selected="true"/>
+				<test id="TX_Statistics_Test010" selected="true"/>
+				<test id="TX_Statistics_Test008" selected="true"/>
+				<test id="TX_Statistics_Test007" selected="true"/>
+				<test id="TX_Statistics_Test006" selected="true"/>
+				<test id="TX_Statistics_Test005" selected="true"/>
+			</test_group>
+			<test_group id="StateManager-ThreadedTests">
+				<test id="StateManager_Thread_Test029" selected="true"/>
+				<test id="StateManager_Thread_Test028" selected="true"/>
+				<test id="StateManager_Thread_Test027" selected="true"/>
+				<test id="StateManager_Thread_Test026" selected="true"/>
+				<test id="StateManager_Thread_Test025" selected="true"/>
+				<test id="StateManager_Thread_Test024" selected="true"/>
+				<test id="StateManager_Thread_Test023" selected="true"/>
+				<test id="StateManager_Thread_Test022" selected="true"/>
+				<test id="StateManager_Thread_Test021" selected="true"/>
+				<test id="StateManager_Thread_Test020" selected="true"/>
+				<test id="StateManager_Thread_Test019" selected="true"/>
+				<test id="StateManager_Thread_Test018" selected="true"/>
+				<test id="StateManager_Thread_Test017" selected="true"/>
+				<test id="StateManager_Thread_Test016" selected="true"/>
+				<test id="StateManager_Thread_Test048" selected="true"/>
+				<test id="StateManager_Thread_Test015" selected="true"/>
+				<test id="StateManager_Thread_Test047" selected="true"/>
+				<test id="StateManager_Thread_Test014" selected="true"/>
+				<test id="StateManager_Thread_Test046" selected="true"/>
+				<test id="StateManager_Thread_Test013" selected="true"/>
+				<test id="StateManager_Thread_Test045" selected="true"/>
+				<test id="StateManager_Thread_Test012" selected="true"/>
+				<test id="StateManager_Thread_Test044" selected="true"/>
+				<test id="StateManager_Thread_Test011" selected="true"/>
+				<test id="StateManager_Thread_Test043" selected="true"/>
+				<test id="StateManager_Thread_Test010" selected="true"/>
+				<test id="StateManager_Thread_Test042" selected="true"/>
+				<test id="StateManager_Thread_Test041" selected="true"/>
+				<test id="StateManager_Thread_Test040" selected="true"/>
+				<test id="StateManager_Thread_Test009" selected="true"/>
+				<test id="StateManager_Thread_Test008" selected="true"/>
+				<test id="StateManager_Thread_Test007" selected="true"/>
+				<test id="StateManager_Thread_Test039" selected="true"/>
+				<test id="StateManager_Thread_Test006" selected="true"/>
+				<test id="StateManager_Thread_Test038" selected="true"/>
+				<test id="StateManager_Thread_Test005" selected="true"/>
+				<test id="StateManager_Thread_Test037" selected="true"/>
+				<test id="StateManager_Thread_Test004" selected="true"/>
+				<test id="StateManager_Thread_Test036" selected="true"/>
+				<test id="StateManager_Thread_Test035" selected="true"/>
+				<test id="StateManager_Thread_Test003" selected="true"/>
+				<test id="StateManager_Thread_Test002" selected="true"/>
+				<test id="StateManager_Thread_Test034" selected="true"/>
+				<test id="StateManager_Thread_Test001" selected="true"/>
+				<test id="StateManager_Thread_Test033" selected="true"/>
+				<test id="StateManager_Thread_Test032" selected="true"/>
+				<test id="StateManager_Thread_Test031" selected="true"/>
+				<test id="StateManager_Thread_Test030" selected="true"/>
+			</test_group>
+			<test_group id="AbstractRecord-ThreadedTests">
+				<test id="AbstractRecord_Thread_Test024" selected="true"/>
+				<test id="AbstractRecord_Thread_Test023" selected="true"/>
+				<test id="AbstractRecord_Thread_Test022" selected="true"/>
+				<test id="AbstractRecord_Thread_Test021" selected="true"/>
+				<test id="AbstractRecord_Thread_Test020" selected="true"/>
+				<test id="AbstractRecord_Thread_Test009" selected="true"/>
+				<test id="AbstractRecord_Thread_Test008" selected="true"/>
+				<test id="AbstractRecord_Thread_Test007" selected="true"/>
+				<test id="AbstractRecord_Thread_Test006" selected="true"/>
+				<test id="AbstractRecord_Thread_Test005" selected="true"/>
+				<test id="AbstractRecord_Thread_Test004" selected="true"/>
+				<test id="AbstractRecord_Thread_Test003" selected="true"/>
+				<test id="AbstractRecord_Thread_Test002" selected="true"/>
+				<test id="AbstractRecord_Thread_Test001" selected="true"/>
+				<test id="AbstractRecord_Thread_Test019" selected="true"/>
+				<test id="AbstractRecord_Thread_Test018" selected="true"/>
+				<test id="AbstractRecord_Thread_Test017" selected="true"/>
+				<test id="AbstractRecord_Thread_Test016" selected="true"/>
+				<test id="AbstractRecord_Thread_Test015" selected="true"/>
+				<test id="AbstractRecord_Thread_Test014" selected="true"/>
+				<test id="AbstractRecord_Thread_Test013" selected="true"/>
+				<test id="AbstractRecord_Thread_Test012" selected="true"/>
+				<test id="AbstractRecord_Thread_Test011" selected="true"/>
+				<test id="AbstractRecord_Thread_Test010" selected="true"/>
+			</test_group>
+			<test_group id="StateManager-MemoryTests">
+				<test id="StateManager_Memory_Test016" selected="true"/>
+				<test id="StateManager_Memory_Test015" selected="true"/>
+				<test id="StateManager_Memory_Test014" selected="true"/>
+				<test id="StateManager_Memory_Test013" selected="true"/>
+				<test id="StateManager_Memory_Test012" selected="true"/>
+				<test id="StateManager_Memory_Test011" selected="true"/>
+				<test id="StateManager_Memory_Test009" selected="true"/>
+				<test id="StateManager_Memory_Test008" selected="true"/>
+				<test id="StateManager_Memory_Test010" selected="true"/>
+				<test id="StateManager_Memory_Test007" selected="true"/>
+				<test id="StateManager_Memory_Test006" selected="true"/>
+				<test id="StateManager_Memory_Test005" selected="true"/>
+				<test id="StateManager_Memory_Test004" selected="true"/>
+				<test id="StateManager_Memory_Test003" selected="true"/>
+				<test id="StateManager_Memory_Test002" selected="true"/>
+				<test id="StateManager_Memory_Test001" selected="true"/>
+			</test_group>
+			<test_group id="StateManager-BasicTests">
+				<test id="StateManager_Test016" selected="true"/>
+				<test id="StateManager_Test015" selected="true"/>
+				<test id="StateManager_Test014" selected="true"/>
+				<test id="StateManager_Test013" selected="true"/>
+				<test id="StateManager_Test012" selected="true"/>
+				<test id="StateManager_Test011" selected="true"/>
+				<test id="StateManager_Test009" selected="true"/>
+				<test id="StateManager_Test008" selected="true"/>
+				<test id="StateManager_Test010" selected="true"/>
+				<test id="StateManager_Test007" selected="true"/>
+				<test id="StateManager_Test006" selected="true"/>
+				<test id="StateManager_Test005" selected="true"/>
+				<test id="StateManager_Test004" selected="true"/>
+				<test id="StateManager_Test003" selected="true"/>
+				<test id="StateManager_Test002" selected="true"/>
+				<test id="StateManager_Test001" selected="true"/>
+			</test_group>
+			<test_group id="AbstractRecord-BasicTests">
+				<test id="AbstractRecord_Test008" selected="true"/>
+				<test id="AbstractRecord_Test007" selected="true"/>
+				<test id="AbstractRecord_Test006" selected="true"/>
+				<test id="AbstractRecord_Test005" selected="true"/>
+				<test id="AbstractRecord_Test004" selected="true"/>
+				<test id="AbstractRecord_Test003" selected="true"/>
+				<test id="AbstractRecord_Test002" selected="true"/>
+				<test id="AbstractRecord_Test001" selected="true"/>
+			</test_group>
+			<test_group id="LockManager-MemoryTests">
+				<test id="LockRecord_Memory_Test014" selected="true"/>
+				<test id="LockRecord_Memory_Test013" selected="true"/>
+				<test id="LockRecord_Memory_Test012" selected="true"/>
+				<test id="LockRecord_Memory_Test011" selected="true"/>
+				<test id="LockRecord_Memory_Test009" selected="true"/>
+				<test id="LockRecord_Memory_Test010" selected="true"/>
+				<test id="LockRecord_Memory_Test008" selected="true"/>
+				<test id="LockRecord_Memory_Test007" selected="true"/>
+				<test id="LockRecord_Memory_Test006" selected="true"/>
+				<test id="LockRecord_Memory_Test005" selected="true"/>
+				<test id="LockRecord_Memory_Test004" selected="true"/>
+				<test id="LockRecord_Memory_Test003" selected="true"/>
+				<test id="LockRecord_Memory_Test002" selected="true"/>
+				<test id="LockRecord_Memory_Test001" selected="true"/>
+				<test id="LockRecord_Memory_Test016" selected="true"/>
+				<test id="LockRecord_Memory_Test015" selected="true"/>
+			</test_group>
+			<test_group id="LockManager-BasicTests">
+				<test id="LockRecord_Test015" selected="true"/>
+				<test id="LockRecord_Test014" selected="true"/>
+				<test id="LockRecord_Test013" selected="true"/>
+				<test id="LockRecord_Test012" selected="true"/>
+				<test id="LockRecord_Test011" selected="true"/>
+				<test id="LockRecord_Test009" selected="true"/>
+				<test id="LockRecord_Test010" selected="true"/>
+				<test id="LockRecord_Test008" selected="true"/>
+				<test id="LockRecord_Test007" selected="true"/>
+				<test id="LockRecord_Test006" selected="true"/>
+				<test id="LockRecord_Test005" selected="true"/>
+				<test id="LockRecord_Test004" selected="true"/>
+				<test id="LockRecord_Test003" selected="true"/>
+				<test id="LockRecord_Test002" selected="true"/>
+				<test id="LockRecord_Test001" selected="true"/>
+				<test id="LockRecord_Test016" selected="true"/>
+			</test_group>
+			<test_group id="AbstractRecord-Crash">
+				<test id="Recovery_(Crash)_AbstractRecord_Test003" selected="true"/>
+				<test id="Recovery_(Crash)_AbstractRecord_Test002" selected="true"/>
+				<test id="Recovery_(Crash)_AbstractRecord_Test001" selected="true"/>
+				<test id="Recovery_(Crash)_AbstractRecord_Test004" selected="true"/>
+			</test_group>
+			<test_group id="StateManager-Crash">
+				<test id="Recovery_(Crash)_StateManager_Test008" selected="true"/>
+				<test id="Recovery_(Crash)_StateManager_Test007" selected="true"/>
+				<test id="Recovery_(Crash)_StateManager_Test006" selected="true"/>
+				<test id="Recovery_(Crash)_StateManager_Test005" selected="true"/>
+				<test id="Recovery_(Crash)_StateManager_Test004" selected="true"/>
+				<test id="Recovery_(Crash)_StateManager_Test003" selected="true"/>
+				<test id="Recovery_(Crash)_StateManager_Test002" selected="true"/>
+				<test id="Recovery_(Crash)_StateManager_Test001" selected="true"/>
+			</test_group>
+		</product>
+	</os>
+
+</test_selection>

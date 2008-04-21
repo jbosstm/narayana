@@ -1,0 +1,61 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2007, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<test_selection>
+	<description></description>
+
+	<os id="RHEL4-64">
+		<product id="JBossTS_JTS_JacORB_QA">
+			<test_group id="JDBCResources01-sybase_jndi">
+				<test id="JDBCResources01-sybase_jndi_Test009" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test008" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test007" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test004" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test003" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test002" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test001" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test032" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test031" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test030" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test019" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test018" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test017" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test016" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test015" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test014" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test013" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test012" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test011" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test010" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test029" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test028" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test027" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test026" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test025" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test024" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test023" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test022" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test021" selected="true"/>
+				<test id="JDBCResources01-sybase_jndi_Test020" selected="true"/>
+			</test_group>
+		</product>
+	</os>
+
+</test_selection>
