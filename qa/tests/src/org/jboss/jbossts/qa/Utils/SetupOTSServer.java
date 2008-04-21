@@ -20,7 +20,7 @@
  */
 package org.jboss.jbossts.qa.Utils;
 
-import com.arjuna.mwlabs.testframework.unittest.Test;
+import org.jboss.dtf.testframework.unittest.Test;
 import com.arjuna.orbportability.Services;
 
 /*

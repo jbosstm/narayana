@@ -21,10 +21,10 @@
 <project name="JBossTS 'Core' QA Suite" default="build">
 
 	<!-- set this property to the location of a JBossTS core build -->
-	<property name="org.jboss.jbossts.qa.ts.home" location="/home/jhalli/IdeaProjects/jboss/jbossts/install/"/>
+	<property name="org.jboss.jbossts.qa.ts.home" location="../../install/"/>
 
 	<!-- set this property to the location of a DTF TestingFramework build -->
-	<property name="org.jboss.jbossts.qa.testingframework_location" location="/home/jhalli/IdeaProjects/jboss/jbossdtf/DTF_3_9/dist/lib/TestingFramework.jar"/>
+	<property name="org.jboss.jbossts.qa.testingframework_location" location="/home/jhalli/IdeaProjects/jboss/dtf/installation/lib/TestingFramework.jar"/>
 
 
 	<property name="org.jboss.jbossts.qa.buildroot" location="build"/>

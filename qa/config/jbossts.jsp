@@ -7,7 +7,7 @@
 <body>
 
 <%@ page import="java.util.ArrayList, java.util.Arrays, java.util.Enumeration, java.net.URL" %>
-<%@ page import="com.arjuna.mwlabs.testframework.dtfweb.*, com.arjuna.mwlabs.testframework.coordinator2.*, com.arjuna.mwlabs.testframework.coordinator2.scheduler.*" %>
+<%@ page import="org.jboss.dtf.testframework.dtfweb.*, org.jboss.dtf.testframework.coordinator2.*, org.jboss.dtf.testframework.coordinator2.scheduler.*" %>
 
 <%
     // TODO: keep only the testId numbers here, lookup the corresponding names from the db?
@@ -49,8 +49,8 @@
                                         "JDBC Local Tests 01 - IBM DB2 JNDI", "JDBC Local Tests 01 - PostgreSQL JNDI",
                                         "JDBC Local Tests 01 - MySQL JNDI", "JDBC Local Tests 01 - Sybase JNDI" };
 
-
-    String[] OS = new String[] { "RHEL4-32", "RHEL4-64", "RHEL5-32", "RHEL5-64", "WIN2003-64", "SOL10-SPARC", "HPUX11-IA64" };
+    // for single host setups you may want to add "Linux" to this list 
+    String[] OS = new String[] { "RHEL4-32", "RHEL4-64", "RHEL5-32", "RHEL5-64", "WIN2003-64", "SOL10-SPARC", "HPUX11-IA64", };
 
     ArrayList allJTSTestIdsInRunOrder = new ArrayList();
     allJTSTestIdsInRunOrder.addAll(Arrays.asList(jts_basicTestIds));

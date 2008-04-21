@@ -21,10 +21,10 @@
 <project name="JBossTS JTA QA Suite" default="build">
 
 	<!-- set this property to the location of a JBossTS JTA build -->
-	<property name="org.jboss.jbossts.qa.ts.home" location="/home/jhalli/IdeaProjects/jboss/jbossts_trunk/install/"/>
+	<property name="org.jboss.jbossts.qa.ts.home" location="../../install/"/>
 
 	<!-- set this property to the location of a DTF TestingFramework build -->
-	<property name="org.jboss.jbossts.qa.testingframework_location" location="/home/jhalli/IdeaProjects/jboss/jbossdtf/DTF_3_9/dist/lib/TestingFramework.jar"/>
+	<property name="org.jboss.jbossts.qa.testingframework_location" location="/home/jhalli/IdeaProjects/jboss/dtf/installation/lib/TestingFramework.jar"/>
 
 	<!-- set this to the location(s) of the database drivers -->
 	<path id="database.drivers.path">
@@ -54,7 +54,6 @@
 		</fileset>
 		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
 			<include name="jbossts-common.jar"/>
-			<include name="jta-spec1_0_1.jar"/>
 			<include name="jta-1_1-classes.zip"/>
 		</fileset>
 	</path>

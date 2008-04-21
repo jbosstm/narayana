@@ -67,15 +67,15 @@
 				<property name="org.jboss.jbossts.qa.Utils.nameserviceuri" value="//localhost:1099/NameService"/>
 			</properties>
 			<sets>
-				<set name="DTF_HOME" value="/services/DTF"/>
+				<set name="DTF_HOME" value="/home/jhalli/IdeaProjects/jboss/dtf/installation"/>
 				<set name="PRODUCTS_HOME" value="/services/DTF/products"/>
-				<set name="INSTALL.DIR" value="/services/DTF/JBossTS-JTS-JacORB-QA/"/>
-				<set name="ORB_HOME" value="/services/DTF/JBossTS-JTS-JacORB-QA/jacorb/"/>
+				<set name="INSTALL.DIR" value="/home/jhalli/IdeaProjects/jboss/dtf/installation/JBossTS-JTS-JacORB-QA/"/>
+				<set name="ORB_HOME" value="/home/jhalli/IdeaProjects/jboss/dtf/installation/JBossTS-JTS-JacORB-QA/jacorb/"/>
 				<set name="CALLS" value="1000"/>
-				<set name="PRODUCT.DIR" value="/services/DTF/JBossTS-JTS-JacORB-QA/"/>
-				<set name="ARJUNAJTS_HOME" value="/services/DTF/JBossTS-JTS-JacORB-QA/"/>
+				<set name="PRODUCT.DIR" value="/home/jhalli/IdeaProjects/jboss/dtf/installation/JBossTS-JTS-JacORB-QA/"/>
+				<set name="ARJUNAJTS_HOME" value="/home/jhalli/IdeaProjects/jboss/dtf/installation/JBossTS-JTS-JacORB-QA/"/>
 			</sets>
-			<jvm id="1.4.2"/>
+			<jvm id="1.5.0"/>
 			<default-classpath name="main"/>
 			<node-exclusions/>
 		</node-configuration>

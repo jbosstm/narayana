@@ -22,7 +22,7 @@
     <target name="install">
 		<delete dir="${INSTALL.DIR}"/>
 		<mkdir dir="${INSTALL.DIR}"/>
-		<get src="http://dev31.qa.atl.jboss.com:8080/dtf/productbuilds/jbossts-jta-qa-distribution.zip"
+		<get src="http://localhost:8080/dtf/productbuilds/jbossts-jta-qa-distribution.zip"
 			 dest="${INSTALL.DIR}/jbossts-jta-qa-distribution.zip"/>
 		<unzip src="${INSTALL.DIR}/jbossts-jta-qa-distribution.zip" dest="${INSTALL.DIR}"/>
     </target>

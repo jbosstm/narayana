@@ -63,16 +63,16 @@
 				<property name="org.jboss.jbossts.qa.Utils.nameserviceuri" value="//localhost:1099/NameService"/>
 			</properties>
 			<sets>
-				<set name="DTF_HOME" value="/services/DTF/"/>
+				<set name="DTF_HOME" value="/home/jhalli/IdeaProjects/jboss/dtf/installation"/>
 				<set name="LOCAL_PARAMETER" value="-local"/>
-				<set name="PRODUCTS_HOME" value="/services/DTF/products"/>
-				<set name="INSTALL.DIR" value="/services/DTF/JBossTS-JTA-QA/"/>
+				<set name="PRODUCTS_HOME" value="/home/jhalli/IdeaProjects/jboss/dtf/installation/products"/>
+				<set name="INSTALL.DIR" value="/home/jhalli/IdeaProjects/jboss/dtf/installation/JBossTS-JTA-QA/"/>
 				<set name="CALLS" value="100"/>
-				<set name="PRODUCT.DIR" value="/services/DTF/JBossTS-JTA-QA/"/>
+				<set name="PRODUCT.DIR" value="/home/jhalli/IdeaProjects/jboss/dtf/installation/JBossTS-JTA-QA/"/>
 				<!-- TODO: should this really be ARJUNAJTS home even thoug it's JTA? -->
-				<set name="ARJUNAJTS_HOME" value="/services/DTF/JBossTS-JTA-QA/"/>
+				<set name="ARJUNAJTS_HOME" value="/home/jhalli/IdeaProjects/jboss/dtf/installation/JBossTS-JTA-QA/"/>
 			</sets>
-			<jvm id="1.4.2"/>
+			<jvm id="1.5.0"/>
 			<default-classpath name="main"/>
 			<node-exclusions/>
 		</node-configuration>
@@ -158,21 +158,21 @@
 
 	<task-runner-definitions>
 		<task-runner name="UnitTestRunner" class="com.arjuna.mwlabs.testframework.testnode.UnitTestTaskRunner"
-					 log-to="http://dev31.qa.atl.jboss.com:8080/dtf/">
+					 log-to="http://localhost:8080/dtf/">
 			<param name="pass_on_wait_for" value="true"/>
 			<param name="fail_indicator" value="Failed"/>
 			<param name="wait_for_text" value="Ready"/>
 			<param name="pass_indicator" value="Passed"/>
 		</task-runner>
 		<task-runner name="ServiceRunner" class="com.arjuna.mwlabs.testframework.testnode.JavaTaskRunner"
-					 log-to="http://dev31.qa.atl.jboss.com:8080/dtf/">
+					 log-to="http://localhost:8080/dtf/">
 			<param name="pass_on_wait_for" value="true"/>
 			<param name="fail_indicator" value="Failed"/>
 			<param name="wait_for_text" value="Ready"/>
 			<param name="pass_indicator" value="Passed"/>
 		</task-runner>
 		<task-runner name="JavaTaskRunner" class="com.arjuna.mwlabs.testframework.testnode.JavaTaskRunner"
-					 log-to="http://dev31.qa.atl.jboss.com:8080/dtf/">
+					 log-to="http://localhost:8080/dtf/">
 			<param name="pass_on_wait_for" value="true"/>
 			<param name="fail_indicator" value="Failed"/>
 			<param name="wait_for_text" value="Ready"/>

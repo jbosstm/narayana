@@ -20,8 +20,8 @@
  */
 package org.jboss.jbossts.qa.Utils;
 
-import com.arjuna.mwlabs.testframework.nameservice.NameNotBound;
-import com.arjuna.mwlabs.testframework.nameservice.NameServiceInterface;
+import org.jboss.dtf.testframework.nameservice.NameNotBound;
+import org.jboss.dtf.testframework.nameservice.NameServiceInterface;
 
 import java.rmi.Naming;
 

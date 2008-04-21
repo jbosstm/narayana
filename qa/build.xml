@@ -15,7 +15,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
 
-  (C) 2005-2006,
+  (C) 2005-2008,
   @author JBoss Inc.
 -->
 <project name="JBossTS QA Suite Distribution" default="dist">
@@ -24,22 +24,19 @@
 	<property name="buildtype" value="jts"/>
 
 	<!-- set this property to the location of a JBossTS JTA/JTS build or installation -->
-<!--
-	<property name="org.jboss.jbossts.qa.ts.home" location="/home/jhalli/IdeaProjects/jboss/jbossts/install/"/>
-	/home/jhalli/javastuff/jbossts-full-4.2.3.sp3
--->
-	<property name="org.jboss.jbossts.qa.ts.home" location="/home/jhalli/IdeaProjects/jboss/jbossts_trunk/install"/>
+	<property name="org.jboss.jbossts.qa.ts.home" location="../install"/>
 
 	<!-- set this property to the location of a DTF TestingFramework.jar build -->
-	<property name="org.jboss.jbossts.qa.testingframework_location" location="/home/jhalli/IdeaProjects/jboss/jbossdtf/DTF_3_9/dist/lib/TestingFramework.jar"/>
+    <!-- TODO should ref the version checked into JBossTS? -->
+    <property name="org.jboss.jbossts.qa.testingframework_location" location="/home/jhalli/IdeaProjects/jboss/dtf/installation/lib/TestingFramework.jar"/>
 
 	<!-- TODO cd ArjunaJTS/orbportability; ant -f build-anttasks.xml -->
 	<property name="org.jboss.jbossts.qa.idlcompiler.lib"
-			  location="/home/jhalli/IdeaProjects/jboss/jbossts_trunk/ArjunaJTS/orbportability/lib/ext"/>
+			  location="../ArjunaJTS/orbportability/lib/ext"/>
 
 	<!-- set these to the location(s) of the database drivers -->
 
-	<fileset id="oracle.drivers" dir="/oracle/product/10.2.0/db_1/jdbc/lib/">
+	<fileset id="oracle.drivers" dir="/home/jhalli/javastuff/dbdrivers/oracle_10_2_0_4/">
 		<include name="ojdbc14.jar"/>
 	</fileset>
 
@@ -47,26 +44,26 @@
 		<include name="ms*.jar"/>
 	</fileset>
 
-	<fileset id="mssql.drivers" dir="/home/jhalli/javastuff/mssql2005_sqljdbc_1.1/enu/">
+	<fileset id="mssql.drivers" dir="/home/jhalli/javastuff/dbdrivers/mssql2005_sqljdbc_1.2/enu/">
 		<include name="sqljdbc.jar"/>
 	</fileset>
 
 	<!-- 8.1.408 is broken, use something more recent. -->
-	<fileset id="pgsql.drivers" dir="/home/jhalli/IdeaProjects/jboss/pgsqldriver/pgjdbc/jars/">
-		<include name="postgresql.jar"/>
+	<fileset id="pgsql.drivers" dir="/home/jhalli/javastuff/dbdrivers/">
+		<include name="postgresql-8.3-603.jdbc3.jar"/>
 	</fileset>
 
 	<!-- server version 5 is the first with XA support, do use anything less.
 	 		driver versions before 5.0.5 are broken, don't use them either. -->
-	<fileset id="mysql.drivers" dir="/home/jhalli/javastuff/mysql-connector-java-5.0-nightly-20070228/">
-		<include name="mysql-connector-java-5.0-nightly-20070228-bin.jar"/>
+	<fileset id="mysql.drivers" dir="/home/jhalli/javastuff/dbdrivers//">
+		<include name="mysql-connector-java-5.1.6-bin.jar"/>
 	</fileset>
 
-	<fileset id="ibmdb2.drivers" dir="/home/jhalli/javastuff/db2driver/DB2_v9/">
+	<fileset id="ibmdb2.drivers" dir="/home/jhalli/javastuff/dbdrivers/DB2_v9/">
 		<include name="db2jcc*.jar"/>
 	</fileset>
 
-	<fileset id="sybase.drivers" dir="/home/jhalli/javastuff/jConnect-5_5/classes/">
+	<fileset id="sybase.drivers" dir="/home/jhalli/javastuff/dbdrivers/jConnect-5_5/classes/">
 		<include name="jconn2.jar"/>
 	</fileset>
 
