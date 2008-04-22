@@ -42,7 +42,7 @@ public class BusinessAgreementWithCoordinatorCompletionParticipantPortTypeImpl i
      *
      * @param parameters
      */
-    @WebMethod(operationName = "CompleteOperation", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/mplete")
+    @WebMethod(operationName = "CompleteOperation", action = "http://docs.oasis-open.org/ws-tx/wsba/2006/06/Complete")
     @Oneway
     public void completeOperation(
         @WebParam(name = "Complete", targetNamespace = "http://docs.oasis-open.org/ws-tx/wsba/2006/06", partName = "parameters")

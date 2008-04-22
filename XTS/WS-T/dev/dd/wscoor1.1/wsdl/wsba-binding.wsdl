@@ -199,7 +199,7 @@
   <wsdl:binding name="BusinessAgreementWithCoordinatorCompletionParticipant_SOAPBinding" type="wsba:BusinessAgreementWithCoordinatorCompletionParticipantPortType">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="CompleteOperation">
-      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsba/2006/06/mplete" style="document"/>
+      <soap:operation soapAction="http://docs.oasis-open.org/ws-tx/wsba/2006/06/Complete" style="document"/>
       <wsdl:input name="wsba:Complete">
 	<soap:body use="literal"/>
       </wsdl:input>
