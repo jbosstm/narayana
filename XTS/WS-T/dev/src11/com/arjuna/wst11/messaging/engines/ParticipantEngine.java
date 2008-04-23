@@ -204,6 +204,60 @@ public class ParticipantEngine implements ParticipantInboundEvents
     }
 
     /**
+     * Handle the early rollback event.
+     *
+     * None -> None
+     * Active -> Aborting (execute rollback, send aborted and forget)
+     * Preparing -> Aborting (execute rollback, send aborted and forget)
+     * PreparedSuccess -> PreparedSuccess
+     * Committing -> Committing
+     * Aborting -> Aborting
+     */
+    public void earlyRollback()
+    {
+        rollbackDecision() ;
+    }
+
+    /**
+     * Handle the early readonly event.
+     *
+     * None -> None
+     * Active -> None (send ReadOnly)
+     * Preparing -> None (send ReadOnly)
+     * PreparedSuccess -> PreparedSuccess
+     * Committing -> Committing
+     * Aborting -> Aborting
+     */
+    public void earlyReadonly()
+    {
+        readOnlyDecision() ;
+    }
+
+    /**
+     * Handle the recovery event.
+     *
+     * None -> None
+     * Active -> Active
+     * Preparing -> Preparing
+     * Committing -> Committing
+     * PreparedSuccess -> PreparedSuccess (resend Prepared)
+     * Aborting -> Aborting
+     */
+    public void recovery()
+    {
+        final State current ;
+        synchronized(this)
+        {
+            current = state ;
+        }
+
+        if (current == State.STATE_PREPARED_SUCCESS)
+        {
+            sendPrepared() ;
+        }
+    }
+
+    /**
      * Handle the soap fault event.
      * @param soapFault The soap fault.
      * @param addressingProperties The addressing context.
