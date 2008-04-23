@@ -4,6 +4,7 @@ import com.arjuna.wsc11.messaging.MessageId;
 
 import javax.xml.ws.addressing.*;
 import java.net.URISyntaxException;
+import java.net.URI;
 
 /**
  * The complete addressing context.
@@ -159,7 +160,9 @@ public class AddressingHelper
         final AddressingProperties requestProperties = builder.newAddressingProperties();
         requestProperties.setMessageID (makeURI(builder, messageID));
         requestProperties.setAction(makeURI(builder, ""));
-
+        URI noneURI = URI.create(builder.newAddressingConstants().getNoneURI());
+        requestProperties.setReplyTo(builder.newEndpointReference(noneURI));
+        
         return requestProperties;
     }
 

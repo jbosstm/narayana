@@ -34,9 +34,11 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.addressing.AddressingBuilder;
 import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.addressing.AttributedURI;
+import javax.xml.ws.addressing.EndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URI;
 
 /**
  * The Client side of the Coordinator Completion Coordinator.
@@ -89,7 +91,7 @@ public class CoordinatorCompletionCoordinatorClient
     /**
      * The coordinator completion participant URI for replies.
      */
-    private AttributedURI coordinatorCompletionParticipant = null;
+    private EndpointReference coordinatorCompletionParticipant = null;
 
     /**
      * Construct the participant completion coordinator client.
@@ -117,10 +119,11 @@ public class CoordinatorCompletionCoordinatorClient
         // Add client policies
         //ClientPolicy.register(handlerRegistry) ;
 
-        final String coordinatorCompletionParticipantURI =
+        final String coordinatorCompletionParticipantURIString =
             ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.COORDINATOR_COMPLETION_PARTICIPANT_SERVICE_NAME) ;
         try {
-            coordinatorCompletionParticipant = builder.newURI(coordinatorCompletionParticipantURI) ;
+            URI coordinatorCompletionParticipantURI = new URI(coordinatorCompletionParticipantURIString) ;
+            coordinatorCompletionParticipant = builder.newEndpointReference(coordinatorCompletionParticipantURI);
         } catch (URISyntaxException use) {
             // TODO - log fault and throw exception
         }
@@ -293,7 +296,7 @@ public class CoordinatorCompletionCoordinatorClient
     }
 
     /**
-     * obtain a port from the participant endpoint configured with the instance identifier handler and the supplied
+     * obtain a port from the coordinator endpoint configured with the instance identifier handler and the supplied
      * addressing properties supplemented with the given action
      * @param participant
      * @param addressingProperties
@@ -303,6 +306,7 @@ public class CoordinatorCompletionCoordinatorClient
     private BusinessAgreementWithCoordinatorCompletionCoordinatorPortType
     getPort(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final AttributedURI action)
     {
+        addressingProperties.setFrom(coordinatorCompletionParticipant);
         return WSBAClient.getCoordinatorCompletionCoordinatorPort(participant, action, addressingProperties);
     }
 }

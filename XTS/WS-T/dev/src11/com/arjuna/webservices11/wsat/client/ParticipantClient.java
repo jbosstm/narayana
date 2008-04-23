@@ -11,9 +11,11 @@ import org.oasis_open.docs.ws_tx.wsat._2006._06.ParticipantPortType;
 import javax.xml.ws.addressing.AddressingBuilder;
 import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.addressing.AttributedURI;
+import javax.xml.ws.addressing.EndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URI;
 
 /**
  * The Client side of the Participant.
@@ -46,7 +48,7 @@ public class ParticipantClient
     /**
      * The coordinator URI for replies.
      */
-    private AttributedURI coordinator ;
+    private EndpointReference coordinator ;
 
     /**
      * Construct the completion initiator client.
@@ -68,9 +70,10 @@ public class ParticipantClient
         // Add client policies
         // ClientPolicy.register(handlerRegistry) ;
 
-        final String coordinatorURI = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COORDINATOR_SERVICE_NAME);
+        final String coordinatorURIString = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COORDINATOR_SERVICE_NAME);
         try {
-            coordinator = builder.newURI(coordinatorURI);
+            URI coordinatorURI = new URI(coordinatorURIString);
+            coordinator = builder.newEndpointReference(coordinatorURI);
         } catch (URISyntaxException use) {
             // TODO - log fault and throw exception
         }
@@ -160,6 +163,7 @@ public class ParticipantClient
                                                 final AddressingProperties addressingProperties,
                                                 final AttributedURI action)
     {
+        addressingProperties.setFrom(coordinator);
         return WSATClient.getParticipantPort(participant, action, addressingProperties);
     }
 }

@@ -6,10 +6,7 @@ import org.oasis_open.docs.ws_tx.wsba._2006._06.*;
 import org.jboss.ws.extensions.addressing.jaxws.WSAddressingClientHandler;
 
 import javax.xml.ws.BindingProvider;
-import javax.xml.ws.addressing.AddressingBuilder;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.AttributedURI;
-import javax.xml.ws.addressing.JAXWSAConstants;
+import javax.xml.ws.addressing.*;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;

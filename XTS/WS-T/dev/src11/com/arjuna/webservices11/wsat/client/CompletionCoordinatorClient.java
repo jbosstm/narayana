@@ -11,9 +11,11 @@ import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import javax.xml.ws.addressing.AddressingBuilder;
 import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.addressing.AttributedURI;
+import javax.xml.ws.addressing.EndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URI;
 
 /**
  * The Client side of the Completion Coordinator.
@@ -38,7 +40,7 @@ public class CompletionCoordinatorClient
     /**
      * The completion initiator URI for replies.
      */
-    private AttributedURI completionInitiator ;
+    private EndpointReference completionInitiator ;
 
     /**
      * Construct the completion coordinator client.
@@ -59,10 +61,11 @@ public class CompletionCoordinatorClient
         // Add client policies
         // ClientPolicy.register(handlerRegistry) ;
 
-        final String completionInitiatorURI =
+        final String completionInitiatorURIString =
             ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_NAME) ;
         try {
-            completionInitiator = builder.newURI(completionInitiatorURI) ;
+            URI completionInitiatorURI = new URI(completionInitiatorURIString) ;
+            completionInitiator = builder.newEndpointReference(completionInitiatorURI);
         } catch (URISyntaxException use) {
             // TODO - log fault and throw exception
         }
@@ -110,7 +113,7 @@ public class CompletionCoordinatorClient
     }
 
     /**
-     * obtain a port from the endpoint configured with the instance identifier handler and the supplied
+     * obtain a port from the completion coordinator endpoint configured with the instance identifier handler and the supplied
      * addressing properties supplemented with the given action
      * @param endpoint
      * @param addressingProperties
@@ -121,6 +124,7 @@ public class CompletionCoordinatorClient
                                                   final AddressingProperties addressingProperties,
                                                   final AttributedURI action)
     {
+        addressingProperties.setFrom(completionInitiator);
         return WSATClient.getCompletionCoordinatorPort(endpoint, action, addressingProperties);
     }
 }

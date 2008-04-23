@@ -11,9 +11,11 @@ import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import javax.xml.ws.addressing.AddressingBuilder;
 import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.addressing.AttributedURI;
+import javax.xml.ws.addressing.EndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URI;
 
 /**
  * The Client side of the Coordinator.
@@ -50,7 +52,7 @@ public class CoordinatorClient
     /**
      * The participant URI for replies.
      */
-    private AttributedURI participant ;
+    private EndpointReference participant ;
 
     /**
      * Construct the coordinator client.
@@ -74,10 +76,11 @@ public class CoordinatorClient
         // Add client policies
         // ClientPolicy.register(handlerRegistry) ;
 
-        final String participantURI =
+        final String participantURIString =
             ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME);
         try {
-            participant = builder.newURI(participantURI);
+            URI participantURI = new URI(participantURIString);
+            participant = builder.newEndpointReference(participantURI);
         } catch (URISyntaxException use) {
             // TODO - log fault and throw exception
         }
@@ -171,17 +174,18 @@ public class CoordinatorClient
     }
 
     /**
-     * obtain a port from the participant endpoint configured with the instance identifier handler and the supplied
+     * obtain a port from the coordinator endpoint configured with the instance identifier handler and the supplied
      * addressing properties supplemented with the given action
-     * @param participant
+     * @param endpoint
      * @param addressingProperties
      * @param action
      * @return
      */
-    private CoordinatorPortType getPort(final W3CEndpointReference participant,
+    private CoordinatorPortType getPort(final W3CEndpointReference endpoint,
                                                 final AddressingProperties addressingProperties,
                                                 final AttributedURI action)
     {
-        return WSATClient.getCoordinatorPort(participant, action, addressingProperties);
+        addressingProperties.setFrom(participant);
+        return WSATClient.getCoordinatorPort(endpoint, action, addressingProperties);
     }
 }

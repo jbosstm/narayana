@@ -33,9 +33,11 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.addressing.AddressingBuilder;
 import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.addressing.AttributedURI;
+import javax.xml.ws.addressing.EndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URI;
 
 /**
  * The Client side of the Coordinator Participant Coordinator.
@@ -88,7 +90,7 @@ public class CoordinatorCompletionParticipantClient
     /**
      * The coordinator completion coordinator URI for replies.
      */
-    private AttributedURI coordinatorCompletionCoordinator = null;
+    private EndpointReference coordinatorCompletionCoordinator = null;
 
     /**
      * Construct the participant completion coordinator client.
@@ -116,10 +118,11 @@ public class CoordinatorCompletionParticipantClient
         // Add client policies
         // ClientPolicy.register(handlerRegistry) ;
 
-        final String coordinatorCompletionCoordinatorURI =
+        final String coordinatorCompletionCoordinatorURIString =
             ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_NAME) ;
         try {
-            coordinatorCompletionCoordinator = builder.newURI(coordinatorCompletionCoordinatorURI) ;
+            URI coordinatorCompletionCoordinatorURI = new URI(coordinatorCompletionCoordinatorURIString) ;
+            coordinatorCompletionCoordinator = builder.newEndpointReference(coordinatorCompletionCoordinatorURI);
         } catch (URISyntaxException use) {
             // TODO - log fault and throw exception
         }
@@ -300,6 +303,7 @@ public class CoordinatorCompletionParticipantClient
     private BusinessAgreementWithCoordinatorCompletionParticipantPortType
     getPort(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final AttributedURI action)
     {
+        addressingProperties.setFrom(coordinatorCompletionCoordinator);
         return WSBAClient.getCoordinatorCompletionParticipantPort(participant, action, addressingProperties);
     }
 }

@@ -948,6 +948,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     private AddressingProperties createContext()
     {
         final String messageId = MessageId.getMessageId() ;
+
         return AddressingHelper.createNotificationContext(messageId) ;
     }
 }
