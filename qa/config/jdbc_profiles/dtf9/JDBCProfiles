@@ -119,8 +119,8 @@ DB_SQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB_SQL_JNDI_Driver0=com.microsoft.sqlserver.jdbc.SQLServerDriver
 DB_SQL_JNDI_Binding=sqlserver_jndi
 DB_SQL_JNDI_DatabaseURL=jdbc\:arjuna\:sqlserver_jndi
-DB_SQL_JNDI_DatabaseUser=jbossts0
-DB_SQL_JNDI_DatabasePassword=jbossts0
+DB_SQL_JNDI_DatabaseUser=dtf91
+DB_SQL_JNDI_DatabasePassword=dtf91
 DB_SQL_JNDI_DatabaseName=jbossts
 DB_SQL_JNDI_Host=dev30.qa.atl.jboss.com
 ##DB_SQL_JNDI_Port=1433
@@ -139,8 +139,8 @@ DB_SQL1_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB_SQL1_JNDI_Driver0=com.microsoft.sqlserver.jdbc.SQLServerDriver
 DB_SQL1_JNDI_Binding=sqlserver_jndi1
 DB_SQL1_JNDI_DatabaseURL=jdbc\:arjuna\:sqlserver_jndi1
-DB_SQL1_JNDI_DatabaseUser=jbossts0
-DB_SQL1_JNDI_DatabasePassword=jbossts0
+DB_SQL1_JNDI_DatabaseUser=dtf91
+DB_SQL1_JNDI_DatabasePassword=dtf91
 DB_SQL1_JNDI_DatabaseName=jbossts
 DB_SQL1_JNDI_Host=dev30.qa.atl.jboss.com
 DB_SQL1_JNDI_Port=3918
@@ -154,8 +154,8 @@ DB_SQL2_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB_SQL2_JNDI_Driver0=com.microsoft.sqlserver.jdbc.SQLServerDriver
 DB_SQL2_JNDI_Binding=sqlserver_jndi2
 DB_SQL2_JNDI_DatabaseURL=jdbc\:arjuna\:sqlserver_jndi2
-DB_SQL2_JNDI_DatabaseUser=jbossts1
-DB_SQL2_JNDI_DatabasePassword=jbossts1
+DB_SQL2_JNDI_DatabaseUser=dtf92
+DB_SQL2_JNDI_DatabasePassword=dtf92
 DB_SQL2_JNDI_DatabaseName=jbossts
 DB_SQL2_JNDI_Host=dev30.qa.atl.jboss.com
 DB_SQL2_JNDI_Port=3918
@@ -170,10 +170,10 @@ DB_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
 DB_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB_THIN_JNDI_Binding=oracle_thin
 DB_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin
-DB_THIN_JNDI_DatabaseUser=jbossts0
-DB_THIN_JNDI_DatabasePassword=jbossts0
-DB_THIN_JNDI_DatabaseName=qadb01
-DB_THIN_JNDI_Host=dev01.qa.atl.jboss.com
+DB_THIN_JNDI_DatabaseUser=dtf91
+DB_THIN_JNDI_DatabasePassword=dtf91
+DB_THIN_JNDI_DatabaseName=TSH1
+DB_THIN_JNDI_Host=dtfdb5.qa.atl2.redhat.com
 DB_THIN_JNDI_Port=1521
 
 ######################################################################
@@ -187,10 +187,10 @@ DB1_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
 DB1_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB1_THIN_JNDI_Binding=oracle_thin1
 DB1_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin1
-DB1_THIN_JNDI_DatabaseUser=jbossts0
-DB1_THIN_JNDI_DatabasePassword=jbossts0
-DB1_THIN_JNDI_DatabaseName=qadb01
-DB1_THIN_JNDI_Host=dev01.qa.atl.jboss.com
+DB1_THIN_JNDI_DatabaseUser=dtf91
+DB1_THIN_JNDI_DatabasePassword=dtf91
+DB1_THIN_JNDI_DatabaseName=TSH1
+DB1_THIN_JNDI_Host=dtfdb5.qa.atl2.redhat.com
 DB1_THIN_JNDI_Port=1521
 
 # DB2
@@ -200,12 +200,11 @@ DB2_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
 DB2_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB2_THIN_JNDI_Binding=oracle_thin2
 DB2_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin2
-DB2_THIN_JNDI_DatabaseUser=jbossts1
-DB2_THIN_JNDI_DatabasePassword=jbossts1
-DB2_THIN_JNDI_DatabaseName=qadb01
-DB2_THIN_JNDI_Host=dev01.qa.atl.jboss.com
+DB2_THIN_JNDI_DatabaseUser=dtf92
+DB2_THIN_JNDI_DatabasePassword=dtf92
+DB2_THIN_JNDI_DatabaseName=TSH1
+DB2_THIN_JNDI_Host=dtfdb5.qa.atl2.redhat.com
 DB2_THIN_JNDI_Port=1521
-
 
 ##########################################################################
 # IBMDB2 JNDI Profile
