@@ -5,6 +5,9 @@ import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsat.client.WSATClient;
 import com.arjuna.webservices11.ServiceRegistry;
+import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CoordinatorPortType;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
@@ -96,6 +99,7 @@ public class CoordinatorClient
     public void sendPrepared(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, preparedAction);
         Notification prepared = new Notification();
 
@@ -112,6 +116,7 @@ public class CoordinatorClient
     public void sendAborted(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFrom(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, abortedAction);
         Notification aborted = new Notification();
 
@@ -128,6 +133,7 @@ public class CoordinatorClient
     public void sendReadOnly(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFrom(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, readOnlyAction);
         Notification readOnly = new Notification();
 
@@ -144,6 +150,7 @@ public class CoordinatorClient
     public void sendCommitted(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFrom(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, committedAction);
         Notification committed = new Notification();
 
@@ -161,7 +168,9 @@ public class CoordinatorClient
     public void sendSoapFault(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final SoapFault soapFault, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        // TODO - we cannot do this without an endpoint so all we can do is log a message!
+        AddressingHelper.installFrom(addressingProperties, participant, identifier);
+        // use the SoapFaultService to format a soap fault and send it back to the faultto or from address
+        SoapFaultClient.sendSoapFault((SoapFault11)soapFault, identifier, addressingProperties, faultAction);
     }
 
     /**
@@ -185,7 +194,6 @@ public class CoordinatorClient
                                                 final AddressingProperties addressingProperties,
                                                 final AttributedURI action)
     {
-        addressingProperties.setFrom(participant);
         return WSATClient.getCoordinatorPort(endpoint, action, addressingProperties);
     }
 }

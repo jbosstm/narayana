@@ -5,9 +5,12 @@ import com.arjuna.services.framework.task.Task;
 import com.arjuna.services.framework.task.TaskManager;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsba.processors.ParticipantCompletionParticipantProcessor;
+import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices.SoapFault;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.BusinessAgreementWithParticipantCompletionParticipantPortType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
+import org.jboss.jbossts.xts.soapfault.Fault;
 
 import javax.annotation.Resource;
 import javax.jws.*;
@@ -217,6 +220,24 @@ public class BusinessAgreementWithParticipantCompletionParticipantPortTypeImpl i
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
                 ParticipantCompletionParticipantProcessor.getProcessor().status(status, inboundAddressProperties, arjunaContext) ;
+            }
+        }) ;
+    }
+
+    @WebMethod(operationName = "fault", action = "http://docs.oasis-open.org/ws-tx/wscoor/2006/06/fault")
+    @Oneway
+    public void fault(
+            @WebParam(name = "Fault", targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/", partName = "parameters")
+            Fault fault)
+    {
+        MessageContext ctx = webServiceCtx.getMessageContext();
+        final AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
+        final SoapFault soapFault = SoapFault11.fromFault(fault);
+
+        TaskManager.getManager().queueTask(new Task() {
+            public void executeTask() {
+                ParticipantCompletionParticipantProcessor.getProcessor().soapFault(soapFault, inboundAddressProperties, arjunaContext); ;
             }
         }) ;
     }

@@ -25,6 +25,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wsba.client.WSBAClient;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.ServiceRegistry;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.BusinessAgreementWithParticipantCompletionParticipantPortType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
@@ -133,6 +134,7 @@ public class ParticipantCompletionParticipantClient
     public void sendClose(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, participantCompletionCoordinator, identifier);
         BusinessAgreementWithParticipantCompletionParticipantPortType port;
         port = getPort(endpoint, addressingProperties, closeAction);
         NotificationType close = new NotificationType();
@@ -150,6 +152,7 @@ public class ParticipantCompletionParticipantClient
     public void sendCancel(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, participantCompletionCoordinator, identifier);
         BusinessAgreementWithParticipantCompletionParticipantPortType port;
         port = getPort(endpoint, addressingProperties, cancelAction);
         NotificationType cancel = new NotificationType();
@@ -167,6 +170,7 @@ public class ParticipantCompletionParticipantClient
     public void sendCompensate(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, participantCompletionCoordinator, identifier);
         BusinessAgreementWithParticipantCompletionParticipantPortType port;
         port = getPort(endpoint, addressingProperties, compensateAction);
         NotificationType compensate = new NotificationType();
@@ -184,6 +188,7 @@ public class ParticipantCompletionParticipantClient
     public void sendFailed(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFrom(addressingProperties, participantCompletionCoordinator, identifier);
         BusinessAgreementWithParticipantCompletionParticipantPortType port;
         port = getPort(endpoint, addressingProperties, failedAction);
         NotificationType failed = new NotificationType();
@@ -201,6 +206,7 @@ public class ParticipantCompletionParticipantClient
     public void sendExited(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFrom(addressingProperties, participantCompletionCoordinator, identifier);
         BusinessAgreementWithParticipantCompletionParticipantPortType port;
         port = getPort(endpoint, addressingProperties, exitedAction);
         NotificationType exited = new NotificationType();
@@ -218,6 +224,7 @@ public class ParticipantCompletionParticipantClient
     public void sendNotCompleted(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFrom(addressingProperties, participantCompletionCoordinator, identifier);
         BusinessAgreementWithParticipantCompletionParticipantPortType port;
         port = getPort(endpoint, addressingProperties, notCompletedAction);
         NotificationType notCompleted = new NotificationType();
@@ -235,6 +242,7 @@ public class ParticipantCompletionParticipantClient
     public void sendGetStatus(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, participantCompletionCoordinator, identifier);
         BusinessAgreementWithParticipantCompletionParticipantPortType port;
         port = getPort(endpoint, addressingProperties, getStatusAction);
         NotificationType getStatus = new NotificationType();
@@ -253,6 +261,7 @@ public class ParticipantCompletionParticipantClient
         final QName state)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, participantCompletionCoordinator, identifier);
         BusinessAgreementWithParticipantCompletionParticipantPortType port;
         port = getPort(endpoint, addressingProperties, statusAction);
         StatusType status = new StatusType();
@@ -282,6 +291,10 @@ public class ParticipantCompletionParticipantClient
     getPort(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final AttributedURI action)
     {
         addressingProperties.setFrom(participantCompletionCoordinator);
-        return WSBAClient.getParticipantCompletionParticipantPort(participant, action, addressingProperties);
+        if (participant != null) {
+            return WSBAClient.getParticipantCompletionParticipantPort(participant, action, addressingProperties);
+        } else {
+            return WSBAClient.getParticipantCompletionParticipantPort(action, addressingProperties);
+        }
     }
 }

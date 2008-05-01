@@ -27,6 +27,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import javax.xml.ws.addressing.EndpointReference;
 
 import com.arjuna.webservices.wsarj.ArjunaConstants;
 
@@ -95,7 +96,7 @@ public class InstanceIdentifier
     }
 
      /**
-     * Set the identifier on an endpoint reference under construction.
+     * Set the identifier on a W3C endpoint reference under construction.
      * @param builder The endpoint reference builder.
      * @param identifier The identifier.
      */
@@ -105,7 +106,7 @@ public class InstanceIdentifier
     }
     
     /**
-     * Set the identifier on an endpoint reference under construction.
+     * Set the identifier on a W3C endpoint reference under construction.
      * @param builder The endpoint reference builder.
      * @param instanceIdentifier The identifier.
      */
@@ -113,6 +114,26 @@ public class InstanceIdentifier
     {
         builder.referenceParameter(createInstanceIdentifierElement(instanceIdentifier.getInstanceIdentifier())) ;
     }
+
+    /**
+    * Set the identifier on a WS Addressing endpoint reference under construction.
+    * @param epReference The WS Addressing endpoint reference.
+    * @param instanceIdentifier The identifier.
+    */
+   public static void setEndpointInstanceIdentifier(final EndpointReference epReference, final InstanceIdentifier instanceIdentifier)
+   {
+       setEndpointInstanceIdentifier(epReference, instanceIdentifier.getInstanceIdentifier());
+   }
+
+    /**
+    * Set the identifier on a WS Addressing endpoint reference under construction.
+    * @param epReference The WS Addressing endpoint reference.
+    * @param instanceIdentifier The identifier string.
+    */
+   public static void setEndpointInstanceIdentifier(final EndpointReference epReference, final String instanceIdentifier)
+   {
+       epReference.getReferenceParameters().addElement(createInstanceIdentifierElement(instanceIdentifier));
+   }
 
     /**
      * a soap factory used to construct SOAPElement instances representing InstanceIdentifier instances
@@ -131,7 +152,7 @@ public class InstanceIdentifier
      * suppliedidentifier string as its value
      */
 
-    private static Element createInstanceIdentifierElement(final String instanceIdentifier)
+    public static Element createInstanceIdentifierElement(final String instanceIdentifier)
     {
         try {
             if (factory == null) {
@@ -142,6 +163,7 @@ public class InstanceIdentifier
                 WSARJ_ELEMENT_INSTANCE_NAME = name;
             }
             SOAPElement element = factory.createElement(WSARJ_ELEMENT_INSTANCE_NAME);
+            element.addNamespaceDeclaration(ArjunaConstants.WSARJ_PREFIX, ArjunaConstants.WSARJ_NAMESPACE);
             element.addTextNode(instanceIdentifier);
             return element;
         } catch (SOAPException se) {

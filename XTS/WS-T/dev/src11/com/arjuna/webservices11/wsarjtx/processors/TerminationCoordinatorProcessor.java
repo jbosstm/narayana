@@ -24,6 +24,7 @@ import com.arjuna.schemas.ws._2005._10.wsarjtx.NotificationType;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.wst11.BusinessActivityTerminator;
+import com.arjuna.webservices.SoapFault;
 
 import javax.xml.ws.addressing.AddressingProperties;
 
@@ -105,4 +106,12 @@ public abstract class TerminationCoordinatorProcessor
      */
     public abstract void complete(final NotificationType complete, final AddressingProperties addressingProperties,
         final ArjunaContext arjunaContext) ;
+
+    /**
+     * handle a soap fault sent by the participant.
+     * @param soapFault The soap fault
+     * @param addressingProperties The addressing context.
+     * @param arjunaContext The arjuna context.
+     */
+    public abstract void soapFault(final SoapFault soapFault, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext);
 }

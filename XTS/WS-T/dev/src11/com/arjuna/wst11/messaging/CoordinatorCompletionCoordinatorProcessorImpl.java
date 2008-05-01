@@ -27,7 +27,10 @@ import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsba.CoordinatorCompletionCoordinatorInboundEvents;
+import com.arjuna.webservices11.wsba.BusinessActivityConstants;
+import com.arjuna.webservices11.wsba.client.CoordinatorCompletionParticipantClient;
 import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
+import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.messaging.MessageId;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.ExceptionType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
@@ -440,11 +443,12 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
     {
         // KEV add check for recovery
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingContext = AddressingHelper.createNotificationContext(messageId) ;
+        final AddressingProperties responseAddressingContext = AddressingHelper.createOneWayResponseContext(addressingProperties, messageId) ;
+
         try
         {
-            // TODO cannot do this without an endpoint so we have to log an error message!
-            // CoordinatorCompletionParticipantClient.getClient().sendExited(responseAddressingContext, arjunaContext.getInstanceIdentifier()) ;
+            // supply a null endpoint indicating that the port should be configured from the addressing properties!
+            CoordinatorCompletionParticipantClient.getClient().sendExited(null, responseAddressingContext, arjunaContext.getInstanceIdentifier()) ;
         }
         catch (final Throwable th)
         {
@@ -467,11 +471,12 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
     {
         // KEV add check for recovery
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingContext = AddressingHelper.createNotificationContext(messageId) ;
+        final AddressingProperties responseAddressingContext = AddressingHelper.createOneWayResponseContext(addressingProperties, messageId) ;
+
         try
         {
-            // TODO cannot do this without an endpoint so we have to log an error message!
-            // CoordinatorCompletionParticipantClient.getClient().sendFailed(responseAddressingContext, arjunaContext.getInstanceIdentifier()) ;
+            // supply null endpoint so that addressing properties are used to deliver message
+            CoordinatorCompletionParticipantClient.getClient().sendFailed(null, responseAddressingContext, arjunaContext.getInstanceIdentifier()) ;
         }
         catch (final Throwable th)
         {

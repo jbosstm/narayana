@@ -29,8 +29,10 @@ import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsba.CoordinatorCompletionParticipantInboundEvents;
 import com.arjuna.webservices11.wsba.State;
+import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsba.client.CoordinatorCompletionCoordinatorClient;
 import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionParticipantProcessor;
+import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 import com.arjuna.wst.FaultedException;
@@ -1069,6 +1071,7 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
     private AddressingProperties createContext()
     {
         final String messageId = MessageId.getMessageId() ;
+
         return AddressingHelper.createNotificationContext(messageId) ;
     }
 }

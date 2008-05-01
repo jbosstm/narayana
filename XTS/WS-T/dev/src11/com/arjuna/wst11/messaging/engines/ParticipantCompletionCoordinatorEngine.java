@@ -28,8 +28,10 @@ import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsba.ParticipantCompletionCoordinatorInboundEvents;
 import com.arjuna.webservices11.wsba.State;
+import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsba.processors.ParticipantCompletionCoordinatorProcessor;
 import com.arjuna.webservices11.wsba.client.ParticipantCompletionParticipantClient;
+import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.wst11.BAParticipantManager;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.ExceptionType;
@@ -870,6 +872,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     private AddressingProperties createContext()
     {
         final String messageId = MessageId.getMessageId() ;
+
         return AddressingHelper.createNotificationContext(messageId);
     }
 }

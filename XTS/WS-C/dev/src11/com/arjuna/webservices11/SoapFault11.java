@@ -2,7 +2,9 @@ package com.arjuna.webservices11;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
+import com.arjuna.webservices.util.InvalidEnumerationException;
 import org.w3c.dom.Element;
+import org.jboss.jbossts.xts.soapfault.Fault;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
@@ -131,6 +133,29 @@ public class SoapFault11 extends SoapFault {
          this.detailElement = detailElement;
          this.headerElements = headerElements ;
      }
+
+    // convert to/from fault we can send via the SoapFaultService
+
+    public Fault toFault()
+    {
+        Fault fault = new Fault();
+        QName faultcode = subcode;
+        String faultstring = getReason();
+        fault.setFaultcode(faultcode);
+        fault.setFaultstring(faultstring);
+        return fault;
+    }
+
+    public static SoapFault11 fromFault(Fault fault)
+    {
+        try {
+            QName subcode = fault.getFaultcode();
+            String reason = fault.getFaultstring();
+            return new SoapFault11(SoapFaultType.FAULT_SENDER, subcode, reason);
+        } catch (Throwable th) {
+            return new SoapFault11(th);
+        }
+    }
 
      /**
       * Get the SOAP fault detailElement.

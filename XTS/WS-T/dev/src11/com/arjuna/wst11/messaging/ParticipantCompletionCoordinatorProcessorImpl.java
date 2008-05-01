@@ -27,7 +27,10 @@ import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsba.ParticipantCompletionCoordinatorInboundEvents;
+import com.arjuna.webservices11.wsba.BusinessActivityConstants;
+import com.arjuna.webservices11.wsba.client.ParticipantCompletionParticipantClient;
 import com.arjuna.webservices11.wsba.processors.ParticipantCompletionCoordinatorProcessor;
+import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.messaging.MessageId;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.ExceptionType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
@@ -441,11 +444,11 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
     {
         // KEV add check for recovery
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingProperties = AddressingHelper.createNotificationContext(messageId) ;
+        final AddressingProperties responseAddressingProperties = AddressingHelper.createOneWayResponseContext(addressingProperties, messageId) ;
         try
         {
-            // cannot do this without a coordinator endpoint and that is the only way it gets called
-            // ParticipantCompletionParticipantClient.getClient().sendExited(responseAddressingProperties, arjunaContext.getInstanceIdentifier()) ;
+            // supply null endpoint so that addressing properties are used to deliver message
+            ParticipantCompletionParticipantClient.getClient().sendExited(null, responseAddressingProperties, arjunaContext.getInstanceIdentifier()) ;
         }
         catch (final Throwable th)
         {
@@ -468,11 +471,11 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
     {
         // KEV add check for recovery
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingProperties = AddressingHelper.createNotificationContext(  messageId) ;
+        final AddressingProperties responseAddressingProperties = AddressingHelper.createOneWayResponseContext(addressingProperties, messageId) ;
         try
         {
-            // cannot do this without a coordinator endpoint and that is the only way it gets called
-            // ParticipantCompletionParticipantClient.getClient().sendFaulted(responseAddressingProperties, arjunaContext.getInstanceIdentifier()) ;
+            // supply null endpoint so that addressing properties are used to deliver message
+            ParticipantCompletionParticipantClient.getClient().sendFailed(null, responseAddressingProperties, arjunaContext.getInstanceIdentifier()) ;
         }
         catch (final Throwable th)
         {

@@ -5,6 +5,7 @@ import com.arjuna.schemas.ws._2005._10.wsarjtx.TerminationCoordinatorService;
 import com.arjuna.schemas.ws._2005._10.wsarjtx.TerminationParticipantPortType;
 import com.arjuna.schemas.ws._2005._10.wsarjtx.TerminationParticipantService;
 import com.arjuna.webservices11.wsarj.handler.InstanceIdentifierHandler;
+import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 
 import javax.xml.ws.BindingProvider;
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.net.URISyntaxException;
 
 import org.jboss.ws.extensions.addressing.jaxws.WSAddressingClientHandler;
+import org.w3c.dom.Element;
 
 /**
  * Created by IntelliJ IDEA.
@@ -134,6 +136,33 @@ public class WSARJTXClient
         AddressingHelper.installCallerProperties(addressingProperties, requestProperties);
         // we should not need to do this but JBossWS does not pick up the value in the addressing properties
         requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, requestProperties.getTo().getURI().toString());
+        return port;
+    }
+    // we use this in situations where we don't have a proper endpoint but we do have caller addressing properties
+    public static TerminationParticipantPortType getTerminationParticipantPort(InstanceIdentifier identifier,
+                                                                               AttributedURI action,
+                                                                               AddressingProperties addressingProperties)
+    {
+        // TODO - we need the 2.1 verison of Service so we can specify that we want to use the WS Addressing feature
+        TerminationParticipantService service = getTerminationParticipantService();
+        // TerminationParticipantPortType port = service.getPort(endpointReference, TerminationParticipantPortType.class, new AddressingFeature(true, true));
+        TerminationParticipantPortType port = service.getPort(TerminationParticipantPortType.class);
+        BindingProvider bindingProvider = (BindingProvider)port;
+        /*
+         * we have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
+         */
+        List<Handler> customHandlerChain = new ArrayList<Handler>();
+		customHandlerChain.add(new WSAddressingClientHandler());
+		bindingProvider.getBinding().setHandlerChain(customHandlerChain);
+        Map<String, Object> requestContext = bindingProvider.getRequestContext();
+        Element refParam = InstanceIdentifier.createInstanceIdentifierElement(identifier.getInstanceIdentifier());
+        addressingProperties.getReferenceParameters().addElement(refParam);
+        addressingProperties.setAction(action);
+        requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES, addressingProperties);
+        // JBossWS shoudl do this for us
+        requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES_OUTBOUND, addressingProperties);
+        // we should not need to do this but JBossWS does not pick up the value in the addressing properties
+        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, addressingProperties.getTo().getURI().toString());
         return port;
     }
 }

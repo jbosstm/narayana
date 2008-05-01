@@ -253,6 +253,7 @@
         <copy file="${dev.dd.dir}/wsarjtx/wsdl/wsarjtx.wsdl" tofile="${build.dev.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl/wsarjtx.wsdl"/>
         <copy file="${dev.dd.dir}/wsarjtx/wsdl/wsarjtx-termination-coordinator-binding.wsdl" tofile="${build.dev.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl/wsarjtx-termination-coordinator-binding.wsdl"/>
         <copy file="${dev.dd.dir}/wsarjtx/wsdl/wsarjtx-termination-participant-binding.wsdl" tofile="${build.dev.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl/wsarjtx-termination-participant-binding.wsdl"/>
+
         <jar jarfile="${build.dev.lib.dir}/ws-t.jar">
             <fileset dir="${build.dev.classes.dir}"/>
             <manifest>

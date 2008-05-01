@@ -25,13 +25,20 @@ import com.arjuna.schemas.ws._2005._10.wsarjtx.TerminationCoordinatorPortType;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
+import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.ServiceRegistry;
+import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 
 import javax.xml.ws.addressing.AddressingBuilder;
 import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.addressing.AttributedURI;
+import javax.xml.ws.addressing.EndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URI;
 
 /**
  * The Client side of the Terminator Participant.
@@ -56,6 +63,16 @@ public class TerminationCoordinatorClient
      * The cancel action.
      */
     private AttributedURI cancelAction = null;
+    /**
+     * The SOAP fault action.
+     */
+    private AttributedURI faultAction = null;
+
+    /**
+     * The participant URI for replies.
+     */
+    private EndpointReference terminationParticipant ;
+
 
     /**
      * Construct the terminator participant client.
@@ -67,6 +84,7 @@ public class TerminationCoordinatorClient
             completeAction = builder.newURI(ArjunaTXConstants.WSARJTX_ACTION_COMPLETE);
             closeAction = builder.newURI(ArjunaTXConstants.WSARJTX_ACTION_CLOSE);
             cancelAction = builder.newURI(ArjunaTXConstants.WSARJTX_ACTION_CANCEL);
+            faultAction = builder.newURI(ArjunaTXConstants.WSARJTX_ACTION_SOAP_FAULT) ;
         } catch (URISyntaxException use) {
             // TODO - log fault and throw exception
         }
@@ -76,6 +94,14 @@ public class TerminationCoordinatorClient
         //AddressingPolicy.register(handlerRegistry) ;
         // Add client policies
         //ClientPolicy.register(handlerRegistry) ;
+        final String terminationParticipantURIString =
+            ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME);
+        try {
+            URI terminationParticipantURI = new URI(terminationParticipantURIString);
+            terminationParticipant = builder.newEndpointReference(terminationParticipantURI);
+        } catch (URISyntaxException use) {
+            // TODO - log fault and throw exception
+        }
     }
 
     /**
@@ -88,6 +114,7 @@ public class TerminationCoordinatorClient
     public void sendComplete(final W3CEndpointReference coordinator, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, terminationParticipant, identifier);
         final TerminationCoordinatorPortType port = getPort(coordinator, addressingProperties, identifier, completeAction);
         final NotificationType complete = new NotificationType();
 
@@ -104,6 +131,7 @@ public class TerminationCoordinatorClient
     public void sendClose(final W3CEndpointReference coordinator, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, terminationParticipant, identifier);
         final TerminationCoordinatorPortType port = getPort(coordinator, addressingProperties, identifier, closeAction);
         final NotificationType close = new NotificationType();
 
@@ -120,12 +148,31 @@ public class TerminationCoordinatorClient
     public void sendCancel(final W3CEndpointReference coordinator, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, terminationParticipant, identifier);
         final TerminationCoordinatorPortType port = getPort(coordinator, addressingProperties, identifier, cancelAction);
         final NotificationType cancel = new NotificationType();
 
         port.cancelOperation(cancel);
     }
 
+    /**
+     * Send a fault.
+     * @param addressingProperties addressing context initialised with to and message ID.
+     * @param soapFault The SOAP fault.
+     * @param identifier The arjuna instance identifier.
+     * @throws SoapFault For any errors.
+     * @throws IOException for any transport errors.
+     */
+    public void sendSoapFault(final W3CEndpointReference endpoint,
+                              final AddressingProperties addressingProperties,
+                              final SoapFault soapFault,
+                              final InstanceIdentifier identifier)
+        throws SoapFault, IOException
+    {
+        AddressingHelper.installFrom(addressingProperties, terminationParticipant, identifier);
+        // use the SoapFaultService to format a soap fault and send it back to the faultto or from address
+        SoapFaultClient.sendSoapFault((SoapFault11)soapFault, endpoint, addressingProperties, faultAction);
+    }
     /**
      * Get the Terminator Coordinator client singleton.
      * @return The Terminator Coordinator client singleton.

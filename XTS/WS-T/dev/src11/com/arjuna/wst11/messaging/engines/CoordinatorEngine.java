@@ -5,11 +5,13 @@ import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.util.TransportTimer;
 import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.CoordinatorInboundEvents;
 import com.arjuna.webservices11.wsat.State;
+import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsat.client.ParticipantClient;
 import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
@@ -540,19 +542,12 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     {
         try
         {
-            final AddressingProperties responseContext = createContext() ;
-            final AttributedURI messageId = addressingProperties.getMessageID() ;
+            final AddressingProperties faultAddressingProperties = AddressingHelper.createFaultContext(addressingProperties, MessageId.getMessageId()) ;
             final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
-            if (messageId != null)
-            {
-                AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-                Relationship[] relatesTo = new Relationship[] { builder.newRelationship(messageId.getURI()) };
-                responseContext.setRelatesTo(relatesTo);
-            }
 
             final String message = WSTLogger.log_mesg.getString("com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendInvalidState_1") ;
             final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME, message) ;
-            ParticipantClient.getClient().sendSoapFault(participant, responseContext, soapFault, instanceIdentifier) ;
+            ParticipantClient.getClient().sendSoapFault(faultAddressingProperties, soapFault, instanceIdentifier) ;
         }
         catch (final Throwable th)
         {
@@ -594,6 +589,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     private AddressingProperties createContext()
     {
         final String messageId = MessageId.getMessageId() ;
+
         return AddressingHelper.createNotificationContext(messageId) ;
     }
 }

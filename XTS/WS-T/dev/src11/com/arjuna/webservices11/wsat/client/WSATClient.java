@@ -101,6 +101,8 @@ public class WSATClient
         return completionInitiatorService.get();
     }
 
+    // fetch ports when we HAVE an endpoint
+
     public static CoordinatorPortType getCoordinatorPort(W3CEndpointReference endpointReference,
                                                          AttributedURI action,
                                                          AddressingProperties addressingProperties)
@@ -110,31 +112,12 @@ public class WSATClient
         // CoordinatorPortType port = service.getPort(endpointReference, CoordinatorPortType.class, new AddressingFeature(true, true));
         CoordinatorPortType port = service.getPort(endpointReference, CoordinatorPortType.class);
         BindingProvider bindingProvider = (BindingProvider)port;
-       /*
-         * we have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
-         */
-        List<Handler> customHandlerChain = new ArrayList<Handler>();
-		customHandlerChain.add(new WSAddressingClientHandler());
-		bindingProvider.getBinding().setHandlerChain(customHandlerChain);
-        // ok, JBossWS native has hacked this by pulling the address and reference parameters out of the endpoint
-        // and storing them in an AddressingProperties instance hung off the context under CLIENT_ADDRESSING_PROPERTIES_OUTBOUND.
-        // we still need to set the action and message id and possibly relatesTo -- this is all distinctly non-portable :-/
-        // n.b. Metro installs the address in requestContext under ENDPOINT_ADDRESS_PROPERTY. it also seems to ensure
-        // that the reference parameters get installed -- but how?
 
-        // the address will have been pulled out of the endpoint by getPort but we still have to set it in the
-        // addressing properties along with the action and message id
-        Map<String, Object> requestContext = bindingProvider.getRequestContext();
-        AddressingProperties requestProperties = (AddressingProperties)requestContext.get(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES_OUTBOUND);
-        addressingProperties.setAction(action);
-        AddressingHelper.installCallerProperties(addressingProperties, requestProperties);
-        // we should not need to do this but JBossWS does not pick up the value in the addressing properties
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, requestProperties.getTo().getURI().toString());
+        configureEndpointPort(bindingProvider, action, addressingProperties);
+
         return port;
     }
 
-    // don't think we ever need this as we get a registration port from the endpoint ref returned by
-    // the activation port request
     public static ParticipantPortType getParticipantPort(W3CEndpointReference endpointReference,
                                                          AttributedURI action,
                                                          AddressingProperties addressingProperties)
@@ -144,26 +127,9 @@ public class WSATClient
         // ParticipantPortType port = service.getPort(endpointReference, ParticipantPortType.class, new AddressingFeature(true, true));
         ParticipantPortType port = service.getPort(endpointReference, ParticipantPortType.class);
         BindingProvider bindingProvider = (BindingProvider)port;
-        /*
-         * we have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
-         */
-        List<Handler> customHandlerChain = new ArrayList<Handler>();
-		customHandlerChain.add(new WSAddressingClientHandler());
-		bindingProvider.getBinding().setHandlerChain(customHandlerChain);
-        // ok, JBossWS native has hacked this by pulling the address and reference parameters out of the endpoint
-        // and storing them in an AddressingProperties instance hung off the context under CLIENT_ADDRESSING_PROPERTIES_OUTBOUND.
-        // we still need to set the action and message id and possibly relatesTo -- this is all distinctly non-portable :-/
-        // n.b. Metro installs the address in requestContext under ENDPOINT_ADDRESS_PROPERTY. it also seems to ensure
-        // that the reference parameters get installed -- but how?
 
-        // the address will have been pulled out of the endpoint by getPort but we still have to set it in the
-        // addressing properties along with the action and message id
-        Map<String, Object> requestContext = bindingProvider.getRequestContext();
-        AddressingProperties requestProperties = (AddressingProperties)requestContext.get(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES_OUTBOUND);
-        addressingProperties.setAction(action);
-        AddressingHelper.installCallerProperties(addressingProperties, requestProperties);
-        // we should not need to do this but JBossWS does not pick up the value in the addressing properties
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, requestProperties.getTo().getURI().toString());
+        configureEndpointPort(bindingProvider, action, addressingProperties);
+
         return port;
     }
 
@@ -176,26 +142,9 @@ public class WSATClient
         // CompletionCoordinatorPortType port = service.getPort(endpointReference, CompletionCoordinatorPortType.class, new AddressingFeature(true, true));
         CompletionCoordinatorPortType port = service.getPort(endpointReference, CompletionCoordinatorPortType.class);
         BindingProvider bindingProvider = (BindingProvider)port;
-        /*
-         * we have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
-         */
-        List<Handler> customHandlerChain = new ArrayList<Handler>();
-		customHandlerChain.add(new WSAddressingClientHandler());
-		bindingProvider.getBinding().setHandlerChain(customHandlerChain);
-        // ok, JBossWS native has hacked this by pulling the address and reference parameters out of the endpoint
-        // and storing them in an AddressingProperties instance hung off the context under CLIENT_ADDRESSING_PROPERTIES_OUTBOUND.
-        // we still need to set the action and message id and possibly relatesTo -- this is all distinctly non-portable :-/
-        // n.b. Metro installs the address in requestContext under ENDPOINT_ADDRESS_PROPERTY. it also seems to ensure
-        // that the reference parameters get installed -- but how?
 
-        // the address will have been pulled out of the endpoint by getPort but we still have to set it in the
-        // addressing properties along with the action and message id
-        Map<String, Object> requestContext = bindingProvider.getRequestContext();
-        AddressingProperties requestProperties = (AddressingProperties)requestContext.get(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES_OUTBOUND);
-        addressingProperties.setAction(action);
-        AddressingHelper.installCallerProperties(addressingProperties, requestProperties);
-        // we should not need to do this but JBossWS does not pick up the value in the addressing properties
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, requestProperties.getTo().getURI().toString());
+        configureEndpointPort(bindingProvider, action, addressingProperties);
+
         return port;
     }
 
@@ -208,12 +157,80 @@ public class WSATClient
         // CompletionInitiatorPortType port = service.getPort(endpointReference, CompletionInitiatorPortType.class, new AddressingFeature(true, true));
         CompletionInitiatorPortType port = service.getPort(endpointReference, CompletionInitiatorPortType.class);
         BindingProvider bindingProvider = (BindingProvider)port;
+
+        configureEndpointPort(bindingProvider, action, addressingProperties);
+
+        return port;
+    }
+
+    // fetch ports when we have NO endpoint
+
+    public static CoordinatorPortType getCoordinatorPort(AttributedURI action,
+                                                         AddressingProperties addressingProperties)
+    {
+        // TODO - we need the 2.1 verison of Service so we can specify that we want to use the WS Addressing feature
+        CoordinatorService service = getCoordinatorService();
+        // CoordinatorPortType port = service.getPort(CoordinatorPortType.class, new AddressingFeature(true, true));
+        CoordinatorPortType port = service.getPort(CoordinatorPortType.class);
+        BindingProvider bindingProvider = (BindingProvider)port;
+
+        configurePort(bindingProvider, action, addressingProperties);
+
+        return port;
+    }
+
+    public static ParticipantPortType getParticipantPort(AttributedURI action,
+                                                         AddressingProperties addressingProperties)
+    {
+        // TODO - we need the 2.1 verison of Service so we can specify that we want to use the WS Addressing feature
+        ParticipantService service = getParticipantService();
+        // ParticipantPortType port = service.getPort(ParticipantPortType.class, new AddressingFeature(true, true));
+        ParticipantPortType port = service.getPort(ParticipantPortType.class);
+        BindingProvider bindingProvider = (BindingProvider)port;
+
+        configurePort(bindingProvider, action, addressingProperties);
+
+        return port;
+    }
+
+    public static CompletionCoordinatorPortType getCompletionCoordinatorPort(AttributedURI action,
+                                                                             AddressingProperties addressingProperties)
+    {
+        // TODO - we need the 2.1 verison of Service so we can specify that we want to use the WS Addressing feature
+        CompletionCoordinatorService service = getCompletionCoordinatorService();
+        // CompletionCoordinatorPortType port = service.getPort(CompletionCoordinatorPortType.class, new AddressingFeature(true, true));
+        CompletionCoordinatorPortType port = service.getPort(CompletionCoordinatorPortType.class);
+        BindingProvider bindingProvider = (BindingProvider)port;
+
+        configurePort(bindingProvider, action, addressingProperties);
+
+        return port;
+    }
+
+    public static CompletionInitiatorPortType getCompletionInitiatorPort(AttributedURI action,
+                                                                         AddressingProperties addressingProperties)
+    {
+        // TODO - we need the 2.1 verison of Service so we can specify that we want to use the WS Addressing feature
+        CompletionInitiatorService service = getCompletionInitiatorService();
+        // CompletionInitiatorPortType port = service.getPort(CompletionInitiatorPortType.class, new AddressingFeature(true, true));
+        CompletionInitiatorPortType port = service.getPort(CompletionInitiatorPortType.class);
+        BindingProvider bindingProvider = (BindingProvider)port;
+
+        configurePort(bindingProvider, action, addressingProperties);
+
+        return port;
+    }
+
+    private static void configureEndpointPort(BindingProvider bindingProvider,
+                                          AttributedURI action,
+                                          AddressingProperties addressingProperties)
+    {
         /*
          * we have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
          */
         List<Handler> customHandlerChain = new ArrayList<Handler>();
-		customHandlerChain.add(new WSAddressingClientHandler());
-		bindingProvider.getBinding().setHandlerChain(customHandlerChain);
+        customHandlerChain.add(new WSAddressingClientHandler());
+        bindingProvider.getBinding().setHandlerChain(customHandlerChain);
         // ok, JBossWS native has hacked this by pulling the address and reference parameters out of the endpoint
         // and storing them in an AddressingProperties instance hung off the context under CLIENT_ADDRESSING_PROPERTIES_OUTBOUND.
         // we still need to set the action and message id and possibly relatesTo -- this is all distinctly non-portable :-/
@@ -228,6 +245,24 @@ public class WSATClient
         AddressingHelper.installCallerProperties(addressingProperties, requestProperties);
         // we should not need to do this but JBossWS does not pick up the value in the addressing properties
         requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, requestProperties.getTo().getURI().toString());
-        return port;
+    }
+
+    private static void configurePort(BindingProvider bindingProvider,
+                                      AttributedURI action,
+                                      AddressingProperties addressingProperties)
+    {
+        /*
+         * we have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
+         */
+        List<Handler> customHandlerChain = new ArrayList<Handler>();
+        customHandlerChain.add(new WSAddressingClientHandler());
+        bindingProvider.getBinding().setHandlerChain(customHandlerChain);
+        Map<String, Object> requestContext = bindingProvider.getRequestContext();
+        addressingProperties.setAction(action);
+        requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES, addressingProperties);
+        // JaxWS should do this for us
+        requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES_OUTBOUND, addressingProperties);
+        // we should not need to do this but JBossWS does not pick up the value in the addressing properties
+        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, addressingProperties.getTo().getURI().toString());
     }
 }

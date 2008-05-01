@@ -5,6 +5,9 @@ import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsat.client.WSATClient;
 import com.arjuna.webservices11.ServiceRegistry;
+import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CompletionInitiatorPortType;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
@@ -86,6 +89,7 @@ public class CompletionInitiatorClient
     public void sendCommitted(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFrom(addressingProperties, completionCoordinator, identifier);
         CompletionInitiatorPortType port = getPort(participant, addressingProperties, committedAction);
         Notification commited = new Notification();
 
@@ -102,6 +106,7 @@ public class CompletionInitiatorClient
     public void sendAborted(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFrom(addressingProperties, completionCoordinator, identifier);
         CompletionInitiatorPortType port = getPort(participant, addressingProperties, abortedAction);
         Notification aborted = new Notification();
 
@@ -119,7 +124,9 @@ public class CompletionInitiatorClient
     public void sendSoapFault(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final SoapFault soapFault, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        // TODO - we only get here if we have no endpoitn so all we can do is log an error!
+        AddressingHelper.installFrom(addressingProperties, completionCoordinator, identifier);
+        // use the SoapFaultService to format a soap fault and send it back to the faultto or from address
+        SoapFaultClient.sendSoapFault((SoapFault11)soapFault, identifier, addressingProperties, faultAction);
     }
 
     /**

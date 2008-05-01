@@ -8,6 +8,8 @@ import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.client.CompletionCoordinatorClient;
 import com.arjuna.webservices11.wsat.processors.CompletionInitiatorCallback;
 import com.arjuna.webservices11.wsat.processors.CompletionInitiatorProcessor;
+import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
+import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;

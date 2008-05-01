@@ -26,13 +26,20 @@ import com.arjuna.schemas.ws._2005._10.wsarjtx.TerminationParticipantPortType;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
+import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.ServiceRegistry;
+import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 
 import javax.xml.ws.addressing.AddressingBuilder;
 import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.addressing.AttributedURI;
+import javax.xml.ws.addressing.EndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URI;
 
 /**
  * The Client side of the Terminator Coordinator.
@@ -67,6 +74,11 @@ public class TerminationParticipantClient
     private AttributedURI soapFaultAction = null;
 
     /**
+     * The participant URI for replies.
+     */
+    private EndpointReference terminationCoordinator ;
+
+    /**
      * Construct the terminator coordinator client.
      */
     private TerminationParticipantClient()
@@ -87,6 +99,14 @@ public class TerminationParticipantClient
         // AddressingPolicy.register(handlerRegistry) ;
         // Add client policies
         // ClientPolicy.register(handlerRegistry) ;
+        final String terminationCoordinatorURIString =
+            ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_COORDINATOR_SERVICE_NAME);
+        try {
+            URI terminationCoordinatorURI = new URI(terminationCoordinatorURIString);
+            terminationCoordinator = builder.newEndpointReference(terminationCoordinatorURI);
+        } catch (URISyntaxException use) {
+            // TODO - log fault and throw exception
+        }
     }
 
     /**
@@ -99,6 +119,7 @@ public class TerminationParticipantClient
     public void sendCompleted(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, terminationCoordinator, identifier);
         final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, completedAction);
         final NotificationType completed = new NotificationType();
 
@@ -115,6 +136,7 @@ public class TerminationParticipantClient
     public void sendClosed(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, terminationCoordinator, identifier);
         final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, closedAction);
         final NotificationType closed = new NotificationType();
 
@@ -131,6 +153,7 @@ public class TerminationParticipantClient
     public void sendCancelled(final W3CEndpointReference participant,final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, terminationCoordinator, identifier);
         final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, cancelledAction);
         final NotificationType cancelled = new NotificationType();
 
@@ -147,10 +170,36 @@ public class TerminationParticipantClient
     public void sendFaulted(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, terminationCoordinator, identifier);
         final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, faultedAction);
         final NotificationType faulted = new NotificationType();
 
         port.faultedOperation(faulted);
+    }
+
+    /**
+     * Send a fault.
+     * @param participant the endpoint reference for the participant to notify
+     * @param addressingProperties The addressing context.
+     * @param soapFault The SOAP fault.
+     * @param identifier The arjuna  instance identifier.
+     * @throws com.arjuna.webservices.SoapFault For any errors.
+     * @throws java.io.IOException for any transport errors.
+     */
+    public void sendSoapFault(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final SoapFault soapFault, final InstanceIdentifier identifier)
+        throws SoapFault, IOException
+    {
+        AddressingHelper.installFrom(addressingProperties, terminationCoordinator, identifier);
+        final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, soapFaultAction);
+        final ExceptionType fault = new ExceptionType();
+        // we pass the fault type, reason and subcode. we cannot pass the detail and header elements as they are
+        // built from Kev's element types rather than dom element types. this is all we need anyway since we only
+        // see faults containing those values
+        fault.setSoapFaultType(soapFault.getSoapFaultType().getValue());
+        fault.setReason(soapFault.getReason());
+        fault.setSubCode(soapFault.getSubcode());
+
+        port.faultOperation(fault);
     }
 
     /**
@@ -161,10 +210,10 @@ public class TerminationParticipantClient
      * @throws com.arjuna.webservices.SoapFault For any errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendSoapFault(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final SoapFault soapFault, final InstanceIdentifier identifier)
+    public void sendSoapFault(final SoapFault soapFault, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, soapFaultAction);
+        final TerminationParticipantPortType port = getPort(addressingProperties, identifier, soapFaultAction);
         final ExceptionType fault = new ExceptionType();
         // we pass the fault type, reason and subcode. we cannot pass the detail and header elements as they are
         // built from Kev's element types rather than dom element types. this is all we need anyway since we only
@@ -194,5 +243,13 @@ public class TerminationParticipantClient
         // in the ednpoint reference. also the identifier should already be installed in the endpoint
         // reference as a reference parameter so we don't need that either
         return WSARJTXClient.getTerminationParticipantPort(endpoint, action, addressingProperties);
+    }
+
+    private TerminationParticipantPortType getPort(final AddressingProperties addressingProperties,
+                                                   final InstanceIdentifier identifier,
+                                                   final AttributedURI action)
+    {
+        // create a port specific to the incoming addressing properties
+        return WSARJTXClient.getTerminationParticipantPort(identifier, action, addressingProperties);
     }
 }

@@ -5,6 +5,7 @@ import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsat.client.WSATClient;
 import com.arjuna.webservices11.ServiceRegistry;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CompletionCoordinatorPortType;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
@@ -81,6 +82,7 @@ public class CompletionCoordinatorClient
     public void sendCommit(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, completionInitiator, identifier);
         CompletionCoordinatorPortType port = getPort(endpoint, addressingProperties, commitAction);
         Notification commit = new Notification();
 
@@ -97,6 +99,7 @@ public class CompletionCoordinatorClient
     public void sendRollback(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, completionInitiator, identifier);
         CompletionCoordinatorPortType port = getPort(endpoint, addressingProperties, rollbackAction);
         Notification rollback = new Notification();
                 

@@ -5,6 +5,9 @@ import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsat.client.WSATClient;
 import com.arjuna.webservices11.ServiceRegistry;
+import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.ParticipantPortType;
 
@@ -90,6 +93,7 @@ public class ParticipantClient
     public void sendPrepare(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, coordinator, identifier);
         ParticipantPortType port = getPort(endpoint, addressingProperties, prepareAction);
         Notification prepare = new Notification();
 
@@ -106,6 +110,7 @@ public class ParticipantClient
     public void sendCommit(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, coordinator, identifier);
         ParticipantPortType port = getPort(endpoint, addressingProperties, commitAction);
         Notification commit = new Notification();
 
@@ -122,6 +127,7 @@ public class ParticipantClient
     public void sendRollback(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installFromReplyTo(addressingProperties, coordinator, identifier);
         ParticipantPortType port = getPort(endpoint, addressingProperties, rollbackAction);
         Notification rollback = new Notification();
 
@@ -136,10 +142,12 @@ public class ParticipantClient
      * @throws com.arjuna.webservices.SoapFault For any errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendSoapFault(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final SoapFault soapFault, final InstanceIdentifier identifier)
+    public void sendSoapFault(final AddressingProperties addressingProperties, final SoapFault soapFault, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        // TODO - we cannot do this without an ednpoint so all we can do is log an error message!
+        // use the SoapFaultService to format a soap fault and send it back to the faultto or from address
+        AddressingHelper.installFrom(addressingProperties, coordinator, identifier);
+        SoapFaultClient.sendSoapFault((SoapFault11)soapFault, identifier, addressingProperties, faultAction);
     }
 
     /**
@@ -164,6 +172,10 @@ public class ParticipantClient
                                                 final AttributedURI action)
     {
         addressingProperties.setFrom(coordinator);
-        return WSATClient.getParticipantPort(participant, action, addressingProperties);
+        if (participant != null) {
+            return WSATClient.getParticipantPort(participant, action, addressingProperties);
+        } else {
+            return WSATClient.getParticipantPort(action, addressingProperties);
+        }
     }
 }

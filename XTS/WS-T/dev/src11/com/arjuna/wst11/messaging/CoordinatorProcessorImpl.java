@@ -1,13 +1,19 @@
 package com.arjuna.wst11.messaging;
 
 import com.arjuna.webservices.SoapFault;
+import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.CoordinatorInboundEvents;
+import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
+import com.arjuna.webservices11.wsat.client.ParticipantClient;
 import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
+import com.arjuna.webservices11.wscoor.CoordinationConstants;
+import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.messaging.MessageId;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
@@ -257,33 +263,19 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
     private void sendInvalidState(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
     {
         // KEV add check for recovery
-        final String responseMessageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingContext = AddressingHelper.createNotificationContext(responseMessageId) ;
+        final AddressingProperties faultAddressingContext = AddressingHelper.createFaultContext(addressingProperties, MessageId.getMessageId()) ;
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
-
-        /*
-         * TODO - fix this. cannot send invalid state fault as we have no participant end point!
-
-        final AttributedURI requestMessageId = addressingProperties.getMessageID() ;
-        if (requestMessageId != null)
-        {
-            AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-            Relationship relatesToValue = builder.newRelationship(requestMessageId.getURI());
-            Relationship[] relatesToSet = { relatesToValue };
-            responseAddressingContext.setRelatesTo(relatesToSet);
-        }
 
         try {
             final String message = WSTLogger.log_mesg.getString("com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendInvalidState_1") ;
-            final SoapFault soapFault = new SoapFault(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME, message) ;
-            ParticipantClient.getClient().sendSoapFault(responseAddressingContext, soapFault, instanceIdentifier) ;
+            final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME, message) ;
+            ParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
         } catch (final Throwable th) {
             if (WSTLogger.arjLoggerI18N.isDebugEnabled())
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendInvalidState_2", th) ;
             }
         }
-        */
     }
 
     /**
@@ -298,14 +290,11 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
     {
         // KEV add check for recovery
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingContext = AddressingHelper.createNotificationContext(messageId) ;
+        final AddressingProperties responseAddressingContext = AddressingHelper.createOneWayResponseContext(addressingProperties, messageId) ;
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
-        /*
-         * TODO - fix this. cannot send rollback as we have no participant end point!
-
         try
         {
-            ParticipantClient.getClient().sendRollback(responseAddressingContext, instanceIdentifier) ;
+            ParticipantClient.getClient().sendRollback(null, responseAddressingContext, instanceIdentifier) ;
         }
         catch (final Throwable th)
         {
@@ -314,6 +303,5 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendRollback_1", th) ;
             }
         }
-        */
     }
 }

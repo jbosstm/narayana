@@ -21,15 +21,21 @@
 package com.arjuna.wst11.messaging.engines;
 
 import com.arjuna.webservices.SoapFault;
+import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.util.TransportTimer;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsba.CoordinatorCompletionCoordinatorInboundEvents;
 import com.arjuna.webservices11.wsba.State;
+import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
 import com.arjuna.webservices11.wsba.client.CoordinatorCompletionParticipantClient;
+import com.arjuna.webservices11.ServiceRegistry;
+import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.wst11.BAParticipantManager;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.ExceptionType;
@@ -38,7 +44,10 @@ import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.addressing.AddressingProperties;
+import javax.xml.ws.addressing.AttributedURI;
+import javax.xml.ws.addressing.AddressingBuilder;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import java.net.URISyntaxException;
 
 /**
  * The coordinator completion coordinator state engine
@@ -253,8 +262,7 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
         }
         else if (current == State.STATE_ACTIVE)
         {
-            // TODO - we cannot send a fault here
-            // sendInvalidStateFault() ;
+            sendInvalidStateFault() ;
         }
     }
 
@@ -797,6 +805,30 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     }
 
     /**
+     * Send the invalid state fault message.
+     *
+     * @message com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendInvalidStateFault_1 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendInvalidStateFault_1] - Unexpected exception while sending InvalidStateFault
+     * @message com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendInvalidStateFault_2 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendInvalidStateFault_2] - Invalid coordinator completion coordinator state
+     */
+    private void sendInvalidStateFault()
+    {
+        final AddressingProperties addressingProperties = createContext() ;
+        try
+        {
+            final SoapFault11 soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME,
+                    WSTLogger.log_mesg.getString("com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendInvalidStateFault_2")) ;
+            SoapFaultClient.sendSoapFault(soapFault, participant, addressingProperties, getFaultAction()) ;
+        }
+        catch (final Throwable th)
+        {
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine.sendInvalidStateFault_1", th) ;
+            }
+        }
+    }
+
+    /**
      * Get the coordinator id.
      * @return The coordinator id.
      */
@@ -975,6 +1007,24 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     private AddressingProperties createContext()
     {
         final String messageId = MessageId.getMessageId() ;
+
         return AddressingHelper.createNotificationContext(messageId) ;
+    }
+
+    private static AttributedURI faultAction = null;
+
+    private static synchronized AttributedURI getFaultAction()
+    {
+        if (faultAction == null) {
+            AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
+
+            try {
+                faultAction = builder.newURI(CoordinationConstants.WSCOOR_ACTION_FAULT);
+            } catch (URISyntaxException e) {
+                // TODO log error here
+            }
+        }
+        
+        return faultAction;
     }
 }

@@ -27,12 +27,17 @@ import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsba.CoordinatorCompletionParticipantInboundEvents;
+import com.arjuna.webservices11.wsba.BusinessActivityConstants;
+import com.arjuna.webservices11.wsba.State;
+import com.arjuna.webservices11.wsba.client.CoordinatorCompletionCoordinatorClient;
 import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionParticipantProcessor;
+import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.messaging.MessageId;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
 
 import javax.xml.ws.addressing.AddressingProperties;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -110,8 +115,7 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.cancel_2", new Object[] {instanceIdentifier}) ;
             }
-            // TODO - cannot do this as we don't have an endpoint
-            // sendCancelled(addressingProperties, arjunaContext) ;
+            sendCancelled(addressingProperties, arjunaContext) ;
         }
     }
 
@@ -149,8 +153,7 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.close_2", new Object[] {instanceIdentifier}) ;
             }
-            // TODO - cannot do this as we don't have an endpoint
-            // sendClosed(addressingProperties, arjunaContext) ;
+            sendClosed(addressingProperties, arjunaContext) ;
         }
     }
 
@@ -188,8 +191,7 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.compensate_2", new Object[] {instanceIdentifier}) ;
             }
-            // TODO - cannot do this as we don't have an endpoint
-            // sendCompensated(addressingProperties, arjunaContext) ;
+            sendCompensated(addressingProperties, arjunaContext) ;
         }
     }
 
@@ -228,8 +230,7 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_2", new Object[] {instanceIdentifier}) ;
             }
-            // TODO - cannot do this as we don't have an endpoint
-            // sendFault(addressingProperties, arjunaContext, WSTLogger.log_mesg.getString("com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_3")) ;
+            sendFail(addressingProperties, arjunaContext, State.STATE_ENDED.getValue()) ;
         }
     }
 
@@ -450,11 +451,12 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
     {
         // KEV add check for recovery
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingProperties = AddressingHelper.createNotificationContext(messageId) ;
+        final AddressingProperties responseAddressingProperties = AddressingHelper.createOneWayResponseContext(addressingProperties, messageId) ;
+
         try
         {
-            // TODO - have to just log an error as we cannot do this without a client endpoint
-            // CoordinatorCompletionCoordinatorClient.getClient().sendCancelled(responseAddressingProperties, arjunaContext.getInstanceIdentifier()) ;
+            // supply null endpoint to indicate addressing properties should be used to route message
+            CoordinatorCompletionCoordinatorClient.getClient().sendCancelled(null, responseAddressingProperties, arjunaContext.getInstanceIdentifier()) ;
         }
         catch (final Throwable th)
         {
@@ -477,11 +479,12 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
     {
         // KEV add check for recovery
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingProperties = AddressingHelper.createNotificationContext(messageId) ;
+        final AddressingProperties responseAddressingProperties = AddressingHelper.createOneWayResponseContext(addressingProperties, messageId) ;
+
         try
         {
-            // TODO - have to just log an error as we cannot do this without a client endpoint
-            // CoordinatorCompletionCoordinatorClient.getClient().sendClosed(responseAddressingProperties, arjunaContext.getInstanceIdentifier()) ;
+            // supply null endpoint to indicate addressing properties should be used to route message
+            CoordinatorCompletionCoordinatorClient.getClient().sendClosed(null, responseAddressingProperties, arjunaContext.getInstanceIdentifier()) ;
         }
         catch (final Throwable th)
         {
@@ -504,11 +507,12 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
     {
         // KEV add check for recovery
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingProperties = AddressingHelper.createNotificationContext(messageId) ;
+        final AddressingProperties responseAddressingProperties = AddressingHelper.createOneWayResponseContext(addressingProperties, messageId) ;
+
         try
         {
-            // TODO - have to just log an error as we cannot do this without a client endpoint
-            // CoordinatorCompletionCoordinatorClient.getClient().sendCompensated(responseAddressingProperties, arjunaContext.getInstanceIdentifier()) ;
+            // supply null endpoint to indicate addressing properties should be used to route message
+            CoordinatorCompletionCoordinatorClient.getClient().sendCompensated(null, responseAddressingProperties, arjunaContext.getInstanceIdentifier()) ;
         }
         catch (final Throwable th)
         {
@@ -520,29 +524,30 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
     }
 
     /**
-     * Send a fault message.
+     * Send a fail message.
      *
      * @param addressingProperties The addressing context.
      * @param arjunaContext The arjuna context.
      * @param exceptionIdentifier The exception identifier.
      *
-     * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendFault_1 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendFault_1] - Unexpected exception while sending Fail
+     * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendFail_1 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendFail_1] - Unexpected exception while sending Fail
      */
-    private void sendFault(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext, final String exceptionIdentifier)
+    private void sendFail(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext, final QName exceptionIdentifier)
     {
         // KEV add check for recovery
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingProperties = AddressingHelper.createNotificationContext(messageId) ;
+        final AddressingProperties responseAddressingProperties = AddressingHelper.createFaultContext(addressingProperties, messageId) ;
+
         try
         {
-            // TODO - have to just log an error as we cannot do this without a client endpoint
-            // CoordinatorCompletionCoordinatorClient.getClient().sendFault(responseAddressingProperties, arjunaContext.getInstanceIdentifier(), exceptionIdentifier) ;
+            // supply null endpoint to indicate addressing properties should be used to route message
+            CoordinatorCompletionCoordinatorClient.getClient().sendFail(null, responseAddressingProperties, arjunaContext.getInstanceIdentifier(), exceptionIdentifier) ;
         }
         catch (final Throwable th)
         {
             if (WSTLogger.arjLoggerI18N.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendFault_1", th) ;
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendFail_1", th) ;
             }
         }
     }

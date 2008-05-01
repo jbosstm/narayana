@@ -32,12 +32,14 @@ import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsarjtx.client.TerminationCoordinatorClient;
 import com.arjuna.webservices11.wsarjtx.processors.TerminationParticipantCallback;
 import com.arjuna.webservices11.wsarjtx.processors.TerminationParticipantProcessor;
+import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.wst.FaultedException;
 import com.arjuna.wst.SystemException;
@@ -223,8 +225,7 @@ public class BusinessActivityTerminatorStub implements BusinessActivityTerminato
                 WSTLogger.log_mesg.getString("com.arjuna.wst11.stub.BusinessActivityTerminatorStub_1")) ;
         try
         {
-            // the terminaron coordinator endpoint does not expose a soapFault web method as this never gets called
-            // TerminationCoordinatorClient.getClient().sendSoapFault(_terminationCoordinator, addressingProperties, soapFault, new InstanceIdentifier(_id)) ;
+            TerminationCoordinatorClient.getClient().sendSoapFault(_terminationCoordinator, addressingProperties, soapFault, new InstanceIdentifier(_id)) ;
         }
         catch (final Throwable th)
         {
