@@ -126,7 +126,7 @@ public class CompletionInitiatorClient
     {
         AddressingHelper.installFrom(addressingProperties, completionCoordinator, identifier);
         // use the SoapFaultService to format a soap fault and send it back to the faultto or from address
-        SoapFaultClient.sendSoapFault((SoapFault11)soapFault, identifier, addressingProperties, faultAction);
+        SoapFaultClient.sendSoapFault((SoapFault11)soapFault, addressingProperties, faultAction);
     }
 
     /**

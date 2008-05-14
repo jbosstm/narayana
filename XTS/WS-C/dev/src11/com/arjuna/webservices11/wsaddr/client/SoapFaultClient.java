@@ -57,7 +57,6 @@ public class SoapFaultClient
      * @throws java.io.IOException for any transport errors.
      */
     public static void sendSoapFault(final SoapFault11 soapFault,
-                                     final InstanceIdentifier instanceIdentifier,
                                      final AddressingProperties addressingProperties,
                                      final AttributedURI action)
         throws SoapFault11, IOException
@@ -67,7 +66,7 @@ public class SoapFaultClient
             soapFault.setAction(action.getURI().toString()) ;
         }
 
-        final SoapFaultPortType faultPort = getSoapFaultPort(instanceIdentifier, addressingProperties, action);
+        final SoapFaultPortType faultPort = getSoapFaultPort(addressingProperties, action);
         Fault fault = soapFault.toFault();
         faultPort.soapFault(fault);
     }
@@ -109,8 +108,7 @@ public class SoapFaultClient
         return soapFaultService.get();
     }
 
-    private static SoapFaultPortType getSoapFaultPort(final InstanceIdentifier instanceIdentifier,
-                                                      final AddressingProperties addressingProperties,
+    private static SoapFaultPortType getSoapFaultPort(final AddressingProperties addressingProperties,
                                                       final AttributedURI action)
     {
         SoapFaultService service = getSoapFaultService();
@@ -125,7 +123,9 @@ public class SoapFaultClient
         bindingProvider.getBinding().setHandlerChain(customHandlerChain);
 
         Map<String, Object> requestContext = bindingProvider.getRequestContext();
-        addressingProperties.setAction(action);
+        if (action != null) {
+            addressingProperties.setAction(action);
+        }
         requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES, addressingProperties);
 	    // jbossws should do this for us . . .
 	    requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES_OUTBOUND, addressingProperties);
@@ -145,7 +145,9 @@ public class SoapFaultClient
         BindingProvider bindingProvider = (BindingProvider)port;
         Map<String, Object> requestContext = bindingProvider.getRequestContext();
         AddressingProperties requestProperties = (AddressingProperties)requestContext.get(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES_OUTBOUND);
-        addressingProperties.setAction(action);
+        if (action != null) {
+            addressingProperties.setAction(action);
+        }
         AddressingHelper.installCallerProperties(addressingProperties, requestProperties);
         AttributedURI toUri = requestProperties.getTo();
         List<Handler> customHandlerChain = new ArrayList<Handler>();
