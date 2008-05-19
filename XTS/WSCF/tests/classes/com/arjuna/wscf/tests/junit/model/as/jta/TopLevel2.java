@@ -69,7 +69,7 @@ public class TopLevel2
 	
 	try
 	{
-        Class clazz = this.getClass().getClassLoader().loadClass(className);
+        Class clazz = TopLevel1.class.getClassLoader().loadClass(className);
 	    ProtocolLocator pl = new ProtocolLocator(clazz);
 
 	    implementationDoc = pl.getProtocol();

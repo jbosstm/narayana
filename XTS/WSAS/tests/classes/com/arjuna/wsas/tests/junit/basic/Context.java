@@ -33,6 +33,8 @@ package com.arjuna.wsas.tests.junit.basic;
 
 import com.arjuna.mw.wsas.UserActivity;
 import com.arjuna.mw.wsas.UserActivityFactory;
+import com.arjuna.mw.wsas.ActivityManagerFactory;
+import com.arjuna.mw.wsas.activity.HLS;
 
 import com.arjuna.mw.wsas.context.ContextManager;
 
@@ -52,6 +54,11 @@ public class Context extends TestCase
             throws Exception
     {
         UserActivity ua = UserActivityFactory.userActivity();
+        HLS[] currentHLS = ActivityManagerFactory.activityManager().allHighLevelServices();
+
+        for (HLS hls : currentHLS) {
+            ActivityManagerFactory.activityManager().removeHLS(hls);
+        }
 
 	try
 	{
@@ -70,6 +77,13 @@ public class Context extends TestCase
             fail("Contexts not null: "+contexts);
         }
     } finally {
+        try {
+            for (HLS hls : currentHLS) {
+                ActivityManagerFactory.activityManager().addHLS(hls);
+            }
+        } catch (Exception e) {
+            
+        }
         WSASTestUtils.cleanup(ua);
     }
     }

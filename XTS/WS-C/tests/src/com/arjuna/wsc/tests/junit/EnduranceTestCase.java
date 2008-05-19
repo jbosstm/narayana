@@ -33,6 +33,7 @@ import junit.framework.TestCase;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.SoapRegistry;
+import com.arjuna.webservices.SoapFault10;
 import com.arjuna.webservices.stax.URI;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
@@ -271,7 +272,7 @@ public class EnduranceTestCase extends TestCase
         
         final SoapFaultType soapFaultType = SoapFaultType.FAULT_SENDER ;
         final QName subcode = CoordinationConstants.WSCOOR_ERROR_CODE_ALREADY_REGISTERED_QNAME ;
-        final SoapFault soapFault = new SoapFault(soapFaultType, subcode, reason) ;
+        final SoapFault soapFault = new SoapFault10(soapFaultType, subcode, reason) ;
         
         final TestActivationRequesterCallback callback = new TestActivationRequesterCallback() {
             public void soapFault(final SoapFault soapFault, final AddressingContext addressingContext)
@@ -377,7 +378,7 @@ public class EnduranceTestCase extends TestCase
         
         final SoapFaultType soapFaultType = SoapFaultType.FAULT_SENDER ;
         final QName subcode = CoordinationConstants.WSCOOR_ERROR_CODE_ALREADY_REGISTERED_QNAME ;
-        final SoapFault soapFault = new SoapFault(soapFaultType, subcode, reason) ;
+        final SoapFault soapFault = new SoapFault10(soapFaultType, subcode, reason) ;
         
         final TestRegistrationRequesterCallback callback = new TestRegistrationRequesterCallback() {
             public void soapFault(final SoapFault soapFault, final AddressingContext addressingContext)

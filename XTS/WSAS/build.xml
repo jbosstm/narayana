@@ -35,6 +35,8 @@
 	<property name="hostname" value="localhost"/>
 	<property name="port" value="8080"/>
 
+    <property name="jboss.client.lib.dir" location="${jboss.dir}/client"/>
+
     <property name="com.arjuna.buildsystem.dir" location="../../antbuildsystem"/>
     <property name="com.arjuna.jta.install" location="../../install"/>
 
@@ -47,6 +49,7 @@
 
     <property name="jta.lib.jars" value="jbossjta.jar"/>
     <property name="jta.ext.jars" value="jbossts-common.jar"/>
+    <property name="jboss.client.lib.jars" value="jboss-javaee.jar"/>
 
     <property name="com.arjuna.mwlabs.wsas.resourcebundle" value="wsas_msg_en_US.properties"/>
 
@@ -83,10 +86,10 @@
 	<!-- tests library and path to library -->
 	<property name="tests.libs" value="junit.jar"/>
 	<property name="tests.depend.libs" value="${tests.libs} ${com.arjuna.mwlabs.ts.modulename}.jar"/>
-	<property name="tests.ext.libs" value="servlet.jar"/>
 
 	<path id="com.arjuna.mwlabs.wsas.tests.lib.path">
-	  <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs} ${tests.ext.libs}"/>
+	  <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
+	  <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
 	</path>
 
 	<!-- Initialisation -->

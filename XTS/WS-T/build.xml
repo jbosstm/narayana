@@ -306,9 +306,11 @@
         <javac destdir="${build.tests.classes.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
             <classpath>
                 <pathelement path="${build.dev.lib.dir}/ws-t.jar"/>
+                <pathelement path="${build.dev.lib.dir}/ws-t10.jar"/>
                 <path refid="tests.lib.path"/>
                 <path refid="lib.ext.path"/>
                 <path refid="ws-c.path"/>
+                <path refid="ws-c10.path"/>
             </classpath>
             <src path="${tests.src.dir}"/>
         </javac>
@@ -323,17 +325,23 @@
         </copy>
         <war warfile="${build.tests.webapps.dir}/ws-t-tests.war" webxml="${build.tests.dd.dir}/web-app.xml">
             <manifest>
-                <attribute name="Class-Path" value="ws-t.jar ${tests.libs}"/>
+                <attribute name="Class-Path" value="ws-t10.jar ws-t.jar ${tests.libs}"/>
             </manifest>
             <classes dir="${build.tests.classes.dir}"/>
         </war>
         <ear earfile="${build.tests.webapps.dir}/ws-t-tests.ear" appxml="${tests.dd.dir}/ws-t-tests_application.xml">
+            <!--
             <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
+            -->
             <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
+            <!--
             <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
-            <fileset dir="${build.dev.lib.dir}" includes="ws-t.jar"/>
+            <fileset dir="${build.dev.lib.dir}" includes="ws-t.jar ws-t10.jar"/>
+            -->
             <fileset dir="${build.tests.webapps.dir}" includes="ws-t-tests.war"/>
-            <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c.libs}"/>
+            <!--
+            <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c.libs} ${ws-c10.libs}"/>
+            -->
         </ear>
     </target>
 

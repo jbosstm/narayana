@@ -320,6 +320,8 @@
 	  <javac destdir="${com.arjuna.mwlabs.wscf.tests.dest}" debug="yes" optimize="no">
 	    <classpath>
 	      <pathelement path="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
+          <pathelement path="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}10.jar"/>
+          <pathelement path="${com.arjuna.mwlabs.wsc.jar.dest}/${wsc10.libs}"/>
 	      <path refid="com.arjuna.mwlabs.wscf.tests.lib.path"/>
 	      <path refid="com.arjuna.mwlabs.wscf.lib.classpath"/>
 	    </classpath>

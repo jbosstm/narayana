@@ -81,7 +81,7 @@ public class TopLevel1 extends TestCase
 
 	    org.w3c.dom.Document implementationDoc = null;
 	
-        Class clazz = this.getClass().getClassLoader().loadClass(testProtocolClassName);
+        Class clazz = TopLevel1.class.getClassLoader().loadClass(testProtocolClassName);
         ProtocolLocator pl = new ProtocolLocator(clazz);
 
         implementationDoc = pl.getProtocol();

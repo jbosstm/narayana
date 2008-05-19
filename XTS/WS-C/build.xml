@@ -306,10 +306,14 @@
             <classes dir="${build.tests.classes.dir}"/>
         </war>
         <ear earfile="${build.tests.webapps.dir}/ws-c-tests.ear" appxml="${tests.dd.dir}/ws-c-tests_application.xml">
+            <!--
             <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
+            -->
             <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
+            <!--
             <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
             <fileset dir="${build.dev.lib.dir}" includes="ws-c10.jar ws-c.jar"/>
+            -->
             <fileset dir="${build.tests.webapps.dir}" includes="ws-c-tests.war"/>
         </ear>
     </target>

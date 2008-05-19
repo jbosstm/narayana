@@ -37,6 +37,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import com.arjuna.mw.wsas.ActivityManagerFactory;
 import com.arjuna.mw.wsas.UserActivity;
 import com.arjuna.mw.wsas.UserActivityFactory;
+import com.arjuna.mw.wsas.activity.HLS;
 import com.arjuna.mw.wsas.context.Context;
 import com.arjuna.mw.wsas.context.DeploymentContext;
 import com.arjuna.mw.wsas.context.DeploymentContextFactory;
@@ -64,6 +65,11 @@ public class Context2 extends TestCase
         UserActivity ua = UserActivityFactory.userActivity();
         DemoHLS demoHLS = new DemoHLS();
         FailureHLS failureHLS = new FailureHLS(); // this constructor means it will lnto fail
+        HLS[] currentHLS = ActivityManagerFactory.activityManager().allHighLevelServices();
+
+        for (HLS hls : currentHLS) {
+            ActivityManagerFactory.activityManager().removeHLS(hls);
+        }
     try
 	{
 	    ActivityManagerFactory.activityManager().addHLS(demoHLS);
@@ -162,6 +168,13 @@ public class Context2 extends TestCase
         WSASTestUtils.cleanup(ua);
         throw ex;
     } finally {
+        try {
+            for (HLS hls : currentHLS) {
+                ActivityManagerFactory.activityManager().addHLS(hls);
+            }
+        } catch (Exception ex) {
+            // ignore this
+        }
         try {
             if (demoHLS != null) {
                 ActivityManagerFactory.activityManager().removeHLS(demoHLS);

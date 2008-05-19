@@ -281,7 +281,7 @@
 			packagenames="${com.arjuna.mwlabs.wstx.htdocs.list}"
 	        >
 			<classpath>
-				<path refid="com.arjuna.mwlabs.wstx.lib.classpath"/>
+                <path refid="com.arjuna.mwlabs.wstx.lib.classpath"/>
 				<path path="${com.arjuna.mwlabs.wstx.src}"/>
 			</classpath>
 		</javadoc>
@@ -334,9 +334,11 @@
 	<target name="com.arjuna.mwlabs.wstx.tests.compile" depends="com.arjuna.mwlabs.wstx.tests.init, com.arjuna.mw.wstx.war">
 	  <javac destdir="${com.arjuna.mwlabs.wstx.tests.dest}" debug="yes" optimize="no">
 	    <classpath>
-	      <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
-	      <path refid="com.arjuna.mwlabs.wstx.tests.lib.path"/>
-	      <path refid="com.arjuna.mwlabs.wstx.lib.classpath"/>
+            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
+            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}10.jar"/>
+            <path refid="com.arjuna.mwlabs.wstx.tests.lib.path"/>
+            <path refid="com.arjuna.mwlabs.wstx.lib.classpath10"/>
+            <path refid="com.arjuna.mwlabs.wstx.lib.classpath"/>
 	    </classpath>
 	    <src path="${com.arjuna.mwlabs.wstx.tests.src}"/>
 	  </javac>
@@ -356,7 +358,9 @@
 	    <classes dir="${com.arjuna.mwlabs.wstx.tests.dest}"/>
 	  </war>
 	  <ear earfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.ear" appxml="${com.arjuna.mwlabs.wstx.tests.dd}/wstx-tests_application.xml">
+        <!--
 	    <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
+	    -->
 	    <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
 	    <!-- we don't need to include these libs if we are
 	         deploying to JBossAs. The XTS libs are already

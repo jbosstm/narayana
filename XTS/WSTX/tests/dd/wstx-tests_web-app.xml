@@ -26,71 +26,10 @@
 
     <description>Arjuna WSTX Tests</description>
 
-    <!-- Initialise Arjuna TX services -->
-    <listener>
-        <listener-class>com.arjuna.webservices.wsarjtx.server.TerminationParticipantInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices.wsarjtx.server.TerminationCoordinatorInitialisation</listener-class>
-    </listener>
-    
-    <!-- Initialise WS-AT services -->
-    <listener>
-        <listener-class>com.arjuna.webservices.wsat.server.CompletionCoordinatorInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices.wsat.server.CompletionInitiatorInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices.wsat.server.CoordinatorInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices.wsat.server.ParticipantInitialisation</listener-class>
-    </listener>
-    
-    <!-- Initialise WS-BA services -->
-    <listener>
-        <listener-class>com.arjuna.webservices.wsba.server.CoordinatorCompletionCoordinatorInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices.wsba.server.CoordinatorCompletionParticipantInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices.wsba.server.ParticipantCompletionCoordinatorInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices.wsba.server.ParticipantCompletionParticipantInitialisation</listener-class>
-    </listener>
-    
-    <!-- Initialise WS-T  -->
-    <listener>
-        <listener-class>com.arjuna.wst.messaging.deploy.TransactionInitialisation</listener-class>
-    </listener>
-    
-    <!--  Initialise the HTTP Client -->
-    <listener>
-        <listener-class>com.arjuna.webservices.transport.http.HttpClientInitialisation</listener-class>
-    </listener>
-    
     <!--  Initialise the tests -->
     <listener>
         <listener-class>com.arjuna.wstx.tests.TestInitialisation</listener-class>
     </listener>
-    
-    <servlet>
-        <servlet-name>HTTP SOAP Service Multiplexor Servlet</servlet-name>
-        <servlet-class>com.arjuna.webservices.transport.http.HttpServiceMultiplexorServlet</servlet-class>
-        <!--
-          The BaseHttpURI and BaseHttpsURI parameters specify the default values
-          used to generate the service URIs without reference to an incoming
-          request.
-         -->
-        <init-param>
-            <param-name>BaseHttpURI</param-name>
-            <param-value>http://@hostname@:@port@/wstx-tests/soap/</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
     
     <servlet>
         <servlet-name>JUnit Tests Servlet</servlet-name>
@@ -103,11 +42,6 @@
     </servlet>
 
 	<!-- servlet mappings -->
-    <servlet-mapping>
-        <servlet-name>HTTP SOAP Service Multiplexor Servlet</servlet-name>
-        <url-pattern>/soap/*</url-pattern>
-    </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>JUnit Tests Servlet</servlet-name>
         <url-pattern>/index.html</url-pattern>

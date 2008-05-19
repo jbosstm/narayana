@@ -26,49 +26,10 @@
 
     <description>Arjuna Web Services Coordination Tests</description>
 
-    <!--  Initialise WS-C services -->
-    <listener>
-        <listener-class>com.arjuna.webservices.wscoor.server.ActivationCoordinatorInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices.wscoor.server.ActivationRequesterInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices.wscoor.server.RegistrationCoordinatorInitialisation</listener-class>
-    </listener>
-    <listener>
-        <listener-class>com.arjuna.webservices.wscoor.server.RegistrationRequesterInitialisation</listener-class>
-    </listener>
-    
-    <!-- Initialise WS-C  -->
-    <listener>
-        <listener-class>com.arjuna.wsc.messaging.deploy.CoordinationInitialisation</listener-class>
-    </listener>
-
-    <!--  Initialise the HTTP Client -->
-    <listener>
-        <listener-class>com.arjuna.webservices.transport.http.HttpClientInitialisation</listener-class>
-    </listener>
-    
     <!--  Initialise the tests -->
     <listener>
         <listener-class>com.arjuna.wsc.tests.TestInitialisation</listener-class>
     </listener>
-    
-    <servlet>
-        <servlet-name>HTTP SOAP Service Multiplexor Servlet</servlet-name>
-        <servlet-class>com.arjuna.webservices.transport.http.HttpServiceMultiplexorServlet</servlet-class>
-        <!--
-          The BaseHttpURI and BaseHttpsURI parameters specify the default values
-          used to generate the service URIs without reference to an incoming
-          request.
-         -->
-        <init-param>
-            <param-name>BaseHttpURI</param-name>
-            <param-value>http://@hostname@:@port@/ws-c-tests/soap/</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
     
     <servlet>
         <servlet-name>JUnit Tests Servlet</servlet-name>
@@ -81,11 +42,6 @@
     </servlet>
 
 	<!-- servlet mappings -->
-    <servlet-mapping>
-        <servlet-name>HTTP SOAP Service Multiplexor Servlet</servlet-name>
-        <url-pattern>/soap/*</url-pattern>
-    </servlet-mapping>
- 
     <servlet-mapping>
         <servlet-name>JUnit Tests Servlet</servlet-name>
         <url-pattern>/index.html</url-pattern>

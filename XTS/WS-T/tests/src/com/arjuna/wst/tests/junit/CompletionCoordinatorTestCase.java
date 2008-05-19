@@ -33,6 +33,7 @@ import junit.framework.TestCase;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.SoapRegistry;
+import com.arjuna.webservices.SoapFault10;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
 import com.arjuna.webservices.wsaddr.EndpointReferenceType;
@@ -142,7 +143,7 @@ public class CompletionCoordinatorTestCase extends TestCase
         
         final SoapFaultType soapFaultType = SoapFaultType.FAULT_SENDER ;
         final QName subcode = ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME ;
-        final SoapFault soapFault = new SoapFault(soapFaultType, subcode, reason) ;
+        final SoapFault soapFault = new SoapFault10(soapFaultType, subcode, reason) ;
         
         final TestCompletionInitiatorCallback callback = new TestCompletionInitiatorCallback() {
             public void soapFault(final SoapFault soapFault, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
