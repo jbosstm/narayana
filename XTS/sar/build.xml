@@ -273,23 +273,23 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <filter token="hostname" value="${hostname}"/>
         <filter token="port" value="${port}"/>
 
-        <unjar src="${xts.home}/webapps/ws-c11.war" dest="${build.dir}/tmp/ws-c11"/>
+        <unjar src="${xts.home}/webapps/ws-c10.war" dest="${build.dir}/tmp/ws-c10"/>
 
-        <copy file="${xts.home}/coordinator/dd/ws-c11_web-app.xml"
-            tofile="${build.dir}/tmp/ws-c11/WEB-INF/web.xml" filtering="true" overwrite="true"/>
+        <copy file="${xts.home}/coordinator/dd/ws-c_web-app.xml"
+            tofile="${build.dir}/tmp/ws-c10/WEB-INF/web.xml" filtering="true" overwrite="true"/>
 
-        <jar destfile="${build.dir}/ws-c11.war" basedir="${build.dir}/tmp/ws-c11" manifest="${build.dir}/tmp/ws-c11/META-INF/MANIFEST.MF"/>
+        <jar destfile="${build.dir}/ws-c10.war" basedir="${build.dir}/tmp/ws-c10" manifest="${build.dir}/tmp/ws-c10/META-INF/MANIFEST.MF"/>
 
-        <delete dir="${build.dir}/tmp/ws-c11"/>
+        <delete dir="${build.dir}/tmp/ws-c10"/>
 
-        <unjar src="${xts.home}/webapps/ws-t11.war" dest="${build.dir}/tmp/ws-t11"/>
+        <unjar src="${xts.home}/webapps/ws-t10.war" dest="${build.dir}/tmp/ws-t10"/>
 
-        <copy file="${xts.home}/coordinator/dd/ws-t11_web-app.xml"
-            tofile="${build.dir}/tmp/ws-t11/WEB-INF/web.xml" filtering="true" overwrite="true"/>
+        <copy file="${xts.home}/coordinator/dd/ws-t_web-app.xml"
+            tofile="${build.dir}/tmp/ws-t10/WEB-INF/web.xml" filtering="true" overwrite="true"/>
 
-        <jar destfile="${build.dir}/ws-t11.war" basedir="${build.dir}/tmp/ws-t11" manifest="${build.dir}/tmp/ws-t11/META-INF/MANIFEST.MF"/>
+        <jar destfile="${build.dir}/ws-t10.war" basedir="${build.dir}/tmp/ws-t10" manifest="${build.dir}/tmp/ws-t10/META-INF/MANIFEST.MF"/>
 
-        <delete dir="${build.dir}/tmp/ws-t11"/>
+        <delete dir="${build.dir}/tmp/ws-t10"/>
     </target>
 
     <target name="clean">
