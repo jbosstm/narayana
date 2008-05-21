@@ -415,7 +415,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 *          null synchronization parameter!
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.syncsnotallowed
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.syncsnotallowed]
-	 *          Synchronizations are not allowed! Transaction status is 
+	 *          Synchronizations are not allowed! Transaction status is
 	 */
 
 	public void registerSynchronization(javax.transaction.Synchronization sync)
@@ -774,11 +774,34 @@ public class TransactionImple implements javax.transaction.Transaction,
 								: theModifier
 										.xaStartParameters(XAResource.TMNOFLAGS));
 
-						xaRes.start(xid, xaStartNormal);
 
-						associatedWork = true;
+                        // Pay attention now, this bit is hairy. We need to add a new AbstractRecord (XAResourceRecord)
+                        // to the BasicAction, which will thereafter drive its completion. However, the transaction
+                        // core is not directly XA aware, so it's our job to start the XAResource. Problem is, if
+                        // adding the record fails, BasicAction will never end the resource via the XAResourceRecord,
+                        // so we must do so directly.  start may fail due to dupl xid or other reason, and transactions
+                        // may rollback async, for which reasons we can't call add before start.
+                        // The xid will change on each pass of the loop, so we need to create a new record on each pass.
+                        // The creation will fail in the case of multiple last resources being disallowed, in which
+                        // case we don't call start on the resource at all. see JBTM-362 and JBTM-363
+                        AbstractRecord abstractRecord = createRecord(xaRes, params, xid);
+                        if(abstractRecord != null) {
+                            xaRes.start(xid, xaStartNormal);
+                            if(_theTransaction.add(abstractRecord) == AddOutcome.AR_ADDED) {
+                                _resources.put(xaRes, new TxInfo(xid));
+                                return true; // dive out, no need to set associatedWork = true;
+                            } else {
+                                // we called start on the resource, but _theTransaction did not accept it.
+                                // we therefore have a mess which we must now clean up by ensuring the start is undone:
+                                abstractRecord.topLevelAbort();
+                            }
+                        }
 
-						_resources.put(xaRes, new TxInfo(xid));
+                        // if we get to here, something other than a failure of xaRes.start probably went wrong.
+                        // so we don't loop and retry, we just give up.
+                        markRollbackOnly();
+                        return false;
+
 					}
 					catch (XAException e)
 					{
@@ -894,64 +917,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 				return true;
 			}
 
-			/*
-			 * Control and Coordinator should be set, or we would not have
-			 * gotten this far!
-			 */
-
-			final AbstractRecord record;
-			if ((xaRes instanceof LastResourceCommitOptimisation)
-					|| ((LAST_RESOURCE_OPTIMISATION_INTERFACE != null) && LAST_RESOURCE_OPTIMISATION_INTERFACE
-							.isInstance(xaRes)))
-			{
-				if (lastResourceCount == 1)
-				{
-					if (jtaLogger.loggerI18N.isWarnEnabled())
-					{
-						if (ALLOW_MULTIPLE_LAST_RESOURCES)
-						{
-							jtaLogger.loggerI18N
-									.warn(
-											"com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning",
-											new Object[]
-											{ xaRes });
-						}
-						else
-						{
-							jtaLogger.loggerI18N
-									.warn(
-											"com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.disallow",
-											new Object[]
-											{ xaRes });
-						}
-					}
-				}
-
-				if ((lastResourceCount++ == 0) || ALLOW_MULTIPLE_LAST_RESOURCES)
-				{
-					record = new LastResourceRecord(new XAOnePhaseResource(
-							xaRes, xid, params));
-				}
-				else
-				{
-					record = null;
-				}
-			}
-			else
-			{
-				record = new XAResourceRecord(this, xaRes, xid, params);
-			}
-
-			if ((record == null)
-					|| (_theTransaction.add(record) != AddOutcome.AR_ADDED))
-			{
-				markRollbackOnly();
-
-				return false;
-			}
-			else
-				return true;
-		}
+            return false;
+        }
 		catch (Exception e)
 		{
 			e.printStackTrace();
@@ -968,10 +935,67 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 	}
 
-	/*
-	 * Do we have to unregister resources? Assume not as it would not make much
-	 * sense otherwise!
-	 */
+    /**
+     * Attempt to create an AbstractRecord wrapping the given XAResource. Return null if this fails, or
+     * is diallowed by the current configuration of multiple last resource behaviour.
+     *
+     * @param xaRes
+     * @param params
+     * @param xid
+     * @return
+     */
+    private AbstractRecord createRecord(XAResource xaRes, Object[] params, Xid xid)
+    {
+        final AbstractRecord record;
+        if ((xaRes instanceof LastResourceCommitOptimisation)
+                || ((LAST_RESOURCE_OPTIMISATION_INTERFACE != null) && LAST_RESOURCE_OPTIMISATION_INTERFACE
+                .isInstance(xaRes)))
+        {
+            if (lastResourceCount == 1)
+            {
+                if (jtaLogger.loggerI18N.isWarnEnabled())
+                {
+                    if (ALLOW_MULTIPLE_LAST_RESOURCES)
+                    {
+                        jtaLogger.loggerI18N
+                                .warn(
+                                        "com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning",
+                                        new Object[]
+                                                { xaRes });
+                    }
+                    else
+                    {
+                        jtaLogger.loggerI18N
+                                .warn(
+                                        "com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.disallow",
+                                        new Object[]
+                                                { xaRes });
+                    }
+                }
+            }
+
+            if ((lastResourceCount++ == 0) || ALLOW_MULTIPLE_LAST_RESOURCES)
+            {
+                record = new LastResourceRecord(new XAOnePhaseResource(
+                        xaRes, xid, params));
+            }
+            else
+            {
+                record = null;
+            }
+        }
+        else
+        {
+            record = new XAResourceRecord(this, xaRes, xid, params);
+        }
+
+        return record;
+    }
+
+    /*
+      * Do we have to unregister resources? Assume not as it would not make much
+      * sense otherwise!
+      */
 
 	/**
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.unknownresource
