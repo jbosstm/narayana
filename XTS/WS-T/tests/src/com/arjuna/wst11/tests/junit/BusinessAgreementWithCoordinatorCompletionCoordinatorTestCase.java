@@ -1,0 +1,285 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. 
+ * See the copyright.txt in the distribution for a full listing 
+ * of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU General Public License, v. 2.0.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License,
+ * v. 2.0 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ * 
+ * (C) 2005-2006,
+ * @author JBoss Inc.
+ */
+/*
+ * Copyright (c) 2004, Arjuna Technologies Limited.
+ *
+ * $Id: BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase.java,v 1.1.2.1 2004/05/26 10:04:55 nmcl Exp $
+ */
+
+package com.arjuna.wst11.tests.junit;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import javax.xml.ws.addressing.AddressingProperties;
+
+import junit.framework.TestCase;
+
+import com.arjuna.webservices.SoapFaultType;
+import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
+import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
+import com.arjuna.webservices11.wsarj.ArjunaContext;
+import com.arjuna.webservices11.wsarj.InstanceIdentifier;
+import com.arjuna.webservices11.wsba.State;
+import com.arjuna.webservices11.wsba.client.CoordinatorCompletionParticipantClient;
+import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionParticipantProcessor;
+import com.arjuna.wst11.tests.junit.TestCoordinatorCompletionParticipantProcessor.CoordinatorCompletionParticipantDetails;
+import com.arjuna.wst11.tests.junit.TestCoordinatorCompletionParticipantProcessor;
+import com.arjuna.wst11.tests.TestUtil;
+
+public class BusinessAgreementWithCoordinatorCompletionCoordinatorTestCase extends TestCase
+{
+    private CoordinatorCompletionParticipantProcessor origCoordinatorCompletionParticipantProcessor ;
+    private TestCoordinatorCompletionParticipantProcessor testCoordinatorCompletionParticipantProcessor = new TestCoordinatorCompletionParticipantProcessor() ;
+
+    protected void setUp()
+        throws Exception
+    {
+        origCoordinatorCompletionParticipantProcessor = CoordinatorCompletionParticipantProcessor.setProcessor(testCoordinatorCompletionParticipantProcessor) ;
+    }
+
+    public void testSendClose()
+        throws Exception
+    {
+        final String messageId = "testSendClose" ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("1") ;
+        W3CEndpointReference endpoint = TestUtil.getCoordinatorCompletionParticipantEndpoint(instanceIdentifier.getInstanceIdentifier());
+        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.coordinatorCompletionParticipantServiceURI, messageId) ;
+
+        CoordinatorCompletionParticipantClient.getClient().sendClose(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+
+        final CoordinatorCompletionParticipantDetails details = testCoordinatorCompletionParticipantProcessor.getCoordinatorCompletionParticipantDetails(messageId, 10000) ;
+
+        assertTrue(details.hasClose()) ;
+
+        checkDetails(details, true, true, messageId, instanceIdentifier);
+    }
+
+    public void testSendCancel()
+        throws Exception
+    {
+        final String messageId = "testSendCancel" ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("2") ;
+        W3CEndpointReference endpoint = TestUtil.getCoordinatorCompletionParticipantEndpoint(instanceIdentifier.getInstanceIdentifier());
+        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.coordinatorCompletionParticipantServiceURI, messageId) ;
+
+        CoordinatorCompletionParticipantClient.getClient().sendCancel(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+
+        final CoordinatorCompletionParticipantDetails details = testCoordinatorCompletionParticipantProcessor.getCoordinatorCompletionParticipantDetails(messageId, 10000) ;
+
+        assertTrue(details.hasCancel()) ;
+
+        checkDetails(details, true, true, messageId, instanceIdentifier);
+    }
+
+    public void testSendCompensate()
+        throws Exception
+    {
+        final String messageId = "testSendCompensate" ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("3") ;
+        W3CEndpointReference endpoint = TestUtil.getCoordinatorCompletionParticipantEndpoint(instanceIdentifier.getInstanceIdentifier());
+        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.coordinatorCompletionParticipantServiceURI, messageId) ;
+
+        CoordinatorCompletionParticipantClient.getClient().sendCompensate(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+
+        final CoordinatorCompletionParticipantDetails details = testCoordinatorCompletionParticipantProcessor.getCoordinatorCompletionParticipantDetails(messageId, 10000) ;
+
+        assertTrue(details.hasCompensate()) ;
+
+        checkDetails(details, true, true, messageId, instanceIdentifier);
+    }
+
+    public void testSendFaulted()
+        throws Exception
+    {
+        final String messageId = "testSendFaulted" ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("4") ;
+        W3CEndpointReference endpoint = TestUtil.getCoordinatorCompletionParticipantEndpoint(instanceIdentifier.getInstanceIdentifier());
+        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.coordinatorCompletionParticipantServiceURI, messageId) ;
+
+        CoordinatorCompletionParticipantClient.getClient().sendFailed(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+
+        final CoordinatorCompletionParticipantDetails details = testCoordinatorCompletionParticipantProcessor.getCoordinatorCompletionParticipantDetails(messageId, 10000) ;
+
+        assertTrue(details.hasFailed()) ;
+
+        checkDetails(details, false, true, messageId, instanceIdentifier);
+    }
+
+    public void testSendExited()
+        throws Exception
+    {
+        final String messageId = "testSendExited" ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("5") ;
+        W3CEndpointReference endpoint = TestUtil.getCoordinatorCompletionParticipantEndpoint(instanceIdentifier.getInstanceIdentifier());
+        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.coordinatorCompletionParticipantServiceURI, messageId) ;
+
+        CoordinatorCompletionParticipantClient.getClient().sendExited(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+
+        final CoordinatorCompletionParticipantDetails details = testCoordinatorCompletionParticipantProcessor.getCoordinatorCompletionParticipantDetails(messageId, 10000) ;
+
+        assertTrue(details.hasExited()) ;
+
+        checkDetails(details, false, true, messageId, instanceIdentifier);
+    }
+
+    public void testSendStatus()
+        throws Exception
+    {
+        final String messageId = "testSendStatus" ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("6") ;
+        W3CEndpointReference endpoint = TestUtil.getCoordinatorCompletionParticipantEndpoint(instanceIdentifier.getInstanceIdentifier());
+        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.coordinatorCompletionParticipantServiceURI, messageId) ;
+
+        final State state = State.STATE_ACTIVE ;
+
+        CoordinatorCompletionParticipantClient.getClient().sendStatus(endpoint, addressingProperties, new InstanceIdentifier("sender"), state.getValue()) ;
+
+        final CoordinatorCompletionParticipantDetails details = testCoordinatorCompletionParticipantProcessor.getCoordinatorCompletionParticipantDetails(messageId, 10000) ;
+
+        assertNotNull(details.hasStatus()) ;
+        assertEquals(details.hasStatus().getState(), state.getValue()) ;
+
+        checkDetails(details, true, true, messageId, instanceIdentifier);
+    }
+
+    public void testSendComplete()
+        throws Exception
+    {
+        final String messageId = "testSendComplete" ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("7") ;
+        W3CEndpointReference endpoint = TestUtil.getCoordinatorCompletionParticipantEndpoint(instanceIdentifier.getInstanceIdentifier());
+        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.coordinatorCompletionParticipantServiceURI, messageId) ;
+
+        CoordinatorCompletionParticipantClient.getClient().sendComplete(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+
+        final CoordinatorCompletionParticipantDetails details = testCoordinatorCompletionParticipantProcessor.getCoordinatorCompletionParticipantDetails(messageId, 10000) ;
+
+        assertTrue(details.hasComplete()) ;
+
+        checkDetails(details, true, true, messageId, instanceIdentifier);
+    }
+
+    public void testSendGetStatus()
+        throws Exception
+    {
+        final String messageId = "testSendGetStatus" ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("8") ;
+        W3CEndpointReference endpoint = TestUtil.getCoordinatorCompletionParticipantEndpoint(instanceIdentifier.getInstanceIdentifier());
+        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.coordinatorCompletionParticipantServiceURI, messageId) ;
+
+        CoordinatorCompletionParticipantClient.getClient().sendGetStatus(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+
+        final CoordinatorCompletionParticipantDetails details = testCoordinatorCompletionParticipantProcessor.getCoordinatorCompletionParticipantDetails(messageId, 10000) ;
+
+        assertTrue(details.hasGetStatus()) ;
+
+        checkDetails(details, true, true, messageId, instanceIdentifier);
+    }
+
+    public void testSendError()
+        throws Exception
+    {
+        final String messageId = "testSendError" ;
+        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.coordinatorCompletionParticipantServiceURI, messageId) ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("9") ;
+        final String reason = "testSendErrorReason" ;
+        final SoapFaultType soapFaultType = SoapFaultType.FAULT_SENDER ;
+        final QName subcode = ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME ;
+        final SoapFault11 soapFault = new SoapFault11(soapFaultType, subcode, reason) ;
+
+        // this would be a better test if we could set the identifier as a reference parameter here
+        AddressingHelper.installNoneReplyTo(addressingProperties);
+        SoapFaultClient.sendSoapFault(soapFault, addressingProperties, TestUtil.getBusinessActivityFaultAction()) ;
+
+        final CoordinatorCompletionParticipantDetails details = testCoordinatorCompletionParticipantProcessor.getCoordinatorCompletionParticipantDetails(messageId, 10000) ;
+
+        assertNotNull(details.hasSoapFault()) ;
+        assertEquals(details.hasSoapFault().getSoapFaultType(), soapFaultType) ;
+        assertEquals(details.hasSoapFault().getReason(), reason) ;
+        assertEquals(details.hasSoapFault().getSubcode(), subcode) ;
+
+        checkDetails(details, false, false, messageId, null);
+    }
+
+    public void testSendNotCompleted()
+        throws Exception
+    {
+        final String messageId = "testSendNotCompleted" ;
+        final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("10") ;
+        W3CEndpointReference endpoint = TestUtil.getCoordinatorCompletionParticipantEndpoint(instanceIdentifier.getInstanceIdentifier());
+        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.coordinatorCompletionParticipantServiceURI, messageId) ;
+
+        CoordinatorCompletionParticipantClient.getClient().sendNotCompleted(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+
+        final CoordinatorCompletionParticipantDetails details = testCoordinatorCompletionParticipantProcessor.getCoordinatorCompletionParticipantDetails(messageId, 10000) ;
+
+        assertTrue(details.hasNotCompleted()) ;
+
+        checkDetails(details, false, true, messageId, instanceIdentifier);
+    }
+
+    protected void tearDown()
+        throws Exception
+    {
+        CoordinatorCompletionParticipantProcessor.setProcessor(origCoordinatorCompletionParticipantProcessor) ;
+    }
+
+    /**
+     * check the message details to see that they have the correct to and from address and message id, a null
+     * reply to address and an arjuna context containing the correct instannce identifier
+     * @param details
+     * @param messageId
+     * @param instanceIdentifier
+     */
+
+    private void checkDetails(CoordinatorCompletionParticipantDetails details, boolean hasFrom, boolean hasFaultTo, String messageId, InstanceIdentifier instanceIdentifier)
+    {
+        AddressingProperties inAddressingProperties = details.getAddressingProperties();
+        ArjunaContext inArjunaContext = details.getArjunaContext();
+
+        assertEquals(inAddressingProperties.getTo().getURI().toString(), TestUtil.coordinatorCompletionParticipantServiceURI);
+        assertNotNull(inAddressingProperties.getReplyTo());
+        assertTrue(AddressingHelper.isNoneReplyTo(inAddressingProperties));
+        if (hasFrom) {
+            assertNotNull(inAddressingProperties.getFrom());
+            assertEquals(inAddressingProperties.getFrom().getAddress().getURI().toString(), TestUtil.coordinatorCompletionCoordinatorServiceURI);
+        } else {
+            assertNull(inAddressingProperties.getFrom());
+        }
+        if (hasFaultTo) {
+            assertNotNull(inAddressingProperties.getFaultTo());
+            assertEquals(inAddressingProperties.getFaultTo().getAddress().getURI().toString(), TestUtil.coordinatorCompletionCoordinatorServiceURI);
+        } else {
+            assertNull(inAddressingProperties.getFrom());
+        }
+        assertNotNull(inAddressingProperties.getMessageID());
+        assertEquals(inAddressingProperties.getMessageID().getURI().toString(), messageId);
+
+        if (instanceIdentifier == null) {
+            assertNull(inArjunaContext);
+        } else {
+            assertNotNull(inArjunaContext) ;
+            assertEquals(instanceIdentifier.getInstanceIdentifier(), inArjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
+        }
+    }
+}
