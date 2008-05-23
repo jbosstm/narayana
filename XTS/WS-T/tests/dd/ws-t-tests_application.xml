@@ -32,4 +32,11 @@
             <context-root>/ws-t-tests</context-root>
         </web>
     </module>
+
+    <module>
+        <web>
+            <web-uri>ws-t11-tests.war</web-uri>
+            <context-root>/ws-t11-tests</context-root>
+        </web>
+    </module>
 </application>

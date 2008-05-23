@@ -82,7 +82,7 @@ public class CompletionCoordinatorClient
     public void sendCommit(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromReplyTo(addressingProperties, completionInitiator, identifier);
+        AddressingHelper.installFromFaultTo(addressingProperties, completionInitiator, identifier);
         CompletionCoordinatorPortType port = getPort(endpoint, addressingProperties, commitAction);
         Notification commit = new Notification();
 
@@ -99,7 +99,7 @@ public class CompletionCoordinatorClient
     public void sendRollback(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromReplyTo(addressingProperties, completionInitiator, identifier);
+        AddressingHelper.installFromFaultTo(addressingProperties, completionInitiator, identifier);
         CompletionCoordinatorPortType port = getPort(endpoint, addressingProperties, rollbackAction);
         Notification rollback = new Notification();
                 
@@ -127,7 +127,7 @@ public class CompletionCoordinatorClient
                                                   final AddressingProperties addressingProperties,
                                                   final AttributedURI action)
     {
-        addressingProperties.setFrom(completionInitiator);
+        AddressingHelper.installNoneReplyTo(addressingProperties);
         return WSATClient.getCompletionCoordinatorPort(endpoint, action, addressingProperties);
     }
 }

@@ -33,7 +33,7 @@ public class TestSuite extends junit.framework.TestSuite
         // the service tests are no longer working
         addTest(new junit.framework.TestSuite(CompletionParticipantTestCase.class));
         addTest(new junit.framework.TestSuite(CompletionCoordinatorTestCase.class));
-        //addTest(new junit.framework.TestSuite(TwoPCParticipantTestCase.class));
+        addTest(new junit.framework.TestSuite(TwoPCParticipantTestCase.class));
         addTest(new junit.framework.TestSuite(TwoPCCoordinatorTestCase.class));
         addTest(new junit.framework.TestSuite(CompletionServiceTestCase.class));
         //addTest(new junit.framework.TestSuite(TwoPCServiceTestCase.class));

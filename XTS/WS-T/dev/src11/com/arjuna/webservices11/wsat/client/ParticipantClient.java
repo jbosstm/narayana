@@ -93,7 +93,7 @@ public class ParticipantClient
     public void sendPrepare(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromReplyTo(addressingProperties, coordinator, identifier);
+        AddressingHelper.installFromFaultTo(addressingProperties, coordinator, identifier);
         ParticipantPortType port = getPort(endpoint, addressingProperties, prepareAction);
         Notification prepare = new Notification();
 
@@ -110,7 +110,7 @@ public class ParticipantClient
     public void sendCommit(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromReplyTo(addressingProperties, coordinator, identifier);
+        AddressingHelper.installFromFaultTo(addressingProperties, coordinator, identifier);
         ParticipantPortType port = getPort(endpoint, addressingProperties, commitAction);
         Notification commit = new Notification();
 
@@ -127,7 +127,7 @@ public class ParticipantClient
     public void sendRollback(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromReplyTo(addressingProperties, coordinator, identifier);
+        AddressingHelper.installFromFaultTo(addressingProperties, coordinator, identifier);
         ParticipantPortType port = getPort(endpoint, addressingProperties, rollbackAction);
         Notification rollback = new Notification();
 
@@ -145,8 +145,8 @@ public class ParticipantClient
     public void sendSoapFault(final AddressingProperties addressingProperties, final SoapFault soapFault, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        AddressingHelper.installNoneReplyTo(addressingProperties);
         // use the SoapFaultService to format a soap fault and send it back to the faultto or from address
-        AddressingHelper.installFrom(addressingProperties, coordinator, identifier);
         SoapFaultClient.sendSoapFault((SoapFault11)soapFault, addressingProperties, faultAction);
     }
 
@@ -171,7 +171,7 @@ public class ParticipantClient
                                                 final AddressingProperties addressingProperties,
                                                 final AttributedURI action)
     {
-        addressingProperties.setFrom(coordinator);
+        AddressingHelper.installNoneReplyTo(addressingProperties);
         if (participant != null) {
             return WSATClient.getParticipantPort(participant, action, addressingProperties);
         } else {

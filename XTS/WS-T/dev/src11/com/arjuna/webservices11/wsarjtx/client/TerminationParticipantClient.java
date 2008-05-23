@@ -119,7 +119,7 @@ public class TerminationParticipantClient
     public void sendCompleted(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromReplyTo(addressingProperties, terminationCoordinator, identifier);
+        AddressingHelper.installFromFaultTo(addressingProperties, terminationCoordinator, identifier);
         final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, completedAction);
         final NotificationType completed = new NotificationType();
 
@@ -136,7 +136,7 @@ public class TerminationParticipantClient
     public void sendClosed(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromReplyTo(addressingProperties, terminationCoordinator, identifier);
+        AddressingHelper.installFromFaultTo(addressingProperties, terminationCoordinator, identifier);
         final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, closedAction);
         final NotificationType closed = new NotificationType();
 
@@ -153,7 +153,7 @@ public class TerminationParticipantClient
     public void sendCancelled(final W3CEndpointReference participant,final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromReplyTo(addressingProperties, terminationCoordinator, identifier);
+        AddressingHelper.installFromFaultTo(addressingProperties, terminationCoordinator, identifier);
         final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, cancelledAction);
         final NotificationType cancelled = new NotificationType();
 
@@ -170,7 +170,7 @@ public class TerminationParticipantClient
     public void sendFaulted(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromReplyTo(addressingProperties, terminationCoordinator, identifier);
+        AddressingHelper.installFromFaultTo(addressingProperties, terminationCoordinator, identifier);
         final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, faultedAction);
         final NotificationType faulted = new NotificationType();
 
@@ -189,7 +189,8 @@ public class TerminationParticipantClient
     public void sendSoapFault(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final SoapFault soapFault, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFrom(addressingProperties, terminationCoordinator, identifier);
+        //AddressingHelper.installFrom(addressingProperties, terminationCoordinator, identifier);
+        AddressingHelper.installNoneReplyTo(addressingProperties);
         final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, soapFaultAction);
         final ExceptionType fault = new ExceptionType();
         // we pass the fault type, reason and subcode. we cannot pass the detail and header elements as they are
@@ -250,6 +251,7 @@ public class TerminationParticipantClient
                                                    final AttributedURI action)
     {
         // create a port specific to the incoming addressing properties
+        AddressingHelper.installNoneReplyTo(addressingProperties);
         return WSARJTXClient.getTerminationParticipantPort(identifier, action, addressingProperties);
     }
 }

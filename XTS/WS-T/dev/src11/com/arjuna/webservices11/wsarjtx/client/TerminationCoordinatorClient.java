@@ -114,7 +114,7 @@ public class TerminationCoordinatorClient
     public void sendComplete(final W3CEndpointReference coordinator, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromReplyTo(addressingProperties, terminationParticipant, identifier);
+        AddressingHelper.installFromFaultTo(addressingProperties, terminationParticipant, identifier);
         final TerminationCoordinatorPortType port = getPort(coordinator, addressingProperties, identifier, completeAction);
         final NotificationType complete = new NotificationType();
 
@@ -131,7 +131,7 @@ public class TerminationCoordinatorClient
     public void sendClose(final W3CEndpointReference coordinator, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromReplyTo(addressingProperties, terminationParticipant, identifier);
+        AddressingHelper.installFromFaultTo(addressingProperties, terminationParticipant, identifier);
         final TerminationCoordinatorPortType port = getPort(coordinator, addressingProperties, identifier, closeAction);
         final NotificationType close = new NotificationType();
 
@@ -148,7 +148,7 @@ public class TerminationCoordinatorClient
     public void sendCancel(final W3CEndpointReference coordinator, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromReplyTo(addressingProperties, terminationParticipant, identifier);
+        AddressingHelper.installFromFaultTo(addressingProperties, terminationParticipant, identifier);
         final TerminationCoordinatorPortType port = getPort(coordinator, addressingProperties, identifier, cancelAction);
         final NotificationType cancel = new NotificationType();
 
@@ -169,7 +169,7 @@ public class TerminationCoordinatorClient
                               final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFrom(addressingProperties, terminationParticipant, identifier);
+        AddressingHelper.installNoneReplyTo(addressingProperties);
         // use the SoapFaultService to format a soap fault and send it back to the faultto or from address
         SoapFaultClient.sendSoapFault((SoapFault11)soapFault, endpoint, addressingProperties, faultAction);
     }
@@ -190,6 +190,7 @@ public class TerminationCoordinatorClient
         // we only need the message id from the addressing properties as the address is already wrapped up
         // in the ednpoint reference. also the identifier should already be installed in the endpoint
         // reference as a reference parameter so we don't need that either
+        AddressingHelper.installNoneReplyTo(addressingProperties);
         return WSARJTXClient.getTerminationCoordinatorPort(endpoint, action, addressingProperties);
     }
 }

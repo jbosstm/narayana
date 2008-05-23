@@ -99,7 +99,7 @@ public class CoordinatorClient
     public void sendPrepared(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromReplyTo(addressingProperties, participant, identifier);
+        AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, preparedAction);
         Notification prepared = new Notification();
 
@@ -116,7 +116,7 @@ public class CoordinatorClient
     public void sendAborted(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFrom(addressingProperties, participant, identifier);
+        AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, abortedAction);
         Notification aborted = new Notification();
 
@@ -133,7 +133,7 @@ public class CoordinatorClient
     public void sendReadOnly(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFrom(addressingProperties, participant, identifier);
+        AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, readOnlyAction);
         Notification readOnly = new Notification();
 
@@ -150,7 +150,7 @@ public class CoordinatorClient
     public void sendCommitted(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFrom(addressingProperties, participant, identifier);
+        AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, committedAction);
         Notification committed = new Notification();
 
@@ -168,9 +168,9 @@ public class CoordinatorClient
     public void sendSoapFault(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final SoapFault soapFault, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFrom(addressingProperties, participant, identifier);
-        // use the SoapFaultService to format a soap fault and send it back to the faultto or from address
-        SoapFaultClient.sendSoapFault((SoapFault11)soapFault, addressingProperties, faultAction);
+        AddressingHelper.installNoneReplyTo(addressingProperties);
+        // use the SoapFaultService to format a soap fault and send it back to the faultto address
+        SoapFaultClient.sendSoapFault((SoapFault11)soapFault, endpoint, addressingProperties, faultAction);
     }
 
     /**
@@ -194,6 +194,7 @@ public class CoordinatorClient
                                                 final AddressingProperties addressingProperties,
                                                 final AttributedURI action)
     {
+        AddressingHelper.installNoneReplyTo(addressingProperties);
         return WSATClient.getCoordinatorPort(endpoint, action, addressingProperties);
     }
 }

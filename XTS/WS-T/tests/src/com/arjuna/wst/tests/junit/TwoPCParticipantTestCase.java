@@ -165,6 +165,8 @@ public class TwoPCParticipantTestCase extends TestCase
         final QName subcode = ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME ;
         final SoapFault soapFault = new SoapFault10(soapFaultType, subcode, reason) ;
 
+        // for this test we use the soap fault client to send a message where we have no valid instance identifier
+        // we could also test the case where we have an instance identifier but it never gets exercised anyway!
         CoordinatorClient.getClient().sendSoapFault(addressingContext, soapFault, new InstanceIdentifier("sender"));
 
         CoordinatorDetails details = testCoordinatorProcessor.getCoordinatorDetails(messageId, 10000);
@@ -172,7 +174,7 @@ public class TwoPCParticipantTestCase extends TestCase
         assertEquals(details.hasSoapFault().getSoapFaultType(), soapFault.getSoapFaultType());
         assertEquals(details.hasSoapFault().getReason(), soapFault.getReason());
         assertEquals(details.hasSoapFault().getSubcode(), soapFault.getSubcode());
-        // don't expect reply to address but do expect identifier
+        // don't expect reply to address nor an identifier
         checkDetails(details, false, messageId, null);
     }
 

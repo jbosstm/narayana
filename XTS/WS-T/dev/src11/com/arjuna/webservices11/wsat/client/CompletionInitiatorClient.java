@@ -89,7 +89,7 @@ public class CompletionInitiatorClient
     public void sendCommitted(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFrom(addressingProperties, completionCoordinator, identifier);
+        AddressingHelper.installFaultTo(addressingProperties, completionCoordinator, identifier);
         CompletionInitiatorPortType port = getPort(participant, addressingProperties, committedAction);
         Notification commited = new Notification();
 
@@ -106,7 +106,7 @@ public class CompletionInitiatorClient
     public void sendAborted(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFrom(addressingProperties, completionCoordinator, identifier);
+        AddressingHelper.installFaultTo(addressingProperties, completionCoordinator, identifier);
         CompletionInitiatorPortType port = getPort(participant, addressingProperties, abortedAction);
         Notification aborted = new Notification();
 
@@ -124,9 +124,9 @@ public class CompletionInitiatorClient
     public void sendSoapFault(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final SoapFault soapFault, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFrom(addressingProperties, completionCoordinator, identifier);
+        AddressingHelper.installNoneReplyTo(addressingProperties);
         // use the SoapFaultService to format a soap fault and send it back to the faultto or from address
-        SoapFaultClient.sendSoapFault((SoapFault11)soapFault, addressingProperties, faultAction);
+        SoapFaultClient.sendSoapFault((SoapFault11)soapFault, participant, addressingProperties, faultAction);
     }
 
     /**
@@ -150,7 +150,7 @@ public class CompletionInitiatorClient
                                                 final AddressingProperties addressingProperties,
                                                 final AttributedURI action)
     {
-        addressingProperties.setFrom(completionCoordinator);
+        AddressingHelper.installNoneReplyTo(addressingProperties);
         return WSATClient.getCompletionInitiatorPort(participant, action, addressingProperties);
     }
 }

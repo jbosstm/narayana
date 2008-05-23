@@ -148,6 +148,7 @@ public class TestInitialisation implements ServletContextListener
         participantCompletionParticipantProcessor.activateParticipant(testFaultedExceptionBusinessAgreementWithParticipantCompletionParticipantEngine, TestUtil.FAULTEDEXCEPTION_PARTICIPANT_IDENTIFIER);
 
         final CoordinatorCompletionParticipantProcessor coordinatorCompletionParticipantProcessor = CoordinatorCompletionParticipantProcessor.getProcessor() ;
+        // !!! is this not supposed to be BusinessActivityConstants.SERVICE_COORDINATOR_COMPLETION_COORDINATOR
         final AttributedURIType coordinatorCompletionCoordinatorURI = new AttributedURIType(SoapRegistry.getRegistry().getServiceURI(BusinessActivityConstants.SERVICE_PARTICIPANT_COMPLETION_COORDINATOR));
 
         testSystemExceptionBusinessAgreementWithCoordinatorCompletionParticipantEngine = new CoordinatorCompletionParticipantEngine(TestUtil.SYSTEMEXCEPTION_PARTICIPANT_IDENTIFIER, new EndpointReferenceType(coordinatorCompletionCoordinatorURI), testSystemExceptionBusinessAgreementWithCoordinatorCompletionParticipant);

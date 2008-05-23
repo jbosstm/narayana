@@ -259,23 +259,59 @@ public class AddressingHelper
         }
     }
     
-    public static void installFrom(AddressingProperties addressingProperties, EndpointReference epReference, InstanceIdentifier identifier)
+    public static void installFaultTo(AddressingProperties addressingProperties, EndpointReference epReference, InstanceIdentifier identifier)
     {
         AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
         EndpointReference from = builder.newEndpointReference(epReference.getAddress().getURI());
         InstanceIdentifier.setEndpointInstanceIdentifier(from, identifier);
-        addressingProperties.setFrom(from);
+        addressingProperties.setFaultTo(from);
     }
 
-    public static void installFromReplyTo(AddressingProperties addressingProperties, EndpointReference epReference, InstanceIdentifier identifier)
+    public static void installFromFaultTo(AddressingProperties addressingProperties, EndpointReference epReference, InstanceIdentifier identifier)
     {
         AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
         EndpointReference from = builder.newEndpointReference(epReference.getAddress().getURI());
         InstanceIdentifier.setEndpointInstanceIdentifier(from, identifier);
-        EndpointReference replyTo = builder.newEndpointReference(epReference.getAddress().getURI());
-        InstanceIdentifier.setEndpointInstanceIdentifier(replyTo, identifier);
         addressingProperties.setFrom(from);
-        addressingProperties.setReplyTo(replyTo);
+        EndpointReference faultTo = builder.newEndpointReference(epReference.getAddress().getURI());
+        InstanceIdentifier.setEndpointInstanceIdentifier(faultTo, identifier);
+        addressingProperties.setFaultTo(faultTo);
+    }
+
+    private static EndpointReference noneReplyTo = null;
+
+    private static synchronized EndpointReference getNoneReplyTo()
+    {
+        if (noneReplyTo == null) {
+            AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
+            AddressingConstants addressingConstants = builder.newAddressingConstants();
+            try {
+                URI noneURI = new URI(addressingConstants.getNoneURI());
+                noneReplyTo = builder.newEndpointReference(noneURI);
+            } catch (URISyntaxException e) {
+                // will not happen
+            }
+        }
+
+        return noneReplyTo;
+    }
+
+    public static boolean isNoneReplyTo(AddressingProperties addressingProperties)
+    {
+        EndpointReference replyTo = addressingProperties.getReplyTo();
+        if (replyTo != null) {
+            String noneAddress = getNoneReplyTo().getAddress().getURI().toString();
+            String replyAddress = replyTo.getAddress().getURI().toString();
+
+            return noneAddress.equals(replyAddress);
+        } else {
+            return false;
+        }
+    }
+
+    public static void installNoneReplyTo(AddressingProperties addressingProperties)
+    {
+        addressingProperties.setReplyTo(getNoneReplyTo());
     }
 
     public static javax.xml.ws.addressing.AttributedURI makeURI(AddressingBuilder builder, String messageID)

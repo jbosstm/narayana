@@ -307,16 +307,24 @@
             <classpath>
                 <pathelement path="${build.dev.lib.dir}/ws-t.jar"/>
                 <pathelement path="${build.dev.lib.dir}/ws-t10.jar"/>
+                <pathelement path="${build.dev.lib.dir}/ws-t11.jar"/>
                 <path refid="tests.lib.path"/>
                 <path refid="lib.ext.path"/>
                 <path refid="ws-c.path"/>
                 <path refid="ws-c10.path"/>
+                <path refid="ws-c11.path"/>
             </classpath>
             <src path="${tests.src.dir}"/>
         </javac>
     </target>
 
     <target name="tests-webapps" depends="tests-compile">
+        <jar jarfile="${build.tests.lib.dir}/ws-t-tests.jar">
+            <fileset dir="${build.tests.classes.dir}"/>
+            <manifest>
+                <attribute name="Class-Path" value="ws-t11.jar ws-t10.jar ws-t.jar ws-c11.jar ws-c10.jar ws-c.jar ${tests.libs}"/>
+            </manifest>
+        </jar>
         <copy file="${tests.dd.dir}/ws-t-tests_web-app.xml" tofile="${build.tests.dd.dir}/web-app.xml">
             <filterset>
                 <filter token="hostname" value="${hostname}"/>
@@ -325,9 +333,19 @@
         </copy>
         <war warfile="${build.tests.webapps.dir}/ws-t-tests.war" webxml="${build.tests.dd.dir}/web-app.xml">
             <manifest>
-                <attribute name="Class-Path" value="ws-t10.jar ws-t.jar ${tests.libs}"/>
+                <attribute name="Class-Path" value="ws-t-tests.jar"/>
             </manifest>
-            <classes dir="${build.tests.classes.dir}"/>
+        </war>
+        <copy file="${tests.dd.dir}/ws-t11-tests_web-app.xml" tofile="${build.tests.dd.dir}/web-app11.xml">
+            <filterset>
+                <filter token="hostname" value="${hostname}"/>
+                <filter token="port" value="${port}"/>
+            </filterset>
+        </copy>
+        <war warfile="${build.tests.webapps.dir}/ws-t11-tests.war" webxml="${build.tests.dd.dir}/web-app11.xml">
+            <manifest>
+                <attribute name="Class-Path" value="ws-t-tests.jar"/>
+            </manifest>
         </war>
         <ear earfile="${build.tests.webapps.dir}/ws-t-tests.ear" appxml="${tests.dd.dir}/ws-t-tests_application.xml">
             <!--
@@ -338,7 +356,8 @@
             <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
             <fileset dir="${build.dev.lib.dir}" includes="ws-t.jar ws-t10.jar"/>
             -->
-            <fileset dir="${build.tests.webapps.dir}" includes="ws-t-tests.war"/>
+            <fileset dir="${build.tests.webapps.dir}" includes="ws-t-tests.war ws-t11-tests.war"/>
+            <fileset dir="${build.tests.lib.dir}" includes="ws-t-tests.jar"/>
             <!--
             <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c.libs} ${ws-c10.libs}"/>
             -->
