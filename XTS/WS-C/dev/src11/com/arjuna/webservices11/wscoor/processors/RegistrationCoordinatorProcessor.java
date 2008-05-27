@@ -53,7 +53,7 @@ public abstract class RegistrationCoordinatorProcessor
      * @param coordinator The coordinator.
      * @return The orig coordinator.
      */
-    public static RegistrationCoordinatorProcessor setCoordinator(final RegistrationCoordinatorProcessorImpl coordinator)
+    public static RegistrationCoordinatorProcessor setCoordinator(final RegistrationCoordinatorProcessor coordinator)
     {
         final RegistrationCoordinatorProcessor origCoordinator = COORDINATOR ;
         COORDINATOR = coordinator ;
