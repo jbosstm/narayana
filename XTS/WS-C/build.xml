@@ -285,6 +285,7 @@
             <classpath>
                 <pathelement path="${build.dev.lib.dir}/ws-c.jar"/>
                 <pathelement path="${build.dev.lib.dir}/ws-c10.jar"/>
+                <pathelement path="${build.dev.lib.dir}/ws-c11.jar"/>
                 <path refid="tests.lib.path"/>
                 <path refid="lib.ext.path"/>
             </classpath>
@@ -299,7 +300,19 @@
                 <filter token="port" value="${port}"/>
             </filterset>
         </copy>
+        <copy file="${tests.dd.dir}/ws-c11-tests_web-app.xml" tofile="${build.tests.dd.dir}/web-app11.xml">
+            <filterset>
+                <filter token="hostname" value="${hostname}"/>
+                <filter token="port" value="${port}"/>
+            </filterset>
+        </copy>
         <war warfile="${build.tests.webapps.dir}/ws-c-tests.war" webxml="${build.tests.dd.dir}/web-app.xml">
+            <manifest>
+                <attribute name="Class-Path" value="ws-c10.jar ws-c.jar ${tests.libs}"/>
+            </manifest>
+            <classes dir="${build.tests.classes.dir}"/>
+        </war>
+        <war warfile="${build.tests.webapps.dir}/ws-c11-tests.war" webxml="${build.tests.dd.dir}/web-app11.xml">
             <manifest>
                 <attribute name="Class-Path" value="ws-c10.jar ws-c.jar ${tests.libs}"/>
             </manifest>
@@ -309,12 +322,15 @@
             <!--
             <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
             -->
+            <!--
             <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
+            -->
             <!--
             <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
             <fileset dir="${build.dev.lib.dir}" includes="ws-c10.jar ws-c.jar"/>
             -->
             <fileset dir="${build.tests.webapps.dir}" includes="ws-c-tests.war"/>
+            <fileset dir="${build.tests.webapps.dir}" includes="ws-c11-tests.war"/>
         </ear>
     </target>
 
