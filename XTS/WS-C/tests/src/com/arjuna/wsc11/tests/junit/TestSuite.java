@@ -36,9 +36,10 @@ public class TestSuite extends junit.framework.TestSuite
         addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.ActivationServiceTestCase.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.ActivationServiceExceptionTestCase.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.RegistrationServiceTestCase.class));
-        //addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.RegistrationServiceExceptionTestCase.class));
+        addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.RegistrationServiceExceptionTestCase.class));
 
-        //addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.EnduranceTestCase.class));
+        addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.EnduranceTestCase.class));
+        // this needs redesigning because 1.1. protocols are RPC pattern
         //addTest(new junit.framework.TestSuite(com.arjuna.wsc11.tests.junit.ThreadedEnduranceTestCase.class));
     }
 }

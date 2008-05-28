@@ -26,11 +26,18 @@ import java.util.Map;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
+import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.wsc11.tests.TestUtil11;
+import com.arjuna.wsc.tests.TestUtil;
+import com.arjuna.webservices.SoapFaultType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponseType;
 
 import javax.xml.ws.addressing.AddressingProperties;
+import javax.xml.ws.soap.SOAPFaultException;
+import javax.xml.ws.ProtocolException;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPFault;
 
 public class TestRegistrationCoordinatorProcessor extends
         RegistrationCoordinatorProcessor
@@ -45,7 +52,47 @@ public class TestRegistrationCoordinatorProcessor extends
             messageIdMap.put(messageId, new RegisterDetails(register, addressingProperties, arjunaContext)) ;
             messageIdMap.notifyAll() ;
         }
-
+        String protocolIdentifier = register.getProtocolIdentifier();
+        if (TestUtil.ALREADY_REGISTERED_PROTOCOL_IDENTIFIER.equals(protocolIdentifier)) {
+            try {
+                SOAPFactory factory = SOAPFactory.newInstance();
+                SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_ALREADY_REGISTERED_QNAME);
+                soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_ALREADY_REGISTERED_QNAME).addTextNode("already registered");
+                throw new SOAPFaultException(soapFault);
+            } catch (Throwable th) {
+                throw new ProtocolException(th);
+            }
+        }
+        if (TestUtil.INVALID_PROTOCOL_PROTOCOL_IDENTIFIER.equals(protocolIdentifier)) {
+            try {
+                SOAPFactory factory = SOAPFactory.newInstance();
+                SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PROTOCOL_QNAME);
+                soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PROTOCOL_QNAME).addTextNode("invalid protocol");
+                throw new SOAPFaultException(soapFault);
+            } catch (Throwable th) {
+                throw new ProtocolException(th);
+            }
+        }
+        if (TestUtil.INVALID_STATE_PROTOCOL_IDENTIFIER.equals(protocolIdentifier)) {
+            try {
+                SOAPFactory factory = SOAPFactory.newInstance();
+                SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME);
+                soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME).addTextNode("invalid state");
+                throw new SOAPFaultException(soapFault);
+            } catch (Throwable th) {
+                throw new ProtocolException(th);
+            }
+        }
+        if (TestUtil.NO_ACTIVITY_PROTOCOL_IDENTIFIER.equals(protocolIdentifier)) {
+            try {
+                SOAPFactory factory = SOAPFactory.newInstance();
+                SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_NO_ACTIVITY_QNAME);
+                soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_NO_ACTIVITY_QNAME).addTextNode("no activity");
+                throw new SOAPFaultException(soapFault);
+            } catch (Throwable th) {
+                throw new ProtocolException(th);
+            }
+        }
         // we need to cook up a response here
         RegisterResponseType registerResponseType = new RegisterResponseType();
         if (arjunaContext != null) {

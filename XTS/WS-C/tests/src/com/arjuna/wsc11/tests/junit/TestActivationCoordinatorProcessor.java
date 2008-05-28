@@ -32,6 +32,7 @@ import com.arjuna.wsc.InvalidStateException;
 import com.arjuna.wsc.NoActivityException;
 import com.arjuna.wsc11.tests.TestRegistrar;
 import com.arjuna.wsc11.tests.TestUtil11;
+import com.arjuna.webservices.SoapFaultType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponseType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
@@ -40,6 +41,10 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import javax.xml.ws.soap.SOAPFaultException;
+import javax.xml.ws.ProtocolException;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPFault;
 
 public class TestActivationCoordinatorProcessor extends
         ActivationCoordinatorProcessor
@@ -55,11 +60,23 @@ public class TestActivationCoordinatorProcessor extends
             messageIdMap.put(messageId, new CreateCoordinationContextDetails(createCoordinationContext, addressingProperties)) ;
             messageIdMap.notifyAll() ;
         }
+        String coordinationType = createCoordinationContext.getCoordinationType();
+        if (TestUtil.INVALID_CREATE_PARAMETERS_COORDINATION_TYPE.equals(coordinationType)) {
+            try {
+                SOAPFactory factory = SOAPFactory.newInstance();
+                SOAPFault soapFault = factory.createFault(SoapFaultType.FAULT_SENDER.getValue(), CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME);
+                soapFault.addDetail().addDetailEntry(CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_PARAMETERS_QNAME).addTextNode("Invalid create parameters");
+                throw new SOAPFaultException(soapFault);
+            } catch (Throwable th) {
+                throw new ProtocolException(th);
+            }
+        }
+        
         // we have to return a value so lets cook one up
 
         CreateCoordinationContextResponseType createCoordinationContextResponseType = new CreateCoordinationContextResponseType();
         CoordinationContext coordinationContext = new CoordinationContext();
-        coordinationContext.setCoordinationType(createCoordinationContext.getCoordinationType());
+        coordinationContext.setCoordinationType(coordinationType);
         coordinationContext.setExpires(createCoordinationContext.getExpires());
         String identifier = nextIdentifier();
         CoordinationContextType.Identifier identifierInstance = new CoordinationContextType.Identifier();
