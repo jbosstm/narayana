@@ -32,4 +32,11 @@
             <context-root>/wscf-tests</context-root>
         </web>
     </module>
+
+    <module>
+        <web>
+            <web-uri>wscf11-tests.war</web-uri>
+            <context-root>/wscf11-tests</context-root>
+        </web>
+    </module>
 </application>

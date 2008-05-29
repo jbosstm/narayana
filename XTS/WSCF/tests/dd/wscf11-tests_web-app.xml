@@ -1,0 +1,53 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/j2ee/dtds/web-app_2_3.dtd">
+
+<web-app>
+    <display-name>Arjuna WSCF 1.1 Tests</display-name>
+
+    <description>Arjuna WSCF 1.1 Tests</description>
+
+    <!--  Initialise the tests -->
+    <listener>
+        <listener-class>com.arjuna.wscf11.tests.TestInitialisation</listener-class>
+    </listener>
+    
+ <servlet>
+        <servlet-name>JUnit Tests Servlet</servlet-name>
+        <servlet-class>com.arjuna.qa.junit.WSCFTestRunnerServlet</servlet-class>
+        <init-param>
+            <param-name>TestSuiteClassName</param-name>
+            <param-value>com.arjuna.wscf11.tests.WSCF11TestSuite</param-value>
+        </init-param>
+        <load-on-startup>4</load-on-startup>
+    </servlet>
+
+	<!-- servlet mappings -->
+    <servlet-mapping>
+        <servlet-name>JUnit Tests Servlet</servlet-name>
+        <url-pattern>/index.html</url-pattern>
+    </servlet-mapping>
+    
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+</web-app>

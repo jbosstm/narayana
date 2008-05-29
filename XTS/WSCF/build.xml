@@ -321,7 +321,9 @@
 	    <classpath>
 	      <pathelement path="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
           <pathelement path="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}10.jar"/>
+          <pathelement path="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}11.jar"/>
           <pathelement path="${com.arjuna.mwlabs.wsc.jar.dest}/${wsc10.libs}"/>
+          <pathelement path="${com.arjuna.mwlabs.wsc.jar.dest}/${wsc11.libs}"/>
 	      <path refid="com.arjuna.mwlabs.wscf.tests.lib.path"/>
 	      <path refid="com.arjuna.mwlabs.wscf.lib.classpath"/>
 	    </classpath>
@@ -336,11 +338,27 @@
                 <filter token="port" value="${port}"/>
             </filterset>
         </copy>
-        <war warfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.war" webxml="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app.xml">
+        <copy file="${com.arjuna.mwlabs.wscf.tests.dd}/wscf11-tests_web-app.xml" tofile="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app11.xml">
+            <filterset>
+                <filter token="hostname" value="${hostname}"/>
+                <filter token="port" value="${port}"/>
+            </filterset>
+        </copy>
+        <jar jarfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.jar">
+            <fileset dir="${com.arjuna.mwlabs.wscf.tests.dest}"/>
             <manifest>
                 <attribute name="Class-Path" value="${tests.depend.libs}"/>
             </manifest>
-            <classes dir="${com.arjuna.mwlabs.wscf.tests.dest}"/>
+        </jar>
+        <war warfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.war" webxml="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app.xml">
+            <manifest>
+                <attribute name="Class-Path" value="wscf-tests.jar"/>
+            </manifest>
+        </war>
+        <war warfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf11-tests.war" webxml="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app11.xml">
+            <manifest>
+                <attribute name="Class-Path" value="wscf-tests.jar"/>
+            </manifest>
         </war>
         <ear earfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.ear" appxml="${com.arjuna.mwlabs.wscf.tests.dd}/wscf-tests_application.xml">
             <!-- we only need to deploy the ext test libs (junit) and
@@ -349,7 +367,7 @@
 	         in the server lib
 	         -->
             <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
-            <fileset dir="${com.arjuna.mwlabs.wscf.tests.webapps.dest}" includes="wscf-tests.war"/>
+            <fileset dir="${com.arjuna.mwlabs.wscf.tests.webapps.dest}" includes="wscf-tests.war wscf11-tests.war wscf-tests.jar"/>
         </ear>
     </target>
 

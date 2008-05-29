@@ -39,11 +39,12 @@ import com.arjuna.mwlabs.wscf.utils.ProtocolLocator;
 
 import com.arjuna.mw.wscf.common.CoordinatorXSD;
 
-import com.arjuna.mw.wscf11.protocols.*;
 import com.arjuna.mw.wscf.utils.DomUtil;
 
 import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
 import com.arjuna.mw.wscf.model.as.CoordinatorManager;
+import com.arjuna.mw.wscf11.protocols.ProtocolManager;
+import com.arjuna.mw.wscf11.protocols.ProtocolRegistry;
 
 import com.arjuna.mw.wsas.exceptions.SystemException;
 
