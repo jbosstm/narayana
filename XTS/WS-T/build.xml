@@ -351,7 +351,9 @@
             <!--
             <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
             -->
+	    <!--
             <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
+	    -->
             <!--
             <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
             <fileset dir="${build.dev.lib.dir}" includes="ws-t.jar ws-t10.jar"/>
