@@ -32,4 +32,11 @@
             <context-root>/wstx-tests</context-root>
         </web>
     </module>
+
+    <module>
+        <web>
+            <web-uri>wstx11-tests.war</web-uri>
+            <context-root>/wstx11-tests</context-root>
+        </web>
+    </module>
 </application>

@@ -22,11 +22,11 @@
  * TestSuite.java
  */
 
-package com.arjuna.wst.tests;
+package com.arjuna.wst11.tests;
 
-public class WSTXTestSuite extends junit.framework.TestSuite
+public class WSTX11TestSuite extends junit.framework.TestSuite
 {
-    public WSTXTestSuite()
+    public WSTX11TestSuite()
     {
         // wst basic tests
         // this test fails because the commit is retried forever instead of an exception being generated

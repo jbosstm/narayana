@@ -80,19 +80,25 @@
     <property name="wsc.libs" value="ws-c.jar"/>
     <property name="wsc10.libs" value="ws-c10.jar"/>
     <property name="wsc11.libs" value="ws-c11.jar"/>
+    <property name="wsc.all.libs" value="${wsc.libs} ${wsc10.libs} ${wsc11.libs}"/>
     <property name="wscf.libs" value="wscf.jar"/>
     <property name="wscf10.libs" value="wscf10.jar"/>
     <property name="wscf11.libs" value="wscf11.jar"/>
+    <property name="wscf.all.libs" value="${wscf.libs} ${wscf10.libs} ${wscf11.libs}"/>
     <property name="wst.libs" value="ws-t.jar"/>
     <property name="wst10.libs" value="ws-t10.jar"/>
     <property name="wst11.libs" value="ws-t11.jar"/>
+    <property name="wst.all.libs" value="${wst.libs} ${wst10.libs} ${wst11.libs}"/>
     <property name="wstx.libs" value="${com.arjuna.mwlabs.ts.modulename}.jar"/>
+    <property name="wstx10.libs" value="${com.arjuna.mwlabs.ts.modulename}10.jar"/>
+    <property name="wstx11.libs" value="${com.arjuna.mwlabs.ts.modulename}11.jar"/>
+    <property name="wstx.all.libs" value="${wstx.libs} ${wstx10.libs} ${wstx11.libs}"/>
 
+    <!--
     <property name="tests.libs" value="junit.jar"/>
-    <!-- can we not just get away with wstx and junit?
-    <property name="tests.all.libs" value="${wsas.libs} ${wsc.libs} ${wscf.libs} ${wst.libs} ${wstx.libs} ${tests.libs} "/>
     -->
-    <property name="tests.all.libs" value="${wsas.libs} ${wsc.libs} ${wscf.libs} ${wst.libs} ${wstx.libs} ${tests.libs} "/>
+    <property name="tests.libs" value="junit.jar"/>
+    <property name="tests.all.libs" value="${wsas.libs} ${wsc.all.libs} ${wscf.all.libs} ${wst.all.libs} ${wstx.all.libs} ${tests.libs}"/>
 
     <path id="com.arjuna.mwlabs.wstx.tests.lib.path">
         <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
@@ -336,8 +342,10 @@
 	    <classpath>
             <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
             <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}10.jar"/>
+            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}11.jar"/>
             <path refid="com.arjuna.mwlabs.wstx.tests.lib.path"/>
             <path refid="com.arjuna.mwlabs.wstx.lib.classpath10"/>
+            <path refid="com.arjuna.mwlabs.wstx.lib.classpath11"/>
             <path refid="com.arjuna.mwlabs.wstx.lib.classpath"/>
 	    </classpath>
 	    <src path="${com.arjuna.mwlabs.wstx.tests.src}"/>
@@ -351,11 +359,28 @@
 	      <filter token="port" value="${port}"/>
 	    </filterset>
 	  </copy>
-	  <war warfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.war" webxml="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app.xml">
+	  <copy file="${com.arjuna.mwlabs.wstx.tests.dd}/wstx11-tests_web-app.xml" tofile="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app11.xml">
+	    <filterset>
+	      <filter token="hostname" value="${hostname}"/>
+	      <filter token="port" value="${port}"/>
+	    </filterset>
+	  </copy>
+	  <jar jarfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.jar">
 	    <manifest>
 	      <attribute name="Class-Path" value="${tests.all.libs}"/>
 	    </manifest>
+	    <fileset dir="${com.arjuna.mwlabs.wstx.tests.dest}"/>
+	  </jar>
+	  <war warfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.war" webxml="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app.xml">
+	    <manifest>
+	      <attribute name="Class-Path" value="wstx-tests.jar"/>
+	    </manifest>
 	    <classes dir="${com.arjuna.mwlabs.wstx.tests.dest}"/>
+	  </war>
+	  <war warfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx11-tests.war" webxml="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app11.xml">
+	    <manifest>
+	      <attribute name="Class-Path" value="wstx-tests.jar"/>
+	    </manifest>
 	  </war>
 	  <ear earfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.ear" appxml="${com.arjuna.mwlabs.wstx.tests.dd}/wstx-tests_application.xml">
         <!--
@@ -375,7 +400,7 @@
 	    <fileset dir="${com.arjuna.mwlabs.wst.jar.dest}" includes="${wst.libs}"/>
 	    <fileset dir="${com.arjuna.mwlabs.wstx.jar.dest}" includes="${wstx.libs}"/>
 	    -->
-	    <fileset dir="${com.arjuna.mwlabs.wstx.tests.webapps.dest}" includes="wstx-tests.war"/>
+	    <fileset dir="${com.arjuna.mwlabs.wstx.tests.webapps.dest}" includes="wstx-tests.war wstx11-tests.war wstx-tests.jar"/>
 	  </ear>
 	</target>
 
