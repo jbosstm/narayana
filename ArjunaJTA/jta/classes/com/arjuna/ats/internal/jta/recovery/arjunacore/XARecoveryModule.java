@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -79,7 +79,23 @@ public class XARecoveryModule implements RecoveryModule
 		com.arjuna.ats.internal.jta.Implementations.initialise();
 	}
 
-	/**
+
+    public void addXAResourceRecoveryHelper(XAResourceRecoveryHelper xaResourceRecoveryHelper) {
+        synchronized (_xaResourceRecoveryHelpers) {
+            if(!_xaResourceRecoveryHelpers.contains(xaResourceRecoveryHelper)) {
+                _xaResourceRecoveryHelpers.add(xaResourceRecoveryHelper);
+            }
+        }
+    }
+
+    public void removeXAResourceRecoveryHelper(XAResourceRecoveryHelper xaResourceRecoveryHelper) {
+        synchronized (_xaResourceRecoveryHelpers) {
+            _xaResourceRecoveryHelpers.remove(xaResourceRecoveryHelper);
+        }
+    }
+
+
+    /**
 	 * @message com.arjuna.ats.internal.jta.recovery.xafirstpass {0} - first
 	 *          pass
 	 * @message com.arjuna.ats.internal.jta.recovery.alluids could not get all
@@ -182,8 +198,9 @@ public class XARecoveryModule implements RecoveryModule
 			 */
 
 			resourceInitiatedRecovery();
+            resourceInitiatedRecoveryForRecoveryHelpers();
 
-			if (jtaLogger.logger.isDebugEnabled())
+            if (jtaLogger.logger.isDebugEnabled())
 			{
 				jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
 						VisibilityLevel.VIS_PUBLIC,
@@ -216,17 +233,19 @@ public class XARecoveryModule implements RecoveryModule
 	/**
 	 * @param Xid
 	 *            xid The transaction to commit/rollback.
-	 * 
+	 *
 	 * @return the XAResource than can be used to commit/rollback the specified
 	 *         transaction.
 	 */
 
 	public XAResource getNewXAResource(Xid xid)
 	{
-		if (_xidScans == null)
+		if (_xidScans == null) {
 			resourceInitiatedRecovery();
+            resourceInitiatedRecoveryForRecoveryHelpers();
+        }
 
-		if (_xidScans != null)
+        if (_xidScans != null)
 		{
 			Enumeration keys = _xidScans.keys();
 
@@ -598,24 +617,24 @@ public class XARecoveryModule implements RecoveryModule
 	 * Now check for any outstanding transactions. If we didn't fail to recover
 	 * them, then roll them back - if they'd got through prepare we would have
 	 * an entry within the object store.
-	 * 
+	 *
 	 * Rely upon _xaRecoverers being set up properly (via properties).
-	 * 
+	 *
 	 * We cannot just remember the XAResourceRecords we used (if any) to cache
 	 * the JDBC connection information and use that since we may never have had
 	 * any such records!
-	 * 
+	 *
 	 * IMPORTANT: resourceInitiatedRecovery may rollback transactions which are
 	 * inflight: just because we have no entry for a transaction in the object
 	 * store does not mean it does not exist - it may be *about* to write its
 	 * intentions list. To try to reduce this probability we remember potential
 	 * rollback-ees at this scan, and wait for the next scan before actually
 	 * rolling them back.
-	 * 
+	 *
 	 * Note we cannot use the method that works with Transactions and
 	 * TransactionalObjects, of checking with original process that created the
 	 * transaction, because we don't know which process it was.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.recovery.getxaresource Caught:
 	 */
 
@@ -673,7 +692,51 @@ public class XARecoveryModule implements RecoveryModule
 		return true;
 	}
 
-	/**
+    private boolean resourceInitiatedRecoveryForRecoveryHelpers()
+    {
+        synchronized (_xaResourceRecoveryHelpers)
+        {
+            for (XAResourceRecoveryHelper xaResourceRecoveryHelper : _xaResourceRecoveryHelpers)
+            {
+                try
+                {
+                    XAResource[] xaResources = xaResourceRecoveryHelper.getXAResources();
+                    if (xaResources != null)
+                    {
+                        for (XAResource xaResource : xaResources)
+                        {
+                            try
+                            {
+                                // This calls out to remote systems and may block. Consider using alternate concurrency
+                                // control rather than sync on __xaResourceRecoveryHelpers to avoid blocking problems?
+                                xaRecovery(xaResource);
+                            }
+                            catch (Exception ex)
+                            {
+                                if (jtaLogger.loggerI18N.isWarnEnabled())
+                                {
+                                    jtaLogger.loggerI18N
+                                            .warn("com.arjuna.ats.internal.jta.recovery.getxaresource", ex);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (jtaLogger.loggerI18N.isWarnEnabled())
+                    {
+                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.recovery.getxaresource", ex);
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+
+    /**
 	 * @message com.arjuna.ats.internal.jta.recovery.xarecovery1 {0} got XA
 	 *          exception {1}, {2}
 	 * @message com.arjuna.ats.internal.jta.recovery.xarecovery2 {0} got
@@ -1104,13 +1167,13 @@ public class XARecoveryModule implements RecoveryModule
 
 	/**
 	 * Is there a log file for this transaction?
-	 * 
+	 *
 	 * @param Xid
 	 *            xid the transaction to check.
-	 * 
+	 *
 	 * @return <code>boolean</code>true if there is a log file,
 	 *         <code>false</code> if there isn't.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.recovery.notaxid {0} not an Arjuna
 	 *          XID
 	 */
@@ -1258,9 +1321,11 @@ public class XARecoveryModule implements RecoveryModule
 
 	private InputObjectState _uids = new InputObjectState();
 
-	private Vector _xaRecoverers = null;
+	private Vector _xaRecoverers = null; // contains XAResourceRecovery instances
 
-	private Hashtable _failures = null;
+    private final List<XAResourceRecoveryHelper> _xaResourceRecoveryHelpers = new LinkedList<XAResourceRecoveryHelper>();
+
+    private Hashtable _failures = null;
 
 	private Vector _xaRecoveryNodes = null;
 
