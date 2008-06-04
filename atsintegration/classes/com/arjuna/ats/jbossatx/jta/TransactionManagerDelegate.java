@@ -30,8 +30,12 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
+import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.jbossatx.BaseTransactionManagerDelegate;
 import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 
 public class TransactionManagerDelegate extends BaseTransactionManagerDelegate implements ObjectFactory
 {
@@ -70,19 +74,55 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
      * errorRollback is true
      *
      * @message com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_1
-     * 		[com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_1] - Transaction rolledback
+     * 		[com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_1] - Transaction has or will rollback.
      * @message com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_2
      * 		[com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_2] - Unexpected error retrieving transaction status
      */
     public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback)
         throws RollbackException
     {
-    	try
+        // see JBAS-5081 and http://www.jboss.com/index.html?module=bb&op=viewtopic&t=132128
+
+        try
     	{
-	    	if (getStatus() == Status.STATUS_MARKED_ROLLBACK)
-	    	{
-	    		throw new RollbackException(jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_1")) ;
-			}
+            switch(getStatus())
+            {
+                case Status.STATUS_MARKED_ROLLBACK:
+                case Status.STATUS_ROLLEDBACK:
+                case Status.STATUS_ROLLING_BACK:
+                    if(errorRollback) {
+                        throw new RollbackException(jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_1"));
+                    }
+                    break;
+                case Status.STATUS_COMMITTED:
+                case Status.STATUS_COMMITTING:
+                case Status.STATUS_UNKNOWN:
+                    throw new IllegalStateException();  // would be better to use a checked exception,
+                    // but RollbackException does not make sense and the API does not allow any other.
+                    // also need to clarify if we should throw an exception at all if !errorRollback?
+                case Status.STATUS_ACTIVE:
+                case Status.STATUS_PREPARED:
+                case Status.STATUS_PREPARING:
+                    // TODO this should attempt to return an actual value (in millisecs), but we need transactionReaper
+                    // changes to do that so it will be in 4.4+ only, not 4.2.3.SP.
+                    // For AS 5.0, something along the lines of the block below will probably work, but we should
+                    // push the code down into the JTA/JTS rather than having it here. Talking direct to ArjunaCore
+                    // seems like a bit of a hack...
+                    /*
+                    try {
+                        BasicAction basicAction = ThreadActionData.currentAction();
+                        int remainingSeconds = TransactionReaper.transactionReaper(true).getRemainingTimeout(basicAction);
+                        if(remainingSeconds != 0) {
+                            return 1000*remainingSeconds;
+                        }
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                    }
+                    */
+                case Status.STATUS_NO_TRANSACTION:
+                default:
+                    break;
+            }
     	}
     	catch (final SystemException se)
     	{
