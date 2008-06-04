@@ -53,6 +53,14 @@ public interface BusinessAgreementWithParticipantCompletionParticipant
      * The transaction has cancelled. The participant previously
      * informed the coordinator that it had finished work but could compensate
      * later if required, so it is now requested to do so.
+     * @throws FaultedException if the participant was unable to
+     * perform the required compensation action because of an
+     * unrecoverable error. The coordinator is notified of this fault
+     * and as a result will stop resending compensation requests.
+     * @throws SystemException if the participant was unable to
+     * perform the required compensation action because of a transient
+     * fault. The coordinator is not notified of this fault so it
+     * will retry the compensate request after a suitable timeout.
      */
 
     public void compensate () throws FaultedException, WrongStateException, SystemException;
