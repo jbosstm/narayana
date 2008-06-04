@@ -107,7 +107,7 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
      * @throws SystemException if unable to perform the compensating transaction.
      */
 
-    public void compensate() throws WrongStateException, SystemException
+    public void compensate() throws FaultedException, WrongStateException, SystemException
     {
         System.out.println("RestaurantParticipantBA.compensate");
 
@@ -144,7 +144,7 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
             {
                 restaurantView.addMessage("id:" + txID + " Compensation failed. Throwing SystemException\n");
                 restaurantView.updateFields();
-                throw new SystemException("Compensating transaction failed.");
+                throw new FaultedException("Compensating transaction failed.");
             }
         }
     }

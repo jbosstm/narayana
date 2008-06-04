@@ -108,7 +108,7 @@ public class TheatreParticipantBA implements BusinessAgreementWithParticipantCom
      * @throws SystemException if unable to perform the compensating transaction.
      */
 
-    public void compensate() throws WrongStateException, SystemException
+    public void compensate() throws FaultedException, WrongStateException, SystemException
     {
         System.out.println("TheatreParticipantBA.compensate");
 
@@ -145,7 +145,7 @@ public class TheatreParticipantBA implements BusinessAgreementWithParticipantCom
             {
                 theatreView.addMessage("id:" + txID + " Compensation failed. Throwing SystemException\n");
                 theatreView.updateFields();
-                throw new SystemException("Compensating transaction failed.");
+                throw new FaultedException("Compensating transaction failed.");
             }
         }
     }

@@ -102,7 +102,7 @@ public class TaxiParticipantBA implements BusinessAgreementWithParticipantComple
      * @throws SystemException always, because this implementation does not support compensation.
      */
 
-    public void compensate() throws WrongStateException, SystemException
+    public void compensate() throws FaultedException, WrongStateException, SystemException
     {
         System.out.println("TaxiParticipantBA.compensate");
 
@@ -115,7 +115,7 @@ public class TaxiParticipantBA implements BusinessAgreementWithParticipantComple
         taxiView.addMessage("Compensation not supported by ths implementation!");
         taxiView.updateFields();
 
-        throw new SystemException("Compensation not supported!");
+        throw new FaultedException("Compensation not supported!");
     }
 
     public String status () throws SystemException
