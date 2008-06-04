@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -42,14 +42,14 @@ import javax.transaction.UserTransaction;
  * @author Richard A. Begg (richard.begg@arjuna.com)
  * @version $Id: TransactionManagerServiceMBean.java,v 1.5 2005/06/17 10:53:51 kconner Exp $
  */
-public interface TransactionManagerServiceMBean extends org.jboss.system.ServiceMBean
+public interface TransactionManagerServiceMBean
 {
     /**
      * Set the default transaction timeout used by this transaction manager.
      *
      * @param timeout The default timeout in seconds for all transactions created
      * using this transaction manager.
-     * 
+     *
      * @throws IllegalStateException if the mbean has already started.
      */
     public void setTransactionTimeout(int timeout) throws IllegalStateException ;
@@ -95,10 +95,10 @@ public interface TransactionManagerServiceMBean extends org.jboss.system.Service
      * @return A reference to the JTA transaction manager.
      */
     public TransactionManager getTransactionManager();
-    
+
     /**
      * Get the XA Terminator
-     * 
+     *
      * @return the XA Terminator
      */
     public JBossXATerminator getXATerminator() ;
@@ -145,28 +145,28 @@ public interface TransactionManagerServiceMBean extends org.jboss.system.Service
      * JBoss.  If this is false the Recovery Manager is already expected to
      * be running when JBoss starts.
      * @param runRM
-     * 
+     *
      * @throws IllegalStateException If the MBean has already started.
      */
     public void setRunInVMRecoveryManager(boolean runRM) throws IllegalStateException ;
-    
+
     /**
      * Get whether the recovery manager should be ran in the same VM as
      * JBoss.  If this is false the Recovery Manager is already expected to
      * be running when JBoss starts.
-     * 
+     *
      * @return true if the recover manager is running in the same VM, false otherwise.
      */
     public boolean getRunInVMRecoveryManager() ;
-    
+
     /**
      * Set the object store directory.
      * @param objectStoreDir The object store directory.
-     * 
+     *
      * @throws IllegalStateException if the MBean has already started
      */
     public void setObjectStoreDir(final String objectStoreDir) throws IllegalStateException ;
-    
+
     /**
      * Get the object store directory.
      * @return objectStoreDir The object store directory.
@@ -176,7 +176,7 @@ public interface TransactionManagerServiceMBean extends org.jboss.system.Service
     /**
      * Set the flag indicating whether the propagation context should always be propagated.
      * @param alwaysPropagateContext true if the context should always be propagated, false if only propagated to OTS transactional objects.
-     * 
+     *
      * @throws IllegalStateException If the MBean has already started.
      */
     public void setAlwaysPropagateContext(final boolean alwaysPropagateContext) throws IllegalStateException ;

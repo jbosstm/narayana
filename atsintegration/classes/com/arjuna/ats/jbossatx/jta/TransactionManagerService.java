@@ -30,13 +30,12 @@
  */
 package com.arjuna.ats.jbossatx.jta;
 
-import org.jboss.mx.util.ObjectNameFactory;
-import org.jboss.system.ServiceMBeanSupport;
-import org.jboss.system.server.Server;
 import org.jboss.system.server.ServerConfig;
 import org.jboss.tm.JBossXATerminator;
 import org.jboss.tm.LastResource;
 import org.jboss.tm.XAExceptionFormatter;
+
+import org.jboss.logging.Logger;
 
 import com.arjuna.ats.internal.jbossatx.jta.jca.XATerminator;
 import com.arjuna.ats.internal.jbossatx.agent.LocalJBossAgentImpl;
@@ -55,17 +54,12 @@ import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.logging.LogFactory;
 
-import javax.management.InstanceNotFoundException;
-import javax.management.Notification;
-import javax.management.NotificationFilterSupport;
-import javax.management.NotificationListener;
-import javax.management.ObjectName;
+import javax.management.*;
 import javax.naming.Reference;
 import javax.naming.InitialContext;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 import java.net.Socket;
-import java.net.InetAddress;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -76,8 +70,27 @@ import java.io.PrintStream;
  * @author Richard A. Begg (richard.begg@arjuna.com)
  * @version $Id: TransactionManagerService.java,v 1.5 2005/06/24 15:24:15 kconner Exp $
  */
-public class TransactionManagerService extends ServiceMBeanSupport implements TransactionManagerServiceMBean, NotificationListener
+public class TransactionManagerService implements TransactionManagerServiceMBean
 {
+    /*
+    deploy/transaction-beans.xml:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+    <bean name="TransactionManager" class="com.arjuna.ats.jbossatx.jta.TransactionManagerService">
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss:service=TransactionManager", exposedInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class, registerDirectly=true)</annotation>
+
+        <property name="transactionTimeout">300</property>
+        <property name="objectStoreDir">${jboss.server.data.dir}/tx-object-store</property>
+        <property name="mbeanServer"><inject bean="JMXKernel" property="mbeanServer"/></property>
+    </bean>
+
+    </deployment>
+     */
+
+
+
     static {
 		/*
 		 * Override the defualt logging config, force use of the plugin that rewrites log levels to reflect app server level semantics.
@@ -89,7 +102,9 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 		//System.setProperty(LogFactory.LOGGER_PROPERTY, "log4j_releveler") ;
 	}
 
-	public final static String PROPAGATE_FULL_CONTEXT_PROPERTY = "com.arjuna.ats.jbossatx.jta.propagatefullcontext";
+    private final Logger log = org.jboss.logging.Logger.getLogger(TransactionManagerService.class);
+
+    public final static String PROPAGATE_FULL_CONTEXT_PROPERTY = "com.arjuna.ats.jbossatx.jta.propagatefullcontext";
 
     private final static String SERVICE_NAME = "TransactionManagerService";
     private final static String PROPAGATION_CONTEXT_IMPORTER_JNDI_REFERENCE = "java:/TransactionPropagationContextImporter";
@@ -99,8 +114,11 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 	private RecoveryManager _recoveryManager;
     private boolean _runRM = true;
     private int timeout ;
-    private boolean started ;
-    private byte[] startedLock = new byte[0] ;
+
+    private boolean configured;
+    private byte[] configuredLock = new byte[0] ;
+
+    private MBeanServer mbeanServer;
 
     /**
      * Use the short class name as the default for the service name.
@@ -110,32 +128,27 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         return SERVICE_NAME;
     }
 
-    /**
-     * Sub-classes should override this method to provide
-     * custum 'start' logic.
-     *
-     * <p>This method is empty, and is provided for convenience
-     *    when concrete service classes do not need to perform
-     *    anything specific for this state change.
-     */
-    protected void startService() throws Exception
+    public TransactionManagerService() {}
+
+
+    public void create() throws Exception
     {
-	synchronized(startedLock)
-	{
-	    started = true ;
-	}
+        synchronized(configuredLock)
+        {
+            configured = true ;
+        }
 
-        this.getLog().info("JBossTS Transaction Service (JTA version) - JBoss Inc.");
+        log.info("JBossTS Transaction Service (JTA version) - JBoss Inc.");
 
-        this.getLog().info("Setting up property manager MBean and JMX layer");
+        log.info("Setting up property manager MBean and JMX layer");
 
         /** Set the tsmx agent implementation to the local JBOSS agent impl **/
-        LocalJBossAgentImpl.setLocalAgent(this.getServer());
+        LocalJBossAgentImpl.setLocalAgent( getMbeanServer() );
         System.setProperty(com.arjuna.ats.tsmx.TransactionServiceMX.AGENT_IMPLEMENTATION_PROPERTY,
                 com.arjuna.ats.internal.jbossatx.agent.LocalJBossAgentImpl.class.getName());
         System.setProperty(Environment.LAST_RESOURCE_OPTIMISATION_INTERFACE, LastResource.class.getName()) ;
         System.setProperty(com.arjuna.ats.arjuna.common.Environment.SERVER_BIND_ADDRESS, System.getProperty(ServerConfig.SERVER_BIND_ADDRESS));
-        
+
         if (timeout != 0)
         {
             TxControl.setDefaultTimeout(timeout);
@@ -156,7 +169,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         }
         catch (Exception e)
         {
-            this.getLog().fatal("Failed to create and register Propagation Context Manager", e);
+            log.fatal("Failed to create and register Propagation Context Manager", e);
         }
 
         /** Start the recovery manager **/
@@ -164,24 +177,22 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         {
             if (_runRM)
             {
-                registerNotification() ;
-
-                this.getLog().info("Starting recovery manager");
+                log.info("Initializing recovery manager");
 
                 RecoveryManager.delayRecoveryManagerThread() ;
                 _recoveryManager = RecoveryManager.manager() ;
 
-                this.getLog().info("Recovery manager started");
+                log.info("Recovery manager configured");
             }
             else
             {
                 if (isRecoveryManagerRunning())
                 {
-                    this.getLog().info("Using external recovery manager");
+                    log.info("Using external recovery manager");
                 }
                 else
                 {
-                    this.getLog().fatal("Recovery manager not found - please refer to the JBossTS documentation for details");
+                    log.fatal("Recovery manager not found - please refer to the JBossTS documentation for details");
 
                     throw new Exception("Recovery manager not found - please refer to the JBossTS documentation for details");
                 }
@@ -189,12 +200,12 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         }
         catch (Exception e)
         {
-            this.getLog().fatal("Failed to start recovery manager", e);
+            log.fatal("Failed to initialize recovery manager", e);
             throw e;
         }
 
         /** Bind the transaction manager and tsr JNDI references **/
-        this.getLog().info("Binding TransactionManager JNDI Reference");
+        log.info("Binding TransactionManager JNDI Reference");
 
         jtaPropertyManager.propertyManager.setProperty(Environment.JTA_TM_IMPLEMENTATION, TransactionManagerDelegate.class.getName());
         jtaPropertyManager.propertyManager.setProperty(Environment.JTA_UT_IMPLEMENTATION, UserTransactionImple.class.getName());
@@ -208,13 +219,12 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 		JNDIManager.bindJTATransactionSynchronizationRegistryImplementation();
 	}
 
-    /**
-     * Handle JMX notification.
-     * @param notification The JMX notification event.
-     * @param param The notification parameter.
-     */
-    public void handleNotification(final Notification notification, final Object param)
+    public void start()
     {
+        log.info("Starting transaction recovery manager");
+
+        // TODO: any point in breaking out the recovery mgr into its own bean w/ own lifecycle?
+        // may impact recovery config e.g. beans injection instead of XAResourceRecoveryRegistry lookup?
         _recoveryManager.startRecoveryManagerThread() ;
     }
 
@@ -245,7 +255,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
             }
             catch (Exception ex)
             {
-                getLog().error("Failed to connect to recovery manager", ex);
+                log.error("Failed to connect to recovery manager", ex);
                 active = false;
             }
             finally
@@ -265,19 +275,12 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
         return active;
     }
 
-    /**
-     * Sub-classes should override this method to provide
-     * custum 'destroy' logic.
-     *
-     * <p>This method is empty, and is provided for convenience
-     *    when concrete service classes do not need to perform
-     *    anything specific for this state change.
-     */
-    protected void destroyService() throws Exception
+
+    public void stop() throws Exception
     {
         if (_runRM)
         {
-            this.getLog().info("Stopping recovery manager");
+            log.info("Stopping transaction recovery manager");
 
             _recoveryManager.stop();
         }
@@ -293,13 +296,13 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
      */
     public void setTransactionTimeout(int timeout) throws IllegalStateException
     {
-	synchronized(startedLock)
+	synchronized(configuredLock)
 	{
-            if (started)
+            if (configured)
             {
         	if (this.timeout != timeout)
         	{
-        	    throw new IllegalStateException("Cannot set transaction timeout once MBean has started") ;
+        	    throw new IllegalStateException("Cannot set transaction timeout once MBean has configured") ;
         	}
             }
             else
@@ -317,9 +320,9 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
      */
     public int getTransactionTimeout()
     {
-	synchronized(startedLock)
+	synchronized(configuredLock)
 	{
-	    return (started ? timeout : TxControl.getDefaultTimeout()) ;
+	    return (configured ? timeout : TxControl.getDefaultTimeout()) ;
 	}
     }
 
@@ -399,7 +402,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
      */
     public void registerXAExceptionFormatter(Class c, XAExceptionFormatter f)
     {
-        this.getLog().warn("XAExceptionFormatters are not supported by the JBossTS Transaction Service - this warning can safely be ignored");
+        log.warn("XAExceptionFormatters are not supported by the JBossTS Transaction Service - this warning can safely be ignored");
     }
 
     /**
@@ -449,13 +452,13 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
     public void setRunInVMRecoveryManager(boolean runRM)
         throws IllegalStateException
     {
-	synchronized(startedLock)
+	synchronized(configuredLock)
 	{
-            if (started)
+            if (configured)
             {
         	if (this._runRM != runRM)
         	{
-        	    throw new IllegalStateException("Cannot set run in VM recovery manager once MBean has started") ;
+        	    throw new IllegalStateException("Cannot set run in VM recovery manager once MBean has configured") ;
         	}
             }
             else
@@ -474,7 +477,7 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
      */
     public boolean getRunInVMRecoveryManager()
     {
-	synchronized(startedLock)
+	synchronized(configuredLock)
 	{
 	    return _runRM ;
 	}
@@ -489,15 +492,15 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
     public void setObjectStoreDir(final String objectStoreDir)
     	throws IllegalStateException
     {
-        synchronized(startedLock)
+        synchronized(configuredLock)
         {
-            if (started)
+            if (configured)
             {
         	final String currentDir = getObjectStoreDir() ;
         	final boolean equal = (currentDir == null ? objectStoreDir == null : currentDir.equals(objectStoreDir)) ;
         	if (!equal)
         	{
-        	    throw new IllegalStateException("Cannot set object store dir once MBean has started") ;
+        	    throw new IllegalStateException("Cannot set object store dir once MBean has configured") ;
         	}
             }
             else
@@ -516,15 +519,29 @@ public class TransactionManagerService extends ServiceMBeanSupport implements Tr
 	return System.getProperty(com.arjuna.ats.arjuna.common.Environment.OBJECTSTORE_DIR) ;
     }
 
-    private void registerNotification()
-        throws InstanceNotFoundException
+
+
+    public MBeanServer getMbeanServer()
     {
-        final NotificationFilterSupport notificationFilter = new NotificationFilterSupport() ;
-        notificationFilter.enableType(Server.START_NOTIFICATION_TYPE) ;
+        return mbeanServer;
+    }
 
-        final ObjectName serverName = ObjectNameFactory.create("jboss.system:type=Server") ;
-
-        getServer().addNotificationListener(serverName, this, notificationFilter, null) ;
+    public void setMbeanServer(MBeanServer mbeanServer)
+    {
+        synchronized(configuredLock)
+        {
+            if (configured)
+            {
+                if (this.mbeanServer != mbeanServer)
+                {
+                    throw new IllegalStateException("Cannot set MBeanServer once MBean has configured") ;
+                }
+            }
+            else
+            {
+                this.mbeanServer = mbeanServer;
+            }
+        }
     }
 
     private void bindRef(String jndiName, String className)
