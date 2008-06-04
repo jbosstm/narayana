@@ -119,29 +119,24 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
         <!-- Make the destination directory -->
         <mkdir dir="${com.arjuna.mwlabs.ts.jbossatx.dest}"/>
 
-        <!-- libs from JBoss App Server installation. Note: these jars were refactored between
-          AS 4.x and AS 5.0. The list below is a hybrid to allow building against either version. -->
-	<!--
-        <property name="jboss.libs" value="jboss-common.jar jboss-system.jar jboss-jmx.jar jboss-logging-spi.jar jboss-common-core.jar jboss-j2se.jar jboss-system-jmx.jar"/>
-        <property name="jboss.server.jta.libs" value="jmx-adaptor-plugin.jar jboss-transaction.jar"/>
-        <property name="jboss.server.jts.libs" value="jboss-iiop.jar jacorb.jar"/>
-	-->
-	<!--
-	    as a jbossas component we would like to use just the
-	    integration jar here. however it does not contain some
-	    stuff we need e.g. rmi, system, logger classes etc, so we
-	    pick up jbossall-client instead. also, pending some
-	    refactoring in the AS we still depend upon class
-	    org.jboss.system.ServiceMBeanSupport which is not in the
-	    integration/client jars. we can find it in the lib dir in
-	    jboss-system-jmx.jar. finally, for a jts build we still
-	    need the jacorb and iiop libs which are in server/all/lib
-	-->
+        <!-- libs from JBoss App Server installation.
+        Note: we need AS 5.0 as it has new integration API.
+        This won't build against earlier AS releases. Not that it would run on
+        earlier AS versions anyhow, as TransactionManagerService is now MC POJO based.
 
-        <property name="jboss.libs" value="jboss-common.jar jboss-system.jar jboss-jmx.jar jboss-logging-spi.jar jboss-common-core.jar jboss-j2se.jar jboss-system-jmx.jar"/>
-        <property name="jboss.client.libs" value="jbossall-client.jar"/>
-        <property name="jboss.server.jta.libs" value="jmx-adaptor-plugin.jar jboss-transaction.jar"/>
+        As a jbossas component we would like to use just the
+        integration jar here. however it does not contain some
+        stuff we need e.g. rmi, system, logger classes etc, so we
+        need some other jars too. For a jts build we still
+        need the jacorb and iiop libs which are in server/all/lib
+        -->
+
+        <!-- jboss-common-core.jar has UnexpectedThrowable, jboss-logging-spi.jar has Logger, jboss-main.jar has ServerConfig -->
+        <property name="jboss.libs" value="jboss-common-core.jar jboss-logging-spi.jar jboss-main.jar"/>
+        <!-- jboss-integration.jar has the transactions SPI, jmx-adaptor-plugin.jar has RMIAdaptor -->
+        <property name="jboss.server.jta.libs" value="jboss-integration.jar jmx-adaptor-plugin.jar"/>
         <property name="jboss.server.jts.libs" value="jboss-iiop.jar jacorb.jar"/>
+
 
         <condition property="jboss.server.libs" value="${jboss.server.jta.libs} ${jboss.server.jts.libs}">
             <isset property="com.hp.mwlabs.ts.build.jts"/>
