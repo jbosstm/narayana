@@ -138,7 +138,7 @@ public class InstanceIdentifier
     /**
      * a soap factory used to construct SOAPElement instances representing InstanceIdentifier instances
      */
-    private static SOAPFactory factory;
+    private static SOAPFactory factory = createSoapFactory();
 
     /**
      * a name for the WSArj Instance element
@@ -155,13 +155,6 @@ public class InstanceIdentifier
     public static Element createInstanceIdentifierElement(final String instanceIdentifier)
     {
         try {
-            if (factory == null) {
-                factory = SOAPFactory.newInstance();
-                Name name = factory.createName(ArjunaConstants.WSARJ_ELEMENT_INSTANCE_IDENTIFIER,
-                        ArjunaConstants.WSARJ_PREFIX,
-                        ArjunaConstants.WSARJ_NAMESPACE);
-                WSARJ_ELEMENT_INSTANCE_NAME = name;
-            }
             SOAPElement element = factory.createElement(WSARJ_ELEMENT_INSTANCE_NAME);
             element.addNamespaceDeclaration(ArjunaConstants.WSARJ_PREFIX, ArjunaConstants.WSARJ_NAMESPACE);
             element.addTextNode(instanceIdentifier);
@@ -170,5 +163,20 @@ public class InstanceIdentifier
             // TODO log error here (should never happen)
             return null;
         }
+    }
+
+    private static SOAPFactory createSoapFactory()
+    {
+        try {
+            SOAPFactory factory = SOAPFactory.newInstance();
+            Name name = factory.createName(ArjunaConstants.WSARJ_ELEMENT_INSTANCE_IDENTIFIER,
+                    ArjunaConstants.WSARJ_PREFIX,
+                    ArjunaConstants.WSARJ_NAMESPACE);
+            WSARJ_ELEMENT_INSTANCE_NAME = name;
+            return factory;
+        } catch (SOAPException e) {
+            // TODO log error here (should never happen)
+        }
+        return null;
     }
 }

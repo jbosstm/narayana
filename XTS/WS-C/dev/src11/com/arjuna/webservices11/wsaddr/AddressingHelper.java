@@ -5,9 +5,14 @@ import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsarj.ArjunaConstants;
 
 import javax.xml.ws.addressing.*;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPException;
 import java.net.URISyntaxException;
 import java.net.URI;
 import java.util.List;
+import java.util.Iterator;
 
 import org.w3c.dom.Element;
 
@@ -65,49 +70,65 @@ public class AddressingHelper
         // this allows the builder class to be redefined via a property
         AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
         final AddressingProperties faultProperties = builder.newAddressingProperties();
-        // ok just calling initializeAsReply directly fails when the ReplyTo/From contain
-        // reference parameter elements. these get installed int the target element extensions
+        // ok just calling initializeAsDestination directly fails when the FaultTo/ReplyTo/From
+        // contains reference parameter elements. these get installed into the target element extensions
         // list for insertion into the outgoing message. however, the insertion fails.
         // JBossWS decides they can be inserted as is without copying because they are SOAP
         // elements but this ignores the fact that they have a DOM node attached. when the
-        // appendElement is called it barfs because the target and source belogn to different
-        // documents. we patch this by copying the FaultTo or ReplyTo here.
-        patchEndpointReference(addressingProperties);
-        faultProperties.initializeAsReply(addressingProperties, true) ;
+        // appendElement is called it barfs because the target and source belong to different
+        // documents. we patch this by copying the FaultTo or ReplyTo or from here if need be.
+        EndpointReference epref= addressingProperties.getFaultTo();
+        if (isNoneAddress(epref)) {
+            epref = addressingProperties.getReplyTo();
+            if (isNoneAddress(epref)) {
+                epref = addressingProperties.getFrom();
+            }
+        }
+        if (!isNoneAddress(epref)) {
+            epref = patchEndpointReference(epref);
+            faultProperties.initializeAsDestination(epref);
+        } else {
+            faultProperties.initializeAsDestination(getNoneAddress());
+        }
         faultProperties.setMessageID(makeURI(builder, messageID)) ;
-
         return faultProperties ;
     }
 
-    // patch the case where we have a faulto ro replyto with a single reference parameter which is an
+    // patch the case where we have an epref with a single reference parameter which is an
     // Arjuna TX InstanceIdentifier
-    private static void patchEndpointReference(AddressingProperties addressingProperties) {
-        EndpointReference epr = addressingProperties.getFaultTo();
-        boolean isFaultTo = true;
-        if (epr == null) {
-            epr = addressingProperties.getReplyTo();
-            isFaultTo = false;
-        }
-        if (epr != null) {
-            ReferenceParameters refParams = epr.getReferenceParameters();
-            List<Object> list = refParams.getElements();
-            Object obj;
-            if (list.size() == 1 && ((obj = list.get(0)) instanceof Element)) {
-                Element element = (Element) obj;
-                if (ArjunaConstants.WSARJ_NAMESPACE.equals(element.getNamespaceURI()) &&
-                        ArjunaConstants.WSARJ_ELEMENT_INSTANCE_IDENTIFIER.equals(element.getLocalName())) {
-                    String identifier = element.getFirstChild().getNodeValue();
-                    // ok, install a copy of the faultTo/replyTo with a new reference parameter element
-                    AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-                    EndpointReference newEpr = builder.newEndpointReference(epr.getAddress().getURI());
-                    InstanceIdentifier.setEndpointInstanceIdentifier(newEpr, identifier);
-                    if (isFaultTo) {
-                        addressingProperties.setFaultTo(newEpr);
-                    } else {
-                        addressingProperties.setReplyTo(newEpr);
-                    }
-                }
+    private static EndpointReference patchEndpointReference(EndpointReference epr)
+    {
+        ReferenceParameters refParams = epr.getReferenceParameters();
+        List<Object> list = refParams.getElements();
+        /*
+        Object obj;
+        if (list.size() == 1 && ((obj = list.get(0)) instanceof Element)) {
+            Element element = (Element) obj;
+            if (ArjunaConstants.WSARJ_NAMESPACE.equals(element.getNamespaceURI()) &&
+                    ArjunaConstants.WSARJ_ELEMENT_INSTANCE_IDENTIFIER.equals(element.getLocalName())) {
+                String identifier = element.getFirstChild().getNodeValue();
+                // ok, cerate a copy of the epref with a new reference parameter element
+                AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
+                EndpointReference newEpr = builder.newEndpointReference(epr.getAddress().getURI());
+                InstanceIdentifier.setEndpointInstanceIdentifier(newEpr, identifier);
+                return newEpr;
             }
+        }
+        */
+        if (list.size() > 0) {
+            Iterator iterator = list.iterator();
+            // ok, create a copy of the epref with a cloned reference parameter list
+            AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
+            EndpointReference newEpr = builder.newEndpointReference(epr.getAddress().getURI());
+            ReferenceParameters newRefParams = newEpr.getReferenceParameters();
+            while (iterator.hasNext()) {
+                SOAPElement element = (SOAPElement) iterator.next();
+                SOAPElement newElement = cloneElement(element);
+                newRefParams.addElement(newElement);
+            }
+            return newEpr;
+        } else {
+            return epr;
         }
     }
 
@@ -278,40 +299,43 @@ public class AddressingHelper
         addressingProperties.setFaultTo(faultTo);
     }
 
-    private static EndpointReference noneReplyTo = null;
+    private static EndpointReference noneAddress = null;
 
-    private static synchronized EndpointReference getNoneReplyTo()
+    private static synchronized EndpointReference getNoneAddress()
     {
-        if (noneReplyTo == null) {
+        if (noneAddress == null) {
             AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
             AddressingConstants addressingConstants = builder.newAddressingConstants();
             try {
                 URI noneURI = new URI(addressingConstants.getNoneURI());
-                noneReplyTo = builder.newEndpointReference(noneURI);
+                noneAddress = builder.newEndpointReference(noneURI);
             } catch (URISyntaxException e) {
                 // will not happen
             }
         }
 
-        return noneReplyTo;
+        return noneAddress;
     }
 
     public static boolean isNoneReplyTo(AddressingProperties addressingProperties)
     {
-        EndpointReference replyTo = addressingProperties.getReplyTo();
-        if (replyTo != null) {
-            String noneAddress = getNoneReplyTo().getAddress().getURI().toString();
-            String replyAddress = replyTo.getAddress().getURI().toString();
-
-            return noneAddress.equals(replyAddress);
-        } else {
-            return false;
-        }
+        return isNoneAddress(addressingProperties.getReplyTo());
     }
 
+    public static boolean isNoneAddress(EndpointReference epref)
+    {
+        if (epref != null) {
+            String noneAddress = getNoneAddress().getAddress().getURI().toString();
+            String eprefAddress = epref.getAddress().getURI().toString();
+
+            return noneAddress.equals(eprefAddress);
+        } else {
+            return true;
+        }
+    }
     public static void installNoneReplyTo(AddressingProperties addressingProperties)
     {
-        addressingProperties.setReplyTo(getNoneReplyTo());
+        addressingProperties.setReplyTo(getNoneAddress());
     }
 
     public static javax.xml.ws.addressing.AttributedURI makeURI(AddressingBuilder builder, String messageID)
@@ -320,6 +344,35 @@ public class AddressingHelper
             return builder.newURI(messageID);
         } catch (URISyntaxException use) {
             return null;
+        }
+    }
+
+    private static SOAPFactory factory = createSoapFactory();
+
+    private static SOAPFactory createSoapFactory()
+    {
+        try {
+            SOAPFactory factory = SOAPFactory.newInstance();
+            return factory;
+        } catch (SOAPException e) {
+            // TODO log error here (should never happen)
+        }
+        return null;
+    }
+
+    /**
+     * create a SOAPElement which is a deep copy of the supplied SOAPElement
+     * @param element
+     * @return
+     */
+    private static SOAPElement cloneElement(SOAPElement element)
+    {
+        try {
+            Element copy = (Element)element.cloneNode(true);
+            SOAPElement newElement = factory.createElement(copy);
+            return newElement;
+        } catch (SOAPException e) {
+            return element;
         }
     }
 }
