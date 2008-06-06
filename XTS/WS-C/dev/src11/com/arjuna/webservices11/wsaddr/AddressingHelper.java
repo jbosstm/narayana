@@ -32,7 +32,11 @@ public class AddressingHelper
         // this allows the builder class to be redefined via a property
         AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
         final AddressingProperties responseProperties = builder.newAddressingProperties();
-        responseProperties.initializeAsReply(addressingProperties, false) ;
+        EndpointReference epref = addressingProperties.getReplyTo();
+        if (isNoneAddress(epref)) {
+            epref = addressingProperties.getFrom();
+        }
+        responseProperties.initializeAsDestination(epref);
         responseProperties.setMessageID(makeURI(builder, messageID)) ;
 
         return responseProperties ;
@@ -50,7 +54,11 @@ public class AddressingHelper
         // this allows the builder class to be redefined via a property
         AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
         final AddressingProperties responseProperties = builder.newAddressingProperties();
-        responseProperties.initializeAsReply(addressingProperties, false) ;
+        EndpointReference epref = addressingProperties.getReplyTo();
+        if (isNoneAddress(epref)) {
+            epref = addressingProperties.getFrom();
+        }
+        responseProperties.initializeAsDestination(epref);
         responseProperties.setMessageID(makeURI(builder, messageID)) ;
 
         return responseProperties ;
@@ -203,8 +211,11 @@ public class AddressingHelper
         // this allows the builder class to be redefined via a property
         AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
         final AddressingProperties requestProperties = builder.newAddressingProperties();
-        requestProperties.initializeAsReply(addressingProperties, false) ;
-
+        EndpointReference epref = addressingProperties.getReplyTo();
+        if (isNoneAddress(epref)) {
+            epref = addressingProperties.getFrom();
+        }
+        requestProperties.initializeAsDestination(epref);
         if (messageID != null)
         {
             requestProperties.setMessageID (makeURI(builder, messageID));
