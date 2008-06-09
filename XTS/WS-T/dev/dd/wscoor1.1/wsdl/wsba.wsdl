@@ -3,7 +3,7 @@
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsba="http://docs.oasis-open.org/ws-tx/wsba/2006/06" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://docs.oasis-open.org/ws-tx/wsba/2006/06">
   <wsdl:types>
     <xs:schema>
-      <xs:import namespace="http://docs.oasis-open.org/ws-tx/wsba/2006/06" schemaLocation="http://docs.oasis-open.org/ws-tx/wsba/2006/06/wsba.xsd"/>
+      <xs:import namespace="http://docs.oasis-open.org/ws-tx/wsba/2006/06" schemaLocation="wsba.xsd"/>
     </xs:schema>
   </wsdl:types>
   <!-- Messages -->

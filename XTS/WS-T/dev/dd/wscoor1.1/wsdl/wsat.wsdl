@@ -12,10 +12,10 @@ This document and the information contained herein is provided on an "AS IS" bas
         <xs:schema>
             <xs:import
                 namespace="http://www.w3.org/2005/08/addressing"
-                schemaLocation="http://www.w3.org/2006/03/addressing/ws-addr.xsd" />
+                schemaLocation="ws-addr.xsd" />
             <xs:import
                 namespace="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
-                schemaLocation="http://docs.oasis-open.org/ws-tx/wsat/2006/06/wsat.xsd" />
+                schemaLocation="wsat.xsd" />
         </xs:schema>
     </wsdl:types>
     <!-- Messages -->

@@ -222,10 +222,17 @@
 
     <target name="dev-jars" depends="dev-compile, dev-resourcebundle" >
         <!-- wsdl files for services -->
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsat.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat.xsd" tofile="${build.dev.dd.dir}/wsdl/wsat.xsd"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/ws-addr.xsd" tofile="${build.dev.dd.dir}/wsdl/ws-addr.xsd"/>
+
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-participant-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsat-participant-binding.wsdl"/>
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-coordinator-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsat-coordinator-binding.wsdl"/>
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-completion-initiator-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsat-completion-initiator-binding.wsdl"/>
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-completion-coordinator-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsat-completion-coordinator-binding.wsdl"/>
+
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsba.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba.xsd" tofile="${build.dev.dd.dir}/wsdl/wsba.xsd"/>
 
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl"/>
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba-coordinator-completion-participant-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wsba-coordinator-completion-participant-binding.wsdl"/>
@@ -240,10 +247,19 @@
         <mkdir dir="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl"/>
         <mkdir dir="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl"/>
         <mkdir dir="${build.dev.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl"/>
+
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat.xsd" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat.xsd"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/ws-addr.xsd" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/ws-addr.xsd"/>
+
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-participant-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat-participant-binding.wsdl"/>
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-coordinator-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat-coordinator-binding.wsdl"/>
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-completion-initiator-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat-completion-initiator-binding.wsdl"/>
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsat-completion-coordinator-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsat/_2006/_06/wsdl/wsat-completion-coordinator-binding.wsdl"/>
+
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/wsba.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba.xsd" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/wsba.xsd"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/ws-addr.xsd" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/ws-addr.xsd"/>
 
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/wsba-coordinator-completion-coordinator-binding.wsdl"/>
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wsba-coordinator-completion-participant-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wsba/_2006/_06/wsdl/wsba-coordinator-completion-participant-binding.wsdl"/>

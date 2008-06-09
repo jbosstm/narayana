@@ -223,11 +223,17 @@
 
     <target name="dev-jars" depends="dev-compile, dev-resourcebundle" >
         <!-- wsdl files for services - loaded as /WEB-INF/wsdl/... -->
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wscoor.wsdl" tofile="${build.dev.dd.dir}/wsdl/wscoor.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wscoor.xsd" tofile="${build.dev.dd.dir}/wsdl/wscoor.xsd"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/ws-addr.xsd" tofile="${build.dev.dd.dir}/wsdl/ws-addr.xsd"/>
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wscoor-activation-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wscoor-activation-binding.wsdl"/>
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wscoor-registration-binding.wsdl" tofile="${build.dev.dd.dir}/wsdl/wscoor-registration-binding.wsdl"/>
 
         <!-- wsdl files for clients - loaded as <ClientClassDir>/wsdl/... -->
         <mkdir dir="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wscoor/_2006/_06/wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wscoor.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wscoor/_2006/_06/wsdl/wscoor.wsdl"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wscoor.xsd" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wscoor/_2006/_06/wsdl/wscoor.xsd"/>
+        <copy file="${dev.dd.dir}/wscoor1.1/wsdl/ws-addr.xsd" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wscoor/_2006/_06/wsdl/ws-addr.xsd"/>
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wscoor-activation-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wscoor/_2006/_06/wsdl/wscoor-activation-binding.wsdl"/>
         <copy file="${dev.dd.dir}/wscoor1.1/wsdl/wscoor-registration-binding.wsdl" tofile="${build.dev.classes11.dir}/org/oasis_open/docs/ws_tx/wscoor/_2006/_06/wsdl/wscoor-registration-binding.wsdl"/>
 

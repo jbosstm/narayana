@@ -3,7 +3,7 @@
 
   <wsdl:import
       namespace="http://docs.oasis-open.org/ws-tx/wscoor/2006/06"
-      location="http://docs.oasis-open.org/ws-tx/wscoor/2006/06/wscoor.wsdl" />
+      location="wscoor.wsdl" />
 
   <wsdl:binding name="Activation_SOAPBinding" type="wscoor:ActivationPortType">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>

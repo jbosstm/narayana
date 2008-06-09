@@ -3,7 +3,7 @@
 
   <wsdl:import
       namespace="http://docs.oasis-open.org/ws-tx/wsba/2006/06"
-      location="http://docs.oasis-open.org/ws-tx/wsba/2006/06/wsba.wsdl" />
+      location="wsba.wsdl" />
 
   <wsdl:binding name="BusinessAgreementWithParticipantCompletionParticipant_SOAPBinding" type="wsba:BusinessAgreementWithParticipantCompletionParticipantPortType">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>

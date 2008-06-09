@@ -3,7 +3,7 @@
 
   <wsdl:import
       namespace="http://docs.oasis-open.org/ws-tx/wsat/2006/06"
-      location="http://docs.oasis-open.org/ws-tx/wsat/2006/06/wsat.wsdl" />
+      location="wsat.wsdl" />
 
   <wsdl:binding name="CompletionInitiator_SOAPBinding" type="wsat:CompletionInitiatorPortType">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
