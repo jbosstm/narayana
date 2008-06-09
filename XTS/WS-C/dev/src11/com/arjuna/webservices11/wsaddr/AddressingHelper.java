@@ -39,6 +39,12 @@ public class AddressingHelper
         responseProperties.initializeAsDestination(epref);
         responseProperties.setMessageID(makeURI(builder, messageID)) ;
 
+        if (addressingProperties.getMessageID() != null)
+        {
+           Relationship rel = builder.newRelationship(addressingProperties.getMessageID().getURI());
+           responseProperties.setRelatesTo(new Relationship[] { rel });
+        }
+
         return responseProperties ;
     }
 
@@ -60,6 +66,12 @@ public class AddressingHelper
         }
         responseProperties.initializeAsDestination(epref);
         responseProperties.setMessageID(makeURI(builder, messageID)) ;
+
+        if (addressingProperties.getMessageID() != null)
+        {
+           Relationship rel = builder.newRelationship(addressingProperties.getMessageID().getURI());
+           responseProperties.setRelatesTo(new Relationship[] { rel });
+        }
 
         return responseProperties ;
     }
@@ -99,6 +111,13 @@ public class AddressingHelper
             faultProperties.initializeAsDestination(getNoneAddress());
         }
         faultProperties.setMessageID(makeURI(builder, messageID)) ;
+
+        if (addressingProperties.getMessageID() != null)
+        {
+           Relationship rel = builder.newRelationship(addressingProperties.getMessageID().getURI());
+           faultProperties.setRelatesTo(new Relationship[] { rel });
+        }
+
         return faultProperties ;
     }
 
@@ -219,6 +238,12 @@ public class AddressingHelper
         if (messageID != null)
         {
             requestProperties.setMessageID (makeURI(builder, messageID));
+        }
+
+        if (addressingProperties.getMessageID() != null)
+        {
+           Relationship rel = builder.newRelationship(addressingProperties.getMessageID().getURI());
+           requestProperties.setRelatesTo(new Relationship[] { rel });
         }
 
         return requestProperties;
