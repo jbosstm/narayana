@@ -142,7 +142,7 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
 
             if(!success)
             {
-                restaurantView.addMessage("id:" + txID + " Compensation failed. Throwing SystemException\n");
+                restaurantView.addMessage("id:" + txID + " Compensation failed. Throwing FaultedException\n");
                 restaurantView.updateFields();
                 throw new FaultedException("Compensating transaction failed.");
             }
