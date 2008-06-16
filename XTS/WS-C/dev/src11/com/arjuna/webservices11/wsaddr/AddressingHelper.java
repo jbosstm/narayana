@@ -32,9 +32,19 @@ public class AddressingHelper
         // this allows the builder class to be redefined via a property
         AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
         final AddressingProperties responseProperties = builder.newAddressingProperties();
+        // ok just calling initializeAsDestination directly fails when the FaultTo/ReplyTo/From
+        // contains reference parameter elements. these get installed into the target element extensions
+        // list for insertion into the outgoing message. however, the insertion fails.
+        // JBossWS decides they can be inserted as is without copying because they are SOAP
+        // elements but this ignores the fact that they have a DOM node attached. when the
+        // appendElement is called it barfs because the target and source belong to different
+        // documents. we patch this by copying the FaultTo or ReplyTo or from here if need be.
         EndpointReference epref = addressingProperties.getReplyTo();
         if (isNoneAddress(epref)) {
             epref = addressingProperties.getFrom();
+        }
+        if (!isNoneAddress(epref)) {
+            epref = patchEndpointReference(epref);
         }
         responseProperties.initializeAsDestination(epref);
         responseProperties.setMessageID(makeURI(builder, messageID)) ;
@@ -60,9 +70,19 @@ public class AddressingHelper
         // this allows the builder class to be redefined via a property
         AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
         final AddressingProperties responseProperties = builder.newAddressingProperties();
+        // ok just calling initializeAsDestination directly fails when the FaultTo/ReplyTo/From
+        // contains reference parameter elements. these get installed into the target element extensions
+        // list for insertion into the outgoing message. however, the insertion fails.
+        // JBossWS decides they can be inserted as is without copying because they are SOAP
+        // elements but this ignores the fact that they have a DOM node attached. when the
+        // appendElement is called it barfs because the target and source belong to different
+        // documents. we patch this by copying the FaultTo or ReplyTo or from here if need be.
         EndpointReference epref = addressingProperties.getReplyTo();
         if (isNoneAddress(epref)) {
             epref = addressingProperties.getFrom();
+        }
+        if (!isNoneAddress(epref)) {
+            epref = patchEndpointReference(epref);
         }
         responseProperties.initializeAsDestination(epref);
         responseProperties.setMessageID(makeURI(builder, messageID)) ;
@@ -230,9 +250,19 @@ public class AddressingHelper
         // this allows the builder class to be redefined via a property
         AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
         final AddressingProperties requestProperties = builder.newAddressingProperties();
+        // ok just calling initializeAsDestination directly fails when the FaultTo/ReplyTo/From
+        // contains reference parameter elements. these get installed into the target element extensions
+        // list for insertion into the outgoing message. however, the insertion fails.
+        // JBossWS decides they can be inserted as is without copying because they are SOAP
+        // elements but this ignores the fact that they have a DOM node attached. when the
+        // appendElement is called it barfs because the target and source belong to different
+        // documents. we patch this by copying the FaultTo or ReplyTo or from here if need be.
         EndpointReference epref = addressingProperties.getReplyTo();
         if (isNoneAddress(epref)) {
             epref = addressingProperties.getFrom();
+        }
+        if (!isNoneAddress(epref)) {
+            epref = patchEndpointReference(epref);
         }
         requestProperties.initializeAsDestination(epref);
         if (messageID != null)
