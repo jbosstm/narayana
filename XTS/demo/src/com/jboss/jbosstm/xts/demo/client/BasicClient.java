@@ -409,7 +409,10 @@ public class BasicClient extends HttpServlet
             }
             else if ("BusinessActivity".equals(txType))
             {
-                testBusinessActivity(restaurantSeats, theatreSeats, theatreArea, bookTaxi);
+                if (!testBusinessActivity(restaurantSeats, theatreSeats, theatreArea, bookTaxi))
+                {
+                    result = "Transaction cancelled/compensated.";
+                }
             }
             else
             {
@@ -418,7 +421,7 @@ public class BasicClient extends HttpServlet
         }
         catch (final TransactionRolledBackException tre)
         {
-            result = "Transaction rolled back" ;
+            result = "Transaction rolled back." ;
             System.out.println("Transaction rolled back") ;
         }
         catch (Exception e)
@@ -481,7 +484,7 @@ public class BasicClient extends HttpServlet
      *
      * @throws Exception for any unexpected errors, such as a failure to commit.
      */
-    private void testBusinessActivity(int restaurantSeats, int theatreSeats, int theatreArea, boolean bookTaxi) throws Exception
+    private boolean testBusinessActivity(int restaurantSeats, int theatreSeats, int theatreArea, boolean bookTaxi) throws Exception
     {
         System.out.println("CLIENT: obtaining userBusinessActivity...");
 
@@ -522,6 +525,8 @@ public class BasicClient extends HttpServlet
 
         System.out.println("CLIENT: done.");
         System.out.flush();
+
+        return isOK;
     }
 
     /**
