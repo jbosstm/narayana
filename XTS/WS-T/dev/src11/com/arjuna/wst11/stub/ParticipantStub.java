@@ -194,8 +194,6 @@ public class ParticipantStub implements Participant, PersistableParticipant
             StreamSource source = new StreamSource(new StringReader(eprefText));
             final W3CEndpointReference endpointReference = new W3CEndpointReference(source);
             coordinator = new CoordinatorEngine(id, durable, endpointReference, State.STATE_PREPARED_SUCCESS) ;
-            // TODO -- think we need to do this
-            CoordinatorProcessor.getProcessor().activateCoordinator(coordinator, id) ;
             return true ;
         }
         catch (final Throwable th)
