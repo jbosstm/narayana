@@ -37,9 +37,10 @@
         <property
         name="com.arjuna.mw.wscf11.protocolImplementation4"
         value="com.arjuna.mwlabs.wst11.ba.ContextFactoryImple"/>
-
+        <!--
 	    <property
 	    name="com.arjuna.ats.arjuna.objectstore.objectStoreDir"
 	    value="XTSObjectStore"/>
+	    -->
 	</properties>
 </wscf-config>
