@@ -195,6 +195,10 @@ public class CoordinatorClient
                                                 final AttributedURI action)
     {
         AddressingHelper.installNoneReplyTo(addressingProperties);
-        return WSATClient.getCoordinatorPort(endpoint, action, addressingProperties);
+        if (endpoint != null) {
+            return WSATClient.getCoordinatorPort(endpoint, action, addressingProperties);
+        } else {
+            return WSATClient.getCoordinatorPort(action, addressingProperties);
+        }
     }
 }
