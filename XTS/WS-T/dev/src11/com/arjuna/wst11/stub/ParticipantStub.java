@@ -4,6 +4,7 @@ import com.arjuna.wst.*;
 import com.arjuna.wst.stub.SystemCommunicationException;
 import com.arjuna.wst11.messaging.engines.CoordinatorEngine;
 import com.arjuna.webservices11.wsat.State;
+import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
 import com.arjuna.webservices11.util.StreamHelper;
 import com.arjuna.webservices.soap.SoapUtils;
 import com.arjuna.webservices.logging.WSTLogger;
@@ -189,10 +190,12 @@ public class ParticipantStub implements Participant, PersistableParticipant
             // this should successfully reverse the save process
             final XMLStreamReader reader = SoapUtils.getXMLStreamReader(new StringReader(eprValue)) ;
             StreamHelper.checkNextStartTag(reader, QNAME_TWO_PC_PARTICIPANT) ;
-            String eprefText = reader.getText();
+            String eprefText = reader.getElementText();
             StreamSource source = new StreamSource(new StringReader(eprefText));
             final W3CEndpointReference endpointReference = new W3CEndpointReference(source);
             coordinator = new CoordinatorEngine(id, durable, endpointReference, State.STATE_PREPARED_SUCCESS) ;
+            // TODO -- think we need to do this
+            CoordinatorProcessor.getProcessor().activateCoordinator(coordinator, id) ;
             return true ;
         }
         catch (final Throwable th)
