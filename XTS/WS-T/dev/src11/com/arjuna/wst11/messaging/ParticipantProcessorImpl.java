@@ -8,6 +8,7 @@ import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.processors.ParticipantProcessor;
 import com.arjuna.webservices11.wsat.ParticipantInboundEvents;
+import com.arjuna.webservices11.wsat.client.CoordinatorClient;
 import com.arjuna.wsc11.messaging.MessageId;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
@@ -223,11 +224,9 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
         final String messageId = MessageId.getMessageId() ;
         final AddressingProperties responseAddressingProperties = AddressingHelper.createResponseContext(addressingProperties, messageId) ;
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
-        /*
-         * TODO - fix this. participant is null and we cannto send a message without an endpoint
         try
         {
-            CoordinatorClient.getClient().sendCommitted(responseAddressingProperties, instanceIdentifier) ;
+            CoordinatorClient.getClient().sendCommitted(null, responseAddressingProperties, instanceIdentifier) ;
         }
         catch (final Throwable th)
         {
@@ -236,7 +235,6 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantProcessorImpl.sendCommitted_1", th) ;
             }
         }
-        */
     }
 
     /**
@@ -253,11 +251,9 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
         final String messageId = MessageId.getMessageId() ;
         final AddressingProperties responseAddressingProperties = AddressingHelper.createResponseContext(addressingProperties, messageId) ;
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
-        /*
-         * TODO - fix this. participant is null and we cannto send a message without an endpoint
         try
         {
-            CoordinatorClient.getClient().sendAborted(responseAddressingProperties, instanceIdentifier) ;
+            CoordinatorClient.getClient().sendAborted(null, responseAddressingProperties, instanceIdentifier) ;
         }
         catch (final Throwable th)
         {
@@ -266,6 +262,5 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantProcessorImpl.sendAborted_1", th) ;
             }
         }
-        */
     }
 }
