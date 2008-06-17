@@ -50,7 +50,7 @@ public interface TransactionManagerServiceMBean
      * @param timeout The default timeout in seconds for all transactions created
      * using this transaction manager.
      *
-     * @throws IllegalStateException if the mbean has already started.
+     * @throws IllegalStateException if the MBean has already started.
      */
     public void setTransactionTimeout(int timeout) throws IllegalStateException ;
 
@@ -123,22 +123,63 @@ public interface TransactionManagerServiceMBean
     public void unregisterXAExceptionFormatter(Class c);
 
     /**
-     * Returns the number of active transactions
-     * @return
+     * Returns the total number of transactions started over the lifetime of the server
+     * @return the total number of transactions started over the lifetime of the server
      */
     public long getTransactionCount();
 
     /**
+     * Returns the total number of nested transactions started over the lifetime of the server.
+     * This will usually be 0 even when stats are enabled, since JTA disallows nested tx by default.
+     * @return the total number of nested transactions started over the lifetime of the server.
+     */
+    public long getNestedTransactonCount();
+
+    /**
+     * Returns the number of heuristics that have occurred.
+     * @return the number of heuristics that have occurred.
+     */
+    public long getHeuristicCount();
+
+    /**
      * Returns the number of committed transactions
-     * @return
+     * @return the number of committed transactions
      */
     public long getCommitCount();
 
     /**
-     * Returns the number of rolledback transactions
+     * Returns the number of rolledback transactions.
+     * This is approximatly the same as applicationRollbackCount + ResourceRollbackCount.
      * @return
      */
     public long getRollbackCount();
+
+    /**
+     * Returns the number of transactions that have begun but not yet terminated.
+     * This count is approximate, particularly in recovery situations.
+     * @return the number of transactions that have begun but not yet terminated.
+     */
+    public long getRunningTransactionCount();
+
+    /**
+     * Returns the number of transactions that have been timed out by the transaction reaper.
+     * @return the number of transactions that have been timed out by the transaction reaper.
+     */
+    public long getTimedoutCount();
+
+    /**
+     * Returns the number of transactions that have been rolled back by application request.
+     * This includes those that timeout, since the timeout behaviour is considered an
+     * attribute of the application configuration.
+     * @return the number of transactions that have been rolled back by application request.
+     */
+    public long getApplicationRollbackCount();
+
+    /**
+     * Returns the number of transactions that rolled back due to resource failure.
+     * @return the number of transactions that rolled back due to resource failure.
+     */
+    public long getResourceRollbackCount();
 
     /**
      * Set whether the recovery manager should be ran in the same VM as
@@ -163,7 +204,7 @@ public interface TransactionManagerServiceMBean
      * Set the object store directory.
      * @param objectStoreDir The object store directory.
      *
-     * @throws IllegalStateException if the MBean has already started
+     * @throws IllegalStateException if the MBean has already started.
      */
     public void setObjectStoreDir(final String objectStoreDir) throws IllegalStateException ;
 

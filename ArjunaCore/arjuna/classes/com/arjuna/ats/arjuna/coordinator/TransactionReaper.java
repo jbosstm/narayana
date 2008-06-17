@@ -73,7 +73,7 @@ import java.util.*;
  *          TransactionReaper::check interrupting cancel in progress for {0}
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_5
  *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_5] -
- *          TransactionReaper::check worker zombie count {0] exceeds specified limit 
+ *          TransactionReaper::check worker zombie count {0] exceeds specified limit
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_6
  *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_6] -
  *          TransactionReaper::check worker {0} not responding to interrupt when cancelling TX {1} -- worker marked as zombie and TX scheduled for mark-as-rollback
@@ -363,7 +363,7 @@ public class TransactionReaper
 				    DebugLevel.FUNCTIONS,
 				    VisibilityLevel.VIS_PUBLIC,
 				    FacilityCode.FAC_ATOMIC_ACTION,
-				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_4", 
+				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_4",
 				    new Object[]{e._control.get_uid()});
 			}
 		    }
@@ -403,7 +403,7 @@ public class TransactionReaper
 					    DebugLevel.ERROR_MESSAGES,
 					    VisibilityLevel.VIS_PUBLIC,
 					    FacilityCode.FAC_ATOMIC_ACTION,
-					    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_5", 
+					    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_5",
 					    new Object[]{new Integer(_zombieCount)});
 				}
 			    }
@@ -423,7 +423,7 @@ public class TransactionReaper
 				    DebugLevel.ERROR_MESSAGES,
 				    VisibilityLevel.VIS_PUBLIC,
 				    FacilityCode.FAC_ATOMIC_ACTION,
-				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_6", 
+				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_6",
 				    new Object[]{e._worker,
 						 e._control.get_uid()});
 			}
@@ -508,7 +508,7 @@ public class TransactionReaper
 		    }
 		}
 	    } while(true) ;
-     
+
 	    return true;
 	}
 
@@ -575,15 +575,21 @@ public class TransactionReaper
 
 		try
 		{
-		    if (e._control.running()) {
+            if (e._control.running()) {
 
-			// try to cancel the transaction
+                // try to cancel the transaction
 
-			if (e._control.cancel() == ActionStatus.ABORTED)
-			{
-			    cancelled = true;
-			}
-		    }
+                if (e._control.cancel() == ActionStatus.ABORTED)
+                {
+                    cancelled = true;
+
+                    if (TxControl.enableStatistics) {
+                        // note that we also count timeouts as application rollbacks via
+                        // the stats unpdate in the TwoPhaseCoordinator cancel() method.
+                        TxStats.incrementTimeouts();
+                    }
+                }
+            }
 		}
 		catch (Exception e1)
 		{
@@ -883,11 +889,11 @@ public class TransactionReaper
 	/**
 	 * Given the transaction instance, this will return the time left before the
 	 * transaction is automatically rolled back if it has not been terminated.
-	 * 
+	 *
 	 * @param control
 	 * @return the remaining time in seconds.
 	 */
-	
+
 	public final int getRemainingTimeout (Object control)
 	{
 	    if ((_transactions.size() == 0) || (control == null))
@@ -906,21 +912,21 @@ public class TransactionReaper
 
 	    final ReaperElement reaperElement = (ReaperElement)_timeouts.get(control);
 	    final Integer timeout;
-	    
-	    if (reaperElement == null) 
+
+	    if (reaperElement == null)
 	    {
 		timeout = new Integer(0);
-	    } 
+	    }
 	    else
 	    {
 		// units are in milliseconds at this stage.
-		
+
 		long remainingTime = reaperElement._absoluteTimeout - System.currentTimeMillis();
 		double timeInSeconds = Math.ceil(remainingTime/1000.0);  // round up.
-		
+
 		if (timeInSeconds <= 0)
 		    timeInSeconds = 1;
-		
+
 		timeout = new Integer((int) remainingTime/1000);  // convert back to seconds.
 	    }
 
@@ -935,7 +941,7 @@ public class TransactionReaper
 
 	    return timeout.intValue();
 	}
-	
+
 	/**
 	 * Given a Control, return the associated timeout, or 0 if we do not know
 	 * about it.
@@ -1057,7 +1063,7 @@ public class TransactionReaper
                         {
                              TransactionReaper._theReaper._cancelWaitPeriod = defaultCancelWaitPeriod;
                         }
-                        
+
 			String cancelFailWait = arjPropertyManager.propertyManager
 					.getProperty(Environment.TX_REAPER_CANCEL_FAIL_WAIT_PERIOD);
 			if (cancelFailWait != null)

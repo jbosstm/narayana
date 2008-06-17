@@ -453,12 +453,28 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
     }
 
     /**
-     * Returns the number of active transactions
-     * @return The number of active transactions.
+     * Returns the total number of transactions started over the lifetime of the server
+     * @return Returns the total number of transactions started over the lifetime of the server
      */
     public long getTransactionCount()
     {
         return TxStats.numberOfTransactions();
+    }
+
+    /**
+     * Returns the total number of nested transactions started over the lifetime of the server.
+     * This will usually be 0 even when stats are enabled, since JTA disallows nested tx by default.
+     */
+    public long getNestedTransactonCount() {
+        return TxStats.numberOfNestedTransactions();
+    }
+
+    /**
+     * Returns the number of heuristics that have occurred.
+     * @return the number of heuristics that have occurred.
+     */
+    public long getHeuristicCount() {
+        return TxStats.numberOfHeuristics();
     }
 
     /**
@@ -479,6 +495,40 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
         return TxStats.numberOfAbortedTransactions();
     }
 
+    /**
+     * Get the number of transactions that have begun but not yet terminated.
+     * This count is approximate, particularly in recovery situations.
+     */
+    public long getRunningTransactionCount() {
+        return TxStats.numberOfInflightTransactions();
+    }
+
+    /**
+     * Returns the number of transactions that have been timed out by the transaction reaper.
+     * @return the number of transactions that have been timed out by the transaction reaper.
+     */
+    public long getTimedoutCount() {
+        return TxStats.numberOfTimedOutTransactions();
+    }
+
+    /**
+     * Returns the number of transactions that have been rolled back by application request.
+     * This includes those that timeout, since the timeout behaviour is considered an
+     * attribute of the application configuration.
+     * @return the number of transactions that have been rolled back by application request.
+     */
+    public long getApplicationRollbackCount() {
+        return TxStats.numberOfApplicationRollbacks();
+    }
+
+    /**
+     * Returns the number of transactions that rolled back due to resource failure.
+     * @return the number of transactions that rolled back due to resource failure.
+     */
+    public long getResourceRollbackCount() {
+        return TxStats.numberOfResourceRollbacks();
+    }
+    
     /**
      * Set whether the recovery manager should be ran in the same VM as
      * JBoss.  If this is false the Recovery Manager is already expected to
