@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -68,7 +68,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
        if (tsLogger.arjLogger.isDebugEnabled())
        {
 	   tsLogger.arjLogger.debug
-            ( DebugLevel.CONSTRUCTORS, 
+            ( DebugLevel.CONSTRUCTORS,
               VisibilityLevel.VIS_PUBLIC,
               FacilityCode.FAC_CRASH_RECOVERY,
               "AtomicActionRecoveryModule created" );
@@ -78,7 +78,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
       {
          _transactionStore = TxControl.getStore() ;
       }
-      
+
       _transactionStatusConnectionMgr = new TransactionStatusConnectionManager() ;
    }
 
@@ -95,9 +95,9 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
       try
       {
-	  if (tsLogger.arjLogger.isInfoEnabled())
+	  if (tsLogger.arjLogger.isDebugEnabled())
 	  {
-	      tsLogger.arjLogger.info( "StatusModule: first pass " );
+	      tsLogger.arjLogger.debug( "StatusModule: first pass " );
 	  }
 
 	  AtomicActions = _transactionStore.allObjUids( _transactionType, aa_uids );
@@ -120,11 +120,11 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
    public void periodicWorkSecondPass()
    {
-       if (tsLogger.arjLogger.isInfoEnabled())
+       if (tsLogger.arjLogger.isDebugEnabled())
        {
-         tsLogger.arjLogger.info( "AtomicActionRecoveryModule: Second pass " );
+           tsLogger.arjLogger.debug( "AtomicActionRecoveryModule: Second pass " );
        }
-       
+
        processTransactionsStatus() ;
    }
 
@@ -133,7 +133,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
        if (tsLogger.arjLogger.isDebugEnabled())
        {
 	   tsLogger.arjLogger.debug
-            ( DebugLevel.CONSTRUCTORS, 
+            ( DebugLevel.CONSTRUCTORS,
               VisibilityLevel.VIS_PUBLIC,
               FacilityCode.FAC_CRASH_RECOVERY,
               "AtomicActionRecoveryModule created" );
@@ -143,19 +143,19 @@ public class AtomicActionRecoveryModule implements RecoveryModule
       {
          _transactionStore = TxControl.getStore() ;
       }
-      
+
       _transactionStatusConnectionMgr = new TransactionStatusConnectionManager() ;
       _transactionType = type;
 
     }
-    
+
    private void doRecoverTransaction( Uid recoverUid )
    {
       boolean commitThisTransaction = true ;
-      
+
       // Retrieve the transaction status from its original process.
       int theStatus = _transactionStatusConnectionMgr.getTransactionStatus( _transactionType, recoverUid ) ;
-                      
+
       boolean inFlight = isTransactionInMidFlight( theStatus ) ;
 
       String Status = ActionStatus.stringForm( theStatus ) ;
@@ -170,12 +170,12 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 		recoverUid.toString() + "\n ActionStatus is " + Status +
 		" in flight is " + inFlight ) ;
       }
-	 
+
       if ( ! inFlight )
       {
          try
          {
-            RecoverAtomicAction rcvAtomicAction = 
+            RecoverAtomicAction rcvAtomicAction =
                new RecoverAtomicAction( recoverUid, theStatus ) ;
 
             rcvAtomicAction.replayPhase2() ;
@@ -194,7 +194,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
    private boolean isTransactionInMidFlight( int status )
    {
       boolean inFlight = false ;
-      
+
       switch ( status )
       {
          // these states can only come from a process that is still alive
@@ -206,7 +206,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
          case ActionStatus.PREPARED   :
             inFlight = true ;
             break ;
-            
+
          // the transaction is apparently still there, but has completed its
          // phase2. should be safe to redo it.
          case ActionStatus.COMMITTED  :
@@ -218,10 +218,10 @@ public class AtomicActionRecoveryModule implements RecoveryModule
             inFlight = false ;
             break ;
 
-         // this shouldn't happen 
+         // this shouldn't happen
          case ActionStatus.INVALID :
          default:
-            inFlight = false ; 
+            inFlight = false ;
       }
 
       return inFlight ;
@@ -230,16 +230,16 @@ public class AtomicActionRecoveryModule implements RecoveryModule
    private Vector processTransactions( InputObjectState uids )
    {
       Vector uidVector = new Vector() ;
-      
+
       if (tsLogger.arjLogger.isDebugEnabled())
       {
 	  tsLogger.arjLogger.debug( DebugLevel.FUNCTIONS,
 				    VisibilityLevel.VIS_PUBLIC,
 				    FacilityCode.FAC_CRASH_RECOVERY,
-				    "processing " + _transactionType 
+				    "processing " + _transactionType
 				    + " transactions" ) ;
       }
-      
+
       Uid theUid = new Uid( Uid.nullUid() );
 
       boolean moreUids = true ;
@@ -266,7 +266,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 			 FacilityCode.FAC_CRASH_RECOVERY,
 			 "found transaction "+ newUid ) ;
 	       }
-	       
+
                uidVector.addElement( newUid ) ;
             }
          }
@@ -304,10 +304,10 @@ public class AtomicActionRecoveryModule implements RecoveryModule
          }
       }
    }
-   
-   // 'type' within the Object Store for AtomicActions. 
+
+   // 'type' within the Object Store for AtomicActions.
    private String _transactionType = new AtomicAction().type() ;
-   
+
    // Array of transactions found in the object store of the
    // AtomicAction type.
    private Vector _transactionUidVector = null ;
@@ -318,6 +318,6 @@ public class AtomicActionRecoveryModule implements RecoveryModule
    // This object manages the interface to all TransactionStatusManagers
    // processes(JVMs) on this system/node.
    private TransactionStatusConnectionManager _transactionStatusConnectionMgr ;
-    
+
 }
 

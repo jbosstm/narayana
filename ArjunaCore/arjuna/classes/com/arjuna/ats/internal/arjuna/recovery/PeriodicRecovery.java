@@ -711,8 +711,11 @@ public class PeriodicRecovery extends Thread
     {
         // n.b. we only get here if status is SCANNING
 
-        tsLogger.arjLogger.info("Periodic recovery - first pass <" +
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug("Periodic recovery - first pass <" +
                 _theTimestamper.format(new Date()) + ">" );
+        }
 
         // n.b. this works on a copy of the modules list so it is not affected by
         // dynamic updates in the middle of a scan
@@ -768,8 +771,11 @@ public class PeriodicRecovery extends Thread
 
         // move on to phase 2
 
-        tsLogger.arjLogger.info("Periodic recovery - second pass <"+
-                _theTimestamper.format(new Date()) + ">" );
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug("Periodic recovery - second pass <"+
+                    _theTimestamper.format(new Date()) + ">" );
+        }
 
         modules = _recoveryModules.elements();
 
@@ -797,7 +803,7 @@ public class PeriodicRecovery extends Thread
      * notify the listener worker that a scan has completed
      *
      * @caveats this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} at the point
-     * where Status transitions from SCANNING to INACTIVE 
+     * where Status transitions from SCANNING to INACTIVE
      */
 
     private void notifyWorker()
@@ -827,7 +833,7 @@ public class PeriodicRecovery extends Thread
      * @param rm the recovery module whose class loader is to be installed as the new thread class loader
      * @return the class loader currently installed as the thread class loader
      */
-    
+
     private ClassLoader switchClassLoader(RecoveryModule rm)
     {
         Thread currentThread = Thread.currentThread();

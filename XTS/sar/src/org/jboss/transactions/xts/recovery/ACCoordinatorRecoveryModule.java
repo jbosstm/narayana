@@ -107,9 +107,9 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
 
         try
         {
-            if (tsLogger.arjLogger.isInfoEnabled())
+            if (tsLogger.arjLogger.isDebugEnabled())
             {
-                tsLogger.arjLogger.info( "StatusModule: first pass " );
+                tsLogger.arjLogger.debug( "StatusModule: first pass " );
             }
 
             ACCoordinators = _transactionStore.allObjUids( _transactionType, acc_uids );
@@ -132,9 +132,9 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
 
     public void periodicWorkSecondPass()
     {
-        if (tsLogger.arjLogger.isInfoEnabled())
+        if (tsLogger.arjLogger.isDebugEnabled())
         {
-            tsLogger.arjLogger.info( "ACCoordinatorRecoveryModule: Second pass " );
+            tsLogger.arjLogger.debug( "ACCoordinatorRecoveryModule: Second pass " );
         }
 
         processTransactionsStatus() ;
