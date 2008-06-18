@@ -57,8 +57,8 @@
         value="http://@hostname@:@port@/ws-c10/soap/ActivationCoordinator"/>
         -->
         <!-- this property can be used to define a remote WSCOOR 1.0
-             activation coordinator. substitute coordinator.hostname
-             and coordinator.port to specify an XTS remote activation
+             activation coordinator. substitute @coordinator.hostname@
+             and @coordinator.port@ to specify an XTS remote activation
              coordinator deployed in another JBoss AS or provide an
              alternative URL if you are using some other coordinator
              service.
@@ -71,7 +71,7 @@
 	     requests. you can override these settings by editing the
 	     build script or by supplying values on the ant command
 	     line using -Dcoordinator.hostname=<hostname> and
-	     -coordinator.port=<port>.
+	     -Dcoordinator.port=<port>.
         -->
         <property
 	    name="com.arjuna.mw.wst11.coordinatorURL"
