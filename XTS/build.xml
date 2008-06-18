@@ -151,11 +151,16 @@
 	</target>
 
 	<!-- Project targets - must add all module names to each target -->
-	<target name="build" depends="com.arjuna.mwlabs.xts.init, com.arjuna.mwlabs.xts.wsas.build, com.arjuna.mwlabs.xts.ws-c.build, com.arjuna.mwlabs.xts.wscf.build, com.arjuna.mwlabs.xts.ws-t.build, com.arjuna.mwlabs.xts.wstx.build, htdocs">
+    <target name="build-projects" depends="com.arjuna.mwlabs.xts.init, com.arjuna.mwlabs.xts.wsas.build, com.arjuna.mwlabs.xts.ws-c.build, com.arjuna.mwlabs.xts.wscf.build, com.arjuna.mwlabs.xts.ws-t.build, com.arjuna.mwlabs.xts.wstx.build, htdocs">
+
+    </target>
+
+    <!-- sar build target - note, requires prior build and *install* of the projects -->
+    <target name="build-sar" depends="install-projects, com.arjuna.mwlabs.xts.sar.build">
 
 	</target>
 
-	<target name="htdocs" depends="com.arjuna.mwlabs.xts.init">
+    <target name="htdocs" depends="com.arjuna.mwlabs.xts.init">
 		<echo message="Building htdocs "/>
 		<mkdir dir="${com.arjuna.mwlabs.xts.htdocs.dest}"/>
 
@@ -185,7 +190,7 @@
 		</javadoc>
 	</target>
 
-	<target name="install" depends="build">
+	<target name="install-projects" depends="build-projects">
 		<echo message="Installation directory : ${com.arjuna.mwlabs.installationdirectory}"/>
 
 		<echo message="Installing jar files"/>
@@ -235,27 +240,43 @@
 
 		<echo message="Installing coordinator"/>
 		<mkdir dir="${com.arjuna.mwlabs.installationdirectory}/coordinator"/>
-		<copy todir="${com.arjuna.mwlabs.installationdirectory}/coordinator">
-			<fileset dir="${com.arjuna.mwlabs.coordinator.dir}"/>
-		</copy>
         <copy todir="${com.arjuna.mwlabs.installationdirectory}/coordinator/dd">
             <fileset dir="WS-C/dev/dd" includes="ws-c_web-app.xml ws-c11_web-app.xml"/>
             <fileset dir="WS-T/dev/dd" includes="ws-t_web-app.xml ws-t11_web-app.xml"/>
         </copy>
 
+    </target>
+
+    <target name="install-demo">
         <echo message="Installing demo"/>
         <mkdir dir="${com.arjuna.mwlabs.installationdirectory}/demo"/>
         <!-- overlay the demo app onto the install -->
         <ant dir="${com.arjuna.xts-demo.dir}" target="distribution"/>
-
 	</target>
 
-	<target name="clean" depends="com.arjuna.mwlabs.xts.init,
+    <target name="install-sar" depends="build-sar">
+        <echo message="Installing service archive"/>
+        <mkdir dir="${com.arjuna.mwlabs.installationdirectory}/sar"/>
+        <copy todir="${com.arjuna.mwlabs.installationdirectory}/sar">
+            <fileset dir="sar/build" includes="jbossxts.sar"/>
+        </copy>
+    </target>
+
+    <!-- build target just builds the main projects but not the sar since
+        the latter cannot be built until after the projects have been installed -->
+    <target name="build" depends="build-projects"/>
+
+    <!-- install target builds and installs the main projects
+        then builds and installs the sar then installs the demo -->
+    <target name="install" depends="install-sar, install-demo"/>
+
+    <target name="clean" depends="com.arjuna.mwlabs.xts.init,
 		com.arjuna.mwlabs.xts.wsas.clean,
 		com.arjuna.mwlabs.xts.ws-c.clean,
 		com.arjuna.mwlabs.xts.wscf.clean,
 		com.arjuna.mwlabs.xts.ws-t.clean,
-		com.arjuna.mwlabs.xts.wstx.clean">
+		com.arjuna.mwlabs.xts.wstx.clean,
+		com.arjuna.mwlabs.xts.sar.clean">
 
 		<delete dir="${com.arjuna.mwlabs.xts.htdocs.dest}"/>
 		<delete dir="${com.arjuna.mwlabs.xts.jar.dest}"/>
@@ -289,6 +310,10 @@
 		<ant dir="WSTX"/>
 	</target>
 
+    <target name="com.arjuna.mwlabs.xts.sar.build">
+        <ant dir="sar"/>
+    </target>
+
 	<target name="com.arjuna.mwlabs.xts.wsas.clean">
 		<ant dir="WSAS" target="clean"/>
 	</target>
@@ -308,5 +333,9 @@
 	<target name="com.arjuna.mwlabs.xts.wstx.clean">
 		<ant dir="WSTX" target="clean"/>
 	</target>
+
+    <target name="com.arjuna.mwlabs.xts.sar.clean">
+        <ant dir="sar" target="clean"/>
+    </target>
 
 </project>

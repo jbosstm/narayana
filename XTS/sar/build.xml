@@ -19,7 +19,7 @@
   @author JBoss Inc.
 -->
 
-<project name="sar" default="sar" basedir=".">
+<project name="sar" default="sar-both" basedir=".">
 
     <!-- ================================================================== -->
     <!-- build and install the XTS component as a service archive           -->
@@ -245,7 +245,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <!-- copy 10 application.xml to build dir -->
         <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application10.xml"/>
 
-        <!-- pack everything in the servcie archive -->
+        <!-- pack everything in the service archive -->
         <jar jarfile="${build.dir}/jbossxts.sar">
             <!-- include generic and 1.0 jars -->
             <fileset dir="${lib.dir}" includes="*.jar" excludes="*11.jar"/>
@@ -321,20 +321,21 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
       <delete dir="${build.dir}"/>
     </target>
 
-    <target name="deploy11" depends="undeploy, sar-11">
+    <!-- convenience targets to build and deploy the service archive -->
+    <target name="deploy-11" depends="undeploy, sar-11">
         <copy file="${build.dir}/jbossxts.sar" todir="${jbossas.home}/server/default/deploy"/>
     </target>
 
-    <target name="deploy10" depends="undeploy, sar-10">
+    <target name="deploy-10" depends="undeploy, sar-10">
         <copy file="${build.dir}/jbossxts.sar" todir="${jbossas.home}/server/default/deploy"/>
     </target>
 
-    <target name="deployboth" depends="undeploy,sar-both">
+    <target name="deploy-both" depends="undeploy, sar-both">
         <copy file="${build.dir}/jbossxts.sar" todir="${jbossas.home}/server/default/deploy"/>
     </target>
 
     <!-- by default deploy sar implementing 1.1. WS-C/T protocols -->
-    <target name="deploy" depends="deploy11">
+    <target name="deploy" depends="deploy-both">
     </target>
 
     <target name="undeploy">
