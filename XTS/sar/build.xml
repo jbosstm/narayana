@@ -27,6 +27,8 @@
     <!-- The properties to override are the following:                      -->
     <!--    hostname (defaults to localhost)                                -->
     <!--    port (defaults to 8080 for jboss)                               -->
+    <!--    coordinator.hostname (defaults to ${hostname})                  -->
+    <!--    coordinator.port (defaults to ${port})                          -->
     <!--    xts.home The installation directory for XTS                     -->
     <!--    server deployment directory (set via env var JBOSS_HOME)        -->
     <!-- ================================================================== -->
@@ -41,6 +43,12 @@
 
     <!-- the name of the port used by the JBoss web listener -->
     <property name="port" value="8080"/>
+
+    <!-- the name of the host where the coordinator resides -->
+    <property name="coordinator.hostname" value="${hostname}"/>
+
+    <!-- the name of the port the coordinator is listening on -->
+    <property name="coordinator.port" value="8080"/>
 
     <!-- the directory in which your installed app server resides -->
     <property environment="env"/>
@@ -63,6 +71,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <property name="build.dir"         value="build"/>
     <property name="build.webinf.dir"       value="${build.dir}/WEB-INF"/>
     <property name="build.metainf.dir"       value="${build.dir}/META-INF"/>
+    <property name="build.conf.dir" location="${build.dir}/conf"/>
 
     <!-- enable debugging of XTS service code -->
 
@@ -74,6 +83,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <mkdir dir="${build.dir}/tmp"/>
         <mkdir dir="${build.webinf.dir}"/>
         <mkdir dir="${build.metainf.dir}"/>
+        <mkdir dir="${build.conf.dir}"/>
     </target>
 
     <!-- TODO are the xts engine and its WS stack conceptually separate deployments? at what level do they integrate? spi or jax-ws?-->
@@ -105,8 +115,13 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         </javac>
 
         <!-- create config jar containing conf files for 1.0 and 1.1 -->
-        <jar jarfile="${build.dir}/config.jar">
+        <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
+        <filter token="coordinator.port" value="${coordinator.port}"/>
+        <copy todir="${build.conf.dir}" filtering="true">
             <fileset dir="${conf.dir}" includes="*.xml"/>
+        </copy>
+        <jar jarfile="${build.dir}/config.jar">
+            <fileset dir="${build.conf.dir}"/>
         </jar>
 
         <!-- copy 11 and 1.0 application.xml to build dir -->
@@ -159,8 +174,13 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         </javac>
 
         <!-- create config jar containing conf files for 1.1 -->
-        <jar jarfile="${build.dir}/config.jar">
+        <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
+        <filter token="coordinator.port" value="${coordinator.port}"/>
+        <copy todir="${build.conf.dir}" filtering="true">
             <fileset dir="${conf.dir}" includes="*11.xml"/>
+        </copy>
+        <jar jarfile="${build.dir}/config.jar">
+            <fileset dir="${build.conf.dir}"/>
         </jar>
 
         <!-- copy 11 application.xml to build dir -->
@@ -213,8 +233,13 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         </javac>
 
         <!-- create config jar containing conf files for 1.0 -->
-        <jar jarfile="${build.dir}/config.jar">
+        <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
+        <filter token="coordinator.port" value="${coordinator.port}"/>
+        <copy todir="${build.conf.dir}" filtering="true">
             <fileset dir="${conf.dir}" includes="*.xml" excludes="*11.xml"/>
+        </copy>
+        <jar jarfile="${build.dir}/config.jar">
+            <fileset dir="${build.conf.dir}"/>
         </jar>
 
         <!-- copy 10 application.xml to build dir -->
