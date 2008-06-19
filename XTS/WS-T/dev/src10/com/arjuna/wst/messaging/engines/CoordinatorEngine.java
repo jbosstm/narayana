@@ -70,6 +70,10 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      */
     private State state ;
     /**
+     * The flag indicating that this coordinator has been recovered from the log.
+     */
+    private boolean recovered ;
+    /**
      * The flag indicating a read only response.
      */
     private boolean readOnly ;
@@ -86,7 +90,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      */
     public CoordinatorEngine(final String id, final boolean durable, final EndpointReferenceType participant)
     {
-        this(id, durable, participant, State.STATE_ACTIVE) ;
+        this(id, durable, participant, false, State.STATE_ACTIVE) ;
     }
     
     /**
@@ -96,13 +100,15 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * @param participant The participant endpoint reference.
      * @param state The initial state.
      */
-    public CoordinatorEngine(final String id, final boolean durable, final EndpointReferenceType participant, final State state)
+    public CoordinatorEngine(final String id, final boolean durable, final EndpointReferenceType participant, boolean recovered, final State state)
     {
         this.id = id ;
         this.instanceIdentifier = new InstanceIdentifier(id) ;
         this.durable = durable ;
         this.participant = participant ;
+        this.recovered = recovered;
         this.state = state ;
+
         CoordinatorProcessor.getProcessor().activateCoordinator(this, id) ;
     }
     
@@ -316,17 +322,20 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
             sendPrepare() ;
         }
         
-        final State result = waitForState(State.STATE_PREPARING, TransportTimer.getTransportTimeout()) ;
-        if (result != State.STATE_PREPARING)
-        {
-            return result ;
-        }
-        
+        waitForState(State.STATE_PREPARING, TransportTimer.getTransportTimeout()) ;
+
         synchronized(this)
         {
-            if ((state == State.STATE_PREPARING) && (timerTask != null))
+            if (state != State.STATE_PREPARING)
+            {
+                return state ;
+            }
+
+            if (timerTask != null)
             {
         	timerTask.cancel() ;
+
+                timerTask = null;
             }
             return state ;
         }
@@ -359,19 +368,31 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
             sendCommit() ;
         }
         
-        final State result = waitForState(State.STATE_COMMITTING, TransportTimer.getTransportTimeout()) ;
-        if (result != State.STATE_COMMITTING)
-        {
-            return result ;
-        }
-        
+        waitForState(State.STATE_COMMITTING, TransportTimer.getTransportTimeout()) ;
+
         synchronized(this)
         {
-            if ((state == State.STATE_COMMITTING) && (timerTask != null))
+            if (state != State.STATE_COMMITTING)
+            {
+                return state ;
+            }
+
+            if (timerTask != null)
             {
         	timerTask.cancel() ;
+
+                timerTask = null;
             }
-            return state ;
+            
+            // no answer means this entry will be saved in the log and the commit retried
+            // we remove this engine but leave a ghost to make sure we drop incoming
+            // prepared or completed messages from the client until we reinsert a new engine
+            // when recovery kicks in. we leave this engine in state COMMITTING so we resend
+            // the commit at the next recovery stage
+
+            CoordinatorProcessor.getProcessor().deactivateCoordinator(this, true) ;
+
+            return State.STATE_COMMITTING;
         }
     }
     
@@ -417,11 +438,17 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * Preparing -> Preparing (resend Prepare)
      * Committing -> Committing (resend Commit)
      */
-    private void commsTimeout()
+    private void commsTimeout(TimerTask caller)
     {
         final State current ;
         synchronized(this)
         {
+            if (timerTask != caller) {
+                // the timer was cancelled but it went off before it could be cancelled
+
+                return;
+            }
+
             current = state ;
         }
         
@@ -517,8 +544,10 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      */
     private void forget()
     {
+        // we don't leave a ghost entry here
+        CoordinatorProcessor.getProcessor().deactivateCoordinator(this, false) ;
+
         changeState(null) ;
-        CoordinatorProcessor.getProcessor().deactivateCoordinator(this) ;
     }
     
     /**
@@ -528,6 +557,24 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      */
     private void sendPrepare()
     {
+        TimerTask newTimerTask = createTimerTask();
+        synchronized (this) {
+            // cancel any existing timer task
+
+            if (timerTask != null) {
+                timerTask.cancel();
+            }
+
+            // install the new timer task. this signals our intention to post a prepare which may need
+            // rescheduling later but allows us to drop the lock on this while we are in the comms layer.
+            // our intention can be revised by another thread by reassigning the field to a new task
+            // or null
+
+            timerTask = newTimerTask;
+        }
+
+        // ok now try the prepare
+
         try
         {
             ParticipantClient.getClient().sendPrepare(createContext(), instanceIdentifier) ;
@@ -540,7 +587,19 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
             }
         }
         
-        initiateTimer() ;
+        // reobtain the lock before deciding whether to schedule the timer
+
+        synchronized (this) {
+            if (timerTask == newTimerTask) {
+                // the timer task has not been cancelled so schedule it if appropriate
+                if (state == State.STATE_PREPARING) {
+                    scheduleTimer(newTimerTask);
+                } else {
+                    // no need to schedule it so get rid of it
+                    timerTask = null;
+                }
+            }
+        }
     }
     
     /**
@@ -550,6 +609,24 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      */
     private void sendCommit()
     {
+        TimerTask newTimerTask = createTimerTask();
+        synchronized (this) {
+            // cancel any existing timer task
+
+            if (timerTask != null) {
+                timerTask.cancel();
+            }
+
+            // install the new timer task. this signals our intention to post a commit which may need
+            // rescheduling later but allows us to drop the lock on this while we are in the comms layer.
+            // our intention can be revised by another thread by reassigning the field to a new task
+            // or null
+
+            timerTask = newTimerTask;
+        }
+
+        // ok now try the commit
+
         try
         {
             ParticipantClient.getClient().sendCommit(createContext(), instanceIdentifier) ;
@@ -562,7 +639,19 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
             }
         }
         
-        initiateTimer() ;
+        // reobtain the lock before deciding whether to schedule the timer
+
+        synchronized (this) {
+            if (timerTask == newTimerTask) {
+                // the timer task has not been cancelled so schedule it if appropriate
+                if (state == State.STATE_COMMITTING) {
+                    scheduleTimer(newTimerTask);
+                } else {
+                    // no need to schedule it so get rid of it
+                    timerTask = null;
+                }
+            }
+        }
     }
     
     /**
@@ -617,6 +706,30 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     }
     
     /**
+     * create a timer task to handle a comms timeout
+     *
+     * @return the timer task
+     */
+    private TimerTask createTimerTask()
+    {
+        return new TimerTask() {
+            public void run() {
+                commsTimeout(this) ;
+            }
+        } ;
+    }
+
+    /**
+     * schedule a timer task to handle a commms timeout
+     * @param timerTask the timer task to be scheduled
+     */
+
+    private void scheduleTimer(TimerTask timerTask)
+    {
+        TransportTimer.getTimer().schedule(timerTask, TransportTimer.getTransportPeriod()) ;
+    }
+
+    /**
      * Initiate the timer.
      */
     private synchronized void initiateTimer()
@@ -629,7 +742,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
         {
             timerTask = new TimerTask() {
                 public void run() {
-                    commsTimeout() ;
+                    commsTimeout(this) ;
                 }
             } ;
             TransportTimer.getTimer().schedule(timerTask, TransportTimer.getTransportPeriod()) ;

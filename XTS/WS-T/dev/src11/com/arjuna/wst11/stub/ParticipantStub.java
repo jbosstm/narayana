@@ -27,7 +27,12 @@ public class ParticipantStub implements Participant, PersistableParticipant
     public ParticipantStub(final String id, final boolean durable, final W3CEndpointReference twoPCParticipant)
         throws Exception
     {
-        coordinator = new CoordinatorEngine(id, durable, twoPCParticipant) ;
+        // id will be supplied as null during recovery in which case we can delay creation
+        // of the coordinator until restore_state is called
+        
+        if (id != null) {
+            coordinator = new CoordinatorEngine(id, durable, twoPCParticipant) ;
+        }
     }
 
     public Vote prepare()
@@ -193,7 +198,7 @@ public class ParticipantStub implements Participant, PersistableParticipant
             String eprefText = reader.getElementText();
             StreamSource source = new StreamSource(new StringReader(eprefText));
             final W3CEndpointReference endpointReference = new W3CEndpointReference(source);
-            coordinator = new CoordinatorEngine(id, durable, endpointReference, State.STATE_PREPARED_SUCCESS) ;
+            coordinator = new CoordinatorEngine(id, durable, endpointReference, true, State.STATE_PREPARED_SUCCESS) ;
             return true ;
         }
         catch (final Throwable th)

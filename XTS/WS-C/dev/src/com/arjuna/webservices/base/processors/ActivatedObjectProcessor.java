@@ -26,16 +26,16 @@ import java.util.Map;
 /**
  * This class manages the association between an object and its identifier.
  */
-public final class ActivatedObjectProcessor
+public class ActivatedObjectProcessor
 {
     /**
      * The identifier to object map.
      */
-    private Map objectMap = new HashMap() ;
+    protected Map objectMap = new HashMap() ;
     /**
      * The object to identifier map.
      */
-    private Map identifierMap = new HashMap() ;
+    protected Map identifierMap = new HashMap() ;
 
     /**
      * Activate the object.

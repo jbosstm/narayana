@@ -24,6 +24,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFault10;
 import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;
+import com.arjuna.webservices.base.processors.ReactivatedObjectProcessor;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
@@ -46,7 +47,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
     /**
      * The activated object processor.
      */
-    private final ActivatedObjectProcessor activatedObjectProcessor = new ActivatedObjectProcessor() ;
+    private final ReactivatedObjectProcessor activatedObjectProcessor = new ReactivatedObjectProcessor() ;
 
     /**
      * Activate the coordinator.
@@ -61,12 +62,14 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
     /**
      * Deactivate the coordinator.
      * @param coordinator The coordinator.
+     * @param leaveGhost true if a ghost activation entry should be left to indicate that the
+     * coordinator exists in a log entry and will be recovered at some later date
      */
-    public void deactivateCoordinator(final CoordinatorInboundEvents coordinator)
+    public void deactivateCoordinator(final CoordinatorInboundEvents coordinator, boolean leaveGhost)
     {
-        activatedObjectProcessor.deactivateObject(coordinator) ;
+        activatedObjectProcessor.deactivateObject(coordinator, leaveGhost) ;
     }
-    
+
     /**
      * Get the coordinator with the specified identifier.
      * @param instanceIdentifier The coordinator identifier.
@@ -78,6 +81,17 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         return (CoordinatorInboundEvents)activatedObjectProcessor.getObject(identifier) ;
     }
     
+    /**
+     * Tests if there is a ghost entry with the specified identifier.
+     * @param instanceIdentifier The coordinator identifier.
+     * @return true if there is a ghost entry.
+     */
+    private boolean getGhostCoordinator(final InstanceIdentifier instanceIdentifier)
+    {
+        final String identifier = (instanceIdentifier != null ? instanceIdentifier.getInstanceIdentifier() : null) ;
+        return activatedObjectProcessor.getGhost(identifier) ;
+    }
+
     /**
      * Aborted.
      * @param aborted The aborted notification.
@@ -121,6 +135,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * 
      * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_1] - Unexpected exception thrown from committed:
      * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_2] - Committed called on unknown coordinator: {0}
+     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_3 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_3] - Ignoring committed called on unidentified coordinator until recovery pass is complete: {0}
      */
     public void committed(final NotificationType committed, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -144,7 +159,11 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         }
         else if (WSTLogger.arjLoggerI18N.isWarnEnabled())
         {
-            WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_2", new Object[] {instanceIdentifier}) ; 
+            if (!getGhostCoordinator(instanceIdentifier)) {
+                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_2", new Object[] {instanceIdentifier}) ;
+            } else {
+                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_3", new Object[] {instanceIdentifier}) ;
+            }
         }
     }
     
@@ -156,6 +175,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * 
      * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_1] - Unexpected exception thrown from prepared:
      * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_2] - Prepared called on unknown coordinator: {0}
+     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_3 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_3] - Ignoring prepared called on unidentified coordinator until recovery pass is complete: {0}
      */
     public void prepared(final NotificationType prepared, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -177,13 +197,13 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
                 }
             }
         }
-        else
+        else if (!getGhostCoordinator(instanceIdentifier))
         {
             if (WSTLogger.arjLoggerI18N.isWarnEnabled())
             {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_2", new Object[] {instanceIdentifier}) ; 
+                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_2", new Object[] {instanceIdentifier}) ;
             }
-            
+
             final String identifierValue = instanceIdentifier.getInstanceIdentifier() ;
             if ((identifierValue != null) && (identifierValue.length() > 0) && (identifierValue.charAt(0) == 'D'))
             {
@@ -192,6 +212,16 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             else
             {
                 sendInvalidState(addressingContext, arjunaContext) ;
+            }
+        }
+        else
+        {
+            // there may be a participant stub waitinng to be recovered from the log so drop the
+            // message, forcing the caller to retry
+
+            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.prepared_3", new Object[] {instanceIdentifier}) ;
             }
         }
     }

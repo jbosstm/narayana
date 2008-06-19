@@ -60,7 +60,12 @@ public class ParticipantStub implements Participant, PersistableParticipant
     public ParticipantStub(final String id, final boolean durable, final EndpointReferenceType twoPCParticipant)
         throws Exception
     {
-        coordinator = new CoordinatorEngine(id, durable, twoPCParticipant) ;
+        // id will be supplied as null during recovery in which case we can delay creation
+        // of the coordinator until restore_state is called
+
+        if (id != null) {
+            coordinator = new CoordinatorEngine(id, durable, twoPCParticipant) ;
+        }
     }
 
     public Vote prepare()
@@ -222,7 +227,7 @@ public class ParticipantStub implements Participant, PersistableParticipant
             StreamHelper.checkNextStartTag(reader, QNAME_TWO_PC_PARTICIPANT) ;
             final EndpointReferenceType endpointReferenceType = new EndpointReferenceType(reader) ;
 
-            coordinator = new CoordinatorEngine(id, durable, endpointReferenceType, State.STATE_PREPARED_SUCCESS) ;
+            coordinator = new CoordinatorEngine(id, durable, endpointReferenceType, true, State.STATE_PREPARED_SUCCESS) ;
             return true ;
         }
         catch (final Throwable th)

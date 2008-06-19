@@ -81,7 +81,7 @@ public class TestCoordinatorProcessor extends CoordinatorProcessor
      *
      * @param coordinator The participant.
      */
-    public void deactivateCoordinator(CoordinatorInboundEvents coordinator) {
+    public void deactivateCoordinator(CoordinatorInboundEvents coordinator, boolean leaveGhost) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

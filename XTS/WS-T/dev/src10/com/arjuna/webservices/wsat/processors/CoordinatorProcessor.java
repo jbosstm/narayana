@@ -68,8 +68,10 @@ public abstract class CoordinatorProcessor
     /**
      * Deactivate the coordinator.
      * @param coordinator The coordinator.
+     * @param leaveGhost true if a ghost activation entry should be left to indicate that the
+     * coordinator exists in a log entry and will be recovered at some later date
      */
-    public abstract void deactivateCoordinator(final CoordinatorInboundEvents coordinator) ;
+    public abstract void deactivateCoordinator(final CoordinatorInboundEvents coordinator, boolean leaveGhost) ;
     
     /**
      * Aborted.

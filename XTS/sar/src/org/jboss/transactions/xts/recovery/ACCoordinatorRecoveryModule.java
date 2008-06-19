@@ -34,6 +34,8 @@ import com.arjuna.common.util.logging.DebugLevel;
 import com.arjuna.common.util.logging.VisibilityLevel;
 
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
+import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;
+import com.arjuna.webservices.base.processors.ReactivatedObjectProcessor;
 
 import java.util.Vector;
 import java.util.Enumeration;
@@ -86,7 +88,6 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
     }
 
     /**
-     * called by the service shutdown code after the recovery module is removed from the recovery managers
      * module list in order to allow the implementations list to be purged of this module's implementations
      */
     public void uninstall()
@@ -138,6 +139,12 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
         }
 
         processTransactionsStatus() ;
+
+        // ok we will have left a ghost record in the reactivated object table for any
+        // entries still sitting in the log so we can safely reject messages for unknown,
+        // non-ghost identifiers
+
+        ReactivatedObjectProcessor.setReactivationProcessingStarted();
     }
 
     protected ACCoordinatorRecoveryModule (String type)
