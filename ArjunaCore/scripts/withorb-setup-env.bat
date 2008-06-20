@@ -43,7 +43,6 @@ set PRODUCT_CLASSPATH=%PRODUCT_CLASSPATH%;%@HOME_DIRECTORY@%\etc\
 
 set EXT_CLASSPATH=%@HOME_DIRECTORY@%\lib\ext\jbossts-common.jar
 set EXT_CLASSPATH=%EXT_CLASSPATH%;%@HOME_DIRECTORY@%\lib\ext\commons-logging-1.1.jar
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%@HOME_DIRECTORY@%\lib\ext\concurrent.jar
 set EXT_CLASSPATH=%EXT_CLASSPATH%;%@HOME_DIRECTORY@%\lib\ext\connector-api.jar
 set EXT_CLASSPATH=%EXT_CLASSPATH%;%@HOME_DIRECTORY@%\lib\ext\jdbc2_0-stdext.jar
 set EXT_CLASSPATH=%EXT_CLASSPATH%;%@HOME_DIRECTORY@%\lib\ext\jmxri.jar

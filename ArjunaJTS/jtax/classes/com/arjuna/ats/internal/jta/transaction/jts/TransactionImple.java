@@ -64,7 +64,7 @@ import javax.transaction.xa.*;
 
 import com.arjuna.ats.arjuna.common.*;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import java.util.*;
 

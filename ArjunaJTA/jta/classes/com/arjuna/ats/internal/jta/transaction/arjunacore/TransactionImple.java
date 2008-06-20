@@ -60,7 +60,7 @@ import java.util.*;
 import javax.transaction.RollbackException;
 import java.lang.IllegalStateException;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*
  * Is given an AtomicAction, but uses the TwoPhaseCoordinator aspects of it to
