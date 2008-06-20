@@ -374,23 +374,22 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
         {
             if (state != State.STATE_COMMITTING)
             {
+                // if this is a recovered participant then forget will not have
+                // deactivated the entry so that this (recovery) thread can
+                // detect it and update its log entry. so we need to deactivate
+                // the entry here.
+
+                if (recovered) {
+                    CoordinatorProcessor.getProcessor().deactivateCoordinator(this) ;
+                }
+
                 return state ;
             }
 
-            if (timerTask != null)
-            {
-        	timerTask.cancel() ;
-
-                timerTask = null;
-            }
-            
-            // no answer means this entry will be saved in the log and the commit retried
-            // we remove this engine but leave a ghost to make sure we drop incoming
-            // prepared or completed messages from the client until we reinsert a new engine
-            // when recovery kicks in. we leave this engine in state COMMITTING so we resend
-            // the commit at the next recovery stage
-
-            CoordinatorProcessor.getProcessor().deactivateCoordinator(this, true) ;
+            // the participant is still uncommitted so it must be rewritten to the log.
+            // it remains activated in case a committed message comes in between now and
+            // the next scan. the recovery code will detect this active participant when
+            // rescanning the log and use it instead of recreating a new one.
 
             return State.STATE_COMMITTING;
         }
@@ -544,10 +543,22 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      */
     private void forget()
     {
-        // we don't leave a ghost entry here
-        CoordinatorProcessor.getProcessor().deactivateCoordinator(this, false) ;
+        // first, change state to null to indicate that the participant has completed.
 
         changeState(null) ;
+                   
+        // participants which have not been recovered from the log can be deactivated now.
+
+        // participants which have been recovered are left for the recovery thread to deactivate.
+        // this is because the recovery thread may have timed out waiting for a response to
+        // the commit message and gone on to complete its scan and suspend. the next scan
+        // will detect this activated participant and note that it has completed. if a crash
+        // happens in between the recovery thread can safely recreate and reactivate the
+        // participant and resend the commit since the commit/committed exchange is idempotent.
+
+        if (!recovered) {
+            CoordinatorProcessor.getProcessor().deactivateCoordinator(this) ;
+        }
     }
     
     /**

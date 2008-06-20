@@ -3,6 +3,7 @@ package com.arjuna.wst11.stub;
 import com.arjuna.wst.*;
 import com.arjuna.wst.stub.SystemCommunicationException;
 import com.arjuna.wst11.messaging.engines.CoordinatorEngine;
+import com.arjuna.wst11.messaging.CoordinatorProcessorImpl;
 import com.arjuna.webservices11.wsat.State;
 import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
 import com.arjuna.webservices11.util.StreamHelper;
@@ -198,7 +199,13 @@ public class ParticipantStub implements Participant, PersistableParticipant
             String eprefText = reader.getElementText();
             StreamSource source = new StreamSource(new StringReader(eprefText));
             final W3CEndpointReference endpointReference = new W3CEndpointReference(source);
-            coordinator = new CoordinatorEngine(id, durable, endpointReference, true, State.STATE_PREPARED_SUCCESS) ;
+            // if we already have a coordinator from a previous recovery scan then reuse it
+            // with luck it will have been committed between the last scan and this one
+            coordinator = (CoordinatorEngine)CoordinatorProcessorImpl.getProcessor().getCoordinator(id);
+            if (coordinator == null) {
+                // no entry found so recreate one which is at the prepared stage
+                coordinator = new CoordinatorEngine(id, durable, endpointReference, true, State.STATE_PREPARED_SUCCESS) ;
+            }
             return true ;
         }
         catch (final Throwable th)

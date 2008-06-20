@@ -51,6 +51,7 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.Vote;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst.messaging.engines.CoordinatorEngine;
+import com.arjuna.wst.messaging.CoordinatorProcessorImpl;
 
 public class ParticipantStub implements Participant, PersistableParticipant
 {
@@ -226,8 +227,13 @@ public class ParticipantStub implements Participant, PersistableParticipant
             final XMLStreamReader reader = SoapUtils.getXMLStreamReader(new StringReader(eprValue)) ;
             StreamHelper.checkNextStartTag(reader, QNAME_TWO_PC_PARTICIPANT) ;
             final EndpointReferenceType endpointReferenceType = new EndpointReferenceType(reader) ;
-
-            coordinator = new CoordinatorEngine(id, durable, endpointReferenceType, true, State.STATE_PREPARED_SUCCESS) ;
+            // if we already have a coordinator from a previous recovery scan then reuse it
+            // with luck it will have been committed between the last scan and this one
+            coordinator = (CoordinatorEngine)CoordinatorProcessorImpl.getProcessor().getCoordinator(id);
+            if (coordinator == null) {
+                // no entry found so recreate one which is at the prepared stage
+                coordinator = new CoordinatorEngine(id, durable, endpointReferenceType, true, State.STATE_PREPARED_SUCCESS) ;
+            }
             return true ;
         }
         catch (final Throwable th)

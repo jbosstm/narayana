@@ -24,7 +24,6 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFault10;
 import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;
-import com.arjuna.webservices.base.processors.ReactivatedObjectProcessor;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
@@ -47,7 +46,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
     /**
      * The activated object processor.
      */
-    private final ReactivatedObjectProcessor activatedObjectProcessor = new ReactivatedObjectProcessor() ;
+    private final ActivatedObjectProcessor activatedObjectProcessor = new ActivatedObjectProcessor() ;
 
     /**
      * Activate the coordinator.
@@ -62,34 +61,30 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
     /**
      * Deactivate the coordinator.
      * @param coordinator The coordinator.
-     * @param leaveGhost true if a ghost activation entry should be left to indicate that the
-     * coordinator exists in a log entry and will be recovered at some later date
      */
-    public void deactivateCoordinator(final CoordinatorInboundEvents coordinator, boolean leaveGhost)
-    {
-        activatedObjectProcessor.deactivateObject(coordinator, leaveGhost) ;
+    public void deactivateCoordinator(CoordinatorInboundEvents coordinator) {
+        activatedObjectProcessor.deactivateObject(coordinator);
     }
 
     /**
      * Get the coordinator with the specified identifier.
-     * @param instanceIdentifier The coordinator identifier.
+     * @param identifier The coordinator identifier as a String.
+     * @return The coordinator or null if not known.
+     */
+
+    public CoordinatorInboundEvents getCoordinator(final String identifier)
+    {
+        return (CoordinatorInboundEvents)activatedObjectProcessor.getObject(identifier) ;
+    }
+    /**
+     * Get the coordinator with the specified identifier.
+     * @param instanceIdentifier The coordinator identifier as an Instanceidentifier.
      * @return The coordinator or null if not known.
      */
     private CoordinatorInboundEvents getCoordinator(final InstanceIdentifier instanceIdentifier)
     {
         final String identifier = (instanceIdentifier != null ? instanceIdentifier.getInstanceIdentifier() : null) ;
-        return (CoordinatorInboundEvents)activatedObjectProcessor.getObject(identifier) ;
-    }
-    
-    /**
-     * Tests if there is a ghost entry with the specified identifier.
-     * @param instanceIdentifier The coordinator identifier.
-     * @return true if there is a ghost entry.
-     */
-    private boolean getGhostCoordinator(final InstanceIdentifier instanceIdentifier)
-    {
-        final String identifier = (instanceIdentifier != null ? instanceIdentifier.getInstanceIdentifier() : null) ;
-        return activatedObjectProcessor.getGhost(identifier) ;
+        return getCoordinator(identifier);
     }
 
     /**
@@ -135,7 +130,6 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * 
      * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_1 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_1] - Unexpected exception thrown from committed:
      * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_2 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_2] - Committed called on unknown coordinator: {0}
-     * @message com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_3 [com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_3] - Ignoring committed called on unidentified coordinator until recovery pass is complete: {0}
      */
     public void committed(final NotificationType committed, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -159,11 +153,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         }
         else if (WSTLogger.arjLoggerI18N.isWarnEnabled())
         {
-            if (!getGhostCoordinator(instanceIdentifier)) {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_2", new Object[] {instanceIdentifier}) ;
-            } else {
-                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_3", new Object[] {instanceIdentifier}) ;
-            }
+            WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.CoordinatorProcessorImpl.committed_2", new Object[] {instanceIdentifier}) ;
         }
     }
     
@@ -197,7 +187,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
                 }
             }
         }
-        else if (!getGhostCoordinator(instanceIdentifier))
+        else if (areRecoveryLogEntriesAccountedFor())
         {
             if (WSTLogger.arjLoggerI18N.isWarnEnabled())
             {
@@ -216,7 +206,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         }
         else
         {
-            // there may be a participant stub waitinng to be recovered from the log so drop the
+            // there may be a participant stub waiting to be recovered from the log so drop the
             // message, forcing the caller to retry
 
             if (WSTLogger.arjLoggerI18N.isWarnEnabled())
@@ -411,4 +401,36 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             }
         }
     }
+
+    /**
+     * Notifies that all coordinator entries in the recovery log have been accounted for.
+     */
+
+    public static void setRecoveryLogEntriesAccountedFor()
+    {
+        recoveryLogEntriesAccountedFor = true;
+    }
+
+    /**
+     * Tests if there may be unknown coordinator entries in the recovery log.
+     *
+     * @return false if there may be unknown coordinator entries in the recovery log.
+     */
+
+    private static boolean areRecoveryLogEntriesAccountedFor()
+    {
+        return recoveryLogEntriesAccountedFor;
+    }
+
+    /**
+     * False if there may be unknown coordinator entries in the recovery log otherwise true.
+     * This field defaults to false at boot. It is reset to true when the first log scan has
+     * completed from which point onwards there will always be a record in the activation
+     * processor for each entry in the recovery log.
+     *
+     * @return False if there may be unknown coordinator entries in the recovery log otherwise
+     * true.
+     */
+
+    private static boolean recoveryLogEntriesAccountedFor = false;
 }
