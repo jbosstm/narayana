@@ -29,7 +29,6 @@ TestingFramework.jar   DTF : 16 July 2002
 classes12.jar		Oracle 9.2
 commons-logging-1.1.jar	Apache Jakarta Commons Logging Framework version 1.1.0
 connector-api.jar
-jdbc2_0-stdext.jar	JDBC 2.0
 jmxri.jar		JMX reference implementation
 jndi.jar		JNDI
 jta-1_1-classes.zip	JTA specification 1.1
