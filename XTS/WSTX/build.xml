@@ -71,7 +71,7 @@
 
     <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
 
-    <property name="jta.lib.jars" value="jbossjta.jar"/>
+    <property name="jta.lib.jars" value="jbossjta.jar jbossjts.jar"/>
     <property name="jta.ext.jars" value="jbossts-common.jar"/>
     <property name="jta.ext.compile.jars" value="commons-logging.jar"/>
     <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jboss-jaxrpc.jar jboss-jaxws-ext.jar jboss-jaxws.jar jbossws-client.jar jboss-saaj.jar"/>

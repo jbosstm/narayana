@@ -110,7 +110,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
                 <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
                 <!-- sar code only depends on generic XTS code -->
                 <fileset dir="${lib.dir}" includes="*.jar" excludes="*10.jar *11.jar"/>
-                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossts-common.jar"/>
+                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossjts.jar jbossts-common.jar"/>
             </classpath>
         </javac>
 
@@ -169,7 +169,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
                 <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
                 <!-- sar code only depends on generic XTS code -->
                 <fileset dir="${lib.dir}" includes="*.jar" excludes="*10.jar *11.jar"/>
-                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossts-common.jar"/>
+                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossjts.jar jbossts-common.jar"/>
             </classpath>
         </javac>
 
@@ -185,7 +185,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
 
         <!-- copy 11 application.xml to build dir -->
         <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application11.xml"/>
-        
+
         <!-- pack everything in the service archive -->
         <jar jarfile="${build.dir}/jbossxts.sar">
             <!-- include generic and 1.1 jars -->
@@ -228,7 +228,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
                 <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
                 <!-- sar only depends on generic XTS code -->
                 <fileset dir="${lib.dir}" includes="*.jar" excludes="*10.jar *11.jar"/>
-                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossts-common.jar"/>
+                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossjts.jar jbossts-common.jar"/>
             </classpath>
         </javac>
 

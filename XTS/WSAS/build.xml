@@ -47,7 +47,7 @@
 
     <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
 
-    <property name="jta.lib.jars" value="jbossjta.jar"/>
+    <property name="jta.lib.jars" value="jbossjta.jar jbossjts.jar"/>
     <property name="jta.ext.jars" value="jbossts-common.jar"/>
     <property name="jboss.client.lib.jars" value="jboss-javaee.jar"/>
 
