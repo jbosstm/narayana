@@ -167,20 +167,20 @@
 	</node-configurations>
 
 	<task-runner-definitions>
-		<task-runner name="UnitTestRunner" class="com.arjuna.mwlabs.testframework.testnode.UnitTestTaskRunner"
+		<task-runner name="UnitTestRunner" class="org.jboss.dtf.testframework.testnode.UnitTestTaskRunner"
 					 log-to="http://dev31.qa.atl.jboss.com:8080/dtf/">
 			<param name="pass_on_wait_for" value="true"/>
 			<param name="fail_indicator" value="Failed"/>
 			<param name="pass_indicator" value="Passed"/>
 		</task-runner>
-		<task-runner name="ServiceRunner" class="com.arjuna.mwlabs.testframework.testnode.JavaTaskRunner"
+		<task-runner name="ServiceRunner" class="org.jboss.dtf.testframework.testnode.JavaTaskRunner"
 					 log-to="http://dev31.qa.atl.jboss.com:8080/dtf/">
 			<param name="pass_on_wait_for" value="true"/>
 			<param name="fail_indicator" value="Failed"/>
 			<param name="wait_for_text" value="Ready"/>
 			<param name="pass_indicator" value="Passed"/>
 		</task-runner>
-		<task-runner name="JavaTaskRunner" class="com.arjuna.mwlabs.testframework.testnode.JavaTaskRunner"
+		<task-runner name="JavaTaskRunner" class="org.jboss.dtf.testframework.testnode.JavaTaskRunner"
 					 log-to="http://dev31.qa.atl.jboss.com:8080/dtf/">
 			<param name="pass_on_wait_for" value="true"/>
 			<param name="fail_indicator" value="Failed"/>
