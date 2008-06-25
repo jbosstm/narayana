@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -44,7 +44,7 @@ import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.mwlabs.testframework.unittest.Test;
+import org.jboss.dtf.testframework.unittest.Test;
 
 import org.omg.CosTransactions.*;
 
@@ -67,7 +67,7 @@ public class GridClient extends Test
 	{
 	    myORB = ORB.getInstance("test");
 	    myOA = OA.getRootOA(myORB);
-	    
+
 	    myORB.initORB(args, null);
 	    myOA.initOA();
 
@@ -79,7 +79,7 @@ public class GridClient extends Test
 	    System.err.println("Initialisation failed: "+e);
 	    assertFailure();
 	}
-	
+
 	TransactionFactory theOTS = null;
 	Control myControl = null;
 	grid gridVar = null;
@@ -91,7 +91,7 @@ public class GridClient extends Test
 	{
 	    gridReference = "C:\\temp\\grid.ref";
 	}
-	
+
 	for (int i = 0; i < args.length; i++)
 	{
 	    if (args[i].compareTo("-help") == 0)
@@ -128,7 +128,7 @@ public class GridClient extends Test
 	}
 
 	System.out.println("Creating transaction.");
-	
+
 	try
 	{
 	    myControl = theOTS.create(0);
@@ -139,7 +139,7 @@ public class GridClient extends Test
 	    e.printStackTrace();
 	    System.exit(1);
 	}
-	
+
 	try
 	{
 	    gridVar = gridHelper.narrow(serv.getService(gridReference, null, Services.FILE));
@@ -167,11 +167,11 @@ public class GridClient extends Test
 	try
 	{
 	    System.out.println("calling set");
-	     
+
 	    gridVar.set(2, 4, 123, myControl);
 
 	    System.out.println("calling get");
-	
+
 	    v = gridVar.get(2, 4, myControl);
 	}
 	catch (Exception sysEx)
@@ -182,7 +182,7 @@ public class GridClient extends Test
 
 	// no problem setting and getting the elememt:
 	System.out.println("grid[2,4] is "+v);
-	
+
 	// sanity check: make sure we got the value 123 back:
 	if (v != 123)
 	{
@@ -196,17 +196,17 @@ public class GridClient extends Test
 	    catch (Exception e)
 	    {
 	    }
-	
+
 	    System.exit(1);
 	}
 	else
 	{
 	    System.out.println("Committing transaction.");
-	    
+
 	    try
 	    {
 		Terminator handle = myControl.get_terminator();
-      
+
 		handle.commit(true);
 	    }
 	    catch (Exception sysEx)
@@ -215,7 +215,7 @@ public class GridClient extends Test
 		System.exit(1);
 	    }
 	}
-	
+
 	/*
 	 * OTSArjuna specific call to tell the system
 	 * that we are finished with this transaction.

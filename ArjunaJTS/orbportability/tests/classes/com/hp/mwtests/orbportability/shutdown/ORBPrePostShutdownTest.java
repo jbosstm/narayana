@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -31,7 +31,7 @@
 
 package com.hp.mwtests.orbportability.shutdown;
 
-import com.arjuna.mwlabs.testframework.unittest.Test;
+import org.jboss.dtf.testframework.unittest.Test;
 
 import com.arjuna.orbportability.*;
 import com.arjuna.orbportability.OA;
@@ -45,9 +45,9 @@ public class ORBPrePostShutdownTest extends Test implements PrePostTestCallback
 {
     public static final int NONE = 0, PRESHUTDOWN = 1, POSTSHUTDOWN = 2, INVALID = 3;
     private static final String[] STATE_STRING = {"NONE", "PRESHUTDOWN", "POSTSHUTDOWN", "INVALID" };
-    
+
     public int	_currentState;
-    
+
     /**
      * Generates a String version of the 'enumerated value'.
      *
@@ -58,10 +58,10 @@ public class ORBPrePostShutdownTest extends Test implements PrePostTestCallback
     {
     	if ( (value >= NONE) && (value <= INVALID) )
     	    return(STATE_STRING[value]);
-    	
+
     	return("##ERROR##");
     }
-    
+
     /**
      * Called by the pre-shutdown subclass to inform test that it has been prodded
      *
@@ -70,7 +70,7 @@ public class ORBPrePostShutdownTest extends Test implements PrePostTestCallback
     public void preShutdownCalled(String name)
     {
     	logInformation( "Previous State : "+ PrettyPrintState( _currentState ) );
-    	
+
     	switch ( _currentState )
         {
     	    case NONE :
@@ -82,8 +82,8 @@ public class ORBPrePostShutdownTest extends Test implements PrePostTestCallback
     	    default :
     	    	_currentState = INVALID;
     	    	break;
-    	}    	
-    	
+    	}
+
     	logInformation( " Current State : "+ PrettyPrintState( _currentState ) );
     }
 
@@ -107,11 +107,11 @@ public class ORBPrePostShutdownTest extends Test implements PrePostTestCallback
     	    default :
     	    	_currentState = INVALID;
     	    	break;
-    	}    	
+    	}
 
     	logInformation( " Current State : "+ PrettyPrintState( _currentState ) );
     }
-	
+
     public void run(String[] args)
     {
         ORB orb = ORB.getInstance("main_orb");
@@ -123,10 +123,10 @@ public class ORBPrePostShutdownTest extends Test implements PrePostTestCallback
 	     * Initialise the ORB and OA
 	     */
 	    logInformation("Initialising ORB and OA");
-	    
+
 	    orb.initORB(args, null);
 	    oa.initOA();
-	    
+
 	    _currentState = NONE;
 	}
 	catch (Exception e)
@@ -135,7 +135,7 @@ public class ORBPrePostShutdownTest extends Test implements PrePostTestCallback
 	    e.printStackTrace();
 	    assertFailure();
 	}
-	
+
 	/**
 	 * Register pre and post shutdown handlers
 	 */
@@ -148,35 +148,35 @@ public class ORBPrePostShutdownTest extends Test implements PrePostTestCallback
 	logInformation("Shutting down ORB and OA");
 	oa.destroy();
 	orb.shutdown();
-	
+
 	/*
 	 * Ensure final state is correct
 	 */
 	logInformation("Final state: " + PrettyPrintState(_currentState) );
-	
+
 	if ( _currentState == POSTSHUTDOWN )
 	    assertSuccess();
 	else
 	    assertFailure();
     }
-       
+
     /**
      *
      */
     public class TestPreShutdown extends com.arjuna.orbportability.orb.PreShutdown
     {
     	private PrePostTestCallback 	_callback;
-    	
+
     	public TestPreShutdown(String name, PrePostTestCallback callback)
     	{
     	    super(name);
-    	    
+
     	    _callback = callback;
     	}
-    	
+
     	/**
     	 * Should be called before the ORB is shutdown
-    	 */	
+    	 */
     	public void work ()
     	{
  	    _callback.preShutdownCalled(name());
@@ -189,29 +189,29 @@ public class ORBPrePostShutdownTest extends Test implements PrePostTestCallback
     public class TestPostShutdown extends com.arjuna.orbportability.orb.PostShutdown
     {
     	private PrePostTestCallback 	_callback;
-    	
+
     	public TestPostShutdown(String name, PrePostTestCallback callback)
     	{
     	    super(name);
 
     	    _callback = callback;
     	}
-    	
+
     	/**
     	 * Should be called before the ORB is shutdown
-    	 */	
+    	 */
     	public void work ()
     	{
  	    _callback.postShutdownCalled(name());
-	}	
+	}
     }
 
 
     public static void main(String[] args)
     {
 	OAPrePostShutdownTest test = new OAPrePostShutdownTest();
-	
-	test.initialise(null, null, args, new com.arjuna.mwlabs.testframework.unittest.LocalHarness());
+
+	test.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
 
 	test.runTest();
     }

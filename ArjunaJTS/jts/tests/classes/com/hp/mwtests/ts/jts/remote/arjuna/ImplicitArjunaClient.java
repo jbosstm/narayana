@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -43,7 +43,7 @@ import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.mwlabs.testframework.unittest.Test;
+import org.jboss.dtf.testframework.unittest.Test;
 
 import org.omg.CosTransactions.*;
 
@@ -66,7 +66,7 @@ public class ImplicitArjunaClient extends Test
 	{
 	    myORB = ORB.getInstance("test");
 	    myOA = OA.getRootOA(myORB);
-	    
+
 	    myORB.initORB(args, null);
 	    myOA.initOA();
 
@@ -86,7 +86,7 @@ public class ImplicitArjunaClient extends Test
 	if (System.getProperty("os.name").startsWith("Windows"))
 	{
 	    refFile = "C:\\temp\\stack.ref";	}
-	
+
 	for (int i = 0; i < args.length; i++)
 	{
 	    if (args[i].compareTo("-reffile") == 0)
@@ -97,7 +97,7 @@ public class ImplicitArjunaClient extends Test
 		assertFailure();
 	    }
 	}
-	
+
 	stack stackVar = null;   // pointer the grid object that will be used.
 
 	try
@@ -107,7 +107,7 @@ public class ImplicitArjunaClient extends Test
 	    try
 	    {
 		Services serv = new Services(myORB);
-		
+
 		stackVar = stackHelper.narrow(myORB.orb().string_to_object(getService(refFile)));
 	    }
 	    catch (Exception e)
@@ -117,7 +117,7 @@ public class ImplicitArjunaClient extends Test
 	    }
 
 	    System.out.println("pushing 1 onto stack");
-	
+
 	    stackVar.push(1);
 
 	    System.out.println("pushing 2 onto stack");
@@ -143,11 +143,11 @@ public class ImplicitArjunaClient extends Test
 		System.out.println("popped top of stack "+val.value);
 
 		current.begin();
-	
+
 		stackVar.push(3);
 
 		System.out.println("pushed 3 onto stack. Aborting nested action.");
-	
+
 		current.rollback();
 
 		stackVar.pop(val);
@@ -171,7 +171,7 @@ public class ImplicitArjunaClient extends Test
 	    {
 		assertFailure();
 		System.err.println("Error getting stack value.");
-	
+
 		current.rollback();
 	    }
 	}

@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -45,7 +45,7 @@ import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.mwlabs.testframework.unittest.Test;
+import org.jboss.dtf.testframework.unittest.Test;
 
 import org.omg.CosTransactions.*;
 
@@ -68,7 +68,7 @@ public class TMClient extends Test
 	{
 	    myORB = ORB.getInstance("test");
 	    myOA = OA.getRootOA(myORB);
-	    
+
 	    myORB.initORB(args, null);
 	    myOA.initOA();
 
@@ -81,7 +81,7 @@ public class TMClient extends Test
 	    e.printStackTrace(System.err);
 	    assertFailure();
 	}
-	
+
 	TransactionFactory theOTS = null;
 	Control topLevelControl = null;
 	Control nestedControl = null;
@@ -151,7 +151,7 @@ public class TMClient extends Test
 	}
 
 	System.out.println("Creating transaction.");
-	
+
 	try
 	{
 	    topLevelControl = theOTS.create(0);
@@ -184,7 +184,7 @@ public class TMClient extends Test
 	    e.printStackTrace(System.err);
 	    assertFailure();
 	}
-	
+
 	try
 	{
 	    DistributedHammerWorker1.hammerObject_1 = HammerHelper.narrow(serv.getService(server, null, Services.FILE));
@@ -195,7 +195,7 @@ public class TMClient extends Test
 		System.out.println("incremented.");
 
 	    System.out.println("sleeping.");
-	    
+
 	    Thread.sleep(20000);
 
 	    nestedControl.get_terminator().rollback();
@@ -203,13 +203,13 @@ public class TMClient extends Test
 	    if (!slave)
 	    {
 		System.out.println("master sleeping again.");
-		
+
 		Thread.sleep(20000);
 	    }
-	    
+
 	    IntHolder value = new IntHolder(0);
 
-	    org.omg.CosTransactions.PropagationContext ctx = topLevelControl.get_coordinator().get_txcontext();	    
+	    org.omg.CosTransactions.PropagationContext ctx = topLevelControl.get_coordinator().get_txcontext();
 
 	    if (!DistributedHammerWorker1.hammerObject_1.get(value, topLevelControl))
 	    {
@@ -238,7 +238,7 @@ public class TMClient extends Test
     public static void main (String[] args)
     {
 	TMClient test = new TMClient();
-	
+
 	test.run(args);
     }
 

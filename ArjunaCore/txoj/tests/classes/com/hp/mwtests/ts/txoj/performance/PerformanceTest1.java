@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -37,14 +37,14 @@ import com.arjuna.ats.txoj.common.*;
 import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 import com.hp.mwtests.ts.txoj.common.resources.RecoverableObject;
-import com.arjuna.mwlabs.testframework.unittest.Test;
-import com.arjuna.mwlabs.testframework.utils.PerformanceLogger;
+import org.jboss.dtf.testframework.unittest.Test;
+import org.jboss.dtf.testframework.utils.PerformanceLogger;
 
 import java.lang.NumberFormatException;
 
 public class PerformanceTest1 extends Test
 {
-    
+
     public void run(String[] args)
     {
 	boolean persistent = true;
@@ -134,13 +134,13 @@ public static long recoverableTest (long iters)
 	long t1 = System.currentTimeMillis();
 
 	A.begin();
-	
+
 	for (int c = 0; c < iters; c++)
 	{
 	    foo.set(2);
 	}
 
-	A.commit();	
+	A.commit();
 
 	return System.currentTimeMillis() - t1;
     }
@@ -152,7 +152,7 @@ public static long persistentTest (long iters)
 	long t1 = System.currentTimeMillis();
 
 	A.begin();
-	
+
 	try
 	{
 	    for (int c = 0; c < iters; c++)
@@ -166,8 +166,8 @@ public static long persistentTest (long iters)
 	}
 
 	A.commit();
-	
+
 	return System.currentTimeMillis() - t1;
-    }    
-    
+    }
+
 };

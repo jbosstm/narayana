@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -40,7 +40,7 @@ import com.arjuna.orbportability.*;
 import com.arjuna.ats.jts.OTSManager;
 
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.mwlabs.testframework.unittest.Test;
+import org.jboss.dtf.testframework.unittest.Test;
 
 import org.omg.CosTransactions.*;
 
@@ -55,12 +55,12 @@ import org.omg.CORBA.INVALID_TRANSACTION;
 
 public class AsyncTest extends Test
 {
-    
+
     public void run(String[] args)
     {
 	boolean errorp = false;
 	boolean errorc = false;
-	
+
 	for (int i = 0; i < args.length; i++)
 	{
 	    if (args[i].compareTo("-help") == 0)
@@ -81,7 +81,7 @@ public class AsyncTest extends Test
 	{
 	    myORB = ORB.getInstance("test");
 	    myOA = OA.getRootOA(myORB);
-	    
+
 	    myORB.initORB(args, null);
 	    myOA.initOA();
 
@@ -93,7 +93,7 @@ public class AsyncTest extends Test
 	    DemoResource.printThread = true;
 
 	    current.begin();
-	    
+
 	    for (int j = 0; j < 100; j++)
 	    {
 		if ((j == 10) && (errorp || errorc))
@@ -105,9 +105,9 @@ public class AsyncTest extends Test
 
 		    h = null;
 		}
-		    
+
 		DemoResource r = new DemoResource();
-    
+
 		r.registerResource();
 
 		r = null;
@@ -141,6 +141,6 @@ public class AsyncTest extends Test
 	myOA.destroy();
 	myORB.shutdown();
     }
-    
+
 }
 

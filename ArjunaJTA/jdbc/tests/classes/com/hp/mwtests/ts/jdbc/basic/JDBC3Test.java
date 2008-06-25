@@ -23,8 +23,8 @@
 
 package com.hp.mwtests.ts.jdbc.basic;
 
-import com.arjuna.mwlabs.testframework.unittest.LocalHarness;
-import com.arjuna.mwlabs.testframework.unittest.Test;
+import org.jboss.dtf.testframework.unittest.LocalHarness;
+import org.jboss.dtf.testframework.unittest.Test;
 
 import java.sql.*;
 

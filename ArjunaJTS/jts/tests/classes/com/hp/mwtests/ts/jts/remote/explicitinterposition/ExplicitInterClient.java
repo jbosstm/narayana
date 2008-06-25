@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -44,8 +44,8 @@ import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.mwlabs.testframework.unittest.Test;
-import com.arjuna.mwlabs.testframework.unittest.LocalHarness;
+import org.jboss.dtf.testframework.unittest.Test;
+import org.jboss.dtf.testframework.unittest.LocalHarness;
 
 import org.omg.CosTransactions.*;
 
@@ -58,7 +58,7 @@ import org.omg.CORBA.INVALID_TRANSACTION;
 
 public class ExplicitInterClient extends Test
 {
-    
+
     public void run(String[] args)
     {
 	ORB myORB = null;
@@ -68,7 +68,7 @@ public class ExplicitInterClient extends Test
 	{
 	    myORB = ORB.getInstance("test");
 	    myOA = OA.getRootOA(myORB);
-	    
+
 	    myORB.initORB(args, null);
 	    myOA.initOA();
 
@@ -90,7 +90,7 @@ public class ExplicitInterClient extends Test
 	{
 	    objectReference = "C:\\temp\\object.ref";
 	}
-	
+
 	for (int i = 0; i < args.length; i++)
 	{
 	    if (args[i].compareTo("-object") == 0)
@@ -121,7 +121,7 @@ public class ExplicitInterClient extends Test
 	try
 	{
 	    Services serv = new Services(myORB);
-	    
+
 	    SetGetVar = SetGetHelper.narrow(myORB.orb().string_to_object(getService(objectReference)));
 	}
 	catch (Exception ex)
@@ -134,12 +134,12 @@ public class ExplicitInterClient extends Test
 	try
 	{
 	    theControl = current.get_control();
-	
+
 	    SetGetVar.set((short) 2, theControl);
-	    //	    SetGetVar.set((short) 2, theControl);	    
+	    //	    SetGetVar.set((short) 2, theControl);
 
 	    theControl = null;
-	    
+
 	    System.out.println("Set value.");
 	}
 	catch (Exception ex1)
@@ -152,13 +152,13 @@ public class ExplicitInterClient extends Test
 	try
 	{
 	    System.out.println("committing first nested action");
-    
+
 	    current.commit(true);
 
 	    //	    SetGetVar.set((short) 4, current.get_control());
-	    
+
 	    System.out.println("committing second nested action");
-    
+
 	    current.commit(true);
 	}
 	catch (Exception sysEx)
@@ -167,15 +167,15 @@ public class ExplicitInterClient extends Test
 	    sysEx.printStackTrace(System.err);
 	    assertFailure();
 	}
-    
+
 	try
 	{
 	    theControl = current.get_control();
-	
+
 	    h = SetGetVar.get(theControl);
 
 	    theControl = null;
-	
+
 	    System.out.println("Got value.");
 	}
 	catch (Exception ex2)

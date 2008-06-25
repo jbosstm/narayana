@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -43,18 +43,18 @@ import java.util.*;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
-import com.arjuna.mwlabs.testframework.unittest.Test;
-import com.arjuna.mwlabs.testframework.unittest.LocalHarness;
+import org.jboss.dtf.testframework.unittest.Test;
+import org.jboss.dtf.testframework.unittest.LocalHarness;
 
 class ThreadWriter extends Thread
 {
     private static final String TYPE = "test";
-    
+
     public ThreadWriter (ObjectStore theStore)
     {
 	store = theStore;
     }
-    
+
     public void run ()
     {
 	byte[] data = new byte[1024];
@@ -68,11 +68,11 @@ class ThreadWriter extends Thread
 	    if (store.write_committed(u, TYPE, state))
 	    {
 		Thread.yield();
-		
+
 		InputObjectState s = store.read_committed(u, TYPE);
 
 		Thread.yield();
-	    
+
 		if (s != null)
 		{
 		    if (store.remove_committed(u, TYPE))
@@ -95,7 +95,7 @@ class ThreadWriter extends Thread
     public boolean passed = false;
 
     private ObjectStore store = null;
-    
+
 }
 
 
@@ -106,7 +106,7 @@ public class CachedTest
 	boolean passed = true;
 	String cacheSize = "2048";
 	int threads = 100;
-	
+
 	for (int i = 0; i < args.length; i++)
 	{
 	    if (args[i].equals("-size"))
@@ -136,19 +136,19 @@ public class CachedTest
 	ObjectStore store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_CacheStore());
 
 	long stime = Calendar.getInstance().getTime().getTime();
-	
+
 	for (int i = 0; (i < threads) && passed; i++)
 	{
 	    try
 	    {
 		t[i] = new ThreadWriter(store);
-		
+
 		t[i].start();
 	    }
 	    catch (Exception ex)
 	    {
 		ex.printStackTrace();
-		
+
 		passed = false;
 	    }
 	}
@@ -165,7 +165,7 @@ public class CachedTest
 	    {
 	    }
 	}
-	
+
 	long ftime = Calendar.getInstance().getTime().getTime();
 	long timeTaken = ftime - stime;
 
@@ -178,7 +178,7 @@ public class CachedTest
 	}
 
 	System.out.println("time for "+threads+" users is "+timeTaken);
-	
+
 	if (passed)
 	    System.out.println("Passed.");
 	else

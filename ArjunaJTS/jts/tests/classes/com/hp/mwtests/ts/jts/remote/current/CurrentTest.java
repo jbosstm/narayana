@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -43,8 +43,8 @@ import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.mwlabs.testframework.unittest.Test;
-import com.arjuna.mwlabs.testframework.unittest.LocalHarness;
+import org.jboss.dtf.testframework.unittest.Test;
+import org.jboss.dtf.testframework.unittest.LocalHarness;
 
 import org.omg.CosTransactions.*;
 
@@ -57,7 +57,7 @@ import org.omg.CORBA.INVALID_TRANSACTION;
 
 public class CurrentTest extends Test
 {
-    
+
     public void run(String[] args)
     {
 	ORB myORB = null;
@@ -67,7 +67,7 @@ public class CurrentTest extends Test
 	{
 	    myORB = ORB.getInstance("test");
 	    myOA = OA.getRootOA(myORB);
-	    
+
 	    myORB.initORB(args, null);
 	    myOA.initOA();
 
@@ -79,7 +79,7 @@ public class CurrentTest extends Test
 	    System.err.println("Initialisation failed: "+e);
 	    assertFailure();
 	}
-    
+
 	CurrentImple current = OTSImpleManager.current();
 	Control myControl = null;
 	String gridReference = "/tmp/grid.ref";
@@ -91,7 +91,7 @@ public class CurrentTest extends Test
 	{
 	    gridReference = "C:\\temp\\grid.ref";
 	}
-	
+
 	for (int i = 0; i < args.length; i++)
 	{
 	    if (args[i].compareTo("-help") == 0)
@@ -104,11 +104,11 @@ public class CurrentTest extends Test
 	}
 
 	System.out.println("Beginning transaction.");
-	
+
 	try
 	{
 	    current.begin();
-	    
+
 	    myControl = current.get_control();
 
 	    if (myControl == null)
@@ -122,11 +122,11 @@ public class CurrentTest extends Test
 	    sysEx.printStackTrace(System.err);
 	    assertFailure();
 	}
-  
+
 	try
 	{
 	    Services serv = new Services(myORB);
-	    
+
 	    gridVar = gridHelper.narrow(myORB.orb().string_to_object(getService(gridReference)));
 	}
 	catch (Exception sysEx)
@@ -183,13 +183,13 @@ public class CurrentTest extends Test
 		e.printStackTrace(System.err);
 		assertFailure();
 	    }
-	
+
 	    assertFailure();
 	}
 	else
 	{
 	    System.out.println("Committing transaction.");
-	    
+
 	    try
 	    {
 		current.commit(true);

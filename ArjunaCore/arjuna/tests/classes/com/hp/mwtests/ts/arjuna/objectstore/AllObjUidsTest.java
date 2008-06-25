@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -39,7 +39,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 
-import com.arjuna.mwlabs.testframework.unittest.Test;
+import org.jboss.dtf.testframework.unittest.Test;
 
 public class AllObjUidsTest extends Test
 {
@@ -50,16 +50,16 @@ public class AllObjUidsTest extends Test
 	boolean passed = false;
 	InputObjectState ios = new InputObjectState();
 	String type = "/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/ArjunaMSXAAtomicAction";
-	
+
 	for (int i = 0; i < args.length; i++)
 	{
 	    if (args[i].equals("-help"))
 	    {
 		System.err.println("Usage: [-help] [-type <type name>]");
-		
+
 		System.exit(0);
 	    }
-	    
+
 	    if (args[i].equals("-type"))
 	    {
 		type = args[i+1];
@@ -73,7 +73,7 @@ public class AllObjUidsTest extends Test
 	    if (objStore.allObjUids(type, ios, ObjectStore.OS_UNKNOWN))
 	    {
 		Uid id = new Uid(Uid.nullUid());
-	    
+
 		do
 		{
 		    try
@@ -84,21 +84,21 @@ public class AllObjUidsTest extends Test
 		    {
 			id = Uid.nullUid();
 		    }
-		
+
 		    if (id.notEquals(Uid.nullUid()))
 			System.err.println("Got UNKNOWN "+id);
 
 		    passed = true;
-		
+
 		} while (id.notEquals(Uid.nullUid()));
 	    }
 
 	    System.err.println("\n");
-	    
+
 	    if (objStore.allObjUids(type, ios, ObjectStore.OS_COMMITTED))
 	    {
 		Uid id = new Uid(Uid.nullUid());
-	    
+
 		do
 		{
 		    try
@@ -109,12 +109,12 @@ public class AllObjUidsTest extends Test
 		    {
 			id = Uid.nullUid();
 		    }
-		
+
 		    if (id.notEquals(Uid.nullUid()))
 			System.err.println("Got COMMITTED "+id);
 
 		    passed = true;
-		
+
 		} while (id.notEquals(Uid.nullUid()));
 	    }
 
@@ -123,7 +123,7 @@ public class AllObjUidsTest extends Test
 	    if (objStore.allObjUids(type, ios, ObjectStore.OS_UNCOMMITTED))
 	    {
 		Uid id = new Uid(Uid.nullUid());
-	    
+
 		do
 		{
 		    try
@@ -134,12 +134,12 @@ public class AllObjUidsTest extends Test
 		    {
 			id = Uid.nullUid();
 		    }
-		
+
 		    if (id.notEquals(Uid.nullUid()))
 			System.err.println("Got UNCOMMITTED "+id);
 
 		    passed = true;
-		
+
 		} while (id.notEquals(Uid.nullUid()));
 	    }
 	}
@@ -147,7 +147,7 @@ public class AllObjUidsTest extends Test
 	{
 	    ex.printStackTrace();
 	}
-	
+
 	if (passed)
 	    assertSuccess();
 	else
@@ -157,7 +157,7 @@ public class AllObjUidsTest extends Test
     public static void main(String[] args)
     {
         AllObjUidsTest test = new AllObjUidsTest();
-        test.initialise(null, null, args, new com.arjuna.mwlabs.testframework.unittest.LocalHarness());
+        test.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
         test.run(args);
     }
 

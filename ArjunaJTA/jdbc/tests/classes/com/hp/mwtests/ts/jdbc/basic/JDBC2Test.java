@@ -36,7 +36,7 @@ import com.arjuna.ats.jdbc.*;
 import java.util.Properties;
 import java.sql.*;
 
-import com.arjuna.mwlabs.testframework.unittest.*;
+import org.jboss.dtf.testframework.unittest.*;
 
 public class JDBC2Test extends Test
 {

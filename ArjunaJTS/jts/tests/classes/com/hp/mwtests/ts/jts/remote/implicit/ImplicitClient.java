@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU General Public License, v. 2.0.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License,
  * v. 2.0 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -43,8 +43,8 @@ import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.mwlabs.testframework.unittest.Test;
-import com.arjuna.mwlabs.testframework.unittest.LocalHarness;
+import org.jboss.dtf.testframework.unittest.Test;
+import org.jboss.dtf.testframework.unittest.LocalHarness;
 
 import org.omg.CosTransactions.*;
 
@@ -62,12 +62,12 @@ public class ImplicitClient extends Test
     {
 	ORB myORB = null;
 	RootOA myOA = null;
-	
+
 	try
 	{
 	    myORB = ORB.getInstance("test");
 	    myOA = OA.getRootOA(myORB);
-	    
+
 	    myORB.initORB(args, null);
 	    myOA.initOA();
 
@@ -87,7 +87,7 @@ public class ImplicitClient extends Test
 	{
 	    refFile = "C:\\temp\\trangrid.ref";
 	}
-	
+
 	for (int i = 0; i < args.length; i++)
 	{
 	    if (args[i].compareTo("-help") == 0)
@@ -107,14 +107,14 @@ public class ImplicitClient extends Test
 	}
 
 	CurrentImple current = OTSImpleManager.current();
-	    
+
 	TranGrid TranGridVar = null;   // pointer the grid object that will be used.
 	short h = 0, w = 0, v = 0;
 
 	try
 	{
 	    current.begin();
-	    
+
 	    Services serv = new Services(myORB);
 	    TranGridVar = TranGridHelper.narrow(myORB.orb().string_to_object(getService(refFile)));
 
@@ -128,7 +128,7 @@ public class ImplicitClient extends Test
 		System.err.println("Invocation failed: "+e);
 
 		e.printStackTrace();
-		
+
 		assertFailure();
 	    }
 
@@ -138,11 +138,11 @@ public class ImplicitClient extends Test
 	    try
 	    {
 		System.out.println("calling set");
-		
+
 		TranGridVar.set((short) 2, (short) 4, (short) 123);
-		
+
 		System.out.println("calling get");
-		
+
 		v = TranGridVar.get((short) 2, (short) 4);
 	    }
 	    catch (Exception sysEx)
@@ -153,15 +153,15 @@ public class ImplicitClient extends Test
 	    }
 
 	    // no problem setting and getting the element:
-	    
+
 	    System.out.println("trangrid[2,4] is "+v);
 
 	    // sanity check: make sure we got the value 123 back:
-	    
+
 	    if (v != 123)
 	    {
 		// oops - we didn't:
-	
+
 		current.rollback();
 	        System.out.println("Result not as expected");
 		assertFailure();

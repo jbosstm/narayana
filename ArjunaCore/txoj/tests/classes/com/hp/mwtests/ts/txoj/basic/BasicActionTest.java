@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -37,17 +37,17 @@ import com.arjuna.ats.arjuna.common.*;
 
 import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
-import com.arjuna.mwlabs.testframework.unittest.Test;
-import com.arjuna.mwlabs.testframework.unittest.LocalHarness;
+import org.jboss.dtf.testframework.unittest.Test;
+import org.jboss.dtf.testframework.unittest.LocalHarness;
 
 public class BasicActionTest extends Test
 {
-    
+
 public void run(String[] args)
     {
 	AtomicObject foo = null;
 	Uid u = null;
-	
+
 	for (int i = 0; i < args.length; i++)
 	{
 	    if (args[i].compareTo("-uid") == 0)
@@ -77,7 +77,7 @@ public void run(String[] args)
 	try
 	{
 	    A.begin();
-	
+
 	    try
 	    {
 		logInformation("current object value is "+foo.get());
@@ -89,7 +89,7 @@ public void run(String[] args)
 	    try
 	    {
 		logInformation("setting value");
-		
+
 		foo.set(foo.get()+2);
 	    }
 	    catch (Exception e)
@@ -125,10 +125,10 @@ public void run(String[] args)
 	try
 	{
 	    AtomicAction B = new AtomicAction();
-	    
+
 	    u = new Uid();
 	    foo = new AtomicObject(u);
-	    
+
 	    B.begin();
 
 	    try
@@ -138,7 +138,7 @@ public void run(String[] args)
 	    catch (Exception e)
 	    {
 	    }
-	    
+
 	    logInformation("trying to set value to 5");
 
 	    try
