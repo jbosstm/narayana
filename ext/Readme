@@ -33,7 +33,7 @@ jmxri.jar		JMX reference implementation
 jndi.jar		JNDI
 jta-1_1-classes.zip	JTA specification 1.1
 junit.jar		JUnit test framework, 3.8.2
-log4j-1.2.8.jar		LOG4j version 1.2.8
+log4j-1.2.14.jar		LOG4j version 1.2.14
 wrapper.jar		Java Service Wrapper 3.2.3
 xalan.jar
 xercesImpl.jar		Xerces 2.3.0

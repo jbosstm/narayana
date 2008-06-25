@@ -50,7 +50,7 @@ set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\connector-api.jar
 set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\jmxri.jar
 set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\jndi.jar
 set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\jta-1_1-classes.zip
-set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\log4j-1.2.8.jar
+set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\log4j-1.2.14.jar
 set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\xercesImpl.jar
 set EXT_CLASSPATH=%EXT_CLASSPATH%;%JBOSSTS_HOME%\lib\ext\xmlParserAPIs.jar
 
