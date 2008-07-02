@@ -1,40 +1,37 @@
-Installing JBossJTA into JBoss 4.0.3SP1, 4.0.4GA and 4.0.5GA
+
+JBossTS 4.4.CR1 is designed for use standalone or with JBossAS 5.0.0.CR1.
+It is not suitable for use with earlier versions of JBossAS.
+
+The installation procedure has changed from earlier releases due to the move from
+a JMX configuration style to the POJO microcontainer used by AS 5.0. Upgrading users
+should take care to read the steps below carefully.
+
+Installing JBossTS 4.4.CR1 JTA into JBossAS 5.0.0.CR1
 ------------------------------------------------------------
 
-This version of JBossTS no longer supports these older
-JBossAS releases. You probably need JBossTS 4.2.3 instead.
+The application server ships with a earlier release of JBossTS JTA as its default transaction manager.
+To update the JTA the following steps are necessary:
 
+ - Replace JBossAS  server/xxx/lib/jbossjta.jar and server/xxx/lib/jbossjta-integration.jar with the newer
+versions from JBossTS lib
 
-Installing JBossTS 4.3 into JBossAS 4.2
-------------------------------------------------------------
+ - Replace JBossAS  server/xxx/lib/jbossts-common.jar with the newer version from JBossTS lib/ext/
 
-Strating with the JBossAS 4.2 release, JBossTS JTA is the default
-transaction manager in JBossAS. For most usage there is no need to
-reinstall or upgrade the transaction manager. Indeed, we recommend
-you stick with the pre-installed version as this has received
-more extensive testing.
+ - Replace JBossAS  server/xxx/conf/jbossjta-properties.xml with  JBossTS  etc/jbossjta-properties.xml
 
-Should you wish to update your JBossAS 4.2.x release to use
-JBossTS JTA 4.3 please take the following steps:
+ - Edit JBossAS  server/xxx/deploy/transaction-service.xml, removing the TransactionManagerService mbean.
 
- - download the tar or zip version of the application server
- - extract the distribution into an installation directory
+ - Create a new file,  server/xxx/deploy/transaction-beans.xml, with the following content:
 
- - copy the following jars from the JBossJTA installation into the
-   server/XXX/lib directory of the application server installation
-   overwriting the already present .jar files of the same name
-   - lib/jbossjta.jar
-   - lib/jbossjta-integration.jar
-   - lib/ext/jbossts-common.jar
- - copy the following configuration file from the JBossJTA installation into
-   the server/XXX/conf directory of the application server installation
-   overwriting the existing version
-   - etc/jbossjta-properties.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-Note that JBossTS 4.3 provides a JTA 1.1 implementation, whereas JBossAS
-4.2 ships the JTA 1.0.1b API files. You may therefore also need to copy
-the JTA 1.1 API into the application server's server/XXX/lib dir
-  - lib/ext/jta-1_1-classes.zip
+    <bean name="TransactionManager" class="com.arjuna.ats.jbossatx.jta.TransactionManagerService">
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss:service=TransactionManager", exposedInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class, registerDirectly=true)</annotation>
 
-JBossTS 4.3 is the last JBossTS release that will support JBossAS 4.2.
-Future releases of JBossTS (4.4 onwards) will integrate with JBossAS 5.0 only.
+        <property name="transactionTimeout">300</property>
+        <property name="objectStoreDir">${jboss.server.data.dir}/tx-object-store</property>
+        <property name="mbeanServer"><inject bean="JMXKernel" property="mbeanServer"/></property>
+    </bean>
+
+</deployment>

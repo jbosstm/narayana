@@ -1,79 +1,105 @@
 
-Installing JBossJTA into JBoss 4.0.3SP1, 4.0.4GA and 4.0.5GA
+JBossTS 4.4.CR1 is designed for use standalone or with JBossAS 5.0.0.CR1.
+It is not suitable for use with earlier versions of JBossAS.
+
+The installation procedure has changed from earlier releases due to the move from
+a JMX configuration style to the POJO microcontainer used by AS 5.0. Upgrading users
+should take care to read the steps below carefully.
+
+Installing JBossTS 4.4.CR1 JTA into JBossAS 5.0.0.CR1
 ------------------------------------------------------------
 
-This version of JBossTS no longer supports these older
-JBossAS releases. You probably need JBossTS 4.2.3 instead.
+The application server ships with a earlier release of JBossTS JTA as its default transaction manager.
+To update the JTA the following steps are necessary:
+
+ - Replace JBossAS  server/xxx/lib/jbossjta.jar and server/xxx/lib/jbossjta-integration.jar with the newer
+versions from JBossTS lib
+
+ - Replace JBossAS  server/xxx/lib/jbossts-common.jar with the newer version from JBossTS lib/ext/
+
+ - Replace JBossAS  server/xxx/conf/jbossjta-properties.xml with  JBossTS  etc/jbossjta-properties.xml
+
+ - Edit JBossAS  server/xxx/deploy/transaction-service.xml, removing the TransactionManagerService mbean.
+
+ - Create a new file,  server/xxx/deploy/transaction-beans.xml, with the following content:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+    <bean name="TransactionManager" class="com.arjuna.ats.jbossatx.jta.TransactionManagerService">
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss:service=TransactionManager", exposedInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class, registerDirectly=true)</annotation>
+
+        <property name="transactionTimeout">300</property>
+        <property name="objectStoreDir">${jboss.server.data.dir}/tx-object-store</property>
+        <property name="mbeanServer"><inject bean="JMXKernel" property="mbeanServer"/></property>
+    </bean>
+
+</deployment>
 
 
-Installing JBossTS 4.3 into JBossAS 4.2 or JBossAS 5.0
+Installing JBossTS 4.4.CR1 JTS into JBossAS 5.0.0.CR1
 ------------------------------------------------------------
 
-Starting with JBossAS 4.2, the application server ships with
-JBossTS JTA as a default component. You do not need to take
-any action if you want JTA support only.
-
-To change the JTA to the full JTS in JBossAS 4.2 or 5.0, follow these steps:
-
- - download the tar or zip version of the application server
- - extract the distribution into an installation directory
+To replace the default JTA in JBossAS with the JTS release, the following steps are necessary.
+Note that you must intall JTS into a server configuration that has a CORBA ORB present.
+In this example we use the 'all' configuration.
 
  - Remove from JBossAS:
-    server/XXX/lib/jbossjta.jar
-    server/XXX/lib/jbossjta-integration.jar
-    server/XXX/lib/jbossts-common.jar
+    server/all/lib/jbossjta.jar
+    server/all/lib/jbossjta-integration.jar
+    server/all/lib/jbossts-common.jar
 
- - Copy the following from JBossTS into server/XXX/lib:
+ - Copy the following from JBossTS into JBossAS server/all/lib:
     jbossjts.jar
     jbossjts-integration.jar
     jbossjts-jacorb.jar
     jbossts-common.jar
 
  - Remove:
-    server/XXX/conf/jbossjta-properties.xml
+    server/all/conf/jbossjta-properties.xml
  - Replace it with
     jbossjts-properties.xml
 
- - edit the server/XXX/conf/jbossjts-properties.xml file and remove the
-   recovery extension property containing the value
-      "com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule"
-
- - edit the server/XXX/conf/jbossjts-properties.xml file and remove the
+ - edit the server/all/conf/jbossjts-properties.xml file and remove the
    recovery extension property containing the value
    "com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule"
 
- - Edit the server/XXX/conf/jboss-service.xml file and modify the
-   jboss:service=TransactionManager mbean declaration:
+ - Edit the server/all/deploy/transaction-service.xml, removing the TransactionManagerService mbean
 
-   <!-- for JTA (comment this out) -->
-   <mbean code="com.arjuna.ats.jbossatx.jta.TransactionManagerService"
-      name="jboss:service=TransactionManager">
-      <attribute name="TransactionTimeout">300</attribute>
-      <attribute name="ObjectStoreDir">${jboss.server.data.dir}/tx-object-store</attribute>
-   </mbean>
+ - Create a new file,  server/all/deploy/transaction-beans.xml, with the following content:
 
-   <!-- for JTS -->
-   <mbean code="com.arjuna.ats.jbossatx.jts.TransactionManagerService"
-      name="jboss:service=TransactionManager">
-      <depends>jboss:service=CorbaORB</depends>
-      <attribute name="TransactionTimeout">300</attribute>
-      <attribute name="ObjectStoreDir">${jboss.server.data.dir}/tx-object-store</attribute>
-   </mbean>
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
 
- - Edit the server/XXX/conf/jacorb.properies as follows.
+    <bean name="TransactionManager" class="com.arjuna.ats.jbossatx.jts.TransactionManagerService">
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss:service=TransactionManager", exposedInterface=com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirectly=true)</annotation>
+
+        <property name="transactionTimeout">300</property>
+        <property name="objectStoreDir">${jboss.server.data.dir}/tx-object-store</property>
+        <property name="mbeanServer"><inject bean="JMXKernel" property="mbeanServer"/></property>
+
+        <start>
+               <parameter><inject bean="jboss:service=CorbaORB" property="ORB"/></parameter>
+        </start>
+
+    </bean>
+
+</deployment>
+
+ - Edit the server/all/conf/jacorb.properies as follows.
   - change the jacorb.poa.thread_pool_max property to 32
 
- - Edit the server/XXX/deploy/iiop-service.xml and modify the
+ - Edit the server/all/deploy/iiop-service.xml and modify the
    PortableInterceptorInitializers attribute as follows.
   - remove the following lines
          <!-- comment out to disable null transaction propagation over IIOP -->
          <initializer>org.jboss.tm.iiop.TxServerClientInterceptorInitializer</initializer>
          <!-- comment out to disable transaction demarcation over IIOP -->
          <initializer>org.jboss.tm.iiop.TxServerInterceptorInitializer</initializer>
-  - add the following lines, according to the version of JBossAS you are running
-         <!-- JBoss TS interceptor. Use with AS 4.2 and AS 5.0 -->
+  - add the following lines
+         <!-- JBoss TS interceptor. -->
          <initializer>com.arjuna.ats.jts.orbspecific.jacorb.interceptors.interposition.InterpositionORBInitializerImpl</initializer>
-         <!-- RMI/IIOP tx context interceptor, use with AS 5.0 only, comment out in AS 4.2 -->
+         <!-- RMI/IIOP tx context interceptor -->
          <initializer>com.arjuna.ats.jbossatx.jts.InboundTransactionCurrentInitializer</initializer>
 
 For each deployment of JacORB, you will need to ensure that the jacorb.implname in the jacorb.properties
@@ -84,23 +110,9 @@ the recovery activator property named "com.arjuna.ats.arjuna.recovery.recoveryAc
 This may be necessary in cluster setups where the ObjectStore is shared, as
 there should be only one recovery manager per ObjectStore.
 
-Note that JBossTS 4.3 provides a JTA 1.1 implementation, whereas JBossAS
-4.2 ships the JTA 1.0.1b API files. You may therefore also need to copy
-the JTA 1.1 API into the application server's server/XXX/lib dir
-  - lib/ext/jta-1_1-classes.zip
-
-Due to issues with statup ordering, of some versions of AS 5.0 you may need to
-move the mbeans in deploy/iiop-service.xml into conf/jboss-service.xml
-
-If building the JTS To AS integration code from source, you must build against
-a JBOSS_HOME for AS 5.0, even if you intend to run the resulting binaries on AS 4.2
-
 Finally, note that starting with JBossAS 4.2, the application server binds to the
 localhost address by default. This is inappropriate for distributed transactions,
 so please ensure the server is bound to a alternative address.
-
-JBossTS 4.3 is the last JBossTS release that will support JBossAS 4.2.
-Future releases of JBossTS (4.4 onwards) will integrate with JBossAS 5.0 only.
 
 
                          Web Services Transactions
