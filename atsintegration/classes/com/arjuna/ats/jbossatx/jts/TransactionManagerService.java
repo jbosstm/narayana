@@ -32,15 +32,20 @@ package com.arjuna.ats.jbossatx.jts;
 
 import org.jboss.system.server.ServerConfig;
 import org.jboss.iiop.CorbaORBService;
-import org.jboss.tm.JBossXATerminator;
-import org.jboss.tm.LastResource;
-import org.jboss.tm.XAExceptionFormatter;
+import org.jboss.tm.*;
 import org.jboss.logging.Logger;
 import com.arjuna.ats.internal.jbossatx.jts.PropagationContextWrapper;
 import com.arjuna.ats.internal.jbossatx.jts.jca.XATerminator;
 import com.arjuna.ats.internal.jbossatx.agent.LocalJBossAgentImpl;
 import com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionSynchronizationRegistryImple;
+
+// yes we do want the arjunacore version of XARecoveryModule. It's the base class for the
+// JTS version and misconfiuration is common, so it's better to use core, thus allowing for either.
+import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
+// the resource wrapper code is common to JTA and JTS.  Import it from JTA rather than duplicating.
+import com.arjuna.ats.internal.jbossatx.jta.XAResourceRecoveryHelperWrapper;
+
 import com.arjuna.ats.jta.utils.JNDIManager;
 import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
@@ -48,6 +53,7 @@ import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.coordinator.TxStats;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
 
@@ -68,6 +74,7 @@ import java.net.UnknownHostException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.Vector;
 
 /**
  * JBoss Transaction Manager Service.
@@ -75,7 +82,7 @@ import java.io.PrintStream;
  * @author Richard A. Begg (richard.begg@arjuna.com)
  * @version $Id: TransactionManagerService.java,v 1.17 2005/06/24 15:24:14 kconner Exp $
  */
-public class TransactionManagerService implements TransactionManagerServiceMBean
+public class TransactionManagerService implements TransactionManagerServiceMBean, XAResourceRecoveryRegistry
 {
     /*
     deploy/transaction-beans.xml:
@@ -103,7 +110,7 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
 
     static {
 		/*
-		 * Override the defualt logging config, force use of the plugin that rewrites log levels to reflect app server level semantics.
+		 * Override the default logging config, force use of the plugin that rewrites log levels to reflect app server level semantics.
 		 * This must be done before the loading of anything that uses the logging, otherwise it's too late to take effect.
 		 * Hence the static initializer block.
 		 * see also http://jira.jboss.com/jira/browse/JBTM-20
@@ -528,7 +535,7 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
     public long getResourceRollbackCount() {
         return TxStats.numberOfResourceRollbacks();
     }
-    
+
     /**
      * Set whether the recovery manager should be ran in the same VM as
      * JBoss.  If this is false the Recovery Manager is already expected to
@@ -631,6 +638,52 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
         }
     }
 
+
+    public void addXAResourceRecovery(XAResourceRecovery xaResourceRecovery)
+    {
+        if(_recoveryManager == null) {
+            log.error("No recovery system in which to register XAResourceRecovery instance");
+            throw new IllegalStateException("No recovery system present in this server");
+        }
+
+        XARecoveryModule xaRecoveryModule = null;
+        for(RecoveryModule recoveryModule : ((Vector<RecoveryModule>)_recoveryManager.getModules())) {
+            if(recoveryModule instanceof XARecoveryModule) {
+                xaRecoveryModule = (XARecoveryModule)recoveryModule;
+                break;
+            }
+        }
+
+        if(xaRecoveryModule == null) {
+            log.error("No suitable recovery module in which to register XAResourceRecovery instance");
+            throw new IllegalStateException("No xa recovery module present in this server");
+        }
+
+        xaRecoveryModule.addXAResourceRecoveryHelper(new XAResourceRecoveryHelperWrapper(xaResourceRecovery));
+    }
+
+    public void removeXAResourceRecovery(XAResourceRecovery xaResourceRecovery)
+    {
+        if(_recoveryManager == null) {
+            log.warn("No recovery system from which to remove XAResourceRecovery instance");
+            return;
+        }
+
+        XARecoveryModule xaRecoveryModule = null;
+        for(RecoveryModule recoveryModule : ((Vector <RecoveryModule>)_recoveryManager.getModules())) {
+            if(recoveryModule instanceof XARecoveryModule) {
+                xaRecoveryModule = (XARecoveryModule)recoveryModule;
+                break;
+            }
+        }
+
+        if(xaRecoveryModule == null) {
+            log.warn("No suitable recovery module in which to register XAResourceRecovery instance");
+            return;
+        }
+
+        xaRecoveryModule.removeXAResourceRecoveryHelper(new XAResourceRecoveryHelperWrapper(xaResourceRecovery));
+    }
     private void bindRef(String jndiName, String className)
             throws Exception
     {
