@@ -75,7 +75,9 @@
     <property name="jta.lib.jars" value="jbossjta.jar jbossjts.jar"/>
     <property name="jta.ext.jars" value="jbossts-common.jar"/>
     <property name="jta.ext.compile.jars" value="commons-logging.jar"/>
-    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jboss-jaxrpc.jar jboss-jaxws-ext.jar jboss-jaxws.jar jbossws-client.jar jboss-saaj.jar"/>
+    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
+            jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar"/>
 
     <property name="wsas.libs" value="wsas.jar"/>
     <property name="wsc.libs" value="ws-c.jar"/>

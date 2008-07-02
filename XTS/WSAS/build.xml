@@ -50,7 +50,9 @@
 
     <property name="jta.lib.jars" value="jbossjta.jar jbossjts.jar"/>
     <property name="jta.ext.jars" value="jbossts-common.jar"/>
-    <property name="jboss.client.lib.jars" value="jboss-javaee.jar"/>
+    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
+            jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar"/>
 
     <property name="com.arjuna.mwlabs.wsas.resourcebundle" value="wsas_msg_en_US.properties"/>
 
