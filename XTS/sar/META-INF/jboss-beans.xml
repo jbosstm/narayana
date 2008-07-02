@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+    <bean name="XTSService" class="org.jboss.transactions.XTSService">
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.xts:service=XTSService", exposedInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class, registerDirectly=true)</annotation>
+
+       <depends>jboss.web:service=WebServer</depends>
+       <depends>jboss:service=TransactionManager</depends>
+   </bean>
+
+</deployment>
