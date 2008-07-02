@@ -20,7 +20,6 @@
  */
 package org.jboss.transactions;
 
-import org.jboss.system.ServiceMBeanSupport;
 import org.jboss.logging.Logger;
 import org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule;
 
@@ -80,11 +79,28 @@ import java.io.InputStream;
 /**
  * $Id$
  */
-public class XTSService extends ServiceMBeanSupport implements XTSServiceMBean {
+public class XTSService implements XTSServiceMBean {
+
+/*
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+    <bean name="XTSService" class="org.jboss.transactions.XTSService">
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.xts:service=XTSService", exposedInterface=org.jboss.transactions.XTSServiceMBean.class, registerDirectly=true)</annotation>
+
+       <depends>jboss.web:service=WebServer</depends>
+       <depends>jboss:service=TransactionManager</depends>
+   </bean>
+
+</deployment>
+
+ */
 
     // TODO expose as bean properties
     private int taskManagerMinWorkerCount = 0;
     private int taskManagerMaxWorkerCount = 10;
+
+    private final Logger log = org.jboss.logging.Logger.getLogger(XTSService.class);
 
     private ACCoordinatorRecoveryModule acCoordinatorRecoveryModule = null;
 
@@ -104,8 +120,9 @@ public class XTSService extends ServiceMBeanSupport implements XTSServiceMBean {
 
     public XTSService() {}
 
-    protected void startService() throws Exception
+    public void start() throws Exception
     {
+        log.info("JBossTS XTS Transaction Service - starting");
 
         // read unified properties file (replaces wscf.xml and wstx.xml)
         // Configuration.initialise("/jbossxts.xml");
@@ -166,9 +183,9 @@ public class XTSService extends ServiceMBeanSupport implements XTSServiceMBean {
 
     }
 
-    protected void stopService() throws Exception
+    public void stop() throws Exception
     {
-        getLog().info("JBossTS XTS Transaction Service - stopping");
+        log.info("JBossTS XTS Transaction Service - stopping");
 
         if (acCoordinatorRecoveryModule != null) {
             // remove the module, making sure no any scan which might be using it has completed

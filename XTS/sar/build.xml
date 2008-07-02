@@ -141,7 +141,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <fileset dir="${build.dir}" includes="config.jar"/>
 
             <!-- include service def (e.g. dependencies) -->
-            <fileset dir="." includes="META-INF/jboss-service.xml"/>
+            <fileset dir="." includes="META-INF/jboss-beans.xml"/>
 
             <!-- include web service config -->
             <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
@@ -200,7 +200,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <fileset dir="${build.dir}" includes="config.jar"/>
 
             <!-- include service def (e.g. dependencies) -->
-            <fileset dir="." includes="META-INF/jboss-service.xml"/>
+            <fileset dir="." includes="META-INF/jboss-beans.xml"/>
 
             <!-- include web service config -->
             <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
@@ -259,7 +259,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <fileset dir="${build.dir}" includes="config.jar"/>
 
             <!-- include service def (e.g. dependencies) -->
-            <fileset dir="." includes="META-INF/jboss-service.xml"/>
+            <fileset dir="." includes="META-INF/jboss-beans.xml"/>
 
             <!-- include web service config -->
             <fileset dir="${build.dir}" includes="META-INF/application.xml"/>

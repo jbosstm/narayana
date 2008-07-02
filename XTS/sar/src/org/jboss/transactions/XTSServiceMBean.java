@@ -23,5 +23,5 @@ package org.jboss.transactions;
 /**
  * $Id$
  */
-public interface XTSServiceMBean  extends org.jboss.system.ServiceMBean {
+public interface XTSServiceMBean {
 }
