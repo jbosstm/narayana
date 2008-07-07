@@ -121,46 +121,104 @@ so please ensure the server is bound to a alternative address.
 Deployment
 ----------
 
-JBossAS 4.2
+In JBossAS 5.0 XTS is deployed as a service archive (sar) which can be
+deployed with either the JTA or JTS Transaction Service
+implementation. This sar implements both the participant and the
+coordinator services required to support web service transactions. By
+default the services deployed in the sar implement both the 1.0 and
+1.1 OASIS WSCOOR, WSAT and WSBA protocols. It is also possible to
+build the sar so that only the 1.0 or the 1.1 implementations are
+deployed (see the build script in XTS/sar for details).
 
-The Web Services Transactions component (also known as the XML
-Transaction Service, or XTS) currently has to be deployed into JBossAS
-4.2 embedded in an application ear file. The XTS demo application
-provides an example of how to deploy XTS in this manner. See file
-demo/BUILDING in the installed XTS tree for instructions on how to
-build the demo for JBossAS 4.2. Read ant script demo/build.xml to
-identify how the XTS code is packaged in the demo ear.
+The default XTS build produces a service archive which contains both
+sets of partipant and coordinator services configured to support
+transactional web service invocations within a single JVM bound to
+address localhost and port 8080. This default build is suitable for
+demonstrating the functionality of XTS using the supplied demo
+programs. One of the demos displays use of the WS 1.1 protocols when
+invoking web services via JaxWS. The other displays use of the WS 1.0
+protcols when invoking web services via JaxRPC.
 
-When deploying into JBossAS 4.2 it is possible to factor out the
-coordinator component of XTS to run in a separate application server.
-However, in this case the XTS code must still be packaged with the
-application so that it can invoke the XTS service remote APIs and
-implement the client-side services to which the coordinator and other
-XTS services reply. See the coordinator sub directory of the XTS
-installed tree for details of how to build and deploy a stand alone
-coordinator.
+To build the default sar, cd to the XTS root directory and invoke the
+ant build script
 
-JBossAS 5.0
+  cd <JBossTSDir>/XTS
+  ant clean install
 
-In JBossAS 5.0 XTS is deployed as a service archive (sar). Follow the
-steps listed below in order to build and deploy this sar
+Note that this assumes you have already built the JBossJTA or JBossJTS
+release in directory <JBossTSDir> and deployed it into your
+application server.
 
-(1) set environment variable JBOSS_HOME to point to the root firectory
-of your JBossAS5.0 installation.
+The newly built sar will be located in the installed XTS tree:
 
-(2) change to the sar subdirectory in the XTS source tree
+  <JBossTSDir>/xts-install/sar/jbossxts.sar
 
-(3) execute 'ant deploy'
+Deploy this sar by copying it into the relevant JBossAS server deploy
+directory
 
-(the instructions above assume you have first built the rest of
-the XTS code by executing command 'ant clean install' in the XTS
-source root directory).
+  cp <JBossTSDir>/xts-install/sar/jbossxts.sar <JBossDir>/server/<xxx>/deploy
 
-n.b. XTS sar deployment to JbossAS 5.0Beta4 requires the web listener
-hostname and port to be "localhost" and "8080". this restriction will
-be lifted in future releases. use of a stand alone coordinator is also
-not currently supported in JbossAS 5.0Beta4.
+Alternatively, you can set the environmwent variable JBOSS_HOME and
+then deploy using the build script in the XTS/sar subdirectory:
 
+  setenv JBOSS_HOME <JBossDir>
+  cd <JBossTSDir>/XTS/sar
+  ant deploy
+
+This will install the sar in subdirectory server/default/deploy of
+$JBOSS_HOME
+
+Command line options can be used
+
+  i) to build a service archive for use with a different application
+      server bind address/port
+
+or
+
+  ii) to disable use of the local coordinator services and direct the
+     participants to negotiate with a remote coordinator located in a
+     different JBoss application server
+
+So, for example,
+
+  setenv JBOSS_HOME <JBossDir>
+  cd <JBossTSDir>/XTS/sar
+  ant clean install
+  cd sar
+  ant deploy -Dhostname=foo.example.com -Dport=9090
+
+will build and deploy a sar suitable for an application server bound
+to address foo.example.com using web server port 9090.
+
+Having deployed this service it would then be possible to use it as a
+remote coordinator for a second JBoss application server bound to
+address bar.example.com and using web server port 8080. The sar for
+the second server could be built and deployed as follows:
+
+  setenv JBOSS_HOME <JBossDir>
+  cd <JBossTSDir>/XTS/sar
+  ant clean install
+  cd sar
+  ant deploy -Dhostname=bar.example.com -Dport=8080 \
+             -Dcoordinator.hostname=foo.example.com \
+             -Dcoordinator.port=9090
+
+Configuration of a remote coordinator provided by another XTS
+implementation is available by editing the configuration files in
+directory XTS/xts-install/conf and setting an appropriate URl for the
+coordinator URL property. The value specified for property
+com.arjuna.mw.wst.coordinatorURL in file wstx.xml is used by the 1.0
+protocol implementation. The value specified for property
+com.arjuna.mw.wst11.coordinatorURL in file wstx11.xml is used by the
+1.1 protocol implementation.
+
+Warning:
+-------
+
+Note that due to a bug in AS.5.0.0.CR1 web services it is not possible
+to deploy the XTS sar before the JBoss application server has
+completed startup. This should be addressed in later releases of
+JBossAS.
 
 XTS Trailmap Documentation
 --------------------------
@@ -171,12 +229,3 @@ deciding whether or not to use a stand alone coordinator service. The
 trail map web pages are located in the htdocs subdirectory of the XTS
 installed tree.
 
-Note, the  following issues exist  with the XTS trailmap  shipped with
-JBossTS
-
-(i) The XTS trailmap demo application generates warning messages on the
-application server console if it is run in JBoss 4.0.4GA or 4.0.5GA.  These
-warnings do not affect the functionality of the demo application.
-
-The warning is:
-  [JSR109ServerMetaDataBuilder] Cannot obtain SEI mapping for:
