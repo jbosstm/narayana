@@ -70,6 +70,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <property name="webinf.dir"         value="WEB-INF"/>
     <property name="metainf.dir"         value="META-INF"/>
     <property name="build.dir"         value="build"/>
+    <property name="build.classes.dir" value="${build.dir}/classes"/>
     <property name="build.webinf.dir"       value="${build.dir}/WEB-INF"/>
     <property name="build.metainf.dir"       value="${build.dir}/META-INF"/>
     <property name="build.conf.dir" location="${build.dir}/conf"/>
@@ -81,6 +82,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <target name="init">
         <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.classes.dir}"/>
         <mkdir dir="${build.dir}/tmp"/>
         <mkdir dir="${build.webinf.dir}"/>
         <mkdir dir="${build.metainf.dir}"/>
@@ -95,17 +97,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
     <target name="sar-both" depends="init, insertcfg10, insertcfg11">
 
-        <!--
-        as a jbossas component we would like to use just the
-	    integration jar here. however it does not contain some stuff
-	    we need e.g. rmi, system, logger classes etc, so we pick up
-	    jbossall-client instead. also, pending some refactoring in
-	    the AS we still depend upon class
-	    org.jboss.system.ServiceMBeanSupport which is not in the
-	    integration/client jars. we can find it in the lib dir in
-	    jboss-system-jmx.jar.
-        -->
-        <javac srcdir="src" destdir="${build.dir}" debug="${javac.debug}">
+        <javac srcdir="src" destdir="${build.classes.dir}" debug="${javac.debug}">
             <classpath>
                 <pathelement location="${jbossas.home}/client/jbossall-client.jar"/>
                 <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
@@ -128,10 +120,28 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <!-- copy 11 and 1.0 application.xml to build dir -->
         <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application.xml"/>
 
+	<!-- unpack all the jar code into the classes directory -->
+	<!-- this works around a bug in AS 5.0.0.CR1 sar handling -->
+        <unjar src="${lib.dir}/ws-c.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/ws-c10.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/ws-c11.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/ws-t.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/ws-t10.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/ws-t11.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wsas.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wscf.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wscf10.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wscf11.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wstx.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wstx10.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wstx11.jar" dest="${build.classes.dir}"/>
+	<delete file="${build.classes.dir}/META-INF/MANIFEST.MF"/>
         <!-- pack everything in the service archive -->
         <jar jarfile="${build.dir}/jbossxts.sar">
             <!-- include generic 1.0 and 1.1 jars -->
+	    <!--
             <fileset dir="${lib.dir}" includes="*.jar"/>
+-->
 
             <!-- include 1.0 and 1.1 web apps all config files are included -->
             <fileset dir="${build.dir}" includes="ws-c11.war ws-c10.war ws-t11.war ws-t10.war"/>
@@ -147,24 +157,16 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
 
             <!-- include sar boot and shutdown code -->
+	    <!--
             <fileset dir="${build.dir}" includes="**/*.class"/>
+	    -->
+	    <fileset dir="${build.classes.dir}" includes="**/*"/>
         </jar>
     </target>
 
     <!-- build XTS service archive supporting 1.1 WS-C/T protocols -->
     <target name="sar-11" depends="init, insertcfg11">
-
-        <!--
-        as a jbossas component we would like to use just the
-	    integration jar here. however it does not contain some stuff
-	    we need e.g. rmi, system, logger classes etc, so we pick up
-	    jbossall-client instead. also, pending some refactoring in
-	    the AS we still depend upon class
-	    org.jboss.system.ServiceMBeanSupport which is not in the
-	    integration/client jars. we can find it in the lib dir in
-	    jboss-system-jmx.jar.
-        -->
-        <javac srcdir="src" destdir="${build.dir}" debug="${javac.debug}">
+        <javac srcdir="src" destdir="${build.classes.dir}" debug="${javac.debug}">
             <classpath>
                 <pathelement location="${jbossas.home}/client/jbossall-client.jar"/>
                 <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
@@ -187,6 +189,18 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <!-- copy 11 application.xml to build dir -->
         <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application11.xml"/>
 
+	<!-- unpack all the jar code into the classes directory -->
+	<!-- this works around a bug in AS 5.0.0.CR1 sar handling -->
+        <unjar src="${lib.dir}/ws-c.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/ws-c11.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/ws-t.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/ws-t11.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wsas.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wscf.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wscf11.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wstx.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wstx11.jar" dest="${build.classes.dir}"/>
+	<delete file="${build.classes.dir}/META-INF/MANIFEST.MF"/>
         <!-- pack everything in the service archive -->
         <jar jarfile="${build.dir}/jbossxts.sar">
             <!-- include generic and 1.1 jars -->
@@ -206,24 +220,16 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
 
             <!-- include sar boot and shutdown code -->
+	    <!--
             <fileset dir="${build.dir}" includes="**/*.class"/>
+	    -->
+            <fileset dir="${build.classes.dir}" includes="**/*"/>
         </jar>
     </target>
 
     <!-- build XTS service archive supporting 1.0 WS-C/T protocols -->
     <target name="sar-10" depends="init, insertcfg10">
-
-        <!--
-        as a jbossas component we would like to use just the
-	    integration jar here. however it does not contain some stuff
-	    we need e.g. rmi, system, logger classes etc, so we pick up
-	    jbossall-client instead. also, pending some refactoring in
-	    the AS we still depend upon class
-	    org.jboss.system.ServiceMBeanSupport which is not in the
-	    integration/client jars. we can find it in the lib dir in
-	    jboss-system-jmx.jar.
-        -->
-        <javac srcdir="src" destdir="${build.dir}" debug="${javac.debug}">
+        <javac srcdir="src" destdir="${build.classes.dir}" debug="${javac.debug}">
             <classpath>
                 <pathelement location="${jbossas.home}/client/jbossall-client.jar"/>
                 <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
@@ -246,6 +252,18 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <!-- copy 10 application.xml to build dir -->
         <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application10.xml"/>
 
+	<!-- unpack all the jar code into the classes directory -->
+	<!-- this works around a bug in AS 5.0.0.CR1 sar handling -->
+        <unjar src="${lib.dir}/ws-c.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/ws-c10.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/ws-t.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/ws-t10.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wsas.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wscf.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wscf10.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wstx.jar" dest="${build.classes.dir}"/>
+        <unjar src="${lib.dir}/wstx10.jar" dest="${build.classes.dir}"/>
+	<delete file="${build.classes.dir}/META-INF/MANIFEST.MF"/>
         <!-- pack everything in the service archive -->
         <jar jarfile="${build.dir}/jbossxts.sar">
             <!-- include generic and 1.0 jars -->
@@ -265,7 +283,10 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
 
             <!-- include sar boot and shutdown code -->
+	    <!--
             <fileset dir="${build.dir}" includes="**/*.class"/>
+	    -->
+            <fileset dir="${build.classes.dir}" includes="**/*"/>
         </jar>
     </target>
 
@@ -335,7 +356,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <copy file="${build.dir}/jbossxts.sar" todir="${jbossas.home}/server/default/deploy"/>
     </target>
 
-    <!-- by default deploy sar implementing 1.1. WS-C/T protocols -->
+    <!-- by default deploy sar implementing 1.1 and 1.0 WS-C/T protocols -->
     <target name="deploy" depends="deploy-both">
     </target>
 
