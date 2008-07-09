@@ -948,42 +948,37 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			if (_recoveryObject == null)
 			{
 				os.packInt(RecoverableXAConnection.OBJECT_RECOVERY);
-
-				boolean shouldSerialize = false;
 				
-				try
-				{
-					if (_theXAResource instanceof Serializable)
-						shouldSerialize = true;
-					
-					ByteArrayOutputStream s = new ByteArrayOutputStream();
-					ObjectOutputStream o = new ObjectOutputStream(s);
+                                if (_theXAResource instanceof Serializable)
+                                {
+        				try
+        				{
+        					ByteArrayOutputStream s = new ByteArrayOutputStream();
+        					ObjectOutputStream o = new ObjectOutputStream(s);
+        
+        					o.writeObject(_theXAResource);
+        					o.close();
+        
+        					os.packBoolean(true);
+        
+        					os.packBytes(s.toByteArray());
+        				}
+        				catch (NotSerializableException ex)
+        				{
+        				    if (jtaLogger.loggerI18N.isWarnEnabled())
+        				    {
+        				        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.saveState");
+        				    }
 
-					o.writeObject(_theXAResource);
-					o.close();
-
-					os.packBoolean(true);
-
-					os.packBytes(s.toByteArray());
-				}
-				catch (NotSerializableException ex)
-				{
-					if (!shouldSerialize)
-					{
-						// have to rely upon XAResource.recover!
-	
-						os.packBoolean(false);		
-					}			
-					else
-					{
-						if (jtaLogger.loggerI18N.isWarnEnabled())
-						{
-							jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.saveState");
-						}
-						
-						return false;
-					}
-				}
+        				    return false;
+        				}
+                                }
+                                else
+                                {
+                                    // have to rely upon XAResource.recover!
+                                
+                                    os.packBoolean(false);
+                                }
 			}
 			else
 			{

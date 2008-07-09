@@ -954,45 +954,37 @@ public class XAResourceRecord extends AbstractRecord
 			{
 				os.packInt(RecoverableXAConnection.OBJECT_RECOVERY);
 
-				boolean shouldSerialize = false;
-
-				try
-				{
-					if (_theXAResource instanceof Serializable)
-						shouldSerialize = true;
-
-					ByteArrayOutputStream s = new ByteArrayOutputStream();
-					ObjectOutputStream o = new ObjectOutputStream(s);
-
-					// don't allow the packing of a null resource
-
-					if (_theXAResource == null)
-						throw new NotSerializableException();
-
-					o.writeObject(_theXAResource);
-					o.close();
-
-					os.packBoolean(true);
-
-					os.packBytes(s.toByteArray());
-				}
-				catch (NotSerializableException ex)
-				{
-					if (!shouldSerialize)
-					{
-						// have to rely upon XAResource.recover!
-
-						os.packBoolean(false);
-					}
-					else
-					{
-						if (jtaLogger.loggerI18N.isWarnEnabled())
-						{
-							jtaLogger.loggerI18N
-									.warn("com.arjuna.ats.internal.jta.resources.arjunacore.savestate");
-						}
-					}
-				}
+                                if (_theXAResource instanceof Serializable)
+                                {
+        				try
+        				{
+        					ByteArrayOutputStream s = new ByteArrayOutputStream();
+        					ObjectOutputStream o = new ObjectOutputStream(s);
+        
+        					o.writeObject(_theXAResource);
+        					o.close();
+        
+        					os.packBoolean(true);
+        
+        					os.packBytes(s.toByteArray());
+        				}
+        				catch (NotSerializableException ex)
+        				{
+        				    if (jtaLogger.loggerI18N.isWarnEnabled())
+        				    {
+        				        jtaLogger.loggerI18N
+        				            .warn("com.arjuna.ats.internal.jta.resources.arjunacore.savestate");
+        				    }
+                                            
+                                            return false;
+        				}
+                                }
+                                else
+                                {
+                                    // have to rely upon XAResource.recover!
+                                    
+                                    os.packBoolean(false);
+                                }
 			}
 			else
 			{
@@ -1012,7 +1004,7 @@ public class XAResourceRecord extends AbstractRecord
 		}
 
 		if (res)
-			res = res && super.save_state(os, t);
+			res = super.save_state(os, t);
 
 		return res;
 	}
@@ -1102,9 +1094,7 @@ public class XAResourceRecord extends AbstractRecord
 						 * try to get a new XAResource later for this instance.
 						 */
 						
-						return true;
-						
-						//return false;
+						res = true;
 					}
 				}
 			}
@@ -1139,7 +1129,7 @@ public class XAResourceRecord extends AbstractRecord
 		}
 
 		if (res)
-			res = res && super.restore_state(os, t);
+			res = super.restore_state(os, t);
 
 		return res;
 	}
