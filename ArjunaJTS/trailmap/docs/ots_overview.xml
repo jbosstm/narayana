@@ -2,8 +2,8 @@
 <!--
   JBoss, Home of Professional Open Source
   Copyright 2006, Red Hat Middleware LLC, and individual contributors
-  as indicated by the @author tags. 
-  See the copyright.txt in the distribution for a full listing 
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a full listing
   of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
@@ -16,11 +16,11 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
 
-  
+
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<page title="Arjuna Technologies Limited: The OMG OTS" rootpath="../..">
+<page title="JBossTS Trail map: The OMG OTS" rootpath="../..">
 	<header>         Trail map: OMG Object Request Broker   </header>
 	<content>
 		<navigation>
@@ -98,11 +98,11 @@ data stored in persistent storage.</li>
 				</ul>
 				<h4>
 					<a name="program_models"/>Application programming models</h4>
-A client application program may use direct or indirect context management to 
-manage a transaction. With indirect context management, an application uses the 
-pseudo object called Current, provided by the Transaction Service , to associate 
-the transaction context with the application thread of control. In direct context 
-management, an application manipulates the Control object and the other objects 
+A client application program may use direct or indirect context management to
+manage a transaction. With indirect context management, an application uses the
+pseudo object called Current, provided by the Transaction Service , to associate
+the transaction context with the application thread of control. In direct context
+management, an application manipulates the Control object and the other objects
 associated with the transaction. <br>
 An object may require transactions to be either explicitly or implicitly
 propagated to its operations.</br>
@@ -156,11 +156,11 @@ implicit propagation of the transaction context.</li>
 				</ul>
 				<h5>Examples</h5>
 				<ul>
-					<li>Indirect and Implicit 
-    <p>In the code fragments below, a transaction originator uses indirect context 
-      management and implicit transaction propagation; txn_crt is an example of 
-      an object supporting the Current interface. The client uses the begin operation 
-      to start the transaction whichbecomes implicitly associated with the originator's 
+					<li>Indirect and Implicit
+    <p>In the code fragments below, a transaction originator uses indirect context
+      management and implicit transaction propagation; txn_crt is an example of
+      an object supporting the Current interface. The client uses the begin operation
+      to start the transaction whichbecomes implicitly associated with the originator's
       thread of control.</p>
 
 <pre>...
@@ -174,15 +174,15 @@ BankAccount.makeDeposit(deposit);
 txn_crt.commit(false)
 </pre>
 
-						<p> The program commits the transaction associated with the client thread. 
-      The report_heuristics argument is set to false so no report will be made 
+						<p> The program commits the transaction associated with the client thread.
+      The report_heuristics argument is set to false so no report will be made
       by the Transaction Service about possible heuristic decisions.</p>
 					</li>
-					<li>Direct and Explicit 
-    <p>In the following example, a transaction originator uses direct context 
-      management and explicit transaction propagation. The client uses a factory 
-      object supporting the CosTransactions::TransactionFactory interface to create 
-      a new transaction and uses the returned Control object to retrieve the Ter 
+					<li>Direct and Explicit
+    <p>In the following example, a transaction originator uses direct context
+      management and explicit transaction propagation. The client uses a factory
+      object supporting the CosTransactions::TransactionFactory interface to create
+      a new transaction and uses the returned Control object to retrieve the Ter
       mi nat or and Coordinator objects.</p>
 
 <pre>...
@@ -197,25 +197,25 @@ transactional_object.do_operation(arg, c);
 t.commit(false);
 </pre>
 
-						<p> The client issues requests, some of which involve transactional objects, 
-      in this case explicit propagation of the context is used. The Control object 
-      reference is passed as an explicit parameter of the request; it is declared 
-      in the OMG IDL of the interface. The transaction originator uses the Terminator 
-      object to commit the transaction; the report_heuristics argument is set 
-      to false: so no report will be made by the Transaction Service about possible 
+						<p> The client issues requests, some of which involve transactional objects,
+      in this case explicit propagation of the context is used. The Control object
+      reference is passed as an explicit parameter of the request; it is declared
+      in the OMG IDL of the interface. The transaction originator uses the Terminator
+      object to commit the transaction; the report_heuristics argument is set
+      to false: so no report will be made by the Transaction Service about possible
       heuristic decisions.</p>
 					</li>
 				</ul>
-				<p>The main difference between direct and indirect context management is the effect 
-  on the invoking thread's transaction context. If using indirect (i.e., invoking 
-  operations through the Current pseudo object), then the thread's transaction 
-  context will be modified automatically by the OTS, e.g., if begin is called 
-  then the thread's notion of the current transaction will be modified to the 
-  newly created transaction; when that is terminated, the transaction previously 
-  associated with the thread (if any) will be restored as the thread's context 
-  (assuming subtransactions are supported by the OTS implementation). However, 
-  if using direct management, no changes to the threads transaction context are 
-  performed by the OTS: the application programmer assumes responsibility for 
+				<p>The main difference between direct and indirect context management is the effect
+  on the invoking thread's transaction context. If using indirect (i.e., invoking
+  operations through the Current pseudo object), then the thread's transaction
+  context will be modified automatically by the OTS, e.g., if begin is called
+  then the thread's notion of the current transaction will be modified to the
+  newly created transaction; when that is terminated, the transaction previously
+  associated with the thread (if any) will be restored as the thread's context
+  (assuming subtransactions are supported by the OTS implementation). However,
+  if using direct management, no changes to the threads transaction context are
+  performed by the OTS: the application programmer assumes responsibility for
   this. </p>
 				<h4>
 OTS Interfaces</h4>

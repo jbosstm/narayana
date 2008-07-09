@@ -2,8 +2,8 @@
 <!--
   JBoss, Home of Professional Open Source
   Copyright 2006, Red Hat Middleware LLC, and individual contributors
-  as indicated by the @author tags. 
-  See the copyright.txt in the distribution for a full listing 
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a full listing
   of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
@@ -16,11 +16,11 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
 
-  
+
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<page title="Arjuna Technologies Limited: Trail map: Running and Testing Examples" rootpath="../..">
+<page title="JBossTS Trail map: Running and Testing Examples" rootpath="../..">
 	<header>         What is Transactional Object For Java  </header>
 	<content>
 		<navigation>
@@ -33,32 +33,32 @@
 		</navigation>
 		<area title="What is Transactional Object For Java">
 			<html>
-				<p>ArjunaCore exploits object-oriented techniques to present programmers with 
-  a toolkit of Java classes from which application classes can inherit to obtain 
-  desired properties, such as persistence and concurrency control. These classes 
+				<p>ArjunaCore exploits object-oriented techniques to present programmers with
+  a toolkit of Java classes from which application classes can inherit to obtain
+  desired properties, such as persistence and concurrency control. These classes
   form a hierarchy, part of which is shown below.</p>
 				<p>
 					<img src="includes/ArjunaCore_Classes.GIF"/>
 				</p>
 				<p>Figure 1 - ArjunaCore class hierarchy.</p>
-				<p>Apart from specifying the scopes of transactions, and setting appropriate locks 
-  within objects, the application programmer does not have any other responsibilities: 
-  ArjunaCore and Transactional Objects for Java (TXOJ) guarantee that transactional 
-  objects will be registered with, and be driven by, the appropriate transactions, 
+				<p>Apart from specifying the scopes of transactions, and setting appropriate locks
+  within objects, the application programmer does not have any other responsibilities:
+  ArjunaCore and Transactional Objects for Java (TXOJ) guarantee that transactional
+  objects will be registered with, and be driven by, the appropriate transactions,
   and crash recovery mechanisms are invoked automatically in the event of failures.</p>
 				<h4>Recovery and Persistency</h4>
-				<p>Making an object persistent and recoverable means that we shall be able to 
-  store its final state or to retrieve its initial state according to the final 
-  status of a transaction even in the presence of failures. ArjunaCore provides 
-  a set of techniques to save to and to retrieve from the Object Store states 
-  of objects. All objects made persistent with these ArjunaCore mechanisms are 
-  assigned unique identifiers (instances of the Uid class), when they are created, 
-  and this is to identify them within the object store. Due to common functionality 
-  for persistency and recovery required by several applications, objects are stored 
-  and retrieved from the object store using the same mechanism: the classes OutputObjectState 
+				<p>Making an object persistent and recoverable means that we shall be able to
+  store its final state or to retrieve its initial state according to the final
+  status of a transaction even in the presence of failures. ArjunaCore provides
+  a set of techniques to save to and to retrieve from the Object Store states
+  of objects. All objects made persistent with these ArjunaCore mechanisms are
+  assigned unique identifiers (instances of the Uid class), when they are created,
+  and this is to identify them within the object store. Due to common functionality
+  for persistency and recovery required by several applications, objects are stored
+  and retrieved from the object store using the same mechanism: the classes OutputObjectState
   and InputObjecState.</p>
-				<p>At the root of the class hierarchy, given in Figure 1, is the class StateManager. 
-  This class is responsible for object activation and deactivation and object 
+				<p>At the root of the class hierarchy, given in Figure 1, is the class StateManager.
+  This class is responsible for object activation and deactivation and object
   recovery. The simplified signature of the class is:</p>
 				<blockquote>
 					<pre>public abstract class StateManager
@@ -75,48 +75,48 @@
    protected StateManager (Uid id);
 };</pre>
 				</blockquote>
-				<p> Objects are assumed to be of three possible flavours. They may simply be recoverable, 
-  in which case StateManager will attempt to generate and maintain appropriate 
-  recovery information for the object. Such objects have lifetimes that do not 
-  exceed the application program that creates them. Objects may be recoverable 
-  and persistent, in which case the lifetime of the object is assumed to be greater 
-  than that of the creating or accessing application, so that in addition to maintaining 
-  recovery information StateManager will attempt to automatically load (unload) 
-  any existing persistent state for the object by calling the activate (deactivate) 
-  operation at appropriate times. Finally, objects may possess none of these capabilities, 
-  in which case no recovery information is ever kept nor is object activation/deactivation 
+				<p> Objects are assumed to be of three possible flavours. They may simply be recoverable,
+  in which case StateManager will attempt to generate and maintain appropriate
+  recovery information for the object. Such objects have lifetimes that do not
+  exceed the application program that creates them. Objects may be recoverable
+  and persistent, in which case the lifetime of the object is assumed to be greater
+  than that of the creating or accessing application, so that in addition to maintaining
+  recovery information StateManager will attempt to automatically load (unload)
+  any existing persistent state for the object by calling the activate (deactivate)
+  operation at appropriate times. Finally, objects may possess none of these capabilities,
+  in which case no recovery information is ever kept nor is object activation/deactivation
   ever automatically attempted.</p>
-				<p>According to the its activation or deactivation a transactional object for 
-  Java move from a passive state to an active state and vice-versa. The fundamental 
+				<p>According to the its activation or deactivation a transactional object for
+  Java move from a passive state to an active state and vice-versa. The fundamental
   life cycle of a persistent object in TXOJ is shown in Figure 2. </p>
 				<p>
 					<img src="includes/txoj_lifecycle.GIF"/>
 				</p>
 				<p>Figure 2 - The life cycle of a persistent object.</p>
 				<ul>
-					<li> The object is initially passive, and is stored in the object store as an 
+					<li> The object is initially passive, and is stored in the object store as an
     instance of the class OutputObjectState.</li>
-					<li> When required by an application the object is automatically activated by 
-    reading it from the store using a read_committed operation and is then converted 
-    from an InputObjectState instance into a fully-fledged object by the restore_state 
+					<li> When required by an application the object is automatically activated by
+    reading it from the store using a read_committed operation and is then converted
+    from an InputObjectState instance into a fully-fledged object by the restore_state
     operation of the object.</li>
-					<li> When the application has finished with the object it is deactivated by 
-    converting it back into an OutputObjectState instance using the save_state 
-    operation, and is then stored back into the object store as a shadow copy 
-    using write_uncommitted. This shadow copy can be committed, overwriting the 
-    previous version, using the commit_state operation. The existence of shadow 
-    copies is normally hidden from the programmer by the transaction system. Object 
-    de-activation normally only occurs when the top-level transaction within which 
+					<li> When the application has finished with the object it is deactivated by
+    converting it back into an OutputObjectState instance using the save_state
+    operation, and is then stored back into the object store as a shadow copy
+    using write_uncommitted. This shadow copy can be committed, overwriting the
+    previous version, using the commit_state operation. The existence of shadow
+    copies is normally hidden from the programmer by the transaction system. Object
+    de-activation normally only occurs when the top-level transaction within which
     the object was activated commits.</li>
 				</ul>
-				<p>While deactivating and activating a transactional object for java, the operations 
-  save_state and restore_state are respectively invoked. These operations must 
-  be implemented by the programmer since StateManager cannot detect user level 
-  state changes. This gives the programmer the ability to decide which parts of 
-  an object&#8217;s state should be made persistent. For example, for a spreadsheet 
-  it may not be necessary to save all entries if some values can simply be recomputed. 
-  The save_state implementation for a class Example that has two integer member 
-  variables called A and B and one String member variable called C could simply 
+				<p>While deactivating and activating a transactional object for java, the operations
+  save_state and restore_state are respectively invoked. These operations must
+  be implemented by the programmer since StateManager cannot detect user level
+  state changes. This gives the programmer the ability to decide which parts of
+  an object&#8217;s state should be made persistent. For example, for a spreadsheet
+  it may not be necessary to save all entries if some values can simply be recomputed.
+  The save_state implementation for a class Example that has two integer member
+  variables called A and B and one String member variable called C could simply
   be:</p>
 
 <pre>public boolean save_state(OutputObjectState o)
@@ -136,7 +136,7 @@
    return true;
 }</pre>
 
-				<p>while, the corresponding restore_state implementation allowing to retrieve 
+				<p>while, the corresponding restore_state implementation allowing to retrieve
   similar values is:</p>
 
 <pre>public boolean restore_state(InputObjectState o)
@@ -157,30 +157,30 @@
 }
 </pre>
 
-				<p>Classes OutputObjectState and InputObjectState provide respectively operations 
-  to pack and unpack instances of standard Java data types. In other words for 
-  a standard Java data type, for instance Long or Short, there are corresponding 
-  methods to pack and unpack, i.e., packLong or packShort and unpackLong or unpackShort. 
+				<p>Classes OutputObjectState and InputObjectState provide respectively operations
+  to pack and unpack instances of standard Java data types. In other words for
+  a standard Java data type, for instance Long or Short, there are corresponding
+  methods to pack and unpack, i.e., packLong or packShort and unpackLong or unpackShort.
 </p>
 				<p>
-					<strong>Note:</strong> it is necessary for all save_state and restore_state 
-  methods to call super.save_state and super.restore_state. This is to cater for 
+					<strong>Note:</strong> it is necessary for all save_state and restore_state
+  methods to call super.save_state and super.restore_state. This is to cater for
   improvements in the crash recovery mechanisms.</p>
 				<h4>The concurrency controller</h4>
-				<p> The concurrency controller is implemented by the class LockManager which provides 
-  sensible default behaviour while allowing the programmer to override it if deemed 
-  necessary by the particular semantics of the class being programmed. The primary 
-  programmer interface to the concurrency controller is via the setlock operation. 
-  By default, the runtime system enforces strict two-phase locking following a 
-  multiple reader, single writer policy on a per object basis. However, as shown 
-  in Figure 1, by inheriting from the Lock class it is possible for programmers 
-  to provide their own lock implementations with different lock conflict rules 
+				<p> The concurrency controller is implemented by the class LockManager which provides
+  sensible default behaviour while allowing the programmer to override it if deemed
+  necessary by the particular semantics of the class being programmed. The primary
+  programmer interface to the concurrency controller is via the setlock operation.
+  By default, the runtime system enforces strict two-phase locking following a
+  multiple reader, single writer policy on a per object basis. However, as shown
+  in Figure 1, by inheriting from the Lock class it is possible for programmers
+  to provide their own lock implementations with different lock conflict rules
   to enable type specific concurrency control.</p>
-				<p> Lock acquisition is (of necessity) under programmer control, since just as 
-  StateManager cannot determine if an operation modifies an object, LockManager 
-  cannot determine if an operation requires a read or write lock. Lock release, 
-  however, is under control of the system and requires no further intervention 
-  by the programmer. This ensures that the two-phase property can be correctly 
+				<p> Lock acquisition is (of necessity) under programmer control, since just as
+  StateManager cannot determine if an operation modifies an object, LockManager
+  cannot determine if an operation requires a read or write lock. Lock release,
+  however, is under control of the system and requires no further intervention
+  by the programmer. This ensures that the two-phase property can be correctly
   maintained.</p>
 
 <pre>public abstract class LockManager extends StateManager
@@ -188,12 +188,12 @@
    public LockResult setlock (Lock toSet, int retry, int timeout);
 };</pre>
 
-				<p> The LockManager class is primarily responsible for managing requests to set 
-  a lock on an object or to release a lock as appropriate. However, since it is 
-  derived from StateManager, it can also control when some of the inherited facilities 
-  are invoked. For example, LockManager assumes that the setting of a write lock 
-  implies that the invoking operation must be about to modify the object. This 
-  may in turn cause recovery information to be saved if the object is recoverable. 
+				<p> The LockManager class is primarily responsible for managing requests to set
+  a lock on an object or to release a lock as appropriate. However, since it is
+  derived from StateManager, it can also control when some of the inherited facilities
+  are invoked. For example, LockManager assumes that the setting of a write lock
+  implies that the invoking operation must be about to modify the object. This
+  may in turn cause recovery information to be saved if the object is recoverable.
   In a similar fashion, successful lock acquisition causes activate to be invoked.</p>
 				<p> The code below shows how we may try to obtain a write lock on an object:</p>
 <pre>public class Example extends LockManager
@@ -203,10 +203,10 @@
      AtomicAction A = new AtomicAction;
      /*
      <strong>
-     * The ArjunaCore AtomicAction class is here used to create 
-     * a transaction. Any interface provided by the JTA or 
-     * JTS interfaces that allow to create transactions can 
-     * be used in association with the Locking mechanisms 
+     * The ArjunaCore AtomicAction class is here used to create
+     * a transaction. Any interface provided by the JTA or
+     * JTS interfaces that allow to create transactions can
+     * be used in association with the Locking mechanisms
      * described in this trail.</strong>
      */
      boolean result = false;
@@ -232,7 +232,7 @@
 }
 </pre>
 				<h4>Further Reading</h4>
-				<p>More details on Transactional Object For Java can be found in the ArjunaCore 
+				<p>More details on Transactional Object For Java can be found in the ArjunaCore
   Programming Guide.<br/>
 				</p>
 			</html>

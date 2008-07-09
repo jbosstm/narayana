@@ -2,8 +2,8 @@
 <!--
   JBoss, Home of Professional Open Source
   Copyright 2006, Red Hat Middleware LLC, and individual contributors
-  as indicated by the @author tags. 
-  See the copyright.txt in the distribution for a full listing 
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a full listing
   of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
@@ -16,11 +16,11 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
 
-  
+
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<page title="Arjuna Technologies Limited: Trail map: Managing Transaction in EJB" rootpath="../..">
+<page title="JBossTS Trail map: Managing Transaction in EJB" rootpath="../..">
 	<header>
         Trail map: Managing Transactions in EJB
     </header>
@@ -57,23 +57,23 @@ servers.</p>
 				</br>
 				<br>
 Figure 4 - EJB and Transactions</br>
-				<p>An enterprise bean is specified by two interfaces: the home interface and the 
-  remote interface. The home interface specifies how a bean can created or found. 
-  With the help of this interface, a client or another bean can obtain a reference 
-  to a bean residing in a container on an EJB server. The remote interface specifies 
+				<p>An enterprise bean is specified by two interfaces: the home interface and the
+  remote interface. The home interface specifies how a bean can created or found.
+  With the help of this interface, a client or another bean can obtain a reference
+  to a bean residing in a container on an EJB server. The remote interface specifies
   application specific methods that are relevant to entity or session beans.<br>
-  Clients obtain references to home interfaces of enterprise beans via the Java 
-  Naming and Directory Interface (JNDI) mechanism. An EJB server should provide 
-  a JNDI implementation for any naming and directory server. Using this reference 
-  to the home interface, a client can obtain a reference to the remote interface. 
-  The client can then access methods specified in the remote interface. The EJB 
-  specification specifies the Java Remote Method Invocation (RMI) as the application 
-  level protocol for remote method invocation. However, an implementation can 
+  Clients obtain references to home interfaces of enterprise beans via the Java
+  Naming and Directory Interface (JNDI) mechanism. An EJB server should provide
+  a JNDI implementation for any naming and directory server. Using this reference
+  to the home interface, a client can obtain a reference to the remote interface.
+  The client can then access methods specified in the remote interface. The EJB
+  specification specifies the Java Remote Method Invocation (RMI) as the application
+  level protocol for remote method invocation. However, an implementation can
   use IIOP as the wire-level protocol.</br>
 					<br>
-  In Figure 5, the client first obtains a reference to the home interface, and 
-  then a reference to an instance of Bean A via the home interface. The same procedure 
-  is applicable for instance of Bean A to obtain a reference and invoke methods 
+  In Figure 5, the client first obtains a reference to the home interface, and
+  then a reference to an instance of Bean A via the home interface. The same procedure
+  is applicable for instance of Bean A to obtain a reference and invoke methods
   on an instance of Bean B.</br>
 				</p>
 				<h4>EJB Transaction Model</h4>
@@ -83,8 +83,8 @@ requires that the javax.transaction.UserTransaction interface of the JTS
 be exposed to enterprise beans. This interface is required for programmatic
 transaction demarcation as discussed in the next section.
 <br>
-The EJB framework allows both programmatic and declarative demarcation of transactions. 
-Declarative demarcation is needed for all enterprise beans deployed on the EJB. 
+The EJB framework allows both programmatic and declarative demarcation of transactions.
+Declarative demarcation is needed for all enterprise beans deployed on the EJB.
 In addition, EJB clients can also initiative and end transactions programmatically.</br>
 				<br>
 The container performs automatic demarcation depending on the transaction

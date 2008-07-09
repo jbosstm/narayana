@@ -2,8 +2,8 @@
 <!--
   JBoss, Home of Professional Open Source
   Copyright 2006, Red Hat Middleware LLC, and individual contributors
-  as indicated by the @author tags. 
-  See the copyright.txt in the distribution for a full listing 
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a full listing
   of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
@@ -16,11 +16,11 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
 
-  
+
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<page title="JBoss (a Division of Redhat): Trail map: Running and Testing Examples" rootpath="../..">
+<page title="JBossTS Trail map: Running and Testing Examples" rootpath="../..">
 	<header>         Trail map: Running and Testing Examples     </header>
 	<content>
 		<navigation>
@@ -34,8 +34,8 @@
 		</navigation>
 		<area title="Running The Banking application with JTS">
 			<html>
-				<p>The JTS version of the Banking application means that the Object Request Broker 
-  will be used. The JBossTS distribution is provided to works with JacOrb version 
+				<p>The JTS version of the Banking application means that the Object Request Broker
+  will be used. The JBossTS distribution is provided to works with JacOrb version
   2.1 that can be obtained from the same download location as JBossTS.</p>
 				<p>
 				<strong>Note</strong>: Ensure that the jacorb jar files are added in your CLASSPATH</p>
@@ -45,7 +45,7 @@
 				<blockquote>
 					<pre>java com.arjuna.ats.arjuna.recovery.RecoveryManager</pre>
 				</blockquote>
-				
+
 				<ol>
 					<li><b>Testing the distributed transaction with <a class="linkscoloured" href="part5_jts_implicit.html"><b>Implicit Propagation Context</b></a></b>
 					</li>
@@ -98,23 +98,23 @@
 					<br/>
 					Your choice :</font>
 				</blockquote>
-				<p>After entering your choice, the appropriate operation is performed by the 
-  remote Bank object, to get the requested account, and by the account to execute 
+				<p>After entering your choice, the appropriate operation is performed by the
+  remote Bank object, to get the requested account, and by the account to execute
   the credit or withdraw or to return the current balance. Let's consider the following execution. </p>
-				<p>Enter the number 1 as your choice, then give the name &quot;Foo&quot; as the 
-  account name and &quot;1000&quot; as an initial value of the account to create. 
+				<p>Enter the number 1 as your choice, then give the name &quot;Foo&quot; as the
+  account name and &quot;1000&quot; as an initial value of the account to create.
   You should get in the server window a result that terminates with the following line</p>
 				<blockquote>
 					<font face="Courier New, Courier, mono">[ Resource for Foo : Commit one phase ]</font>
 				</blockquote>
 				<ul>
-					<li>Since only one AccountResource then only one CosTransaction.Resource is 
-    involved in the account creation transaction, the two phases needed to get 
-    a consensus in the 2PC protocol are not mandatory. The one phase commit optimisation, 
+					<li>Since only one AccountResource then only one CosTransaction.Resource is
+    involved in the account creation transaction, the two phases needed to get
+    a consensus in the 2PC protocol are not mandatory. The one phase commit optimisation,
     indicated by the &quot;Commit one phase&quot;, is applied. </li>
 				</ul>
 				<p>In the same way create a second account with the name &quot;Bar&quot; and the initial balance set to 500. </p>
-				<p>As a choice now, enter in the client window &quot;3&quot; to make a transfer 
+				<p>As a choice now, enter in the client window &quot;3&quot; to make a transfer
   (300) from &quot;Foo&quot; to &quot;Bar&quot;. </p>
 				<blockquote>
 					<font face="Courier New, Courier, mono">Your choice : 3<br/>
@@ -133,10 +133,10 @@
 					[ Resource for Bar : Commit ]</font>
 				</blockquote>
 				<ul>
-					<li>Now two AccountResource objects, then two CosTransactions.Resource objects are enlisted with the transaction. The 
+					<li>Now two AccountResource objects, then two CosTransactions.Resource objects are enlisted with the transaction. The
 					displayed lines show that the two phases, prepare and commit, are applied. </li>
 				</ul>
-				<p>Any attempt to manipulate an account that it doesn't exist leads to throw the NotExistingAccount exception and to rollback 
+				<p>Any attempt to manipulate an account that it doesn't exist leads to throw the NotExistingAccount exception and to rollback
 				the transaction in progress. For instance, let's withdraw money from an account FooBar not previously created.</p>
 				<blockquote>
 					<font face="Courier New, Courier, mono">Your choice : 5<br/>
@@ -149,10 +149,10 @@
 					   minor code: 50001  completed: No</font>
 				</blockquote>
 				<h4>Using a stand-alone Transaction Server</h4>
-				<p>By default JBossTS does not use a separate transaction manager server: transaction 
-  managers are co-located with each application process to improve performance 
-  and improve application fault-tolerance. When running applications which require 
-  a separate transaction manager, you must set the com.arjuna.ats.jts.transactionManager 
+				<p>By default JBossTS does not use a separate transaction manager server: transaction
+  managers are co-located with each application process to improve performance
+  and improve application fault-tolerance. When running applications which require
+  a separate transaction manager, you must set the com.arjuna.ats.jts.transactionManager
   property variable, in the arjunajts-properties.xml file, to YES. </p>
 				<p>In a separate window, the stand-alone Transaction Server is launched as follow:</p>
 				<blockquote>
@@ -168,11 +168,11 @@
 				It is possible to run the JBoss Transaction Service and recovery manager processes on a different machine and have clients access these
 				centralized services in a hub-and-spoke style architecture.</p>
 				<p>
-				All that must be done is to provide the clients with enough information to contact the transaction service (such as the ORB's NameService). 
+				All that must be done is to provide the clients with enough information to contact the transaction service (such as the ORB's NameService).
 				However, configuring the ORB is beyond the remit of this trailmap and so we shall opt for a simpler mechanism wherby the transaction services
 				IOR is shared by access to a common file.</p>
 				<p>
-				This trailmap stage assumes that the transaction service has been appropriately installed and configured (the 
+				This trailmap stage assumes that the transaction service has been appropriately installed and configured (the
 				<font face="Courier New, Courier, mono">setenv.[bat|sh]</font> script has been ran) onto two hosts (for the purpose of explanation we shall
 				refer to these hosts as <font face="Courier New, Courier, mono">host1</font> and <font face="Courier New, Courier, mono">host2</font>).</p>
 				<ol>
@@ -194,7 +194,7 @@
 				<ol start="2">
 					<li>Share the transaction service IOR on <font face="Courier New, Courier, mono">host1</font> with <font face="Courier New, Courier, mono">host2</font></li>
 					<p>
-					Open a command prompt on <font face="Courier New, Courier, mono">host2</font> and copy the <font face="Courier New, Courier, mono">CosServices.cfg</font> file 
+					Open a command prompt on <font face="Courier New, Courier, mono">host2</font> and copy the <font face="Courier New, Courier, mono">CosServices.cfg</font> file
 					from the <font face="Courier New, Courier, mono">&lt;arjunajts_install_root>/etc</font> directory on <font face="Courier New, Courier, mono">host1</font>.</p>
 					<p>
 					For example, using the popular <font face="Courier New, Courier, mono">scp</font> package, open a shell prompt and issue the following command:</p>

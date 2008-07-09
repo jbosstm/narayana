@@ -2,8 +2,8 @@
 <!--
   JBoss, Home of Professional Open Source
   Copyright 2006, Red Hat Middleware LLC, and individual contributors
-  as indicated by the @author tags. 
-  See the copyright.txt in the distribution for a full listing 
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a full listing
   of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
@@ -16,11 +16,11 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
 
-  
+
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<page title="JBoss (a Division of Redhat): Trail map: JBossTS Failure Recovery" rootpath="../..">
+<page title="JBossTS Trail map: Failure Recovery" rootpath="../..">
 	<header>
         Trail map: JBossTS - Failure Recovery
     </header>
@@ -88,7 +88,7 @@ java com.arjuna.ats.arjuna.recovery.RecoveryManager -test
 On initialization the Recovery Manager first loads in configuration information
 via a properties file. This configuration includes a number of recovery
 activators and recovery modules, which are then dynamically loaded.
-<br>Each recovery activator, which implements the 
+<br>Each recovery activator, which implements the
 <font face="Courier New,Courier">com.arjuna.ats.arjuna.recovery.RecoveryActivator</font>
 interface, is used to instantiate a recovery class related to the underlying
 communication protocol. Indeed, since the version 3.0 of JBossTS, the
@@ -99,17 +99,17 @@ transaction protocol. For instance, when used with OTS, the RecoveryActivitor
 has the responsibility to create a RecoveryCoordinator object able to respond
 to the replay_completion operation.</br>
 				<br>
-All RecoveryActivator instances inherit the same interface. They are loaded via 
+All RecoveryActivator instances inherit the same interface. They are loaded via
 the following recovery extension property:
 </br>
 				<pre>
-&lt;property 
-  name="com.arjuna.ats.arjuna.recovery.recoveryActivator_&lt;number>" 
+&lt;property
+  name="com.arjuna.ats.arjuna.recovery.recoveryActivator_&lt;number>"
   value="RecoveryClass"/>
 </pre>
 				<p>For instance the RecoveryActivator provided in the distribution of JTS/OTS,   which shall not be commented, is as follow : </p>
 				<pre>
-&lt;property  
+&lt;property
   name="com.arjuna.ats.arjuna.recovery.recoveryActivator_1"
   value="com.arjuna.ats.internal.jts.
      orbspecific.recovery.RecoveryEnablement"/>
@@ -135,10 +135,10 @@ com.arjuna.ats.arjuna.recovery.recoveryExtension&lt;number>=&lt;RecoveryClass>
 The default RecoveryExtension settings are:
 
 <pre>
-&lt;property name="com.arjuna.ats.arjuna.recovery.recoveryExtension1" 
+&lt;property name="com.arjuna.ats.arjuna.recovery.recoveryExtension1"
   value="com.arjuna.ats.internal.
      arjuna.recovery.AtomicActionRecoveryModule"/>
-&lt;property name="com.arjuna.ats.arjuna.recovery.recoveryExtension2" 
+&lt;property name="com.arjuna.ats.arjuna.recovery.recoveryExtension2"
   value="com.arjuna.ats.internal.
      txoj.recovery.TORecoveryModule"/>
 &lt;property name="com.arjuna.ats.arjuna.recovery.recoveryExtension3"
@@ -178,8 +178,8 @@ value is negative, the first scan is delayed until after the first interval
   value="com.arjuna.ats.internal.arjuna.recovery.
        ExpiredTransactionStatusManagerScanner"/>
  </pre>
-				<p>The following table summarize properties used by the Recovery Manager. These 
-  properties are defined by default the properties file named RecoveryManager-properties.xml. 
+				<p>The following table summarize properties used by the Recovery Manager. These
+  properties are defined by default the properties file named RecoveryManager-properties.xml.
 </p>
 				<table BORDER="" WIDTH="100%">
 					<tr ALIGN="CENTER" BGCOLOR="#66FFFF">
@@ -232,7 +232,7 @@ value is negative, the first scan is delayed until after the first interval
 						  recovery.recoveryExtensionX</font>
 						</td>
 						<td>
-							<font size="-7">Indicates a periodic recovery module to use. X is the occurence number 
+							<font size="-7">Indicates a periodic recovery module to use. X is the occurence number
       of the recovery module among a set of recovery modules. These modules are
       invoked in sort-order of names</font>
 						</td>
@@ -249,14 +249,14 @@ value is negative, the first scan is delayed until after the first interval
 						  recovery.recoveryActivator_X</font>
 						</td>
 						<td>
-							<font size="-7">Indicates a recovery activator to use. X is the occurence number of the 
+							<font size="-7">Indicates a recovery activator to use. X is the occurence number of the
       recovery activator among a set of recovery activators. </font>
 						</td>
 						<td>
 							<font size="-7">The class name of the periodic recovery activator</font>
 						</td>
 						<td>
-							<font size="-7">JBossTS provide one class that manages the recovery protocol specified 
+							<font size="-7">JBossTS provide one class that manages the recovery protocol specified
       by the OTS specification </font>
 						</td>
 					</tr>
@@ -266,7 +266,7 @@ value is negative, the first scan is delayed until after the first interval
 						  recovery.expiryScannerXXX</font>
 						</td>
 						<td>
-							<font size="-7">Expiry scanners to use (order of invocation is random). Names must begin 
+							<font size="-7">Expiry scanners to use (order of invocation is random). Names must begin
       with &quot;com.arjuna.ats.arjuna.<br/>recovery.expiryScanner&quot;</font>
 						</td>
 						<td>
@@ -282,9 +282,9 @@ value is negative, the first scan is delayed until after the first interval
 						  recovery.expiryScanInterval</font>
 						</td>
 						<td>
-							<font size="-7">Interval, in hours, between running the expiry scanners. This can be 
-      quite long. The absolute value determines the interval - if the value is 
-      negative, the scan will NOT be run until after one interval has elapsed. 
+							<font size="-7">Interval, in hours, between running the expiry scanners. This can be
+      quite long. The absolute value determines the interval - if the value is
+      negative, the scan will NOT be run until after one interval has elapsed.
       If positive the first scan will be immediately
       after startup. Zero will prevent any scanning. </font>
 						</td>
@@ -301,8 +301,8 @@ value is negative, the first scan is delayed until after the first interval
 						  transactionStatusManagerExpiryTime</font>
 						</td>
 						<td>
-							<font size="-7">Age, in hours, for removal of transaction status manager item. This should 
-      be longer than any ts-using process will remain running. Zero = Never removed. 
+							<font size="-7">Age, in hours, for removal of transaction status manager item. This should
+      be longer than any ts-using process will remain running. Zero = Never removed.
     </font>
 						</td>
 						<td>

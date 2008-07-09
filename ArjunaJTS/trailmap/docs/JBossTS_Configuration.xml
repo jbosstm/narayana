@@ -2,8 +2,8 @@
 <!--
   JBoss, Home of Professional Open Source
   Copyright 2006, Red Hat Middleware LLC, and individual contributors
-  as indicated by the @author tags. 
-  See the copyright.txt in the distribution for a full listing 
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a full listing
   of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
@@ -16,11 +16,11 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
 
-  
+
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<page title="JBoss (a Division of Redhat): Trail map: Configuring the JBoss Transaction Service" rootpath="../..">
+<page title="JBossTS Trail map: Configuring the JBoss Transaction Service" rootpath="../..">
 	<header>
         Trail map: JBossTS Configuration
     </header>
@@ -42,8 +42,8 @@
   arguments, it is more convenient to organise and initialise them through properties
   files. </p>
 <h4>Properties File</h4>
-<p> The properties file named <font face="Courier New, Courier, mono">arjunajts-properties.xml 
-   </font> and located under the <font face="Courier New, Courier, mono">&lt;ats_installation_directory&gt;/etc</font> 
+<p> The properties file named <font face="Courier New, Courier, mono">arjunajts-properties.xml
+   </font> and located under the <font face="Courier New, Courier, mono">&lt;ats_installation_directory&gt;/etc</font>
    directory is organised as a collection of property names. </p>
 <blockquote>
 <pre>
@@ -92,7 +92,7 @@
 							<b>Default Value</b>
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>com.arjuna.ats.arjuna.<br/>objectstore.localOSRoot</td>
 						<td>By default, all object states will be stored within the &quot;defaultStore&quot;
@@ -117,22 +117,22 @@
 					</tr>
 				</table>
 				<h4>ObjectStore management</h4>
-The JBossTS layer requires an object store for transaction management <a class="linkscoloured" href="DTP.html#RecoveryLog">logs</a>. Within 
-the transaction service installation, object store is updated regularly whenever 
-transactions are created, or when Transactional Objects for Java is used. In a 
-failure free environment, the only object states which should reside within the 
-object store are those representing objects created with the Transactional Objects 
-for Java API. However, if failures occur, transaction logs may remain in the object 
-store until crash recovery facilities have resolved the transactions they represent. 
-As such it is very important that the contents of the object store are not deleted 
-without due care and attention, as this will make it impossible to resolve in 
-doubt transactions. In addition, if multiple users share the same object store 
-it is important that they realise this and do not simply delete the contents of 
-the object store assuming it is an exclusive resource. 
-<p> The location of the ObjectStore is specified in via the properrty <font face="Courier New,Courier">com.arjuna.ats.arjuna.objectstore.objectStoreDir</font> 
-  that can be passed with the java flag &quot;-D&quot;. For convenience this property 
-  is defined in the properties file arjuna-properties.xml, and its value is set 
-  during the JBossTS installation. At any time, the location of the ObjectStore 
+The JBossTS layer requires an object store for transaction management <a class="linkscoloured" href="DTP.html#RecoveryLog">logs</a>. Within
+the transaction service installation, object store is updated regularly whenever
+transactions are created, or when Transactional Objects for Java is used. In a
+failure free environment, the only object states which should reside within the
+object store are those representing objects created with the Transactional Objects
+for Java API. However, if failures occur, transaction logs may remain in the object
+store until crash recovery facilities have resolved the transactions they represent.
+As such it is very important that the contents of the object store are not deleted
+without due care and attention, as this will make it impossible to resolve in
+doubt transactions. In addition, if multiple users share the same object store
+it is important that they realise this and do not simply delete the contents of
+the object store assuming it is an exclusive resource.
+<p> The location of the ObjectStore is specified in via the properrty <font face="Courier New,Courier">com.arjuna.ats.arjuna.objectstore.objectStoreDir</font>
+  that can be passed with the java flag &quot;-D&quot;. For convenience this property
+  is defined in the properties file arjuna-properties.xml, and its value is set
+  during the JBossTS installation. At any time, the location of the ObjectStore
   may be changed.</p>
 				<h4>Configuring Output</h4>
 				<p>Sometimes it is desirable, mainly in case of debugging, to have some form of

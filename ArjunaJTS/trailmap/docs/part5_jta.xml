@@ -2,8 +2,8 @@
 <!--
   JBoss, Home of Professional Open Source
   Copyright 2006, Red Hat Middleware LLC, and individual contributors
-  as indicated by the @author tags. 
-  See the copyright.txt in the distribution for a full listing 
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a full listing
   of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
@@ -16,11 +16,11 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
 
-  
+
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<page title="Arjuna Technologies Limited: Trail map: Running and Testing Examples" rootpath="../..">
+<page title="JBossTS Trail map: Running and Testing Examples" rootpath="../..">
 	<header>         Trail map: The banking Application with JTA     </header>
 	<content>
 		<navigation>
@@ -34,31 +34,31 @@
 		</navigation>
 		<area title="Building The Banking Application with JTA ">
 			<html>
-				
-				<p>From an architectural point of view of <a class="linkscoloured" href="JTA_Overview.html">JTA</a>, the bank client is considered as 
+
+				<p>From an architectural point of view of <a class="linkscoloured" href="JTA_Overview.html">JTA</a>, the bank client is considered as
  an application program able to manage transactions via the <a class="linkscoloured" href="JTA_Overview.html#UserTransaction">javax.transaction.UserTransaction </a> interface. The following portion of code illustrates how a JTA transaction is
  started and terminated when the client asks to transfer money from one account  to another. This also describes what are JBossTS packages that need to be used
   in order to obtain appropriate objects instances (such UserTransaction).</p>
-				<p>Note: The code below is a simplified view of the BankClient.java program. Only the transfer operation is illustrated; other operations manage transactions in the same way. 
+				<p>Note: The code below is a simplified view of the BankClient.java program. Only the transfer operation is illustrated; other operations manage transactions in the same way.
  (see for details the <a href="../src/com/arjuna/demo/jta/localbank/BankClient.java">BankClient.java</a>)</p>
 <pre>
 package com.arjuna.demo.jta.localbank;
 public class BankClient
 {
    private Bank _bank;
-   // This operation is used to make a transfer 
+   // This operation is used to make a transfer
    //from an account to another account
    private void makeTransfer()
    {
      System.out.print(&quot;Take money from : &quot;);
      String name_supplier = input();
-   
+
      System.out.print(&quot;Put money to : &quot;);
      String name_consumer = input();
-   
+
      System.out.print(&quot;Transfer amount : &quot;);
      String amount = input();
-   
+
      float famount = 0;
      try
       {
@@ -69,21 +69,21 @@ public class BankClient
         System.out.println(&quot;Invalid float number, abort operation...&quot;);
         return;
       }
-   
+
      try
       {
-       //the following instruction asks a specific ArjunaTA 
+       //the following instruction asks a specific ArjunaTA
        //class to obtain a UserTransaction instance
-       <strong>javax.transaction.UserTransaction userTran = 
+       <strong>javax.transaction.UserTransaction userTran =
                      com.arjuna.ats.jta.UserTransaction.userTransaction()</strong>;
        System.out.println(&quot;Beginning a User transaction to get balance&quot;);
        <strong>userTran.begin()</strong>;
-    
+
        Account supplier = _bank.get_account( name_supplier );
        Account consumer = _bank.get_account( name_consumer );
        supplier.debit( famount );
        consumer.credit( famount );
-    
+
        <strong>userTran.commit( )</strong>;
       }
      catch (Exception e)
@@ -94,26 +94,26 @@ public class BankClient
    ......
 }
 </pre>
-<p>The Bank object has mainly two operations: creating an account, which is added in the account list, 
+<p>The Bank object has mainly two operations: creating an account, which is added in the account list,
 and returning an Account object. No transactional instruction  is performed by the Bank object</p>
 
 <pre>
 package com.arjuna.demo.jta.localbank;
 public class Bank {
    private java.util.Hashtable _accounts;
-   
+
    public Bank()
    {
      _accounts = new java.util.Hashtable();
    }
-   
+
    public Account create_account( String name )
    {
      Account acc = new Account(name);
      _accounts.put( name, acc );
       return acc;
    }
-   
+
    public Account get_account(String name)
    throws NotExistingAccount
    {
@@ -125,16 +125,16 @@ public class Bank {
 }
 </pre>
 
-<p>The Account object provides mainly three methods <font face="Courier New, Courier, mono">balance</font>, 
-  <font face="Courier New, Courier, mono">credit</font> and <font face="Courier New, Courier, mono">withdraw</font>. 
-  However, in order to provide the transactional behaviour, rather than to modify 
-  the current account directly (according to credit or withdraw) this task is 
-  delegated to an AccountResource object that is able, according to the transaction 
+<p>The Account object provides mainly three methods <font face="Courier New, Courier, mono">balance</font>,
+  <font face="Courier New, Courier, mono">credit</font> and <font face="Courier New, Courier, mono">withdraw</font>.
+  However, in order to provide the transactional behaviour, rather than to modify
+  the current account directly (according to credit or withdraw) this task is
+  delegated to an AccountResource object that is able, according to the transaction
   outcome, to set the account value either to its initial state or its final state.<br/>
-  The AccountResource object is in fact an object that implements the <a class="linkscoloured" href="JTA_Overview.html#XAResource">javax.transactions.XAResource</a>, 
-  then able to participate to the transaction commitment. For this aim, the Account 
-  object has to register or enlist the AccountResource object as a participant 
-  after having obtaining the reference of the <a class="linkscoloured" href="JTA_Overview.html#Transaction">javax.transaction.Transaction</a> object 
+  The AccountResource object is in fact an object that implements the <a class="linkscoloured" href="JTA_Overview.html#XAResource">javax.transactions.XAResource</a>,
+  then able to participate to the transaction commitment. For this aim, the Account
+  object has to register or enlist the AccountResource object as a participant
+  after having obtaining the reference of the <a class="linkscoloured" href="JTA_Overview.html#Transaction">javax.transaction.Transaction</a> object
   via the <a class="linkscoloured" href="JTA_Overview.html#TransactionManager">javax.transaction.TransactionManager</a> object</p>
 
 <pre>
@@ -144,45 +144,45 @@ public class Account
 {
    float _balance;
    AccountResource accRes = null;
-   
+
    public Account(String name)
    {
      _name = name;
      _balance = 0;
    }
-   
+
    public float balance()
    {
      return getXAResource().balance();;
    }
-   
+
    public void credit( float value )
    {
      getXAResource().credit( value );
    }
-   
+
    public void debit( float value )
    {
      getXAResource().debit( value );
    }
-   
+
    public AccountResource getXAResource()
    {
-   
+
      try
      {
-       <strong>javax.transaction.TransactionManager transactionManager = 
+       <strong>javax.transaction.TransactionManager transactionManager =
          com.arjuna.ats.jta.TransactionManager.transactionManager();
-       javax.transaction.Transaction currentTrans = 
+       javax.transaction.Transaction currentTrans =
           transactionManager.getTransaction();</strong>
-   
+
        if (accRes == null) {
-         <strong>currentTrans.enlistResource( 
+         <strong>currentTrans.enlistResource(
             </strong>accRes = new AccountResource(this, _name)<strong> );</strong>
        }
-   
+
        currentTrans.delistResource( accRes, XAResource.TMSUCCESS );
-    
+
      }
      catch (Exception e)
      {
@@ -194,11 +194,11 @@ public class Account
 }
 </pre>
 
-<p>The AccountResource class that implements the javax.transaxtion.XAResource 
-  interface provides similar methods as the Account class (credit, withdraw and 
-  balance) but also all methods specified by the javax.transaxtion.XAResource. 
-  The following portion of code describes how the methods <font face="Courier New, Courier, mono">prepare</font>, 
-  <font face="Courier New, Courier, mono">commit</font> and <font face="Courier New, Courier, mono">rollback</font> 
+<p>The AccountResource class that implements the javax.transaxtion.XAResource
+  interface provides similar methods as the Account class (credit, withdraw and
+  balance) but also all methods specified by the javax.transaxtion.XAResource.
+  The following portion of code describes how the methods <font face="Courier New, Courier, mono">prepare</font>,
+  <font face="Courier New, Courier, mono">commit</font> and <font face="Courier New, Courier, mono">rollback</font>
   are implemented.</p>
 
 <pre>
@@ -211,28 +211,28 @@ public class AccountResource <strong>implements XAResource</strong>
      _initial_balance = account._balance;
      _current_balance = _initial_balance;
    }
-   
+
    public float balance()
    {
      return _current_balance;
    }
-   
+
    public void credit( float value )
    {
      _current_balance += value;
    }
-   
+
    public void debit( float value )
    {
      _current_balance -= value;
    }
-   
+
    <strong>public void commit(Xid id, boolean onePhase) throws XAException</strong>
    {
-     //The value of the associated Account object is modified      
+     //The value of the associated Account object is modified
      _account._balance = _current_balance;
    }
-   
+
    <strong>public int prepare(Xid xid) throws XAException</strong>
    {
      if ( _initial_balance == _current_balance ) //account not modified
@@ -240,7 +240,7 @@ public class AccountResource <strong>implements XAResource</strong>
      if ( _current_balance &lt; 0 )
         throw new XAException(XAException.XA_RBINTEGRITY);
         //If the integrity of the account is corrupted then vote rollback
-     return (XA_OK); //return OK 
+     return (XA_OK); //return OK
    }
    </pre>
 <pre>
@@ -252,12 +252,12 @@ public class AccountResource <strong>implements XAResource</strong>
 <pre>   private float _initial_balance;
    private float _current_balance;
    private Account _account;
-   
+
    }
  }</pre>
 
 				<h5>Sample Application Source Code</h5>
-				<p>Full source code for the banking application with JTA is included to provide 
+				<p>Full source code for the banking application with JTA is included to provide
   you with a starting point for experimentation. </p>
 				<ul>
 					<li>

@@ -2,8 +2,8 @@
 <!--
   JBoss, Home of Professional Open Source
   Copyright 2006, Red Hat Middleware LLC, and individual contributors
-  as indicated by the @author tags. 
-  See the copyright.txt in the distribution for a full listing 
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a full listing
   of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
@@ -16,7 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
 
-  
+
   (C) 2005-2006,
   @author JBoss Inc.
 -->
@@ -33,8 +33,8 @@
     <xsl:template match="page">
         <HTML>
             <HEAD>
-                <META name="description" content="Arjuna Technologies: Suppliers of transactioning, messaging, and coordination middleware for reliable distributed systems"/>
-                <META name="keywords" content="transactions, transactioning, atomic transaction, OTS, JTS, BTP, JMS, WS-Coordination, WS-Transaction, BPEL, JAXTX, Activity Service"/>
+                <META name="description" content="JBossTS: JTA and JTS java transaction system"/>
+                <META name="keywords" content="transactions, transactioning, atomic transaction, OTS, JTA, JTS, BTP, JMS, WS-Coordination, WS-Transaction, BPEL, JAXTX, Activity Service"/>
                 <TITLE><xsl:value-of select="@title"/></TITLE>
                 <xsl:element name="LINK">
                     <xsl:attribute name="href"><xsl:value-of select="$rootpath"/>/styles.css</xsl:attribute>
@@ -78,20 +78,12 @@ function emailThisPage()
             <TD width="494">
                 <xsl:element name="IMG">
                     <xsl:attribute name="src"><xsl:value-of select="$rootpath"/>/images/look_and_feel/JBoss_DivOfRH_RGB.gif</xsl:attribute>
-                    <xsl:attribute name="alt">arjuna logo</xsl:attribute>
-                    <xsl:attribute name="width">178</xsl:attribute>
-                    <xsl:attribute name="height">63</xsl:attribute>
+                    <xsl:attribute name="alt">JBoss logo</xsl:attribute>
+                    <xsl:attribute name="width">249</xsl:attribute>
+                    <xsl:attribute name="height">78</xsl:attribute>
                 </xsl:element>
             </TD>
-            <TD width="233">
-                <xsl:element name="IMG">
-                    <xsl:attribute name="src"><xsl:value-of select="$rootpath"/>/images/look_and_feel/arjuna_strapline.gif</xsl:attribute>
-                    <xsl:attribute name="alt">arjuna strap line</xsl:attribute>
-                    <xsl:attribute name="width">233</xsl:attribute>
-                    <xsl:attribute name="height">63</xsl:attribute>
-                </xsl:element>
-            </TD>
-        </TR>        
+        </TR>
         <xsl:apply-templates select="//page/content/navigation/links[position()=1]" mode="header"/>
     </xsl:template>
 
@@ -192,7 +184,7 @@ function emailThisPage()
                             <TABLE width="100%" border="0" cellspacing="0" cellpadding="8">
                                 <TR>
                                     <TD valign="top" bgcolor="#FFFFFF">
-                                        <xsl:apply-templates mode="nav"/>                        
+                                        <xsl:apply-templates mode="nav"/>
                                     </TD>
                                 </TR>
                                 <TR>
@@ -201,8 +193,8 @@ function emailThisPage()
                                         <xsl:attribute name="background"><xsl:value-of select="$rootpath"/>/images/look_and_feel/search_bg.gif</xsl:attribute>
                                         <xsl:attribute name="bgcolor">#FFFFFF</xsl:attribute>
                                         <xsl:attribute name="class">bodytext</xsl:attribute>
-                                        
-                                        <BR/>                      
+
+                                        <BR/>
                                         <TABLE width="100%" border="0" cellspacing="0" cellpadding="4">
                                             <TR>
                                                 <TD width="15">
@@ -237,7 +229,7 @@ function emailThisPage()
                                         </TABLE>
                                     </xsl:element>
                                 </TR>
-                            </TABLE>                            
+                            </TABLE>
                         </TD>
                     </TR>
                 </TABLE>
@@ -279,7 +271,7 @@ function emailThisPage()
         <xsl:apply-templates select="document(@include)" mode="nav"/>
     </xsl:template>
 
-    <xsl:template match="links[link]|links[abslink]" mode="header"> 
+    <xsl:template match="links[link]|links[abslink]" mode="header">
         <TR>
             <TD colspan="2">
                 <TABLE width="100%" border="0" cellspacing="0" cellpadding="8">
@@ -293,7 +285,7 @@ function emailThisPage()
         </TR>
     </xsl:template>
 
-    <xsl:template match="links[link]|links[abslink]" mode="nav"> 
+    <xsl:template match="links[link]|links[abslink]" mode="nav">
         <P class="menuheader">
             <xsl:value-of select="@title"/>
             <DIV class="menuoptions">
@@ -302,13 +294,13 @@ function emailThisPage()
         </P>
     </xsl:template>
 
-    <xsl:template match="links[news]|links[absnews]" mode="header"> 
+    <xsl:template match="links[news]|links[absnews]" mode="header">
         <xsl:message terminate="yes">
             "news/absnews" in header not supported
         </xsl:message>
     </xsl:template>
 
-    <xsl:template match="links[news]|links[absnews]" mode="nav"> 
+    <xsl:template match="links[news]|links[absnews]" mode="nav">
         <P class="menuheader" valign="top">
             <xsl:value-of select="@title"/>
             <DIV class="quotetext">
@@ -671,25 +663,10 @@ function emailThisPage()
             <TD width="727" valign="top" align="right" colspan="3">
                 <FONT style="font-family: Arial, Helvetica, sans-serif" size="1">
 
-                    Copyright 2002-2005 Arjuna Technologies 
-
-                    <xsl:element name="IMG">
-                        <xsl:attribute name="src"><xsl:value-of select="$rootpath"/>/images/look_and_feel/spacer.jpg</xsl:attribute>
-                        <xsl:attribute name="alt"></xsl:attribute>
-                        <xsl:attribute name="border">0</xsl:attribute>
-                    </xsl:element>
-
+                    Copyright 2002-2005 Arjuna Technologies.
+                    Copyright 2008 JBoss, a division of Red Hat.
                     All Rights Reserved.
 
-                    <br/><a class="linkscoloured" href="mailto:info@arjuna.com">info@arjuna.com</a>
-
-                    <xsl:element name="IMG">
-                        <xsl:attribute name="src"><xsl:value-of select="$rootpath"/>/images/look_and_feel/spacer.jpg</xsl:attribute>
-                        <xsl:attribute name="alt"></xsl:attribute>
-                        <xsl:attribute name="border">0</xsl:attribute>
-                    </xsl:element>
-
-                    +44 191 243 0676
                 </FONT>
             </TD>
         </TR>

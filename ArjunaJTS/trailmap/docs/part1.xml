@@ -2,8 +2,8 @@
 <!--
   JBoss, Home of Professional Open Source
   Copyright 2006, Red Hat Middleware LLC, and individual contributors
-  as indicated by the @author tags. 
-  See the copyright.txt in the distribution for a full listing 
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a full listing
   of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
@@ -16,11 +16,11 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
 
-  
+
   (C) 2005-2006,
   @author JBoss Inc.
 -->
-<page title="Arjuna Technologies Limited: Trail map: Installation Content" rootpath="../..">
+<page title="JBossTS Trail map: Installation Content" rootpath="../..">
 	<header>
         Trail map: Installation Content
     </header>
@@ -37,45 +37,45 @@
 		<area title="Installation Content">
 			<html>
 				<h4>Verifying Installation</h4>
-By default, JBossTS is installed in the directory <font face="Courier New,Courier">/opt/jboss/jbossts</font> 
-on Unix machines, and <font face="Courier New,Courier">C:\Program Files\Arjuna\ats-4.0</font> 
-on Windows, except if a different location has been specified during JBossTS 
-installation. When installed, the JBossTS should have the following structure. 
+By default, JBossTS is installed in the directory <font face="Courier New,Courier">/opt/jboss/jbossts</font>
+on Unix machines, and <font face="Courier New,Courier">C:\Program Files\Arjuna\ats-4.0</font>
+on Windows, except if a different location has been specified during JBossTS
+installation. When installed, the JBossTS should have the following structure.
 <ul>
 					<li>
-						<font face="Courier New,Courier">/bin</font>: this directory contains commands 
-    to run the OTS transaction manager server (if required) and the Recovery Manager, 
+						<font face="Courier New,Courier">/bin</font>: this directory contains commands
+    to run the OTS transaction manager server (if required) and the Recovery Manager,
     and scripts to configure environment variables needed to execute JBossTS.</li>
 					<li>
-						<font face="Courier New,Courier">/docs</font>: this directory contains 
-    documentation on the way to installing, administering and programming ArjunaCore, 
+						<font face="Courier New,Courier">/docs</font>: this directory contains
+    documentation on the way to installing, administering and programming ArjunaCore,
     ArjunaTA and JBossTS.</li>
 					<li> <font face="Courier New,Courier">/etc</font>: this directory contains appropriate
     properties files that can be used to configure the behaviour of the JBoss Transaction Service.</li>
 					<li>
-						<font face="Courier New,Courier">/htdocs</font>: this directory describes 
+						<font face="Courier New,Courier">/htdocs</font>: this directory describes
     all APIs defined by JBossTS
 					</li>
 					<li>
-						<font face="Courier New,Courier">/idl</font>: this directory contains the 
-    CORBA idl files that may be registered with your interface repository prior 
+						<font face="Courier New,Courier">/idl</font>: this directory contains the
+    CORBA idl files that may be registered with your interface repository prior
     to running any applications.
 					</li>
 					<li>
 						<font face="Courier New,Courier">/jacorb</font>: This directory contains the jacorb distribution.
 					</li>
 					<li>
-						<font face="Courier New,Courier">/lib</font>: this directory contains the 
-    jar files that contains packages defined by the JBossTS. These jar files 
+						<font face="Courier New,Courier">/lib</font>: this directory contains the
+    jar files that contains packages defined by the JBossTS. These jar files
     shall be added in the CLASSPATH
 					</li>
 					<li>
-						<font face="Courier New,Courier">/services</font>: this directory contains the 
+						<font face="Courier New,Courier">/services</font>: this directory contains the
     appropriates scripts, jar and configuration files allowing to start and stop standalone Transaction Service and Recovery Manager
 					</li>
 
 					<li>
-						<font face="Courier New, Courier, mono">/trail_map</font>: contains examples 
+						<font face="Courier New, Courier, mono">/trail_map</font>: contains examples
     applications</li>
 				</ul>
 				<h4>
@@ -83,19 +83,19 @@ installation. When installed, the JBossTS should have the following structure.
 				<p>To ensure that your JBossTS installation is fully operational, we will run the simple demo.</p>
 				<p>Please follow these steps before running the transactional applications</p>
 				<ul>
-					<li>Ensure you have the Ant build system installed. Ant is a Java build tool, 
-    similar to make. It is available for free from http://ant.apache.org/ The 
+					<li>Ensure you have the Ant build system installed. Ant is a Java build tool,
+    similar to make. It is available for free from http://ant.apache.org/ The
     sample application requires version 1.5.1 or later. </li>
-					<li>The PATH and CLASSPATH environment variables need to be set appropriately 
-    to use JBoss Transaction Service. To make this easier, we provide a shell 
-    script <font face="Courier New, Courier, mono">setup_env.sh</font> (and for 
-    Windows a batch file <font face="Courier New, Courier, mono">setup_env.bat</font>) 
+					<li>The PATH and CLASSPATH environment variables need to be set appropriately
+    to use JBoss Transaction Service. To make this easier, we provide a shell
+    script <font face="Courier New, Courier, mono">setup_env.sh</font> (and for
+    Windows a batch file <font face="Courier New, Courier, mono">setup_env.bat</font>)
     in the directory <font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;/bin/</font>
 					</li>
-					<li>From a command prompt, cd to the directory containing the build.xml file 
-    (<font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;/trail_map</font>) 
-    and type 'ant'. This will compile a set of sources files located under <font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;/trail_map/src</font> 
-    then create an application .jar file named <em>jbossts-demo.jar</em>. under 
+					<li>From a command prompt, cd to the directory containing the build.xml file
+    (<font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;/trail_map</font>)
+    and type 'ant'. This will compile a set of sources files located under <font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;/trail_map/src</font>
+    then create an application .jar file named <em>jbossts-demo.jar</em>. under
     the directory <font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;/trail_map/lib</font>
 					</li>
 					<li>Add the generated jar file to the CLASSPATH environment variable.</li>
@@ -103,7 +103,7 @@ installation. When installed, the JBossTS should have the following structure.
 					<b>Ensure that JBossTS jar files appear before jacorb jar files. </b></li>
 				</ul>
 				<ul>
-					<li> Start the server.  <a class="linkscoloured" href="../src/com/arjuna/demo/simple/HelloServer.java">(HelloServer.java)</a> (<i>Note: The source code for the trailmap is fully documented and can often contain very useful tips and information that may not be reflected elsewhere in the trailmap</i>)</li> 
+					<li> Start the server.  <a class="linkscoloured" href="../src/com/arjuna/demo/simple/HelloServer.java">(HelloServer.java)</a> (<i>Note: The source code for the trailmap is fully documented and can often contain very useful tips and information that may not be reflected elsewhere in the trailmap</i>)</li>
 				</ul>
 				<blockquote>
 					<p>
@@ -111,8 +111,8 @@ installation. When installed, the JBossTS should have the following structure.
 					</p>
 				</blockquote>
 				<ul>
-					<li>Open another command prompt, go to the same /trail_map directory and start 
-    the client <a class="linkscoloured" href="../src/com/arjuna/demo/simple/HelloClient.java">(HelloClient.java)</a> . Be sure that the environment variable CLASSPATH is set with the 
+					<li>Open another command prompt, go to the same /trail_map directory and start
+    the client <a class="linkscoloured" href="../src/com/arjuna/demo/simple/HelloClient.java">(HelloClient.java)</a> . Be sure that the environment variable CLASSPATH is set with the
     same value as explained above. </li>
 				</ul>
 				<blockquote>
@@ -129,26 +129,26 @@ installation. When installed, the JBossTS should have the following structure.
 				<p>In the server, which must be stopped by hand, you should see:</p>
 					<pre>
      Hello - called within a scope of a transaction</pre>
-	
+
 				<h4>Setting properties</h4>
-The JBoss Transaction Service has been designed to be highly configurable at runtime through the use of various 
-property attributes. Although these attributes can be provided at runtime on the 
+The JBoss Transaction Service has been designed to be highly configurable at runtime through the use of various
+property attributes. Although these attributes can be provided at runtime on the
 command line, it is possible (and may be more convenient) to specify them through the
-properties  file <font face="Courier New,Courier">arjunajts-properties.xml</font> located under the <font face="Courier New,Courier">/etc</font> directory of the ATS distribution.
-				<p>More details on the way to configure the behavior of JBossTS can be found <a class="linkscoloured" href="JBossTS_Configuration.html">here</a>. 
+properties  file <font face="Courier New,Courier">arjunajts-properties.xml</font> located under the <font face="Courier New,Courier">/etc</font> directory of the JBossTS distribution.
+				<p>More details on the way to configure the behavior of JBossTS can be found <a class="linkscoloured" href="JBossTS_Configuration.html">here</a>.
 </p>
-				
+
 				<h4>Specifying the ORB to use</h4>
-				<p>JDK releases from 1.2.2 onwards include a minimum ORB implementation from Sun. 
-  If using such a JDK in conjunction with another ORB it is necessary to tell 
-  the JVM which ORB to use. This happens by specifying the org.omg.CORBA.ORBClass 
+				<p>JDK releases from 1.2.2 onwards include a minimum ORB implementation from Sun.
+  If using such a JDK in conjunction with another ORB it is necessary to tell
+  the JVM which ORB to use. This happens by specifying the org.omg.CORBA.ORBClass
   <br/>
-  and org.omg.CORBA.ORBSingletonClass properties. In earlier versions of the JBossTS 
-  it was necessary to specify these properties explicitly, either on the command 
-  line of in the properties file. However, it is no longer a requirement to do 
-  this, as the <a class="linkscoloured" href="JBossTS_ORBPortability.html">ORB Portability</a> classes 
-  will ensure that these properties are automatically set when required. Of course 
-  it is still possible to specify these values explicitly (and necessary if not 
+  and org.omg.CORBA.ORBSingletonClass properties. In earlier versions of the JBossTS
+  it was necessary to specify these properties explicitly, either on the command
+  line of in the properties file. However, it is no longer a requirement to do
+  this, as the <a class="linkscoloured" href="JBossTS_ORBPortability.html">ORB Portability</a> classes
+  will ensure that these properties are automatically set when required. Of course
+  it is still possible to specify these values explicitly (and necessary if not
   using the ORB initialization methods)</p>
 			</html>
 		</area>
