@@ -185,7 +185,7 @@ public static void main(String[] args)
   means that if there are classes for more than one ORB in the classpath the wrong
   ORB can be detected. Therefore it is best to only have one ORB in your classpath.
   If it is necessary to have multiple ORBs in the classpath then the property
-  <font face="Courier New, Courier, mono">com.hp.mw.orbportability.orbImplementation</font>
+  <font face="Courier New, Courier, mono">com.arjuna.orbportability.orbImplementation</font>
   must be set to the value specified in the table below.</p>
 				<table width="75%" border="1">
 					<tr bgcolor="#8BD5FC">
