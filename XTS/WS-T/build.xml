@@ -307,17 +307,10 @@
             </filterset>
         </copy>
         <copy file="${dev.dd.dir}/ws-t_handlers.xml" tofile="${build.dev.classes11.dir}/handlers.xml"/>
-        <war warfile="${build.dev.webapps.dir}/ws-t10.war" webxml="${build.dev.dd.dir}/web-app.xml">
-            <manifest>
-                <attribute name="Class-Path" value="ws-t10.jar ws-t.jar"/>
-            </manifest>
-        </war>
+        <war warfile="${build.dev.webapps.dir}/ws-t10.war" webxml="${build.dev.dd.dir}/web-app.xml"/>
         <war warfile="${build.dev.webapps.dir}/ws-t11.war" webxml="${build.dev.dd.dir}/web-app11.xml">
             <webinf dir="${build.dir}/dev/classes11" includes="classes/com/arjuna/webservices11/wsat/sei/* classes/com/arjuna/webservices11/wsba/sei/* classes/com/arjuna/webservices11/wsarjtx/sei/* classes/handlers.xml"/>
             <webinf dir="${build.dev.dd.dir}" includes="wsdl/**"/>
-            <manifest>
-                <attribute name="Class-Path" value="WEB-INF/classes ws-c.jar ws-t11.jar ws-t.jar"/>
-            </manifest>
         </war>
     </target>
 
@@ -351,9 +344,6 @@
             </filterset>
         </copy>
         <war warfile="${build.tests.webapps.dir}/ws-t-tests.war" webxml="${build.tests.dd.dir}/web-app.xml">
-            <manifest>
-                <attribute name="Class-Path" value="ws-t-tests.jar"/>
-            </manifest>
         </war>
         <copy file="${tests.dd.dir}/ws-t11-tests_web-app.xml" tofile="${build.tests.dd.dir}/web-app11.xml">
             <filterset>
@@ -362,9 +352,6 @@
             </filterset>
         </copy>
         <war warfile="${build.tests.webapps.dir}/ws-t11-tests.war" webxml="${build.tests.dd.dir}/web-app11.xml">
-            <manifest>
-                <attribute name="Class-Path" value="ws-t-tests.jar"/>
-            </manifest>
         </war>
         <ear earfile="${build.tests.webapps.dir}/ws-t-tests.ear" appxml="${tests.dd.dir}/ws-t-tests_application.xml">
             <!--

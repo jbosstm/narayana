@@ -220,16 +220,8 @@
 	<property name="com.arjuna.mwlabs.wstx.htdocs.list" value="com.arjuna.mw.*"/>
 
 	<target name="com.arjuna.mw.wstx.war" depends="com.arjuna.mw.wstx.jar">
-        <war warfile="${com.arjuna.mwlabs.wstx.webapps.dest}/${com.arjuna.mwlabs.ts.modulename}10.war" webxml="xml/wstx_web-app.xml">
-            <manifest>
-                <attribute name="Class-Path" value="${com.arjuna.mwlabs.ts.modulename}.jar ${com.arjuna.mwlabs.ts.modulename}10.jar"/>
-            </manifest>
-        </war>
-        <war warfile="${com.arjuna.mwlabs.wstx.webapps.dest}/${com.arjuna.mwlabs.ts.modulename}11.war" webxml="xml/wstx_web-app11.xml">
-            <manifest>
-                <attribute name="Class-Path" value="${com.arjuna.mwlabs.ts.modulename}.jar ${com.arjuna.mwlabs.ts.modulename}11.jar"/>
-            </manifest>
-        </war>
+        <war warfile="${com.arjuna.mwlabs.wstx.webapps.dest}/${com.arjuna.mwlabs.ts.modulename}10.war" webxml="xml/wstx_web-app.xml"/>
+        <war warfile="${com.arjuna.mwlabs.wstx.webapps.dest}/${com.arjuna.mwlabs.ts.modulename}11.war" webxml="xml/wstx_web-app11.xml"/>
     </target>
 
 	<!-- Jar targets -->
@@ -375,16 +367,9 @@
 	    <fileset dir="${com.arjuna.mwlabs.wstx.tests.dest}"/>
 	  </jar>
 	  <war warfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.war" webxml="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app.xml">
-	    <manifest>
-	      <attribute name="Class-Path" value="wstx-tests.jar"/>
-	    </manifest>
 	    <classes dir="${com.arjuna.mwlabs.wstx.tests.dest}"/>
 	  </war>
-	  <war warfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx11-tests.war" webxml="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app11.xml">
-	    <manifest>
-	      <attribute name="Class-Path" value="wstx-tests.jar"/>
-	    </manifest>
-	  </war>
+	  <war warfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx11-tests.war" webxml="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app11.xml"/>
 	  <ear earfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.ear" appxml="${com.arjuna.mwlabs.wstx.tests.dd}/wstx-tests_application.xml">
         <!--
 	    <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>

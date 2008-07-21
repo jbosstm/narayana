@@ -189,16 +189,8 @@
 	value="com.arjuna.mw.*"/>
 
 	<target name="com.arjuna.mw.wscf.war" depends="com.arjuna.mw.wscf.jar">
-	  <war warfile="${com.arjuna.mwlabs.wscf.war.dest}/${com.arjuna.mwlabs.ts.modulename}10.war" webxml="xml/wscf_web-app.xml">
-        <manifest>
-            <attribute name="Class-Path" value="${com.arjuna.mwlabs.ts.modulename}.10jar"/>
-        </manifest>
-      </war>
-        <war warfile="${com.arjuna.mwlabs.wscf.war.dest}/${com.arjuna.mwlabs.ts.modulename}11.war" webxml="xml/wscf11_web-app.xml">
-          <manifest>
-              <attribute name="Class-Path" value="${com.arjuna.mwlabs.ts.modulename}11.jar"/>
-          </manifest>
-        </war>
+	  <war warfile="${com.arjuna.mwlabs.wscf.war.dest}/${com.arjuna.mwlabs.ts.modulename}10.war" webxml="xml/wscf_web-app.xml"/>
+        <war warfile="${com.arjuna.mwlabs.wscf.war.dest}/${com.arjuna.mwlabs.ts.modulename}11.war" webxml="xml/wscf11_web-app.xml"/>
 	</target>
 
 	<!-- Jar targets -->
@@ -353,16 +345,8 @@
                 <attribute name="Class-Path" value="${tests.depend.libs}"/>
             </manifest>
         </jar>
-        <war warfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.war" webxml="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app.xml">
-            <manifest>
-                <attribute name="Class-Path" value="wscf-tests.jar"/>
-            </manifest>
-        </war>
-        <war warfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf11-tests.war" webxml="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app11.xml">
-            <manifest>
-                <attribute name="Class-Path" value="wscf-tests.jar"/>
-            </manifest>
-        </war>
+        <war warfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.war" webxml="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app.xml"/>
+        <war warfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf11-tests.war" webxml="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app11.xml"/>
         <ear earfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.ear" appxml="${com.arjuna.mwlabs.wscf.tests.dd}/wscf-tests_application.xml">
             <!-- we only need to deploy the ext test libs (junit) and
 	         the tests war in JBoss AS 5.0. the rest of the XTS

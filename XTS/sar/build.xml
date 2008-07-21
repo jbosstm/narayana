@@ -122,6 +122,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
 
 	<!-- unpack all the jar code into the classes directory -->
 	<!-- this works around a bug in AS 5.0.0.CR1 sar handling -->
+	<!--
         <unjar src="${lib.dir}/ws-c.jar" dest="${build.classes.dir}"/>
         <unjar src="${lib.dir}/ws-c10.jar" dest="${build.classes.dir}"/>
         <unjar src="${lib.dir}/ws-c11.jar" dest="${build.classes.dir}"/>
@@ -136,12 +137,14 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <unjar src="${lib.dir}/wstx10.jar" dest="${build.classes.dir}"/>
         <unjar src="${lib.dir}/wstx11.jar" dest="${build.classes.dir}"/>
 	<delete file="${build.classes.dir}/META-INF/MANIFEST.MF"/>
+	-->
         <!-- pack everything in the service archive -->
         <jar jarfile="${build.dir}/jbossxts.sar">
             <!-- include generic 1.0 and 1.1 jars -->
 	    <!--
             <fileset dir="${lib.dir}" includes="*.jar"/>
 -->
+            <fileset dir="${lib.dir}" includes="*.jar"/>
 
             <!-- include 1.0 and 1.1 web apps all config files are included -->
             <fileset dir="${build.dir}" includes="ws-c11.war ws-c10.war ws-t11.war ws-t10.war"/>

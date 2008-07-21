@@ -221,9 +221,6 @@
 	    </filterset>
 	  </copy>
 	  <war warfile="${com.arjuna.mwlabs.wsas.tests.webapps.dest}/wsas-tests.war" webxml="${com.arjuna.mwlabs.wsas.tests.dd.dest}/web-app.xml">
-	    <manifest>
-	      <attribute name="Class-Path" value="${tests.depend.libs}"/>
-	    </manifest>
 	    <classes dir="${com.arjuna.mwlabs.wsas.tests.dest}"/>
 	  </war>
 	  <ear earfile="${com.arjuna.mwlabs.wsas.tests.webapps.dest}/wsas-tests.ear" appxml="${com.arjuna.mwlabs.wsas.tests.dd}/wsas-tests_application.xml">
