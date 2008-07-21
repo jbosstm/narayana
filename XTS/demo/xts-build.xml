@@ -78,7 +78,9 @@
     <property name="lib10.libs" value="wscf10.jar wstx10.jar ws-t10.jar ws-c10.jar"/>
     <property name="lib11.libs" value="wscf11.jar wstx11.jar ws-t11.jar ws-c11.jar"/>
     <property name="ext.libs" value="jbossjta.jar jbossts-common.jar commons-logging.jar"/>
-    <property name="jboss.client.libs" value="jaxb-api.jar jboss-javaee.jar jboss-jaxrpc.jar jboss-jaxws-ext.jar jboss-jaxws.jar jbossws-client.jar jboss-saaj.jar"/>
+    <property name="jboss.client.libs" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
+            jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar"/>
 
     <!-- ================================================================== -->
 
@@ -251,9 +253,6 @@
 		includes="com/jboss/jbosstm/xts/demo/taxi/ITaxiServiceAT.class"/>
 	    <classes dir="${build.dir}/classes/"
 		includes="com/jboss/jbosstm/xts/demo/taxi/ITaxiServiceBA.class"/>
-            <manifest>
-                <attribute name="Class-Path" value="/WEB-INF/classes ${lib11.libs} ${lib.libs}"/>
-            </manifest>
         </war>
     </target>
 
@@ -311,9 +310,6 @@
                 includes="com/jboss/jbosstm/xts/demo/taxi/ITaxiServiceBA.class"/>
 	    <!-- jsp files -->
             <fileset dir="${web.dir}" excludes="indexrpc.jsp"/>
-            <manifest>
-                <attribute name="Class-Path" value="wstx11.jar wstx.jar"/>
-            </manifest>
         </war>
     </target>
 
