@@ -26,7 +26,6 @@ import com.arjuna.ats.tools.objectstorebrowser.ObjectStoreBrowserTreeManipulatio
 import com.arjuna.ats.tools.objectstorebrowser.ObjectStoreBrowserPlugin;
 import com.arjuna.ats.tools.objectstorebrowser.rootprovider.TxInputObjectState;
 import com.arjuna.ats.tools.objectstorebrowser.rootprovider.InFlightTransactionPseudoStore;
-import com.arjuna.ats.tools.objectstorebrowser.rootprovider.TxTester;
 import com.arjuna.ats.tools.objectstorebrowser.panels.StatePanel;
 import com.arjuna.ats.tools.objectstorebrowser.panels.SubTreeViewEntry;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.UidNode;
@@ -58,8 +57,6 @@ public class InFlightTransactionViewer extends AtomicActionViewer
             throw new ToolPluginException("No object store provider has been configured");
 
         ObjectStoreBrowserPlugin.getRootProvider().addRoot(InFlightTransactionPseudoStore.STORE_NAME);
-
-//        new TxTester().createTransactions();
     }
 
     public void uidNodeExpanded(ObjectStore os,
