@@ -38,6 +38,7 @@ import com.arjuna.ats.internal.jta.resources.jts.LocalCleanupSynchronization;
 import com.arjuna.ats.internal.jta.resources.jts.orbspecific.LastResourceRecord;
 import com.arjuna.ats.internal.jta.resources.jts.orbspecific.SynchronizationImple;
 import com.arjuna.ats.internal.jta.resources.jts.orbspecific.XAResourceRecord;
+import com.arjuna.ats.internal.jta.resources.jts.orbspecific.ManagedSynchronizationImple;
 
 import com.arjuna.ats.jta.resources.LastResourceCommitOptimisation;
 import com.arjuna.ats.jta.utils.XAHelper;
@@ -458,7 +459,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					"TransactionImple.registerSynchronization - "
 							+ jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.nullparam"));
 
-        registerSynchronizationImple(new SynchronizationImple(sync));
+        registerSynchronizationImple(new ManagedSynchronizationImple(sync));
 	}
 
 	// package-private method also for use by
@@ -1826,7 +1827,30 @@ public class TransactionImple implements javax.transaction.Transaction,
 		return XA_TRANSACTION_TIMEOUT_ENABLED ;
 	}
 
-	protected AtomicTransaction _theTransaction;
+    public static Map<Uid, javax.transaction.Transaction> getTransactions()
+    {
+        return Collections.unmodifiableMap(_transactions);
+    }
+
+    public Map<XAResource, TxInfo> getResources()
+    {
+        return Collections.unmodifiableMap(_resources);
+    }
+
+    public int getTimeout()
+    {
+        return _theTransaction.getTimeout();
+    }
+
+    public java.util.Map<Uid, String> getSynchronizations()
+    {
+        if (_theTransaction != null)
+            return _theTransaction.getControlWrapper().getSynchronizations();
+
+        return Collections.EMPTY_MAP;
+    }
+
+    protected AtomicTransaction _theTransaction;
 
 	private Hashtable _resources;
 	private Hashtable _duplicateResources;

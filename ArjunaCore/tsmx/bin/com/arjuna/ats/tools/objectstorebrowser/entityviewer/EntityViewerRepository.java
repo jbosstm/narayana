@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors 
  * as indicated by the @author tags. 
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors. 
@@ -15,7 +15,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  * 
- * (C) 2005-2006,
+ * (C) 2005-2008,
  * @author JBoss Inc.
  */
 package com.arjuna.ats.tools.objectstorebrowser.entityviewer;
@@ -23,6 +23,8 @@ package com.arjuna.ats.tools.objectstorebrowser.entityviewer;
 import java.util.Properties;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004
@@ -39,11 +41,11 @@ public class EntityViewerRepository
 {
     private final static String VIEWER_PROPERTY_PREFIX = "com.arjuna.mwtools.objectstorebrowser.entityviewers.";
 
-    private static Hashtable    _viewers = new Hashtable();
+    private static ConcurrentMap _viewers = new ConcurrentHashMap();
 
     public static void registerEntityViewer(String type, EntityViewerInterface entityViewer)
     {
-        _viewers.put(type, entityViewer);
+        _viewers.putIfAbsent(type, entityViewer);
     }
 
     public static EntityViewerInterface getEntityViewer(String type)
@@ -74,7 +76,8 @@ public class EntityViewerRepository
                     }
                     catch (Exception e)
                     {
-                        throw new ExceptionInInitializerError("Failed to create instance of '"+viewerClassname+"' entity viewer: "+e);
+                        System.out.println("Warning: Failed to create instance of '"+viewerClassname+"' entity viewer: " + e.getMessage());
+//                        throw new ExceptionInInitializerError("Failed to create instance of '"+viewerClassname+"' entity viewer: "+e);
                     }
                 }
             }
@@ -83,5 +86,10 @@ public class EntityViewerRepository
         {
             throw new ExceptionInInitializerError("Failed to initiate object state viewers: "+e);
         }
+    }
+
+    public static void disposeRepository()
+    {
+        _viewers.clear();
     }
 }

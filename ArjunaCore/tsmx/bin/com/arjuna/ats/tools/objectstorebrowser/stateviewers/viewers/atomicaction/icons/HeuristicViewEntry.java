@@ -31,48 +31,20 @@ package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicactio
  * $Id: HeuristicViewEntry.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.tools.objectstorebrowser.panels.*;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.ObjectStoreBrowserNode;
-import com.arjuna.ats.tools.objectstorebrowser.frames.*;
-import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.AtomicActionWrapper;
-import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.nodes.*;
+import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.BasicActionInfo;
 
-import com.arjuna.ats.tools.toolsframework.iconpanel.IconSelectionListener;
-import com.arjuna.ats.tools.toolsframework.iconpanel.IconPanelEntry;
+import com.arjuna.ats.arjuna.coordinator.RecordList;
 
-import javax.swing.tree.*;
-
-public class HeuristicViewEntry extends ListViewEntry implements IconSelectionListener
+public class HeuristicViewEntry extends AtomicTransactionViewEntry
 {
     public HeuristicViewEntry(String tn, String label, ObjectStoreBrowserNode node)
     {
         super(tn, label, node);
-
-        addSelectionListener(this);
     }
 
-    /**
-     * Called when this entry is selected
-     * @param icon
-     * @param selected
-     */
-    public void iconSelected(IconPanelEntry icon, boolean selected)
+    protected RecordList getList(BasicActionInfo wrapper)
     {
-        /** Populate panel with details of this list **/
-        StatePanel panel = BrowserFrame.getStatePanel();
-        final HeuristicListNode node = (HeuristicListNode)getNode();
-        AtomicActionWrapper aaw = (AtomicActionWrapper)node.getAssObject();
-        panel.clear();
-        panel.setType(getTypeName());
-        panel.setInfo(aaw.getHeuristicList().size()+" entries");
-        panel.enableDetailsButton(new DetailsButtonAdapter() {
-            public void detailsButtonPressed()
-            {
-                TreePath path = new TreePath(BrowserFrame.getTreeModel().getPathToRoot(node));
-                BrowserFrame.getTree().expandPath(path);
-                BrowserFrame.getTree().setSelectionPath(path);
-            }
-        });
-        panel.repaint();
+        return wrapper.getHeuristicList();
     }
 }

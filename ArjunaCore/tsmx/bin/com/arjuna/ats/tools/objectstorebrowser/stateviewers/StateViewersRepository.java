@@ -33,6 +33,8 @@ package com.arjuna.ats.tools.objectstorebrowser.stateviewers;
 import com.arjuna.ats.tools.objectstorebrowser.PluginClassloader;
 
 import java.util.Hashtable;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.io.File;
 
 /**
@@ -45,17 +47,18 @@ public class StateViewersRepository
 {
     private final static String STATE_VIEWER_JAR_PREFIX = "osbv-";
     private final static String JAR_MANIFEST_SECTION_NAME = "arjuna-tools-objectstorebrowser";
-
+    private final static String DEFAULT_ABSTRACT_RECORD_VIEWER = "com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrecord.AbstractRecordViewer";
 
     /** Store objectTypeName to stateViewer mappings **/
-    private static Hashtable	        _stateViewers = new Hashtable();
-    private static Hashtable            _abstractRecordStateViewers = new Hashtable();
+    private static ConcurrentMap        _stateViewers = new ConcurrentHashMap();
+    private static ConcurrentMap _abstractRecordStateViewers = new ConcurrentHashMap();
     private static StateViewerInterface _defaultStateViewer = null;
 
     public static void registerStateViewer(String objectTypeName, StateViewerInterface stateViewer) throws ViewerAlreadyRegisteredException
     {
-	
+	_stateViewers.putIfAbsent( objectTypeName, stateViewer );
 	/** If stateviewer already registered then throw an exception **/
+        /*
 	if ( !_stateViewers.containsKey(objectTypeName) )
 	{
 	    _stateViewers.put( objectTypeName, stateViewer );
@@ -64,11 +67,14 @@ public class StateViewersRepository
 	{
 	    throw new ViewerAlreadyRegisteredException("A viewer is already registered for object type '"+objectTypeName+"'");
 	}
+        */
     }
 
     public static void registerAbstractRecordStateViewer(String type, AbstractRecordStateViewerInterface stateViewer) throws ViewerAlreadyRegisteredException
     {
+        _abstractRecordStateViewers.putIfAbsent(type,stateViewer);
         /** If the state viewer is already registered then throw an exception **/
+        /*
         if ( !_abstractRecordStateViewers.containsKey(type) )
         {
             _abstractRecordStateViewers.put( type, stateViewer );
@@ -77,6 +83,7 @@ public class StateViewersRepository
         {
             throw new ViewerAlreadyRegisteredException("A viewer is already registered for object type '"+type+"'");
         }
+        */
     }
 
     public static void setDefaultStateViewer(StateViewerInterface svi)
@@ -88,14 +95,28 @@ public class StateViewersRepository
     {
 	StateViewerInterface svi = (StateViewerInterface)_stateViewers.get(objectTypeName);
 
-        /** If the object type is not registered then return the default svi **/
-        return ( svi == null ) ? _defaultStateViewer : svi;
+        /** If the object type is not registered then look for a more generic viewer **/
+        if (svi == null)
+        {
+            // determine where the last component starts (assumes objectTypeName != null)
+            int i = objectTypeName.substring(0, objectTypeName.length() - 1).lastIndexOf('/');
+
+            if (i == -1)
+                return _defaultStateViewer; // no more components so return the default viewer
+            else
+                return lookupStateViewer(objectTypeName.substring(0, i + 1));
+        }
+        else
+            return svi;
     }
 
     public static AbstractRecordStateViewerInterface lookupAbstractRecordStateViewer(String type)
     {
         AbstractRecordStateViewerInterface svi = (AbstractRecordStateViewerInterface)_abstractRecordStateViewers.get(type);
 
+        if (svi == null)
+            return (AbstractRecordStateViewerInterface)_abstractRecordStateViewers.get(DEFAULT_ABSTRACT_RECORD_VIEWER);
+        
         return svi;
     }
 
@@ -135,5 +156,11 @@ public class StateViewersRepository
 	    
 	    throw new ExceptionInInitializerError("Failed to initiate object state viewers: "+e);
 	}
+    }
+
+    public static void disposeRepository()
+    {
+        _stateViewers.clear();
+        _abstractRecordStateViewers.clear();
     }
 }

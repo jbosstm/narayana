@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. 
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors. 
@@ -15,7 +15,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  * 
- * (C) 2005-2006,
+ * (C) 2005-2008,
  * @author JBoss Inc.
  */
 /*
@@ -31,6 +31,7 @@
 package com.arjuna.ats.tools.toolsframework.dialogs;
 
 import com.sun.image.codec.jpeg.JPEGCodec;
+import com.arjuna.ats.tools.toolsframework.images.ImageCommon;
 
 import javax.swing.*;
 import java.awt.*;
@@ -118,9 +119,13 @@ public class AboutDialog extends JDialog implements Runnable
 
 	private Image createLogo() throws java.io.IOException
 	{
-		URL imageUrl = ClassLoader.getSystemResource(LOGO_FILENAME);
+        /*
+        URL imageUrl = ClassLoader.getSystemResource(LOGO_FILENAME);
 		Image img = getToolkit().getImage(imageUrl);
-		MediaTracker mt = new MediaTracker(this);
+		*/
+        Image img = ImageCommon.getImage(LOGO_FILENAME);
+
+        MediaTracker mt = new MediaTracker(this);
 
 		mt.addImage(img, 0);
 

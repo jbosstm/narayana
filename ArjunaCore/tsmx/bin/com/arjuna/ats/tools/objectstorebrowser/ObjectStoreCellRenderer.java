@@ -33,6 +33,7 @@ package com.arjuna.ats.tools.objectstorebrowser;
 import com.arjuna.ats.tools.objectstorebrowser.frames.BrowserFrame;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.ListNode;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.ObjectStoreBrowserNode;
+import com.arjuna.ats.tools.toolsframework.images.ImageCommon;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.InputObjectState;
@@ -49,9 +50,14 @@ public class ObjectStoreCellRenderer extends DefaultTreeCellRenderer
 	private final static String EMPTY_CONTAINER_ICON_FILENAME = "objectstore-empty.gif";
     private final static String LIST_ICON_FILENAME = "objectstore-list.gif";
 
-	private static ImageIcon	_emptyContainerIcon = new ImageIcon(ClassLoader.getSystemResource( EMPTY_CONTAINER_ICON_FILENAME ));
+    /*
+    private static ImageIcon	_emptyContainerIcon = new ImageIcon(ClassLoader.getSystemResource( EMPTY_CONTAINER_ICON_FILENAME ));
     private static ImageIcon	_listIcon = new ImageIcon(ClassLoader.getSystemResource( LIST_ICON_FILENAME ));
-	/**
+	*/
+    private static ImageIcon _emptyContainerIcon = ImageCommon.getImageIcon(EMPTY_CONTAINER_ICON_FILENAME);
+    private static ImageIcon	_listIcon = ImageCommon.getImageIcon(LIST_ICON_FILENAME);
+
+    /**
 	 * Configures the renderer based on the passed in components.
 	 * The value is set from messaging the tree with
 	 * <code>convertValueToText</code>, which ultimately invokes

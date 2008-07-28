@@ -22,7 +22,15 @@ package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicactio
 
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.XAResourceInfo;
+import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.UidInfo;
+import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.SynchronizationInfo;
+import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.BasicActionInfo;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004
@@ -35,7 +43,7 @@ import com.arjuna.ats.arjuna.common.Uid;
  * $Id: AtomicActionWrapper.java 2342 2006-03-30 13:06:17Z  $
  */
 
-public class AtomicActionWrapper extends AtomicAction
+public class AtomicActionWrapper extends AtomicAction implements BasicActionInfo
 {
     public AtomicActionWrapper(Uid objUid)
     {
@@ -65,5 +73,47 @@ public class AtomicActionWrapper extends AtomicAction
     public RecordList getReadOnlyList()
     {
         return readonlyList;
+    }
+
+    public UidInfo getUidInfo()
+    {
+        return new UidInfo(get_uid(), getClass().getName() + "@" + Integer.toHexString(hashCode()));
+    }
+
+    public int getTxTimeout()
+    {
+        return getTimeout();
+    }
+
+    /**
+     * Return the Arjuna concept of the transaction status
+     * (as opposed to
+     * @see javax.transaction.Status
+     * @return
+     */
+    public int getStatus()
+    {
+        return super.status();
+    }
+
+    public Collection<SynchronizationInfo> getSynchronizationInfo()
+    {
+        return Collections.EMPTY_LIST;
+    }
+
+    public Collection<XAResourceInfo> getResources()
+    {
+        return Collections.EMPTY_LIST;
+    }
+    
+    public void remove() throws ObjectStoreException
+    {
+        if (!getStore().remove_committed(getSavingUid(), type()))
+            throw new ObjectStoreException();
+    }
+
+    public boolean isLive()
+    {
+        return false;
     }
 }

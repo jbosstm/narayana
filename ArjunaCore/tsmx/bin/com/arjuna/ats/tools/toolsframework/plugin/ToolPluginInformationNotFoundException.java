@@ -30,23 +30,19 @@
  */
 package com.arjuna.ats.tools.toolsframework.plugin;
 
-public class ToolPluginInformationNotFoundException extends Exception
+public class ToolPluginInformationNotFoundException extends ToolPluginException
 {
-	/**
-	 * Constructs an <code>Exception</code> with no specified detail message.
-	 */
-	public ToolPluginInformationNotFoundException()
-	{
-		super();
-	}
+    public ToolPluginInformationNotFoundException(String msg)
+    {
+        super(msg);
+    }
 
-	/**
-	 * Constructs an <code>Exception</code> with the specified detail message.
-	 *
-	 * @param   s   the detail message.
-	 */
-	public ToolPluginInformationNotFoundException(String s)
-	{
-		super(s);
-	}
+    public ToolPluginInformationNotFoundException()
+    {
+    }
+
+    public ToolPluginInformationNotFoundException(String msg, Throwable cause)
+    {
+        super(msg, cause);
+    }
 }

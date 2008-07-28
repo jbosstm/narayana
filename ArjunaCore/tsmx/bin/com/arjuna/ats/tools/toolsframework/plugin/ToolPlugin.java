@@ -31,6 +31,7 @@
 package com.arjuna.ats.tools.toolsframework.plugin;
 
 import com.arjuna.ats.tools.toolsframework.panels.ATFSettingsPanel;
+import com.arjuna.ats.tools.toolsframework.ToolsFramework;
 
 import javax.swing.*;
 import java.util.Properties;
@@ -41,8 +42,9 @@ public abstract class ToolPlugin
 	private JDesktopPane	_desktop = null;
     private Icon			_icon16 = null;
 	private Icon			_icon32 = null;
+    private ToolsFramework  toolsFramework;
 
-	public final void initialisePlugin(JMenuBar menubar, JDesktopPane desktop, String icon16, String icon32)
+    public final void initialisePlugin(JMenuBar menubar, JDesktopPane desktop, String icon16, String icon32)
 	{
 		_menubar = menubar;
 		_desktop = desktop;
@@ -141,4 +143,13 @@ public abstract class ToolPlugin
 		return getMenu(_menubar, "File");
 	}
 
+    public final void setToolsFramework(ToolsFramework toolsFramework)
+    {
+        this.toolsFramework = toolsFramework;
+    }
+
+    public ToolsFramework getToolsFramework()
+    {
+        return toolsFramework;
+    }
 }

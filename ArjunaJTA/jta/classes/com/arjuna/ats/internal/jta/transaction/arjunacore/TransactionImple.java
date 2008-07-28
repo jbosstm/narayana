@@ -1853,7 +1853,30 @@ public class TransactionImple implements javax.transaction.Transaction,
 		return XA_TRANSACTION_TIMEOUT_ENABLED;
 	}
 
-	protected com.arjuna.ats.arjuna.AtomicAction _theTransaction;
+    public static Map<Uid, javax.transaction.Transaction> getTransactions()
+    {
+        return Collections.unmodifiableMap(_transactions);
+    }
+
+    public Map<XAResource, TxInfo> getResources()
+    {
+        return Collections.unmodifiableMap(_resources);
+    }
+
+    public int getTimeout()
+    {
+        return _theTransaction.getTimeout();
+    }
+
+    public java.util.Map<Uid, String> getSynchronizations()
+    {
+        if (_theTransaction != null)
+            return _theTransaction.getSynchronizations();
+
+        return Collections.EMPTY_MAP;
+    }
+
+    protected com.arjuna.ats.arjuna.AtomicAction _theTransaction;
 
 	private Hashtable _resources;
 

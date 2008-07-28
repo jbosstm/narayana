@@ -150,12 +150,14 @@
 	<target name="com.hp.mw.ts.product.compile"
 		depends="com.hp.mwlabs.ts.product.init,
 		com.hp.mwlabs.ts.product.jta.compile,
-		com.hp.mwlabs.ts.product.jdbc.compile"/>
+		com.hp.mwlabs.ts.product.jdbc.compile,
+                com.hp.mwlabs.ts.product.tsmx.compile"/>
 
 	<target name="com.hp.mw.ts.product.jar"
 		depends="com.hp.mwlabs.ts.product.init,
 		com.hp.mwlabs.ts.product.jta.jar,
 		com.hp.mwlabs.ts.product.jdbc.jar,
+                com.hp.mwlabs.ts.product.tsmx.jar,
 		com.hp.mw.ts.product.tests.dojar,
 		com.hp.mw.ts.product.dojar"/>
 
@@ -233,6 +235,7 @@
         depends="com.hp.mwlabs.ts.product.init,
             com.hp.mwlabs.ts.product.jta.install,
             com.hp.mwlabs.ts.product.jdbc.install,
+            com.hp.mwlabs.ts.product.tsmx.install,
             com.hp.mw.ts.product.dojar"
         if="com.hp.mwlabs.ts.build.jta">
 
@@ -273,7 +276,8 @@
 
 	<target name="com.hp.mw.ts.product.clean"
 		depends="com.hp.mwlabs.ts.product.jta.clean,
-		com.hp.mwlabs.ts.product.jdbc.clean">
+		com.hp.mwlabs.ts.product.jdbc.clean,
+                com.hp.mwlabs.ts.product.tsmx.clean">
 
 		<delete dir="${com.hp.mwlabs.ts.product.jar.dest}" quiet="true"/>
 		<delete dir="${com.hp.mwlabs.ts.product.htdocs.dest}" quiet="true"/>
@@ -289,6 +293,10 @@
 		<ant dir="jdbc" />
 	</target>
 
+        <target name="com.hp.mwlabs.ts.product.tsmx.compile">
+                <ant dir="tsmx" target="compile"/>
+        </target>
+
 	<target name="com.hp.mwlabs.ts.product.jta.jar">
 		<ant dir="jta" target="com.hp.mw.ts.jta.build" />
 	</target>
@@ -296,6 +304,10 @@
 	<target name="com.hp.mwlabs.ts.product.jdbc.jar">
 		<ant dir="jdbc" target="com.hp.mw.ts.jdbc.jar" />
 	</target>
+
+        <target name="com.hp.mwlabs.ts.product.tsmx.jar">
+                <ant dir="tsmx" target="jar" />
+        </target>
 
 	<target name="com.hp.mwlabs.ts.product.jta.install">
 		<ant dir="jta" target="com.hp.mw.ts.jta.install"/>
@@ -305,6 +317,10 @@
 		<ant dir="jdbc" target="com.hp.mw.ts.jdbc.install"/>
 	</target>
 
+        <target name="com.hp.mwlabs.ts.product.tsmx.install">
+                <ant dir="tsmx" target="install"/>
+        </target>
+
 	<target name="com.hp.mwlabs.ts.product.jta.clean">
 		<ant dir="jta" target="com.hp.mw.ts.jta.clean" />
 	</target>
@@ -312,6 +328,10 @@
 	<target name="com.hp.mwlabs.ts.product.jdbc.clean">
 		<ant dir="jdbc" target="com.hp.mw.ts.jdbc.clean" />
 	</target>
+
+        <target name="com.hp.mwlabs.ts.product.tsmx.clean">
+                <ant dir="tsmx" target="clean" />
+        </target>
 
 	<!-- Short target names -->
 	<target name="build" depends="com.hp.mw.ts.product.build"/>

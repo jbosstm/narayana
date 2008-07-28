@@ -32,9 +32,15 @@ package com.arjuna.ats.tools.objectstorebrowser.entityviewer.viewers.resource;
  */
 
 import com.arjuna.ats.internal.jts.resources.ResourceRecord;
-import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.arjunatransaction.ArjunaTransactionWrapper;
+import com.arjuna.ats.internal.jts.resources.ExtendedResourceRecord;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
+import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.BasicActionInfo;
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.coordinator.RecoveryAbstractRecord;
 
 import javax.swing.*;
+import javax.transaction.xa.XAResource;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -46,7 +52,7 @@ public class ResourceViewDialog extends JDialog implements ActionListener
     private final static String CLOSE_BUTTON_LABEL = "Close";
     private final static String FORGET_BUTTON_LABEL = "Forget";
 
-    private ResourceActionHandle _resourceActionHandle;
+    private AbstractResourceActionHandle _resourceActionHandle;
 
     /**
      * Creates a non-modal dialog without a title with the
@@ -54,11 +60,9 @@ public class ResourceViewDialog extends JDialog implements ActionListener
      *
      * @param owner the <code>Frame</code> from which the dialog is displayed
      */
-    public ResourceViewDialog(Frame owner, String type, ResourceActionHandle rah)
+    public ResourceViewDialog(Frame owner, String type)
     {
         super(owner, DIALOG_TITLE);
-
-        _resourceActionHandle = rah;
 
         /** Create layout manager **/
         GridBagLayout gbl = new GridBagLayout();
@@ -94,7 +98,13 @@ public class ResourceViewDialog extends JDialog implements ActionListener
         getContentPane().add(buttonPanel);
 
         pack();
-        show();
+        setVisible(true);
+    }
+
+    public ResourceViewDialog(Frame owner, String type, AbstractResourceActionHandle rah)
+    {
+        this(owner, type);
+        this._resourceActionHandle = rah;
     }
 
     /**
@@ -111,20 +121,57 @@ public class ResourceViewDialog extends JDialog implements ActionListener
                 dispose();
             }
             else
-            if ( actionCommand.equals(FORGET_BUTTON_LABEL) )
+            if ( actionCommand.equals(FORGET_BUTTON_LABEL))
             {
                 if ( JOptionPane.showConfirmDialog(this, "Are you sure you wish to do this?") == JOptionPane.YES_OPTION )
                 {
                     try
                     {
                         /** Call forget on the resource handle **/
-                        ((ResourceRecord)_resourceActionHandle.getAbstractRecord().record()).resourceHandle().forget();
+                        AbstractRecord ar = _resourceActionHandle.getAbstractRecord();
+
+                        if (ar instanceof ResourceRecord)
+                        {
+                            ((ResourceRecord)ar).resourceHandle().forget();
+                        }
+                        else if (ar instanceof XAResourceRecord)
+                        {
+                            XAResourceRecord rc = (XAResourceRecord) ar;
+
+                            ((XAResource)rc.value()).forget(rc.getXid());
+                        }
+                        else if (ar instanceof RecoveryAbstractRecord)
+                        {
+                            ar = ((RecoveryAbstractRecord) ar).record();
+                            ar.forgetHeuristic();
+                        }
+                        else if (ar instanceof ExtendedResourceRecord)
+                        {
+                            // call forget on the OTS Resource
+                            try
+                            {
+                                ((ExtendedResourceRecord) ar).resourceHandle().forget();
+                            }
+                            catch (Exception e1)
+                            {
+                                int res = JOptionPane.showConfirmDialog(this, "An error occurred during forget: "+e1.getMessage() + ". Do you wish to continue");
+
+                                if (res != JOptionPane.YES_OPTION)
+                                {
+                                    e1.printStackTrace();
+                                    return;
+                                }
+                            }
+                        }
 
                         /** Remove the abstract record from the heuristic list **/
-                        ((ArjunaTransactionWrapper)_resourceActionHandle.getAction()).getHeuristicList().remove(_resourceActionHandle.getAbstractRecord().record());
+                        BasicAction action = _resourceActionHandle.getAction();
+
+                        if (action instanceof BasicActionInfo)
+                            ((BasicActionInfo) action).getHeuristicList().remove(ar);
 
                         /** Persist state **/
-                        if ( !_resourceActionHandle.getAction().deactivate() )
+                        if ( !action.deactivate() )
                         {
                             JOptionPane.showMessageDialog(this, "Failed to persist the action");
                         }

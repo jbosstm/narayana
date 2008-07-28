@@ -51,6 +51,7 @@ import org.omg.CosTransactions.*;
 import org.omg.CORBA.CompletionStatus;
 
 import java.lang.NullPointerException;
+import java.util.Collections;
 
 import org.omg.CosTransactions.SubtransactionsUnavailable;
 import org.omg.CosTransactions.NoTransaction;
@@ -444,7 +445,15 @@ public class ControlWrapper implements Reapable
 		}
 	}
 
-	public final org.omg.CosTransactions.Status get_status ()
+    public java.util.Map<Uid, String> getSynchronizations()
+    {
+        if ( _controlImpl.getImplHandle() == null)
+            return Collections.EMPTY_MAP;
+        else
+            return _controlImpl.getImplHandle().getSynchronizations();    
+    }
+
+    public final org.omg.CosTransactions.Status get_status ()
 			throws SystemException
 	{
 		try

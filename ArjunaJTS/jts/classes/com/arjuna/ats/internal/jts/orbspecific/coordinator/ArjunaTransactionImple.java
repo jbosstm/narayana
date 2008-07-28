@@ -2412,4 +2412,38 @@ public class ArjunaTransactionImple extends
 		}
 	}
 
+    public java.util.Map<Uid, String> getSynchronizations()
+    {
+        if (_synchs != null)
+        {
+            java.util.Map<Uid, String> synchMap = new java.util.HashMap<Uid, String> ();
+            SynchronizationRecord[] synchs = (SynchronizationRecord[]) _synchs.toArray(new SynchronizationRecord[] {});
+
+            for (SynchronizationRecord synch : synchs)
+            {
+                Synchronization c = synch.contents();
+                String cn;
+
+                if (c._is_a(ManagedSynchronizationHelper.id()))
+                {
+                    ManagedSynchronization mc = ManagedSynchronizationHelper.narrow(c);
+
+                    try {
+                        cn = mc.instanceName(); //implementationType() ;
+                    } catch (Throwable t) {
+                        cn = synch.getClass().getCanonicalName();
+                    }
+                }
+                else {
+                    cn = synch.getClass().getCanonicalName();
+                }
+
+                synchMap.put(synch.get_uid(), cn);
+            }
+
+            return synchMap;
+        }
+
+        return Collections.EMPTY_MAP;
+    }
 }

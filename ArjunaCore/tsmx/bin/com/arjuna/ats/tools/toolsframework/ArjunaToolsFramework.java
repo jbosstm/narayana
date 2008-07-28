@@ -35,7 +35,6 @@ import com.arjuna.ats.tools.toolsframework.plugin.ToolPluginException;
 import com.arjuna.ats.tools.toolsframework.plugin.ToolPluginInformation;
 import com.arjuna.ats.tools.toolsframework.dialogs.AboutDialog;
 import com.arjuna.ats.tools.toolsframework.dialogs.SettingsDialog;
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 import javax.swing.*;
 import javax.swing.event.MenuListener;
@@ -44,14 +43,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.util.Properties;
 import java.util.ArrayList;
 import java.awt.event.*;
-import java.awt.*;
 import java.io.InputStream;
-import java.io.File;
 import java.beans.PropertyVetoException;
+import java.net.URL;
 
 import org.w3c.dom.*;
 
-public class ArjunaToolsFramework extends JFrame implements ActionListener, MenuListener
+/**
+ * Top level frame for running jbosstm tools
+ */
+public class ArjunaToolsFramework extends JFrame implements ActionListener, MenuListener, ToolsFramework
 {
 	private final static String CONFIGURATION_FILENAME = "toolsframework.xml";
 
@@ -59,7 +60,7 @@ public class ArjunaToolsFramework extends JFrame implements ActionListener, Menu
 	private final static String TITLE_NODE = "title";
 	private final static String FRAME_PROPERTIES_NODE = "frame-properties";
 	private final static String PLUGIN_CONFIGURATIONS_NODE = "plugins";
-	private final static String PROPERTIES_CONFIGURATION_NODE = "properties";
+    private final static String PROPERTIES_CONFIGURATION_NODE = "properties";
 	private final static String PROPERTY_CONFIGURATION_NODE = "property";
 
 	private final static String PROPERTY_NAME_ATTRIBUTE = "name";
@@ -68,9 +69,7 @@ public class ArjunaToolsFramework extends JFrame implements ActionListener, Menu
 	private final static String WIDTH_ATTRIBUTE = "width";
 	private final static String HEIGHT_ATTRIBUTE = "height";
 
-	private final static String DEFAULT_LIB_DIRECTORY = "lib";
-
-	private final static String FILE_MENU = "File";
+    private final static String FILE_MENU = "File";
 	private final static String SETTINGS_MENU_ITEM = "Settings";
 	private final static String EXIT_MENU_ITEM = "Exit";
 
@@ -85,24 +84,26 @@ public class ArjunaToolsFramework extends JFrame implements ActionListener, Menu
 	private final static float CASCADE_WINDOW_PERCENTAGE = 0.75f;
 	private final static int CASCADE_WINDOW_INCREMENT = 25;
 
-    private static File	_libDirectory = new File(System.getProperty("com.arjuna.mw.ArjunaToolsFramework.lib", DEFAULT_LIB_DIRECTORY));
-
-    public static File getLibDirectory()
-    {
-        return _libDirectory;
-    }
-
 	private ToolsClassLoader _classLoader = null;
 	private ArrayList _plugins = new ArrayList();
 	private JDesktopPane _desktop = null;
 	private JMenuBar _menuBar = null;
 	private boolean _hasSettings = false;
 	private boolean _disposed = false;
+	private boolean _isEmbedded = false;
 
 	public ArjunaToolsFramework()
 	{
+		this(false);
+	}
+
+	public ArjunaToolsFramework(boolean isEmbedded)
+	{
+        /** Is the application embedded? **/
+		_isEmbedded = isEmbedded;
+
 		/** Create tools classloader **/
-		_classLoader = new ToolsClassLoader(_libDirectory);
+		_classLoader = new ToolsClassLoader();
 
 		/** Create JMenuBar **/
 		this.setJMenuBar(_menuBar = createBasicMenuBar());
@@ -140,12 +141,12 @@ public class ArjunaToolsFramework extends JFrame implements ActionListener, Menu
 			public void windowClosing(WindowEvent e)
 			{
 				disposePlugins();
-				System.exit(0);
+				exitApplication(0);
 			}
 		});
 
 		/** Display the frame **/
-		show();
+		setVisible(true);
 
 		/** Show the about dialog and allow to automatically close **/
 		new AboutDialog(this, true);
@@ -169,6 +170,14 @@ public class ArjunaToolsFramework extends JFrame implements ActionListener, Menu
 					System.err.println("An error occurred while trying to dispose of the plugs: " + e);
 				}	
 			}
+		}
+	}
+
+	public synchronized void exitApplication(int status)
+	{
+		if (!_isEmbedded)
+		{
+			System.exit(status);
 		}
 	}
 
@@ -383,7 +392,7 @@ public class ArjunaToolsFramework extends JFrame implements ActionListener, Menu
 			if (configStream == null)
 			{
 				System.err.println("Cannot find the configuration file '" + CONFIGURATION_FILENAME + "' in the tests/config directory");
-				System.exit(1);
+				exitApplication(1);
 			}
 
 			/** Parse the configuration document **/
@@ -415,7 +424,7 @@ public class ArjunaToolsFramework extends JFrame implements ActionListener, Menu
 				}
 			}
 
-			/** Retrieve the plugin configuration nodes **/
+            /** Retrieve the plugin configuration nodes **/
             Node pluginConfigs = getChildNode(configRoot, PLUGIN_CONFIGURATIONS_NODE);
 
 			/** Retrieve the tool plugin information classes for the JARs in the tool lib directory **/
@@ -428,9 +437,10 @@ public class ArjunaToolsFramework extends JFrame implements ActionListener, Menu
 				for (int classnameCount=0;classnameCount<pluginClassname.length;classnameCount++)
 				{
 					/** Instantiate plugin and add to list **/
-					_plugins.add(plugin = (ToolPlugin) _classLoader.loadClass(pluginClassname[classnameCount]).newInstance());
-
-					/** Call initialisers **/
+					plugin = (ToolPlugin) _classLoader.loadClass(pluginClassname[classnameCount]).newInstance();
+                    plugin.setToolsFramework(this);
+                    
+                    /** Call initialisers **/
 					plugin.initialisePlugin(_menuBar, _desktop, plugins[pluginCount].getIcon16(), plugins[pluginCount].getIcon32());
 
 					/** Retrieve the tool properties and then override any locally defined properties **/
@@ -442,9 +452,18 @@ public class ArjunaToolsFramework extends JFrame implements ActionListener, Menu
 						toolProps.putAll( localProps );
 					}
 
-					plugin.initialise( toolProps );
-
-					/** See if this plugin has a settings panel, if it does ensure we enable all setting functionality **/
+                    try
+                    {
+                        plugin.initialise( toolProps );
+                        _plugins.add(plugin);
+                    }
+                    catch (Throwable e)
+                    {
+                        e.printStackTrace();
+                        System.err.println("Error initialising plugin " + plugin.getName());
+                    }
+                    
+                    /** See if this plugin has a settings panel, if it does ensure we enable all setting functionality **/
 					if ( plugin.createSettingsPanel() != null )
 					{
 						_hasSettings = true;
@@ -521,4 +540,9 @@ public class ArjunaToolsFramework extends JFrame implements ActionListener, Menu
 	{
 		new ArjunaToolsFramework();
 	}
+
+    public URL getToolsDir()
+    {
+        return _classLoader.getToolsDir();
+    }
 }

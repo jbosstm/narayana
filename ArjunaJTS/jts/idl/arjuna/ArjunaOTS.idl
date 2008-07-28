@@ -148,6 +148,13 @@ module ArjunaOTS
     interface JTAInterposedSynchronization : CosTransactions::Synchronization
     {
     };
+
+    // for managing synchronisations via the admin tools
+    interface ManagedSynchronization : CosTransactions::Synchronization
+    {
+	readonly attribute string implementationType;
+	readonly attribute string instanceName;
+    };
 };
 
 #endif

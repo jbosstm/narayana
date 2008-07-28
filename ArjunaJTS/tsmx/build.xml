@@ -30,6 +30,10 @@
         location="${com.arjuna.arjunacore.dir}/tsmx/lib"/>
     <property name="com.arjuna.arjunacore.tsmx.tools"
         location="${com.arjuna.arjunacore.tsmx.lib}/bin/tools"/>
+    <property name="com.arjuna.arjunajta.tsmx.classes"
+        location="${com.arjuna.arjunajta.dir}/tsmx/build/bin"/>
+    <property name="com.arjuna.arjunajta.tsmx.lib"
+        location="${com.arjuna.arjunajta.dir}/tsmx/lib"/>
 
     <!-- Load Build Properties File -->
     <property file="${com.arjuna.mw.ts.properties}"/>
@@ -120,6 +124,7 @@
             <classpath>
                 <path path="${build.classpath}"/>
                 <path path="${tsmx.classpath}"/>
+                <path path="${com.arjuna.arjunajta.tsmx.classes}"/>
             </classpath>
         </javac>
     </target>
@@ -137,6 +142,7 @@
         <delete dir="${com.arjuna.mwlabs.ts.tsmx.tmp}"/>
         <mkdir dir="${com.arjuna.mwlabs.ts.tsmx.tmp}"/>
         <unzip src="${com.arjuna.arjunacore.tsmx.tools}/${objectstorebrowser}" dest="${com.arjuna.mwlabs.ts.tsmx.tmp}"/>
+        <unzip src="${com.arjuna.arjunajta.tsmx.lib}/${objectstorebrowser}" dest="${com.arjuna.mwlabs.ts.tsmx.tmp}"/>
 
         <copy todir="${com.arjuna.mwlabs.ts.tsmx.tmp}" overwrite="true">
             <fileset dir="${com.arjuna.mwlabs.ts.tsmx.utilities.dest}"

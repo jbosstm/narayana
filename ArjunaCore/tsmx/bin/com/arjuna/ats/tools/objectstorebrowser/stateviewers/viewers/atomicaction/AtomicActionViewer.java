@@ -35,15 +35,20 @@ import com.arjuna.ats.tools.objectstorebrowser.ObjectStoreBrowserTreeManipulatio
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.*;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.nodes.*;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.icons.*;
+import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.TxInfoNode;
+import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.TxInfoViewEntry;
+import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.ArjunaTransactionWrapper;
 import com.arjuna.ats.tools.objectstorebrowser.panels.*;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.ObjectType;
 
 import javax.swing.tree.*;
+import javax.swing.*;
 
 public class AtomicActionViewer implements StateViewerInterface
 {
@@ -63,12 +68,19 @@ public class AtomicActionViewer implements StateViewerInterface
     {
         Uid theUid = uidNode.getUid();
         AtomicActionWrapper aaw = new AtomicActionWrapper(theUid);
-        aaw.restore_state(os.read_committed(theUid, type), ObjectType.ANDPERSISTENT);
+
+        if (!activate(aaw))
+            infoPanel.reportStatus("Unable to activate " + theUid);
 
         manipulator.clearEntries();
 
         ListNode node;
         SubTreeViewEntry entry;
+
+        node = new TxInfoNode("Tx Info", aaw, type);
+        entry = new TxInfoViewEntry(type, "Info", node);
+        addNode(manipulator, node, entry, "Basic Information");
+
         manipulator.createEntry(node = new PreparedListNode("Prepared List", aaw, type));
         node.setIconPanelEntry(entry = new PreparedViewEntry(type, "Prepared List", node));
         entry.setToolTipText(getListSize(aaw.getPreparedList())+" entries");
@@ -95,6 +107,34 @@ public class AtomicActionViewer implements StateViewerInterface
         node.add(new DefaultMutableTreeNode(""));
     }
 
+    protected void addNode(ObjectStoreBrowserTreeManipulationInterface manipulator,
+                         ListNode node, SubTreeViewEntry entry,
+                         String tooltip)
+    {
+        manipulator.createEntry(node);
+        node.setIconPanelEntry(entry);
+        entry.setToolTipText(tooltip);
+        node.add(new DefaultMutableTreeNode(""));
+    }
+
+    protected boolean activate(BasicAction action)
+    {
+        return action.activate();
+/*
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
+        try
+        {
+            return action.activate();
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader(loader);
+        }
+        */
+    }
     /**
      * Get the type this state viewer is intended to be registered against.
      * @return

@@ -31,16 +31,9 @@ package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicactio
  * $Id: PreparedListNode.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.tools.objectstorebrowser.treenodes.ListNode;
-import com.arjuna.ats.tools.objectstorebrowser.treenodes.ListEntryNode;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.ListNodeListener;
-import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.AtomicActionWrapper;
-import com.arjuna.ats.tools.objectstorebrowser.panels.ObjectStoreViewEntry;
-import com.arjuna.ats.tools.objectstorebrowser.panels.StatePanel;
-import com.arjuna.ats.tools.objectstorebrowser.frames.BrowserFrame;
-import com.arjuna.ats.tools.toolsframework.iconpanel.IconPanelEntry;
 import com.arjuna.ats.tools.toolsframework.iconpanel.IconSelectionListener;
-import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.RecordList;
 
 public class PreparedListNode extends AtomicActionListNode implements ListNodeListener, IconSelectionListener
 {
@@ -49,46 +42,8 @@ public class PreparedListNode extends AtomicActionListNode implements ListNodeLi
         super(userObject, assObject, type);
     }
 
-    /**
-     * Called when the list node is expanded
-     * @param node
-     */
-    public void listExpanded(ListNode node)
+    public RecordList getList()
     {
-        super.listExpanded(node);
-
-        AtomicActionWrapper aaw = (AtomicActionWrapper)this.getAssObject();
-        AbstractRecord current = aaw.getPreparedList().peekFront();
-        int count = 1;
-        while ( current != null )
-        {
-            ListEntryNode entryNode;
-            ObjectStoreViewEntry icon;
-            node.createEntry(entryNode = new ListEntryNode("["+count+"] "+current.type(), current, current.type()));
-            entryNode.setIconPanelEntry(icon = new ObjectStoreViewEntry(aaw.type(), (String)entryNode.getUserObject(), entryNode));
-            icon.addSelectionListener(this);
-            current = aaw.getPreparedList().peekNext(current);
-            count++;
-        }
-    }
-
-    /**
-     * Called when one of the list entries is selected.
-     *
-     * @param icon
-     * @param selected
-     */
-    public void iconSelected(IconPanelEntry icon, boolean selected)
-    {
-        /** Get node and the associated AbstractRecord **/
-        ListEntryNode node = (ListEntryNode)(((ObjectStoreViewEntry)icon).getNode());
-        AbstractRecord record = (AbstractRecord)node.getAssociatedObject();
-        StatePanel panel = BrowserFrame.getStatePanel();
-        panel.clear();
-        panel.setType(record.type());
-
-        invokeStateViewer(record, (AtomicActionWrapper)this.getAssObject(), icon);
-
-        panel.repaint();
+        return getAction().getPreparedList();
     }
 }

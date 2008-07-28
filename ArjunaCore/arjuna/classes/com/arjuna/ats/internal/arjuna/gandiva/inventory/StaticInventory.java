@@ -285,7 +285,9 @@ private synchronized final void initialise ()
 		    {
 			Class c = Thread.currentThread().getContextClassLoader().loadClass(className);
 			Object o = c.newInstance();
-		    }
+                if (o instanceof InventoryElement)
+                    Inventory.inventory().addToList((InventoryElement) o);
+            }
 		    catch (Exception ex)
 		    {
 			ex.printStackTrace();

@@ -31,23 +31,27 @@ package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrec
  * $Id: ResourceRecordViewer.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.tools.objectstorebrowser.stateviewers.AbstractRecordStateViewerInterface;
-import com.arjuna.ats.tools.objectstorebrowser.entityviewer.EntityViewerRepository;
-import com.arjuna.ats.tools.objectstorebrowser.entityviewer.EntityViewerInterface;
-import com.arjuna.ats.tools.objectstorebrowser.entityviewer.viewers.resource.ResourceActionHandle;
 import com.arjuna.ats.tools.objectstorebrowser.panels.StatePanel;
 import com.arjuna.ats.tools.objectstorebrowser.panels.ObjectStoreViewEntry;
-import com.arjuna.ats.tools.objectstorebrowser.panels.DetailsButtonAdapter;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.RecoveryAbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.internal.jts.Implementations;
+import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.resources.ResourceRecord;
+import com.arjuna.ats.internal.jts.resources.ExtendedResourceRecord;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
 
-import javax.swing.*;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.XAException;
+
+import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CosTransactions.HeuristicMixed;
+import org.omg.CosTransactions.HeuristicCommit;
 
 /**
  * This is a state viewer for a JTS ResourceRecord.
@@ -55,7 +59,7 @@ import javax.swing.*;
  * @author Richard A. Begg (richard.begg@arjuna.com)
  * @version $Id: ResourceRecordViewer.java 2342 2006-03-30 13:06:17Z  $
  */
-public class ResourceRecordViewer implements AbstractRecordStateViewerInterface
+public class ResourceRecordViewer extends AbstractRecordViewer
 {
     private final static String ORB_NAME = "tools-orb";
 
@@ -68,11 +72,14 @@ public class ResourceRecordViewer implements AbstractRecordStateViewerInterface
     {
         try
         {
-            _orb = ORB.getInstance(ORB_NAME);
-            OA oa = OA.getRootOA(_orb);
+            if (!ORBManager.isInitialised())
+            {
+                _orb = ORB.getInstance(ORB_NAME);
+                OA oa = OA.getRootOA(_orb);
 
-            _orb.initORB((String[])null, null);
-            oa.initPOA(null);
+                _orb.initORB((String[])null, null);
+                oa.initPOA(null);
+            }
 
             Implementations.initialise();
         }
@@ -97,23 +104,189 @@ public class ResourceRecordViewer implements AbstractRecordStateViewerInterface
                               final ObjectStoreViewEntry entry,
                               final StatePanel statePanel) throws ObjectStoreException
     {
-        final RecoveryAbstractRecord rec = ((RecoveryAbstractRecord)record);
+        super.entrySelected(record, action, entry, statePanel);
+    }
 
-        statePanel.enableDetailsButton(new DetailsButtonAdapter() {
-            public void detailsButtonPressed()
-            {
-                EntityViewerInterface evi = EntityViewerRepository.getEntityViewer(ResourceActionHandle.class.getName());
+    protected void initRecord(BasicAction action, AbstractRecord record, ObjectStoreViewEntry entry)
+    {
+        super.initRecord(action, record, entry);
+    }
 
-                if ( evi != null )
-                {
-                    evi.viewEntity(ResourceActionHandle.class.getName(), new ResourceActionHandle(action, rec), statePanel);
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog(null, "No viewer defined for this entity");
-                }
+    protected boolean doOp(ResourceRecord record, RecoveryOp op)
+    {
+        try
+        {
+            switch (op) {
+                case FORGET_OP:
+                    record.resourceHandle().forget();
+                    break;
+                case COMMIT_OP:
+                    // commit 1PC since the user is bypassing the TM
+                    record.resourceHandle().commit_one_phase();
+                    break;
+                case ABORT_OP:
+                    record.resourceHandle().rollback();
+                    break;
+                default:
             }
-        });
+
+            return true;
+        }
+        catch (HeuristicMixed e)
+        {
+            appendError("Heuristic mixed error: " + e.getMessage());
+        }
+        catch (HeuristicHazard e)
+        {
+            appendError("Heuristic hazard error: " + e.getMessage());
+        }
+        catch (HeuristicCommit e)
+        {
+            appendError("Heuristic commit error: " + e.getMessage());
+        }
+        catch (Throwable t)
+        {
+            appendError("Error: " + t.getMessage());
+        }
+
+        return false;
+    }
+
+    protected boolean doOp(ExtendedResourceRecord record, RecoveryOp op)
+    {
+        try
+        {
+            switch (op) {
+                case FORGET_OP:
+                    record.resourceHandle().forget();
+                    break;
+                case COMMIT_OP:
+                    record.resourceHandle().commit_one_phase();
+                    break;
+                case ABORT_OP:
+                    record.resourceHandle().rollback();
+                    break;
+                default:
+            }
+
+            return true;
+        }
+        catch (HeuristicMixed e)
+        {
+            appendError("Heuristic mixed error: " + e.getMessage());
+        }
+        catch (HeuristicHazard e)
+        {
+            appendError("Heuristic hazard error: " + e.getMessage());
+        }
+        catch (HeuristicCommit e)
+        {
+            appendError("Heuristic commit error: " + e.getMessage());
+        }
+        catch (Throwable t)
+        {
+            appendError("Error: " + t.getMessage());    
+        }
+
+        return false;
+    }
+
+    protected boolean doOp(XAResourceRecord record, RecoveryOp op)
+    {
+        try
+        {
+            switch (op) {
+                case FORGET_OP:
+                    ((XAResource)record.value()).forget(record.getXid());
+                    break;
+                case COMMIT_OP:
+                    ((XAResource)record.value()).commit(record.getXid(), true);
+                    break;
+                case ABORT_OP:
+                    ((XAResource)record.value()).rollback(record.getXid());
+                    break;
+                default:
+            }
+
+            return true;
+        }
+        catch (XAException e)
+        {
+            appendError("XA error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    protected boolean doOp(RecoveryAbstractRecord record, RecoveryOp op)
+    {
+        try
+        {
+            int err;
+
+            switch (op) {
+                case FORGET_OP:
+                    if (!record.record().forgetHeuristic())
+                    {
+                        appendError("Could not forget this record");
+                        return false;
+                    }
+                    return true;
+                case COMMIT_OP:
+                    err = record.record().topLevelOnePhaseCommit();
+
+                    if (err == TwoPhaseOutcome.FINISH_OK)
+                        return true;
+
+                    appendError("Commit error: " + TwoPhaseOutcome.stringForm(err));
+                    return false;
+                case ABORT_OP:
+                    err = record.record().topLevelAbort();
+
+                    if (err == TwoPhaseOutcome.FINISH_OK)
+                        return true;
+
+                    appendError("Commit error: " + TwoPhaseOutcome.stringForm(err));
+                    return false;
+                default:
+                    return true;
+            }
+        }
+        catch (Exception e)
+        {
+            appendError("Unable to complete operation: " + e.getMessage());
+            return false;
+        }
+    }
+
+    protected boolean doOp(RecoveryOp op)
+    {
+        if (getRecord() instanceof ResourceRecord)
+            return doOp((ResourceRecord) getRecord(), op);
+        else if (getRecord() instanceof XAResourceRecord)
+            return doOp((XAResourceRecord) getRecord(), op);
+        else if (getRecord() instanceof RecoveryAbstractRecord)
+            return doOp((RecoveryAbstractRecord) getRecord(), op);
+        else if (getRecord() instanceof ExtendedResourceRecord)
+            return doOp((ExtendedResourceRecord) getRecord(), op);
+        else
+            appendError("Unsupported record type: " + getRecord().getClass().getSimpleName());
+
+        return false;
+    }
+
+    protected boolean doForget()
+    {
+        return doOp(RecoveryOp.FORGET_OP);        
+    }
+
+    protected boolean doCommit()
+    {
+        return doOp(RecoveryOp.COMMIT_OP);
+    }
+
+    protected boolean doRollback()
+    {
+        return doOp(RecoveryOp.ABORT_OP);
     }
 
     /**

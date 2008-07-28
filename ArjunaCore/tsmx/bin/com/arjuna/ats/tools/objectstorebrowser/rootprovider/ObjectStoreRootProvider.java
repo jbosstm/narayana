@@ -48,4 +48,5 @@ public interface ObjectStoreRootProvider
      * @return
      */
     public Vector getRoots();
+    void addRoot(String name);
 }

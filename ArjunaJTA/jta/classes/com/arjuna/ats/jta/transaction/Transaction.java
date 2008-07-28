@@ -31,11 +31,15 @@
 
 package com.arjuna.ats.jta.transaction;
 
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.internal.jta.xa.TxInfo;
+
 import javax.transaction.xa.*;
 
 import javax.transaction.RollbackException;
 
 import java.lang.IllegalStateException;
+import java.util.Map;
 
 /*
  * Extended methods.
@@ -55,4 +59,8 @@ public interface Transaction extends javax.transaction.Transaction
 	public Object getTxLocalResource(Object key);
 	public void putTxLocalResource(Object key, Object value);
     public boolean isAlive();
+
+    Map<Uid, String> getSynchronizations();
+    Map<XAResource, TxInfo> getResources();
+    int getTimeout();
 }

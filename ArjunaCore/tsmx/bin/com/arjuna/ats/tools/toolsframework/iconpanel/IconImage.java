@@ -30,6 +30,8 @@
  */
 package com.arjuna.ats.tools.toolsframework.iconpanel;
 
+import com.arjuna.ats.tools.toolsframework.images.ImageCommon;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -39,34 +41,35 @@ import java.net.URL;
 
 public class IconImage extends JComponent
 {
-	private Image	_iconImageSelected;
-	private Image	_iconImageOver;
-	private Image	_iconImageUnselected;
-	private boolean _selected = false;
-	private boolean _over = false;
+    private Image	_iconImageSelected;
+    private Image	_iconImageOver;
+    private Image	_iconImageUnselected;
+    private boolean _selected = false;
+    private boolean _over = false;
 
-	public IconImage(String iconFilename)
-	{
-		this.setBackground(Color.white);
+    public IconImage(String iconFilename)
+    {
+        this.setBackground(Color.white);
 
-		setImage(iconFilename);
-	}
+        setImage(iconFilename);
+    }
 
-	public void setImage(Image img)
-	{
-		_iconImageSelected = img;
-		_iconImageOver = _iconImageSelected;
-		_iconImageUnselected = getUnselectedImage(_iconImageSelected);
-		setPreferredSize(new Dimension(_iconImageSelected.getWidth(this), _iconImageSelected.getHeight(this)));
-	}
+    public void setImage(Image img)
+    {
+        _iconImageSelected = img;
+        _iconImageOver = _iconImageSelected;
+        _iconImageUnselected = getUnselectedImage(_iconImageSelected);
+        setPreferredSize(new Dimension(_iconImageSelected.getWidth(this), _iconImageSelected.getHeight(this)));
+    }
 
-	public void setImage(String iconFilename)
-	{
-		try
-		{
-			MediaTracker mt = new MediaTracker(this);
+    public void setImage(String iconFilename)
+    {
+        try
+        {
+            MediaTracker mt = new MediaTracker(this);
 
-			URL imageURL = ClassLoader.getSystemResource(iconFilename);
+            /*
+            URL imageURL = ClassLoader.getSystemResource(iconFilename);
 
 			if ( imageURL != null )
 			{
@@ -79,92 +82,102 @@ public class IconImage extends JComponent
 				_iconImageOver = _iconImageSelected;
 				_iconImageUnselected = getUnselectedImage(_iconImageSelected);
 			}
-		}
-		catch (InterruptedException e)
-		{
-			// Ignore
-		}
+			*/
 
-		setPreferredSize(new Dimension(_iconImageSelected.getWidth(this), _iconImageSelected.getHeight(this)));
-	}
+            _iconImageSelected = ImageCommon.getImage(iconFilename);
+            
+            mt.addImage(_iconImageSelected, 0);
 
-	/**
-	 * Create selected image which is grayscale.
-	 * @param img
-	 * @return
-	 */
-	private Image getUnselectedImage(Image img)
-	{
-		BufferedImage bi = new BufferedImage(img.getWidth(this), img.getHeight(this), BufferedImage.TYPE_INT_ARGB);
-		bi.getGraphics().drawImage(img, 0, 0, this);
+            mt.waitForAll();
 
-		for (int y=0;y<bi.getHeight();y++)
-		{
-			for (int x=0;x<bi.getWidth();x++)
-			{
-				int rgb = bi.getRGB(x,y);
+            _iconImageOver = _iconImageSelected;
+            _iconImageUnselected = getUnselectedImage(_iconImageSelected);
+        }
+        catch (InterruptedException e)
+        {
+            // Ignore
+        }
 
-				int s = (rgb >> 24) & 0xFF;
-				int red = (rgb >> 16) & 0xFF;
-				int green = (rgb >> 8) & 0xFF;
-				int blue = (rgb >> 8) & 0xFF;
-				int l = (int) ( ( (float)( red + green + blue ) / 768 ) * 255 );
+        setPreferredSize(new Dimension(_iconImageSelected.getWidth(this), _iconImageSelected.getHeight(this)));
+    }
 
-				rgb = (s << 24) | (l << 16) | ( l << 8 ) | ( l);
+    /**
+     * Create selected image which is grayscale.
+     * @param img
+     * @return
+     */
+    private Image getUnselectedImage(Image img)
+    {
+        BufferedImage bi = new BufferedImage(img.getWidth(this), img.getHeight(this), BufferedImage.TYPE_INT_ARGB);
+        bi.getGraphics().drawImage(img, 0, 0, this);
 
-				bi.setRGB(x,y,rgb);
-			}
-		}
+        for (int y=0;y<bi.getHeight();y++)
+        {
+            for (int x=0;x<bi.getWidth();x++)
+            {
+                int rgb = bi.getRGB(x,y);
 
-		return bi;
-	}
+                int s = (rgb >> 24) & 0xFF;
+                int red = (rgb >> 16) & 0xFF;
+                int green = (rgb >> 8) & 0xFF;
+                int blue = (rgb >> 8) & 0xFF;
+                int l = (int) ( ( (float)( red + green + blue ) / 768 ) * 255 );
 
-	public boolean isSelected()
-	{
-		return _selected;
-	}
+                rgb = (s << 24) | (l << 16) | ( l << 8 ) | ( l);
 
-	public void setSelected(boolean selected)
-	{
-		_selected = selected;
-	}
+                bi.setRGB(x,y,rgb);
+            }
+        }
 
-	public void setOver(boolean over)
-	{
-		_over = over;
+        return bi;
+    }
 
-		repaint();
-	}
+    public boolean isSelected()
+    {
+        return _selected;
+    }
 
-	public boolean isOver()
-	{
-		return _over;
-	}
+    public void setSelected(boolean selected)
+    {
+        _selected = selected;
+    }
 
-	public void paintComponent(Graphics g)
-	{
-		if ( _iconImageSelected != null )
-		{
-			if (_selected)
-			{
-				g.drawImage( _iconImageSelected, (getWidth() / 2) - (_iconImageSelected.getWidth(this) / 2), (getHeight() / 2) - (_iconImageSelected.getHeight(this) / 2), this);
-			}
-			else
-			{
-				if ( _over )
-				{
-					g.drawImage( _iconImageOver, (getWidth() / 2) - (_iconImageOver.getWidth(this) / 2), (getHeight() / 2) - (_iconImageOver.getHeight(this) / 2), this);
-				}
-				else
-				{
-					g.drawImage( _iconImageUnselected, (getWidth() / 2) - (_iconImageUnselected.getWidth(this) / 2), (getHeight() / 2) - (_iconImageUnselected.getHeight(this) / 2), this);
-				}
-			}
-		}
-	}
+    public void setOver(boolean over)
+    {
+        _over = over;
 
-	public Image getImage()
-	{
-		return _iconImageSelected;
-	}
+        repaint();
+    }
+
+    public boolean isOver()
+    {
+        return _over;
+    }
+
+    public void paintComponent(Graphics g)
+    {
+        if ( _iconImageSelected != null )
+        {
+            if (_selected)
+            {
+                g.drawImage( _iconImageSelected, (getWidth() / 2) - (_iconImageSelected.getWidth(this) / 2), (getHeight() / 2) - (_iconImageSelected.getHeight(this) / 2), this);
+            }
+            else
+            {
+                if ( _over )
+                {
+                    g.drawImage( _iconImageOver, (getWidth() / 2) - (_iconImageOver.getWidth(this) / 2), (getHeight() / 2) - (_iconImageOver.getHeight(this) / 2), this);
+                }
+                else
+                {
+                    g.drawImage( _iconImageUnselected, (getWidth() / 2) - (_iconImageUnselected.getWidth(this) / 2), (getHeight() / 2) - (_iconImageUnselected.getHeight(this) / 2), this);
+                }
+            }
+        }
+    }
+
+    public Image getImage()
+    {
+        return _iconImageSelected;
+    }
 }

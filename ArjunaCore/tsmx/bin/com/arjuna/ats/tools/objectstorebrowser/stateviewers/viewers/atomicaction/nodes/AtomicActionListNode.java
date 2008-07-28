@@ -32,20 +32,36 @@ package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicactio
  */
 
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.ListNode;
+import com.arjuna.ats.tools.objectstorebrowser.treenodes.ListEntryNode;
+import com.arjuna.ats.tools.objectstorebrowser.treenodes.ListNodeListener;
+import com.arjuna.ats.tools.objectstorebrowser.treenodes.IUidCollection;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.StateViewersRepository;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.AbstractRecordStateViewerInterface;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.AtomicActionWrapper;
+import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.BasicActionInfo;
 import com.arjuna.ats.tools.objectstorebrowser.frames.BrowserFrame;
 import com.arjuna.ats.tools.objectstorebrowser.panels.ObjectStoreViewEntry;
+import com.arjuna.ats.tools.objectstorebrowser.panels.StatePanel;
 import com.arjuna.ats.tools.toolsframework.iconpanel.IconPanelEntry;
+import com.arjuna.ats.tools.toolsframework.iconpanel.IconSelectionListener;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.common.Uid;
 
-public abstract class AtomicActionListNode extends ListNode
+public abstract class AtomicActionListNode extends ListNode implements IUidCollection, ListNodeListener, IconSelectionListener
 {
+    private AtomicActionWrapper wrapper;
+
     public AtomicActionListNode(Object userObject, Object assObject, String type)
     {
         super(userObject, assObject, type);
+
+        wrapper = (AtomicActionWrapper) assObject;
+    }
+
+    protected BasicActionInfo getAction()
+    {
+        return wrapper;  //or (BasicActionInfo) this.getAssObject();
     }
 
     protected void invokeStateViewer(AbstractRecord record, AtomicActionWrapper aaw, IconPanelEntry entry)
@@ -67,5 +83,101 @@ public abstract class AtomicActionListNode extends ListNode
         {
             System.out.println("Viewer not registered for "+record.type());
         }
+    }
+
+    public boolean remove(Uid uid)
+    {
+        AbstractRecord rec = getList().peekFront();
+
+        while (rec != null)
+        {
+            if (rec.order().equals(uid))
+                return getList().remove(rec);
+
+            rec = getList().peekNext(rec);
+        }
+
+        return false;
+    }
+
+    public boolean contains(Uid uid)
+    {
+        AbstractRecord rec = getList().peekFront();
+
+        while (rec != null)
+        {
+            if (rec.order().equals(uid))
+                return true;
+
+            rec = getList().peekNext(rec);
+        }
+
+        return false;
+    }
+
+    public boolean contains(String uid)
+    {
+        AbstractRecord rec = getList().peekFront();
+
+        while (rec != null)
+        {
+            if (rec.order().stringForm().equals(uid))
+                return true;
+
+            rec = getList().peekNext(rec);
+        }
+
+        return false;
+    }
+
+    /**
+     * Called when the list node is expanded
+     * @param node
+     */
+    public void listExpanded(ListNode node)
+    {
+        super.listExpanded(node);
+
+        AbstractRecord current = getList().peekFront();
+        int count = 1;
+
+        while ( current != null )
+        {
+            ListEntryNode entryNode;
+            ObjectStoreViewEntry icon;
+            
+            node.createEntry(entryNode = new ListEntryNode("["+count+"] "+current.type(), current, current.type()));
+            entryNode.setIconPanelEntry(icon = new ObjectStoreViewEntry(wrapper.type(), (String)entryNode.getUserObject(), entryNode));
+            icon.addSelectionListener(this);
+            current = getList().peekNext(current);
+            count++;
+        }
+    }
+
+    /**
+     * Called when one of the list entries is selected.
+     *
+     * @param icon
+     * @param selected
+     */
+    public void iconSelected(IconPanelEntry icon, boolean selected)
+    {
+        /** Get node and the associated AbstractRecord **/
+        ListEntryNode node = (ListEntryNode)(((ObjectStoreViewEntry)icon).getNode());
+        AbstractRecord record = (AbstractRecord)node.getAssociatedObject();
+        StatePanel panel = BrowserFrame.getStatePanel();
+
+        panel.clear();
+        panel.setType(record.type());
+
+        updatePanelData(panel, record);
+
+        invokeStateViewer(record, wrapper, icon);
+
+        panel.repaint();
+    }
+
+    protected void updatePanelData(StatePanel panel, AbstractRecord record)
+    {
     }
 }

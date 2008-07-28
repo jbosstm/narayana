@@ -1,0 +1,192 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2006, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags. 
+  See the copyright.txt in the distribution for a full listing 
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU General Public License, v. 2.0.
+  This program is distributed in the hope that it will be useful, but WITHOUT A 
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License,
+  v. 2.0 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  MA  02110-1301, USA.
+  
+  (C) 2005-2006,
+  @author JBoss Inc.
+-->
+<project name="module-tsmx" default="com.arjuna.mw.ts.tsmx.compile" basedir=".">
+    <!-- class path behaviour -->
+    <property name="build.sysclasspath" value="last"/>
+    <property name="com.hp.mwlabs.classpathbuilderfilename" location="buildsystem.classpath"/>
+
+    <!-- Set module name -->
+    <property name="com.arjuna.mwlabs.ts.modulename" value="tsmx"/>
+    <property name="com.arjuna.arjunacore.tsmx.lib"
+        location="${com.arjuna.arjunacore.dir}/tsmx/lib"/>
+    <property name="com.arjuna.arjunacore.tsmx.tools"
+        location="${com.arjuna.arjunacore.tsmx.lib}/bin/tools"/>
+
+    <!-- Load Build Properties File -->
+    <property file="${com.arjuna.mw.ts.properties}"/>
+
+    <!-- Set internal property defaults -->
+    <!-- Path names -->
+    <property name="com.arjuna.mwlabs.ts.tsmx.destroot" location="build"/>
+    <property name="com.arjuna.mwlabs.ts.tsmx.jar.dest" location="lib"/>
+    <property name="com.arjuna.mwlabs.ts.tsmx.utilities.src" location="bin"/>
+    <property name="com.arjuna.mwlabs.ts.tsmx.utilities.dest" location="${com.arjuna.mwlabs.ts.tsmx.destroot}/bin"/>
+    <property name="com.arjuna.mwlabs.ts.tsmx.tmp" location="${com.arjuna.mwlabs.ts.tsmx.destroot}/tmp"/>
+
+    <!-- Initialisation -->
+    <target name="com.arjuna.mwlabs.ts.tsmx.init">
+        <!-- Define default build properties -->
+        <tstamp>
+            <format property="com.arjuna.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
+        </tstamp>
+
+        <!-- Define classpath builder task -->
+        <taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpath="${com.arjuna.buildsystem.classpath}"/>
+
+        <condition property="com.arjuna.mwlabs.ts.tsmx.utilities.compile">
+            <equals arg1="${com.arjuna.mw.ts.tsmx.utilities.compile}" arg2="yes"/>
+        </condition>
+
+        <condition property="com.arjuna.mwlabs.ts.tsmx.utilities.install">
+            <equals arg1="${com.arjuna.mw.ts.tsmx.utilities.install}" arg2="yes"/>
+        </condition>
+
+        <condition property="com.arjuna.mwlabs.ts.tsmx.utilities.jar">
+            <equals arg1="${com.arjuna.mw.ts.tsmx.utilities.jar}" arg2="yes"/>
+        </condition>
+
+        <property name="com.arjuna.mw.installationdirectory" value="install"/>
+        <property name="com.arjuna.mw.sourceid" value="unknown"/>
+        <property name="com.arjuna.mw.version" value="unknown"/>
+        <property name="com.arjuna.mw.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
+        <property name="com.arjuna.mw.notes" value=""/>
+        <echo message="Initialising module tsmx"/>
+        <echo message="Source ID = ${com.arjuna.mw.sourceid}"/>
+        <echo message="Version   = ${com.arjuna.mw.version}"/>
+        <echo message="Builder   = ${com.arjuna.mw.builder}"/>
+        <echo message="Date      = ${com.arjuna.mw.date}"/>
+        <echo message="Notes     = ${com.arjuna.mw.notes}"/>
+
+        <!-- Installation directory -->
+        <property name="com.arjuna.mwlabs.installationdirectory" location="${com.arjuna.mw.installationdirectory}"/>
+
+        <!-- Compile with debugging? -->
+        <condition property="com.arjuna.mwlabs.debug" value="no">
+            <equals arg1="${com.arjuna.mw.debug}" arg2="no"/>
+        </condition>
+        <property name="com.arjuna.mwlabs.debug" value="yes"/>
+
+        <!-- Compile with deprecation? -->
+        <condition property="com.arjuna.mwlabs.deprecation" value="yes">
+            <equals arg1="${com.arjuna.mw.deprecation}" arg2="yes"/>
+        </condition>
+        <property name="com.arjuna.mwlabs.deprecation" value="no"/>
+
+        <!-- setup classpath -->
+        <property name="com.arjuna.arjunacore.tsmx.dir" location="${com.arjuna.arjunacore.dir}/tsmx"/>
+        <property name="com.arjuna.arjunacore.tsmx.lib.dir" location="${com.arjuna.arjunacore.tsmx.dir}/lib"/>
+        <property name="com.arjuna.arjunacore.tsmx.bin.dir" location="${com.arjuna.arjunacore.tsmx.lib.dir}/bin.tools"/>
+
+        <path id="tsmx.classpath">
+            <fileset dir="${com.arjuna.arjunacore.tsmx.lib.dir}" includes="**/*.jar"/>
+        </path>
+        <property name="tsmx.classpath" refid="tsmx.classpath"/>
+
+        <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+    </target>
+
+    <target name="com.arjuna.mw.ts.tsmx.compile" depends="com.arjuna.mwlabs.ts.tsmx.utilities.compile"/>
+
+    <target name="com.arjuna.mwlabs.ts.tsmx.utilities.compile" depends="com.arjuna.mwlabs.ts.tsmx.init">
+
+        <echo message="Compiling utilities"/>
+
+        <mkdir dir="${com.arjuna.mwlabs.ts.tsmx.utilities.dest}"/>
+
+        <javac
+            srcdir="${com.arjuna.mwlabs.ts.tsmx.utilities.src}"
+            destdir="${com.arjuna.mwlabs.ts.tsmx.utilities.dest}"
+            debug="${com.arjuna.mwlabs.debug}"
+            deprecation="${com.arjuna.mwlabs.deprecation}">
+            <classpath>
+                <path path="${build.classpath}"/>
+                <path path="${tsmx.classpath}"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="com.arjuna.mw.ts.tsmx.jar" depends="com.arjuna.mwlabs.ts.tsmx.utilities.jar"/>
+
+    <target name="com.arjuna.mwlabs.ts.tsmx.utilities.jar" depends="com.arjuna.mwlabs.ts.tsmx.utilities.compile">
+
+        <echo message="Building utilities jar file"/>
+
+        <mkdir dir="${com.arjuna.mwlabs.ts.tsmx.jar.dest}"/>
+        <mkdir dir="${com.arjuna.mwlabs.ts.tsmx.jar.dest}/plugins"/>
+
+        <property name="objectstorebrowser" value="${com.arjuna.mwlabs.ts.modulename}-objectstorebrowser.jar"/>
+        <delete dir="${com.arjuna.mwlabs.ts.tsmx.tmp}"/>
+        <mkdir dir="${com.arjuna.mwlabs.ts.tsmx.tmp}"/>
+        <unzip src="${com.arjuna.arjunacore.tsmx.tools}/${objectstorebrowser}" dest="${com.arjuna.mwlabs.ts.tsmx.tmp}"/>
+
+        <copy todir="${com.arjuna.mwlabs.ts.tsmx.tmp}" overwrite="true">
+            <fileset dir="${com.arjuna.mwlabs.ts.tsmx.utilities.dest}"
+                includes="com/arjuna/ats/tools/objectstorebrowser/**/*.class"
+                excludes="com/arjuna/ats/tools/toolsframework/**/*.class,com/arjuna/ats/tools/objecstorebrowser/stateviewers/viewers/**/*.class"/>
+        </copy>
+        <zip zipfile="${com.arjuna.mwlabs.ts.tsmx.jar.dest}/${objectstorebrowser}" basedir="${com.arjuna.mwlabs.ts.tsmx.tmp}"/>
+
+        <property name="osbv-default" value="plugins/osbv-defaults.jar"/>
+        <delete dir="${com.arjuna.mwlabs.ts.tsmx.tmp}"/>
+        <mkdir dir="${com.arjuna.mwlabs.ts.tsmx.tmp}"/>
+        <unzip src="${com.arjuna.arjunacore.tsmx.tools}/${osbv-default}" dest="${com.arjuna.mwlabs.ts.tsmx.tmp}"/>
+
+        <copy todir="${com.arjuna.mwlabs.ts.tsmx.tmp}" overwrite="true">
+            <fileset dir="${com.arjuna.mwlabs.ts.tsmx.utilities.dest}"
+                includes="com/arjuna/ats/tools/objectstorebrowser/stateviewers/viewers/**/*.class"
+                excludes="com/arjuna/ats/tools/toolsframework/**"/>
+        </copy>
+        <zip zipfile="${com.arjuna.mwlabs.ts.tsmx.jar.dest}/${osbv-default}" basedir="${com.arjuna.mwlabs.ts.tsmx.tmp}"/>
+        <delete dir="${com.arjuna.mwlabs.ts.tsmx.tmp}"/>
+    </target>
+
+    <!-- Installation targets -->
+    <target name="com.arjuna.mw.ts.tsmx.install" depends="com.arjuna.mw.ts.tsmx.compile, com.arjuna.mwlabs.ts.tsmx.utilities.install">
+
+        <echo message="Installing module tsmx"/>
+
+    </target>
+
+    <target name="com.arjuna.mwlabs.ts.tsmx.utilities.install" depends="com.arjuna.mwlabs.ts.tsmx.utilities.jar">
+
+        <echo message="Installing utilities"/>
+
+        <mkdir dir="${com.hp.mwlabs.installationdirectory}/bin/tools"/>
+        <copy todir="${com.hp.mwlabs.installationdirectory}/bin/tools">
+            <fileset dir="${com.arjuna.mwlabs.ts.tsmx.jar.dest}" includes="**/*.jar"/>
+        </copy>
+    </target>
+
+    <!-- Clean targets -->
+    <target name="com.arjuna.mw.ts.tsmx.clean">
+
+        <echo message="Cleaning module"/>
+        <delete dir="${com.arjuna.mwlabs.ts.tsmx.destroot}"/>
+
+        <delete dir="${com.arjuna.mwlabs.ts.tsmx.jar.dest}"/>
+    </target>
+
+    <!-- Short target names -->
+    <target name="compile" depends="com.arjuna.mw.ts.tsmx.compile"/>
+    <target name="jar" depends="com.arjuna.mw.ts.tsmx.jar"/>
+    <target name="install" depends="com.arjuna.mw.ts.tsmx.install"/>
+    <target name="clean" depends="com.arjuna.mw.ts.tsmx.clean"/>
+</project>

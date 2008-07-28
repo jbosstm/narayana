@@ -125,7 +125,9 @@
     <target name="com.arjuna.mw.ts.tsmx.build" depends="com.arjuna.mw.ts.tsmx.jar, com.arjuna.mwlabs.ts.tsmx.utilities.jar, com.arjuna.mwlabs.ts.tsmx.tests.jar"/>
 
     <!-- Compilation targets -->
-    <target name="com.arjuna.mw.ts.tsmx.compile" depends="com.arjuna.mwlabs.ts.tsmx.init, com.arjuna.mwlabs.ts.tsmx.compile"/>
+    <target name="com.arjuna.mw.ts.tsmx.compile" depends="com.arjuna.mwlabs.ts.tsmx.init, com.arjuna.mwlabs.ts.tsmx.compile">
+        <ant dir="sar" target="compile"/>
+    </target>
 
     <target name="com.arjuna.mwlabs.ts.tsmx.compile" depends="com.arjuna.mwlabs.ts.tsmx.init,com.arjuna.mwlabs.ts.tsmx.generateresourcebundle">
 
@@ -189,6 +191,9 @@
             <classpath>
                 <path path="${build.classpath}"/>
                 <path path="${com.arjuna.mwlabs.ts.tsmx.dest}"/>
+                <fileset dir="${com.arjuna.mwlabs.ts.tsmx.jar.ext}">
+                   <include name="**/*.jar"/>
+                </fileset>
 				<path location="${com.arjuna.mwlabs.ts.tsmx.jar.ext}/jfreechart-1.0.2.jar"/>
 				<path location="${com.arjuna.mwlabs.ts.tsmx.jar.ext}/jcommon-1.0.5.jar"/>
             </classpath>
@@ -204,9 +209,15 @@
         <mkdir dir="${com.arjuna.mwlabs.ts.tsmx.jar.dest}/bin/tools"/>
         <mkdir dir="${com.arjuna.mwlabs.ts.tsmx.jar.dest}/bin/tools/plugins"/>
 
+        <copy todir="${com.arjuna.mwlabs.ts.tsmx.utilities.dest}/com/arjuna/ats/tools/toolsframework/images">
+            <fileset dir="${com.arjuna.mwlabs.ts.tsmx.etc}" includes="*.gif"/>
+        </copy>
+
         <jar jarfile="${com.arjuna.mwlabs.ts.tsmx.jar.dest}/bin/${com.arjuna.mwlabs.ts.modulename}-tools.jar">
-            <fileset dir="${com.arjuna.mwlabs.ts.tsmx.utilities.dest}" includes="com/arjuna/ats/tools/toolsframework/**/*.class"/>
-            <fileset dir="${com.arjuna.mwlabs.ts.tsmx.etc}" includes="**/**.gif"/>
+            <fileset dir="${com.arjuna.mwlabs.ts.tsmx.utilities.dest}">
+                <include name="com/arjuna/ats/tools/toolsframework/**/*.class"/>
+                <include name="com/arjuna/ats/tools/toolsframework/**/*.gif"/>
+            </fileset>
         </jar>
 
         <jar jarfile="${com.arjuna.mwlabs.ts.tsmx.jar.dest}/bin/tools/${com.arjuna.mwlabs.ts.modulename}-jmxbrowser.jar">
@@ -236,6 +247,10 @@
                     <attribute name="plugin-classname-1" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.AtomicActionViewer"/>
                     <attribute name="plugin-classname-3" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.arjunatransaction.ArjunaTransactionViewer"/>
                     <attribute name="plugin-classname-2" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrecord.ResourceRecordViewer"/>
+                    <attribute name="plugin-classname-4" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrecord.XAResourceRecordViewer"/>
+                    <attribute name="plugin-classname-5" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrecord.AbstractRecordViewer"/>
+                    <attribute name="plugin-classname-6" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrecord.ExtendedResourceRecordViewer"/>
+                    <attribute name="plugin-classname-7" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.InFlightTransactionViewer"/>                    
                 </section>
             </manifest>
         </jar>
@@ -312,15 +327,20 @@
 			<fileset dir="${com.arjuna.mwlabs.ts.tsmx.jar.ext}" includes="*.jar"/>
 		</copy>
         <copy todir="${com.hp.mwlabs.installationdirectory}/bin/">
-            <fileset dir="${com.arjuna.mwlabs.ts.tsmx.jar.dest}/bin" includes="tsmx-tools.jar"/>
+            <fileset dir="${com.arjuna.mwlabs.ts.tsmx.jar.dest}/bin" includes="tsmx-tools.jar,jbossts-tools.sar"/>
         </copy>
 
+    </target>
+
+    <target name="install_jboss_tools">
+        <ant dir="sar" target="build-sar"/>
     </target>
 
     <!-- Clean targets -->
     <target name="com.arjuna.mw.ts.tsmx.clean">
 
         <echo message="Cleaning module"/>
+        <ant dir="sar" target="clean"/>
         <delete dir="${com.arjuna.mwlabs.ts.tsmx.destroot}"/>
         <delete dir="${com.arjuna.mwlabs.ts.tsmx.tests.dest}"/>
 

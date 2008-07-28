@@ -28,4 +28,7 @@
 
     <plugins/>
 
+    <tools>
+                <jar name="tsmx-objectstorebrowser.jar"/>
+    </tools>
 </tools-framework>

@@ -31,67 +31,29 @@ package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicactio
  * $Id: HeuristicListNode.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.tools.objectstorebrowser.treenodes.*;
-import com.arjuna.ats.tools.objectstorebrowser.frames.*;
-import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.AtomicActionWrapper;
 import com.arjuna.ats.tools.objectstorebrowser.panels.*;
-import com.arjuna.ats.tools.toolsframework.iconpanel.*;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 
-public class HeuristicListNode extends AtomicActionListNode implements ListNodeListener, IconSelectionListener
+public class HeuristicListNode extends AtomicActionListNode
 {
     public HeuristicListNode(Object userObject, Object assObject, String type)
     {
         super(userObject, assObject, type);
     }
 
-    /**
-     * Called when the list node is expanded
-     * @param node
-     */
-    public void listExpanded(ListNode node)
+    public RecordList getList()
     {
-        super.listExpanded(node);
-
-        AtomicActionWrapper aaw = (AtomicActionWrapper)this.getAssObject();
-        AbstractRecord current = aaw.getHeuristicList().peekFront();
-        int count = 1;
-        while ( current != null )
-        {
-            ListEntryNode entryNode;
-            ObjectStoreViewEntry icon;
-            node.createEntry(entryNode = new ListEntryNode("["+count+"] "+current.type(), current, current.type()));
-            entryNode.setIconPanelEntry(icon = new ObjectStoreViewEntry(aaw.type(), (String)entryNode.getUserObject(), entryNode));
-            icon.addSelectionListener(this);
-            current = aaw.getHeuristicList().peekNext(current);
-            count++;
-        }
+        return getAction().getHeuristicList();
     }
 
-    /**
-     * Called when one of the list entries is selected.
-     *
-     * @param icon
-     * @param selected
-     */
-    public void iconSelected(IconPanelEntry icon, boolean selected)
+    protected void updatePanelData(StatePanel panel, AbstractRecord record)
     {
-        /** Get node and the associated AbstractRecord **/
-        ListEntryNode node = (ListEntryNode)(((ObjectStoreViewEntry)icon).getNode());
-        AbstractRecord record = (AbstractRecord)node.getAssociatedObject();
-        StatePanel panel = BrowserFrame.getStatePanel();
-        panel.clear();
-        panel.setType(record.type());
-
         if ( record.value() instanceof HeuristicInformation )
         {
             HeuristicInformation heuristicInfo = (HeuristicInformation)record.value();
+
             panel.setData("Heuristic Type", TwoPhaseOutcome.stringForm(heuristicInfo.getHeuristicType()));
         }
-
-        invokeStateViewer(record, (AtomicActionWrapper)this.getAssObject(), icon);
-
-        panel.repaint();
     }
 }

@@ -34,6 +34,7 @@ import com.arjuna.ats.tools.objectstorebrowser.panels.*;
 import com.arjuna.ats.tools.objectstorebrowser.ObjectStoreCellRenderer;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.*;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.StateViewersRepository;
+import com.arjuna.ats.tools.objectstorebrowser.treenodes.IUidCollection;
 
 import com.arjuna.ats.tools.toolsframework.iconpanel.IconPanelEntry;
 import com.arjuna.ats.tools.toolsframework.iconpanel.IconSelectionListener;
@@ -69,8 +70,9 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
 	private JSplitPane _splitPane = null;
 	private IconPanel _objectView = null;
     private JComboBox _rootCombo = null;
+    private JLabel    _statusBar = new JLabel();
 
-	public BrowserFrame()
+    public BrowserFrame()
 	{
 		super(FRAME_TITLE, true, true, true, true);
 
@@ -88,11 +90,7 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
         /** Create root pulldown **/
         _rootCombo = new JComboBox(ObjectStoreBrowserPlugin.getRootProvider().getRoots());
         _rootCombo.addActionListener(this);
-
-        if ( _rootCombo.getItemCount() == 0 )
-        {
-            _rootCombo.setEnabled(false);
-        }
+        _rootCombo.setEnabled(_rootCombo.getItemCount() != 0);
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -101,12 +99,17 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
         gbl.addLayoutComponent(_rootCombo,gbc);
         treePanel.add(_rootCombo);
 
+        JComponent sp = getSearchPanel();
+        gbc.gridx = 0; gbc.gridy = 1; gbc.fill = GridBagConstraints.BOTH; gbc.weighty = 0;
+        gbl.addLayoutComponent(sp,gbc);
+        treePanel.add(sp);
+
         ObjectStoreRootProvider provider = ObjectStoreBrowserPlugin.getRootProvider();
 
         /** Create object store **/
         if ( provider == null || provider.getRoots().isEmpty() )
         {
-            JOptionPane.showMessageDialog(this, "No object store roots found, object store is empty", "Warning", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No object store roots found, object store is empty", "Error", JOptionPane.WARNING_MESSAGE);
             dispose();
         }
         else
@@ -121,7 +124,7 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
             _tree.addTreeWillExpandListener(this);
             _tree.setCellRenderer(new ObjectStoreCellRenderer());
             gbc.gridx = 0;
-            gbc.gridy = 1;
+            gbc.gridy = 2;
             gbc.fill = GridBagConstraints.BOTH;
             gbc.weighty = 1;
             gbc.weightx = 1;
@@ -146,15 +149,169 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
             this.getContentPane().add(_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treePanel, rightHandSplitPlane));
             _splitPane.setDividerSize(3);
 
+            // and finally a status bar
+            _statusBar.setBorder(new javax.swing.border.EtchedBorder());
+            this.getContentPane().add(_statusBar, BorderLayout.SOUTH);
+            _stateViewer.setStatusBar(_statusBar);
+
             show();
         }
 	}
 
-	private final static DefaultMutableTreeNode getChildWithName(DefaultMutableTreeNode currentNode, String name)
+    /**
+     * Create an edit box for automatically navigating to a particular tree node
+     *
+     * @return a component containing the search box and its label
+     */
+    private JComponent getSearchPanel()
+    {
+        Box box = new Box(BoxLayout.X_AXIS);
+
+        box.add(new JLabel("Uid: "));
+        JTextField searchBox = new JTextField(20);
+
+        searchBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                // locate a node starting from the currently selected node
+                TreePath currentSelection = getSelectedPath();
+                DefaultMutableTreeNode node = locateNode(currentSelection, e.getActionCommand());
+
+                if (node != null)
+                {
+                    TreePath path = new TreePath(node.getPath());
+                    
+                    _tree.expandPath(path);
+                    _tree.setSelectionPath(path);
+                    _tree.scrollPathToVisible(path);
+                    expandTree(_tree, node);
+                }
+            }
+        });
+        box.add(searchBox);
+        box.setToolTipText("Enter a uid to search for");
+
+        return box;
+    }
+
+    /**
+     * Return the currently selected node. If none is selected then
+     * make the root node the currently selected node.
+     *
+     * @return the current selected node
+     */
+    private TreePath getSelectedPath()
+    {
+        TreePath currentSelection = _tree.getSelectionPath();
+
+        if (currentSelection == null)
+        {
+            TreePath path = new TreePath(_treeModel.getRoot());
+
+            _tree.setSelectionPath(path);
+            return path;
+        }
+
+        return currentSelection;
+    }
+
+    private void expandTree(JTree tree, DefaultMutableTreeNode start)
+    {
+        for (Enumeration e = start.children(); e.hasMoreElements();)
+        {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
+
+            if (!node.isLeaf())
+            {
+                tree.expandPath(new TreePath(node.getPath()));
+                expandTree(tree, node);
+            }
+        }
+    }
+
+    /**
+     * Convert a tree path to an object store path
+     *
+     * @param path the tree path
+     * @return the corresponding object store path
+     */
+    private String getPathName(TreePath path)
+    {
+		String pathName = "";
+
+        // Skip the root node as it is not part of the underlying object store tree
+        for (int i = 1; i < path.getPathCount(); i++)
+            pathName += ((DefaultMutableTreeNode) path.getPathComponent(i)).getUserObject().toString() + GROUP_DELIMITER;
+
+        return pathName;
+    }
+
+    /**
+     * Locate a node and simultaneously update each node in the path to the target node.
+     *
+     * @param path where to start the search from
+     * @param name the name of the node to look for
+     * @return the first node with the given name or null if not found under path
+     */
+    private DefaultMutableTreeNode locateNode(TreePath path, String name)
+    {
+        DefaultMutableTreeNode node = findNode((DefaultMutableTreeNode) path.getLastPathComponent(), name);
+
+        if (node != null)
+            return node;
+
+        // not found so try updating the tree and then search again
+		String pathName = getPathName(path);
+
+        node = (DefaultMutableTreeNode)path.getLastPathComponent();
+        updateTreeNode(node, pathName);
+
+        // if the node contains a collection of ids ...
+        if (node instanceof IUidCollection && ((IUidCollection) node).contains(name))
+            return node;
+
+        for (Enumeration e = node.children(); e.hasMoreElements();)
+        {
+            DefaultMutableTreeNode child = (DefaultMutableTreeNode) e.nextElement();
+            
+            path = new TreePath(child.getPath());
+            node = locateNode(path, name);
+
+            if (node != null)
+                return node;
+        }
+
+        return null;    // not found
+    }
+
+    /**
+     * Locate a node by name
+     *
+     * @param node the node from which to start the search
+     * @param name the name of the node to search for
+     * @return null if no matching node can be found
+     */
+    private DefaultMutableTreeNode findNode(DefaultMutableTreeNode node, String name)
+    {
+        if (node.getUserObject().toString().equals(name))
+            return node;
+
+        for (int i = 0; i < node.getChildCount(); i++)
+        {
+            DefaultMutableTreeNode child = findNode((DefaultMutableTreeNode) node.getChildAt(i), name);
+
+            if (child != null)
+                return child;
+        }
+
+        return null;
+    }
+
+    private static DefaultMutableTreeNode getChildWithName(DefaultMutableTreeNode currentNode, String name)
 	{
-		for (int count=0;count<currentNode.getChildCount();count++)
+        for (int count=0;count<currentNode.getChildCount();count++)
 		{
-            String currentName = (String)((DefaultMutableTreeNode)currentNode.getChildAt(count)).getUserObject();
+            String currentName = ((DefaultMutableTreeNode)currentNode.getChildAt(count)).getUserObject().toString();
 
 			if ( name.equals(currentName) )
 			{
@@ -165,15 +322,29 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
 		return null;
 	}
 
+    /**
+     * Triggered when the object store root combo is changed
+     *
+     * @param e the triggering action containing the name of the target store root
+     */
     public void actionPerformed(ActionEvent e)
     {
         String commandAction = e.getActionCommand();
 
         if ( commandAction != null )
         {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
             String objectStoreRoot = (String)_rootCombo.getSelectedItem();
+
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
+            _stateViewer.clear();
+            _stateViewer.setVisible(false);
             _objectStore = new ObjectStore(new com.arjuna.ats.arjuna.gandiva.ClassName(objectStoreRoot));
             _treeModel.setRoot(createTree());
+
+            Thread.currentThread().setContextClassLoader(loader);
+
         }
     }
 
@@ -187,7 +358,7 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
 
 			if (_objectStore.allTypes(types))
 			{
-				String theName = null;
+				String theName;
 
 				try
 				{
@@ -203,7 +374,7 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
 						{
 							SubTreeNode childNode;
                             DefaultMutableTreeNode currentNode = rootNode;
-							String parseName = new String(theName);
+							String parseName = theName;
 
 							if ( parseName.indexOf(GROUP_DELIMITER) != -1 )
 							{
@@ -239,7 +410,7 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
 		}
 		catch (Exception e)
 		{
-            JOptionPane.showMessageDialog(this, "An error occurred while creating the object browser tree");
+            _stateViewer.reportError("An error occurred while creating the object browser tree");
 			System.err.println("Caught unexpected exception: " + e);
             e.printStackTrace(System.err);
 		}
@@ -265,12 +436,12 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
     public void valueChanged(TreeSelectionEvent e)
     {
         TreePath selectedPath = e.getPath();
-        String theName = "";
+        String theName = getPathName(selectedPath);
 
-        for (int count=1;count<selectedPath.getPathCount();count++)
-        {
-            theName += ((String)((DefaultMutableTreeNode)selectedPath.getPathComponent(count)).getUserObject()) + GROUP_DELIMITER;
-        }
+        _stateViewer.clearStatus();
+
+        if (e.getNewLeadSelectionPath() == null)
+            return; // the whole tree is going to change so bail out early
 
         try
         {
@@ -298,16 +469,13 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
 
 	private void updateTreePath(TreePath path)
 	{
-		String pathPrefix = "";
+		String pathPrefix = getPathName(path);
         DefaultMutableTreeNode lastNode = (DefaultMutableTreeNode)path.getLastPathComponent();
-        // Skip the root node as it is not part of the underlying object store tree
-        for (int count=1;count<path.getPathCount();count++)
-        {
-            pathPrefix += (String)((DefaultMutableTreeNode)path.getPathComponent(count)).getUserObject() + GROUP_DELIMITER;
-        }
 
         updateTreeNode(lastNode, pathPrefix);
 
+        _stateViewer.setVisible(false);
+        
         if ( lastNode instanceof ListNode )
         {
             if ( ((ListNode)lastNode).getListNodeListener() != null )
@@ -332,7 +500,7 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
             }
             catch (ObjectStoreException e)
             {
-                JOptionPane.showMessageDialog(this, "An error occurred while creating the state viewer");
+                _stateViewer.reportError("An error occurred while creating the state viewer");
                 e.printStackTrace(System.err);
             }
         }
@@ -429,7 +597,7 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
                                 {
                                     UidNode uidNode;
 
-                                    if ( getChildWithName(node, theName) == null )
+                                    if ( getChildWithName(node, theUid.stringForm()) == null )
                                     {
                                         _treeModel.insertNodeInto(uidNode = new UidNode(theUid.toString(), theUid, theName), node, _treeModel.getChildCount(node));
                                         uidNode.setIconPanelEntry(new ObjectViewEntry(theName, theUid.toString(), _objectStore.currentState(theUid, theName), uidNode));
@@ -466,14 +634,22 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
         }
 	}
 
-
+    /**
+     * Initialize the object view panel in response to the user selected a new tree node
+     * each view panel entry should have already been initialized during the call to
+     * updateTreePath (provided the clicked node is of type UidNode and there is a viewer
+     * registered against the object store type - NB viewers are defined in the jar manifest
+     * for the tool).
+     *
+     * @param theName the object store path name (aka type) of the selected node
+     * @param parentNode the selected tree node
+     */
 	private void setupObjectViewPanel(String theName, DefaultMutableTreeNode parentNode)
 	{
-		if ( theName.length() > 0 )
+        if ( theName.length() > 0 )
 		{
             /** Reset the icons **/
 			_objectView.resetIcons();
-
             /** Add the icons for each node in the tree **/
             for (int count=0;count<_treeModel.getChildCount(parentNode);count++)
             {
@@ -500,20 +676,22 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
 		{
 			if ( _objectView.getSelectedEntry() == null )
 			{
-				_stateViewer.removeAll();
-				validate();
-				repaint();
+                _stateViewer.setVisible(false);
+//                _stateViewer.removeAll();
+//				validate();
+//				repaint();
 			}
 
 			if ( selected )
 			{
-				// Do nothing
+                _stateViewer.setVisible(true);
+                // Do nothing
 			}
 		}
 		catch (Exception e)
 		{
             e.printStackTrace(System.err);
-			JOptionPane.showMessageDialog(this, "An error occurred while creating the state viewer");
+			_stateViewer.reportError("An error occurred while creating the state viewer");
 		}
 	}
 

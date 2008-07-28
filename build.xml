@@ -30,6 +30,8 @@
    <property name="jta.dir" location="ArjunaJTA"/>
    <property name="jts.dir" location="ArjunaJTS"/>
    <property name="integration.dir" location="atsintegration"/>
+   <property name="jboss.tools.dir" location="${core.dir}/tsmx"/>
+   <property name="com.hp.mw.installationdirectory.bin" location="${com.hp.mw.installationdirectory}/bin"/>
 
    <property name="jboss.eula" location="JBossORG-EULA.txt"/>
    <property name="jboss.libdir" location="jboss"/>
@@ -84,10 +86,12 @@ Targets supported in this build.xml file
 
    <target name="jbossjts">
       <runant target="run_jbossjts"/>
+      <runant target="install_jboss_tools"/>
    </target>
 
    <target name="jbossjta">
       <runant target="run_jbossjta"/>
+      <runant target="install_jboss_tools"/>
    </target>
 
    <target name="clean">
@@ -142,6 +146,12 @@ Targets supported in this build.xml file
       <copy todir="${jboss.install.libdir}">
          <fileset dir="${jboss.libdir}"/>
       </copy>
+   </target>
+
+   <target name="install_jboss_tools">
+      <ant dir="${jboss.tools.dir}" target="install_jboss_tools">
+          <property name="jboss.ts.tools.install.dir" value="${com.hp.mw.installationdirectory.bin}"/>
+      </ant>
    </target>
 
    <target name="build_jts" depends="init_jts, init, build_jta">

@@ -32,7 +32,6 @@ package com.arjuna.ats.tools.objectstorebrowser.entityviewer.viewers.resource;
  */
 
 import com.arjuna.ats.tools.objectstorebrowser.entityviewer.EntityViewerInterface;
-import com.arjuna.ats.tools.objectstorebrowser.entityviewer.viewers.resource.ResourceViewDialog;
 
 import javax.swing.*;
 
@@ -53,9 +52,9 @@ public class ResourceEntityViewer implements EntityViewerInterface
      */
     public void viewEntity(String type, Object value, JPanel panel)
     {
-        if ( value instanceof ResourceActionHandle )
+        if ( value instanceof AbstractResourceActionHandle )
         {
-            ResourceActionHandle rah = (ResourceActionHandle)value;
+            AbstractResourceActionHandle rah = (AbstractResourceActionHandle)value;
 
             new ResourceViewDialog(null, type, rah);
         }

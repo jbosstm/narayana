@@ -132,7 +132,7 @@ public class PluginClassloader implements FilenameFilter
                 }
                 catch (Exception e)
                 {
-                    System.err.println("Could not instantiate the class '"+obj+"'");
+                    System.err.println("Could not instantiate the class '"+obj+"' - " + e.getMessage());
                 }
             }
         }

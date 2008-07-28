@@ -48,4 +48,14 @@ public class ToolPluginException extends Exception
 	public ToolPluginException()
 	{
 	}
+
+    /**
+     * Constructs an <code>Exception</code> with the specified detail message and cause
+     * @param msg detail message
+     * @param cause the cause of the exception
+     */
+    public ToolPluginException(String msg, Throwable cause)
+	{
+		super(msg, cause);
+	}
 }

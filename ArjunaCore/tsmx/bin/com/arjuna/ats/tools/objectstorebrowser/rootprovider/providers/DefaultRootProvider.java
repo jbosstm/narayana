@@ -39,11 +39,11 @@ import java.util.Vector;
 
 public class DefaultRootProvider implements ObjectStoreRootProvider
 {
-    public Vector getRoots()
+    Vector roots = new Vector();
+
+    public DefaultRootProvider()
     {
         File objectStoreRoot = new File(arjPropertyManager.getPropertyManager().getProperty(Environment.OBJECTSTORE_DIR,"."));
-        Vector roots = new Vector();
-
         File[] files = objectStoreRoot.listFiles();
 
         if ( files != null )
@@ -56,7 +56,15 @@ public class DefaultRootProvider implements ObjectStoreRootProvider
                 }
             }
         }
+    }
 
+    public Vector getRoots()
+    {
         return roots;
+    }
+
+    public void addRoot(String name)
+    {
+        roots.add(name);
     }
 }

@@ -20,17 +20,9 @@
  */
 package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.icons;
 
-import com.arjuna.ats.tools.objectstorebrowser.panels.ListViewEntry;
-import com.arjuna.ats.tools.objectstorebrowser.panels.StatePanel;
-import com.arjuna.ats.tools.objectstorebrowser.panels.DetailsButtonAdapter;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.ObjectStoreBrowserNode;
-import com.arjuna.ats.tools.objectstorebrowser.frames.BrowserFrame;
-import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.nodes.FailedListNode;
-import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.AtomicActionWrapper;
-import com.arjuna.ats.tools.toolsframework.iconpanel.IconSelectionListener;
-import com.arjuna.ats.tools.toolsframework.iconpanel.IconPanelEntry;
-
-import javax.swing.tree.TreePath;
+import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.BasicActionInfo;
+import com.arjuna.ats.arjuna.coordinator.RecordList;
 
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004
@@ -43,37 +35,15 @@ import javax.swing.tree.TreePath;
  * $Id: FailedViewEntry.java 2342 2006-03-30 13:06:17Z  $
  */
 
-public class FailedViewEntry extends ListViewEntry implements IconSelectionListener
+public class FailedViewEntry extends AtomicTransactionViewEntry
 {
     public FailedViewEntry(String tn, String label, ObjectStoreBrowserNode node)
     {
         super(tn, label, node);
-
-        addSelectionListener(this);
     }
 
-    /**
-     * Called when this entry is selected
-     * @param icon
-     * @param selected
-     */
-    public void iconSelected(IconPanelEntry icon, boolean selected)
+    protected RecordList getList(BasicActionInfo wrapper)
     {
-        /** Populate panel with details of this list **/
-        StatePanel panel = BrowserFrame.getStatePanel();
-        final FailedListNode node = (FailedListNode)getNode();
-        AtomicActionWrapper aaw = (AtomicActionWrapper)node.getAssObject();
-        panel.clear();
-        panel.setType(getTypeName());
-        panel.setInfo(aaw.getFailedList().size()+" entries");
-        panel.enableDetailsButton(new DetailsButtonAdapter() {
-            public void detailsButtonPressed()
-            {
-                TreePath path = new TreePath(BrowserFrame.getTreeModel().getPathToRoot(node));
-                BrowserFrame.getTree().expandPath(path);
-                BrowserFrame.getTree().setSelectionPath(path);
-            }
-        });
-        panel.repaint();
+        return wrapper.getFailedList();
     }
 }

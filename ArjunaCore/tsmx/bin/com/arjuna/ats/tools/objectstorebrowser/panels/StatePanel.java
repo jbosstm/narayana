@@ -36,19 +36,36 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.Map;
+import java.util.HashMap;
 
 public class StatePanel extends JPanel implements ActionListener
 {
     private final static String TYPE_LABEL_TEXT = "Type:";
     private final static String INFO_LABEL_TEXT = "Information:";
-    private final static String DETAILS_BUTTON_TEXT = "details";
+    
+    public final static String DETAILS_BUTTON_TEXT = "details";
+    public final static String FORGET_BUTTON_TEXT = "forget";
+    public final static String COMMIT_BUTTON_TEXT = "commit";
+    public final static String ROLLBACK_BUTTON_TEXT = "rollback";
+
+    private final static Map<String, String> BUTTONS;
+
+    static {
+        BUTTONS = new HashMap<String, String> ();
+
+        BUTTONS.put(DETAILS_BUTTON_TEXT, "Show more information");
+        BUTTONS.put(FORGET_BUTTON_TEXT, "Forget this item");
+        BUTTONS.put(COMMIT_BUTTON_TEXT, "Commit the item");
+        BUTTONS.put(ROLLBACK_BUTTON_TEXT, "Rollback the item");
+    }
 
     private JLabel                  _type;
     private JLabel                  _info;
+    private JLabel                  _statusBar;
     private DefaultTableModel       _tableModel;
-    private JTable                  _table;
-    private JButton                 _detailsButton;
-    private DetailsButtonListener   _detailsListener;
+    private StateTable              _table;
+    private Map<String, JButton>    _buttons = new HashMap<String, JButton>();
 
     public StatePanel()
     {
@@ -93,7 +110,7 @@ public class StatePanel extends JPanel implements ActionListener
 
         JPanel panel = new JPanel();
         panel.setBorder(javax.swing.border.LineBorder.createBlackLineBorder());
-        _table = new JTable(_tableModel = new DefaultTableModel(0,2));
+        _table = new StateTable(_tableModel = new DefaultTableModel(0,2));
         panel.setLayout(new BorderLayout());
         panel.add(BorderLayout.CENTER, _table);
         gbc.gridy++;
@@ -103,15 +120,68 @@ public class StatePanel extends JPanel implements ActionListener
         gbl.addLayoutComponent(panel, gbc);
         add(panel);
 
-        _detailsButton = new JButton(DETAILS_BUTTON_TEXT);
-        gbc.gridy++;
+        JPanel buttonPanel = new JPanel();
+
+        for (Map.Entry<String, String> e : BUTTONS.entrySet())
+            buttonPanel.add(newButton(e.getKey(), e.getValue(), false, this));
+
         gbc.fill = GridBagConstraints.NONE;
-        gbl.addLayoutComponent(_detailsButton, gbc);
-        _detailsButton.addActionListener(this);
-        _detailsButton.setEnabled(false);
-        add(_detailsButton);
+        gbc.gridy++;
+        gbl.addLayoutComponent(buttonPanel, gbc);
+        add(buttonPanel);
     }
 
+    /**
+     * Create a new button. Note this does not add the button to the panel which
+     * is the callers responsibility
+     *
+     * @param text button text
+     * @param tooltip button tooltip
+     * @param enable if true the button is enabled and made visible
+     * @param listener
+     * @return the newly added button
+     */
+    private JButton newButton(String text, String tooltip, boolean enable, ActionListener listener)
+    {
+        JButton button = new JButton(text);
+
+        button.setToolTipText(tooltip);
+        _buttons.put(text, button);
+        enableButtons(enable, listener, text);
+
+        return button;
+    }
+
+    /**
+     * Initialise a collection of buttons. Any existing listeners will be removed.
+     *
+     * @param enable if true enable the button and make it visible
+     * @param listener the action
+     * @param buttons button (these must correspond to a previously registered button)
+     */
+    public void enableButtons(boolean enable, ActionListener listener, String ... buttons)
+    {
+        for (String name : buttons)
+        {
+            JButton button = _buttons.get(name);
+
+            if (button != null)
+            {
+                for (ActionListener l : button.getActionListeners())
+                    button.removeActionListener(l);
+
+                button.addActionListener(listener);
+                button.setEnabled(enable);
+                button.setVisible(enable);
+            }
+        }
+    }
+
+    public void enableButton(String buttonName, ActionListener listener)
+    {
+         enableButtons(true, listener, buttonName);
+    }
+    
     public void setType(String type)
     {
         _type.setText(type);
@@ -128,18 +198,34 @@ public class StatePanel extends JPanel implements ActionListener
         _table.invalidate();
     }
 
-    public void enableDetailsButton(DetailsButtonListener listener)
+    /**
+     * Add headers for the table in the state panel
+     * @param name first column
+     * @param value second column
+     */
+    public void setTableHeader(String name, String value)
     {
-        _detailsButton.setEnabled(true);
-        _detailsListener = listener;
+        _table.shadeHeaders(true);
+        _tableModel.insertRow(0, new String[] { name, value });
+    }
+
+    /**
+     * Size the columns to accomodate the data (ie shrink to largest data size or expand
+     * to largest data size up to a maximum)
+     */
+    public void updateColumnSizes()
+    {
+        _table.updateColumnSizes();
     }
 
     public void clear()
     {
         _type.setText("");
         _info.setText("");
-        _detailsListener = null;
-        _detailsButton.setEnabled(false);
+        _table.shadeHeaders(false);
+        enableButtons(false, null, _buttons.keySet().toArray(new String[_buttons.size()]));
+        clearStatus();
+        
         while ( _table.getRowCount() > 0 )
         {
             _tableModel.removeRow(0);
@@ -148,11 +234,50 @@ public class StatePanel extends JPanel implements ActionListener
 
     public void actionPerformed(ActionEvent e)
     {
-        String actionCommand = e.getActionCommand();
+    }
 
-        if ( actionCommand != null && actionCommand.equals(DETAILS_BUTTON_TEXT) )
+    public void setStatusBar(JLabel statusBar)
+    {
+        this._statusBar = statusBar;
+    }
+
+    public void reportStatus(String message)
+    {
+        if (_statusBar != null)
+            _statusBar.setText(message);
+    }
+
+    public void reportError(String message)
+    {
+        reportStatus(message);
+    }
+
+    public int reportStatus(String message, int severity)
+    {
+        switch (severity)
         {
-            _detailsListener.detailsButtonPressed();
+            case JOptionPane.ERROR_MESSAGE:
+                JOptionPane.showMessageDialog(this, message, "Error", severity);
+                break;
+            case JOptionPane.INFORMATION_MESSAGE:
+                JOptionPane.showMessageDialog(this, message, "Information", severity);
+                break;
+            case JOptionPane.WARNING_MESSAGE:
+                JOptionPane.showMessageDialog(this, message, "Warning", severity);
+                break;
+            case JOptionPane.QUESTION_MESSAGE:
+                return JOptionPane.showConfirmDialog(this, message);
+            case JOptionPane.PLAIN_MESSAGE:
+                //FALLTHRU
+            default:
+                break;
         }
+
+        return JOptionPane.OK_OPTION;
+    }
+
+    public void clearStatus()
+    {
+        reportStatus("");
     }
 }

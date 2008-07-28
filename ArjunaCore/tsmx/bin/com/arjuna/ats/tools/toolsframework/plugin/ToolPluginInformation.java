@@ -30,14 +30,12 @@
  */
 package com.arjuna.ats.tools.toolsframework.plugin;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.jar.JarFile;
 import java.util.jar.JarEntry;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.net.URL;
 
 public class ToolPluginInformation
 {
@@ -48,11 +46,11 @@ public class ToolPluginInformation
 
 	private String[]	_classnames = null;
 	private Properties	_properties = null;
-	private File		_filename = null;
+	private URL		    _fileURL = null;
     private String		_icon16 = null;
 	private String		_icon32 = null;
 
-	private ToolPluginInformation(File filename, Properties toolInfo)
+	private ToolPluginInformation(URL fileURL, Properties toolInfo)
 	{
 		/** Parse the ; delimited classname list **/
 		ArrayList classnames = new ArrayList();
@@ -81,7 +79,7 @@ public class ToolPluginInformation
 		props.remove( TOOL_CLASSNAME_PROPERTY_NAME );
 
 		_properties = props;
-		_filename = filename;
+		_fileURL = fileURL;
 	}
 
 	/**
@@ -124,25 +122,23 @@ public class ToolPluginInformation
 	 * Get the name of the tool's JAR file.
 	 * @return
 	 */
-	public final File getFilename()
+	public final URL getFileURL()
 	{
-		return _filename;
+		return _fileURL;
 	}
 
 	/**
 	 * Searches the given JAR file for the tools information file and creates a tool plugin information
 	 * wrapper for it.
 	 *
-	 * @param filename The JAR file to search.
-	 * @return The ToolPluginInformation wrapper for that tool JAR file.
-	 * @throws java.io.IOException
-	 * @throws ToolPluginInformationNotFoundException
+     * @param plugins collection for returning the desired plugin wrapper for the tool jar file
+	 * @param jar The JAR file to search.
+	 * @return the url of the JAR file.
+	 * @throws IOException
 	 */
-	public static ToolPluginInformation getToolPluginInformation(File filename) throws java.io.IOException, ToolPluginInformationNotFoundException
+	public static URL getToolPluginInformation(Collection<ToolPluginInformation> plugins, File jar) throws IOException
 	{
-		try
-		{
-			JarFile jFile = new JarFile(filename);
+			JarFile jFile = new JarFile(jar);
 
 			Enumeration entries = jFile.entries();
 
@@ -154,18 +150,60 @@ public class ToolPluginInformation
 				{
 					Properties toolProps = new Properties();
 					toolProps.load( jFile.getInputStream(entry) );
-					return new ToolPluginInformation(filename, toolProps);
+                    plugins.add(new ToolPluginInformation(jar.toURL(), toolProps));
+
+                    break;
 				}
 			}
 
 			jFile.close();
-		}
-		catch (FileNotFoundException e)
-		{
-			throw new ToolPluginInformationNotFoundException("Tool plugin information not found in '"+filename+"'");
-		}
 
-		/** We have not found the tools information file **/
-		return null;
+            return jar.toURL();
 	}
+    
+    public static URL toPlugin(Collection<ToolPluginInformation> plugins, String tmpDir, InputStream is, ZipEntry ze) throws IOException
+    {
+        return getToolPluginInformation(plugins, externalizeFile(tmpDir, is, ze));  // TODO clean up when done
+    }
+
+    public static File externalizeFile(String fname, InputStream is) throws IOException
+    {
+        File f = new File(fname);
+        OutputStream out = new FileOutputStream(f);
+        byte[] buf = new byte[1024];
+        int len;
+
+        while ((len = is.read(buf)) > 0)
+            out.write(buf, 0, len);
+
+        out.close();
+
+        return f;
+    }
+
+    public static File externalizeFile(String tmpDir, InputStream is, ZipEntry ze) throws IOException
+    {
+        File f = new File(tmpDir + ze.getName());
+        
+        if (f.isFile())
+        {
+            File d = f.getParentFile();
+
+            if (d != null)
+                f.mkdirs();
+
+            OutputStream out = new FileOutputStream(f);
+            byte[] buf = new byte[1024];
+            int len;
+
+            while ((len = is.read(buf)) > 0)
+                out.write(buf, 0, len);
+
+            out.close();
+        }
+        else
+            f.mkdirs();
+
+        return f;
+    }
 }

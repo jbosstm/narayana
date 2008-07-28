@@ -407,7 +407,26 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 		return !problem;
 	}
 
-	private SortedSet _synchs;
+    public java.util.Map<Uid, String> getSynchronizations()
+    {
+        java.util.Map<Uid, String> synchs = new java.util.HashMap<Uid, String> ();
+
+        synchronized (this) {
+            if (_synchs != null)
+            {
+                for (Object _synch : _synchs)
+                {
+                    SynchronizationRecord synch = (SynchronizationRecord) _synch;
+
+                    synchs.put(synch.get_uid(), synch.toString());
+                }
+            }
+        }
+
+        return synchs;
+    }
+
+    private SortedSet _synchs;
 	private SynchronizationRecord _currentRecord; // the most recently processed Synchronization.
 	private Throwable _deferredThrowable;
 	
