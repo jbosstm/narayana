@@ -229,3 +229,18 @@ deciding whether or not to use a stand alone coordinator service. The
 trail map web pages are located in the htdocs subdirectory of the XTS
 installed tree.
 
+                         Embedded Tools
+                         --------------
+
+Deployment
+----------
+
+Embedded tools is an applet that runs in proccess with the AS which 
+includes an interface for inspecting transactions. It is deployed as 
+a service archive and can be found in the product install directory:
+<install directory>/bin/jbossts-tools.sar
+
+To start the tool simply copy the sar to the AS deploy directory, open 
+the JMX console (http://.../jmx-console) and click on the service named 
+EmbeddedTools.
+
