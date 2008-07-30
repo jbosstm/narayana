@@ -24,7 +24,10 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
 	version="2.4">
 
-	<servlet>
+    <listener>
+        <listener-class>com.jboss.jbosstm.xts.demo.services.recovery.DemoATRecoveryListener</listener-class>
+    </listener>
+    <servlet>
 		<servlet-name>RestaurantServiceAT</servlet-name>
 		<servlet-class>com.jboss.jbosstm.xts.demo.services.restaurant.RestaurantServiceAT</servlet-class>
 	</servlet>

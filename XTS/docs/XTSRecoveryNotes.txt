@@ -1,0 +1,416 @@
+           WS-AT Coordinator/Participant Recovery Overview
+           -----------------------------------------------
+
+WS-AT Participant Side
+----------------------
+
+WS-AT has a generic participant interface
+
+interface Participant
+{
+    public Vote prepare () throws WrongStateException, SystemException;
+    public void commit () throws WrongStateException, SystemException;
+    public void rollback () throws WrongStateException, SystemException;
+    public void unknown () throws SystemException;
+    void error () throws SystemException;
+}
+
+Participant has two main subinterfaces which are used when registering
+either a volatile or a durable participant.
+
+public interface Volatile2PCParticipant extends Participant
+{
+}
+
+and
+
+public interface Durable2PCParticipant extends Participant
+{
+}
+
+Each of these three interfaces is employed by both the 1.0 and 1.1
+implementations. They are all located in package com.arjuna.wst.
+
+An application which wishes to employ WS-AT to manage transactional
+resources must define classes implementing these interfaces which
+manage the application's transactional state. It can then register
+instances of these classes as participants using the enlistment APIs
+associated with the WS-AT transaction manager class.
+
+Volatile participants are not expected to be involved in
+commit/rollback or recovery processing (even though they implement
+commit(), rollback() and unknown() these should never be called). They
+are expected to perform any necessary saving or flushing of volatile
+state at prepare and, if necessary, delete any redundant in-memory or
+persistent state at the same time. They must vote against prepare if
+their volatile state cannot be saved/flushed.
+
+Durable participants are expected to persist all necessary
+transactional state before or at prepare and it is at this latter
+point that they need to persist any recovery state i.e. information
+which may be needed to either roll forward or roll back prepared
+transactional state. Durable participants must perform roll forward or
+roll back of transactional state at commit/rollback and it is at this
+point that they are expected to delete any saved recovery state.
+During crash recovery processing the recovery state for a participant
+will be located and used to recreate the participant allowing a
+subsequent roll forward or roll back of the transactional state to be
+performed.
+
+Details of the API provided to allow recovery state to be identified
+and restored during recovery processing are provided below.
+
+WS-AT Coordinator Side
+----------------------
+
+On the XTS coordinator side information about participants is retained
+using stubs. These stub participants shadow the state of the actual
+participants, recording and validating state changes notified via
+incoming messages.
+
+public class ParticipantStub implements Participant, PersistableParticipant
+{
+    public Vote prepare() throws WrongStateException, SystemException;
+    public void commit() throws WrongStateException, SystemException;
+    public void rollback() throws WrongStateException, SystemException;
+    public void unknown() throws SystemException;
+    public void error() throws SystemException;
+    public boolean saveState(final OutputObjectState oos);
+    public boolean restoreState(final InputObjectState ios);
+}
+
+ParticipantStub is specialised by two subclasses, Durable2PCStub and
+Volatile2PCStub. 
+
+public class Durable2PCStub extends ParticipantStub
+    implements Durable2PCParticipant
+{
+    Durable2PCStub(String id, W3CEndpointReference twoPCParticipant);
+    Durable2PCStub();
+}
+
+and
+
+public class Volatile2PCStub extends ParticipantStub
+    implements Volatile2PCParticipant
+{
+    public Volatile2PCStub(String id, W3CEndpointReference twoPCParticipant)
+}
+
+These subclasses add no extra behaviours. However, they both provide a
+constructor which allows an id and endpoint reference for the
+originating participant's participant management service to be
+associated with the stub. Volatile2PCStub is not expected to be
+involved in commit or recovery processing (even though it redundantly
+implements commit(), rollback(), unknown(), saveState() and
+restoreState() these should never be called).
+
+Durable2PCStub is involved in commit/rollback processing and recovery.
+It implements a second, 'empty' constructor allowing the stub to be
+recreated during recovery as a precursor to invoking the restore_state
+method.
+
+Saving of durable participant stub recovery state is performed
+automatically by the WS-AT coordinator at prepare. The participant
+state is bundled in with the coordinator (transaction) state whenever
+the latter is written to disk. This ensures that a recovered WS-AT
+transaction can be recreated with all necessary participant
+information in case of a coordinator crash during commit or rollback
+processing.
+
+These three classes exist in two different flavours, one for WS-AT 1.0
+and another for WS-AT 1.1. The 1.0 versions exist in package
+com.arjuna.wst.stub while the 1.1. versions are in package
+com.arjuna.wst11.stub. This split is necessary because the endpoint
+reference type for 1.0 is from Kev's hand-rolled SOAP stack whereas
+the endpoint for 1.1 is a W3CEndpointReference from the app server's
+WS implementation.
+
+WS-AT Participant Side Recovery
+-------------------------------
+
+In order to be able to perform participant side recovery the XTS
+implementation must:
+
+  -- save details of durable participants at prepare time
+
+  -- delete saved details of durable participants at commit time
+
+  -- identify saved durable participant details during crash recovery
+     and recreate a durable participant from the saved details
+
+Saving, restoring and deletion of participant data, including the
+application-specific recovery state, is managed by the WS-AT
+implementation. However, recreation of saved participants during
+recovery involves creating and initialising instances of
+application-specific classes using the saved recovery state. Since
+this requires loading application-specific classes it must be done by
+application code. Hence, it will be necessary for the XTS
+implementation to provide a registration mechanism allowing
+applications to provide a recovery module to perform this step in the
+recovery process.
+
+Recovery modules must be able to recognise that saved participant
+details belong to their associated application rather than some other
+application. This will be achieved by requiring participants to employ
+identifiers which are unique to their application (as well as unique
+within all participants created by that application). The id employed
+when the participant is registered will be used for this purpose.
+
+A participant must support saving of its recovery state by
+implementing a method which encodes the recovery state as a byte
+array. At prepare, this byte array will be obtained and written to
+disk by the WS-AT implementation, along with the participant
+identifier and the endpoint of the participant's coordinator. This
+participant recovery record will be deleted at the appropriate point
+during commit or rollback. During recovery processing saved recovery
+records for outstanding transactions will be identified and
+reloaded. The byte array saved in the record will be used to
+reconstruct a durable participant and re-register it as an active
+participant with the participant service using the saved identifier
+and endpoint.
+
+A recovery module must implement a method which discriminates amongst
+candidate identifiers. For those which are associated with its
+application, it will be required to construct a durable participant
+from the saved recovery state byte array. If the recovery module does
+not recognise a participant id then it will be assumed to belong to
+some other application.
+
+Participant API
+---------------
+Durable participants are normally expected to implement the save state
+functionality by implementing interface Serializable. In such cases
+participants will be automatically serialized to a byte stream using
+Java serialization and the resulting byte data is stored in the
+recovery record (specifically, immediately afetr teh call to the
+participant's prepare method the stream will be written by means of a
+single call to ObjectOuputStream.writeObject with the participant as
+argument). Alternatively, if the participant does not implement
+Serializable it can implement the following interface in package
+com.arjuna.wst:
+
+public interface PersistableATParticipant
+{
+    byte[] getRecoveryState() throws Exception;
+}
+
+In this case, getRecoveryState will be invoked immediately after the
+call to the participant's prepare method.
+
+One or other of these interfaces must be implemented, otherwise the
+prepare operation on the participant will fail and the participant's
+rollback method will be invoked.
+
+Participant Recovery Module API
+-------------------------------
+A recovery module must implement the following interface in package
+org.jboss.xts.recovery:
+
+public interface XTSATRecoveryModule
+{
+    public Durable2PCParticipant
+    deserialize(String id, ObjectInputStream stream) throws Exception; 
+
+    public Durable2PCParticipant
+    recreate(String id, byte[] recoveryState) throws Exception; 
+}
+
+If a participant was saved using serialization then deserialize will
+be called to allow the module a chance to deserialize it. If a
+participant was saved by invoking the getRecoveryState method of
+PersistableATParticipant then recreate will be called to recreate it.
+Note that either method may be called since the recovery module may be
+asked to recreate participants which belong to other applications so
+it must expect either method to be called even if the application only
+uses one specific means of saving its participant instances.
+
+id is the identifier under which the participant was registered. the
+recovery module should only attempt to reconstruct a durable
+participant if it recognizes the id. stream is stream from which the
+application can read its participant by invoking
+ObjectInputStream.readObject. recoveryState is a byte array containing
+the data returned by getRecoveryState.
+
+Whichever method is called, if it returns null then it is assumed that
+the recovery record does not belong to the recovery module's
+application. If an exception is thrown then it is assumed that the
+record does belong to the module's application and a warning is
+logged. Although this may indicate that the recovery data has been
+corrupted the participant recovery record is not deleted. The recovery
+thread will retry the reconstruction operation when it next runs in
+case the error is a transient one whic can be recovered from. In such
+cases participant records must be deleted from the log manually by an
+administrator.
+
+An application must register its recovery module during application
+deployment and unregister it during undeployment using the following
+API in package org.jboss.xts.recovery:
+
+public class XTSATRecoveryManager
+{
+    ...
+    public void registerRecoveryModule(XTSATRecoveryModule module);
+    public void unregisterRecoveryModule(XTSATRecoveryModule module);
+    ...
+}
+
+WS-AT Participant Recovery State Processing
+-------------------------------------------
+
+An XTS WS-AT participant recovery record is modelled in-memory by
+class ATParticipantRecord. Each record will contain details of a
+single participant: a String identifier; an XML format String
+representation of the associated coordinator endpint reference
+(inlcuding any reference parameters); and a byte[] participant
+recovery state. No subordinate state is required so no persistence
+record types need be defined by the participant recovery system.
+
+Since the endpoint reference format differs between the 1.0 and 1.1
+implementations and since recovery processing will differ depending
+upon the protocol in use it is necessary to implement this class in
+two flavours, one for the WS-AT 1.0 protocol and another for the 1.1
+protocol.
+
+Class ATParticipantRecord implements the PersistableParticipant
+interface enabling the standard TX object state read_committed and
+write_committed operations to be used for creation, retrieval and
+deletion of the object store entry containing the record. Where
+appropriate delegation to methods on the 1.0 or 1.1 subclasses is used
+to generate teh required disk data representation. The saved state
+includes details of the implementation class so that on recovery a
+valid in-memory version of the record can be reconstructed.
+
+XTS WS-AT participant records are saved as top-level TX store entries,
+stored in a location in the TX object store defined by the XTS WS-AT
+participant record type (akin to the ACCoordinator type used on the
+coordinator side to store XTS WS-AT coordinator (transaction)
+state). WS-AT participant recovery records differ from other object
+store entries in that they are not derived from AtopmicAction nor from
+StateManager. The former class is only appropriate as a superclass of
+transactions. The latter class is only appropriate as a superclass of
+classes which will be saved and restored when an Action is current in
+the saving/restoring thread context and that is not the case in the
+threads which handle Participant service incoming messages (*** is
+this actually correct -- need to check ***). Note, however, that this
+should present no problem in managing the object store entries in the
+absence of heuristic outcomes. A participant recovery record will only
+be written at prepare and recovery processing should always ensure
+that a commit or rollback eventually causes the entry to be
+deleted. It does present an issue for any tools provided to scan the
+object store as these need to be aware of the existence of AT recovery
+records and need to support manual deletion of records in the case
+that a crashed coordinator cannot proceed to recovery.
+
+During normal operation the XTS implementation maintains an active
+WS-AT participant map, an in-memory map from WS-AT participant ids to
+WS-AT participant engines. An engine represents an active participant
+and is the primary target for incoming prepare, commit and rollback
+messages. The map is updated during enlist, prepare, commit and
+rollback to reflect the presence of: active participants; and saved or
+deleted WS-AT participant recovery records in the TX object store.
+
+During bootstrap the XTS recovery module will scan for all XTS WS-AT
+participant recovery records. Each WS-AT record will be reconstructed
+in memory and be entered into a recovered participant map, an
+in-memory map from WS-AT participant ids to in-memory participant
+recovery records. Once all records have been scanned and loaded into
+the recovery map each of the XTS WS-AT recovery modules registered
+with the XTS implementation will be used to try to restore the durable
+participant from teh recovery state in each of the participant
+recovery records.
+
+If a module sucessfully converts an entry to a DurableParticipant the
+recovery record will be atomically removed from the recovery map and a
+WS-AT participant engine entered into the active participant map. If
+no module successfully converts the entry to a DurableParticipant a
+recovery warning will be generated and the entry will be left in the
+recovered participant map for conversion on a later recovery pass,
+possibly by a newly registered recovery module (registration may not
+be complete before the first recovery scan is completed).
+n.b. existing modules get another bite at the cherry i.e. the recovery
+recrods is passed to all modules registered at the time of the scan,
+not jsut to those whic hhave been registered since the last scan. This
+covers the case where the failure to initially process the record was
+because the module needed to wait on other internal/external resources
+to start up.
+
+An incoming commit or rollback message may contain a participant id
+which is not found in the WS-AT active participant map. This may
+happen during bootstrap because the initial recovery scan is not
+complete. It may also happen after the initial scan because the
+recovery state has not yet been converted to a participant. The former
+case can be detected using a flag which defaults to false and is set
+to true after the first scan is completed. In the latter case there
+will be an entry for the participant in the recovered participant map.
+
+In these two cases incoming commit or rollback requests will be
+silently dropped to ensure that a valid response is provided when
+recovery is ready. If neither of these exemptions applies it is
+assumed that the message has been resent and processing follows the
+transition tables in the WS-AT spec: the response to a commit request
+will be to send a commited response (i.e. to presume that the commit
+has been resent); the response to a rollback request will be to send
+an aborted response (i.e. to presume that the rollback has been
+resent).
+
+
+WS-AT Coordinator Side Recovery
+-------------------------------
+
+In order to be able to perform coordinator side recovery the WS-AT
+implementation must:
+
+  -- save details of durable participant stubs at prepare
+
+  -- delete saved details of durable participant stubs at commit time
+
+  -- update saved details of durable participant stubs at if a commit
+     stalls par way through or if it completes with a heuristic
+     outcome.
+
+  -- identify saved durable participant stub details during crash
+     recovery and recreate a durable participant stub from the saved
+     details
+
+Saving, restoring and deletion of participant recovery state is
+managed by the WS-AT ACCoordinator class using the participant list
+management capabilities of class TwoPhaseCoordinator. Participant
+stubs are referenced from ParticipantRecord instances located in the
+coordinators participant list. At prepare the details or each active
+stub are converted to a byte format and composed to construct the
+coordinator's saved state, each sub-entry tagged with type XTS_RECORD,
+the type associated with the ParticipantRecord class. The combined
+transaction state is then saved to the TX object store in a location
+associated with the WS-AT ACCoordinator class. This state is normally
+deleted at commit or rollback. It may be rewritten with the results of
+a partial commit process if, say a participant times out, or with the
+details of a heuristic outcome.
+
+During normal operation the XTS implementation maintains an active
+WS-AT participant stub map, an in-memory map from WS-AT participant
+ids to participant stubs. This is used to identify the primary target
+for incoming prepared, committed and aborted requests. The map is
+updated during enlist, prepare and commit/rollback to reflect the
+presence of active participant stubs and saved/deleted WS-AT
+Participant stub records in the TX object store.
+
+During bootstrap the ACCoordinator recovery module recreates XTS WS-AT
+participant stub records as it scans ACCoordinator entries in the TX
+object store. Each WS-AT stub record is entered in the active
+participant map as it is recreated. So, once the first recovery scan
+is completed all active WS-AT participants are entered in the map.
+This point can be detected using a flag which defaults to false and is
+set to true after the first scan is completed.
+
+Up to this point a prepared, committed or aborted message may
+legitimately employ a participant id which is not found in the WS-AT
+active participant map. In such a case incoming commit or rollback
+requests received which do not identify an entry in the map will be
+silently dropped to ensure that a valid response is provided when
+recovery is ready. After this point it is assumed that the message has
+been resent and processing follows the transition tables in the WS-AT
+spec: the response to a prepared message will be to send a rollback
+(i.e. to presume that the message was sent in error); the response to
+a committed or aborted message will be to ignore it (i.e. to presume
+that the message has been resent).

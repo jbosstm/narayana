@@ -49,7 +49,7 @@
     <property name="com.arjuna.jta.install.ext.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
     <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
             jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
-            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar"/>
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar"/>
 
     <condition property="jboss.home" value="${env.JBOSS_HOME}">
         <isset property="env.JBOSS_HOME"/>

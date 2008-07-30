@@ -18,13 +18,11 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package org.jboss.transactions.xts.recovery;
+package org.jboss.jbossts.xts.recovery;
 
 import com.arjuna.ats.arjuna.gandiva.inventory.InventoryElement;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.gandiva.ObjectName;
-import com.arjuna.ats.arjuna.PersistenceRecord;
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord;

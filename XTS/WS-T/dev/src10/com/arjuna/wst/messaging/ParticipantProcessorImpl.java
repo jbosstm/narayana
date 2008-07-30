@@ -31,6 +31,7 @@ import com.arjuna.webservices.wsat.ParticipantInboundEvents;
 import com.arjuna.webservices.wsat.client.CoordinatorClient;
 import com.arjuna.webservices.wsat.processors.ParticipantProcessor;
 import com.arjuna.wsc.messaging.MessageId;
+import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 
 /**
  * The Participant processor.
@@ -63,6 +64,17 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
     }
     
     /**
+     * Check whether a participant with the given id is currently active
+     * @param identifier The identifier.
+     */
+    public boolean isActive(final String identifier)
+    {
+        // if there is an entry in the table then it is active or completed and pending delete
+
+        return (activatedObjectProcessor.getObject(identifier) != null);
+    }
+
+    /**
      * Get the participant with the specified identifier.
      * @param instanceIdentifier The participant identifier.
      * @return The participant or null if not known.
@@ -81,13 +93,32 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
      * 
      * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_1 [com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_1] - Unexpected exception thrown from commit:
      * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_2 [com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_2] - Commit called on unknown participant: {0}
+     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_3 [com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_3] - Commit request dropped pending WS-AT participant recovery manager initialization for participant: {0}
+     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_4 [com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_4] - Commit request dropped pending WS-AT participant recovery manager scan for unknown participant: {0}
+     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_5 [com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_5] - Commit request dropped pending registration of application-specific recovery module for WS-AT participant: {0}
      */
     public void commit(final NotificationType commit, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
+
+        /**
+         * ensure the AT participant recovery manager is running
+         */
+        XTSATRecoveryManager recoveryManager = XTSATRecoveryManager.getRecoveryManager();
+
+        if (recoveryManager == null) {
+            // log warning and drop this message -- it will be resent
+            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_3", new Object[] {instanceIdentifier}) ;
+            }
+
+            return;
+        }
+
         final ParticipantInboundEvents participant = getParticipant(instanceIdentifier) ;
-        
+
         if (participant != null)
         {
             try
@@ -100,6 +131,20 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
                 {
                     WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_1", th) ; 
                 }
+            }
+        }
+        else if (!recoveryManager.isParticipantRecoveryStarted())
+        {
+            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_4", new Object[] {instanceIdentifier}) ;
+            }
+        }
+        else if (recoveryManager.findParticipantRecoveryRecord(instanceIdentifier.getInstanceIdentifier()) != null)
+        {
+            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.commit_5", new Object[] {instanceIdentifier}) ;
             }
         }
         else
@@ -120,6 +165,7 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
      * 
      * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.prepare_1 [com.arjuna.wst.messaging.ParticipantProcessorImpl.prepare_1] - Unexpected exception thrown from prepare: 
      * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.prepare_2 [com.arjuna.wst.messaging.ParticipantProcessorImpl.prepare_2] - Prepare called on unknown participant: {0}
+     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.prepare_3 [com.arjuna.wst.messaging.ParticipantProcessorImpl.prepare_3] - Prepare request dropped pending WS-AT participant recovery manager initialization for participant: {0}
      */
     public void prepare(final NotificationType prepare, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
@@ -159,11 +205,29 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
      * 
      * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_1 [com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_1] - Unexpected exception thrown from rollback: 
      * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_2 [com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_2] - Rollback called on unknown participant: {0}
+     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_3 [com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_3] - Rollback request dropped pending WS-AT participant recovery manager initialization for participant: {0}
+     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_4 [com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_4] - Rollback request dropped pending WS-AT participant recovery manager scan for unknown participant: {0}
+     * @message com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_5 [com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_5] - Rollback request dropped pending registration of application-specific recovery module for WS-AT participant: {0}
      */
     public void rollback(final NotificationType rollback, final AddressingContext addressingContext,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
+
+        /**
+         * ensure the AT participant recovery manager is running
+         */
+        XTSATRecoveryManager recoveryManager = XTSATRecoveryManager.getRecoveryManager();
+
+        if (recoveryManager == null) {
+            // log warning and drop this message -- it will be resent
+            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_3", new Object[] {instanceIdentifier}) ;
+            }
+
+        }
+
         final ParticipantInboundEvents participant = getParticipant(instanceIdentifier) ;
 
         if (participant != null)
@@ -178,6 +242,20 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
                 {
                     WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_1", th) ;
                 }
+            }
+        }
+        else if (!recoveryManager.isParticipantRecoveryStarted())
+        {
+            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_4", new Object[] {instanceIdentifier}) ;
+            }
+        }
+        else if (recoveryManager.findParticipantRecoveryRecord(instanceIdentifier.getInstanceIdentifier()) != null)
+        {
+            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst.messaging.ParticipantProcessorImpl.rollback_5", new Object[] {instanceIdentifier}) ;
             }
         }
         else

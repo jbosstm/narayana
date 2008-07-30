@@ -83,7 +83,7 @@
     <property name="jta.ext.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
     <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
             jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
-            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar"/>
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar"/>
 
     <property name="tests.libs"              value="junit.jar"/>
     <property name="ws-c.libs"               value="ws-c.jar"/>
@@ -195,7 +195,7 @@
 
         <classpath-builder filename="${com.arjuna.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
 
-        <javadoc    packagenames="com.arjuna.*"
+        <javadoc    packagenames="com.arjuna.*, org.jboss.jbossts.xts.*"
                     failonerror="yes"
                     private="yes"
                     defaultexcludes="yes"
@@ -203,14 +203,17 @@
 
             <packageset dir="${dev.src.dir}" defaultexcludes="yes">
               <include name="com/arjuna/**"/>
+              <include name="org/jboss/jbossts/xts/**"/>
             </packageset>
 
             <packageset dir="${dev.src10.dir}" defaultexcludes="yes">
               <include name="com/arjuna/**"/>
+              <include name="org/jboss/jbossts/xts/**"/>
             </packageset>
 
             <packageset dir="${dev.src11.dir}" defaultexcludes="yes">
               <include name="com/arjuna/**"/>
+              <include name="org/jboss/jbossts/xts//**"/>
             </packageset>
 
              <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">

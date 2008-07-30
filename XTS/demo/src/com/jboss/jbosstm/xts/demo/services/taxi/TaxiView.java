@@ -29,13 +29,15 @@
 
 package com.jboss.jbosstm.xts.demo.services.taxi;
 
+import java.io.Serializable;
+
 /**
  * The visual interface (GUI) for the Taxi Service.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.2 $
  */
-public class TaxiView extends javax.swing.JFrame
+public class TaxiView extends javax.swing.JFrame implements Serializable
 {
     // Note: Some parts of this file were auto-generated
     // by NetBeans 3.3 FormEditor (http://www.netbeans.org)

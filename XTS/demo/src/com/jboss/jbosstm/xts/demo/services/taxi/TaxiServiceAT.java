@@ -33,11 +33,14 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst11.TransactionManagerFactory;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.jboss.jbosstm.xts.demo.taxi.ITaxiServiceAT;
+import com.jboss.jbosstm.xts.demo.services.recovery.DemoATRecoveryModule;
 
 import javax.jws.WebService;
 import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
 import javax.jws.soap.SOAPBinding;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 /**
  * An adapter class that exposes the TaxiManager business API as a
@@ -53,6 +56,26 @@ import javax.jws.soap.SOAPBinding;
 @SOAPBinding(style=SOAPBinding.Style.RPC)
 public class TaxiServiceAT implements ITaxiServiceAT
 {
+    /**
+     * ensure that the recovery module for the dmeo is installed
+     */
+    @PostConstruct
+    void postConstruct()
+    {
+        // ensure that the xts-demo AT recovery helper module is registered
+        DemoATRecoveryModule.register();
+    }
+
+    /**
+     * ensure that the recovery module for the dmeo is deinstalled
+     */
+    @PreDestroy
+    void preDestroy()
+    {
+        // ensure that the xts-demo AT recovery helper module is registered
+        DemoATRecoveryModule.unregister();
+    }
+
     /**
      * Book a taxi
      * Enrols a Participant if necessary, then passes
@@ -76,7 +99,7 @@ public class TaxiServiceAT implements ITaxiServiceAT
                 System.out.println("TaxiServiceAT - enrolling...");
                 // enlist the Participant for this service:
                 TaxiParticipantAT taxiParticipant = new TaxiParticipantAT(transactionId);
-                TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(taxiParticipant, new Uid().toString());
+                TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(taxiParticipant, "org.jboss.jbossts.xts-demo:taxiAT:" + new Uid().toString());
             }
         }
         catch (Exception e)

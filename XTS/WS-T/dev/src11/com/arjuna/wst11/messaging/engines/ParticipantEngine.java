@@ -11,12 +11,12 @@ import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wsat.client.CoordinatorClient;
 import com.arjuna.webservices11.wsat.ParticipantInboundEvents;
 import com.arjuna.webservices11.wsat.State;
-import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsat.processors.ParticipantProcessor;
-import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.wst.*;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
+import org.jboss.jbossts.xts11.recovery.participant.at.ATParticipantRecoveryRecord;
+import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.addressing.AddressingProperties;
@@ -49,6 +49,15 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * The associated timer task or null.
      */
     private TimerTask timerTask ;
+    /**
+     * true if this participant has been recovered otherwise false
+     */
+    private boolean recovered;
+
+    /**
+     * true if this participant's recovery details have been logged to disk otherwise false
+     */
+    private boolean persisted;
 
     /**
      * Construct the initial engine for the participant.
@@ -58,7 +67,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
      */
     public ParticipantEngine(final Participant participant, final String id, final W3CEndpointReference coordinator)
     {
-        this(participant, id, State.STATE_ACTIVE, coordinator) ;
+        this(participant, id, State.STATE_ACTIVE, coordinator, false) ;
     }
 
     /**
@@ -68,12 +77,14 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * @param state The initial state.
      * @param coordinator The coordinator endpoint reference.
      */
-    public ParticipantEngine(final Participant participant, final String id, final State state, final W3CEndpointReference coordinator)
+    public ParticipantEngine(final Participant participant, final String id, final State state, final W3CEndpointReference coordinator, final boolean recovered)
     {
         this.participant = participant ;
         this.id = id ;
         this.state = state ;
         this.coordinator = coordinator ;
+        this.recovered = recovered;
+        this.persisted = recovered;
     }
 
     /**
@@ -171,6 +182,8 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * PreparedSuccess -> Aborting (execute rollback, send aborted and forget)
      * Committing -> Committing (ignore)
      * Aborting -> Aborting (send aborted and forget)
+     *
+     *  @message com.arjuna.wst11.messaging.engines.ParticipantEngine.rollback_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.rollback_1] could not delete recovery record for participant {0}
      */
     public void rollback(final Notification rollback, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
     {
@@ -178,6 +191,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
         synchronized(this)
         {
             current = state ;
+
             if ((current == State.STATE_ACTIVE) || (current == State.STATE_PREPARING) ||
                 (current == State.STATE_PREPARED_SUCCESS))
             {
@@ -190,9 +204,33 @@ public class ParticipantEngine implements ParticipantInboundEvents
             if ((current == State.STATE_ACTIVE) || (current == State.STATE_PREPARING) ||
                 (current == State.STATE_PREPARED_SUCCESS))
             {
+                // n.b. if state is PREPARING the participant may still be in the middle
+                // of prepare or may even be told to prepare after this is called. according
+                // to the spec that is not our lookout. however, rollback should only get
+                // called once here.
+
                 if (!executeRollback())
                 {
                     return ;
+                }
+            }
+
+            // if the participant managed to persist the log record then we should try
+            // to delete it. note that persisted can only be set to true by the PREPARING
+            // thread. if it detects a transtiion to ABORTING while it is doing the log write
+            // it will clear up itself.
+
+            if (persisted && participant instanceof Durable2PCParticipant) {
+                // if we cannot delete the participant we effectively drop the rollback message
+                // here in the hope that we have better luck next time..
+                if (!XTSATRecoveryManager.getRecoveryManager().deleteParticipantRecoveryRecord(id)) {
+                    // hmm, could not delete entry -- leave it so we can maybe retry later
+                    if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+                    {
+                        WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantEngine.rollback_1", new Object[] {id}) ;
+                    }
+
+                    return;
                 }
             }
 
@@ -288,13 +326,21 @@ public class ParticipantEngine implements ParticipantInboundEvents
      *
      * Preparing -> PreparedSuccess (send Prepared)
      * Committing -> Committing (send committed and forget)
+
+     * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_1] - Exception rolling back participant
+     * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_2 [com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_2] - Unable to delete recovery record during prepare for participant {0}
+     * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_3 [com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_3] - Unable to delete recovery record at commit for participant {0}
      */
     private void commitDecision()
     {
-        final State current ;
+        State current ;
+        boolean rollbackRequired  = false;
+        boolean deleteRequired  = false;
+
         synchronized(this)
         {
             current = state ;
+
             if (current == State.STATE_PREPARING)
             {
                 state = State.STATE_PREPARED_SUCCESS ;
@@ -303,10 +349,94 @@ public class ParticipantEngine implements ParticipantInboundEvents
 
         if (current == State.STATE_PREPARING)
         {
-            sendPrepared() ;
+            // ok, we need to write the recovery details to log and send prepared.
+            // if we cannot write the log then we have to rollback the participant
+            //  and send aborted.
+            if (participant instanceof Durable2PCParticipant) {
+                // write a durable participant recovery record to the persistent store
+                Durable2PCParticipant durableParticipant =(Durable2PCParticipant) participant;
+
+                ATParticipantRecoveryRecord recoveryRecord = new ATParticipantRecoveryRecord(id, durableParticipant, coordinator);
+
+                if (!XTSATRecoveryManager.getRecoveryManager().writeParticipantRecoveryRecord(recoveryRecord)) {
+                    // we need to rollback and send aborted unless some other thread
+                    //gets there first
+                    rollbackRequired = true;
+                }
+            }
+            // recheck state in case a rollback or readonly came in while we were writing the
+            // log record
+
+            synchronized (this) {
+                current = state;
+
+                if (current == State.STATE_PREPARED_SUCCESS) {
+                    if (rollbackRequired) {
+                        // if we change state to aborting then we are responsible for
+                        // calling rollback and sending aborted but we have no log record
+                        // to delete
+                        state = State.STATE_ABORTING;
+                    } else {
+                        // this ensures any subsequent commit or rollback deletes the log record
+                        // so we still have no log record to delete here
+                        persisted = true;
+                    }
+                } else if (!rollbackRequired) {
+                    // an incoming rollback or readonly changed the state to aborted or null so
+                    // it will already have performed a rollback if required but we need to
+                    // delete the log record since the rollback/readonly thread did not know
+                    // about it
+                    deleteRequired = true;
+                }
+            }
+
+            if (rollbackRequired)
+            {
+                // we need to do the rollback and send aborted
+
+                executeRollback();
+
+                sendAborted();
+                forget();
+            } else if (deleteRequired) {
+                // just try to delete the log entry -- any required aborted has already been sent
+
+                if (!XTSATRecoveryManager.getRecoveryManager().deleteParticipantRecoveryRecord(id)) {
+                    // hmm, could not delete entry log warning
+                    if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+                    {
+                        WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_2", new Object[] {id}) ;
+                    }
+                }
+            } else {
+                // whew got through -- send a prepared
+                sendPrepared() ;
+            }
         }
         else if (current == State.STATE_COMMITTING)
         {
+            if (persisted && participant instanceof Durable2PCParticipant) {
+                // remove any durable participant recovery record from the persistent store
+                Durable2PCParticipant durableParticipant =(Durable2PCParticipant) participant;
+
+                // if we cannot delete the participant we effectively drop the commit message
+                // here in the hope that we have better luck next time.
+                if (!XTSATRecoveryManager.getRecoveryManager().deleteParticipantRecoveryRecord(id)) {
+                    // hmm, could not delete entry -- log a warning
+                    if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+                    {
+                        WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.ParticipantEngine.commitDecision_3", new Object[] {id}) ;
+                    }
+                    // now revert back to PREPARED_SUCCESS and drop message awaiting a retry
+
+                    synchronized (this) {
+                        state = State.STATE_PREPARED_SUCCESS;
+                    }
+
+                    return;
+                }
+            }
+            
             sendCommitted() ;
             forget() ;
         }

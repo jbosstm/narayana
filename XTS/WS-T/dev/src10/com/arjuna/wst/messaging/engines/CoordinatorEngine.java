@@ -109,7 +109,15 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
         this.recovered = recovered;
         this.state = state ;
 
-        CoordinatorProcessor.getProcessor().activateCoordinator(this, id) ;
+        // unrecovered participants are always activated
+        // we only need to reactivate recovered participants which were successfully prepared
+        // any others will only have been saved because of a heuristic outcome e.g. a comms
+        // timeout at prepare will write a heuristic record for an ABORTED TX including a
+        // participant in state PREPARING. we can safely drop it since we implement presumed abort.
+
+        if (!recovered || state == State.STATE_PREPARED_SUCCESS) {
+            CoordinatorProcessor.getProcessor().activateCoordinator(this, id) ;
+        }
     }
     
     /**
@@ -337,6 +345,14 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
 
                 timerTask = null;
             }
+
+            // ok, the coordinator is going to start a rollback because of this timeout but it will
+            // only roll back the participants which have been prepared or have not yet been processed.
+            // we need to deactivate the participant here so that any later prepared messages are
+            // answered with a rollback (presumed abort)
+
+            CoordinatorProcessor.getProcessor().deactivateCoordinator(this);
+
             return state ;
         }
     }
@@ -386,10 +402,14 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
                 return state ;
             }
 
-            // the participant is still uncommitted so it must be rewritten to the log.
+            // the participant is still uncommitted so it will be rewritten to the log.
             // it remains activated in case a committed message comes in between now and
             // the next scan. the recovery code will detect this active participant when
             // rescanning the log and use it instead of recreating a new one.
+            // we need to mark this one as recovered so it does not get deleted until
+            // the next scan
+
+            recovered = true;
 
             return State.STATE_COMMITTING;
         }

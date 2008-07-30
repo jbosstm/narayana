@@ -18,7 +18,7 @@
  * (C) 2007,
  * @author JBoss Inc.
  */
-package org.jboss.transactions;
+package org.jboss.jbossts;
 
 /**
  * $Id$

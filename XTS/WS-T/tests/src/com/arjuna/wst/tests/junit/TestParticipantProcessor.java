@@ -82,6 +82,11 @@ public class TestParticipantProcessor extends ParticipantProcessor
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    public boolean isActive(final String identifier)
+    {
+        return true;
+    }
+
     public void commit(NotificationType commit,
             AddressingContext addressingContext, ArjunaContext arjunaContext)
     {

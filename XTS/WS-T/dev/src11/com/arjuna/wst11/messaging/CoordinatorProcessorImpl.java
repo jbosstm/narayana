@@ -16,6 +16,7 @@ import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.messaging.MessageId;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
+import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 
 import javax.xml.ws.addressing.AddressingProperties;
 
@@ -327,15 +328,6 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
     }
 
     /**
-     * Notifies that all coordinator entries in the recovery log have been accounted for.
-     */
-
-    public static void setRecoveryLogEntriesAccountedFor()
-    {
-        recoveryLogEntriesAccountedFor = true;
-    }
-
-    /**
      * Tests if there may be unknown coordinator entries in the recovery log.
      *
      * @return false if there may be unknown coordinator entries in the recovery log.
@@ -343,18 +335,6 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
 
     private static boolean areRecoveryLogEntriesAccountedFor()
     {
-        return recoveryLogEntriesAccountedFor;
+        return XTSATRecoveryManager.getRecoveryManager().isCoordinatorRecoveryStarted();
     }
-
-    /**
-     * False if there may be unknown coordinator entries in the recovery log otherwise true.
-     * This field defaults to false at boot. It is reset to true when the first log scan has
-     * completed from which point onwards there will always be a record in the activation
-     * processor for each entry in the recovery log.
-     *
-     * @return False if there may be unknown coordinator entries in the recovery log otherwise
-     * true.
-     */
-
-    private static boolean recoveryLogEntriesAccountedFor = false;
 }

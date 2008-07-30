@@ -18,11 +18,13 @@
  * (C) 2007,
  * @author Red Hat Middleware LLC.
  */
-package org.jboss.transactions.xts.recovery;
+package org.jboss.jbossts.xts.recovery;
+
+import org.jboss.jbossts.xts.logging.XTSLogger;
+import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager;
-import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
@@ -34,7 +36,6 @@ import com.arjuna.common.util.logging.DebugLevel;
 import com.arjuna.common.util.logging.VisibilityLevel;
 
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
-import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;
 import com.arjuna.webservices.base.processors.ReactivatedObjectProcessor;
 
 import java.util.Vector;
@@ -48,22 +49,20 @@ import java.util.Enumeration;
  * (com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.ACCoordinator)
  * Modelled on com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
  * TODO: refactor this and AtomicActionRecoveryModule to remove duplication?
- * TODO: move to better package.
- * TODO: how to register (config file vs. programmatic, given that the module list is fixed once recovery has started)
- *
- * @message com.arjuna.ats.internal.arjuna.recovery.ACCoordinatorRecoveryModule_1 [com.arjuna.ats.internal.arjuna.recovery.ACCoordinatorRecoveryModule_1] - RecoveryManagerStatusModule: Object store exception: {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.ACCoordinatorRecoveryModule_2 [com.arjuna.ats.internal.arjuna.recovery.ACCoordinatorRecoveryModule_2] - failed to recover Transaction {0} {1}
- * @message com.arjuna.ats.internal.arjuna.recovery.ACCoordinatorRecoveryModule_3 [com.arjuna.ats.internal.arjuna.recovery.ACCoordinatorRecoveryModule_3] - failed to access transaction store {0} {1}
  *
  * $Id$
+ *
+ * @message com.arjuna.ats.internal.arjuna.recovery.ACCoordinatorRecoveryModule_1 [org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_1] - RecoveryManagerStatusModule: Object store exception: {0}
+ * @message org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_2 [org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_2] - failed to recover Transaction {0} {1}
+ * @message org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_3 [org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_3] - failed to access transaction store {0} {1}
  */
 public class ACCoordinatorRecoveryModule  implements RecoveryModule
 {
     public ACCoordinatorRecoveryModule()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
+        if (XTSLogger.arjLogger.isDebugEnabled())
         {
-            tsLogger.arjLogger.debug
+            XTSLogger.arjLogger.debug
                     ( DebugLevel.CONSTRUCTORS,
                             VisibilityLevel.VIS_PUBLIC,
                             FacilityCode.FAC_CRASH_RECOVERY,
@@ -108,9 +107,9 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
 
         try
         {
-            if (tsLogger.arjLogger.isDebugEnabled())
+            if (XTSLogger.arjLogger.isDebugEnabled())
             {
-                tsLogger.arjLogger.debug( "StatusModule: first pass " );
+                XTSLogger.arjLogger.debug( "StatusModule: first pass " );
             }
 
             ACCoordinators = _transactionStore.allObjUids( _transactionType, acc_uids );
@@ -118,9 +117,9 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
         }
         catch ( ObjectStoreException ex )
         {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+            if (XTSLogger.arjLoggerI18N.isWarnEnabled())
             {
-                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.ACCoordinatorRecoveryModule_1",
+                XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_1",
                         new Object[]{ex});
             }
         }
@@ -133,25 +132,22 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
 
     public void periodicWorkSecondPass()
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
+        if (XTSLogger.arjLogger.isDebugEnabled())
         {
-            tsLogger.arjLogger.debug( "ACCoordinatorRecoveryModule: Second pass " );
+            XTSLogger.arjLogger.debug( "ACCoordinatorRecoveryModule: Second pass " );
         }
 
         processTransactionsStatus() ;
 
-        // ok we will have left a ghost record in the reactivated object table for any
-        // entries still sitting in the log so we can safely reject messages for unknown,
-        // non-ghost identifiers
+        // ok notify the coordinator processor that recovery processing has completed
 
-        ReactivatedObjectProcessor.setReactivationProcessingStarted();
     }
 
     protected ACCoordinatorRecoveryModule (String type)
     {
-        if (tsLogger.arjLogger.isDebugEnabled())
+        if (XTSLogger.arjLogger.isDebugEnabled())
         {
-            tsLogger.arjLogger.debug
+            XTSLogger.arjLogger.debug
                     ( DebugLevel.CONSTRUCTORS,
                             VisibilityLevel.VIS_PUBLIC,
                             FacilityCode.FAC_CRASH_RECOVERY,
@@ -173,15 +169,19 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
         boolean commitThisTransaction = true ;
 
         // Retrieve the transaction status from its original process.
+        // n.b. for a non-active XTS TX this status wil l always be committed even
+        // if it aborted or had a heuristic outcome. in that case we need to use
+        // the logged action status which can only be retrieved after activation
+
         int theStatus = _transactionStatusConnectionMgr.getTransactionStatus( _transactionType, recoverUid ) ;
 
         boolean inFlight = isTransactionInMidFlight( theStatus ) ;
 
         String Status = ActionStatus.stringForm( theStatus ) ;
 
-        if (tsLogger.arjLogger.isDebugEnabled())
+        if (XTSLogger.arjLogger.isDebugEnabled())
         {
-            tsLogger.arjLogger.debug
+            XTSLogger.arjLogger.debug
                     ( DebugLevel.FUNCTIONS,
                             VisibilityLevel.VIS_PUBLIC,
                             FacilityCode.FAC_CRASH_RECOVERY,
@@ -194,11 +194,11 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
         {
             try
             {
-                tsLogger.arjLogger.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                XTSLogger.arjLogger.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                             FacilityCode.FAC_CRASH_RECOVERY, "jjh doing revovery here for "+recoverUid);
                 // TODO jjh
                 RecoverACCoordinator rcvACCoordinator =
-                        new RecoverACCoordinator(recoverUid, theStatus);
+                        new RecoverACCoordinator(recoverUid);
 //                RecoverAtomicAction rcvAtomicAction =
 //                        new RecoverAtomicAction( recoverUid, theStatus ) ;
 
@@ -207,9 +207,9 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
             }
             catch ( Exception ex )
             {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                if (XTSLogger.arjLoggerI18N.isWarnEnabled())
                 {
-                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.ACCoordinatorRecoveryModule_2",
+                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_2",
                             new Object[]{recoverUid.toString(), ex});
                 }
             }
@@ -256,9 +256,9 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
     {
         Vector uidVector = new Vector() ;
 
-        if (tsLogger.arjLogger.isDebugEnabled())
+        if (XTSLogger.arjLogger.isDebugEnabled())
         {
-            tsLogger.arjLogger.debug( DebugLevel.FUNCTIONS,
+            XTSLogger.arjLogger.debug( DebugLevel.FUNCTIONS,
                     VisibilityLevel.VIS_PUBLIC,
                     FacilityCode.FAC_CRASH_RECOVERY,
                     "processing " + _transactionType
@@ -283,9 +283,9 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
                 {
                     Uid newUid = new Uid( theUid ) ;
 
-                    if (tsLogger.arjLogger.isDebugEnabled())
+                    if (XTSLogger.arjLogger.isDebugEnabled())
                     {
-                        tsLogger.arjLogger.debug
+                        XTSLogger.arjLogger.debug
                                 ( DebugLevel.FUNCTIONS,
                                         VisibilityLevel.VIS_PUBLIC,
                                         FacilityCode.FAC_CRASH_RECOVERY,
@@ -321,13 +321,15 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
             }
             catch ( ObjectStoreException ex )
             {
-                if (tsLogger.arjLogger.isWarnEnabled())
+                if (XTSLogger.arjLogger.isWarnEnabled())
                 {
-                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.ACCoordinatorRecoveryModule_3",
+                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_3",
                             new Object[]{currentUid.toString(), ex});
                 }
             }
         }
+
+        XTSATRecoveryManager.getRecoveryManager().setCoordinatorRecoveryStarted();
     }
 
     // 'type' within the Object Store for ACCoordinator.

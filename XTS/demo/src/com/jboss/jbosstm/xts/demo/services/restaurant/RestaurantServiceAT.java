@@ -33,12 +33,17 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst11.TransactionManagerFactory;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.jboss.jbosstm.xts.demo.restaurant.IRestaurantServiceAT;
+import com.jboss.jbosstm.xts.demo.services.recovery.DemoATRecoveryModule;
 
 import javax.jws.HandlerChain;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.soap.SOAPBinding;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 
 /**
  * An adapter class that exposes the RestaurantManager business API as a
@@ -54,6 +59,26 @@ import javax.jws.soap.SOAPBinding;
 @SOAPBinding(style=SOAPBinding.Style.RPC)
 public class RestaurantServiceAT implements IRestaurantServiceAT
 {
+    /**
+     * ensure that the recovery module for the dmeo is installed
+     */
+    @PostConstruct
+    void postConstruct()
+    {
+        // ensure that the xts-demo AT recovery helper module is registered
+        DemoATRecoveryModule.register();
+    }
+
+    /**
+     * ensure that the recovery module for the dmeo is deinstalled
+     */
+    @PreDestroy
+    void preDestroy()
+    {
+        // ensure that the xts-demo AT recovery helper module is registered
+        DemoATRecoveryModule.unregister();
+    }
+
     /**
      * Book a number of seats in the restaurant
      * Enrols a Participant if necessary, then passes
@@ -81,7 +106,7 @@ public class RestaurantServiceAT implements IRestaurantServiceAT
                 System.out.println("RestaurantServiceAT - enrolling...");
                 // enlist the Participant for this service:
                 RestaurantParticipantAT restaurantParticipant = new RestaurantParticipantAT(transactionId);
-                TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(restaurantParticipant, new Uid().toString());
+                TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(restaurantParticipant, "org.jboss.jbossts.xts-demo:restaurantAT:" + new Uid().toString());
             }
         }
         catch (Exception e)

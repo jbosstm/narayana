@@ -31,6 +31,8 @@ package com.jboss.jbosstm.xts.demo.services.theatre;
 
 import com.arjuna.wst.*;
 
+import java.io.Serializable;
+
 /**
  * An adapter class that exposes the TheatreManager transaction lifecycle
  * API as a WS-T Atomic Transaction participant.
@@ -39,7 +41,7 @@ import com.arjuna.wst.*;
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
  */
-public class TheatreParticipantAT implements Durable2PCParticipant
+public class TheatreParticipantAT implements Durable2PCParticipant, Serializable
 {
     /**
      * Participant instances are related to transaction instances
@@ -49,9 +51,6 @@ public class TheatreParticipantAT implements Durable2PCParticipant
      */
     public TheatreParticipantAT(String txID)
     {
-        // Binds to the singleton TheatreView and TheatreManager
-        theatreManager = TheatreManager.getSingletonInstance();
-        theatreView = TheatreView.getSingletonInstance();
         // we need to save the txID for later use when calling
         // business logic methods in the theatreManger.
         this.txID = txID;
@@ -72,9 +71,9 @@ public class TheatreParticipantAT implements Durable2PCParticipant
 
         System.out.println("TheatreParticipantAT.prepare");
 
-        theatreView.addPrepareMessage("id:" + txID + ". Prepare called on participant: " + this.getClass().toString());
+        getTheatreView().addPrepareMessage("id:" + txID + ". Prepare called on participant: " + this.getClass().toString());
 
-        boolean success = theatreManager.prepareSeats(txID);
+        boolean success = getTheatreManager().prepareSeats(txID);
 
         // Log the outcome and map the return value from
         // the business logic to the appropriate Vote type.
@@ -82,15 +81,15 @@ public class TheatreParticipantAT implements Durable2PCParticipant
 
         if (success)
         {
-            theatreView.addMessage("Theatre prepared successfully. Returning 'Prepared'\n");
-            theatreView.updateFields();
+            getTheatreView().addMessage("Theatre prepared successfully. Returning 'Prepared'\n");
+            getTheatreView().updateFields();
             return new Prepared();
         }
         else
         {
-            theatreManager.cancelSeats(txID) ;
-            theatreView.addMessage("Prepare failed (not enough seats?) Returning 'Aborted'\n");
-            theatreView.updateFields();
+            getTheatreManager().cancelSeats(txID) ;
+            getTheatreView().addMessage("Prepare failed (not enough seats?) Returning 'Aborted'\n");
+            getTheatreView().updateFields();
             return new Aborted();
         }
     }
@@ -109,22 +108,22 @@ public class TheatreParticipantAT implements Durable2PCParticipant
 
         System.out.println("TheatreParticipantAT.commit");
 
-        theatreView.addMessage("id:" + txID + ". Commit called on participant: " + this.getClass().toString());
+        getTheatreView().addMessage("id:" + txID + ". Commit called on participant: " + this.getClass().toString());
 
-        boolean success = theatreManager.commitSeats(txID);
+        boolean success = getTheatreManager().commitSeats(txID);
 
         // Log the outcome
 
         if (success)
         {
-            theatreView.addMessage("Theatre tickets committed\n");
+            getTheatreView().addMessage("Theatre tickets committed\n");
         }
         else
         {
-            theatreView.addMessage("Something went wrong (Transaction not registered?)\n");
+            getTheatreView().addMessage("Something went wrong (Transaction not registered?)\n");
         }
 
-        theatreView.updateFields();
+        getTheatreView().updateFields();
     }
 
     /**
@@ -141,22 +140,22 @@ public class TheatreParticipantAT implements Durable2PCParticipant
 
         System.out.println("TheatreParticipantAT.rollback");
 
-        theatreView.addMessage("id:" + txID + ". Rollback called on participant: " + this.getClass().toString());
+        getTheatreView().addMessage("id:" + txID + ". Rollback called on participant: " + this.getClass().toString());
 
-        boolean success = theatreManager.cancelSeats(txID);
+        boolean success = getTheatreManager().cancelSeats(txID);
 
         // Log the outcome
 
         if (success)
         {
-            theatreView.addMessage("Theatre booking cancelled\n");
+            getTheatreView().addMessage("Theatre booking cancelled\n");
         }
         else
         {
-            theatreView.addMessage("Something went wrong (Transaction not registered?)\n");
+            getTheatreView().addMessage("Something went wrong (Transaction not registered?)\n");
         }
 
-        theatreView.updateFields();
+        getTheatreView().updateFields();
     }
 
     /**
@@ -189,13 +188,11 @@ public class TheatreParticipantAT implements Durable2PCParticipant
      */
     protected String txID;
 
-    /**
-     * The TheatreView object to log events through.
-     */
-    protected static TheatreView theatreView;
+    public TheatreView getTheatreView() {
+        return TheatreView.getSingletonInstance();
+    }
 
-    /**
-     * The TheatreManager to perform business logic operations on.
-     */
-    protected static TheatreManager theatreManager;
+    public TheatreManager getTheatreManager() {
+        return TheatreManager.getSingletonInstance();
+    }
 }

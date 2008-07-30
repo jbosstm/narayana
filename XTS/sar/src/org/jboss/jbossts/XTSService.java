@@ -18,12 +18,12 @@
  * (C) 2007,
  * @author JBoss Inc.
  */
-package org.jboss.transactions;
+package org.jboss.jbossts;
 
 import org.jboss.logging.Logger;
-import org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule;
+import org.jboss.jbossts.xts.recovery.ACCoordinatorRecoveryModule;
+import org.jboss.jbossts.xts.recovery.participant.at.ATParticipantRecoveryModule;
 
-import com.arjuna.mw.wsas.utils.Configuration;
 //import com.arjuna.mw.wst.deploy.WSTXInitialisation;
 //import com.arjuna.mw.wst.UserTransaction;
 //import com.arjuna.mw.wst.TransactionManager;
@@ -74,8 +74,6 @@ import com.arjuna.services.framework.task.TaskManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 //import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 
-import java.io.InputStream;
-
 /**
  * $Id$
  */
@@ -103,6 +101,7 @@ public class XTSService implements XTSServiceMBean {
     private final Logger log = org.jboss.logging.Logger.getLogger(XTSService.class);
 
     private ACCoordinatorRecoveryModule acCoordinatorRecoveryModule = null;
+    private ATParticipantRecoveryModule atParticipantRecoveryModule = null;
 
     // TODO: how to use a (per application) remote coordinator?
     // does the http servlet param indicate its own location and the
@@ -177,10 +176,18 @@ public class XTSService implements XTSServiceMBean {
 
         acCoordinatorRecoveryModule.install();
 
+        // we don't need to install anything in the Inventory for this recovery module as it
+        // manages its own ObjectStore records but we do need it to create the recovery manager
+        // singleton.
+
+        atParticipantRecoveryModule = new ATParticipantRecoveryModule();
+
+        atParticipantRecoveryModule.install();
+
         // we assume the tx manager has started, hence initializing the recovery manager.
         // to guarantee this our mbean should depend on the tx mgr mbean. (but does that g/tee start or just load?)
+        RecoveryManager.manager().addModule(atParticipantRecoveryModule);
         RecoveryManager.manager().addModule(acCoordinatorRecoveryModule);
-
     }
 
     public void stop() throws Exception
@@ -188,10 +195,16 @@ public class XTSService implements XTSServiceMBean {
         log.info("JBossTS XTS Transaction Service - stopping");
 
         if (acCoordinatorRecoveryModule != null) {
-            // remove the module, making sure no any scan which might be using it has completed
+            // remove the module, making sure any scan which might be using it has completed
             RecoveryManager.manager().removeModule(acCoordinatorRecoveryModule, true);
             // ok, now it is safe to get the recovery manager to uninstall its Implementations from the inventory
             acCoordinatorRecoveryModule.uninstall();
+        }
+        if (atParticipantRecoveryModule != null) {
+            // remove the module, making sure any scan which might be using it has completed
+            RecoveryManager.manager().removeModule(atParticipantRecoveryModule, true);
+            // call uninstall even though it is currently a null op for this module
+            atParticipantRecoveryModule.uninstall();
         }
         TaskManager.getManager().shutdown() ; // com.arjuna.services.framework.admin.TaskManagerInitialisation
 

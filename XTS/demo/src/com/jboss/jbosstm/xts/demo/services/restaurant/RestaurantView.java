@@ -29,13 +29,15 @@
 
 package com.jboss.jbosstm.xts.demo.services.restaurant;
 
+import java.io.Serializable;
+
 /**
  * The visual interface (GUI) for the Restaurant Service.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.2 $
  */
-public class RestaurantView extends javax.swing.JFrame
+public class RestaurantView extends javax.swing.JFrame implements Serializable
 {
     // Note: Some parts of this file were auto-generated
     // by NetBeans 3.3 FormEditor (http://www.netbeans.org)

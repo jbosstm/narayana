@@ -39,12 +39,9 @@ import com.arjuna.webservices.wsat.client.CoordinatorClient;
 import com.arjuna.webservices.wsat.processors.ParticipantProcessor;
 import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.wsc.messaging.MessageId;
-import com.arjuna.wst.Aborted;
-import com.arjuna.wst.Participant;
-import com.arjuna.wst.Prepared;
-import com.arjuna.wst.ReadOnly;
-import com.arjuna.wst.SystemException;
-import com.arjuna.wst.Vote;
+import com.arjuna.wst.*;
+import org.jboss.jbossts.xts10.recovery.participant.at.ATParticipantRecoveryRecord;
+import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 
 /**
  * The participant state engine
@@ -72,7 +69,12 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * The associated timer task or null.
      */
     private TimerTask timerTask ;
-    
+
+    /**
+     * true id this is a recovered participant otherwise false.
+     */
+    private boolean recovered ;
+
     /**
      * Construct the initial engine for the participant.
      * @param participant The participant.
@@ -81,7 +83,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
      */
     public ParticipantEngine(final Participant participant, final String id, final EndpointReferenceType coordinator)
     {
-        this(participant, id, State.STATE_ACTIVE, coordinator) ;
+        this(participant, id, State.STATE_ACTIVE, coordinator, false) ;
     }
     
     /**
@@ -91,12 +93,13 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * @param state The initial state.
      * @param coordinator The coordinator endpoint reference.
      */
-    public ParticipantEngine(final Participant participant, final String id, final State state, final EndpointReferenceType coordinator)
+    public ParticipantEngine(final Participant participant, final String id, final State state, final EndpointReferenceType coordinator, boolean recovered)
     {
         this.participant = participant ;
         this.id = id ;
         this.state = state ;
         this.coordinator = coordinator ;
+        this.recovered = recovered;
     }
     
     /**
@@ -324,12 +327,37 @@ public class ParticipantEngine implements ParticipantInboundEvents
         
         if (current == State.STATE_PREPARING)
         {
+            if (participant instanceof Durable2PCParticipant) {
+                // write a durable participant recovery record to the persistent store
+                Durable2PCParticipant durableParticipant =(Durable2PCParticipant) participant;
+
+                ATParticipantRecoveryRecord recoveryRecord = new ATParticipantRecoveryRecord(id, durableParticipant, coordinator);
+                if (!XTSATRecoveryManager.getRecoveryManager().writeParticipantRecoveryRecord(recoveryRecord)) {
+                    // we need to revert the state to PREPARING
+                    state = State.STATE_PREPARING;
+                    return;
+                }
+            }
+
             sendPrepared() ;
         }
         else if (current == State.STATE_COMMITTING)
         {
-            sendCommitted() ;
-            forget() ;
+            if (participant instanceof Durable2PCParticipant) {
+                // remove any durable participant recovery record from the persistent store
+                Durable2PCParticipant durableParticipant =(Durable2PCParticipant) participant;
+
+                // if we cannot delete the participant we effectively drop the commit message
+                // here in the hope that we have better luck next time. the delete call will
+                // already have logged a warning so there is no else branch here.
+                if (XTSATRecoveryManager.getRecoveryManager().deleteParticipantRecoveryRecord(id)) {
+                    sendCommitted();
+                    forget();
+                }
+            } else {
+                sendCommitted() ;
+                forget() ;
+            }
         }
     }
     
@@ -375,7 +403,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
                 state = State.STATE_ABORTING ;
             }
         }
-        
+
         if ((current == State.STATE_PREPARING) || (current == State.STATE_ACTIVE))
         {
             sendAborted() ;

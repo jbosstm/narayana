@@ -33,12 +33,15 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst11.TransactionManagerFactory;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.jboss.jbosstm.xts.demo.theatre.ITheatreServiceAT;
+import com.jboss.jbosstm.xts.demo.services.recovery.DemoATRecoveryModule;
 
 import javax.jws.WebService;
 import javax.jws.WebParam;
 import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
 import javax.jws.soap.SOAPBinding;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 /**
  * An adapter class that exposes the TheatreManager business API as a
@@ -54,6 +57,26 @@ import javax.jws.soap.SOAPBinding;
 @SOAPBinding(style=SOAPBinding.Style.RPC)
 public class TheatreServiceAT implements ITheatreServiceAT
 {
+    /**
+     * ensure that the recovery module for the dmeo is installed
+     */
+    @PostConstruct
+    void postConstruct()
+    {
+        // ensure that the xts-demo AT recovery helper module is registered
+        DemoATRecoveryModule.register();
+    }
+
+    /**
+     * ensure that the recovery module for the dmeo is deinstalled
+     */
+    @PreDestroy
+    void preDestroy()
+    {
+        // ensure that the xts-demo AT recovery helper module is registered
+        DemoATRecoveryModule.unregister();
+    }
+
     /**
      * Book a number of seats in the Theatre
      * Enrols a Participant if necessary, then passes
@@ -84,7 +107,7 @@ public class TheatreServiceAT implements ITheatreServiceAT
                 System.out.println("theatreService - enrolling...");
                 // enlist the Participant for this service:
                 TheatreParticipantAT theatreParticipant = new TheatreParticipantAT(transactionId);
-                TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(theatreParticipant, new Uid().toString());
+                TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(theatreParticipant, "org.jboss.jbossts.xts-demo:theatreAT:" + new Uid().toString());
             }
         }
         catch (Exception e)

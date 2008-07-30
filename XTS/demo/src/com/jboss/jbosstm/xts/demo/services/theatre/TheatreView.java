@@ -29,13 +29,15 @@
 
 package com.jboss.jbosstm.xts.demo.services.theatre;
 
+import java.io.Serializable;
+
 /**
  * The visual interface (GUI) for the Theatre Service.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
  */
-public class TheatreView extends javax.swing.JFrame
+public class TheatreView extends javax.swing.JFrame implements Serializable
 {
 
     // Note: Some parts of this file were auto-generated

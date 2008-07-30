@@ -75,9 +75,27 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <property name="build.metainf.dir"       value="${build.dir}/META-INF"/>
     <property name="build.conf.dir" location="${build.dir}/conf"/>
 
+    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
+            jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar"/>
+    <property name="jboss.client.lib.dir" value="${jbossas.home}/client"/>
     <!-- enable debugging of XTS service code -->
 
     <property name="javac.debug" value="on"/>
+
+    <!-- name of the resource bundle -->
+    <property name="xts.resourcebundle"
+          value="xts_msg_en_US.properties"/>
+    <!-- Define buildsystem classpath -->
+    <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
+
+    <property name="com.arjuna.buildsystem.dir" location="../../antbuildsystem"/>
+    <property name="com.arjuna.buildsystem.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
+
+    <path id="com.arjuna.buildsystem.classpath">
+        <fileset dir="${com.arjuna.buildsystem.lib}" includes="${com.arjuna.buildsystem.lib.jars}"/>
+    </path>
+    <property name="com.arjuna.buildsystem.classpath" refid="com.arjuna.buildsystem.classpath"/>
 
     <target name="init">
         <delete dir="${build.dir}"/>
@@ -94,19 +112,43 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <!-- by default build XTS service archive supporting 1.1 WS-C/T protocols -->
     <target name="sar" depends="sar-11"/>
 
-    <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
-    <target name="sar-both" depends="init, insertcfg10, insertcfg11">
-
+    <target name="compile" depends="init">
         <javac srcdir="src" destdir="${build.classes.dir}" debug="${javac.debug}">
             <classpath>
-                <pathelement location="${jbossas.home}/client/jbossall-client.jar"/>
+                <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
                 <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
-                <!-- sar code only depends on generic XTS code -->
-                <fileset dir="${lib.dir}" includes="*.jar" excludes="*10.jar *11.jar"/>
+                <fileset dir="${lib.dir}" includes="*.jar"/>
                 <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossjts.jar jbossts-common.jar"/>
             </classpath>
         </javac>
+    </target>
 
+    <!-- build the messages resource bundle for use by the XTS logger -->
+    <target name="dev-resourcebundle">
+        <echo message="Generating XTS Bundle"/>
+
+        <javadoc    packagenames="org.jboss.jbossts.*"
+                    failonerror="yes"
+                    private="yes"
+                    defaultexcludes="yes"
+                    classpath="${build.classes.dir}">
+
+            <packageset dir="src" defaultexcludes="yes">
+              <include name="org/jboss/jbossts/**"/>
+            </packageset>
+
+             <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
+                <path>
+                    <pathelement path="${com.arjuna.buildsystem.classpath}"/>
+                </path>
+                <param name="-basedir" value="${basedir}/${build.classes.dir}"/>
+                <param name="-resourcebundle" value="${xts.resourcebundle}"/>
+             </doclet>
+        </javadoc>
+    </target>            
+
+    <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
+    <target name="sar-both" depends="init, compile, dev-resourcebundle, insertcfg10, insertcfg11">
         <!-- create config jar containing conf files for 1.0 and 1.1 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -168,17 +210,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     </target>
 
     <!-- build XTS service archive supporting 1.1 WS-C/T protocols -->
-    <target name="sar-11" depends="init, insertcfg11">
-        <javac srcdir="src" destdir="${build.classes.dir}" debug="${javac.debug}">
-            <classpath>
-                <pathelement location="${jbossas.home}/client/jbossall-client.jar"/>
-                <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
-                <!-- sar code only depends on generic XTS code -->
-                <fileset dir="${lib.dir}" includes="*.jar" excludes="*10.jar *11.jar"/>
-                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossjts.jar jbossts-common.jar"/>
-            </classpath>
-        </javac>
-
+    <target name="sar-11" depends="init, compile, dev-resourcebundle, insertcfg11">
         <!-- create config jar containing conf files for 1.1 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -231,17 +263,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     </target>
 
     <!-- build XTS service archive supporting 1.0 WS-C/T protocols -->
-    <target name="sar-10" depends="init, insertcfg10">
-        <javac srcdir="src" destdir="${build.classes.dir}" debug="${javac.debug}">
-            <classpath>
-                <pathelement location="${jbossas.home}/client/jbossall-client.jar"/>
-                <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
-                <!-- sar only depends on generic XTS code -->
-                <fileset dir="${lib.dir}" includes="*.jar" excludes="*10.jar *11.jar"/>
-                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossjts.jar jbossts-common.jar"/>
-            </classpath>
-        </javac>
-
+    <target name="sar-10" depends="init, compile, dev-resourcebundle, insertcfg10">
         <!-- create config jar containing conf files for 1.0 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>

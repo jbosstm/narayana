@@ -158,6 +158,20 @@ public class ParticipantStub implements Participant, PersistableParticipant
         {
             oos.packString(coordinator.getId()) ;
             oos.packBoolean(coordinator.isDurable()) ;
+            State state = coordinator.getState();
+            // participants in the heuristic list may get saved in any state
+            if (state == State.STATE_ACTIVE) {
+                oos.packInt(0);
+            } else if (state == State.STATE_PREPARING) {
+                oos.packInt(1);
+            } else if (state == State.STATE_PREPARED ||
+                        state == State.STATE_PREPARED_SUCCESS) {
+                oos.packInt(2);
+            } else if (state == State.STATE_ABORTING) {
+                oos.packInt(3);
+            } else { // COMMITTING or none
+                oos.packInt(4);
+            }
 
             // n.b. just use toString() for the endpoint -- it uses the writeTo() method which calls a suitable marshaller
             final StringWriter sw = new StringWriter() ;
@@ -187,10 +201,30 @@ public class ParticipantStub implements Participant, PersistableParticipant
      */
     public boolean restoreState(final InputObjectState ios)
     {
+        State state;
         try
         {
             final String id = ios.unpackString() ;
             final boolean durable = ios.unpackBoolean() ;
+            final int stateTag = ios.unpackInt();
+            switch (stateTag)
+            {
+                case 0:
+                    state = State.STATE_ACTIVE;
+                    break;
+                case 1:
+                    state = State.STATE_PREPARING;
+                    break;
+                case 2:
+                    state = State.STATE_PREPARED_SUCCESS;
+                    break;
+                case 3:
+                    state = State.STATE_ABORTING;
+                    break;
+                default:
+                    state = State.STATE_COMMITTING;
+                    break;
+            }
             final String eprValue = ios.unpackString() ;
 
             // this should successfully reverse the save process
@@ -199,12 +233,15 @@ public class ParticipantStub implements Participant, PersistableParticipant
             String eprefText = reader.getElementText();
             StreamSource source = new StreamSource(new StringReader(eprefText));
             final W3CEndpointReference endpointReference = new W3CEndpointReference(source);
-            // if we already have a coordinator from a previous recovery scan then reuse it
-            // with luck it will have been committed between the last scan and this one
+            // if we already have a coordinator from a previous recovery scan or because
+            // we had a heuristic outcoe then reuse it with luck it will have been committed
+            // or aborted between the last scan and this one
+            // note that whatever happens it will not have been removed from the table
+            // because it is marked as recovered
             coordinator = (CoordinatorEngine)CoordinatorProcessorImpl.getProcessor().getCoordinator(id);
             if (coordinator == null) {
-                // no entry found so recreate one which is at the prepared stage
-                coordinator = new CoordinatorEngine(id, durable, endpointReference, true, State.STATE_PREPARED_SUCCESS) ;
+                // no entry found so recreate one with the saved state
+                coordinator = new CoordinatorEngine(id, durable, endpointReference, true, state) ;
             }
             return true ;
         }

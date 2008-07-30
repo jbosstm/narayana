@@ -31,6 +31,9 @@ package com.jboss.jbosstm.xts.demo.services.restaurant;
 
 import com.arjuna.wst.*;
 
+import java.io.Serializable;
+import java.io.IOException;
+
 /**
  * An adapter class that exposes the RestaurantManager transaction lifecycle
  * API as a WS-T Atomic Transaction participant.
@@ -39,7 +42,7 @@ import com.arjuna.wst.*;
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
  */
-public class RestaurantParticipantAT implements Durable2PCParticipant
+public class RestaurantParticipantAT implements Durable2PCParticipant, Serializable
 {
     /**
      * Participant instances are related to transaction instances
@@ -49,9 +52,6 @@ public class RestaurantParticipantAT implements Durable2PCParticipant
      */
     public RestaurantParticipantAT(String txID)
     {
-        // Binds to the singleton RestaurantView and RestaurantManager
-        restaurantManager = RestaurantManager.getSingletonInstance();
-        restaurantView = RestaurantView.getSingletonInstance();
         // we need to save the txID for later use when calling
         // business logic methods in the restaurantManger.
         this.txID = txID;
@@ -72,24 +72,24 @@ public class RestaurantParticipantAT implements Durable2PCParticipant
 
         System.out.println("RestaurantParticipantAT.prepare");
 
-        restaurantView.addPrepareMessage("id:" + txID + ". Prepare called on participant: " + this.getClass().toString());
+        getRestaurantView().addPrepareMessage("id:" + txID + ". Prepare called on participant: " + this.getClass().toString());
 
-        boolean success = restaurantManager.prepareSeats(txID);
+        boolean success = getRestaurantManager().prepareSeats(txID);
 
         // Log the outcome and map the return value from
         // the business logic to the appropriate Vote type.
 
         if (success)
         {
-            restaurantView.addMessage("Seats prepared successfully. Returning 'Prepared'\n");
-            restaurantView.updateFields();
+            getRestaurantView().addMessage("Seats prepared successfully. Returning 'Prepared'\n");
+            getRestaurantView().updateFields();
             return new Prepared();
         }
         else
         {
-            restaurantManager.cancelSeats(txID) ;
-            restaurantView.addMessage("Prepare failed (not enough seats?) Returning 'Aborted'\n");
-            restaurantView.updateFields();
+            getRestaurantManager().cancelSeats(txID) ;
+            getRestaurantView().addMessage("Prepare failed (not enough seats?) Returning 'Aborted'\n");
+            getRestaurantView().updateFields();
             return new Aborted();
         }
     }
@@ -108,22 +108,22 @@ public class RestaurantParticipantAT implements Durable2PCParticipant
 
         System.out.println("RestaurantParticipantAT.commit");
 
-        restaurantView.addMessage("id:" + txID + ". Commit called on participant: " + this.getClass().toString());
+        getRestaurantView().addMessage("id:" + txID + ". Commit called on participant: " + this.getClass().toString());
 
-        boolean success = restaurantManager.commitSeats(txID);
+        boolean success = getRestaurantManager().commitSeats(txID);
 
         // Log the outcome
 
         if (success)
         {
-            restaurantView.addMessage("Seats committed\n");
+            getRestaurantView().addMessage("Seats committed\n");
         }
         else
         {
-            restaurantView.addMessage("Something went wrong (Transaction not registered?)\n");
+            getRestaurantView().addMessage("Something went wrong (Transaction not registered?)\n");
         }
 
-        restaurantView.updateFields();
+        getRestaurantView().updateFields();
     }
 
     /**
@@ -140,22 +140,22 @@ public class RestaurantParticipantAT implements Durable2PCParticipant
 
         System.out.println("RestaurantParticipantAT.rollback");
 
-        restaurantView.addMessage("id:" + txID + ". Rollback called on participant: " + this.getClass().toString());
+        getRestaurantView().addMessage("id:" + txID + ". Rollback called on participant: " + this.getClass().toString());
 
-        boolean success = restaurantManager.cancelSeats(txID);
+        boolean success = getRestaurantManager().cancelSeats(txID);
 
         // Log the outcome
 
         if (success)
         {
-            restaurantView.addMessage("Seats booking cancelled\n");
+            getRestaurantView().addMessage("Seats booking cancelled\n");
         }
         else
         {
-            restaurantView.addMessage("Something went wrong (Transaction not registered?)\n");
+            getRestaurantView().addMessage("Something went wrong (Transaction not registered?)\n");
         }
 
-        restaurantView.updateFields();
+        getRestaurantView().updateFields();
     }
 
     /**
@@ -188,14 +188,12 @@ public class RestaurantParticipantAT implements Durable2PCParticipant
      */
     protected String txID;
 
-    /**
-     * The RestaurantView object to log events through.
-     */
-    protected static RestaurantView restaurantView;
+    public RestaurantView getRestaurantView() {
+        return RestaurantView.getSingletonInstance();
+    }
 
-    /**
-     * The RestaurantManager to perform business logic operations on.
-     */
-    protected static RestaurantManager restaurantManager;
+    public RestaurantManager getRestaurantManager() {
+        return RestaurantManager.getSingletonInstance();
+    }
 }
 

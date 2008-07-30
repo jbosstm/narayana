@@ -30,6 +30,8 @@
 package com.jboss.jbosstm.xts.demo.services.restaurant;
 
 import java.util.Hashtable;
+import java.util.Enumeration;
+import java.io.*;
 
 /**
  * The transactional application logic for the Restaurant Service.
@@ -37,17 +39,30 @@ import java.util.Hashtable;
  * Stores and manages seating reservations. Knows nothing about Web Services.
  * Understands transactional booking lifecycle: unprepared, prepared, finished.
  *
+ * </p>The manager maintains the following invariants regarding seating capacity:
+ * <ul>
+ * <li>nBooked == sum(unpreparedList.seatCount) + sum(preparedList.seatCount)
+ *
+ * <li>nPrepared = sum(prepared.seatCount)
+ *
+ * <li>nTotal == nFree + nPrepared + nCommitted
+ * </ul>
+ * changes to nPrepared, nFree, nCommitted, nTotal and preparedList are always shadowed in
+ * persistent storage before returning control to clients.
+ *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
  */
-public class RestaurantManager
+public class RestaurantManager implements Serializable
 {
     /**
      * Create and initialise a new RestaurantManager instance.
      */
-    public RestaurantManager()
+    private RestaurantManager()
     {
-        setToDefault();
+        setToDefault(false);
+        // restore any state saved by a previous installation of this web service
+        restoreState();
     }
 
     /**
@@ -56,7 +71,7 @@ public class RestaurantManager
      * @param txID   The transaction identifier
      * @param nSeats The number of seats requested
      */
-    public void bookSeats(Object txID, int nSeats)
+    public synchronized void bookSeats(Object txID, int nSeats)
     {
         // locate any pre-existing request for the same transaction
         Integer request = (Integer) unpreparedTransactions.get(txID);
@@ -73,6 +88,7 @@ public class RestaurantManager
 
         // record the increased commitment to provide seating
         nBookedSeats += nSeats;
+        // we don't actually need to update until prepare
     }
 
     /**
@@ -81,7 +97,7 @@ public class RestaurantManager
      * @param txID The transaction identifier
      * @return true on success, false otherwise
      */
-    public boolean prepareSeats(Object txID)
+    public synchronized boolean prepareSeats(Object txID)
     {
         // ensure that we have seen this transaction before
         Integer request = (Integer) unpreparedTransactions.get(txID);
@@ -101,6 +117,8 @@ public class RestaurantManager
                     // mark the prepared seats as unavailable
                     nFreeSeats -= request.intValue();
                     nPreparedSeats += request.intValue();
+                    updateState();
+
                     return true;
                 }
                 else
@@ -130,6 +148,7 @@ public class RestaurantManager
                         // mark the prepared seats as unavailable
                         nFreeSeats -= request.intValue();
                         nPreparedSeats += request.intValue();
+                        updateState();
                         return true;
                     }
                     else
@@ -152,7 +171,7 @@ public class RestaurantManager
      * @param txID The transaction identifier
      * @return true on success, false otherwise
      */
-    public boolean cancelSeats(Object txID)
+    public synchronized boolean cancelSeats(Object txID)
     {
         boolean success = false;
 
@@ -165,6 +184,7 @@ public class RestaurantManager
             nFreeSeats += request.intValue();
             nPreparedSeats -= request.intValue();
             nBookedSeats -= request.intValue();
+            updateState();
             success = true;
         }
         else if (unpreparedTransactions.containsKey(txID))
@@ -178,7 +198,6 @@ public class RestaurantManager
         {
             success = false; // error: transaction not registered
         }
-
         return success;
     }
 
@@ -188,7 +207,7 @@ public class RestaurantManager
      * @param txID The transaction identifier
      * @return true on success, false otherwise
      */
-    public boolean commitSeats(Object txID)
+    public synchronized boolean commitSeats(Object txID)
     {
         boolean success = false;
 
@@ -201,6 +220,7 @@ public class RestaurantManager
             nCommittedSeats += request.intValue();
             nPreparedSeats -= request.intValue();
             nBookedSeats -= request.intValue();
+            updateState();
             success = true;
         }
         else if (unpreparedTransactions.containsKey(txID))
@@ -210,6 +230,7 @@ public class RestaurantManager
             nCommittedSeats += request.intValue();
             nFreeSeats -= request.intValue();
             nBookedSeats -= request.intValue();
+            updateState();
             success = true;
         }
         else
@@ -354,9 +375,20 @@ public class RestaurantManager
     }
 
     /**
-     * (re-)initialise the instance data structures.
+     * (re-)initialise the instance data structures deleting any previously saved
+     * transaction state.
      */
     public void setToDefault()
+    {
+        setToDefault(true);
+    }
+
+    /**
+     * (re-)initialise the instance data structures, potentially committing any saved state
+     * to disk
+     * @param deleteSavedState true if any cached transaction state should be deleted otherwise false
+     */
+    public void setToDefault(boolean deleteSavedState)
     {
         nTotalSeats = DEFAULT_SEATING_CAPACITY;
         nFreeSeats = nTotalSeats;
@@ -369,6 +401,10 @@ public class RestaurantManager
         preparation = new Object();
         isPreparationWaiting = false;
         isCommit = true;
+        if (deleteSavedState) {
+            // just write the current state.
+            updateState();
+        }
     }
 
     /**
@@ -376,7 +412,7 @@ public class RestaurantManager
      *
      * @return the singleton RestaurantManager instance.
      */
-    public static RestaurantManager getSingletonInstance()
+    public synchronized static RestaurantManager getSingletonInstance()
     {
         if (singletonInstance == null)
         {
@@ -419,7 +455,7 @@ public class RestaurantManager
 
     /**
      * The auto commit mode.
-     * <p/>
+     * <p/>                                 sa
      * true = automatically commit, false = manually commit
      */
     private boolean autoCommitMode;
@@ -453,4 +489,126 @@ public class RestaurantManager
      * The default initial capacity of each seating area.
      */
     public static final int DEFAULT_SEATING_CAPACITY = 100;
+
+    /**
+     * the name of the file sued to store the restaurant manager state
+     */
+    final static private String STATE_FILENAME = "restaurantManagerState";
+
+    /**
+     * the name of the file sued to store the restaurant manager shadow state
+     */
+    final static private String SHADOW_STATE_FILENAME = "restaurantManagerShadowState";
+
+    /**
+     * load any previously saved manager state
+     *
+     * n.b. can only be called once from the singleton constructor before save can be called
+     * so there is no need for any synchronization here
+     */
+
+    private void restoreState()
+    {
+        File file = new File(STATE_FILENAME);
+        File shadowFile = new File(SHADOW_STATE_FILENAME);
+        if (file.exists()) {
+            if (shadowFile.exists()) {
+                // crashed during shadow file write == just trash it
+                shadowFile.delete();
+            }
+        } else if (shadowFile.exists()) {
+            // crashed afetr successful write - promote shadow file to real file
+            shadowFile.renameTo(file);
+            file = new File(STATE_FILENAME);
+        }
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                readState(ois);
+            } catch (Exception e) {
+                System.out.println("error : could not restore restaurant manager state" + e);
+            }
+        } else {
+            System.out.println("Starting with default restaurant manager state");
+        }
+    }
+
+    /**
+     * write the current manager state to a shadow disk file then commit it as the latest state
+     * by relinking it to the current file
+     *
+     * n.b. must always called synchronized since the caller must always atomically check the
+     * current state, modify it and write it.
+     */
+    private void updateState()
+    {
+        File file = new File(STATE_FILENAME);
+        File shadowFile = new File(SHADOW_STATE_FILENAME);
+
+        if (shadowFile.exists()) {
+            // previous write must have barfed
+            shadowFile.delete();
+        }
+
+        try {
+            FileOutputStream fos = new FileOutputStream(shadowFile);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            writeState(oos);
+        } catch (Exception e) {
+            System.out.println("error : could not restore restaurant manager state" + e);
+        }
+
+        shadowFile.renameTo(file);
+    }
+
+    /**
+     * does the actual work of reading in the saved manager state
+     *
+     * @param ois
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void readState(ObjectInputStream ois) throws IOException, ClassNotFoundException
+    {
+        nTotalSeats = ois.readInt();
+        nFreeSeats = ois.readInt();
+        nPreparedSeats = ois.readInt();
+        nCommittedSeats = ois.readInt();
+        preparedTransactions = new Hashtable();
+        String name = (String)ois.readObject();
+        while (!"".equals(name)) {
+            int count = ois.readInt();
+            preparedTransactions.put(name, new Integer(count));
+            name = (String)ois.readObject();
+        }
+        unpreparedTransactions = new Hashtable();
+        // derive nBookedSeats from invariant
+        nBookedSeats = nPreparedSeats;
+        // assert invariant for total seats
+        assert nTotalSeats == nFreeSeats + nPreparedSeats + nCommittedSeats;
+    }
+
+    /**
+     * does the actual work of writing out the saved manager state
+     * @param oos
+     * @throws IOException
+     */
+    private void writeState(ObjectOutputStream oos) throws IOException
+    {
+        // assert invariant for total seats
+        assert nTotalSeats == nFreeSeats + nPreparedSeats + nCommittedSeats;
+        oos.writeInt(nTotalSeats);
+        oos.writeInt(nFreeSeats);
+        oos.writeInt(nPreparedSeats);
+        oos.writeInt(nCommittedSeats);
+        Enumeration keys = preparedTransactions.keys();
+        while (keys.hasMoreElements()) {
+            String name = (String)keys.nextElement();
+            int count = ((Integer)preparedTransactions.get(name)).intValue();
+            oos.writeObject(name);
+            oos.writeInt(count);
+        }
+        oos.writeObject("");
+    }
 }

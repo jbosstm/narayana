@@ -54,6 +54,12 @@ public abstract class ParticipantProcessor
     public abstract void deactivateParticipant(final ParticipantInboundEvents participant) ;
 
     /**
+     * Check whether a participant with the given id is currently active
+     * @param identifier The identifier.
+     */
+    public abstract boolean isActive(final String identifier) ;
+
+    /**
      * Commit.
      * @param commit The commit notification.
      * @param addressingProperties The addressing context.
