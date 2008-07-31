@@ -39,7 +39,7 @@ import java.io.*;
  * Stores and manages taxi reservations. Knows nothing about Web Services.
  * Understands transactional booking lifecycle: unprepared, prepared, finished.
  *
- * </p>Tchanges to preparedList are always shadowed in persistent storage before
+ * </p>changes to preparedList are always shadowed in persistent storage before
  * returning control to clients.
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
@@ -374,12 +374,12 @@ public class TaxiManager implements Serializable
     private boolean isPreparationWaiting;
 
     /**
-     * the name of the file sued to store the restaurant manager state
+     * the name of the file used to store the restaurant manager state
      */
     final static private String STATE_FILENAME = "taxiManagerState";
 
     /**
-     * the name of the file sued to store the restaurant manager shadow state
+     * the name of the file used to store the restaurant manager shadow state
      */
     final static private String SHADOW_STATE_FILENAME = "taxiManagerShadowState";
 

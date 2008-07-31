@@ -455,7 +455,7 @@ public class RestaurantManager implements Serializable
 
     /**
      * The auto commit mode.
-     * <p/>                                 sa
+     * <p/>
      * true = automatically commit, false = manually commit
      */
     private boolean autoCommitMode;
@@ -491,12 +491,12 @@ public class RestaurantManager implements Serializable
     public static final int DEFAULT_SEATING_CAPACITY = 100;
 
     /**
-     * the name of the file sued to store the restaurant manager state
+     * the name of the file used to store the restaurant manager state
      */
     final static private String STATE_FILENAME = "restaurantManagerState";
 
     /**
-     * the name of the file sued to store the restaurant manager shadow state
+     * the name of the file used to store the restaurant manager shadow state
      */
     final static private String SHADOW_STATE_FILENAME = "restaurantManagerShadowState";
 
