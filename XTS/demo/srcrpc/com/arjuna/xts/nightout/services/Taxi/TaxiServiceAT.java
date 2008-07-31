@@ -64,7 +64,7 @@ public class TaxiServiceAT implements ITaxiService
                 System.out.println("TaxiServiceAT - enrolling...");
                 // enlist the Participant for this service:
                 TaxiParticipantAT taxiParticipant = new TaxiParticipantAT(transactionId);
-                TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(taxiParticipant, new Uid().toString());
+                TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(taxiParticipant, "org.jboss.jbossts.xts-demorpc:taxiAT:" + new Uid().toString());
             }
         }
         catch (Exception e)

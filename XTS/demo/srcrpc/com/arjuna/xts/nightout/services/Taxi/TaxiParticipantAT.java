@@ -31,6 +31,8 @@ package com.arjuna.xts.nightout.services.Taxi;
 
 import com.arjuna.wst.*;
 
+import java.io.Serializable;
+
 /**
  * An adapter class that exposes the TaxiManager transaction lifecycle
  * API as a WS-T Atomic Transaction participant.
@@ -39,7 +41,7 @@ import com.arjuna.wst.*;
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
  */
-public class TaxiParticipantAT implements Durable2PCParticipant
+public class TaxiParticipantAT implements Durable2PCParticipant, Serializable
 {
     /**
      * Participant instances are related to transaction instances
@@ -49,9 +51,6 @@ public class TaxiParticipantAT implements Durable2PCParticipant
      */
     public TaxiParticipantAT(String txID)
     {
-        // Binds to the singleton TaxiView and TaxiManager
-        taxiManager = TaxiManager.getSingletonInstance();
-        taxiView = TaxiView.getSingletonInstance();
         // we need to save the txID for later use when calling
         // business logic methods in the taxiManger.
         this.txID = txID;
@@ -72,24 +71,24 @@ public class TaxiParticipantAT implements Durable2PCParticipant
 
         System.out.println("TaxiParticipantAT.prepare");
 
-        taxiView.addPrepareMessage("id:" + txID + ". Prepare called on participant: " + this.getClass().toString());
+        getTaxiView().addPrepareMessage("id:" + txID + ". Prepare called on participant: " + this.getClass().toString());
 
-        boolean success = taxiManager.prepareTaxi(txID);
+        boolean success = getTaxiManager().prepareTaxi(txID);
 
         // Log the outcome and map the return value from
         // the business logic to the appropriate Vote type.
 
         if (success)
         {
-            taxiView.addMessage("Taxi prepared successfully. Returning 'Prepared'\n");
-            taxiView.updateFields();
+            getTaxiView().addMessage("Taxi prepared successfully. Returning 'Prepared'\n");
+            getTaxiView().updateFields();
             return new Prepared();
         }
         else
         {
-            taxiManager.cancelTaxi(txID) ;
-            taxiView.addMessage("Prepare failed (not enough Taxis?) Returning 'Aborted'\n");
-            taxiView.updateFields();
+            getTaxiManager().cancelTaxi(txID) ;
+            getTaxiView().addMessage("Prepare failed (not enough Taxis?) Returning 'Aborted'\n");
+            getTaxiView().updateFields();
             return new Aborted();
         }
     }
@@ -108,22 +107,22 @@ public class TaxiParticipantAT implements Durable2PCParticipant
 
         System.out.println("TaxiParticipantAT.commit");
 
-        taxiView.addMessage("id:" + txID + ". Commit called on participant: " + this.getClass().toString());
+        getTaxiView().addMessage("id:" + txID + ". Commit called on participant: " + this.getClass().toString());
 
-        boolean success = taxiManager.commitTaxi(txID);
+        boolean success = getTaxiManager().commitTaxi(txID);
 
         // Log the outcome
 
         if (success)
         {
-            taxiView.addMessage("Taxi committed\n");
+            getTaxiView().addMessage("Taxi committed\n");
         }
         else
         {
-            taxiView.addMessage("Something went wrong (Transaction not registered?)\n");
+            getTaxiView().addMessage("Something went wrong (Transaction not registered?)\n");
         }
 
-        taxiView.updateFields();
+        getTaxiView().updateFields();
     }
 
     /**
@@ -140,22 +139,22 @@ public class TaxiParticipantAT implements Durable2PCParticipant
 
         System.out.println("TaxiParticipantAT.rollback");
 
-        taxiView.addMessage("id:" + txID + ". Rollback called on participant: " + this.getClass().toString());
+        getTaxiView().addMessage("id:" + txID + ". Rollback called on participant: " + this.getClass().toString());
 
-        boolean success = taxiManager.cancelTaxi(txID);
+        boolean success = getTaxiManager().cancelTaxi(txID);
 
         // Log the outcome
 
         if (success)
         {
-            taxiView.addMessage("Taxi booking cancelled\n");
+            getTaxiView().addMessage("Taxi booking cancelled\n");
         }
         else
         {
-            taxiView.addMessage("Something went wrong (Transaction not registered?)\n");
+            getTaxiView().addMessage("Something went wrong (Transaction not registered?)\n");
         }
 
-        taxiView.updateFields();
+        getTaxiView().updateFields();
     }
 
     /**
@@ -188,13 +187,11 @@ public class TaxiParticipantAT implements Durable2PCParticipant
      */
     protected String txID;
 
-    /**
-     * The TaxiView object to log events through.
-     */
-    protected static TaxiView taxiView;
+    public TaxiView getTaxiView() {
+        return TaxiView.getSingletonInstance();
+    }
 
-    /**
-     * The TaxiManager to perform business logic operations on.
-     */
-    protected static TaxiManager taxiManager;
+    public TaxiManager getTaxiManager() {
+        return TaxiManager.getSingletonInstance();
+    }
 }

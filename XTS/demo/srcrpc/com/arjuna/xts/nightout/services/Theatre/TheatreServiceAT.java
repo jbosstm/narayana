@@ -66,7 +66,7 @@ public class TheatreServiceAT implements ITheatreService
                 System.out.println("theatreService - enrolling...");
                 // enlist the Participant for this service:
                 TheatreParticipantAT theatreParticipant = new TheatreParticipantAT(transactionId);
-                TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(theatreParticipant, new Uid().toString());
+                TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(theatreParticipant, "org.jboss.jbossts.xts-demorpc:theatreAT:" + new Uid().toString());
             }
         }
         catch (Exception e)

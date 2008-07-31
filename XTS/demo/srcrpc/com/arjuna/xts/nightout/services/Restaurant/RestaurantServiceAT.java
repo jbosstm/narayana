@@ -66,7 +66,7 @@ public class RestaurantServiceAT implements IRestaurantService
                 System.out.println("RestaurantServiceAT - enrolling...");
                 // enlist the Participant for this service:
                 RestaurantParticipantAT restaurantParticipant = new RestaurantParticipantAT(transactionId);
-                TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(restaurantParticipant, new Uid().toString());
+                TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(restaurantParticipant, "org.jboss.jbossts.xts-demorpc:restaurantAT:" + new Uid().toString());
             }
         }
         catch (Exception e)

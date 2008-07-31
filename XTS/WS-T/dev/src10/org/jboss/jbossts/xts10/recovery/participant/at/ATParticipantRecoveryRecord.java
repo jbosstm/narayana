@@ -7,8 +7,10 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.webservices.wsaddr.EndpointReferenceType;
 import com.arjuna.webservices.wsat.State;
 import com.arjuna.webservices.wsat.processors.ParticipantProcessor;
+import com.arjuna.webservices.util.StreamHelper;
 
 import javax.xml.stream.*;
+import javax.xml.namespace.QName;
 import java.io.StringWriter;
 import java.io.IOException;
 import java.io.StringReader;
@@ -49,7 +51,9 @@ public class ATParticipantRecoveryRecord extends org.jboss.jbossts.xts.recovery.
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         StringWriter stringWriter = new StringWriter();
         XMLStreamWriter writer = factory.createXMLStreamWriter(stringWriter);
+        StreamHelper.writeStartElement(writer, QNAME_TWO_PC_COORDINATOR) ;
         endpoint.writeContent(writer);
+        StreamHelper.writeEndElement(writer, null, null) ;
         writer.close();
         oos.packString(stringWriter.toString());
     }
@@ -63,6 +67,7 @@ public class ATParticipantRecoveryRecord extends org.jboss.jbossts.xts.recovery.
         StringReader stringReader = new StringReader(xmlEndpoint);
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader reader = factory.createXMLStreamReader(stringReader);
+        StreamHelper.checkNextStartTag(reader, QNAME_TWO_PC_COORDINATOR) ;
         endpoint = new EndpointReferenceType(reader);
     }
 
@@ -84,6 +89,8 @@ public class ATParticipantRecoveryRecord extends org.jboss.jbossts.xts.recovery.
     {
         return ParticipantProcessor.getProcessor().isActive(getId());
     }
+
+    private static final QName QNAME_TWO_PC_COORDINATOR = new QName("twoPCCoordinator") ;
 
     private EndpointReferenceType endpoint;
 }

@@ -30,6 +30,8 @@
 package com.arjuna.xts.nightout.services.Taxi;
 
 import java.util.Hashtable;
+import java.util.Enumeration;
+import java.io.*;
 
 /**
  * The transactional application logic for the Taxi Service
@@ -37,17 +39,21 @@ import java.util.Hashtable;
  * Stores and manages taxi reservations. Knows nothing about Web Services.
  * Understands transactional booking lifecycle: unprepared, prepared, finished.
  *
+ * </p>changes to preparedList are always shadowed in persistent storage before
+ * returning control to clients.
+ *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
  */
-public class TaxiManager
+public class TaxiManager implements Serializable
 {
     /**
      * Create and initialise a new TaxiManager instance.
      */
-    public TaxiManager()
+    private TaxiManager()
     {
-        setToDefault();
+        setToDefault(false);
+        restoreState();
     }
 
     /**
@@ -55,7 +61,7 @@ public class TaxiManager
      *
      * @param txID The transaction identifier
      */
-    public void bookTaxi(Object txID)
+    public synchronized void bookTaxi(Object txID)
     {
         // locate any pre-existing request for the same transaction
         Integer request = (Integer) unpreparedTransactions.get(txID);
@@ -68,6 +74,7 @@ public class TaxiManager
 
         // record the request, keyed to its transaction scope
         unpreparedTransactions.put(txID, new Integer(request.intValue()));
+        // we don't actually need to update until prepare
     }
 
     /**
@@ -76,7 +83,7 @@ public class TaxiManager
      * @param txID The transaction identifier
      * @return true on success, false otherwise
      */
-    public boolean prepareTaxi(Object txID)
+    public synchronized boolean prepareTaxi(Object txID)
     {
         // ensure that we have seen this transaction before
         Integer request = (Integer) unpreparedTransactions.get(txID);
@@ -91,6 +98,7 @@ public class TaxiManager
                 // record the prepared transaction
                 preparedTransactions.put(txID, request);
                 unpreparedTransactions.remove(txID);
+                updateState();
                 return true;
             }
             else
@@ -109,6 +117,7 @@ public class TaxiManager
                         // record the prepared transaction
                         preparedTransactions.put(txID, request);
                         unpreparedTransactions.remove(txID);
+                        updateState();
                         return true;
                     }
                     else
@@ -132,7 +141,7 @@ public class TaxiManager
      * @param txID The transaction identifier
      * @return true on success, false otherwise
      */
-    public boolean cancelTaxi(Object txID)
+    public synchronized boolean cancelTaxi(Object txID)
     {
         boolean success = false;
 
@@ -142,12 +151,14 @@ public class TaxiManager
         {
             // undo the prepare operations
             preparedTransactions.remove(txID);
+            updateState();
             success = true;
         }
         else if (unpreparedTransactions.containsKey(txID))
         {
             // undo the booking operations
             unpreparedTransactions.remove(txID);
+            // we don't need to update state
             success = true;
         }
         else
@@ -164,7 +175,7 @@ public class TaxiManager
      * @param txID The transaction identifier
      * @return true on success, false otherwise
      */
-    public boolean commitTaxi(Object txID)
+    public synchronized boolean commitTaxi(Object txID)
     {
         boolean success = false;
         hasCommitted = true;
@@ -175,12 +186,14 @@ public class TaxiManager
         {
             // complete the prepared transaction
             preparedTransactions.remove(txID);
+            updateState();
             success = true;
         }
         else if (unpreparedTransactions.containsKey(txID))
         {
             // use one phase commit optimisation, skipping prepare
             unpreparedTransactions.remove(txID);
+            // we don't need to update state
             success = true;
         }
         else
@@ -262,9 +275,20 @@ public class TaxiManager
     }
 
     /**
-     * (re-)initialise the instance data structures.
+     * (re-)initialise the instance data structures deleting any previously saved
+     * transaction state.
      */
     public void setToDefault()
+    {
+        setToDefault(true);
+    }
+
+    /**
+     * (re-)initialise the instance data structures, potentially committing any saved state
+     * to disk
+     * @param deleteSavedState true if any cached transaction state should be deleted otherwise false
+     */
+    public void setToDefault(boolean deleteSavedState)
     {
         preparedTransactions = new Hashtable();
         unpreparedTransactions = new Hashtable();
@@ -273,12 +297,16 @@ public class TaxiManager
         isPreparationWaiting = false;
         isCommit = false;
         hasCommitted = false;
+        if (deleteSavedState) {
+            // just write the current state.
+            updateState();
+        }
     }
 
     /**
      * Allow use of a singleton model for web services demo.
      */
-    public static TaxiManager getSingletonInstance()
+    public synchronized static TaxiManager getSingletonInstance()
     {
         if (singletonInstance == null)
         {
@@ -344,4 +372,112 @@ public class TaxiManager
      * The waiting status, when in manual commit mode.
      */
     private boolean isPreparationWaiting;
+
+    /**
+     * the name of the file sued to store the restaurant manager state
+     */
+    final static private String STATE_FILENAME = "taxiManagerRPCState";
+
+    /**
+     * the name of the file sued to store the restaurant manager shadow state
+     */
+    final static private String SHADOW_STATE_FILENAME = "taxiManagerRPCShadowState";
+
+    /**
+     * load any previously saved manager state.
+     *
+     * n.b. can only be called once from the singleton constructor before save can be called
+     * so there is no need for any synchronization here
+     */
+
+    private synchronized void restoreState()
+    {
+        File file = new File(STATE_FILENAME);
+        File shadowFile = new File(SHADOW_STATE_FILENAME);
+        if (file.exists()) {
+            if (shadowFile.exists()) {
+                // crashed during shadow file write == just trash it
+                shadowFile.delete();
+            }
+        } else if (shadowFile.exists()) {
+            // crashed afetr successful write - promote shadow file to real file
+            shadowFile.renameTo(file);
+            file = new File(STATE_FILENAME);
+        }
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                readState(ois);
+            } catch (Exception e) {
+                System.out.println("error : could not restore restaurant manager state" + e);
+            }
+        } else {
+            System.out.println("Starting with default restaurant manager state");
+        }
+    }
+
+    /**
+     * write the current manager state to a shadow disk file then commit it as the latest state
+     * by relinking it to the current file
+     *
+     * n.b. must always called synchronized since the caller must always atomically check the
+     * current state, modify it and write it.
+     */
+    private void updateState()
+    {
+        File file = new File(STATE_FILENAME);
+        File shadowFile = new File(SHADOW_STATE_FILENAME);
+
+        if (shadowFile.exists()) {
+            // previous write must have barfed
+            shadowFile.delete();
+        }
+
+        try {
+            FileOutputStream fos = new FileOutputStream(shadowFile);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            writeState(oos);
+        } catch (Exception e) {
+            System.out.println("error : could not restore restaurant manager state" + e);
+        }
+
+        shadowFile.renameTo(file);
+    }
+
+    /**
+     * does the actual work of reading in the saved manager state
+     *
+     * @param ois
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void readState(ObjectInputStream ois) throws IOException, ClassNotFoundException
+    {
+        preparedTransactions = new Hashtable();
+        String name = (String)ois.readObject();
+        while (!"".equals(name)) {
+            int count = ois.readInt();
+            preparedTransactions.put(name, new Integer(count));
+            name = (String)ois.readObject();
+        }
+        unpreparedTransactions = new Hashtable();
+    }
+
+    /**
+     * does the actual work of writing out the saved manager state
+     * @param oos
+     * @throws IOException
+     */
+    private void writeState(ObjectOutputStream oos) throws IOException
+    {
+        Enumeration keys = preparedTransactions.keys();
+        while (keys.hasMoreElements()) {
+            String name = (String)keys.nextElement();
+            int count = ((Integer)preparedTransactions.get(name)).intValue();
+            oos.writeObject(name);
+            oos.writeInt(count);
+        }
+        oos.writeObject("");
+    }
 }
