@@ -107,6 +107,9 @@ import java.util.*;
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_16
  *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_16] -
  *          TransactionReaper::doCancellations worker {0} exception while marking TX {1} as rollback only
+ * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_18
+ *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_18] -
+ *          TransactionReaper::check timeout for TX {0} in state  {1}
  */
 
 public class TransactionReaper
@@ -241,13 +244,13 @@ public class TransactionReaper
 		    break;
 		}
 
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLoggerI18N.isWarnEnabled())
 		{
-		    tsLogger.arjLogger
-			.debug(
-			    DebugLevel.FUNCTIONS,
-			    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
-			    "Reaper timeout for TX " + e._control.get_uid() + " state " + e.statusName());
+		    tsLogger.arjLoggerI18N
+			.warn(
+                    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_18",
+                    new Object[]
+                    { e._control.get_uid() , e.statusName() });
 		}
 
 		// if we have to synchronize on multiple objects we always
@@ -363,7 +366,7 @@ public class TransactionReaper
 				    DebugLevel.FUNCTIONS,
 				    VisibilityLevel.VIS_PUBLIC,
 				    FacilityCode.FAC_ATOMIC_ACTION,
-				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_4",
+				    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_4",
 				    new Object[]{e._control.get_uid()});
 			}
 		    }
@@ -383,9 +386,9 @@ public class TransactionReaper
 			{
 			    _zombieCount++;
 
-			    if (tsLogger.arjLoggerI18N.isDebugEnabled())
+			    if (tsLogger.arjLogger.isDebugEnabled())
 			    {
-				tsLogger.arjLoggerI18N
+				tsLogger.arjLogger
 				    .debug(
 					DebugLevel.FUNCTIONS,
 					VisibilityLevel.VIS_PUBLIC,
@@ -396,14 +399,11 @@ public class TransactionReaper
 			    {
 				// log zombie overflow error call()
 
-				if (tsLogger.arjLoggerI18N.isDebugEnabled())
+				if (tsLogger.arjLoggerI18N.isErrorEnabled())
 				{
 				    tsLogger.arjLoggerI18N
-					.debug(
-					    DebugLevel.ERROR_MESSAGES,
-					    VisibilityLevel.VIS_PUBLIC,
-					    FacilityCode.FAC_ATOMIC_ACTION,
-					    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_5",
+					.error(
+					    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_5",
 					    new Object[]{new Integer(_zombieCount)});
 				}
 			    }
@@ -416,14 +416,11 @@ public class TransactionReaper
 
 			// log a failed cancel()
 
-			if (tsLogger.arjLoggerI18N.isDebugEnabled())
+			if (tsLogger.arjLoggerI18N.isWarnEnabled())
 			{
 			    tsLogger.arjLoggerI18N
-				.debug(
-				    DebugLevel.ERROR_MESSAGES,
-				    VisibilityLevel.VIS_PUBLIC,
-				    FacilityCode.FAC_ATOMIC_ACTION,
-				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_6",
+				.warn(
+				    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_6",
 				    new Object[]{e._worker,
 						 e._control.get_uid()});
 			}
@@ -446,14 +443,11 @@ public class TransactionReaper
 
 				// log a successful preventCommit()
 
-				if (tsLogger.arjLoggerI18N.isDebugEnabled())
+				if (tsLogger.arjLoggerI18N.isWarnEnabled())
 				{
 				    tsLogger.arjLoggerI18N
-					.debug(
-					    DebugLevel.FUNCTIONS,
-					    VisibilityLevel.VIS_PUBLIC,
-					    FacilityCode.FAC_ATOMIC_ACTION,
-					    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_10",
+					.warn(
+					    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_10",
 					    new Object[]{e._control.get_uid()});
 				}
 			    }
@@ -461,13 +455,11 @@ public class TransactionReaper
 			    {
 				// log a failed preventCommit()
 
-				if (tsLogger.arjLoggerI18N.isDebugEnabled())
+				if (tsLogger.arjLoggerI18N.isWarnEnabled())
 				{
 				    tsLogger.arjLoggerI18N
-					.debug(DebugLevel.ERROR_MESSAGES,
-					       VisibilityLevel.VIS_PUBLIC,
-					       FacilityCode.FAC_ATOMIC_ACTION,
-					       "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_11",
+					.warn(
+					       "com.arjuna.ats.arjuna.coordinator.TransactionReaper_11",
 					       new Object[]{e._control.get_uid()});
 				}
 			    }
@@ -476,14 +468,12 @@ public class TransactionReaper
 			{
 			    // log an exception under preventCommit()
 
-			    if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+			    if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
 				tsLogger.arjLoggerI18N
-				    .debug(
-					DebugLevel.ERROR_MESSAGES,
-					VisibilityLevel.VIS_PUBLIC,
-					FacilityCode.FAC_ATOMIC_ACTION,
-					"com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_12",
-					new Object[]{e._control.get_uid()});
+				    .warn(
+					"com.arjuna.ats.arjuna.coordinator.TransactionReaper_12",
+					new Object[]{e._control.get_uid()},
+                    e1);
 			    }
 			}
 		    }
@@ -560,7 +550,7 @@ public class TransactionReaper
 		}
 
 		boolean cancelled = false;
-		boolean excepted = false;
+		Exception exception = null;
 
 		synchronized(e)
 		{
@@ -593,7 +583,7 @@ public class TransactionReaper
 		}
 		catch (Exception e1)
 		{
-		    excepted = true;
+		    exception = e1;
 		}
 
 		// ok, close the interrupt window by resetting the
@@ -618,14 +608,11 @@ public class TransactionReaper
 			    _zombieCount--;
 			}
 
-			if (tsLogger.arjLoggerI18N.isDebugEnabled())
+			if (tsLogger.arjLoggerI18N.isWarnEnabled())
 			{
 			    tsLogger.arjLoggerI18N
-				.debug(
-				    DebugLevel.ERROR_MESSAGES,
-				    VisibilityLevel.VIS_PUBLIC,
-				    FacilityCode.FAC_ATOMIC_ACTION,
-				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_13",
+				.warn(
+				    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_13",
 				    new Object[]{Thread.currentThread(),
 						 e._control.get_uid(),
 						 new Integer(_zombieCount)});
@@ -663,14 +650,11 @@ public class TransactionReaper
 
 		if (cancelled)
 		{
-		    if (tsLogger.arjLoggerI18N.isDebugEnabled())
+		    if (tsLogger.arjLoggerI18N.isWarnEnabled())
 		    {
 			tsLogger.arjLoggerI18N
-			    .debug(
-				DebugLevel.FUNCTIONS,
-				VisibilityLevel.VIS_PUBLIC,
-				FacilityCode.FAC_ATOMIC_ACTION,
-				"com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_7",
+			    .warn(
+				"com.arjuna.ats.arjuna.coordinator.TransactionReaper_7",
 				new Object[]{Thread.currentThread(),
 					     e._control.get_uid()});
 		    }
@@ -683,30 +667,25 @@ public class TransactionReaper
 		}
 		else
 		{
-		    if (excepted)
+		    if (exception != null)
 		    {
-			if (tsLogger.arjLoggerI18N.isDebugEnabled())
+			if (tsLogger.arjLoggerI18N.isWarnEnabled())
 			{
 			    tsLogger.arjLoggerI18N
-				.debug(
-				    DebugLevel.FUNCTIONS,
-				    VisibilityLevel.VIS_PUBLIC,
-				    FacilityCode.FAC_ATOMIC_ACTION,
-				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_9",
+				.warn(
+				    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_9",
 				    new Object[]{Thread.currentThread(),
-						 e._control.get_uid()});
+						 e._control.get_uid()},
+                        exception);
 			}
 		    }
 		    else
 		    {
-			if (tsLogger.arjLoggerI18N.isDebugEnabled())
+			if (tsLogger.arjLoggerI18N.isWarnEnabled())
 			{
 			    tsLogger.arjLoggerI18N
-				.debug(
-				    DebugLevel.FUNCTIONS,
-				    VisibilityLevel.VIS_PUBLIC,
-				    FacilityCode.FAC_ATOMIC_ACTION,
-				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_8",
+				.warn(
+				    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_8",
 				    new Object[]{Thread.currentThread(),
 						 e._control.get_uid()});
 			}
@@ -723,14 +702,11 @@ public class TransactionReaper
 			if (e._control.preventCommit()) {
 			    // log a successful preventCommit()
 
-			    if (tsLogger.arjLoggerI18N.isDebugEnabled())
+			    if (tsLogger.arjLoggerI18N.isWarnEnabled())
 			    {
 				tsLogger.arjLoggerI18N
-				    .debug(
-					DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					FacilityCode.FAC_ATOMIC_ACTION,
-					"com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_14",
+				    .warn(
+					"com.arjuna.ats.arjuna.coordinator.TransactionReaper_14",
 					new Object[]{Thread.currentThread(),
 						     e._control.get_uid()});
 			    }
@@ -739,14 +715,11 @@ public class TransactionReaper
 			{
 			    // log a failed preventCommit()
 
-			    if (tsLogger.arjLoggerI18N.isDebugEnabled())
+			    if (tsLogger.arjLoggerI18N.isWarnEnabled())
 			    {
 				tsLogger.arjLoggerI18N
-				    .debug(
-					DebugLevel.ERROR_MESSAGES,
-					VisibilityLevel.VIS_PUBLIC,
-					FacilityCode.FAC_ATOMIC_ACTION,
-					"com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_15",
+				    .warn(
+					"com.arjuna.ats.arjuna.coordinator.TransactionReaper_15",
 					new Object[]{Thread.currentThread(),
 						     e._control.get_uid()});
 			    }
@@ -756,15 +729,13 @@ public class TransactionReaper
 		    {
 			// log an exception under preventCommit()
 
-			if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+			if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
 			    tsLogger.arjLoggerI18N
-				.debug(
-				    DebugLevel.ERROR_MESSAGES,
-				    VisibilityLevel.VIS_PUBLIC,
-				    FacilityCode.FAC_ATOMIC_ACTION,
-				    "com.arjuna.ats.internal.arjuna.coordinator.ReaperThread_16",
+				.warn(
+				    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_16",
 				    new Object[]{Thread.currentThread(),
-						 e._control.get_uid()});
+						 e._control.get_uid()},
+                    e1);
 			}
 		    }
 		}
@@ -930,7 +901,8 @@ public class TransactionReaper
 		timeout = new Integer((int) remainingTime/1000);  // convert back to seconds.
 	    }
 
-	    tsLogger.arjLoggerI18N
+        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+        tsLogger.arjLoggerI18N
 	    .debug(
 		    DebugLevel.FUNCTIONS,
 		    VisibilityLevel.VIS_PUBLIC,
@@ -938,8 +910,9 @@ public class TransactionReaper
 		    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_17",
 		    new Object[]
 		               { control, timeout });
+        }
 
-	    return timeout.intValue();
+        return timeout.intValue();
 	}
 
 	/**
@@ -1029,9 +1002,11 @@ public class TransactionReaper
 					}
 					catch (NumberFormatException e)
 					{
-						tsLogger.arjLogger.warn("TransactionReaper::create - "
+                        if (tsLogger.arjLogger.isWarnEnabled()) {
+                        tsLogger.arjLogger.warn("TransactionReaper::create - "
 								+ e);
-					}
+                        }
+                    }
 				}
 			}
 			else
