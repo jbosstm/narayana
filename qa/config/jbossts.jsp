@@ -24,8 +24,8 @@
                                         "Raw Subtransaction Aware Resources Tests 01-3", "Raw Subtransaction Aware Resources Tests 02-1",
                                         "Raw Subtransaction Aware Resources Tests 02-2", "Raw Subtransaction Aware Resources Tests 02-3" };
 
-    String[] jts_crTestIds = new String[] { "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "146" };
-    String[] jts_crTestNames = new String[] { "Crash Recovery Tests 01", "Crash Recovery Tests 02-1", "Crash Recovery Tests 02-2",
+    String[] jts_crTestIds = new String[] { "300", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "146" };
+    String[] jts_crTestNames = new String[] { "AS Crash Recovery Tests 01", "Crash Recovery Tests 01", "Crash Recovery Tests 02-1", "Crash Recovery Tests 02-2",
                                         "Crash Recovery Tests 03", "Crash Recovery Tests 04", "Crash Recovery Tests 05-1",
                                         "Crash Recovery Tests 05-2", "Crash Recovery Tests 06", "Crash Recovery Tests 07",
                                         "Crash Recovery Tests 08", "Crash Recovery Tests 12" };
@@ -49,8 +49,11 @@
                                         "JDBC Local Tests 01 - IBM DB2 JNDI", "JDBC Local Tests 01 - PostgreSQL JNDI",
                                         "JDBC Local Tests 01 - MySQL JNDI", "JDBC Local Tests 01 - Sybase JNDI" };
 
+    String[] jta_crashTestIds = new String[] { "300" };
+    String[] jta_crashTestNames = new String[] { "JTA Crash Tests" };
+
     // for single host setups you may want to add "Linux" to this list 
-    String[] OS = new String[] { "RHEL4-32", "RHEL4-64", "RHEL5-32", "RHEL5-64", "WIN2003-64", "SOL10-SPARC", "HPUX11-IA64", };
+    String[] OS = new String[] { "RHEL4-32", "RHEL4-64", "RHEL5-32", "RHEL5-64", "WIN2003-64", "SOL10-SPARC", "HPUX11-IA64", "Linux"};
 
     ArrayList allJTSTestIdsInRunOrder = new ArrayList();
     allJTSTestIdsInRunOrder.addAll(Arrays.asList(jts_basicTestIds));
@@ -62,9 +65,10 @@
     ArrayList allJTATestIdsInRunOrder = new ArrayList();
     allJTATestIdsInRunOrder.addAll(Arrays.asList(jta_basicTestIds));
     allJTATestIdsInRunOrder.addAll(Arrays.asList(jta_jdbcTestIds));
+    allJTATestIdsInRunOrder.addAll(Arrays.asList(jta_crashTestIds));
 
 
-    String distributionList = "jonathan.halliday@redhat.com";
+    String distributionList = "mmusgrov@redhat.com";
 
     int count = 0;
     for(int i = 0; i < allJTSTestIdsInRunOrder.size(); i++) {
@@ -177,6 +181,7 @@
 
     <tr>
         <td><b>DTF Tests for JBossTS JTS (JBossTS_JTS_JacORB_QA)</b></td>
+        <td><input type="submit" value="schedule selected tests"/></td>
     </tr>
 
     <tr>
@@ -272,6 +277,19 @@
             <td><%= jta_basicTestNames[i] %></td>
             <% for(int j = 0; j < OS.length; j++) { %>
             <td><input type="checkbox" name="runJTATest#<%= jta_basicTestIds[i] %>@<%= OS[j] %>"/></td>
+            <% } %>
+        </tr>
+    <% } %>
+
+    <tr><td></td></tr>
+    <tr>
+        <td>Crash Tests</td>
+    </tr>
+    <% for(int i = 0; i < jta_crashTestIds.length; i++) { %>
+        <tr>
+            <td><%= jta_crashTestNames[i] %></td>
+            <% for(int j = 0; j < OS.length; j++) { %>
+            <td><input type="checkbox" name="runJTATest#<%= jta_crashTestIds[i] %>@<%= OS[j] %>"/></td>
             <% } %>
         </tr>
     <% } %>

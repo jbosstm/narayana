@@ -75,7 +75,10 @@ TODO: check licencing on specific db drivers - can we check them into this proje
 should be possible for the open source dbs at least, plus maybe others
 
 Now edit the build.xml file in this directory, setting the properties near the top to the locations of
-the various pre-requisites mentioned above.
+the various pre-requisites mentioned above. If you want to package an AS as part of the test suite
+then make sure that the JBOSS_HOME environment variable points to a valid JBoss distribution and
+set the ant property 'as' to true. When runing the tests ensure that the version of TestingFramework.jar used
+running the DTF is the same one that is checked into JBossTS.
 
 Create the directory config/jdbc_profiles/<name_of_testnode_host>/ by copying the existing
 config/jdbc_profiles/_template/ directory, one for each host on which a test node will run.
@@ -87,9 +90,10 @@ tests run.
 
 Set the JAVA_HOME to the older version of Java you may want to run tests on..
 
-Run 'ant'. This builds the JTS version of the product test classes by calling tests/build-jts.xml,
-then builds a .zip file with the QA distribution, which contains the tests plus the product itself
-copied in from your installation above, plus the database drivers, plus some config files.
+Run 'ant'. This target will build JTA/JTS version of the product if the JBossTS build was JTA/JTS.
+The builds generates a .zip file with the QA distribution, which contains the tests plus the product itself
+copied in from your installation above, plus the database drivers, plus some config files and a copy of
+the JBoss AS if built with 'ant -Das=true'.
 
 To deploy the built product QA distribution to the DTF:
 

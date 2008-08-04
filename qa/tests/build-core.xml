@@ -24,8 +24,7 @@
 	<property name="org.jboss.jbossts.qa.ts.home" location="../../install/"/>
 
 	<!-- set this property to the location of a DTF TestingFramework build -->
-	<property name="org.jboss.jbossts.qa.testingframework_location" location="/home/jhalli/IdeaProjects/jboss/dtf/installation/lib/TestingFramework.jar"/>
-
+	<property name="org.jboss.jbossts.qa.testingframework_location" location="../../ext/TestingFramework.jar"/>
 
 	<property name="org.jboss.jbossts.qa.buildroot" location="build"/>
 	<property name="org.jboss.jbossts.qa.build.classes" value="${org.jboss.jbossts.qa.buildroot}/classes/"/>

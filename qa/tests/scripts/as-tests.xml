@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+
+<project name="JBoss" default="help" basedir="."
+         xmlns:astest="http://jboss.org/ns/test/ant/astest">
+
+  <property environment="env"/>
+  <property name="jboss.home" value="${env.JBOSS_HOME}"/>
+  <property name="jboss.server.config" value="default"/>
+  <property name="product.dir" value="${env.DTF_HOME}/JBossTS-JTA-QA/"/>
+
+  <path id="astest.taskdef.classpath">
+    <pathelement location="${jboss.home}/client/jbossall-client.jar"/>
+    <pathelement location="${jboss.home}/client/log4j.jar" />
+    <pathelement location="${jboss.home}/lib/jboss-aop-jdk50.jar"/>
+    <pathelement location="${jboss.home}/lib/trove.jar"/>
+
+    <fileset dir="${product.dir}">
+       <include name="lib/*.jar"/>
+       <include name="lib/ext/*.jar"/>
+       <include name="qa/lib/*.jar"/>
+    </fileset>
+  </path>
+
+  <property name="node0" value="localhost" />
+  <property name="node1" value="192.168.1.106" />
+
+  <target name="help">
+    <echo message="
+These tests normally run as part of the DTF test suite. To run them in
+standalone mode you will need define a security policy and override the ant
+property product.dir (which controls where the tests will search for product
+resources) as follows:${line.separator}
+   export ANT_OPTS=&quot;-Djava.security.policy=../src/org/jboss/jbossts/qa/astests/resources/java.policy -Dproduct.dir=../../build/&quot;
+${line.separator}
+If the target product directory does not contain a directory called 'as'
+containing a JBOSS installation then the environment variable JBOSS_HOME will be used.
+"/>
+    <echo message="test4 - 2 xa resources, throw exceptions in commit"/>
+    <echo message="test5 - 2 xa resources, suspend one in prepare"/>
+    <echo message="test6 - 2 xa resources, halt the VM on commit"/>
+    <echo message="testjta - run lots of tests in parallel against a running server (using jta) "/>
+    <echo message="testjts - run lots of tests in parallel against a running server (using jts) "/>
+  </target>
+
+  <!--
+      import configuration settings for the tests
+    -->
+  <import file="imports/test-config.xml"/>
+
+  <target name="test4">
+    <!--
+        start a server identified by the name default (specified in the imported config file)
+        and deploy one artifact
+      -->
+    <astest:server method="start" serverName="default" >
+      <deploy from="qa/lib/astest.jar" to="deploy/astest.jar" />
+    </astest:server>
+    <!--
+        wait 10000 ms and then execute an action (TODO implement a method of detecting when the
+        desired artifacts have deployed)
+      -->
+    <astest:action waitFor="10000" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
+      <param key="name" value="test04" />
+      <param key="specs" value="commit_ex,commit_ex" />
+      <param key="serverName" value="default" />
+    </astest:action>
+    <!--
+        stop a server and undeploy an artifact
+      -->
+    <astest:server method="stop" serverName="default" >
+      <undeploy from="deploy/astest.jar" />
+    </astest:server>
+  </target>
+
+  <target name="test5">
+    <astest:server method="start" serverName="default" >
+      <deploy from="qa/lib/astest.jar" to="deploy/astest.jar" />
+    </astest:server>
+    <astest:action waitFor="10000" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
+      <param key="name" value="test05" />
+      <param key="specs" value="prepare_suspend,none" />
+      <param key="cmt" value="false" />
+      <param key="debug" value="false" />
+      <param key="serverName" value="default" />
+    </astest:action>
+    <astest:server method="stop" serverName="default" >
+      <undeploy from="deploy/astest.jar" />
+    </astest:server>
+  </target>
+
+  <target name="test6">
+    <astest:server method="start" serverName="default" >
+      <deploy from="qa/lib/astest.jar" to="deploy/astest.jar" />
+    </astest:server>
+    <astest:action waitFor="10000" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
+      <param key="name" value="test06" />
+      <param key="specs" value="none,commit_halt" />
+      <param key="cmt" value="true" />
+      <param key="debug" value="false" />
+      <param key="serverName" value="default" />
+      <param key="storeType" value="StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction" />
+    </astest:action>
+    <astest:server method="stop" serverName="default" >
+      <undeploy from="deploy/astest.jar" />
+    </astest:server>
+  </target>
+
+  <target name="nulltest">
+    <astest:action impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test01" />
+  </target>
+
+  <!--
+      A test that does not start a server - ie the server must already be running.
+      A waitFor property is used on the deploy action to give enough time
+      for the server to deploy the artifacts.
+    -->
+  <target name="testjta">
+    <astest:server method="deploy" serverName="jta" waitFor="10000">
+      <deploy from="qa/lib/astest.jar" to="deploy/astest.jar" />
+    </astest:server>
+    <parallel>
+      <astest:action abortOnFail="false" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
+        <param key="specs" value="sync_before,sync_after,none,pre_prepare_suspend" />
+      </astest:action>
+      <astest:action abortOnFail="false" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
+        <param key="name" value="testjta" />
+        <param key="specs" value="none,none,none,commit_ex,commit_ex" />
+        <param key="serverName" value="jta" />
+      </astest:action>
+      <astest:action abortOnFail="false" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
+        <param key="specs" value="sync_before,sync_after,none,pre_prepare_suspend" />
+      </astest:action>
+    </parallel>
+    <astest:server method="undeploy" serverName="jta" >
+      <undeploy from="deploy/astest.jar" />
+    </astest:server>
+  </target>
+
+  <target name="testjts">
+    <astest:server method="deploy" serverName="jts" waitFor="10000">
+      <deploy from="qa/lib/astest.jar" to="deploy/astest.jar" />
+    </astest:server>
+    <parallel>
+      <astest:action abortOnFail="false" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
+        <param key="name" value="testjts" />
+        <param key="specs" value="none,none,none,commit_ex,commit_ex" />
+        <param key="serverName" value="jts" />
+      </astest:action>
+      <astest:action abortOnFail="false" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
+        <param key="specs" value="sync_before,sync_after,none,pre_prepare_suspend" />
+        <param key="serverName" value="jts" />
+      </astest:action>
+      <astest:action abortOnFail="false" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
+        <param key="specs" value="sync_before,sync_after,none,pre_prepare_suspend" />
+      </astest:action>
+      <astest:action abortOnFail="false" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
+        <param key="specs" value="sync_before,sync_after,none,pre_prepare_suspend" />
+      </astest:action>
+    </parallel>
+    <astest:server method="undeploy" serverName="jts" >
+      <undeploy from="deploy/astest.jar" />
+    </astest:server>
+  </target>
+
+</project>

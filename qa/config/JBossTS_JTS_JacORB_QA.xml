@@ -29,6 +29,7 @@
 			<jar name="$(PRODUCT.DIR)/lib/ext/*.jar"/>
 			<jar name="$(PRODUCT.DIR)/lib/ext/*.zip"/>
 
+            <jar name="$(PRODUCT.DIR)/jacorb/etc/"/>
 			<jar name="$(PRODUCT.DIR)/qa/lib/*.jar"/>
 
 			<jar name="$(ORB_HOME)/lib/*.jar"/>
@@ -67,13 +68,13 @@
 				<property name="org.jboss.jbossts.qa.Utils.nameserviceuri" value="//localhost:1099/NameService"/>
 			</properties>
 			<sets>
-				<set name="DTF_HOME" value="/home/jhalli/IdeaProjects/jboss/dtf/installation"/>
-				<set name="PRODUCTS_HOME" value="/services/DTF/products"/>
-				<set name="INSTALL.DIR" value="/home/jhalli/IdeaProjects/jboss/dtf/installation/JBossTS-JTS-JacORB-QA/"/>
-				<set name="ORB_HOME" value="/home/jhalli/IdeaProjects/jboss/dtf/installation/JBossTS-JTS-JacORB-QA/jacorb/"/>
-				<set name="CALLS" value="1000"/>
-				<set name="PRODUCT.DIR" value="/home/jhalli/IdeaProjects/jboss/dtf/installation/JBossTS-JTS-JacORB-QA/"/>
-				<set name="ARJUNAJTS_HOME" value="/home/jhalli/IdeaProjects/jboss/dtf/installation/JBossTS-JTS-JacORB-QA/"/>
+				<set name="DTF_HOME"       value="/home/mmusgrov/misc/DTF"/>
+				<set name="PRODUCTS_HOME"  value="/services/DTF/products"/>
+				<set name="INSTALL.DIR"    value="/home/mmusgrov/misc/DTF/JBossTS-JTS-JacORB-QA/"/>
+				<set name="ORB_HOME"       value="/home/mmusgrov/misc/DTF/JBossTS-JTS-JacORB-QA/jacorb/"/>
+				<set name="CALLS"          value="1000"/>
+				<set name="PRODUCT.DIR"    value="/home/mmusgrov/misc/DTF/JBossTS-JTS-JacORB-QA/"/>
+				<set name="ARJUNAJTS_HOME" value="/home/mmusgrov/misc/DTF/JBossTS-JTS-JacORB-QA/"/>
 			</sets>
 			<jvm id="1.5.0"/>
 			<default-classpath name="main"/>
@@ -187,6 +188,14 @@
 			<param name="wait_for_text" value="Ready"/>
 			<param name="pass_indicator" value="Passed"/>
 		</task-runner>
+                <task-runner name="AntTaskRunner" class="com.arjuna.mwlabs.testframework.testnode.AntTaskRunner"
+                                         log-to="http://localhost:8080/dtf/">
+                        <param name="pass_on_wait_for" value="true"/>
+                        <param name="fail_indicator" value="Failed"/>
+                        <param name="wait_for_text" value="Ready"/>
+                        <param name="pass_indicator" value="Passed"/>
+                        <param name="product_dir" value="$(PRODUCT.DIR)"/>
+                </task-runner>
 	</task-runner-definitions>
 
 </product-configuration>

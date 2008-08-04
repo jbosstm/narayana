@@ -20,15 +20,15 @@
 -->
 <project name="JBossTS QA Suite Distribution" default="dist">
 
-	<!-- jta or jts. TODO: Should really be determied automatically by looking at content of ts.home -->
-	<property name="buildtype" value="jts"/>
+	<property environment="env"/>
+	<property name="driver.home" value="/home/mmusgrov/drivers"/>
 
 	<!-- set this property to the location of a JBossTS JTA/JTS build or installation -->
 	<property name="org.jboss.jbossts.qa.ts.home" location="../install"/>
+	<property name="jbossts.install.lib" location="${org.jboss.jbossts.qa.ts.home}/lib"/>
 
 	<!-- set this property to the location of a DTF TestingFramework.jar build -->
-    <!-- TODO should ref the version checked into JBossTS? -->
-    <property name="org.jboss.jbossts.qa.testingframework_location" location="/home/jhalli/IdeaProjects/jboss/dtf/installation/lib/TestingFramework.jar"/>
+	<property name="org.jboss.jbossts.qa.testingframework_location" location="../ext/TestingFramework.jar"/>
 
 	<!-- TODO cd ArjunaJTS/orbportability; ant -f build-anttasks.xml -->
 	<property name="org.jboss.jbossts.qa.idlcompiler.lib"
@@ -36,34 +36,30 @@
 
 	<!-- set these to the location(s) of the database drivers -->
 
-	<fileset id="oracle.drivers" dir="/home/jhalli/javastuff/dbdrivers/oracle_10_2_0_4/">
+	<fileset id="oracle.drivers" dir="${driver.home}/oracle_10_2_0_4/">
 		<include name="ojdbc14.jar"/>
 	</fileset>
 
-	<fileset id="mssql.drivers.old" dir="/home/jhalli/javastuff/mssql2000jdbc/lib">
-		<include name="ms*.jar"/>
-	</fileset>
-
-	<fileset id="mssql.drivers" dir="/home/jhalli/javastuff/dbdrivers/mssql2005_sqljdbc_1.2/enu/">
+	<fileset id="mssql.drivers" dir="${driver.home}/mssql2005_sqljdbc_1.2/enu/">
 		<include name="sqljdbc.jar"/>
 	</fileset>
 
 	<!-- 8.1.408 is broken, use something more recent. -->
-	<fileset id="pgsql.drivers" dir="/home/jhalli/javastuff/dbdrivers/">
+	<fileset id="pgsql.drivers" dir="${driver.home}/">
 		<include name="postgresql-8.3-603.jdbc3.jar"/>
 	</fileset>
 
 	<!-- server version 5 is the first with XA support, do use anything less.
 	 		driver versions before 5.0.5 are broken, don't use them either. -->
-	<fileset id="mysql.drivers" dir="/home/jhalli/javastuff/dbdrivers//">
+	<fileset id="mysql.drivers" dir="${driver.home}/">
 		<include name="mysql-connector-java-5.1.6-bin.jar"/>
 	</fileset>
 
-	<fileset id="ibmdb2.drivers" dir="/home/jhalli/javastuff/dbdrivers/DB2_v9/">
+	<fileset id="ibmdb2.drivers" dir="${driver.home}/DB2_v9/">
 		<include name="db2jcc*.jar"/>
 	</fileset>
 
-	<fileset id="sybase.drivers" dir="/home/jhalli/javastuff/dbdrivers/jConnect-5_5/classes/">
+	<fileset id="sybase.drivers" dir="${driver.home}/jConnect-5_5/classes/">
 		<include name="jconn2.jar"/>
 	</fileset>
 
@@ -78,15 +74,44 @@
 		<fileset refid="sybase.drivers"/>
 	</path>
 
+	<property name="org.jboss.jbossts.qa.server_manager_location" location="ext/jboss-server-manager-0.1.0.GA.jar"/>
 	<property name="org.jboss.jbossts.qa.dist.buildroot" location="build"/>
 
-	<target name="clean">
+	<target name="buildtype">
+		<available file="${jbossts.install.lib}/jbossjts.jar" property="buildtype" value="jts"/>
+		<available file="${jbossts.install.lib}/jts.jar" property="buildtype" value="jts"/>
+
+		<available file="${jbossts.install.lib}/jbossjta.jar" property="buildtype" value="jta"/>                        
+		<available file="${jbossts.install.lib}/jta.jar" property="buildtype" value="jta"/>
+
+		<available file="${jbossts.install.lib}/jbossjta-integration.jar" property="integration.build"/>
+		<available file="${jbossts.install.lib}/jbossjts-integration.jar" property="integration.build"/>
+
+		<condition property="dist.as">
+			<and>
+				<isset property="integration.build"/>
+				<isset property="as"/>
+			</and>
+		</condition>
+	</target>
+
+	<target name="dist.as" depends="buildtype" if="dist.as">
+		<fail unless="env.JBOSS_HOME" message="Please set the JBOSS_HOME environment variable" />
+		<echo message="copying ${env.JBOSS_HOME} - this may take a while ..."/>
+		<mkdir dir="${org.jboss.jbossts.qa.dist.buildroot}/as"/>
+		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/as">
+			<fileset dir="${env.JBOSS_HOME}"/>
+		</copy>
+	</target>
+
+	<target name="clean" depends="buildtype">
 		<delete dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
 		<ant dir="tests" antfile="build-${buildtype}.xml" target="clean"/>
 	</target>
 
-	<target name="init">
+	<target name="init" depends="buildtype">
 		<mkdir dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
+		<antcall target="dist.as"/>
 	</target>
 
 	<target name="dist" depends="clean, init">
@@ -94,6 +119,8 @@
 		<!-- build the test suite -->
 		<ant dir="tests" antfile="build-${buildtype}.xml">
 			<reference refid="database.drivers.path"/>
+			<property name="org.jboss.jbossts.qa.server_manager_location"
+			          value="${org.jboss.jbossts.qa.server_manager_location}"/>
 		</ant>
 
 		<!-- prepare the content of the qa distribution, which is the product build
@@ -110,12 +137,23 @@
 		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/lib">
 			<fileset file="${org.jboss.jbossts.qa.testingframework_location}"/>
 			<fileset file="tests/build/jbossts-${buildtype}-qa.jar"/>
+			<fileset file="tests/build/astest.jar"/>
+			<fileset file="tests/build/java.policy"/>
+			<fileset file="${org.jboss.jbossts.qa.server_manager_location}"/>
 			<fileset refid="oracle.drivers"/>
 			<fileset refid="mssql.drivers"/>
 			<fileset refid="pgsql.drivers"/>
 			<fileset refid="mysql.drivers"/>
 			<fileset refid="ibmdb2.drivers"/>
 			<fileset refid="sybase.drivers"/>
+		</copy>
+		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa">
+			<fileset dir="tests/build/qa">
+				<include name="resources/**/*"/>
+			</fileset>
+			<fileset dir="tests">
+				<include name="scripts/**/*"/>
+			</fileset>
 		</copy>
 		<!-- testing is done with some non-default properties: -->
 		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/etc" overwrite="true">
@@ -128,4 +166,16 @@
 
 	</target>
 
+	<target name="help">
+<echo>Supported targets:
+  jta - build tests for the standalone jta transaction engine
+  jts - build tests for the standalone jts transaction engine
+  jbossjta - build tests for the integrated jta transaction engine
+  jbossjts - build tests for the integrated jts transaction engine
+  dist - build tests for the last build of the transaction engine
+
+  To include a copy of the AS (pointed to by the JBOSS_HOME
+  environment variable) in the distribution please set the ant
+  property 'as' to true.</echo>
+	</target>
 </project>

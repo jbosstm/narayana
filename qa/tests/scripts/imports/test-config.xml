@@ -1,0 +1,88 @@
+<project name="server-config" default="help"
+         xmlns:astest="http://jboss.org/ns/test/ant/astest">
+
+  <taskdef name="config" classname="org.jboss.jbossts.qa.astests.taskdefs.ASTestConfig"
+           uri="http://jboss.org/ns/test/ant/astest" loaderref="astest.loader">
+    <classpath refid="astest.taskdef.classpath"/>
+  </taskdef>
+
+  <!--
+    - Task to start/stop servers with attribute for deploying and undeploying artifacts
+    -->
+  <taskdef name="server" classname="org.jboss.jbossts.qa.astests.taskdefs.ServerTask"
+           uri="http://jboss.org/ns/test/ant/astest" loaderref="astest.loader">
+  </taskdef>
+
+  <!--
+    - Task to perform an arbitary action. The action will have access to the test configuration
+    - specified in the configuration.
+    -->
+  <taskdef name="action" classname="org.jboss.jbossts.qa.astests.taskdefs.ASClientTask"
+           uri="http://jboss.org/ns/test/ant/astest" loaderref="astest.loader">
+  </taskdef>
+
+  <!--
+    - a spec is specification of how to inject faults into the XA protocol operations
+    -->
+  <typedef name="spec" classname="org.jboss.jbossts.qa.astests.recovery.ASFailureSpec"
+           uri="http://jboss.org/ns/test/ant/astest" loaderref="astest.loader">
+  </typedef>
+
+  <!--
+    - a server is specification of how configure a instance of an AS
+  <typedef name="server" classname="org.jboss.jbossas.servermanager.Server"
+           uri="http://jboss.org/ns/test/ant/astest" loaderref="astest.loader">
+  </typedef>
+    -->
+
+  <!--
+    - If the product directory where this test is running from contains an AS installation then use it,
+    - otherwise use the value of the JBOSS_HOME environment variable
+    -->
+  <!--
+    - The framework detects whether a server is running via the httpPort if the server has a web server,
+    - otherwise it uses the servers rmi port.
+    - To specify the http port use the httpPort attribute in the server definition.
+    - To specify the rmi port in the server definition use the rmiPort attribute together with hasWebServer="false"
+    - 
+    - The port numbers must match the ports used by the actual server. Note that the default port bindings for a
+    - server can be changed via the server.binding.name and server.binding.location properties.
+    -->
+  <astest:config javaHome="${env.JAVA_HOME}" debug="false">
+     <spec name= "commit_ex" mode="XAEXCEPTION" type="XARES_COMMIT" modeArg="XA_RDONLY" />
+     <spec name= "prepare_suspend" mode="SUSPEND" type="XARES_PREPARE" modeArg="40000" />
+     <spec name= "pre_prepare_suspend" mode="SUSPEND" type="PRE_PREPARE" modeArg="40000" />
+     <spec name= "sync_before" mode="NONE" type="SYNCH_BEFORE" modeArg="0" />
+     <spec name= "sync_after" mode="NONE" type="SYNCH_AFTER" modeArg="0" />
+     <spec name= "prepare_ex" mode="XAEXCEPTION" type="XARES_PREPARE" modeArg="XA_RDONLY" />
+     <spec name= "prepare_halt" mode="HALT" type="XARES_PREPARE" />
+     <spec name= "commit_suspend" mode="SUSPEND" type="XARES_COMMIT" modeArg="40000" />
+     <spec name= "commit_halt" mode="HALT" type="XARES_COMMIT" />
+     <spec name= "none" mode="NONE" type="NONE" />
+
+     <server name="jta" host="${node0}" >
+       <jvmarg value="-Xmx512M" />
+       <jvmarg value="-Xdebug" />
+       <jvmarg value="-Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006"/>
+     </server>
+
+     <server name="jts" host="${node0}" />
+
+     <server name="default" host="${node0}">
+       <jvmarg value="-Xms128m" />
+       <jvmarg value="-Xmx512m" />
+       <jvmarg value="-XX:MaxPermSize=512m" />
+       <jvmarg value="-server" />
+<!--
+       <jvmarg value="-Xdebug" />
+       <jvmarg value="-Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006"/>
+-->
+       <sysproperty key="java.net.preferIPv4Stack" value="true" />
+       <sysproperty key="org.jboss.resolver.warning" value="true" />
+       <sysproperty key="sun.rmi.dgc.client.gcInterval" value="3600000" />
+       <sysproperty key="sun.rmi.dgc.server.gcInterval" value="3600000" />
+       <sysproperty key="server.binding.name" value="ports-02" />
+       <sysproperty key="server.binding.location" value="qa/resources/sample-bindings.xml" />
+     </server>
+  </astest:config>
+</project>
