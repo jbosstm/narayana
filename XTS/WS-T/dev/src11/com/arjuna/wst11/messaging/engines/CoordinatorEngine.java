@@ -288,13 +288,9 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
                 timerTask = null;
             }
 
-            // ok, the coordinator is going to start a rollback because of this timeout but it will
-            // only roll back the participants which have been prepared or have not yet been processed.
-            // we need to deactivate the participant here so that any later prepared messages are
-            // answered with a rollback (presumed abort)
+            // ok, we leave the participant stub active because the coordinator will attempt
+            // to roll it back when it notices that this has failed
 
-            CoordinatorProcessor.getProcessor().deactivateCoordinator(this);
-            
             return state ;
         }
     }

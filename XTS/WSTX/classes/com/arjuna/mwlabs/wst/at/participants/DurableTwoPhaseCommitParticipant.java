@@ -44,6 +44,7 @@ import com.arjuna.mw.wscf.exceptions.*;
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wsas.exceptions.WrongStateException;
 import com.arjuna.mw.wsas.exceptions.SystemCommunicationException;
+import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wst.util.PersistableParticipantHelper;
 
 /**
@@ -65,7 +66,14 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 		_id = identifier;
 	}
 
-	public Vote prepare () throws InvalidParticipantException,
+    /**
+     * tell the participant to prepare
+     *
+     * @return the participant's vote or a cancel vote the aprticipant is null
+     *
+     * @message com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.prepare_1 [com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.prepare_1] comms timeout attempting to prepare WS-AT participant {0}
+     */
+    public Vote prepare () throws InvalidParticipantException,
 			WrongStateException, HeuristicHazardException,
 			HeuristicMixedException, SystemException
 	{
@@ -110,11 +118,25 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 		//	catch (com.arjuna.mw.wst.exceptions.SystemException ex)
 		catch (com.arjuna.wst.SystemException ex)
 		{
+            if(ex instanceof com.arjuna.wst.stub.SystemCommunicationException) {
+                // log an error here or else the participant may be left hanging
+                // waiting for a prepare
+                if (wstxLogger.arjLoggerI18N.isErrorEnabled()) {
+                    wstxLogger.arjLoggerI18N.error("com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.prepare_1", new Object[] { _id });
+                }
+                throw new SystemCommunicationException(ex.toString());
+            } else {
 			throw new SystemException(ex.toString());
-		}
+            }
+        }
 	}
 
-	public void confirm () throws InvalidParticipantException,
+    /**
+     * attempt to commit the participant
+     *
+     * @message com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.confirm_1 [com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.confirm_1] comms timeout attempting to commit WS-AT participant {0}
+     */
+    public void confirm () throws InvalidParticipantException,
 			WrongStateException, HeuristicHazardException,
 			HeuristicMixedException, HeuristicCancelException, SystemException
 	{
@@ -144,6 +166,10 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			catch (com.arjuna.wst.SystemException ex)
 			{
 				if(ex instanceof com.arjuna.wst.stub.SystemCommunicationException) {
+                    // log an error here -- we will end up writing a heuristic transaction record too
+                    if (wstxLogger.arjLoggerI18N.isErrorEnabled()) {
+                        wstxLogger.arjLoggerI18N.error("com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.confirm_1", new Object[] { _id });
+                    }
                     throw new SystemCommunicationException(ex.toString());
                 } else {
                     throw new SystemException(ex.toString());
@@ -154,6 +180,11 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			throw new InvalidParticipantException();
 	}
 
+    /**
+     * attempt to cancel the participant
+     *
+     * @message com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.cancel_1 [com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.cancel_1] comms timeout attempting to cancel WS-AT participant {0}
+     */
 	public void cancel () throws InvalidParticipantException,
 			WrongStateException, HeuristicHazardException,
 			HeuristicMixedException, HeuristicConfirmException, SystemException
@@ -181,7 +212,15 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			//	    catch (com.arjuna.mw.wst.exceptions.SystemException ex)
 			catch (com.arjuna.wst.SystemException ex)
 			{
-				throw new SystemException(ex.toString());
+                if(ex instanceof com.arjuna.wst.stub.SystemCommunicationException) {
+                    // log an error here -- if the participant is dead it will retry anyway
+                    if (wstxLogger.arjLoggerI18N.isErrorEnabled()) {
+                        wstxLogger.arjLoggerI18N.error("com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant.cancel_1", new Object[] { _id });
+                    }
+                    throw new SystemCommunicationException(ex.toString());
+                } else {
+                    throw new SystemException(ex.toString());
+                }
 			}
 		}
 		else
@@ -190,7 +229,7 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 
 	// TODO mark ParticipantCancelledException explicitly?
 
-	public void confirmOnePhase () throws InvalidParticipantException,
+    public void confirmOnePhase () throws InvalidParticipantException,
 			WrongStateException, HeuristicHazardException,
 			HeuristicMixedException, HeuristicCancelException, SystemException
 	{
@@ -202,9 +241,12 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			{
 				v = prepare();
 			}
-			catch (Exception ex)
+            catch (Exception ex)
 			{
-				ex.printStackTrace();
+                // either the prepare timed out or the participant was invalid or in an
+                // invalid state
+                
+                ex.printStackTrace();
 
 				v = new VoteCancel();
 			}
@@ -217,11 +259,15 @@ public class DurableTwoPhaseCommitParticipant implements Participant
 			{
 				_rolledback = false;
 
-				// TODO only do this if we didn't return VoteCancel
+                // TODO only do this if we didn't return VoteCancel
 
-				cancel();
-
-				throw new ParticipantCancelledException();
+                try {
+                    cancel();
+                } catch (SystemCommunicationException sce) {
+                    // if the rollback times out as well as the prepare we
+                    // return an exception which indicates a failed transaction
+                }
+                throw new ParticipantCancelledException();
 			}
 			else
 			{

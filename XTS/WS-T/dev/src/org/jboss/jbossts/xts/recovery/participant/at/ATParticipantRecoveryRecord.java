@@ -47,23 +47,30 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
         try {
             useSerialization = ATParticipantHelper.isSerializable(participant);
             recoveryState = ATParticipantHelper.getRecoveryState(useSerialization, participant);
+            recoveryStateValid = true;
         } catch (Exception exception) {
             if (WSTLogger.arjLoggerI18N.isWarnEnabled())
             {
                 WSTLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_1", new Object[] {id}) ;
             }
-            return false;
+            // if we continue here then we cannot recover this transaction if we crash during
+            // commit processing. we should strictly fail here to play safe but . . .
+
+            recoveryStateValid = false;
         }
 
         try {
             oos.packString(id);
             saveEndpointReference(oos);
+            oos.packBoolean(recoveryStateValid);
+            if (recoveryStateValid) {
             oos.packBoolean(useSerialization);
-            if (recoveryState != null) {
-                oos.packBoolean(true);
-                oos.packBytes(recoveryState);
-            } else {
-                oos.packBoolean(false);
+                if (recoveryState != null) {
+                    oos.packBoolean(true);
+                    oos.packBytes(recoveryState);
+                } else {
+                    oos.packBoolean(false);
+                }
             }
         } catch (XMLStreamException xmle) {
             if (WSTLogger.arjLoggerI18N.isWarnEnabled())
@@ -95,13 +102,15 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
         try {
             id = ios.unpackString();
             restoreEndpointReference(ios);
-            useSerialization = ios.unpackBoolean();
-            if (ios.unpackBoolean()) {
-                recoveryState = ios.unpackBytes();
-            } else {
-                recoveryState =  null;
+            recoveryStateValid = ios.unpackBoolean();
+            if (recoveryStateValid) {
+                useSerialization = ios.unpackBoolean();
+                if (ios.unpackBoolean()) {
+                    recoveryState = ios.unpackBytes();
+                } else {
+                    recoveryState =  null;
+                }
             }
-            recoveryStateValid = true;
         } catch (XMLStreamException xmle) {
             if (WSTLogger.arjLoggerI18N.isWarnEnabled())
             {
@@ -124,6 +133,7 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
      * specific recovery state back into a participant
      * @param module the XTS recovery module to be used to attempt the conversion
      * @return
+     * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.restoreParticipant_1 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.restoreParticipant_1] participant {0} has no saved recovery state to recover   
      */
 
     public boolean restoreParticipant(XTSATRecoveryModule module) throws Exception
@@ -133,19 +143,28 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
             return false;
         }
 
-        if (useSerialization) {
-            final ByteArrayInputStream bais = new ByteArrayInputStream(recoveryState) ;
-            final ObjectInputStream ois = new ObjectInputStream(bais) ;
+        if (recoveryStateValid) {
+            if (useSerialization) {
+                final ByteArrayInputStream bais = new ByteArrayInputStream(recoveryState) ;
+                final ObjectInputStream ois = new ObjectInputStream(bais) ;
 
-            participant = module.deserialize(getId(), ois);
+                participant = module.deserialize(getId(), ois);
+            } else {
+                participant = module.recreate(getId(), recoveryState);
+            }
+
+            if (participant != null) {
+                return true;
+            }
         } else {
-            participant = module.recreate(getId(), recoveryState);
-        }
+            // the original participant did not provide a way to save its state so
+            // throw an exception to notify this
 
-        if (participant != null) {
-            return true;
-        }
+            String mesg = WSTLogger.arjLoggerI18N.getString("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.restoreParticipant_1", id);
 
+            throw new Exception(mesg);
+        }
+        
         return false;
     }
 

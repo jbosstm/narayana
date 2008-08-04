@@ -70,7 +70,11 @@ public class ParticipantStub implements Participant, PersistableParticipant
         }
         else if (state == State.STATE_PREPARING)
         {
-            throw new SystemException() ;
+            // typically means no response from the remote end.
+            // throw a comm exception to distinguish this case from the
+            // one where the remote end itself threw a SystemException.
+
+            throw new SystemCommunicationException() ;
         }
         else
         {
@@ -124,7 +128,7 @@ public class ParticipantStub implements Participant, PersistableParticipant
         {
             if (state == State.STATE_ABORTING)
             {
-                throw new SystemException() ;
+                throw new SystemCommunicationException() ;
             }
             else
             {

@@ -421,6 +421,12 @@ public class ParticipantRecord extends
 				{
 					return TwoPhaseOutcome.HEURISTIC_MIXED;
 				}
+                catch(SystemCommunicationException ex)
+                {
+                    // if prepare timed out then we return error so it goes back on the
+                    // prepare list and is rolled back
+                    return TwoPhaseOutcome.FINISH_ERROR;
+                }
 				catch (SystemException ex)
 				{
 					return TwoPhaseOutcome.HEURISTIC_HAZARD;
