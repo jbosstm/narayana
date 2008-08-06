@@ -205,7 +205,7 @@ public class ASTestConfig extends Task
         {
             Server server = manager.getServer(serverName);
 
-            return (server != null ? new ServerWrapper(server).getNamingContext() : null);
+            return (server != null ? server.getNamingContext() : null);
         }
         catch (NamingException e)
         {
@@ -290,7 +290,7 @@ public class ASTestConfig extends Task
      */
     public void configureServerBinding(String serverName) throws TransformerException, IOException, SAXException, ParserConfigurationException
     {
-        ServerWrapper server = new ServerWrapper(manager.getServer(serverName));
+        Server server = manager.getServer(serverName);
         String configHome = getProductDir();
         String mbeanServiceFile = getServerPath(serverName) + "conf/jboss-service.xml";
         String bindingName = server.getSysProperty("server.binding.name");

@@ -74,7 +74,7 @@
 		<fileset refid="sybase.drivers"/>
 	</path>
 
-	<property name="org.jboss.jbossts.qa.server_manager_location" location="ext/jboss-server-manager-0.1.0.GA.jar"/>
+	<property name="org.jboss.jbossts.qa.server_manager_location" location="ext/jboss-server-manager-0.1.1.GA.jar"/>
 	<property name="org.jboss.jbossts.qa.dist.buildroot" location="build"/>
 
 	<target name="buildtype">
