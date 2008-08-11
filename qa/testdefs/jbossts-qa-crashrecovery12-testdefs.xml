@@ -95,7 +95,8 @@
 				</start_task>
 				<wait_for_task runtime_id="outcome0"/>
 				<terminate_task runtime_id="server0"/>
-			</action_list>
+                <terminate_task runtime_id="client0"/>
+            </action_list>
 		</test_declaration>
 
 		<test_declaration id="CrashRecovery12_Test03" descriptive_name="CrashRecovery12 Test03" author="JDC">
@@ -125,6 +126,7 @@
 				</start_task>
 				<wait_for_task runtime_id="outcome0"/>
 				<terminate_task runtime_id="server0"/>
+                <terminate_task runtime_id="client0"/>
 			</action_list>
 		</test_declaration>
 
@@ -155,6 +157,7 @@
 				</start_task>
 				<wait_for_task runtime_id="outcome0"/>
 				<terminate_task runtime_id="server0"/>
+                <terminate_task runtime_id="client0"/>
 			</action_list>
 		</test_declaration>
 

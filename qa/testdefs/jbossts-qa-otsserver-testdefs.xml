@@ -25,14 +25,21 @@
 
 	<test_group name="OTSServer">
 		<task_declaration>
-
+<!--
 			<task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" classname="org.jboss.jbossts.qa.Utils.RegisterOTSServer"
 				  runner="UnitTestRunner" type="expect_ready"/>
 
 			<task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" classname="org.jboss.jbossts.qa.Utils.SetupOTSServer"
 				  runner="UnitTestRunner" type="expect_ready"/>
+-->
+			<task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" classname="org.jboss.jbossts.qa.Utils.RegisterOTSServer2"
+				  runner="JavaTaskRunner" type="expect_ready"/>
 
-			<task id="com.arjuna.ats.arjuna.recovery.RecoveryManager"
+			<task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" classname="org.jboss.jbossts.qa.Utils.SetupOTSServer2"
+				  runner="JavaTaskRunner" type="expect_ready"/>
+-->
+
+            <task id="com.arjuna.ats.arjuna.recovery.RecoveryManager"
 				  classname="com.arjuna.ats.arjuna.recovery.RecoveryManager" runner="JavaTaskRunner"
 				  type="expect_ready"/>
 

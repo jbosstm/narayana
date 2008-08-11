@@ -21,7 +21,7 @@
 <project name="JBossTS QA Suite Distribution" default="dist">
 
 	<property environment="env"/>
-	<property name="driver.home" value="/home/mmusgrov/drivers"/>
+	<property name="driver.home" value="/home/jhalli/javastuff/dbdrivers"/>
 
 	<!-- set this property to the location of a JBossTS JTA/JTS build or installation -->
 	<property name="org.jboss.jbossts.qa.ts.home" location="../install"/>
@@ -65,35 +65,39 @@
 
 	<!-- you should not need to configure anything below here -->
 
-	<path id="database.drivers.path">
-		<fileset refid="oracle.drivers"/>
-		<fileset refid="mssql.drivers"/>
-		<fileset refid="pgsql.drivers"/>
-		<fileset refid="mysql.drivers"/>
-		<fileset refid="ibmdb2.drivers"/>
-		<fileset refid="sybase.drivers"/>
-	</path>
-
 	<property name="org.jboss.jbossts.qa.server_manager_location" location="ext/jboss-server-manager-0.1.1.GA.jar"/>
 	<property name="org.jboss.jbossts.qa.dist.buildroot" location="build"/>
 
-	<target name="buildtype">
+    <path id="database.drivers.path">
+        <fileset refid="oracle.drivers"/>
+        <fileset refid="mssql.drivers"/>
+        <fileset refid="pgsql.drivers"/>
+        <fileset refid="mysql.drivers"/>
+        <fileset refid="ibmdb2.drivers"/>
+        <fileset refid="sybase.drivers"/>
+    </path>
+
+    <target name="buildtype">
 		<available file="${jbossts.install.lib}/jbossjts.jar" property="buildtype" value="jts"/>
 		<available file="${jbossts.install.lib}/jts.jar" property="buildtype" value="jts"/>
 
-		<available file="${jbossts.install.lib}/jbossjta.jar" property="buildtype" value="jta"/>                        
+		<available file="${jbossts.install.lib}/jbossjta.jar" property="buildtype" value="jta"/>
 		<available file="${jbossts.install.lib}/jta.jar" property="buildtype" value="jta"/>
 
 		<available file="${jbossts.install.lib}/jbossjta-integration.jar" property="integration.build"/>
 		<available file="${jbossts.install.lib}/jbossjts-integration.jar" property="integration.build"/>
 
-		<condition property="dist.as">
+        <condition property="dist.as">
 			<and>
 				<isset property="integration.build"/>
 				<isset property="as"/>
 			</and>
 		</condition>
-	</target>
+
+        <fail unless="env.JBOSS_HOME" message="Please set the JBOSS_HOME environment variable" if="integration.build" />
+
+        <available file="${driver.home}" property="have.dbdrivers" value="true"/>
+    </target>
 
 	<target name="dist.as" depends="buildtype" if="dist.as">
 		<fail unless="env.JBOSS_HOME" message="Please set the JBOSS_HOME environment variable" />
@@ -106,7 +110,8 @@
 
 	<target name="clean" depends="buildtype">
 		<delete dir="${org.jboss.jbossts.qa.dist.buildroot}"/>
-		<ant dir="tests" antfile="build-${buildtype}.xml" target="clean"/>
+
+        <ant dir="tests" antfile="build-${buildtype}.xml" target="clean"/>
 	</target>
 
 	<target name="init" depends="buildtype">
@@ -116,10 +121,10 @@
 
 	<target name="dist" depends="clean, init">
 
-		<!-- build the test suite -->
+        <!-- build the test suite -->
 		<ant dir="tests" antfile="build-${buildtype}.xml">
 			<reference refid="database.drivers.path"/>
-			<property name="org.jboss.jbossts.qa.server_manager_location"
+            <property name="org.jboss.jbossts.qa.server_manager_location"
 			          value="${org.jboss.jbossts.qa.server_manager_location}"/>
 		</ant>
 
@@ -140,14 +145,16 @@
 			<fileset file="tests/build/astest.jar"/>
 			<fileset file="tests/build/java.policy"/>
 			<fileset file="${org.jboss.jbossts.qa.server_manager_location}"/>
-			<fileset refid="oracle.drivers"/>
+        </copy>
+        <copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/lib" failonerror="${have.dbdrivers}">
+            <fileset refid="oracle.drivers"/>
 			<fileset refid="mssql.drivers"/>
 			<fileset refid="pgsql.drivers"/>
 			<fileset refid="mysql.drivers"/>
 			<fileset refid="ibmdb2.drivers"/>
 			<fileset refid="sybase.drivers"/>
 		</copy>
-		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa">
+		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa" failonerror="false">
 			<fileset dir="tests/build/qa">
 				<include name="resources/**/*"/>
 			</fileset>
@@ -160,11 +167,20 @@
 			<fileset file="config/jboss${buildtype}-properties.xml"/>
 		</copy>
 
-		<!-- build the qa distribution installer package -->
+        <!-- for 'loca'l tests, we need some libs we would otherwise have got from DTF -->
+        <mkdir dir="${org.jboss.jbossts.qa.dist.buildroot}/qa/lib/ext"/>
+        <copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/lib/ext" failonerror="false">
+            <fileset dir="ext">
+                <include name="fscontext.jar"/>
+                <include name="providerutil.jar"/>
+            </fileset>
+        </copy>
+
+        <!-- build the qa distribution installer package -->
 		<zip destfile="${org.jboss.jbossts.qa.dist.buildroot}/jbossts-${buildtype}-qa-distribution.zip"
 			basedir="${org.jboss.jbossts.qa.dist.buildroot}" excludes="jbossts-${buildtype}-qa-distribution.zip"/>
 
-	</target>
+    </target>
 
 	<target name="help">
 <echo>Supported targets:

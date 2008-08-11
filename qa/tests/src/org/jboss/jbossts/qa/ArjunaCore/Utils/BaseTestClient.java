@@ -139,11 +139,13 @@ public class BaseTestClient extends BaseTestCase
 	public void getFirstReading()
 	{
 		clientMemory0 = (int) JVMStats.getMemory();
-	}
+        System.out.println("clientMemory0: "+clientMemory0);
+    }
 
 	public void getSecondReading()
 	{
 		clientMemory1 = (int) JVMStats.getMemory();
+        System.out.println("clientMemory1: "+clientMemory1);
 	}
 
 	public void qaMemoryAssert()

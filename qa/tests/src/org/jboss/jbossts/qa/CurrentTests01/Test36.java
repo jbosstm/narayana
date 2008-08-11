@@ -87,21 +87,19 @@ public class Test36
 			{
 			}
 
-			if (correct)
-			{
-				System.out.println("Passed");
-			}
-			else
+			if (!correct)
 			{
 				System.out.println("Failed");
-			}
+                return;
+            }
 		}
 		catch (Exception exception)
 		{
 			System.out.println("Failed");
 			System.err.println("Test036.main: " + exception);
 			exception.printStackTrace(System.err);
-		}
+            return;
+        }
 
 		try
 		{

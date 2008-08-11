@@ -28,7 +28,7 @@
 	<property name="jboss.home" value="${env.JBOSS_HOME}"/>
 	<property name="jbossall-client.location" location="${jboss.home}/client/jbossall-client.jar"/>
 	<property name="astest.dir" value="org/jboss/jbossts/qa/astests"/>
-    
+
     <!-- set this property to the location of a DTF TestingFramework build -->
 	<property name="org.jboss.jbossts.qa.testingframework_location" location="../../ext/TestingFramework.jar"/>
 
@@ -77,7 +77,6 @@
 			<include name="orbportability-ant.jar"/>
 		</fileset>
 		<fileset file="${org.jboss.jbossts.qa.server_manager_location}" />
-		<fileset file="${jbossall-client.location}" /> 
         <pathelement path="${org.jboss.jbossts.qa.orb.classpath}"/>
 	</path>
 
@@ -246,20 +245,35 @@
 			   debug="on" deprecation="on">
 
 			<exclude name="org/jboss/jbossts/qa/ArjunaCore/Common/ClassPathParserTest.java" />
-			<exclude name="**/${astest.dir}/**/*.java" />
 
-			<classpath>
+			<exclude name="**/${astest.dir}/**/*.java" />
+            <exclude name="**/JNDIManager.java"/>
+
+            <classpath>
 				<path refid="jts.classpath"/>
-				<path refid="database.drivers.path"/>
 				<pathelement location="${org.jboss.jbossts.qa.build.classes}"/>
 				<pathelement location="${org.jboss.jbossts.qa.testingframework_location}"/>
 			</classpath>
-
 		</javac>
-
 	</target>
 
-	<path id="as.classpath">
+    <target name="jdbc-compile" depends="org.jboss.jbossts.qa.clean, org.jboss.jbossts.qa.init" if="have.dbdrivers">
+		<javac srcdir="${org.jboss.jbossts.qa.src}"
+			   destdir="${org.jboss.jbossts.qa.build.classes}"
+			   debug="on" deprecation="on" includes="**/JNDIManager.java">
+
+			<classpath>
+				<path refid="jts.classpath"/>
+				<pathelement location="${org.jboss.jbossts.qa.build.classes}"/>
+				<pathelement location="${org.jboss.jbossts.qa.testingframework_location}"/>
+
+                <path refid="database.drivers.path"/>
+			</classpath>
+		</javac>
+	</target>
+
+
+    <path id="as.classpath">
                 <fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/">
                         <include name="jbossjts.jar"/>
                 </fileset>
@@ -275,7 +289,7 @@
                 </fileset>
 	</path>
 
-    <target name="as-ejbjar.compile" >
+    <target name="as-ejbjar.compile" if="integration.build">
         <javac srcdir="${org.jboss.jbossts.qa.src}"
                destdir="${org.jboss.jbossts.qa.build.classes}"
                debug="on" deprecation="on">
@@ -286,7 +300,7 @@
         </javac>
     </target>
 
-   <target name="as-ejbjar" depends="as-ejbjar.compile" >
+   <target name="as-ejbjar" depends="as-ejbjar.compile" if="integration.build">
       <jar jarfile="${org.jboss.jbossts.qa.buildroot}/astest.jar">
          <fileset dir="${org.jboss.jbossts.qa.build.classes}">
             <include name="${astest.dir}/**/*.class"/>
@@ -303,7 +317,7 @@
       </copy>
    </target>
 
-	<target name="org.jboss.jbossts.qa.jar" depends="org.jboss.jbossts.qa.compile, as-ejbjar">
+	<target name="org.jboss.jbossts.qa.jar" depends="org.jboss.jbossts.qa.compile, jdbc-compile, as-ejbjar">
 		<jar jarfile="${org.jboss.jbossts.qa.buildroot}/jbossts-jts-qa.jar"
 			 basedir="${org.jboss.jbossts.qa.build.classes}"/>
 	</target>
