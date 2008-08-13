@@ -286,6 +286,7 @@ public class ATParticipantRecoveryModule implements RecoveryModule
 
     private void processParticipantsStatus()
     {
+        if (_participantUidVector != null) {
         // Process the Vector of transaction Uids
         Enumeration participantUidEnum = _participantUidVector.elements() ;
 
@@ -308,6 +309,7 @@ public class ATParticipantRecoveryModule implements RecoveryModule
                             new Object[]{currentUid.toString()}, ex);
                 }
             }
+        }
         }
 
         // now get the AT recovery manager to try to activate recovered participants
