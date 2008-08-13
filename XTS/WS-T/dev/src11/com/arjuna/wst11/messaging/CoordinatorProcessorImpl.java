@@ -13,7 +13,6 @@ import com.arjuna.webservices11.wsat.client.ParticipantClient;
 import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.SoapFault11;
-import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.messaging.MessageId;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
@@ -185,7 +184,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             }
             else
             {
-                sendInvalidState(addressingProperties, arjunaContext) ;
+                sendUnknownTransaction(addressingProperties, arjunaContext) ;
             }
         }
         else
@@ -279,23 +278,23 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
      * @param addressingProperties The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendInvalidState_1 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendInvalidState_1] - Unknown Transaction.
-     * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendInvalidState_2 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendInvalidState_2] - Unexpecting exception while sending InvalidState
+     * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_1 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_1] - Unknown Transaction.
+     * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_2 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_2] - Unexpecting exception while sending InvalidState
      */
-    private void sendInvalidState(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    private void sendUnknownTransaction(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
     {
         // KEV add check for recovery
         final AddressingProperties faultAddressingContext = AddressingHelper.createFaultContext(addressingProperties, MessageId.getMessageId()) ;
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
 
         try {
-            final String message = WSTLogger.log_mesg.getString("com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendInvalidState_1") ;
-            final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME, message) ;
+            final String message = WSTLogger.log_mesg.getString("com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_1") ;
+            final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, AtomicTransactionConstants.WSAT_ERROR_CODE_UNKNOWN_TRANSACTION_QNAME, message) ;
             ParticipantClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
         } catch (final Throwable th) {
             if (WSTLogger.arjLoggerI18N.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendInvalidState_2", th) ;
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_2", th) ;
             }
         }
     }

@@ -209,6 +209,15 @@ public interface AtomicTransactionConstants
     public QName WSAT_ERROR_CODE_INCONSISTENT_INTERNAL_STATE_QNAME = new QName(WSAT_NAMESPACE, WSAT_ERROR_CODE_INCONSISTENT_INTERNAL_STATE, WSAT_PREFIX) ;
 
     /**
+     * The UnknownTransaction error code.
+     */
+    public String WSAT_ERROR_CODE_UNKNOWN_TRANSACTION = "UnknownTransaction" ;
+    /**
+     * The UnknownTransaction error code QName.
+     */
+    public QName WSAT_ERROR_CODE_UNKNOWN_TRANSACTION_QNAME = new QName(WSAT_NAMESPACE, WSAT_ERROR_CODE_UNKNOWN_TRANSACTION, WSAT_PREFIX) ;
+
+    /**
      * The atomic transaction protocol.
      */
     public String WSAT_PROTOCOL = WSAT_NAMESPACE ;

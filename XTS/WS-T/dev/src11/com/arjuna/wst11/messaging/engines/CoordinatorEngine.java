@@ -10,9 +10,9 @@ import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.CoordinatorInboundEvents;
 import com.arjuna.webservices11.wsat.State;
+import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsat.client.ParticipantClient;
 import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
-import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.wsc11.messaging.MessageId;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
@@ -182,7 +182,16 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
         {
             sendCommit() ;
         }
-        else if ((current == State.STATE_ABORTING) || ((current == null) && !readOnly))
+        else if ((current == State.STATE_ABORTING))
+        {
+            if (durable) {
+                sendRollback();
+            } else {
+                sendUnknownTransaction(addressingProperties, arjunaContext) ;
+            }
+            forget();
+        }
+        else if ((current == null) && !readOnly)
         {
             if (durable)
             {
@@ -190,11 +199,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
             }
             else
             {
-        	    sendInvalidState(addressingProperties, arjunaContext) ;
-            }
-            if (current != null)
-            {
-        	forget() ;
+        	sendUnknownTransaction(addressingProperties, arjunaContext) ;
             }
         }
     }
@@ -386,7 +391,27 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
             forget() ;
         }
 
-        return waitForState(State.STATE_ABORTING, TransportTimer.getTransportTimeout()) ;
+        waitForState(State.STATE_ABORTING, TransportTimer.getTransportTimeout()) ;
+
+        synchronized(this)
+        {
+            if (state != State.STATE_ABORTING)
+            {
+                // means state must be null and the participant has already been deactivated
+
+                return state ;
+            }
+
+            // the participant has not confirmed that it is aborted so it will be written to the
+            // log in the transaction's heuristic list. it needs to be deactivated here
+            // so that subsequent ABORTED messages are handled correctly, either by sending
+            // an UnknownTransaction fault or a rollback depending upon whether it is
+            // volatile or durable, respectively
+
+            forget();
+
+            return State.STATE_ABORTING;
+        }
     }
 
     /**
@@ -653,27 +678,27 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     }
 
     /**
-     * Send the InvalidStateWS message.
+     * Send the UnknownTransaction message.
      *
-     * @message com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendInvalidState_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendInvalidState_1] - Inconsistent internal state.
-     * @message com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendInvalidState_2 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendInvalidState_2] - Unexpecting exception while sending InvalidState
+     * @message com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_1] - Unknown transaction
+     * @message com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_2 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_2] - Unexpected exception while sending UnknownTransaction for participant {0}
      */
-    private void sendInvalidState(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    private void sendUnknownTransaction(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
     {
         try
         {
             final AddressingProperties faultAddressingProperties = AddressingHelper.createFaultContext(addressingProperties, MessageId.getMessageId()) ;
             final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
 
-            final String message = WSTLogger.log_mesg.getString("com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendInvalidState_1") ;
-            final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME, message) ;
+            final String message = WSTLogger.log_mesg.getString("com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_1") ;
+            final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, AtomicTransactionConstants.WSAT_ERROR_CODE_UNKNOWN_TRANSACTION_QNAME, message) ;
             ParticipantClient.getClient().sendSoapFault(faultAddressingProperties, soapFault, instanceIdentifier) ;
         }
         catch (final Throwable th)
         {
-            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendInvalidState_2", th) ;
+                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_2", new Object[] { id }, th) ;
             }
         }
     }
