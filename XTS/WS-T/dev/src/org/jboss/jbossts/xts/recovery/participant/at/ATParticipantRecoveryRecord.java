@@ -35,7 +35,7 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
      * @param oos The output output stream.
      * @return true if persisted, false otherwise.
      *
-     * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_1 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_1] Could not save recovery state for son-serializable durable WS-AT participant {0}
+     * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_1 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_1] Could not save recovery state for non-serializable durable WS-AT participant {0}
      * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_2 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_2] XML stream exception saving recovery state for participant {0}
      * @message org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_3 [org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.saveState_3] I/O exception saving recovery state for participant {0}
      */
