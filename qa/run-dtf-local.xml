@@ -82,8 +82,13 @@
 
 
         <!-- this runs forked because the product config file it uses has relative paths in it, so we need to guarantee
-            the working dir is the same as the location of this script. -->
-        <junit printsummary="yes" haltonfailure="yes" fork="true" dir="${basedir}">
+            the working dir is the same as the location of this script.
+		TODO: investigate why it needs such a large memory footprint. I suspect it's buffering
+		the entire stdout, which is big for longer runs as DTF tends to be rather verbose.
+		But with 10MB of stdout based on text file size, junit needs >128MB of memory???
+		Stopping the buffering would be nice anyhow, as it stands we don't see any output in the file
+		until the tests are all done, which makes following progress a bit of a problem. -->
+        <junit printsummary="yes" haltonfailure="yes" fork="true" dir="${basedir}" maxmemory="192m">
             <classpath>
                 <path refid="tests.classpath"/>
             </classpath>
