@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2007, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2007, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2006-2007,
  * @author JBoss Inc.
  */
@@ -44,10 +44,10 @@ public class ReaperWorkerThread extends Thread
         _theReaper = arg;
         _shutdown = false;
     }
-    
+
     /**
-     * @message com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkThread_1 [com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkThread_1] - Thread {0} waiting for cancelled TXs
-     * @message com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkThread_2 [com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkThread_2] - Thread {0} performing cancellations
+     * @message com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_1 [com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkThread_1] - Thread {0} waiting for cancelled TXs
+     * @message com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_2 [com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkThread_2] - Thread {0} performing cancellations
      */
 
 public void run ()
@@ -57,7 +57,7 @@ public void run ()
               tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                                        FacilityCode.FAC_ATOMIC_ACTION, "ReaperWorkerThread.run ()");
          }
-    	
+
         for (;;)
     	{
              // wait for the reaper thread to queue some TXs for
@@ -67,7 +67,7 @@ public void run ()
              {
                   tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                                                FacilityCode.FAC_ATOMIC_ACTION,
-                                               "com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_1", 
+                                               "com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_1",
                                                new Object[]{Thread.currentThread()});
              }
 
@@ -84,7 +84,7 @@ public void run ()
              {
                   tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                                                FacilityCode.FAC_ATOMIC_ACTION,
-                                               "com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_2", 
+                                               "com.arjuna.ats.internal.arjuna.coordinator.ReaperWorkerThread_2",
                                                new Object[]{Thread.currentThread()});
              }
 
@@ -104,5 +104,5 @@ public void run ()
 
     private TransactionReaper _theReaper;
     private boolean           _shutdown;
-    
+
 }

@@ -2130,13 +2130,20 @@ public class ArjunaTransactionImple extends
 						if (TransactionReaper.transactionReaper() != null)
 						{
 						    if (_propagateRemainingTimeout)
-							context.timeout = TransactionReaper.transactionReaper().getRemainingTimeout(control);
-						    else
-							context.timeout = TransactionReaper.transactionReaper().getTimeout(control);
-						}
+                            {
+                                long timeInMills = TransactionReaper.transactionReaper().getRemainingTimeoutMills(control);
+                                context.timeout = (int)(timeInMills/1000L);
+                            }
+                            else
+                            {
+                                context.timeout = TransactionReaper.transactionReaper().getTimeout(control);
+                            }
+                        }
 						else
-							context.timeout = 0;
-					}
+                        {
+                            context.timeout = 0;
+                        }
+                    }
 
 					control = null;
 				}
@@ -2343,7 +2350,7 @@ public class ArjunaTransactionImple extends
 	static boolean _checkedTransactions = false;
 
 	static boolean _propagateTerminator = false;
-	
+
 	static boolean _propagateRemainingTimeout = true;  // OTS 1.2 onwards supported this.
 
 	/**
@@ -2402,7 +2409,7 @@ public class ArjunaTransactionImple extends
 			if (propTerm.compareTo("YES") == 0)
 				_propagateTerminator = true;
 		}
-		
+
 		String propRemainingTimeout = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.OTS_1_0_TIMEOUT_PROPAGATION);
 
 		if (propRemainingTimeout != null)

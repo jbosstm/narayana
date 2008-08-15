@@ -62,5 +62,6 @@ public interface Transaction extends javax.transaction.Transaction
 
     Map<Uid, String> getSynchronizations();
     Map<XAResource, TxInfo> getResources();
-    int getTimeout();
+    int getTimeout(); // total lifetime set, in seconds
+    long getRemainingTimeoutMills(); // time remaining until possible expire, in ms. 0 if unknown.
 }

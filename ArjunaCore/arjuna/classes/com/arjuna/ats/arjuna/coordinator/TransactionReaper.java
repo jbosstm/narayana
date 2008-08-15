@@ -67,7 +67,7 @@ import java.util.*;
  *          TransactionReaper::getTimeout for {0} returning {1}
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_17
  *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_17] -
- *          TransactionReaper::getRemainingTimeout for {0} returning {1}
+ *          TransactionReaper::getRemainingTimeoutMillis for {0} returning {1}
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_4
  *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_4] -
  *          TransactionReaper::check interrupting cancel in progress for {0}
@@ -857,62 +857,55 @@ public class TransactionReaper
                 }
 	}
 
-	/**
+    /**
 	 * Given the transaction instance, this will return the time left before the
 	 * transaction is automatically rolled back if it has not been terminated.
 	 *
 	 * @param control
-	 * @return the remaining time in seconds.
+	 * @return the remaining time in milliseconds.
 	 */
 
-	public final int getRemainingTimeout (Object control)
+	public final long getRemainingTimeoutMills(Object control)
 	{
-	    if ((_transactions.size() == 0) || (control == null))
-	    {
-		if (tsLogger.arjLogger.debugAllowed())
-		{
-		    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
-			    VisibilityLevel.VIS_PUBLIC,
-			    FacilityCode.FAC_ATOMIC_ACTION,
-			    "TransactionReaper::getRemainingTimeout for " + control
-			    + " returning 0");
-		}
+        if ((_transactions.size() == 0) || (control == null))
+        {
+            if (tsLogger.arjLogger.debugAllowed())
+            {
+                tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
+                        VisibilityLevel.VIS_PUBLIC,
+                        FacilityCode.FAC_ATOMIC_ACTION,
+                        "TransactionReaper::getRemainingTimeout for " + control
+                                + " returning 0");
+            }
 
-		return 0;
-	    }
-
-	    final ReaperElement reaperElement = (ReaperElement)_timeouts.get(control);
-	    final Integer timeout;
-
-	    if (reaperElement == null)
-	    {
-		timeout = new Integer(0);
-	    }
-	    else
-	    {
-		// units are in milliseconds at this stage.
-
-		long remainingTime = reaperElement._absoluteTimeout - System.currentTimeMillis();
-		double timeInSeconds = Math.ceil(remainingTime/1000.0);  // round up.
-
-		if (timeInSeconds <= 0)
-		    timeInSeconds = 1;
-
-		timeout = new Integer((int) remainingTime/1000);  // convert back to seconds.
-	    }
-
-        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
-        tsLogger.arjLoggerI18N
-	    .debug(
-		    DebugLevel.FUNCTIONS,
-		    VisibilityLevel.VIS_PUBLIC,
-		    FacilityCode.FAC_ATOMIC_ACTION,
-		    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_17",
-		    new Object[]
-		               { control, timeout });
+            return 0;
         }
 
-        return timeout.intValue();
+        final ReaperElement reaperElement = (ReaperElement)_timeouts.get(control);
+        long timeout = 0;
+
+        if (reaperElement == null)
+        {
+            timeout = 0;
+        }
+        else
+        {
+            // units are in milliseconds at this stage.
+            timeout = reaperElement._absoluteTimeout - System.currentTimeMillis();
+        }
+
+        if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
+            tsLogger.arjLoggerI18N
+                    .debug(
+                            DebugLevel.FUNCTIONS,
+                            VisibilityLevel.VIS_PUBLIC,
+                            FacilityCode.FAC_ATOMIC_ACTION,
+                            "com.arjuna.ats.arjuna.coordinator.TransactionReaper_17",
+                            new Object[]
+                                    { control, timeout });
+        }
+
+        return timeout;
 	}
 
 	/**

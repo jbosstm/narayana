@@ -77,8 +77,8 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
     public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback)
         throws RollbackException
     {
-        // see JBAS-5081 and http://www.jboss.com/index.html?module=bb&op=viewtopic&t=132128
-        
+        // see JBAS-5081, JBTM-371 and http://www.jboss.com/index.html?module=bb&op=viewtopic&t=132128
+
         try
     	{
             switch(getStatus())
@@ -99,8 +99,12 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
                 case Status.STATUS_ACTIVE:
                 case Status.STATUS_PREPARED:
                 case Status.STATUS_PREPARING:
-                    // TODO this should attempt to return an actual value (in millisecs), but we need transactionReaper
-                    // changes to do that so it will be in 4.4+ only, not 4.2.3.SP
+                    com.arjuna.ats.jta.transaction.Transaction tx = (com.arjuna.ats.jta.transaction.Transaction)getTransaction();
+                    if(tx != null) {
+                            return tx.getRemainingTimeoutMills();
+                    } else {
+                        return 0;
+                    }
                 case Status.STATUS_NO_TRANSACTION:
                 default:
                     break;

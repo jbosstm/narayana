@@ -68,7 +68,7 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
      * Get the time left before transaction timeout
      *
      * @param errorRollback throw an error if the transaction is marked for rollback
-     * @return the remaining in the current transaction or -1
+     * @return the time (in ms) remaining in the current transaction or -1
      * if there is no transaction
      * @throws RollbackException if the transaction is marked for rollback and
      * errorRollback is true
@@ -81,7 +81,7 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
     public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback)
         throws RollbackException
     {
-        // see JBAS-5081 and http://www.jboss.com/index.html?module=bb&op=viewtopic&t=132128
+        // see JBAS-5081, JBTM-371 and http://www.jboss.com/index.html?module=bb&op=viewtopic&t=132128
 
         try
     	{
@@ -103,22 +103,12 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
                 case Status.STATUS_ACTIVE:
                 case Status.STATUS_PREPARED:
                 case Status.STATUS_PREPARING:
-                    // TODO this should attempt to return an actual value (in millisecs), but we need transactionReaper
-                    // changes to do that so it will be in 4.4+ only, not 4.2.3.SP.
-                    // For AS 5.0, something along the lines of the block below will probably work, but we should
-                    // push the code down into the JTA/JTS rather than having it here. Talking direct to ArjunaCore
-                    // seems like a bit of a hack...
-                    /*
-                    try {
-                        BasicAction basicAction = ThreadActionData.currentAction();
-                        int remainingSeconds = TransactionReaper.transactionReaper(true).getRemainingTimeout(basicAction);
-                        if(remainingSeconds != 0) {
-                            return 1000*remainingSeconds;
-                        }
-                    } catch(Exception e) {
-                        e.printStackTrace();
+                    com.arjuna.ats.jta.transaction.Transaction tx = (com.arjuna.ats.jta.transaction.Transaction)getTransaction();
+                    if(tx != null) {
+                            return tx.getRemainingTimeoutMills();
+                    } else {
+                        return 0;
                     }
-                    */
                 case Status.STATUS_NO_TRANSACTION:
                 default:
                     break;

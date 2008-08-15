@@ -1868,6 +1868,10 @@ public class TransactionImple implements javax.transaction.Transaction,
         return _theTransaction.getTimeout();
     }
 
+    public long getRemainingTimeoutMills() {
+        return TransactionReaper.transactionReaper().getRemainingTimeoutMills(_theTransaction);
+    }
+
     public java.util.Map<Uid, String> getSynchronizations()
     {
         if (_theTransaction != null)

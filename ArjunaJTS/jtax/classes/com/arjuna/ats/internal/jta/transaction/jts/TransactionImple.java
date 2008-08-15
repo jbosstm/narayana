@@ -47,6 +47,7 @@ import org.omg.CosTransactions.*;
 
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator;
+import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 
 import com.arjuna.ats.jta.xa.*;
 import com.arjuna.ats.jta.common.Configuration;
@@ -1840,6 +1841,10 @@ public class TransactionImple implements javax.transaction.Transaction,
     public int getTimeout()
     {
         return _theTransaction.getTimeout();
+    }
+
+    public long getRemainingTimeoutMills() {
+        return TransactionReaper.transactionReaper().getRemainingTimeoutMills(_theTransaction.getControlWrapper());
     }
 
     public java.util.Map<Uid, String> getSynchronizations()
