@@ -137,7 +137,9 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
             XTSLogger.arjLogger.debug( "ACCoordinatorRecoveryModule: Second pass " );
         }
 
-        processTransactionsStatus() ;
+        if (_transactionUidVector != null) {
+            processTransactionsStatus() ;
+        }
 
         // ok notify the coordinator processor that recovery processing has completed
 
