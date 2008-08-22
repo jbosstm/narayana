@@ -68,7 +68,6 @@
     <xmlproperty file="${xmlpropertyfile}" keeproot="false"/>
 
     <property name="xts.home" value=".."/>
-    <property name="conf.dir" location="${xts.home}/conf"/>
 
     <property name="lib.dir" location="${xts.home}/lib"/>
     <property name="ext.dir" location="${lib.dir}/ext"/>
@@ -89,16 +88,12 @@
     <property name="dd.dir" location="dd"/>
     <property name="jboss.dd.dir" location="${dd.dir}/jboss"/>
     <property name="build.jboss.dd.dir" location="${build.dir}/dd/jboss"/>
-    <property name="build.config" location="${build.dir}/config"/>
-    <property name="build.soapconfig" location="${build.dir}/soapconfig"/>
 
     <property name="buildrpc.dir" location="buildrpc"/>
     <property name="srcrpc.dir" location="srcrpc"/>
     <property name="ddrpc.dir" location="ddrpc"/>
     <property name="jboss.ddrpc.dir" location="${ddrpc.dir}/jboss"/>
     <property name="build.jboss.ddrpc.dir" location="${buildrpc.dir}/dd/jboss"/>
-    <property name="buildrpc.config" location="${buildrpc.dir}/config"/>
-    <property name="buildrpc.soapconfig" location="${buildrpc.dir}/soapconfig"/>
 
     <property name="web.dir" location="web"/>
     <property name="build.web.dir" location="${build.dir}/web"/>
@@ -183,16 +178,12 @@
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.dir}/classes"/>
         <mkdir dir="${build.jboss.dd.dir}"/>
-        <mkdir dir="${build.config}"/>
-        <mkdir dir="${build.soapconfig}"/>
     </target>
 
     <target name="initrpc" depends="init-properties">
         <mkdir dir="${buildrpc.dir}"/>
         <mkdir dir="${buildrpc.dir}/classes"/>
         <mkdir dir="${build.jboss.ddrpc.dir}"/>
-        <mkdir dir="${buildrpc.config}"/>
-        <mkdir dir="${buildrpc.soapconfig}"/>
     </target>
 
     <target name="compilerpc" depends="initrpc">
@@ -256,15 +247,6 @@
         </war>
     </target>
 
-    <target name="config" depends="insertcfg">
-        <filter token="hostname" value="${hostname}"/>
-        <filter token="port" value="${port}"/>
-        <copy todir="${build.config}" filtering="true">
-            <fileset dir="${conf.dir}" includes="wscf.xml wstx.xml wst.xml"/>
-        </copy>
-        <jar destfile="${build.dir}/config.jar" basedir="${build.config}"/>
-    </target>
-
     <target name="jboss-webservicesrpc" depends="compilerpc">
         <war destfile="${buildrpc.dir}/xts-demo-webservicesrpc.war" webxml="${jboss.ddrpc.dir}/service-web-app.xml">
             <webinf dir="${jboss.ddrpc.dir}" excludes="client-web-app.xml service-web-app.xml application.xml client-jaxrpc-mapping.xml"/>
@@ -272,15 +254,6 @@
                 <include name="com/arjuna/xts/nightout/services/**"/>
             </classes>
         </war>
-    </target>
-
-    <target name="configrpc" depends="insertcfgrpc">
-        <filter token="hostname" value="${hostname}"/>
-        <filter token="port" value="${port}"/>
-        <copy todir="${buildrpc.config}" filtering="true">
-            <fileset dir="${conf.dir}" includes="wscf.xml wstx.xml wst.xml"/>
-        </copy>
-        <jar destfile="${buildrpc.dir}/config.jar" basedir="${buildrpc.config}"/>
     </target>
 
     <!-- the client side elements -->
@@ -356,54 +329,6 @@
     <target name="build" depends="jboss-ear"/>
 
     <target name="buildrpc" depends="jboss-earrpc"/>
-
-    <target name="insertcfg" depends="init">
-        <filter token="hostname" value="${hostname}"/>
-        <filter token="port" value="${port}"/>
-        <filter token="urlstub" value="${urlstub}"/>
-
-        <unjar src="${xts.home}/webapps/ws-c11.war" dest="${build.dir}/tmp/ws-c11"/>
-
-        <copy file="${xts.home}/coordinator/dd/ws-c11_web-app.xml"
-            tofile="${build.dir}/tmp/ws-c11/WEB-INF/web.xml" filtering="true" overwrite="true"/>
-
-        <jar destfile="${build.dir}/ws-c11.war" basedir="${build.dir}/tmp/ws-c11" manifest="${build.dir}/tmp/ws-c11/META-INF/MANIFEST.MF"/>
-
-        <delete dir="${build.dir}/tmp/ws-c11"/>
-
-        <unjar src="${xts.home}/webapps/ws-t.war" dest="${build.dir}/tmp/ws-t11"/>
-
-        <copy file="${xts.home}/coordinator/dd/ws-t11_web-app.xml"
-            tofile="${build.dir}/tmp/ws-t11/WEB-INF/web.xml" filtering="true" overwrite="true"/>
-
-        <jar destfile="${build.dir}/ws-t11.war" basedir="${build.dir}/tmp/ws-t11" manifest="${build.dir}/tmp/ws-t11/META-INF/MANIFEST.MF"/>
-
-        <delete dir="${build.dir}/tmp/ws-t11"/>
-    </target>
-
-    <target name="insertcfgrpc" depends="initrpc">
-        <filter token="hostname" value="${hostname}"/>
-        <filter token="port" value="${port}"/>
-        <filter token="urlstub" value="${urlstub}rpc"/>
-
-        <unjar src="${xts.home}/webapps/ws-c.war" dest="${buildrpc.dir}/tmp/ws-c"/>
-
-        <copy file="${xts.home}/coordinator/dd/ws-c_web-app.xml"
-            tofile="${buildrpc.dir}/tmp/ws-c/WEB-INF/web.xml" filtering="true" overwrite="true"/>
-
-        <jar destfile="${buildrpc.dir}/ws-c.war" basedir="${buildrpc.dir}/tmp/ws-c" manifest="${buildrpc.dir}/tmp/ws-c/META-INF/MANIFEST.MF"/>
-
-        <delete dir="${buildrpc.dir}/tmp/ws-c"/>
-
-        <unjar src="${xts.home}/webapps/ws-t.war" dest="${buildrpc.dir}/tmp/ws-t"/>
-
-        <copy file="${xts.home}/coordinator/dd/ws-t_web-app.xml"
-            tofile="${buildrpc.dir}/tmp/ws-t/WEB-INF/web.xml" filtering="true" overwrite="true"/>
-
-        <jar destfile="${buildrpc.dir}/ws-t.war" basedir="${buildrpc.dir}/tmp/ws-t" manifest="${buildrpc.dir}/tmp/ws-t/META-INF/MANIFEST.MF"/>
-
-        <delete dir="${buildrpc.dir}/tmp/ws-t"/>
-    </target>
 
     <target name="deploy" depends="build, undeploy">
         <copy file="${build.dir}/xts-demo.ear" tofile="${deploy.dir}/xts-demo.ear"/>

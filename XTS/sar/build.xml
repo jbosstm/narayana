@@ -26,8 +26,6 @@
     <!-- build and install the XTS component as a service archive           -->
 
     <!-- The properties to override are the following:                      -->
-    <!--    hostname (defaults to localhost)                                -->
-    <!--    port (defaults to 8080 for jboss)                               -->
     <!--    coordinator.hostname (defaults to ${hostname})                  -->
     <!--    coordinator.port (defaults to ${port})                          -->
     <!--    xts.home The installation directory for XTS                     -->
@@ -39,17 +37,15 @@
     <!-- the directory in which XTS resides -->
     <property name="xts.home" value="../xts-install"/>
 
-    <!-- the name of the host running JBOSS -->
-    <property name="hostname" value="localhost"/>
+    <!-- the name of the host where the coordinator resides. this defaults to the
+    special symbol server.bind.address which will be substituted with the actual
+    server bind address employed when jboss is started -->
+    <property name="coordinator.hostname" value="server.bind.address"/>
 
-    <!-- the name of the port used by the JBoss web listener -->
-    <property name="port" value="8080"/>
-
-    <!-- the name of the host where the coordinator resides -->
-    <property name="coordinator.hostname" value="${hostname}"/>
-
-    <!-- the name of the port the coordinator is listening on -->
-    <property name="coordinator.port" value="8080"/>
+    <!-- the name of the port the coordinator is listening on.  this defaults to the
+    special symbol jboss.web.bind.port which will be substituted with the actual
+    jboss web service HTTP listener port employed when jboss is started -->
+    <property name="coordinator.port" value="jboss.web.bind.port"/>
 
     <!-- the directory in which your installed app server resides -->
     <property environment="env"/>
@@ -148,7 +144,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     </target>            
 
     <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
-    <target name="sar-both" depends="init, compile, dev-resourcebundle, insertcfg10, insertcfg11">
+    <target name="sar-both" depends="init, compile, dev-resourcebundle">
         <!-- create config jar containing conf files for 1.0 and 1.1 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -162,24 +158,6 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <!-- copy 11 and 1.0 application.xml to build dir -->
         <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application.xml"/>
 
-	<!-- unpack all the jar code into the classes directory -->
-	<!-- this works around a bug in AS 5.0.0.CR1 sar handling -->
-	<!--
-        <unjar src="${lib.dir}/ws-c.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/ws-c10.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/ws-c11.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/ws-t.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/ws-t10.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/ws-t11.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wsas.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wscf.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wscf10.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wscf11.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wstx.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wstx10.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wstx11.jar" dest="${build.classes.dir}"/>
-	<delete file="${build.classes.dir}/META-INF/MANIFEST.MF"/>
-	-->
         <!-- pack everything in the service archive -->
         <jar jarfile="${build.dir}/jbossxts.sar">
             <!-- include generic 1.0 and 1.1 jars -->
@@ -188,9 +166,8 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
 -->
             <fileset dir="${lib.dir}" includes="*.jar"/>
 
-            <!-- include 1.0 and 1.1 web apps all config files are included -->
-            <fileset dir="${build.dir}" includes="ws-c11.war ws-c10.war ws-t11.war ws-t10.war"/>
-            <fileset dir="${webapps.dir}" includes="*.war" excludes="ws-c11.war ws-c10.war ws-t11.war ws-t10.war"/>
+            <!-- include 1.0 and 1.1 web apps -->
+            <fileset dir="${webapps.dir}" includes="*.war"/>
 
             <!-- include config jar -->
             <fileset dir="${build.dir}" includes="config.jar"/>
@@ -202,15 +179,12 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
 
             <!-- include sar boot and shutdown code -->
-	    <!--
-            <fileset dir="${build.dir}" includes="**/*.class"/>
-	    -->
 	    <fileset dir="${build.classes.dir}" includes="**/*"/>
         </jar>
     </target>
 
     <!-- build XTS service archive supporting 1.1 WS-C/T protocols -->
-    <target name="sar-11" depends="init, compile, dev-resourcebundle, insertcfg11">
+    <target name="sar-11" depends="init, compile, dev-resourcebundle">
         <!-- create config jar containing conf files for 1.1 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -224,26 +198,13 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <!-- copy 11 application.xml to build dir -->
         <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application11.xml"/>
 
-	<!-- unpack all the jar code into the classes directory -->
-	<!-- this works around a bug in AS 5.0.0.CR1 sar handling -->
-        <unjar src="${lib.dir}/ws-c.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/ws-c11.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/ws-t.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/ws-t11.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wsas.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wscf.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wscf11.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wstx.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wstx11.jar" dest="${build.classes.dir}"/>
-	<delete file="${build.classes.dir}/META-INF/MANIFEST.MF"/>
         <!-- pack everything in the service archive -->
         <jar jarfile="${build.dir}/jbossxts.sar">
             <!-- include generic and 1.1 jars -->
             <fileset dir="${lib.dir}" includes="*.jar" excludes="*10.jar"/>
 
-            <!-- include 1.1 web apps all config files are included -->
-            <fileset dir="${build.dir}" includes="ws-c11.war ws-t11.war"/>
-            <fileset dir="${webapps.dir}" includes="*11.war" excludes="ws-c11.war ws-t11.war"/>
+            <!-- include 1.1 web apps-->
+            <fileset dir="${webapps.dir}" includes="*11.war"/>
 
             <!-- include config jar -->
             <fileset dir="${build.dir}" includes="config.jar"/>
@@ -255,15 +216,12 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
 
             <!-- include sar boot and shutdown code -->
-	    <!--
-            <fileset dir="${build.dir}" includes="**/*.class"/>
-	    -->
             <fileset dir="${build.classes.dir}" includes="**/*"/>
         </jar>
     </target>
 
     <!-- build XTS service archive supporting 1.0 WS-C/T protocols -->
-    <target name="sar-10" depends="init, compile, dev-resourcebundle, insertcfg10">
+    <target name="sar-10" depends="init, compile, dev-resourcebundle">
         <!-- create config jar containing conf files for 1.0 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -277,26 +235,13 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <!-- copy 10 application.xml to build dir -->
         <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application10.xml"/>
 
-	<!-- unpack all the jar code into the classes directory -->
-	<!-- this works around a bug in AS 5.0.0.CR1 sar handling -->
-        <unjar src="${lib.dir}/ws-c.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/ws-c10.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/ws-t.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/ws-t10.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wsas.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wscf.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wscf10.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wstx.jar" dest="${build.classes.dir}"/>
-        <unjar src="${lib.dir}/wstx10.jar" dest="${build.classes.dir}"/>
-	<delete file="${build.classes.dir}/META-INF/MANIFEST.MF"/>
         <!-- pack everything in the service archive -->
         <jar jarfile="${build.dir}/jbossxts.sar">
             <!-- include generic and 1.0 jars -->
             <fileset dir="${lib.dir}" includes="*.jar" excludes="*11.jar"/>
 
-            <!-- include 1.0 web apps all config files are included -->
-            <fileset dir="${build.dir}" includes="ws-c10.war ws-t10.war"/>
-            <fileset dir="${webapps.dir}" includes="*10.war" excludes="ws-c10.war ws-t10.war"/>
+            <!-- include 1.0 web apps -->
+            <fileset dir="${webapps.dir}" includes="*10.war"/>
 
             <!-- include config jar -->
             <fileset dir="${build.dir}" includes="config.jar"/>
@@ -308,9 +253,6 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
 
             <!-- include sar boot and shutdown code -->
-	    <!--
-            <fileset dir="${build.dir}" includes="**/*.class"/>
-	    -->
             <fileset dir="${build.classes.dir}" includes="**/*"/>
         </jar>
     </target>

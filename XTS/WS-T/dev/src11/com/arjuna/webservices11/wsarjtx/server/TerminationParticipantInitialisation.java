@@ -27,6 +27,7 @@ import javax.servlet.ServletContext;
 import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.services.framework.startup.Sequencer;
+import com.arjuna.wsc11.common.Environment;
 
 /**
  * Activate the Terminator Coordinator service
@@ -40,13 +41,22 @@ public class TerminationParticipantInitialisation implements ServletContextListe
      */
     public void contextInitialized(final ServletContextEvent servletContextEvent)
     {
-        ServletContext context = servletContextEvent.getServletContext();
-        String baseURI = context.getInitParameter("BaseURI");
-        final String uri = baseURI + "/" + ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME;
-
         Sequencer.Callback callback = new Sequencer.Callback(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WST11) {
            public void run() {
                final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+               String bindAddress = System.getProperty(Environment.XTS_BIND_ADDRESS);
+               String bindPort = System.getProperty(Environment.XTS_BIND_PORT);
+               String secureBindPort = System.getProperty(Environment.XTS_SECURE_BIND_PORT);
+
+               if (bindAddress == null) {
+                   bindAddress = "127.0.0.1";
+               }
+
+               if (bindPort == null) {
+                   bindPort = "8080";
+               }
+               final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11/";
+               final String uri = baseUri + ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME;
                serviceRegistry.registerServiceProvider(ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME, uri) ;
            }
         };

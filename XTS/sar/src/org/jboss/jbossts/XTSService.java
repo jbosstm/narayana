@@ -34,6 +34,7 @@ import org.jboss.jbossts.xts.recovery.participant.at.ATParticipantRecoveryModule
 //import com.arjuna.wsc.messaging.RegistrationCoordinatorProcessorImpl;
 //import com.arjuna.mwlabs.wsc.ContextFactoryMapperImple;
 import com.arjuna.services.framework.task.TaskManager;
+import com.arjuna.services.framework.startup.Sequencer;
 //import com.arjuna.webservices.HandlerRegistry;
 //import com.arjuna.webservices.SoapRegistry;
 //import com.arjuna.webservices.SoapService;
@@ -72,6 +73,12 @@ import com.arjuna.services.framework.task.TaskManager;
 //import com.arjuna.webservices.wsaddr.policy.AddressingPolicy;
 //import com.arjuna.wst.messaging.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+
+import javax.management.ObjectName;
+import javax.management.AttributeNotFoundException;
+import javax.management.JMException;
+import javax.management.MBeanServer;
+import java.util.Set;
 //import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 
 /**
@@ -125,6 +132,88 @@ public class XTSService implements XTSServiceMBean {
 
         // read unified properties file (replaces wscf.xml and wstx.xml)
         // Configuration.initialise("/jbossxts.xml");
+
+        // before we can allow the services to start up we need to identify the server
+        // bind address and the web service port so they services register themselves
+        // in the registry using the correct URL
+
+        // the Transaction Service initialization saves the server bind address using a System
+        // property. we can use this to define the binding address used by the XTS services
+
+        String bindAddress = System.getProperty(com.arjuna.ats.arjuna.common.Environment.SERVER_BIND_ADDRESS);
+        System.setProperty(com.arjuna.wsc.common.Environment.XTS_BIND_ADDRESS, bindAddress);
+        System.setProperty(com.arjuna.wsc11.common.Environment.XTS_BIND_ADDRESS, bindAddress);
+
+        // the web service exposes its listen port somehow or other
+        String bindPortString = getConnectorPort("HTTP/1.1", false);
+        String secureBindPortString = getConnectorPort("HTTP/1.1", true);
+
+        if (bindPortString != null) {
+            System.setProperty(com.arjuna.wsc.common.Environment.XTS_BIND_PORT, bindPortString);
+            System.setProperty(com.arjuna.wsc11.common.Environment.XTS_BIND_PORT, bindPortString);
+        }
+
+        if (secureBindPortString != null) {
+            System.setProperty(com.arjuna.wsc.common.Environment.XTS_SECURE_BIND_PORT, secureBindPortString);
+            System.setProperty(com.arjuna.wsc11.common.Environment.XTS_SECURE_BIND_PORT, secureBindPortString);
+        }
+
+        // see if the coordinatorURL or host/port has been specified on the command line
+        // if so then we need to record that fact here so we override any value
+        // supplied in the  config file
+        // but we don't do this if we have already saved it and we are now reloading XTS
+        // yeeurrch really need to stop using System properties
+
+        if (System.getProperty(com.arjuna.wsc.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL) == null) {
+            String coordinatorURL = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_URL);
+            String coordinatorHost = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_HOST);
+            String coordinatorPort = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_PORT);
+            String coordinatorPath = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_PATH);
+            if (coordinatorURL != null) {
+                System.setProperty(com.arjuna.wsc.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
+            } else if (coordinatorHost != null || coordinatorPort != null || coordinatorPath != null) {
+                if (coordinatorHost == null) {
+                    coordinatorHost = (bindAddress != null ? bindAddress : "127.0.0.1");
+                }
+                if (coordinatorPort == null) {
+                    coordinatorPort = (bindPortString != null ? bindPortString : "8080");
+                }
+                if (coordinatorPath == null) {
+                    coordinatorPath = "ws-c10/soap/ActivationCoordinator";
+                }
+                coordinatorURL = "http://" + coordinatorHost + ":" + coordinatorPort + "/" + coordinatorPath;
+                System.setProperty(com.arjuna.wsc.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
+                System.setProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_URL, coordinatorURL);
+            }
+        }
+
+        // ok now do the same for the 1.1 env settings
+
+        if (System.getProperty(com.arjuna.wsc11.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL) == null) {
+            String coordinatorURL = System.getProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_URL);
+            String coordinatorHost = System.getProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_HOST);
+            String coordinatorPort = System.getProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_PORT);
+            String coordinatorPath = System.getProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_PATH);
+            if (coordinatorURL != null) {
+                System.setProperty(com.arjuna.wsc11.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
+            } else if (coordinatorHost != null || coordinatorPort != null || coordinatorPath != null) {
+                if (coordinatorHost == null) {
+                    coordinatorHost = (bindAddress != null ? bindAddress : "127.0.0.1");
+                }
+                if (coordinatorPort == null) {
+                    coordinatorPort = (bindPortString != null ? bindPortString : "8080");
+                }
+                if (coordinatorPath == null) {
+                    coordinatorPath = "ws-c11/ActivationService";
+                }
+                coordinatorURL = "http://" + coordinatorHost + ":" + coordinatorPort + "/" + coordinatorPath;
+                System.setProperty(com.arjuna.wsc11.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
+                System.setProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_URL, coordinatorURL);
+            }
+        }
+        // now it is safe to let the Sequencer class run any intiialisation routines it needs
+
+        Sequencer.unlatch();
 
         TaskManagerInitialisation(); // com.arjuna.services.framework.admin.TaskManagerInitialisation : initialise the Task Manager
 
@@ -452,4 +541,63 @@ public class XTSService implements XTSServiceMBean {
         soapRegistry.registerSoapService(serviceName, new SoapService(handlerRegistry)) ;
     }
     */
+
+    private String getConnectorPort(final String protocol, final boolean secure)
+    {
+       int port = -1;
+
+       try
+       {
+          ObjectName connectors = new ObjectName("jboss.web:type=Connector,*");
+
+          Set connectorNames = getMbeanServer().queryNames(connectors, null);
+          for (Object current : connectorNames)
+          {
+             ObjectName currentName = (ObjectName)current;
+
+             try
+             {
+                int connectorPort = (Integer)getMbeanServer().getAttribute(currentName, "port");
+                boolean connectorSecure = (Boolean)getMbeanServer().getAttribute(currentName, "secure");
+                String connectorProtocol = (String)getMbeanServer().getAttribute(currentName, "protocol");
+
+                if (protocol.equals(connectorProtocol) && secure == connectorSecure)
+                {
+                   if (port > -1)
+                   {
+                      log.warn("Found multiple connectors for protocol='" + protocol + "' and secure='" + secure + "', using first port found '" + port + "'");
+                   }
+                   else
+                   {
+                      port = connectorPort;
+                   }
+                }
+             }
+             catch (AttributeNotFoundException ignored)
+             {
+             }
+          }
+
+           if (port < 0) {
+               return null;
+           } else {
+               return Integer.toString(port);
+           }
+       }
+       catch (JMException e)
+       {
+          return null;
+       }
+    }
+    public MBeanServer getMbeanServer()
+    {
+       return mbeanServer;
+    }
+
+    public void setMbeanServer(MBeanServer mbeanServer)
+    {
+       this.mbeanServer = mbeanServer;
+    }
+
+    private MBeanServer mbeanServer = null;
 }

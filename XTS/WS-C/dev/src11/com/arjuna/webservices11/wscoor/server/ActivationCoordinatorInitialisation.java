@@ -23,6 +23,7 @@ package com.arjuna.webservices11.wscoor.server;
 import com.arjuna.services.framework.startup.Sequencer;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.ServiceRegistry;
+import com.arjuna.wsc11.common.Environment;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -40,16 +41,26 @@ public class ActivationCoordinatorInitialisation implements ServletContextListen
      */
     public void contextInitialized(final ServletContextEvent servletContextEvent)
     {
-        ServletContext context = servletContextEvent.getServletContext();
-        String baseURI = context.getInitParameter("BaseURI");
-        final String uri = baseURI + "/ActivationService";
-
         Sequencer.Callback callback = new Sequencer.Callback(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WSC11) {
            public void run() {
                // TODO if we rely upon JaxWS to automatically publish implementation classes it will only
                // do so under a URL based on service name. which means we cannot define a service using
                // multiple port bindings because thsi causes a namespace clash
                final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+               String bindAddress = System.getProperty(Environment.XTS_BIND_ADDRESS);
+               String bindPort = System.getProperty(Environment.XTS_BIND_PORT);
+               String secureBindPort = System.getProperty(Environment.XTS_SECURE_BIND_PORT);
+
+               if (bindAddress == null) {
+                   bindAddress = "127.0.0.1";
+               }
+
+               if (bindPort == null) {
+                   bindPort = "8080";
+               }
+               final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-c11/";
+               final String uri = baseUri + "ActivationService";
+
                serviceRegistry.registerServiceProvider(CoordinationConstants.ACTIVATION_SERVICE_NAME, uri) ;
            }
         };

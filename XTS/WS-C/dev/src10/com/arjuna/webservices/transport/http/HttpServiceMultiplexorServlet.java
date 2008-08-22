@@ -40,6 +40,7 @@ import com.arjuna.webservices.SoapService;
 import com.arjuna.webservices.SoapServiceEndpointProvider;
 import com.arjuna.webservices.util.ClassLoaderHelper;
 import com.arjuna.services.framework.startup.Sequencer;
+import com.arjuna.wsc.common.Environment;
 
 /**
  * Servlet handling SOAP requests over HTTP.
@@ -368,7 +369,33 @@ public class HttpServiceMultiplexorServlet extends HttpServlet implements SoapSe
         }
         return buffer.substring(startIndex, endIndex+1) ;
     }
-    
+
+    /**
+     * called by the sequencer callback to set the base address used to construct the XTS
+     * service URLs.
+     */
+    private void configureBaseURIs()
+    {
+        String bindAddress = System.getProperty(Environment.XTS_BIND_ADDRESS);
+        String bindPort = System.getProperty(Environment.XTS_BIND_PORT);
+        String secureBindPort = System.getProperty(Environment.XTS_SECURE_BIND_PORT);
+
+        if (bindAddress == null) {
+            bindAddress = "127.0.0.1";
+        }
+
+        if (bindPort == null) {
+            bindPort = "8080";
+        }
+
+        if (secureBindPort == null) {
+            secureBindPort = "8080";
+        }
+
+        baseHttpURI = "http://" +  bindAddress + ":" + bindPort + "/ws-c10/soap/";
+        baseHttpsURI = "http://" +  bindAddress + ":" + secureBindPort + "/ws-c10/soap/";
+    }
+
     /**
      * Configure the endpoint servlet.
      * @param servletConfig The servlet configuration.
@@ -384,15 +411,10 @@ public class HttpServiceMultiplexorServlet extends HttpServlet implements SoapSe
                final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
                soapRegistry.registerSoapServiceProvider(HttpUtils.HTTP_SCHEME, servlet) ;
                soapRegistry.registerSoapServiceProvider(HttpUtils.HTTPS_SCHEME, servlet) ;
+               servlet.configureBaseURIs();
            }
         };
 
-        // must do this before we close the callback list because some of the other callbacks depend upon and
-        // we don't want to introduce a race
-
-        baseHttpURI = processURI(servletConfig.getInitParameter("BaseHttpURI")) ;
-        baseHttpsURI = processURI(servletConfig.getInitParameter("BaseHttpsURI")) ;
-        
         // this is the last WSC callback to be initialised so close the list
         Sequencer.close(Sequencer.SEQUENCE_WSCOOR10, Sequencer.WEBAPP_WSC10);
 

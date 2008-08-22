@@ -42,6 +42,7 @@ import com.arjuna.mw.wst.UserTransaction;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.webservices.util.ClassLoaderHelper;
 import com.arjuna.services.framework.startup.Sequencer;
+import com.arjuna.wsc.common.Environment;
 
 /**
  * Initialise WSTX.
@@ -70,6 +71,15 @@ public class WSTXInitialisation implements ServletContextListener
                {
                    Configuration.initialise("/wstx.xml");
 
+                   // ok, if we just loaded a coordinator URL and one was already defined on
+                   // the command line then reinstate the command line version
+                   String commandLineCoordinatrURL  = System.getProperty(com.arjuna.wsc.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL);
+                   if (commandLineCoordinatrURL != null) {
+                       System.setProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_URL, commandLineCoordinatrURL);
+                   }
+
+                   fixCoordinatorURL();
+                   
                    listener.configure();
                    // Start recovery
 //            RecoveryManager.manager() ;
@@ -133,6 +143,52 @@ public class WSTXInitialisation implements ServletContextListener
         BusinessActivityManager.setBusinessActivityManager((BusinessActivityManager)ClassLoaderHelper.forName(getClass(), baManager).newInstance()) ;
     }
 
+    private final String SERVER_BIND_ADDRESS_KEY = "server.bind.address";
+
+    private final String JBOSS_WEB_BIND_PORT_KEY = "jboss.web.bind.port";
+
+    private void fixCoordinatorURL()
+    {
+        // ok, if we just loaded a coordinator URL and one was already defined on
+        // the command line then reinstate the command line version
+        String commandLineCoordinatrURL  = System.getProperty(com.arjuna.wsc.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL);
+        if (commandLineCoordinatrURL != null) {
+            System.setProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_URL, commandLineCoordinatrURL);
+        }
+
+        // if the coordinatorURL contains the symbolic names server.bind.address
+        // or jboss.web.bind.port then we must substitute these with the actual
+        // bind address and jboss web http port
+
+        String coordinatorURL = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_URL);
+
+        if (coordinatorURL != null) {
+            boolean updated = false;
+            int idx = coordinatorURL.indexOf(SERVER_BIND_ADDRESS_KEY);
+            if (idx >= 0) {
+                String bindAddress = System.getProperty(Environment.XTS_BIND_ADDRESS);
+                if (bindAddress == null) {
+                    bindAddress = "127.0.0.1";
+                }
+                coordinatorURL = coordinatorURL.substring(0, idx) + bindAddress + coordinatorURL.substring(idx + SERVER_BIND_ADDRESS_KEY.length());
+                updated = true;
+            }
+
+            idx = coordinatorURL.indexOf(JBOSS_WEB_BIND_PORT_KEY);
+            if (idx >= 0) {
+                String bindPort = System.getProperty(Environment.XTS_BIND_PORT);
+                if (bindPort == null) {
+                    bindPort = "8080";
+                }
+                coordinatorURL = coordinatorURL.substring(0, idx) + bindPort + coordinatorURL.substring(idx + JBOSS_WEB_BIND_PORT_KEY.length());
+                updated = true;
+            }
+
+            if (updated) {
+                System.setProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_URL, coordinatorURL);
+            }
+        }
+    }
     /**
      * Get the specified service.
      * @param root The root element.

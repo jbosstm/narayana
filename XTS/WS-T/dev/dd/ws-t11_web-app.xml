@@ -27,11 +27,6 @@
 
     <description>Arjuna Web Services Transaction 1.1</description>
 
-    <!-- base URL for location of Web Services Transaction 1.1 services -->
-    <context-param>
-        <param-name>BaseURI</param-name>
-	<param-value>http://@hostname@:@port@/ws-t11</param-value>
-    </context-param>
     <!-- Initialise Arjuna TX 1.1 services -->
     <listener>
         <listener-class>com.arjuna.webservices11.wsarjtx.server.TerminationParticipantInitialisation</listener-class>

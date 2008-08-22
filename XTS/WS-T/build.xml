@@ -43,8 +43,6 @@
 
     <!-- ================================================================== -->
     <property name="deploy.dir" value="${jboss.server.dir}/deploy"/>
-    <property name="hostname" value="localhost"/>
-    <property name="port" value="8080"/>
     <property name="ws-c.home"               value="../WS-C"/>
 
     <!-- ================================================================== -->
@@ -298,16 +296,8 @@
 
     <target name="dev-webapps" depends="dev-jars">
         <copy file="${dev.dd.dir}/ws-t_web-app.xml" tofile="${build.dev.dd.dir}/web-app.xml">
-            <filterset>
-                <filter token="hostname" value="${hostname}"/>
-                <filter token="port" value="${port}"/>
-            </filterset>
         </copy>
         <copy file="${dev.dd.dir}/ws-t11_web-app.xml" tofile="${build.dev.dd.dir}/web-app11.xml">
-            <filterset>
-                <filter token="hostname" value="${hostname}"/>
-                <filter token="port" value="${port}"/>
-            </filterset>
         </copy>
         <copy file="${dev.dd.dir}/ws-t_handlers.xml" tofile="${build.dev.classes11.dir}/handlers.xml"/>
         <war warfile="${build.dev.webapps.dir}/ws-t10.war" webxml="${build.dev.dd.dir}/web-app.xml"/>
@@ -341,18 +331,10 @@
             </manifest>
         </jar>
         <copy file="${tests.dd.dir}/ws-t-tests_web-app.xml" tofile="${build.tests.dd.dir}/web-app.xml">
-            <filterset>
-                <filter token="hostname" value="${hostname}"/>
-                <filter token="port" value="${port}"/>
-            </filterset>
         </copy>
         <war warfile="${build.tests.webapps.dir}/ws-t-tests.war" webxml="${build.tests.dd.dir}/web-app.xml">
         </war>
         <copy file="${tests.dd.dir}/ws-t11-tests_web-app.xml" tofile="${build.tests.dd.dir}/web-app11.xml">
-            <filterset>
-                <filter token="hostname" value="${hostname}"/>
-                <filter token="port" value="${port}"/>
-            </filterset>
         </copy>
         <war warfile="${build.tests.webapps.dir}/ws-t11-tests.war" webxml="${build.tests.dd.dir}/web-app11.xml">
         </war>

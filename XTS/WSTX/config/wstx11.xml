@@ -57,16 +57,16 @@
 
 	     n.b. if you leave this line as is the build script in the
 	     sar directory which builds the jbossxts service archive
-	     (jbossxts.sar) will substitute the local hostname and
-	     port into this property which means that the local
+	     (jbossxts.sar) will substitute the values server.bind.address and
+	     jboss.web.bind.port into this property which means that the local
 	     coordinator will be used to service coordination
-	     requests. you can override these settings by editing the
-	     build script or by supplying values on the ant command
-	     line using -Dcoordinator.hostname=<hostname> and
-	     -Dcoordinator.port=<port>.
+	     requests. you can override these settings by editing the sar
+	     build script or supplying values -Dcoordinator.hostname=<hostname>
+	     and -Dcoordinator.port=<port> on the ant command
+	     line when rebuilding the sar.
         -->
         <property
-	    name="com.arjuna.mw.wst11.coordinatorURL"
+	    name="org.jboss.jbossts.xts11.coordinatorURL"
 	    value="http://@coordinator.hostname@:@coordinator.port@/ws-c11/ActivationService"/>
 	</properties>
 </wstx-config>

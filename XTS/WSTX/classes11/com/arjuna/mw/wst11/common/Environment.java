@@ -37,6 +37,9 @@ package com.arjuna.mw.wst11.common;
 public interface Environment
 {
 
-    public static final String COORDINATOR_URL = "com.arjuna.mw.wst11.coordinatorURL";
+    public static final String COORDINATOR_URL = "org.jboss.jbossts.xts11.coordinatorURL";
+    public static final String COORDINATOR_HOST = "org.jboss.jbossts.xts11.coordinator.host";
+    public static final String COORDINATOR_PORT = "org.jboss.jbossts.xts11.coordinator.port";
+    public static final String COORDINATOR_PATH = "org.jboss.jbossts.xts11.coordinator.path";
 
 }

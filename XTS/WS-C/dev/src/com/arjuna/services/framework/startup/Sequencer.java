@@ -130,7 +130,25 @@ public class Sequencer {
         public abstract void run();
     }
 
+    /**
+     * undo the latch which initially delays running of any callback sequences. this is provided
+     * to enable the Service start routine to configure any necessary parameters before the
+     * listener callbacks are run. It is synchronized on the class so we can safely notify any
+     * threads waiting to pass the latch which will be waiting on the Sequencer.class.
+     */
+    public static synchronized void unlatch()
+    {
+        latched = false;
+        Sequencer.class.notifyAll();
+    }
+
     // private implementation
+
+    /**
+     * a global latch used to delay running of callbacks until the XTS servcie is ready to
+     * let them run
+     */
+    private static boolean latched = true;
 
     /**
      * a global list of all startup sequences
@@ -202,11 +220,28 @@ public class Sequencer {
 
     private void runCallbacks()
     {
+        // we cannot run the callbacks until the sequencer has been unlatched
+        passLatch();
+
         for (int i = 0; i < sequenceSize; i++) {
             Iterator<Callback> iter = callbacks[i].iterator();
             while (iter.hasNext()) {
                 Callback cb = iter.next();
                 cb.run();
+            }
+        }
+    }
+
+    /**
+     * do not return until the latch has been lifted
+     */
+    private static synchronized void passLatch()
+    {
+        while (latched) {
+            try {
+                Sequencer.class.wait();
+            } catch (InterruptedException e) {
+                // ignore
             }
         }
     }

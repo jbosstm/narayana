@@ -50,13 +50,6 @@
 	    name="com.arjuna.ats.arjuna.recovery.recoveryExtension1"
 	    value="com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule"/>
 
-        <!-- include this property to employ a remote WS-COOR 1.0 activation coordinator
-          substitute host and port to use an XTS remote activation coordinator deployed in another JBoss AS
-          or provide an alternative URL if you are using some other coordinator service
-        <property
-        name="com.arjuna.mw.wst.coordinatorURL"
-        value="http://@hostname@:@port@/ws-c10/soap/ActivationCoordinator"/>
-        -->
         <!-- this property can be used to define a remote WSCOOR 1.0
              activation coordinator. substitute @coordinator.hostname@
              and @coordinator.port@ to specify an XTS remote activation
@@ -66,16 +59,16 @@
 
 	     n.b. if you leave this line as is the build script in the
 	     sar directory which builds the jbossxts service archive
-	     (jbossxts.sar) will substitute the local hostname and
-	     port into this property which means that the local
+	     (jbossxts.sar) will substitute the values server.bind.address and
+	     jboss.web.bind.port into this property which means that the local
 	     coordinator will be used to service coordination
-	     requests. you can override these settings by editing the
-	     build script or by supplying values on the ant command
-	     line using -Dcoordinator.hostname=<hostname> and
-	     -Dcoordinator.port=<port>.
+	     requests. you can override these settings by editing the sar
+	     build script or supplying values -Dcoordinator.hostname=<hostname>
+	     and -Dcoordinator.port=<port> on the ant command
+	     line when rebuilding the sar.
         -->
         <property
-	    name="com.arjuna.mw.wst.coordinatorURL"
+	    name="org.jboss.jbossts.xts.coordinatorURL"
 	    value="http://@coordinator.hostname@:@coordinator.port@/ws-c10/soap/ActivationCoordinator"/>
 	</properties>
 </wstx-config>

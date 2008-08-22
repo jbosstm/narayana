@@ -29,12 +29,10 @@
 	<!-- Load Build Properties File -->
 	<property file="${com.arjuna.mw.wsas.properties}"/>
 
-	<!-- Set hostname and port property defaults -->
+	<!-- Set property defaults -->
 	<property environment="env"/>
 	<property name="jboss.dir" value="${env.JBOSS_HOME}"/>
 	<property name="deploy.dir" value="${jboss.dir}/server/default/deploy"/>
-	<property name="hostname" value="localhost"/>
-	<property name="port" value="8080"/>
 
     <property name="jboss.client.lib.dir" location="${jboss.dir}/client"/>
 
@@ -215,10 +213,6 @@
 
 	<target name="com.arjuna.mwlabs.wsas.tests.webapps" depends="com.arjuna.mwlabs.wsas.tests.compile">
 	  <copy file="${com.arjuna.mwlabs.wsas.tests.dd}/wsas-tests_web-app.xml" tofile="${com.arjuna.mwlabs.wsas.tests.dd.dest}/web-app.xml">
-	    <filterset>
-	      <filter token="hostname" value="${hostname}"/>
-	      <filter token="port" value="${port}"/>
-	    </filterset>
 	  </copy>
 	  <war warfile="${com.arjuna.mwlabs.wsas.tests.webapps.dest}/wsas-tests.war" webxml="${com.arjuna.mwlabs.wsas.tests.dd.dest}/web-app.xml">
 	    <classes dir="${com.arjuna.mwlabs.wsas.tests.dest}"/>

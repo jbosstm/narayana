@@ -42,8 +42,6 @@
 
     <!-- ================================================================== -->
     <property name="deploy.dir" value="${jboss.server.dir}/deploy"/>
-    <property name="hostname" value="localhost"/>
-    <property name="port" value="8080"/>
 
     <!-- ================================================================== -->
 
@@ -263,16 +261,8 @@
 
     <target name="dev-webapps" depends="dev-jars" >
         <copy file="${dev.dd.dir}/ws-c_web-app.xml" tofile="${build.dev.dd.dir}/web-app.xml">
-            <filterset>
-                <filter token="hostname" value="${hostname}"/>
-                <filter token="port" value="${port}"/>
-            </filterset>
         </copy>
         <copy file="${dev.dd.dir}/ws-c11_web-app.xml" tofile="${build.dev.dd.dir}/web-app11.xml">
-            <filterset>
-                <filter token="hostname" value="${hostname}"/>
-                <filter token="port" value="${port}"/>
-            </filterset>
         </copy>
         <copy file="${dev.dd.dir}/ws-c_handlers.xml" tofile="${build.dev.classes11.dir}/handlers.xml"/>
         <war warfile="${build.dev.webapps.dir}/ws-c10.war" webxml="${build.dev.dd.dir}/web-app.xml"/>
@@ -297,16 +287,8 @@
 
     <target name="tests-webapps" depends="tests-compile" >
         <copy file="${tests.dd.dir}/ws-c-tests_web-app.xml" tofile="${build.tests.dd.dir}/web-app.xml">
-            <filterset>
-                <filter token="hostname" value="${hostname}"/>
-                <filter token="port" value="${port}"/>
-            </filterset>
         </copy>
         <copy file="${tests.dd.dir}/ws-c11-tests_web-app.xml" tofile="${build.tests.dd.dir}/web-app11.xml">
-            <filterset>
-                <filter token="hostname" value="${hostname}"/>
-                <filter token="port" value="${port}"/>
-            </filterset>
         </copy>
         <war warfile="${build.tests.webapps.dir}/ws-c-tests.war" webxml="${build.tests.dd.dir}/web-app.xml">
             <classes dir="${build.tests.classes.dir}"/>

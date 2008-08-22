@@ -39,8 +39,6 @@
 	<property name="jboss.server.lib.dir" location="${jboss.server.dir}/lib"/>
 
 	<property name="deploy.dir" value="${jboss.server.dir}/deploy"/>
-	<property name="hostname" value="localhost"/>
-	<property name="port" value="8080"/>
 
 	<!-- Set internal property defaults -->
 	<!-- Path names -->
@@ -328,16 +326,8 @@
 
     <target name="com.arjuna.mwlabs.wscf.tests.webapps" depends="com.arjuna.mwlabs.wscf.tests.compile">
         <copy file="${com.arjuna.mwlabs.wscf.tests.dd}/wscf-tests_web-app.xml" tofile="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app.xml">
-            <filterset>
-                <filter token="hostname" value="${hostname}"/>
-                <filter token="port" value="${port}"/>
-            </filterset>
         </copy>
         <copy file="${com.arjuna.mwlabs.wscf.tests.dd}/wscf11-tests_web-app.xml" tofile="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app11.xml">
-            <filterset>
-                <filter token="hostname" value="${hostname}"/>
-                <filter token="port" value="${port}"/>
-            </filterset>
         </copy>
         <jar jarfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.jar">
             <fileset dir="${com.arjuna.mwlabs.wscf.tests.dest}"/>

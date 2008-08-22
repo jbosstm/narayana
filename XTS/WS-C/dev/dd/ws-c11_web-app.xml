@@ -27,11 +27,6 @@
 
     <description>WS-Coordination 1.1 Services</description>
 
-    <!-- base URL for location of Coordination 1.1 services -->
-    <context-param>
-        <param-name>BaseURI</param-name>
-	<param-value>http://@hostname@:@port@/ws-c11</param-value>
-    </context-param>
     <!-- Initialise WS Coord 1.1 services -->
     <listener>
         <listener-class>com.arjuna.webservices11.wscoor.server.ActivationCoordinatorInitialisation</listener-class>

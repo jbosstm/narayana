@@ -29,7 +29,7 @@
  * $Id: Environment.java,v 1.6 2004/09/09 08:48:48 kconner Exp $
  */
 
-package com.arjuna.mw.wst.common;
+package com.arjuna.wsc.common;
 
 /**
  */
@@ -37,9 +37,8 @@ package com.arjuna.mw.wst.common;
 public interface Environment
 {
 
-    public static final String COORDINATOR_URL = "org.jboss.jbossts.xts.coordinatorURL";
-    public static final String COORDINATOR_HOST = "org.jboss.jbossts.xts.coordinator.host";
-    public static final String COORDINATOR_PORT = "org.jboss.jbossts.xts.coordinator.port";
-    public static final String COORDINATOR_PATH = "org.jboss.jbossts.xts.coordinator.path";
-
+    public static final String XTS_BIND_ADDRESS = "org.jboss.jbossts.xts.bind.address";
+    public static final String XTS_BIND_PORT = "org.jboss.jbossts.xts.bind.port";
+    public static final String XTS_SECURE_BIND_PORT = "org.jboss.jbossts.xts.bind.port.secure";
+    public static final String XTS_COMMAND_LINE_COORDINATOR_URL = "org.jboss.jbossts.xts.command.line.coordinatorURL";
 }
