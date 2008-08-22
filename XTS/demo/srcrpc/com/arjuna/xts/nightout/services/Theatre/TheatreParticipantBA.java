@@ -143,7 +143,7 @@ public class TheatreParticipantBA implements BusinessAgreementWithParticipantCom
 
             if(!success)
             {
-                theatreView.addMessage("id:" + txID + " Compensation failed. Throwing SystemException\n");
+                theatreView.addMessage("id:" + txID + " Compensation failed. Throwing FaultedException\n");
                 theatreView.updateFields();
                 throw new FaultedException("Compensating transaction failed.");
             }
