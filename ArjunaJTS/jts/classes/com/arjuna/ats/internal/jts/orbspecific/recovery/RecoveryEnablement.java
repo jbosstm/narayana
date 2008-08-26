@@ -75,7 +75,7 @@ import java.net.*;
  * @version $Id: RecoveryEnablement.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 2.1.
  *
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_1 [com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_1] - added ORBAttribute for recoveryCoordinatorInitialiser
+ * @message com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_1 [com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_1] - Could not locate supported ORB for RecoveryCoordinator initialisation.
  * @message com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_2 [com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_2] - Full crash recovery is not supported with this orb
  * @message com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_3 [com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_3] - Set property {0}  =  {1}
  * @message com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_4 [com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_4] - RecoveryCoordinator service can only be provided in RecoveryManager
