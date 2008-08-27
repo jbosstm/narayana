@@ -640,23 +640,11 @@ function emailThisPage()
 
                     Copyright 2002-2005 Arjuna Technologies
 
-                    <xsl:element name="IMG">
-                        <xsl:attribute name="src"><xsl:value-of select="$rootpath"/>/images/look_and_feel/spacer.jpg</xsl:attribute>
-                        <xsl:attribute name="alt"></xsl:attribute>
-                        <xsl:attribute name="border">0</xsl:attribute>
-                    </xsl:element>
+                    <br/>Copyright 2005-2008 JBoss Inc.
 
-                    All Rights Reserved.
+                    <br/>All Rights Reserved.
 
-                    <br/><a class="linkscoloured" href="mailto:info@arjuna.com">info@arjuna.com</a>
-
-                    <xsl:element name="IMG">
-                        <xsl:attribute name="src"><xsl:value-of select="$rootpath"/>/images/look_and_feel/spacer.jpg</xsl:attribute>
-                        <xsl:attribute name="alt"></xsl:attribute>
-                        <xsl:attribute name="border">0</xsl:attribute>
-                    </xsl:element>
-
-                    +44 191 243 0676
+                    <br/><a class="linkscoloured" href="http://www.jboss.org/jbosstm/">http://www.jboss.org/jbosstm/</a>
                 </FONT>
             </TD>
         </TR>

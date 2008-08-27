@@ -16,7 +16,7 @@
   MA  02110-1301, USA.
 
   
-  (C) 2005-2006,
+  (C) 2005-2008,
   @author JBoss Inc.
 -->
 <page title="XML Transaction Service Demonstration Application: Introduction" rootpath="../..">
@@ -34,7 +34,7 @@
         <area title="Introduction">
             <html>
                 <p>
-                    Welcome to the &quot;Night Out&quot; sample application for the XML Transaction component of JBossTS 4.3.0.
+                    Welcome to the &quot;Night Out&quot; sample application for the XML Transaction component of JBossTS 4.4.0.
                 </p>
                 <p>
                     This documentation will help you get started with using the JBossTS Web services transactioning product.

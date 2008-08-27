@@ -16,7 +16,7 @@
   MA  02110-1301, USA.
 
   
-  (C) 2005-2006,
+  (C) 2005-2008,
   @author JBoss Inc.
 -->
 <page title="XML Transaction Service Demonstration Application: About the sample application" rootpath="../..">
@@ -37,7 +37,7 @@
             <html>
                 <p>
                     The sample application features some simple transactional Web services, a client application, deployment metadata files and a build script.
-                    The application is designed to introduce some of the key features of the XML Transaction component of JBossTS 4.3.0 and help you get started with writing your own transactional Web services applications.
+                    The application is designed to introduce some of the key features of the XML Transaction component of JBossTS 4.4.0 and help you get started with writing your own transactional Web services applications.
                 </p>
                 <p>
                     The application is based around a simple booking scenario. The services provide the ability to transactionally reserve resources,
@@ -52,8 +52,8 @@
                     The client side of the application is a servlet which allows the user to select the required reservations and then books a night out by making invocations on each of the services within the scope of a Web Services transaction.
                 </p>
                 <p>
-                    The demo is implemented in two versions. The standard version exposes the services as JaxWS service endpoints. The client obtains service endpoint proxies from JaxWS and uses them to invoke the remote service methods.
-                    The alternative implementation demonstrates how to invoke legacy services. It uses JaxRPC to invoke the remote methods of services exposed as classes implementing the Remote interface.
+                    The demo is implemented in two versions. The standard version exposes the services as JaxWS service endpoints. The client obtains service endpoint proxies from JaxWS and uses them to invoke the remote service methods. This version of the demo employs the XTS 1.1 protocol implementation.
+                    The alternative implementation demonstrates how to invoke legacy services. It uses JaxRPC to invoke the remote methods of services exposed as classes implementing the Remote interface. This version of the demo employs the XTS 1.0 protocol implementation.
                 </p>
                 <p>
                     Full source code for the services and the client is included, along with an ant script for building and deploying the code.

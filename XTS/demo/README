@@ -1,8 +1,9 @@
 This is the raw demo source directory for the XTS demo program
-(XTS/demo). Do not attempt to build the demo from this directory a sit
+(XTS/demo). Do not attempt to build the demo from this directory as it
 will not work.
 
-Run the command 'ant clean install' in the parent directory (XTS) to
+Run the command 'ant clean install' in the parent directory (XTS).
+This will:
 
   - create the xts install directory (XTS/xts-install)
 

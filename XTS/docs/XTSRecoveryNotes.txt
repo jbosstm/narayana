@@ -38,8 +38,7 @@ instances of these classes as participants using the enlistment APIs
 associated with the WS-AT transaction manager class.
 
 Volatile participants are not expected to be involved in
-commit/rollback or recovery processing (even though they implement
-commit(), rollback() and unknown() these should never be called). They
+commit/rollback or recovery processing. They
 are expected to perform any necessary saving or flushing of volatile
 state at prepare and, if necessary, delete any redundant in-memory or
 persistent state at the same time. They must vote against prepare if

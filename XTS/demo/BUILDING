@@ -18,33 +18,25 @@
 # @author JBoss Inc.
 #
 
-This demo has been written for, and tested on, JBoss4.2.2.GA and
-JBoss5.0Beta4. Please download and install one of these app servers
-from the JBoss website.
+This demo has been written for, and tested on, JBoss5.0.CR1.
+Please download and install one of these app servers from the
+JBoss website.
 
 Follow these steps to build the demo for JBoss
  - edit jboss.properties and replace variables as directed in the comments
  - add java and ant to your path
  - set environment variable JBOSS_HOME to point to the root directory of an
-   instance of JBoss4.2 or JBoss5.0Beta4
- - for JBoss5.0Beta4 execute 'sh build.sh jboss clean deploy' on unix or
+   instance of JBoss5.0.0.CR1
+ - execute 'sh build.sh jboss clean deploy' on unix or
    'build.bat jboss clean deploy' on windows
- - for JBoss4.2 execute 'sh build.sh jboss clean sa-deploy' on unix or
-   'build.bat jboss clean sa-deploy' on windows
 
 Open a browser and enter the xts-demo url (e.g. http://localhost:8080/xts-demo)
 
 An alternative version of the demo can be built using JaxRPC instead
-of JaxWS. For JBoss5.0.Beta4 this can be built by supplying the
-argument 'deployrpc' in place of 'deploy' on the 'execute' command
-line detailed above. For JBoss4.2 it can be built by supplying the
-argument 'sa-deployrpc' in place of 'sa-deploy'. Access the demo using
-the same url.
+of JaxWS by supplying the argument 'deployrpc' in place of 'deploy' on
+the 'execute' command line detailed above.
 
-n.b. deployment of the demo to JbossAS 5.0Beta4 assumes that the XTS
+n.b. deployment of the demo to JbossAS 5.0.CR1 assumes that the XTS
 has already been deployed as a service archive (sar). See the INSTALL
-file in your ArjunaJTS install tree for instructions on how to perform
-this deployment. XTS sar deployment currently requires the web
-listener hostname and port to be "localhost" and "8080". This
-restriction will be lifted in future releases. Use of a stand alone
-coordinator is also not currently supported in JbossAS 5.0Beta4.
+file in your ArjunaJTA or ArjunaJTS install tree for instructions on how
+to perform this deployment.

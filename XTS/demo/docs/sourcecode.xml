@@ -16,7 +16,7 @@
   MA  02110-1301, USA.
 
   
-  (C) 2005-2006,
+  (C) 2005-2008,
   @author JBoss Inc.
 -->
 <page title="XML Transaction Service Demonstration Application: Source code overview" rootpath="../..">
@@ -36,9 +36,9 @@
         <area title="Source code overview">
             <html>
                 <p>
-                    You can begin experimenting with the XML Transaction component of JBoss 4.3.0 by editing the sample application source code, which is heavily commented to assist your understanding.
-                    The source code can be found in the &lt;jbossts 4.3.0 install&gt;demo/src directory. Deployment descriptors for the application can be found iin directory &lt;jbossts 4.3.0 install&gt;demo/dd.
-                    (corresponding files for the JaxRPC implementation are in directories &lt;jbossts 4.3.0 install&gt;demo/srcrpc and &lt;jbossts 4.3.0 install&gt;demo/ddrpc). 
+                    You can begin experimenting with the XML Transaction component of JBoss 4.4.0 by editing the sample application source code, which is heavily commented to assist your understanding.
+                    The source code can be found in the &lt;jbossts 4.4.0 xts&gt;/xts-install/demo/src directory. Deployment descriptors for the application can be found iin directory &lt;jbossts 4.4.0 xtsl&gt;/xts-install/demo/dd.
+                    (corresponding files for the JaxRPC implementation are in directories &lt;jbossts 4.4.0 xts&gt;/xts-install/demo/srcrpc and &lt;jbossts 4.4.0 xts&gt;/xts-install/demo/ddrpc). 
                 </p>
                 <p>
                     It is structured as follows:

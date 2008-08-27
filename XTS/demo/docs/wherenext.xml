@@ -16,7 +16,7 @@
   MA  02110-1301, USA.
 
   
-  (C) 2005-2006,
+  (C) 2005-2008,
   @author JBoss Inc.
 -->
 <page title="XML Transaction Service Demonstration Application: Where next?" rootpath="../..">
@@ -36,7 +36,7 @@
             <html>
                 <p>
                     For further information, please consult the XML Transaction component of JBossTS 4.3.0 product documentation set.
-                    <li><a class="linkscoloured" href="../../docs/Programmers Guide.pdf" target="_blank">Programmers Guide</a> (.pdf)</li>
+                    <li><a class="linkscoloured" href="../../docs/ProgrammersGuide.pdf" target="_blank">Programmers Guide</a> (.pdf)</li>
                 </p>
                 <p>
                     A collection of links to additional background reading material on Web services coordination and transactions is also avaialble on the JBossTS labs site:

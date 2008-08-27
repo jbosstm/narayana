@@ -16,7 +16,7 @@
   MA  02110-1301, USA.
 
   
-  (C) 2005-2006,
+  (C) 2005-2008,
   @author JBoss Inc.
 -->
 <page title="XML Transaction Service Demonstration Application: Installation Content" rootpath="../..">
@@ -35,22 +35,22 @@
         <area title="Installation Content">
             <html>
                 <p>
-                    The installer should have installed the following directories under &lt;jbosst 4.3.0 install&gt;/wst directory:
+                    The installer should have installed the following directories under directory &lt;jbossts 4.4.0 xts&gt;/xts-install:
                     <ul>
                         <p>conf: product configuration files.</p>
-                        <p>coordinator: an application independent version of the transaction coordinator.</p>
                         <p>demo: a sample application and introductory documentation.</p>
                         <p>docs: product manuals and API javadocs.</p>
                         <p>lib: jar files for the JBossTS components and their 3rd party prerequisites.</p>
+                        <p>sar: deployable JBoss service archive containing the XTS 1.0 and 1.1 implementation.</p>
                         <p>webapps: pre built J2EE web applications for the product components.</p>
                     </ul>
                 </p>
                 <p>
                     In addition, you will require a Web services platform on which to deploy and run the product.
-				    This release of the XML Transaction component of JBossTS 4.3.0 is designed to run within JBoss.
+				    This release of the XML Transaction component of JBossTS 4.4.0 is designed to run within JBoss.
 				</p>
 				<p>
-    				This release has been tested on JBoss 4.2.2.GA and JBoss 5.0.Beta4.
+    				This release has been tested on JBoss 5.0.0.CR1.
                 </p>
                 <p>
                     To compile, deploy and run the sample application we also recommend using java SDK 1.5 and Apache ant 1.6.1 or later.

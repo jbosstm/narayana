@@ -16,7 +16,7 @@
   MA  02110-1301, USA.
 
   
-  (C) 2005-2006,
+  (C) 2005-2008,
   @author JBoss Inc.
 -->
 <page title="XML Transaction Service Demonstration Application: Deploying the sample application" rootpath="../..">
@@ -42,44 +42,29 @@
                     To proceed, you will need to install ant (<a class="linkscoloured" href="http://ant.apache.org/" target="_blank">http://ant.apache.org/</a>) to take advantage of the supplied build file. Version 1.6.1 or later of ant is recommended for this application. The application may not function correctly with versions prior to 1.5.
                 </p>
                 <p>
-                    This release has been tested against JBoss 4.2.2.GA and JBoss 5.0.Beta4.
-                </p>
-                <p>
-					Deploying into JBoss 4.2.
-				</p>
-                <ol>
-                    <li><p>Install JBoss 4.2.</p>
-                    </li>
-                    <li><p>Edit the <code>&lt;xts-home&gt;/demo/jboss.properties</code> file, replacing the <code>JBOSS_HOSTNAME</code> and <code>JBOSS_PORT</code> with the values used by your JBoss server web listener. Replace <code>JBOSS_URLSTUB</code> with a path used as the location for the demo application web services</p></li>
-                    <li><p>Set environment variable <code>JBOSS_HOME</code> to point to the root directory of your JBoss installation.</p></li>
-                    <li><p>Compile the application source, build the application archive file and deploy it into JBoss deploy directory by typing '<code>build.sh jboss clean sa-deploy</code>' on Unix or '<code>build.bat jboss clean sa-deploy</code>' on Windows</p></li>
-                    <li><p>Run the application server by using the run.sh or run.bat command.</p></li>
-                    <li><p>Invoke the demo client by browsing the URL (e.g.): <code>http://hostname:port/xts-demo/</code></p></li>
-                </ol>
-                <p>
-                    n.b. the JaxRPC based version of the demo can be built and deployed by substituting target '<code>sa-deploy</code>' in the commands listed above with the alternative target '<code>sa-deployrpc</code>'
-                </p>
-                <p>
-                This release of the demo application includes the ability to run the client against a mixture of backend webservices. The property files contain the URLs of the webservices, which can be changed to exercise any combination and demonstrate a distributed transaction.
-                The services are started using the same mechanism as above. Each platform will be running its own copy of the webservices but the deployed client will access those services configured in the relevant property file.
+                    This release has been tested against JBoss 5.0.0.CR1.
                 </p>
             <p>
-                Deploying into JBoss 5.0.Beta4.
-            </p>
-            <p>
-                Note that at present JBoss JTS and XTS must be manually deployed into JBoss 5.0. In full 5.0 releases the XTS component should be bundled into the release as a service archive.
+                Deploying into JBoss 5.0.0.CR1.
             </p>
             <ol>
                 <li><p>Install JBoss 5.0.</p>
                 </li>
-                <li><p>Build and deploy JBoss JTS and JBoss XTS service archive (execute '<code>ant jbossjts</code>' in the JBossTS source tree and follow the deployment instructions in file INSTALL of the resulting JBossTS install tree).</p>
+                <li><p>Set environment variable <code>JBOSS_HOME</code> to point to the root directory of your JBoss installation.</p></li>
+                <li><p>(Optional**) Build and deploy JBoss JTA or JBoss JTS (execute '<code>ant jbossjta</code>' or '<code>ant jbossjts</code>' in the JBossTS source tree and follow the deployment instructions in file INSTALL of the resulting JBossTS install tree).</p>
                 </li>
-                    <li><p>Edit the <code>&lt;xts-home&gt;/demo/jboss.properties</code> file, replacing the <code>JBOSS_HOSTNAME</code> and <code>JBOSS_PORT</code> with the values used by your JBoss server web listener. Replace <code>JBOSS_URLSTUB</code> with a path used as the location for the demo application web services. (n.b. at present the hostname and port must be supplied as <code>localhost</code> and <code>8080</code></p></li>
-                    <li><p>Set environment variable <code>JBOSS_HOME</code> to point to the root directory of your JBoss installation.</p></li>
-                <li><p>Compile the application source, build the application archive file and deploy it into JBoss deploy directory by typing '<code>build.sh jboss clean deploy</code>' on Unix or '<code>build.bat jboss clean deploy</code>' on Windows</p></li>
+                <li><p>(Optional**) Build JBoss XTS (follow the XTS build instructions in file INSTALL of the JBossTS install tree).</p>
+                </li>
+                <li><p>Deploy the XTS service archive <code>&lt;jbossts 4.4.0 xts&gt;/xts-install/sar/jbossxts.sar</code> into the JBoss 5.0 server deploy directory.  n.b. due to a bug in the JBossWS implementation it is only possible to deploy the XTS service archive after starting JBoss AS.</p>
+                </li>
+                <li><p>Edit the <code>&lt;jbossts 4.4.0 xts&gt;/xts-install/demo/jboss.properties</code> file, replacing the <code>JBOSS_HOSTNAME</code> and <code>JBOSS_PORT</code> with the bind address and port used by your JBoss server and Jboss Web listener. Replace <code>JBOSS_URLSTUB</code> with a path used as the location for the demo application web services.</p></li>
+                <li><p>Compile the application source under <code>&lt;jbossts 4.4.0 xts&gt;/xts-install/demo</code>, build the application archive file and deploy it into JBoss deploy directory by typing '<code>build.sh jboss clean deploy</code>' on Unix or '<code>build.bat jboss clean deploy</code>' on Windows</p></li>
                 <li><p>Run the application server by using the run.sh or run.bat command.</p></li>
                 <li><p>Invoke the demo client by browsing the URL (e.g.): <code>http://hostname:port/xts-demo/</code></p></li>
             </ol>
+            <p>
+               ** the JBoss 5.0 installation may include a pre-built, pre-installed JBossTS build and a pre-built XTS service archive.
+            </p>
             <p>
                 n.b. the JaxRPC based version of the demo can be built and deployed by substituting target '<code>deploy</code>' in the commands listed above with the alternative target '<code>deployrpc</code>'
             </p>

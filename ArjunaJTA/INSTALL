@@ -54,10 +54,11 @@ deployed (see the build script in XTS/sar for details).
 
 The default XTS build produces a service archive which contains both
 sets of partipant and coordinator services configured to support
-transactional web service invocations within a single JVM bound to
-address localhost and port 8080. This default build is suitable for
-demonstrating the functionality of XTS using the supplied demo
-programs. One of the demos displays use of the WS 1.1 protocols when
+transactional web service invocations within a single JVM. The services
+employ the JBoss Application Server bind address and JBoss Web listener
+port which default to address localhost and port 8080. This default build
+is suitable for demonstrating the functionality of XTS using the supplied
+demo programs. One of the demos displays use of the WS 1.1 protocols when
 invoking web services via JaxWS. The other displays use of the WS 1.0
 protcols when invoking web services via JaxRPC.
 
@@ -90,16 +91,46 @@ then deploy using the build script in the XTS/sar subdirectory:
 This will install the sar in subdirectory server/default/deploy of
 $JBOSS_HOME
 
-Command line options can be used
+Stand-alone coordinator configuration
+---------------------------------
 
-  i) to build a service archive for use with a different application
-      server bind address/port
+The JBoss AS command line can be used to disable use of the local
+coordinator services and direct the participants to negotiate with
+a remote coordinator located in a different JBoss application server.
 
-or
+The -D option can be used to set a property defining an absolute URL
+for the coordinator service to be used by XTS clients. So, for example,
+the 1.0 and 1.1 implementations would be configured independently by
+providing, respectively, the following command line arguments
 
-  ii) to disable use of the local coordinator services and direct the
-     participants to negotiate with a remote coordinator located in a
-     different JBoss application server
+  -Dorg.jboss.jbossts.xts.coordinatorURL=http://foo.example.com:8080/ws-c10/soap/ActivationCoordinator
+
+  -Dorg.jboss.jbossts.xts11.coordinatorURL=http://bar.example.com:9090/ws-c11/ActivationService
+
+This would cause all XTS 1.0 clients to negotiate with the coordinator
+services deployed on host foo.example.com via port 8080 and all XTS 1.1
+clients to negotiate with the coordinator services deployed on host
+bar.example.com via port 9090. The URL paths supplied are appropriate
+to a JBoss AS with XTS deployed. These will need to be redefined if
+another vendor's coordination service implementation is being used.
+
+It is also possible to respecify individual components of the coordinator
+URL using the following property settings
+
+    org.jboss.jbossts.xts.coordinator.host
+    org.jboss.jbossts.xts.coordinator.port
+    org.jboss.jbossts.xts.coordinator.path
+
+    org.jboss.jbossts.xts11.coordinator.host
+    org.jboss.jbossts.xts11.coordinator.port
+    org.jboss.jbossts.xts11.coordinator.path
+
+The host and port default to the server bind address and the JBoss Web
+listener port. The paths default to the values supplied in the example
+above.
+
+It is possible to rebuild the XTS sar so that it employs a stand-alone
+coordinator without the need to supply arguments on the AS command line.
 
 So, for example,
 
@@ -107,32 +138,24 @@ So, for example,
   cd <JBossTSDir>/XTS/sar
   ant clean install
   cd sar
-  ant deploy -Dhostname=foo.example.com -Dport=9090
-
-will build and deploy a sar suitable for an application server bound
-to address foo.example.com using web server port 9090.
-
-Having deployed this service it would then be possible to use it as a
-remote coordinator for a second JBoss application server bound to
-address bar.example.com and using web server port 8080. The sar for
-the second server could be built and deployed as follows:
-
-  setenv JBOSS_HOME <JBossDir>
-  cd <JBossTSDir>/XTS/sar
-  ant clean install
-  cd sar
-  ant deploy -Dhostname=bar.example.com -Dport=8080 \
-             -Dcoordinator.hostname=foo.example.com \
+  ant deploy -Dcoordinator.hostname=foo.example.com \
              -Dcoordinator.port=9090
+
+will build and deploy a sar which, by default will direct clients
+to the coordinator located in a JBoss AS instance running on host
+foo.example.com and configured to use port 9090 as the JBoss Web
+listener port. It is not possible to redefine the coordinator URL
+path using this mechanism.
 
 Configuration of a remote coordinator provided by another XTS
 implementation is available by editing the configuration files in
-directory XTS/xts-install/conf and setting an appropriate URl for the
-coordinator URL property. The value specified for property
-com.arjuna.mw.wst.coordinatorURL in file wstx.xml is used by the 1.0
-protocol implementation. The value specified for property
-com.arjuna.mw.wst11.coordinatorURL in file wstx11.xml is used by the
-1.1 protocol implementation.
+directory XTS/xts-install/conf and setting an appropriate URL for
+the coordinator URL property. The value specified for property
+org.jboss.jbossts.xts.coordinatorURL in file wstx.xml is used by
+the 1.0 protocol implementation. The value specified for property
+org.jboss.jbossts.xts11.coordinatorURL in file wstx11.xml is used
+by the 1.1 protocol implementation.
+
 
 Warning:
 -------
