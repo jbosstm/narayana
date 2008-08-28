@@ -354,7 +354,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 			String classname = System.getProperty(Environment.OVERRIDING_PLUGIN_CLASSNAME);
 			classname = classname == null ? pluginClassname : classname;
 
-			PropertyManagerIOPlugin plugin = (PropertyManagerIOPlugin)Thread.currentThread().getContextClassLoader().loadClass(pluginClassname).newInstance();
+			PropertyManagerIOPlugin plugin = (PropertyManagerIOPlugin)Thread.currentThread().getContextClassLoader().loadClass(classname).newInstance();
 
 			plugin.load(uri, _topLevelPropertyManager, _verbose);
 		}
