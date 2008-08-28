@@ -68,6 +68,11 @@ public class PropagationContextManager
 
 		String txid = ((BasicAction.Current() == null) ? null : BasicAction.Current().get_uid().stringForm());
 
+		if (log.isDebugEnabled())
+                {
+                    log.debug("PropagationContextManager.getTransactionPropagationContext() - returned tpc = " + txid);
+                }
+		
 		return txid;
 	}
 
@@ -76,7 +81,7 @@ public class PropagationContextManager
 	 *  given as an argument, or <code>null</code>
 	 *  if the argument is <code>null</code> or of a type unknown to
 	 *  this factory.
-	 */
+	 */e
 
 	public Object getTransactionPropagationContext(Transaction tx)
 	{
@@ -86,7 +91,16 @@ public class PropagationContextManager
 		}
 
 		if (tx instanceof com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple)
-		    return ((com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple) tx).get_uid().stringForm();
+		{
+		    String tpc = ((com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple) tx).get_uid().stringForm();
+		    
+		    if (log.isDebugEnabled())
+                    {
+                        log.debug("PropagationContextManager.getTransactionPropagationContext(Transaction) - returned tpc = " + tpc);
+                    }
+		    
+		    return tpc;
+		}
 		else
 		    return null;
 	}
