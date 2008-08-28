@@ -31,7 +31,7 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.transaction.xa.*;
 
@@ -179,7 +179,7 @@ public class TxImporter
 	 * Remove the subordinate (imported) transaction.
 	 * 
 	 * @param xid
-	 *            the global transactin.
+	 *            the global transaction.
 	 * 
 	 * @throws XAException
 	 *             thrown if there are any errors.
@@ -193,6 +193,6 @@ public class TxImporter
 		_transactions.remove(new XidImple(xid));
 	}
 
-	private static HashMap _transactions = new HashMap();
+	private static ConcurrentHashMap<Xid, TransactionImple> _transactions = new ConcurrentHashMap<Xid, TransactionImple>();
 
 }
