@@ -64,7 +64,7 @@ public class ConnectionSynchronization implements Synchronization
 	}
 	try
 	{
-	    _recoveryConnection.close();
+	    _recoveryConnection.closeCloseCurrentConnection();
 	}
 	catch (Exception ex)
 	{

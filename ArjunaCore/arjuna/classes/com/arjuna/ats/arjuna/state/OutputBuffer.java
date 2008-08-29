@@ -402,8 +402,9 @@ public final synchronized void packString (String s) throws IOException
 
 	if (sz > 0)
 	{
-	    _output.write(dummy.getBytes(), 0, dummy.getBytes().length);
-	    realign(dummy.getBytes().length);
+        byte[] bytes = dummy.getBytes();
+        _output.write(bytes, 0, bytes.length);
+	    realign(bytes.length);
 	}
 	
 	_output.flush();

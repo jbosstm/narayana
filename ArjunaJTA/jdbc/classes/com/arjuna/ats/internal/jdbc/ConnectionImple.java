@@ -375,8 +375,11 @@ public class ConnectionImple implements java.sql.Connection
 			}
 			else
 			{
-				_recoveryConnection.close();
-				_theConnection = null;
+				_recoveryConnection.closeCloseCurrentConnection();
+                if (_theConnection != null && !_theConnection.isClosed())
+                    _theConnection.close();
+                
+                _theConnection = null;
 			}
 
 			// what about connections without xaCon?
@@ -631,7 +634,7 @@ public class ConnectionImple implements java.sql.Connection
 
 	final java.sql.Connection getConnection() throws SQLException
 	{
-		if (_theConnection != null)
+		if (_theConnection != null && !_theConnection.isClosed())
 			return _theConnection;
 
 		XAConnection xaConn = _recoveryConnection.getConnection();

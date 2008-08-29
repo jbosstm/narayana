@@ -65,6 +65,7 @@ public interface RecoverableXAConnection
     public XAConnection getConnection () throws SQLException;
     public XAConnection getCurrentConnection () throws SQLException;
     public XADataSource getDataSource () throws SQLException;
+    void closeCloseCurrentConnection() throws SQLException;
 
     /**
      * @return true if the connection is being used within a transaction,

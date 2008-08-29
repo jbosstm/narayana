@@ -220,30 +220,6 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
     public final void close ()
     {
 	reset();
-
-	synchronized (this)
-	{
-	    if (_theConnection != null)
-	    {
-		_theArjunaConnection.reset();
-
-		//	    JDBC2ConnectionManager.remove(_theArjunaConnection);
-	    }
-
-	    if (_theModifier != null)
-	    {
-		try
-		{
-		    _theConnection = _theModifier.getConnection(_theConnection);
-		}
-		catch (Exception ex)
-		{
-		    _theConnection = null;
-		}
-	    }
-	    else
-		_theConnection = null;
-	}
     }
 
     public final void reset ()
@@ -289,6 +265,18 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
     public XAConnection getCurrentConnection () throws SQLException
     {
 	return _theConnection;
+    }
+
+    public void closeCloseCurrentConnection() throws SQLException
+    {
+        synchronized (this)
+        {
+            if (_theConnection != null)
+            {
+                _theConnection.close();
+                _theConnection = null;
+            }
+        }
     }
 
     public XAConnection getConnection () throws SQLException
