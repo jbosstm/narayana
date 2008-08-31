@@ -81,7 +81,7 @@ public class PropagationContextManager
 	 *  given as an argument, or <code>null</code>
 	 *  if the argument is <code>null</code> or of a type unknown to
 	 *  this factory.
-	 */e
+	 */
 
 	public Object getTransactionPropagationContext(Transaction tx)
 	{
