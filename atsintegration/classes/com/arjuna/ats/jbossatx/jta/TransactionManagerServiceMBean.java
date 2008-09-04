@@ -36,6 +36,7 @@ import org.jboss.tm.XAExceptionFormatter;
 
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
+import java.net.InetAddress;
 
 /**
  * The MBean interface for the TransactionManager JBoss service.
@@ -215,5 +216,73 @@ public interface TransactionManagerServiceMBean
      * @return objectStoreDir The object store directory.
      */
     public String getObjectStoreDir() ;
+
+
+    /**
+     * Gets the address to which the TransactionStatusManager listener will bind.
+     * @return InetAddress the address.
+     */
+    public InetAddress getTransactionStatusManagerInetAddress();
+
+    /**
+     * Sets the address to which the TransactionStatusManager will bind.
+     * @param tsmInetAddress the address to set.
+     * @throws IllegalStateException if the MBean has already started.
+     */
+    public void setTransactionStatusManagerInetAddress(InetAddress tsmInetAddress) throws IllegalStateException;
+
+    /**
+     * Gets the port number to which the TransactionStatusManager will bind.
+     * @return int the port number.
+     */
+    public int getTransactionStatusManagerPort();
+
+    /**
+     * Sets the port number to which the TransactionStatusManager will bind.
+     * @param port the port number to set.
+     * @throws IllegalStateException if the MBean has already started.
+     */
+    public void setTransactionStatusManagerPort(int port) throws IllegalStateException;
+
+
+    /**
+     * Gets the address to which the RecoveryManager will bind, if it runs in-process with the application server.
+     * @return InetAddress the address.
+     */
+    public InetAddress getRecoveryInetAddress();
+
+    /**
+     * Sets the address to which the RecvoeryManager will bind, if it runs in-process with the application server.
+     * @param recoveryInetAddress the address to set
+     * @throws IllegalStateException if the MBean has already started.
+     */
+    public void setRecoveryInetAddress(InetAddress recoveryInetAddress) throws IllegalStateException;
+
+    /**
+     * Gets the port number to which the RecoveryManager will bind, if it runs in-process with the application server.
+     * @return int the port number.
+     */
+    public int getRecoveryPort();
+
+    /**
+     * Sets the port number to which the RecoveryManager will bind, if it runs in-process with the application server.
+     * @param port
+     * @throws IllegalStateException if the MBean has already started.
+     */
+    public void setRecoveryPort(int port) throws IllegalStateException;
+
+    /**
+     * Gets the port number to which the SocketProcessId service will bind.
+     * @return
+     */
+    public int getSocketProcessIdPort();
+
+    /**
+     * Sets the port number to which the SocketProcessId service will bind.
+     * @param port
+     * @throws IllegalStateException if the MBean has already started.
+     */
+    public void setSocketProcessIdPort(int port) throws IllegalStateException;
+
 }
 

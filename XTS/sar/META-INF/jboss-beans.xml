@@ -6,7 +6,31 @@
 
        <depends>jboss.web:service=WebServer</depends>
        <depends>jboss:service=TransactionManager</depends>
-        <property name="mbeanServer"><inject bean="JMXKernel" property="mbeanServer"/></property>
+       <property name="mbeanServer"><inject bean="JMXKernel" property="mbeanServer"/></property>
+
+
+        <property name="httpBindInetAddress">
+           <value-factory bean="ServiceBindingManager"
+                           method="getInetAddressBinding" >
+              <parameter>jboss.web:service=WebServer</parameter>
+           </value-factory>
+        </property>
+
+        <property name="httpPort">
+           <value-factory bean="ServiceBindingManager"
+                           method="getIntBinding" >
+              <parameter>jboss.web:service=WebServer</parameter>
+           </value-factory>
+        </property>
+
+        <property name="httpsPort">
+           <value-factory bean="ServiceBindingManager"
+                           method="getIntBinding" >
+              <parameter>jboss.web:service=WebServer</parameter>
+               <parameter>HttpsConnector</parameter>
+           </value-factory>
+        </property>
+
    </bean>
 
 </deployment>

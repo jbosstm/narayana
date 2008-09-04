@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -28,7 +28,7 @@
  *
  * $Id: TransactionStatusManager.java 2342 2006-03-30 13:06:17Z  $
  */
- 
+
 package com.arjuna.ats.arjuna.recovery ;
 
 import java.io.* ;
@@ -71,22 +71,22 @@ public class TransactionStatusManager
    {
       start( _defaultTsmService, null, -1 ) ;
    }
-   
+
    public TransactionStatusManager( int port )
    {
       start( _defaultTsmService, null, port ) ;
    }
-    
+
    public TransactionStatusManager( String serviceName )
    {
       start( serviceName, null, -1 ) ;
    }
-    
+
    public TransactionStatusManager( String serviceName, int port  )
    {
       start( serviceName, null, port ) ;
    }
-   
+
    /**
     * The work item to be executed.
     */
@@ -99,8 +99,8 @@ public class TransactionStatusManager
 
 	 if (tsLogger.arjLoggerI18N.isInfoEnabled())
 	 {
-	     tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_1", 
-					 new Object[]{service.getClass().getName(), 
+	     tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_1",
+					 new Object[]{service.getClass().getName(),
 							  Integer.toString(serverSocket.getLocalPort())});
 	 }
 
@@ -111,7 +111,7 @@ public class TransactionStatusManager
 	  tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_2");
       }
    }
-      
+
    /**
     * Removes the TransactionStatusManager from the object store
     * and closes down the listener thread.
@@ -124,7 +124,7 @@ public class TransactionStatusManager
 
 	   _listener.stopListener() ;
 	   TransactionStatusManagerItem.removeThis( Utility.getProcessUid() ) ;
-      } 
+      }
    }
 
    /**
@@ -135,18 +135,18 @@ public class TransactionStatusManager
       try
       {
          Class serviceClass = Thread.currentThread().getContextClassLoader().loadClass( serviceName ) ;
-   
+
          Service service = (Service) serviceClass.newInstance() ;
-            
+
          ServerSocket socketServer = getTsmServerSocket(host, port);
 
          addService( service, socketServer ) ;
-   
+
          TransactionStatusManagerItem.createAndSave(socketServer.getInetAddress().getHostAddress(), socketServer.getLocalPort() ) ;
 
          if (tsLogger.arjLoggerI18N.isInfoEnabled())
 	 {
-	     tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_3", 
+	     tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_3",
 					  new Object[]{Integer.toString(socketServer.getLocalPort()), socketServer.getInetAddress().getHostAddress(), serviceName});
 	 }
       }
@@ -154,7 +154,7 @@ public class TransactionStatusManager
       {
 	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
 	  {
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_4", 
+	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_4",
 					  new Object[]{serviceName});
 	  }
       }
@@ -162,7 +162,7 @@ public class TransactionStatusManager
       {
 	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
 	  {
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_5", 
+	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_5",
 					  new Object[]{serviceName});
 	  }
       }
@@ -170,7 +170,7 @@ public class TransactionStatusManager
       {
 	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
 	  {
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_6", 
+	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_6",
 					  new Object[]{serviceName});
 	  }
       }
@@ -178,7 +178,7 @@ public class TransactionStatusManager
       {
 	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
 	  {
-          tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_14", 
+          tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_14",
 					  new Object[]{getListenerHostName(), getListenerPort(-1)});
 	  }
 
@@ -225,7 +225,7 @@ public class TransactionStatusManager
         PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
         //pm = arjPropertyManager.propertyManager;
 
-        return Utility.getServerBindAddress(pm, com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_ADDRESS);
+        return pm.getProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_ADDRESS);
     }
 
     /**
@@ -276,15 +276,15 @@ public class TransactionStatusManager
      * Listener thread.
      */
     private Listener _listener ;
-    
+
     /**
      * Default service run on listener thread.
-     */ 
+     */
     private static final String _defaultTsmService = "com.arjuna.ats.arjuna.recovery.ActionStatusService" ;
 
     /**
      * Flag used to ensure finalize gets called just once.
-     */ 
+     */
     private boolean _finalizeCalled = false ;
 
     /**

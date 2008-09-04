@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: JacOrbRCServiceInit.java 2342 2006-03-30 13:06:17Z  $
  *
@@ -83,25 +83,25 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
     public JacOrbRCServiceInit()
     {
     }
-    
+
     /**
      * Provide the POA for the recoverycoordinator.
      * Construct with the policies appropriate for its use in the RecoveryManager,
      * but the policies are usable by the JacOrbRCManager to create the IOR's in
      * TS-using processes.
      */
-    
+
     static POA getRCPOA (String domainName)
     {
 	String rcServiceName = GenericRecoveryCreator.getRecCoordServiceName();
 
 	if (jtsLogger.logger.isDebugEnabled())
 	{
-	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-				   FacilityCode.FAC_CRASH_RECOVERY, 
+	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+				   FacilityCode.FAC_CRASH_RECOVERY,
 				   "JacOrbRCServiceInit.getRCPOA " + rcServiceName );
 	}
-	
+
 	if (_poa == null)
 	{
 	    String poaName = POA_NAME_PREFIX + rcServiceName+domainName;
@@ -117,8 +117,8 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 	    {
 		_orb = com.arjuna.orbportability.internal.InternalORB.getInstance("RecoveryServer");
 		String[] params = null;
-		String recoveryManagerPort = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.RECOVERY_MANAGER_PORT, "4711");
-        String recoveryManagerAddr = Utility.getServerBindAddress(jtsPropertyManager.propertyManager, com.arjuna.ats.jts.common.Environment.RECOVERY_MANAGER_ADDRESS);
+		String recoveryManagerPort = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.RECOVERY_MANAGER_PORT, "4712");
+        String recoveryManagerAddr = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.RECOVERY_MANAGER_ADDRESS);
 
         if (recoveryManagerAddr == null)
             recoveryManagerAddr = "";
@@ -154,7 +154,7 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
             p.setProperty(oaAddr, recoveryManagerAddr);
             System.setProperty(oaAddr, oldAddr);
         }
-            
+
         _orb.initORB(params, p);
 		_oa = OA.getRootOA(_orb);
 
@@ -179,7 +179,7 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 		    jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6a", new java.lang.Object[]{oldPort});
 		}
 	    }
-		
+
 	    try
 	    {
 		/*
@@ -206,11 +206,11 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 
 		org.omg.CORBA.ORB theORB = _orb.orb();
 		org.omg.PortableServer.POA rootPOA = _oa.rootPoa ();
-			
+
 		// create direct persistent POA
 		// make the policy lists, with standard policies
 		org.omg.CORBA.Policy[] policies = null;
-			
+
 		policies = new Policy []
 		{
 		    rootPOA.create_lifespan_policy(LifespanPolicyValue.PERSISTENT),
@@ -219,7 +219,7 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 		    rootPOA.create_id_uniqueness_policy(IdUniquenessPolicyValue.MULTIPLE_ID),
 		    rootPOA.create_request_processing_policy(RequestProcessingPolicyValue.USE_DEFAULT_SERVANT)
 		};
-			
+
 		_poa = rootPOA.create_POA(poaName, rootPOA.the_POAManager(), policies);
 	    }
 	    catch (Exception ex)
@@ -227,32 +227,32 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_1",ex);
 	    }
 	}
-	
-	return _poa;    
+
+	return _poa;
     }
-    
+
     /**
      * This starts the service in the RecoveryManager.
      */
-    
+
     public  boolean startRCservice ()
     {
 	POA ourPOA = getRCPOA("recovery_coordinator");
-	
-	try 
+
+	try
 	    {
 		// get the orb, so we can pass it to the default servant
-		
+
 		// make the default servant
 		JacOrbRCDefaultServant theButler = new JacOrbRCDefaultServant(_orb.orb());
-		
+
 		// register it on the POA
 		ourPOA.set_servant(theButler);
-		
-		org.omg.CORBA.Object obj = ourPOA.create_reference_with_id("RecoveryManager".getBytes(), 
+
+		org.omg.CORBA.Object obj = ourPOA.create_reference_with_id("RecoveryManager".getBytes(),
 									   RecoveryCoordinatorHelper.id());
-		
-		// Write the object refenece in the file 
+
+		// Write the object refenece in the file
 
 		String reference = _orb.orb().object_to_string(obj);
 
@@ -271,34 +271,34 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 		    {
 			jtsLogger.loggerI18N.fatal("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_5");
 	  }
-		
+
 		if (jtsLogger.loggerI18N.isDebugEnabled())
 		    {
-			jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-						   FacilityCode.FAC_CRASH_RECOVERY, 
+			jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+						   FacilityCode.FAC_CRASH_RECOVERY,
 						   "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_2");
 		    }
-		
-		// activate the poa 
-		
+
+		// activate the poa
+
 		_oa.rootPoa().the_POAManager().activate();
-		
+
 		//_oa.run();
 		ORBRunner _runOA = new ORBRunner();
-		
+
 		return true;
 	    } catch (Exception ex) {
 		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_3", ex);
 		return false;
-	    }    
-	
+	    }
+
     }
-    
+
     public static void shutdownRCService ()
     {
 	_poa = null;
     }
-    
+
     public static String type ()
     {
 	return "/RecoveryCoordinator";
@@ -306,12 +306,12 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 
 
     private static final String POA_NAME_PREFIX = "RcvCo-";
-    
+
     protected static POA                _poa = null;
-    
+
     protected static com.arjuna.orbportability.ORB _orb = null;
     protected static com.arjuna.orbportability.RootOA _oa = null;
-    
+
     protected static String RecoveryIdStore = "RecoveryCoordinatorIdStore";
     protected static String RecoveryCoordStore = "RecoveryCoordinator";
 
@@ -320,8 +320,8 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 
     private ObjectStore     currentStore;
     static protected String uid4Recovery = "52e38d0c:c91:4140398c:0";
-  
-    
+
+
 };
 
 

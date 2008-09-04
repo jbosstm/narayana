@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -66,11 +66,11 @@ class ScanThread extends Thread
     public void run ()
     {
 	_theImple.scan();
-	
+
 	if (_callback != null)
 	    _callback.completed();
     }
-    
+
     private RecoveryManagerImple _theImple;
     private RecoveryScan         _callback;
 }
@@ -107,12 +107,12 @@ public class RecoveryManager
      *
      * @return the manager.
      */
-    
+
     public static synchronized final RecoveryManager manager () throws IllegalArgumentException
     {
 	return manager(RecoveryManager.INDIRECT_MANAGEMENT);
     }
-    
+
     /**
      * Obtain a reference to the RecoveryManager singleton. If it hasn't
      * been created yet then it will be. The manager can be created in a
@@ -135,10 +135,10 @@ public class RecoveryManager
 	    if (_recoveryManager.mode() != mode)
 		throw new IllegalArgumentException();
 	}
-	
+
 	return _recoveryManager;
     }
-    
+
     /**
      * Delay the start of the recovery manager thread when creating an indirect recovery manager.
      */
@@ -170,10 +170,10 @@ public class RecoveryManager
     public final void scan (RecoveryScan callback)
     {
 	ScanThread st = new ScanThread(_theImple, callback);
-	
+
 	st.start();
     }
-    
+
     /**
      * Stop the periodic recovery manager waiting for any recovery scan in progress to complete
      */
@@ -197,7 +197,7 @@ public class RecoveryManager
      * Suspend the recovery manager. If the recovery manager is in the process of
      * doing recovery scans then it will be suspended afterwards, in order to
      * preserve data integrity.
-     * 
+     *
      * @param async false means wait for the recovery manager to finish any scans before returning.
      */
 
@@ -210,7 +210,7 @@ public class RecoveryManager
     {
 	_theImple.resumeScan();
     }
-	
+
     /**
      * Start the recovery manager thread.
      */
@@ -234,7 +234,7 @@ public class RecoveryManager
      * Remove a recovery module from the system.
      *
      * @param module The module to remove.
-     * @param waitOnScan true if the remove operation should wait for any in-progress scan to complete 
+     * @param waitOnScan true if the remove operation should wait for any in-progress scan to complete
      */
 
     public final void removeModule (RecoveryModule module, boolean waitOnScan)
@@ -251,7 +251,7 @@ public class RecoveryManager
     {
 	return _theImple.getModules();
     }
-    
+
     /**
      * Indicates what mode (INDIRECT_MANAGEMENT or DIRECT_MANAGEMENT)
      * the recovery manager is configured for.
@@ -264,7 +264,7 @@ public class RecoveryManager
 	return _mode;
     }
 
-    public static InetAddress getRecoveryManagerHost(boolean useASBindAddress) throws UnknownHostException
+    public static InetAddress getRecoveryManagerHost() throws UnknownHostException
     {
         PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
 
@@ -272,7 +272,7 @@ public class RecoveryManager
             return InetAddress.getLocalHost();
 
         String hostPropName = com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_ADDRESS;
-        String host = ((useASBindAddress) ? Utility.getServerBindAddress(pm, hostPropName) : pm.getProperty(hostPropName));
+        String host = pm.getProperty(hostPropName);
 
         return Utility.hostNameToInetAddress(host, "com.arjuna.ats.arjuna.recovery.RecoveryManager_2");
     }
@@ -308,16 +308,13 @@ public class RecoveryManager
 
     /**
      * Obtain a client connection to the recovery manager
-     * 
-     * @param useASBindAddress if true and the recovery manager is running within an appserver then
-     *  bind the socket to the same address that the AS is using. Otherwise use the environment config
-     *  to choose which address to bind to
+     *
      * @return a bound client socket connection to the recovery manager
      * @throws IOException
      */
-    public static Socket getClientSocket (boolean useASBindAddress) throws IOException
+    public static Socket getClientSocket () throws IOException
     {
-        Socket socket = new Socket(getRecoveryManagerHost(useASBindAddress), getRecoveryManagerPort());
+        Socket socket = new Socket(getRecoveryManagerHost(), getRecoveryManagerPort());
 
         if (tsLogger.arjLogger.isInfoEnabled())
         {
@@ -327,7 +324,7 @@ public class RecoveryManager
 
         return socket;
     }
-    
+
     /**
      * Run the RecoveryManager. See Administration manual for details.
      */
@@ -357,7 +354,7 @@ public class RecoveryManager
 	try
 	{
 	    manager();
-	    
+
 	    if (testMode)
 		System.out.println("Ready");
 	}
@@ -376,10 +373,10 @@ public class RecoveryManager
 
 	_mode = mode;
     }
-    
+
     private RecoveryManagerImple _theImple = null;
     private int _mode;
-    
+
     private static RecoveryManager _recoveryManager = null;
     private static boolean delayRecoveryManagerThread ;
 }

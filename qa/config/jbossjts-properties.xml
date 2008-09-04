@@ -278,7 +278,7 @@
         <!--
 	  This property controls the port on which the Recovery ORB listens
 	-->
-        <property name="com.arjuna.ats.jts.recoveryManagerPort" value="4711"/>
+        <property name="com.arjuna.ats.jts.recoveryManagerPort" value="4712"/>
     </properties>
     <properties depends="orbportability,arjuna" name="jts">
         <!--

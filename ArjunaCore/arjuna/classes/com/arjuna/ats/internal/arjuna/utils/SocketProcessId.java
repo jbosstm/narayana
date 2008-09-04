@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Hewlett-Packard Arjuna Labs,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: SocketProcessId.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -58,11 +58,11 @@ public class SocketProcessId implements com.arjuna.ats.arjuna.utils.Process
      * @return the process id. This had better be unique between processes
      * on the same machine. If not we're in trouble!
      *
-     * @message com.arjuna.ats.internal.arjuna.utils.SocketProcessId_1 [com.arjuna.ats.internal.arjuna.utils.SocketProcessId_1]- Invalid port specified 
+     * @message com.arjuna.ats.internal.arjuna.utils.SocketProcessId_1 [com.arjuna.ats.internal.arjuna.utils.SocketProcessId_1]- Invalid port specified
      * @message com.arjuna.ats.internal.arjuna.utils.SocketProcessId_2 [com.arjuna.ats.internal.arjuna.utils.SocketProcessId_2] - SocketProcessId.getpid could not get unique port.
      * @message com.arjuna.ats.internal.arjuna.utils.SocketProcessId_3 [com.arjuna.ats.internal.arjuna.utils.SocketProcessId_3]- Invalid value for SocketProcessIdMaxPorts specified {0}
      */
-    
+
     public int getpid ()
     {
 	synchronized (SocketProcessId._lock)
@@ -78,7 +78,7 @@ public class SocketProcessId implements com.arjuna.ats.arjuna.utils.Process
                         "com.arjuna.ats.internal.arjuna.utils.SocketProcessId_3",
                         0, Utility.MAX_PORT);
             int maxPort;
-                          
+
             if (maxPorts <= 1)
             {
                 maxPort = port;
@@ -103,7 +103,7 @@ public class SocketProcessId implements com.arjuna.ats.arjuna.utils.Process
 
 	if (_thePort == -1)
 	    throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.utils.SocketProcessId_2"));
-	
+
 	return _thePort;
     }
 
@@ -111,7 +111,7 @@ public class SocketProcessId implements com.arjuna.ats.arjuna.utils.Process
     {
         try
         {
-            return new ServerSocket(port);
+            return new ServerSocket(port, 0, InetAddress.getLocalHost());
         }
         catch (IOException e)
         {
@@ -126,7 +126,7 @@ public class SocketProcessId implements com.arjuna.ats.arjuna.utils.Process
 	    return _theSocket;
 	}
     }
-    
+
     private static int          _thePort = 0;
     private static ServerSocket _theSocket = null;
     private static final Object       _lock = new Object();
@@ -136,5 +136,5 @@ public class SocketProcessId implements com.arjuna.ats.arjuna.utils.Process
      */
 
     private static final int _defaultPort = 0 ;
- 
+
 }

@@ -316,7 +316,7 @@ public class PeriodicRecovery extends Thread
         synchronized (PeriodicRecovery._socketLock)
         {
             if (_socket == null)
-                _socket = new ServerSocket(RecoveryManager.getRecoveryManagerPort(), Utility.BACKLOG, RecoveryManager.getRecoveryManagerHost(true));
+                _socket = new ServerSocket(RecoveryManager.getRecoveryManagerPort(), Utility.BACKLOG, RecoveryManager.getRecoveryManagerHost());
 
             return _socket;
         }

@@ -79,6 +79,7 @@ import javax.management.AttributeNotFoundException;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import java.util.Set;
+import java.net.InetAddress;
 //import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 
 /**
@@ -137,25 +138,31 @@ public class XTSService implements XTSServiceMBean {
         // bind address and the web service port so they services register themselves
         // in the registry using the correct URL
 
-        // the Transaction Service initialization saves the server bind address using a System
-        // property. we can use this to define the binding address used by the XTS services
+        // the app server's MicroContainer and ServiceBindingManager should work together
+        // to supply us the properties used by the web server. Check that it's done so:
+        // if this blows up, changes are binding.xml or XTS's jboss-beans.xml is broken.
+        if(httpBindInetAddress == null || (httpPort == 0 && httpsPort == 0)) {
+            log.error("insufficient webserver address:port information available - unable to start XTS.");
+            throw new Exception("insufficient webserver address:port information available - unable to start XTS.");
+        }
 
-        String bindAddress = System.getProperty(com.arjuna.ats.arjuna.common.Environment.SERVER_BIND_ADDRESS);
+        // The app servers gives us a InetAddress, but our config system is String based.
+        // so we convert it here, then XTS internally convert it back later. sigh.
+        // likewise for ints to Strings for hte port numbers.
+
+        String bindAddress = httpBindInetAddress.getHostAddress();
+
         System.setProperty(com.arjuna.wsc.common.Environment.XTS_BIND_ADDRESS, bindAddress);
         System.setProperty(com.arjuna.wsc11.common.Environment.XTS_BIND_ADDRESS, bindAddress);
 
-        // the web service exposes its listen port somehow or other
-        String bindPortString = getConnectorPort("HTTP/1.1", false);
-        String secureBindPortString = getConnectorPort("HTTP/1.1", true);
-
-        if (bindPortString != null) {
-            System.setProperty(com.arjuna.wsc.common.Environment.XTS_BIND_PORT, bindPortString);
-            System.setProperty(com.arjuna.wsc11.common.Environment.XTS_BIND_PORT, bindPortString);
+        if(httpPort != 0) {
+            System.setProperty(com.arjuna.wsc.common.Environment.XTS_BIND_PORT, ""+httpPort);
+            System.setProperty(com.arjuna.wsc11.common.Environment.XTS_BIND_PORT, ""+httpPort);
         }
 
-        if (secureBindPortString != null) {
-            System.setProperty(com.arjuna.wsc.common.Environment.XTS_SECURE_BIND_PORT, secureBindPortString);
-            System.setProperty(com.arjuna.wsc11.common.Environment.XTS_SECURE_BIND_PORT, secureBindPortString);
+        if(httpsPort != 0) {
+            System.setProperty(com.arjuna.wsc.common.Environment.XTS_SECURE_BIND_PORT, ""+httpsPort);
+            System.setProperty(com.arjuna.wsc11.common.Environment.XTS_SECURE_BIND_PORT, ""+httpsPort);
         }
 
         // see if the coordinatorURL or host/port has been specified on the command line
@@ -176,7 +183,7 @@ public class XTSService implements XTSServiceMBean {
                     coordinatorHost = (bindAddress != null ? bindAddress : "127.0.0.1");
                 }
                 if (coordinatorPort == null) {
-                    coordinatorPort = (bindPortString != null ? bindPortString : "8080");
+                    coordinatorPort = (httpPort != 0 ? ""+httpPort : "8080");
                 }
                 if (coordinatorPath == null) {
                     coordinatorPath = "ws-c10/soap/ActivationCoordinator";
@@ -201,7 +208,7 @@ public class XTSService implements XTSServiceMBean {
                     coordinatorHost = (bindAddress != null ? bindAddress : "127.0.0.1");
                 }
                 if (coordinatorPort == null) {
-                    coordinatorPort = (bindPortString != null ? bindPortString : "8080");
+                    coordinatorPort = (httpPort != 0 ? ""+httpPort : "8080");
                 }
                 if (coordinatorPath == null) {
                     coordinatorPath = "ws-c11/ActivationService";
@@ -216,48 +223,6 @@ public class XTSService implements XTSServiceMBean {
         Sequencer.unlatch();
 
         TaskManagerInitialisation(); // com.arjuna.services.framework.admin.TaskManagerInitialisation : initialise the Task Manager
-
-        /*
-         * initialisation is done by 1.0/1.1 war files so as to allow us to iunclude either WS-COOR/AT/BA 1.0 or 1.1
-         * or both
-         */
-        /*
-        //// wscf.war:
-
-        WSCFInitialisation();  // com.arjuna.mw.wsc.deploy.WSCFInitialisation: Initialise WSCF
-
-        //// ws-c.war:
-
-        TaskManagerInitialisation(); // com.arjuna.services.framework.admin.TaskManagerInitialisation : initialise the Task Manager
-        ActivationCoordinatorInitialisation(); // com.arjuna.webservices.wscoor.server.ActivationCoordinatorInitialisation : Activate the Activation Coordinator service
-        ActivationRequesterInitialisation(); // com.arjuna.webservices.wscoor.server.ActivationRequesterInitialisation : Activate the Activation Requester service
-        RegistrationCoordinatorInitialisation(); // com.arjuna.webservices.wscoor.server.RegistrationCoordinatorInitialisation : Activate the Registration Coordinator service
-        RegistrationRequesterInitialisation(); // com.arjuna.webservices.wscoor.server.RegistrationRequesterInitialisation : Activate the Registration Requester service
-        CoordinationInitialisation(); // com.arjuna.wsc.messaging.deploy.CoordinationInitialisation : Initialise the coordination services.
-        HttpClientInitialisation(); // com.arjuna.webservices.transport.http.HttpClientInitialisation : initialise the HTTP clients.
-        // TODO: HTTP SOAP Service Multiplexor Servlet
-
-        //// ws-t.war:
-
-        TerminationParticipantInitialisation(); // com.arjuna.webservices.wsarjtx.server.TerminationParticipantInitialisation : Arjuna TX - Activate the Terminator Participant  service
-        TerminationCoordinatorInitialisation(); // com.arjuna.webservices.wsarjtx.server.TerminationCoordinatorInitialisation : Arjuna TX - Activate the Terminator Coordinator service
-
-        CompletionCoordinatorInitialisation(); // com.arjuna.webservices.wsat.server.CompletionCoordinatorInitialisation : WS-AT - Activate the Completion Coordinator service
-        CompletionInitiatorInitialisation(); // com.arjuna.webservices.wsat.server.CompletionInitiatorInitialisation : WS-AT - Activate the Completion Initiator service
-        CoordinatorInitialisation(); // com.arjuna.webservices.wsat.server.CoordinatorInitialisation : WS-AT: Activate the Coordinator service
-        ParticipantInitialisation(); // com.arjuna.webservices.wsat.server.ParticipantInitialisation : WS-AT - Activate the Participant service
-
-        CoordinatorCompletionCoordinatorInitialisation(); // com.arjuna.webservices.wsba.server.CoordinatorCompletionCoordinatorInitialisation : WS-BA - Activate the Coordinator Completion Coordinator service
-        CoordinatorCompletionParticipantInitialisation(); // com.arjuna.webservices.wsba.server.CoordinatorCompletionParticipantInitialisation : WS-BA - Activate the Coordinator Completion Participant service
-        ParticipantCompletionCoordinatorInitialisation(); // com.arjuna.webservices.wsba.server.ParticipantCompletionCoordinatorInitialisation : WS-BA - Activate the Participant Completion Coordinator service
-        ParticipantCompletionParticipantInitialisation(); // com.arjuna.webservices.wsba.server.ParticipantCompletionParticipantInitialisation : WS-BA - Activate the Participant Completion Participant service
-
-        TransactionInitialisation(); // com.arjuna.wst.messaging.deploy.TransactionInitialisation : WS-T - Initialise the transaction services.
-
-        //// wstx.war:
-
-        WSTXInitialisation(); // com.arjuna.mw.wst.deploy.WSTXInitialisation : Initialise WSTX
-        */
 
         acCoordinatorRecoveryModule = new ACCoordinatorRecoveryModule();
 
@@ -313,282 +278,6 @@ public class XTSService implements XTSServiceMBean {
         taskManager.setMaximumWorkerCount(taskManagerMaxWorkerCount) ;
     }
 
-    /*
-     * this is now done by war listeners -- see above for rationale
-    ///////////////////////////////
-
-    private void WSCFInitialisation() throws Exception
-    {
-        //Configuration.initialise("/wscf.xml");
-
-        final ContextFactoryMapper wscfImpl = ContextFactoryMapper.getFactory() ;
-
-        wscfImpl.setSubordinateContextFactoryMapper(new ContextFactoryMapperImple());
-    }
-
-    private void TaskManagerInitialisation()
-    {
-        final TaskManager taskManager = TaskManager.getManager() ;
-        taskManager.setMinimumWorkerCount(taskManagerMinWorkerCount) ;
-        taskManager.setMaximumWorkerCount(taskManagerMaxWorkerCount) ;
-    }
-
-    private void ActivationCoordinatorInitialisation()
-    {
-        final HandlerRegistry handlerRegistry = new HandlerRegistry() ;
-
-        // Add WS-Addressing
-        AddressingPolicy.register(handlerRegistry) ;
-        // Add Activation coordinator.
-        ActivationCoordinatorPolicy.register(handlerRegistry) ;
-
-        addToSOAPRegistry(CoordinationConstants.SERVICE_ACTIVATION_COORDINATOR, handlerRegistry);
-    }
-
-    private void ActivationRequesterInitialisation()
-    {
-        final HandlerRegistry handlerRegistry = new HandlerRegistry() ;
-
-        // Add WS-Addressing
-        AddressingPolicy.register(handlerRegistry) ;
-        // Add Activation coordinator.
-        ActivationRequesterPolicy.register(handlerRegistry) ;
-
-        addToSOAPRegistry(CoordinationConstants.SERVICE_ACTIVATION_REQUESTER, handlerRegistry);
-    }
-
-    private void RegistrationCoordinatorInitialisation()
-    {
-        final HandlerRegistry handlerRegistry = getHandlerRegistry();
-
-        // Add Registration coordinator.
-        RegistrationCoordinatorPolicy.register(handlerRegistry) ;
-
-        addToSOAPRegistry(CoordinationConstants.SERVICE_REGISTRATION_COORDINATOR, handlerRegistry);
-    }
-
-    private void RegistrationRequesterInitialisation()
-    {
-        final HandlerRegistry handlerRegistry = new HandlerRegistry() ;
-
-        // Add WS-Addressing
-        AddressingPolicy.register(handlerRegistry) ;
-        // Add Registration coordinator.
-        RegistrationRequesterPolicy.register(handlerRegistry) ;
-
-        addToSOAPRegistry(CoordinationConstants.SERVICE_REGISTRATION_REQUESTER, handlerRegistry);
-    }
-
-    private void CoordinationInitialisation()
-    {
-        ActivationCoordinatorProcessor.setCoordinator(new ActivationCoordinatorProcessorImpl()) ;
-        RegistrationCoordinatorProcessor.setCoordinator(new RegistrationCoordinatorProcessorImpl()) ;
-    }
-
-    private void HttpClientInitialisation()
-    {
-        final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
-        final SoapClient client = new HttpClient() ;
-        soapRegistry.registerSoapClient("http", client) ;
-        soapRegistry.registerSoapClient("https", client) ;
-    }
-
-    private void TerminationParticipantInitialisation()
-    {
-        final HandlerRegistry handlerRegistry = getHandlerRegistry();
-
-        // Add Terminator coordinator.
-        TerminationParticipantPolicy.register(handlerRegistry) ;
-
-        addToSOAPRegistry(ArjunaTXConstants.SERVICE_TERMINATION_PARTICIPANT, handlerRegistry);
-    }
-
-    private void TerminationCoordinatorInitialisation()
-    {
-        final HandlerRegistry handlerRegistry = getHandlerRegistry();
-
-        // Add Terminator participant.
-        TerminationCoordinatorPolicy.register(handlerRegistry) ;
-
-        addToSOAPRegistry(ArjunaTXConstants.SERVICE_TERMINATION_COORDINATOR, handlerRegistry);
-    }
-
-    private void CompletionCoordinatorInitialisation()
-    {
-        final HandlerRegistry handlerRegistry = getHandlerRegistry();
-
-        // Add Completion coordinator.
-        CompletionCoordinatorPolicy.register(handlerRegistry) ;
-
-        addToSOAPRegistry(AtomicTransactionConstants.SERVICE_COMPLETION_COORDINATOR, handlerRegistry);
-    }
-
-    private void CompletionInitiatorInitialisation()
-    {
-        final HandlerRegistry handlerRegistry = getHandlerRegistry();
-
-        // Add Completion initiator.
-        CompletionInitiatorPolicy.register(handlerRegistry);
-
-        addToSOAPRegistry(AtomicTransactionConstants.SERVICE_COMPLETION_INITIATOR, handlerRegistry);
-    }
-
-    private void CoordinatorInitialisation()
-    {
-        final HandlerRegistry handlerRegistry = getHandlerRegistry();
-
-        // Add coordinator.
-        CoordinatorPolicy.register(handlerRegistry) ;
-
-        addToSOAPRegistry(AtomicTransactionConstants.SERVICE_COORDINATOR, handlerRegistry);
-    }
-
-    private void ParticipantInitialisation()
-    {
-        final HandlerRegistry handlerRegistry = getHandlerRegistry();
-
-        // Add Participant.
-        ParticipantPolicy.register(handlerRegistry) ;
-
-        addToSOAPRegistry(AtomicTransactionConstants.SERVICE_PARTICIPANT, handlerRegistry);
-    }
-
-    private void CoordinatorCompletionCoordinatorInitialisation()
-    {
-        final HandlerRegistry handlerRegistry = getHandlerRegistry();
-
-        // Add Coordinator Completion coordinator.
-        CoordinatorCompletionCoordinatorPolicy.register(handlerRegistry) ;
-
-        addToSOAPRegistry(BusinessActivityConstants.SERVICE_COORDINATOR_COMPLETION_COORDINATOR, handlerRegistry);
-    }
-
-    private void CoordinatorCompletionParticipantInitialisation()
-    {
-        final HandlerRegistry handlerRegistry = getHandlerRegistry();
-
-        // Add Coordinator Completion participant.
-        CoordinatorCompletionParticipantPolicy.register(handlerRegistry) ;
-
-        addToSOAPRegistry(BusinessActivityConstants.SERVICE_COORDINATOR_COMPLETION_PARTICIPANT, handlerRegistry);
-    }
-
-    private void ParticipantCompletionCoordinatorInitialisation()
-    {
-        final HandlerRegistry handlerRegistry = getHandlerRegistry();
-
-        // Add Participant Completion coordinator.
-        ParticipantCompletionCoordinatorPolicy.register(handlerRegistry) ;
-
-        addToSOAPRegistry(BusinessActivityConstants.SERVICE_PARTICIPANT_COMPLETION_COORDINATOR, handlerRegistry);
-    }
-
-    private void ParticipantCompletionParticipantInitialisation()
-    {
-        final HandlerRegistry handlerRegistry = getHandlerRegistry();
-
-        // Add Participant Completion participant.
-        ParticipantCompletionParticipantPolicy.register(handlerRegistry) ;
-
-        addToSOAPRegistry(BusinessActivityConstants.SERVICE_PARTICIPANT_COMPLETION_PARTICIPANT, handlerRegistry);
-    }
-
-    private void TransactionInitialisation()
-    {
-        CompletionCoordinatorProcessor.setProcessor(new CompletionCoordinatorProcessorImpl()) ;
-        ParticipantProcessor.setProcessor(new ParticipantProcessorImpl()) ;
-        CoordinatorProcessor.setProcessor(new CoordinatorProcessorImpl()) ;
-        TerminationCoordinatorProcessor.setProcessor(new TerminatorParticipantProcessorImpl()) ;
-        CoordinatorCompletionParticipantProcessor.setProcessor(new CoordinatorCompletionParticipantProcessorImpl()) ;
-        ParticipantCompletionParticipantProcessor.setProcessor(new ParticipantCompletionParticipantProcessorImpl()) ;
-        CoordinatorCompletionCoordinatorProcessor.setProcessor(new CoordinatorCompletionCoordinatorProcessorImpl()) ;
-        ParticipantCompletionCoordinatorProcessor.setProcessor(new ParticipantCompletionCoordinatorProcessorImpl()) ;
-    }
-
-    private void WSTXInitialisation() throws Exception
-    {
-        // we don't know if the servlet is inited yet since its deploy is async,
-        // so play it safe and set the URL here too since UserTransactionImple needs it.
-        System.setProperty("com.arjuna.mw.wst.coordinatorURL", "http://localhost:8080/jbossxts/soap/ActivationCoordinator");
-
-        // wst.xml ignored. TODO: make these configurable again (mbean properties?):
-        UserTransaction.setUserTransaction(new com.arjuna.mwlabs.wst.at.remote.UserTransactionImple());
-        TransactionManager.setTransactionManager(new com.arjuna.mwlabs.wst.at.remote.TransactionManagerImple());
-        UserBusinessActivity.setUserBusinessActivity(new com.arjuna.mwlabs.wst.ba.remote.UserBusinessActivityImple());
-        BusinessActivityManager.setBusinessActivityManager(new com.arjuna.mwlabs.wst.ba.remote.BusinessActivityManagerImple());
-
-        // TODO: should this really be after the above? At least one property from this file (coordinatorURL)
-        // would seem to be required at an earlier stage.
-        //Configuration.initialise("/wstx.xml");
-
-    }
-    ////
-
-    private HandlerRegistry getHandlerRegistry() {
-        final HandlerRegistry handlerRegistry = new HandlerRegistry() ;
-
-        // Add WS-Addressing
-        AddressingPolicy.register(handlerRegistry) ;
-        // Add Arjuna handlers
-        ArjunaPolicy.register(handlerRegistry) ;
-
-        return handlerRegistry;
-    }
-
-    private void addToSOAPRegistry(String serviceName, HandlerRegistry handlerRegistry)
-    {
-        final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
-        soapRegistry.registerSoapService(serviceName, new SoapService(handlerRegistry)) ;
-    }
-    */
-
-    private String getConnectorPort(final String protocol, final boolean secure)
-    {
-       int port = -1;
-
-       try
-       {
-          ObjectName connectors = new ObjectName("jboss.web:type=Connector,*");
-
-          Set connectorNames = getMbeanServer().queryNames(connectors, null);
-          for (Object current : connectorNames)
-          {
-             ObjectName currentName = (ObjectName)current;
-
-             try
-             {
-                int connectorPort = (Integer)getMbeanServer().getAttribute(currentName, "port");
-                boolean connectorSecure = (Boolean)getMbeanServer().getAttribute(currentName, "secure");
-                String connectorProtocol = (String)getMbeanServer().getAttribute(currentName, "protocol");
-
-                if (protocol.equals(connectorProtocol) && secure == connectorSecure)
-                {
-                   if (port > -1)
-                   {
-                      log.warn("Found multiple connectors for protocol='" + protocol + "' and secure='" + secure + "', using first port found '" + port + "'");
-                   }
-                   else
-                   {
-                      port = connectorPort;
-                   }
-                }
-             }
-             catch (AttributeNotFoundException ignored)
-             {
-             }
-          }
-
-           if (port < 0) {
-               return null;
-           } else {
-               return Integer.toString(port);
-           }
-       }
-       catch (JMException e)
-       {
-          return null;
-       }
-    }
     public MBeanServer getMbeanServer()
     {
        return mbeanServer;
@@ -600,4 +289,39 @@ public class XTSService implements XTSServiceMBean {
     }
 
     private MBeanServer mbeanServer = null;
+
+    ///////////////
+
+    // These setters are used to allow MC/ServiceBindingManger to relay information from the Web server
+    // seee bindings.xml and jboss-beans.xml
+
+    public InetAddress getHttpBindInetAddress() {
+        return httpBindInetAddress;
+    }
+
+    public void setHttpBindInetAddress(InetAddress httpBindInetAddress) {
+        this.httpBindInetAddress = httpBindInetAddress;
+    }
+
+    private InetAddress httpBindInetAddress = null;
+
+    public int getHttpPort() {
+        return httpPort;
+    }
+
+    public void setHttpPort(int httpPort) {
+        this.httpPort = httpPort;
+    }
+
+    int httpPort = 0;
+
+    public int getHttpsPort() {
+        return httpsPort;
+    }
+
+    public void setHttpsPort(int httpsPort) {
+        this.httpsPort = httpsPort;
+    }
+
+    int httpsPort = 0;
 }

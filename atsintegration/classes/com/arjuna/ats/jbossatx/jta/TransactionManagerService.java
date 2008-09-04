@@ -49,6 +49,8 @@ import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.coordinator.TxStats;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
+import com.arjuna.ats.arjuna.utils.Utility;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 import com.arjuna.ats.internal.tsmx.mbeans.PropertyServiceJMXPlugin;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
@@ -61,6 +63,8 @@ import javax.naming.InitialContext;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 import java.net.Socket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -75,7 +79,7 @@ import java.util.Vector;
 public class TransactionManagerService implements TransactionManagerServiceMBean, XAResourceRecoveryRegistry
 {
     /*
-    deploy/transaction-beans.xml:
+    deploy/transaction-jboss-beans.xml:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <deployment xmlns="urn:jboss:bean-deployer:2.0">
@@ -120,6 +124,9 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
     private boolean configured;
     private byte[] configuredLock = new byte[0] ;
 
+    private boolean isTransactionStatusManagerBindAddressSet;
+    private boolean isRecoveryManagerBindAddressSet;
+
     private MBeanServer mbeanServer;
 
     /**
@@ -137,6 +144,22 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
     {
         synchronized(configuredLock)
         {
+            // if the app server's ServerBindingManager has NOT been used to configure the listen addresses
+            // (which it should be by default via the binding.xml and transaction-jboss-beans.xml) then we
+            // want to fall back to using the SERVER_BIND_ADDRESS in preference to the value from the
+            // jbossjta-properties.xml. Belt and Braces...
+
+            InetAddress serverInetAddress = InetAddress.getByName(System.getProperty(ServerConfig.SERVER_BIND_ADDRESS));
+            if(!isRecoveryManagerBindAddressSet) {
+                setRecoveryInetAddress(serverInetAddress);
+            }
+            if(!isTransactionStatusManagerBindAddressSet) {
+                setTransactionStatusManagerInetAddress(serverInetAddress);
+            }
+
+            // we are now done configuring things. The transaction system gets unhappy if we change config
+            // once it's running, so prevent any further alterations before we start it up...
+
             configured = true ;
         }
 
@@ -149,7 +172,6 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
         System.setProperty(com.arjuna.ats.tsmx.TransactionServiceMX.AGENT_IMPLEMENTATION_PROPERTY,
                 com.arjuna.ats.internal.jbossatx.agent.LocalJBossAgentImpl.class.getName());
         System.setProperty(Environment.LAST_RESOURCE_OPTIMISATION_INTERFACE, LastResource.class.getName()) ;
-        System.setProperty(com.arjuna.ats.arjuna.common.Environment.SERVER_BIND_ADDRESS, System.getProperty(ServerConfig.SERVER_BIND_ADDRESS));
 
         if (timeout != 0)
         {
@@ -242,7 +264,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
 
             try
             {
-                Socket sckt = RecoveryManager.getClientSocket(getRunInVMRecoveryManager());
+                Socket sckt = RecoveryManager.getClientSocket();
 
                 in = new BufferedReader(new InputStreamReader(sckt.getInputStream()));
                 out = new PrintStream(sckt.getOutputStream());
@@ -257,7 +279,18 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
             }
             catch (Exception ex)
             {
-                log.error("Failed to connect to recovery manager", ex);
+                try
+                {
+                    InetAddress host = RecoveryManager.getRecoveryManagerHost();
+                    int port = RecoveryManager.getRecoveryManagerPort();
+
+                    log.error("Failed to connect to recovery manager on " + host.getHostAddress() + ':' + port);
+                }
+                catch (UnknownHostException e)
+                {
+                    log.error("Failed to connect to recovery manager", ex);
+                }
+
                 active = false;
             }
             finally
@@ -648,5 +681,134 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
     {
         Reference ref = new Reference(className, className, null);
         new InitialContext().bind(jndiName, ref);
+    }
+
+    ///////////////////
+
+    // note that the address/port setters rely on having the property manager initialized first, or their settings
+    // would be overridden by those in the config files when the properties are loaded from file. Fortunatly the static
+    // block for the logging has the nice side effect of loading the config too, so it works out ok.
+
+    public InetAddress getTransactionStatusManagerInetAddress()
+    {
+        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+        try {
+            return Utility.hostNameToInetAddress(pm.getProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_ADDRESS), "");
+        } catch(UnknownHostException e) {
+            log.warn("UnknownHostException from getTransactionStatusManagerInetAddress, input was: "+pm.getProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_ADDRESS));
+            return null;
+        }
+    }
+
+    public void setTransactionStatusManagerInetAddress(InetAddress tsmInetAddress) throws IllegalStateException
+    {
+        synchronized(configuredLock)
+        {
+            if (configured)
+            {
+                if(!tsmInetAddress.getAddress().equals(getTransactionStatusManagerInetAddress().getAddress())) {
+                    throw new IllegalStateException("Cannot set transactionStatusManagerInetAddress once the MBean has configured");
+                }
+            }
+            else
+            {
+                PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+                pm.setProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_ADDRESS, tsmInetAddress.getHostAddress());
+                isTransactionStatusManagerBindAddressSet = true;
+            }
+        }
+    }
+
+    public int getTransactionStatusManagerPort()
+    {
+        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+        return Integer.parseInt(pm.getProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_PORT));
+    }
+
+    public void setTransactionStatusManagerPort(int port) throws IllegalStateException
+    {
+        if (configured)
+        {
+            if(port != getTransactionStatusManagerPort()) {
+                throw new IllegalStateException("Cannot set transactionStatusManagerPort once the MBean has configured");
+            }
+        }
+        else
+        {
+            PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+            pm.setProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_PORT, ""+port);
+        }
+    }
+
+
+
+    public InetAddress getRecoveryInetAddress()
+    {
+        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+        try {
+            return Utility.hostNameToInetAddress(pm.getProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_ADDRESS), "");
+        } catch(UnknownHostException e) {
+            log.warn("UnknownHostException from getRecoveryInetAddress, input was: "+pm.getProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_ADDRESS));
+            return null;
+        }
+    }
+
+    public void setRecoveryInetAddress(InetAddress recoveryInetAddress) throws IllegalStateException
+    {
+        if (configured)
+        {
+            if(!recoveryInetAddress.getAddress().equals(getRecoveryInetAddress().getAddress())) {
+                throw new IllegalStateException("Cannot set recoveryInetAddress once the MBean has configured");
+            }
+        }
+        else
+        {
+            PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+            pm.setProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_ADDRESS, recoveryInetAddress.getHostAddress());
+            isRecoveryManagerBindAddressSet = true;
+        }
+    }
+
+    public int getRecoveryPort()
+    {
+        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+        return Integer.parseInt(pm.getProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_PORT));
+    }
+
+    public void setRecoveryPort(int port) throws IllegalStateException
+    {
+        if (configured)
+        {
+            if(port != getRecoveryPort()) {
+                throw new IllegalStateException("Cannot set recoveryPort once the MBean has configured");
+            }
+        }
+        else
+        {
+            PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+            pm.setProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_PORT, ""+port);
+        }
+    }
+
+
+    public int getSocketProcessIdPort()
+    {
+        PropertyManager pm = arjPropertyManager.getPropertyManager();
+        return Integer.parseInt(pm.getProperty(com.arjuna.ats.arjuna.common.Environment.SOCKET_PROCESS_ID_PORT));
+    }
+
+    public void setSocketProcessIdPort(int port) throws IllegalStateException
+    {
+        if (configured)
+        {
+            if(port != getSocketProcessIdPort()) {
+                throw new IllegalStateException("Cannot set socketProcessIdPort once the MBean has configured");
+            }
+        }
+        else
+        {
+            PropertyManager pm = arjPropertyManager.getPropertyManager();
+            pm.setProperty(com.arjuna.ats.arjuna.common.Environment.SOCKET_PROCESS_ID_PORT, ""+port);
+        }
     }
 }

@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -61,11 +61,11 @@ public class RecoveryManagerImple
 
 	/**
 	 * Does the work of setting up crash recovery.
-	 * 
+	 *
 	 * @param threaded
 	 *            if <code>true</code> then the manager will start a separate
 	 *            thread to run recovery periodically.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1
 	 *          [com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1] -
 	 *          property io exception {0}
@@ -128,7 +128,7 @@ public class RecoveryManagerImple
                     tsLogger.arjLoggerI18N.fatal(
                             "com.arjuna.ats.internal.arjuna.recovery.fail",
                             new Object[] {
-                                    RecoveryManager.getRecoveryManagerHost(true), RecoveryManager.getRecoveryManagerPort()
+                                    RecoveryManager.getRecoveryManagerHost(), RecoveryManager.getRecoveryManagerPort()
                             }
                     );
                 }
@@ -228,20 +228,20 @@ public class RecoveryManagerImple
 	 * Suspend the recovery manager. If the recovery manager is in the process of
 	 * doing recovery scans then it will be suspended afterwards, in order to
 	 * preserve data integrity.
-	 * 
+	 *
 	 * @param async false means wait for the recovery manager to finish any scans before returning.
 	 */
-	
+
 	public void suspendScan (boolean async)
 	{
 	    _periodicRecovery.suspendScan(async);
 	}
-	
+
 	public void resumeScan ()
 	{
 	    _periodicRecovery.resumeScan();
 	}
-	
+
 	public void finalize ()
 	{
 		stop(true);
