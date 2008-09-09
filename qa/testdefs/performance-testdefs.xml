@@ -1,0 +1,189 @@
+<test_set>
+
+    <default_timeout value="640"/>
+
+    <description>
+        HP-TS Performance Tests
+    </description>
+
+    <test_group name="RemoteTests">
+
+        <task_declaration>
+
+            <task   id="PerformanceTestWrapper"
+                    classname="com.hp.mwtests.performance.PerformanceTestWrapper"
+                    runner="UnitTestRunner" type="expect_pass_fail"
+                    parameter_setting="APPEND_PARAMETERS|OVERRIDE_JVM_PARAMETERS">
+                <param>-ORBname</param><param>arjuna.portable_interceptor.ots_interposition</param>
+            </task>
+
+            <task   id="DummyImplServer"
+                    classname="com.hp.mwtests.performance.servers.DummyImplServer"
+                    runner="UnitTestRunner" type="expect_ready"
+                    parameter="APPEND_PARAMETERS|OVERRIDE_JVM_PARAMETERS">
+                <param>-ORBname</param><param>arjuna.portable_interceptor.ots_interposition</param>
+            </task>
+
+            <task   id="NestedOnePhaseServer"
+                    classname="com.hp.mwtests.performance.servers.NestedOnePhaseServer"
+                    runner="UnitTestRunner" type="expect_ready"
+                    parameter="APPEND_PARAMETERS|OVERRIDE_JVM_PARAMETERS">
+                <param>-ORBname</param><param>arjuna.portable_interceptor.ots_interposition</param>
+            </task>
+
+            <task   id="NestedTwoPhaseServer"
+                    classname="com.hp.mwtests.performance.servers.NestedTwoPhaseServer"
+                    runner="UnitTestRunner" type="expect_ready"
+                    parameter="APPEND_PARAMETERS|OVERRIDE_JVM_PARAMETERS">
+                <param>-ORBname</param><param>arjuna.portable_interceptor.ots_interposition</param>
+            </task>
+
+        </task_declaration>
+
+        <test_declaration id="NestedTrx" descriptive_name="Test performance of remote nested transactions" author="Richard A. Begg">
+
+            <description> </description>
+
+            <configuration names_required="2"/>
+
+            <action_list>
+                <start_task   id="DummyImplServer"
+                              runtime_id="server"
+                              name_list="1,2">
+                    <param>$(1)</param>
+                    <param>$(2)</param>
+                </start_task>
+
+                <perform_task id="PerformanceTestWrapper" name_list="1,2">
+                    <param>-classname</param><param>com.hp.mwtests.performance.implementations.remote.nested.NestedTrx</param>
+                    <param>-iterations</param><param>1000</param>
+                    <param>-threads</param><param>10</param>
+                    <param>-service</param><param>$(1)</param>
+                    <param>-service</param><param>$(2)</param>
+                    <param>-commit</param>
+                </perform_task>
+                <terminate_task runtime_id="server"/>
+            </action_list>
+
+        </test_declaration>
+
+    </test_group>
+
+    <test_group name="LocalTests">
+
+        <task_declaration>
+
+            <task   id="PerformanceTestWrapper"
+                    classname="com.hp.mwtests.performance.PerformanceTestWrapper"
+                    runner="UnitTestRunner" type="expect_pass_fail"
+                    parameter_setting="APPEND_PARAMETERS|OVERRIDE_JVM_PARAMETERS">
+                <param>-ORBname</param><param>arjuna.portable_interceptor.ots_interposition</param>
+            </task>
+
+        </task_declaration>
+
+        <test_declaration id="NestedTrx" descriptive_name="Test performance of nested transactions" author="Richard A. Begg">
+
+            <description> </description>
+
+            <configuration/>
+
+            <action_list>
+                <perform_task id="PerformanceTestWrapper">
+                    <param>-classname</param><param>com.hp.mwtests.performance.implementations.local.NestedTrx</param>
+                    <param>-iterations</param><param>1000</param>
+                    <param>-threads</param><param>10</param>
+                    <param>-commit</param>
+                </perform_task>
+            </action_list>
+
+        </test_declaration>
+
+        <test_declaration id="NestedOnePhaseTrx" descriptive_name="Test performance of one phase nested transactions" author="Richard A. Begg">
+
+            <description> </description>
+
+            <configuration/>
+
+            <action_list>
+                <perform_task id="PerformanceTestWrapper">
+                    <param>-classname</param><param>com.hp.mwtests.performance.implementations.local.NestedOnePhaseTrx</param>
+                    <param>-iterations</param><param>1000</param>
+                    <param>-threads</param><param>10</param>
+                    <param>-commit</param>
+                </perform_task>
+            </action_list>
+
+        </test_declaration>
+
+        <test_declaration id="NestedTwoPhaseTrx" descriptive_name="Test performance of two phase nested transactions" author="Richard A. Begg">
+
+            <description> </description>
+
+            <configuration/>
+
+            <action_list>
+                <perform_task id="PerformanceTestWrapper">
+                    <param>-classname</param><param>com.hp.mwtests.performance.implementations.local.NestedTwoPhaseTrx</param>
+                    <param>-iterations</param><param>1000</param>
+                    <param>-threads</param><param>10</param>
+                    <param>-commit</param>
+                </perform_task>
+            </action_list>
+
+        </test_declaration>
+
+        <test_declaration id="TopLevelTrx" descriptive_name="Test performance of top level transactions" author="Richard A. Begg">
+
+            <description> </description>
+
+            <configuration/>
+
+            <action_list>
+                <perform_task id="PerformanceTestWrapper">
+                    <param>-classname</param><param>com.hp.mwtests.performance.implementations.local.TopLevelTrx</param>
+                    <param>-iterations</param><param>1000</param>
+                    <param>-threads</param><param>10</param>
+                    <param>-commit</param>
+                </perform_task>
+            </action_list>
+
+        </test_declaration>
+
+        <test_declaration id="OnePhaseTrx" descriptive_name="Test performance of top level one-phase transactions" author="Richard A. Begg">
+
+            <description> </description>
+
+            <configuration/>
+
+            <action_list>
+                <perform_task id="PerformanceTestWrapper">
+                    <param>-classname</param><param>com.hp.mwtests.performance.implementations.local.OnePhaseTrx</param>
+                    <param>-iterations</param><param>1000</param>
+                    <param>-threads</param><param>10</param>
+                    <param>-commit</param>
+                </perform_task>
+            </action_list>
+
+        </test_declaration>
+
+        <test_declaration id="TwoPhaseTrx" descriptive_name="Test performance of top level two-phase transactions" author="Richard A. Begg">
+
+            <description> </description>
+
+            <configuration/>
+
+            <action_list>
+                <perform_task id="PerformanceTestWrapper">
+                    <param>-classname</param><param>com.hp.mwtests.performance.implementations.local.TwoPhaseTrx</param>
+                    <param>-iterations</param><param>1000</param>
+                    <param>-threads</param><param>10</param>
+                    <param>-commit</param>
+                </perform_task>
+            </action_list>
+
+        </test_declaration>
+
+    </test_group>
+
+</test_set>

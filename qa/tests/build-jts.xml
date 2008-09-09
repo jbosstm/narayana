@@ -110,6 +110,9 @@
 
 		<idl-build-list inproperty="org.jboss.jbossts.qa.jts.idl.buildlist">
 
+			<element src="${org.jboss.jbossts.qa.idl}/performance.idl"
+					package="com.hp.mwtests"
+					mappings="CosTransactions=org.omg;performance=com.hp.mwtests;CORBA=org.omg"/>
 			<element src="${org.jboss.jbossts.qa.idl}/AITResources01.idl"
 					 package="org.jboss.jbossts.qa.AITResources01"
 					 mappings="AITResources01=org.jboss.jbossts.qa;CosTransactions=org.omg;CORBA=org.omg"/>

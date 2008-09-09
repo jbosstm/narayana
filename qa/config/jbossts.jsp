@@ -15,6 +15,9 @@
     String[] jts_basicTestIds = new String[] { "66", "70", "71" };
     String[] jts_basicTestNames = new String[] { "Current Tests 01", "JTA Tests 01", "OTS Server Tests" };
 
+    String[] jts_perfTestIds = new String[] { "400", "401", "402", "403" };
+    String[] jts_perfTestNames = new String[] { "Perf Profile Tests 01 E", "Perf Profile Tests 01 I", "Perf Profile Tests IO", "HP-TS Performance Tests" };
+
     String[] jts_rrTestIds = new String[] { "84", "85", "86", "87", "88", "89" };
     String[] jts_rrTestNames = new String[] { "Raw Resources Tests 01-1", "Raw Resources Tests 01-2", "Raw Resources Tests 01-3",
                                         "Raw Resources Tests 02-1", "Raw Resources Tests 02-2", "Raw Resources Tests 02-3" };
@@ -49,7 +52,7 @@
                                         "JDBC Local Tests 01 - IBM DB2 JNDI", "JDBC Local Tests 01 - PostgreSQL JNDI",
                                         "JDBC Local Tests 01 - MySQL JNDI", "JDBC Local Tests 01 - Sybase JNDI" };
 
-    String[] jta_crashTestIds = new String[] { "300" };
+    String[] jta_crashTestIds = new String[] { "301" };
     String[] jta_crashTestNames = new String[] { "JTA Crash Tests" };
 
     // for single host setups you may want to add "Linux" to this list 
@@ -57,6 +60,7 @@
 
     ArrayList allJTSTestIdsInRunOrder = new ArrayList();
     allJTSTestIdsInRunOrder.addAll(Arrays.asList(jts_basicTestIds));
+    allJTSTestIdsInRunOrder.addAll(Arrays.asList(jts_perfTestIds));
     allJTSTestIdsInRunOrder.addAll(Arrays.asList(jts_rrTestIds));
     allJTSTestIdsInRunOrder.addAll(Arrays.asList(jts_rstrTestIds));
     allJTSTestIdsInRunOrder.addAll(Arrays.asList(jts_crTestIds));
@@ -68,7 +72,7 @@
     allJTATestIdsInRunOrder.addAll(Arrays.asList(jta_crashTestIds));
 
 
-    String distributionList = "mmusgrov@redhat.com";
+    String distributionList = "jhalliday@redhat.com";
 
     int count = 0;
     for(int i = 0; i < allJTSTestIdsInRunOrder.size(); i++) {
@@ -200,6 +204,19 @@
             <td><%= jts_basicTestNames[i] %></td>
             <% for(int j = 0; j < OS.length; j++) { %>
                 <td><input type="checkbox" name="runJTSTest#<%= jts_basicTestIds[i] %>@<%= OS[j] %>"/></td>
+            <% } %>
+        </tr>
+    <% } %>
+
+    <tr><td></td></tr>
+    <tr>
+        <td>Performance Tests</td>
+    </tr>
+    <% for(int i = 0; i < jts_perfTestIds.length; i++) { %>
+        <tr>
+            <td><%= jts_perfTestNames[i] %></td>
+            <% for(int j = 0; j < OS.length; j++) { %>
+                <td><input type="checkbox" name="runJTSTest#<%= jts_perfTestIds[i] %>@<%= OS[j] %>"/></td>
             <% } %>
         </tr>
     <% } %>

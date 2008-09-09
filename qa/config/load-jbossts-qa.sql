@@ -83,10 +83,15 @@ INSERT INTO `StoredTestdefs` VALUES (209,'jbossts-qa-jdbclocals01-pgsql_jndi-tes
 INSERT INTO `StoredTestdefs` VALUES (210,'jbossts-qa-jdbclocals01-mysql_jndi-testdefs.xml','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/jbossts-qa-jdbclocals01-mysql_jndi-testdefs.xml','JDBC Local Tests 01 - MySQL JNDI');
 INSERT INTO `StoredTestdefs` VALUES (211,'jbossts-qa-jdbclocals01-sybase_jndi-testdefs.xml','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/jbossts-qa-jdbclocals01-sybase_jndi-testdefs.xml','JDBC Local Tests 01 - Sybase JNDI');
 
+INSERT INTO `StoredTestdefs` VALUES (300,'jbossts-qa-as-crashrecovery01-testdefs.xml','http://127.0.0.1:8080/dtf/producttests/jbossts-qa-as-crashrecovery01-testdefs.xml','AS Crash Recovery Tests 01');
+INSERT INTO `StoredTestdefs` VALUES (400,'atsqa-perfprofile01_e-qa-testdefs.xml','http://127.0.0.1:8080/dtf/producttests/atsqa-perfprofile01_e-qa-testdefs.xml','Perf Profile Tests 01 E');
+INSERT INTO `StoredTestdefs` VALUES (401,'atsqa-perfprofile01_i-qa-testdefs.xml','http://127.0.0.1:8080/dtf/producttests/atsqa-perfprofile01_i-qa-testdefs.xml','Perf Profile Tests 01 I');
+INSERT INTO `StoredTestdefs` VALUES (402,'atsqa-perfprofileio-qa-testdefs.xml','http://127.0.0.1:8080/dtf/producttests/atsqa-perfprofileio-qa-testdefs.xml','Perf Profile Tests IO');
+INSERT INTO `StoredTestdefs` VALUES (403,'performance-testdefs.xml','http://127.0.0.1:8080/dtf/producttests/performance-testdefs.xml','HP-TS Performance Test');
 
 
 ---
-UPDATE NextTestId SET NextId=300;
+UPDATE NextTestId SET NextId=404;
 ---
 -- ForTestId, Name, ProductName, URL, Description
 INSERT INTO StoredTestSelections VALUES (117,'AJQ_Linux','JDBCResources01-Oracle_thin_jndi','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/117_AJQ_Linux.xml','AJQ_Linux');
@@ -148,3 +153,10 @@ INSERT INTO StoredTestSelections VALUES (208,'JTAQ_Linux','JDBC Local Tests 01 -
 INSERT INTO StoredTestSelections VALUES (209,'JTAQ_Linux','JDBC Local Tests 01 - PostgreSQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/209_JTAQ_Linux.xml','JTAQ_Linux');
 INSERT INTO StoredTestSelections VALUES (210,'JTAQ_Linux','JDBC Local Tests 01 - MySQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/210_JTAQ_Linux.xml','JTAQ_Linux');
 INSERT INTO StoredTestSelections VALUES (211,'JTAQ_Linux','JDBC Local Tests 01 - Sybase JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/211_JTAQ_Linux.xml','JTAQ_Linux');
+
+INSERT INTO StoredTestSelections VALUES (300,'AJQ_Linux','ASCrashRecovery01','http://127.0.0.1:8080/dtf/producttests/300_AJQ_Linux.xml','AJQ_Linux');
+INSERT INTO StoredTestSelections VALUES (400, 'AJQ_Linux','Perf Profile Tests 01 E','http://127.0.0.1:8080/dtf/producttests/400_AJQ_Linux.xml','AJQ_Linux');
+INSERT INTO StoredTestSelections VALUES (401,'AJQ_Linux','Perf Profile Tests 01 I','http://127.0.0.1:8080/dtf/producttests/401_AJQ_Linux.xml','AJQ_Linux');
+INSERT INTO StoredTestSelections VALUES (402,'AJQ_Linux','Perf Profile Tests IO','http://127.0.0.1:8080/dtf/producttests/402_AJQ_Linux.xml','AJQ_Linux');
+INSERT INTO StoredTestSelections VALUES (403,'AJQ_Linux','HP-TS Performance Tests','http://127.0.0.1:8080/dtf/producttests/403_AJQ_Linux.xml','AJQ_Linux');
+

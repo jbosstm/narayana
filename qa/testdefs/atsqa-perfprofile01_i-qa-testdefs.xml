@@ -1,0 +1,868 @@
+<test_set>
+	<default_timeout value="480"/>
+	<description>Perf Profile Tests 01 I</description>
+
+
+	<test_group name="PerfProfile01_I">
+	<task_declaration>
+		<task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" classname="com.arjuna.ats.arjuna.recovery.RecoveryManager" runner="JavaTaskRunner" type="expect_ready"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" classname="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runner="JavaTaskRunner" type="expect_ready"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_NoTranNullOper" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_NoTranNullOper" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" classname="org.jboss.jbossts.qa.Utils.EmptyObjectStore" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" classname="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranCommitNullOper" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranCommitNullOper" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranCommitReadLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranCommitReadLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranCommitWriteLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranCommitWriteLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranRollbackNullOper" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranRollbackNullOper" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranRollbackReadLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranRollbackReadLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranRollbackWriteLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranRollbackWriteLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_NoTranNullOper" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_NoTranNullOper" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_NoTranReadLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_NoTranReadLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_NoTranWriteLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_NoTranWriteLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranCommitNullOper" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranCommitNullOper" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranCommitReadLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranCommitReadLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranCommitWriteLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranCommitWriteLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranRollbackNullOper" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranRollbackNullOper" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranRollbackReadLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranRollbackReadLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranRollbackWriteLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranRollbackWriteLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_NoTranNullOper" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_NoTranNullOper" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_NoTranReadLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_NoTranReadLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_NoTranWriteLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_NoTranWriteLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranCommitNullOper" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranCommitNullOper" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranCommitReadLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranCommitReadLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranCommitWriteLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranCommitWriteLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranRollbackNullOper" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranRollbackNullOper" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranRollbackReadLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranRollbackReadLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+		<task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranRollbackWriteLock" classname="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranRollbackWriteLock" runner="JavaTaskRunner" type="expect_pass_fail"/>
+
+	</task_declaration>
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_NoTran_NoTranNullOper" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_NoTran_NoTranNullOper'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_NoTranNullOper" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>10000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_NoTran_TranCommitNullOper" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_NoTran_TranCommitNullOper'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranCommitNullOper" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_NoTran_TranCommitReadLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_NoTran_TranCommitReadLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranCommitReadLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_NoTran_TranCommitWriteLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_NoTran_TranCommitWriteLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranCommitWriteLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_NoTran_TranRollbackNullOper" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_NoTran_TranRollbackNullOper'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranRollbackNullOper" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_NoTran_TranRollbackReadLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_NoTran_TranRollbackReadLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranRollbackReadLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_NoTran_TranRollbackWriteLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_NoTran_TranRollbackWriteLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_NoTran_TranRollbackWriteLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_NoTranNullOper" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranCommit_NoTranNullOper'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_NoTranNullOper" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_NoTranReadLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranCommit_NoTranReadLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_NoTranReadLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_NoTranWriteLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranCommit_NoTranWriteLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_NoTranWriteLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_TranCommitNullOper" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranCommit_TranCommitNullOper'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranCommitNullOper" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_TranCommitReadLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranCommit_TranCommitReadLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranCommitReadLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_TranCommitWriteLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranCommit_TranCommitWriteLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranCommitWriteLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_TranRollbackNullOper" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranCommit_TranRollbackNullOper'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranRollbackNullOper" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_TranRollbackReadLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranCommit_TranRollbackReadLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranRollbackReadLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_TranRollbackWriteLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranCommit_TranRollbackWriteLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranCommit_TranRollbackWriteLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_NoTranNullOper" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranRollback_NoTranNullOper'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_NoTranNullOper" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_NoTranReadLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranRollback_NoTranReadLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_NoTranReadLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_NoTranWriteLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranRollback_NoTranWriteLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_NoTranWriteLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_TranCommitNullOper" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranRollback_TranCommitNullOper'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranCommitNullOper" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_TranCommitReadLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranRollback_TranCommitReadLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranCommitReadLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_TranCommitWriteLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranRollback_TranCommitWriteLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranCommitWriteLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_TranRollbackNullOper" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranRollback_TranRollbackNullOper'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranRollbackNullOper" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_TranRollbackReadLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranRollback_TranRollbackReadLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranRollbackReadLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_TranRollbackWriteLock" descriptive_name="Converted by QA-to-DTF" author="QA2DTF">
+		<description>This test was generated by QA-to-DTF for test 'PerfProfile01_I AIT01_ImplicitObject_TranRollback_TranRollbackWriteLock'</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>-test</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Servers.Server_AIT01_ImplicitObject" runtime_id="server1" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>$(1)</param>
+			</start_task>
+			<start_task id="org.jboss.jbossts.qa.PerfProfile01Clients.Client_ImplicitObject_TranRollback_TranRollbackWriteLock" runtime_id="client0" >
+				<param>$(ORBFLAGS_1)</param>
+				<param>$(ORBFLAGS_2)</param>
+				<param>AIT01</param>
+				<param>1000</param>
+				<param>$(1)</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+			<terminate_task runtime_id="server1"/>
+			<terminate_task runtime_id="server0"/>
+			<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<param>$(1)</param>
+			</perform_task>
+		</action_list>
+	</test_declaration>
+
+	</test_group>
+</test_set>

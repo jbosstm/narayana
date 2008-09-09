@@ -1,0 +1,35 @@
+<test_selection>
+    <description>AJQ_Linux</description>
+    <os id="Linux">
+        <product id="JBossTS_JTS_JacORB_QA">
+            <test_group id="PerfProfile01_I">
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_NoTran_NoTranNullOper" selected="true"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_NoTran_TranCommitNullOper" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_NoTran_TranCommitReadLock" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_NoTran_TranCommitWriteLock" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_NoTran_TranRollbackNullOper" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_NoTran_TranRollbackReadLock" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_NoTran_TranRollbackWriteLock" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_NoTranNullOper" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_NoTranReadLock" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_NoTranWriteLock" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_TranCommitNullOper" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_TranCommitReadLock" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_TranCommitWriteLock" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_TranRollbackNullOper" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_TranRollbackReadLock" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranCommit_TranRollbackWriteLock" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_NoTranNullOper" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_NoTranReadLock" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_NoTranWriteLock" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_TranCommitNullOper" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_TranCommitReadLock" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_TranCommitWriteLock" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_TranRollbackNullOper" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_TranRollbackReadLock" selected="false"/>
+                <test id="PerfProfile01_I_AIT01_ImplicitObject_TranRollback_TranRollbackWriteLock" selected="false"/>
+            </test_group>
+        </product>
+    </os>
+</test_selection>
+
