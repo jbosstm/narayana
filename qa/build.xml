@@ -136,6 +136,9 @@
 		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/jdbc_profiles">
 			<fileset dir="config/jdbc_profiles"/>
 		</copy>
+		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/perf_profiles">
+			<fileset dir="config/perf_profiles"/>
+		</copy>
 		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/memory_profiles">
 			<fileset dir="config/memory_profiles"/>
 		</copy>
