@@ -67,12 +67,22 @@ public class RecoverACCoordinator extends ACCoordinator {
            // again it is pointless calling phase2Abort since the prepared list is empty. 
 
        if ((status == ActionStatus.PREPARED) ||
-               (status == ActionStatus.COMMITTING))
+               (status == ActionStatus.COMMITTING) ||
+               (status == ActionStatus.COMMITTED) ||
+               (status == ActionStatus.H_COMMIT) ||
+               (status == ActionStatus.H_MIXED) ||
+               (status == ActionStatus.H_HAZARD))
 	   {
 	       super.phase2Commit( _reportHeuristics ) ;
-	   }
+	   } else if ((status ==  ActionStatus.ABORTED) ||
+               (status == ActionStatus.H_ROLLBACK) ||
+               (status == ActionStatus.ABORTING) ||
+               (status == ActionStatus.ABORT_ONLY))
+       {
+           super.phase2Abort( _reportHeuristics ) ;
+       }
 
-	   if (XTSLogger.arjLoggerI18N.debugAllowed())
+       if (XTSLogger.arjLoggerI18N.debugAllowed())
 	   {
 	       XTSLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					    FacilityCode.FAC_CRASH_RECOVERY,
