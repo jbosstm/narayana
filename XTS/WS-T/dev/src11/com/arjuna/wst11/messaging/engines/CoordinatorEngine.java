@@ -472,6 +472,15 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     }
 
     /**
+     * Is the participant recovered?
+     * @return true if recovered, false otherwise.
+     */
+    public boolean isRecovered()
+    {
+        return recovered ;
+    }
+
+    /**
      * Was this a read only response?
      * @return true if a read only response, false otherwise.
      */
