@@ -1,12 +1,12 @@
 
-JBossTS 4.4.CR1 is designed for use standalone or with JBossAS 5.0.0.CR1.
+JBossTS 4.4.GA is designed for use standalone or with JBossAS 5.0.0.CR2.
 It is not suitable for use with earlier versions of JBossAS.
 
 The installation procedure has changed from earlier releases due to the move from
 a JMX configuration style to the POJO microcontainer used by AS 5.0. Upgrading users
 should take care to read the steps below carefully.
 
-Installing JBossTS 4.4.CR1 JTA into JBossAS 5.0.0.CR1
+Installing JBossTS 4.4.GA JTA into JBossAS 5.0.0.CR2
 ------------------------------------------------------------
 
 The application server ships with a earlier release of JBossTS JTA as its default transaction manager.
@@ -19,22 +19,6 @@ versions from JBossTS lib
 
  - Replace JBossAS  server/xxx/conf/jbossjta-properties.xml with  JBossTS  etc/jbossjta-properties.xml
 
- - Edit JBossAS  server/xxx/deploy/transaction-service.xml, removing the TransactionManagerService mbean.
-
- - Create a new file,  server/xxx/deploy/transaction-beans.xml, with the following content:
-
-<?xml version="1.0" encoding="UTF-8"?>
-<deployment xmlns="urn:jboss:bean-deployer:2.0">
-
-    <bean name="TransactionManager" class="com.arjuna.ats.jbossatx.jta.TransactionManagerService">
-        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss:service=TransactionManager", exposedInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class, registerDirectly=true)</annotation>
-
-        <property name="transactionTimeout">300</property>
-        <property name="objectStoreDir">${jboss.server.data.dir}/tx-object-store</property>
-        <property name="mbeanServer"><inject bean="JMXKernel" property="mbeanServer"/></property>
-    </bean>
-
-</deployment>
 
 
                          Web Services Transactions
@@ -68,9 +52,10 @@ ant build script
   cd <JBossTSDir>/XTS
   ant clean install
 
-Note that this assumes you have already built the JBossJTA or JBossJTS
+Note that this assumes you have already built the JBossTS JTA or JBossTS JTS
 release in directory <JBossTSDir> and deployed it into your
-application server.
+application server. Although JBossAS contains a JBossTS JTA installation
+by default, this should be upgraded to exactly match the version of XTS if required.
 
 The newly built sar will be located in the installed XTS tree:
 
@@ -160,7 +145,7 @@ by the 1.1 protocol implementation.
 Warning:
 -------
 
-Note that due to a bug in AS.5.0.0.CR1 web services it is not possible
+Note that due to a bug in AS.5.0.0.CR2 web services it is not possible
 to deploy the XTS sar before the JBoss application server has
 completed startup. This should be addressed in later releases of
 JBossAS.
