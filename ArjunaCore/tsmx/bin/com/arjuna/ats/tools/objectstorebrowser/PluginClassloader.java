@@ -66,6 +66,7 @@ public class PluginClassloader implements FilenameFilter
 	if (files == null)	/* Directory not found */
 		return;
         ArrayList urls = new ArrayList();
+        ArrayList<String> plugins = new ArrayList<String> ();
 
         for (int count=0;count<files.length;count++)
         {
@@ -90,7 +91,7 @@ public class PluginClassloader implements FilenameFilter
                             /** Add the URL of the file to urls list **/
                             urls.add(files[count].toURL());
                             /** Add the classname to the list - which will later be replaced with the actual class **/
-                            _plugins.add(classname);
+                            plugins.add(classname);
                         }
                     }
                 }
@@ -111,30 +112,29 @@ public class PluginClassloader implements FilenameFilter
         _urlClassloader = new URLClassLoader(jarUrls, this.getClass().getClassLoader());
 
         /** Go through list of classnames and convert into object instances **/
-        for (int count=0;count<_plugins.size();count++)
+        for (String obj : plugins)
         {
-            Object obj = _plugins.get(count);
-
             /** if it's a string then we need to convert it into a instance of that class **/
-            if ( obj instanceof String )
-            {
                 try
                 {
                     Object instance = _urlClassloader.loadClass((String)obj).newInstance();
 
                     /** Override the classname with the instance of that class **/
-                    _plugins.set(count, instance);
+                    _plugins.add(instance);
                 }
                 catch (ClassNotFoundException e)
                 {
-                    System.err.println("The class '"+obj+"' cannot be found");
+                    System.err.println("Warning: The class '"+obj+"' cannot be found");
                     // Ignore - invalid configuration
+                }
+                catch (NoClassDefFoundError e)
+                {
+                    System.err.println("Warning: The class '"+obj+"' is not defined");
                 }
                 catch (Exception e)
                 {
-                    System.err.println("Could not instantiate the class '"+obj+"' - " + e.getMessage());
+                    System.err.println("Warning: cCould not instantiate the class '"+obj+"' - " + e.getMessage());
                 }
-            }
         }
     }
 
