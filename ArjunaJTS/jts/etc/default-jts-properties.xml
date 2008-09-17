@@ -137,7 +137,7 @@
 	-->
                 <property
                   name="com.arjuna.ats.jts.recoveryManagerPort"
-                  value="4712"/>
+                  value="4711"/>
 
 	<!--
 	  This property controls the address on which the Recovery ORB binds - defaults to the loopback connection
