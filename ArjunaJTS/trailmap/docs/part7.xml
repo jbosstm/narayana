@@ -66,7 +66,7 @@
 				<a class="linkscoloured" href="JBossTS_Recovery.html">here</a>.</i></p>
 				<h4>Windows</h4>
 				<p>
-				To run the Recovery Manager as a Windows NT service, simply:</p>
+				To run the Recovery Manager as a Windows service, simply:</p>
 				<ol>
 					<li>Open a command prompt</li>
 					<li>cd to the directory <font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;\services\bin\windows</font></li>
@@ -83,7 +83,7 @@
 				</ol>
 				<h4>UNIX</h4>
 				<p>
-				To launch the Recovery Manager on a UNIX platform, simply:</p>
+				To launch the Recovery Manager on a Linux/UNIX platform, simply:</p>
 				<ol>
 					<li>Open a command prompt</li>
 					<li>cd to the directory <font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;\services\bin\[platform]</font></li>
@@ -96,11 +96,11 @@
 		<area title="The Recovery Process and XAResources">
 			<html>
 				<p>
-				The Arjuna recovery manager provides support for recovering XAResources whether or not they are Serializable. XAResources that <i>do</i>
+				The JBossTS recovery manager provides support for recovering XAResources whether or not they are Serializable. XAResources that <i>do</i>
 				implement the Serializable interface are handled without requiring additional programmer defined classes. For those XAResources that need
 				to recover but which cannot implement Serializable, it is possible to provide a small class which is used to help recover them.</p>
 				<p>
-				This example shows the Arjuna recovery manager recovering a Serializable XAResource and a non-Serializable XAResource.</p>
+				This example shows the JBossTS recovery manager recovering a Serializable XAResource and a non-Serializable XAResource.</p>
 				<h4>The demo's components</h4>
 				The application consists of four classes. Each class is well documented and it is recommended that the provided code is inspected to gain
 				useful insight into some of the nuances of the recovery process.
@@ -112,37 +112,37 @@
 				<a class="linkscoloured" href="../src/com/arjuna/demo/recovery/xaresource/ExampleXAResource.java">ExampleXAResource.java</a></li>
 				<li>Programmer-defined support of the non-Serializable XAResource is required both in the XAResource implementation class
 				<a class="linkscoloured" href="../src/com/arjuna/demo/recovery/xaresource/NonSerializableExampleXAResource.java">NonSerializableExampleXAResource</a>,
-				and in a class that implements a helper for the Arjuna recovery process
+				and in a class that implements a helper for the JBossTS recovery process
 				<a class="linkscoloured" href="../src/com/arjuna/demo/recovery/xaresource/NonSerializableExampleXAResourceRecovery.java">NonSerializableExampleXAResourceRecovery.java</a></li>
 				</ul>
 				<h4>XAResourceRecovery registration</h4>
 
 				<p>
-         			When recovering from failures, Arjuna requires the ability to reconnect to the XAResource
+         			When recovering from failures, JBossTS requires the ability to reconnect to the XAResource
  			        that were in use prior to the failures in order to resolve any outstanding transactions.
 			        In order to recreate those connections for non-Serializable XAResources it is necessary to
-				provide implementations of the following Arjuna interface com.arjuna.ats.jta.waitForRecovery.XAResourceRecovery.</p>
+				provide implementations of the following JBossTS interface com.arjuna.ats.jta.waitForRecovery.XAResourceRecovery.</p>
 			        <p>
 			        To inform the waitForRecovery system about each of the XAResourceRecovery instances, it is
-			        necessary to specify their class names through property variables in the arjunajts-properties.xml file.
+			        necessary to specify their class names through property variables in the jbossjts-properties.xml file.
 				Any property variable which starts with the name XAResourceRecovery will be assumed to represent
 				one of these instances, and its value should be the class name.</p>
 
 				<p>
-			        When running XA waitForRecovery it is necessary to tell Arjuna which types of
-			        Xid it can recover. Each Xid that Arjuna creates has a unique node
-			        identifier encoded within it and Arjuna will only recover transactions
+			        When running XA waitForRecovery it is necessary to tell JBossTS which types of
+			        Xid it can recover. Each Xid that JBossTS creates has a unique node
+			        identifier encoded within it and JBossTS will only recover transactions
 			        and states that match a specified node identifier. The node identifier to
-			        use should be provided to Arjuna via a property that starts with the
+			        use should be provided to JBossTS via a property that starts with the
 			        name com.arjuna.ats.jta.xaRecoveryNode (multiple values may
-			        be provided). A value of * will force Arjuna to recover (and possibly
+			        be provided). A value of * will force JBossTS to recover (and possibly
 			        rollback) all transactions irrespective of their node identifier and should be
 			        used with caution.</p>
 
 				<p>
 				The recovery module for the non-Serializable XAResource must be deployed in order to provide support to recover the non-Serializable XAResource.
-				If this step was missed out the Serializable XAResource would recover OK but Arjuna would have no knowledge of the non-Serializable XAResource
-				and so it could not recover it. To register the non-Serializable XAResource XAResourceRecovery module, add an entry to the arjunajts-properties.xml.</p>
+				If this step was missed out the Serializable XAResource would recover OK but JBossTS would have no knowledge of the non-Serializable XAResource
+				and so it could not recover it. To register the non-Serializable XAResource XAResourceRecovery module, add an entry to the jbossjts-properties.xml.</p>
 
 				<p>
 				Under the element <font face="Courier New, Courier, mono">&lt;properties depends="jts" name="jta"&gt;</font>, add:</p>
@@ -155,7 +155,7 @@
 				<p>
 				By default, the recovery manager is configured to perform a pass over resources to be recovered every two minutes. It will then wait for ten seconds
 				before re-checking the resources. Although the test will run OK with this configuration, it is possible to configure the recovery
-				manager scan times to reduce the time waiting. To configure the intervals, edit the arjunajts-properties.xml as follows:</p>
+				manager scan times to reduce the time waiting. To configure the intervals, edit the jbossjts-properties.xml as follows:</p>
 				<ul>
 					<li>Edit the property <font face="Courier New, Courier, mono">"com.arjuna.ats.arjuna.recovery.periodicRecoveryPeriod"</font>
 					to change the value from 120 to 5.</li>
@@ -167,17 +167,17 @@
 				<p>
 				The recovery manager will work in the same manner for either the JTA or JTS implementation. By default the JBoss Transaction Service
 				is configured to use a JTS transaction manager, in order to configure it to use a JTA transaction manager a change must again be made
-				to the arjunajts-properties.xml. <i>See <a class="linkscoloured" href="part5_testing_jta.html">here</a> for more information on how to configure
+				to the jbossjts-properties.xml. <i>See <a class="linkscoloured" href="part5_testing_jta.html">here</a> for more information on how to configure
 				the JBossTS transaction manager to use JTA rather than JTS.</i></p>
 				<p>
 				<b>If you do change the transaction manager type remember to reconfigure the recovery manager as follows:</b></p>
 				<p>
-				If you are using the ArjunaCore (raw JTA) transaction manager implementation comment out the element in arjunajts-properties.xml containing the following text:</p>
+				If you are using the ArjunaCore (raw JTA) transaction manager implementation comment out the element in jbossjts-properties.xml containing the following text:</p>
 				<blockquote>
 				<font face="Courier New, Courier, mono">internal.jta.recovery.jts.XARecoveryModule</font>
 				</blockquote>
 				<p>
-				If you are using the JTS transaction manager implementation comment out the element in arjunajts-properties.xml containing the following text:</p>
+				If you are using the JTS transaction manager implementation comment out the element in jbossjts-properties.xml containing the following text:</p>
 				<blockquote>
 				<font face="Courier New, Courier, mono">internal.jta.recovery.arjunacore.XARecoveryModule</font>
 				</blockquote>
@@ -241,7 +241,7 @@
 
 				<h4>Recovery Module registration</h4>
 				The recovery module should now be deployed in order to be called by the Recovery Manager. To do so,
-				we just need to add an entry in the arjunajts-properties.xml by adding a new property as follow:
+				we just need to add an entry in the jbossjts-properties.xml by adding a new property as follow:
 				<blockquote>
 					&lt;property name="com.arjuna.ats.arjuna.recovery.recoveryExtension&lt;i&gt;"
 				        value="com.arjuna.demo.recoverymodule.SimpleRecoveryModule"/&gt;

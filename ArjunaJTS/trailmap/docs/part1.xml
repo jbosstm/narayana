@@ -17,7 +17,7 @@
   MA  02110-1301, USA.
 
 
-  (C) 2005-2006,
+  (C) 2005-2008,
   @author JBoss Inc.
 -->
 <page title="JBossTS Trail map: Installation Content" rootpath="../..">
@@ -37,10 +37,7 @@
 		<area title="Installation Content">
 			<html>
 				<h4>Verifying Installation</h4>
-By default, JBossTS is installed in the directory <font face="Courier New,Courier">/opt/jboss/jbossts</font>
-on Unix machines, and <font face="Courier New,Courier">C:\Program Files\Arjuna\ats-4.0</font>
-on Windows, except if a different location has been specified during JBossTS
-installation. When installed, the JBossTS should have the following structure.
+When installed, the binary release of JBossTS, JTS version, should have the following structure.
 <ul>
 					<li>
 						<font face="Courier New,Courier">/bin</font>: this directory contains commands
@@ -49,7 +46,7 @@ installation. When installed, the JBossTS should have the following structure.
 					<li>
 						<font face="Courier New,Courier">/docs</font>: this directory contains
     documentation on the way to installing, administering and programming ArjunaCore,
-    ArjunaTA and JBossTS.</li>
+    JBossTS JTA and JBossTS JTS.</li>
 					<li> <font face="Courier New,Courier">/etc</font>: this directory contains appropriate
     properties files that can be used to configure the behaviour of the JBoss Transaction Service.</li>
 					<li>
@@ -99,7 +96,7 @@ installation. When installed, the JBossTS should have the following structure.
     the directory <font face="Courier New, Courier, mono">&lt;jbossts_install_root&gt;/trail_map/lib</font>
 					</li>
 					<li>Add the generated jar file to the CLASSPATH environment variable.</li>
-					<li>Ensure that the jacorb (version 2.2.2) jar files are added in your CLASSPATH. <br/>
+					<li>Ensure that the jacorb is added in your CLASSPATH. Use only the patched version that ships with JBossTS. <br/>
 					<b>Ensure that JBossTS jar files appear before jacorb jar files. </b></li>
 				</ul>
 				<ul>
@@ -134,7 +131,7 @@ installation. When installed, the JBossTS should have the following structure.
 The JBoss Transaction Service has been designed to be highly configurable at runtime through the use of various
 property attributes. Although these attributes can be provided at runtime on the
 command line, it is possible (and may be more convenient) to specify them through the
-properties  file <font face="Courier New,Courier">arjunajts-properties.xml</font> located under the <font face="Courier New,Courier">/etc</font> directory of the JBossTS distribution.
+properties  file <font face="Courier New,Courier">jbossjts-properties.xml</font> located under the <font face="Courier New,Courier">/etc</font> directory of the JBossTS distribution.
 				<p>More details on the way to configure the behavior of JBossTS can be found <a class="linkscoloured" href="JBossTS_Configuration.html">here</a>.
 </p>
 

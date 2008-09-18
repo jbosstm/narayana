@@ -17,7 +17,7 @@
   MA  02110-1301, USA.
 
 
-  (C) 2005-2006,
+  (C) 2005-2008,
   @author JBoss Inc.
 -->
 <page title="JBossTS Trail map: Running and Testing Examples" rootpath="../..">
@@ -36,11 +36,7 @@
 			<html>
 
 <p>The JTS version of the Banking application means that the Object Request Broker
-  will be used. The JBossTS distribution is provided to works with JacORB version
-  2.1 that can be obtained from the arjuna product page. JBossTS works also
-  with Orbix 2000 v2.0, for more details see the ORB configuration section of the
-  <a class="linkscoloured" href="../../docs/user_guide/ProgrammersGuide.pdf" target="_blank">Programmers Guide (pdf)</a>
-  </p>
+  will be used. The JBossTS distribution is provided to work with the bundled JacORB version</p>
 <p>To describe the possibilities provided by JBossTS to build a transactional
   application according to the programming models defined by the OTS specification,
   the Banking Application is programmed in different ways. </p>

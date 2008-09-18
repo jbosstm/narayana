@@ -17,7 +17,7 @@
   MA  02110-1301, USA.
 
 
-  (C) 2005-2006,
+  (C) 2005-2008,
   @author JBoss Inc.
 -->
 <page title="JBossTS Trail map: Introduction" rootpath="../..">
@@ -40,7 +40,7 @@
   Java EE and EJB frameworks.</p>
 				<p>JBossTS is a 100% Java implementation of a
 				<a class="linkscoloured" href="DTP.html">distributed transaction management system</a>
-  based on the Sun Microsystems Java EE Java Transaction Service (<a class="linkscoloured" href="jta_overview.html">JTS</a>) standard.
+  based on the Sun Microsystems Java EE Java Transaction Service (<a class="linkscoloured" href="JTA_Overview.html">JTS</a>) standard.
   Our implementation of the JTS utilizes the Object Management Group's (OMG) Object
   Transaction Service (<a class="linkscoloured" href="ots_overview.html">OTS</a>) model for transaction interoperability as recommended
   in the Java EE and EJB standards. Although any JTS-compliant product will allow
@@ -56,9 +56,8 @@
 					<p>In addition to providing full compliance with the latest version of the JTS
 specification, JBossTS leads the market in providing many advanced features such
 as fully distributed transactions and ORB portability with POA support.</p>
-					<p>JBossTS is supported on HP-UX 11i, Linux RedHat, Microsoft Windows NT 4.0,
-  Microsoft Windows 2000, Microsoft Window XP, Sun Solaris 8 operating environments
-  and with any JDK 1.3 compliant environment.</p>
+					<p>JBossTS is tested on HP-UX 11i, Red Hat Linux, Windows Server 2003,
+  and Sun Solaris 10, using Sun's JDK 5. It should howerver work on any system with JDK 5 or 6.</p>
 					<p>The Java Transaction API support for JBossTS comes in two flavours:</p>
 					<ul>
 						<li>a purely local implementation, that does not require an ORB, but obviously
@@ -67,10 +66,10 @@ as fully distributed transactions and ORB portability with POA support.</p>
 					</ul>
 					<h4>Key features</h4>
 					<ul>
-						<li>full compliant with the JTA 1.0.1 specification:
+						<li>full compliant with the JTA 1.1 specification:
     <ul>
 								<li>Purely local (ORB-less) JTA offers the fastest JTA performance </li>
-								<li>JDBC 2.0 support </li>
+								<li>JDBC support </li>
 								<li>XA compliance </li>
 								<li>JDBC drivers for database access with full transaction support </li>
 								<li>Automatic crash recovery for XAResources </li>
@@ -105,7 +104,7 @@ as fully distributed transactions and ORB portability with POA support.</p>
 				</p>
 
 				<p>
-                    This trail map will help you get started with running Arjuna  transaction service product.
+                    This trail map will help you get started with running JBoss transaction service product.
                     It is structured as follows:</p>
 				<ul>
 					<li>

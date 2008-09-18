@@ -72,7 +72,7 @@ public class BankClient
 
      try
       {
-       //the following instruction asks a specific ArjunaTA
+       //the following instruction asks a specific JBossTS
        //class to obtain a UserTransaction instance
        <strong>javax.transaction.UserTransaction userTran =
                      com.arjuna.ats.jta.UserTransaction.userTransaction()</strong>;

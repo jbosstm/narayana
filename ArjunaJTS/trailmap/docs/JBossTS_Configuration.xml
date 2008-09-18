@@ -33,7 +33,7 @@
 			</links>
 			<links include="includes/trailmap_additional.xml"/>
 		</navigation>
-		<area title="Configuring the Arjuna Transaction Service">
+		<area title="Configuring the JBoss Transaction Service">
 			<html>
 				<p>This trail provides information on the way to configure environmental variables
   needed to define the behaviour of transactional applications managed with JBossTS.
@@ -42,7 +42,7 @@
   arguments, it is more convenient to organise and initialise them through properties
   files. </p>
 <h4>Properties File</h4>
-<p> The properties file named <font face="Courier New, Courier, mono">arjunajts-properties.xml
+<p> The properties file named <font face="Courier New, Courier, mono">jbossjts-properties.xml
    </font> and located under the <font face="Courier New, Courier, mono">&lt;ats_installation_directory&gt;/etc</font>
    directory is organised as a collection of property names. </p>
 <blockquote>
@@ -56,10 +56,8 @@
 
 <p>Some properties must be specified by the developer while others do not need
   to be defined and can be used with their default values. Basically the properties
-  file that does not provide default values to all its properties is the arjuna-properties.xml.
-  Indeed, the most important properties that must be provided are the licences
-  needed to execute JBossTS. </p>
-				<p>The following table describes some properties in the arjuna-properties.xml, where:</p>
+  file that does not provide default values to all its properties is the jbossjts-properties.xml.</p>
+				<p>The following table describes some properties in the jbossjts-properties.xml, where:</p>
 				<ul>
 					<li>
 						<b>Name</b> : indicates the name of the property</li>
@@ -72,11 +70,7 @@
 						<strong>Value</strong>: shows the default value, if any,
     assigned to the property</li>
 				</ul>
-				<p>
-					<b>
-						<i>Note</i>
-					</b>: In the first table ATL means Arjuna Technologies Ltd.
-</p>
+				
 				<table BORDER="" WIDTH="100%">
 					<tr ALIGN="CENTER" VALIGN="CENTER" BGCOLOR="#8BD5FC">
 						<td width="38%">
@@ -131,7 +125,7 @@ it is important that they realise this and do not simply delete the contents of
 the object store assuming it is an exclusive resource.
 <p> The location of the ObjectStore is specified in via the properrty <font face="Courier New,Courier">com.arjuna.ats.arjuna.objectstore.objectStoreDir</font>
   that can be passed with the java flag &quot;-D&quot;. For convenience this property
-  is defined in the properties file arjuna-properties.xml, and its value is set
+  is defined in the properties file jbossjts-properties.xml, and its value is set
   during the JBossTS installation. At any time, the location of the ObjectStore
   may be changed.</p>
 				<h4>Configuring Output</h4>
@@ -167,7 +161,7 @@ the object store assuming it is an exclusive resource.
 				<p>According to these variables the Common Logging Framework defines three interfaces.
   A particular product may implement its own classes according to its own finer
   granularity. JBossTS uses the default Debugging level and the default Visibility
-  level provided by CLF, but it defines its own Facility Code. ArjunaJTS uses
+  level provided by CLF, but it defines its own Facility Code. JBossTS uses
   the default level assigned to its commonLoggers objects (DEBUG). However, it
   uses the finer debugging features to disable or enable debug messages. Finer
   values used by the JBossTS are defined below:

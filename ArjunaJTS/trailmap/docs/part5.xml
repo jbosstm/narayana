@@ -60,7 +60,7 @@
 					</li>
 					<li>
 						The PATH and CLASSPATH environment variables
-						need to be set appropriately to use Arjuna
+						need to be set appropriately to use JBoss
 						Transaction Service. To make this easier, we
 						provide a shell script setup_env.sh (and for
 						Windows a batch file setup_env.bat) in the
@@ -102,7 +102,7 @@
 				<p>
 					<h5>Local transaction with JTA</h5>
 					To configure JBossTS for such transaction, edit the
-					arjunajts-properties.xml file and set the following
+					jbossjts-properties.xml file and set the following
 					properties to the appropriate values:
 
 					<pre>

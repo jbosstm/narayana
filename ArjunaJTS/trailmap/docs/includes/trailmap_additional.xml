@@ -24,7 +24,7 @@
 	<link ref="DTP.html">Distributed Transaction Processing</link>
 	<link ref="xopen_overview.html">The X/Open DTP Model</link>
 	<link ref="ots_overview.html">The OMG OTS Model</link>
-	<link ref="jta_overview.html">Transactions in Java EE</link>
+	<link ref="JTA_Overview.html">Transactions in Java EE</link>
 	<link ref="JBossTS_Configuration.html">Configuring JBossTS</link>
 	<link ref="JBossTS_Recovery.html">
 		Configuring the Recovery Manager

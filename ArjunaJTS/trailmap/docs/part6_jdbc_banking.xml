@@ -211,7 +211,7 @@ This property can be added in previous command as follow:
 </pre>
 				<h4>Note</h4>
 				<p>Although, this version of the banking application creates JTA local transactions,
-  the way to manipulate JDBC API and the associated ArjunaTA mechanisms in the
+  the way to manipulate JDBC API and the associated JBossTS mechanisms in the
   case of distributed transactions is the same.</p>
 			</html>
 		</area>

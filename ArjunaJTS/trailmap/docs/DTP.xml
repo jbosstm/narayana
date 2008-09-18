@@ -342,7 +342,7 @@ them has a particular role. Main components are described below. </p>
         Transaction Service</a> and finally
 						</li>
 					<li>
-							        The Java Community Process leaded by Sun with its <a class="linkscoloured" href="jta_overview.html">
+							        The Java Community Process leaded by Sun with its <a class="linkscoloured" href="JTA_overview.html">
         JTA/JTS specification</a>
 					</li>
 				</ul>

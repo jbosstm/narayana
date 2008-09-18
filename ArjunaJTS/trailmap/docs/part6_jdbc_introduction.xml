@@ -33,14 +33,14 @@
 			</links>
 			<links include="includes/trailmap_additional.xml"/>
 		</navigation>
-		<area title="Developing applications with JDBC and ArjunaJTS">
+		<area title="Developing applications with JDBC and JBossTS JTS">
 			<html>
-				<p>ArjunaJTS supports the construction of both local and distributed transactional
+				<p>JBossTS JTS supports the construction of both local and distributed transactional
   applications which access databases using the JDBC APIs. JDBC supports
   two-phase commit of transactions, and is similar to the XA X/Open standard.
   The JDBC support is found in the com.arjuna.ats.jdbc package.</p>
 				<h4>Transactional Driver</h4>
-				<p>The ArjunaJTS approach to incorporating JDBC connections within transactions
+				<p>The JBossTS JTS approach to incorporating JDBC connections within transactions
   is to provide transactional JDBC drivers through which all interactions occur.
   These drivers intercept all invocations and ensure that they are registered
   with, and driven by, appropriate transactions. There is a single type of transactional
@@ -87,13 +87,13 @@ DriverManager.registerDriver(arjunaJDBC2Driver);</pre>
 
 				<p>From its version 2.0, the JDBC API has introduced a new way to obtain instances
   of the Connection class. This is the case of the interfaces DataSource and XADataSource
-  that creates transactional connections. When using a JDBC 2.0 driver, ArjunaTA
+  that creates transactional connections. When using a JDBC 2.0 driver, JBossTS
   will use the appropriate DataSource whenever a connection to the database is
   made. It will then obtain XAResources and register them with the transaction
   via the JTA interfaces. It is these XAResources which the transaction service
   will use when the transaction terminates in order to drive the database to either
   commit or rollback the changes made via the JDBC connection.</p>
-				<p> There are two ways in which the ArjunaTA JDBC 2.0 support can obtain XADataSources.
+				<p> There are two ways in which the JBossTS JDBC 2.0 support can obtain XADataSources.
   These will be explained in the following sections. Note, for simplicity we shall
   assume that the JDBC 2.0 driver is instantiated directly by the application.</p>
 				<ol>
@@ -129,12 +129,12 @@ Connection connection = arjunaJDBC2Driver.
 						<p> Many JDBC implementations provide proprietary implementations of XADataSources
       that provide non-standard extensions to the specification. In order to allow
       the application to remain isolated from the actual JDBC 2.0 implementation
-      it is using and yet continue to be able to use these extensions, ArjunaTA
+      it is using and yet continue to be able to use these extensions, JBossTS
       hides the details of these proprietary implementations using dynamic class
       instantiation. In addition, the use of JNDI is not required when using this
       mechanism because the actual implementation of the XADataSource will be
       directly instantiated, albeit in a manner which will not tie an application
-      or driver to a specific implementation. ArjunaTA therefore has several classes
+      or driver to a specific implementation. JBossTS therefore has several classes
       which are for specific JDBC implementations, and these can be selected
       at runtime by the application setting the dynamicClass property appropriately:
     </p>
@@ -200,24 +200,24 @@ Connection connection = arjunaJDBC2Driver.connect(&quot;jdbc:arjuna:
 				</ul>
 				<h4> Using the Connection</h4>
 				<p>Once the connection has been established (for example, using the java.sql.DriverManager.getConnection
-  method), all operations on the connection will be monitored by ArjunaTA. Once
+  method), all operations on the connection will be monitored by JBossTS. Once
   created, the driver and any connection can be used in the same way as any other
   JDBC driver or connection.</p>
-				<p> ArjunaTA connections can be used within multiple different transactions simultaneously,
+				<p> JBossTS connections can be used within multiple different transactions simultaneously,
   i.e., different threads, with different notions of the current transaction,
-  may use the same JDBC connection. ArjunaTA does connection pooling for each
+  may use the same JDBC connection. JBossTS does connection pooling for each
   transaction within the JDBC connection. So, although multiple threads may use
   the same instance of the JDBC connection, internally this may be using a different
   connection instance per transaction. With the exception of close, all operations
   performed on the connection at the application level will only be performed
   on this transaction-specific connection.</p>
-				<p> ArjunaTA will automatically register the JDBC driver connection with the transaction
+				<p> JBossTS will automatically register the JDBC driver connection with the transaction
   via an appropriate resource . When the transaction terminates, this resource
   will be responsible for either committing or rolling back any changes made to
   the underlying database via appropriate calls on the JDBC driver.</p>
 				<h4>Further reading</h4>
 				<p>More details on the way to manage applications using the JDBC API can be found
-  in the ArjunaTA Programming Guide.</p>
+  in the JBossTS Programming Guide.</p>
 			</html>
 		</area>
 	</content>
