@@ -17,7 +17,7 @@
   MA  02110-1301, USA.
 
 
-  (C) 2005-2006,
+  (C) 2005-2008,
   @author JBoss Inc.
 -->
 <page title="JBossTS Trail map: Running and Testing Examples" rootpath="../..">
@@ -118,18 +118,18 @@
 				<h4>XAResourceRecovery registration</h4>
 
 				<p>
-         			When recovering from failures, JBossTS requires the ability to reconnect to the XAResource
+         			When recovering from failures, JBossTS requires the ability to reconnect to the resource managers
  			        that were in use prior to the failures in order to resolve any outstanding transactions.
 			        In order to recreate those connections for non-Serializable XAResources it is necessary to
-				provide implementations of the following JBossTS interface com.arjuna.ats.jta.waitForRecovery.XAResourceRecovery.</p>
+				provide implementations of the following JBossTS interface com.arjuna.ats.jta.recovery.XAResourceRecovery.</p>
 			        <p>
-			        To inform the waitForRecovery system about each of the XAResourceRecovery instances, it is
+			        To inform the recovery system about each of the XAResourceRecovery instances, it is
 			        necessary to specify their class names through property variables in the jbossjts-properties.xml file.
 				Any property variable which starts with the name XAResourceRecovery will be assumed to represent
 				one of these instances, and its value should be the class name.</p>
 
 				<p>
-			        When running XA waitForRecovery it is necessary to tell JBossTS which types of
+			        When running XA transaction recovery it is necessary to tell JBossTS which types of
 			        Xid it can recover. Each Xid that JBossTS creates has a unique node
 			        identifier encoded within it and JBossTS will only recover transactions
 			        and states that match a specified node identifier. The node identifier to
