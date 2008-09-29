@@ -790,8 +790,35 @@ public class ParticipantEngine implements ParticipantInboundEvents
         return AddressingHelper.createNotificationContext(messageId) ;
     }
     
+    /**
+     * Get the coordinator id.
+     * @return The coordinator id.
+     */
+    public String getId()
+    {
+        return id ;
+    }
+
     public W3CEndpointReference getCoordinator()
     {
         return coordinator;
+    }
+
+    /**
+     * Is the participant persisted to disk?
+     * @return true if persisted, false otherwise.
+     */
+    public boolean isPersisted()
+    {
+        return persisted ;
+    }
+
+    /**
+     * Is the participant recovered?
+     * @return true if recovered, false otherwise.
+     */
+    public boolean isRecovered()
+    {
+        return recovered ;
     }
 }

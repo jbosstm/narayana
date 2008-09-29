@@ -821,4 +821,31 @@ public class ParticipantEngine implements ParticipantInboundEvents
         final String messageId = MessageId.getMessageId() ;
         return AddressingContext.createRequestContext(coordinator, messageId) ;
     }
+    
+    /**
+     * Get the coordinator id.
+     * @return The coordinator id.
+     */
+    public String getId()
+    {
+        return id ;
+    }
+
+    /**
+     * Is the participant persisted to disk?
+     * @return true if persisted, false otherwise.
+     */
+    public boolean isPersisted()
+    {
+        return persisted ;
+    }
+
+    /**
+     * Is the participant recovered?
+     * @return true if recovered, false otherwise.
+     */
+    public boolean isRecovered()
+    {
+        return recovered ;
+    }
 }
