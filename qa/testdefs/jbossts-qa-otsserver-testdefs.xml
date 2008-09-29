@@ -19,7 +19,7 @@
   @author JBoss Inc.
 -->
 <test_set>
-	<default_timeout value="480"/>
+	<default_timeout value="1480"/>
 	<description>OTS Server Tests</description>
 
 

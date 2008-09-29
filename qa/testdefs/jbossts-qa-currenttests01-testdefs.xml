@@ -19,7 +19,7 @@
   @author JBoss Inc.
 -->
 <test_set>
-	<default_timeout value="480"/>
+	<default_timeout value="600"/>
 	<description>Current Tests 01</description>
 
 

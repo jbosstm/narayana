@@ -16,29 +16,27 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
 
-  (C) 2005-2006,
+  (C) 2005-2008,
   @author JBoss Inc.
 -->
 <product-configuration name="JBossTS_JTS_JacORB_QA" permutationid="AJQ">
 
 	<classpath-configurations>
 		<classpath name="main">
-
 			<jar name="$(PRODUCT.DIR)/lib/jbossjts.jar"/>
 			<jar name="$(PRODUCT.DIR)/lib/jbossjts-jacorb.jar"/>
-            <directory name="$(PRODUCT.DIR)/etc/"/>
-
-            <jar name="$(PRODUCT.DIR)/lib/ext/*.jar"/>
+			<directory name="$(PRODUCT.DIR)/etc/"/>
+			<jar name="$(PRODUCT.DIR)/lib/ext/*.jar"/>
 			<jar name="$(PRODUCT.DIR)/lib/ext/*.zip"/>
 
-            <jar name="$(PRODUCT.DIR)/jacorb/etc/"/>
 			<jar name="$(PRODUCT.DIR)/qa/lib/*.jar"/>
 
 			<jar name="$(ORB_HOME)/lib/*.jar"/>
-            <directory name="$(ORB_HOME)/etc/"/>
+			<directory name="$(ORB_HOME)/etc/"/>
 
-            <jar name="$(DTF_HOME)/lib/ext/fscontext.jar"/>
+			<jar name="$(DTF_HOME)/lib/ext/fscontext.jar"/>
 			<jar name="$(DTF_HOME)/lib/ext/providerutil.jar"/>
+
 
 			<!-- These are no longer required:
 			<jar name="$(ORB_HOME)/lib/avalon-framework-4.1.5.jar"/>
@@ -49,6 +47,7 @@
 			<jar name="$(PRODUCT.DIR)/qa/lib/*.zip"/>
 			<jar name="$(PRODUCT.DIR)/tests/*.jar"/>
 			-->
+
 		</classpath>
 	</classpath-configurations>
 
@@ -87,12 +86,12 @@
 			<node-exclusions/>
 		</node-configuration>
 
-
         <node-configuration os="Linux">
 			<properties>
 				<property name="Context.INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
 				<property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles"/>
 				<property name="Context.PROVIDER_URL" value="file://$(PRODUCT.DIR)"/>
+
 				<property name="qa.debug" value="true"/>
 				<property name="performanceprofilestore.dir" value="$(PRODUCT.DIR)/qa/perf_profiles/"/>
 				<property name="com.arjuna.ats.jta.jtaTMImplementation"
@@ -104,134 +103,297 @@
 				<property name="org.jboss.jbossts.qa.Utils.nameserviceuri" value="//localhost:1099/NameService"/>
 			</properties>
 			<sets>
-				<set name="DTF_HOME"       value="/home/mmusgrov/misc/DTF"/>
-				<set name="PRODUCTS_HOME"  value="/services/DTF/products"/>
-				<set name="INSTALL.DIR"    value="/home/mmusgrov/misc/DTF/JBossTS-JTS-JacORB-QA/"/>
-				<set name="ORB_HOME"       value="/home/mmusgrov/misc/DTF/JBossTS-JTS-JacORB-QA/jacorb/"/>
-				<set name="CALLS"          value="1000"/>
-				<set name="PRODUCT.DIR"    value="/home/mmusgrov/misc/DTF/JBossTS-JTS-JacORB-QA/"/>
-				<set name="ARJUNAJTS_HOME" value="/home/mmusgrov/misc/DTF/JBossTS-JTS-JacORB-QA/"/>
+
+				<set name="DTF_HOME" value="/services/DTF"/>
+				<set name="PRODUCTS_HOME" value="/services/DTF/products"/>
+				<set name="INSTALL.DIR" value="/services/DTF/JBossTS-JTS-JacORB-QA/"/>
+				<set name="ORB_HOME" value="/services/DTF/JBossTS-JTS-JacORB-QA/jacorb/"/>
+				<set name="CALLS" value="1000"/>
+				<set name="PRODUCT.DIR" value="/services/DTF/JBossTS-JTS-JacORB-QA/"/>
+				<set name="ARJUNAJTS_HOME" value="/services/DTF/JBossTS-JTS-JacORB-QA/"/>
+			</sets>
+			<jvm id="1.5.0"/>
+
+			<default-classpath name="main"/>
+			<node-exclusions/>
+		</node-configuration>
+
+        <node-configuration os="Linux_jdk15">
+			<properties>
+				<property name="Context.INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
+				<property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles"/>
+				<property name="Context.PROVIDER_URL" value="file://$(PRODUCT.DIR)"/>
+
+				<property name="qa.debug" value="true"/>
+				<property name="performanceprofilestore.dir" value="$(PRODUCT.DIR)/qa/perf_profiles/"/>
+				<property name="com.arjuna.ats.jta.jtaTMImplementation"
+						  value="com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple"/>
+				<!-- TODO fix me - pkg changes, both sides? -->
+				<property name="org.jboss.jbossts.qa.Utils.ServerIORStore.plugin"
+						  value="org.jboss.jbossts.qa.Utils.DistributedIORStorePlugin"/>
+				<property name="memorytestprofilestore.dir" value="$(PRODUCT.DIR)/qa/memory_profiles/"/>
+				<property name="org.jboss.jbossts.qa.Utils.nameserviceuri" value="//localhost:1099/NameService"/>
+			</properties>
+			<sets>
+
+				<set name="DTF_HOME" value="/services/DTF"/>
+				<set name="PRODUCTS_HOME" value="/services/DTF/products"/>
+				<set name="INSTALL.DIR" value="/services/DTF/JBossTS-JTS-JacORB-QA/"/>
+				<set name="ORB_HOME" value="/services/DTF/JBossTS-JTS-JacORB-QA/jacorb/"/>
+				<set name="CALLS" value="1000"/>
+				<set name="PRODUCT.DIR" value="/services/DTF/JBossTS-JTS-JacORB-QA/"/>
+				<set name="ARJUNAJTS_HOME" value="/services/DTF/JBossTS-JTS-JacORB-QA/"/>
+			</sets>
+			<jvm id="1.5.0"/>
+
+			<default-classpath name="main"/>
+			<node-exclusions/>
+		</node-configuration>
+
+       <!-- ###  The following node configs are for the JBoss DTF cluster (dtf*.qa.atl2.redhat.com)
+                    https://wiki.corp.jboss.com/bin/view/IT/SystemServiceQaAllMachines#DTF_Lab
+                  The testnode is in /qa/local/dtf-admin/DTF and coordinator host is dtfexec1 ### -->
+
+		<node-configuration os="RHEL4-32"><!-- RHEL4, x86: dtf1 -->
+			<properties>
+
+				<property name="Context.INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
+				<property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles/"/>
+				<property name="Context.PROVIDER_URL" value="file://$(PRODUCT.DIR)"/>
+				<property name="qa.debug" value="false"/>
+				<property name="performanceprofilestore.dir" value="$(PRODUCT.DIR)/qa/perf_profiles/"/>
+                <property name="com.arjuna.ats.jta.jtaTMImplementation"
+                          value="com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple"/>
+				<property name="com.arjuna.ats.qa.Utils.ServerIORStore.plugin"
+						  value="com.arjuna.ats.qa.Utils.DistributedIORStorePlugin"/>
+				<property name="memorytestprofilestore.dir" value="$(PRODUCT.DIR)/qa/memory_profiles/"/>
+				<property name="org.jboss.jbossts.qa.Utils.nameserviceuri" value="//dtfexec1.qa.atl2.redhat.com:1099/NameService"/>
+
+			</properties>
+			<sets>
+				<set name="DTF_HOME" value="/qa/local/dtf-admin/JBossDTF"/>
+				<set name="PRODUCTS_HOME" value="/qa/local/dtf-admin/JBossDTF/products"/>
+				<set name="INSTALL.DIR" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+                <set name="ORB_HOME" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/jacorb/"/>
+				<set name="CALLS" value="1000"/>
+				<set name="PRODUCT.DIR" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+				<set name="ARJUNAJTS_HOME" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+
 			</sets>
 			<jvm id="1.5.0"/>
 			<default-classpath name="main"/>
 			<node-exclusions/>
 		</node-configuration>
-<!--
-		<node-configuration os="Win2K">
+
+		<node-configuration os="RHEL4-64"><!-- RHEL4, x86_64: dtf3 -->
+            <properties>
+                <property name="Context.INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
+
+                <property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles/"/>
+                <property name="Context.PROVIDER_URL" value="file://$(PRODUCT.DIR)"/>
+                <property name="qa.debug" value="false"/>
+                <property name="performanceprofilestore.dir" value="$(PRODUCT.DIR)/qa/perf_profiles/"/>
+                <property name="com.arjuna.ats.jta.jtaTMImplementation"
+                          value="com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple"/>
+                <property name="com.arjuna.ats.qa.Utils.ServerIORStore.plugin"
+                          value="com.arjuna.ats.qa.Utils.DistributedIORStorePlugin"/>
+                <property name="memorytestprofilestore.dir" value="$(PRODUCT.DIR)/qa/memory_profiles/"/>
+                <property name="org.jboss.jbossts.qa.Utils.nameserviceuri" value="//dtfexec1.qa.atl2.redhat.com:1099/NameService"/>
+            </properties>
+
+            <sets>
+                <set name="DTF_HOME" value="/qa/local/dtf-admin/JBossDTF"/>
+                <set name="PRODUCTS_HOME" value="/qa/local/dtf-admin/JBossDTF/products"/>
+                <set name="INSTALL.DIR" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+                <set name="ORB_HOME" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/jacorb/"/>
+                <set name="CALLS" value="1000"/>
+                <set name="PRODUCT.DIR" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+                <set name="ARJUNAJTS_HOME" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+            </sets>
+
+            <jvm id="1.5.0"/>
+            <default-classpath name="main"/>
+            <node-exclusions/>
+		</node-configuration>
+		<node-configuration os="RHEL5-32"><!-- RHEL5, x86: dtf2 -->
+            <properties>
+                <property name="Context.INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
+                <property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles/"/>
+                <property name="Context.PROVIDER_URL" value="file://$(PRODUCT.DIR)"/>
+
+                <property name="qa.debug" value="false"/>
+                <property name="performanceprofilestore.dir" value="$(PRODUCT.DIR)/qa/perf_profiles/"/>
+                <property name="com.arjuna.ats.jta.jtaTMImplementation"
+                          value="com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple"/>
+                <property name="com.arjuna.ats.qa.Utils.ServerIORStore.plugin"
+                          value="com.arjuna.ats.qa.Utils.DistributedIORStorePlugin"/>
+                <property name="memorytestprofilestore.dir" value="$(PRODUCT.DIR)/qa/memory_profiles/"/>
+                <property name="org.jboss.jbossts.qa.Utils.nameserviceuri" value="//dtfexec1.qa.atl2.redhat.com:1099/NameService"/>
+            </properties>
+            <sets>
+                <set name="DTF_HOME" value="/qa/local/dtf-admin/JBossDTF"/>
+
+                <set name="PRODUCTS_HOME" value="/qa/local/dtf-admin/JBossDTF/products"/>
+                <set name="INSTALL.DIR" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+                <set name="ORB_HOME" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/jacorb/"/>
+                <set name="CALLS" value="1000"/>
+                <set name="PRODUCT.DIR" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+                <set name="ARJUNAJTS_HOME" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+            </sets>
+            <jvm id="1.5.0"/>
+            <default-classpath name="main"/>
+
+            <node-exclusions/>
+		</node-configuration>
+		<node-configuration os="RHEL5-64"><!-- RHEL5, x86_64: dtf4 -->
 			<properties>
 				<property name="Context.INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
-				<property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles"/>
+				<property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles/"/>
 				<property name="Context.PROVIDER_URL" value="file://$(PRODUCT.DIR)"/>
-				<property name="qa.debug" value="true"/>
+				<property name="qa.debug" value="false"/>
 				<property name="performanceprofilestore.dir" value="$(PRODUCT.DIR)/qa/perf_profiles/"/>
-				<property name="com.arjuna.ats.jta.jtaTMImplementation"
-						  value="com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple"/>
-				<property name="com.arjuna.ats.qa.Utils.ServerIORStore.plugin"
+
+                <property name="com.arjuna.ats.jta.jtaTMImplementation"
+                          value="com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple"/>
+                <property name="com.arjuna.ats.qa.Utils.ServerIORStore.plugin"
 						  value="com.arjuna.ats.qa.Utils.DistributedIORStorePlugin"/>
 				<property name="memorytestprofilestore.dir" value="$(PRODUCT.DIR)/qa/memory_profiles/"/>
-				<property name="com.arjuna.ats.qa.Utils.nameserviceuri" value="//localhost:1099/NameService"/>
+				<property name="org.jboss.jbossts.qa.Utils.nameserviceuri" value="//dtfexec1.qa.atl2.redhat.com:1099/NameService"/>
 			</properties>
 			<sets>
-				<set name="DTF_HOME" value="C:/DTF/"/>
-				<set name="PRODUCTS_HOME" value="C:/DTF/products"/>
-				<set name="INSTALL.DIR" value="C:/DTF/products/ArjunaJTS-JacORB-QA/"/>
-				<set name="ORB_HOME" value="C:/DTF/products/ArjunaJTS-JacORB-QA/install/jacorb_2_1/"/>
-				<set name="CALLS" value="1000"/>
-				<set name="ARJUNAJTS_HOME" value="C:/DTF/products/ArjunaJTS-JacORB-QA/install/"/>
-				<set name="PRODUCT.DIR" value="C:/DTF/products/ArjunaJTS-JacORB-QA/install/"/>
+                <set name="DTF_HOME" value="/qa/local/dtf-admin/JBossDTF"/>
+                <set name="PRODUCTS_HOME" value="/qa/local/dtf-admin/JBossDTF/products"/>
+                <set name="INSTALL.DIR" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+
+                <set name="ORB_HOME" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/jacorb/"/>
+                <set name="CALLS" value="1000"/>
+                <set name="PRODUCT.DIR" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+                <set name="ARJUNAJTS_HOME" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
 			</sets>
-			<jvm id="1.4.2"/>
+			<jvm id="1.5.0"/>
 			<default-classpath name="main"/>
 			<node-exclusions/>
 		</node-configuration>
 
-		<node-configuration os="SunOS">
+        <node-configuration os="SOL10-SPARC"><!-- Solaris 10 on SPARC: dtf7, dtf8 -->
+            <properties>
+                <property name="Context.INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
+                <property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles/"/>
+                <property name="Context.PROVIDER_URL" value="file://$(PRODUCT.DIR)"/>
+                <property name="qa.debug" value="false"/>
+                <property name="performanceprofilestore.dir" value="$(PRODUCT.DIR)/qa/perf_profiles/"/>
+                <property name="com.arjuna.ats.jta.jtaTMImplementation"
+                          value="com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple"/>
+
+                <property name="com.arjuna.ats.qa.Utils.ServerIORStore.plugin"
+                          value="com.arjuna.ats.qa.Utils.DistributedIORStorePlugin"/>
+                <property name="memorytestprofilestore.dir" value="$(PRODUCT.DIR)/qa/memory_profiles/"/>
+                <property name="org.jboss.jbossts.qa.Utils.nameserviceuri" value="//dtfexec1.qa.atl2.redhat.com:1099/NameService"/>
+            </properties>
+            <sets>
+                <set name="DTF_HOME" value="/qa/local/dtf-admin/JBossDTF"/>
+                <set name="PRODUCTS_HOME" value="/qa/local/dtf-admin/JBossDTF/products"/>
+                <set name="INSTALL.DIR" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+                <set name="ORB_HOME" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/jacorb/"/>
+
+                <set name="CALLS" value="1000"/>
+                <set name="PRODUCT.DIR" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+                <set name="ARJUNAJTS_HOME" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+            </sets>
+            <jvm id="1.5.0"/>
+            <default-classpath name="main"/>
+            <node-exclusions/>
+        </node-configuration>
+
+        <node-configuration os="HPUX11-IA64"><!-- HP-UX 11i on Itanium: dtf9, dtf10 -->
+            <properties>
+                <property name="Context.INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
+                <property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles/"/>
+                <property name="Context.PROVIDER_URL" value="file://$(PRODUCT.DIR)"/>
+                <property name="qa.debug" value="false"/>
+                <property name="performanceprofilestore.dir" value="$(PRODUCT.DIR)/qa/perf_profiles/"/>
+                <property name="com.arjuna.ats.jta.jtaTMImplementation"
+                          value="com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple"/>
+                <property name="com.arjuna.ats.qa.Utils.ServerIORStore.plugin"
+                          value="com.arjuna.ats.qa.Utils.DistributedIORStorePlugin"/>
+
+                <property name="memorytestprofilestore.dir" value="$(PRODUCT.DIR)/qa/memory_profiles/"/>
+                <property name="org.jboss.jbossts.qa.Utils.nameserviceuri" value="//dtfexec1.qa.atl2.redhat.com:1099/NameService"/>
+            </properties>
+            <sets>
+                <set name="DTF_HOME" value="/qa/local/dtf-admin/JBossDTF"/>
+                <set name="PRODUCTS_HOME" value="/qa/local/dtf-admin/JBossDTF/products"/>
+                <set name="INSTALL.DIR" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+                <set name="ORB_HOME" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/jacorb/"/>
+                <set name="CALLS" value="1000"/>
+
+                <set name="PRODUCT.DIR" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+                <set name="ARJUNAJTS_HOME" value="/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+            </sets>
+            <jvm id="1.5.0"/>
+            <default-classpath name="main"/>
+            <node-exclusions/>
+        </node-configuration>
+
+		<node-configuration os="WIN2003-64"><!-- Windows 2003 Server on x86_64 -->
+
 			<properties>
 				<property name="Context.INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
-				<property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles"/>
+				<property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles/"/>
 				<property name="Context.PROVIDER_URL" value="file://$(PRODUCT.DIR)"/>
-				<property name="qa.debug" value="true"/>
+                <property name="qa.debug" value="false"/>
 				<property name="performanceprofilestore.dir" value="$(PRODUCT.DIR)/qa/perf_profiles/"/>
-				<property name="com.arjuna.ats.jta.jtaTMImplementation"
-						  value="com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple"/>
+                <property name="com.arjuna.ats.jta.jtaTMImplementation"
+                          value="com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple"/>
 				<property name="com.arjuna.ats.qa.Utils.ServerIORStore.plugin"
 						  value="com.arjuna.ats.qa.Utils.DistributedIORStorePlugin"/>
 				<property name="memorytestprofilestore.dir" value="$(PRODUCT.DIR)/qa/memory_profiles/"/>
-				<property name="com.arjuna.ats.qa.Utils.nameserviceuri" value="//dtf:1094/NameService"/>
+
+				<property name="com.arjuna.ats.qa.Utils.nameserviceuri" value="//dtfexec1.qa.atl2.redhat.com:1099/NameService"/>
 			</properties>
 			<sets>
-				<set name="DTF_HOME" value="/DTF/"/>
-				<set name="PRODUCTS_HOME" value="/DTF/products"/>
-				<set name="INSTALL.DIR" value="/DTF/products/ArjunaJTS-JacORB-QA/"/>
-				<set name="ORB_HOME" value="/DTF/products/ArjunaJTS-JacORB-QA/install/jacorb_2_1/"/>
+				<set name="DTF_HOME" value="c:/qa/local/dtf-admin/JBossDTF/"/>
+				<set name="PRODUCTS_HOME" value="c:/qa/local/dtf-admin/JBossDTF/products/"/>
+				<set name="INSTALL.DIR" value="c:/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+                <set name="ORB_HOME" value="c:/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/jacorb/"/>
 				<set name="CALLS" value="1000"/>
-				<set name="PRODUCT.DIR" value="/DTF/products/ArjunaJTS-JacORB-QA/install/"/>
-				<set name="ARJUNAJTS_HOME" value="/DTF/products/ArjunaJTS-JacORB-QA/install/"/>
+                <set name="PRODUCT.DIR" value="c:/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
+
+				<set name="ARJUNAJTS_HOME" value="c:/qa/local/dtf-admin/JBossDTF/JBossTS-JTS-JacORB-QA/"/>
 			</sets>
-			<jvm id="1.4.2"/>
+			<jvm id="1.5.0"/>
 			<default-classpath name="main"/>
 			<node-exclusions/>
 		</node-configuration>
 
-		<node-configuration os="HPUX">
-			<properties>
-				<property name="Context.INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
-				<property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles"/>
-				<property name="Context.PROVIDER_URL" value="file://$(PRODUCT.DIR)"/>
-				<property name="qa.debug" value="true"/>
-				<property name="performanceprofilestore.dir" value="$(PRODUCT.DIR)/qa/perf_profiles/"/>
-				<property name="com.arjuna.ats.jta.jtaTMImplementation"
-						  value="com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple"/>
-				<property name="com.arjuna.ats.qa.Utils.ServerIORStore.plugin"
-						  value="com.arjuna.ats.qa.Utils.DistributedIORStorePlugin"/>
-				<property name="memorytestprofilestore.dir" value="$(PRODUCT.DIR)/qa/memory_profiles/"/>
-				<property name="com.arjuna.ats.qa.Utils.nameserviceuri" value="//dtf:1094/NameService"/>
-			</properties>
-			<sets>
-				<set name="DTF_HOME" value="/home/DTF/"/>
-				<set name="PRODUCTS_HOME" value="/home/DTF/products"/>
-				<set name="INSTALL.DIR" value="/home/DTF/products/ArjunaJTS-JacORB-QA/"/>
-				<set name="ORB_HOME" value="/home/DTF/products/ArjunaJTS-JacORB-QA/install/jacorb_2_1/"/>
-				<set name="CALLS" value="1000"/>
-				<set name="ARJUNAJTS_HOME" value="/home/DTF/products/ArjunaJTS-JacORB-QA/install/"/>
-				<set name="PRODUCT.DIR" value="/home/DTF/products/ArjunaJTS-JacORB-QA/install/"/>
-			</sets>
-			<jvm id="1.4.2"/>
-			<default-classpath name="main"/>
-			<node-exclusions/>
-		</node-configuration>
--->
+
+
 	</node-configurations>
 
 	<task-runner-definitions>
-		<task-runner name="UnitTestRunner" class="org.jboss.dtf.testframework.testnode.UnitTestTaskRunner"
-					 log-to="http://dev31.qa.atl.jboss.com:8080/dtf/">
+		<task-runner name="UnitTestRunner" class="com.arjuna.mwlabs.testframework.testnode.UnitTestTaskRunner"
+					 log-to="http://dtfexec1.qa.atl2.redhat.com:8080/dtf/">
 			<param name="pass_on_wait_for" value="true"/>
 			<param name="fail_indicator" value="Failed"/>
 			<param name="pass_indicator" value="Passed"/>
 		</task-runner>
-		<task-runner name="ServiceRunner" class="org.jboss.dtf.testframework.testnode.JavaTaskRunner"
-					 log-to="http://dev31.qa.atl.jboss.com:8080/dtf/">
+		<task-runner name="ServiceRunner" class="com.arjuna.mwlabs.testframework.testnode.JavaTaskRunner"
+					 log-to="http://dtfexec1.qa.atl2.redhat.com:8080/dtf/">
 			<param name="pass_on_wait_for" value="true"/>
-			<param name="fail_indicator" value="Failed"/>
-			<param name="wait_for_text" value="Ready"/>
-			<param name="pass_indicator" value="Passed"/>
-		</task-runner>
-		<task-runner name="JavaTaskRunner" class="org.jboss.dtf.testframework.testnode.JavaTaskRunner"
-					 log-to="http://dev31.qa.atl.jboss.com:8080/dtf/">
-			<param name="pass_on_wait_for" value="true"/>
+
 			<param name="fail_indicator" value="Failed"/>
 			<param name="wait_for_text" value="Ready"/>
 			<param name="pass_indicator" value="Passed"/>
 		</task-runner>
-                <task-runner name="AntTaskRunner" class="com.arjuna.mwlabs.testframework.testnode.AntTaskRunner"
-                                         log-to="http://localhost:8080/dtf/">
-                        <param name="pass_on_wait_for" value="true"/>
-                        <param name="fail_indicator" value="Failed"/>
-                        <param name="wait_for_text" value="Ready"/>
-                        <param name="pass_indicator" value="Passed"/>
-                        <param name="product_dir" value="$(PRODUCT.DIR)"/>
-                </task-runner>
+		<task-runner name="JavaTaskRunner" class="com.arjuna.mwlabs.testframework.testnode.JavaTaskRunner"
+					 log-to="http://dtfexec1.qa.atl2.redhat.com:8080/dtf/">
+			<param name="pass_on_wait_for" value="true"/>
+			<param name="fail_indicator" value="Failed"/>
+			<param name="wait_for_text" value="Ready"/>
+			<param name="pass_indicator" value="Passed"/>
+
+		</task-runner>
 	</task-runner-definitions>
 
 </product-configuration>
+

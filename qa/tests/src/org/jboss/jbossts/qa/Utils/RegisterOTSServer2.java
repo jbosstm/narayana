@@ -26,6 +26,7 @@ import org.omg.CosTransactions.TransactionFactoryHelper;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.File;
 
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003
@@ -78,7 +79,9 @@ public class RegisterOTSServer2
 
     public static void registerService(String name, String ior) throws IOException
     {
-        FileOutputStream fout = new FileOutputStream(name);
+        File file = new File(name);
+        file.getParentFile().mkdirs();
+        FileOutputStream fout = new FileOutputStream(file);
         fout.write(ior.getBytes());
         fout.close();
     }

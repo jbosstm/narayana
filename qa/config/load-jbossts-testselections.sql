@@ -69,6 +69,7 @@ INSERT INTO StoredTestSelections VALUES (208,'JTAQ_RHEL4-32','JDBC Local Tests 0
 INSERT INTO StoredTestSelections VALUES (209,'JTAQ_RHEL4-32','JDBC Local Tests 01 - PostgreSQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/209_JTAQ_RHEL4-32.xml','JTAQ_RHEL4-32');
 INSERT INTO StoredTestSelections VALUES (210,'JTAQ_RHEL4-32','JDBC Local Tests 01 - MySQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/210_JTAQ_RHEL4-32.xml','JTAQ_RHEL4-32');
 INSERT INTO StoredTestSelections VALUES (211,'JTAQ_RHEL4-32','JDBC Local Tests 01 - Sybase JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/211_JTAQ_RHEL4-32.xml','JTAQ_RHEL4-32');
+INSERT INTO StoredTestSelections VALUES (300,'JTAQ_RHEL4-32','ASCrashRecovery01','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/300_AJQ_Linux.xml','JTAQ_RHEL4-32');
 
 INSERT INTO StoredTestSelections VALUES (117,'AJQ_RHEL5-32','JDBCResources01-Oracle_thin_jndi','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/117_AJQ_RHEL5-32.xml','AJQ_RHEL5-32');
 INSERT INTO StoredTestSelections VALUES (119,'AJQ_RHEL5-32','JDBCResources01_MSSQLServer_jndi','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/119_AJQ_RHEL5-32.xml','AJQ_RHEL5-32');
@@ -121,6 +122,7 @@ INSERT INTO StoredTestSelections VALUES (208,'JTAQ_RHEL5-32','JDBC Local Tests 0
 INSERT INTO StoredTestSelections VALUES (209,'JTAQ_RHEL5-32','JDBC Local Tests 01 - PostgreSQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/209_JTAQ_RHEL5-32.xml','JTAQ_RHEL5-32');
 INSERT INTO StoredTestSelections VALUES (210,'JTAQ_RHEL5-32','JDBC Local Tests 01 - MySQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/210_JTAQ_RHEL5-32.xml','JTAQ_RHEL5-32');
 INSERT INTO StoredTestSelections VALUES (211,'JTAQ_RHEL5-32','JDBC Local Tests 01 - Sybase JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/211_JTAQ_RHEL5-32.xml','JTAQ_RHEL5-32');
+INSERT INTO StoredTestSelections VALUES (300,'AJQ_Linux','ASCrashRecovery01','http://127.0.0.1:8080/dtf/producttests/300_AJQ_Linux.xml','AJQ_Linux');
 
 INSERT INTO StoredTestSelections VALUES (117,'AJQ_RHEL4-64','JDBCResources01-Oracle_thin_jndi','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/117_AJQ_RHEL4-64.xml','AJQ_RHEL4-64');
 INSERT INTO StoredTestSelections VALUES (119,'AJQ_RHEL4-64','JDBCResources01_MSSQLServer_jndi','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/119_AJQ_RHEL4-64.xml','AJQ_RHEL4-64');
@@ -173,6 +175,7 @@ INSERT INTO StoredTestSelections VALUES (208,'JTAQ_RHEL4-64','JDBC Local Tests 0
 INSERT INTO StoredTestSelections VALUES (209,'JTAQ_RHEL4-64','JDBC Local Tests 01 - PostgreSQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/209_JTAQ_RHEL4-64.xml','JTAQ_RHEL4-64');
 INSERT INTO StoredTestSelections VALUES (210,'JTAQ_RHEL4-64','JDBC Local Tests 01 - MySQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/210_JTAQ_RHEL4-64.xml','JTAQ_RHEL4-64');
 INSERT INTO StoredTestSelections VALUES (211,'JTAQ_RHEL4-64','JDBC Local Tests 01 - Sybase JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/211_JTAQ_RHEL4-64.xml','JTAQ_RHEL4-64');
+INSERT INTO StoredTestSelections VALUES (300,'AJQ_Linux','ASCrashRecovery01','http://127.0.0.1:8080/dtf/producttests/300_AJQ_Linux.xml','AJQ_Linux');
 
 INSERT INTO StoredTestSelections VALUES (117,'AJQ_RHEL5-64','JDBCResources01-Oracle_thin_jndi','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/117_AJQ_RHEL5-64.xml','AJQ_RHEL5-64');
 INSERT INTO StoredTestSelections VALUES (119,'AJQ_RHEL5-64','JDBCResources01_MSSQLServer_jndi','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/119_AJQ_RHEL5-64.xml','AJQ_RHEL5-64');
@@ -225,6 +228,7 @@ INSERT INTO StoredTestSelections VALUES (208,'JTAQ_RHEL5-64','JDBC Local Tests 0
 INSERT INTO StoredTestSelections VALUES (209,'JTAQ_RHEL5-64','JDBC Local Tests 01 - PostgreSQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/209_JTAQ_RHEL5-64.xml','JTAQ_RHEL5-64');
 INSERT INTO StoredTestSelections VALUES (210,'JTAQ_RHEL5-64','JDBC Local Tests 01 - MySQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/210_JTAQ_RHEL5-64.xml','JTAQ_RHEL5-64');
 INSERT INTO StoredTestSelections VALUES (211,'JTAQ_RHEL5-64','JDBC Local Tests 01 - Sybase JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/211_JTAQ_RHEL5-64.xml','JTAQ_RHEL5-64');
+INSERT INTO StoredTestSelections VALUES (300,'AJQ_Linux','ASCrashRecovery01','http://127.0.0.1:8080/dtf/producttests/300_AJQ_Linux.xml','AJQ_Linux');
 
 INSERT INTO StoredTestSelections VALUES (117,'AJQ_WIN2003-64','JDBCResources01-Oracle_thin_jndi','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/117_AJQ_WIN2003-64.xml','AJQ_WIN2003-64');
 INSERT INTO StoredTestSelections VALUES (119,'AJQ_WIN2003-64','JDBCResources01_MSSQLServer_jndi','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/119_AJQ_WIN2003-64.xml','AJQ_WIN2003-64');
@@ -277,6 +281,7 @@ INSERT INTO StoredTestSelections VALUES (208,'JTAQ_WIN2003-64','JDBC Local Tests
 INSERT INTO StoredTestSelections VALUES (209,'JTAQ_WIN2003-64','JDBC Local Tests 01 - PostgreSQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/209_JTAQ_WIN2003-64.xml','JTAQ_WIN2003-64');
 INSERT INTO StoredTestSelections VALUES (210,'JTAQ_WIN2003-64','JDBC Local Tests 01 - MySQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/210_JTAQ_WIN2003-64.xml','JTAQ_WIN2003-64');
 INSERT INTO StoredTestSelections VALUES (211,'JTAQ_WIN2003-64','JDBC Local Tests 01 - Sybase JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/211_JTAQ_WIN2003-64.xml','JTAQ_WIN2003-64');
+INSERT INTO StoredTestSelections VALUES (300,'AJQ_Linux','ASCrashRecovery01','http://127.0.0.1:8080/dtf/producttests/300_AJQ_Linux.xml','AJQ_Linux');
 
 INSERT INTO StoredTestSelections VALUES (117,'AJQ_SOL10-SPARC','JDBCResources01-Oracle_thin_jndi','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/117_AJQ_SOL10-SPARC.xml','AJQ_SOL10-SPARC');
 INSERT INTO StoredTestSelections VALUES (119,'AJQ_SOL10-SPARC','JDBCResources01_MSSQLServer_jndi','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/119_AJQ_SOL10-SPARC.xml','AJQ_SOL10-SPARC');
@@ -329,6 +334,7 @@ INSERT INTO StoredTestSelections VALUES (208,'JTAQ_SOL10-SPARC','JDBC Local Test
 INSERT INTO StoredTestSelections VALUES (209,'JTAQ_SOL10-SPARC','JDBC Local Tests 01 - PostgreSQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/209_JTAQ_SOL10-SPARC.xml','JTAQ_SOL10-SPARC');
 INSERT INTO StoredTestSelections VALUES (210,'JTAQ_SOL10-SPARC','JDBC Local Tests 01 - MySQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/210_JTAQ_SOL10-SPARC.xml','JTAQ_SOL10-SPARC');
 INSERT INTO StoredTestSelections VALUES (211,'JTAQ_SOL10-SPARC','JDBC Local Tests 01 - Sybase JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/211_JTAQ_SOL10-SPARC.xml','JTAQ_SOL10-SPARC');
+INSERT INTO StoredTestSelections VALUES (300,'AJQ_Linux','ASCrashRecovery01','http://127.0.0.1:8080/dtf/producttests/300_AJQ_Linux.xml','AJQ_Linux');
 
 INSERT INTO StoredTestSelections VALUES (117,'AJQ_HPUX11-IA64','JDBCResources01-Oracle_thin_jndi','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/117_AJQ_HPUX11-IA64.xml','AJQ_HPUX11-IA64');
 INSERT INTO StoredTestSelections VALUES (119,'AJQ_HPUX11-IA64','JDBCResources01_MSSQLServer_jndi','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/119_AJQ_HPUX11-IA64.xml','AJQ_HPUX11-IA64');
@@ -381,3 +387,8 @@ INSERT INTO StoredTestSelections VALUES (208,'JTAQ_HPUX11-IA64','JDBC Local Test
 INSERT INTO StoredTestSelections VALUES (209,'JTAQ_HPUX11-IA64','JDBC Local Tests 01 - PostgreSQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/209_JTAQ_HPUX11-IA64.xml','JTAQ_HPUX11-IA64');
 INSERT INTO StoredTestSelections VALUES (210,'JTAQ_HPUX11-IA64','JDBC Local Tests 01 - MySQL JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/210_JTAQ_HPUX11-IA64.xml','JTAQ_HPUX11-IA64');
 INSERT INTO StoredTestSelections VALUES (211,'JTAQ_HPUX11-IA64','JDBC Local Tests 01 - Sybase JNDI','http://dtfexec1.qa.atl2.redhat.com:8080/products/producttests/211_JTAQ_HPUX11-IA64.xml','JTAQ_HPUX11-IA64');
+INSERT INTO StoredTestSelections VALUES (300,'AJQ_Linux','ASCrashRecovery01','http://127.0.0.1:8080/dtf/producttests/300_AJQ_Linux.xml','AJQ_Linux');
+
+---
+INSERT INTO StoredTestSelections VALUES (300,'AJQ_Linux','ASCrashRecovery01','http://127.0.0.1:8080/dtf/producttests/300_AJQ_Linux.xml','AJQ_Linux');
+INSERT INTO StoredTestSelections VALUES (300,'AJQ_Linux','ASCrashRecovery01','http://127.0.0.1:8080/dtf/producttests/300_AJQ_Linux.xml','AJQ_Linux');

@@ -6408,10 +6408,10 @@
 			</description>
 			<configuration names_required="1"/>
 			<action_list>
-				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
+                <start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
 					<param>-test</param>
 				</start_task>
-				<start_task id="org.jboss.jbossts.qa.ArjunaCore.LockManager.CrashRecovery.client.Client001b"
+                <start_task id="org.jboss.jbossts.qa.ArjunaCore.LockManager.CrashRecovery.client.Client001b"
 							runtime_id="client0">
 					<param>100</param>
 					<param>1</param>
@@ -6420,13 +6420,13 @@
 					<param>$(1)</param>
 				</start_task>
 				<wait_for_task runtime_id="client0"/>
-				<start_task id="org.jboss.jbossts.qa.ArjunaCore.LockManager.CrashRecovery.client.Client001a"
+                <start_task id="org.jboss.jbossts.qa.ArjunaCore.LockManager.CrashRecovery.client.Client001a"
 							runtime_id="client1">
 					<param>100</param>
 					<param>1</param>
 					<param>$(1)</param>
 				</start_task>
-				<wait_for_task runtime_id="client1"/>
+                <wait_for_task runtime_id="client1"/>
 				<terminate_task runtime_id="server0"/>
 				<perform_task id="org.jboss.jbossts.qa.ArjunaCore.Utils.EmptyObjectStore" location="all">
 				</perform_task>
