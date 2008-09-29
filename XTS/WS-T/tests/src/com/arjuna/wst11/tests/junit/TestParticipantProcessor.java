@@ -83,6 +83,15 @@ public class TestParticipantProcessor extends ParticipantProcessor
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Check whether a participant with the given id is currently active
+     *
+     * @param identifier The identifier.
+     */
+    public boolean isActive(String identifier) {
+        return true;
+    }
+
     public void commit(Notification commit,
             AddressingProperties addressingProperties, ArjunaContext arjunaContext)
     {

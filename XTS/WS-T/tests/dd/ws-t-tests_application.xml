@@ -40,4 +40,12 @@
             <context-root>/ws-t11-tests</context-root>
         </web>
     </module>
+
+    <module>
+        <java>junit.jar</java>
+    </module>
+    
+    <module>
+        <java>ws-t-tests.jar</java>
+    </module>
 </application>

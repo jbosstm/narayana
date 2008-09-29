@@ -61,17 +61,17 @@ public class TestUtil
 
     public static final String NONEXISTENT_PARTICIPANT_IDENTIFIER                    = "NONE123456PI";
 
-    public static String participantServiceURI = "http://localhost:8080/ws-t11/ParticipantService";
-    public static String coordinatorServiceURI = "http://localhost:8080/ws-t11/CoordinatorService";
-    public static String completionInitiatorServiceURI = "http://localhost:8080/ws-t11/CompletionInitiatorService";
-    public static String completionCoordinatorServiceURI = "http://localhost:8080/ws-t11/CompletionCoordinatorService";
+    public static String participantServiceURI = "http://127.0.0.1:8080/ws-t11/ParticipantService";
+    public static String coordinatorServiceURI = "http://127.0.0.1:8080/ws-t11/CoordinatorService";
+    public static String completionInitiatorServiceURI = "http://127.0.0.1:8080/ws-t11/CompletionInitiatorService";
+    public static String completionCoordinatorServiceURI = "http://127.0.0.1:8080/ws-t11/CompletionCoordinatorService";
     private static AttributedURI atomicTransactionFaultAction = null;
     private static AttributedURI businessActivityFaultAction = null;
 
-    public static String participantCompletionParticipantServiceURI = "http://localhost:8080/ws-t11/BusinessAgreementWithParticipantCompletionParticipantService";
-    public static String participantCompletionCoordinatorServiceURI = "http://localhost:8080/ws-t11/BusinessAgreementWithParticipantCompletionCoordinatorService";
-    public static String coordinatorCompletionParticipantServiceURI = "http://localhost:8080/ws-t11/BusinessAgreementWithCoordinatorCompletionParticipantService";
-    public static String coordinatorCompletionCoordinatorServiceURI = "http://localhost:8080/ws-t11/BusinessAgreementWithCoordinatorCompletionCoordinatorService";
+    public static String participantCompletionParticipantServiceURI = "http://127.0.0.1:8080/ws-t11/BusinessAgreementWithParticipantCompletionParticipantService";
+    public static String participantCompletionCoordinatorServiceURI = "http://127.0.0.1:8080/ws-t11/BusinessAgreementWithParticipantCompletionCoordinatorService";
+    public static String coordinatorCompletionParticipantServiceURI = "http://127.0.0.1:8080/ws-t11/BusinessAgreementWithCoordinatorCompletionParticipantService";
+    public static String coordinatorCompletionCoordinatorServiceURI = "http://127.0.0.1:8080/ws-t11/BusinessAgreementWithCoordinatorCompletionCoordinatorService";
 
     public static synchronized AttributedURI getAtomicTransactionFaultAction()
     {

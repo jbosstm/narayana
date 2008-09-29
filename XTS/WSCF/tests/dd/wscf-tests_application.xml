@@ -40,4 +40,10 @@
             <context-root>/wscf11-tests</context-root>
         </web>
     </module>
+    <module>
+        <java>junit.jar</java>
+    </module>
+    <module>
+        <java>wscf-tests.jar</java>
+    </module>
 </application>
