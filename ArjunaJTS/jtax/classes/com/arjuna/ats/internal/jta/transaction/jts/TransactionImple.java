@@ -52,6 +52,8 @@ import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.jta.xa.*;
 import com.arjuna.ats.jta.common.Configuration;
 import com.arjuna.ats.jta.common.Environment;
+import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
+import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
 import com.arjuna.ats.jta.logging.*;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 
@@ -268,7 +270,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (org.omg.CosTransactions.WrongTransaction wt)
 			{
-				throw new IllegalStateException(
+				throw new InactiveTransactionException(
 						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"));
 			}
 			catch (org.omg.CosTransactions.NoTransaction e1)
@@ -294,7 +296,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (INVALID_TRANSACTION e6)
 			{
-				throw new IllegalStateException(
+				throw new InactiveTransactionException(
 						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
 			}
 			catch (org.omg.CORBA.SystemException e7)
@@ -353,7 +355,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (org.omg.CosTransactions.WrongTransaction e1)
 			{
-				throw new IllegalStateException(
+				throw new InactiveTransactionException(
 						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"));
 			}
 			catch (org.omg.CORBA.NO_PERMISSION e2)
@@ -362,7 +364,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (INVALID_TRANSACTION e3)
 			{
-				throw new IllegalStateException(
+				throw new InactiveTransactionException(
 						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
 			}
 			catch (NoTransaction e4)
@@ -380,7 +382,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 
 			if (endSuspendedFailed)
-				throw new IllegalStateException(
+				throw new InvalidTerminationStateException (
 						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.endsuspendfailed2"));
 		}
 		else

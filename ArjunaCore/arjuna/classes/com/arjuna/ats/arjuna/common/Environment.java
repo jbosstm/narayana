@@ -145,6 +145,7 @@ public class Environment
     public static final String TRANSACTION_STATUS_MANAGER_ADDRESS = "com.arjuna.ats.arjuna.recovery.transactionStatusManagerAddress";
     public static final String SOCKET_PROCESS_ID_PORT= "com.arjuna.ats.internal.arjuna.utils.SocketProcessIdPort";
     public static final String SOCKET_PROCESS_ID_MAX_PORTS= "com.arjuna.ats.internal.arjuna.utils.SocketProcessIdMaxPorts";
+    public static final String PROCESS_IMPLEMENTATION = "com.arjuna.ats.internal.arjuna.utils.processImplementation";
 
     /**
       * Constant that holds the name of the environment property

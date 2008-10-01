@@ -31,19 +31,6 @@
 
 package com.arjuna.ats.arjuna.utils;
 
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
-import java.util.Properties;
-import java.io.*;
-import java.net.InetAddress;
-
-import com.arjuna.ats.arjuna.exceptions.FatalError;
-import java.net.UnknownHostException;
-import java.lang.NumberFormatException;
-import java.lang.StringIndexOutOfBoundsException;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-
 /**
  * Provides a configurable way to get a unique process id.
  *

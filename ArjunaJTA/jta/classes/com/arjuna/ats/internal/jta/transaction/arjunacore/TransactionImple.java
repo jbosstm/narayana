@@ -41,6 +41,8 @@ import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 import com.arjuna.ats.jta.common.Configuration;
 import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
+import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
 import com.arjuna.ats.jta.resources.LastResourceCommitOptimisation;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XidImple;
@@ -1401,14 +1403,12 @@ public class TransactionImple implements javax.transaction.Transaction,
 					case ActionStatus.ABORTED:
 					case ActionStatus.ABORTING:
 						_theTransaction.abort(); // assure thread disassociation
-						throw new IllegalStateException(
+						throw new InactiveTransactionException(
 								jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 
 					case ActionStatus.COMMITTED:
 					case ActionStatus.COMMITTING: // in case of async commit
 						_theTransaction.commit(true); // assure thread disassociation
-						throw new IllegalStateException(
-								jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 				}
 
 				switch (_theTransaction.commit(true))
@@ -1429,7 +1429,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 						}
 						throw rollbackException;
 					default:
-						throw new IllegalStateException(
+						throw new InvalidTerminationStateException(
 								jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate"));
 				}
 			}
@@ -1488,7 +1488,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					case ActionStatus.ABORTING: // in case of async rollback
 						break;
 					default:
-						throw new IllegalStateException(
+						throw new InactiveTransactionException(
 								jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.rollbackstatus")
 										+ ActionStatus.stringForm(outcome));
 				}

@@ -37,6 +37,8 @@ import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
+import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
+import com.arjuna.ats.jta.exceptions.UnexpectedConditionException;
 import com.arjuna.ats.jta.logging.*;
 
 import java.lang.IllegalStateException;
@@ -45,6 +47,8 @@ import javax.transaction.HeuristicCommitException;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.SystemException;
+
+// https://jira.jboss.org/jira/browse/JBTM-384
 
 /**
  * @message com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.invalidstate
@@ -122,7 +126,7 @@ public class TransactionImple extends
 	public void rollback () throws java.lang.IllegalStateException,
 			java.lang.SecurityException, javax.transaction.SystemException
 	{
-		throw new IllegalStateException(
+		throw new InvalidTerminationStateException(
 				jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.invalidstate"));
 	}
 
@@ -159,7 +163,7 @@ public class TransactionImple extends
 
 	public void doCommit () throws IllegalStateException,
 			HeuristicMixedException, HeuristicRollbackException,
-			SystemException
+			javax.transaction.SystemException
 	{
 		try
 		{
@@ -196,7 +200,7 @@ public class TransactionImple extends
 		{
 			ex.printStackTrace();
 
-			throw new IllegalStateException();
+			throw new UnexpectedConditionException(ex.toString());
 		}
 	}
 
@@ -238,7 +242,7 @@ public class TransactionImple extends
 		{
 			ex.printStackTrace();
 
-			throw new IllegalStateException();
+			throw new UnexpectedConditionException(ex.toString());
 		}
 	}
 
@@ -261,7 +265,7 @@ public class TransactionImple extends
 	}
 	
 	public void doOnePhaseCommit () throws IllegalStateException,
-			javax.transaction.HeuristicRollbackException
+			javax.transaction.HeuristicRollbackException, javax.transaction.SystemException
 	{
 		try
 		{
@@ -286,14 +290,14 @@ public class TransactionImple extends
 			default:
 				throw new javax.transaction.HeuristicRollbackException();
 			case ActionStatus.INVALID:
-				throw new IllegalStateException();
+				throw new InvalidTerminationStateException();
 			}
 		}
 		catch (ClassCastException ex)
 		{
 			ex.printStackTrace();
 
-			throw new IllegalStateException();
+			throw new UnexpectedConditionException(ex.toString());
 		}
 	}
 
@@ -320,7 +324,7 @@ public class TransactionImple extends
 		 * jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
 		 */
 
-		throw new IllegalStateException();
+		throw new InvalidTerminationStateException();
 	}
 
 	protected void rollbackAndDisassociate ()
@@ -332,7 +336,7 @@ public class TransactionImple extends
 		 * jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
 		 */
 
-		throw new IllegalStateException();
+		throw new InvalidTerminationStateException();
 	}
 
 	/**
