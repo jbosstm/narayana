@@ -110,6 +110,9 @@ import java.util.*;
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_18
  *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_18] -
  *          TransactionReaper::check timeout for TX {0} in state  {1}
+ * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_19
+ *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_19] -
+ *          TransactionReaper NORMAL mode is deprecated. Update config to use PERIODIC for equivalent behaviour.
  */
 
 public class TransactionReaper
@@ -119,7 +122,9 @@ public class TransactionReaper
 
 	public static final String DYNAMIC = "DYNAMIC";
 
-	public TransactionReaper(long checkPeriod)
+    public static final String PERIODIC = "PERIODIC"; // the new name for 'NORMAL'
+
+    public TransactionReaper(long checkPeriod)
 	{
 		if (tsLogger.arjLogger.debugAllowed())
 		{
@@ -968,16 +973,29 @@ public class TransactionReaper
 
 		if (TransactionReaper._theReaper == null)
 		{
-			String mode = arjPropertyManager.propertyManager
+            // default to dynamic mode
+            TransactionReaper._dynamic = true;
+
+            String mode = arjPropertyManager.propertyManager
 					.getProperty(Environment.TX_REAPER_MODE);
 
 			if (mode != null)
 			{
-				if (mode.compareTo(TransactionReaper.DYNAMIC) == 0)
-					TransactionReaper._dynamic = true;
-			}
+				if (mode.compareTo(TransactionReaper.PERIODIC) == 0) {
+					TransactionReaper._dynamic = false;
+                }
 
-			if (!TransactionReaper._dynamic)
+                if(mode.compareTo(TransactionReaper.NORMAL) == 0) {
+                    TransactionReaper._dynamic = false;
+
+                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
+			        {
+				        tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_19");
+    			    }
+                }
+            }
+            
+            if (!TransactionReaper._dynamic)
 			{
 				String timeoutEnv = arjPropertyManager.propertyManager
 						.getProperty(Environment.TX_REAPER_TIMEOUT);
@@ -1127,7 +1145,11 @@ public class TransactionReaper
 			return _theReaper;
 	}
 
-	/*
+    public static boolean isDynamic() {
+        return _dynamic;
+    }
+
+    /*
 	 * Don't bother synchronizing as this is only an estimate anyway.
 	 */
 
@@ -1179,7 +1201,7 @@ public class TransactionReaper
 
 	private static ReaperWorkerThread _reaperWorkerThread = null;
 
-	private static boolean _dynamic = false;
+	private static boolean _dynamic = true;
 
 	private static long _lifetime = 0;
 

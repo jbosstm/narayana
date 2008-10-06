@@ -46,7 +46,8 @@ public class ReaperTestCase extends TestCase
 		// test set+readback of interval
 		TransactionReaper.create(100);
 		TransactionReaper reaper = TransactionReaper.transactionReaper();
-		assertEquals(100, reaper.checkingPeriod());
+        // set value is ignored in default DYNAMIC mode, it uses max long instead.
+        assertEquals(Long.MAX_VALUE, reaper.checkingPeriod());
 
 
 		Reapable reapable = new MockReapable(new Uid());
