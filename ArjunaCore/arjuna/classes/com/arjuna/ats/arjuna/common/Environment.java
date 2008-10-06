@@ -146,7 +146,8 @@ public class Environment
     public static final String SOCKET_PROCESS_ID_PORT= "com.arjuna.ats.internal.arjuna.utils.SocketProcessIdPort";
     public static final String SOCKET_PROCESS_ID_MAX_PORTS= "com.arjuna.ats.internal.arjuna.utils.SocketProcessIdMaxPorts";
     public static final String PROCESS_IMPLEMENTATION = "com.arjuna.ats.internal.arjuna.utils.processImplementation";
-
+    public static final String PROCESS_IDENTIFIER = "com.arjuna.ats.internal.arjuna.utils.pid";
+    
     /**
       * Constant that holds the name of the environment property
       * for specifying the bind address for transaction services
