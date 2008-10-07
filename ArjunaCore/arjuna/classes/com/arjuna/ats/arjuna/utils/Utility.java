@@ -213,10 +213,7 @@ public class Utility
     {
         try
         {
-            if (host == null || host.length() == 0)
-                return InetAddress.getLocalHost();
-            else
-                return InetAddress.getByName(host);
+            return InetAddress.getByName(host);
         }
         catch (UnknownHostException ex)
         {

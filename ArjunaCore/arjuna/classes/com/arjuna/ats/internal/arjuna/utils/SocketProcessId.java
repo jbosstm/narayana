@@ -111,7 +111,7 @@ public class SocketProcessId implements com.arjuna.ats.arjuna.utils.Process
     {
         try
         {
-            return new ServerSocket(port, 0, InetAddress.getLocalHost());
+            return new ServerSocket(port, 0, InetAddress.getByName(null));
         }
         catch (IOException e)
         {
