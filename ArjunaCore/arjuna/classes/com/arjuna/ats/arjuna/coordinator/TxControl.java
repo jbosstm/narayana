@@ -186,7 +186,7 @@ public class TxControl
 
 	static boolean enable = true;
 
-	static TransactionStatusManager transactionStatusManager = null;
+	private static TransactionStatusManager transactionStatusManager = null;
 
 	static ClassName actionStoreType = null;
 
@@ -350,7 +350,10 @@ public class TxControl
 					Environment.XA_NODE_IDENTIFIER, new String(xaNodeName));
 		}
 
-		if (transactionStatusManager == null)
+        
+        String enableTSM = arjPropertyManager.propertyManager.getProperty(Environment.TRANSACTION_STATUS_MANAGER_ENABLE);
+        // run the TSM by default, unless it's turned off explicitly.
+        if (transactionStatusManager == null && !"NO".equalsIgnoreCase(enableTSM))
 		{
 			transactionStatusManager = new TransactionStatusManager();
 

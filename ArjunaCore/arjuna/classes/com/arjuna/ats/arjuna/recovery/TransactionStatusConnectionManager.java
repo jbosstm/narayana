@@ -87,71 +87,99 @@ public class TransactionStatusConnectionManager
 	
 	return status ;
     }
-   
+
     /**
      * Obtain the transaction status for the specified transaction type
      * and transaction.
      */
     public int getTransactionStatus( String transactionType, Uid tranUid )
     {
-	int status = ActionStatus.INVALID ;
-	
-	// extract process id from uid, use to index into
-	// hash table to obtain transaction status connector
-	// with which to retrieve the transaction status.
-	
-	String process_id = get_process_id ( tranUid ) ;
-	
-	if ( ! _tscTable.containsKey ( process_id ) )
-	{
-	    updateTSMI();
-	}
+        int status = ActionStatus.INVALID ;
 
-	if ( _tscTable.containsKey ( process_id ) )
-	    {
-		TransactionStatusConnector tsc = (TransactionStatusConnector) _tscTable.get( process_id ) ;
-		
-		if ( tsc.isDead() )
-		{
-		    _tscTable.remove( process_id ) ;
-		    tsc.delete() ;
-		    tsc = null ;
-		}
-		else
-		{
-		    status = tsc.getTransactionStatus( transactionType, tranUid ) ;
-		}
-	    }
+        // extract process id from uid
+        String process_id = get_process_id ( tranUid ) ;
 
-	/*
-	 * Try to read status from disc locally if invalid status,
-	 * as TransactionStatusManager may have died or comms may 
-	 * have failed.
-	 * Use an ActionStatusService instance as that's what the remote
-	 * recovery manager would have used, and it contains all of the logic
-	 * to find and map the state type.
-	 */
+        // if the tx is in the same JVM we rely on ActionStatusService directly.
+        // This skips the communication with TransactionStatusManager, which is just backed
+        // by ActionStatusService anyhow. That allows TSM to be turned off for local only cases if desired.
+        // Note: condition assumes ObjectStore is not shared between machines i.e. that processId is globally uniq.
+        if(! process_id.equals( get_process_id(_localUid) )) {
+            status = getRemoteTransactionStatus(process_id, transactionType, tranUid);
+        }
 
-	if ( status == ActionStatus.INVALID )
-	{
-	    ActionStatusService ass = new ActionStatusService();
-	    
-	    try
-	    {
-		status = ass.getTransactionStatus(transactionType, tranUid.stringForm());
-	    }
-	    catch ( Exception ex )
-	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_1", ex);
-		}
-	    }
-	}
+        /*
+         * Try to read status from disc locally if invalid status,
+         * as the tx may be local or, if it is remote, the
+         * TransactionStatusManager may have died or comms may
+         * have failed.
+         * Use an ActionStatusService instance as that's what the remote
+         * recovery manager would have used, and it contains all of the logic
+         * to find and map the state type.
+         */
 
-	return status ;
+        if ( status == ActionStatus.INVALID )
+        {
+            ActionStatusService ass = new ActionStatusService();
+
+            try
+            {
+                status = ass.getTransactionStatus(transactionType, tranUid.stringForm());
+            }
+            catch ( Exception ex )
+            {
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_1", ex);
+                }
+            }
+        }
+
+        return status ;
     }
-   
+
+    /**
+     * Use the TransactionStatusConnector to remotly query a transaction manager to get the tx status.
+     *
+     * @param process_id
+     * @param transactionType
+     * @param tranUid
+     * @return
+     */
+    private int getRemoteTransactionStatus(String process_id, String transactionType, Uid tranUid ) {
+
+        int status = ActionStatus.INVALID ;
+
+        // tx is not local, so use process id to index into
+        // hash table to obtain transaction status connector
+        // with which to retrieve the transaction status.
+
+        // Note: assumes ObjectStore is not shared between machienes
+        // otherwise we need to key on hostname,process_id tuple.
+
+        if ( ! _tscTable.containsKey ( process_id ) )
+        {
+            updateTSMI();
+        }
+
+        if ( _tscTable.containsKey ( process_id ) )
+        {
+            TransactionStatusConnector tsc = (TransactionStatusConnector) _tscTable.get( process_id ) ;
+
+            if ( tsc.isDead() )
+            {
+                _tscTable.remove( process_id ) ;
+                tsc.delete() ;
+                tsc = null ;
+            }
+            else
+            {
+                status = tsc.getTransactionStatus( transactionType, tranUid ) ;
+            }
+        }
+
+        return status;
+    }
+    
     /**
      * Examine the Object Store for any new TrasactionStatusManagerItem
      * objects, and add to local hash table.
@@ -274,7 +302,7 @@ public class TransactionStatusConnectionManager
     // Reference to object store.
     private static ObjectStore _objStore = null ;
       
-    
+    private static Uid _localUid = new Uid();
 }
 	  
 

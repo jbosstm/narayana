@@ -37,6 +37,7 @@ import java.util.Vector;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.recovery.RecoveryConfiguration;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
@@ -72,9 +73,12 @@ public class RecoveryManagerImple
 	 * @message com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2
 	 *          [com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2] -
 	 *          socket io exception {0}
-	 * @message com.arjuna.ats.internal.arjuna.recovery.ready
-	 *          [com.arjuna.ats.internal.arjuna.recovery.ready]
+	 * @message com.arjuna.ats.internal.arjuna.recovery.socketready
+	 *          [com.arjuna.ats.internal.arjuna.recovery.socketready]
 	 *          RecoveryManagerImple is ready on port {0}
+     * @message com.arjuna.ats.internal.arjuna.recovery.localready
+	 *          [com.arjuna.ats.internal.arjuna.recovery.localready]
+	 *          RecoveryManagerImple is ready. Socket listener is turned off.
      * @message com.arjuna.ats.internal.arjuna.recovery.fail
 	 *          [com.arjuna.ats.internal.arjuna.recovery.fail]
 	 *          RecoveryManagerImple: cannot bind to socket on address {0} and port {1}
@@ -114,12 +118,27 @@ public class RecoveryManagerImple
 
 		Implementations.initialise();
 
-		/*
+
+        // by default we use a socket based listener, but it can be turned off if not required.
+        boolean useListener = true;
+        if("NO".equalsIgnoreCase(arjPropertyManager.propertyManager.getProperty(Environment.RECOVERY_MANAGER_LISTENER))) {
+            useListener = false;
+        }
+        
+        /*
 		 * Check whether there is a recovery daemon running - only allow one per
 		 * object store
+		 *
+		 * Note: this does not actually check if a recovery manager is running for the same ObjectStore,
+		 * only if one is on the same port as our confgiuration. Thus it's not particularly robust.
+		 * TODO: add a lock file to the ObjectStore as a belt and braces approach?
+		 *
+		 * This check works by trying to bind the server socket, so don't do it if we are running local only
+		 * (yup, that means there is a greater chance of winding up with more than one recovery manager if
+		 * we are running without a listener. See comment on robustness and file locking.)
 		 */
 
-		if (isRecoveryManagerEndPointInUse())
+		if (useListener && isRecoveryManagerEndPointInUse())
 		{
             if (tsLogger.arjLoggerI18N.isFatalEnabled())
             {
@@ -159,17 +178,25 @@ public class RecoveryManagerImple
 		// start the periodic recovery thread
 		// (don't start this until just about to go on to the other stuff)
 
-		_periodicRecovery = new PeriodicRecovery(threaded);
+		_periodicRecovery = new PeriodicRecovery(threaded, useListener);
 
 		try
 		{
 			if (tsLogger.arjLogger.isInfoEnabled())
 			{
-				tsLogger.arjLoggerI18N.info(
-						"com.arjuna.ats.internal.arjuna.recovery.ready",
-						new Object[] { new Integer(_periodicRecovery
-								.getServerSocket().getLocalPort()) });
-			}
+				if(useListener)
+                {
+                    tsLogger.arjLoggerI18N.info(
+                            "com.arjuna.ats.internal.arjuna.recovery.socketready",
+                            new Object[] { new Integer(_periodicRecovery
+                                    .getServerSocket().getLocalPort()) });
+                }
+                else
+                {
+                    tsLogger.arjLoggerI18N.info(
+                            "com.arjuna.ats.internal.arjuna.recovery.localready");
+                }
+            }
 		}
 		catch (IOException ex)
 		{

@@ -122,5 +122,15 @@
         name="com.arjuna.ats.arjuna.recovery.transactionStatusManagerAddress"
         value=""/>
 
+        <!--
+          For cases where the recovery manager is in process with the transaction manager and nothing else uses
+          the ObjectStore, it is possible to disable the socket based recovery listener by setting this to NO.
+          Caution: use of this property can allow multiple recovery processes to run on the same ObjectStore
+          if you are not careful. That in turn can lead to incorrect transaction processing. Use with care.
+        -->
+        <property
+            name="com.arjuna.ats.arjuna.recovery.recoveryListener"
+            value="YES"/>
+
     </properties>
 </transaction-service>

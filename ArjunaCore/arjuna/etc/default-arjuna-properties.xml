@@ -144,6 +144,17 @@
         name="com.arjuna.ats.internal.arjuna.utils.SocketProcessIdMaxPorts"
         value="1"/>
 
+      <!--
+        Run the TransactionStatusManager to allow out-of-process recovery managers to query
+        the status of transactions owned by this coordinator.  Default is YES.
+        This can be set to NO in cases where an ObjectStore is used only by one transaction manager
+        and the recovery manager for that store is in the same JVM. In any other cases disabling the
+        TransactionStatusManager may cause crash recovery to misbehave.
+      -->
+      <property
+        name="com.arjuna.ats.arjuna.coordinator.transactionStatusManagerEnable"
+        value="YES"/>
+
       <!-- property
         name="com.arjuna.ats.arjuna.coordinator.actionStore"
 		value="HashedActionStore"

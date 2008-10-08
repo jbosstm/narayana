@@ -142,54 +142,65 @@ public class PeriodicRecovery extends Thread
         private Mode() { }
     }
 
-   public PeriodicRecovery (boolean threaded)
-   {
-      initialise();
+    /**
+     *
+     *
+     * @param threaded
+     * @param useListener  if true, start a socket based listener.
+     */
+    public PeriodicRecovery (boolean threaded, boolean useListener)
+    {
+        initialise();
 
-      // Load the recovery modules that actually do the work.
+        // Load the recovery modules that actually do the work.
 
-      loadModules();
+        loadModules();
 
-      try
-      {
-	  _workerService = new WorkerService(this);
+        if (useListener)
+        {
+            try
+            {
+                _workerService = new WorkerService(this);
 
-	  _listener = new Listener(getServerSocket(), _workerService);
-	  _listener.setDaemon(true);
+                _listener = new Listener(getServerSocket(), _workerService);
+                _listener.setDaemon(true);
 
-      if (tsLogger.arjLoggerI18N.isInfoEnabled())
-          tsLogger.arjLoggerI18N.info(
-                  "com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_13",
-                  new Object[] {
-                          _socket.getInetAddress().getHostAddress(), _socket.getLocalPort()
-                  });
-      }
-      catch (Exception ex)
-      {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	  {
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_9", new Object[]{ex});
-	  }
-      }
+                if (tsLogger.arjLoggerI18N.isInfoEnabled())
+                    tsLogger.arjLoggerI18N.info(
+                            "com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_13",
+                            new Object[] {
+                                    _socket.getInetAddress().getHostAddress(), _socket.getLocalPort()
+                            });
+            }
+            catch (Exception ex)
+            {
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_9", new Object[]{ex});
+                }
+            }
+        }
 
-      if (threaded)
-      {
-          if (tsLogger.arjLogger.isDebugEnabled())
-          {
-                 tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                         FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: starting background scanner thread" );
-          }
-	  start();
-      }
+        if (threaded)
+        {
+            if (tsLogger.arjLogger.isDebugEnabled())
+            {
+                tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                        FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: starting background scanner thread" );
+            }
+            start();
+        }
 
-       if (tsLogger.arjLogger.isDebugEnabled())
-       {
-              tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                      FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: starting listener worker thread" );
-       }
-
-      _listener.start();
-   }
+        if(useListener)
+        {
+            if (tsLogger.arjLogger.isDebugEnabled())
+            {
+                tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                        FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: starting listener worker thread" );
+            }
+            _listener.start();
+        }
+    }
 
     /**
      * initiate termination of the periodic recovery thread and stop any subsequent scan requests from proceeding.
@@ -816,7 +827,10 @@ public class PeriodicRecovery extends Thread
                 tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                         FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: scan thread signals listener worker");
             }
-            _workerService.signalDone();
+            if(_workerService != null)
+            {
+                _workerService.signalDone();
+            }
             _workerScanRequested = false;
         }
     }

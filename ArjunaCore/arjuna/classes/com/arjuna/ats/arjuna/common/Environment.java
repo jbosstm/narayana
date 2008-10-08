@@ -137,10 +137,12 @@ public class Environment
     public static final String OBJECTSTORE_SHARE = "com.arjuna.ats.arjuna.objectstore.share";
     public static final String OBJECTSTORE_HIERARCHY_RETRY = "com.arjuna.ats.arjuna.objectstore.hierarchyRetry";
     public static final String OBJECTSTORE_HIERARCHY_TIMEOUT = "com.arjuna.ats.arjuna.objectstore.hierarchyTimeout";
+    public static final String RECOVERY_MANAGER_LISTENER = "com.arjuna.ats.arjuna.recovery.recoveryListener";
     public static final String RECOVERY_MANAGER_PORT = "com.arjuna.ats.arjuna.recovery.recoveryPort";
     public static final String RECOVERY_MANAGER_ADDRESS = "com.arjuna.ats.arjuna.recovery.recoveryAddress";
     public static final String XA_NODE_IDENTIFIER = "com.arjuna.ats.arjuna.xa.nodeIdentifier";
     public static final String DEFAULT_TIMEOUT = "com.arjuna.ats.arjuna.coordinator.defaultTimeout";
+    public static final String TRANSACTION_STATUS_MANAGER_ENABLE = "com.arjuna.ats.arjuna.coordinator.transactionStatusManagerEnable";
     public static final String TRANSACTION_STATUS_MANAGER_PORT = "com.arjuna.ats.arjuna.recovery.transactionStatusManagerPort";
     public static final String TRANSACTION_STATUS_MANAGER_ADDRESS = "com.arjuna.ats.arjuna.recovery.transactionStatusManagerAddress";
     public static final String SOCKET_PROCESS_ID_PORT= "com.arjuna.ats.internal.arjuna.utils.SocketProcessIdPort";
