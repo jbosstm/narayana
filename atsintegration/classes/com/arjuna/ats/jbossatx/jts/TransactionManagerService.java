@@ -218,7 +218,21 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
         jtaPropertyManager.propertyManager.setProperty(Environment.TSR_JNDI_CONTEXT, "java:/TransactionSynchronizationRegistry");
 
         JNDIManager.bindJTATransactionManagerImplementation();
-		JNDIManager.bindJTATransactionSynchronizationRegistryImplementation();
+        JNDIManager.bindJTATransactionSynchronizationRegistryImplementation();
+
+        try
+        {
+            org.omg.CosTransactions.TransactionFactory factory = com.arjuna.ats.jts.OTSManager.get_factory();
+            final int resolver = com.arjuna.ats.jts.TransactionServer.getResolver();
+    
+            com.arjuna.ats.jts.TransactionServer.registerTransactionManager(resolver, ORB.getInstance("jboss-atx"), factory);
+        }
+        catch (final Exception ex)
+        {
+            log.fatal("Problem encountered while trying to register transaction manager with ORB!");
+
+            throw new Exception("Problem encountered while trying to register transaction manager with ORB! "+ex);
+        }
     }
 
     public void start(org.omg.CORBA.ORB theCorbaORB) throws Exception

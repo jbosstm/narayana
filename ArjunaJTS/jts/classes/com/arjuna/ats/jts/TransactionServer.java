@@ -45,6 +45,56 @@ import org.omg.CosTransactions.*;
 
 public class TransactionServer
 {
+    // TODO consider as a util class addition?
+    
+    public static final int getResolver ()
+    {
+        int resolver = com.arjuna.orbportability.common.Configuration.bindDefault();
+        final String resolveService = jtsPropertyManager.propertyManager.getProperty(com.arjuna.orbportability.common.Environment.RESOLVE_SERVICE);
+
+        if (resolveService != null)
+        {
+            if (resolveService.compareTo("NAME_SERVICE") == 0)
+                resolver = com.arjuna.orbportability.Services.NAME_SERVICE;
+            else
+            {
+                if (resolveService.compareTo("BIND_CONNECT") == 0)
+                    resolver = com.arjuna.orbportability.Services.BIND_CONNECT;
+                else
+                {
+                    if (resolveService.compareTo("FILE") == 0)
+                        resolver = com.arjuna.orbportability.Services.FILE;
+                    else
+                    {
+                        if (resolveService.compareTo("RESOLVE_INITIAL_REFERENCES") == 0)
+                            resolver = com.arjuna.orbportability.Services.RESOLVE_INITIAL_REFERENCES;
+                    }
+                }
+            }
+        }
+
+        return resolver;
+    }
+
+    private static final void registerTransactionManager (final int resolver, ORB myORB, org.omg.CosTransactions.TransactionFactory theOTS) throws Exception
+    {
+        final Services myServ = new Services(myORB);
+
+        if (resolver != com.arjuna.orbportability.Services.BIND_CONNECT)
+        {
+            String[] params = new String[1];
+
+            params[0] = com.arjuna.orbportability.Services.otsKind;
+
+            /*                                                                                                                                           
+             * Register using the default mechanism.                                                                                                     
+             */
+
+            myServ.registerService(theOTS, com.arjuna.orbportability.Services.transactionService, params, resolver);
+
+            params = null;
+        }
+    }
     
     public static void main (String[] args)
     {
@@ -73,29 +123,7 @@ public class TransactionServer
 	}
 
 	com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple theOTS = null;
-	int resolver = com.arjuna.orbportability.common.Configuration.bindDefault();
-	String resolveService = jtsPropertyManager.propertyManager.getProperty(com.arjuna.orbportability.common.Environment.RESOLVE_SERVICE);
-
-	if (resolveService != null)
-	{
-	    if (resolveService.compareTo("NAME_SERVICE") == 0)
-		resolver = com.arjuna.orbportability.Services.NAME_SERVICE;
-	    else
-	    {
-		if (resolveService.compareTo("BIND_CONNECT") == 0)
-		    resolver = com.arjuna.orbportability.Services.BIND_CONNECT;
-		else
-		{
-		    if (resolveService.compareTo("FILE") == 0)
-			resolver = com.arjuna.orbportability.Services.FILE;
-		    else
-		    {
-			if (resolveService.compareTo("RESOLVE_INITIAL_REFERENCES") == 0)
-			    resolver = com.arjuna.orbportability.Services.RESOLVE_INITIAL_REFERENCES;
-		    }
-		}
-	    }
-	}
+	final int resolver = getResolver();
 	
 	try
 	{
@@ -121,29 +149,10 @@ public class TransactionServer
 
 	    try
 	    {
-		Services myServ = new Services(myORB);
-		
-		System.err.println("**checking "+resolver);
-		
-		if (resolver != com.arjuna.orbportability.Services.BIND_CONNECT)
-		{
-		    String[] params = new String[1];
+	        registerTransactionManager(resolver, myORB, theOTS.getReference());
 
-		    params[0] = com.arjuna.orbportability.Services.otsKind;
-
-		    /*
-		     * Register using the default mechanism.
-		     */
-
-		    System.err.println("**registering**");
-		    
-		    myServ.registerService(theOTS.getReference(), com.arjuna.orbportability.Services.transactionService, params, resolver);
-
-		    params = null;
-		}
-
-		if (!printReady)
-		    System.out.println("Transaction manager registered.");
+                if (!printReady)
+                    System.out.println("Transaction manager registered.");
 	    }
 	    catch (Exception e1)
 	    {
