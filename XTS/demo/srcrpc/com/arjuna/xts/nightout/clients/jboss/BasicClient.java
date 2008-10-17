@@ -354,7 +354,11 @@ public class BasicClient extends HttpServlet
      */
     private String getURL(final ServletConfig config, final String property, final String defaultValue)
     {
-        final String value = config.getInitParameter(property) ;
+        // allow command line override via system property
+        String value = System.getProperty(property);
+        if (value == null) {
+            value = config.getInitParameter(property) ;
+        }
         return (value == null ? defaultValue : value) ;
     }
     
