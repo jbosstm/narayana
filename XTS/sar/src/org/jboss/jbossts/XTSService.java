@@ -21,7 +21,7 @@
 package org.jboss.jbossts;
 
 import org.jboss.logging.Logger;
-import org.jboss.jbossts.xts.recovery.ACCoordinatorRecoveryModule;
+import org.jboss.jbossts.xts.recovery.coordinator.at.ACCoordinatorRecoveryModule;
 import org.jboss.jbossts.xts.recovery.participant.at.ATParticipantRecoveryModule;
 
 //import com.arjuna.mw.wst.deploy.WSTXInitialisation;
@@ -74,11 +74,7 @@ import com.arjuna.services.framework.startup.Sequencer;
 //import com.arjuna.wst.messaging.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 
-import javax.management.ObjectName;
-import javax.management.AttributeNotFoundException;
-import javax.management.JMException;
 import javax.management.MBeanServer;
-import java.util.Set;
 import java.net.InetAddress;
 //import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 

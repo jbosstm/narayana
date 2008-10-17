@@ -19,7 +19,7 @@
  * @author JBoss Inc.
  */
 
-package org.jboss.jbossts.xts.recovery;
+package org.jboss.jbossts.xts.recovery.coordinator.at;
 
 import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
 

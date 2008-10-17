@@ -1,4 +1,4 @@
-package org.jboss.jbossts.xts.recovery;
+package org.jboss.jbossts.xts.recovery.coordinator.at;
 
 import org.jboss.jbossts.xts.logging.XTSLogger;
 
@@ -14,10 +14,10 @@ import com.arjuna.common.util.logging.VisibilityLevel;
  * This class is a plug-in module for the recovery manager.
  * It is responsible for recovering failed ACCoordinator transactions.
  *
- * @message org.jboss.transactions.xts.recovery.RecoverACCoordinator_1 [org.jboss.transactions.xts.recovery.RecoverACCoordinator_1] - RecoverACCoordinator.replayPhase2 recovering {0} ActionStatus is {1}
- * @message org.jboss.transactions.xts.recovery.RecoverACCoordinator_2 [org.jboss.transactions.xts.recovery.RecoverACCoordinator_2] - RecoverACCoordinator.replayPhase2: Unexpected status: {0}
- * @message org.jboss.transactions.xts.recovery.RecoverACCoordinator_3 [org.jboss.transactions.xts.recovery.RecoverACCoordinator_3] - RecoverACCoordinator.replayPhase2( {0} )  finished
- * @message org.jboss.transactions.xts.recovery.RecoverACCoordinator_4 [org.jboss.transactions.xts.recovery.RecoverACCoordinator_4] - RecoverACCoordinator.replayPhase2 transaction {0} not activated, unable to replay phase 2 commit
+ * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_1 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_1] - RecoverACCoordinator.replayPhase2 recovering {0} ActionStatus is {1}
+ * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_2 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_2] - RecoverACCoordinator.replayPhase2: Unexpected status: {0}
+ * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_3 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_3] - RecoverACCoordinator.replayPhase2( {0} )  finished
+ * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_4 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_4] - RecoverACCoordinator.replayPhase2 transaction {0} not activated, unable to replay phase 2 commit
 */
 public class RecoverACCoordinator extends ACCoordinator {
 
@@ -44,7 +44,7 @@ public class RecoverACCoordinator extends ACCoordinator {
        {
 	   XTSLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					FacilityCode.FAC_CRASH_RECOVERY,
-					"org.jboss.transactions.xts.recovery.RecoverACCoordinator_1",
+					"org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_1",
 					new Object[]{get_uid(), ActionStatus.stringForm(status)});
        }
 
@@ -86,13 +86,13 @@ public class RecoverACCoordinator extends ACCoordinator {
 	   {
 	       XTSLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					    FacilityCode.FAC_CRASH_RECOVERY,
-					    "org.jboss.transactions.xts.recovery.RecoverACCoordinator_3",
+					    "org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_3",
 					    new Object[]{get_uid()});
 	   }
        }
        else
        {
-	   XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.RecoverACCoordinator_4", new Object[]{get_uid()});
+	   XTSLogger.arjLoggerI18N.warn("org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_4", new Object[]{get_uid()});
        }
    }
 

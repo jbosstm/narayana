@@ -18,7 +18,7 @@
  * (C) 2007,
  * @author Red Hat Middleware LLC.
  */
-package org.jboss.jbossts.xts.recovery;
+package org.jboss.jbossts.xts.recovery.coordinator.at;
 
 import org.jboss.jbossts.xts.logging.XTSLogger;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
@@ -36,7 +36,6 @@ import com.arjuna.common.util.logging.DebugLevel;
 import com.arjuna.common.util.logging.VisibilityLevel;
 
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
-import com.arjuna.webservices.base.processors.ReactivatedObjectProcessor;
 
 import java.util.Vector;
 import java.util.Enumeration;
@@ -52,9 +51,9 @@ import java.util.Enumeration;
  *
  * $Id$
  *
- * @message com.arjuna.ats.internal.arjuna.recovery.ACCoordinatorRecoveryModule_1 [org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_1] - RecoveryManagerStatusModule: Object store exception: {0}
- * @message org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_2 [org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_2] - failed to recover Transaction {0} {1}
- * @message org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_3 [org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_3] - failed to access transaction store {0} {1}
+ * @message org.jboss.transactions.xts.recovery.coordinator.at.ACCoordinatorRecoveryModule_1 [org.jboss.transactions.xts.recovery.coordinator.at.ACCoordinatorRecoveryModule_1] - RecoveryManagerStatusModule: Object store exception: {0}
+ * @message org.jboss.transactions.xts.recovery.coordinator.at.ACCoordinatorRecoveryModule_2 [org.jboss.transactions.xts.recovery.coordinator.at.ACCoordinatorRecoveryModule_2] - failed to recover Transaction {0} {1}
+ * @message org.jboss.transactions.xts.recovery.coordinator.at.ACCoordinatorRecoveryModule_3 [org.jboss.transactions.xts.recovery.coordinator.at.ACCoordinatorRecoveryModule_3] - failed to access transaction store {0} {1}
  */
 public class ACCoordinatorRecoveryModule  implements RecoveryModule
 {
@@ -119,7 +118,7 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
         {
             if (XTSLogger.arjLoggerI18N.isWarnEnabled())
             {
-                XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_1",
+                XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.coordinator.at.ACCoordinatorRecoveryModule_1",
                         new Object[]{ex});
             }
         }
@@ -211,7 +210,7 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
             {
                 if (XTSLogger.arjLoggerI18N.isWarnEnabled())
                 {
-                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_2",
+                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.coordinator.at.ACCoordinatorRecoveryModule_2",
                             new Object[]{recoverUid.toString(), ex});
                 }
             }
@@ -325,7 +324,7 @@ public class ACCoordinatorRecoveryModule  implements RecoveryModule
             {
                 if (XTSLogger.arjLogger.isWarnEnabled())
                 {
-                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.ACCoordinatorRecoveryModule_3",
+                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.coordinator.at.ACCoordinatorRecoveryModule_3",
                             new Object[]{currentUid.toString(), ex});
                 }
             }
