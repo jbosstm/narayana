@@ -188,8 +188,8 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
       * @param addressingProperties The addressing context.
       * @param arjunaContext The arjuna context.
       *
-      * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_1 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_1] - Unexpected exception thrown from compensated:
-      * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_2 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_2] - Compensated called on unknown coordinator: {0}
+      * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_1 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_1] - Unexpected exception thrown from failed:
+      * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_2 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_2] - Failed called on unknown coordinator: {0}
       */
      public void fail(final ExceptionType fail, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
      {
@@ -213,6 +213,7 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
          else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
          {
              WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_2", new Object[] {instanceIdentifier}) ;
+             sendFailed(addressingProperties, arjunaContext) ;
          }
      }
     
@@ -295,8 +296,8 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
      * @param addressingProperties The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.cannotComplete_1 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.cannotComplete_1] - Unexpected exception thrown from fault:
-     * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.cannotComplete_2 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.cannotComplete_2] - Fault called on unknown coordinator: {0}
+     * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.cannotComplete_1 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.cannotComplete_1] - Unexpected exception thrown from cannotComplete:
+     * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.cannotComplete_2 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.cannotComplete_2] - cannotComplete called on unknown coordinator: {0}
      */
     public void cannotComplete(final NotificationType cannotComplete, final AddressingProperties addressingProperties,
         final ArjunaContext arjunaContext)
@@ -324,7 +325,7 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.cannotComplete_2", new Object[] {instanceIdentifier}) ;
             }
-            sendFailed(addressingProperties, arjunaContext) ;
+            sendNotCompleted(addressingProperties, arjunaContext) ;
         }
     }
 
@@ -483,6 +484,34 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
             if (WSTLogger.arjLoggerI18N.isDebugEnabled())
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendFailed_1", th) ;
+            }
+        }
+    }
+
+    /**
+     * Send a not completed message.
+     *
+     * @param addressingProperties The addressing context.
+     * @param arjunaContext The arjuna context.
+     *
+     * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendNotCompleted_1 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendNotCompleted_1] - Unexpected exception while sending NotCompleted
+     */
+    private void sendNotCompleted(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    {
+        // KEV add check for recovery
+        final String messageId = MessageId.getMessageId() ;
+        final AddressingProperties responseAddressingContext = AddressingHelper.createOneWayResponseContext(addressingProperties, messageId) ;
+
+        try
+        {
+            // supply null endpoint so that addressing properties are used to deliver message
+            CoordinatorCompletionParticipantClient.getClient().sendNotCompleted(null, responseAddressingContext, arjunaContext.getInstanceIdentifier()); ;
+        }
+        catch (final Throwable th)
+        {
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendNotCompleted_1", th) ;
             }
         }
     }

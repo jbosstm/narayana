@@ -249,6 +249,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
         else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
         {
             WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_2", new Object[] {instanceIdentifier}) ;
+            sendNotCompleted(addressingProperties, arjunaContext) ;
         }
     }
 
@@ -482,6 +483,33 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
             if (WSTLogger.arjLoggerI18N.isDebugEnabled())
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendFailed_1", th) ;
+            }
+        }
+    }
+
+    /**
+     * Send a not completed message.
+     *
+     * @param addressingProperties The addressing context.
+     * @param arjunaContext The arjuna context.
+     *
+     * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendNotCompleted_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendNotCompleted_1] - Unexpected exception while sending NotCompleted
+     */
+    private void sendNotCompleted(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    {
+        // KEV add check for recovery
+        final String messageId = MessageId.getMessageId() ;
+        final AddressingProperties responseAddressingProperties = AddressingHelper.createOneWayResponseContext(addressingProperties, messageId) ;
+        try
+        {
+            // supply null endpoint so that addressing properties are used to deliver message
+            ParticipantCompletionParticipantClient.getClient().sendNotCompleted(null, responseAddressingProperties, arjunaContext.getInstanceIdentifier()); ;
+        }
+        catch (final Throwable th)
+        {
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendNotCompleted_1", th) ;
             }
         }
     }
