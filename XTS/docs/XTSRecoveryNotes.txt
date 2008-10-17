@@ -285,11 +285,13 @@ stored in a location in the TX object store defined by the XTS WS-AT
 participant record type (akin to the ACCoordinator type used on the
 coordinator side to store XTS WS-AT coordinator (transaction)
 state). WS-AT participant recovery records differ from other object
-store entries in that they are not derived from AtopmicAction nor from
-StateManager. The former class is only appropriate as a superclass of
-transactions. The latter class is only appropriate as a superclass of
-classes which will be saved and restored when an Action is current in
-the saving/restoring thread context and that is not the case in the
+store entries in that they are not derived from AbstractRecord nor
+from StateManager. The former class is only appropriate where the
+record is capable of being driven through prepare, commit and/or abort
+by a BasicAction, which is only appropriate on the coordinator
+side. The latter class is only appropriate as a superclass of classes
+which will be saved and restored when an Action is current in the
+saving/restoring thread context and that is not the case in the
 threads which handle Participant service incoming messages (*** is
 this actually correct -- need to check ***). Note, however, that this
 should present no problem in managing the object store entries in the
