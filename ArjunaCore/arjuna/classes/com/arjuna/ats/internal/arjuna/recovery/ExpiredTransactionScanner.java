@@ -151,6 +151,8 @@ public class ExpiredTransactionScanner implements ExpiryScanner
 															new Object[]
 															{ newUid });
 										}
+										else
+										    _objectStore.remove_committed(newUid, _typeName);
 									}
 								}
 								catch (Exception ex)
