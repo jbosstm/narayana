@@ -33,15 +33,8 @@ package com.arjuna.ats.internal.arjuna;
 
 import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
 
-import com.arjuna.ats.internal.arjuna.objectstore.ShadowingStoreSetup;
-import com.arjuna.ats.internal.arjuna.objectstore.ActionStoreSetup;
-import com.arjuna.ats.internal.arjuna.objectstore.HashedActionStoreSetup;
-import com.arjuna.ats.internal.arjuna.objectstore.ShadowNoFileLockStoreSetup;
-import com.arjuna.ats.internal.arjuna.objectstore.HashedStoreSetup;
-import com.arjuna.ats.internal.arjuna.objectstore.JDBCStoreSetup;
-import com.arjuna.ats.internal.arjuna.objectstore.JDBCActionStoreSetup;
 import com.arjuna.ats.internal.arjuna.objectstore.CacheStoreSetup;
-import com.arjuna.ats.internal.arjuna.objectstore.CacheStoreSetup;
+import com.arjuna.ats.internal.arjuna.objectstore.*;
 
 import com.arjuna.ats.internal.arjuna.gandiva.nameservice.JNSSetup;
 import com.arjuna.ats.internal.arjuna.gandiva.nameservice.PNSSetup;
@@ -82,8 +75,9 @@ public static synchronized void initialise ()
 	    Inventory.inventory().addToList(new JDBCStoreSetup());
 	    Inventory.inventory().addToList(new JDBCActionStoreSetup());
 	    Inventory.inventory().addToList(new CacheStoreSetup());
+        Inventory.inventory().addToList(new VolatileStoreSetup());
 
-	    Inventory.inventory().addToList(new JNSSetup());
+        Inventory.inventory().addToList(new JNSSetup());
 	    Inventory.inventory().addToList(new PNSSetup());
 
 	    /*
