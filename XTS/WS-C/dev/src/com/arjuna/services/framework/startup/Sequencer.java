@@ -17,6 +17,11 @@ import java.util.List;
  * triggered, thus ensuring that callbacks for web apps with lower sequence indices complete before callbacks with
  * higher indices are called.
  *
+ * This version also includes a global latch which can be used to ensure that no callbacks are not processed until a
+ * client lifts the latch. If the latch has already been lifted when the final element of a sequencer is closed the
+ * callbacks are run straight away. If the latch is closed then the sequencer is installed in a deferred list. When
+ * the latch is lifted the deferred list is scanned and callbacks are run for each sequencer found in the list.
+ *
  * User: adinn
  * Date: Nov 30, 2007
  * Time: 4:05:13 PM
@@ -133,19 +138,26 @@ public class Sequencer {
     /**
      * undo the latch which initially delays running of any callback sequences. this is provided
      * to enable the Service start routine to configure any necessary parameters before the
-     * listener callbacks are run. It is synchronized on the class so we can safely notify any
-     * threads waiting to pass the latch which will be waiting on the Sequencer.class.
+     * listener callbacks are run.
      */
-    public static synchronized void unlatch()
+    public static void unlatch()
     {
-        latched = false;
-        Sequencer.class.notifyAll();
+        synchronized (Sequencer.class) {
+            latched = false;
+        }
+
+        Iterator<Sequencer> iterator = deferred.iterator();
+
+        while (iterator.hasNext()) {
+            Sequencer sequencer = iterator.next();
+            sequencer.runCallbacks();
+        }
     }
 
     // private implementation
 
     /**
-     * a global latch used to delay running of callbacks until the XTS servcie is ready to
+     * a global latch used to defer running of callbacks until the XTS service is ready to
      * let them run
      */
     private static boolean latched = true;
@@ -158,6 +170,13 @@ public class Sequencer {
                     new Sequencer(WEBAPP_MAX10),
                     new Sequencer(WEBAPP_MAX11)
             };
+
+
+    /**
+     * a list of sequencers for which invocation of callbacks has been deferred pending lifting of the sequencer latch
+     */
+
+    private static List<Sequencer> deferred = new ArrayList<Sequencer>();
 
     /**
      * method called by the Callback constructor to append a startup callback to the list for a web
@@ -220,28 +239,21 @@ public class Sequencer {
 
     private void runCallbacks()
     {
-        // we cannot run the callbacks until the sequencer has been unlatched
-        passLatch();
+        // if the latch is lifted then run the callbacks otherwise defer them for the
+        // thread which raises the latch to run
+
+        synchronized(Sequencer.class) {
+            if (latched) {
+                deferred.add(this);
+                return;
+            }
+        }
 
         for (int i = 0; i < sequenceSize; i++) {
             Iterator<Callback> iter = callbacks[i].iterator();
             while (iter.hasNext()) {
                 Callback cb = iter.next();
                 cb.run();
-            }
-        }
-    }
-
-    /**
-     * do not return until the latch has been lifted
-     */
-    private static synchronized void passLatch()
-    {
-        while (latched) {
-            try {
-                Sequencer.class.wait();
-            } catch (InterruptedException e) {
-                // ignore
             }
         }
     }
