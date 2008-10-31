@@ -130,7 +130,7 @@ public class UserTransactionImple extends UserTransaction
 	}
 
 	public void commit () throws TransactionRolledBackException,
-			UnknownTransactionException, SecurityException, SystemException
+			UnknownTransactionException, SecurityException, SystemException, WrongStateException
 	{
 		try
 		{
@@ -146,7 +146,7 @@ public class UserTransactionImple extends UserTransaction
 		}
 	}
 
-	public void rollback () throws UnknownTransactionException, SecurityException, SystemException
+	public void rollback () throws UnknownTransactionException, SecurityException, SystemException, WrongStateException
 	{
 		try
 		{
@@ -244,7 +244,7 @@ public class UserTransactionImple extends UserTransaction
 
 	private final void commitWithoutAck ()
 			throws TransactionRolledBackException, UnknownTransactionException,
-			SecurityException, SystemException
+			SecurityException, SystemException, WrongStateException
 	{
 		TxContextImple ctx = null;
 		String id = null;
@@ -253,7 +253,7 @@ public class UserTransactionImple extends UserTransaction
 		{
 			ctx = (TxContextImple) _ctxManager.suspend();
             if (ctx == null) {
-                throw new UnknownTransactionException();
+                throw new WrongStateException();
             }
             id = ctx.identifier();
 
@@ -283,6 +283,10 @@ public class UserTransactionImple extends UserTransaction
 		{
 			throw ex;
 		}
+        catch (WrongStateException ex)
+        {
+            throw ex;
+        }
 		catch (UnknownTransactionException ex)
 		{
 			throw ex;
@@ -315,7 +319,7 @@ public class UserTransactionImple extends UserTransaction
 	}
 
 	private final void abortWithoutAck () throws UnknownTransactionException, SecurityException,
-			SystemException
+			SystemException, WrongStateException
 	{
 		TxContextImple ctx = null;
 		String id = null;
@@ -323,6 +327,9 @@ public class UserTransactionImple extends UserTransaction
 		try
 		{
 			ctx = (TxContextImple) _ctxManager.suspend();
+            if (ctx == null) {
+                throw new WrongStateException();
+            }
 			id = ctx.identifier();
 
 			/*
@@ -351,6 +358,10 @@ public class UserTransactionImple extends UserTransaction
 		{
 			throw ex;
 		}
+        catch (WrongStateException ex)
+        {
+            throw ex;
+        }
 		catch (SecurityException ex)
 		{
 			throw ex;

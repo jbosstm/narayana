@@ -129,13 +129,16 @@ public class UserBusinessActivityImple extends UserBusinessActivity
     	}
     }
 
-    public void close () throws TransactionRolledBackException, UnknownTransactionException, SystemException
+    public void close () throws TransactionRolledBackException, UnknownTransactionException, SystemException, WrongStateException
     {
     	TxContextImple ctx = null;
     
     	try
     	{
     	    ctx = (TxContextImple) _ctxManager.suspend();
+            if (ctx == null) {
+                throw new WrongStateException();
+            }
             
             final String id = ctx.identifier() ;
             final EndpointReferenceType terminatorCoordinator = getTerminationCoordinator(ctx) ;
@@ -156,6 +159,10 @@ public class UserBusinessActivityImple extends UserBusinessActivity
     	{
     	    throw ex;
     	}
+        catch (WrongStateException ex)
+        {
+            throw ex;
+        }
     	catch (Exception ex)
     	{
     	    ex.printStackTrace();
@@ -168,14 +175,17 @@ public class UserBusinessActivityImple extends UserBusinessActivity
     	}
     }
 
-    public void cancel () throws UnknownTransactionException, SystemException
+    public void cancel () throws UnknownTransactionException, SystemException, WrongStateException
     {
     	TxContextImple ctx = null;
     
     	try
     	{
             ctx = (TxContextImple) _ctxManager.suspend();
-            
+            if (ctx == null) {
+                throw new WrongStateException();
+            }
+
             final String id = ctx.identifier() ;
             final EndpointReferenceType terminatorCoordinator = getTerminationCoordinator(ctx) ;
             
@@ -191,6 +201,10 @@ public class UserBusinessActivityImple extends UserBusinessActivity
     	{
     	    throw ex;
     	}
+        catch (WrongStateException ex)
+        {
+            throw ex;
+        }
     	catch (Exception ex)
     	{
     	    ex.printStackTrace();
@@ -203,11 +217,14 @@ public class UserBusinessActivityImple extends UserBusinessActivity
     	}
     }
 
-    public void complete () throws UnknownTransactionException, SystemException
+    public void complete () throws UnknownTransactionException, SystemException, WrongStateException
     {
     	try
     	{
             final TxContextImple ctx = ((TxContextImple) _ctxManager.currentTransaction()) ;
+            if (ctx == null) {
+                throw new WrongStateException();
+            }
             final String id = ctx.identifier() ;
             final EndpointReferenceType terminatorCoordinator = getTerminationCoordinator(ctx) ;
             
@@ -223,6 +240,10 @@ public class UserBusinessActivityImple extends UserBusinessActivity
     	{
     	    throw ex;
     	}
+        catch (WrongStateException ex)
+        {
+            throw ex;
+        }
     	catch (Exception ex)
     	{
     	    throw new SystemException(ex.toString());

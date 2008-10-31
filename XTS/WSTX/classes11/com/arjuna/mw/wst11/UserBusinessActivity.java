@@ -104,14 +104,14 @@ public abstract class UserBusinessActivity
      * is required.
      */
     public abstract void close()
-        throws TransactionRolledBackException, UnknownTransactionException, SystemException;
+        throws TransactionRolledBackException, UnknownTransactionException, SystemException, WrongStateException;
 
     /**
      * If the BA must undo its work then the cancel method is used. Any
      * participants that can compensate are forced to do so.
      */
     public abstract void cancel()
-        throws UnknownTransactionException, SystemException;
+        throws UnknownTransactionException, SystemException, WrongStateException;
 
     /**
      * If participants have registered for the BusinessAgreementWithComplete
@@ -120,7 +120,7 @@ public abstract class UserBusinessActivity
      * complete method is used for this purpose.
      */
     public abstract void complete()
-        throws UnknownTransactionException, SystemException;
+        throws UnknownTransactionException, SystemException, WrongStateException;
 
     public abstract String transactionIdentifier();
 }

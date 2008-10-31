@@ -97,22 +97,28 @@ public abstract class UserTransaction
      * The transaction is committed by the commit method. This will execute
      * the PhaseZero, 2PC and OutcomeNotification protocols prior to returning.
      * If there is no transaction associated with the invoking thread then
-     * UnknownTransactionException is thrown. If the transaction ultimately
-     * rolls back then the TransactionRolledBackException is thrown. When
-     * complete, this operation disassociates the transaction from the current
-     * thread such that it becomes associated with no transaction.
+     * WrongStateException is thrown. If the coordinator is not aware of the
+     * current transaction UnknownTransactionException is thrown. If the transaction
+     * ultimately rolls back then the TransactionRolledBackException is thrown.
+     * If any other error occurs a SystemException is thrown. When complete, this
+     * operation disassociates the transaction from the current thread such that
+     * it becomes associated with no transaction.
      */
     public abstract void commit()
-        throws TransactionRolledBackException, UnknownTransactionException, SecurityException, SystemException;
+        throws TransactionRolledBackException, UnknownTransactionException, SecurityException, SystemException, WrongStateException;
 
     /**
      * The rollback operation will terminate the transaction and return
      * normally if it succeeded, while throwing an appropriate exception if it
      * didn't. If there is no transaction associated with the invoking thread
-     * then UnknownTransactionException is thrown.
+     * then WrongStateException is thrown. If the coordinator is not aware of the
+     * current transaction UnknownTransactionException is thrown. If any other error
+     * occurs a SystemException is thrown. When complete, this operation disassociates
+     * the transaction from the current thread such that it becomes associated with no
+     * transaction.
      */
     public abstract void rollback()
-        throws UnknownTransactionException, SecurityException, SystemException;
+        throws UnknownTransactionException, SecurityException, SystemException, WrongStateException;
 
     public abstract String transactionIdentifier ();
 }
