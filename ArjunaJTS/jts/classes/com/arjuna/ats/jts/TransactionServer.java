@@ -76,7 +76,7 @@ public class TransactionServer
         return resolver;
     }
 
-    private static final void registerTransactionManager (final int resolver, ORB myORB, org.omg.CosTransactions.TransactionFactory theOTS) throws Exception
+    public static final void registerTransactionManager (final int resolver, ORB myORB, org.omg.CosTransactions.TransactionFactory theOTS) throws Exception
     {
         final Services myServ = new Services(myORB);
 
