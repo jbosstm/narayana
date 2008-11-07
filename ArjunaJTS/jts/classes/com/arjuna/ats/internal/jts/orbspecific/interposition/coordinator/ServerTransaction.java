@@ -164,25 +164,6 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 		_prepState = ActionStatus.PREPARED;
 
-		if (!_beforeCompleted && (_sync != null))
-		{
-			/*
-			 * Synchronizations should have been called by now if we have them!
-			 */
-
-			if (jtsLogger.loggerI18N.isWarnEnabled())
-			{
-				jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.sycerror", new Object[]
-				{ "ServerTransaction.doPrepare" });
-			}
-
-			/*
-			 * Prevent commit!
-			 */
-
-			super.preventCommit();
-		}
-
 		/*
 		 * If we do not have an interposed synchronization then
 		 * before_completions will not have been called yet. So, do it now.
@@ -203,6 +184,25 @@ public class ServerTransaction extends ArjunaTransactionImple
 			}
 		}
 
+		if (!_beforeCompleted && (_sync != null))
+		{
+		    /*
+		     * Synchronizations should have been called by now if we have them!
+		     */
+
+		    if (jtsLogger.loggerI18N.isWarnEnabled())
+		    {
+		        jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.sycerror", new Object[]
+		                                                                                                                           { "ServerTransaction.doPrepare" });
+		    }
+
+		    /*
+		     * Prevent commit!
+		     */
+
+		    super.preventCommit();
+		}
+	              
 		int res = super.prepare(true);
 
 		/*
