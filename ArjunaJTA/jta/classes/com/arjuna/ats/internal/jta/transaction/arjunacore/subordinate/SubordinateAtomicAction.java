@@ -198,7 +198,18 @@ public class SubordinateAtomicAction extends
 
 	public int doOnePhaseCommit ()
 	{
-		return super.End(true);
+	    int status;
+	    
+	    if (beforeCompletion())
+	    {
+		status = super.End(true);
+	    }
+	    else
+	        status = ActionStatus.ABORTED;
+	              
+            afterCompletion(status);
+            
+            return status;
 	}
 
 	public void doForget ()
