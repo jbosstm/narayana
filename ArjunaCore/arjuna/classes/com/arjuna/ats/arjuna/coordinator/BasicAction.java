@@ -1839,9 +1839,6 @@ public class BasicAction extends StateManager
 		if (reportHeuristics || (!reportHeuristics && !TxControl.asyncCommit))
 			returnCurrentStatus = true;
 
-		if (TxControl.enableStatistics)
-			TxStats.incrementCommittedTransactions();
-
 		if (returnCurrentStatus)
 		{
 			if (reportHeuristics)
@@ -2187,7 +2184,17 @@ public class BasicAction extends StateManager
 			ActionManager.manager().remove(get_uid());
 			
 			criticalEnd();
-		}
+
+            // ok count this as a commit unless we got a heuristic rollback in which case phase2Abort
+            // will have been called and will already have counted it as an abort
+            
+            if (TxControl.enableStatistics) {
+                if (heuristicDecision != TwoPhaseOutcome.HEURISTIC_ROLLBACK) {
+                    TxStats.incrementCommittedTransactions();
+                }
+            }
+
+        }
 	}
 
 	/**
@@ -2254,9 +2261,11 @@ public class BasicAction extends StateManager
 		 * rolling back because of a resource problem.
 		 */
 		
-		if (TxControl.enableStatistics)
-			TxStats.incrementResourceRollbacks();
-	}
+		if (TxControl.enableStatistics) {
+            TxStats.incrementResourceRollbacks();
+            TxStats.incrementAbortedTransactions();
+        }
+    }
 
 	/**
 	 * Phase one of a two phase commit protocol. This function returns the
@@ -2568,7 +2577,7 @@ public class BasicAction extends StateManager
 				try
 				{				
 					if (!currentStore.write_committed(u, tn, state))
-					{
+					{                                               
 						if (tsLogger.arjLoggerI18N.isWarnEnabled())
 						{
 							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_46", new Object[]
@@ -2753,7 +2762,16 @@ public class BasicAction extends StateManager
 		ActionManager.manager().remove(get_uid());
 		
 		criticalEnd();
-	}
+
+        if (TxControl.enableStatistics) {
+            if (actionStatus == ActionStatus.ABORTED) {
+                TxStats.incrementAbortedTransactions();
+            } else {
+                TxStats.incrementCommittedTransactions();
+            }
+        }
+
+    }
 
 	/**
 	 * @return the current heuristic decision. Each time a heuristic outcome is
