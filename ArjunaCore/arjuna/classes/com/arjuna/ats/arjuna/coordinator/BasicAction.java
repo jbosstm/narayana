@@ -2156,18 +2156,26 @@ public class BasicAction extends StateManager
 
 			if ((readonlyList != null) && (readonlyList.size() > 0))
 			{
-				while (((recordBeingHandled = readonlyList.getFront()) != null))
-				{
-					if ((actionType == ActionType.NESTED)
-							&& (recordBeingHandled.propagateOnCommit()))
-					{
-						merge(recordBeingHandled);
-					}
-					else
-					{
-						recordBeingHandled = null;
-					}
-				}
+			    if (!TxControl.readonlyOptimisation)
+			    {
+			        if (readonlyList != null)
+			            doCommit(readonlyList, reportHeuristics);
+			    }
+
+			    // now still process the list.
+			    
+			    while (((recordBeingHandled = readonlyList.getFront()) != null))
+			    {
+			        if ((actionType == ActionType.NESTED)
+			                && (recordBeingHandled.propagateOnCommit()))
+			        {
+			            merge(recordBeingHandled);
+			        }
+			        else
+			        {
+			            recordBeingHandled = null;
+			        }
+			    }
 			}
 
 			forgetHeuristics();
