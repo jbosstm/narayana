@@ -86,7 +86,8 @@ public class RecordType
     public static final int ACTIVATION = 131;
     public static final int OTS_RECORD = 141;
     public static final int OTS_ABSTRACTRECORD = 151;
-    public static final int XTS_RECORD = 161;
+    public static final int XTS_WSAT_RECORD = 161;
+    public static final int XTS_WSBA_RECORD = 162;
     public static final int JTA_RECORD = 171;
     public static final int JTAX_RECORD = 172;
     public static final int REPLICATION = 181;
@@ -194,8 +195,10 @@ public class RecordType
 	     return new ClassName("RecordType.RPCTERMINATE");
 	 case RecordType.RPCCADAVER:
 	     return new ClassName("RecordType.RPCCADAVER");
-	 case RecordType.XTS_RECORD:
-	     return new ClassName("RecordType.XTS_RECORD");
+         case RecordType.XTS_WSAT_RECORD:
+             return new ClassName("RecordType.XTS_WSAT_RECORD");
+         case RecordType.XTS_WSBA_RECORD:
+             return new ClassName("RecordType.XTS_WSBA_RECORD");
 	 case RecordType.JTA_RECORD:
 	     return new ClassName("RecordType.JTA_RECORD");
 	 case RecordType.JTAX_RECORD:
@@ -359,8 +362,11 @@ public static int classNameToType (ClassName cn)
 	    if (cn.stringForm().compareTo("RecordType.NONE_RECORD") == 0)
 		return NONE_RECORD;
 	else
-	    if (cn.stringForm().compareTo("RecordType.XTS_RECORD") == 0)
-		return XTS_RECORD;
+	    if (cn.stringForm().compareTo("RecordType.XTS_WSAT_RECORD") == 0)
+		return XTS_WSAT_RECORD;
+    else
+        if (cn.stringForm().compareTo("RecordType.XTS_WSBA_RECORD") == 0)
+        return XTS_WSBA_RECORD;
 	else
 	    return -1;
     }
