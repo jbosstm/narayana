@@ -63,28 +63,29 @@ public class FailureBusinessParticipant implements com.arjuna.wst.BusinessAgreem
     {
 	System.out.println("FailureBusinessParticipant.close for "+this);
 
-	if (_failurePoint == FAIL_IN_CLOSE)
-	    throw new WrongStateException();
+	if (_failurePoint == FAIL_IN_CLOSE) {
+        throw new WrongStateException();
+    }
 	
 	_passed = true;
     }
 
-    public void cancel () throws WrongStateException, SystemException
+    public void cancel () throws WrongStateException, SystemException, FaultedException
     {
 	System.out.println("FailureBusinessParticipant.cancel for "+this);
 
 	if (_failurePoint == FAIL_IN_CANCEL)
-	    throw new WrongStateException();
+	    throw new FaultedException();
 	
 	_passed = true;
     }
 
-    public void compensate () throws WrongStateException, SystemException
+    public void compensate () throws WrongStateException, SystemException, FaultedException
     {
 	System.out.println("FailureBusinessParticipant.compensate for "+this);
 
 	if (_failurePoint == FAIL_IN_COMPENSATE)
-	    throw new WrongStateException();
+	    throw new FaultedException();
 	
 	_passed = true;
     }

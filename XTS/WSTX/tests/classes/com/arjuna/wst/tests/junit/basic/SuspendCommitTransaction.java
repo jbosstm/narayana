@@ -35,6 +35,7 @@ import com.arjuna.mw.wst.TransactionManager;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wst.UserTransaction;
 import com.arjuna.wst.UnknownTransactionException;
+import com.arjuna.wst.WrongStateException;
 import junit.framework.TestCase;
 
 /**
@@ -69,7 +70,7 @@ public class SuspendCommitTransaction extends TestCase
     try {
 	    ut.commit();
 	}
-	catch (UnknownTransactionException ex)
+	catch (WrongStateException ex)
 	{
 	    // we should arrive here
 	}

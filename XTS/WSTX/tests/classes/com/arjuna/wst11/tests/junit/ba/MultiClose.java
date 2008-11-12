@@ -71,19 +71,8 @@ public class MultiClose extends TestCase
             }
             throw eouter;
         }
-	    try {
+        // the close should succeed even though the participant fails
 	    uba.close();
-        } catch (SystemException ex) {
-            // we should get here
-            assertTrue(p.passed());
-            return;
-        } catch (Exception eouter) {
-            try {
-                uba.cancel();
-            } catch(Exception einner) {
-            }
-            throw eouter;
-        }
         fail("expected SystemError");
     }
 }

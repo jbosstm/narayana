@@ -57,8 +57,7 @@ public class WSTX11TestSuite extends junit.framework.TestSuite
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.Exit.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.MultiCancel.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.MultiClose.class));
-        // this test fails because the compensate is retried forever instead of an exception being generated
-        //addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.MultiCompensate.class));
+        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.MultiCompensate.class));
 
         // wstx basic tests
         // these don't run at present because the WSCF protocol manager code cannot process the xml

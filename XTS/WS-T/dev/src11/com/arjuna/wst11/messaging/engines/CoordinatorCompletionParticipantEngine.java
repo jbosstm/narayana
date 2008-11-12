@@ -740,11 +740,17 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
      *
      * Completed -> Completed (resend Completed)
      */
-    private void commsTimeout()
+    private void commsTimeout(TimerTask caller)
     {
         final State current ;
         synchronized(this)
         {
+            if (timerTask != caller) {
+                // the timer was cancelled but it went off before it could be cancelled
+
+                return;
+            }
+
             current = state ;
         }
 
@@ -1074,7 +1080,7 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
             // restore previous state so we can retry the close otherwise we get stuck in state closing forever
             changeState(State.STATE_COMPLETED);
 
-            sendCompleted();
+            initiateTimer();
             return ;
         }
         // delete any log record for the participant
@@ -1091,7 +1097,7 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
 
                 changeState(State.STATE_COMPLETED);
 
-                sendCompleted();
+                initiateTimer();
 
                 return;
             }
@@ -1292,7 +1298,7 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
         {
             timerTask = new TimerTask() {
                 public void run() {
-                    commsTimeout() ;
+                    commsTimeout(this) ;
                 }
             } ;
             TransportTimer.getTimer().schedule(timerTask, TransportTimer.getTransportPeriod()) ;

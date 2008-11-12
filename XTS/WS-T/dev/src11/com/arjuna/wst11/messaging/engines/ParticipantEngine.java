@@ -533,11 +533,17 @@ public class ParticipantEngine implements ParticipantInboundEvents
      *
      * PreparedSuccess -> PreparedSuccess (resend Prepared)
      */
-    private void commsTimeout()
+    private void commsTimeout(TimerTask caller)
     {
         final State current ;
         synchronized(this)
         {
+            if (timerTask != caller) {
+                // the timer was cancelled but it went off before it could be cancelled
+
+                return;
+            }
+
             current = state ;
         }
 
@@ -769,7 +775,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
         {
             timerTask = new TimerTask() {
                 public void run() {
-                    commsTimeout() ;
+                    commsTimeout(this) ;
                 }
             } ;
             TransportTimer.getTimer().schedule(timerTask, TransportTimer.getTransportPeriod()) ;

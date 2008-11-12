@@ -70,18 +70,8 @@ public class MultiCompensate extends TestCase
             }
             throw eouter;
         }
-	    try {
+        // the cancel/compensate should succeed even though the participant fails to compensate
 	    uba.cancel();
-        } catch (SystemException ex) {
-            // we should get here
-            assertTrue(p.passed());
-        } catch (Exception eouter) {
-            try {
-                uba.cancel();
-            } catch(Exception einner) {
-            }
-            throw eouter;
-        }
-        fail("expected SystemError");
+        assertTrue(p.passed());
 	}
 }

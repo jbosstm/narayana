@@ -342,8 +342,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         }
         else if ((current == State.STATE_CANCELING) || (current == State.STATE_COMPENSATING))
         {
-            sendFailed() ;
-            ended() ;
+            executeFail(fail.getExceptionIdentifier()) ;
         }
         else if (current == State.STATE_ENDED)
         {

@@ -838,7 +838,7 @@ public class ParticipantRecord extends
     public final boolean isParticipantCompletion ()
     {
         // n.b. this is ok if _resourceHandle is null
-        return (_resourceHandle instanceof ParticipantWithComplete);
+        return !(_resourceHandle instanceof ParticipantWithComplete);
     }
 
 	/*
