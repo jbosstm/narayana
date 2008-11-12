@@ -83,6 +83,15 @@ public class TestParticipantCompletionParticipantProcessor extends ParticipantCo
     public void deactivateParticipant(ParticipantCompletionParticipantInboundEvents participant) {
     }
 
+    /**
+     * Check whether a participant with the given id is currently active
+     *
+     * @param identifier The identifier.
+     */
+    public boolean isActive(String identifier) {
+        return false;
+    }
+
     public void cancel(NotificationType cancel, AddressingContext addressingContext, ArjunaContext arjunaContext)
     {
         final String messageId = addressingContext.getMessageID().getValue() ;

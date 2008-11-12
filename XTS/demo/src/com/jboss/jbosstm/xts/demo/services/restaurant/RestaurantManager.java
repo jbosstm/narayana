@@ -29,6 +29,8 @@
 
 package com.jboss.jbosstm.xts.demo.services.restaurant;
 
+import com.arjuna.wst.FaultedException;
+
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.io.*;
@@ -47,8 +49,15 @@ import java.io.*;
  *
  * <li>nTotal == nFree + nPrepared + nCommitted
  * </ul>
- * changes to nPrepared, nFree, nCommitted, nTotal and preparedList are always shadowed in
- * persistent storage before returning control to clients.
+ * Extended to include support for BA compensation based rollback
+ * </p>
+ * The manager now maintains an extra list compensatableList:
+ *  <ul>
+ * <li>nCompensatable == sum(compensatableList.seatCount)
+ * </ul>
+ * changes to nPrepared, nFree, nCommitted, nCompensatable, nTotal, preparedList and compensatableList are
+ * always shadowed in persistent storage before returning control to clients.
+ * </p>
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
@@ -202,6 +211,64 @@ public class RestaurantManager implements Serializable
     }
 
     /**
+     * Compensate a committed booking.
+     *
+     * @param txID The transaction identifier
+     * @return true on success, false otherwise
+     */
+    public synchronized boolean compensateSeats(Object txID)
+            throws FaultedException
+    {
+        boolean success = false;
+
+        // the transaction must be compensatable
+
+        if (compensatableTransactions.containsKey(txID))
+        {
+            // see if the user wants to report a compensation fault
+            
+            if (!autoCommitMode)
+            {
+                try
+                {
+                    // wait for a user commit/rollback decision
+                    isPreparationWaiting = true;
+                    synchronized (preparation)
+                    {
+                        preparation.wait();
+                    }
+                    isPreparationWaiting = false;
+
+                    // process the user decision
+                    if (!isCommit)
+                    {
+                        throw new FaultedException("RestaurantManager.compensateSeats(): compensation fault");
+                    }
+                }
+                catch (Exception e)
+                {
+                    System.err.println("RestaurantManager.compensateSeats(): Unexpected error during compensation.");
+                    throw new FaultedException("RestaurantManager.compensateSeats(): compensation fault");
+                }
+            }
+
+            // compensate the committed transaction
+            Integer request = (Integer) compensatableTransactions.remove(txID);
+            nCompensatableSeats -= request.intValue();
+
+            nCommittedSeats -= request.intValue();
+            nFreeSeats += request.intValue();
+            updateState();
+            success = true;
+        }
+        else
+        {
+            success = false; // error: transaction not registered
+        }
+        return success;
+    }
+
+    /**
      * Commit seat bookings.
      *
      * @param txID The transaction identifier
@@ -209,7 +276,19 @@ public class RestaurantManager implements Serializable
      */
     public synchronized boolean commitSeats(Object txID)
     {
-        boolean success = false;
+        return commitSeats(txID, false);
+    }
+
+    /**
+     * Commit seat bookings, possibly allowing subsequent compensation.
+     *
+     * @param txID The transaction identifier
+     * @param compensatable true if it may be necessary to compensate this commit laer
+     * @return true on success, false otherwise
+     */
+    public synchronized boolean commitSeats(Object txID, boolean compensatable)
+    {
+        boolean success;
 
         // the transaction may be prepared, unprepared or unknown
 
@@ -217,6 +296,10 @@ public class RestaurantManager implements Serializable
         {
             // complete the prepared transaction
             Integer request = (Integer) preparedTransactions.remove(txID);
+            if (compensatable) {
+                nCompensatableSeats += request.intValue();
+                compensatableTransactions.put(txID, request);
+            }
             nCommittedSeats += request.intValue();
             nPreparedSeats -= request.intValue();
             nBookedSeats -= request.intValue();
@@ -225,17 +308,88 @@ public class RestaurantManager implements Serializable
         }
         else if (unpreparedTransactions.containsKey(txID))
         {
-            // use one phase commit optimisation, skipping prepare
             Integer request = (Integer) unpreparedTransactions.remove(txID);
-            nCommittedSeats += request.intValue();
-            nFreeSeats -= request.intValue();
-            nBookedSeats -= request.intValue();
+            boolean doCommit;
+            // check we have enough seats and if so
+            // use one phase commit optimisation, skipping prepare
+
+            if (autoCommitMode)
+            {
+                if (request.intValue() <= nFreeSeats)
+                {
+                    doCommit = true;
+                } else {
+                    doCommit = false;
+                }
+            }
+            else
+            {
+                try
+                {
+                    // wait for a user decision
+                    isPreparationWaiting = true;
+                    synchronized (preparation)
+                    {
+                        preparation.wait();
+                    }
+                    isPreparationWaiting = false;
+
+                    // process the user decision
+                    doCommit = isCommit;
+                } catch (Exception e) {
+                    System.err.println("RestaurantManager.commitSeats(): Unable to perform commit.");
+                    doCommit = false;
+                }
+            }
+
+            if (doCommit) {
+                if (compensatable) {
+                    nCompensatableSeats += request.intValue();
+                    compensatableTransactions.put(txID, request);
+                }
+                nCommittedSeats += request.intValue();
+                nFreeSeats -= request.intValue();
+                nBookedSeats -= request.intValue();
+                updateState();
+                success = true;
+            } else {
+                // get rid of the commitment to keep these seats
+                nBookedSeats -= request.intValue();
+                success = false;
+            }
+        }
+        else
+        {
+            success = false; // error: transaction not registered
+        }
+
+        return success;
+    }
+
+    /**
+     * Close seat bookings, removing possibility for compensation.
+     *
+     * @param txID The transaction identifier
+     * @return true on success, false otherwise
+     */
+    public synchronized boolean closeSeats(Object txID)
+    {
+        boolean success;
+
+        // the transaction may be compensatable or unknown
+
+        if (compensatableTransactions.containsKey(txID))
+        {
+            // complete the prepared transaction
+            Integer request = (Integer) compensatableTransactions.remove(txID);
+
+            nCompensatableSeats -= request.intValue();
             updateState();
             success = true;
         }
         else
         {
-            success = false; // error: transaction not registered
+            success = false; // error: transaction not registered for compensation
         }
 
         return success;
@@ -312,6 +466,16 @@ public class RestaurantManager implements Serializable
     public int getNCommittedSeats()
     {
         return nCommittedSeats;
+    }
+
+    /**
+     * Get the number of compensatable seats in the given area.
+     *
+     * @return The number of compensatable seats
+     */
+    public int getNCompensatableSeats()
+    {
+        return nCompensatableSeats;
     }
 
     /**
@@ -395,6 +559,8 @@ public class RestaurantManager implements Serializable
         nBookedSeats = 0;
         nPreparedSeats = 0;
         nCommittedSeats = 0;
+        nCompensatableSeats = 0;
+        compensatableTransactions = new Hashtable();
         preparedTransactions = new Hashtable();
         unpreparedTransactions = new Hashtable();
         autoCommitMode = true;
@@ -454,6 +620,11 @@ public class RestaurantManager implements Serializable
     private int nCommittedSeats;
 
     /**
+     * The number of compensatable seats in each area.
+     */
+    private int nCompensatableSeats;
+
+    /**
      * The auto commit mode.
      * <p/>
      * true = automatically commit, false = manually commit
@@ -484,6 +655,11 @@ public class RestaurantManager implements Serializable
      * The transactions we know about and are prepared to commit.
      */
     private Hashtable preparedTransactions;
+
+    /**
+     * The transactions we know about and are prepared to compensate.
+     */
+    private Hashtable compensatableTransactions;
 
     /**
      * The default initial capacity of each seating area.
@@ -575,8 +751,16 @@ public class RestaurantManager implements Serializable
         nFreeSeats = ois.readInt();
         nPreparedSeats = ois.readInt();
         nCommittedSeats = ois.readInt();
-        preparedTransactions = new Hashtable();
+        nCompensatableSeats = ois.readInt();
+        compensatableTransactions = new Hashtable();
         String name = (String)ois.readObject();
+        while (!"".equals(name)) {
+            int count = ois.readInt();
+            compensatableTransactions.put(name, new Integer(count));
+            name = (String)ois.readObject();
+        }
+        preparedTransactions = new Hashtable();
+        name = (String)ois.readObject();
         while (!"".equals(name)) {
             int count = ois.readInt();
             preparedTransactions.put(name, new Integer(count));
@@ -602,7 +786,16 @@ public class RestaurantManager implements Serializable
         oos.writeInt(nFreeSeats);
         oos.writeInt(nPreparedSeats);
         oos.writeInt(nCommittedSeats);
-        Enumeration keys = preparedTransactions.keys();
+        oos.writeInt(nCompensatableSeats);
+        Enumeration keys = compensatableTransactions.keys();
+        while (keys.hasMoreElements()) {
+            String name = (String)keys.nextElement();
+            int count = ((Integer)compensatableTransactions.get(name)).intValue();
+            oos.writeObject(name);
+            oos.writeInt(count);
+        }
+        oos.writeObject("");
+        keys = preparedTransactions.keys();
         while (keys.hasMoreElements()) {
             String name = (String)keys.nextElement();
             int count = ((Integer)preparedTransactions.get(name)).intValue();

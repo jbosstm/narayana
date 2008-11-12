@@ -32,6 +32,8 @@ package com.jboss.jbosstm.xts.demo.services.theatre;
 import com.arjuna.wst.*;
 import com.arjuna.ats.arjuna.common.Uid;
 
+import java.io.Serializable;
+
 /**
  * An adapter class that exposes the TheatreManager transaction lifecycle
  * API as a WS-T Business Activity participant.
@@ -40,7 +42,7 @@ import com.arjuna.ats.arjuna.common.Uid;
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
  */
-public class TheatreParticipantBA implements BusinessAgreementWithParticipantCompletionParticipant
+public class TheatreParticipantBA implements BusinessAgreementWithParticipantCompletionParticipant, Serializable
 {
     /**
      * Participant instances are related to business method calls
@@ -52,9 +54,6 @@ public class TheatreParticipantBA implements BusinessAgreementWithParticipantCom
      */
     public TheatreParticipantBA(String txID, int how_many, int which_area)
     {
-        // Binds to the singleton TheatreView and TheatreManager
-        theatreManager = TheatreManager.getSingletonInstance();
-        theatreView = TheatreView.getSingletonInstance();
         // we need to save the txID for later use when logging
         this.txID = txID;
         // we also need the business paramater(s) in case of compensation
@@ -72,12 +71,19 @@ public class TheatreParticipantBA implements BusinessAgreementWithParticipantCom
 
     public void close() throws WrongStateException, SystemException
     {
-        // for logging only. This impl does not do anything else here.
+        // let the manager know that this activity no longer requires the option of compensation
 
         System.out.println("TheatreParticipantBA.close");
 
-        theatreView.addMessage("id:" + txID + ". Close called on participant: " + this.getClass());
-        theatreView.updateFields();
+        if (!getTheatreManager().closeSeats(txID)) {
+            // throw a WrongStateException to indicate that we were not expecting a close
+            System.out.println("TheatreParticipantBA.close : not expecting a close for BA participant " + txID);
+
+            throw new WrongStateException("Unexpected close for BA participant " + txID);
+        }
+
+        getTheatreView().addMessage("id:" + txID + ". Close called on participant: " + this.getClass());
+        getTheatreView().updateFields();
     }
 
     /**
@@ -91,12 +97,19 @@ public class TheatreParticipantBA implements BusinessAgreementWithParticipantCom
 
     public void cancel() throws WrongStateException, SystemException
     {
-        // we will always have called completed or error, so this can be a null op.
+        // let the manager know that this activity has been cancelled
 
         System.out.println("TheatreParticipantBA.cancel");
 
-        theatreView.addMessage("id:" + txID + ". Cancel called on participant: " + this.getClass().toString());
-        theatreView.updateFields();
+        if (!getTheatreManager().cancelSeats(txID)) {
+            // throw a WrongStateException to indicate that we were not expecting a close
+            System.out.println("TheatreParticipantBA.cancel : not expecting a cancel for BA participant " + txID);
+
+            throw new WrongStateException("Unexpected cancel for BA participant " + txID);
+        }
+
+        getTheatreView().addMessage("id:" + txID + ". Cancel called on participant: " + this.getClass().toString());
+        getTheatreView().updateFields();
     }
 
     /**
@@ -112,42 +125,29 @@ public class TheatreParticipantBA implements BusinessAgreementWithParticipantCom
     {
         System.out.println("TheatreParticipantBA.compensate");
 
-        // Log the event and perform a compensating transaction
-        // on the backend business logic if needed.
+        getTheatreView().addPrepareMessage("id:" + txID + ". Attempting to compensate participant: " + this.getClass().toString());
 
-        theatreView.addPrepareMessage("id:" + txID + ". Compensate called on participant: " + this.getClass().toString());
-        theatreView.updateFields();
+        getTheatreView().updateFields();
 
-        if (seatCount > 0)
-        {
-            String compensatingTxID = new Uid().toString();
-            // use a negative number of seats to 'reverse' the previous booking
-            // This technique (hack) prevents us needing new business logic to support compensation.
-            theatreManager.bookSeats(compensatingTxID, seatCount * -1, seatingArea);
-            theatreView.updateFields();
+        // tell the manager to compensate
 
-            boolean success = false;
-            if(theatreManager.prepareSeats(compensatingTxID))
-            {
-                if (theatreManager.commitSeats(compensatingTxID))
-                {
-                    theatreView.addMessage("id:" + txID + " Compensating transaction completed sucessfully.");
-                    theatreView.updateFields();
-                    success = true;
-                }
+        try {
+            if (!getTheatreManager().compensateSeats(txID)) {
+                // throw a WrongStateException to indicate that we were not expecting a close
+                System.out.println("TheatreParticipantBA.compensate : not expecting a compensate for BA participant " + txID);
+
+                throw new WrongStateException("Unexpected compensate for BA participant " + txID);
             }
-            else
-            {
-                theatreManager.cancelSeats(compensatingTxID);
-            }
+        } catch (FaultedException fe) {
+            getTheatreView().addMessage("id:" + txID + ". FaultedException when compensating participant: " + this.getClass().toString());
 
-            if(!success)
-            {
-                theatreView.addMessage("id:" + txID + " Compensation failed. Throwing FaultedException\n");
-                theatreView.updateFields();
-                throw new FaultedException("Compensating transaction failed.");
-            }
+            getTheatreView().updateFields();
+            throw fe;
         }
+
+        getTheatreView().addMessage("id:" + txID + ". Compensated participant: " + this.getClass().toString());
+
+        getTheatreView().updateFields();
     }
     
     public String status()
@@ -182,13 +182,11 @@ public class TheatreParticipantBA implements BusinessAgreementWithParticipantCom
      */
     protected int seatingArea;
 
-    /**
-     * The TheatreView object to log events through.
-     */
-    protected static TheatreView theatreView;
+    public TheatreView getTheatreView() {
+        return TheatreView.getSingletonInstance();
+    }
 
-    /**
-     * The TheatreManager to perform business logic operations on.
-     */
-    protected static TheatreManager theatreManager;
+    public TheatreManager getTheatreManager() {
+        return TheatreManager.getSingletonInstance();
+    }
 }

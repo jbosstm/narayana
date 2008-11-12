@@ -177,7 +177,41 @@ public class BAParticipantManagerImple implements BAParticipantManager
 
     public void cannotComplete () throws WrongStateException, UnknownTransactionException, SystemException
     {
-        exit();
+        try
+        {
+            if (_hier == null)
+                throw new UnknownTransactionException();
+
+                _coordManager.resume(_hier);
+
+                _coordManager.participantCannotComplete(_participantId);
+
+                _coordManager.suspend();
+        }
+        catch (final InvalidActivityException iae)
+        {
+            throw new SystemException("UnknownTransactionException");
+        }
+        catch (final UnknownTransactionException ute)
+        {
+            throw new SystemException("UnknownTransactionException");
+        }
+        catch (com.arjuna.mw.wscf.exceptions.InvalidParticipantException ex)
+        {
+            throw new SystemException("UnknownParticipantException");
+        }
+        catch (com.arjuna.mw.wsas.exceptions.WrongStateException ex)
+        {
+            throw new WrongStateException();
+        }
+            catch (com.arjuna.mw.wsas.exceptions.NoActivityException ex)
+        {
+            throw new SystemException("UnknownTransactionException");
+        }
+        catch (com.arjuna.mw.wsas.exceptions.SystemException ex)
+        {
+            throw new SystemException(ex.toString());
+        }
     }
 
     public void error () throws SystemException

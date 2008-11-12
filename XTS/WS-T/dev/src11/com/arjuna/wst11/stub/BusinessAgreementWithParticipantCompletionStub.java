@@ -47,8 +47,10 @@ import com.arjuna.wst.PersistableParticipant;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine;
+import com.arjuna.wst11.RecoverableBusinessAgreementWithParticipantCompletionParticipant;
+import com.arjuna.wst11.BAParticipantManager;
 
-public class BusinessAgreementWithParticipantCompletionStub implements BusinessAgreementWithParticipantCompletionParticipant, PersistableParticipant
+public class BusinessAgreementWithParticipantCompletionStub implements RecoverableBusinessAgreementWithParticipantCompletionParticipant, PersistableParticipant
 {
     private static final QName QNAME_BAPCWS_PARTICIPANT = new QName("bapcwsParticipant") ;
 
@@ -58,6 +60,15 @@ public class BusinessAgreementWithParticipantCompletionStub implements BusinessA
         throws Exception
     {
         this.participant = participant ;
+    }
+
+    /**
+     * constructor for use during recovery
+     * @throws Exception
+     */
+    public BusinessAgreementWithParticipantCompletionStub()
+    {
+        this.participant = null ;
     }
 
     public synchronized void close ()
@@ -88,7 +99,7 @@ public class BusinessAgreementWithParticipantCompletionStub implements BusinessA
     }
 
     public synchronized void cancel ()
-        throws WrongStateException, SystemException
+        throws FaultedException, WrongStateException, SystemException
     {
         /*
          * Active -> illegal state
@@ -107,6 +118,10 @@ public class BusinessAgreementWithParticipantCompletionStub implements BusinessA
         if (state == State.STATE_CANCELING)
         {
             throw new SystemException() ;
+        }
+        else if (state != State.STATE_FAILING_CANCELING)
+        {
+            throw new FaultedException() ;
         }
         else if (state != State.STATE_ENDED)
         {
@@ -181,7 +196,7 @@ public class BusinessAgreementWithParticipantCompletionStub implements BusinessA
             StreamHelper.writeEndElement(writer, null, null) ;
             writer.close() ;
 
-            oos.packString(writer.toString()) ;
+            oos.packString(sw.toString()) ;
 
             final State state = participant.getStatus();
             final QName stateName = state.getValue();
@@ -214,7 +229,7 @@ public class BusinessAgreementWithParticipantCompletionStub implements BusinessA
             // this should successfully reverse the save process
             final XMLStreamReader reader = SoapUtils.getXMLStreamReader(new StringReader(eprValue)) ;
             StreamHelper.checkNextStartTag(reader, QNAME_BAPCWS_PARTICIPANT) ;
-            String eprefText = reader.getText();
+            String eprefText = reader.getElementText();
             StreamSource source = new StreamSource(new StringReader(eprefText));
             final W3CEndpointReference endpointReference = new W3CEndpointReference(source);
 
@@ -231,7 +246,25 @@ public class BusinessAgreementWithParticipantCompletionStub implements BusinessA
             QName statename = new QName(ns, localPart, prefix);
             State state = State.toState11(statename);
 
-            participant = new ParticipantCompletionCoordinatorEngine(id, endpointReference, state);
+            participant = new ParticipantCompletionCoordinatorEngine(id, endpointReference, state, true);
+            // TODO -- work out how to fix this
+            // we need to obtain a participant manager allowing the engine to post events to the coordinator
+            // the normal one is obtained from the BusinessAgreementWithParticipantCompletionImple which wraps
+            // this stub. the registrar normally creates an engine, a stub and a BAWCPImple. it asks the BAWPCImple
+            // for a participant manager and passes it to the engine. to make things worse, the BAWPCImple relies
+            // upon being created inside an activity which identifies the relevant coordinator. this is because
+            // the manager it creates needs to access the coordinator and it uses the current activity to provide
+            // an access path. we cannot do this here because 1) the restore_state protocol is a simple top-down
+            // recursive model so does not give us a handle on either the enclosing BAWCImple or the ACCoordinator
+            // and 2) the BAWCImple does not know about the implementation of this stub so cannot access the engine
+            // it wraps and 3) we cannot install an activity at this point during recovery as we are still creating
+            // the coordinator which will coordinate it.
+            //
+            // if we obtain a handle on the current coordinator we can just create an alternative proxy to route
+            // messages directly, avoiding the activity hierarchy.
+            //
+            //participantManager = ???;
+            // participant.setCoordinator(participantManager) ;
             return true ;
         }
         catch (final Throwable th)
@@ -239,5 +272,14 @@ public class BusinessAgreementWithParticipantCompletionStub implements BusinessA
             WSTLogger.arjLoggerI18N.error("com.arjuna.wst11.stub.BusinessAgreementWithParticipantCompletionStub_3", th) ;
             return false ;
         }
+    }
+
+    /**
+     * establish  a back channel from the coordinator side protocol engine to the coordinator.
+     *
+     * @param participantManager a manager which will forward incoming remote participant requests to the coordinator
+     */
+    public void setParticipantManager(BAParticipantManager participantManager) {
+        participant.setCoordinator(participantManager);
     }
 }

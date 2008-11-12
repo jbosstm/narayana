@@ -27,14 +27,13 @@ import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsba.ParticipantCompletionCoordinatorInboundEvents;
-import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsba.client.ParticipantCompletionParticipantClient;
 import com.arjuna.webservices11.wsba.processors.ParticipantCompletionCoordinatorProcessor;
-import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.messaging.MessageId;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.ExceptionType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
+import org.jboss.jbossts.xts.recovery.participant.ba.XTSBARecoveryManager;
 
 import javax.xml.ws.addressing.AddressingProperties;
 
@@ -190,6 +189,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
      *
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_1] - Unexpected exception thrown from completed:
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_2 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_2] - Completed called on unknown coordinator: {0}
+     * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_3 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_3] - Ignoring completed called on unidentified coordinator until recovery pass is complete: {0}
      */
     public void completed(final NotificationType completed, final AddressingProperties addressingProperties,
         final ArjunaContext arjunaContext)
@@ -213,7 +213,13 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
         }
         else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_2", new Object[] {instanceIdentifier}) ;
+            if (areRecoveryLogEntriesAccountedFor()) {
+                // this is a resend for a lost participant
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_2", new Object[] {instanceIdentifier}) ;
+            } else {
+                // this may be a resend for a participant still pending recovery
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_3", new Object[] {instanceIdentifier}) ;
+            }
         }
     }
 
@@ -245,10 +251,12 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
                     WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_1", th) ;
                 }
             }
-        }
-        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
-        {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_2", new Object[] {instanceIdentifier}) ;
+        } else {
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_2", new Object[] {instanceIdentifier}) ;
+            }
+
             sendNotCompleted(addressingProperties, arjunaContext) ;
         }
     }
@@ -280,9 +288,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
                     WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.exit_1", th) ;
                 }
             }
-        }
-        else
-        {
+        } else {
             if (WSTLogger.arjLoggerI18N.isDebugEnabled())
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.exit_2", new Object[] {instanceIdentifier}) ;
@@ -292,13 +298,14 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
     }
 
     /**
-     * Fault.
-     * @param fail The fault notification.
+     * Fail.
+     * @param fail The fail notification.
      * @param addressingProperties The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fault_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fault_1] - Unexpected exception thrown from fault:
-     * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fault_2 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fault_2] - Fault called on unknown coordinator: {0}
+     * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_1] - Unexpected exception thrown from fail:
+     * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_2 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_2] - Fail called on unknown coordinator: {0}
+     * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_3 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_3] - Ignoring fail called on unidentified coordinator until recovery pass is complete: {0}
      */
     public void fail(final ExceptionType fail, final AddressingProperties addressingProperties,
         final ArjunaContext arjunaContext)
@@ -316,17 +323,22 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
             {
                 if (WSTLogger.arjLoggerI18N.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fault_1", th) ;
+                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_1", th) ;
                 }
             }
-        }
-        else
-        {
+        } else if (areRecoveryLogEntriesAccountedFor()) {
+            // we can respond with a failed as the participant is not pending recovery
             if (WSTLogger.arjLoggerI18N.isDebugEnabled())
             {
-                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fault_2", new Object[] {instanceIdentifier}) ;
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_2", new Object[] {instanceIdentifier}) ;
             }
             sendFailed(addressingProperties, arjunaContext) ;
+        } else {
+            // we must delay responding until we can be sure there is no participant pending recovery
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_3", new Object[] {instanceIdentifier}) ;
+            }
         }
     }
 
@@ -360,7 +372,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
         }
         else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_2", new Object[] {instanceIdentifier}) ;
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_2", new Object[] {instanceIdentifier}) ;
         }
     }
 
@@ -461,12 +473,12 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
     }
 
     /**
-     * Send a faulted message.
+     * Send a failed message.
      *
      * @param addressingProperties The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendFaulted_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendFaulted_1] - Unexpected exception while sending Faulted
+     * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendFailed_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendFailed_1] - Unexpected exception while sending Failed
      */
     private void sendFailed(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
     {
@@ -512,5 +524,16 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendNotCompleted_1", th) ;
             }
         }
+    }
+
+    /**
+     * Tests if there may be unknown coordinator entries in the recovery log.
+     *
+     * @return false if there may be unknown coordinator entries in the recovery log.
+     */
+
+    private static boolean areRecoveryLogEntriesAccountedFor()
+    {
+        return XTSBARecoveryManager.getRecoveryManager().isCoordinatorRecoveryStarted();
     }
 }

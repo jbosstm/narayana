@@ -29,6 +29,8 @@
 
 package com.arjuna.xts.nightout.services.Theatre;
 
+import com.arjuna.wst.FaultedException;
+
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.io.*;
@@ -47,8 +49,15 @@ import java.io.*;
  *
  * <li>nTotal[area] == nFree[area] + nPrepared[area] + nCommitted[area]
  * </ul>
- * changes to nPrepared, nFree, nCommitted, nTotal and preparedList are always shadowed in
- * persistent storage before returning control to clients.
+ * Extended to include support for BA compensation based rollback
+ * </p>
+ * The manager now maintains an extra list compensatableList:
+ *  <ul>
+ * <li>nCompensatable[area] == sum(compensatableList.seatCount[area])
+ * </ul>
+ * changes to nPrepared, nFree, nCommitted, nCompensatable, nTotal, preparedList and compensatableList are
+ * always shadowed in persistent storage before returning control to clients.
+ * </p>
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.4 $
@@ -231,12 +240,85 @@ public class TheatreManager implements Serializable
     }
 
     /**
+     * Compensate a booking.
+     *
+     * @param txID The transaction identifier
+     * @return true on success, false otherwise
+     */
+    public boolean compensateSeats(Object txID)
+            throws FaultedException
+    {
+        boolean success = false;
+
+        // the transaction must be compensatable
+
+        if (compensatableTransactions.containsKey(txID))
+        {
+            // see if the user wants to report a compensation fault
+
+            if (!autoCommitMode)
+            {
+                try
+                {
+                    // wait for a user commit/rollback decision
+                    isPreparationWaiting = true;
+                    synchronized (preparation)
+                    {
+                        preparation.wait();
+                    }
+                    isPreparationWaiting = false;
+
+                    // process the user decision
+                    if (!isCommit)
+                    {
+                        throw new FaultedException("TheatreManager.compensateSeats(): compensation fault");
+                    }
+                }
+                catch (Exception e)
+                {
+                    System.err.println("TheatreManager.compensateSeats(): Unexpected error during compensation.");
+                    throw new FaultedException("TheatreManager.compensateSeats(): compensation fault");
+                }
+            }
+
+            // compensate the prepared transaction
+            Integer[] requests = (Integer[]) compensatableTransactions.remove(txID);
+            for (int i = 0; i < NUM_SEAT_AREAS; i++)
+            {
+                nCompensatableSeats[i] -= requests[i].intValue();
+                nCommittedSeats[i] -= requests[i].intValue();
+                nFreeSeats[i] += requests[i].intValue();
+            }
+            updateState();
+            success = true;
+        }
+        else
+        {
+            success = false; // error: transaction not registered
+        }
+
+        return success;
+    }
+
+    /**
      * Commit seat bookings.
      *
      * @param txID The transaction identifier
      * @return true on success, false otherwise
      */
     public boolean commitSeats(Object txID)
+    {
+        return commitSeats(txID, false);
+    }
+
+    /**
+     * Commit seat bookings, possibly allowing subsequent compensation.
+     *
+     * @param txID The transaction identifier
+     * @param compensatable true if it may be necessary to compensate this commit laer
+     * @return true on success, false otherwise
+     */
+    public synchronized boolean commitSeats(Object txID, boolean compensatable)
     {
         boolean success = false;
 
@@ -247,8 +329,15 @@ public class TheatreManager implements Serializable
 
             // complete the prepared transaction
             Integer[] requests = (Integer[]) preparedTransactions.remove(txID);
+            if (compensatable)
+            {
+                compensatableTransactions.put(txID, requests);
+            }
             for (int i = 0; i < NUM_SEAT_AREAS; i++)
             {
+                if (compensatable) {
+                    nCompensatableSeats[i] += requests[i].intValue();
+                }
                 nCommittedSeats[i] += requests[i].intValue();
                 nPreparedSeats[i] -= requests[i].intValue();
                 nBookedSeats[i] -= requests[i].intValue();
@@ -260,18 +349,96 @@ public class TheatreManager implements Serializable
         {
             // use one phase commit optimisation, skipping prepare
             Integer[] requests = (Integer[]) unpreparedTransactions.remove(txID);
-            for (int i = 0; i < NUM_SEAT_AREAS; i++)
+            boolean doCommit = true;
+            // check we have enough seats and if so
+            // use one phase commit optimisation, skipping prepare
+
+            if (autoCommitMode)
             {
-                nCommittedSeats[i] += requests[i].intValue();
-                nFreeSeats[i] -= requests[i].intValue();
-                nBookedSeats[i] -= requests[i].intValue();
+                for (int i = 0; doCommit && i < NUM_SEAT_AREAS; i++)
+                {
+                    if (requests[i].intValue() > nFreeSeats[i])
+                    {
+                        doCommit = false;
+                    }
+                }
+            }
+            else
+            {
+                try
+                {
+                    // wait for a user decision
+                    isPreparationWaiting = true;
+                    synchronized (preparation)
+                    {
+                        preparation.wait();
+                    }
+                    isPreparationWaiting = false;
+
+                    // process the user decision
+                    doCommit = isCommit;
+                } catch (Exception e) {
+                    System.err.println("TheatreManager.commitSeats(): Unable to perform commit.");
+                    doCommit = false;
+                }
+            }
+
+            if (doCommit) {
+                if (compensatable) {
+                    compensatableTransactions.put(txID, requests);
+                }
+                for (int i = 0; i < NUM_SEAT_AREAS; i++)
+                {
+                    if (compensatable) {
+                        nCompensatableSeats[i] += requests[i].intValue();
+                    }
+                    nCommittedSeats[i] += requests[i].intValue();
+                    nFreeSeats[i] -= requests[i].intValue();
+                    nBookedSeats[i] -= requests[i].intValue();
+                }
+                updateState();
+                success = true;
+            } else {
+                // get rid of the commitment to keep these seats
+                for (int i = 0; i < NUM_SEAT_AREAS; i++)
+                {
+                    nBookedSeats[i] -= requests[i].intValue();
+                }
+                success = false;
+            }
+        }
+        else
+        {
+            success = false; // error: transaction not registered
+        }
+
+        return success;
+    }
+    /**
+     * Close seat bookings, removing possibility for compensation.
+     *
+     * @param txID The transaction identifier
+     * @return true on success, false otherwise
+     */
+    public synchronized boolean closeSeats(Object txID)
+    {
+        boolean success;
+
+        // the transaction may be compensatable or unknown
+
+        if (compensatableTransactions.containsKey(txID))
+        {
+            // complete the prepared transaction
+            Integer[] requests = (Integer[]) compensatableTransactions.remove(txID);
+            for (int i = 0; i < NUM_SEAT_AREAS; i++) {
+                nCompensatableSeats[i] -= requests[i].intValue();
             }
             updateState();
             success = true;
         }
         else
         {
-            success = false; // error: transaction not registered
+            success = false; // error: transaction not registered for compensation
         }
 
         return success;
@@ -357,6 +524,16 @@ public class TheatreManager implements Serializable
     }
 
     /**
+     * Get the number of compensatable seats in the given area.
+     *
+     * @return The number of compensatable seats
+     */
+    public int getNCompensatableSeats(int area)
+    {
+        return nCompensatableSeats[area];
+    }
+
+    /**
      * Determine the autoCommit status of the instance.
      *
      * @return true if autoCommit mode is active, false otherwise
@@ -434,6 +611,7 @@ public class TheatreManager implements Serializable
         nBookedSeats = new int[NUM_SEAT_AREAS];
         nPreparedSeats = new int[NUM_SEAT_AREAS];
         nCommittedSeats = new int[NUM_SEAT_AREAS];
+        nCompensatableSeats = new int[NUM_SEAT_AREAS];
         for (int i = 0; i < NUM_SEAT_AREAS; i++)
         {
             nTotalSeats[i] = DEFAULT_SEATING_CAPACITY;
@@ -441,7 +619,9 @@ public class TheatreManager implements Serializable
             nBookedSeats[i] = 0;
             nPreparedSeats[i] = 0;
             nCommittedSeats[i] = 0;
+            nCompensatableSeats[i] = 0;
         }
+        compensatableTransactions = new Hashtable();
         preparedTransactions = new Hashtable();
         unpreparedTransactions = new Hashtable();
         autoCommitMode = true;
@@ -506,6 +686,11 @@ public class TheatreManager implements Serializable
     private int[] nCommittedSeats;
 
     /**
+     * The number of compensatable seats in each area.
+     */
+    private int[] nCompensatableSeats;
+
+    /**
      * The auto commit mode.
      * <p/>
      * true = automatically commit, false = manually commit
@@ -536,6 +721,11 @@ public class TheatreManager implements Serializable
      * The transactions we know about and are prepared to commit.
      */
     private Hashtable preparedTransactions;
+
+    /**
+     * The transactions we know about and are prepared to compensate.
+     */
+    private Hashtable compensatableTransactions;
 
     /**
      * Constant (array index) used for the seating area CIRCLE.
@@ -648,9 +838,21 @@ public class TheatreManager implements Serializable
             nFreeSeats[i] = ois.readInt();
             nPreparedSeats[i] = ois.readInt();
             nCommittedSeats[i] = ois.readInt();
+            nCompensatableSeats[i] = ois.readInt();
+        }
+        compensatableTransactions = new Hashtable();
+        String name = (String)ois.readObject();
+        while (!"".equals(name)) {
+            Integer[] counts = new Integer[NUM_SEAT_AREAS];
+            for (int i = 0; i < NUM_SEAT_AREAS; i++) {
+                int count = ois.readInt();
+                counts[i] = new Integer(count);
+            }
+            compensatableTransactions.put(name, counts);
+            name = (String)ois.readObject();
         }
         preparedTransactions = new Hashtable();
-        String name = (String)ois.readObject();
+        name = (String)ois.readObject();
         while (!"".equals(name)) {
             Integer[] counts = new Integer[NUM_SEAT_AREAS];
             for (int i = 0; i < NUM_SEAT_AREAS; i++) {
@@ -683,8 +885,19 @@ public class TheatreManager implements Serializable
             oos.writeInt(nFreeSeats[i]);
             oos.writeInt(nPreparedSeats[i]);
             oos.writeInt(nCommittedSeats[i]);
+            oos.writeInt(nCompensatableSeats[i]);
         }
-        Enumeration keys = preparedTransactions.keys();
+        Enumeration keys = compensatableTransactions.keys();
+        while (keys.hasMoreElements()) {
+            String name = (String)keys.nextElement();
+            Integer[] counts = (Integer[]) compensatableTransactions.get(name);
+            oos.writeObject(name);
+            for (int i = 0; i < NUM_SEAT_AREAS; i++) {
+                oos.writeInt(counts[i].intValue());
+            }
+        }
+        oos.writeObject("");
+        keys = preparedTransactions.keys();
         while (keys.hasMoreElements()) {
             String name = (String)keys.nextElement();
             Integer[] counts = (Integer[]) preparedTransactions.get(name);

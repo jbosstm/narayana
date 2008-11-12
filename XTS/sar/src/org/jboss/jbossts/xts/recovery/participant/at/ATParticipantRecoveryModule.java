@@ -41,12 +41,8 @@ import org.jboss.jbossts.xts.recovery.participant.at.ATParticipantRecoveryRecord
 
 /**
  * This class is a plug-in module for the recovery manager.
- * It is responsible for recovering failed XTS (ACCoordinator) transactions.
- *
- * Responsible for recovering instances of XTS Transaction Coordinators
- * (com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.ACCoordinator)
- * Modelled on com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
- * TODO: refactor this and AtomicActionRecoveryModule to remove duplication?
+ * It is responsible for recovering XTS AT participants.
+ * (instances of org.jboss.jbossts.xts.recovery.participant.at.ATParticipantRecoveryRecord)
  *
  * $Id$
  *

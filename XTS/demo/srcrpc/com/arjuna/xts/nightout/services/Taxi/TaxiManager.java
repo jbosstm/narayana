@@ -29,6 +29,8 @@
 
 package com.arjuna.xts.nightout.services.Taxi;
 
+import com.arjuna.wst.FaultedException;
+
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.io.*;
@@ -38,9 +40,14 @@ import java.io.*;
  * <p/>
  * Stores and manages taxi reservations. Knows nothing about Web Services.
  * Understands transactional booking lifecycle: unprepared, prepared, finished.
- *
- * </p>changes to preparedList are always shadowed in persistent storage before
- * returning control to clients.
+ * </p>
+ * Extended to include support for BA compensation based rollback
+ * </p>
+ * The manager now maintains an extra list compensatableList
+ * </p>
+ * changes to preparedList and compensatableList are
+ * always shadowed in persistent storage before returning control to clients.
+ * </p>
  *
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
@@ -170,12 +177,79 @@ public class TaxiManager implements Serializable
     }
 
     /**
+     * Compensate a committed booking.
+     *
+     * @param txID The transaction identifier
+     * @return true on success, false otherwise
+     */
+    public synchronized boolean compensateTaxi(Object txID)
+            throws FaultedException
+    {
+        boolean success = false;
+
+        // the transaction must be compensatable
+
+        if (compensatableTransactions.containsKey(txID))
+        {
+            // see if the user wants to report a compensation fault
+
+            if (!autoCommitMode)
+            {
+                try
+                {
+                    // wait for a user commit/rollback decision
+                    isPreparationWaiting = true;
+                    synchronized (preparation)
+                    {
+                        preparation.wait();
+                    }
+                    isPreparationWaiting = false;
+
+                    // process the user decision
+                    if (!isCommit)
+                    {
+                        throw new FaultedException("TheatreManager.compensateSeats(): compensation fault");
+                    }
+                }
+                catch (Exception e)
+                {
+                    System.err.println("TaxiManager.compensateTaxi(): Unexpected error during compensation.");
+                    throw new FaultedException("TaxiManager.compensateTaxi(): compensation fault");
+                }
+            }
+
+            // compensate the committed operation
+            compensatableTransactions.remove(txID);
+            updateState();
+            success = true;
+        }
+        else
+        {
+            success = false; // error: transaction not registered
+        }
+
+        return success;
+    }
+
+    /**
      * Commit taxi booking.
      *
      * @param txID The transaction identifier
      * @return true on success, false otherwise
      */
     public synchronized boolean commitTaxi(Object txID)
+    {
+        return commitTaxi(txID, false);
+    }
+
+    /**
+     * Commit taxi booking, possibly allowing subsequent compensation.
+     *
+     * @param txID The transaction identifier
+     * @param compensatable true if it may be necessary to compensate this commit laer
+     * @return true on success, false otherwise
+     */
+    public synchronized boolean commitTaxi(Object txID, boolean compensatable)
     {
         boolean success = false;
         hasCommitted = true;
@@ -185,20 +259,89 @@ public class TaxiManager implements Serializable
         if (preparedTransactions.containsKey(txID))
         {
             // complete the prepared transaction
-            preparedTransactions.remove(txID);
+            Integer request =  (Integer)preparedTransactions.remove(txID);
+            if (compensatable) {
+                compensatableTransactions.put(txID, request);
+            }
             updateState();
             success = true;
         }
         else if (unpreparedTransactions.containsKey(txID))
         {
+            Integer request = (Integer)unpreparedTransactions.remove(txID);
+            boolean doCommit;
+            // check we are ok to go ahead and if so
             // use one phase commit optimisation, skipping prepare
-            unpreparedTransactions.remove(txID);
-            // we don't need to update state
-            success = true;
+
+            if (autoCommitMode)
+            {
+                doCommit = true;
+            }
+            else
+            {
+                try
+                {
+                    // wait for a user decision
+                    isPreparationWaiting = true;
+                    synchronized (preparation)
+                    {
+                        preparation.wait();
+                    }
+                    isPreparationWaiting = false;
+
+                    // process the user decision
+                    doCommit = isCommit;
+                } catch (Exception e) {
+                    System.err.println("RestaurantManager.commitSeats(): Unable to perform commit.");
+                    doCommit = false;
+                }
+            }
+
+            if (doCommit) {
+                if (compensatable) {
+                    compensatableTransactions.put(txID, request);
+                    // we have to update state in this case
+                    updateState();
+                    success = true;
+                } else {
+                    // we don't have to update anything
+                    success = true;
+                }
+            } else {
+                // we don't have to update anything
+                success = false;
+            }
         }
         else
         {
             success = false; // error: transaction not registered
+        }
+
+        return success;
+    }
+
+    /**
+     * Close taxi bookings, removing possibility for compensation.
+     *
+     * @param txID The transaction identifier
+     * @return true on success, false otherwise
+     */
+    public synchronized boolean closeTaxi(Object txID)
+    {
+        boolean success;
+
+        // the transaction may be compensatable or unknown
+
+        if (compensatableTransactions.containsKey(txID))
+        {
+            // complete the prepared transaction
+            compensatableTransactions.remove(txID);
+            updateState();
+            success = true;
+        }
+        else
+        {
+            success = false; // error: transaction not registered for compensation
         }
 
         return success;
@@ -290,6 +433,7 @@ public class TaxiManager implements Serializable
      */
     public void setToDefault(boolean deleteSavedState)
     {
+        compensatableTransactions = new Hashtable();
         preparedTransactions = new Hashtable();
         unpreparedTransactions = new Hashtable();
         autoCommitMode = true;
@@ -345,6 +489,11 @@ public class TaxiManager implements Serializable
      * The transactions we know about and are prepared to commit.
      */
     private Hashtable preparedTransactions;
+
+    /**
+     * The transactions we know about and are prepared to commit.
+     */
+    private Hashtable compensatableTransactions;
 
     /**
      * The auto commit mode.
@@ -454,8 +603,15 @@ public class TaxiManager implements Serializable
      */
     private void readState(ObjectInputStream ois) throws IOException, ClassNotFoundException
     {
-        preparedTransactions = new Hashtable();
+        compensatableTransactions = new Hashtable();
         String name = (String)ois.readObject();
+        while (!"".equals(name)) {
+            int count = ois.readInt();
+            compensatableTransactions.put(name, new Integer(count));
+            name = (String)ois.readObject();
+        }
+        preparedTransactions = new Hashtable();
+        name = (String)ois.readObject();
         while (!"".equals(name)) {
             int count = ois.readInt();
             preparedTransactions.put(name, new Integer(count));
@@ -471,7 +627,15 @@ public class TaxiManager implements Serializable
      */
     private void writeState(ObjectOutputStream oos) throws IOException
     {
-        Enumeration keys = preparedTransactions.keys();
+        Enumeration keys = compensatableTransactions.keys();
+        while (keys.hasMoreElements()) {
+            String name = (String)keys.nextElement();
+            int count = ((Integer)compensatableTransactions.get(name)).intValue();
+            oos.writeObject(name);
+            oos.writeInt(count);
+        }
+        oos.writeObject("");
+        keys = preparedTransactions.keys();
         while (keys.hasMoreElements()) {
             String name = (String)keys.nextElement();
             int count = ((Integer)preparedTransactions.get(name)).intValue();

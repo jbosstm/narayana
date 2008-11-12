@@ -106,7 +106,7 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
      * Start a new activity. If there is already an activity associated
      * with the thread then it will be nested.
      *
-     * @param int timeout The timeout associated with the activity. If the
+     * @param timeout The timeout associated with the activity. If the
      * activity has not been terminated by the time this period elapses, then
      * it will automatically be terminated.
      * @exception WrongStateException Thrown if the currently associated
@@ -313,7 +313,7 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
      * each thread and this means that no application specified timeout is
      * set for activities.
      *
-     * @param int timeout The timeout (in seconds) to associate with all
+     * @param timeout The timeout (in seconds) to associate with all
      * subsequently created activities. This value must be 0 or greater.
      *
      * @exception InvalidTimeoutException Thrown if the timeout value provided
@@ -369,7 +369,7 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
      * activities that it may already be associated with. If the parameter is
      * null then the thread is associated with no activity.
      *
-     * @param ActivityHierarchy tx The activity to associate with this thread. This
+     * @param tx The activity to associate with this thread. This
      * may be null in which case the current thread becomes associated with
      * no activity.
      *
@@ -387,7 +387,7 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
      * Enrol the specified participant with the coordinator associated with
      * the current thread.
      *
-     * @param Participant act The participant.
+     * @param act The participant.
      *
      * @exception WrongStateException Thrown if the coordinator is not in a
      * state that allows participants to be enrolled.
@@ -398,7 +398,7 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
      * @exception SystemException Thrown if any other error occurs.
      */
 
-    public void enlistParticipant (Participant act) throws WrongStateException, DuplicateParticipantException, InvalidParticipantException, NoCoordinatorException, SystemException
+    public void enlistParticipant (RecoverableParticipant act) throws WrongStateException, DuplicateParticipantException, InvalidParticipantException, NoCoordinatorException, SystemException
     {
 	_coordManager.enlistParticipant(act);
     }
@@ -438,6 +438,20 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
 	}
     }
     
+    public void participantCannotComplete (String participantId) throws NoActivityException, InvalidParticipantException, WrongStateException, SystemException
+    {
+	_coordManager.participantCannotComplete(participantId);
+
+	try
+	{
+	    setCancelOnly();
+	}
+	catch (Exception ex)
+	{
+	    throw new SystemException(ex.toString());
+	}
+    }
+
     /**
      * @return the token representing the current activity context hierarchy,
      * or null if there is none associated with the invoking thread.

@@ -47,7 +47,7 @@ public interface BusinessAgreementWithParticipantCompletionParticipant
      * completed.
      */
 
-    public void cancel () throws WrongStateException, SystemException;
+    public void cancel () throws FaultedException, WrongStateException, SystemException;
 
     /**
      * The transaction has cancelled. The participant previously

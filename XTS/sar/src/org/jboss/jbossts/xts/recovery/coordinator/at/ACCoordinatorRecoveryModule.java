@@ -42,12 +42,8 @@ import java.util.Enumeration;
 
 /**
  * This class is a plug-in module for the recovery manager.
- * It is responsible for recovering failed XTS (ACCoordinator) transactions.
- *
- * Responsible for recovering instances of XTS Transaction Coordinators
- * (com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.ACCoordinator)
- * Modelled on com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
- * TODO: refactor this and AtomicActionRecoveryModule to remove duplication?
+ * It is responsible for recovering failed XTS AT (ACCoordinator) transactions.
+ * (instances of com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator)
  *
  * $Id$
  *

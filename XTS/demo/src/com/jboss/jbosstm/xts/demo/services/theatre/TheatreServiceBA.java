@@ -108,17 +108,19 @@ public class TheatreServiceBA implements ITheatreServiceBA
             BAParticipantManager participantManager = null;
             try
             {
-                participantManager = activityManager.enlistForBusinessAgreementWithParticipantCompletion(theatreParticipant, new Uid().toString());
+                participantManager = activityManager.enlistForBusinessAgreementWithParticipantCompletion(theatreParticipant, "org.jboss.jbossts.xts-demo:restaurantBA:" + new Uid().toString());
             }
             catch (Exception e)
             {
                 theatreView.addMessage("id:" + transactionId + ". Participant enrolement failed");
+                theatreManager.cancelSeats(transactionId);
                 System.err.println("bookSeats: Participant enrolement failed");
                 e.printStackTrace(System.err);
                 return false;
             }
 
-            theatreManager.commitSeats(transactionId);
+            // finish the booking in the backend ensuring it is compensatable:
+            theatreManager.commitSeats(transactionId, true);
 
             try
             {
@@ -127,6 +129,7 @@ public class TheatreServiceBA implements ITheatreServiceBA
             catch (Exception e)
             {
                 System.err.println("bookSeats: 'completed' callback failed");
+                theatreManager.cancelSeats(transactionId);
                 e.printStackTrace(System.err);
                 return false;
             }

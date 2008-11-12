@@ -30,7 +30,8 @@
 package com.arjuna.xts.nightout.services.Restaurant;
 
 import com.arjuna.wst.*;
-import com.arjuna.ats.arjuna.common.Uid;
+
+import java.io.Serializable;
 
 /**
  * An adapter class that exposes the RestaurantManager transaction lifecycle
@@ -40,7 +41,7 @@ import com.arjuna.ats.arjuna.common.Uid;
  * @author Jonathan Halliday (jonathan.halliday@arjuna.com)
  * @version $Revision: 1.3 $
  */
-public class RestaurantParticipantBA implements BusinessAgreementWithParticipantCompletionParticipant
+public class RestaurantParticipantBA implements BusinessAgreementWithParticipantCompletionParticipant, Serializable
 {
     /**
      * Participant instances are related to business method calls
@@ -51,9 +52,6 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
      */
     public RestaurantParticipantBA(String txID, int how_many)
     {
-        // Binds to the singleton RestaurantView and RestaurantManager
-        restaurantManager = RestaurantManager.getSingletonInstance();
-        restaurantView = RestaurantView.getSingletonInstance();
         // we need to save the txID for later use when logging.
         this.txID = txID;
         // we also need the business paramater(s) in case of compensation
@@ -70,12 +68,20 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
 
     public void close() throws WrongStateException, SystemException
     {
-        // for logging only. This impl does not do anything else here.
+        // let the manager know that this activity no longer requires the option of compensation
 
         System.out.println("RestaurantParticipantBA.close");
 
-        restaurantView.addMessage("id:" + txID + ". Close called on participant: " + this.getClass());
-        restaurantView.updateFields();
+        if (!getRestaurantManager().closeSeats(txID)) {
+            // throw a WrongStateException to indicate that we were not expecting a close
+            System.out.println("RestaurantParticipantBA.close : not expecting a close for BA participant " + txID);
+
+            throw new WrongStateException("Unexpected close for BA participant " + txID);
+        }
+
+        getRestaurantView().addMessage("id:" + txID + ". Close called on participant: " + this.getClass());
+
+        getRestaurantView().updateFields();
     }
 
 
@@ -90,12 +96,19 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
 
     public void cancel() throws WrongStateException, SystemException
     {
-        // we will always have called completed or error, so this can be a null op.
+        // let the manager know that this activity has been cancelled
 
         System.out.println("RestaurantParticipantBA.cancel");
 
-        restaurantView.addMessage("id:" + txID + ". Cancel called on participant: " + this.getClass().toString());
-        restaurantView.updateFields();
+        if (!getRestaurantManager().cancelSeats(txID)) {
+            // throw a WrongStateException to indicate that we were not expecting a close
+            System.out.println("RestaurantParticipantBA.cancel : not expecting a cancel for BA participant " + txID);
+
+            throw new WrongStateException("Unexpected cancel for BA participant " + txID);
+        }
+
+        getRestaurantView().addMessage("id:" + txID + ". Cancel called on participant: " + this.getClass().toString());
+        getRestaurantView().updateFields();
     }
 
     /**
@@ -114,39 +127,29 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
         // Log the event and perform a compensating transaction
         // on the backend business logic.
 
-        restaurantView.addPrepareMessage("id:" + txID + ". Compensate called on participant: " + this.getClass().toString());
-        restaurantView.updateFields();
+        getRestaurantView().addPrepareMessage("id:" + txID + ". Compensate called on participant: " + this.getClass().toString());
 
-        if (seatCount > 0)
-        {
-            String compensatingTxID = new Uid().toString();
-            // use a negative number of seats to 'reverse' the previous booking
-            // This technique (hack) prevents us needing new business logic to support compensation.
-            restaurantManager.bookSeats(compensatingTxID, seatCount * -1);
-            restaurantView.updateFields();
+        getRestaurantView().updateFields();
 
-            boolean success = false;
-            if(restaurantManager.prepareSeats(compensatingTxID))
-            {
-                if (restaurantManager.commitSeats(compensatingTxID))
-                {
-                    restaurantView.addMessage("id:" + txID + " Compensating transaction completed sucessfully.");
-                    restaurantView.updateFields();
-                    success = true;
-                }
-            }
-            else
-            {
-                restaurantManager.cancelSeats(compensatingTxID);
-            }
+        // tell the manager to compensate
 
-            if(!success)
-            {
-                restaurantView.addMessage("id:" + txID + " Compensation failed. Throwing FaultedException\n");
-                restaurantView.updateFields();
-                throw new FaultedException("Compensating transaction failed.");
+        try {
+            if (!getRestaurantManager().compensateSeats(txID)) {
+                // throw a WrongStateException to indicate that we were not expecting a close
+                System.out.println("RestaurantParticipantBA.compensate : not expecting a compensate for BA participant " + txID);
+
+                throw new WrongStateException("Unexpected compensate for BA participant " + txID);
             }
+        } catch (FaultedException fe) {
+            getRestaurantView().addMessage("id:" + txID + ". FaultedException when compensating participant: " + this.getClass().toString());
+
+            getRestaurantView().updateFields();
+            throw fe;
         }
+
+        getRestaurantView().addMessage("id:" + txID + ". Compensated participant: " + this.getClass().toString());
+
+        getRestaurantView().updateFields();
     }
 
     public String status()
@@ -176,14 +179,12 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
      */
     protected int seatCount;
 
-    /**
-     * The RestaurantView object to log events through.
-     */
-    protected static RestaurantView restaurantView;
+    public RestaurantView getRestaurantView() {
+        return RestaurantView.getSingletonInstance();
+    }
 
-    /**
-     * The RestaurantManager to perform business logic operations on.
-     */
-    protected static RestaurantManager restaurantManager;
+    public RestaurantManager getRestaurantManager() {
+        return RestaurantManager.getSingletonInstance();
+    }
 }
 

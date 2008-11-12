@@ -41,10 +41,14 @@ import com.arjuna.ats.arjuna.gandiva.ClassName;
 
 import com.arjuna.mw.wscf.model.sagas.participants.Participant;
 import com.arjuna.mw.wscf.model.sagas.participants.ParticipantWithComplete;
+import com.arjuna.mw.wscf.model.sagas.participants.RecoverableParticipant;
+import com.arjuna.mw.wscf.model.sagas.exceptions.CompensateFailedException;
+import com.arjuna.mw.wscf.model.sagas.exceptions.CancelFailedException;
 
 import com.arjuna.mw.wsas.exceptions.*;
 
 import com.arjuna.mw.wscf.exceptions.*;
+import com.arjuna.webservices.util.ClassLoaderHelper;
 
 import java.io.PrintWriter;
 
@@ -70,7 +74,7 @@ public class ParticipantRecord extends
 	 *          ParticipantRecord {0} - null participant provided!
 	 */
 
-	public ParticipantRecord (Participant theResource, Uid id)
+	public ParticipantRecord (RecoverableParticipant theResource, Uid id)
 	{
 		super(id, null, ObjectType.ANDPERSISTENT);
 
@@ -109,7 +113,7 @@ public class ParticipantRecord extends
 	{
 		// TODO add to record list
 		
-		return RecordType.USER_DEF_FIRST1;
+		return RecordType.XTS_WSBA_RECORD;
 	}
 
 	/**
@@ -268,14 +272,38 @@ public class ParticipantRecord extends
 				{
 					return TwoPhaseOutcome.FINISH_ERROR;
 				}
-				catch (WrongStateException ex)
-				{
-					return TwoPhaseOutcome.FINISH_ERROR;
-				}
+                catch (WrongStateException ex)
+                {
+                    // this indicates a fail occured and was detected during cancel (or compensation?) so we return a
+                    // HEURISTIC_HAZARD which will place the participant in the heuristic list
+                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                }
+                catch (CancelFailedException ex)
+                {
+                    // this indicates a fail occured and was detected during cancel so we return a HEURISTIC_HAZARD
+                    // which will place the participant in the heuristic list
+                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                }
+                catch (CompensateFailedException ex)
+                {
+                    // this indicates a fail occured during compensation so we return a HEURISTIC_HAZARD
+                    // which will place the participant in the heuristic list
+                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                }
 				catch (SystemException ex)
 				{
-					return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                    // this indicates a comms failure so we return FINISH_ERROR which will place
+                    // the participant in the failed list and cause a retry of the close
+                    return TwoPhaseOutcome.FINISH_ERROR;
 				}
+
+                // we are not guaranteed to detect all state transitions so we still have to
+                // make sure we did not fail and then end while we were trying to cancel or
+                // compensate
+
+                if (_failed) {
+                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                }
 
 				return TwoPhaseOutcome.FINISH_OK;
 			}
@@ -319,14 +347,24 @@ public class ParticipantRecord extends
 				}
 				catch (WrongStateException ex)
 				{
-					return TwoPhaseOutcome.NOT_PREPARED;
-				}
-				catch (SystemException ex)
-				{
+                    // this indicates a failure to close so we notify a heuristic hazard
 					return TwoPhaseOutcome.HEURISTIC_HAZARD;
 				}
+                catch (SystemException ex)
+				{
+                    // this indicates a comms failure so we return FINISH_ERROR which will place
+                    // the participant in the failed list and cause a retry of the close
+                    return TwoPhaseOutcome.FINISH_ERROR;
+				}
 
-				return TwoPhaseOutcome.FINISH_OK;
+                // if we have failed we notify a heuristic hazard to ensure that the
+                // participant is placed in the heuristic list and the transaction is logged
+
+                if (_failed) {
+                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                }
+
+                return TwoPhaseOutcome.FINISH_OK;
 			}
 			else
 				return TwoPhaseOutcome.FINISH_ERROR;
@@ -356,13 +394,24 @@ public class ParticipantRecord extends
 	{
 		try
 		{
-			if (_resourceHandle != null)
-			{
-				return TwoPhaseOutcome.PREPARE_OK;
-			}
-			else
-				return TwoPhaseOutcome.PREPARE_NOTOK;
-		}
+            boolean result;
+            // only complete if we have not exited
+            if (!_exited) {
+                result = complete();
+            } else {
+                result = false;
+            }
+            // if we have failed we return heuristic hazard so the participant is added to
+            // the heuristic list and the transaction is logged
+
+            if (_failed) {
+                return TwoPhaseOutcome.HEURISTIC_HAZARD;
+            } else if (_exited) {
+                return TwoPhaseOutcome.PREPARE_READONLY;
+            } else {
+                return (result ? TwoPhaseOutcome.PREPARE_OK: TwoPhaseOutcome.PREPARE_NOTOK);
+            }
+        }
 		catch (Exception e6)
 		{
 			wscfLogger.arjLoggerI18N
@@ -426,7 +475,7 @@ public class ParticipantRecord extends
 			{
 				try
 				{
-					if (!_exited) _resourceHandle.close();
+                    if (!_exited) _resourceHandle.close();
 				}
 				catch (InvalidParticipantException ex)
 				{
@@ -434,14 +483,25 @@ public class ParticipantRecord extends
 				}
 				catch (WrongStateException ex)
 				{
-					return TwoPhaseOutcome.FINISH_ERROR;
+                    // this indicates a failure to close so we notify a heuristic hazard
+					return TwoPhaseOutcome.HEURISTIC_HAZARD;
 				}
 				catch (SystemException ex)
 				{
-					return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                    // this indicates a comms failure so we return FINISH_ERROR which will place
+                    // the participant in the failed list and cause a retry of the close
+                    return TwoPhaseOutcome.FINISH_ERROR;
 				}
 
-				return TwoPhaseOutcome.FINISH_OK;
+                // if we have failed we notify a heuristic hazard to ensure that the
+                // participant is placed in the heuristic list and the transaction is logged
+
+                if (_failed) {
+                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
+                }
+                // if we closed or we exited then all is ok
+
+                return TwoPhaseOutcome.FINISH_OK;
 			}
 			else
 				return TwoPhaseOutcome.FINISH_ERROR;
@@ -517,7 +577,7 @@ public class ParticipantRecord extends
 		return false;
 	}
 
-	/**
+    /**
 	 * @message com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_13
 	 *          [com.arjuna.mwlabs.wscf.model.sagas.coordinator.arjunacore.ParticipantRecord_13] -
 	 *          ParticipantRecord.complete {0} caught: {1}
@@ -533,13 +593,13 @@ public class ParticipantRecord extends
 			{
 				try
 				{
-					if (!_completed)
+					if (isActive())
 					{
 						if (_resourceHandle instanceof ParticipantWithComplete)
 						{
 							((ParticipantWithComplete) _resourceHandle)
 									.complete();
-							 _completed = true;
+							 completed();
 						}
 
 						result = true;
@@ -607,14 +667,19 @@ public class ParticipantRecord extends
 		{
 			try
 			{
-				// TODO
+                String resourcehandleImplClassName = os.unpackString();
+                Class clazz = ClassLoaderHelper.forName(ParticipantRecord.class, resourcehandleImplClassName);
+                _resourceHandle = (RecoverableParticipant)clazz.newInstance();
 
-				if (_resourceHandle.restore_state(os))
+                result = _resourceHandle.restore_state(os);
+
+				if (result) {
 					_timeout = os.unpackLong();
-
-				/*
-				 * TODO: unpack qualifiers and coord id.
-				 */
+                    _exited = os.unpackBoolean();
+                    if (_exited) {
+                        _failed = os.unpackBoolean();
+                    }
+                }
 			}
 			catch (Exception ex)
 			{
@@ -644,12 +709,17 @@ public class ParticipantRecord extends
 		{
 			try
 			{
-				// TODO
-				
-				if (_resourceHandle.save_state(os))
+                os.packString(_resourceHandle.getClass().getName()); // TODO: a shorter value whould be more efficient.
+				result = _resourceHandle.save_state(os);
+                if (result) {
 					os.packLong(_timeout);
+                    os.packBoolean(_exited);
+                    if (_exited) {
+                        os.packBoolean(_failed);
+                    }
+                }
 
-				/*
+                /*
 				 * TODO: pack qualifiers and coord id.
 				 */
 			}
@@ -667,7 +737,27 @@ public class ParticipantRecord extends
 		return result;
 	}
 
-	public String type ()
+    /**
+     * called during recovery activation to propagate the coordinator to the underlying stubs and their protocol
+     * engines allowing the engines to establish a back channel to the cooridnator for flow of remote participant
+     * requests.
+     */
+    
+    public void setRecoveryCoordinator(ACCoordinator coordinator)
+    {
+        try {
+            // try to propagate setCoordinator to the resource
+
+            RecoverableParticipant recoverableParticipant = (RecoverableParticipant) _resourceHandle;
+            recoverableParticipant.setCoordinator(coordinator);
+        } catch (ClassCastException e) {
+            // ignore as this is obviously not an instance of RecoverableParticipant
+            // it must be a participant registered via the local API which means there is
+            // no BAParticipantManager instance around to drive messages to the coordinator
+        }
+    }
+
+    public String type ()
 	{
 		return "/StateManager/AbstractRecord/WSCF/ArjunaCore/ParticipantRecord";
 	}
@@ -675,11 +765,12 @@ public class ParticipantRecord extends
 	public boolean doSave ()
 	{
 		/*
-		 * If the participant has exited, then we don't need to save anything
-		 * about it in the transaction log.
+		 * If the participant has exited without failure, then we don't need to save anything
+		 * about it in the transaction log. If it has not exited or it has exited with failure
+		 * we do need to log it
 		 */
 
-		return !_exited;
+		return (!_exited || _failed);
 	}
 
 	public void merge (AbstractRecord a)
@@ -710,15 +801,45 @@ public class ParticipantRecord extends
 		return false;
 	}
 
-	public final void delist ()
+    /**
+     * record the fact that this participant has exited
+     *
+     * @param failed true if the exit was because of a failure i.e. the participant may be in an unclean state
+     */
+    public final void delist (boolean failed)
 	{
 		_exited = true;
-	}
+        _failed = failed;
+    }
 
-	public final void completed ()
-	{
-		_completed = true;
-	}
+    /**
+     * record the fact that this participant has completed
+     */
+    public final synchronized void completed ()
+    {
+        _completed = true;
+    }
+
+    /**
+     * is the participant is still able to be sent a complete request
+     *
+     * @caveat it is only appropriate to call this if this is a CoordinatorCompletion participant
+     * @return true if the participant is still able to be sent a complete request otherwise false
+     */
+    public final synchronized boolean isActive ()
+    {
+        return !_completed && !_exited;
+    }
+
+    /**
+     * is this a ParticipantCompletion participant
+     * @return true if this is a ParticipantCompletion participant otherwise false
+     */
+    public final boolean isParticipantCompletion ()
+    {
+        // n.b. this is ok if _resourceHandle is null
+        return (_resourceHandle instanceof ParticipantWithComplete);
+    }
 
 	/*
 	 * Protected constructor used by crash recovery.
@@ -733,13 +854,15 @@ public class ParticipantRecord extends
 		_coordId = null;
 	}
 
-	private Participant _resourceHandle;
+	private RecoverableParticipant _resourceHandle;
 
 	private long _timeout;
 
 	private CoordinatorIdImple _coordId;
 
-	private boolean _exited = false;
+    private boolean _exited = false;
+
+    private boolean _failed = false;
 
 	private boolean _completed = false;
 

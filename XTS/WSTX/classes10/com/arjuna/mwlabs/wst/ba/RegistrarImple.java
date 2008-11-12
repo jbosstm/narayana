@@ -83,8 +83,6 @@ public class RegistrarImple implements Registrar
 	 * mappers or to the same register mapper with different protocol
 	 * identifiers.
 	 * 
-	 * @param serviceAddress
-	 *            the address of the service
 	 * @param protocolIdentifier
 	 *            the protocol identifier
 	 */
@@ -96,8 +94,6 @@ public class RegistrarImple implements Registrar
 	/**
 	 * Registers the interest of participant in a particular protocol.
 	 * 
-	 * @param participantProtocolServiceAddress
-	 *            the address of the participant protocol service
 	 * @param protocolIdentifier
 	 *            the protocol identifier
 	 * 
@@ -228,8 +224,6 @@ public class RegistrarImple implements Registrar
 	 * register mappers or from the same register mapper with different protocol
 	 * identifiers.
 	 * 
-	 * @param serviceAddress
-	 *            the address of the service
 	 * @param protocolIdentifier
 	 *            the protocol identifier
 	 */

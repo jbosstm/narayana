@@ -74,6 +74,12 @@ public abstract class ParticipantCompletionParticipantProcessor
     public abstract void deactivateParticipant(final ParticipantCompletionParticipantInboundEvents participant) ;
     
     /**
+     * Check whether a participant with the given id is currently active
+     * @param identifier The identifier.
+     */
+    public abstract boolean isActive(final String identifier) ;
+
+    /**
      * Cancel.
      * @param cancel The cancel notification.
      * @param addressingContext The addressing context.

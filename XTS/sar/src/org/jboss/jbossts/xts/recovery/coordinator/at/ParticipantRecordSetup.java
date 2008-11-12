@@ -68,8 +68,7 @@ public class ParticipantRecordSetup implements InventoryElement {
 
     public ClassName className ()
     {
-        return RecordType.typeToClassName(RecordType.USER_DEF_FIRST0);
-                //ClassName("WSATParticipantRecord"); // TODO remove dupl with ParticipantRecord
+        return RecordType.typeToClassName(RecordType.XTS_WSAT_RECORD);
     }
 
 }

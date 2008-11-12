@@ -25,6 +25,9 @@
 	version="2.4">
 
     <listener>
+        <listener-class>com.arjuna.xts.nightout.services.recovery.DemoRPCBARecoveryListener</listener-class>
+    </listener>
+    <listener>
         <listener-class>com.arjuna.xts.nightout.services.recovery.DemoRPCATRecoveryListener</listener-class>
     </listener>
 	<servlet>

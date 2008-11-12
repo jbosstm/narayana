@@ -63,7 +63,16 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
     {
         activatedObjectProcessor.deactivateObject(participant) ;
     }
-    
+
+    /**
+     * Check whether a participant with the given id is currently active
+     *
+     * @param identifier The identifier.
+     */
+    public boolean isActive(String identifier) {
+        return activatedObjectProcessor.getObject(identifier) != null;        
+    }
+
     /**
      * Get the participant with the specified identifier.
      * @param instanceIdentifier The participant identifier.

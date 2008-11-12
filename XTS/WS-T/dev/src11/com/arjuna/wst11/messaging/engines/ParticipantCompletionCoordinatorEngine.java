@@ -68,6 +68,10 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      * The current state.
      */
     private State state ;
+    /**
+     * The flag indicating that this coordinator has been recovered from the log.
+     */
+    private boolean recovered ;
 
     /**
      * Construct the initial engine for the coordinator.
@@ -76,7 +80,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      */
     public ParticipantCompletionCoordinatorEngine(final String id, final W3CEndpointReference participant)
     {
-        this(id, participant, State.STATE_ACTIVE) ;
+        this(id, participant, State.STATE_ACTIVE, false) ;
     }
 
     /**
@@ -86,12 +90,13 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      * @param state The initial state.
      */
     public ParticipantCompletionCoordinatorEngine(final String id, final W3CEndpointReference participant,
-        final State state)
+        final State state, final boolean recovered)
     {
         this.id = id ;
         this.instanceIdentifier = new InstanceIdentifier(id) ;
         this.participant = participant ;
         this.state = state ;
+        this.recovered = recovered;
     }
 
     /**
@@ -101,7 +106,13 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     public void setCoordinator(final BAParticipantManager coordinator)
     {
         this.coordinator = coordinator ;
-        ParticipantCompletionCoordinatorProcessor.getProcessor().activateCoordinator(this, id) ;
+        // unrecovered participants are always activated
+        // we only need to reactivate recovered participants which were successfully COMPLETED or which began
+        // CLOSING. any others will only have been saved because of a heuristic outcome. we can safely drop
+        // them since we implement presumed abort.
+        if (!recovered || state == State.STATE_COMPLETED || state == State.STATE_CLOSING) {
+            ParticipantCompletionCoordinatorProcessor.getProcessor().activateCoordinator(this, id) ;
+        }
     }
 
     /**

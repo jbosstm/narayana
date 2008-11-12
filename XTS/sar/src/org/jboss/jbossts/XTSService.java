@@ -22,7 +22,9 @@ package org.jboss.jbossts;
 
 import org.jboss.logging.Logger;
 import org.jboss.jbossts.xts.recovery.coordinator.at.ACCoordinatorRecoveryModule;
+import org.jboss.jbossts.xts.recovery.coordinator.ba.BACoordinatorRecoveryModule;
 import org.jboss.jbossts.xts.recovery.participant.at.ATParticipantRecoveryModule;
+import org.jboss.jbossts.xts.recovery.participant.ba.BAParticipantRecoveryModule;
 
 //import com.arjuna.mw.wst.deploy.WSTXInitialisation;
 //import com.arjuna.mw.wst.UserTransaction;
@@ -106,6 +108,9 @@ public class XTSService implements XTSServiceMBean {
 
     private ACCoordinatorRecoveryModule acCoordinatorRecoveryModule = null;
     private ATParticipantRecoveryModule atParticipantRecoveryModule = null;
+
+    private BACoordinatorRecoveryModule baCoordinatorRecoveryModule = null;
+    private BAParticipantRecoveryModule baParticipantRecoveryModule = null;
 
     // TODO: how to use a (per application) remote coordinator?
     // does the http servlet param indicate its own location and the
@@ -234,21 +239,58 @@ public class XTSService implements XTSServiceMBean {
 
         atParticipantRecoveryModule.install();
 
+        // ok, now the recovery mocules for the BA coordinator and participant
+
+        baCoordinatorRecoveryModule = new BACoordinatorRecoveryModule();
+
+        // ensure Implementations are installed into the inventory before we register the module
+
+        baCoordinatorRecoveryModule.install();
+
+        // we don't need to install anything in the Inventory for this recovery module as it
+        // manages its own ObjectStore records but we do need it to create the recovery manager
+        // singleton.
+
+        baParticipantRecoveryModule = new BAParticipantRecoveryModule();
+
+        baParticipantRecoveryModule.install();
+
         // we assume the tx manager has started, hence initializing the recovery manager.
         // to guarantee this our mbean should depend on the tx mgr mbean. (but does that g/tee start or just load?)
+
+        //  recovery should perform better if we register partiicpants first since this allows the XTS client
+        // recovery module to have a try at recreating the participant before its coordinator attempts to
+        // talk to it when they are both in the same VM. it also means the participant nay attempt bottom-up
+        // recovery before the coordinator is ready but coordinator recoveyr is probably going to happen quicker.
+
         RecoveryManager.manager().addModule(atParticipantRecoveryModule);
+        RecoveryManager.manager().addModule(baParticipantRecoveryModule);
+
         RecoveryManager.manager().addModule(acCoordinatorRecoveryModule);
+        RecoveryManager.manager().addModule(baCoordinatorRecoveryModule);
     }
 
     public void stop() throws Exception
     {
         log.info("JBossTS XTS Transaction Service - stopping");
 
+        if (baCoordinatorRecoveryModule != null) {
+            // remove the module, making sure any scan which might be using it has completed
+            RecoveryManager.manager().removeModule(baCoordinatorRecoveryModule, true);
+            // ok, now it is safe to get the recovery manager to uninstall its Implementations from the inventory
+            baCoordinatorRecoveryModule.uninstall();
+        }
         if (acCoordinatorRecoveryModule != null) {
             // remove the module, making sure any scan which might be using it has completed
             RecoveryManager.manager().removeModule(acCoordinatorRecoveryModule, true);
             // ok, now it is safe to get the recovery manager to uninstall its Implementations from the inventory
             acCoordinatorRecoveryModule.uninstall();
+        }
+        if (baParticipantRecoveryModule != null) {
+            // remove the module, making sure any scan which might be using it has completed
+            RecoveryManager.manager().removeModule(baParticipantRecoveryModule, true);
+            // call uninstall even though it is currently a null op for this module
+            baParticipantRecoveryModule.uninstall();
         }
         if (atParticipantRecoveryModule != null) {
             // remove the module, making sure any scan which might be using it has completed
@@ -256,6 +298,7 @@ public class XTSService implements XTSServiceMBean {
             // call uninstall even though it is currently a null op for this module
             atParticipantRecoveryModule.uninstall();
         }
+
         TaskManager.getManager().shutdown() ; // com.arjuna.services.framework.admin.TaskManagerInitialisation
 
         /*

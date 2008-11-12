@@ -41,6 +41,8 @@ import com.arjuna.wsc.InvalidStateException;
 import com.arjuna.wsc.NoActivityException;
 import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
+import com.arjuna.wst.stub.LocalParticipantCompletionParticipantStub;
+import com.arjuna.wst.stub.LocalCoordinatorCompletionParticipantStub;
 
 /**
  * This class simulates the use of the real RegistrarImple, which we can't
@@ -94,7 +96,8 @@ public class LocalRegistrarImple
 
 	    try
 	    {
-		_coordManager.enlistParticipant(new com.arjuna.mwlabs.wst.ba.participants.BusinessAgreementWithParticipantCompletionImple((BusinessAgreementWithParticipantCompletionParticipant) participant, participantId));
+        LocalParticipantCompletionParticipantStub recoverableParticipant = new LocalParticipantCompletionParticipantStub((BusinessAgreementWithParticipantCompletionParticipant)participant, participantId);
+        _coordManager.enlistParticipant(new com.arjuna.mwlabs.wst.ba.participants.BusinessAgreementWithParticipantCompletionImple(recoverableParticipant, participantId));
 	    }
 	    catch (Exception ex)
 	    {
@@ -107,7 +110,8 @@ public class LocalRegistrarImple
 	    {
 		try
 		{
-		    _coordManager.enlistParticipant(new com.arjuna.mwlabs.wst.ba.participants.BusinessAgreementWithCoordinatorCompletionImple((BusinessAgreementWithCoordinatorCompletionParticipant) participant, participantId));
+            LocalCoordinatorCompletionParticipantStub recoverableParticipant = new LocalCoordinatorCompletionParticipantStub((BusinessAgreementWithCoordinatorCompletionParticipant)participant, participantId);
+		    _coordManager.enlistParticipant(new com.arjuna.mwlabs.wst.ba.participants.BusinessAgreementWithCoordinatorCompletionImple(recoverableParticipant, participantId));
 		}
 		catch (Exception ex)
 		{

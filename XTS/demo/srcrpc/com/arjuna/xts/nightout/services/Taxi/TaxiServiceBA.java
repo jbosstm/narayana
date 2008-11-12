@@ -93,18 +93,19 @@ public class TaxiServiceBA implements ITaxiServiceBA
             BAParticipantManager participantManager = null;
             try
             {
-                participantManager = activityManager.enlistForBusinessAgreementWithParticipantCompletion(taxiParticipant, new Uid().toString());
+                participantManager = activityManager.enlistForBusinessAgreementWithParticipantCompletion(taxiParticipant, "com.arjuna.xts-demorpc:taxiBA:" + new Uid().toString());
             }
             catch (Exception e)
             {
                 taxiView.addMessage("id:" + transactionId + ". Participant enrolement failed");
+                taxiManager.cancelTaxi(transactionId);
                 System.err.println("bookTaxi: Participant enrolment failed");
                 e.printStackTrace(System.err);
                 return false;
             }
 
-            // finish the booking in the backend:
-            taxiManager.commitTaxi(transactionId);
+            // finish the booking in the backend ensuring it is compensatable:
+            taxiManager.commitTaxi(transactionId, true);
 
             try
             {
@@ -114,6 +115,7 @@ public class TaxiServiceBA implements ITaxiServiceBA
             catch (Exception e)
             {
                 System.err.println("bookTaxi: 'completed' callback failed");
+                taxiManager.cancelTaxi(transactionId);
                 e.printStackTrace(System.err);
                 return false;
             }

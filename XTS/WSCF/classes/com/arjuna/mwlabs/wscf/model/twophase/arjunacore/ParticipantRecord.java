@@ -109,7 +109,7 @@ public class ParticipantRecord extends
 	{
 		// TODO add specific record type.
 
-		return RecordType.USER_DEF_FIRST0;
+		return RecordType.XTS_WSAT_RECORD;
 	}
 
 	/**

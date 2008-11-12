@@ -12,7 +12,7 @@ import com.arjuna.common.util.logging.VisibilityLevel;
 
 /**
  * This class is a plug-in module for the recovery manager.
- * It is responsible for recovering failed ACCoordinator transactions.
+ * It is responsible for recovering failed WSAT ACCoordinator transactions.
  *
  * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_1 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_1] - RecoverACCoordinator.replayPhase2 recovering {0} ActionStatus is {1}
  * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_2 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_2] - RecoverACCoordinator.replayPhase2: Unexpected status: {0}
@@ -20,8 +20,6 @@ import com.arjuna.common.util.logging.VisibilityLevel;
  * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_4 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_4] - RecoverACCoordinator.replayPhase2 transaction {0} not activated, unable to replay phase 2 commit
 */
 public class RecoverACCoordinator extends ACCoordinator {
-
-    // TODO: refactor RecoverAtomicAction so that this can subclass it to remove dupl?
 
    /**
     * Re-creates/activates an AtomicAction for the specified

@@ -27,6 +27,9 @@
     <listener>
         <listener-class>com.jboss.jbosstm.xts.demo.services.recovery.DemoATRecoveryListener</listener-class>
     </listener>
+    <listener>
+        <listener-class>com.jboss.jbosstm.xts.demo.services.recovery.DemoBARecoveryListener</listener-class>
+    </listener>
     <servlet>
 		<servlet-name>RestaurantServiceAT</servlet-name>
 		<servlet-class>com.jboss.jbosstm.xts.demo.services.restaurant.RestaurantServiceAT</servlet-class>

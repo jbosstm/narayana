@@ -110,18 +110,19 @@ public class RestaurantServiceBA implements IRestaurantServiceBA
             BAParticipantManager participantManager = null;
             try
             {
-                participantManager = activityManager.enlistForBusinessAgreementWithParticipantCompletion(restaurantParticipant, new Uid().toString());
+                participantManager = activityManager.enlistForBusinessAgreementWithParticipantCompletion(restaurantParticipant, "org.jboss.jbossts.xts-demo:restaurantBA:" + new Uid().toString());
             }
             catch (Exception e)
             {
                 restaurantView.addMessage("id:" + transactionId + ". Participant enrolement failed");
+                restaurantManager.cancelSeats(transactionId);
                 System.err.println("bookSeats: Participant enlistment failed");
                 e.printStackTrace(System.err);
                 return false;
             }
 
-            // finish the booking in the backend:
-            restaurantManager.commitSeats(transactionId);
+            // finish the booking in the backend ensuring it is compensatable:
+            restaurantManager.commitSeats(transactionId, true);
 
             try
             {
@@ -131,6 +132,7 @@ public class RestaurantServiceBA implements IRestaurantServiceBA
             catch (Exception e)
             {
                 System.err.println("bookSeats: 'completed' callback failed");
+                restaurantManager.cancelSeats(transactionId);
                 e.printStackTrace(System.err);
                 return false;
             }

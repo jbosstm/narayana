@@ -39,10 +39,19 @@ import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wsas.exceptions.WrongStateException;
 import com.arjuna.mw.wscf.exceptions.InvalidParticipantException;
 import com.arjuna.mw.wscf.model.sagas.exceptions.CompensateFailedException;
+import com.arjuna.mw.wscf.model.sagas.exceptions.CancelFailedException;
 import com.arjuna.mwlabs.wst.util.PersistableParticipantHelper;
 import com.arjuna.mwlabs.wst11.ba.remote.BAParticipantManagerImple;
+import com.arjuna.mwlabs.wst11.ba.remote.BARecoveryParticipantManagerImple;
+import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator;
 import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
+import com.arjuna.wst.stub.SystemCommunicationException;
 import com.arjuna.wst11.BAParticipantManager;
+import com.arjuna.wst11.RecoverableBusinessAgreementWithParticipantCompletionParticipant;
+import com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine;
+import com.arjuna.wst11.stub.BusinessAgreementWithParticipantCompletionStub;
+
+import java.io.IOException;
 
 // TODO crash recovery (for EVERYTHING!!)
 
@@ -56,17 +65,24 @@ import com.arjuna.wst11.BAParticipantManager;
  */
 
 public class BusinessAgreementWithParticipantCompletionImple implements
-		com.arjuna.mw.wscf.model.sagas.participants.Participant
+		com.arjuna.mw.wscf.model.sagas.participants.RecoverableParticipant
 {
 //
-	public BusinessAgreementWithParticipantCompletionImple(
-			BusinessAgreementWithParticipantCompletionParticipant resource,
-			String id)
-	{
-		_resource = resource;
-		_identifier = id;
-		_baParticipantManager = new BAParticipantManagerImple(id);
-	}
+public BusinessAgreementWithParticipantCompletionImple(
+        RecoverableBusinessAgreementWithParticipantCompletionParticipant resource,
+        String id)
+{
+    _resource = resource;
+    _identifier = id;
+    _baParticipantManager = new BAParticipantManagerImple(id);
+}
+
+    public BusinessAgreementWithParticipantCompletionImple()
+    {
+        _resource = null;
+        _identifier = null;
+        _baParticipantManager = null;
+    }
 
 	public void close () throws InvalidParticipantException,
 			WrongStateException, SystemException
@@ -90,7 +106,7 @@ public class BusinessAgreementWithParticipantCompletionImple implements
 		}
 	}
 
-	public void cancel () throws InvalidParticipantException,
+	public void cancel () throws CancelFailedException, InvalidParticipantException,
 			WrongStateException, SystemException
 	{
 		try
@@ -106,10 +122,15 @@ public class BusinessAgreementWithParticipantCompletionImple implements
 		{
 			throw new WrongStateException(ex.toString());
 		}
-		catch (com.arjuna.wst.SystemException ex)
-		{
-			throw new SystemException(ex.toString());
-		}
+        catch (com.arjuna.wst.FaultedException ex)
+        {
+            // we can see this in 1.1
+            throw new CancelFailedException(ex.toString());
+        }
+        catch (com.arjuna.wst.SystemException ex)
+        {
+            throw new SystemException(ex.toString());
+        }
 	}
 
 	public void compensate () throws CompensateFailedException,
@@ -204,15 +225,25 @@ public class BusinessAgreementWithParticipantCompletionImple implements
 
 	public boolean save_state (OutputObjectState os)
 	{
+        try {
+            os.packString(_identifier);
+        } catch (IOException e) {
+            return false;
+        }
         return PersistableParticipantHelper.save_state(os, _resource) ;
 	}
 
 	public boolean restore_state (InputObjectState is)
 	{
+        try {
+            _identifier = is.unpackString();
+        } catch (IOException e) {
+            return false;
+        }
         final Object resource = PersistableParticipantHelper.restore_state(is) ;
         if (resource != null)
         {
-            _resource = (BusinessAgreementWithParticipantCompletionParticipant)resource ;
+            _resource = (RecoverableBusinessAgreementWithParticipantCompletionParticipant)resource ;
             return true ;
         }
         else
@@ -221,7 +252,19 @@ public class BusinessAgreementWithParticipantCompletionImple implements
         }
 	}
 
-	protected BusinessAgreementWithParticipantCompletionParticipant _resource;
+    /**
+     * establish a back channel from the underlying stub to the coordinator by creating a participant manager which
+     * will forward messages to the coordinator. thisis oly called during recovery processing
+     *
+     * @param coordinator
+     */
+    public void setCoordinator(ACCoordinator coordinator)
+    {
+        _baParticipantManager = new BARecoveryParticipantManagerImple(coordinator, _identifier);
+        _resource.setParticipantManager(_baParticipantManager);
+    }
+
+	protected RecoverableBusinessAgreementWithParticipantCompletionParticipant _resource;
 
 	private String _identifier = null;
 

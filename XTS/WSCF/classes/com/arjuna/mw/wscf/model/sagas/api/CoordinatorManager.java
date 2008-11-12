@@ -68,7 +68,7 @@ public interface CoordinatorManager extends UserCoordinator
      * @exception SystemException Thrown if any other error occurs.
      */
 
-    public void enlistParticipant (Participant act) throws NoActivityException, WrongStateException, DuplicateParticipantException, InvalidParticipantException, SystemException;
+    public void enlistParticipant (RecoverableParticipant act) throws NoActivityException, WrongStateException, DuplicateParticipantException, InvalidParticipantException, SystemException;
 
     /**
      * Remove the specified participant from the coordinator associated with
@@ -105,7 +105,8 @@ public interface CoordinatorManager extends UserCoordinator
     /**
      * A participant has faulted during normal execution or compensation.
      * The saga will attempt to undo. The WS-T specification is a little
-     * vague here - we assume the entire transaction has to undo.
+     * vague here - we assume the entire transaction has to undo and a heuristic
+     * hazard needs to be logged.
      *
      * @param participantId The participant.
      *
@@ -117,5 +118,20 @@ public interface CoordinatorManager extends UserCoordinator
 
     public void participantFaulted (String participantId) throws NoActivityException, InvalidParticipantException, SystemException;
     
+    /**
+     * A participant cannot complete during normal execution or compensation.
+     * The saga will attempt to undo. The WS-T specification is a little
+     * vague here - we assume the entire transaction has to undo.
+     *
+     * @param participantId The participant.
+     *
+     * @exception NoActivityException Thrown if there is no activity associated
+     * with the current thread.
+     * @exception InvalidParticipantException Thrown if the participant is invalid.
+     * @exception SystemException Thrown if any other error occurs.
+     */
+
+    public void participantCannotComplete (String participantId) throws NoActivityException, InvalidParticipantException, WrongStateException, SystemException;
+
 }
 

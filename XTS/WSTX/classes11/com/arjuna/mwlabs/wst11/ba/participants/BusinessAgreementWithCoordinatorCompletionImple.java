@@ -36,6 +36,7 @@ import com.arjuna.mw.wsas.exceptions.WrongStateException;
 import com.arjuna.mw.wscf.exceptions.InvalidParticipantException;
 import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 import com.arjuna.mwlabs.wst11.ba.participants.BusinessAgreementWithParticipantCompletionImple;
+import com.arjuna.wst11.RecoverableBusinessAgreementWithCoordinatorCompletionParticipant;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -46,15 +47,20 @@ import com.arjuna.mwlabs.wst11.ba.participants.BusinessAgreementWithParticipantC
 
 public class BusinessAgreementWithCoordinatorCompletionImple extends
         BusinessAgreementWithParticipantCompletionImple implements
-		com.arjuna.mw.wscf.model.sagas.participants.ParticipantWithComplete
+		com.arjuna.mw.wscf.model.sagas.participants.RecoverableParticipantWithComplete
 {
 
 	public BusinessAgreementWithCoordinatorCompletionImple(
-			BusinessAgreementWithCoordinatorCompletionParticipant participant,
+			RecoverableBusinessAgreementWithCoordinatorCompletionParticipant participant,
 			String identifier)
 	{
 		super(participant, identifier);
 	}
+
+    public BusinessAgreementWithCoordinatorCompletionImple()
+    {
+        super();
+    }
 
 	public void complete () throws InvalidParticipantException,
 			WrongStateException, SystemException

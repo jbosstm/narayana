@@ -66,7 +66,11 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * The current state.
      */
     private State state ;
-    
+    /**
+     * The flag indicating that this coordinator has been recovered from the log.
+     */
+    private boolean recovered ;
+
     /**
      * Construct the initial engine for the coordinator.
      * @param id The coordinator id.
@@ -74,7 +78,7 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      */
     public CoordinatorCompletionCoordinatorEngine(final String id, final EndpointReferenceType participant)
     {
-        this(id, participant, State.STATE_ACTIVE) ;
+        this(id, participant, State.STATE_ACTIVE, false) ;
     }
     
     /**
@@ -84,12 +88,13 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * @param state The initial state.
      */
     public CoordinatorCompletionCoordinatorEngine(final String id, final EndpointReferenceType participant,
-        final State state)
+        final State state, final boolean recovered)
     {
         this.id = id ;
         this.instanceIdentifier = new InstanceIdentifier(id) ;
         this.participant = participant ;
         this.state = state ;
+        this.recovered = recovered;
     }
     
     /**
@@ -99,7 +104,13 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     public void setCoordinator(final BAParticipantManager coordinator)
     {
         this.coordinator = coordinator ;
-        CoordinatorCompletionCoordinatorProcessor.getProcessor().activateCoordinator(this, id) ;
+        // unrecovered participants are always activated
+        // we only need to reactivate recovered participants which were successfully COMPLETED or which began
+        // CLOSING. any others will only have been saved because of a heuristic outcome. we can safely drop
+        // it since we implement presumed abort.
+        if (!recovered || state == State.STATE_COMPLETED || state == State.STATE_CLOSING) {
+            CoordinatorCompletionCoordinatorProcessor.getProcessor().activateCoordinator(this, id) ;
+        }
     }
     
     /**
@@ -495,7 +506,35 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
             sendComplete() ;
         }
         
-        return waitForState(State.STATE_COMPLETING, TransportTimer.getTransportTimeout()) ;
+        waitForState(State.STATE_COMPLETING, TransportTimer.getTransportTimeout()) ;
+
+        synchronized(this)
+        {
+            if (state != State.STATE_COMPLETING)
+            {
+                // if this is a recovered participant then forget will not have
+                // deactivated the entry so that this (recovery) thread can
+                // detect it and update its log entry. so we need to deactivate
+                // the entry here.
+
+                if (recovered) {
+                    CoordinatorCompletionCoordinatorProcessor.getProcessor().deactivateCoordinator(this) ;
+                }
+
+                return state ;
+            }
+
+            // the participant is still uncommitted so it will be rewritten to the log.
+            // it remains activated in case a committed message comes in between now and
+            // the next scan. the recovery code will detect this active participant when
+            // rescanning the log and use it instead of recreating a new one.
+            // we need to mark this one as recovered so it does not get deleted until
+            // the next scan
+
+            recovered = true;
+
+            return State.STATE_COMPLETING;
+        }
     }
     
     /**
@@ -829,7 +868,18 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     private void ended()
     {
         changeState(State.STATE_ENDED) ;
-        CoordinatorCompletionCoordinatorProcessor.getProcessor().deactivateCoordinator(this) ;
+        // participants which have not been recovered from the log can be deactivated now.
+
+        // participants which have been recovered are left for the recovery thread to deactivate.
+        // this is because the recovery thread may have timed out waiting for a response to
+        // the commit message and gone on to complete its scan and suspend. the next scan
+        // will detect this activated participant and note that it has ended. if a crash
+        // happens in between the recovery thread can safely recreate and reactivate the
+        // participant and resend the close since the close/closed exchange is idempotent.
+
+        if (!recovered) {
+            CoordinatorCompletionCoordinatorProcessor.getProcessor().deactivateCoordinator(this) ;
+        }
     }
     
     /**

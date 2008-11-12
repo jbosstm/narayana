@@ -46,6 +46,7 @@ import com.arjuna.mw.wscf.common.Qualifier;
 import com.arjuna.mw.wscf.common.CoordinatorId;
 
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.BasicAction;
 
 import com.arjuna.mw.wsas.UserActivityFactory;
 
@@ -114,7 +115,7 @@ public class CoordinatorControl
     /**
      * The current activity is completing with the specified completion status.
      *
-     * @param CompletionStatus cs The completion status to use.
+     * @param cs The completion status to use.
      *
      * @return The result of terminating the relationship of this HLS and
      * the current activity.
@@ -128,14 +129,12 @@ public class CoordinatorControl
 	if ((cs != null) && (cs instanceof Success))
 	{
 	    // commit
-
-	    outcome = current.end(true);
+        outcome = current.close();
 	}
 	else
 	{
 	    // abort
-
-	    outcome = current.cancel();
+        outcome = current.cancel();
 	}
 
 	_coordinators.remove(currentActivity());
@@ -316,7 +315,7 @@ public class CoordinatorControl
      * @exception SystemException Thrown if any other error occurs.
      */
 
-    public void enlistParticipant (Participant act) throws WrongStateException, DuplicateParticipantException, InvalidParticipantException, NoCoordinatorException, SystemException
+    public void enlistParticipant (RecoverableParticipant act) throws WrongStateException, DuplicateParticipantException, InvalidParticipantException, NoCoordinatorException, SystemException
     {
 	currentCoordinator().enlistParticipant(act);
     }
@@ -346,7 +345,12 @@ public class CoordinatorControl
     {
 	currentCoordinator().participantFaulted(participantId);
     }
-    
+
+    public void participantCannotComplete (String participantId) throws NoActivityException, InvalidParticipantException, WrongStateException, SystemException
+    {
+	currentCoordinator().participantCannotComplete(participantId);
+    }
+
     public final ACCoordinator currentCoordinator () throws NoCoordinatorException, SystemException
     {
 	ACCoordinator coord = (ACCoordinator) _coordinators.get(currentActivity());

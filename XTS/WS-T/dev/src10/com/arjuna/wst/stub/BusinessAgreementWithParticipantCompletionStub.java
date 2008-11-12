@@ -27,9 +27,11 @@
 package com.arjuna.wst.stub;
 
 import java.io.StringWriter;
+import java.io.StringReader;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.XMLStreamReader;
 
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
@@ -37,14 +39,11 @@ import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.soap.SoapUtils;
 import com.arjuna.webservices.util.StreamHelper;
 import com.arjuna.webservices.wsba.State;
-import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
-import com.arjuna.wst.FaultedException;
-import com.arjuna.wst.PersistableParticipant;
-import com.arjuna.wst.SystemException;
-import com.arjuna.wst.WrongStateException;
+import com.arjuna.webservices.wsaddr.EndpointReferenceType;
+import com.arjuna.wst.*;
 import com.arjuna.wst.messaging.engines.ParticipantCompletionCoordinatorEngine;
 
-public class BusinessAgreementWithParticipantCompletionStub implements BusinessAgreementWithParticipantCompletionParticipant, PersistableParticipant
+public class BusinessAgreementWithParticipantCompletionStub implements RecoverableBusinessAgreementWithParticipantCompletionParticipant, PersistableParticipant
 {
     private static final QName QNAME_BAPC_PARTICIPANT = new QName("bapcParticipant") ;
     
@@ -54,6 +53,14 @@ public class BusinessAgreementWithParticipantCompletionStub implements BusinessA
         throws Exception
     {
         this.participant = participant ;
+    }
+
+    /**
+     * default constructor for use during recovery
+     */
+    public BusinessAgreementWithParticipantCompletionStub ()
+    {
+        this.participant = null ;
     }
 
     public synchronized void close ()
@@ -175,8 +182,17 @@ public class BusinessAgreementWithParticipantCompletionStub implements BusinessA
             StreamHelper.writeEndElement(writer, null, null) ;
             writer.close() ;
             
-            oos.packString(writer.toString()) ;
+            oos.packString(sw.toString()) ;
             
+            final State state = participant.getStatus();
+            final QName stateName = state.getValue();
+            final String ns = stateName.getNamespaceURI();
+            final String localPart = stateName.getLocalPart();
+            final String prefix = stateName.getPrefix();
+            oos.packString(ns != null ? ns : "");
+            oos.packString(localPart != null ? localPart : "");
+            oos.packString(prefix != null ? prefix : "");
+
             return true ;
         }
         catch (final Throwable th)
@@ -191,25 +207,43 @@ public class BusinessAgreementWithParticipantCompletionStub implements BusinessA
      */
     public boolean restoreState(final InputObjectState ios)
     {
-        // KEV - rework
-        return false ;
-//        try
-//        {
-//            final String id = ios.unpackString() ;
-//            final String eprValue = ios.unpackString() ;
-//            
-//            final XMLStreamReader reader = SoapUtils.getXMLStreamReader(new StringReader(eprValue)) ;
-//            StreamHelper.checkNextStartTag(reader, QNAME_BAPC_PARTICIPANT) ;
-//            final EndpointReferenceType endpointReferenceType = new EndpointReferenceType(reader) ;
-//            
-//            _id = id ;
-//            _businessAgreementWithParticipantCompletionParticipant = endpointReferenceType ;
-//            return true ;
-//        }
-//        catch (final Throwable th)
-//        {
-//            WSTLogger.arjLoggerI18N.error("com.arjuna.wst.stub.BusinessAgreementWithParticipantCompletionStub_3", th) ;
-//            return false ;
-//        }
+        try
+        {
+            final String id = ios.unpackString();
+            final String eprValue = ios.unpackString();
+
+            final XMLStreamReader reader = SoapUtils.getXMLStreamReader(new StringReader(eprValue)) ;
+            StreamHelper.checkNextStartTag(reader, QNAME_BAPC_PARTICIPANT) ;
+            final EndpointReferenceType endpointReferenceType = new EndpointReferenceType(reader) ;
+            String ns = ios.unpackString();
+            final String localPart = ios.unpackString();
+            String prefix = ios.unpackString();
+            if ("".equals(ns)) {
+                ns = null;
+            }
+            if ("".equals(prefix)) {
+                prefix = null;
+            }
+
+            QName statename = new QName(ns, localPart, prefix);
+            State state = State.toState(statename);
+
+            participant = new ParticipantCompletionCoordinatorEngine(id, endpointReferenceType, state, true);
+            return true ;
+        }
+        catch (final Throwable th)
+        {
+            WSTLogger.arjLoggerI18N.error("com.arjuna.wst.stub.BusinessAgreementWithParticipantCompletionStub_3", th) ;
+            return false ;
+        }
+    }
+
+    /**
+     * establish  a back channel from the coordinator side protocol engine to the coordinator.
+     *
+     * @param participantManager a manager which will forward incoming remote participant requests to the coordinator
+     */
+    public void setParticipantManager(BAParticipantManager participantManager) {
+        participant.setCoordinator(participantManager);
     }
 }

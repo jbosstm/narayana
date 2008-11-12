@@ -35,6 +35,7 @@ import com.arjuna.wsc11.messaging.MessageId;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.ExceptionType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
+import org.jboss.jbossts.xts.recovery.participant.ba.XTSBARecoveryManager;
 
 import javax.xml.ws.addressing.AddressingProperties;
 
@@ -86,8 +87,8 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
      * @param addressingProperties The addressing context.
      * @param arjunaContext The arjuna context.
      *
-     * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.canceled_1 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.cancelled_1] - Unexpected exception thrown from cancelled:
-     * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.canceled_2 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.cancelled_2] - Cancelled called on unknown coordinator: {0}
+     * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.cancelled_1 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.canceled_1] - Unexpected exception thrown from cancelled:
+     * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.cancelled_2 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.canceled_2] - Cancelled called on unknown coordinator: {0}
      */
     public void cancelled(final NotificationType cancelled, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
     {
@@ -104,13 +105,13 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
             {
                 if (WSTLogger.arjLoggerI18N.isDebugEnabled())
                 {
-                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.canceled_1", th) ;
+                    WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.cancelled_1", th) ;
                 }
             }
         }
         else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.canceled_2", new Object[] {instanceIdentifier}) ;
+            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.cancelled_2", new Object[] {instanceIdentifier}) ;
         }
     }
 
@@ -190,7 +191,8 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
       *
       * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_1 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_1] - Unexpected exception thrown from failed:
       * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_2 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_2] - Failed called on unknown coordinator: {0}
-      */
+      * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_3 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_3] - Ignoring fail called on unidentified coordinator until recovery pass is complete: {0}
+     */
      public void fail(final ExceptionType fail, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
      {
          final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
@@ -209,11 +211,19 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
                      WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_1", th) ;
                  }
              }
-         }
-         else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
-         {
-             WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_2", new Object[] {instanceIdentifier}) ;
+         } else if (areRecoveryLogEntriesAccountedFor()) {
+             // we can respond with a failed as the participant is not pending recovery
+             if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+             {
+                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_2", new Object[] {instanceIdentifier}) ;
+             }
              sendFailed(addressingProperties, arjunaContext) ;
+         } else {
+             // we must delay responding until we can be sure there is no participant pending recovery
+             if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+             {
+                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.fail_3", new Object[] {instanceIdentifier}) ;
+             }
          }
      }
     
@@ -225,6 +235,7 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
      *
      * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.completed_1 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.completed_1] - Unexpected exception thrown from completed:
      * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.completed_2 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.completed_2] - Completed called on unknown coordinator: {0}
+     * @message com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.completed_3 [com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.completed_3] - Ignoring completed called on unidentified coordinator until recovery pass is complete: {0}
      */
     public void completed(final NotificationType completed, final AddressingProperties addressingProperties,
         final ArjunaContext arjunaContext)
@@ -248,7 +259,13 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
         }
         else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.completed_2", new Object[] {instanceIdentifier}) ;
+            if (areRecoveryLogEntriesAccountedFor()) {
+                // this is a resend for a lost participant
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.completed_2", new Object[] {instanceIdentifier}) ;
+            } else {
+                // this may be a resend for a participant still pending recovery
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.completed_3", new Object[] {instanceIdentifier}) ;
+            }
         }
     }
 
@@ -514,5 +531,16 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl.sendNotCompleted_1", th) ;
             }
         }
+    }
+
+    /**
+     * Tests if there may be unknown coordinator entries in the recovery log.
+     *
+     * @return false if there may be unknown coordinator entries in the recovery log.
+     */
+
+    private static boolean areRecoveryLogEntriesAccountedFor()
+    {
+        return XTSBARecoveryManager.getRecoveryManager().isCoordinatorRecoveryStarted();
     }
 }

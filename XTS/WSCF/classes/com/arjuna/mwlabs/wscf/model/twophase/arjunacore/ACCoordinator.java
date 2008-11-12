@@ -101,10 +101,6 @@ public class ACCoordinator extends TwoPhaseCoordinator
 	 * This implementation only supports coordination at the end of the
 	 * activity.
 	 * 
-	 * @param CompletionStatus
-	 *            cs The completion status to use when determining how to
-	 *            execute the protocol.
-	 * 
 	 * @exception WrongStateException
 	 *                Thrown if the coordinator is in a state the does not allow
 	 *                coordination to occur.
@@ -127,9 +123,8 @@ public class ACCoordinator extends TwoPhaseCoordinator
 	 * Enrol the specified participant with the coordinator associated with the
 	 * current thread.
 	 * 
-	 * @param Participant
-	 *            act The participant.
-	 * 
+	 * @param act The participant.
+	 *
 	 * @exception WrongStateException
 	 *                Thrown if the coordinator is not in a state that allows
 	 *                participants to be enrolled.
@@ -185,8 +180,7 @@ public class ACCoordinator extends TwoPhaseCoordinator
 	 * Enrol the specified synchronization with the coordinator associated with
 	 * the current thread.
 	 * 
-	 * @param Synchronization
-	 *            act The synchronization to add.
+	 * @param act The synchronization to add.
 	 * 
 	 * @exception WrongStateException
 	 *                Thrown if the coordinator is not in a state that allows
