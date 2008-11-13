@@ -122,14 +122,22 @@ public class SubordinateAtomicAction extends
 
 	public int doPrepare ()
 	{
-		if (super.beforeCompletion()) {
+        int status = super.status();
+
+        // In JTA spec, beforeCompletions are run on commit attempts only, not rollbacks.
+        // We attempt to mimic that here, even though we are outside the scope of the spec.
+        // note it's not perfect- async timeout/rollback means there is a race condition in which we
+        // can still call beforeCompletion on rollbacks, but that's not too bad as skipping it is really
+        // just an optimization anyhow.  JBTM-429
+        if ( !(status == ActionStatus.ABORT_ONLY || status == ActionStatus.ABORTING) && super.beforeCompletion())
+        {
             int outcome = super.prepare(true);
             if(outcome == TwoPhaseOutcome.PREPARE_READONLY) {
                 // we won't get called again, so we need to clean up
                 // and run the afterCompletions before returning.
                 doCommit();
             }
-            
+
             return outcome;
         }
 		else
@@ -205,20 +213,27 @@ public class SubordinateAtomicAction extends
 	}
 
 	public int doOnePhaseCommit ()
-	{
-	    int status;
+    {
+        int status = super.status();
 
-	    if (beforeCompletion())
-	    {
-		status = super.End(true);
-	    }
-	    else
-	        status = ActionStatus.ABORTED;
+        // In JTA spec, beforeCompletions are run on commit attempts only, not rollbacks.
+        // We attempt to mimic that here, even though we are outside the scope of the spec.
+        // note it's not perfect- async timeout/rollback means there is a race condition in which we
+        // can still call beforeCompletion on rollbacks, but that's not too bad as skipping it is really
+        // just an optimization anyhow. JBTM-429
+        // behaviour relies on java's lazy evaluation of the if clause:
+        if (status == ActionStatus.ABORT_ONLY || super.beforeCompletion())
+        {
+            status = super.End(true);
+        }
+        else
+        {
+            status = ActionStatus.ABORTED;
+        }
 
-            afterCompletion(status);
-
-            return status;
-	}
+        afterCompletion(status);
+        return status;
+    }
 
 	public void doForget ()
 	{
