@@ -119,7 +119,7 @@ public class BusinessAgreementWithParticipantCompletionStub implements Recoverab
         {
             throw new SystemException() ;
         }
-        else if (state != State.STATE_FAILING_CANCELING)
+        else if (state == State.STATE_FAILING_CANCELING)
         {
             throw new FaultedException() ;
         }

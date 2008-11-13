@@ -100,7 +100,7 @@ public class BusinessAgreementWithCoordinatorCompletionStub implements Recoverab
     }
 
     public synchronized void cancel ()
-        throws WrongStateException, SystemException
+        throws FaultedException, WrongStateException, SystemException
     {
         /*
          * Active -> illegal state
@@ -123,6 +123,10 @@ public class BusinessAgreementWithCoordinatorCompletionStub implements Recoverab
             (state == State.STATE_CANCELING_COMPLETING))
         {
             throw new SystemException() ;
+        }
+        else if (state == State.STATE_FAILING_CANCELING)
+        {
+            throw new FaultedException();
         }
         else if (state != State.STATE_ENDED)
         {
