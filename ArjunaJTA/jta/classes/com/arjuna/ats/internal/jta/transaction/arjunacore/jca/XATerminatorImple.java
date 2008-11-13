@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -34,10 +34,7 @@ package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 import java.io.IOException;
 import java.util.Stack;
 
-import javax.transaction.HeuristicCommitException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.SystemException;
+import javax.transaction.*;
 import javax.transaction.xa.*;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -51,9 +48,9 @@ import com.arjuna.ats.jta.xa.XidImple;
 
 /**
  * The XATerminator implementation.
- * 
+ *
  * @author mcl
- * 
+ *
  */
 
 public class XATerminatorImple implements javax.resource.spi.XATerminator
@@ -61,14 +58,14 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 
 	/**
 	 * Commit the transaction identified and hence any inflow-associated work.
-	 * 
+	 *
 	 * @param xid
 	 *            the transaction to commit
 	 * @param onePhase
 	 *            whether or not this is a one-phase commit (should only be
 	 *            <code>true</code> if there is a single resource associated
 	 *            with the transaction).
-	 * 
+	 *
 	 * @exception XAException
 	 *                thrown if there are any errors, including if the
 	 *                transaction cannot commit and has to roll back.
@@ -95,10 +92,16 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 			else
 				throw new XAException(XAException.XA_RETRY);
 		}
+        catch(RollbackException e) {
+            TxImporter.removeImportedTransaction(xid);
+            XAException xaException = new XAException(XAException.XA_RBROLLBACK);
+            xaException.initCause(e);
+            throw xaException;
+        }
 		catch (XAException ex)
 		{
 			// resource hasn't had a chance to recover yet
-			
+
 			if (ex.errorCode != XAException.XA_RETRY)
 			{
 				TxImporter.removeImportedTransaction(xid);
@@ -125,10 +128,10 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 	/**
 	 * If the transaction subordinate generated a heuristic, then this operation
 	 * will be called later once that heuristic has been resolved.
-	 * 
+	 *
 	 * @param xid
 	 *            the transaction.
-	 * 
+	 *
 	 * @throws XAException
 	 *             if any error happens.
 	 */
@@ -156,14 +159,14 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 
 	/**
 	 * Prepare the imported transaction.
-	 * 
+	 *
 	 * @param xid
 	 *            the transaction to prepare.
-	 * 
+	 *
 	 * @throws XAException
 	 *             thrown if any error occurs, including if the transaction has
 	 *             rolled back.
-	 * 
+	 *
 	 * @return either XAResource.XA_OK if the transaction prepared, or
 	 *         XAResource.XA_RDONLY if it was a read-only transaction (and in
 	 *         which case, a second phase message is not expected/required.)
@@ -182,15 +185,31 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 			{
 			case TwoPhaseOutcome.PREPARE_READONLY:
 				TxImporter.removeImportedTransaction(xid);
-
 				return XAResource.XA_RDONLY;
 			case TwoPhaseOutcome.PREPARE_NOTOK:
-				TxImporter.removeImportedTransaction(xid); // TODO check if
-															// rollback is going
-															// to be called
-															// first
-
-				throw new XAException(XAException.XA_RBROLLBACK);
+                // the JCA API spec limits what we can do in terms of reporting problems.
+                // try to use the exception code and cause to provide info whilst
+                // ramining API compliant.  JBTM-427.
+                Exception initCause = null;
+                int xaExceptionCode = XAException.XA_RBROLLBACK;
+                try {
+                    tx.doRollback();
+                } catch(HeuristicCommitException e) {
+                    initCause = e;
+                    xaExceptionCode = XAException.XAER_RMERR;
+                } catch (HeuristicMixedException e) {
+                    initCause = e;
+                    xaExceptionCode = XAException.XAER_RMERR;
+                } catch (SystemException e) {
+                    initCause = e;
+                    xaExceptionCode = XAException.XAER_RMERR;
+                }
+                TxImporter.removeImportedTransaction(xid);
+                XAException xaException = new XAException(xaExceptionCode);
+                if(initCause != null) {
+                    xaException.initCause(initCause);
+                }
+				throw xaException;
 			case TwoPhaseOutcome.PREPARE_OK:
 				return XAResource.XA_OK;
 			default:
@@ -207,15 +226,15 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 	 * Return a list of indoubt transactions. This may include those
 	 * transactions that are currently in-flight and running 2PC and do not need
 	 * recovery invoked on them.
-	 * 
+	 *
 	 * @param flag
 	 *            either XAResource.TMSTARTRSCAN to indicate the start of a
 	 *            recovery scan, or XAResource.TMENDRSCAN to indicate the end of
 	 *            the recovery scan.
-	 * 
+	 *
 	 * @throws XAException
 	 *             thrown if any error occurs.
-	 * 
+	 *
 	 * @return a list of potentially indoubt transactions or <code>null</code>.
 	 */
 
@@ -321,10 +340,10 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 
 	/**
 	 * Rollback the imported transaction subordinate.
-	 * 
+	 *
 	 * @param xid
 	 *            the transaction to roll back.
-	 * 
+	 *
 	 * @throws XAException
 	 *             thrown if there are any errors.
 	 */
@@ -350,7 +369,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		catch (XAException ex)
 		{
 			// resource hasn't had a chance to recover yet
-			
+
 			if (ex.errorCode != XAException.XA_RETRY)
 			{
 				TxImporter.removeImportedTransaction(xid);
