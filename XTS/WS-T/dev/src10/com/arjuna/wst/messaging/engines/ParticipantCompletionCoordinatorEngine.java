@@ -246,10 +246,6 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
             {
                 changeState(State.STATE_FAULTING) ;
             }
-            else if (current == State.STATE_CANCELING)
-            {
-        	state = State.STATE_COMPENSATING ;
-            }
         }
         
         if ((current == State.STATE_ACTIVE) || (current == State.STATE_CANCELING))

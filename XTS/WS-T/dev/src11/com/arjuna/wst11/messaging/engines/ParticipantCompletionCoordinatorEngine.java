@@ -215,7 +215,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      * @param arjunaContext The arjuna context.
      *
      * Active -> Completed
-     * Canceling -> Compensating
+     * Canceling -> Completed
      * Completed -> Completed
      * Closing -> Closing (resend Close)
      * Compensating -> (resend Compensate)
@@ -233,13 +233,9 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
         synchronized(this)
         {
             current = state ;
-            if (current == State.STATE_ACTIVE)
+            if (current == State.STATE_ACTIVE || current == State.STATE_CANCELING)
             {
                 changeState(State.STATE_COMPLETED) ;
-            }
-            else if (current == State.STATE_CANCELING)
-            {
-        	state = State.STATE_COMPENSATING ;
             }
         }
 
