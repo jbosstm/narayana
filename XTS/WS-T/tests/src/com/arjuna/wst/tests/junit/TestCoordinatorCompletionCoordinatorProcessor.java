@@ -83,6 +83,10 @@ public class TestCoordinatorCompletionCoordinatorProcessor extends CoordinatorCo
     public void deactivateCoordinator(CoordinatorCompletionCoordinatorInboundEvents coordinator) {
     }
 
+    public CoordinatorCompletionCoordinatorInboundEvents getCoordinator(String identifier) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     /**
      * Cancelled.
      *

@@ -14,7 +14,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
  * to the underlying participant.
  */
 public class LocalParticipantCompletionParticipantStub
-        implements RecoverableBusinessAgreementWithParticipantCompletionParticipant, PersistableParticipant
+        implements BusinessAgreementWithParticipantCompletionParticipant, PersistableParticipant
 {
     public LocalParticipantCompletionParticipantStub(BusinessAgreementWithParticipantCompletionParticipant participant, String id)
     {
@@ -28,15 +28,6 @@ public class LocalParticipantCompletionParticipantStub
     {
         this.participant = null;
         this.id = null;
-    }
-
-    /**
-     * establish  a back channel from the coordinator side protocol engine to the coordinator.
-     *
-     * @param participantManager a manager which will forward incoming remote participant requests to the coordinator
-     */
-    public void setParticipantManager(BAParticipantManager participantManager) {
-        // currently unimplemented this really needs help from the applicaton helper
     }
 
     /**

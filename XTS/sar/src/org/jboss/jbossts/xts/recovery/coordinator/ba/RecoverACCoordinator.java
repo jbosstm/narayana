@@ -56,7 +56,6 @@ public class RecoverACCoordinator extends ACCoordinator {
                 if (absRec instanceof ParticipantRecord)
                 {
                     ParticipantRecord pr = (ParticipantRecord) absRec;
-                    pr.setRecoveryCoordinator(this);
                 }
 
                 absRec = iter.iterate();

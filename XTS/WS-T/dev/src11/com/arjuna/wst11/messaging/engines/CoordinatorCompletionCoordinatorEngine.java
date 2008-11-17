@@ -30,10 +30,8 @@ import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsba.CoordinatorCompletionCoordinatorInboundEvents;
 import com.arjuna.webservices11.wsba.State;
-import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
 import com.arjuna.webservices11.wsba.client.CoordinatorCompletionParticipantClient;
-import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.wsc11.messaging.MessageId;
@@ -76,6 +74,10 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      */
     private State state;
     /**
+     * The failure state which preceded state ended during close/cancel or null if no failure occurred.
+     */
+    private State failureState;
+    /**
      * The flag indicating that this coordinator has been recovered from the log.
      */
     private boolean recovered ;
@@ -91,7 +93,7 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     }
 
     /**
-     * Construct the engine for the coordinator in a specified state.
+     * Construct the engine for the coordinator in a specified state and register it.
      * @param id The coordinator id.
      * @param participant The participant endpoint reference.
      * @param state The initial state.
@@ -103,16 +105,8 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
         this.instanceIdentifier = new InstanceIdentifier(id) ;
         this.participant = participant ;
         this.state = state ;
+        this.failureState = null;
         this.recovered = recovered;
-    }
-
-    /**
-     * Set the coordinator and register
-     * @param coordinator
-     */
-    public void setCoordinator(final BAParticipantManager coordinator)
-    {
-        this.coordinator = coordinator ;
         // unrecovered participants are always activated
         // we only need to reactivate recovered participants which were successfully COMPLETED or which began
         // CLOSING. any others will only have been saved because of a heuristic outcome. we can safely drop
@@ -120,6 +114,15 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
         if (!recovered || state == State.STATE_COMPLETED || state == State.STATE_CLOSING) {
             CoordinatorCompletionCoordinatorProcessor.getProcessor().activateCoordinator(this, id) ;
         }
+    }
+
+    /**
+     * Set the coordinator
+     * @param coordinator
+     */
+    public void setCoordinator(final BAParticipantManager coordinator)
+    {
+        this.coordinator = coordinator ;
     }
 
     /**
@@ -341,6 +344,35 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      * NotCompleting -> NotCompleting (invalid state)
      * Exiting -> Exiting (invalid state)
      * Ended -> Ended (resend Failed)
+     *
+     * In fact we only execute the transition to FAILING_ACTIVE and in this case we send a message to the
+     * coordinator by calling executeFail. This propagates the failure back thorugh the activityy hierarchy
+     * to the relevant participant and also marks the acivity as ABORT_ONLY.
+     *
+     * In the other failure cases we do not change to a FAILING_XXX state but instead go straight to ENDED
+     * and save the failing state in a field failureState. In these cases there will be a coordinator
+     * close/cancel/compensate thread waiting on the change to state FAILING_XXX. The change to FAILING_XXX
+     * will wake it up and, if the state is still FAILING_XXX, return a fault to the coordinator, However,
+     * the failing thread also sends a failed response and then call ended. This means the state might be
+     * transitioned to ENDED before the coordinator thread is scheduled. So, we have to avoid this race by
+     * going straight to ENDED and saving a failureState which the coordinator thread can check.
+     *
+     * The failureState also avoids another race condition for these (non-ACTIVE) cases. It means we don't have
+     * to send a message to the coordinator to notify the failure. We would need to do this after the state
+     * change as we need to exclude threads handling resent messages. However, the waiting coordinator thread
+     * is woken by the state change and so it might complete and remove the activity before the message is sent
+     * causing a NoSuchActivity exception in this thread. Settign the  failureState ensures that the failure is
+     * detected cleanly by any waiting coordinator thread.
+     *
+     * Fortuitously, this also avoids problems during recovery. During recovery we have no link to our
+     * coordinator available since there is no activity hierarchy in the current context. So, communicating
+     * failures via the failureState is the only way to ensure that the recovreed coordinator sees a failure.
+     * There is a further wrinkle here too. If a recovered coordinator times out waiting for a response we need
+     * to leave the engine in place when we ditch the recovered coordinator and then reestablish a link to it
+     * next time we recreate the coordinator. We cannot afford to miss a failure during this interval but the]
+     * engine must transition to ENDED after handling the failure. Saving the failure state ensures that the
+     * next time the coordinator calls cancel, compensate or close it receives a fault indicating a failure
+     * rather than just detecting that the pariticpant  has ended.
      */
     public void fail(final ExceptionType fail, final AddressingProperties addressingProperties,
         final ArjunaContext arjunaContext)
@@ -355,15 +387,18 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
             }
             else if ((current == State.STATE_CANCELING_ACTIVE) || (current == State.STATE_CANCELING_COMPLETING))
             {
-                changeState(State.STATE_FAILING_CANCELING) ;
+                failureState = State.STATE_FAILING_CANCELING;
+                ended();
             }
             else if (current == State.STATE_COMPLETING)
             {
-                changeState(State.STATE_FAILING_COMPLETING) ;
+                failureState = State.STATE_FAILING_COMPLETING;
+                ended();
             }
             else if (current == State.STATE_COMPENSATING)
             {
-                changeState(State.STATE_FAILING_COMPENSATING) ;
+                failureState = State.STATE_FAILING_COMPENSATING;
+                ended();
             }
         }
 
@@ -372,12 +407,8 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
             executeFail(fail.getExceptionIdentifier()) ;
         }
         else if ((current == State.STATE_CANCELING_ACTIVE) || (current == State.STATE_CANCELING_COMPLETING) ||
-        	 (current == State.STATE_COMPLETING) || (current == State.STATE_COMPENSATING))
-        {
-            sendFailed() ;
-            ended() ;
-        }
-        else if (current == State.STATE_ENDED)
+                (current == State.STATE_COMPLETING) || (current == State.STATE_COMPENSATING) ||
+                (current == State.STATE_ENDED))
         {
             sendFailed() ;
         }
@@ -486,7 +517,7 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      */
     public State cancel()
     {
-        final State current ;
+        State current ;
         synchronized(this)
         {
             current = state ;
@@ -503,13 +534,21 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
         if (current == State.STATE_ACTIVE)
         {
             sendCancel() ;
-            return waitForState(State.STATE_CANCELING_ACTIVE, TransportTimer.getTransportTimeout()) ;
+            current = waitForState(State.STATE_CANCELING_ACTIVE, TransportTimer.getTransportTimeout()) ;
         }
         else if (current == State.STATE_COMPLETING)
         {
             sendCancel() ;
-            return waitForState(State.STATE_CANCELING_COMPLETING, TransportTimer.getTransportTimeout()) ;
+            current = waitForState(State.STATE_CANCELING_COMPLETING, TransportTimer.getTransportTimeout()) ;
         }
+
+        // if we reached ended via a failure then make sure we return the failure state so that
+        // the coordinator sees the failure
+
+        if (current == State.STATE_ENDED && failureState != null) {
+            return failureState;
+        }
+
         return current ;
     }
 
@@ -534,7 +573,7 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      */
     public State compensate()
     {
-        final State current ;
+        State current ;
         synchronized(this)
         {
             current = state ;
@@ -547,10 +586,30 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
         if (current == State.STATE_COMPLETED)
         {
             sendCompensate() ;
-            return waitForState(State.STATE_COMPENSATING, TransportTimer.getTransportTimeout()) ;
+            waitForState(State.STATE_COMPENSATING, TransportTimer.getTransportTimeout()) ;
         }
 
-        return current ;
+        synchronized(this) {
+            if (state != State.STATE_COMPENSATING) {
+                // if this is a recovered participant then ended will not have
+                // deactivated the entry so that this (recovery) thread can
+                // detect it and update its log entry. so we need to deactivate
+                // the entry here.
+
+                if (recovered) {
+                    CoordinatorCompletionCoordinatorProcessor.getProcessor().deactivateCoordinator(this) ;
+                }
+
+                if (state == State.STATE_ENDED && failureState != null) {
+                    return failureState;
+                }
+
+                return state;
+            }  else {
+                // timeout -- leave participant in place as this TX will get retried later
+                return State.STATE_COMPENSATING;
+            }
+        }
     }
 
     /**
@@ -613,7 +672,7 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      */
     public State close()
     {
-        final State current ;
+        State current ;
         synchronized(this)
         {
             current = state ;
@@ -626,9 +685,30 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
         if (current == State.STATE_COMPLETED)
         {
             sendClose() ;
-            return waitForState(State.STATE_CLOSING, TransportTimer.getTransportTimeout()) ;
+            waitForState(State.STATE_CLOSING, TransportTimer.getTransportTimeout()) ;
         }
-        return current ;
+
+        synchronized(this) {
+            if (state != State.STATE_CLOSING) {
+                // if this is a recovered participant then ended will not have
+                // deactivated the entry so that this (recovery) thread can
+                // detect it and update its log entry. so we need to deactivate
+                // the entry here.
+
+                if (recovered) {
+                    CoordinatorCompletionCoordinatorProcessor.getProcessor().deactivateCoordinator(this) ;
+                }
+
+                if (state == State.STATE_ENDED && failureState != null) {
+                    return failureState;
+                }
+
+                return state;
+            }  else {
+                // timeout -- leave participant in place as this TX will get retried later
+                return State.STATE_CLOSING;
+            }
+        }
     }
 
     /**
@@ -642,7 +722,9 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
         ended() ;
         try
         {
-            coordinator.fail(soapFault.getSubcode()) ;
+            if (coordinator != null) {
+                coordinator.fail(soapFault.getSubcode()) ;
+            }
         }
         catch (final Throwable th) {} // ignore
     }
@@ -1009,7 +1091,18 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     private void ended()
     {
         changeState(State.STATE_ENDED) ;
-        CoordinatorCompletionCoordinatorProcessor.getProcessor().deactivateCoordinator(this) ;
+        // participants which have not been recovered from the log can be deactivated now.
+
+        // participants which have been recovered are left for the recovery thread to deactivate.
+        // this is because the recovery thread may have timed out waiting for a response to
+        // a close/cancel message and gone on to complete its scan and suspend. the next scan
+        // will detect this activated participant and note that it has completed. if a crash
+        // happens in between the recovery thread can safely recreate and reactivate the
+        // participant and resend the commit since the commit/committed exchange is idempotent.
+
+        if (!recovered) {
+            CoordinatorCompletionCoordinatorProcessor.getProcessor().deactivateCoordinator(this) ;
+        }
     }
 
     /**

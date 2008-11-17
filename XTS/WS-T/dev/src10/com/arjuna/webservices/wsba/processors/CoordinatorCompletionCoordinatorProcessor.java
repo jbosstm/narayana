@@ -64,7 +64,7 @@ public abstract class CoordinatorCompletionCoordinatorProcessor
     
     /**
      * Activate the coordinator.
-     * @param coordinatorState The coordinator.
+     * @param coordinator The coordinator.
      * @param identifier The identifier.
      */
     public abstract void activateCoordinator(final CoordinatorCompletionCoordinatorInboundEvents coordinator, final String identifier) ;
@@ -75,6 +75,12 @@ public abstract class CoordinatorCompletionCoordinatorProcessor
      */
     public abstract void deactivateCoordinator(final CoordinatorCompletionCoordinatorInboundEvents coordinator) ;
     
+    /**
+     * Locate a coordinator by name.
+     * @param identifier The name of the coordinator.
+     */
+    public abstract CoordinatorCompletionCoordinatorInboundEvents getCoordinator(final String  identifier) ;
+
     /**
      * Cancelled.
      * @param cancelled The cancelled notification.

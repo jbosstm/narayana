@@ -10,7 +10,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
  */
 public class LocalCoordinatorCompletionParticipantStub
         extends LocalParticipantCompletionParticipantStub
-        implements RecoverableBusinessAgreementWithCoordinatorCompletionParticipant, PersistableParticipant {
+        implements BusinessAgreementWithCoordinatorCompletionParticipant, PersistableParticipant {
 
     public LocalCoordinatorCompletionParticipantStub(BusinessAgreementWithCoordinatorCompletionParticipant participant, String id) {
         super(participant, id);

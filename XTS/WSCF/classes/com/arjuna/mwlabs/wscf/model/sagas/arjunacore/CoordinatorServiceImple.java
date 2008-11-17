@@ -398,7 +398,7 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
      * @exception SystemException Thrown if any other error occurs.
      */
 
-    public void enlistParticipant (RecoverableParticipant act) throws WrongStateException, DuplicateParticipantException, InvalidParticipantException, NoCoordinatorException, SystemException
+    public void enlistParticipant (Participant act) throws WrongStateException, DuplicateParticipantException, InvalidParticipantException, NoCoordinatorException, SystemException
     {
 	_coordManager.enlistParticipant(act);
     }

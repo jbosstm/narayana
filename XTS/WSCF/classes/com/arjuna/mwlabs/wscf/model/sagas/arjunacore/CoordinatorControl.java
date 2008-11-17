@@ -213,7 +213,7 @@ public class CoordinatorControl
      * This implementation only supports coordination at the end of the
      * activity.
      *
-     * @param CompletionStatus cs The completion status to use when determining
+     * @param cs The completion status to use when determining
      * how to execute the protocol.
      *
      * @exception WrongStateException Thrown if the coordinator is in a state
@@ -304,7 +304,7 @@ public class CoordinatorControl
      * Enrol the specified participant with the coordinator associated with
      * the current thread.
      *
-     * @param Participant act The participant.
+     * @param act The participant.
      *
      * @exception WrongStateException Thrown if the coordinator is not in a
      * state that allows participants to be enrolled.
@@ -315,7 +315,7 @@ public class CoordinatorControl
      * @exception SystemException Thrown if any other error occurs.
      */
 
-    public void enlistParticipant (RecoverableParticipant act) throws WrongStateException, DuplicateParticipantException, InvalidParticipantException, NoCoordinatorException, SystemException
+    public void enlistParticipant (Participant act) throws WrongStateException, DuplicateParticipantException, InvalidParticipantException, NoCoordinatorException, SystemException
     {
 	currentCoordinator().enlistParticipant(act);
     }

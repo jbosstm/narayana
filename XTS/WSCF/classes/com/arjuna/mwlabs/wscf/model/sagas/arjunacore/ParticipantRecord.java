@@ -41,7 +41,6 @@ import com.arjuna.ats.arjuna.gandiva.ClassName;
 
 import com.arjuna.mw.wscf.model.sagas.participants.Participant;
 import com.arjuna.mw.wscf.model.sagas.participants.ParticipantWithComplete;
-import com.arjuna.mw.wscf.model.sagas.participants.RecoverableParticipant;
 import com.arjuna.mw.wscf.model.sagas.exceptions.CompensateFailedException;
 import com.arjuna.mw.wscf.model.sagas.exceptions.CancelFailedException;
 
@@ -74,7 +73,7 @@ public class ParticipantRecord extends
 	 *          ParticipantRecord {0} - null participant provided!
 	 */
 
-	public ParticipantRecord (RecoverableParticipant theResource, Uid id)
+	public ParticipantRecord (Participant theResource, Uid id)
 	{
 		super(id, null, ObjectType.ANDPERSISTENT);
 
@@ -669,7 +668,7 @@ public class ParticipantRecord extends
 			{
                 String resourcehandleImplClassName = os.unpackString();
                 Class clazz = ClassLoaderHelper.forName(ParticipantRecord.class, resourcehandleImplClassName);
-                _resourceHandle = (RecoverableParticipant)clazz.newInstance();
+                _resourceHandle = (Participant)clazz.newInstance();
 
                 result = _resourceHandle.restore_state(os);
 
@@ -736,26 +735,6 @@ public class ParticipantRecord extends
 
 		return result;
 	}
-
-    /**
-     * called during recovery activation to propagate the coordinator to the underlying stubs and their protocol
-     * engines allowing the engines to establish a back channel to the cooridnator for flow of remote participant
-     * requests.
-     */
-    
-    public void setRecoveryCoordinator(ACCoordinator coordinator)
-    {
-        try {
-            // try to propagate setCoordinator to the resource
-
-            RecoverableParticipant recoverableParticipant = (RecoverableParticipant) _resourceHandle;
-            recoverableParticipant.setCoordinator(coordinator);
-        } catch (ClassCastException e) {
-            // ignore as this is obviously not an instance of RecoverableParticipant
-            // it must be a participant registered via the local API which means there is
-            // no BAParticipantManager instance around to drive messages to the coordinator
-        }
-    }
 
     public String type ()
 	{
@@ -854,7 +833,7 @@ public class ParticipantRecord extends
 		_coordId = null;
 	}
 
-	private RecoverableParticipant _resourceHandle;
+	private Participant _resourceHandle;
 
 	private long _timeout;
 

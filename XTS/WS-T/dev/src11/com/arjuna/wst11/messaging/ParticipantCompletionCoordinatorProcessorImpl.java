@@ -69,6 +69,15 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
     }
 
     /**
+     * Locate a coordinator by name.
+     * @param identifier The name of the coordinator.
+     */
+    public ParticipantCompletionCoordinatorInboundEvents getCoordinator(final String  identifier)
+    {
+        return (ParticipantCompletionCoordinatorInboundEvents)activatedObjectProcessor.getObject(identifier);
+    }
+
+    /**
      * Get the coordinator with the specified identifier.
      * @param instanceIdentifier The coordinator identifier.
      * @return The coordinator or null if not known.

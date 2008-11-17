@@ -43,7 +43,6 @@ import com.arjuna.mwlabs.wst.util.PersistableParticipantHelper;
 import com.arjuna.mwlabs.wst.ba.remote.BARecoveryParticipantManagerImple;
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator;
 import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
-import com.arjuna.wst.RecoverableBusinessAgreementWithParticipantCompletionParticipant;
 
 // TODO crash recovery (for EVERYTHING!!)
 
@@ -57,11 +56,11 @@ import com.arjuna.wst.RecoverableBusinessAgreementWithParticipantCompletionParti
  */
 
 public class BusinessAgreementWithParticipantCompletionImple implements
-		com.arjuna.mw.wscf.model.sagas.participants.RecoverableParticipant
+		com.arjuna.mw.wscf.model.sagas.participants.Participant
 {
 //
 	public BusinessAgreementWithParticipantCompletionImple (
-			RecoverableBusinessAgreementWithParticipantCompletionParticipant resource,
+			BusinessAgreementWithParticipantCompletionParticipant resource,
 			String id)
 	{
 		_resource = resource;
@@ -226,7 +225,7 @@ public class BusinessAgreementWithParticipantCompletionImple implements
         final Object resource = PersistableParticipantHelper.restore_state(is) ;
         if (resource != null)
         {
-            _resource = (RecoverableBusinessAgreementWithParticipantCompletionParticipant)resource ;
+            _resource = (BusinessAgreementWithParticipantCompletionParticipant)resource ;
             return true ;
         }
         else
@@ -235,19 +234,7 @@ public class BusinessAgreementWithParticipantCompletionImple implements
         }
 	}
 
-    /**
-     * establish a back channel from the underlying stub to the coordinator by creating a participant manager which
-     * will forward messages to the coordinator. this is only called during recovery processing
-     *
-     * @param coordinator
-     */
-    public void setCoordinator(ACCoordinator coordinator)
-    {
-        _baParticipantManager = new BARecoveryParticipantManagerImple(coordinator, _identifier);
-        _resource.setParticipantManager(_baParticipantManager);
-    }
-
-	protected RecoverableBusinessAgreementWithParticipantCompletionParticipant _resource;
+	protected BusinessAgreementWithParticipantCompletionParticipant _resource;
 
 	private String _identifier = null;
 

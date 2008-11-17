@@ -39,11 +39,13 @@ import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.soap.SoapUtils;
 import com.arjuna.webservices.util.StreamHelper;
 import com.arjuna.webservices.wsba.State;
+import com.arjuna.webservices.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
 import com.arjuna.webservices.wsaddr.EndpointReferenceType;
 import com.arjuna.wst.*;
 import com.arjuna.wst.messaging.engines.CoordinatorCompletionCoordinatorEngine;
+import com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl;
 
-public class BusinessAgreementWithCoordinatorCompletionStub implements RecoverableBusinessAgreementWithCoordinatorCompletionParticipant, PersistableParticipant
+public class BusinessAgreementWithCoordinatorCompletionStub implements BusinessAgreementWithCoordinatorCompletionParticipant, PersistableParticipant
 {
     private static final QName QNAME_BACC_PARTICIPANT = new QName("baccParticipant") ;
     private CoordinatorCompletionCoordinatorEngine participant ;
@@ -267,20 +269,19 @@ public class BusinessAgreementWithCoordinatorCompletionStub implements Recoverab
             QName statename = new QName(ns, localPart, prefix);
             State state = State.toState(statename);
 
-            participant = new CoordinatorCompletionCoordinatorEngine(id, endpointReferenceType, state, true);
+            // if we already have an engine from a previous recovery scan or because
+            // we had a heuristic outcome then reuse it with luck it will have been committed
+            // or aborted between the last scan and this one
+            // note that whatever happens it will not have been removed from the table
+            // because it is marked as recovered
+            participant = (CoordinatorCompletionCoordinatorEngine) CoordinatorCompletionCoordinatorProcessor.getProcessor().getCoordinator(id);
+            if (participant == null) {
+                participant = new CoordinatorCompletionCoordinatorEngine(id, endpointReferenceType, state, true);
+            }
             return true ;
         } catch (final Throwable th) {
             WSTLogger.arjLoggerI18N.error("com.arjuna.wst.stub.BusinessAgreementWithCoordinatorCompletionStub_3", th) ;
             return false ;
         }
-    }
-
-    /**
-     * establish  a back channel from the coordinator side protocol engine to the coordinator.
-     *
-     * @param participantManager a manager which will forward incoming remote participant requests to the coordinator
-     */
-    public void setParticipantManager(BAParticipantManager participantManager) {
-        participant.setCoordinator(participantManager);
     }
 }

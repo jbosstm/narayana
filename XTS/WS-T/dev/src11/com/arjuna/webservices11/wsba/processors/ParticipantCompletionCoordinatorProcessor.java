@@ -76,6 +76,12 @@ public abstract class ParticipantCompletionCoordinatorProcessor
     public abstract void deactivateCoordinator(final ParticipantCompletionCoordinatorInboundEvents coordinator) ;
 
     /**
+     * Locate a coordinator by name.
+     * @param identifier The name of the coordinator.
+     */
+    public abstract ParticipantCompletionCoordinatorInboundEvents getCoordinator(final String  identifier) ;
+
+    /**
      * Cancelled.
      * @param cancelled The cancelled notification.
      * @param addressingProperties The addressing context.

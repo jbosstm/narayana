@@ -388,13 +388,13 @@ public class ACCoordinator extends BasicAction
 	 *                Thrown if any other error occurs.
 	 */
 
-	public void enlistParticipant (RecoverableParticipant act) throws WrongStateException,
+	public void enlistParticipant (Participant act) throws WrongStateException,
 			DuplicateParticipantException, InvalidParticipantException,
 			SystemException
 	{
 		if (act == null) throw new InvalidParticipantException();
 
-		AbstractRecord rec = new ParticipantRecord((RecoverableParticipant)act, new Uid());
+		AbstractRecord rec = new ParticipantRecord((Participant)act, new Uid());
 
 		if (add(rec) != AddOutcome.AR_ADDED) throw new WrongStateException();
 		else

@@ -67,6 +67,10 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
      */
     private State state ;
     /**
+     * The failure state which preceded state ended during close/cancel or null if no failure occurred.
+     */
+    private State failureState;
+    /**
      * The flag indicating that this coordinator has been recovered from the log.
      */
     private boolean recovered ;
@@ -82,7 +86,7 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
     }
     
     /**
-     * Construct the engine for the coordinator in a specified state.
+     * Construct the engine for the coordinator in a specified state and register it.
      * @param id The coordinator id.
      * @param participant The participant endpoint reference.
      * @param state The initial state.
@@ -94,16 +98,8 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
         this.instanceIdentifier = new InstanceIdentifier(id) ;
         this.participant = participant ;
         this.state = state ;
+        this.failureState = null;
         this.recovered = recovered;
-    }
-    
-    /**
-     * Set the coordinator and register
-     * @param coordinator
-     */
-    public void setCoordinator(final BAParticipantManager coordinator)
-    {
-        this.coordinator = coordinator ;
         // unrecovered participants are always activated
         // we only need to reactivate recovered participants which were successfully COMPLETED or which began
         // CLOSING. any others will only have been saved because of a heuristic outcome. we can safely drop
@@ -111,6 +107,15 @@ public class CoordinatorCompletionCoordinatorEngine implements CoordinatorComple
         if (!recovered || state == State.STATE_COMPLETED || state == State.STATE_CLOSING) {
             CoordinatorCompletionCoordinatorProcessor.getProcessor().activateCoordinator(this, id) ;
         }
+    }
+    
+    /**
+     * Set the coordinator
+     * @param coordinator
+     */
+    public void setCoordinator(final BAParticipantManager coordinator)
+    {
+        this.coordinator = coordinator ;
     }
     
     /**

@@ -40,6 +40,7 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.soap.SoapUtils;
 import com.arjuna.webservices11.wsba.State;
+import com.arjuna.webservices11.wsba.processors.ParticipantCompletionCoordinatorProcessor;
 import com.arjuna.webservices11.util.StreamHelper;
 import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
 import com.arjuna.wst.FaultedException;
@@ -47,10 +48,9 @@ import com.arjuna.wst.PersistableParticipant;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine;
-import com.arjuna.wst11.RecoverableBusinessAgreementWithParticipantCompletionParticipant;
-import com.arjuna.wst11.BAParticipantManager;
+import com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl;
 
-public class BusinessAgreementWithParticipantCompletionStub implements RecoverableBusinessAgreementWithParticipantCompletionParticipant, PersistableParticipant
+public class BusinessAgreementWithParticipantCompletionStub implements BusinessAgreementWithParticipantCompletionParticipant, PersistableParticipant
 {
     private static final QName QNAME_BAPCWS_PARTICIPANT = new QName("bapcwsParticipant") ;
 
@@ -246,25 +246,15 @@ public class BusinessAgreementWithParticipantCompletionStub implements Recoverab
             QName statename = new QName(ns, localPart, prefix);
             State state = State.toState11(statename);
 
-            participant = new ParticipantCompletionCoordinatorEngine(id, endpointReference, state, true);
-            // TODO -- work out how to fix this
-            // we need to obtain a participant manager allowing the engine to post events to the coordinator
-            // the normal one is obtained from the BusinessAgreementWithParticipantCompletionImple which wraps
-            // this stub. the registrar normally creates an engine, a stub and a BAWCPImple. it asks the BAWPCImple
-            // for a participant manager and passes it to the engine. to make things worse, the BAWPCImple relies
-            // upon being created inside an activity which identifies the relevant coordinator. this is because
-            // the manager it creates needs to access the coordinator and it uses the current activity to provide
-            // an access path. we cannot do this here because 1) the restore_state protocol is a simple top-down
-            // recursive model so does not give us a handle on either the enclosing BAWCImple or the ACCoordinator
-            // and 2) the BAWCImple does not know about the implementation of this stub so cannot access the engine
-            // it wraps and 3) we cannot install an activity at this point during recovery as we are still creating
-            // the coordinator which will coordinate it.
-            //
-            // if we obtain a handle on the current coordinator we can just create an alternative proxy to route
-            // messages directly, avoiding the activity hierarchy.
-            //
-            //participantManager = ???;
-            // participant.setCoordinator(participantManager) ;
+            // if we already have an engine from a previous recovery scan or because
+            // we had a heuristic outcome then reuse it with luck it will have been committed
+            // or aborted between the last scan and this one
+            // note that whatever happens it will not have been removed from the table
+            // because it is marked as recovered
+            participant = (ParticipantCompletionCoordinatorEngine) ParticipantCompletionCoordinatorProcessor.getProcessor().getCoordinator(id);
+            if (participant == null) {
+                participant = new ParticipantCompletionCoordinatorEngine(id, endpointReference, state, true);
+            }
             return true ;
         }
         catch (final Throwable th)
@@ -272,14 +262,5 @@ public class BusinessAgreementWithParticipantCompletionStub implements Recoverab
             WSTLogger.arjLoggerI18N.error("com.arjuna.wst11.stub.BusinessAgreementWithParticipantCompletionStub_3", th) ;
             return false ;
         }
-    }
-
-    /**
-     * establish  a back channel from the coordinator side protocol engine to the coordinator.
-     *
-     * @param participantManager a manager which will forward incoming remote participant requests to the coordinator
-     */
-    public void setParticipantManager(BAParticipantManager participantManager) {
-        participant.setCoordinator(participantManager);
     }
 }

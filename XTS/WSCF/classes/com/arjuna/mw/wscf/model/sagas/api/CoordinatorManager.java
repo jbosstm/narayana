@@ -68,7 +68,7 @@ public interface CoordinatorManager extends UserCoordinator
      * @exception SystemException Thrown if any other error occurs.
      */
 
-    public void enlistParticipant (RecoverableParticipant act) throws NoActivityException, WrongStateException, DuplicateParticipantException, InvalidParticipantException, SystemException;
+    public void enlistParticipant (Participant act) throws NoActivityException, WrongStateException, DuplicateParticipantException, InvalidParticipantException, SystemException;
 
     /**
      * Remove the specified participant from the coordinator associated with
