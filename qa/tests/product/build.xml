@@ -164,6 +164,8 @@ different object store implementations, the command would be
 -->
 
     <target name="init">
+        <available file="${jbossts.home}/lib/jbossjta.jar" property="is.jta" />
+        <fail message="The tests only build on JTA version of JBossTS" unless="is.jta" />
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.classes.dir}"/>
         <mkdir dir="${log.dir}"/>
@@ -192,7 +194,7 @@ different object store implementations, the command would be
     </target>
 
     <target name="init.xargs" unless="xargs">
-        <property name="xargs" value="sync=ON,tx.count=1%thread.count=1%db.user=user1,user2%db.password=user1,user2%db.url=jdbc:h2:db1%db.url=jdbc:h2:db2"/>
+        <property name="xargs" value="tx.count=100%thread.count=1%db.user=user1,user2%db.password=user1,user2%db.url=jdbc:h2:db1%db.url=jdbc:h2:db2"/>
     </target>
 
     <target name="init.propfile" unless="propfile">
