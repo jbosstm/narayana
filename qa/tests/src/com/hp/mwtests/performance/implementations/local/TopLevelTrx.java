@@ -21,7 +21,7 @@
 package com.hp.mwtests.performance.implementations.local;
 
 import com.hp.mwtests.performance.PerformanceTest;
-import com.arjuna.ats.arjuna.AtomicAction;
+import com.hp.mwtests.performance.products.TxWrapper;
 
 public class TopLevelTrx extends PerformanceTest
 {
@@ -29,7 +29,7 @@ public class TopLevelTrx extends PerformanceTest
     {
         try
         {
-            AtomicAction tx = new AtomicAction();
+            TxWrapper tx = getTxWrapper();
 
             tx.begin();  // Top level begin
 

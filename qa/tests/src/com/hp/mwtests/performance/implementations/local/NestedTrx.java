@@ -21,16 +21,21 @@
 package com.hp.mwtests.performance.implementations.local;
 
 import com.hp.mwtests.performance.PerformanceTest;
-import com.arjuna.ats.arjuna.AtomicAction;
+import com.hp.mwtests.performance.products.TxWrapper;
 
 public class NestedTrx extends PerformanceTest
 {
+    protected boolean requiresNestedTxSupport()
+    {
+        return true;
+    }
+
     protected void work() throws Exception
     {
         try
         {
-            AtomicAction tx1 = new AtomicAction();
-            AtomicAction tx2 = new AtomicAction();
+            TxWrapper tx1 = getTxWrapper();
+            TxWrapper tx2 = getTxWrapper();
 
             tx1.begin();         // Top level begin
             tx2.begin();         // Nested level begin
