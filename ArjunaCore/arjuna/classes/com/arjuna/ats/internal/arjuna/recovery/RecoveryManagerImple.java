@@ -179,8 +179,7 @@ public class RecoveryManagerImple
 		// (don't start this until just about to go on to the other stuff)
 
 		_periodicRecovery = new PeriodicRecovery(threaded, useListener);
-		_periodicRecovery.setDaemon(true);
-		
+
 		try
 		{
 			if (tsLogger.arjLogger.isInfoEnabled())
