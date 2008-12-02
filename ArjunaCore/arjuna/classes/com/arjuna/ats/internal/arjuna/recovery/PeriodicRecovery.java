@@ -156,6 +156,8 @@ public class PeriodicRecovery extends Thread
 
         loadModules();
 
+        setDaemon(true);
+        
         if (useListener)
         {
             try
