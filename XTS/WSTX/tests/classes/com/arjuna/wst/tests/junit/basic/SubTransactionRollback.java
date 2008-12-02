@@ -19,11 +19,11 @@
  * @author JBoss Inc.
  */
 
-package com.arjuna.wst11.tests.junit.basic;
+package com.arjuna.wst.tests.junit.basic;
 
-import com.arjuna.mw.wst11.TransactionManager;
-import com.arjuna.mw.wst11.UserTransaction;
-import com.arjuna.mw.wst11.UserSubTransaction;
+import com.arjuna.mw.wst.TransactionManager;
+import com.arjuna.mw.wst.UserTransaction;
+import com.arjuna.mw.wst.UserSubTransaction;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.wst.tests.DemoDurableParticipant;
 import com.arjuna.wst.tests.DemoVolatileParticipant;
@@ -34,10 +34,10 @@ import junit.framework.TestCase;
  * @version $Id: $
  */
 
-public class SubTransactionCommit extends TestCase
+public class SubTransactionRollback extends TestCase
 {
 
-    public static void testSubTransactionCommit()
+    public static void testSubTransactionRollback()
             throws Exception
     {
         final UserTransaction ut = UserTransaction.getUserTransaction();
@@ -61,10 +61,11 @@ public class SubTransactionCommit extends TestCase
         tm.enlistForVolatileTwoPhase(p4, p4.identifier());
 
         tm.resume(tx);
-        ut.commit();
-        assertTrue(p1.prepared() && p1.resolved() && p1.passed());
-        assertTrue(p2.prepared() && p2.resolved() && p2.passed());
-        assertTrue(p3.prepared() && p3.resolved() && p3.passed());
-        assertTrue(p4.prepared() && p4.resolved() && p4.passed());
+        ut.rollback();
+
+        assertTrue(p1.resolved() && !p1.passed());
+        assertTrue(p2.resolved() && !p2.passed());
+        assertTrue(p3.resolved() && !p3.passed());
+        assertTrue(p4.resolved() && !p4.passed());
     }
 }

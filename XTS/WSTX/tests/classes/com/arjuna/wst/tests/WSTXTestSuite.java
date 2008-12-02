@@ -49,6 +49,11 @@ public class WSTXTestSuite extends junit.framework.TestSuite
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SuspendTransaction.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.ThreadedTransaction.class));
 
+        // subtransaction tests
+        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SubTransactionCommit.class));
+        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SubTransactionRollback.class));
+        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SubTransactionCommitRollbackInPrepare.class));
+        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SubTransactionCommitFailInPrepare.class));
         // wst BA tests
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.Cancel.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.Close.class));

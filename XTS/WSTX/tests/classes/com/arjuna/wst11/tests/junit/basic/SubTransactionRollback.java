@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. 
  * See the copyright.txt in the distribution for a full listing 
  * of individual contributors.
@@ -15,18 +15,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  * 
- * (C) 2005-2006,
+ * (C) 2008,
  * @author JBoss Inc.
- */
-/*
- * Copyright (C) 2002,
- *
- * Arjuna Technologies Limited,
- * Newcastle upon Tyne,
- * Tyne and Wear,
- * UK.
- *
- * $Id: MultiParticipants.java,v 1.6.8.1 2005/11/22 10:36:11 kconner Exp $
  */
 
 package com.arjuna.wst11.tests.junit.basic;
@@ -37,13 +27,11 @@ import com.arjuna.mw.wst11.UserSubTransaction;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.wst.tests.DemoDurableParticipant;
 import com.arjuna.wst.tests.DemoVolatileParticipant;
-import com.arjuna.mwlabs.wst11.at.remote.UserSubTransactionImple;
 import junit.framework.TestCase;
 
 /**
- * @author Mark Little (mark.little@arjuna.com)
- * @version $Id: MultiParticipants.java,v 1.6.8.1 2005/11/22 10:36:11 kconner Exp $
- * @since 1.0.
+ * @author Andrew Dinn
+ * @version $Id:$
  */
 
 public class SubTransactionRollback extends TestCase

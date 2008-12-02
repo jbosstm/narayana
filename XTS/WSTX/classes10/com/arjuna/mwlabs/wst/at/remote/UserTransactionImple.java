@@ -408,7 +408,7 @@ public class UserTransactionImple extends UserTransaction
 		}
 	}
 
-	private ContextManager _ctxManager = new ContextManager();
-	private String _activationCoordinatorService;
+	protected ContextManager _ctxManager = new ContextManager();
+	protected String _activationCoordinatorService;
 	private Hashtable _completionCoordinators = new Hashtable();
 }

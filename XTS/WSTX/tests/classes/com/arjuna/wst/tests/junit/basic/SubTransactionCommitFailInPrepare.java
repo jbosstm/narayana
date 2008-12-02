@@ -19,25 +19,27 @@
  * @author JBoss Inc.
  */
 
-package com.arjuna.wst11.tests.junit.basic;
+package com.arjuna.wst.tests.junit.basic;
 
-import com.arjuna.mw.wst11.TransactionManager;
-import com.arjuna.mw.wst11.UserTransaction;
-import com.arjuna.mw.wst11.UserSubTransaction;
+import com.arjuna.mw.wst.TransactionManager;
+import com.arjuna.mw.wst.UserTransaction;
+import com.arjuna.mw.wst.UserSubTransaction;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.wst.tests.DemoDurableParticipant;
 import com.arjuna.wst.tests.DemoVolatileParticipant;
+import com.arjuna.wst.tests.FailureParticipant;
+import com.arjuna.wst.TransactionRolledBackException;
 import junit.framework.TestCase;
 
 /**
  * @author Andrew Dinn
- * @version $Id: $
+ * @version $Id:$
  */
 
-public class SubTransactionCommit extends TestCase
+public class SubTransactionCommitFailInPrepare extends TestCase
 {
 
-    public static void testSubTransactionCommit()
+    public static void testSubTransactionCommitFailInPrepare()
             throws Exception
     {
         final UserTransaction ut = UserTransaction.getUserTransaction();
@@ -46,7 +48,7 @@ public class SubTransactionCommit extends TestCase
 
         final DemoDurableParticipant p1 = new DemoDurableParticipant();
         final DemoVolatileParticipant p2 = new DemoVolatileParticipant();
-        final DemoDurableParticipant p3 = new DemoDurableParticipant();
+        final FailureParticipant p3 = new FailureParticipant(FailureParticipant.FAIL_IN_PREPARE, FailureParticipant.WRONG_STATE);
         final DemoVolatileParticipant p4 = new DemoVolatileParticipant();
 
         ut.begin();
@@ -57,14 +59,19 @@ public class SubTransactionCommit extends TestCase
         ust.begin();
         final TxContext stx = tm.suspend();
         tm.resume(stx);
-        tm.enlistForDurableTwoPhase(p3, p3.identifier());
+        tm.enlistForDurableTwoPhase(p3, "failure in prepare");
         tm.enlistForVolatileTwoPhase(p4, p4.identifier());
 
         tm.resume(tx);
+        try {
         ut.commit();
-        assertTrue(p1.prepared() && p1.resolved() && p1.passed());
-        assertTrue(p2.prepared() && p2.resolved() && p2.passed());
-        assertTrue(p3.prepared() && p3.resolved() && p3.passed());
-        assertTrue(p4.prepared() && p4.resolved() && p4.passed());
+            fail("expecting TransactionRolledBackException");
+        } catch (TransactionRolledBackException wse) {
+            // expect this
+        }
+        assertTrue(p1.prepared() && p1.resolved() && !p1.passed());
+        assertTrue(p2.prepared() && p2.resolved() && !p2.passed());
+        assertTrue(!p3.passed());
+        assertTrue(p4.prepared() && p4.resolved() && !p4.passed());
     }
 }

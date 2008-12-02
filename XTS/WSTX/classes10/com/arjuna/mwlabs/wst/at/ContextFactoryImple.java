@@ -40,6 +40,7 @@ import com.arjuna.mwlabs.wscf.coordinator.LocalFactory;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorControl;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorServiceImple;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
 import com.arjuna.mwlabs.wst.at.context.ArjunaContextImple;
 import com.arjuna.mwlabs.wst.at.participants.CleanupSynchronization;
 import com.arjuna.webservices.SoapRegistry;
@@ -48,12 +49,20 @@ import com.arjuna.webservices.wsaddr.AttributedURIType;
 import com.arjuna.webservices.wsaddr.EndpointReferenceType;
 import com.arjuna.webservices.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsat.AtomicTransactionConstants;
+import com.arjuna.webservices.wsat.processors.ParticipantProcessor;
 import com.arjuna.webservices.wscoor.AttributedUnsignedIntType;
 import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.webservices.wscoor.CoordinationContextType;
 import com.arjuna.wsc.ContextFactory;
 import com.arjuna.wsc.InvalidCreateParametersException;
 import com.arjuna.wsc.InvalidProtocolException;
+import com.arjuna.wsc.RegistrationCoordinator;
+import com.arjuna.wsc.messaging.MessageId;
+import com.arjuna.wst.Volatile2PCParticipant;
+import com.arjuna.wst.Durable2PCParticipant;
+import com.arjuna.wst.stub.SubordinateVolatile2PCStub;
+import com.arjuna.wst.stub.SubordinateDurable2PCStub;
+import com.arjuna.wst.messaging.engines.ParticipantEngine;
 
 public class ContextFactoryImple implements ContextFactory, LocalFactory
 {
@@ -83,13 +92,6 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 	public void install(final String coordinationTypeURI)
 	{
 	}
-
-	// TODO interposition
-
-	/*
-	 * If there is a context passed through to create then this newly created
-	 * coordinator should be interposed.
-	 */
 
 	/**
 	 * Creates a coordination context.
@@ -124,6 +126,7 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 			{
 				// make sure no transaction is currently associated
 
+                if (currentContext == null) {
 				_coordManager.suspend();
 
 				final int timeout ;
@@ -173,6 +176,52 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 				_theRegistrar.associate();
 
 				return coordinationContext;
+                } else {
+                    // we need to create a subordinate transaction and register it as both a durable and volatile
+                    // participant with the registration service defined in the current context
+
+                    SubordinateCoordinator subTx = (SubordinateCoordinator) createSubordinate();
+                    // hmm, need to create wrappers here as the subTx is in WSCF which only knows
+                    // about WSAS and WS-C and the participant is in WS-T
+                    String vtppid = subTx.getVolatile2PhaseId();
+                    String dtppid = subTx.getDurable2PhaseId();
+                    Volatile2PCParticipant vtpp = new SubordinateVolatile2PCStub(subTx);
+                    Durable2PCParticipant dtpp = new SubordinateDurable2PCStub(subTx);
+                    final String messageId = MessageId.getMessageId() ;
+                    EndpointReferenceType participant;
+                    EndpointReferenceType coordinator;
+                    participant= getParticipant(vtppid);
+                    coordinator = RegistrationCoordinator.register(currentContext, messageId, participant, AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC) ;
+                    ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(vtpp, vtppid, coordinator), vtppid) ;
+                    participant= getParticipant(dtppid);
+                    coordinator = RegistrationCoordinator.register(currentContext, messageId, participant, AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC) ;
+                    ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(dtpp, dtppid, coordinator), dtppid) ;
+
+                    // ok now create the context
+                    final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
+                    final String registrationCoordinatorURI = soapRegistry.getServiceURI(CoordinationConstants.SERVICE_REGISTRATION_COORDINATOR) ;
+
+                    final CoordinationContextType coordinationContext = new CoordinationContextType() ;
+                    coordinationContext.setCoordinationType(new URI(coordinationTypeURI));
+                    String txId = subTx.get_uid().stringForm();
+                    coordinationContext.setIdentifier(new AttributedURIType("urn:"+ txId)) ;
+                    AttributedUnsignedIntType expiresObject = currentContext.getExpires();
+                    if (expiresObject != null) {
+                        long transactionExpires = currentContext.getExpires().getValue();
+                        if (transactionExpires > 0) {
+                            coordinationContext.setExpires(new AttributedUnsignedIntType(transactionExpires)) ;
+                        }
+                    }
+                    final EndpointReferenceType registrationCoordinator = new EndpointReferenceType(new AttributedURIType(registrationCoordinatorURI)) ;
+                    InstanceIdentifier.setEndpointInstanceIdentifier(registrationCoordinator, txId) ;
+                    coordinationContext.setRegistrationService(registrationCoordinator) ;
+                    coordinationContext.setRegistrationService(registrationCoordinator) ;
+
+                    // now associate the tx id with the sub transaction
+
+                    _theRegistrar.associate(subTx);
+                    return coordinationContext;
+                }
 			}
 			catch (com.arjuna.mw.wsas.exceptions.NoActivityException ex)
 			{
@@ -253,6 +302,15 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 		}
 	}
 	
+    private EndpointReferenceType getParticipant(final String id)
+    {
+        final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
+        final String participantURI = soapRegistry.getServiceURI(AtomicTransactionConstants.SERVICE_PARTICIPANT) ;
+        final EndpointReferenceType participant = new EndpointReferenceType(new AttributedURIType(participantURI)) ;
+        InstanceIdentifier.setEndpointInstanceIdentifier(participant, id) ;
+        return participant;
+    }
+
 	public final RegistrarImple registrar ()
 	{
 		return _theRegistrar;

@@ -1,24 +1,23 @@
-package com.arjuna.mwlabs.wst11.at.remote;
+package com.arjuna.mwlabs.wst.at.remote;
 
 import com.arjuna.mw.wstx.logging.wstxLogger;
-import com.arjuna.mw.wsc11.context.Context;
-import com.arjuna.mwlabs.wst11.at.ContextImple;
-import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
-import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
+import com.arjuna.mw.wsc.context.Context;
+import com.arjuna.mwlabs.wst.at.ContextImple;
+import com.arjuna.mwlabs.wst.at.context.TxContextImple;
+import com.arjuna.webservices.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices.SoapFault;
-import com.arjuna.wsc11.ActivationCoordinator;
+import com.arjuna.webservices.wscoor.CoordinationContextType;
+import com.arjuna.wsc.ActivationCoordinator;
 import com.arjuna.wsc.InvalidCreateParametersException;
-import com.arjuna.wsc11.messaging.MessageId;
+import com.arjuna.wsc.messaging.MessageId;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 
 /**
- * @message com.arjuna.mwlabs.wst11.at.remote.UserSubTransactionImple_1
- *          [com.arjuna.mwlabs.wst11.at.remote.UserSubTransactionImple_1] - Received
+ * @message com.arjuna.mwlabs.wst.at.remote.UserSubTransactionImple_1
+ *          [com.arjuna.mwlabs.wst.at.remote.UserSubTransactionImple_1] - Received
  *          context is null!
  */
 public class UserSubTransactionImple extends UserTransactionImple
@@ -115,7 +114,7 @@ public class UserSubTransactionImple extends UserTransactionImple
 
 
 
-            final CoordinationContext current = currentCoordinationContext();
+            final CoordinationContextType current = currentCoordinationContext();
             final Long expires = (timeout > 0 ? new Long(timeout) : null) ;
             final String messageId = MessageId.getMessageId() ;
             final CoordinationContextType coordinationContext = ActivationCoordinator.createCoordinationContext(
@@ -123,7 +122,7 @@ public class UserSubTransactionImple extends UserTransactionImple
             if (coordinationContext == null)
             {
                 throw new SystemException(
-                    wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wst11.at.remote.UserSubTransactionImple_1"));
+                    wstxLogger.log_mesg.getString("com.arjuna.mwlabs.wst.at.remote.UserSubTransactionImple_1"));
             }
             return new ContextImple(coordinationContext) ;
 		}
@@ -144,15 +143,10 @@ public class UserSubTransactionImple extends UserTransactionImple
     /**
      * get a CoordinationContext based on the one stasahed away in the current TxContext
      */
-    public CoordinationContext currentCoordinationContext() throws SystemException
+    public CoordinationContextType currentCoordinationContext() throws SystemException
     {
         final TxContextImple txContext = (TxContextImple)_ctxManager.currentTransaction();
-        final CoordinationContextType savedContext = txContext.context().getCoordinationContext();
-        final CoordinationContext current = new CoordinationContext();
-        current.setCoordinationType(savedContext.getCoordinationType());
-        current.setExpires(savedContext.getExpires());
-        current.setIdentifier(savedContext.getIdentifier());
-        current.setRegistrationService(savedContext.getRegistrationService());
+        final CoordinationContextType current = txContext.context().getCoordinationContext();
         return current;
     }
 

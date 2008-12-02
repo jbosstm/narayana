@@ -122,7 +122,7 @@ public class WSTXInitialisation implements ServletContextListener
         final String userBa = getService(docElem, "UserBusinessActivity") ;
         final String baManager = getService(docElem, "BusinessActivityManager") ;
 
-        if ((userTx == null) || (txManager == null) || (userBa == null) || (baManager == null))
+        if ((userTx == null) || (userSubTx == null) || (txManager == null) || (userBa == null) || (baManager == null))
         {
             throw new FileNotFoundException(wstxLogger.log_mesg.getString("com.arjuna.mw.wst11.deploy.WSTXI_23"));
         }

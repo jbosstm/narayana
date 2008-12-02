@@ -98,13 +98,6 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 	{
 	}
 
-	// TODO interposition
-
-	/*
-	 * If there is a context passed through to create then this newly created
-	 * coordinator should be interposed.
-	 */
-
 	/**
 	 * Creates a coordination context.
 	 *

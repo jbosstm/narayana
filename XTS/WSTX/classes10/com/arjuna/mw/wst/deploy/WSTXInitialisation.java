@@ -35,10 +35,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.arjuna.mw.wsas.utils.Configuration;
-import com.arjuna.mw.wst.BusinessActivityManager;
-import com.arjuna.mw.wst.TransactionManager;
-import com.arjuna.mw.wst.UserBusinessActivity;
-import com.arjuna.mw.wst.UserTransaction;
+import com.arjuna.mw.wst.*;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.webservices.util.ClassLoaderHelper;
 import com.arjuna.services.framework.startup.Sequencer;
@@ -129,15 +126,17 @@ public class WSTXInitialisation implements ServletContextListener
 
         final Element docElem = doc.getDocumentElement() ;
         final String userTx = getService(docElem, "UserTransaction") ;
+        final String userSubTx = getService(docElem, "UserSubTransaction") ;
         final String txManager = getService(docElem, "TransactionManager") ;
         final String userBa = getService(docElem, "UserBusinessActivity") ;
         final String baManager = getService(docElem, "BusinessActivityManager") ;
 
-        if ((userTx == null) || (txManager == null) || (userBa == null) || (baManager == null))
+        if ((userTx == null) || (userSubTx == null) || (txManager == null) || (userBa == null) || (baManager == null))
         {
             throw new FileNotFoundException(wstxLogger.log_mesg.getString("com.arjuna.mw.wst.deploy.WSTXI_23"));
         }
         UserTransaction.setUserTransaction((UserTransaction)ClassLoaderHelper.forName(getClass(), userTx).newInstance()) ;
+        UserSubTransaction.setUserTransaction((UserTransaction)ClassLoaderHelper.forName(getClass(), userSubTx).newInstance()) ;
         TransactionManager.setTransactionManager((TransactionManager)ClassLoaderHelper.forName(getClass(), txManager).newInstance()) ;
         UserBusinessActivity.setUserBusinessActivity((UserBusinessActivity)ClassLoaderHelper.forName(getClass(), userBa).newInstance()) ;
         BusinessActivityManager.setBusinessActivityManager((BusinessActivityManager)ClassLoaderHelper.forName(getClass(), baManager).newInstance()) ;

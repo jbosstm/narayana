@@ -15,15 +15,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  * 
- * (C) 2008,
+ * (C) 2008
  * @author JBoss Inc.
  */
 
-package com.arjuna.wst11.tests.junit.basic;
 
-import com.arjuna.mw.wst11.TransactionManager;
-import com.arjuna.mw.wst11.UserTransaction;
-import com.arjuna.mw.wst11.UserSubTransaction;
+package com.arjuna.wst.tests.junit.basic;
+
+import com.arjuna.mw.wst.TransactionManager;
+import com.arjuna.mw.wst.UserTransaction;
+import com.arjuna.mw.wst.UserSubTransaction;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.wst.tests.DemoDurableParticipant;
 import com.arjuna.wst.tests.DemoVolatileParticipant;
@@ -31,7 +32,7 @@ import junit.framework.TestCase;
 
 /**
  * @author Andrew Dinn
- * @version $Id: $
+ * @version $Id:$
  */
 
 public class SubTransactionCommit extends TestCase

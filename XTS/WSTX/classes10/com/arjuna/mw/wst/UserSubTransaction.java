@@ -19,12 +19,7 @@
  * @author JBoss Inc.
  */
 
-package com.arjuna.mw.wst11;
-
-import com.arjuna.wst.SystemException;
-import com.arjuna.wst.TransactionRolledBackException;
-import com.arjuna.wst.UnknownTransactionException;
-import com.arjuna.wst.WrongStateException;
+package com.arjuna.mw.wst;
 
 /**
  * This is the interface that allows transactions to be started and terminated.
