@@ -51,6 +51,18 @@ public class DemoDurableParticipant implements Durable2PCParticipant
     public DemoDurableParticipant ()
     {
 	_passed = false;
+    _prepared = false;
+    _resolved = false;
+    }
+
+    public final boolean resolved ()
+    {
+	return _resolved;
+    }
+
+    public final boolean prepared ()
+    {
+	return _prepared;
     }
 
     public final boolean passed ()
@@ -62,6 +74,7 @@ public class DemoDurableParticipant implements Durable2PCParticipant
     {
 	System.out.println("DemoDurableParticipant.prepare for "+this);
 	
+    _prepared = true;
 	return new Prepared();
     }
 
@@ -69,6 +82,7 @@ public class DemoDurableParticipant implements Durable2PCParticipant
     {
 	System.out.println("DemoDurableParticipant.commit for "+this);
 
+    _resolved = true;
 	_passed = true;
     }
 
@@ -76,6 +90,7 @@ public class DemoDurableParticipant implements Durable2PCParticipant
     {
 	System.out.println("DemoDurableParticipant.rollback for "+this);
 
+    _resolved = true;
 	_passed = false;
     }
 
@@ -98,6 +113,8 @@ public class DemoDurableParticipant implements Durable2PCParticipant
     }
     
     private boolean _passed;
+    private boolean _prepared;
+    private boolean _resolved;
     private Uid     _id = new Uid();
     
 }

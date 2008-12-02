@@ -47,10 +47,21 @@ import com.arjuna.wst.*;
 
 public class DemoVolatileParticipant implements Volatile2PCParticipant
 {
-
     public DemoVolatileParticipant ()
     {
 	_passed = false;
+    _prepared = false;
+    _resolved = false;
+    }
+
+    public final boolean resolved ()
+    {
+	return _resolved;
+    }
+
+    public final boolean prepared ()
+    {
+	return _prepared;
     }
 
     public final boolean passed ()
@@ -61,7 +72,8 @@ public class DemoVolatileParticipant implements Volatile2PCParticipant
     public Vote prepare () throws WrongStateException, SystemException
     {
 	System.out.println("DemoVolatileParticipant.prepare for "+this);
-	
+
+    _prepared = true;
 	return new Prepared();
     }
 
@@ -69,6 +81,7 @@ public class DemoVolatileParticipant implements Volatile2PCParticipant
     {
 	System.out.println("DemoVolatileParticipant.commit for "+this);
 
+    _resolved = true;
 	_passed = true;
     }
 
@@ -76,6 +89,7 @@ public class DemoVolatileParticipant implements Volatile2PCParticipant
     {
 	System.out.println("DemoVolatileParticipant.rollback for "+this);
 
+    _resolved = true;
 	_passed = false;
     }
 
@@ -98,6 +112,8 @@ public class DemoVolatileParticipant implements Volatile2PCParticipant
     }
     
     private boolean _passed;
+    private boolean _prepared;
+    private boolean _resolved;
     private Uid     _id = new Uid();
     
 }

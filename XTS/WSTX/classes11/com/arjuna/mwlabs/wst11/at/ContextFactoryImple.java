@@ -40,22 +40,34 @@ import com.arjuna.mwlabs.wscf.coordinator.LocalFactory;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorControl;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorServiceImple;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
 import com.arjuna.mwlabs.wst11.at.context.ArjunaContextImple;
 import com.arjuna.mwlabs.wst11.at.participants.CleanupSynchronization;
 import com.arjuna.mwlabs.wst11.at.RegistrarImple;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
+import com.arjuna.webservices11.wsat.processors.ParticipantProcessor;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
+import com.arjuna.webservices11.wscoor.client.WSCOORClient;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.ContextFactory;
+import com.arjuna.wsc11.RegistrationCoordinator;
+import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.wsc.InvalidCreateParametersException;
 import com.arjuna.wsc.InvalidProtocolException;
+import com.arjuna.wst.Volatile2PCParticipant;
+import com.arjuna.wst.Durable2PCParticipant;
+import com.arjuna.wst11.messaging.engines.ParticipantEngine;
+import com.arjuna.wst11.stub.SubordinateVolatile2PCStub;
+import com.arjuna.wst11.stub.SubordinateDurable2PCStub;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.Expires;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import javax.xml.ws.addressing.EndpointReference;
+import javax.xml.namespace.QName;
 
 public class ContextFactoryImple implements ContextFactory, LocalFactory
 {
@@ -124,6 +136,7 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 		{
 			try
 			{
+                if (currentContext == null) {
 				// make sure no transaction is currently associated
 
 				_coordManager.suspend();
@@ -178,6 +191,53 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 				_theRegistrar.associate();
 
 				return coordinationContext;
+                } else {
+                    // we need to create a subordinate transaction and register it as both a durable and volatile
+                    // participant with the registration service defined in the current context
+
+                    SubordinateCoordinator subTx = (SubordinateCoordinator) createSubordinate();
+                    // hmm, need to create wrappers here as the subTx is in WSCF which only knows
+                    // about WSAS and WS-C and the participant is in WS-T
+                    String vtppid = subTx.getVolatile2PhaseId();
+                    String dtppid = subTx.getDurable2PhaseId();
+                    Volatile2PCParticipant vtpp = new SubordinateVolatile2PCStub(subTx);
+                    Durable2PCParticipant dtpp = new SubordinateDurable2PCStub(subTx);
+                    final String messageId = MessageId.getMessageId() ;
+                    W3CEndpointReference participant;
+                    W3CEndpointReference coordinator;
+                    participant= getParticipant(vtppid);
+                    coordinator = RegistrationCoordinator.register(currentContext, messageId, participant, AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC) ;
+                    ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(vtpp, vtppid, coordinator), vtppid) ;
+                    participant= getParticipant(dtppid);
+                    coordinator = RegistrationCoordinator.register(currentContext, messageId, participant, AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC) ;
+                    ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(dtpp, dtppid, coordinator), dtppid) ;
+
+                    // ok now create the context
+                    final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+                    final String registrationCoordinatorURI = serviceRegistry.getServiceURI(CoordinationConstants.REGISTRATION_SERVICE_NAME) ;
+
+                    final CoordinationContext coordinationContext = new CoordinationContext() ;
+                    coordinationContext.setCoordinationType(coordinationTypeURI);
+                    CoordinationContextType.Identifier identifier = new CoordinationContextType.Identifier();
+                    String txId = subTx.get_uid().stringForm();
+                    identifier.setValue("urn:" + txId);
+                    coordinationContext.setIdentifier(identifier) ;
+                    Expires expiresInstance = currentContext.getExpires();
+                    final long transactionExpires = (expiresInstance != null ? expiresInstance.getValue() : 0);
+                    if (transactionExpires > 0)
+                    {
+                        expiresInstance = new Expires();
+                        expiresInstance.setValue(transactionExpires);
+                        coordinationContext.setExpires(expiresInstance);
+                    }
+                    W3CEndpointReference registrationCoordinator = getRegistrationCoordinator(registrationCoordinatorURI, txId);
+                    coordinationContext.setRegistrationService(registrationCoordinator) ;
+
+                    // now associate the tx id with the sub transaction
+
+                    _theRegistrar.associate(subTx);
+                    return coordinationContext;
+                }
 			}
 			catch (NoActivityException ex)
 			{
@@ -218,14 +278,34 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 		return null;
 	}
 
-    private static W3CEndpointReference getRegistrationCoordinator(String registrationCoordinatorURI, ArjunaContextImple arjunaContext) {
+    private W3CEndpointReference getParticipant(final String id)
+    {
+        final QName serviceName = AtomicTransactionConstants.PARTICIPANT_SERVICE_QNAME;
+        final QName endpointName = AtomicTransactionConstants.PARTICIPANT_PORT_QNAME;
+        final String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME);
+        W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
+        builder.serviceName(serviceName);
+        builder.endpointName(endpointName);
+        builder.address(address);
+        InstanceIdentifier.setEndpointInstanceIdentifier(builder, id);
+        return builder.build();
+    }
+
+    private static W3CEndpointReference getRegistrationCoordinator(String registrationCoordinatorURI, ArjunaContextImple arjunaContext)
+    {
+        String identifier = arjunaContext.getTransactionIdentifier();
+        return getRegistrationCoordinator(registrationCoordinatorURI, identifier);
+    }
+
+    private static W3CEndpointReference getRegistrationCoordinator(String registrationCoordinatorURI, String identifier)
+    {
         final W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
         builder.serviceName(CoordinationConstants.REGISTRATION_SERVICE_QNAME);
         builder.endpointName(CoordinationConstants.REGISTRATION_ENDPOINT_QNAME);
         // strictly we shouldn't need to set the address because we are in the same web app as the
         // coordinator but we have to as the W3CEndpointReference implementation is incomplete
         builder.address(registrationCoordinatorURI);
-        InstanceIdentifier.setEndpointInstanceIdentifier(builder, arjunaContext.getTransactionIdentifier());
+        InstanceIdentifier.setEndpointInstanceIdentifier(builder, identifier);
         W3CEndpointReference registrationCoordinator = builder.build();
         return registrationCoordinator;
     }

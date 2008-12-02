@@ -22,10 +22,7 @@ package com.arjuna.mw.wst11.deploy;
 
 import com.arjuna.mw.wsas.utils.Configuration;
 import com.arjuna.mw.wstx.logging.wstxLogger;
-import com.arjuna.mw.wst11.BusinessActivityManager;
-import com.arjuna.mw.wst11.TransactionManager;
-import com.arjuna.mw.wst11.UserBusinessActivity;
-import com.arjuna.mw.wst11.UserTransaction;
+import com.arjuna.mw.wst11.*;
 import com.arjuna.services.framework.startup.Sequencer;
 import com.arjuna.webservices.util.ClassLoaderHelper;
 import com.arjuna.wsc11.common.Environment;
@@ -120,6 +117,7 @@ public class WSTXInitialisation implements ServletContextListener
 
         final Element docElem = doc.getDocumentElement() ;
         final String userTx = getService(docElem, "UserTransaction") ;
+        final String userSubTx = getService(docElem, "UserSubTransaction") ;
         final String txManager = getService(docElem, "TransactionManager") ;
         final String userBa = getService(docElem, "UserBusinessActivity") ;
         final String baManager = getService(docElem, "BusinessActivityManager") ;
@@ -129,6 +127,7 @@ public class WSTXInitialisation implements ServletContextListener
             throw new FileNotFoundException(wstxLogger.log_mesg.getString("com.arjuna.mw.wst11.deploy.WSTXI_23"));
         }
         UserTransaction.setUserTransaction((UserTransaction)ClassLoaderHelper.forName(getClass(), userTx).newInstance()) ;
+        UserSubTransaction.setUserTransaction((UserTransaction)ClassLoaderHelper.forName(getClass(), userSubTx).newInstance()) ;
         TransactionManager.setTransactionManager((TransactionManager)ClassLoaderHelper.forName(getClass(), txManager).newInstance()) ;
         UserBusinessActivity.setUserBusinessActivity((UserBusinessActivity)ClassLoaderHelper.forName(getClass(), userBa).newInstance()) ;
         // we only have one choice for the 1.1 business activity manager

@@ -78,8 +78,7 @@ public class SubordinateCoordinator extends ACCoordinator
 	 * This implementation only supports coordination at the end of the
 	 * activity.
 	 * 
-	 * @param CompletionStatus
-	 *            cs The completion status to use when determining how to
+	 * @param     cs The completion status to use when determining how to
 	 *            execute the protocol.
 	 * 
 	 * @exception WrongStateException
@@ -109,86 +108,151 @@ public class SubordinateCoordinator extends ACCoordinator
 	{
 		return ActionStatus.INVALID;
 	}
-	
-	public int doPrepare ()
+
+    /**
+     * this is driven by a volatile participant registered on behalf of the coordinator
+     *
+     * @return true if the beforeCompletion succeeds otherwise false.
+     */
+    public boolean prepareVolatile()
+    {
+        return super.beforeCompletion();
+    }
+
+    /**
+     * this is driven by a durable participant registered on behalf of the coordinator and does a
+     * normal prepare mninus the before completion processing which has already been performed
+     * @return the result of preparing the transaction
+     */
+
+	public int prepare ()
 	{
-		if (super.beforeCompletion())
-			return super.prepare(true);
-		else
-		{
-			super.phase2Abort(true);
-			
-			return TwoPhaseOutcome.PREPARE_NOTOK;
-		}
+        return super.prepare(true);
 	}
 
-	public int doCommit ()
+    /**
+     * this is driven by a volatile participant registered on behalf of the coordinator
+     */
+    public void commitVolatile()
+    {
+        super.afterCompletion(finalStatus);
+    }
+
+    /**
+     * this is driven by a durable participant registered on behalf of the coordinator and does a
+     * normal commit minus the after completion processing which will be driven by a volatile
+     * participant also registerd for this coordinator..
+     */
+
+	public void commit ()
 	{
 		super.phase2Commit(true);
 
-		int toReturn;
+		int status;
 		
 		switch (super.getHeuristicDecision())
 		{
 		case TwoPhaseOutcome.PREPARE_OK:
 		case TwoPhaseOutcome.FINISH_OK:
-			toReturn = super.status();		
+			status = super.status();		
 			break;
 		case TwoPhaseOutcome.HEURISTIC_ROLLBACK:
-			toReturn = ActionStatus.H_ROLLBACK;
+			status = ActionStatus.H_ROLLBACK;
 			break;
 		case TwoPhaseOutcome.HEURISTIC_COMMIT:
-			toReturn = ActionStatus.H_COMMIT;
+			status = ActionStatus.H_COMMIT;
 			break;
 		case TwoPhaseOutcome.HEURISTIC_MIXED:
-			toReturn = ActionStatus.H_MIXED;
+			status = ActionStatus.H_MIXED;
 			break;
 		case TwoPhaseOutcome.HEURISTIC_HAZARD:
 		default:
-			toReturn = ActionStatus.H_HAZARD;
+			status = ActionStatus.H_HAZARD;
 			break;
 		}
-		
-		super.afterCompletion(toReturn);
-		
-		return toReturn;
+
+        this.finalStatus = status;
 	}
 
-	public int doRollback ()
+    /**
+     * this is driven by a volatile participant registered on behalf of the coordinator
+     */
+    public void rollbackVolatile()
+    {
+        super.afterCompletion(finalStatus);
+    }
+
+    /**
+     * this is driven by a durable participant registered on behalf of the coordinator and does a
+     * normal commit minus the after completion processing which will be driven by a volatile
+     * participant also registerd for this coordinator..
+     */
+	public void rollback ()
 	{
 		super.phase2Abort(true);
 		
-		int toReturn;
+		int status;
 		
 		switch (super.getHeuristicDecision())
 		{
 		case TwoPhaseOutcome.PREPARE_OK:
 		case TwoPhaseOutcome.FINISH_OK:
-			toReturn = super.status();
+			status = super.status();
 			break;
 		case TwoPhaseOutcome.HEURISTIC_ROLLBACK:
-			toReturn = ActionStatus.H_ROLLBACK;
+			status = ActionStatus.H_ROLLBACK;
 			break;
 		case TwoPhaseOutcome.HEURISTIC_COMMIT:
-			toReturn = ActionStatus.H_COMMIT;
+			status = ActionStatus.H_COMMIT;
 			break;
 		case TwoPhaseOutcome.HEURISTIC_MIXED:
-			toReturn = ActionStatus.H_MIXED;
+			status = ActionStatus.H_MIXED;
 			break;
 		case TwoPhaseOutcome.HEURISTIC_HAZARD:
 		default:
-			toReturn = ActionStatus.H_HAZARD;
+			status = ActionStatus.H_HAZARD;
 			break;
 		}
-		
-		super.afterCompletion(toReturn);
-		
-		return toReturn;
+
+        this.finalStatus = status;
 	}
 
-	public int doOnePhaseCommit ()
-	{	
-		return super.end(true);
-	}
-	
+    /**
+     * called by the durable participant during recovery processing
+     * TODO clarify when and why this gets called and what to do about it
+     */
+    public void unknown()
+    {
+    }
+
+    /**
+     * called by the durable participant during recovery processing
+     * TODO clarify when and why this gets called and what to do about it
+     */
+    public void error()
+    {
+    }
+
+    /**
+     * return a uid for the volatile participant registered on behalf of this corodinator
+     */
+    public String getVolatile2PhaseId()
+    {
+        return get_uid().stringForm() + "_V";
+    }
+
+    /**
+     * return a uid for the durable participant registered on behalf of this corodinator
+     */
+    public String getDurable2PhaseId()
+    {
+        return get_uid().stringForm() + "_D";
+    }
+
+
+    /**
+     * this saves the status after the subtransaction commit or rollback so it can be referred to during
+     * afterCompletion processing.
+     */
+    private int finalStatus = ActionStatus.CREATED;
 }

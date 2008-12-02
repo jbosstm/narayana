@@ -20,10 +20,14 @@
   @author JBoss Inc.
 -->
 <deployment>
-	<service name="UserTransaction">
-		<parameter name="className"
-		value="com.arjuna.mwlabs.wst11.at.remote.UserTransactionImple"/>
-	</service>
+    <service name="UserTransaction">
+        <parameter name="className"
+        value="com.arjuna.mwlabs.wst11.at.remote.UserTransactionImple"/>
+    </service>
+    <service name="UserSubTransaction">
+        <parameter name="className"
+        value="com.arjuna.mwlabs.wst11.at.remote.UserSubTransactionImple"/>
+    </service>
 	<service name="TransactionManager">
 		<parameter name="className"
 		value="com.arjuna.mwlabs.wst11.at.remote.TransactionManagerImple"/>

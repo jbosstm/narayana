@@ -55,7 +55,8 @@ public class FailureParticipant implements Durable2PCParticipant
     {
 	_failurePoint = failurePoint;
 	_failureType = failureType;
-	_passed = false;
+    _prepared = false;
+    _resolved = false;
     }
 
     public final boolean passed ()
@@ -63,10 +64,21 @@ public class FailureParticipant implements Durable2PCParticipant
 	return _passed;
     }
     
+    public final boolean prepared ()
+    {
+	return _prepared;
+    }
+
+    public final boolean resolved ()
+    {
+	return _resolved;
+    }
+
     public Vote prepare () throws WrongStateException, SystemException
     {
 	System.out.println("FailureParticipant.prepare");
 	
+    _prepared = true;
 	if (_failurePoint == FAIL_IN_PREPARE)
 	{
 	    generateException();
@@ -81,6 +93,7 @@ public class FailureParticipant implements Durable2PCParticipant
     {
 	System.out.println("FailureParticipant.commit");
 
+    _resolved = true;
 	if (_failurePoint == FAIL_IN_COMMIT)
 	    generateException();
 
@@ -90,6 +103,7 @@ public class FailureParticipant implements Durable2PCParticipant
 
     public void rollback () throws WrongStateException, SystemException
     {
+    _resolved = true;
 	System.out.println("FailureParticipant.rollback");
 	
 	if (_failurePoint == FAIL_IN_ROLLBACK)
@@ -101,6 +115,7 @@ public class FailureParticipant implements Durable2PCParticipant
 
     public void commitOnePhase () throws WrongStateException, SystemException
     {
+    _resolved = true;
 	System.out.println("FailureParticipant.commitOnePhase");
 
 	if (_failurePoint == FAIL_IN_ONE_PHASE)
@@ -133,6 +148,8 @@ public class FailureParticipant implements Durable2PCParticipant
     private int     _failurePoint;
     private int     _failureType;
     private boolean _passed;
-    
+    private boolean _prepared;
+    private boolean _resolved;
+
 }
 

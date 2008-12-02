@@ -44,6 +44,7 @@
     <!-- ================================================================== -->
     <property name="deploy.dir" value="${jboss.server.dir}/deploy"/>
     <property name="ws-c.home"               value="../WS-C"/>
+    <property name="wscf.home"               value="../WSCF"/>
 
     <!-- ================================================================== -->
 
@@ -74,6 +75,7 @@
     <property name="com.arjuna.xts.ext" location="../ext"/>
 
     <property name="ws-c.build.dev.lib.dir"  value="${ws-c.home}/build/dev/lib"/>
+    <property name="wscf.build.lib.dir"  value="${wscf.home}/build/lib"/>
 
     <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
 
@@ -87,6 +89,9 @@
     <property name="ws-c.libs"               value="ws-c.jar"/>
     <property name="ws-c10.libs"               value="ws-c10.jar"/>
     <property name="ws-c11.libs"               value="ws-c11.jar"/>
+    <property name="wscf.libs"               value="wscf.jar"/>
+    <property name="wscf10.libs"               value="wscf10.jar"/>
+    <property name="wscf11.libs"               value="wscf11.jar"/>
 
     <property name="javac.debug"             value="on"/>
     <property name="javac.optimize"          value="off"/>
@@ -99,6 +104,16 @@
     </path>
     <path id="ws-c11.path">
         <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c11.libs}"/>
+    </path>
+
+    <path id="wscf.path">
+        <fileset dir="${wscf.build.lib.dir}" includes="${wscf.libs}"/>
+    </path>
+    <path id="wscf10.path">
+        <fileset dir="${wscf.build.lib.dir}" includes="${wscf10.libs}"/>
+    </path>
+    <path id="wscf11.path">
+        <fileset dir="${wscf.build.lib.dir}" includes="${wscf11.libs}"/>
     </path>
 
     <path id="lib.ext.path">
@@ -160,6 +175,7 @@
                 </path>
                 <path refid="lib.ext.path"/>
                 <path refid="ws-c10.path"/>
+                <path refid="wscf10.path"/>
             </classpath>
             <src path="${dev.src10.dir}"/>
         </javac>
@@ -173,6 +189,7 @@
                 </path>
                 <path refid="lib.ext.path"/>
                 <path refid="ws-c11.path"/>
+                <path refid="wscf11.path"/>
             </classpath>
             <src path="${dev.src11.dir}"/>
         </javac>
@@ -183,6 +200,7 @@
             <classpath>
                 <path refid="lib.ext.path"/>
                 <path refid="ws-c.path"/>
+                <path refid="wscf.path"/>
             </classpath>
             <src path="${dev.src.dir}"/>
         </javac>
@@ -318,6 +336,9 @@
                 <path refid="ws-c.path"/>
                 <path refid="ws-c10.path"/>
                 <path refid="ws-c11.path"/>
+                <path refid="wscf.path"/>
+                <path refid="wscf10.path"/>
+                <path refid="wscf11.path"/>
             </classpath>
             <src path="${tests.src.dir}"/>
         </javac>

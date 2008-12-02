@@ -73,6 +73,6 @@ public class MultiClose extends TestCase
         }
         // the close should succeed even though the participant fails
 	    uba.close();
-        fail("expected SystemError");
+        assertTrue(p.passed());
     }
 }

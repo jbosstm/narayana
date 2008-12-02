@@ -264,6 +264,10 @@ public class UserTransactionImple extends UserTransaction
 		{
 			throw ex;
 		}
+        catch (WrongStateException ex)
+        {
+            throw ex;
+        }
 		catch (Exception ex)
 		{
 			ex.printStackTrace();
@@ -331,6 +335,10 @@ public class UserTransactionImple extends UserTransaction
 		{
 			throw ex;
 		}
+        catch (WrongStateException ex)
+        {
+            throw ex;
+        }
 		catch (Exception ex)
 		{
 			throw new SystemException(ex.toString());
@@ -383,7 +391,7 @@ public class UserTransactionImple extends UserTransaction
 		}
 	}
 
-	private ContextManager _ctxManager = new ContextManager();
-	private String _activationCoordinatorService;
+	protected ContextManager _ctxManager = new ContextManager();
+	protected String _activationCoordinatorService;
 	private Hashtable _completionCoordinators = new Hashtable();
 }
