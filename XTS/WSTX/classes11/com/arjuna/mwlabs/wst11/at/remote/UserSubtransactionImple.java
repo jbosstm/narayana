@@ -21,15 +21,15 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
  *          [com.arjuna.mwlabs.wst11.at.remote.UserSubTransactionImple_1] - Received
  *          context is null!
  */
-public class UserSubTransactionImple extends UserTransactionImple
+public class UserSubtransactionImple extends UserTransactionImple
 {
 
-	public UserSubTransactionImple()
+	public UserSubtransactionImple()
 	{
         super();
 	}
 
-	public void begin () throws WrongStateException, SystemException
+    public void begin () throws WrongStateException, SystemException
     {
 		begin(0);
 	}

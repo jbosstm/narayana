@@ -31,8 +31,6 @@
 
 package com.arjuna.wst.tests;
 
-import com.arjuna.ats.arjuna.common.Uid;
-
 import com.arjuna.wst.*;
 
 /**
@@ -59,12 +57,30 @@ public class FailureBusinessParticipant implements com.arjuna.wst.BusinessAgreem
 	return _passed;
     }
 
+    /**
+     * we use this to time out the failure behaviour for close because otherwise the transaction will keep
+     * retrying -- that's as per the sepc but a pain in the proverbial
+     */
+    private static long closeFirstCalledTime = 0;
+
+    /**
+     * timeout for the close failure in milliseconds. this must be bigger than the BA coordinator
+     * wait timeout and any timeout used by a test when it waits for the transaction to complete.
+     * A few minutes should be adequate.
+     */
+    private final long CLOSE_FAIL_TIMEOUT = (3 * 60 * 1000);
+
     public void close () throws WrongStateException, SystemException
     {
 	System.out.println("FailureBusinessParticipant.close for "+this);
-
+    if (closeFirstCalledTime == 0) {
+        closeFirstCalledTime = System.currentTimeMillis();
+    }
 	if (_failurePoint == FAIL_IN_CLOSE) {
+        long timeNow = System.currentTimeMillis();
+        if ((timeNow - closeFirstCalledTime) < CLOSE_FAIL_TIMEOUT) {
         throw new WrongStateException();
+        }
     }
 	
 	_passed = true;

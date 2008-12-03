@@ -15,16 +15,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  * 
- * (C) 2008
+ * (C) 2008,
  * @author JBoss Inc.
  */
-
 
 package com.arjuna.wst.tests.junit.basic;
 
 import com.arjuna.mw.wst.TransactionManager;
 import com.arjuna.mw.wst.UserTransaction;
-import com.arjuna.mw.wst.UserSubTransaction;
+import com.arjuna.mw.wst.UserSubtransaction;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.wst.tests.DemoDurableParticipant;
 import com.arjuna.wst.tests.DemoVolatileParticipant;
@@ -32,17 +31,17 @@ import junit.framework.TestCase;
 
 /**
  * @author Andrew Dinn
- * @version $Id:$
+ * @version $Id: $
  */
 
-public class SubTransactionCommit extends TestCase
+public class SubtransactionRollback extends TestCase
 {
 
-    public static void testSubTransactionCommit()
+    public static void testSubTransactionRollback()
             throws Exception
     {
         final UserTransaction ut = UserTransaction.getUserTransaction();
-        final UserTransaction ust = UserSubTransaction.getUserTransaction();
+        final UserTransaction ust = UserSubtransaction.getUserTransaction();
         final TransactionManager tm = TransactionManager.getTransactionManager();
 
         final DemoDurableParticipant p1 = new DemoDurableParticipant();
@@ -62,10 +61,11 @@ public class SubTransactionCommit extends TestCase
         tm.enlistForVolatileTwoPhase(p4, p4.identifier());
 
         tm.resume(tx);
-        ut.commit();
-        assertTrue(p1.prepared() && p1.resolved() && p1.passed());
-        assertTrue(p2.prepared() && p2.resolved() && p2.passed());
-        assertTrue(p3.prepared() && p3.resolved() && p3.passed());
-        assertTrue(p4.prepared() && p4.resolved() && p4.passed());
+        ut.rollback();
+
+        assertTrue(p1.resolved() && !p1.passed());
+        assertTrue(p2.resolved() && !p2.passed());
+        assertTrue(p3.resolved() && !p3.passed());
+        assertTrue(p4.resolved() && !p4.passed());
     }
 }

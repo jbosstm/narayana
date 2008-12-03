@@ -35,7 +35,7 @@ package com.arjuna.mw.wst;
  * @version $Id:$
  */
 
-public abstract class UserSubTransaction extends UserTransaction
+public abstract class UserSubtransaction extends UserTransaction
 {
     /**
      * The transaction.

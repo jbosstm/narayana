@@ -40,7 +40,7 @@ import com.arjuna.wst.WrongStateException;
  * @version $Id:$
  */
 
-public abstract class UserSubTransaction extends UserTransaction
+public abstract class UserSubtransaction extends UserTransaction
 {
     /**
      * The transaction.

@@ -24,6 +24,11 @@
 
 package com.arjuna.wst.tests;
 
+import com.arjuna.wst.tests.junit.basic.SubtransactionCommit;
+import com.arjuna.wst.tests.junit.basic.SubtransactionCommitFailInPrepare;
+import com.arjuna.wst.tests.junit.basic.SubtransactionCommitRollbackInPrepare;
+import com.arjuna.wst.tests.junit.basic.SubtransactionRollback;
+
 public class WSTXTestSuite extends junit.framework.TestSuite
 {
     public WSTXTestSuite()
@@ -50,10 +55,10 @@ public class WSTXTestSuite extends junit.framework.TestSuite
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.ThreadedTransaction.class));
 
         // subtransaction tests
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SubTransactionCommit.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SubTransactionRollback.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SubTransactionCommitRollbackInPrepare.class));
-        addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.basic.SubTransactionCommitFailInPrepare.class));
+        addTest(new junit.framework.TestSuite(SubtransactionCommit.class));
+        addTest(new junit.framework.TestSuite(SubtransactionRollback.class));
+        addTest(new junit.framework.TestSuite(SubtransactionCommitRollbackInPrepare.class));
+        addTest(new junit.framework.TestSuite(SubtransactionCommitFailInPrepare.class));
         // wst BA tests
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.Cancel.class));
         addTest(new junit.framework.TestSuite(com.arjuna.wst.tests.junit.ba.Close.class));

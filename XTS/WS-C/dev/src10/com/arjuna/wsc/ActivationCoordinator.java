@@ -69,7 +69,7 @@ public class ActivationCoordinator
         try
         {
             ActivationCoordinatorClient.getClient().sendCreateCoordination(addressingContext,
-                    coordinationTypeURI, expiresValue, null) ;
+                    coordinationTypeURI, expiresValue, currentContext) ;
             callback.waitUntilTriggered() ;
         }
         catch (final IOException ioe)

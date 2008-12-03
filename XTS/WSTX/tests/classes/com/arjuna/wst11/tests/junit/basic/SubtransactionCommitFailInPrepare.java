@@ -23,7 +23,7 @@ package com.arjuna.wst11.tests.junit.basic;
 
 import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst11.UserTransaction;
-import com.arjuna.mw.wst11.UserSubTransaction;
+import com.arjuna.mw.wst11.UserSubtransaction;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.wst.tests.DemoDurableParticipant;
 import com.arjuna.wst.tests.DemoVolatileParticipant;
@@ -34,21 +34,22 @@ import junit.framework.TestCase;
 /**
  * @author Andrew Dinn
  * @version $Id:$
+ * @since 1.0.
  */
 
-public class SubTransactionCommitRollbackInPrepare extends TestCase
+public class SubtransactionCommitFailInPrepare extends TestCase
 {
 
-    public static void testSubTransactionCommitRollbackInPrepare()
+    public static void testSubTransactionCommitFailInPrepare()
             throws Exception
     {
         final UserTransaction ut = UserTransaction.getUserTransaction();
-        final UserTransaction ust = UserSubTransaction.getUserTransaction();
+        final UserTransaction ust = UserSubtransaction.getUserTransaction();
         final TransactionManager tm = TransactionManager.getTransactionManager();
 
         final DemoDurableParticipant p1 = new DemoDurableParticipant();
         final DemoVolatileParticipant p2 = new DemoVolatileParticipant();
-        final FailureParticipant p3 = new FailureParticipant(FailureParticipant.FAIL_IN_PREPARE, FailureParticipant.NONE);
+        final FailureParticipant p3 = new FailureParticipant(FailureParticipant.FAIL_IN_PREPARE, FailureParticipant.WRONG_STATE);
         final DemoVolatileParticipant p4 = new DemoVolatileParticipant();
 
         ut.begin();
@@ -66,7 +67,7 @@ public class SubTransactionCommitRollbackInPrepare extends TestCase
         try {
         ut.commit();
             fail("expecting TransactionRolledBackException");
-        } catch (TransactionRolledBackException trbe) {
+        } catch (TransactionRolledBackException wse) {
             // expect this
         }
         assertTrue(p1.prepared() && p1.resolved() && !p1.passed());

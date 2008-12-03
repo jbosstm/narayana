@@ -19,11 +19,11 @@
  * @author JBoss Inc.
  */
 
-package com.arjuna.wst.tests.junit.basic;
+package com.arjuna.wst11.tests.junit.basic;
 
-import com.arjuna.mw.wst.TransactionManager;
-import com.arjuna.mw.wst.UserTransaction;
-import com.arjuna.mw.wst.UserSubTransaction;
+import com.arjuna.mw.wst11.TransactionManager;
+import com.arjuna.mw.wst11.UserTransaction;
+import com.arjuna.mw.wst11.UserSubtransaction;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.wst.tests.DemoDurableParticipant;
 import com.arjuna.wst.tests.DemoVolatileParticipant;
@@ -31,17 +31,17 @@ import junit.framework.TestCase;
 
 /**
  * @author Andrew Dinn
- * @version $Id: $
+ * @version $Id:$
  */
 
-public class SubTransactionRollback extends TestCase
+public class SubtransactionRollback extends TestCase
 {
 
     public static void testSubTransactionRollback()
             throws Exception
     {
         final UserTransaction ut = UserTransaction.getUserTransaction();
-        final UserTransaction ust = UserSubTransaction.getUserTransaction();
+        final UserTransaction ust = UserSubtransaction.getUserTransaction();
         final TransactionManager tm = TransactionManager.getTransactionManager();
 
         final DemoDurableParticipant p1 = new DemoDurableParticipant();

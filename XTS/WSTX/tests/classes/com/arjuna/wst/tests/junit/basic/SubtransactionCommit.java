@@ -15,20 +15,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  * 
- * (C) 2008,
+ * (C) 2008
  * @author JBoss Inc.
  */
+
 
 package com.arjuna.wst.tests.junit.basic;
 
 import com.arjuna.mw.wst.TransactionManager;
 import com.arjuna.mw.wst.UserTransaction;
-import com.arjuna.mw.wst.UserSubTransaction;
+import com.arjuna.mw.wst.UserSubtransaction;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.wst.tests.DemoDurableParticipant;
 import com.arjuna.wst.tests.DemoVolatileParticipant;
-import com.arjuna.wst.tests.FailureParticipant;
-import com.arjuna.wst.TransactionRolledBackException;
 import junit.framework.TestCase;
 
 /**
@@ -36,19 +35,19 @@ import junit.framework.TestCase;
  * @version $Id:$
  */
 
-public class SubTransactionCommitFailInPrepare extends TestCase
+public class SubtransactionCommit extends TestCase
 {
 
-    public static void testSubTransactionCommitFailInPrepare()
+    public static void testSubTransactionCommit()
             throws Exception
     {
         final UserTransaction ut = UserTransaction.getUserTransaction();
-        final UserTransaction ust = UserSubTransaction.getUserTransaction();
+        final UserTransaction ust = UserSubtransaction.getUserTransaction();
         final TransactionManager tm = TransactionManager.getTransactionManager();
 
         final DemoDurableParticipant p1 = new DemoDurableParticipant();
         final DemoVolatileParticipant p2 = new DemoVolatileParticipant();
-        final FailureParticipant p3 = new FailureParticipant(FailureParticipant.FAIL_IN_PREPARE, FailureParticipant.WRONG_STATE);
+        final DemoDurableParticipant p3 = new DemoDurableParticipant();
         final DemoVolatileParticipant p4 = new DemoVolatileParticipant();
 
         ut.begin();
@@ -59,19 +58,14 @@ public class SubTransactionCommitFailInPrepare extends TestCase
         ust.begin();
         final TxContext stx = tm.suspend();
         tm.resume(stx);
-        tm.enlistForDurableTwoPhase(p3, "failure in prepare");
+        tm.enlistForDurableTwoPhase(p3, p3.identifier());
         tm.enlistForVolatileTwoPhase(p4, p4.identifier());
 
         tm.resume(tx);
-        try {
         ut.commit();
-            fail("expecting TransactionRolledBackException");
-        } catch (TransactionRolledBackException wse) {
-            // expect this
-        }
-        assertTrue(p1.prepared() && p1.resolved() && !p1.passed());
-        assertTrue(p2.prepared() && p2.resolved() && !p2.passed());
-        assertTrue(!p3.passed());
-        assertTrue(p4.prepared() && p4.resolved() && !p4.passed());
+        assertTrue(p1.prepared() && p1.resolved() && p1.passed());
+        assertTrue(p2.prepared() && p2.resolved() && p2.passed());
+        assertTrue(p3.prepared() && p3.resolved() && p3.passed());
+        assertTrue(p4.prepared() && p4.resolved() && p4.passed());
     }
 }

@@ -26,9 +26,9 @@
         <!-- <parameter name="className"
     value="com.arjuna.mwlabs.wst.at.local.UserTransactionImple"/ -->
     </service>
-    <service name="UserSubTransaction">
+    <service name="UserSubtransaction">
         <parameter name="className"
-        value="com.arjuna.mwlabs.wst.at.remote.UserSubTransactionImple"/>
+        value="com.arjuna.mwlabs.wst.at.remote.UserSubtransactionImple"/>
 	</service>
 	<service name="TransactionManager">
 		<parameter name="className"

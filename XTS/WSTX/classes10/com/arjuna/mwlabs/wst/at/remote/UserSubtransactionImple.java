@@ -20,15 +20,15 @@ import com.arjuna.wst.WrongStateException;
  *          [com.arjuna.mwlabs.wst.at.remote.UserSubTransactionImple_1] - Received
  *          context is null!
  */
-public class UserSubTransactionImple extends UserTransactionImple
+public class UserSubtransactionImple extends UserTransactionImple
 {
 
-	public UserSubTransactionImple()
+	public UserSubtransactionImple()
 	{
         super();
 	}
 
-	public void begin () throws WrongStateException, SystemException
+    public void begin () throws WrongStateException, SystemException
     {
 		begin(0);
 	}
