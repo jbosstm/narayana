@@ -44,6 +44,8 @@ import com.arjuna.mw.wsas.exceptions.ProtocolViolationException;
 
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
 
+import java.util.HashMap;
+
 /**
  * This class represents a specific coordination instance. It is essentially an
  * ArjunaCore TwoPhaseCoordinator, which gives us access to two-phase with
@@ -58,15 +60,24 @@ import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
 
 public class SubordinateCoordinator extends ACCoordinator
 {
-	
+
+    /**
+     * normal constructor
+     */
 	public SubordinateCoordinator ()
 	{
 		super();
+        activated = true;
 	}
 
+    /**
+     * constructor for recovered coordinator
+     * @param recovery
+     */
 	public SubordinateCoordinator (Uid recovery)
 	{
 		super(recovery);
+        activated = false;
 	}
 
 	/**
@@ -233,6 +244,11 @@ public class SubordinateCoordinator extends ACCoordinator
     {
     }
 
+    public String type ()
+    {
+        return "/StateManager/BasicAction/AtomicAction/TwoPhaseCoordinator/TwoPhase/SubordinateCoordinator";
+    }
+
     /**
      * return a uid for the volatile participant registered on behalf of this corodinator
      */
@@ -250,9 +266,42 @@ public class SubordinateCoordinator extends ACCoordinator
     }
 
 
+    protected static synchronized void addRecoveredCoordinator(SubordinateCoordinator coordinator)
+    {
+        recoveredCoordinators.put(coordinator.get_uid().stringForm(), coordinator);
+    }
+
+    protected static synchronized void removeRecoveredCoordinator(SubordinateCoordinator coordinator)
+    {
+        recoveredCoordinators.put(coordinator.get_uid().stringForm(), null);
+    }
+
+    protected void setActivated()
+    {
+        activated = true;
+    }
+
+    public boolean isActivated()
+    {
+        return activated;
+    }
+
+    public static synchronized SubordinateCoordinator getRecoveredCoordinator(String coordinatorId)
+    {
+        return recoveredCoordinators.get(coordinatorId);
+    }
+
     /**
      * this saves the status after the subtransaction commit or rollback so it can be referred to during
      * afterCompletion processing.
      */
     private int finalStatus = ActionStatus.CREATED;
+
+    /**
+     * flag identifying whether this coordinator is active, set true for normal transactions and false
+     * for recovered transactions until they are activated
+     */
+    private boolean activated;
+
+    private static final HashMap<String, SubordinateCoordinator> recoveredCoordinators = new HashMap<String, SubordinateCoordinator>();
 }

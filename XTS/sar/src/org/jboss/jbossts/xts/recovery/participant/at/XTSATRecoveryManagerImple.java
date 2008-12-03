@@ -299,11 +299,29 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
     }
 
     /**
+     * test whether the first AT subordinate coordinator recovery scan has completed. this indicates
+     * whether there may or may not still be unknown AT subtransaction records on disk. If the first
+     * scan has not yet completed then a commit for an unknown subtransaction must raise an exception
+     * delaying commit of the parent transaction.
+     */
+    public synchronized boolean isSubordinateCoordinatorRecoveryStarted() {
+        return subordinateCoordinatorRecoveryStarted;
+    }
+
+    /**
      * record the fact that the first AT coordinator recovery scan has completed.
      */
 
     public synchronized void setCoordinatorRecoveryStarted() {
         coordinatorRecoveryStarted = true;
+    }
+
+    /**
+     * record the fact that the first AT subordinate coordinator recovery scan has completed.
+     */
+
+    public synchronized void setSubordinateCoordinatorRecoveryStarted() {
+        subordinateCoordinatorRecoveryStarted = true;
     }
 
     /**
@@ -317,6 +335,12 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
      * been performed.
      */
     private boolean coordinatorRecoveryStarted = false;
+
+    /**
+     * a global flag indicating whether the first AT subordinate coordinator recovery scan has
+     * been performed.
+     */
+    private boolean subordinateCoordinatorRecoveryStarted = false;
 
     /**
      * a map from participant ids to participant recovery records

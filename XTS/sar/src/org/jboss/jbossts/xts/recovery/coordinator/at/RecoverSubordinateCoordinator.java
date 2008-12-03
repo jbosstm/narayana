@@ -1,0 +1,123 @@
+package org.jboss.jbossts.xts.recovery.coordinator.at;
+
+import org.jboss.jbossts.xts.logging.XTSLogger;
+
+import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.logging.FacilityCode;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
+import com.arjuna.common.util.logging.DebugLevel;
+import com.arjuna.common.util.logging.VisibilityLevel;
+
+/**
+ * This class is a plug-in module for the recovery manager.
+ * It is responsible for recovering failed WSAT ACCoordinator transactions.
+ *
+ * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoverSubordinateCoordinator_1 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoverSubordinateCoordinator_1] - RecoverSubordinateCoordinator.replayPhase2 recovering {0} ActionStatus is {1}
+ * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoverSubordinateCoordinator_2 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoverSubordinateCoordinator_2] - RecoverSubordinateCoordinator.replayPhase2: Unexpected status: {0}
+ * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoverSubordinateCoordinator_3 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoverSubordinateCoordinator_3] - RecoverSubordinateCoordinator.replayPhase2( {0} )  finished
+ * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoverSubordinateCoordinator_4 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoverSubordinateCoordinator_4] - RecoverSubordinateCoordinator.replayPhase2 transaction {0} not activated, unable to replay phase 2 commit
+*/
+public class RecoverSubordinateCoordinator extends SubordinateCoordinator {
+
+   /**
+    * Re-creates/activates an AtomicAction for the specified
+    * transaction Uid.
+    */
+   public RecoverSubordinateCoordinator( Uid rcvUid )
+   {
+      super( rcvUid ) ;
+      _activated = activate() ;
+   }
+
+    /**
+     * run parent activate and also make this coordinator visible if there might be a durable participant waiting
+     * for it to commit.
+     * @return
+     */
+    public boolean activate()
+    {
+        boolean result = super.activate();
+        // record whether the activation worked
+        if (result) {
+            setActivated();
+        }
+
+        int status = status();
+        if (result == false || (status == ActionStatus.PREPARED || status == ActionStatus.COMMITTING)) {
+            // we need to install this coordinator in a global table so that the participant which
+            // was driving it will know that it has been recovered but not yet committed
+            // n.b. we do this even if the activation failed because we need to ensure the
+            // participant rejects a commit until this transaction has committed
+            
+            SubordinateCoordinator.addRecoveredCoordinator(this);
+        }
+
+        return result;
+    }
+
+   /**
+    * Replays phase 2 of the commit protocol.
+    */
+   public void replayPhase2()
+   {
+       final int status = status();
+
+       if (XTSLogger.arjLoggerI18N.debugAllowed())
+       {
+	   XTSLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+					FacilityCode.FAC_CRASH_RECOVERY,
+					"org.jboss.jbossts.xts.recovery.coordinator.at.RecoverSubordinateCoordinator_1",
+					new Object[]{get_uid(), ActionStatus.stringForm(status)});
+       }
+
+       if ( _activated )
+       {
+           // we don't run phase 2 again if status is PREPARED because we need to wait for the
+           // parent coordinator to tell us what to do
+
+           // we automatically rerun phase2 if the action status is COMMITTING, which happens when
+           // we get a comms timeout from one of the participants after sending it a COMMIT message.
+
+       if ((status == ActionStatus.COMMITTING) ||
+               (status == ActionStatus.COMMITTED) ||
+               (status == ActionStatus.H_COMMIT) ||
+               (status == ActionStatus.H_MIXED) ||
+               (status == ActionStatus.H_HAZARD))
+	   {
+	       super.phase2Commit( _reportHeuristics ) ;
+	   } else if ((status ==  ActionStatus.ABORTED) ||
+               (status == ActionStatus.H_ROLLBACK) ||
+               (status == ActionStatus.ABORTING) ||
+               (status == ActionStatus.ABORT_ONLY))
+       {
+           super.phase2Abort( _reportHeuristics ) ;
+       }
+
+       if (XTSLogger.arjLoggerI18N.debugAllowed())
+	   {
+	       XTSLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+					    FacilityCode.FAC_CRASH_RECOVERY,
+					    "org.jboss.jbossts.xts.recovery.coordinator.at.RecoverSubordinateCoordinator_3",
+					    new Object[]{get_uid()});
+	   }
+       }
+       else
+       {
+	   XTSLogger.arjLoggerI18N.warn("org.jboss.jbossts.xts.recovery.coordinator.at.RecoverSubordinateCoordinator_4", new Object[]{get_uid()});
+       }
+
+       if ((status == ActionStatus.PREPARED) ||
+               (status == ActionStatus.COMMITTING)) {
+           SubordinateCoordinator.removeRecoveredCoordinator(this);
+       }
+   }
+
+   // Flag to indicate that this transaction has been re-activated
+   // successfully.
+   private boolean _activated = false ;
+
+   // whether heuristic reporting on phase 2 commit is enabled.
+   private boolean _reportHeuristics = true ;
+}

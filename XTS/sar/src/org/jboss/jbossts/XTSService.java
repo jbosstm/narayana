@@ -22,6 +22,7 @@ package org.jboss.jbossts;
 
 import org.jboss.logging.Logger;
 import org.jboss.jbossts.xts.recovery.coordinator.at.ACCoordinatorRecoveryModule;
+import org.jboss.jbossts.xts.recovery.coordinator.at.SubordinateCoordinatorRecoveryModule;
 import org.jboss.jbossts.xts.recovery.coordinator.ba.BACoordinatorRecoveryModule;
 import org.jboss.jbossts.xts.recovery.participant.at.ATParticipantRecoveryModule;
 import org.jboss.jbossts.xts.recovery.participant.ba.BAParticipantRecoveryModule;
@@ -107,6 +108,7 @@ public class XTSService implements XTSServiceMBean {
     private final Logger log = org.jboss.logging.Logger.getLogger(XTSService.class);
 
     private ACCoordinatorRecoveryModule acCoordinatorRecoveryModule = null;
+    private SubordinateCoordinatorRecoveryModule subordinateCoordinatorRecoveryModule = null;
     private ATParticipantRecoveryModule atParticipantRecoveryModule = null;
 
     private BACoordinatorRecoveryModule baCoordinatorRecoveryModule = null;
@@ -225,11 +227,21 @@ public class XTSService implements XTSServiceMBean {
 
         TaskManagerInitialisation(); // com.arjuna.services.framework.admin.TaskManagerInitialisation : initialise the Task Manager
 
+
+        // install the AT recovery modules
+        
         acCoordinatorRecoveryModule = new ACCoordinatorRecoveryModule();
 
         // ensure Implementations are installed into the inventory before we register the module
 
         acCoordinatorRecoveryModule.install();
+
+        // we don't need to install anything in the Inventory for this recovery module as it
+        // uses the same records as those employed by ACCoordinatorRecoveryModule
+
+        subordinateCoordinatorRecoveryModule = new SubordinateCoordinatorRecoveryModule();
+
+        subordinateCoordinatorRecoveryModule.install();
 
         // we don't need to install anything in the Inventory for this recovery module as it
         // manages its own ObjectStore records but we do need it to create the recovery manager
@@ -267,6 +279,7 @@ public class XTSService implements XTSServiceMBean {
         RecoveryManager.manager().addModule(baParticipantRecoveryModule);
 
         RecoveryManager.manager().addModule(acCoordinatorRecoveryModule);
+        RecoveryManager.manager().addModule(subordinateCoordinatorRecoveryModule);
         RecoveryManager.manager().addModule(baCoordinatorRecoveryModule);
     }
 
@@ -279,6 +292,12 @@ public class XTSService implements XTSServiceMBean {
             RecoveryManager.manager().removeModule(baCoordinatorRecoveryModule, true);
             // ok, now it is safe to get the recovery manager to uninstall its Implementations from the inventory
             baCoordinatorRecoveryModule.uninstall();
+        }
+        if (subordinateCoordinatorRecoveryModule != null) {
+            // remove the module, making sure any scan which might be using it has completed
+            RecoveryManager.manager().removeModule(subordinateCoordinatorRecoveryModule, true);
+            // ok, now it is safe to get the recovery manager to uninstall its Implementations from the inventory
+            subordinateCoordinatorRecoveryModule.uninstall();
         }
         if (acCoordinatorRecoveryModule != null) {
             // remove the module, making sure any scan which might be using it has completed

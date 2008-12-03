@@ -133,10 +133,24 @@ public abstract class XTSATRecoveryManager {
     public abstract boolean isCoordinatorRecoveryStarted();
 
     /**
+     * test whether the first AT subordinate coordinator recovery scan has completed. this indicates
+     * whether there may or may not still be unknown AT subtransaction records on disk. If the first
+     * scan has not yet completed then a commit for an unknown subtransaction must raise an exception
+     * delaying commit of the parent transaction.
+     */
+    public abstract boolean isSubordinateCoordinatorRecoveryStarted();
+
+    /**
      * record the fact thatwhether the first AT coordinator recovery scan has completed.
      */
 
     public abstract void setCoordinatorRecoveryStarted();
+
+    /**
+     * record the fact thatwhether the first AT coordinator recovery scan has completed.
+     */
+
+    public abstract void setSubordinateCoordinatorRecoveryStarted();
 
     /**
      * the singleton instance of the recovery manager

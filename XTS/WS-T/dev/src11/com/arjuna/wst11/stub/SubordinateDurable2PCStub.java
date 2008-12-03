@@ -3,16 +3,41 @@ package com.arjuna.wst11.stub;
 import com.arjuna.wst.*;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.arjuna.state.InputObjectState;
+
+import java.io.IOException;
+
+import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 
 /**
  * A durable participant registered on behalf of an interposed WS-AT coordinator in order to ensure that
  * durable participants in the subtransaction prepared, committed and aborted at the right time.
  */
-public class SubordinateDurable2PCStub implements Durable2PCParticipant
+public class SubordinateDurable2PCStub implements Durable2PCParticipant, PersistableParticipant
 {
+    /**
+     * normal constructor used when the subordinate coordinator is registered as a durable participant
+     * with its parent coordinator.
+     *
+     * @param coordinator
+     */
     public SubordinateDurable2PCStub(SubordinateCoordinator coordinator)
     {
         this.coordinator = coordinator;
+        this.coordinatorId = coordinator.get_uid().stringForm();
+        this.recovered = false;
+    }
+
+    /**
+     * empty constructor for use only during recovery
+     */
+    public SubordinateDurable2PCStub()
+    {
+        this.coordinator = null;
+        this.coordinatorId = null;
+        this.recovered = true;
     }
 
     /**
@@ -44,7 +69,41 @@ public class SubordinateDurable2PCStub implements Durable2PCParticipant
      */
 
     public void commit() throws WrongStateException, SystemException {
-        coordinator.commit();
+        if (!isRecovered()) {
+            coordinator.commit();
+        } else {
+            // first check whether crashed coordinators have been recovered
+            XTSATRecoveryManager recoveryManager = XTSATRecoveryManager.getRecoveryManager();
+            boolean isRecoveryScanStarted = recoveryManager.isSubordinateCoordinatorRecoveryStarted();
+            // now look for a subordinate coordinator with the right id
+            coordinator = SubordinateCoordinator.getRecoveredCoordinator(coordinatorId);
+            if (coordinator == null) {
+                if (!isRecoveryScanStarted) {
+                    // the subtransaction may still be waiting to be resolved
+                    // throw an exception causing the commit to be retried later
+                    throw new SystemException();
+                }
+            } else if(!coordinator.isActivated()) {
+                // the transaction was logged but has not yet been recovered successfully
+                // throw an exception causing the commit to be retried later
+                    throw new SystemException();
+            } else {
+                int status = coordinator.status();
+
+                if (status == ActionStatus.PREPARED) {
+                    // ok, the commit process was not previously initiated so start it now
+                    coordinator.commit();
+                    status = coordinator.status();
+                }
+
+                // check that we are not still committing because of a comms timeout
+
+                if (status == ActionStatus.COMMITTING) {
+                    // throw an exception causing the commit to be retried later
+                    throw new SystemException();
+                }
+            }
+        }
     }
 
     /**
@@ -55,7 +114,34 @@ public class SubordinateDurable2PCStub implements Durable2PCParticipant
      */
 
     public void rollback() throws WrongStateException, SystemException {
-        coordinator.rollback();
+        if (!isRecovered()) {
+            coordinator.rollback();
+        } else {
+            // first check whether crashed coordinators have been recovered
+            XTSATRecoveryManager recoveryManager = XTSATRecoveryManager.getRecoveryManager();
+            boolean isRecoveryScanStarted = recoveryManager.isSubordinateCoordinatorRecoveryStarted();
+            // now look for a subordinate coordinator with the right id
+            coordinator = SubordinateCoordinator.getRecoveredCoordinator(coordinatorId);
+            if (coordinator == null) {
+                if (!isRecoveryScanStarted) {
+                    // the subtransaction may still be waiting to be resolved
+                    // throw an exception causing the rollback to be retried later
+                    throw new SystemException();
+                }
+            } else if(!coordinator.isActivated()) {
+                // the transaction was logged but has not yet been recovered successfully
+                // throw an exception causing the rollback to be retried later
+                    throw new SystemException();
+            } else {
+                int status = coordinator.status();
+
+                if (status == ActionStatus.PREPARED) {
+                    // ok, the rollback process was not previously initiated so start it now
+                    coordinator.rollback();
+                    status = coordinator.status();
+                }
+            }
+        }
     }
 
     /**
@@ -75,7 +161,58 @@ public class SubordinateDurable2PCStub implements Durable2PCParticipant
     }
 
     /**
+     * Save the state of the particpant to the specified input object stream.
+     * @param oos The output output stream.
+     * @return true if persisted, false otherwise.
+     */
+    public boolean saveState(OutputObjectState oos) {
+        // we need to save the id of the subordinate coordinator so we can identify it again
+        // when we are recreated
+        try {
+            oos.packString(coordinatorId);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Restore the state of the particpant from the specified input object stream.
+     * @param ios The Input object stream.
+     * @return true if restored, false otherwise.
+     */
+    public boolean restoreState(InputObjectState ios) {
+        // restore the subordinate coordinator id so we can check to ensure it has been committed
+        String coordinatorId;
+        try {
+            coordinatorId = ios.unpackString();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    /**
+     * test if this participant is recovered
+     */
+    public boolean isRecovered()
+    {
+        return recovered;
+    }
+
+    /**
      * the interposed coordinator
      */
     private SubordinateCoordinator coordinator;
+
+    /**
+     * the interposed coordinator's id
+     */
+    private String coordinatorId;
+
+    /**
+     * a flag indicating whether this participant has been recovered
+     */
+
+    private boolean recovered;
 }
