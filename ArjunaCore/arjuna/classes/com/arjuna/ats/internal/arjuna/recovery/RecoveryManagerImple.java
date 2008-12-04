@@ -46,7 +46,6 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
 import com.arjuna.ats.internal.arjuna.Implementations;
-import com.arjuna.ats.internal.arjuna.utils.SocketProcessId;
 
 /**
  * The RecoveryManagerImple - does the real work. Currently we can have only one
@@ -56,67 +55,67 @@ import com.arjuna.ats.internal.arjuna.utils.SocketProcessId;
 
 public class RecoveryManagerImple
 {
-	private PeriodicRecovery _periodicRecovery = null;
+        private PeriodicRecovery _periodicRecovery = null;
 
-	private RecActivatorLoader _recActivatorLoader = null;
+        private RecActivatorLoader _recActivatorLoader = null;
 
-	/**
-	 * Does the work of setting up crash recovery.
-	 *
-	 * @param threaded
-	 *            if <code>true</code> then the manager will start a separate
-	 *            thread to run recovery periodically.
-	 *
-	 * @message com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1
-	 *          [com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1] -
-	 *          property io exception {0}
-	 * @message com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2
-	 *          [com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2] -
-	 *          socket io exception {0}
-	 * @message com.arjuna.ats.internal.arjuna.recovery.socketready
-	 *          [com.arjuna.ats.internal.arjuna.recovery.socketready]
-	 *          RecoveryManagerImple is ready on port {0}
+        /**
+         * Does the work of setting up crash recovery.
+         *
+         * @param threaded
+         *            if <code>true</code> then the manager will start a separate
+         *            thread to run recovery periodically.
+         *
+         * @message com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1
+         *          [com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1] -
+         *          property io exception {0}
+         * @message com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2
+         *          [com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2] -
+         *          socket io exception {0}
+         * @message com.arjuna.ats.internal.arjuna.recovery.socketready
+         *          [com.arjuna.ats.internal.arjuna.recovery.socketready]
+         *          RecoveryManagerImple is ready on port {0}
      * @message com.arjuna.ats.internal.arjuna.recovery.localready
-	 *          [com.arjuna.ats.internal.arjuna.recovery.localready]
-	 *          RecoveryManagerImple is ready. Socket listener is turned off.
+         *          [com.arjuna.ats.internal.arjuna.recovery.localready]
+         *          RecoveryManagerImple is ready. Socket listener is turned off.
      * @message com.arjuna.ats.internal.arjuna.recovery.fail
-	 *          [com.arjuna.ats.internal.arjuna.recovery.fail]
-	 *          RecoveryManagerImple: cannot bind to socket on address {0} and port {1}
-	 */
+         *          [com.arjuna.ats.internal.arjuna.recovery.fail]
+         *          RecoveryManagerImple: cannot bind to socket on address {0} and port {1}
+         */
 
-	public RecoveryManagerImple (boolean threaded)
-	{
-		String rmPropertyFile = RecoveryConfiguration
-				.recoveryManagerPropertiesFile();
+        public RecoveryManagerImple (boolean threaded)
+        {
+                String rmPropertyFile = RecoveryConfiguration
+                                .recoveryManagerPropertiesFile();
 
-		try
-		{
-			arjPropertyManager.propertyManager = PropertyManagerFactory
-					.getPropertyManager("com.arjuna.ats.propertymanager",
-							"recoverymanager");
-		}
-		catch (Exception ex)
-		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-				tsLogger.arjLoggerI18N
-						.warn(
-								"com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1",
-								new Object[] { ex });
-			}
-		}
+                try
+                {
+                        arjPropertyManager.propertyManager = PropertyManagerFactory
+                                        .getPropertyManager("com.arjuna.ats.propertymanager",
+                                                        "recoverymanager");
+                }
+                catch (Exception ex)
+                {
+                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                        {
+                                tsLogger.arjLoggerI18N
+                                                .warn(
+                                                                "com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1",
+                                                                new Object[] { ex });
+                        }
+                }
 
-		// force normal recovery trace on
-		tsLogger.arjLogger.mergeFacilityCode(FacilityCode.FAC_RECOVERY_NORMAL);
-		tsLogger.arjLoggerI18N
-				.mergeFacilityCode(FacilityCode.FAC_RECOVERY_NORMAL);
+                // force normal recovery trace on
+                tsLogger.arjLogger.mergeFacilityCode(FacilityCode.FAC_RECOVERY_NORMAL);
+                tsLogger.arjLoggerI18N
+                                .mergeFacilityCode(FacilityCode.FAC_RECOVERY_NORMAL);
 
-		/*
-		 * This next would force debugging on, but separate recovery mgr file
-		 * makes this unnecessary.
-		 */
+                /*
+                 * This next would force debugging on, but separate recovery mgr file
+                 * makes this unnecessary.
+                 */
 
-		Implementations.initialise();
+                Implementations.initialise();
 
 
         // by default we use a socket based listener, but it can be turned off if not required.
@@ -126,20 +125,20 @@ public class RecoveryManagerImple
         }
         
         /*
-		 * Check whether there is a recovery daemon running - only allow one per
-		 * object store
-		 *
-		 * Note: this does not actually check if a recovery manager is running for the same ObjectStore,
-		 * only if one is on the same port as our confgiuration. Thus it's not particularly robust.
-		 * TODO: add a lock file to the ObjectStore as a belt and braces approach?
-		 *
-		 * This check works by trying to bind the server socket, so don't do it if we are running local only
-		 * (yup, that means there is a greater chance of winding up with more than one recovery manager if
-		 * we are running without a listener. See comment on robustness and file locking.)
-		 */
+                 * Check whether there is a recovery daemon running - only allow one per
+                 * object store
+                 *
+                 * Note: this does not actually check if a recovery manager is running for the same ObjectStore,
+                 * only if one is on the same port as our configuration. Thus it's not particularly robust.
+                 * TODO: add a lock file to the ObjectStore as a belt and braces approach?
+                 *
+                 * This check works by trying to bind the server socket, so don't do it if we are running local only
+                 * (yup, that means there is a greater chance of winding up with more than one recovery manager if
+                 * we are running without a listener. See comment on robustness and file locking.)
+                 */
 
-		if (useListener && isRecoveryManagerEndPointInUse())
-		{
+                if (useListener && isRecoveryManagerEndPointInUse())
+                {
             if (tsLogger.arjLoggerI18N.isFatalEnabled())
             {
                 try
@@ -163,33 +162,33 @@ public class RecoveryManagerImple
             }
 
             throw new FatalError("Recovery manager already active (or recovery port and address are in use)!");
-		}
+                }
 
-		// start the expiry scanners
+                // start the expiry scanners
 
-		// start the activator recovery loader
+                // start the activator recovery loader
 
-		_recActivatorLoader = new RecActivatorLoader();
+                _recActivatorLoader = new RecActivatorLoader();
 
-		// start the expiry scanners
+                // start the expiry scanners
 
-		ExpiredEntryMonitor.startUp();
+                ExpiredEntryMonitor.startUp();
 
-		// start the periodic recovery thread
-		// (don't start this until just about to go on to the other stuff)
+                // start the periodic recovery thread
+                // (don't start this until just about to go on to the other stuff)
 
-		_periodicRecovery = new PeriodicRecovery(threaded, useListener);
+                _periodicRecovery = new PeriodicRecovery(threaded, useListener);
 
-		try
-		{
-			if (tsLogger.arjLogger.isInfoEnabled())
-			{
-				if(useListener)
+                try
+                {
+                        if (tsLogger.arjLogger.isInfoEnabled())
+                        {
+                                if(useListener)
                 {
                     tsLogger.arjLoggerI18N.info(
                             "com.arjuna.ats.internal.arjuna.recovery.socketready",
-                            new Object[] { new Integer(_periodicRecovery
-                                    .getServerSocket().getLocalPort()) });
+                            new Object[] { PeriodicRecovery.
+                                    getServerSocket().getLocalPort() });
                 }
                 else
                 {
@@ -197,82 +196,93 @@ public class RecoveryManagerImple
                             "com.arjuna.ats.internal.arjuna.recovery.localready");
                 }
             }
-		}
-		catch (IOException ex)
-		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-				tsLogger.arjLoggerI18N
-						.warn(
-								"com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2",
-								new Object[] { ex });
-			}
-		}
-	}
+                }
+                catch (IOException ex)
+                {
+                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                        {
+                                tsLogger.arjLoggerI18N
+                                                .warn(
+                                                                "com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_2",
+                                                                new Object[] { ex });
+                        }
+                }
+        }
 
-	public final void scan ()
-	{
-		_periodicRecovery.doWork();
-	}
+        public final void scan ()
+        {
+                _periodicRecovery.doWork();
+        }
 
-	public final void addModule (RecoveryModule module)
-	{
-		_periodicRecovery.addModule(module);
-	}
+        public final void addModule (RecoveryModule module)
+        {
+                _periodicRecovery.addModule(module);
+        }
 
     public final void removeModule (RecoveryModule module, boolean waitOnScan)
     {
         _periodicRecovery.removeModule(module, waitOnScan);
     }
 
-	public final Vector getModules ()
-	{
-		return _periodicRecovery.getModules();
-	}
+        public final Vector getModules ()
+        {
+                return _periodicRecovery.getModules();
+        }
 
-	public void start ()
-	{
-		if (!_periodicRecovery.isAlive())
-		{
-			_periodicRecovery.start();
-		}
-	}
+        public void start ()
+        {
+                if (!_periodicRecovery.isAlive())
+                {
+                        _periodicRecovery.start();
+                }
+        }
 
     /**
      * stop the recovery manager
      * @param async false means wait for any recovery scan in progress to complete
      */
-	public void stop (boolean async)
-	{
-		_periodicRecovery.shutdown(async);
+        public void stop (boolean async)
+        {
+                _periodicRecovery.shutdown(async);
 
-		// TODO why?
+                // TODO why?
 
-		// ExpiredEntryMonitor.shutdown();
-	}
+                // ExpiredEntryMonitor.shutdown();
+        }
 
-	/**
-	 * Suspend the recovery manager. If the recovery manager is in the process of
-	 * doing recovery scans then it will be suspended afterwards, in order to
-	 * preserve data integrity.
-	 *
-	 * @param async false means wait for the recovery manager to finish any scans before returning.
-	 */
+        /**
+         * Suspend the recovery manager. If the recovery manager is in the process of
+         * doing recovery scans then it will be suspended afterwards, in order to
+         * preserve data integrity.
+         *
+         * @param async false means wait for the recovery manager to finish any scans before returning.
+         */
 
-	public void suspendScan (boolean async)
-	{
-	    _periodicRecovery.suspendScan(async);
-	}
+        public void suspendScan (boolean async)
+        {
+            _periodicRecovery.suspendScan(async);
+        }
 
-	public void resumeScan ()
-	{
-	    _periodicRecovery.resumeScan();
-	}
+        public void resumeScan ()
+        {
+            _periodicRecovery.resumeScan();
+        }
 
-	public void finalize ()
-	{
-		stop(true);
-	}
+        public void finalize ()
+        {
+                stop(true);
+        }
+        
+        public void waitForTermination ()
+        {
+            try
+            {
+                _periodicRecovery.join();
+            }
+            catch (final Exception ex)
+            {
+            }
+        }
 
     /**
      * Test whether the recovery manager (RM) port and address are available - if not assume that another
@@ -283,7 +293,7 @@ public class RecoveryManagerImple
      * @return true if the RM port and address are in use
      */
     private final boolean isRecoveryManagerEndPointInUse ()
-	{
+        {
         try
         {
             /*
@@ -298,6 +308,6 @@ public class RecoveryManagerImple
         {
             return true;
         }
-	}
+        }
 
 }

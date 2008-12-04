@@ -188,11 +188,18 @@ public class RecoveryManager
      * @param async false means wait for any recovery scan in progress to complete
      */
 
-
     public final void stop (boolean async)
     {
         _theImple.stop(async);
     }
+    
+    // does nothing when running embedded.
+    
+    public void waitForTermination ()
+    {
+        _theImple.waitForTermination();
+    }
+    
     /**
      * Suspend the recovery manager. If the recovery manager is in the process of
      * doing recovery scans then it will be suspended afterwards, in order to
@@ -357,6 +364,8 @@ public class RecoveryManager
 
 	    if (testMode)
 		System.out.println("Ready");
+
+	    manager().waitForTermination();
 	}
 	catch (Throwable e)
 	{
