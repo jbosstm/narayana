@@ -30,7 +30,7 @@
  */
 package com.arjuna.ats.jbossatx.jta;
 
-import org.jboss.system.server.ServerConfig;
+import org.jboss.bootstrap.spi.ServerConfig;
 import org.jboss.tm.*;
 
 import org.jboss.logging.Logger;

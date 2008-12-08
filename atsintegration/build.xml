@@ -76,9 +76,8 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
         </fail>
 
         <property name="jboss.lib.dir" location="${jboss.home}/lib"/>
-        <property name="jboss.client.lib.dir" location="${jboss.home}/client"/>
-        <property name="jboss.server.dir" location="${jboss.home}/server/${jboss.server}"/>
-        <property name="jboss.server.lib.dir" location="${jboss.server.dir}/lib"/>
+        <property name="jboss.common.lib.dir" location="${jboss.home}/common/lib"/>
+        <property name="jboss.server.all.lib.dir" location="${jboss.home}/server/all/lib"/>
 
         <property name="com.arjuna.mw.installationdirectory" value="install"/>
         <property name="com.arjuna.mw.sourceid" value="unknown"/>
@@ -132,16 +131,23 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
         -->
 
         <!-- jboss-common-core.jar has UnexpectedThrowable, jboss-logging-spi.jar has Logger, jboss-main.jar has ServerConfig -->
-        <property name="jboss.libs" value="jboss-common-core.jar jboss-logging-spi.jar jboss-main.jar"/>
+        <property name="jboss.libs" value="jboss-common-core.jar jboss-logging-spi.jar jboss-bootstrap.jar"/>
         <!-- jboss-integration.jar has the transactions SPI, jmx-adaptor-plugin.jar has RMIAdaptor -->
-        <property name="jboss.server.jta.libs" value="jboss-integration.jar jmx-adaptor-plugin.jar"/>
-        <property name="jboss.server.jts.libs" value="jboss-iiop.jar jacorb.jar"/>
+        <property name="jboss.common.shared.jta.libs" value="jboss-integration.jar jmx-adaptor-plugin.jar"/>
 
+        <property name="jboss.common.shared.jts.libs" value="jboss-iiop.jar"/>
+        <property name="jboss.server.all.jts.libs" value="jacorb.jar"/>
 
-        <condition property="jboss.server.libs" value="${jboss.server.jta.libs} ${jboss.server.jts.libs}">
+        <condition property="jboss.common.shared.libs" value="${jboss.common.shared.jta.libs} ${jboss.common.shared.jts.libs}">
             <isset property="com.hp.mwlabs.ts.build.jts"/>
         </condition>
-        <property name="jboss.server.libs" value="${jboss.server.jta.libs}"/>
+        <property name="jboss.common.shared.libs" value="${jboss.common.shared.jta.libs}"/>
+
+        <condition property="jboss.server.all.libs" value="${jboss.server.all.jts.libs}">
+            <isset property="com.hp.mwlabs.ts.build.jts"/>
+        </condition>
+        <property name="jboss.server.all.libs" value=""/>
+
         <!-- Classpath -->
         <path id="build.classpath">
             <fileset dir="${com.arjuna.mwlabs.installation.lib.directory}">
@@ -149,8 +155,9 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
 				<include name="**/*.zip"/>
 			</fileset>
 			<filelist dir="${jboss.lib.dir}" files="${jboss.libs}"/>
-			<filelist dir="${jboss.client.lib.dir}" files="${jboss.client.libs}"/>
-            <filelist dir="${jboss.server.lib.dir}" files="${jboss.server.libs}"/>
+            <filelist dir="${jboss.common.lib.dir}" files="${jboss.common.shared.libs}"/>
+            <filelist dir="${jboss.server.all.lib.dir}" files="${jboss.server.all.libs}"/>
+
         </path>
         <property name="build.classpath" refid="build.classpath"/>
 

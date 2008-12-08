@@ -30,7 +30,7 @@
  */
 package com.arjuna.ats.jbossatx.jts;
 
-import org.jboss.system.server.ServerConfig;
+import org.jboss.bootstrap.spi.ServerConfig;
 import org.jboss.iiop.CorbaORBService;
 import org.jboss.tm.*;
 import org.jboss.logging.Logger;
@@ -224,7 +224,7 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
         {
             org.omg.CosTransactions.TransactionFactory factory = com.arjuna.ats.jts.OTSManager.get_factory();
             final int resolver = com.arjuna.ats.jts.TransactionServer.getResolver();
-    
+
             com.arjuna.ats.jts.TransactionServer.registerTransactionManager(resolver, ORB.getInstance("jboss-atx"), factory);
         }
         catch (final Exception ex)
