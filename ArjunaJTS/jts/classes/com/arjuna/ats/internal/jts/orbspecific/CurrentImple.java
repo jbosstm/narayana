@@ -54,13 +54,13 @@ import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.CheckedAction;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 
 import com.arjuna.common.util.logging.*;
 
 import java.io.PrintStream;
 import java.util.*;
 import java.lang.Object;
-import org.omg.CORBA.CompletionStatus;
 import org.omg.CORBA.*;
 
 import org.omg.CosTransactions.SubtransactionsUnavailable;
@@ -480,6 +480,8 @@ public class CurrentImple extends LocalObject implements
 		{
 			v = value.intValue();
 		}
+		else
+		    v = TxControl.getDefaultTimeout();
 
 		if (jtsLogger.logger.isDebugEnabled())
 		{

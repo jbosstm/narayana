@@ -61,12 +61,22 @@ import com.arjuna.ats.arjuna.recovery.TransactionStatusManager;
 
 public class TxControl
 {
-
+    /**
+     * If a timeout is not associated with a transaction when it is created then
+     * this value will be used. A value of 0 means that the transaction will
+     * never time out.
+     */
 	public static final int getDefaultTimeout()
 	{
 		return _defaultTimeout;
 	}
 
+	/**
+	 * Set the timeout to be associated with a newly created transaction if there is no
+	 * other timeout to be used.
+	 * 
+	 * @param timeout
+	 */
 	public static final void setDefaultTimeout(int timeout)
 	{
 		_defaultTimeout = timeout;
@@ -99,6 +109,59 @@ public class TxControl
 		return actionStoreType;
 	}
 
+	/**
+         * By default we should use the same store as the coordinator. However, there
+         * may be some ObjectStore implementations that preclude this and in which
+         * case we will default to the basic action store since performance is not
+         * an issue.
+         * 
+         * @return the <code>ObjectStore</code> implementation which the
+         * recovery manager uses.
+         * 
+         * @see com.arjuna.ats.arjuna.objectstore.ObjectStore
+         */
+        
+        public static final ObjectStore getRecoveryStore ()
+        {
+            if (TxControl.actionStoreType == null)
+            {
+                    String useLog = arjPropertyManager.propertyManager.getProperty(
+                                    Environment.TRANSACTION_LOG, "OFF");
+
+                    if (useLog.equals("ON"))
+                            TxControl.actionStoreType = new ClassName(ArjunaNames
+                                            .Implementation_ObjectStore_ActionLogStore());
+                    else
+                            TxControl.actionStoreType = new ClassName(
+                                            arjPropertyManager.propertyManager
+                                                            .getProperty(
+                                                                            Environment.ACTION_STORE,
+                                                                            ArjunaNames
+                                                                                            .Implementation_ObjectStore_defaultActionStore()
+                                                                                            .stringForm()));
+
+                    String sharedLog = arjPropertyManager.propertyManager.getProperty(
+                                    Environment.SHARED_TRANSACTION_LOG, "NO");
+
+                    if (sharedLog.equals("YES"))
+                            sharedTransactionLog = true;
+            }
+
+            ClassName recoveryType = TxControl.actionStoreType;
+            
+            if (TxControl.actionStoreType.equals(ArjunaNames.Implementation_ObjectStore_ActionLogStore()))
+                recoveryType = ArjunaNames.Implementation_ObjectStore_defaultActionStore();
+            
+            /*
+             * Defaults to ObjectStore.OS_UNSHARED
+             */
+
+            if (sharedTransactionLog)
+                    return new ObjectStore(recoveryType, ObjectStore.OS_SHARED);
+            else
+                    return new ObjectStore(recoveryType);
+        }
+        
 	/**
 	 * @return the <code>ObjectStore</code> implementation which the
 	 *         transaction coordinator will use.

@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.utils.ThreadUtil;
 import com.arjuna.ats.jta.common.*;
 import com.arjuna.ats.jta.logging.*;
@@ -92,6 +93,8 @@ public class BaseTransaction
 		{
 			v = value.intValue();
 		}
+		else
+		    v = TxControl.getDefaultTimeout();
 
 		// TODO set default timeout
 

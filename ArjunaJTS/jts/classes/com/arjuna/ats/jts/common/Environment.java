@@ -52,7 +52,7 @@ public class Environment
     public static final String SUPPORT_SUBTRANSACTIONS = "com.arjuna.ats.jts.supportSubtransactions";
     public static final String SUPPORT_ROLLBACK_SYNC = "com.arjuna.ats.jts.supportRollbackSync";
     public static final String SUPPORT_INTERPOSED_SYNCHRONIZATION = "com.arjuna.ats.jts.supportInterposedSynchronization";
-    public static final String DEFAULT_TIMEOUT = "com.arjuna.ats.jts.defaultTimeout";
+    public static final String DEFAULT_TIMEOUT = "com.arjuna.ats.jts.defaultTimeout"; // deprecated
     public static final String PROPAGATE_TERMINATOR = "com.arjuna.ats.jts.propagateTerminator";
     public static final String CONTEXT_PROP_MODE = "com.arjuna.ats.jts.contextPropMode";
     public static final String RECOVERY_MANAGER_ORB_PORT = "com.arjuna.ats.jts.recoveryManagerPort";

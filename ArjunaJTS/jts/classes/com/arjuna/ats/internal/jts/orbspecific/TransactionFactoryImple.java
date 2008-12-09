@@ -50,6 +50,7 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.coordinator.ActionManager;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
@@ -165,7 +166,7 @@ public class TransactionFactoryImple extends
 			int theTimeout = time_out;
 
 			if (theTimeout == 0)
-				theTimeout = TransactionFactoryImple._defaultTimeout;
+			    theTimeout = TxControl.getDefaultTimeout();
 
 			if (theTimeout > 0)
 			{
@@ -663,7 +664,7 @@ public class TransactionFactoryImple extends
 		else
 			info.reaperTimeout = (int) reaper.checkingPeriod();
 
-		info.defaultTimeout = TransactionFactoryImple._defaultTimeout;
+		info.defaultTimeout = TxControl.getDefaultTimeout();
 
 		return info;
 	}
@@ -904,8 +905,6 @@ public class TransactionFactoryImple extends
 
 	private static FactoryList creators = new FactoryList();
 
-	private static int _defaultTimeout = 0;
-
 	/**
 	 * @message com.arjuna.ats.internal.jts.orbspecific.tfitimeout {0} - invalid
 	 *          default transaction timeout {1}. Caught exception: {2}
@@ -921,7 +920,7 @@ public class TransactionFactoryImple extends
 			{
 				Integer i = new Integer(timeout);
 
-				TransactionFactoryImple._defaultTimeout = i.intValue();
+				TxControl.setDefaultTimeout(i.intValue());
 			}
 			catch (Exception e)
 			{

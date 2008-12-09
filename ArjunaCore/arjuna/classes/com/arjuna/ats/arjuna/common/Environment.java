@@ -108,6 +108,8 @@ public class Environment
     public static final String OBJECTSTORE_TYPE = "com.arjuna.ats.arjuna.objectstore.objectStoreType";
     public static final String HASHED_DIRECTORIES = "com.arjuna.ats.arjuna.objectstore.hashedDirectories";
     public static final String TRANSACTION_LOG = "com.arjuna.ats.arjuna.coordinator.transactionLog";
+    public static final String TRANSACTION_LOG_REMOVAL_MARKER = "com.arjuna.ats.arjuna.coordinator.transactionLog.removalMarker";
+    public static final String TRANSACTION_LOG_SIZE = "com.arjuna.ats.arjuna.coordinator.transactionLog.size";
     public static final String TRANSACTION_LOG_WRITE_OPTIMISATION = "com.arjuna.ats.arjuna.coordinator.transactionLog.writeOptimisation";
     public static final String TRANSACTION_SYNC = "com.arjuna.ats.arjuna.objectstore.transactionSync";
     public static final String READONLY_OPTIMISATION = "com.arjuna.ats.arjuna.coordinator.readonlyOptimisation";
