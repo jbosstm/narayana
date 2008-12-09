@@ -27,12 +27,6 @@
  * UK.  
  *
  * $Id: RecoveryInit.java 2342 2006-03-30 13:06:17Z  $
- *
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_1 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_1] - added ORBAttribute for recoveryCoordinatorInitialiser
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_2 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_2] - Full crash recovery is not supported with this orb
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_2 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_3] - Set property {0}  =  {1}
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_3 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_4] - RecoveryCoordinator service can only be provided in RecoveryManager
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_4 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_5] - ORB/OA initialisation failed: {0}
  */
 
 package com.arjuna.ats.internal.jts.recovery;
@@ -67,6 +61,12 @@ import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecovery
  *   <p>Orb-specific details of recovery are handled by this class.
  *  
  * @author Malik SAHEB 
+ *
+ * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_1 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_1] - added ORBAttribute for recoveryCoordinatorInitialiser
+ * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_2 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_2] - Full crash recovery is not supported with this orb
+ * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_2 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_3] - Set property {0}  =  {1}
+ * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_3 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_4] - RecoveryCoordinator service can only be provided in RecoveryManager
+ * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_4 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_5] - ORB/OA initialisation failed: {0}
  */
 
 public class RecoveryInit

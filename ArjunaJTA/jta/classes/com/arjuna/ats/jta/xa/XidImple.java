@@ -389,7 +389,7 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 		}
 	}
 
-	/*
+	/**
 	 * @message com.arjuna.ats.jta.xa.xidunset Xid unset
 	 */
 

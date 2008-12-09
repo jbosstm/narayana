@@ -101,7 +101,7 @@ public class oracle_9_0 implements XAModifier, ConnectionModifier
 	return true;
     }
 
-    /*
+    /**
      * @message com.arjuna.ats.internal.jdbc.drivers.modifiers.notSupported Oracle does not support isolation level 
      */
 
