@@ -31,26 +31,14 @@
 
 package com.arjuna.ats.internal.jts.recovery;
 
-import com.arjuna.ats.arjuna.recovery.RecoveryActivator;
 import com.arjuna.ats.jts.logging.*;
 import com.arjuna.common.util.logging.*;
 
-import com.arjuna.orbportability.orb.Attribute;
 import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.common.Environment;
 import com.arjuna.orbportability.*;
 
-import org.omg.CORBA.NO_IMPLEMENT;
-import org.omg.CORBA.SystemException;
-
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
-
-import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCreator;
 
 /**
  * Registers the appropriate classes with the ORB.
@@ -64,9 +52,9 @@ import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecovery
  *
  * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_1 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_1] - added ORBAttribute for recoveryCoordinatorInitialiser
  * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_2 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_2] - Full crash recovery is not supported with this orb
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_2 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_3] - Set property {0}  =  {1}
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_3 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_4] - RecoveryCoordinator service can only be provided in RecoveryManager
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_4 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_5] - ORB/OA initialisation failed: {0}
+ * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_3 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_3] - Set property {0}  =  {1}
+ * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_4 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_4] - RecoveryCoordinator service can only be provided in RecoveryManager
+ * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_5 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_5] - ORB/OA initialisation failed: {0}
  */
 
 public class RecoveryInit
