@@ -163,11 +163,6 @@ public LockStore (Object[] param)
 	    _imple = null;
     }
 	    
-public void finalize ()
-    {
-	_imple = null;
-    }
-    
 public InputObjectState read_state (Uid u, String tName) throws LockStoreException
     {
 	return ((_imple != null) ? _imple.read_state(u, tName) : null);

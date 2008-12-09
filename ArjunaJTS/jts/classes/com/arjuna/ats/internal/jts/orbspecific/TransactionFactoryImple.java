@@ -115,18 +115,6 @@ public class TransactionFactoryImple extends
 		_factoryRef = getReference();
 	}
 
-	public void finalize () throws Throwable
-	{
-		if (jtsLogger.logger.isDebugEnabled())
-		{
-			jtsLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "TransactionFactoryImple.finalize ()");
-		}
-
-		_factoryRef = null;
-
-		super.finalize();
-	}
-
 	public final synchronized TransactionFactory getReference ()
 	{
 		if (_factoryRef == null)

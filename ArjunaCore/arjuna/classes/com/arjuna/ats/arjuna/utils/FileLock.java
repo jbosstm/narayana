@@ -111,11 +111,6 @@ public FileLock (File name, long timeout, long retry)
 	_retry = retry;
     }
 
-public void finalize ()
-    {
-	_theFile = null;
-    }
-    
     /**
      * @since JTS 2.1.1.
      */

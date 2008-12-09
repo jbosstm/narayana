@@ -148,18 +148,6 @@ public class TransactionReaper
 		}
 	}
 
-	public void finalize()
-	{
-		if (tsLogger.arjLogger.debugAllowed())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.DESTRUCTORS,
-					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
-					"TransactionReaper.finalize ()");
-		}
-
-		_transactions = null;
-	}
-
 	public final long checkingPeriod()
 	{
 		if (_dynamic)

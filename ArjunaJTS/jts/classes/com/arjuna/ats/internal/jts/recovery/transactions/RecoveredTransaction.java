@@ -67,7 +67,6 @@ import org.omg.CORBA.SystemException;
  * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_1 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_1] - RecoveredTransaction {0} created
  * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_2 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_2] - RecoveredTransaction activate of {0} failed 
  * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_3 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_3] - RecoveredTransaction activate of {0} failed - {1}
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_4 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_4] - RecoveredTransaction {0} destroyed
  * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_5 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_5] - RecoveredTransaction.replayPhase2 ({0}) - status = {1}
  * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_6 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_6] - RecoveredTransaction.replayPhase2 for {0} failed
  * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_7 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_7] - RecoveredTransaction.replayPhase2 ({0}) finished 
@@ -129,17 +128,6 @@ public class RecoveredTransaction extends ArjunaTransactionImple
 	}
 
 	_txStatus = Status.StatusUnknown;
-    }
-
-    public void finalize ()
-    {
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_4", new Object[]{get_uid()});
-	    }
-	super.finalize();
     }
 
     /**

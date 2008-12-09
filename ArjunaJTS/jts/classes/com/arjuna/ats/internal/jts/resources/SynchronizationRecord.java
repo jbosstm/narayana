@@ -71,18 +71,6 @@ public class SynchronizationRecord implements ListElement, Comparable
         _isJTAInterposed = isJTAInterposed;
 	}
 
-    public void finalize ()
-    {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-						 com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "SynchronizationRecord.finalize ()");
-	}
-
-	_ptr = null;
-	_uid = null;
-    }
-
     public final Synchronization contents ()
     {
 	if (jtsLogger.logger.isDebugEnabled())

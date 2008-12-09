@@ -157,13 +157,6 @@ public ObjectName (NameService nameService, String objectName)
 	}
     }
 
-public void finalize ()
-    {
-	_mech = null;
-	_name = null;
-	_nameService = null;
-    }
-
     /**
      * Return the type of the specified attribute.
      */

@@ -57,7 +57,6 @@ import java.io.IOException;
  * It is responsible for the recovery of server transactions
  * 
  * @message com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_1 [com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_1] - ServerTransactionRecoveryModule created
- * @message com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_2 [com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_2] - ServerTransactionRecoveryModule destroyed
  * @message com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_3 [com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_3] - ServerTransactionRecoveryModule - First Pass
  * @message com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_4 [com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_4] - ServerTransactionRecoveryModule - Second Pass
  * @message com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_5 [com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_5] - ServerTransactionRecoveryModule - Transaction {0} still in ActionStore
@@ -82,17 +81,6 @@ public class ServerTransactionRecoveryModule extends TransactionRecoveryModule
 	
 	if (_transactionType == null)
 	    _transactionType = ServerTransaction.typeName();
-    }
-
-    public void finalize () throws Throwable
-    {
-	super.finalize();
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	  {
-	      jtsLogger.loggerI18N.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-					 FacilityCode.FAC_CRASH_RECOVERY, 
-					 "com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule_2");
-	  }
     }
 
     /**

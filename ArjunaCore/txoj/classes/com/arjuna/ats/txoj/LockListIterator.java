@@ -40,11 +40,6 @@ public LockListIterator (LockList L)
 	next = L.head;
     }
     
-public void finalize ()
-    {
-	next = null;
-    }
-
 public final synchronized Lock iterate ()
     {
 	Lock current = next;

@@ -54,11 +54,6 @@ public HashListIterator (HashList list)
 	lastBucket = -1;
     }
 
-public void finalize ()
-    {
-	iter = null;
-    }
-
     /**
      * Return the next item in the list.
      */

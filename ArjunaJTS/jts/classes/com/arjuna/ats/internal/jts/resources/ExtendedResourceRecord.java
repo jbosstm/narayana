@@ -123,17 +123,6 @@ public class ExtendedResourceRecord extends
 		_restored = false;
 	}
 
-	public void finalize () throws Throwable
-	{
-		_resourceHandle = null;
-		_stringifiedResourceHandle = null;
-		_recCoordUid = null;
-		_parentCoordHandle = null;
-		_currentTransaction = null;
-
-		super.finalize();
-	}
-
 	/**
 	 * Specific OTS method for getting at the value.
 	 */

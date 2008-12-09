@@ -146,20 +146,6 @@ public class PersistenceRecord extends RecoveryRecord
 		topLevelState = null;
 	}
 
-	public void finalize ()
-	{
-		if (tsLogger.arjLogger.debugAllowed())
-		{
-			tsLogger.arjLogger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "PersistenceRecord.finalize() for "
-					+ order());
-		}
-
-		store = null;
-		topLevelState = null;
-
-		super.finalize();
-	}
-
 	/**
 	 * Redefintions of abstract functions inherited from RecoveryRecord.
 	 */

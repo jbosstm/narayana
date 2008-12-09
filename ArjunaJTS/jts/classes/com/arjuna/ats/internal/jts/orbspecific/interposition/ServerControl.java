@@ -157,14 +157,6 @@ public class ServerControl extends ControlImple
 		addControl();
 	}
 
-	public void finalize () throws Throwable
-	{
-		_realCoordinator = null;
-		_realTerminator = null;
-
-		super.finalize();
-	}
-
 	public final boolean isWrapper ()
 	{
 		return _isWrapper;

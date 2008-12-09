@@ -44,10 +44,6 @@ public BasicSemaphoreSetup ()
     {
     }
 
-public void finalize ()
-    {
-    }
-
 public synchronized Object createVoid ()
     {
 	return null;

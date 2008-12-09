@@ -107,11 +107,6 @@ public Semaphore (ObjectName objName)
 	}
     }    
 
-public void finalize ()
-    {
-	_imple = null;
-    }
-
 public int lock ()
     {
 	return ((_imple != null) ? _imple.lock() : Semaphore.SM_ERROR);

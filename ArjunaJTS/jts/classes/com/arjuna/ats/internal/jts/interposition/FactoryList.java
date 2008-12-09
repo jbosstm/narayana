@@ -60,12 +60,6 @@ class FactoryElement
 		_next = null;
 	}
 
-	public void finalize ()
-	{
-		if (_next != null)
-			_next = null;
-	}
-
 	public ControlImple recreateLocal (PropagationContext ctx)
 			throws SystemException
 	{

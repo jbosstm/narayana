@@ -70,11 +70,6 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
 					  new Object[]{_id});
     }
 
-    public void finalize () throws Throwable
-    {
-        _resourceHandle = null;
-    }
-
     public boolean beforeCompletion ()
     {
 	if (_resourceHandle != null)

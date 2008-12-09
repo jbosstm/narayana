@@ -211,11 +211,6 @@ public class ObjectStore
 	    _imple = null;	
     }
     
-    public void finalize ()
-    {
-	_imple = null;
-    }
-
     public boolean allObjUids (String s, InputObjectState buff, int m) throws ObjectStoreException
     {
 	return ((_imple != null) ? _imple.allObjUids(s, buff, m) : false);

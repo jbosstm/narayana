@@ -55,15 +55,6 @@ public class RecoveredTransactionReplayer extends Thread
 	_recoveringCache.put(_actionUid, this);
     }
     
-    public void finalize () throws Throwable
-    {
-	super.finalize();
-
-	_actionUid = null;
-	_actionType = null;
-	_cachedRecoveredTransaction = null;
-    }
-
     /**
      * @since JTS 2.1.1.
      */

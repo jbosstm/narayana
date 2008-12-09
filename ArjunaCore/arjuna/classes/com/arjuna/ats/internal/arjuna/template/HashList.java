@@ -59,13 +59,6 @@ public HashList (int hashBucket)
 	    buckets[i] = null;
     }
 
-public void finalize ()
-    {
-	empty();
-
-	buckets = null;
-    }
-
     /**
      * Empty the list.
      */

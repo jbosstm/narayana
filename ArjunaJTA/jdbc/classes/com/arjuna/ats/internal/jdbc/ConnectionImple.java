@@ -153,20 +153,6 @@ public class ConnectionImple implements java.sql.Connection
 		_theConnection = null;
 	}
 
-	public void finalize()
-	{
-		if (jdbcLogger.logger.isDebugEnabled())
-		{
-			jdbcLogger.logger.debug(DebugLevel.DESTRUCTORS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jdbc.logging.FacilityCode.FAC_JDBC,
-					"ConnectionImple.finalize ()");
-		}
-
-		_recoveryConnection = null;
-		_theConnection = null;
-	}
-
 	public Statement createStatement() throws SQLException
 	{
 		checkTransaction();

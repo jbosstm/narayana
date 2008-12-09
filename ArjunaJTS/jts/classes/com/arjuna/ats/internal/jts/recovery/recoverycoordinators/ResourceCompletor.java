@@ -61,12 +61,6 @@ public class ResourceCompletor extends Thread
 	_action = action;
     }
     
-    public void finalize () throws Throwable
-    {
-	super.finalize();
-	_res = null;
-    }
-
     public final void run ()
     {
 	if (_action == ROLLBACK)

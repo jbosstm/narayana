@@ -78,20 +78,6 @@ public class CachedRecoveredTransaction
 	    }
     }
     
-    public void finalize ()
-    {
-	if (jtsLogger.logger.isDebugEnabled())
-	    {
-		jtsLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-				       FacilityCode.FAC_CRASH_RECOVERY, 
-				       "CachedRecoveredTransaction.finalise ["
-				       +_theTransactionUid+", "+_theTransactionType+"]");
-	    }
-	
-	_theTransactionUid = null;
-	_theTransactionType = null;
-    }
-
     public Uid getTransactionUid()
     {
 	if (jtsLogger.logger.isDebugEnabled())

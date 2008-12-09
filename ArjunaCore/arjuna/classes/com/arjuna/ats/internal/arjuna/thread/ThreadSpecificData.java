@@ -65,11 +65,6 @@ public class ThreadSpecificData
 		_table = new ThreadLocal();
 	}
 
-	public void finalize ()
-	{
-		_table = null;
-	}
-
 	/**
 	 * Associate the specified data with the current thread.
 	 */

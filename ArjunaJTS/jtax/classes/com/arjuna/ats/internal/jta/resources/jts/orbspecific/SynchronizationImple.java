@@ -89,19 +89,6 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
 	_theReference = null;
     }
 
-    public void finalize ()
-    {
-	_theSynch = null;
-
-	try
-	{
-	    super.finalize();
-	}
-	catch (Throwable e)
-	{
-	}
-    }
-
     public final org.omg.CosTransactions.Synchronization getSynchronization ()
     {
         if (_theReference == null)

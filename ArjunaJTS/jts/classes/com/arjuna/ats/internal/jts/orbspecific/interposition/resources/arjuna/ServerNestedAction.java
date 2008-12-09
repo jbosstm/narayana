@@ -129,20 +129,6 @@ public ServerNestedAction (ServerControl myControl)
 	}
     }
 
-public void finalize ()
-    {
-	if (jtsLogger.logger.isDebugEnabled())
-	{
-	    jtsLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerNestedAction.finalize ( "+_theUid+" )");
-	}
-
-	_theResource = null;
-	_resourceRef = null;
-
-	super.finalize();
-    }
-
     /**
      * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.nullcontrol_1 {0} - attempt to commit with null control!
      */

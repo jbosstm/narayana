@@ -80,11 +80,6 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
 					  new Object[]{_id});
     }
 
-    public void finalize () throws Throwable
-    {
-        _resourceHandle = null;
-    }
-
     /**
      * @message com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.SynchronizationRecord_2 [com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.SynchronizationRecord_2] - SynchronizationRecord.beforeCompletion for {0} called without a resource!
      * @message com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.SynchronizationRecord_3 [com.arjuna.mwlabs.wscf.model.as.coordinator.arjunacore.SynchronizationRecord_3] - SynchronizationRecord.beforeCompletion {0} caught exception: {1}

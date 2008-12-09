@@ -64,7 +64,7 @@ public class ServerResource implements ListElement
      * Assume only one thread can delete an object!
      */
 
-public void finalize ()
+public void finalize () throws Throwable
     {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
@@ -73,6 +73,8 @@ public void finalize ()
 	}
 
 	tidyup();
+    // should always call parent finalize method
+    super.finalize();
     }
 
     /*

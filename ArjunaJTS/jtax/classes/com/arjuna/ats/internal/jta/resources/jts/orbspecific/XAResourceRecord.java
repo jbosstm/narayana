@@ -154,14 +154,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 	}
 
-	public void finalize()
-	{
-		if (_theTransaction != null)
-		{
-			_theTransaction = null;
-		}
-	}
-
 	public final Uid get_uid()
 	{
 		return _theUid;

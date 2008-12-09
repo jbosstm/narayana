@@ -85,13 +85,6 @@ public class ParticipantRecord extends
 			{ order() });
 	}
 
-	public void finalize () throws Throwable
-	{
-		_resourceHandle = null;
-
-		super.finalize();
-	}
-
 	/**
 	 * Override AbstractRecord.propagateOnCommit
 	 */

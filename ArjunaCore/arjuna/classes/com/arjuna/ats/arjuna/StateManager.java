@@ -155,7 +155,7 @@ public void finalize () throws Throwable
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_STATE_MAN, "StateManager.finalize() for object-id "+get_uid());
+				     FacilityCode.FAC_STATE_MAN, "StateManager.finalize() for object-id "+get_uid() + " type " + type());
 	}
 
 	if (currentStatus == ObjectStatus.ACTIVE_NEW)
@@ -169,16 +169,6 @@ public void finalize () throws Throwable
 		cleanup(false);
 	    }
 	}
-
-	smAttributes = null;
-	objectName = null;
-
-	modifyingActions = null;
-	usingActions = null;
-	
-	objectStore = null;
-	storeRoot = null;
-	objectUid = null;
     }
 
     /**

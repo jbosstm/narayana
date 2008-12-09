@@ -94,13 +94,6 @@ public class ParticipantRecord extends
 			{ order() });
 	}
 
-	public void finalize () throws Throwable
-	{
-		_resourceHandle = null;
-
-		super.finalize();
-	}
-
 	public final void setResponse (Message notification, Outcome response)
 			throws WrongStateException
 	{

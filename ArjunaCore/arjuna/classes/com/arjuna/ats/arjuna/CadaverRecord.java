@@ -105,24 +105,6 @@ public class CadaverRecord extends PersistenceRecord
     }
 
     /**
-     * Tidy-up the instance.
-     */
-
-    public void finalize ()
-    {
-	if (tsLogger.arjLogger.debugAllowed())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::finalize() for "+order());
-	}
-	
-	oldState = null;
-	store = null;
-	
-	super.finalize();
-    }
-
-    /**
      * Override default AbstractRecord method. CadaverRecords are propagated
      * regardless of the termination condition.
      *

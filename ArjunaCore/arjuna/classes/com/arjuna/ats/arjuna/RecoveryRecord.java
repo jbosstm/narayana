@@ -67,17 +67,16 @@ class RecoveryRecord extends AbstractRecord
 	actionHandle = BasicAction.Current();
     }
     
-    public void finalize ()
+    public void finalize () throws Throwable
     {
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_ABSTRACT_REC, "RecoveryRecord.finalize() for "+order());
+				     FacilityCode.FAC_ABSTRACT_REC, "RecoveryRecord.finalize() for "+order() + " type " + type());
 	}
-	
-	state = null;
+        super.finalize();
     }
-    
+
     public int typeIs ()
     {
 	return RecordType.RECOVERY;

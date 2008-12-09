@@ -138,11 +138,6 @@ public LockStoreSegment ()
 	headOfList = null;
     }
 
-public void finalize ()
-    {
-	headOfList = null;
-    }
-
 public synchronized boolean write_committed (Uid u, String tName, OutputObjectState state)
     {
 	if (state.size() <= 0)

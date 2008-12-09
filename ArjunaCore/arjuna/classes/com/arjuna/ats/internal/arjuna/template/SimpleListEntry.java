@@ -46,11 +46,6 @@ public SimpleListEntry (SimpleListEntry old, ListElement th)
 	theData = th;
     }
 
-public void finalize ()
-    {
-	theData = null;
-    }
-    
 protected SimpleListEntry next;
 protected ListElement     theData;
 

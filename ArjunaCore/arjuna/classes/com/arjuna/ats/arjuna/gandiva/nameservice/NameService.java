@@ -100,11 +100,6 @@ public NameService (NameServiceImple nameServiceImple)
 	_imple = nameServiceImple;
     }
 
-public void finalize ()
-    {
-	_imple = null;
-    }
-
     /**
      * Return the type of the attribute. The ObjectName identity is given
      * to allow implementation specific lookups.

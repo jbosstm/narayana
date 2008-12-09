@@ -72,11 +72,6 @@ public RecoveryAbstractRecord (ClassName cName, int type, boolean doSave)
 	_doSave = doSave;
     }
 
-public void finalize ()
-    {
-	_imple = null;
-    }
-    
 public int typeIs ()
     {
 	return _recordType;

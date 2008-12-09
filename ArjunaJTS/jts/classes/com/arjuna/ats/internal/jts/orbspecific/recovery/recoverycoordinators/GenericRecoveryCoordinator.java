@@ -67,7 +67,6 @@ import com.arjuna.common.util.logging.*;
  *
  * @message com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_1 [com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_1] - GenericRecoveryCoordinator {0} constructed
  * @message com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_2 [com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_2] - GenericRecoveryCoordinator() constructing
- * @message com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_3 [com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_3] - GenericRecoveryCoordinator {0} destroyed
  * @message com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_4 [com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_4] - GenericRecoveryCoordinator - swapping Resource for RC {0}
  */
 
@@ -113,17 +112,6 @@ public class GenericRecoveryCoordinator extends org.omg.CosTransactions.Recovery
 	_id = null;
     }
     
-    public void finalize () throws Throwable
-    {
-	super.finalize();
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCoordinator_3", new Object[]{_id});
-	    }
-    }
-
     /**
      * Implementation of IDL method:
      *  <p>

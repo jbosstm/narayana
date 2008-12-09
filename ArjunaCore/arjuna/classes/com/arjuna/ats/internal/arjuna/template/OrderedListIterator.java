@@ -51,11 +51,6 @@ public OrderedListIterator (OrderedList L)
 	ptr = L.head();
     }
 
-public void finalize ()
-    {
-	ptr = null;
-    }
-
     /**
      * Return the next item in the list.
      */

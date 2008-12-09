@@ -134,14 +134,6 @@ public class XAResourceRecord extends AbstractRecord
 		_theTransaction = tx;
 	}
 
-	public void finalize()
-	{
-		if (_theTransaction != null)
-		{
-			_theTransaction = null;
-		}
-	}
-
 	public final Xid getXid()
 	{
 		return _tranID;

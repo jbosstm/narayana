@@ -79,7 +79,6 @@ import java.util.Hashtable;
  *
  * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_1 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_1] - RecoveredServerTransaction {0} created
  * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_2 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_2] - RecoveredServerTransaction - activate of {0} failed!
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_3 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_3] - RecoveredServerTransaction {0} destroyed
  * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_4 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_4] - RecoveredServerTransaction.replayPhase2({0}) - status = {1}
  * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_5 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_5] - RecoveredServerTransaction.replayPhase2({0}) - status after contacting parent = {1}
  * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_6 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_6] - ServerTransaction {0} unable determine status - retry later
@@ -178,18 +177,6 @@ public class RecoveredServerTransaction extends ServerTransaction
 	}
 
 	_txStatus = Status.StatusUnknown;
-    }
-
-    public void finalize ()
-    {
-	if (jtsLogger.loggerI18N.isDebugEnabled())
-	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_3", new Object[]{getSavingUid()});
-	    }
-
-	super.finalize();
     }
 
     /**

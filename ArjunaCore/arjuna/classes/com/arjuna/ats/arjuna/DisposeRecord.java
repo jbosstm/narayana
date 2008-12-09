@@ -80,21 +80,6 @@ public class DisposeRecord extends CadaverRecord
 	}
     }
 
-    public void finalize ()
-    {
-	if (tsLogger.arjLogger.debugAllowed())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-				     FacilityCode.FAC_ABSTRACT_REC, 
-				     "DisposeRecord.finalize for "+order());
-	}
-	
-	store = null;
-	typeName = null;
-
-	super.finalize();
-    }
-
     public boolean propagateOnAbort ()
     {
 	return false;

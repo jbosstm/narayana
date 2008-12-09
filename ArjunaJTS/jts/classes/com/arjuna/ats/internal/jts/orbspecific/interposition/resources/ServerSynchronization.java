@@ -62,12 +62,6 @@ public class ServerSynchronization extends
 				.narrow(ORBManager.getPOA().corbaReference(this));
 	}
 
-	public void finalize()
-	{
-		_theTransaction = null;
-		_theSynchronization = null;
-	}
-
 	public final Synchronization getSynchronization()
 	{
 		return _theSynchronization;

@@ -63,11 +63,6 @@ public Interposition ()
 	_head = new HashList(11);
     }
 
-public void finalize ()
-    {
-	_head = null;
-    }
-
 public static ControlImple create (PropagationContext context) throws SystemException
     {
 	if (__list != null)

@@ -147,16 +147,6 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 	_rolledback = false;
     }
 
-    public void finalize () throws Throwable
-    {
-	_resourceHandle = null;
-	_stringifiedResourceHandle = null;
-	_recCoordUid = null;
-	_parentCoordHandle = null;
-
-	super.finalize();
-    }
-
     public final Resource resourceHandle ()
     {
 	/*

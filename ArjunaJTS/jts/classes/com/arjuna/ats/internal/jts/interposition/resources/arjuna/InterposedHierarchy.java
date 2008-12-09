@@ -51,11 +51,6 @@ public class InterposedHierarchy implements ListElement
 	_action = action;
     }
 
-    public void finalize ()
-    {
-	_action = null;
-    }
-
     public final ServerTopLevelAction action ()
     {
 	return _action;

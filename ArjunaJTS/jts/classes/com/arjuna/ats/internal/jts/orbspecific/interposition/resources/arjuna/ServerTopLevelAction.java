@@ -147,20 +147,6 @@ public ServerTopLevelAction (ServerControl control)
 	    _valid = false;
     }
  
-/*
- * Assume only one thread can delete an object!
- */
- 
-public void finalize ()
-    {
-	_theResource = null;
-	_resourceRef = null;
-
-	super.tidyup();
-
-	super.finalize();
-    }
-
 public Resource getReference ()
     {
 	if ((_resourceRef == null) && _valid)
