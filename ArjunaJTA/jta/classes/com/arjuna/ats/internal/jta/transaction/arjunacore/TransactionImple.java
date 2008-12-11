@@ -1403,7 +1403,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					case ActionStatus.ABORTED:
 					case ActionStatus.ABORTING:
 						_theTransaction.abort(); // assure thread disassociation
-						throw new InactiveTransactionException(
+						throw new javax.transaction.RollbackException(
 								jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 
 					case ActionStatus.COMMITTED:
