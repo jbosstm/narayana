@@ -1,21 +1,21 @@
 
-JBossTS 4.4.GA is designed for use standalone or with JBossAS 5.0.0.CR2.
+JBossTS 4.5.GA is designed for use standalone or with JBossAS 5.0.0.GA.
 It is not suitable for use with earlier versions of JBossAS.
 
 The installation procedure has changed from earlier releases due to the move from
 a JMX configuration style to the POJO microcontainer used by AS 5.0. Upgrading users
 should take care to read the steps below carefully.
 
-Installing JBossTS 4.4.GA JTA into JBossAS 5.0.0.CR2
+Installing JBossTS 4.5.GA JTA into JBossAS 5.0.0.GA
 ------------------------------------------------------------
 
 The application server ships with a earlier release of JBossTS JTA as its default transaction manager.
 To update the JTA the following steps are necessary:
 
- - Replace JBossAS  server/xxx/lib/jbossjta.jar and server/xxx/lib/jbossjta-integration.jar with the newer
+ - Replace JBossAS  common/lib/jbossjta.jar and common/lib/jbossjta-integration.jar with the newer
 versions from JBossTS lib
 
- - Replace JBossAS  server/xxx/lib/jbossts-common.jar with the newer version from JBossTS lib/ext/
+ - Replace JBossAS  common/lib/jbossts-common.jar with the newer version from JBossTS lib/ext/
 
  - Replace JBossAS  server/xxx/conf/jbossjta-properties.xml with  JBossTS  etc/jbossjta-properties.xml
 
@@ -141,14 +141,6 @@ the 1.0 protocol implementation. The value specified for property
 org.jboss.jbossts.xts11.coordinatorURL in file wstx11.xml is used
 by the 1.1 protocol implementation.
 
-
-Warning:
--------
-
-Note that due to a bug in AS.5.0.0.CR2 web services it is not possible
-to deploy the XTS sar before the JBoss application server has
-completed startup. This should be addressed in later releases of
-JBossAS.
 
 XTS Trailmap Documentation
 --------------------------
