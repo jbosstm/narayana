@@ -1405,12 +1405,17 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (INVALID_TRANSACTION e6)
 			{
-				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
+			    /*
+			     * In JTS/OTS we can indicate that something was terminated by another thread.
+			     * JTA doesn't really prevent this, but ...
+			     */
+			    
+				//throw new IllegalStateException(
+				//		jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
 			}
 			catch (org.omg.CORBA.SystemException e7)
 			{
-				throw new javax.transaction.SystemException();
+				throw new InvalidTerminationStateException();
 			}
 			finally
 			{
