@@ -80,7 +80,9 @@ public class RegisterOTSServer2
     public static void registerService(String name, String ior) throws IOException
     {
         File file = new File(name);
-        file.getParentFile().mkdirs();
+        if(file.getParentFile() != null) {
+            file.getParentFile().mkdirs();
+        }
         FileOutputStream fout = new FileOutputStream(file);
         fout.write(ior.getBytes());
         fout.close();
