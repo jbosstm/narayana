@@ -1,10 +1,10 @@
 This directory contains an extract of the JacORB 2.3.0 distribution with certain JBoss patches applied.
 
-Specifically, it is JacORB 2.3.0-patch4 build from 
-http://repository.jboss.org/jacorb/2.3.0jboss.patch4-brew/
+Specifically, it is JacORB 2.3.0-patch6 build from
+http://repository.jboss.org/jacorb/2.3.0jboss.patch6-brew/
 
-Source code for the patches is in 
-http://repository.jboss.org/jacorb/2.3.0jboss.patch4-brew/src/
+Source code for the patches is in
+http://repository.jboss.org/jacorb/2.3.0jboss.patch6-brew/src/
 
 Note the licence file incorrectly states 'JacORB 2.2.3'
 this error is present in the original JacORB distribution
