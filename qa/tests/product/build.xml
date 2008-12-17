@@ -121,9 +121,9 @@ different object store implementations, the command would be
     <path id="classpath.simplejta">
         <pathelement location="${lib.dir}/simplejta/simplejta-1.07.jar" />
     </path>
-    <!-- http://mvnrepository.com/artifact/geronimo-spec/geronimo-spec-jta -->
+    
     <path id="classpath.j2ee">
-        <pathelement location="${lib.dir}/common/geronimo-spec-jta-1.0.1B-rc4.jar" />
+        <fileset dir="${jbossts.home}/lib/ext" includes="jta-1_1-classes.zip"/>
     </path>
     <!-- http://db.apache.org/derby/index.html -->
     <!-- or http://mvnrepository.com/artifact/org.apache.derby -->
