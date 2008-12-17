@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -69,8 +69,8 @@ import com.arjuna.ats.arjuna.state.*;
  * recreated in the RecoveryManager if necessary following a crash
  * of this process.
  *
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_1 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCRCManager_1] - JacOrbRCManager: Created reference for tran {0} = {1}
- * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_2 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCRCManager_2] - RCManager.makeRC did not make rcvco reference 
+ * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_1 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_1] - JacOrbRCManager: Created reference for tran {0} = {1}
+ * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_2 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_2] - RCManager.makeRC did not make rcvco reference
  * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_3 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_3] - RCManager could not find file in object store.
  * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_4 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_4] - RCManager could not find file in object store during setup.
  * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_5 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_5] - Unexpected exception during IOR setup {0}
@@ -97,7 +97,7 @@ public JacOrbRCManager ()
     /**
      * We create a RecoveryCoordinator reference, but without (we think)
      * actually making the implementation object available to the orb.
-     * The data needed to construct the RecoveryCoordinator is put in 
+     * The data needed to construct the RecoveryCoordinator is put in
      * the ObjectId. If a replay_completion is received, it will be sent,
      * via the locationd daemon, to the RecoveryManager.
      */
@@ -107,7 +107,7 @@ public JacOrbRCManager ()
 				       boolean isServerTransaction )
     {
 	initialise();
-	
+
 	RecoveryCoordinator rc = null;
 
 	// mangle those parameters to the string key (object id sort of thing)
@@ -115,32 +115,32 @@ public JacOrbRCManager ()
 	try
 	{
 	    String rcObjectId = GenericRecoveryCoordinator.makeId(RCUid, tranUid, processUid, isServerTransaction);
-    
+
 	    if (ref_ReCoo != null)
 	    {
 		// New for IOR template
 		String new_ior = RecoverIOR.newObjectKey(ref_ReCoo, rcObjectId);
 		org.omg.CORBA.Object rcAsObject = ORBManager.getORB().orb().string_to_object(new_ior);
 		//End for IOR Template
-		
+
 		rc = RecoveryCoordinatorHelper.narrow(rcAsObject);
 		
 		if (jtsLogger.loggerI18N.isDebugEnabled())
 		{
-		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, 
-					       VisibilityLevel.VIS_PUBLIC, 
-					       FacilityCode.FAC_CRASH_RECOVERY, 
-					       "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCRCManager_1", new java.lang.Object[]{tranUid, rc});
+		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS,
+					       VisibilityLevel.VIS_PUBLIC,
+					       FacilityCode.FAC_CRASH_RECOVERY,
+					       "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_1", new java.lang.Object[]{tranUid, rc});
 		}
 	    }
-	    else 
+	    else
 	    {
 		if (JacOrbRCManager._runWithoutDaemon)
 		    throw new NO_IMPLEMENT();
 		else
 		{
 		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_3");
-		    
+
 		    rc = null;
 		}
 	    }
@@ -171,7 +171,7 @@ public void destroyAll (java.lang.Object[] params) throws SystemException
 	if (!_initialised)
 	{
 	    _initialised = true;
-	
+
 	    if (!_runWithoutDaemon)
 	    {
 		try
@@ -200,7 +200,7 @@ public void destroyAll (java.lang.Object[] params) throws SystemException
 	    }
 	}
     }
-    
+
 protected char rcKeyDelimiter = '#';
 
 static protected String ref_ReCoo = null;
@@ -211,7 +211,7 @@ private POA _ourPOA;
     private static boolean _initialised = false;
 
     private ObjectStore     currentStore;
-    
+
     static
     {
 	/*
@@ -222,12 +222,12 @@ private POA _ourPOA;
 	 */
 
 	String env = jtsPropertyManager.propertyManager.getProperty("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.noDaemon");
-	
+
 	if (env != null)
 	{
 	    if (env.equals("YES"))
 		_runWithoutDaemon = true;
 	}
     }
-    
+
 }
