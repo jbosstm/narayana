@@ -220,19 +220,6 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
         JNDIManager.bindJTATransactionManagerImplementation();
         JNDIManager.bindJTATransactionSynchronizationRegistryImplementation();
 
-        try
-        {
-            org.omg.CosTransactions.TransactionFactory factory = com.arjuna.ats.jts.OTSManager.get_factory();
-            final int resolver = com.arjuna.ats.jts.TransactionServer.getResolver();
-
-            com.arjuna.ats.jts.TransactionServer.registerTransactionManager(resolver, ORB.getInstance("jboss-atx"), factory);
-        }
-        catch (final Exception ex)
-        {
-            log.fatal("Problem encountered while trying to register transaction manager with ORB!");
-
-            throw new Exception("Problem encountered while trying to register transaction manager with ORB! "+ex);
-        }
     }
 
     public void start(org.omg.CORBA.ORB theCorbaORB) throws Exception
@@ -252,6 +239,21 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
 
             RecoveryORBManager.setORB(orb);
             RecoveryORBManager.setPOA(oa);
+
+            try
+            {
+                org.omg.CosTransactions.TransactionFactory factory = com.arjuna.ats.jts.OTSManager.get_factory();
+                final int resolver = com.arjuna.ats.jts.TransactionServer.getResolver();
+
+                com.arjuna.ats.jts.TransactionServer.registerTransactionManager(resolver, orb, factory);
+            }
+            catch (final Exception ex)
+            {
+                log.fatal("Problem encountered while trying to register transaction manager with ORB!");
+
+                throw new Exception("Problem encountered while trying to register transaction manager with ORB! "+ex);
+            }
+
 
             // Start the recovery manager
             if (_runRM)
