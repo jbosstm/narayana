@@ -25,7 +25,7 @@ import com.arjuna.ats.arjuna.AtomicAction;
 
 /**
  * This class is a plug-in module for the recovery manager. This class is
- * responsible for the removing ransaction status manager items that are too
+ * responsible for the removing transaction status manager items that are too
  * old.
  */
 
