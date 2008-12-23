@@ -68,6 +68,10 @@
       <property
         name="com.arjuna.ats.arjuna.recovery.expiryScannerTransactionStatusManager"
         value="com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner"/>
+        <!-- Enable the following to move logs that cannot be completed by failure recovery. But
+        be sure you know what you are doing and why! -->
+        <!-- property
+            name="com.arjuna.ats.arjuna.recovery.expiryScannerAtomicActionLog" value="com.arjuna.ats.internal.arjuna.recovery.AtomicActionExpiryScanner"/ -->
       <!--
         Interval, in hours, between running the expiry scanners.
         This can be quite long. The absolute value determines the interval -
