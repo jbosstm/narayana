@@ -197,7 +197,7 @@ public class ExpiredEntryMonitor extends Thread
     {
 	if (tsLogger.arjLogger.isInfoEnabled())
 	{
-	    tsLogger.arjLogger.info("\n  --- ExpiredEntryMonitor ----" + 
+	    tsLogger.arjLogger.info("--- ExpiredEntryMonitor ----" + 
 				      _theTimestamper.format(new Date()) + "----" );
 	}
 	
