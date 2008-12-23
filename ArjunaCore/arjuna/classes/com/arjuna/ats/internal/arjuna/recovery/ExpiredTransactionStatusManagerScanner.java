@@ -49,13 +49,6 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.common.util.logging.*;
 
 /**
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_1 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_1] - ExpiredTransactionStatusManagerScanner created, with expiry time of {0}  seconds
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_2 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_2] - ExpiredTransactionStatusManagerScanner - scanning to remove items from before {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_3 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_3] - Removing old transaction status manager item {0}
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_4 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_4] - Expiry scan interval set to  {0}  seconds
- * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_5 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_5] - {0}  has inappropriate value ({1})
-
-/**
  * This class is a plug-in module for the recovery manager.  This
  * class is responsible for the removing transaction status manager items 
  * that are too old.
@@ -64,6 +57,14 @@ import com.arjuna.common.util.logging.*;
 public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
 {
 
+    /**
+     * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_1 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_1] - ExpiredTransactionStatusManagerScanner created, with expiry time of {0}  seconds
+     * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_2 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_2] - ExpiredTransactionStatusManagerScanner - scanning to remove items from before {0}
+     * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_3 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_3] - Removing old transaction status manager item {0}
+     * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_4 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_4] - Expiry scan interval set to  {0}  seconds
+     * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_5 [com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_5] - {0}  has inappropriate value ({1})
+     */
+    
    public ExpiredTransactionStatusManagerScanner()
    {
        if (tsLogger.arjLoggerI18N.isDebugEnabled())
