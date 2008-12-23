@@ -323,7 +323,7 @@ public class RecoveryManager
     {
         Socket socket = new Socket(getRecoveryManagerHost(), getRecoveryManagerPort());
 
-        if (tsLogger.arjLogger.isInfoEnabled())
+        if (tsLogger.arjLoggerI18N.isInfoEnabled())
         {
             tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.recovery.RecoveryManager_4",
                     new Object[]{socket.getInetAddress().getHostAddress(), socket.getLocalPort()});
@@ -360,12 +360,12 @@ public class RecoveryManager
 
 	try
 	{
-	    manager();
+	    RecoveryManager man = manager();
 
 	    if (testMode)
 		System.out.println("Ready");
 
-	    manager().waitForTermination();
+	    man.waitForTermination();
 	}
 	catch (Throwable e)
 	{
