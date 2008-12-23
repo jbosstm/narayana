@@ -75,7 +75,7 @@ public class RecActivatorLoader
   {
       if (tsLogger.arjLogger.isInfoEnabled())
 	  {
-	      tsLogger.arjLogger.info("\n  --- Start RecoveryActivators ");
+	      tsLogger.arjLogger.info("--- Start RecoveryActivators ");
 	  }
 
       Enumeration activators = _recoveryActivators.elements();
