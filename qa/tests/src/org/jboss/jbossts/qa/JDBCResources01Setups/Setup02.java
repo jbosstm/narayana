@@ -45,6 +45,8 @@ public class Setup02
 {
 	public static void main(String[] args)
 	{
+        boolean useSybaseLockingHack = false;
+
 		boolean passed = true;
 
 		try
@@ -58,6 +60,10 @@ public class Setup02
 			for (int index = 0; index < numberOfDrivers; index++)
 			{
 				String driver = JDBCProfileStore.driver(profileName, index);
+
+                if(driver.contains(".sybase.")) {
+                    useSybaseLockingHack = true;
+                }
 
 				Class.forName(driver);
 			}
@@ -109,6 +115,15 @@ public class Setup02
 					"ON " + databaseUser + "_InfoTable (Name) ");
 			statement.executeUpdate("CREATE UNIQUE INDEX " + databaseUser + "_IT_Ind " +
 					"ON " + databaseUser + "_InfoTable (Name) ");
+
+            // sybase uses coarse grained locking by default and XA tx branches appear to be loose coupled i.e. do not share locks.
+            // Unlike MSSQL, the presence of an index is not enough to cause the db to use row level locking. We need to configure
+            // it explicitly instead. Without this the tests that use more than one server i.e. db conn/branch may block.
+            if(useSybaseLockingHack) {
+                // force use of row level locking
+                System.err.println("configuring sybase row level locking: ALTER TABLE " + databaseUser + "_InfoTable lock datarows");
+                statement.executeUpdate("ALTER TABLE " + databaseUser + "_InfoTable lock datarows");
+            }
 
 			for (int index = 0; index < 10; index++)
 			{
