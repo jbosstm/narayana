@@ -79,7 +79,7 @@ import java.util.*;
  *          TransactionReaper::check worker {0} not responding to interrupt when cancelling TX {1} -- worker marked as zombie and TX scheduled for mark-as-rollback
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_7
  *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_7] -
- *          TransactionReaper::doCancellations worker {0} successfuly cancelled TX {1}
+ *          TransactionReaper::doCancellations worker {0} successfully canceled TX {1}
  * @message com.arjuna.ats.arjuna.coordinator.TransactionReaper_8
  *          [com.arjuna.ats.arjuna.coordinator.TransactionReaper_8] -
  *          TransactionReaper::doCancellations worker {0} failed to cancel TX {1} -- rescheduling for mark-as-rollback
