@@ -237,6 +237,8 @@ public class TransactionReaper
 		    break;
 		}
 
+		tsLogger.arjLogger.warn("**working on "+e);
+
 		if (tsLogger.arjLoggerI18N.isWarnEnabled())
 		{
 		    tsLogger.arjLoggerI18N
@@ -426,8 +428,7 @@ public class TransactionReaper
 
 			synchronized(this)
 			{
-			    _timeouts.remove(e._control);
-			    _transactions.remove(e);
+			    removeElement(e);
 			}
 
 			try
@@ -482,8 +483,7 @@ public class TransactionReaper
 
 			synchronized(this)
 			{
-			    _timeouts.remove(e._control);
-			    _transactions.remove(e);
+			    removeElement(e);
 			}
 		    }
 		    break;
@@ -654,8 +654,7 @@ public class TransactionReaper
 
 		    synchronized(this)
 		    {
-			_timeouts.remove(e._control);
-			_transactions.remove(e);
+		        removeElement(e);
 		    }
 		}
 		else
@@ -686,8 +685,7 @@ public class TransactionReaper
 
 		    synchronized(this)
 		    {
-			_timeouts.remove(e._control);
-			_transactions.remove(e);
+		        removeElement(e);
 		    }
 
 		    try
@@ -845,7 +843,9 @@ public class TransactionReaper
 
 		    synchronized(this)
 		    {
-			return _transactions.remove(key);
+		        removeElement(key);
+		        
+		        return true;
 		    }
                 }
 	}
@@ -945,6 +945,121 @@ public class TransactionReaper
 		return timeout.intValue();
 	}
 
+	/*
+         * Terminate the transaction reaper. This is a synchronous operation
+         * and will only return once the reaper has been shutdown cleanly.
+         * 
+         * Note, this method assumes that the transaction system has been
+         * shutdown already so no new transactions can be created, or we
+         * could be here for a long time!
+         * 
+         * @param waitForTransactions if <code>true</code> then the reaper will
+         * wait until all transactions have terminated (or been terminated by it).
+         * If <code>false</code> then the reaper will call setRollbackOnly on all
+         * the transactions.
+         */
+	
+	private final void shutdown (boolean waitForTransactions)
+	{
+	    synchronized (_shutdownLock)
+	    {
+	        _inShutdown = true;
+
+	        /*
+	         * If the caller does not want to wait for the normal transaction timeout
+	         * periods to elapse before terminating, then we first start by enabling
+	         * our time machine!
+	         */
+	        
+	        if (!waitForTransactions)
+	        {
+	            Iterator iter = _transactions.iterator();
+	            ReaperElement e;
+	            
+	            while (iter.hasNext())
+	            {
+	                e = (ReaperElement) iter.next();
+	                
+	                e._absoluteTimeout = 0;
+	            }
+	        }
+
+	        /*
+	         * Wait for all of the transactions to
+	         * terminate normally.
+	         */
+
+	        while (_transactions.size() > 0)
+	        {
+	            try
+	            {
+	                _shutdownLock.wait();
+	            }
+	            catch (final Exception ex)
+	            {
+	            }
+	        }
+
+	        synchronized (_reaperThread)
+	        {
+	            _reaperThread.shutdown();               
+	            _reaperThread.interrupt();  // by this stage there should be no transactions left anyway.
+	            
+	            synchronized (this)
+	            {
+	                notify();
+	            }
+
+	            try
+	            {
+	                _reaperThread.join();
+	            }
+	            catch (final Exception ex)
+	            {	                
+	            }
+	        }
+
+	        _reaperThread = null;
+	                	               
+	        _reaperWorkerThread.shutdown();
+	        
+	        synchronized (_reaperWorkerThread)
+	        {
+	            try
+	            {
+	                _reaperWorkerThread.interrupt();
+	                _reaperWorkerThread.join();
+	            }
+	            catch (final Exception ex)
+	            {	                
+	            }
+	        }
+	        
+	        _reaperWorkerThread = null;
+	        
+	        _inShutdown = false;
+	    }
+	}
+	
+	/*
+	 * Remove element from list and trigger waiter if we are
+	 * being shutdown.
+	 */
+	
+	private final void removeElement (ReaperElement e)
+	{
+	    synchronized (_shutdownLock)
+	    {
+                _timeouts.remove(e._control);
+                _transactions.remove(e);
+                
+	        if (_inShutdown && (_transactions.size() == 0))
+	        {
+	            _shutdownLock.notify();
+	        }
+	    }
+	}
+	
 	/**
 	 * Currently we let the reaper thread run at same priority as other threads.
 	 * Could get priority from environment.
@@ -1133,6 +1248,29 @@ public class TransactionReaper
 			return _theReaper;
 	}
 
+	/**
+	 * Terminate the transaction reaper. This is a synchronous operation
+	 * and will only return once the reaper has been shutdown cleanly.
+	 * 
+	 * Note, this method assumes that the transaction system has been
+	 * shutdown already so no new transactions can be created, or we
+	 * could be here for a long time!
+	 * 
+	 * @param waitForTransactions if <code>true</code> then the reaper will
+	 * wait until all transactions have terminated (or been terminated by it).
+	 * If <code>false</code> then the reaper will call setRollbackOnly on all
+	 * the transactions.
+	 */
+	
+	public static void terminate (boolean waitForTransactions)
+	{
+	    if (_theReaper != null)
+	    {
+	        _theReaper.shutdown(waitForTransactions);
+	        _theReaper = null;
+	    }
+	}
+	
     public static boolean isDynamic() {
         return _dynamic;
     }
@@ -1194,4 +1332,11 @@ public class TransactionReaper
 	private static long _lifetime = 0;
 
 	private static int _zombieCount = 0;
+	
+	/*
+	 * Shutdown lock.
+	 */
+	
+	private static final Object _shutdownLock = new Object();
+	private static boolean _inShutdown = false;
 }
