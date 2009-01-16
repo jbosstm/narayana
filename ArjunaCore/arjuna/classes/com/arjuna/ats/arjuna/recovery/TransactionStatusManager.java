@@ -37,7 +37,6 @@ import java.net.* ;
 import com.arjuna.ats.arjuna.utils.Utility ;
 import com.arjuna.ats.internal.arjuna.recovery.Listener ;
 import com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem ;
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.common.util.propertyservice.PropertyManager;
@@ -116,6 +115,8 @@ public class TransactionStatusManager
     * Removes the TransactionStatusManager from the object store
     * and closes down the listener thread.
     */
+   
+   // TODO consider adding a shutdown operation (signature change)
    public void finalize()
    {
        if ( ! _finalizeCalled )

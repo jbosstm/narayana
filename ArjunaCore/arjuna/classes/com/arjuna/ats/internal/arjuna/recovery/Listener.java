@@ -33,7 +33,6 @@ package com.arjuna.ats.internal.arjuna.recovery;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -143,6 +142,9 @@ public class Listener extends Thread
 	     if (tsLogger.arjLoggerI18N.isWarnEnabled())
 		 tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.Listener_2");
          }
+         catch (final Exception ex)
+         {
+         }
       }
    }
    
@@ -154,6 +156,14 @@ public class Listener extends Thread
    {
       _stop_listener = true;
       this.interrupt();
+      
+      try
+      {
+          _listener_socket.close();  // in case we're still in accept
+      }
+      catch (final Exception ex)
+      {
+      }
    }
 
    // Socket & port which client(RecoveryManager) connects to.

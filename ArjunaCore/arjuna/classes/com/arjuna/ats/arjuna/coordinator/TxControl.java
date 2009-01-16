@@ -61,6 +61,17 @@ import com.arjuna.ats.arjuna.recovery.TransactionStatusManager;
 
 public class TxControl
 {
+    public static class Shutdown extends Thread
+    {
+        public void run()
+        {
+            if (transactionStatusManager != null)
+            {
+                transactionStatusManager.finalize();
+            }
+        }
+    };
+    
     /**
      * If a timeout is not associated with a transaction when it is created then
      * this value will be used. A value of 0 means that the transaction will
@@ -82,24 +93,53 @@ public class TxControl
 		_defaultTimeout = timeout;
 	}
 
-	public static final void enable()
+	/**
+	 * Start the transaction system. This allows new transactions to be created
+	 * and for recovery to execute.
+	 */
+	
+	public static final synchronized void enable()
 	{
-		TxControl.enable = true;
+	    createTransactionStatusManager();
+	    
+	    TxControl.enable = true;
 	}
 
-	public static final void disable()
+	/**
+	 * Stop the transaction system. New transactions will be prevented but
+	 * recovery will be allowed to continue.
+	 */
+	
+	public static final synchronized void disable()
 	{
-		/*
-		 * We could have an implementation that did not return until all
-		 * transactions had finished. However, this could take an arbitrary
-		 * time, especially if participants could fail. Since this information
-		 * is available anyway to the application, let it handle it.
-		 */
-
-		TxControl.enable = false;
+	    disable(false);
 	}
+	
+	/**
+         * Stop the transaction system. New transactions will be prevented and
+         * recovery will cease.
+         * 
+         * WARNING: make sure you know what you are doing when you call this
+         * routine!
+         */
+	
+	public static final synchronized void disable (boolean disableRecovery)
+        {
+            /*
+             * We could have an implementation that did not return until all
+             * transactions had finished. However, this could take an arbitrary
+             * time, especially if participants could fail. Since this information
+             * is available anyway to the application, let it handle it.
+             */
 
-	public static final boolean isEnabled()
+	    if (disableRecovery)
+	        removeTransactionStatusManager();
+
+            TxControl.enable = false;
+        }
+
+
+	public static final synchronized boolean isEnabled()
 	{
 		return TxControl.enable;
 	}
@@ -229,6 +269,35 @@ public class TxControl
 		xaNodeName = name;
 	}
 
+	private final static synchronized void createTransactionStatusManager ()
+	{
+	    if (transactionStatusManager == null && _enableTSM)
+	    {
+	        transactionStatusManager = new TransactionStatusManager();
+
+	        _shutdownHook = new Shutdown();
+	        
+	        // add hook to ensure finalize gets called.
+	        Runtime.getRuntime().addShutdownHook(_shutdownHook);
+	    }
+	}
+	
+	private final static synchronized void removeTransactionStatusManager ()
+	{
+	    if (_shutdownHook != null)
+	    {
+	        Runtime.getRuntime().removeShutdownHook(_shutdownHook);
+	        
+	        _shutdownHook = null;
+	        
+	        if (transactionStatusManager != null)
+	        {
+	            transactionStatusManager.finalize();
+	            transactionStatusManager = null;
+	        }
+	    }
+	}
+	
 	static boolean maintainHeuristics = true;
 
 	static boolean asyncCommit = false;
@@ -257,6 +326,12 @@ public class TxControl
 
 	static int _defaultTimeout = 60; // 60 seconds
 
+	static boolean _enableTSM = true;
+	
+	static Thread _shutdownHook = null;
+	
+	static Object _lock = new Object();
+	
 	static
 	{
 		String env = arjPropertyManager.propertyManager
@@ -409,29 +484,17 @@ public class TxControl
 
 		if (writeNodeName)
 		{
-			arjPropertyManager.propertyManager.setProperty(
-					Environment.XA_NODE_IDENTIFIER, new String(xaNodeName));
+		    arjPropertyManager.propertyManager.setProperty(
+		            Environment.XA_NODE_IDENTIFIER, new String(xaNodeName));
 		}
 
-        
-        String enableTSM = arjPropertyManager.propertyManager.getProperty(Environment.TRANSACTION_STATUS_MANAGER_ENABLE);
-        // run the TSM by default, unless it's turned off explicitly.
-        if (transactionStatusManager == null && !"NO".equalsIgnoreCase(enableTSM))
-		{
-			transactionStatusManager = new TransactionStatusManager();
+		String enableTSM = arjPropertyManager.propertyManager.getProperty(Environment.TRANSACTION_STATUS_MANAGER_ENABLE);
+		// run the TSM by default, unless it's turned off explicitly.
 
-			// add hook to ensure finalize gets called.
-			Runtime.getRuntime().addShutdownHook(new Thread()
-			{
-				public void run()
-				{
-					if (transactionStatusManager != null)
-					{
-						transactionStatusManager.finalize();
-					}
-				}
-			});
-		}
+		if ("NO".equalsIgnoreCase(enableTSM))
+		    _enableTSM = false;
+
+		createTransactionStatusManager();
 	}
 
 }
