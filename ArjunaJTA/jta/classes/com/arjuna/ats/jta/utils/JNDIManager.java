@@ -93,6 +93,15 @@ public class JNDIManager
     }
 
     /**
+     * Unbind the transaction manager from the default JNDI context.
+     * @throws javax.naming.NamingException
+     */
+    public static void unbindJTATransactionManagerImplementation() throws javax.naming.NamingException
+    {
+        unbindJTATransactionManagerImplementation(new InitialContext());
+    }
+
+    /**
      * Bind the currently configured transaction manager implementation to the JNDI
      * context passed in.
      * @param initialContext
@@ -107,6 +116,16 @@ public class JNDIManager
         Reference ref = new Reference(tmImplementation, tmImplementation, null);
         initialContext.rebind(getTransactionManagerJNDIName(), ref);
 	}
+
+    /**
+     * Unbind the transaction manager from the provided JNDI context.
+     * @param initialContext
+     * @throws javax.naming.NamingException
+     */
+    public static void unbindJTATransactionManagerImplementation(InitialContext initialContext) throws javax.naming.NamingException
+    {
+        initialContext.unbind(getTransactionManagerJNDIName());
+    }
 
     /**
      * Bind the currently configured user transaction implementation to the default JNDI
@@ -144,6 +163,15 @@ public class JNDIManager
 		bindJTATransactionSynchronizationRegistryImplementation(new InitialContext());
 	}
 
+    /**
+     * Unbind the TSR from the default JNDI context.
+     * @throws javax.naming.NamingException
+     */
+    public static void unbindJTATransactionSynchronizationRegistryImplementation() throws javax.naming.NamingException
+	{
+		unbindJTATransactionSynchronizationRegistryImplementation(new InitialContext());
+	}
+
 	/**
      * Bind the currently configured TransactionSynchronizationRegistry implementation to the passed in
      * JNDI context.
@@ -167,6 +195,16 @@ public class JNDIManager
 
         /** Bind the TransactionSynchronizationRegistry to the appropriate JNDI context **/
         initialContext.rebind(getTransactionSynchronizationRegistryJNDIName(), tsr);
+    }
+
+    /**
+     * Unbind the TSR from the provided JNDI context.
+     * @param initialContext
+     * @throws javax.naming.NamingException
+     */
+    public static void unbindJTATransactionSynchronizationRegistryImplementation(InitialContext initialContext) throws javax.naming.NamingException
+	{
+        initialContext.unbind(getTransactionSynchronizationRegistryJNDIName());
     }
 
 	public final static String getTransactionManagerJNDIName()

@@ -68,6 +68,7 @@ import com.arjuna.common.util.logging.LogFactory;
 import javax.management.*;
 import javax.naming.Reference;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 import java.net.Socket;
@@ -203,7 +204,7 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
         }
         catch (Exception e)
         {
-            log.fatal("Failed to create and register ORB/OA", e);
+            log.fatal("Failed to create and register Propagation Context Manager", e);
         }
 
         /** Bind the transaction manager and tsr JNDI reference **/
@@ -220,6 +221,25 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
         JNDIManager.bindJTATransactionManagerImplementation();
         JNDIManager.bindJTATransactionSynchronizationRegistryImplementation();
 
+    }
+
+    public void destroy()
+    {
+        log.info("Destroying TransactionManagerService");
+
+        // unregister the JNDI entries that were registered by create()
+        try
+        {
+            unbind(PROPAGATION_CONTEXT_IMPORTER_JNDI_REFERENCE);
+            unbind(PROPAGATION_CONTEXT_EXPORTER_JNDI_REFERENCE);
+
+            JNDIManager.unbindJTATransactionManagerImplementation();
+            JNDIManager.unbindJTATransactionSynchronizationRegistryImplementation();
+        }
+        catch(NamingException e)
+        {
+            log.warn("Unable to unbind TransactionManagerService JNDI entries ", e);
+        }
     }
 
     public void start(org.omg.CORBA.ORB theCorbaORB) throws Exception
@@ -724,6 +744,11 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
     {
         Reference ref = new Reference(className, className, null);
         new InitialContext().bind(jndiName, ref);
+    }
+
+    private void unbind(String jndiName) throws NamingException
+    {
+        new InitialContext().unbind(jndiName);
     }
 
     /**

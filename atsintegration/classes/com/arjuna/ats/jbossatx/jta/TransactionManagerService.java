@@ -60,6 +60,7 @@ import com.arjuna.common.util.logging.LogFactory;
 import javax.management.*;
 import javax.naming.Reference;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 import java.net.Socket;
@@ -242,6 +243,25 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
 		JNDIManager.bindJTATransactionManagerImplementation();
 		JNDIManager.bindJTATransactionSynchronizationRegistryImplementation();
 	}
+
+    public void destroy()
+    {
+        log.info("Destroying TransactionManagerService");
+
+        // unregister the JNDI entries that were registered by create()
+        try
+        {
+            unbind(PROPAGATION_CONTEXT_IMPORTER_JNDI_REFERENCE);
+            unbind(PROPAGATION_CONTEXT_EXPORTER_JNDI_REFERENCE);
+
+            JNDIManager.unbindJTATransactionManagerImplementation();
+            JNDIManager.unbindJTATransactionSynchronizationRegistryImplementation();
+        }
+        catch(NamingException e)
+        {
+            log.warn("Unable to unbind TransactionManagerService JNDI entries ", e);
+        }
+    }
 
     public void start()
     {
@@ -681,6 +701,11 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
     {
         Reference ref = new Reference(className, className, null);
         new InitialContext().bind(jndiName, ref);
+    }
+
+    private void unbind(String jndiName) throws NamingException
+    {
+        new InitialContext().unbind(jndiName);
     }
 
     ///////////////////
