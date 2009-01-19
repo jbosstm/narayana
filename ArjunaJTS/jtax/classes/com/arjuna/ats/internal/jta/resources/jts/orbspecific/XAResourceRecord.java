@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -101,9 +101,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	 * The params represent specific parameters we need to recreate the
 	 * connection to the database in the event of a failure. If they're not set
 	 * then recovery is out of our control.
-	 * 
+	 *
 	 * Could also use it to pass other information, such as the readonly flag.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.consterror
 	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.consterror]
 	 *          {0} caught exception during construction: {1}
@@ -182,7 +182,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed]
 	 *          XAResource prepare failed with: {1}
 	 */
-	
+
 	public org.omg.CosTransactions.Vote prepare() throws HeuristicMixed,
 			HeuristicHazard, org.omg.CORBA.SystemException
 	{
@@ -227,13 +227,13 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			 * create the resource log after we know the prepare outcome then
 			 * there's a chance we may crash between prepare and writing the
 			 * state.
-			 * 
+			 *
 			 * We go for the latter currently since failures are rare, but
 			 * performance is always required. The result is that the
 			 * transaction will roll back (since it won't get an ack from
 			 * prepare) and the resource won't be recovered. The sys. admin.
 			 * will have to clean up manually.
-			 * 
+			 *
 			 * Actually what will happen in the case of ATS is that the XA
 			 * recovery module will eventually roll back this resource when it
 			 * notices that there is no log entry for it.
@@ -269,15 +269,15 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 								{ XAHelper
 										.printXAErrorCode(e1) });
 			}
-			
+
 			/*
 			 * XA_RB*, XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
 			 * XAER_PROTO.
 			 */
-			
+
 			if (_rollbackOptimization) // won't have rollback called on it
 				removeConnection();
-			
+
 			switch (e1.errorCode)
 			{
 			case XAException.XAER_RMERR:
@@ -388,11 +388,11 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				    else
 				    {
 					removeConnection();
-					
+
 					throw new UNKNOWN();
 				    }
 				}
-				
+
 				try
 				{
 					_theXAResource.rollback(_tranID);
@@ -554,10 +554,10 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						 * XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
 						 * XAER_PROTO.
 						 */
-						
+
 						switch (e1.errorCode)
 						{
-						
+
 						case XAException.XA_HEURHAZ:
 							updateState(TwoPhaseOutcome.HEURISTIC_HAZARD);
 
@@ -582,9 +582,15 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 							updateState(TwoPhaseOutcome.HEURISTIC_MIXED);
 
 							throw new org.omg.CosTransactions.HeuristicMixed();
-						case XAException.XAER_NOTA:
-						case XAException.XAER_PROTO:
-							break;
+
+                        case XAException.XAER_NOTA:
+                            // RM unexpectedly lost track of the tx, outcome is uncertain
+                            updateState(TwoPhaseOutcome.HEURISTIC_HAZARD);
+			    			throw new org.omg.CosTransactions.HeuristicHazard();
+    					case XAException.XAER_PROTO:
+                            // presumed abort (or we could be really paranoid and throw a heuristic)
+                            throw new TRANSACTION_ROLLEDBACK();
+
 						case XAException.XA_RETRY:
 							throw new UNKNOWN();
 						case XAException.XAER_INVAL:
@@ -700,7 +706,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	 * outcome is whatever we want. Therefore, we do not need to save any
 	 * additional recoverable state, such as a reference to the transaction
 	 * coordinator, since it will not have an intentions list anyway.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.coperror
 	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.coperror]
 	 *          Caught the following error while trying to single phase complete
@@ -747,9 +753,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					 * TODO in Oracle, the end is not required. Is this
 					 * common to other RM implementations?
 					 */
-					
+
 					boolean commit = true;
-					
+
 					try
 					{
         					if (endAssociation())
@@ -785,7 +791,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						 * Has been marked as rollback-only. We still
 						 * need to call rollback.
 						 */
-						
+
 						commit = false;
 						break;
 					    case XAException.XAER_RMERR:
@@ -815,7 +821,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					{
 						throw new TRANSACTION_ROLLEDBACK();
 					}
-					
+
 					switch (e1.errorCode)
 					{
 					case XAException.XA_HEURHAZ:
@@ -838,9 +844,15 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					case XAException.XAER_RMERR:
 						handleForget() ;
 						throw new TRANSACTION_ROLLEDBACK();
+
 					case XAException.XAER_NOTA:
+                        // RM unexpectedly lost track of the tx, outcome is uncertain
+                        updateState(TwoPhaseOutcome.HEURISTIC_HAZARD);
+						throw new org.omg.CosTransactions.HeuristicHazard();
 					case XAException.XAER_PROTO:
-						break;
+                        // presumed abort (or we could be really paranoid and throw a heuristic)
+                        throw new TRANSACTION_ROLLEDBACK();
+
 					case XAException.XAER_INVAL:
 					case XAException.XAER_RMFAIL: // resource manager failed,
 												  // did it rollback?
@@ -852,7 +864,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				catch (SystemException ex)
 				{
 					ex.printStackTrace();
-					
+
 					throw ex;
 				}
 				catch (org.omg.CosTransactions.HeuristicHazard ex)
@@ -870,7 +882,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					}
 
 					e2.printStackTrace();
-					
+
 					throw new UNKNOWN();
 				}
 				finally
@@ -897,7 +909,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 		removeConnection();
 	}
-	
+
 	private void handleForget()
 	{
 		if ((_theXAResource != null) && (_tranID != null))
@@ -917,7 +929,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.saveState]
 	 *          Could not serialize a serializable XAResource!
 	 */
-	
+
 	public boolean saveState(OutputObjectState os)
 	{
 		boolean res = false;
@@ -940,19 +952,19 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			if (_recoveryObject == null)
 			{
 				os.packInt(RecoverableXAConnection.OBJECT_RECOVERY);
-				
+
                                 if (_theXAResource instanceof Serializable)
                                 {
         				try
         				{
         					ByteArrayOutputStream s = new ByteArrayOutputStream();
         					ObjectOutputStream o = new ObjectOutputStream(s);
-        
+
         					o.writeObject(_theXAResource);
         					o.close();
-        
+
         					os.packBoolean(true);
-        
+
         					os.packBytes(s.toByteArray());
         				}
         				catch (NotSerializableException ex)
@@ -968,7 +980,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
                                 else
                                 {
                                     // have to rely upon XAResource.recover!
-                                
+
                                     os.packBoolean(false);
                                 }
 			}
@@ -1069,7 +1081,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 											new Object[]
 											{ ex });
 						}
-						
+
 						return false;
 					}
 				}
@@ -1489,7 +1501,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		try
 		{
 			if (_theReference != null)
-			{				
+			{
 				ORBManager.getPOA().shutdownObject(this);
 				_theReference = null;
 			}
@@ -1589,7 +1601,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			if (_theTransaction.getXAResourceState(_theXAResource) == TxInfo.NOT_ASSOCIATED)
 			{
 				// end has been called so we don't need to do it again!
-				
+
 				doEnd = false;
 			}
 		}
@@ -1616,7 +1628,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	// cached variables
 
 	private String _cachedUidStringForm;
-	
+
 	private static boolean _rollbackOptimization = false;
 
 	static
