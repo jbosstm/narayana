@@ -71,6 +71,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
+import javax.transaction.TransactionSynchronizationRegistry;
 import java.net.Socket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -435,6 +436,17 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
         return com.arjuna.ats.jta.TransactionManager.transactionManager();
     }
 
+    /**
+     * Retrieve a reference ot the JTA TransactionSynchronizationRegistry.
+     *
+     * @return a reference to the JTA TransactionSynchronizationRegistry.
+     */
+    public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry()
+    {
+        // rely on the imple being stateless:
+        return new TransactionSynchronizationRegistryImple();
+    }
+    
     /**
      * Get the XA Terminator
      *

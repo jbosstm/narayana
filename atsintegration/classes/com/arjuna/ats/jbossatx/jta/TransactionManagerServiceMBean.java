@@ -36,6 +36,7 @@ import org.jboss.tm.XAExceptionFormatter;
 
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
+import javax.transaction.TransactionSynchronizationRegistry;
 import java.net.InetAddress;
 
 /**
@@ -111,6 +112,13 @@ public interface TransactionManagerServiceMBean
      * @return A reference to the JTA user transaction manager.
      */
     public UserTransaction getUserTransaction();
+
+    /**
+     * Retrieve a reference to the JTA TransactionSynchronizationRegistry.
+     *
+     * @return a reference to the JTA TransactionSynchronizationRegistry.
+     */
+    public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry();
 
     /**
      * This method has been put in here so that it is compatible with the JBoss standard Transaction Manager.
