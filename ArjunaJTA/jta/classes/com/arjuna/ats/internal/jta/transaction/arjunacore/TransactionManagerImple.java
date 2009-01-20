@@ -106,33 +106,28 @@ public class TransactionManagerImple extends BaseTransaction implements
 		 * If we are here then there is no transaction associated with the
 		 * thread.
 		 */
-
-		if (which != null)
+		
+		if ((which == null) || (which instanceof TransactionImple))
 		{
-			if (which instanceof TransactionImple)
-			{
-				TransactionImple theTransaction = (TransactionImple) which;
+		    TransactionImple theTransaction = (TransactionImple) which;
 
-				try
-				{
-					if (!AtomicAction.resume(theTransaction.getAtomicAction()))
-						throw new InvalidTransactionException();
+		    try
+		    {
+		        AtomicAction act = ((theTransaction == null) ? null : theTransaction.getAtomicAction());
+		        
+		        if (!AtomicAction.resume(act))
+		            throw new InvalidTransactionException();
 
-					theTransaction = null;
-				}
-				catch (Exception e2)
-				{
-					throw new javax.transaction.SystemException();
-				}
-			}
-			else
-				throw new InvalidTransactionException("Illegal type is: "
-						+ which);
+		        theTransaction = null;
+		    }
+		    catch (final Exception e2)
+		    {
+		        throw new javax.transaction.SystemException();
+		    }
 		}
 		else
-		{
-			// no transaction associated and none to be resumed.
-		}
+		    throw new InvalidTransactionException("Illegal type is: "
+		            + which);
 	}
 
 	/**
