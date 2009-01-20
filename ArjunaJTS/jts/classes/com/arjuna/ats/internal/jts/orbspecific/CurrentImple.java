@@ -854,10 +854,17 @@ public class CurrentImple extends LocalObject implements
 					+ which + " )");
 		}
 
-		if (which.isLocal())
-			resumeImple(which.getImple());
+		if (which != null)
+		{
+		    if (which.isLocal())
+		        resumeImple(which.getImple());
+		    else
+		        resume(which.getControl());
+		}
 		else
-			resume(which.getControl());
+		{
+		    resumeImple(null);
+		}
 	}
 
 	public ControlWrapper suspendWrapper () throws SystemException
