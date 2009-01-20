@@ -115,47 +115,45 @@ public class TransactionManagerImple extends BaseTransaction implements
 	public void resume (Transaction which) throws InvalidTransactionException,
 			java.lang.IllegalStateException, javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionManagerImple.resume");
-		}
+	    if (jtaLogger.logger.isDebugEnabled())
+	    {
+	        jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionManagerImple.resume");
+	    }
 
-		super.checkTransactionState();
+	    super.checkTransactionState();
 
-        if (which != null)
-        {
-            if (which instanceof TransactionImple)
-            {
-                TransactionImple theTransaction = (TransactionImple) which;
+	    /*
+	     * Need to resume null as the standard says this is the
+	     * same as suspend (breaking thread-to-transaction association).
+	     */
 
-                try
-                {
-                    ControlWrapper cont = theTransaction.getControlWrapper();
+	    if ((which == null) || (which instanceof TransactionImple))
+	    {
+	        TransactionImple theTransaction = (TransactionImple) which;
 
-                    OTSImpleManager.current().resumeWrapper(cont);
+	        try
+	        {
+	            ControlWrapper cont = ((theTransaction == null) ? null : theTransaction.getControlWrapper());
 
-                    cont = null;
-                    theTransaction = null;
-                }
-                catch (org.omg.CosTransactions.InvalidControl e1)
-                {
-                    //throw new InvalidTransactionException();
-                }
-                catch (org.omg.CORBA.SystemException e2)
-                {
-                    throw new javax.transaction.SystemException();
-                }
-            }
-            else
-            {
-                throw new InvalidTransactionException();
-            }
-        }
-        else
-        {
-            // resume a null tx == nothing to do
-        }
-    }
+	            OTSImpleManager.current().resumeWrapper(cont);
+
+	            cont = null;
+	            theTransaction = null;
+	        }
+	        catch (org.omg.CosTransactions.InvalidControl e1)
+	        {
+	            throw new InvalidTransactionException();
+	        }
+	        catch (org.omg.CORBA.SystemException e2)
+	        {
+	            throw new javax.transaction.SystemException();
+	        }
+	    }
+	    else
+	    {
+	        throw new InvalidTransactionException();
+	    }
+	}
 
 	/**
 	 * Creates a TransactionManageImple from the given information.
