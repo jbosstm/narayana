@@ -133,14 +133,23 @@ public class Listener extends Thread
 
             new_conn.start();
          }
-         catch ( InterruptedIOException ex )
+         catch ( final InterruptedIOException ex )
          {
             // timeout on the listener socket expired.
          }
-         catch ( IOException ex )
+         catch (final SocketException ex)
          {
-	     if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		 tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.Listener_2");
+             if (tsLogger.arjLogger.debugAllowed())
+             {
+                 tsLogger.arjLogger.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_CRASH_RECOVERY,
+                         "Recovery listener existing "+ 
+                         _listener_service.getClass().getName() );
+             }
+         }
+         catch ( final IOException ex )
+         {
+	     if (tsLogger.arjLoggerI18N.debugAllowed())
+		 tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.Listener_2"+" "+ex);
          }
          catch (final Exception ex)
          {
