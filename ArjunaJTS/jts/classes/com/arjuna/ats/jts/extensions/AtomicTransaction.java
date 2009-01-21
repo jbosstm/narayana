@@ -219,8 +219,6 @@ public class AtomicTransaction
 
 		CurrentImple current = OTSImpleManager.current();
 
-		current.begin();
-
 		synchronized (_theStatus)
 		{
 			if (_theAction != null)
@@ -228,6 +226,8 @@ public class AtomicTransaction
 				throw new INVALID_TRANSACTION(ExceptionCodes.ALREADY_BEGUN,
 						CompletionStatus.COMPLETED_NO);
 			}
+
+		        current.begin();
 
 			_theAction = current.getControlWrapper();
 		}
@@ -704,7 +704,17 @@ public class AtomicTransaction
 			throw new WrongTransaction();
 		}
 
-		_theAction = OTSImpleManager.current().suspendWrapper();
+		synchronized (_theStatus)
+		{
+        		_theAction = OTSImpleManager.current().suspendWrapper();
+        		
+        		/*
+        		 * Make sure to set the status in case we get called again.
+        		 */
+        		
+        		if (_theAction == null)
+        		    _theStatus = org.omg.CosTransactions.Status.StatusNoTransaction;
+		}
 	}
 
 	/**
@@ -914,7 +924,12 @@ public class AtomicTransaction
 			}
 		}
 
-		org.omg.CosTransactions.Status stat = Status.StatusNoTransaction;
+		/*
+		 * It shouldn't be possible for _theAction to be null and for the status
+		 * to be unset. If it is something went wrong!!
+		 */
+		
+		org.omg.CosTransactions.Status stat = org.omg.CosTransactions.Status.StatusUnknown;
 
 		if (_theAction != null)
 		{

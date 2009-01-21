@@ -57,6 +57,7 @@ import org.omg.CosTransactions.SubtransactionsUnavailable;
 import org.omg.CosTransactions.NoTransaction;
 import org.omg.CosTransactions.HeuristicMixed;
 import org.omg.CosTransactions.HeuristicHazard;
+import org.omg.CORBA.OBJECT_NOT_EXIST;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UNKNOWN;
 import org.omg.CORBA.BAD_OPERATION;
@@ -453,46 +454,50 @@ public class ControlWrapper implements Reapable
             return _controlImpl.getImplHandle().getSynchronizations();    
     }
 
-    public final org.omg.CosTransactions.Status get_status ()
-			throws SystemException
-	{
-		try
-		{
-			if (_controlImpl != null)
-				return _controlImpl.getImplHandle().get_status();
-			else
-			{
-				Coordinator c = null;
+    public final org.omg.CosTransactions.Status get_status () throws SystemException
+    {
+        if (_controlImpl != null)
+            return _controlImpl.getImplHandle().get_status();
+        else
+        {
+            Coordinator c = null;
 
-				try
-				{
-					c = _control.get_coordinator();
-				}
-				catch (Unavailable e)
-				{
-					c = null;
-				}
+            try
+            {
+                if (_control != null)
+                    c = _control.get_coordinator();
+                else
+                    return org.omg.CosTransactions.Status.StatusUnknown;
+            }
+            catch (final OBJECT_NOT_EXIST ex)
+            {
+                // definitely not there so rolled back.
+                
+                return org.omg.CosTransactions.Status.StatusRolledBack;
+            }
+            catch (final Exception e)
+            {
+                return org.omg.CosTransactions.Status.StatusUnknown;
+            }
 
-				if (c != null)
-				{
-					try
-					{
-						return c.get_status();
-					}
-					catch (Exception e)
-					{
-						return org.omg.CosTransactions.Status.StatusUnknown;
-					}
-				}
-				else
-					return org.omg.CosTransactions.Status.StatusNoTransaction;
-			}
-		}
-		catch (NullPointerException ex)
-		{
-			return org.omg.CosTransactions.Status.StatusNoTransaction;
-		}
-	}
+            try
+            {
+                return c.get_status();
+            }
+            catch (final OBJECT_NOT_EXIST ex)
+            {
+                // definitely not there any more.
+
+                return org.omg.CosTransactions.Status.StatusRolledBack;
+            }
+            catch (final Exception e)
+            {
+                // who knows?!
+
+                return org.omg.CosTransactions.Status.StatusUnknown;
+            }
+        }
+    }
 
 	public final XID get_xid (boolean branch) throws SystemException
 	{
