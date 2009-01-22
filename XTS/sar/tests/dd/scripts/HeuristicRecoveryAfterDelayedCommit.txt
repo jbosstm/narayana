@@ -130,21 +130,21 @@
 # Available tests include:
 #
 # org.jboss.jbossts.xts.servicetests.test.ATSingleParticipantPrepareAndCommitTest
-# this test invokes a single service registering 1 client
+# this test invokes a single service registering 1 participant
 # the location of service is defined by defining a system property:
 #    org.jboss.jbossts.xts.servicetests.ServiceURL
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
 # org.jboss.jbossts.xts.servicetests.test.ATMultiParticipantPrepareAndCommitTest
-# this test invokes a single service registering 3 clients
+# this test invokes a single service registering 3 participant
 # the location of service is defined by defining a system property:
 #    org.jboss.jbossts.xts.servicetests.ServiceURL
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
 # org.jboss.jbossts.xts.servicetests.test.ATMultiServicePrepareAndCommitTest
-# this test invokes 3 separate services registering a client with each service
+# this test invokes 3 separate services registering a participant with each service
 # the location of service is defined by defining by system properties:
 #    org.jboss.jbossts.xts.servicetests.ServiceURL1
 #    org.jboss.jbossts.xts.servicetests.ServiceURL2
