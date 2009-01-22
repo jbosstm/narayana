@@ -42,6 +42,7 @@ import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.ats.internal.jts.utils.*;
 import com.arjuna.ats.internal.jts.orbspecific.*;
+import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 
 import com.arjuna.common.util.logging.*;
 
@@ -457,7 +458,14 @@ public class ControlWrapper implements Reapable
     public final org.omg.CosTransactions.Status get_status () throws SystemException
     {
         if (_controlImpl != null)
-            return _controlImpl.getImplHandle().get_status();
+        {
+            ArjunaTransactionImple tx = _controlImpl.getImplHandle();
+            
+            if (tx == null)
+                return _controlImpl.getFinalStatus();
+            else
+                return tx.get_status();
+        }
         else
         {
             Coordinator c = null;
