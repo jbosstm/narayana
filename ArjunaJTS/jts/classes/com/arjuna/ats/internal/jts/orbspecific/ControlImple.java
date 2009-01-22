@@ -338,6 +338,16 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 		return false;
 	}
 	
+	/**
+	 * In the case that the transaction is terminated by the reaper then it will
+	 * also be tidied up. This means that the internal handle to the real transaction
+	 * instance will be nulled out. In that case we cache the status just before removing
+	 * the handle and this method can be used to obtain it.
+	 * 
+	 * @return the final termination status of the transaction.
+	 * @throws IllegalStateException thrown if the transaction is still available.
+	 */
+	
 	public org.omg.CosTransactions.Status getFinalStatus () throws IllegalStateException
 	{
 	    if (getImplHandle() != null)
