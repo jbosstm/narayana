@@ -172,7 +172,7 @@ public class AtomicTransaction extends
 		}
 		catch (Unavailable e)
 		{
-			_theStatus = Status.StatusNoTransaction;
+			_theStatus = Status.StatusNoTransaction;  // unknown?
 
 			throw new NoTransaction();
 		}

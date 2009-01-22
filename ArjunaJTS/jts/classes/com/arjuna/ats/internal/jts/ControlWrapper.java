@@ -63,6 +63,7 @@ import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UNKNOWN;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.INVALID_TRANSACTION;
+import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 
 /**
  * This class attempts to mask the local/remote control issue. We try to use
@@ -271,6 +272,10 @@ public class ControlWrapper implements Reapable
 				{
 					throw new Unavailable();
 				}
+				catch (final NullPointerException ex)
+				{
+				    throw new Unavailable();
+				}
 
 				if (t != null)
 					t.commit(report_heuristics);
@@ -278,9 +283,9 @@ public class ControlWrapper implements Reapable
 					throw new Unavailable();
 			}
 		}
-		catch (NullPointerException ex)
+		catch (NullPointerException ex)  // if local handle is null then it was terminated (reaper)
 		{
-			throw new Unavailable();
+			throw new TRANSACTION_ROLLEDBACK();
 		}
 	}
 
@@ -303,7 +308,11 @@ public class ControlWrapper implements Reapable
 				{
 					throw new Unavailable();
 				}
-
+				catch (final NullPointerException ex)
+                                {
+                                    throw new Unavailable();
+                                }
+				
 				if (t != null)
 					t.rollback();
 				else
@@ -312,7 +321,7 @@ public class ControlWrapper implements Reapable
 		}
 		catch (NullPointerException ex)
 		{
-			throw new Unavailable();
+			throw new TRANSACTION_ROLLEDBACK();
 		}
 	}
 
@@ -335,7 +344,11 @@ public class ControlWrapper implements Reapable
 				{
 					throw new Unavailable();
 				}
-
+				catch (final NullPointerException ex)
+                                {
+                                    throw new Unavailable();
+                                }
+				
 				if (c != null)
 					c.rollback_only();
 				else
@@ -344,7 +357,7 @@ public class ControlWrapper implements Reapable
 		}
 		catch (NullPointerException ex)
 		{
-			throw new Unavailable();
+			throw new Inactive();
 		}
 	}
 
@@ -371,6 +384,10 @@ public class ControlWrapper implements Reapable
 				{
 					throw new UNKNOWN();
 				}
+				catch (final NullPointerException ex)
+                                {
+                                    throw new UNKNOWN();
+                                }
 			}
 		}
 		catch (NullPointerException e1)
@@ -404,6 +421,10 @@ public class ControlWrapper implements Reapable
 				{
 					throw new UNKNOWN();
 				}
+				catch (final NullPointerException ex)
+                                {
+                                    throw new UNKNOWN();
+                                }
 			}
 		}
 		catch (NullPointerException e1)
@@ -429,17 +450,17 @@ public class ControlWrapper implements Reapable
 
 					coord.register_synchronization(sync);
 				}
-				catch (Unavailable e2)
+				catch (final Unavailable e2)
 				{
 					throw new Inactive();
 				}
-				catch (Exception e3)
+				catch (final Exception e3)
 				{
 					throw new UNKNOWN();
 				}
 			}
 		}
-		catch (NullPointerException e1)
+		catch (final NullPointerException e1)
 		{
 			// not available
 
@@ -544,11 +565,15 @@ public class ControlWrapper implements Reapable
 				{
 					throw e2;
 				}
+				catch (final NullPointerException ex)
+                                {
+                                    throw new UNKNOWN();
+                                }
 			}
 		}
 		catch (NullPointerException e3)
 		{
-			return null;
+			throw new UNKNOWN();
 		}
 	}
 
@@ -564,7 +589,7 @@ public class ControlWrapper implements Reapable
 		}
 		catch (NullPointerException e)
 		{
-			return null;
+			throw new Unavailable();
 		}
 	}
 
