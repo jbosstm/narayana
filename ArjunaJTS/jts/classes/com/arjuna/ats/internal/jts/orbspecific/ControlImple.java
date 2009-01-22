@@ -337,6 +337,14 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 
 		return false;
 	}
+	
+	public org.omg.CosTransactions.Status getFinalStatus () throws IllegalStateException
+	{
+	    if (getImplHandle() != null)
+	        throw new IllegalStateException();
+	    else
+	        return _finalStatus;
+	}
 
 	protected synchronized void canDestroy () throws ActiveTransaction,
 			ActiveThreads, BadControl, Destroyed, SystemException
@@ -609,6 +617,8 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 		{
 			if (_transactionImpl != null)
 			{
+			    _finalStatus = _transactionImpl.get_status();
+			    
 				ORBManager.getPOA().shutdownObject(_transactionImpl);
 
 				_transactionHandle = null;
@@ -625,7 +635,7 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 			}
 		}
 	}
-
+	
 	/*
 	 * Make private, with public accessor.
 	 */
@@ -648,4 +658,5 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 
 	protected boolean _destroyed;
 
+	private org.omg.CosTransactions.Status _finalStatus = org.omg.CosTransactions.Status.StatusUnknown;
 }
