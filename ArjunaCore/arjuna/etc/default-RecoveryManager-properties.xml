@@ -51,6 +51,9 @@
         value="10"/>
       <!--
         Periodic recovery modules to use.  Invoked in sort-order of names.
+       	Check http://www.jboss.org/community/docs/DOC-10788 for more information
+       	on recovery modules and their configuration when running in various
+       	deployments.
       -->
       <property
         name="com.arjuna.ats.arjuna.recovery.recoveryExtension1"
