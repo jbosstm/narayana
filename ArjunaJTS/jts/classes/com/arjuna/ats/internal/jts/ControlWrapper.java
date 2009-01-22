@@ -500,9 +500,11 @@ public class ControlWrapper implements Reapable
             }
             catch (final OBJECT_NOT_EXIST ex)
             {
-                // definitely not there so rolled back.
+                // definitely/maybe not there so rolled back.
                 
-                return org.omg.CosTransactions.Status.StatusRolledBack;
+               // return org.omg.CosTransactions.Status.StatusRolledBack;
+                
+                return org.omg.CosTransactions.Status.StatusUnknown;
             }
             catch (final Exception e)
             {
@@ -515,9 +517,11 @@ public class ControlWrapper implements Reapable
             }
             catch (final OBJECT_NOT_EXIST ex)
             {
-                // definitely not there any more.
+                // definitely/maybe not there any more.
 
-                return org.omg.CosTransactions.Status.StatusRolledBack;
+               // return org.omg.CosTransactions.Status.StatusRolledBack;
+                
+                return org.omg.CosTransactions.Status.StatusUnknown;
             }
             catch (final Exception e)
             {
