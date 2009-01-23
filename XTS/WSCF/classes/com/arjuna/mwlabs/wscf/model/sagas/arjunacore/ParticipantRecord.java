@@ -387,21 +387,20 @@ public class ParticipantRecord extends
 		try
 		{
             boolean result;
-            // only complete if we have not exited
-            if (!_exited) {
-                result = complete();
-            } else {
-                result = false;
-            }
-            // if we have failed we return heuristic hazard so the participant is added to
-            // the heuristic list and the transaction is logged
-
             if (_failed) {
+                // if we have failed we return heuristic hazard so the participant is added to
+                // the heuristic list and the transaction is logged
+
                 return TwoPhaseOutcome.HEURISTIC_HAZARD;
             } else if (_exited) {
+                // otherwise if we have exited then this means the resource is read only
+
                 return TwoPhaseOutcome.PREPARE_READONLY;
             } else {
-                return (result ? TwoPhaseOutcome.PREPARE_OK: TwoPhaseOutcome.PREPARE_NOTOK);
+                // otherwise we only need to have completed for the prepare to be ok -- if we have
+                // not completed then the prepare is not ok
+
+                return (_completed ? TwoPhaseOutcome.PREPARE_OK: TwoPhaseOutcome.PREPARE_NOTOK);
             }
         }
 		catch (Exception e6)
@@ -465,6 +464,10 @@ public class ParticipantRecord extends
 		{
 			if (_resourceHandle != null)
 			{
+                // we cannot proceed if the participant has not completed
+
+                if (!_completed) return TwoPhaseOutcome.FINISH_ERROR;
+
 				try
 				{
                     if (!_exited) _resourceHandle.close();

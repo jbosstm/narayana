@@ -52,14 +52,17 @@ import com.arjuna.mw.wsas.exceptions.ProtocolViolationException;
 import com.arjuna.mw.wscf.exceptions.*;
 
 /**
- * This class represents a specific coordination instance. It is essentially an
- * ArjunaCore BasicAction which gives us independent prepare, commit and abort
- * without synchronization support and without thread management. We don't
- * inherit from TwoPhaseCoordinator because we don't ever initiate a 2phase
- * operation directly -- we map the BA Termination protocol complete message
- * to prepare, the close message to commit and the cancel to abort so these
- * operations are decoupled actions. Also, since we don't call end we cannot
- * usefully use the synchronization support (not that we need it anyway).
+ * This class represents a specific coordination instance. It inherits from
+ * ArjunaCore TwoPhaseCoordinator so we can do the prepare and commit when a
+ * BA client close is requested and have it roll back if anything goes wrong.
+ * The BA client cancel request maps through to TwoPhaseCoordinator cancel which
+ * also does what we need. Although we inherit synchronization support from
+ * TwoPhaseCoordinator it is not used by the BA code.
+ *
+ * This class also exposes a separate complete method which implements
+ * the deprectaed BA client complete operation allowing coordinator completion
+ * participants to be notified that they complete. This is pretty much redundant
+ * as complete gets called at close anyway.
  * 
  * @author Mark Little (mark.little@arjuna.com)
  * @version $Id: ACCoordinator.java,v 1.5 2005/05/19 12:13:37 nmcl Exp $
@@ -67,24 +70,16 @@ import com.arjuna.mw.wscf.exceptions.*;
  * 
  * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_1
  *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_1] -
- *          Cannot complete business activity until all ParticipantCompletion participants have completed
+ *          Participant failed to complete in activity {1}
  * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_2
  *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_2] -
  *          Null is an invalid parameter.
  * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_3
  *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_3] -
  *          Wrong state for operation!
- * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_4
- *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_4] -
- *          Complete of action-id {0} failed.
- * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_5
- *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_5] - Received
- *          heuristic: {0} .
- * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_6
- *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_6] - Action marked as AbortOnly {0}.
  */
 
-public class ACCoordinator extends BasicAction
+public class ACCoordinator extends TwoPhaseCoordinator
 {
 
     private final static int DELISTED = 0;
@@ -135,52 +130,6 @@ public class ACCoordinator extends BasicAction
 	}
 
     /**
-     * start the transaction
-     *
-     * @param parentAction
-     * @return
-     */
-    public int start (BasicAction parentAction)
-    {
-        if (parentAction != null)
-            parentAction.addChildAction(this);
-
-        return super.Begin(parentAction);
-    }
-
-    /**
-     * ensure that none of required participants are still active throwing a SystemException if they are
-     * @param allParticipants true if no participants, including CooordinatorCompletion participants,
-     * may still be active and false if only CooordinatorCompletion participants may still be active.
-     * @throws SystemException if any of the required participants has not completed.
-     */
-    void ensureNotActive(boolean allParticipants) throws SystemException
-    {
-        if (pendingList != null)
-        {
-            RecordListIterator iter = new RecordListIterator(pendingList);
-            AbstractRecord absRec = iter.iterate();
-
-            while (absRec != null)
-            {
-                if (absRec instanceof ParticipantRecord)
-                {
-                    ParticipantRecord pr = (ParticipantRecord) absRec;
-
-                    if ((allParticipants || pr.isParticipantCompletion()) && pr.isActive())
-                    {
-                        throw new SystemException(
-                                wscfLogger.log_mesg
-                                        .getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_1"));
-                    }
-                }
-
-                absRec = iter.iterate();
-            }
-        }
-    }
-
-    /**
      * ensure all ParticipantCompletion participants have completed and then send a complete message to
      * any remaining CoordinatorCompletion participants.
      * @throws WrongStateException if the transaction is neither RUNNING nor PREPARED
@@ -197,10 +146,32 @@ public class ACCoordinator extends BasicAction
             // check that all ParticipantCompletion participants have completed
             // throwing a wobbly if not
 
-            ensureNotActive(false);
+            if (pendingList != null)
+            {
+                RecordListIterator iter = new RecordListIterator(pendingList);
+                AbstractRecord absRec = iter.iterate();
 
-            doComplete();
+                while (absRec != null)
+                {
+                    if (absRec instanceof ParticipantRecord)
+                    {
+                        ParticipantRecord pr = (ParticipantRecord) absRec;
 
+                        if (!pr.complete()) {
+
+                            // ok, we must force a rollback
+
+                            preventCommit();
+
+                            wscfLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_1", new Object[] { get_uid() });
+
+                            throw new SystemException("Participant failed to complete");
+                        }
+                    }
+
+                    absRec = iter.iterate();
+                }
+            }
 		}
 		else
         {
@@ -209,166 +180,23 @@ public class ACCoordinator extends BasicAction
     }
 
     /**
-     * invoke the prepare operation in order to drive all CoordinatorCompletion participants to completion
-     * @throws SystemException if any of the participants fails to complete
-     */
-    private void doComplete() throws SystemException
-    {
-        // we can emerge from this with outcome PREPARE_NOTOK if one of the CoordinatorCompletion participants
-        // failed to respond to a completed request. in that case the action status will be PREPARING
-        int outcome = super.prepare(true);
-
-        if (outcome == TwoPhaseOutcome.PREPARE_NOTOK) {
-            if (wscfLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                wscfLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_4", new Object[] { get_uid() });
-            }
-
-            int heuristicDecision = getHeuristicDecision();
-
-            if (heuristicDecision != TwoPhaseOutcome.PREPARE_OK)
-            {
-                if (wscfLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    wscfLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_5", new Object[] { TwoPhaseOutcome.stringForm(heuristicDecision) });
-                }
-            }
-
-            if (wscfLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                wscfLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_6",new Object[] { get_uid() });
-            }
-
-        }
-    }
-
-    /**
-     * if all is well with the TX invoke the phase2Commit operation in order to drive all participants to
-     * closed status, if not invoke Abort.
-     * @return the outcome of the commit or abort
-     * @throws SystemException if there are _any_ uncompleted participants, either because the client has
-     * not called close to close CoordinatorCompletion participants or because not all ParticipantCompletion
-     * participants have notified completion.
+     * close the activity
+     * @return
+     * @throws SystemException
      */
     public int close () throws SystemException
     {
-        int outcome;
-
-        if (parent() != null)
-            parent().removeChildAction(this);
-
-        if (status() == ActionStatus.RUNNING) {
-            // check that _all_ participants have completed throwing a SystemException if not
-
-            ensureNotActive(true);
-
-            // ok, we do a complete anyway to ensure we log the participant list and progress to state
-            // PREPARED. this should not fail since the participants ought to just say yeah yeah whateva
-
-            doComplete();
+        // we need to make sure all coordinator completion aprticipants ahve completed
+        try {
+            complete();
+        } catch (Exception e) {
+            // carry on as end will catch any further problems
         }
 
-        switch (status()) {
-            case ActionStatus.PREPARING:
-            {
-                // we failed during prepare so we have to do a phase2Abort in order to clean up
-                // this means we may end up leaving a log entry for an aborted transaction with
-                // a heuristic outcome
-                super.phase2Abort(true);
-                outcome = status();
-            }
-            break;
-            // we managed to prepare so we need to do a phase2Commit
-            case ActionStatus.PREPARED:
-            case ActionStatus.COMMITTING:
-            {
-                if (parent() != null)
-                    parent().removeChildAction(this);
+        // now call end(). if any of the participant completion participants are not
+        // completed they will throw a WrongStateException during prepare leading to rollback
 
-                super.phase2Commit(true);
-                // remap the status if there are heuristics
-                outcome = status();
-                int heuristicDecision = getHeuristicDecision();
-
-                switch (heuristicDecision)
-                {
-                case TwoPhaseOutcome.PREPARE_OK:
-                case TwoPhaseOutcome.FINISH_OK:
-                    break;
-                case TwoPhaseOutcome.HEURISTIC_ROLLBACK:
-                    outcome = ActionStatus.H_ROLLBACK;
-                case TwoPhaseOutcome.HEURISTIC_COMMIT:
-                    outcome = ActionStatus.H_COMMIT;
-                case TwoPhaseOutcome.HEURISTIC_MIXED:
-                    outcome = ActionStatus.H_MIXED;
-                case TwoPhaseOutcome.HEURISTIC_HAZARD:
-                default:
-                    outcome = ActionStatus.H_HAZARD;
-                }
-            }
-            break;
-            // this covers the case where the tx is marked as ABORT_ONLY
-            default:
-            {
-                if (parent() != null)
-                    parent().removeChildAction(this);
-
-                // no heuristics to deal with
-                
-                outcome = super.Abort();
-            }
-        }
-
-        return outcome;
-    }
-
-    /**
-     * invoke Abort.
-     * @return the outcome of the abort
-     */
-    public int cancel ()
-    {
-        // we cannot do this as per TwoPhaseCoordinator because TxControl and TxStats are package private
-        // but note that JTS does not count this either
-        //if (TxControl.enableStatistics)
-        //    TxStats.incrementApplicationRollbacks();
-
-        if (parent() != null)
-            parent().removeChildAction(this);
-
-        int outcome;
-
-        switch (status()) {
-
-            // PREPARING/PREPARED/COMMITTING mean we have committed or tried to commit in which case we
-            // may have entries in the pending and prepared lists and we may have written a log record
-            // which we need to update. it also means we can end up leaving a log entry for an aborted
-            // transaction with a heuristic outcome
-
-            case ActionStatus.PREPARING:
-            case ActionStatus.PREPARED:
-            case ActionStatus.COMMITTING:
-            {
-                super.phase2Abort(true);
-                outcome = status();
-            }
-            break;
-            // RUNNING or ABORT_ONLY means we never got to commit so we can just do a normal abort
-            case ActionStatus.RUNNING:
-            case ActionStatus.ABORT_ONLY:
-            {
-                outcome = super.Abort();
-            }
-            break;
-            // nothing to do if we are in any other state
-            default:
-            {
-                outcome = status();
-            }
-            break;
-        }
-
-        return outcome;
+        return end(true);
     }
 
 	/**
