@@ -136,7 +136,7 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
             } catch (Exception e) {
                 throw new WebServiceException("enlistVolatile failed ", e);
             }
-            for (;idx < size; idx++) {
+            for (idx = 1;idx < size; idx++) {
                 participant.addCommand(commandList.get(idx));
             }
             participantMap.put(id, participant);
@@ -152,7 +152,7 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
             } catch (Exception e) {
                 throw new WebServiceException("enlistCoordinatorCompletion failed ", e);
             }
-            for (;idx < size; idx++) {
+            for (idx = 1;idx < size; idx++) {
                 participant.addCommand(commandList.get(idx));
             }
             participantMap.put(id, participant);
@@ -168,7 +168,7 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
             } catch (Exception e) {
                 throw new WebServiceException("enlistParticipantCompletion failed ", e);
             }
-            for (;idx < size; idx++) {
+            for (idx = 1;idx < size; idx++) {
                 participant.addCommand(commandList.get(idx));
             }
             participantMap.put(id, participant);

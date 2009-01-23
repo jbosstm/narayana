@@ -100,7 +100,7 @@
 # The default way of exercising this test is to deploy the xtstest war
 # to a single AS and configure it to run the relevant XTS Service Test.
 # The web services and coordinator will be located with the client.
-# The number of participants can actually be 1, 2, 3 or more. The
+# The number of participants can actually be 2, 3 or The
 # web service(s), client (i.e. the XTS Service Test which drives
 # the test) and coordinator service can optionally be located in separate
 # ASs. It possible to use just a single web service and have the client
@@ -108,6 +108,11 @@
 # the client commits. At reboot the rest of the test should run
 # automatically and the server should be killed after a the heuristic
 # transaction is successfuly replayed.
+#
+# n.b. this test is not appropriate foir the case where only one participant
+# is registered since the coordiantor employs the one phase optimization,
+# omitting to log the transaction. In this case the participant should be
+# rolled back at restart.
 #
 # This script needs to be passed to a TOAST agent in the JVM running
 # the coordinator service both at first boot and at reboot. Output will be
@@ -128,13 +133,6 @@
 # crashed TX.
 #
 # Available tests include:
-#
-# org.jboss.jbossts.xts.servicetests.test.ATSingleParticipantPrepareAndCommitTest
-# this test invokes a single service registering 1 participant
-# the location of service is defined by defining a system property:
-#    org.jboss.jbossts.xts.servicetests.ServiceURL
-# if this is not set the value used defaults to
-#    http://localhost:8080/xtstest/xtsservicetest1
 #
 # org.jboss.jbossts.xts.servicetests.test.ATMultiParticipantPrepareAndCommitTest
 # this test invokes a single service registering 3 participant

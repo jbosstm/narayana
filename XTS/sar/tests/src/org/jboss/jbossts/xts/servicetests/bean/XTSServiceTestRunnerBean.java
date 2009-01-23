@@ -24,6 +24,7 @@ package org.jboss.jbossts.xts.servicetests.bean;
 import org.jboss.logging.Logger;
 import org.jboss.jbossts.xts.servicetests.test.XTSServiceTest;
 import org.jboss.jbossts.xts.servicetests.service.recovery.TestATRecoveryModule;
+import org.jboss.jbossts.xts.servicetests.service.recovery.TestBARecoveryModule;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -81,6 +82,7 @@ public class XTSServiceTestRunnerBean
         // ensure that the xts service test AT recovery helper module is registered
         
         TestATRecoveryModule.register();
+        TestBARecoveryModule.register();
 
         if (testName != null) {
             log.info("Starting XTS Service Test " + testName);
@@ -139,8 +141,9 @@ public class XTSServiceTestRunnerBean
         // ensure that the xts service test AT recovery helper module is unregistered
 
         TestATRecoveryModule.unregister();
+        TestBARecoveryModule.unregister();
 
-               log.info("Stopped XTSServiceTestRunner");
+        log.info("Stopped XTSServiceTestRunner");
     }
 
     private final Logger log = org.jboss.logging.Logger.getLogger(XTSServiceTestRunnerBean.class);
