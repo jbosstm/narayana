@@ -78,6 +78,7 @@ public class ATParticipantRecoveryRecord extends org.jboss.jbossts.xts.recovery.
     public void activate() {
         ParticipantEngine engine = new ParticipantEngine(participant, id, State.STATE_PREPARED_SUCCESS, endpoint, true);
         ParticipantProcessor.getProcessor().activateParticipant(engine, getId());
+        engine.recovery();
     }
 
     /**

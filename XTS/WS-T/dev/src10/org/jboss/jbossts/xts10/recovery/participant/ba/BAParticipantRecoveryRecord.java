@@ -82,10 +82,12 @@ public class BAParticipantRecoveryRecord extends org.jboss.jbossts.xts.recovery.
         if (isParticipantCompletion) {
             ParticipantCompletionParticipantEngine engine = new ParticipantCompletionParticipantEngine(id, endpoint, participant, State.STATE_COMPLETED, true);
             ParticipantCompletionParticipantProcessor.getProcessor().activateParticipant(engine, getId());
+            engine.recovery();
         } else {
             BusinessAgreementWithCoordinatorCompletionParticipant coordinatorCompletionParticipant = (BusinessAgreementWithCoordinatorCompletionParticipant) participant;
             CoordinatorCompletionParticipantEngine engine = new CoordinatorCompletionParticipantEngine(id, endpoint, coordinatorCompletionParticipant, State.STATE_COMPLETED, true);
             CoordinatorCompletionParticipantProcessor.getProcessor().activateParticipant(engine, getId());
+            engine.recovery();
         }
     }
 

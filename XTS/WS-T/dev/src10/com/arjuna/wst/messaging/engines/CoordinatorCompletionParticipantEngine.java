@@ -436,6 +436,34 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
     }
     
     /**
+     * Handle the recovery event.
+     *
+     * Active -> Active (invalid state)
+     * Canceling -> Canceling (invalid state)
+     * Completed -> Completed (resend completed)
+     * Closing -> Closing (invalid state)
+     * Compensating -> Compensating (invalid state)
+     * Faulting -> Ended
+     * Faulting-Active -> Ended
+     * Faulting-Compensating -> Ended
+     * Exiting -> Exiting (invalid state)
+     * Ended -> Ended (invalid state)
+     */
+    public void recovery()
+    {
+        final State current ;
+        synchronized(this)
+        {
+            current = state ;
+        }
+
+        if (current == State.STATE_COMPLETED)
+        {
+            sendCompleted();
+        }
+    }
+
+    /**
      * Handle the soap fault event.
      * @param soapFault The soap fault.
      * @param addressingContext The addressing context.
@@ -499,7 +527,7 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
         }
         if (current == State.STATE_COMPLETING) {
             // ok we need to write the participant details to disk because it has just completed
-            BAParticipantRecoveryRecord recoveryRecord = new BAParticipantRecoveryRecord(id, participant, true, coordinator);
+            BAParticipantRecoveryRecord recoveryRecord = new BAParticipantRecoveryRecord(id, participant, false, coordinator);
 
             if (!XTSBARecoveryManager.getRecoveryManager().writeParticipantRecoveryRecord(recoveryRecord)) {
                 // hmm, could not write entry log warning
@@ -1089,7 +1117,7 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
         if (current == State.STATE_COMPLETING)
         {
             // ok we need to write the participant details to disk because it has just completed
-            BAParticipantRecoveryRecord recoveryRecord = new BAParticipantRecoveryRecord(id, participant, true, coordinator);
+            BAParticipantRecoveryRecord recoveryRecord = new BAParticipantRecoveryRecord(id, participant, false, coordinator);
 
             if (!XTSBARecoveryManager.getRecoveryManager().writeParticipantRecoveryRecord(recoveryRecord)) {
                 // hmm, could not write entry log warning

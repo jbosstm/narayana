@@ -374,6 +374,34 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     }
     
     /**
+     * Handle the recovery event.
+     *
+     * Active -> Active (invalid state)
+     * Canceling -> Canceling (invalid state)
+     * Completed -> Completed (resend completed)
+     * Closing -> Closing (invalid state)
+     * Compensating -> Compensating (invalid state)
+     * Faulting -> Ended
+     * Faulting-Active -> Ended
+     * Faulting-Compensating -> Ended
+     * Exiting -> Exiting (invalid state)
+     * Ended -> Ended (invalid state)
+     */
+    public void recovery()
+    {
+        final State current ;
+        synchronized(this)
+        {
+            current = state ;
+        }
+
+        if (current == State.STATE_COMPLETED)
+        {
+            sendCompleted();
+        }
+    }
+
+    /**
      * Handle the soap fault event.
      * @param soapFault The soap fault.
      * @param addressingContext The addressing context.
