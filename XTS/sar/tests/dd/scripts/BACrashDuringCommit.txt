@@ -154,14 +154,14 @@
 # org.jboss.jbossts.xts.servicetests.test.BAMultiCoordinatorCompletionParticipantCloseTest
 # this test invokes a single service registering 3 coordinator completion participants
 # the location of service is defined by defining a system property:
-#    org.jboss.jbossts.xts.servicetests.ServiceURL
+#    org.jboss.jbossts.xts.servicetests.ServiceURL1
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
 # org.jboss.jbossts.xts.servicetests.test.BAMultiParticipantCompletionParticipantCloseTest
 # this test invokes a single service registering 3 participant completion participants
 # the location of service is defined by defining a system property:
-#    org.jboss.jbossts.xts.servicetests.ServiceURL
+#    org.jboss.jbossts.xts.servicetests.ServiceURL1
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
@@ -169,7 +169,7 @@
 # this test invokes a single service registering 3 coordinator completion participants
 # it sends an exit to the first participant before closing the activity
 # the location of service is defined by defining a system property:
-#    org.jboss.jbossts.xts.servicetests.ServiceURL
+#    org.jboss.jbossts.xts.servicetests.ServiceURL1
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
@@ -177,7 +177,7 @@
 # this test invokes a single service registering 3 participant completion participants
 # it sends an exit to the first participant before closing the activity
 # the location of service is defined by defining a system property:
-#    org.jboss.jbossts.xts.servicetests.ServiceURL
+#    org.jboss.jbossts.xts.servicetests.ServiceURL1
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
@@ -384,7 +384,7 @@ AT ENTRY
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
-IF recovered
+IF NOT recovered
 DO debug("received exit message for participant completion participant stub " + identifier),
    traceln("log", "received exit message for participant completion participant stub " + identifier)
 ENDRULE
@@ -401,7 +401,7 @@ AT ENTRY
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
-IF recovered
+IF NOT recovered
 DO debug("received exit message for coordinator completion participant stub " + identifier),
    traceln("log", "received exit message for coordinator completion participant stub " + identifier)
 ENDRULE

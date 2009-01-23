@@ -34,11 +34,13 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 
+import java.util.List;
+
 /**
  * Starts a transaction and enlists mulitple participants swith instructions to prepare and commit
  * without error
  */
-public class BAMultiParticipantCoordinatorCompletionParticipantCloseTest implements XTSServiceTest
+public class BAMultiParticipantParticipantCompletionParticipantCloseTest implements XTSServiceTest
 {
     private boolean isSuccessful = false;
     private Exception exception;
@@ -69,6 +71,10 @@ public class BAMultiParticipantCoordinatorCompletionParticipantCloseTest impleme
         XTSServiceTestClient client = new XTSServiceTestClient();
         CommandsType commands = new CommandsType();
         ResultsType results = null;
+        List<String> resultsList;
+        String participantId1;
+        String participantId2;
+        String participantId3;
 
         // start the transaction
 
@@ -81,14 +87,13 @@ public class BAMultiParticipantCoordinatorCompletionParticipantCloseTest impleme
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : txbegin failure " + exception);
+            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : txbegin failure " + exception);
             return;
         }
 
-        // invoke the service to create a coordinaator completion participant and script it to complete and close
+        // invoke the service to create a coordinator completion participant and script it to close
         commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
-        commands.getCommandList().add("complete");
+        commands.getCommandList().add("enlistPartiicpantCompletion");
         commands.getCommandList().add("close");
 
         try {
@@ -98,19 +103,20 @@ public class BAMultiParticipantCoordinatorCompletionParticipantCloseTest impleme
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : server failure " + exception);
+            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : server failure " + exception);
             return;
         }
 
+        resultsList = results.getResultList();
+        participantId1 = resultsList.get(0);
+
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : enlistCoordinatorCompletion " + s);
+            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : enlistPartiicpantCompletion " + s);
         }
 
-        // invoke the service again to create a coordinaator completion participant and script it to complete
-        // and close
+        // invoke the service again to create a coordinaator completion participant and script it to close
         commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
-        commands.getCommandList().add("complete");
+        commands.getCommandList().add("enlistPartiicpantCompletion");
         commands.getCommandList().add("close");
 
         try {
@@ -120,20 +126,22 @@ public class BAMultiParticipantCoordinatorCompletionParticipantCloseTest impleme
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : server failure " + exception);
+            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : server failure " + exception);
             return;
         }
 
+        resultsList = results.getResultList();
+        participantId2 = resultsList.get(0);
+
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : enlistCoordinatorCompletion " + s);
+            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : enlistPartiicpantCompletion " + s);
         }
 
         // invoke the service a third time to create a coordinaator completion participant and script it to
-        // complete and close
+        // close
 
         commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
-        commands.getCommandList().add("complete");
+        commands.getCommandList().add("enlistPartiicpantCompletion");
         commands.getCommandList().add("close");
 
         try {
@@ -143,12 +151,75 @@ public class BAMultiParticipantCoordinatorCompletionParticipantCloseTest impleme
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : server failure " + exception);
+            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : server failure " + exception);
+            return;
+        }
+
+        resultsList = results.getResultList();
+        participantId3 = resultsList.get(0);
+
+        for (String s : results.getResultList()) {
+            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : enlistPartiicpantCompletion " + s);
+        }
+
+        // invoke the service scripting the first participant to complete
+        commands = new CommandsType();
+        commands.getCommandList().add("completed");
+        commands.getCommandList().add(participantId1);
+
+        try {
+            results = client.serve(serviceURL1, commands);
+        } catch (Exception e) {
+            exception = e;
+        }
+
+        if (exception != null) {
+            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : server failure " + exception);
             return;
         }
 
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : enlistCoordinatorCompletion " + s);
+            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : completed " + participantId1 + " " + s);
+        }
+
+        // invoke the service scripting the second participant to copmplete
+        commands = new CommandsType();
+        commands.getCommandList().add("completed");
+        commands.getCommandList().add(participantId2);
+
+        try {
+            results = client.serve(serviceURL1, commands);
+        } catch (Exception e) {
+            exception = e;
+        }
+
+        if (exception != null) {
+            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : server failure " + exception);
+            return;
+        }
+
+        for (String s : results.getResultList()) {
+            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : completed " + participantId2 + " " + s);
+        }
+
+        // invoke the service scripting the third participant to complete
+        commands = new CommandsType();
+        commands.getCommandList().add("completed");
+        commands.getCommandList().add(participantId3);
+
+        try {
+            results = client.serve(serviceURL1, commands);
+        } catch (Exception e) {
+            exception = e;
+        }
+
+        if (exception != null) {
+            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : server failure " + exception);
+            return;
+        }
+
+        for (String s : results.getResultList()) {
+            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : completed " + participantId3 + " " + s);
         }
 
         // now close the activity
@@ -166,10 +237,10 @@ public class BAMultiParticipantCoordinatorCompletionParticipantCloseTest impleme
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : commit failure " + exception);
+            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : commit failure " + exception);
         }
 
-        System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : completed");
+        System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : completed");
     }
 
     public boolean isSuccessful() {

@@ -43,12 +43,18 @@ public class ATMultiParticipantPrepareAndCommitTest implements XTSServiceTest
 
     public void run() {
 
-        // wait a while so the service has time to start
-
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             // ignore
+        }
+
+        String serviceURL1;
+
+        serviceURL1 = System.getProperty(XTSServiceTest.SERVICE_URL1_KEY);
+
+        if (serviceURL1 == null) {
+            serviceURL1 = "http://localhost:8080/xtstest/xtsservicetest1";
         }
 
         UserTransaction tx = UserTransactionFactory.userTransaction();
@@ -59,6 +65,8 @@ public class ATMultiParticipantPrepareAndCommitTest implements XTSServiceTest
         XTSServiceTestClient client = new XTSServiceTestClient();
         CommandsType commands = new CommandsType();
         ResultsType results = null;
+
+        // wait a while so the service has time to start
 
         // start the transaction
 
@@ -84,7 +92,7 @@ public class ATMultiParticipantPrepareAndCommitTest implements XTSServiceTest
         // call the same web service multiple times -- it's ok to use the samew commands list
 
         try {
-            results = client.serve("http://localhost:8080/xtstest/xtsservicetest1", commands);
+            results = client.serve(serviceURL1, commands);
         } catch (Exception e) {
             exception = e;
         }
@@ -99,7 +107,7 @@ public class ATMultiParticipantPrepareAndCommitTest implements XTSServiceTest
         }
 
         try {
-            results = client.serve("http://localhost:8080/xtstest/xtsservicetest1", commands);
+            results = client.serve(serviceURL1, commands);
         } catch (Exception e) {
             exception = e;
         }
@@ -114,7 +122,7 @@ public class ATMultiParticipantPrepareAndCommitTest implements XTSServiceTest
         }
 
         try {
-            results = client.serve("http://localhost:8080/xtstest/xtsservicetest1", commands);
+            results = client.serve(serviceURL1, commands);
         } catch (Exception e) {
             exception = e;
         }

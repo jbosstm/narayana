@@ -51,6 +51,14 @@ public class ATSingleParticipantPrepareAndCommitTest implements XTSServiceTest
             // ignore
         }
 
+        String serviceURL1;
+
+        serviceURL1 = System.getProperty(XTSServiceTest.SERVICE_URL1_KEY);
+
+        if (serviceURL1 == null) {
+            serviceURL1 = "http://localhost:8080/xtstest/xtsservicetest1";
+        }
+
         UserTransaction tx = UserTransactionFactory.userTransaction();
 
 
@@ -82,7 +90,7 @@ public class ATSingleParticipantPrepareAndCommitTest implements XTSServiceTest
         commands.getCommandList().add("commit");
 
         try {
-            results = client.serve("http://localhost:8080/xtstest/xtsservicetest1", commands);
+            results = client.serve(serviceURL1, commands);
         } catch (Exception e) {
             exception = e;
         }

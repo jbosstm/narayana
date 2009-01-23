@@ -288,13 +288,13 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
     }
 
     /**
-     * a table used ot retain a handle on enlisted participants so that they can be driven by the client to
+     * a table used to retain a handle on enlisted participants so that they can be driven by the client to
      * perform actions not contained in the original command script.
      */
-    private HashMap<String, ScriptedTestParticipant> participantMap = new HashMap<String, ScriptedTestParticipant>();
+    private static HashMap<String, ScriptedTestParticipant> participantMap = new HashMap<String, ScriptedTestParticipant>();
 
     /**
-     * a table used ot retain a handle on managers for enlisted BA  participants.
+     * a table used to retain a handle on managers for enlisted BA  participants.
      */
-    private HashMap<String, BAParticipantManager> managerMap = new HashMap<String, BAParticipantManager>();
+    private static HashMap<String, BAParticipantManager> managerMap = new HashMap<String, BAParticipantManager>();
 }

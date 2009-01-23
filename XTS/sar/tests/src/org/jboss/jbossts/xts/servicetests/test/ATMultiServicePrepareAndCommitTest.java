@@ -51,6 +51,26 @@ public class ATMultiServicePrepareAndCommitTest implements XTSServiceTest
             // ignore
         }
 
+        String serviceURL1;
+        String serviceURL2;
+        String serviceURL3;
+
+        serviceURL1 = System.getProperty(XTSServiceTest.SERVICE_URL1_KEY);
+        serviceURL2 = System.getProperty(XTSServiceTest.SERVICE_URL2_KEY);
+        serviceURL3 = System.getProperty(XTSServiceTest.SERVICE_URL3_KEY);
+
+        if (serviceURL1 == null) {
+            serviceURL1 = "http://localhost:8080/xtstest/xtsservicetest1";
+        }
+
+        if (serviceURL2 == null) {
+            serviceURL2 = "http://localhost:8080/xtstest/xtsservicetest2";
+        }
+
+        if (serviceURL3 == null) {
+            serviceURL3 = "http://localhost:8080/xtstest/xtsservicetest3";
+        }
+
         UserTransaction tx = UserTransactionFactory.userTransaction();
 
 
@@ -84,7 +104,7 @@ public class ATMultiServicePrepareAndCommitTest implements XTSServiceTest
         // call the same web service multiple times -- it's ok to use the samew commands list
 
         try {
-            results = client.serve("http://localhost:8080/xtstest/xtsservicetest1", commands);
+            results = client.serve(serviceURL1, commands);
         } catch (Exception e) {
             exception = e;
         }
@@ -99,7 +119,7 @@ public class ATMultiServicePrepareAndCommitTest implements XTSServiceTest
         }
 
         try {
-            results = client.serve("http://localhost:8080/xtstest/xtsservicetest2", commands);
+            results = client.serve(serviceURL2, commands);
         } catch (Exception e) {
             exception = e;
         }
@@ -114,7 +134,7 @@ public class ATMultiServicePrepareAndCommitTest implements XTSServiceTest
         }
 
         try {
-            results = client.serve("http://localhost:8080/xtstest/xtsservicetest3", commands);
+            results = client.serve(serviceURL3, commands);
         } catch (Exception e) {
             exception = e;
         }

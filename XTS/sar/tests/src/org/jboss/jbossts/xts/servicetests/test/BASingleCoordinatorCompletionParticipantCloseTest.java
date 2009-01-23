@@ -53,6 +53,14 @@ public class BASingleCoordinatorCompletionParticipantCloseTest implements XTSSer
             // ignore
         }
 
+        String serviceURL1;
+
+        serviceURL1 = System.getProperty(XTSServiceTest.SERVICE_URL1_KEY);
+
+        if (serviceURL1 == null) {
+            serviceURL1 = "http://localhost:8080/xtstest/xtsservicetest1";
+        }
+
         UserBusinessActivity ba = UserBusinessActivityFactory.userBusinessActivity();
 
 
@@ -84,7 +92,7 @@ public class BASingleCoordinatorCompletionParticipantCloseTest implements XTSSer
         commands.getCommandList().add("close");
 
         try {
-            results = client.serve("http://localhost:8080/xtstest/xtsservicetest1", commands);
+            results = client.serve(serviceURL1, commands);
         } catch (Exception e) {
             exception = e;
         }

@@ -29,4 +29,10 @@ public interface XTSServiceTest
     public void run();
     public boolean isSuccessful();
     public Exception getException();
+
+    // System properties which can be set to configure the behaviour of tests
+
+    public static final String SERVICE_URL1_KEY = "org.jboss.jbossts.xts.servicetests.serviceURL1";
+    public static final String SERVICE_URL2_KEY = "org.jboss.jbossts.xts.servicetests.serviceURL2";
+    public static final String SERVICE_URL3_KEY = "org.jboss.jbossts.xts.servicetests.serviceURL3";
 }
