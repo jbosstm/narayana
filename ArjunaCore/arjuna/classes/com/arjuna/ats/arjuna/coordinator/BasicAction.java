@@ -3950,7 +3950,7 @@ public class BasicAction extends StateManager
 		}
 	}
 
-	protected final synchronized boolean doOnePhase ()
+	private final synchronized boolean doOnePhase ()
 	{
 		if (TxControl.onePhase)
 		{
