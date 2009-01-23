@@ -40,7 +40,8 @@
     <property name="jboss.client.lib.dir" location="${jboss.home}/client"/>
     <property name="jboss.server.dir" location="${jboss.home}/server/${jboss.server}"/>
     <property name="jboss.server.lib.dir" location="${jboss.server.dir}/lib"/>
-
+    <property name="jboss.common.lib.dir" location="${jboss.home}/common/lib"/>
+    
     <!-- ================================================================== -->
     <property name="deploy.dir" value="${jboss.server.dir}/deploy"/>
     <property name="ws-c.home"               value="../WS-C"/>
@@ -81,9 +82,10 @@
 
     <property name="jta.lib.jars" value="jbossjta.jar jbossjts.jar"/>
     <property name="jta.ext.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
-    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
+    <property name="jboss.client.lib.jars" value="jaxb-api.jar jbossws-native-jaxrpc.jar
             jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
             jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar"/>
+    <property name="jboss.common.lib.jars" value="servlet-api.jar"/>
 
     <property name="tests.libs"              value="junit.jar"/>
     <property name="ws-c.libs"               value="ws-c.jar"/>
@@ -120,6 +122,7 @@
         <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars}"/>
     	<fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
         <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
+        <fileset dir="${jboss.common.lib.dir}" includes="${jboss.common.lib.jars}"/>
     </path>
 
     <path id="tests.lib.path">
