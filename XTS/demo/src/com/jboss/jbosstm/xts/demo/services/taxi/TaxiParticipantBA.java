@@ -148,7 +148,7 @@ public class TaxiParticipantBA implements BusinessAgreementWithParticipantComple
 
     public String status () throws SystemException
     {
-        return Status.STATUS_ACTIVE;
+        return null;
     }
 
     public void unknown() throws SystemException

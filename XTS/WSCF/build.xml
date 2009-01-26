@@ -76,13 +76,14 @@
     <property name="jta.lib.jars" value="jbossjta.jar jbossjts.jar"/>
     <property name="jta.ext.jars" value="jbossts-common.jar"/>
     <property name="jta.ext.compile.jars" value="commons-logging-1.1.jar jta-1_1-classes.zip"/>
-    <property name="jboss.client.lib.jars" value="jaxb-api.jar jbossws-native-jaxrpc.jar
+    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
             jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
             jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar"/>
     <property name="jboss.common.lib.jars" value="servlet-api.jar"/>
 
     <property name="wsas.libs" value="wsas.jar"/>
     <property name="wsc.libs" value="ws-c.jar"/>
+    <property name="wsc.api.libs" value="ws-c-api.jar"/>
     <property name="wsc10.libs" value="ws-c10.jar"/>
     <property name="wsc11.libs" value="ws-c11.jar"/>
 
@@ -110,7 +111,7 @@
         <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
         <fileset dir="${jboss.common.lib.dir}" includes="${jboss.common.lib.jars}"/>
         <fileset dir="${com.arjuna.mwlabs.wsas.jar.dest}" includes="${wsas.libs}"/>
-        <fileset dir="${com.arjuna.mwlabs.wsc.jar.dest}" includes="${wsc.libs}"/>
+        <fileset dir="${com.arjuna.mwlabs.wsc.jar.dest}" includes="${wsc.libs} ${wsc.api.libs}"/>
     </path>
 
 	<!-- tests library and path to library -->
@@ -209,9 +210,6 @@
 
         <jar jarfile="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}11.jar"
             basedir="${com.arjuna.mwlabs.wscf.dest11}">
-            <manifest>
-                <attribute name="Class-Path" value="${com.arjuna.mwlabs.ts.modulename}.jar"/>
-            </manifest>
         </jar>
     </target>
 
@@ -229,9 +227,6 @@
 
         <jar jarfile="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}10.jar"
             basedir="${com.arjuna.mwlabs.wscf.dest10}">
-            <manifest>
-                <attribute name="Class-Path" value="${com.arjuna.mwlabs.ts.modulename}.jar"/>
-            </manifest>
         </jar>
     </target>
 
@@ -240,9 +235,6 @@
         <mkdir dir="${com.arjuna.mwlabs.wscf.jar.dest}"/>
         <jar jarfile="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"
             basedir="${com.arjuna.mwlabs.wscf.dest}">
-            <manifest>
-                <attribute name="Class-Path" value="${wsas.libs} ${wsc.libs} config.jar config11.jar"/>
-            </manifest>
         </jar>
     </target>
 
@@ -334,9 +326,6 @@
         </copy>
         <jar jarfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.jar">
             <fileset dir="${com.arjuna.mwlabs.wscf.tests.dest}"/>
-            <manifest>
-                <attribute name="Class-Path" value="${tests.depend.libs}"/>
-            </manifest>
         </jar>
         <war warfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf-tests.war" webxml="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app.xml"/>
         <war warfile="${com.arjuna.mwlabs.wscf.tests.webapps.dest}/wscf11-tests.war" webxml="${com.arjuna.mwlabs.wscf.tests.dd.dest}/web-app11.xml"/>

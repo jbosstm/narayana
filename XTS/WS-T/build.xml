@@ -67,6 +67,23 @@
     <property name="build.tests.dd.dir"      value="${build.dir}/tests/dd"/>
     <property name="build.tests.webapps.dir" value="${build.dir}/tests/webapps"/>
 
+    <!-- classes provided for clients via api jars -->
+    <property name="ws-t.api.classes" value="com/arjuna/wst/Vote.class com/arjuna/wst/Prepared.class
+        com/arjuna/wst/ReadOnly.class com/arjuna/wst/Aborted.class
+        com/arjuna/wst/Participant.class com/arjuna/wst/Durable2PCParticipant.class
+        com/arjuna/wst/Volatile2PCParticipant.class
+        com/arjuna/wst/BusinessAgreementWithParticipantCompletionParticipant.class
+        com/arjuna/wst/BusinessAgreementWithCoordinatorCompletionParticipant.class
+        com/arjuna/wst/WrongStateException.class com/arjuna/wst/SystemException.class
+        com/arjuna/wst/TransactionRolledBackException.class com/arjuna/wst/UnknownTransactionException.class
+        com/arjuna/wst/FaultedException.class
+        org/jboss/jbossts/xts/recovery/participant/at/XTSATRecoveryModule.class
+        org/jboss/jbossts/xts/recovery/participant/at/XTSATRecoveryManager.class
+        org/jboss/jbossts/xts/recovery/participant/ba/XTSBARecoveryModule.class
+        org/jboss/jbossts/xts/recovery/participant/ba/XTSBARecoveryManager.class"/>
+    <property name="ws-t10.api.classes" value="com/arjuna/wst/BAParticipantManager.class"/>
+    <property name="ws-t11.api.classes" value="com/arjuna/wst11/BAParticipantManager.class"/>
+
     <property name="com.arjuna.buildsystem.dir" location="../../antbuildsystem"/>
     <property name="com.arjuna.jta.install" location="../../install"/>
 
@@ -82,13 +99,14 @@
 
     <property name="jta.lib.jars" value="jbossjta.jar jbossjts.jar"/>
     <property name="jta.ext.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
-    <property name="jboss.client.lib.jars" value="jaxb-api.jar jbossws-native-jaxrpc.jar
+    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
             jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
             jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar"/>
     <property name="jboss.common.lib.jars" value="servlet-api.jar"/>
 
     <property name="tests.libs"              value="junit.jar"/>
     <property name="ws-c.libs"               value="ws-c.jar"/>
+    <property name="ws-c.api.libs"               value="ws-c-api.jar"/>
     <property name="ws-c10.libs"               value="ws-c10.jar"/>
     <property name="ws-c11.libs"               value="ws-c11.jar"/>
     <property name="wscf.libs"               value="wscf.jar"/>
@@ -99,7 +117,7 @@
     <property name="javac.optimize"          value="off"/>
 
     <path id="ws-c.path">
-        <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c.libs}"/>
+        <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c.libs} ${ws-c.api.libs}"/>
     </path>
     <path id="ws-c10.path">
         <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c10.libs}"/>
@@ -177,7 +195,9 @@
                     <pathelement path="${build.dev.classes.dir}"/>
                 </path>
                 <path refid="lib.ext.path"/>
+                <path refid="ws-c.path"/>
                 <path refid="ws-c10.path"/>
+                <path refid="wscf.path"/>
                 <path refid="wscf10.path"/>
             </classpath>
             <src path="${dev.src10.dir}"/>
@@ -191,7 +211,9 @@
                     <pathelement path="${build.dev.classes.dir}"/>
                 </path>
                 <path refid="lib.ext.path"/>
+                <path refid="ws-c.path"/>
                 <path refid="ws-c11.path"/>
+                <path refid="wscf.path"/>
                 <path refid="wscf11.path"/>
             </classpath>
             <src path="${dev.src11.dir}"/>
@@ -296,22 +318,22 @@
         <copy file="${dev.dd.dir}/wsarjtx/wsdl/wsarjtx-termination-participant-binding.wsdl" tofile="${build.dev.classes11.dir}/com/arjuna/schemas/ws/_2005/_10/wsarjtx/wsdl/wsarjtx-termination-participant-binding.wsdl"/>
 
         <jar jarfile="${build.dev.lib.dir}/ws-t.jar">
-            <fileset dir="${build.dev.classes.dir}"/>
-            <manifest>
-                <attribute name="Class-Path" value="${ws-c.libs}"/>
-            </manifest>
+            <fileset dir="${build.dev.classes.dir}" excludes="${ws-t.api.classes}"/>
+        </jar>
+        <jar jarfile="${build.dev.lib.dir}/ws-t-api.jar">
+            <fileset dir="${build.dev.classes.dir}" includes="${ws-t.api.classes}"/>
         </jar>
         <jar jarfile="${build.dev.lib.dir}/ws-t10.jar">
-            <fileset dir="${build.dev.classes10.dir}"/>
-            <manifest>
-                <attribute name="Class-Path" value="ws-t.jar ${ws-c10.libs}"/>
-            </manifest>
+            <fileset dir="${build.dev.classes10.dir}" excludes="${ws-t10.api.classes}"/>
+        </jar>
+        <jar jarfile="${build.dev.lib.dir}/ws-t10-api.jar">
+            <fileset dir="${build.dev.classes10.dir}" includes="${ws-t10.api.classes}"/>
         </jar>
         <jar jarfile="${build.dev.lib.dir}/ws-t11.jar">
-            <fileset dir="${build.dev.classes11.dir}" excludes="com/arjuna/webservices11/wsat/sei/* com/arjuna/webservices11/wsba/sei/* com/arjuna/webservices11/wsarjtx/sei/* handlers.xml"/>
-            <manifest>
-                <attribute name="Class-Path" value="ws-t.jar ${ws-c11.libs}"/>
-            </manifest>
+            <fileset dir="${build.dev.classes11.dir}" excludes="${ws-t11.api.classes} com/arjuna/webservices11/wsat/sei/* com/arjuna/webservices11/wsba/sei/* com/arjuna/webservices11/wsarjtx/sei/* handlers.xml"/>
+        </jar>
+        <jar jarfile="${build.dev.lib.dir}/ws-t11-api.jar">
+            <fileset dir="${build.dev.classes11.dir}" includes="${ws-t11.api.classes}"/>
         </jar>
     </target>
 
@@ -332,8 +354,11 @@
         <javac destdir="${build.tests.classes.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
             <classpath>
                 <pathelement path="${build.dev.lib.dir}/ws-t.jar"/>
+                <pathelement path="${build.dev.lib.dir}/ws-t-api.jar"/>
                 <pathelement path="${build.dev.lib.dir}/ws-t10.jar"/>
+                <pathelement path="${build.dev.lib.dir}/ws-t10-api.jar"/>
                 <pathelement path="${build.dev.lib.dir}/ws-t11.jar"/>
+                <pathelement path="${build.dev.lib.dir}/ws-t11-api.jar"/>
                 <path refid="tests.lib.path"/>
                 <path refid="lib.ext.path"/>
                 <path refid="ws-c.path"/>
@@ -350,9 +375,6 @@
     <target name="tests-webapps" depends="tests-compile">
         <jar jarfile="${build.tests.lib.dir}/ws-t-tests.jar">
             <fileset dir="${build.tests.classes.dir}"/>
-            <manifest>
-                <attribute name="Class-Path" value="ws-t11.jar ws-t10.jar ws-t.jar ws-c11.jar ws-c10.jar ws-c.jar ${tests.libs}"/>
-            </manifest>
         </jar>
         <copy file="${tests.dd.dir}/ws-t-tests_web-app.xml" tofile="${build.tests.dd.dir}/web-app.xml">
         </copy>

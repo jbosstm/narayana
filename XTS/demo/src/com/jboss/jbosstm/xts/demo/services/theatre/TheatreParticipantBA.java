@@ -152,7 +152,7 @@ public class TheatreParticipantBA implements BusinessAgreementWithParticipantCom
     
     public String status()
     {
-        return Status.STATUS_ACTIVE ;
+        return null ;
     }
 
     public void unknown() throws SystemException

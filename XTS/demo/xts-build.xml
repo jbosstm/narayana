@@ -73,9 +73,8 @@
     <property name="ext.dir" location="${lib.dir}/ext"/>
     <property name="jboss.client.lib.dir" location="${jboss.home}/client"/>
 
-    <property name="lib.libs" value="wscf.jar wstx.jar ws-t.jar ws-c.jar"/>
-    <property name="lib10.libs" value="wscf10.jar wstx10.jar ws-t10.jar ws-c10.jar"/>
-    <property name="lib11.libs" value="wscf11.jar wstx11.jar ws-t11.jar ws-c11.jar"/>
+    <property name="lib.libs" value="jbossxts-api.jar"/>
+
     <property name="ext.libs" value="jbossjta.jar jbossts-common.jar commons-logging.jar"/>
     <property name="jboss.client.libs" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
             jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
@@ -103,12 +102,6 @@
 
     <path id="lib.path">
         <fileset dir="${lib.dir}" includes="${lib.libs}"/>
-    </path>
-    <path id="lib10.path">
-        <fileset dir="${lib.dir}" includes="${lib10.libs}"/>
-    </path>
-    <path id="lib11.path">
-        <fileset dir="${lib.dir}" includes="${lib11.libs}"/>
     </path>
     <path id="ext.path">
         <fileset dir="${ext.dir}" includes="${ext.libs}"/>
@@ -162,16 +155,6 @@
             <path refid="jboss.client.path"/>
             <path refid="ext.path"/>
         </path>
-        <path id="compile10.path">
-            <path refid="lib10.path"/>
-            <path refid="jboss.client.path"/>
-            <path refid="ext.path"/>
-        </path>
-        <path id="compile11.path">
-            <path refid="lib11.path"/>
-            <path refid="jboss.client.path"/>
-            <path refid="ext.path"/>
-        </path>
     </target>
 
     <target name="init" depends="init-properties">
@@ -190,7 +173,7 @@
         <javac destdir="${buildrpc.dir}/classes" debug="${javac.debug}"
             optimize="${javac.optimize}" deprecation="${javac.deprecation}" >
             <classpath>
-                <path refid="compile10.path"/>
+                <path refid="compile.path"/>
             </classpath>
             <src path="${srcrpc.dir}"/>
             <patternset>
@@ -204,7 +187,7 @@
         <javac destdir="${build.dir}/classes" debug="${javac.debug}"
             optimize="${javac.optimize}" deprecation="${javac.deprecation}" >
             <classpath>
-                <path refid="compile11.path"/>
+                <path refid="compile.path"/>
             </classpath>
             <src path="${src.dir}"/>
             <patternset>

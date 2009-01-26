@@ -154,7 +154,7 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
 
     public String status()
     {
-        return Status.STATUS_ACTIVE ;
+        return null ;
     }
     
     public void unknown() throws SystemException

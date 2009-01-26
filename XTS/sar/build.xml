@@ -143,8 +143,46 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         </javadoc>
     </target>            
 
+    <target name="api-both-jar">
+        <mkdir dir="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/ws-c-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/ws-t-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/ws-t10-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/ws-t11-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/wstx-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/wstx10-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/wstx11-api.jar" dest="${build.dir}/tmp/api"/>
+        <jar file="${build.dir}/jbossxts-api.jar" basedir="${build.dir}/tmp/api"/>
+        <copy file="${build.dir}/jbossxts-api.jar" tofile="${lib.dir}/jbossxts-api.jar"/>
+        <delete dir="${build.dir}/tmp/api"/>
+    </target>
+
+    <target name="api11-jar">
+        <mkdir dir="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/ws-c-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/ws-t-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/ws-t11-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/wstx-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/wstx11-api.jar" dest="${build.dir}/tmp/api"/>
+        <jar file="${build.dir}/jbossxts-api.jar" basedir="${build.dir}/tmp/api"/>
+        <copy file="${build.dir}/jbossxts-api.jar" tofile="${lib.dir}/jbossxts-api.jar"/>
+        <delete dir="${build.dir}/tmp/api"/>
+    </target>
+    
+    <target name="api10-jar">
+        <mkdir dir="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/ws-c-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/ws-t-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/ws-t10-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/wstx-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/wstx10-api.jar" dest="${build.dir}/tmp/api"/>
+        <jar file="${build.dir}/jbossxts-api.jar" basedir="${build.dir}/tmp/api"/>
+        <copy file="${build.dir}/jbossxts-api.jar" tofile="${lib.dir}/jbossxts-api.jar"/>
+        <delete dir="${build.dir}/tmp/api"/>
+    </target>
+
     <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
-    <target name="sar-both" depends="init, compile, dev-resourcebundle">
+    <target name="sar-both" depends="init, compile, dev-resourcebundle, api-both-jar">
         <!-- create config jar containing conf files for 1.0 and 1.1 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -164,7 +202,9 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
 	    <!--
             <fileset dir="${lib.dir}" includes="*.jar"/>
 -->
-            <fileset dir="${lib.dir}" includes="*.jar"/>
+            <fileset dir="${lib.dir}" includes="*.jar" excludes="*-api.jar"/>
+
+            <fileset dir="${build.dir}" includes="jbossxts-api.jar"/>
 
             <!-- include 1.0 and 1.1 web apps -->
             <fileset dir="${webapps.dir}" includes="*.war"/>
@@ -184,7 +224,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     </target>
 
     <!-- build XTS service archive supporting 1.1 WS-C/T protocols -->
-    <target name="sar-11" depends="init, compile, dev-resourcebundle">
+    <target name="sar-11" depends="init, compile, dev-resourcebundle, api11-jar">
         <!-- create config jar containing conf files for 1.1 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -201,7 +241,9 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <!-- pack everything in the service archive -->
         <jar jarfile="${build.dir}/jbossxts.sar">
             <!-- include generic and 1.1 jars -->
-            <fileset dir="${lib.dir}" includes="*.jar" excludes="*10.jar"/>
+            <fileset dir="${lib.dir}" includes="*.jar" excludes="*10.jar *api.jar"/>
+
+            <fileset dir="${build.dir}" includes="jbossxts-api.jar"/>
 
             <!-- include 1.1 web apps-->
             <fileset dir="${webapps.dir}" includes="*11.war"/>
@@ -221,7 +263,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     </target>
 
     <!-- build XTS service archive supporting 1.0 WS-C/T protocols -->
-    <target name="sar-10" depends="init, compile, dev-resourcebundle">
+    <target name="sar-10" depends="init, compile, dev-resourcebundle, api10-jar">
         <!-- create config jar containing conf files for 1.0 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -238,7 +280,9 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <!-- pack everything in the service archive -->
         <jar jarfile="${build.dir}/jbossxts.sar">
             <!-- include generic and 1.0 jars -->
-            <fileset dir="${lib.dir}" includes="*.jar" excludes="*11.jar"/>
+            <fileset dir="${lib.dir}" includes="*.jar" excludes="*11.jar *api.jar"/>
+
+            <fileset dir="${build.dir}" includes="jbossxts-api.jar"/>
 
             <!-- include 1.0 web apps -->
             <fileset dir="${webapps.dir}" includes="*10.war"/>
@@ -257,57 +301,9 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         </jar>
     </target>
 
-    <!-- copy the ws-c11 and ws-t11 wars replacing any config files which have been substituted with the default
-      host and port with new versions substituted with the values defined in this build script
-    -->
-    <target name="insertcfg11">
-        <filter token="hostname" value="${hostname}"/>
-        <filter token="port" value="${port}"/>
-
-        <unjar src="${xts.home}/webapps/ws-c11.war" dest="${build.dir}/tmp/ws-c11"/>
-
-        <copy file="${xts.home}/coordinator/dd/ws-c11_web-app.xml"
-            tofile="${build.dir}/tmp/ws-c11/WEB-INF/web.xml" filtering="true" overwrite="true"/>
-
-        <jar destfile="${build.dir}/ws-c11.war" basedir="${build.dir}/tmp/ws-c11" manifest="${build.dir}/tmp/ws-c11/META-INF/MANIFEST.MF"/>
-
-        <delete dir="${build.dir}/tmp/ws-c11"/>
-
-        <unjar src="${xts.home}/webapps/ws-t11.war" dest="${build.dir}/tmp/ws-t11"/>
-
-        <copy file="${xts.home}/coordinator/dd/ws-t11_web-app.xml"
-            tofile="${build.dir}/tmp/ws-t11/WEB-INF/web.xml" filtering="true" overwrite="true"/>
-
-        <jar destfile="${build.dir}/ws-t11.war" basedir="${build.dir}/tmp/ws-t11" manifest="${build.dir}/tmp/ws-t11/META-INF/MANIFEST.MF"/>
-
-        <delete dir="${build.dir}/tmp/ws-t11"/>
-    </target>
-
-    <target name="insertcfg10">
-        <filter token="hostname" value="${hostname}"/>
-        <filter token="port" value="${port}"/>
-
-        <unjar src="${xts.home}/webapps/ws-c10.war" dest="${build.dir}/tmp/ws-c10"/>
-
-        <copy file="${xts.home}/coordinator/dd/ws-c_web-app.xml"
-            tofile="${build.dir}/tmp/ws-c10/WEB-INF/web.xml" filtering="true" overwrite="true"/>
-
-        <jar destfile="${build.dir}/ws-c10.war" basedir="${build.dir}/tmp/ws-c10" manifest="${build.dir}/tmp/ws-c10/META-INF/MANIFEST.MF"/>
-
-        <delete dir="${build.dir}/tmp/ws-c10"/>
-
-        <unjar src="${xts.home}/webapps/ws-t10.war" dest="${build.dir}/tmp/ws-t10"/>
-
-        <copy file="${xts.home}/coordinator/dd/ws-t_web-app.xml"
-            tofile="${build.dir}/tmp/ws-t10/WEB-INF/web.xml" filtering="true" overwrite="true"/>
-
-        <jar destfile="${build.dir}/ws-t10.war" basedir="${build.dir}/tmp/ws-t10" manifest="${build.dir}/tmp/ws-t10/META-INF/MANIFEST.MF"/>
-
-        <delete dir="${build.dir}/tmp/ws-t10"/>
-    </target>
-
     <target name="clean">
       <delete dir="${build.dir}"/>
+      <delete file="${lib.dir}/jbossxts-api.jar"/>
     </target>
 
     <!-- convenience targets to build and deploy the service archive -->

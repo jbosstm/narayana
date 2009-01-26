@@ -139,11 +139,7 @@
 	<target name="com.arjuna.mw.wsas.jar" depends="com.arjuna.mw.wsas.compile">
 		<echo message="Building jar file"/>
 		<mkdir dir="${com.arjuna.mwlabs.wsas.jar.dest}"/>
-		<jar jarfile="${com.arjuna.mwlabs.wsas.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar" basedir="${com.arjuna.mwlabs.wsas.dest}">
-			<manifest>
-                <attribute name="Class-Path" value="${jta.lib.jars}"/>
-            </manifest>
-        </jar>
+		<jar jarfile="${com.arjuna.mwlabs.wsas.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar" basedir="${com.arjuna.mwlabs.wsas.dest}"/>
 	</target>
 
 	<target name="com.arjuna.mw.wsas.htdocs"
