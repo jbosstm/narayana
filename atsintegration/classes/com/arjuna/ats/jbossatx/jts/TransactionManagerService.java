@@ -61,6 +61,7 @@ import com.arjuna.orbportability.OA;
 
 import com.arjuna.ats.internal.tsmx.mbeans.PropertyServiceJMXPlugin;
 import com.arjuna.ats.internal.jts.recovery.RecoveryORBManager;
+import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.logging.LogFactory;
@@ -263,6 +264,10 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
 
             try
             {
+                // OTSManager won't play nice unless we explicity bootstrap the portability layer:
+                ORBManager.setORB(orb);
+                ORBManager.setPOA(oa);
+
                 org.omg.CosTransactions.TransactionFactory factory = com.arjuna.ats.jts.OTSManager.get_factory();
                 final int resolver = com.arjuna.ats.jts.TransactionServer.getResolver();
 
@@ -446,7 +451,7 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
         // rely on the imple being stateless:
         return new TransactionSynchronizationRegistryImple();
     }
-    
+
     /**
      * Get the XA Terminator
      *
