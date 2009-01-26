@@ -227,7 +227,8 @@ public class RecoveryManager
     
     /**
      * Terminate and cleanup the recovery manager. There is no going back from this. Can be called
-     * synchronous or asynchronously.
+     * synchronous or asynchronously. If you have any intention of restarting the recovery manager
+     * later then you MUST use the async=false option.
      * 
      * @param async false means wait for any recovery scan in progress to complete.
      * @throws IllegalStateException if the recovery manager has been shutdown.
