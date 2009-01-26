@@ -464,9 +464,9 @@ public class ParticipantRecord extends
 		{
 			if (_resourceHandle != null)
 			{
-                // we cannot proceed if the participant has not completed
+                // we cannot proceed if the participant has neither completed not exited
 
-                if (!_completed) return TwoPhaseOutcome.FINISH_ERROR;
+                if (isActive()) return TwoPhaseOutcome.FINISH_ERROR;
 
 				try
 				{
