@@ -288,6 +288,7 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
 
                 RecoveryManager.delayRecoveryManagerThread() ;
                 _recoveryManager = RecoveryManager.manager() ; // RecoveryORBManager must be set up before this
+                _recoveryManager.initialize();
                 _recoveryManager.startRecoveryManagerThread() ;
 
                 log.info("Recovery manager configured and started");
@@ -379,7 +380,7 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
         {
             log.info("Stopping transaction recovery manager");
 
-            _recoveryManager.stop();
+            _recoveryManager.terminate();
         }
     }
 
