@@ -176,7 +176,7 @@
         <unzip src="${workdir}/jbossts-jta-${filename}.zip" dest="${workdir}/build"/>
         <mkdir dir="${workdir}/build/resources"/>
         <delete file="${workdir}/build/resources.jar"/>
-        <copy file="${workdir}/build/${tag}/etc/jbossjta-properties.xml"
+        <copy file="${workdir}/build/${tag}/etc/jbossts-properties.xml"
                 tofile="${workdir}/build/resources/jbossts-properties.xml-forJTA" />
 
         <!-- now package the JTS -->
@@ -247,7 +247,7 @@
 
         <!-- the resources part appears to require a bit of a kludge: -->
         <!-- add to the same dir as the previously cached jta properties file, then jar up -->
-        <copy file="${workdir}/build/${tag}/etc/jbossjts-properties.xml"
+        <copy file="${workdir}/build/${tag}/etc/jbossts-properties.xml"
                 tofile="${workdir}/build/resources/jbossts-properties.xml-forJTS" />
 
         <jar basedir="${workdir}/build" includes="resources/*" destfile="${workdir}/build/resources.jar"/>

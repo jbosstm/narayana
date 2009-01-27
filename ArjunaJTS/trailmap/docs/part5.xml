@@ -102,7 +102,7 @@
 				<p>
 					<h5>Local transaction with JTA</h5>
 					To configure JBossTS for such transaction, edit the
-					jbossjts-properties.xml file and set the following
+					jbossts-properties.xml file and set the following
 					properties to the appropriate values:
 
 					<pre>

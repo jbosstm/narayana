@@ -152,7 +152,7 @@
   managers are co-located with each application process to improve performance
   and improve application fault-tolerance. When running applications which require
   a separate transaction manager, you must set the com.arjuna.ats.jts.transactionManager
-  property variable, in the jbossjts-properties.xml file, to YES. </p>
+  property variable, in the jbossts-properties.xml file, to YES. </p>
 				<p>In a separate window, the stand-alone Transaction Server is launched as follow:</p>
 				<blockquote>
 					<font face="Courier New, Courier, mono">java com.arjuna.ats.jts.TransactionServer [-test]</font>

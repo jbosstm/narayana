@@ -1,12 +1,12 @@
 
-JBossTS 4.5.GA is designed for use standalone or with JBossAS 5.0.0.GA.
+JBossTS 4.6.GA is designed for use standalone or with JBossAS 5.0.0.GA.
 It is not suitable for use with earlier versions of JBossAS.
 
 The installation procedure has changed from earlier releases due to the move from
 a JMX configuration style to the POJO microcontainer used by AS 5.0. Upgrading users
 should take care to read the steps below carefully.
 
-Installing JBossTS 4.5.GA JTA into JBossAS 5.0.0.GA
+Installing JBossTS 4.6.GA JTA into JBossAS 5.0.0.GA
 ------------------------------------------------------------
 
 The application server ships with a earlier release of JBossTS JTA as its default transaction manager.
@@ -17,7 +17,7 @@ versions from JBossTS lib
 
  - Replace JBossAS  common/lib/jbossts-common.jar with the newer version from JBossTS lib/ext/
 
- - Replace JBossAS  server/xxx/conf/jbossjta-properties.xml with  JBossTS  etc/jbossjta-properties.xml
+ - Replace JBossAS  server/xxx/conf/jbossjta-properties.xml with  JBossTS  etc/jbossts-properties.xml
 
 
 

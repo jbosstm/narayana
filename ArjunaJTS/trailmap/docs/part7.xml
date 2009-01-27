@@ -124,7 +124,7 @@
 				provide implementations of the following JBossTS interface com.arjuna.ats.jta.recovery.XAResourceRecovery.</p>
 			        <p>
 			        To inform the recovery system about each of the XAResourceRecovery instances, it is
-			        necessary to specify their class names through property variables in the jbossjts-properties.xml file.
+			        necessary to specify their class names through property variables in the jbossts-properties.xml file.
 				Any property variable which starts with the name XAResourceRecovery will be assumed to represent
 				one of these instances, and its value should be the class name.</p>
 
@@ -142,7 +142,7 @@
 				<p>
 				The recovery module for the non-Serializable XAResource must be deployed in order to provide support to recover the non-Serializable XAResource.
 				If this step was missed out the Serializable XAResource would recover OK but JBossTS would have no knowledge of the non-Serializable XAResource
-				and so it could not recover it. To register the non-Serializable XAResource XAResourceRecovery module, add an entry to the jbossjts-properties.xml.</p>
+				and so it could not recover it. To register the non-Serializable XAResource XAResourceRecovery module, add an entry to the jbossts-properties.xml.</p>
 
 				<p>
 				Under the element <font face="Courier New, Courier, mono">&lt;properties depends="jts" name="jta"&gt;</font>, add:</p>
@@ -155,7 +155,7 @@
 				<p>
 				By default, the recovery manager is configured to perform a pass over resources to be recovered every two minutes. It will then wait for ten seconds
 				before re-checking the resources. Although the test will run OK with this configuration, it is possible to configure the recovery
-				manager scan times to reduce the time waiting. To configure the intervals, edit the jbossjts-properties.xml as follows:</p>
+				manager scan times to reduce the time waiting. To configure the intervals, edit the jbossts-properties.xml as follows:</p>
 				<ul>
 					<li>Edit the property <font face="Courier New, Courier, mono">"com.arjuna.ats.arjuna.recovery.periodicRecoveryPeriod"</font>
 					to change the value from 120 to 5.</li>
@@ -167,17 +167,17 @@
 				<p>
 				The recovery manager will work in the same manner for either the JTA or JTS implementation. By default the JBoss Transaction Service
 				is configured to use a JTS transaction manager, in order to configure it to use a JTA transaction manager a change must again be made
-				to the jbossjts-properties.xml. <i>See <a class="linkscoloured" href="part5_testing_jta.html">here</a> for more information on how to configure
+				to the jbossts-properties.xml. <i>See <a class="linkscoloured" href="part5_testing_jta.html">here</a> for more information on how to configure
 				the JBossTS transaction manager to use JTA rather than JTS.</i></p>
 				<p>
 				<b>If you do change the transaction manager type remember to reconfigure the recovery manager as follows:</b></p>
 				<p>
-				If you are using the ArjunaCore (raw JTA) transaction manager implementation comment out the element in jbossjts-properties.xml containing the following text:</p>
+				If you are using the ArjunaCore (raw JTA) transaction manager implementation comment out the element in jbossts-properties.xml containing the following text:</p>
 				<blockquote>
 				<font face="Courier New, Courier, mono">internal.jta.recovery.jts.XARecoveryModule</font>
 				</blockquote>
 				<p>
-				If you are using the JTS transaction manager implementation comment out the element in jbossjts-properties.xml containing the following text:</p>
+				If you are using the JTS transaction manager implementation comment out the element in jbossts-properties.xml containing the following text:</p>
 				<blockquote>
 				<font face="Courier New, Courier, mono">internal.jta.recovery.arjunacore.XARecoveryModule</font>
 				</blockquote>
@@ -241,7 +241,7 @@
 
 				<h4>Recovery Module registration</h4>
 				The recovery module should now be deployed in order to be called by the Recovery Manager. To do so,
-				we just need to add an entry in the jbossjts-properties.xml by adding a new property as follow:
+				we just need to add an entry in the jbossts-properties.xml by adding a new property as follow:
 				<blockquote>
 					&lt;property name="com.arjuna.ats.arjuna.recovery.recoveryExtension&lt;i&gt;"
 				        value="com.arjuna.demo.recoverymodule.SimpleRecoveryModule"/&gt;

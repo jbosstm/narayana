@@ -160,7 +160,7 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
             // if the app server's ServerBindingManager has NOT been used to configure the listen addresses
             // (which it should be by default via the binding.xml and transaction-jboss-beans.xml) then we
             // want to fall back to using the SERVER_BIND_ADDRESS in preference to the value from the
-            // jbossjta-properties.xml. Belt and Braces...
+            // jbossts-properties.xml. Belt and Braces...
 
             InetAddress serverInetAddress = InetAddress.getByName(System.getProperty(ServerConfig.SERVER_BIND_ADDRESS));
             if(!isRecoveryManagerBindAddressSet) {

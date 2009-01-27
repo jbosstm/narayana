@@ -235,7 +235,11 @@ Targets supported in this build.xml file
          JBossTS currently requires jdk1.4 or jdk1.5 to build.
       </fail>
 
-      <property name="com.hp.mw.ts.product.propertyfile" value="${com.hp.mw.ts.product.name.lowercase}-properties.xml"/>
+      <!-- starting from 4.6 we change from ${com.hp.mw.ts.product.name.lowercase}-properties.xml
+        to a common name of jbossts-properties.xml to facilitate using the JTS binaries for either
+        JTA or JTS. The actual content of the config file is not affected. -->
+      -->
+      <property name="com.hp.mw.ts.product.propertyfile" value="jbossts-properties.xml"/>
 
       <property name="com.hp.mw.sourceid" value="unknown"/>
       <property name="com.hp.mw.version" value="unknown"/>

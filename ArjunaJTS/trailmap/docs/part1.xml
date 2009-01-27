@@ -131,7 +131,7 @@ When installed, the binary release of JBossTS, JTS version, should have the foll
 The JBoss Transaction Service has been designed to be highly configurable at runtime through the use of various
 property attributes. Although these attributes can be provided at runtime on the
 command line, it is possible (and may be more convenient) to specify them through the
-properties  file <font face="Courier New,Courier">jbossjts-properties.xml</font> located under the <font face="Courier New,Courier">/etc</font> directory of the JBossTS distribution.
+properties  file <font face="Courier New,Courier">jbossts-properties.xml</font> located under the <font face="Courier New,Courier">/etc</font> directory of the JBossTS distribution.
 				<p>More details on the way to configure the behavior of JBossTS can be found <a class="linkscoloured" href="JBossTS_Configuration.html">here</a>.
 </p>
 
