@@ -166,8 +166,8 @@
 			</fileset>
 		</copy>
 		<!-- testing is done with some non-default properties: -->
-		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/etc" overwrite="true">
-			<fileset file="config/jboss${buildtype}-properties.xml"/>
+		<copy file="config/jbossts-${buildtype}-properties.xml"
+                tofile="${org.jboss.jbossts.qa.dist.buildroot}/etc/jbossts-properties.xml" overwrite="true">
 		</copy>
 
         <!-- for 'loca'l tests, we need some libs we would otherwise have got from DTF -->
