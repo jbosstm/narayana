@@ -314,7 +314,11 @@
 	</target>
 
     <target name="com.arjuna.mwlabs.xts.sar.build">
-        <ant dir="sar"/>
+        <!-- by default we build 1.0 and 1.1 for ease of testing,
+            but release bundles should use -Dsartype=sar-11 so that
+            thay contain only the supported version. -->
+        <property name="sartype" value="sar-both"/>
+        <ant dir="sar" target="${sartype}"/>
     </target>
 
 	<target name="com.arjuna.mwlabs.xts.wsas.clean">
