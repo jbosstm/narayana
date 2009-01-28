@@ -160,7 +160,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
         if ( value == null )
         {
             /** Else search upwards **/
-            Iterator itr = _childPropertyManagers.iterator();
+            Iterator itr = _parentPropertyManagers.iterator();
             while (itr.hasNext() && value == null)
             {
                 PropertyManagerImpl pm = (PropertyManagerImpl)itr.next();
