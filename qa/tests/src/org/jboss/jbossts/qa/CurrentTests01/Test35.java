@@ -61,6 +61,7 @@ import org.jboss.jbossts.qa.Utils.OAInterface;
 import org.jboss.jbossts.qa.Utils.ORBInterface;
 import org.jboss.jbossts.qa.Utils.OTS;
 import org.omg.CORBA.INVALID_TRANSACTION;
+import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 
 public class Test35
 {
@@ -121,7 +122,7 @@ public class Test35
 
 				System.err.println("Client: Trying commit (expect INVALID_TRANSACTION exception)...");
 				current.commit(true);
-				System.err.println("Client: Commit OK - Warning: Expected INVALID_TRANSACTION exception to be thrown");
+				System.err.println("Client: Commit OK - Warning: Expected INVALID_TRANSACTION or TRANSACTION_ROLLEDBACK exception to be thrown");
 				System.err.println("Client: Test should fail");
 				correct = false;
 			}
@@ -129,6 +130,10 @@ public class Test35
 			{
 				System.err.println("Client: Caught INVALID_TRANSACTION exception");
 			}
+            catch(TRANSACTION_ROLLEDBACK transactionRolledback)
+            {
+                System.out.println("Client: Caught TRANSACTION_ROLLEDBACK exception");
+            }
 			catch (Exception exception)
 			{
 				System.err.println("Client: Caught unexpected exception: " + exception);
