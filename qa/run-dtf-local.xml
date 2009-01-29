@@ -44,34 +44,60 @@
 
     <target name="junit">
 
+        <!-- currenttests01 : 36 tests, 3 minutes -->
         <antcall target="junit-tests"><param name="tests" value="currenttests01"/></antcall>
+        <!-- jtatests01 : 6 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="jtatests01"/></antcall>
+        <!-- otsserver : 20 tests, 7 minutes -->
         <antcall target="junit-tests"><param name="tests" value="otsserver"/></antcall>
 
+        <!-- rawresources01_1 : 6 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="rawresources01_1"/></antcall>
+        <!-- rawresources01_2 : 294 tests, 30 minutes -->
         <antcall target="junit-tests"><param name="tests" value="rawresources01_2"/></antcall>
+        <!-- rawresources01_3 : 150 tests, 15 minutes -->
         <antcall target="junit-tests"><param name="tests" value="rawresources01_3"/></antcall>
+        <!-- rawresources02_1 : 6 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="rawresources02_1"/></antcall>
+        <!-- rawresources02_2 : 294 tests, 30 minutes -->
         <antcall target="junit-tests"><param name="tests" value="rawresources02_2"/></antcall>
+        <!-- rawresources02_3 : 150 tests, 15 minutes -->
         <antcall target="junit-tests"><param name="tests" value="rawresources02_3"/></antcall>
 
+        <!-- rawsubtransactionawareresources01_1 : 6 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="rawsubtransactionawareresources01_1"/></antcall>
+        <!-- rawsubtransactionawareresources01_2 : 10 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="rawsubtransactionawareresources01_2"/></antcall>
+        <!-- rawsubtransactionawareresources01_3 : 25 tests, 3 minutes -->
         <antcall target="junit-tests"><param name="tests" value="rawsubtransactionawareresources01_3"/></antcall>
+        <!-- rawsubtransactionawareresources02_1 : 6 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="rawsubtransactionawareresources02_1"/></antcall>
+        <!-- rawsubtransactionawareresources02_2 : 10 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="rawsubtransactionawareresources02_2"/></antcall>
+        <!-- rawsubtransactionawareresources02_3 : 25 tests, 3 minutes -->
         <antcall target="junit-tests"><param name="tests" value="rawsubtransactionawareresources02_3"/></antcall>
 
+        <!-- crashrecovery01 : 24 tests, 6 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery01"/></antcall>
+        <!-- crashrecovery02_1 : 5 tests, 6 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery02_1"/></antcall>
+        <!-- crashrecovery02_2 : 50 tests, 60 minutes -->
         <!-- <antcall target="junit-tests"><param name="tests" value="crashrecovery02_2"/></antcall> -->
+        <!-- crashrecovery03 : 1 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery03"/></antcall>
+        <!-- crashrecovery04 : 48 tests, 11 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery04"/></antcall>
+        <!-- crashrecovery05_1 : 10 tests, 12 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery05_1"/></antcall>
+        <!-- crashrecovery05_2 : 100 tests, 122 minutes -->
         <!-- <antcall target="junit-tests"><param name="tests" value="crashrecovery05_2"/></antcall> -->
+        <!-- crashrecovery06 : 2 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery06"/></antcall>
+        <!-- crashrecovery07 : 16 tests, 87 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery07"/></antcall>
+        <!-- crashrecovery08 : 32 tests, 228 minutes -->
         <!-- <antcall target="junit-tests"><param name="tests" value="crashrecovery08"/></antcall> -->
+        <!-- crashrecovery12 : 7 tests, 5 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery12"/></antcall>
 
     </target>
