@@ -384,6 +384,14 @@ public class TransactionImple implements javax.transaction.Transaction,
 									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 				}
 			}
+            else
+            {
+                // keep a record of why we are rolling back i.e. who called us first, it's a useful debug aid.
+                if(_rollbackOnlyCallerStacktrace == null)
+                {
+                    _rollbackOnlyCallerStacktrace = new Throwable("setRollbackOnly called from:");
+                }
+            }
 		}
 		else
 			throw new IllegalStateException(
@@ -1423,8 +1431,13 @@ public class TransactionImple implements javax.transaction.Transaction,
 					case ActionStatus.H_ROLLBACK:
 					case ActionStatus.ABORTED:
 					case ActionStatus.ABORTING:
-						RollbackException rollbackException = new RollbackException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted"));
-						if(_theTransaction.getDeferredThrowable() != null) {
+                        RollbackException rollbackException = new RollbackException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted"));
+                        if(_rollbackOnlyCallerStacktrace != null) {
+                            // we rolled back beacuse the user explicitly told us not to commit. Attach the trace of who did that for debug:
+                            rollbackException.initCause(_rollbackOnlyCallerStacktrace);
+                        }
+                        else if(_theTransaction.getDeferredThrowable() != null) {
+                            // we tried to commit but it went wrong - attach the reason for debug:
 							rollbackException.initCause(_theTransaction.getDeferredThrowable());
 						}
 						throw rollbackException;
@@ -1891,6 +1904,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private final boolean _xaTransactionTimeoutEnabled;
 
 	private Map _txLocalResources;
+    
+    private Throwable _rollbackOnlyCallerStacktrace;
 
 	/**
 	 * Count of last resources seen in this transaction.

@@ -403,6 +403,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 			try
 			{
 				_theTransaction.rollbackOnly();
+                // keep a record of why we are rolling back i.e. who called us first, it's a useful debug aid.
+                if(_rollbackOnlyCallerStacktrace == null)
+                {
+                    _rollbackOnlyCallerStacktrace = new Throwable("setRollbackOnly called from:");
+                }
 			}
 			catch (org.omg.CosTransactions.NoTransaction e3)
 			{
@@ -1397,7 +1402,12 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (TRANSACTION_ROLLEDBACK e4)
 			{
-				throw new RollbackException(e4.toString());
+				RollbackException rollbackException = new RollbackException(e4.toString());
+                if(_rollbackOnlyCallerStacktrace != null) {
+                    // we rolled back beacuse the user explicitly told us not to commit. Attach the trace of who did that for debug:
+                    rollbackException.initCause(_rollbackOnlyCallerStacktrace);
+                }
+                throw rollbackException;
 			}
 			catch (org.omg.CORBA.NO_PERMISSION e5)
 			{
@@ -1870,6 +1880,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private final boolean _xaTransactionTimeoutEnabled ;
     private Map _txLocalResources;
 
+    private Throwable _rollbackOnlyCallerStacktrace;
+    
         /**
          * Count of last resources seen in this transaction.
          */
