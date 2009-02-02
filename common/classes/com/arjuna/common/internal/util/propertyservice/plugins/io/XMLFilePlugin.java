@@ -24,6 +24,7 @@ import com.arjuna.common.util.propertyservice.plugins.PropertyManagerIOPlugin;
 import com.arjuna.common.util.propertyservice.propertycontainer.PropertyManagerPluginInterface;
 import com.arjuna.common.util.exceptions.LoadPropertiesException;
 import com.arjuna.common.util.propertyservice.PropertyManager;
+import com.arjuna.common.util.propertyservice.StringPropertyReplacer;
 import com.arjuna.common.util.FileLocator;
 import com.arjuna.common.util.exceptions.SavePropertiesException;
 
@@ -179,6 +180,9 @@ public class XMLFilePlugin implements PropertyManagerIOPlugin
 							{
 								System.out.println( propertyName +"="+ propertyValue );
 							}
+                            
+                            // perform JBossAS style property substitutions. JBTM-369
+                            propertyValue = StringPropertyReplacer.replaceProperties(propertyValue);
 
 							/** Set the property but don't allow any system property to be overridden **/
 							pm.setProperty(propertyName, propertyValue, false);
