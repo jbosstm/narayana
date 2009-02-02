@@ -125,22 +125,7 @@ public class VolatileStore extends ObjectStoreImple
 
     public synchronized boolean commit_state(Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.debugAllowed())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                         FacilityCode.FAC_OBJECT_STORE,
-                         "VolatileStore.commit_state(Uid="+u+", typeName="+tn+")");
-        }
-
-        if(currentState(u, tn) == ObjectStore.OS_UNCOMMITTED) {
-            setState(u, ObjectStore.OS_COMMITTED);
-        }
-
-        if(currentState(u, tn) == ObjectStore.OS_UNCOMMITTED_HIDDEN) {
-            setState(u, ObjectStore.OS_COMMITTED_HIDDEN);
-        }
-
-        return true;
+        throw new ObjectStoreException("Operation not supported by this implementation");
     }
 
     /**
@@ -202,14 +187,7 @@ public class VolatileStore extends ObjectStoreImple
 
     public synchronized InputObjectState read_uncommitted(Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.debugAllowed())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                         FacilityCode.FAC_OBJECT_STORE,
-                         "VolatileStore.read_uncommitted(Uid="+u+", typeName="+tn+")");
-        }
-
-        return read(u, tn, ObjectStore.OS_UNCOMMITTED);
+        throw new ObjectStoreException("Operation not supported by this implementation");
     }
 
     /**
@@ -244,14 +222,7 @@ public class VolatileStore extends ObjectStoreImple
 
     public synchronized boolean remove_uncommitted(Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.debugAllowed())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                         FacilityCode.FAC_OBJECT_STORE,
-                         "VolatileStore.remove_uncommitted(Uid="+u+", typeName="+tn+")");
-        }
-
-        return remove(u, tn, ObjectStore.OS_UNCOMMITTED);
+        throw new ObjectStoreException("Operation not supported by this implementation");
     }
 
     /**
@@ -288,14 +259,7 @@ public class VolatileStore extends ObjectStoreImple
 
     public synchronized boolean write_uncommitted(Uid u, String tn, OutputObjectState buff) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.debugAllowed())
-        {
-            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                         FacilityCode.FAC_OBJECT_STORE,
-                         "VolatileStore.write_uncommitted(Uid="+u+", typeName="+tn+")");
-        }
-
-        return write(u, tn, buff, ObjectStore.OS_UNCOMMITTED);
+        throw new ObjectStoreException("Operation not supported by this implementation");
     }
 
     /**
@@ -325,16 +289,13 @@ public class VolatileStore extends ObjectStoreImple
           the synchronization. Not done initially because the small footprint apps we sometimes want to run on don't
           have ConcurrentHashMap, so we'd have to fork the impl.
 
-          The byte[] array is the contents of the Object's state buffer, prefixed by a single byte holding
-          the ObjectStore state e.g. ObjectStore.OS_COMMITTED.  Clearly this will blow up horribly if that enum
-          ever makes use of its full int range potential rather than keeping to byte values as it currently does.
-          but in the meanwhile it's nicely space efficient.
+          The byte[] array is simply the contents of the Object's state buffer.
     */
     private Map<Uid, byte[]> stateMap = new HashMap<Uid, byte[]>();
 
     private boolean remove(Uid u, String tn, int state) throws ObjectStoreException
     {
-        if(currentState(u, tn) == state) {
+        if(stateMap.containsKey(u))  {
             stateMap.remove(u);
             return true;
         } else {
@@ -344,11 +305,9 @@ public class VolatileStore extends ObjectStoreImple
 
     private InputObjectState read(Uid u, String tn, int state) throws ObjectStoreException
     {
-        if(currentState(u, tn) == state) {
-            byte[] withStateHeader = stateMap.get(u);
-            byte[] withoutStateHeader = new byte[withStateHeader.length-1];
-            System.arraycopy(withStateHeader, 1, withoutStateHeader, 0, withoutStateHeader.length);
-            InputObjectState new_image = new InputObjectState(u, tn, withoutStateHeader);
+        if(stateMap.containsKey(u)) {
+            byte[] data = stateMap.get(u);
+            InputObjectState new_image = new InputObjectState(u, tn, data);
             return new_image;
         } else {
             return null;
@@ -357,27 +316,16 @@ public class VolatileStore extends ObjectStoreImple
 
     private boolean write(Uid u, String tn, OutputObjectState buff, int state) throws ObjectStoreException
     {
-        byte[] withoutStateHeader = buff.buffer();
-        byte[] withStateHeader = new byte[withoutStateHeader.length+1];
-        System.arraycopy(withoutStateHeader, 0, withStateHeader, 1, withoutStateHeader.length);
-        stateMap.put(u, withStateHeader);
-        setState(u, state);        
+        stateMap.put(u, buff.buffer());
         return true;
     }
 
-    private void setState(Uid u, int state) {
-        byte[] value = stateMap.get(u);
-        if(value != null) {
-            value[0] = (byte)state;
-        }
-    }
-
-    private int getState(Uid u) {
-        byte[] value = stateMap.get(u);
-        if(value == null) {
-            return ObjectStore.OS_UNKNOWN;
+    private int getState(Uid u)
+    {
+        if(stateMap.containsKey(u)) {
+            return ObjectStore.OS_COMMITTED;
         } else {
-            return (int)value[0];
+            return ObjectStore.OS_UNKNOWN;
         }
     }
 }
