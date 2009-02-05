@@ -12,6 +12,7 @@ import javax.xml.ws.addressing.JAXWSAConstants;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
@@ -46,11 +47,13 @@ public class RegistrationPortTypeImpl implements RegistrationPortType
     )
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
+        HttpServletRequest request = (HttpServletRequest)ctx.get(MessageContext.SERVLET_REQUEST);
+        boolean isSecure = request.getScheme().equals("https");
         AddressingProperties inboundAddressProperties
             = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx) ;
 
-        return RegistrationCoordinatorProcessor.getCoordinator().register(parameters, inboundAddressProperties, arjunaContext);
+        return RegistrationCoordinatorProcessor.getCoordinator().register(parameters, inboundAddressProperties, arjunaContext, isSecure);
 
     }
 }

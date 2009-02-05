@@ -52,7 +52,8 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
      */
     public CreateCoordinationContextResponseType
         createCoordinationContext(final CreateCoordinationContextType createCoordinationContext,
-                                  final AddressingProperties addressingProperties)
+                                  final AddressingProperties addressingProperties,
+                                  final boolean isSecure)
     {
         final ContextFactoryMapper contextFactoryMapper = ContextFactoryMapper.getFactory() ;
         try
@@ -68,7 +69,7 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
                     final Expires expiresElement = createCoordinationContext.getExpires() ;
                     final Long expires = (expiresElement == null ? null : new Long(expiresElement.getValue())) ;
                     
-                    coordinationContext = contextFactory.create(coordinationType, expires, createCoordinationContext.getCurrentContext()) ;
+                    coordinationContext = contextFactory.create(coordinationType, expires, createCoordinationContext.getCurrentContext(), isSecure) ;
                     final CreateCoordinationContextResponseType response = new CreateCoordinationContextResponseType() ;
                     response.setCoordinationContext(coordinationContext) ;
                     return response;

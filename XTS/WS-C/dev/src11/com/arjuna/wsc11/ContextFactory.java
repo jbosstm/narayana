@@ -56,7 +56,7 @@ public interface ContextFactory
      */
 	
     public CoordinationContext create(final String coordinationTypeURI,
-            final Long expires, final CoordinationContextType currentContext)
+            final Long expires, final CoordinationContextType currentContext, final boolean isSecure)
         throws InvalidCreateParametersException;
 
     /**

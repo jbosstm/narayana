@@ -40,6 +40,11 @@ public class ServiceRegistry
     private final Map<String, String> serviceProviderRegistry = new TreeMap<String, String>() ;
 
     /**
+     * The secure SOAP service provider registry.
+     */
+    private final Map<String, String> secureServiceProviderRegistry = new TreeMap<String, String>() ;
+
+    /**
      * Get the service registry.
      * @return The service registry.
      */
@@ -62,6 +67,19 @@ public class ServiceRegistry
     }
 
     /**
+     * Register the specified secure service.
+     * @param serviceName The secure service name.
+     * @param url The service url.
+     */
+    public void registerSecureServiceProvider(final String serviceName, final String url)
+    {
+        synchronized(secureServiceProviderRegistry)
+        {
+            secureServiceProviderRegistry.put(serviceName, url) ;
+        }
+    }
+
+    /**
      * Remove the specified service.
      * @param serviceName The service name.
      */
@@ -70,6 +88,18 @@ public class ServiceRegistry
         synchronized(serviceProviderRegistry)
         {
             serviceProviderRegistry.remove(serviceName) ;
+        }
+    }
+
+    /**
+     * Remove the specified secure service.
+     * @param serviceName The secure service name.
+     */
+    public void removeSecureServiceProvider(final String serviceName)
+    {
+        synchronized(secureServiceProviderRegistry)
+        {
+            secureServiceProviderRegistry.remove(serviceName) ;
         }
     }
 
@@ -88,5 +118,37 @@ public class ServiceRegistry
         }
 
         return uri;
+    }
+
+    /**
+     * Get the secure service URI.
+     * @param serviceName The secure service name.
+     * @return The secure service URI or null if not registered.
+     */
+    public String getSecureServiceURI(final String serviceName)
+    {
+        String uri;
+
+        synchronized(secureServiceProviderRegistry)
+        {
+            uri = secureServiceProviderRegistry.get(serviceName) ;
+        }
+
+        return uri;
+    }
+
+    /**
+     * Get the service URI.
+     * @param serviceName The service name.
+     * @param isSecure true if the secure service URL is required false if the normal service URL is required
+     * @return The service URI or null if not registered.
+     */
+    public String getServiceURI(final String serviceName, boolean isSecure)
+    {
+        if (isSecure) {
+            return getSecureServiceURI(serviceName);
+        } else {
+            return getServiceURI(serviceName);
+        }
     }
 }

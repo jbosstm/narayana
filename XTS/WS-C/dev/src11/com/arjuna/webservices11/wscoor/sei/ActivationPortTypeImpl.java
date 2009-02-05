@@ -14,6 +14,7 @@ import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.addressing.JAXWSAConstants;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.Addressing;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,8 +44,10 @@ public class ActivationPortTypeImpl implements ActivationPortType
         CreateCoordinationContextType parameters)
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
+        HttpServletRequest request = (HttpServletRequest)ctx.get(MessageContext.SERVLET_REQUEST);
+        boolean isSecure = request.getScheme().equals("https");
         AddressingProperties inboundAddressProperties
             = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
-        return ActivationCoordinatorProcessor.getCoordinator().createCoordinationContext(parameters, inboundAddressProperties);
+        return ActivationCoordinatorProcessor.getCoordinator().createCoordinationContext(parameters, inboundAddressProperties, isSecure);
    }
 }

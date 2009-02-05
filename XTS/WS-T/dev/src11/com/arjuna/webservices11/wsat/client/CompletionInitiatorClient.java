@@ -50,6 +50,11 @@ public class CompletionInitiatorClient
     private EndpointReference completionCoordinator ;
 
     /**
+     * The completion coordinator URI for secure replies.
+     */
+    private EndpointReference secureCompletionCoordinator ;
+
+    /**
      * Construct the completion initiator client.
      */
     private CompletionInitiatorClient()
@@ -70,10 +75,18 @@ public class CompletionInitiatorClient
         // ClientPolicy.register(handlerRegistry) ;
 
         final String completionCoordinatorURIString =
-            ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_COORDINATOR_SERVICE_NAME) ;
+            ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_COORDINATOR_SERVICE_NAME, false) ;
+        final String secureCompletionCoordinatorURIString =
+            ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_COORDINATOR_SERVICE_NAME, true) ;
         try {
             URI completionCoordinatorURI = new URI(completionCoordinatorURIString) ;
             completionCoordinator = builder.newEndpointReference(completionCoordinatorURI);
+        } catch (URISyntaxException use) {
+            // TODO - log fault and throw exception
+        }
+        try {
+            URI secureCompletionCoordinatorURI = new URI(secureCompletionCoordinatorURIString) ;
+            secureCompletionCoordinator = builder.newEndpointReference(secureCompletionCoordinatorURI);
         } catch (URISyntaxException use) {
             // TODO - log fault and throw exception
         }
@@ -89,7 +102,8 @@ public class CompletionInitiatorClient
     public void sendCommitted(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFaultTo(addressingProperties, completionCoordinator, identifier);
+        EndpointReference coordinator = getCompletionCoordinator(participant);
+        AddressingHelper.installFaultTo(addressingProperties, coordinator, identifier);
         CompletionInitiatorPortType port = getPort(participant, addressingProperties, committedAction);
         Notification commited = new Notification();
 
@@ -106,7 +120,8 @@ public class CompletionInitiatorClient
     public void sendAborted(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFaultTo(addressingProperties, completionCoordinator, identifier);
+        EndpointReference coordinator = getCompletionCoordinator(participant);
+        AddressingHelper.installFaultTo(addressingProperties, coordinator, identifier);
         CompletionInitiatorPortType port = getPort(participant, addressingProperties, abortedAction);
         Notification aborted = new Notification();
 
@@ -127,6 +142,21 @@ public class CompletionInitiatorClient
         AddressingHelper.installNoneReplyTo(addressingProperties);
         // use the SoapFaultService to format a soap fault and send it back to the faultto or from address
         SoapFaultClient.sendSoapFault((SoapFault11)soapFault, participant, addressingProperties, faultAction);
+    }
+
+    /**
+     * return a completion coordinator endpoint appropriate to the type of completion initiator
+     * @param participant
+     * @return either the secure terminaton participant endpoint or the non-secure endpoint
+     */
+    EndpointReference getCompletionCoordinator(W3CEndpointReference participant)
+    {
+        String address = participant.getAddress();
+        if (address.startsWith("https")) {
+            return secureCompletionCoordinator;
+        } else {
+            return completionCoordinator;
+        }
     }
 
     /**

@@ -58,6 +58,11 @@ public class CoordinatorClient
     private EndpointReference participant ;
 
     /**
+     * The participant URI for secure replies.
+     */
+    private EndpointReference secureParticipant ;
+
+    /**
      * Construct the coordinator client.
      */
     private CoordinatorClient()
@@ -80,10 +85,18 @@ public class CoordinatorClient
         // ClientPolicy.register(handlerRegistry) ;
 
         final String participantURIString =
-            ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME);
+            ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, false);
+        final String secureParticipantURIString =
+            ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, true);
         try {
             URI participantURI = new URI(participantURIString);
             participant = builder.newEndpointReference(participantURI);
+        } catch (URISyntaxException use) {
+            // TODO - log fault and throw exception
+        }
+        try {
+            URI secureParticipantURI = new URI(secureParticipantURIString);
+            secureParticipant = builder.newEndpointReference(secureParticipantURI);
         } catch (URISyntaxException use) {
             // TODO - log fault and throw exception
         }
@@ -99,6 +112,7 @@ public class CoordinatorClient
     public void sendPrepared(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        EndpointReference participant = getParticipant(endpoint);
         AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, preparedAction);
         Notification prepared = new Notification();
@@ -116,6 +130,7 @@ public class CoordinatorClient
     public void sendAborted(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        EndpointReference participant = getParticipant(endpoint);
         AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, abortedAction);
         Notification aborted = new Notification();
@@ -133,6 +148,7 @@ public class CoordinatorClient
     public void sendReadOnly(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        EndpointReference participant = getParticipant(endpoint);
         AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, readOnlyAction);
         Notification readOnly = new Notification();
@@ -150,6 +166,7 @@ public class CoordinatorClient
     public void sendCommitted(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
+        EndpointReference participant = getParticipant(endpoint);
         AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, committedAction);
         Notification committed = new Notification();
@@ -171,6 +188,21 @@ public class CoordinatorClient
         AddressingHelper.installNoneReplyTo(addressingProperties);
         // use the SoapFaultService to format a soap fault and send it back to the faultto address
         SoapFaultClient.sendSoapFault((SoapFault11)soapFault, endpoint, addressingProperties, faultAction);
+    }
+
+    /**
+     * return a participant endpoint appropriate to the type of coordinator
+     * @param endpoint
+     * @return either the secure participant endpoint or the non-secure endpoint
+     */
+    EndpointReference getParticipant(W3CEndpointReference endpoint)
+    {
+        String address = endpoint.getAddress();
+        if (address.startsWith("https")) {
+            return secureParticipant;
+        } else {
+            return participant;
+        }
     }
 
     /**

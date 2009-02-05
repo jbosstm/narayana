@@ -18,6 +18,7 @@ import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.addressing.JAXWSAConstants;
 import javax.xml.ws.handler.MessageContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.jbossts.xts.soapfault.Fault;
 
@@ -53,6 +54,8 @@ public class TerminationCoordinatorPortTypeImpl implements TerminationCoordinato
         NotificationType parameters)
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
+        HttpServletRequest request = (HttpServletRequest)ctx.get(MessageContext.SERVLET_REQUEST);
+        boolean isSecure = request.getScheme().equals("https");
         final NotificationType complete = parameters;
         final AddressingProperties inboundAddressProperties
             = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);

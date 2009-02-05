@@ -122,7 +122,7 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 	 */
 
 	public CoordinationContext create (final String coordinationTypeURI, final Long expires,
-            final CoordinationContextType currentContext)
+            final CoordinationContextType currentContext, final boolean isSecure)
 			throws InvalidCreateParametersException
 	{
 		if (coordinationTypeURI.equals(AtomicTransactionConstants.WSAT_PROTOCOL))
@@ -149,7 +149,7 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 
                 final ArjunaContextImple arjunaContext = ArjunaContextImple.getContext() ;
                 final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
-                final String registrationCoordinatorURI = serviceRegistry.getServiceURI(CoordinationConstants.REGISTRATION_SERVICE_NAME) ;
+                final String registrationCoordinatorURI = serviceRegistry.getServiceURI(CoordinationConstants.REGISTRATION_SERVICE_NAME, isSecure) ;
 
                 final CoordinationContext coordinationContext = new CoordinationContext() ;
                 coordinationContext.setCoordinationType(coordinationTypeURI);
@@ -198,16 +198,16 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
                     final String messageId = MessageId.getMessageId() ;
                     W3CEndpointReference participant;
                     W3CEndpointReference coordinator;
-                    participant= getParticipant(vtppid);
+                    participant= getParticipant(vtppid, isSecure);
                     coordinator = RegistrationCoordinator.register(currentContext, messageId, participant, AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC) ;
                     ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(vtpp, vtppid, coordinator), vtppid) ;
-                    participant= getParticipant(dtppid);
+                    participant= getParticipant(dtppid, isSecure);
                     coordinator = RegistrationCoordinator.register(currentContext, messageId, participant, AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC) ;
                     ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(dtpp, dtppid, coordinator), dtppid) ;
 
                     // ok now create the context
                     final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
-                    final String registrationCoordinatorURI = serviceRegistry.getServiceURI(CoordinationConstants.REGISTRATION_SERVICE_NAME) ;
+                    final String registrationCoordinatorURI = serviceRegistry.getServiceURI(CoordinationConstants.REGISTRATION_SERVICE_NAME, isSecure) ;
 
                     final CoordinationContext coordinationContext = new CoordinationContext() ;
                     coordinationContext.setCoordinationType(coordinationTypeURI);
@@ -271,11 +271,11 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 		return null;
 	}
 
-    private W3CEndpointReference getParticipant(final String id)
+    private W3CEndpointReference getParticipant(final String id, final boolean isSecure)
     {
         final QName serviceName = AtomicTransactionConstants.PARTICIPANT_SERVICE_QNAME;
         final QName endpointName = AtomicTransactionConstants.PARTICIPANT_PORT_QNAME;
-        final String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME);
+        final String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, isSecure);
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
         builder.serviceName(serviceName);
         builder.endpointName(endpointName);

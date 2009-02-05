@@ -65,5 +65,6 @@ public abstract class ActivationCoordinatorProcessor
      */
     public abstract CreateCoordinationContextResponseType
         createCoordinationContext(final CreateCoordinationContextType createCoordinationContext,
-                                  final AddressingProperties addressingProperties) ;
+                                  final AddressingProperties addressingProperties,
+                                  final boolean isSecure) ;
 }

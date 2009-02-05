@@ -91,14 +91,14 @@ public class RegistrarImple implements Registrar
 	 * applicable. This needs updating!
 	 */
 	public W3CEndpointReference register(final W3CEndpointReference participantProtocolService,
-        final String protocolIdentifier, final InstanceIdentifier instanceIdentifier)
+        final String protocolIdentifier, final InstanceIdentifier instanceIdentifier, final boolean isSecure)
 			throws AlreadyRegisteredException, InvalidProtocolException,
             InvalidStateException, NoActivityException
 	{
 		Object tx = _hierarchies.get(instanceIdentifier.getInstanceIdentifier());
 
 		if (tx instanceof SubordinateCoordinator)
-			return registerWithSubordinate((SubordinateCoordinator)tx, participantProtocolService, protocolIdentifier);
+			return registerWithSubordinate((SubordinateCoordinator)tx, participantProtocolService, protocolIdentifier, isSecure);
 
 		ActivityHierarchy hier = (ActivityHierarchy) tx;
 
@@ -132,7 +132,7 @@ public class RegistrarImple implements Registrar
 
 				_coordManager.suspend();
 
-				return getCoordinator(participantId) ;
+				return getCoordinator(participantId, isSecure) ;
 			}
 			catch (Exception ex)
 			{
@@ -151,7 +151,7 @@ public class RegistrarImple implements Registrar
 
 				_coordManager.suspend();
 
-				return getCoordinator(participantId) ;
+				return getCoordinator(participantId, isSecure) ;
 			}
 			catch (Exception ex)
 			{
@@ -167,7 +167,7 @@ public class RegistrarImple implements Registrar
 
 				_coordManager.suspend();
 
-				return getCompletionCoordinator(instanceIdentifier) ;
+				return getCompletionCoordinator(instanceIdentifier, isSecure) ;
 			}
 			catch (Exception ex)
 			{
@@ -221,7 +221,8 @@ public class RegistrarImple implements Registrar
 	}
 
 	private final W3CEndpointReference registerWithSubordinate(final SubordinateCoordinator theTx,
-        final W3CEndpointReference participantProtocolService, final String protocolIdentifier)
+        final W3CEndpointReference participantProtocolService, final String protocolIdentifier,
+        final boolean isSecure)
 			throws AlreadyRegisteredException, InvalidProtocolException,
 			InvalidStateException, NoActivityException
     {
@@ -235,7 +236,7 @@ public class RegistrarImple implements Registrar
                 final Durable2PCStub participantStub = new Durable2PCStub(participantId, participantProtocolService) ;
                 theTx.enlistParticipant(new DurableTwoPhaseCommitParticipant(participantStub, participantId));
 
-                return getCoordinator(participantId) ;
+                return getCoordinator(participantId, isSecure) ;
             }
             catch (Exception ex)
             {
@@ -252,7 +253,7 @@ public class RegistrarImple implements Registrar
                 final Volatile2PCStub participantStub = new Volatile2PCStub(participantId, participantProtocolService) ;
                 theTx.enlistSynchronization(new VolatileTwoPhaseCommitParticipant(participantStub)) ;
 
-                return getCoordinator(participantId) ;
+                return getCoordinator(participantId, isSecure) ;
             }
             catch (Exception ex)
             {
@@ -274,10 +275,10 @@ public class RegistrarImple implements Registrar
 		}
 	}
 
-    private W3CEndpointReference getCompletionCoordinator(final InstanceIdentifier instanceIdentifier)
+    private W3CEndpointReference getCompletionCoordinator(final InstanceIdentifier instanceIdentifier, final boolean isSecure)
     {
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-        String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_COORDINATOR_SERVICE_NAME);
+        String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_COORDINATOR_SERVICE_NAME, isSecure);
         builder.serviceName(AtomicTransactionConstants.COMPLETION_COORDINATOR_SERVICE_QNAME);
         builder.endpointName(AtomicTransactionConstants.COMPLETION_COORDINATOR_PORT_QNAME);
         builder.address(address);
@@ -285,10 +286,10 @@ public class RegistrarImple implements Registrar
         return builder.build();
     }
 
-    private W3CEndpointReference getCoordinator(final String participantId)
+    private W3CEndpointReference getCoordinator(final String participantId, final boolean isSecure)
     {
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
-        String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COORDINATOR_SERVICE_NAME);
+        String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COORDINATOR_SERVICE_NAME, isSecure);
         builder.serviceName(AtomicTransactionConstants.COORDINATOR_SERVICE_QNAME);
         builder.endpointName(AtomicTransactionConstants.COORDINATOR_PORT_QNAME);
         builder.address(address);

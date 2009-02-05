@@ -38,7 +38,8 @@ public class TransactionManagerImple extends TransactionManager
     {
 		try
 		{
-			final W3CEndpointReference coordinator = registerParticipant(getParticipant(id), AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC);
+            final W3CEndpointReference participant = getParticipant(id, isCurrentContextSecure());
+			final W3CEndpointReference coordinator = registerParticipant(participant, AtomicTransactionConstants.WSAT_SUB_PROTOCOL_DURABLE_2PC);
 
 			ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(tpp, id, coordinator), id) ;
 		}
@@ -62,7 +63,8 @@ public class TransactionManagerImple extends TransactionManager
 	{
 		try
 		{
-			final W3CEndpointReference coordinator = registerParticipant(getParticipant(id), AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC);
+            final W3CEndpointReference participant = getParticipant(id, isCurrentContextSecure());
+			final W3CEndpointReference coordinator = registerParticipant(participant, AtomicTransactionConstants.WSAT_SUB_PROTOCOL_VOLATILE_2PC);
 
 			ParticipantProcessor.getProcessor().activateParticipant(new ParticipantEngine(tpp, id, coordinator), id) ;
 		}
@@ -149,11 +151,20 @@ public class TransactionManagerImple extends TransactionManager
 		}
 	}
 
-    private W3CEndpointReference getParticipant(final String id)
+    private boolean isCurrentContextSecure()  throws SystemException
+    {
+        TxContextImple currentTx = (TxContextImple) _ctxManager.currentTransaction();
+        if (currentTx != null) {
+            return currentTx.isSecure();
+        }
+        return false;
+    }
+
+    private W3CEndpointReference getParticipant(final String id, final boolean isSecure)
     {
         final QName serviceName = AtomicTransactionConstants.PARTICIPANT_SERVICE_QNAME;
         final QName endpointName = AtomicTransactionConstants.PARTICIPANT_PORT_QNAME;
-        final String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME);
+        final String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, isSecure);
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
         builder.serviceName(serviceName);
         builder.endpointName(endpointName);

@@ -36,7 +36,8 @@ public interface Registrar
      * @throws com.arjuna.wsc.NoActivityException if the actvity does not exist
      */
     public W3CEndpointReference register(final W3CEndpointReference participantProtocolService,
-        final String protocolIdentifier, final InstanceIdentifier instanceIdentifier)
+        final String protocolIdentifier, final InstanceIdentifier instanceIdentifier,
+        final boolean isSecure)
         throws AlreadyRegisteredException, InvalidProtocolException, InvalidStateException, NoActivityException;
 
     /**

@@ -55,10 +55,18 @@ public class ParticipantCompletionParticipantInitialisation implements ServletCo
                if (bindPort == null) {
                    bindPort = "8080";
                }
+
+               if (secureBindPort == null) {
+                   secureBindPort = "8443";
+               }
+
                final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11/";
                final String uri = baseUri + BusinessActivityConstants.PARTICIPANT_COMPLETION_PARTICIPANT_SERVICE_NAME;
+               final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + "/ws-t11/";
+               final String secureUri = secureBaseUri + BusinessActivityConstants.PARTICIPANT_COMPLETION_PARTICIPANT_SERVICE_NAME;
 
                serviceRegistry.registerServiceProvider(BusinessActivityConstants.PARTICIPANT_COMPLETION_PARTICIPANT_SERVICE_NAME, uri) ;
+               serviceRegistry.registerSecureServiceProvider(BusinessActivityConstants.PARTICIPANT_COMPLETION_PARTICIPANT_SERVICE_NAME, secureUri) ;
            }
         };
     }

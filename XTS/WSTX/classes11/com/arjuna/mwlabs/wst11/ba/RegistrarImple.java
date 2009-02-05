@@ -118,7 +118,8 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
 	public W3CEndpointReference register (
 			final W3CEndpointReference participantProtocolService,
 			final String protocolIdentifier,
-			final InstanceIdentifier instanceIdentifier)
+			final InstanceIdentifier instanceIdentifier,
+            final boolean isSecure)
 			throws AlreadyRegisteredException, InvalidProtocolException,
 			InvalidStateException, NoActivityException
 	{
@@ -162,7 +163,7 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
 				return getParticipantManager(
                         BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_QNAME,
                         BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_PORT_QNAME,
-                        ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_NAME),
+                        ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_NAME, isSecure),
 						id);
 			}
 			catch (Exception ex)
@@ -189,7 +190,7 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
 					return getParticipantManager(
                             BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_QNAME,
 							BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_PORT_QNAME,
-                            ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_NAME),
+                            ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_NAME, isSecure),
 							id);
 				}
 				catch (Exception ex)
@@ -212,7 +213,7 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
                         return getParticipantManager(
                                 ArjunaTX11Constants.TERMINATION_COORDINATOR_SERVICE_QNAME,
 								ArjunaTX11Constants.TERMINATION_COORDINATOR_PORT_QNAME,
-                                ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_COORDINATOR_SERVICE_NAME),
+                                ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_COORDINATOR_SERVICE_NAME, isSecure),
                                 instanceIdentifier.getInstanceIdentifier());
 					}
 					catch (Exception ex)

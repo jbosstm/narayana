@@ -67,5 +67,5 @@ public abstract class RegistrationCoordinatorProcessor
      * @param arjunaContext The arjuna context.
      */
     public abstract RegisterResponseType register(final RegisterType register, final AddressingProperties addressingContext,
-        final ArjunaContext arjunaContext) ;
+        final ArjunaContext arjunaContext, final boolean isSecure) ;
 }

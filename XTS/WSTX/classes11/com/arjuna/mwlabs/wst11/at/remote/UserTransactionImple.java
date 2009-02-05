@@ -170,7 +170,7 @@ public class UserTransactionImple extends UserTransaction
 
             final TxContextImple txContext = (TxContextImple) tm.currentTransaction();
             final String id = txContext.identifier();
-            final W3CEndpointReference completionCoordinator = tm.enlistForCompletion(getCompletionParticipant(id));
+            final W3CEndpointReference completionCoordinator = tm.enlistForCompletion(getCompletionParticipant(id, txContext.isSecure()));
 
 			_completionCoordinators.put(id, completionCoordinator);
 		}
@@ -366,11 +366,11 @@ public class UserTransactionImple extends UserTransaction
      * @param id the current transaction context identifier
      * @return
      */
-    private W3CEndpointReference getCompletionParticipant(final String id)
+    private W3CEndpointReference getCompletionParticipant(final String id, final boolean isSecure)
     {
         final QName serviceName = AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_QNAME;
         final QName endpointName = AtomicTransactionConstants.COMPLETION_INITIATOR_PORT_QNAME;
-        final String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_NAME);
+        final String address = ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_NAME, isSecure);
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
         builder.serviceName(serviceName);
         builder.endpointName(endpointName);

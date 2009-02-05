@@ -55,10 +55,18 @@ public class CoordinatorInitialisation implements ServletContextListener
                if (bindPort == null) {
                    bindPort = "8080";
                }
+
+               if (secureBindPort == null) {
+                   secureBindPort = "8443";
+               }
+
                final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-t11/";
                final String uri = baseUri + AtomicTransactionConstants.COORDINATOR_SERVICE_NAME;
+               final String secureBaseUri = "https://" +  bindAddress + ":" + secureBindPort + "/ws-t11/";
+               final String secureUri = secureBaseUri + AtomicTransactionConstants.COORDINATOR_SERVICE_NAME;
 
                serviceRegistry.registerServiceProvider(AtomicTransactionConstants.COORDINATOR_SERVICE_NAME, uri) ;
+               serviceRegistry.registerSecureServiceProvider(AtomicTransactionConstants.COORDINATOR_SERVICE_NAME, secureUri) ;
            }
         };
     }

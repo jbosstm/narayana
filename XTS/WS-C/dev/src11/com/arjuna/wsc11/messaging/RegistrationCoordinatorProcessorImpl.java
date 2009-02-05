@@ -59,7 +59,7 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
      * @param arjunaContext The arjuna context.
      */
     public RegisterResponseType register(final RegisterType register, final AddressingProperties addressingContext,
-        final ArjunaContext arjunaContext)
+        final ArjunaContext arjunaContext, final boolean isSecure)
     {
         final com.arjuna.wsc11.RegistrarMapper registrarMapper = RegistrarMapper.getFactory() ;
         try
@@ -74,7 +74,7 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
                     final W3CEndpointReference participantProtocolService = register.getParticipantProtocolService() ;
                     final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier();
                     final W3CEndpointReference coordinationProtocolService =
-                            registrar.register(participantProtocolService, protocolIdentifier, instanceIdentifier) ;
+                            registrar.register(participantProtocolService, protocolIdentifier, instanceIdentifier, isSecure) ;
                     final RegisterResponseType response = new RegisterResponseType() ;
 
                     response.setCoordinatorProtocolService(coordinationProtocolService);

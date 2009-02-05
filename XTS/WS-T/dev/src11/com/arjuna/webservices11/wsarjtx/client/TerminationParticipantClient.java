@@ -79,6 +79,11 @@ public class TerminationParticipantClient
     private EndpointReference terminationCoordinator ;
 
     /**
+     * The participant URI for securereplies.
+     */
+    private EndpointReference secureTerminationCoordinator ;
+
+    /**
      * Construct the terminator coordinator client.
      */
     private TerminationParticipantClient()
@@ -100,10 +105,18 @@ public class TerminationParticipantClient
         // Add client policies
         // ClientPolicy.register(handlerRegistry) ;
         final String terminationCoordinatorURIString =
-            ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_COORDINATOR_SERVICE_NAME);
+            ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_COORDINATOR_SERVICE_NAME, false);
+        final String secureTerminationCoordinatorURIString =
+            ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_COORDINATOR_SERVICE_NAME, true);
         try {
             URI terminationCoordinatorURI = new URI(terminationCoordinatorURIString);
             terminationCoordinator = builder.newEndpointReference(terminationCoordinatorURI);
+        } catch (URISyntaxException use) {
+            // TODO - log fault and throw exception
+        }
+        try {
+            URI secureTerminationCoordinatorURI = new URI(secureTerminationCoordinatorURIString);
+            secureTerminationCoordinator = builder.newEndpointReference(secureTerminationCoordinatorURI);
         } catch (URISyntaxException use) {
             // TODO - log fault and throw exception
         }
@@ -119,7 +132,8 @@ public class TerminationParticipantClient
     public void sendCompleted(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromFaultTo(addressingProperties, terminationCoordinator, identifier);
+        EndpointReference coordinator = getCoordinator(participant);
+        AddressingHelper.installFromFaultTo(addressingProperties, coordinator, identifier);
         final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, completedAction);
         final NotificationType completed = new NotificationType();
 
@@ -136,7 +150,8 @@ public class TerminationParticipantClient
     public void sendClosed(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromFaultTo(addressingProperties, terminationCoordinator, identifier);
+        EndpointReference coordinator = getCoordinator(participant);
+        AddressingHelper.installFromFaultTo(addressingProperties, coordinator, identifier);
         final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, closedAction);
         final NotificationType closed = new NotificationType();
 
@@ -153,7 +168,8 @@ public class TerminationParticipantClient
     public void sendCancelled(final W3CEndpointReference participant,final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromFaultTo(addressingProperties, terminationCoordinator, identifier);
+        EndpointReference coordinator = getCoordinator(participant);
+        AddressingHelper.installFromFaultTo(addressingProperties, coordinator, identifier);
         final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, cancelledAction);
         final NotificationType cancelled = new NotificationType();
 
@@ -170,7 +186,8 @@ public class TerminationParticipantClient
     public void sendFaulted(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromFaultTo(addressingProperties, terminationCoordinator, identifier);
+        EndpointReference coordinator = getCoordinator(participant);
+        AddressingHelper.installFromFaultTo(addressingProperties, coordinator, identifier);
         final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, faultedAction);
         final NotificationType faulted = new NotificationType();
 
@@ -179,19 +196,19 @@ public class TerminationParticipantClient
 
     /**
      * Send a fault.
-     * @param participant the endpoint reference for the participant to notify
+     * @param endpoint the endpoint reference to notify
      * @param addressingProperties The addressing context.
      * @param soapFault The SOAP fault.
      * @param identifier The arjuna  instance identifier.
      * @throws com.arjuna.webservices.SoapFault For any errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendSoapFault(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final SoapFault soapFault, final InstanceIdentifier identifier)
+    public void sendSoapFault(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final SoapFault soapFault, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
         //AddressingHelper.installFrom(addressingProperties, terminationCoordinator, identifier);
         AddressingHelper.installNoneReplyTo(addressingProperties);
-        final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, soapFaultAction);
+        final TerminationParticipantPortType port = getPort(endpoint, addressingProperties, identifier, soapFaultAction);
         final ExceptionType fault = new ExceptionType();
         // we pass the fault type, reason and subcode. we cannot pass the detail and header elements as they are
         // built from Kev's element types rather than dom element types. this is all we need anyway since we only
@@ -224,6 +241,21 @@ public class TerminationParticipantClient
         fault.setSubCode(soapFault.getSubcode());
 
         port.faultOperation(fault);
+    }
+
+    /**
+     * return a coordinator endpoint appropriate to the type of participant
+     * @param participant
+     * @return either the secure terminaton participant endpoint or the non-secure endpoint
+     */
+    EndpointReference getCoordinator(W3CEndpointReference participant)
+    {
+        String address = participant.getAddress();
+        if (address.startsWith("https")) {
+            return secureTerminationCoordinator;
+        } else {
+            return terminationCoordinator;
+        }
     }
 
     /**

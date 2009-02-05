@@ -74,10 +74,11 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
     {
         final QName service = BusinessActivityConstants.PARTICIPANT_COMPLETION_PARTICIPANT_SERVICE_QNAME;
         final QName endpoint = BusinessActivityConstants.PARTICIPANT_COMPLETION_PARTICIPANT_PORT_QNAME;
-        final String address = ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.PARTICIPANT_COMPLETION_PARTICIPANT_SERVICE_NAME);
-        final W3CEndpointReference participant = getParticipant(service, endpoint, address, id) ;
-    	try
-    	{
+        try
+        {
+            boolean isSecure = ((TxContextImple)currentTransaction()).isSecure();
+            final String address = ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.PARTICIPANT_COMPLETION_PARTICIPANT_SERVICE_NAME, isSecure);
+            final W3CEndpointReference participant = getParticipant(service, endpoint, address, id) ;
             W3CEndpointReference baPMEndpoint = registerParticipant(participant, BusinessActivityConstants.WSBA_SUB_PROTOCOL_PARTICIPANT_COMPLETION);
             final ParticipantCompletionParticipantEngine engine = new ParticipantCompletionParticipantEngine(id, baPMEndpoint, bap) ;
             ParticipantCompletionParticipantProcessor.getProcessor().activateParticipant(engine, id) ;
@@ -108,10 +109,11 @@ public class BusinessActivityManagerImple extends BusinessActivityManager
     {
         final QName service = BusinessActivityConstants.COORDINATOR_COMPLETION_PARTICIPANT_SERVICE_QNAME;
         final QName endpoint = BusinessActivityConstants.COORDINATOR_COMPLETION_PARTICIPANT_PORT_QNAME;
-        final String address = ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.COORDINATOR_COMPLETION_PARTICIPANT_SERVICE_NAME);
-        final W3CEndpointReference participant = getParticipant(service, endpoint, address, id) ;
-    	try
-    	{
+        boolean isSecure = ((TxContextImple)currentTransaction()).isSecure();
+        try
+        {
+            final String address = ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.COORDINATOR_COMPLETION_PARTICIPANT_SERVICE_NAME, isSecure);
+            final W3CEndpointReference participant = getParticipant(service, endpoint, address, id) ;
     	    W3CEndpointReference baPMEndpoint = registerParticipant(participant, BusinessActivityConstants.WSBA_SUB_PROTOCOL_COORDINATOR_COMPLETION);
             final CoordinatorCompletionParticipantEngine engine = new CoordinatorCompletionParticipantEngine(id, baPMEndpoint, bawcp) ;
             CoordinatorCompletionParticipantProcessor.getProcessor().activateParticipant(engine, id) ;

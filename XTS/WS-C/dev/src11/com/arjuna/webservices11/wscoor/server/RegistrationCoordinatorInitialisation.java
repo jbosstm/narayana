@@ -56,10 +56,18 @@ public class RegistrationCoordinatorInitialisation implements ServletContextList
                if (bindPort == null) {
                    bindPort = "8080";
                }
+
+               if (secureBindPort == null) {
+                   secureBindPort = "8443";
+               }
+
                final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-c11/";
                final String uri = baseUri + "RegistrationService";
+               final String secureBaseUri = "https://" + bindAddress + ":" + secureBindPort + "/ws-c11/";
+               final String secureUri = secureBaseUri + "RegistrationService";
 
                serviceRegistry.registerServiceProvider(CoordinationConstants.REGISTRATION_SERVICE_NAME, uri) ;
+               serviceRegistry.registerSecureServiceProvider(CoordinationConstants.REGISTRATION_SERVICE_NAME, secureUri); ;
            }
         };
     }

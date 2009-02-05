@@ -312,7 +312,7 @@ public class UserBusinessActivityImple extends UserBusinessActivity
         try
         {
             return RegistrationCoordinator.register(coordinationContext, messageId,
-                getParticipantProtocolService(ctx.identifier()), com.arjuna.webservices.wsarjtx.ArjunaTXConstants.WSARJTX_PROTOCOL_TERMINATION) ;
+                getParticipantProtocolService(ctx.identifier(), ctx.isSecure()), com.arjuna.webservices.wsarjtx.ArjunaTXConstants.WSARJTX_PROTOCOL_TERMINATION) ;
         }
         catch (final Throwable th)
         {
@@ -320,13 +320,13 @@ public class UserBusinessActivityImple extends UserBusinessActivity
         }
     }
 
-    private W3CEndpointReference getParticipantProtocolService(final String id)
+    private W3CEndpointReference getParticipantProtocolService(final String id, boolean isSecure)
     {
         // final SoapRegistry soapRegistry = SoapRegistry.getRegistry() ;
         // final String serviceURI = soapRegistry.getServiceURI(ArjunaTX11Constants.SERVICE_TERMINATION_PARTICIPANT) ;
         final QName serviceId = ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_QNAME;
         final QName endpointId = ArjunaTX11Constants.TERMINATION_PARTICIPANT_PORT_QNAME;
-        final String address = ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME);
+        final String address = ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_PARTICIPANT_SERVICE_NAME, isSecure);
         W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
         builder.serviceName(serviceId);
         builder.endpointName(endpointId);

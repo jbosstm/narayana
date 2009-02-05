@@ -95,6 +95,11 @@ public class ParticipantCompletionCoordinatorClient
     private EndpointReference participantCompletionParticipant = null;
 
     /**
+     * The participant completion participant URI for secure replies.
+     */
+    private EndpointReference secureParticipantCompletionParticipant = null;
+
+    /**
      * Construct the participant completion coordinator client.
      */
     private ParticipantCompletionCoordinatorClient()
@@ -121,10 +126,18 @@ public class ParticipantCompletionCoordinatorClient
         // ClientPolicy.register(handlerRegistry) ;
 
         final String participantCompletionParticipantURIString =
-            ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.PARTICIPANT_COMPLETION_PARTICIPANT_SERVICE_NAME) ;
+            ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.PARTICIPANT_COMPLETION_PARTICIPANT_SERVICE_NAME, false) ;
+        final String secureParticipantCompletionParticipantURIString =
+            ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.PARTICIPANT_COMPLETION_PARTICIPANT_SERVICE_NAME, true) ;
         try {
             URI participantCompletionParticipantURI = new URI(participantCompletionParticipantURIString) ;
             participantCompletionParticipant = builder.newEndpointReference(participantCompletionParticipantURI);
+        } catch (URISyntaxException use) {
+            // TODO - log fault and throw exception
+        }
+        try {
+            URI secureParticipantCompletionParticipantURI = new URI(secureParticipantCompletionParticipantURIString) ;
+            secureParticipantCompletionParticipant = builder.newEndpointReference(secureParticipantCompletionParticipantURI);
         } catch (URISyntaxException use) {
             // TODO - log fault and throw exception
         }
@@ -140,7 +153,8 @@ public class ParticipantCompletionCoordinatorClient
     public void sendCompleted(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromFaultTo(addressingProperties, participantCompletionParticipant, identifier);
+        EndpointReference participant = getParticipant(endpoint);
+        AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, completedAction);
         NotificationType completed = new NotificationType();
@@ -159,7 +173,8 @@ public class ParticipantCompletionCoordinatorClient
         final QName exceptionIdentifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromFaultTo(addressingProperties, participantCompletionParticipant, identifier);
+        EndpointReference participant = getParticipant(endpoint);
+        AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, failAction);
         ExceptionType fail = new ExceptionType();
@@ -178,7 +193,8 @@ public class ParticipantCompletionCoordinatorClient
     public void sendCompensated(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFaultTo(addressingProperties, participantCompletionParticipant, identifier);
+        EndpointReference participant = getParticipant(endpoint);
+        AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, compensatedAction);
         NotificationType compensated = new NotificationType();
@@ -196,7 +212,8 @@ public class ParticipantCompletionCoordinatorClient
     public void sendClosed(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFaultTo(addressingProperties, participantCompletionParticipant, identifier);
+        EndpointReference participant = getParticipant(endpoint);
+        AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, closedAction);
         NotificationType closed = new NotificationType();
@@ -214,7 +231,8 @@ public class ParticipantCompletionCoordinatorClient
     public void sendCancelled(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFaultTo(addressingProperties, participantCompletionParticipant, identifier);
+        EndpointReference participant = getParticipant(endpoint);
+        AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, cancelledAction);
         NotificationType cancelled = new NotificationType();
@@ -232,7 +250,8 @@ public class ParticipantCompletionCoordinatorClient
     public void sendExit(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromFaultTo(addressingProperties, participantCompletionParticipant, identifier);
+        EndpointReference participant = getParticipant(endpoint);
+        AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, exitAction);
         NotificationType exit = new NotificationType();
@@ -250,7 +269,8 @@ public class ParticipantCompletionCoordinatorClient
     public void sendCannotComplete(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromFaultTo(addressingProperties, participantCompletionParticipant, identifier);
+        EndpointReference participant = getParticipant(endpoint);
+        AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, cannotCompleteAction);
         NotificationType cannotComplete = new NotificationType();
@@ -268,7 +288,8 @@ public class ParticipantCompletionCoordinatorClient
     public void sendGetStatus(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromFaultTo(addressingProperties, participantCompletionParticipant, identifier);
+        EndpointReference participant = getParticipant(endpoint);
+        AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, getStatusAction);
         NotificationType getStatus = new NotificationType();
@@ -287,13 +308,29 @@ public class ParticipantCompletionCoordinatorClient
         final QName state)
         throws SoapFault, IOException
     {
-        AddressingHelper.installFromFaultTo(addressingProperties, participantCompletionParticipant, identifier);
+        EndpointReference participant = getParticipant(endpoint);
+        AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithParticipantCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, statusAction);
         StatusType status = new StatusType();
         status.setState(state);
 
         port.statusOperation(status);
+    }
+
+    /**
+     * return a participant endpoint appropriate to the type of coordinator
+     * @param endpoint
+     * @return either the secure participant endpoint or the non-secure endpoint
+     */
+    EndpointReference getParticipant(W3CEndpointReference endpoint)
+    {
+        String address = endpoint.getAddress();
+        if (address.startsWith("https")) {
+            return secureParticipantCompletionParticipant;
+        } else {
+            return participantCompletionParticipant;
+        }
     }
 
     /**

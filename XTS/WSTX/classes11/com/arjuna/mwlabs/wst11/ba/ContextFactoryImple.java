@@ -105,7 +105,7 @@ public class ContextFactoryImple implements ContextFactory
      */
 
     public CoordinationContext create (final String coordinationTypeURI,
-            final Long expires, final CoordinationContextType currentContext)
+            final Long expires, final CoordinationContextType currentContext, final boolean isSecure)
         throws InvalidCreateParametersException
     {
         if (BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME.equals(coordinationTypeURI))
@@ -131,7 +131,7 @@ public class ContextFactoryImple implements ContextFactory
 
             final ArjunaContextImple arjunaContext = ArjunaContextImple.getContext() ;
             final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
-            final String registrationCoordinatorURI = serviceRegistry.getServiceURI(CoordinationConstants.REGISTRATION_SERVICE_NAME) ;
+            final String registrationCoordinatorURI = serviceRegistry.getServiceURI(CoordinationConstants.REGISTRATION_SERVICE_NAME, isSecure) ;
 
             final CoordinationContext coordinationContext = new CoordinationContext() ;
             coordinationContext.setCoordinationType(coordinationTypeURI) ;

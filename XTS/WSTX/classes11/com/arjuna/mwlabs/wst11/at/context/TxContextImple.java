@@ -91,6 +91,16 @@ public class TxContextImple implements TxContext
 		return _context.toString();
 	}
 
+    public boolean isSecure()
+    {
+        if (valid()) {
+            CoordinationContextType coordinationContextType = _context.getCoordinationContext();
+            String address = coordinationContextType.getRegistrationService().getAddress();
+            return address.startsWith("https");
+        }
+        return false;
+    }
+
 	private Context _context;
 
 }

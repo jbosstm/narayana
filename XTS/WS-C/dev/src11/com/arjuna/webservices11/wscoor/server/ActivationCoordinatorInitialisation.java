@@ -43,9 +43,6 @@ public class ActivationCoordinatorInitialisation implements ServletContextListen
     {
         Sequencer.Callback callback = new Sequencer.Callback(Sequencer.SEQUENCE_WSCOOR11, Sequencer.WEBAPP_WSC11) {
            public void run() {
-               // TODO if we rely upon JaxWS to automatically publish implementation classes it will only
-               // do so under a URL based on service name. which means we cannot define a service using
-               // multiple port bindings because thsi causes a namespace clash
                final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
                String bindAddress = System.getProperty(Environment.XTS_BIND_ADDRESS);
                String bindPort = System.getProperty(Environment.XTS_BIND_PORT);
@@ -58,10 +55,18 @@ public class ActivationCoordinatorInitialisation implements ServletContextListen
                if (bindPort == null) {
                    bindPort = "8080";
                }
+
+               if (secureBindPort == null) {
+                   secureBindPort = "8443";
+               }
+
                final String baseUri = "http://" +  bindAddress + ":" + bindPort + "/ws-c11/";
                final String uri = baseUri + "ActivationService";
+               final String secureBaseUri = "https://" + bindAddress + ":" + secureBindPort + "/ws-c11/";
+               final String secureUri = secureBaseUri + "ActivationService";
 
                serviceRegistry.registerServiceProvider(CoordinationConstants.ACTIVATION_SERVICE_NAME, uri) ;
+               serviceRegistry.registerSecureServiceProvider(CoordinationConstants.ACTIVATION_SERVICE_NAME, secureUri) ;
            }
         };
     }

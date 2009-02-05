@@ -153,7 +153,12 @@ public class XTSService implements XTSServiceMBean {
         // so we convert it here, then XTS internally convert it back later. sigh.
         // likewise for ints to Strings for hte port numbers.
 
-        String bindAddress = httpBindInetAddress.getHostAddress();
+        String bindAddress = httpBindInetAddress.getHostName();
+
+        if (bindAddress == null || "".equals(bindAddress)) {
+            // use the ip address instead of the name
+            bindAddress= httpBindInetAddress.getHostAddress();
+        }
 
         System.setProperty(com.arjuna.wsc.common.Environment.XTS_BIND_ADDRESS, bindAddress);
         System.setProperty(com.arjuna.wsc11.common.Environment.XTS_BIND_ADDRESS, bindAddress);
@@ -176,22 +181,30 @@ public class XTSService implements XTSServiceMBean {
 
         if (System.getProperty(com.arjuna.wsc.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL) == null) {
             String coordinatorURL = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_URL);
+            String coordinatorScheme = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_SCHEME);
             String coordinatorHost = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_HOST);
             String coordinatorPort = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_PORT);
             String coordinatorPath = System.getProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_PATH);
             if (coordinatorURL != null) {
                 System.setProperty(com.arjuna.wsc.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
-            } else if (coordinatorHost != null || coordinatorPort != null || coordinatorPath != null) {
+            } else if (coordinatorScheme != null || coordinatorHost != null || coordinatorPort != null || coordinatorPath != null) {
+                if (coordinatorScheme == null) {
+                    coordinatorScheme = "http";
+                }
                 if (coordinatorHost == null) {
                     coordinatorHost = (bindAddress != null ? bindAddress : "127.0.0.1");
                 }
                 if (coordinatorPort == null) {
-                    coordinatorPort = (httpPort != 0 ? ""+httpPort : "8080");
+                    if ("https".equals(coordinatorScheme)) {
+                        coordinatorPort = (httpsPort != 0 ? ""+httpsPort : "8443");
+                    } else {
+                        coordinatorPort = (httpPort != 0 ? ""+httpPort : "8080");
+                    }
                 }
                 if (coordinatorPath == null) {
                     coordinatorPath = "ws-c10/soap/ActivationCoordinator";
                 }
-                coordinatorURL = "http://" + coordinatorHost + ":" + coordinatorPort + "/" + coordinatorPath;
+                coordinatorURL = coordinatorScheme + "://" + coordinatorHost + ":" + coordinatorPort + "/" + coordinatorPath;
                 System.setProperty(com.arjuna.wsc.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
                 System.setProperty(com.arjuna.mw.wst.common.Environment.COORDINATOR_URL, coordinatorURL);
             }
@@ -201,22 +214,30 @@ public class XTSService implements XTSServiceMBean {
 
         if (System.getProperty(com.arjuna.wsc11.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL) == null) {
             String coordinatorURL = System.getProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_URL);
+            String coordinatorScheme = System.getProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_SCHEME);
             String coordinatorHost = System.getProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_HOST);
             String coordinatorPort = System.getProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_PORT);
             String coordinatorPath = System.getProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_PATH);
             if (coordinatorURL != null) {
                 System.setProperty(com.arjuna.wsc11.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
-            } else if (coordinatorHost != null || coordinatorPort != null || coordinatorPath != null) {
+            } else if (coordinatorScheme != null || coordinatorHost != null || coordinatorPort != null || coordinatorPath != null) {
+                if (coordinatorScheme == null) {
+                    coordinatorScheme = "http";
+                }
                 if (coordinatorHost == null) {
                     coordinatorHost = (bindAddress != null ? bindAddress : "127.0.0.1");
                 }
                 if (coordinatorPort == null) {
-                    coordinatorPort = (httpPort != 0 ? ""+httpPort : "8080");
+                    if ("https".equals(coordinatorScheme)) {
+                        coordinatorPort = (httpsPort != 0 ? ""+httpsPort : "8443");
+                    } else {
+                        coordinatorPort = (httpPort != 0 ? ""+httpPort : "8080");
+                    }
                 }
                 if (coordinatorPath == null) {
                     coordinatorPath = "ws-c11/ActivationService";
                 }
-                coordinatorURL = "http://" + coordinatorHost + ":" + coordinatorPort + "/" + coordinatorPath;
+                coordinatorURL = coordinatorScheme + "://" + coordinatorHost + ":" + coordinatorPort + "/" + coordinatorPath;
                 System.setProperty(com.arjuna.wsc11.common.Environment.XTS_COMMAND_LINE_COORDINATOR_URL, coordinatorURL);
                 System.setProperty(com.arjuna.mw.wst11.common.Environment.COORDINATOR_URL, coordinatorURL);
             }
