@@ -51,7 +51,7 @@
         <attribute name="serverUrl" />
         <attribute name="outfile" />
         <sequential>
-            <junit printsummary="yes" haltonfailure="yes" fork="true" dir="." maxmemory="256m" showoutput="yes">
+            <junit printsummary="yes" haltonfailure="no" fork="true" dir="." maxmemory="256m" showoutput="yes">
                 <classpath>
                     <path refid="tests.classpath"/>
                 </classpath>
