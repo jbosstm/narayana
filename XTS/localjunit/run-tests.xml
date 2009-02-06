@@ -22,8 +22,8 @@
 <project name="Local JUnit Test for basic XTS testsuite" default="run" basedir=".">
 
     <property environment="env"/>
-    <!--property name="server.hostname" value="${env.MYTESTIP_1}"/-->
-    <property name="server.hostname" value="localhost"/>
+    <property name="server.hostname" value="${env.MYTESTIP_1}"/>
+    <!--property name="server.hostname" value="localhost"/-->
     <property name="base.url" value="http://${server.hostname}:8080"/>
     <property name="reports.dir" value="reports"/>
 
