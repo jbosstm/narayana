@@ -32,9 +32,19 @@
         <listener-class>com.arjuna.wscf.tests.TestInitialisation</listener-class>
     </listener>
     
- <servlet>
+    <servlet>
         <servlet-name>JUnit Tests Servlet</servlet-name>
         <servlet-class>com.arjuna.qa.junit.WSCFTestRunnerServlet</servlet-class>
+        <init-param>
+            <param-name>TestSuiteClassName</param-name>
+            <param-value>com.arjuna.wscf.tests.WSCFTestSuite</param-value>
+        </init-param>
+        <load-on-startup>4</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>JUnit Tests XML Servlet</servlet-name>
+        <servlet-class>com.arjuna.qa.junit.WSCFTestRunnerXMLServlet</servlet-class>
         <init-param>
             <param-name>TestSuiteClassName</param-name>
             <param-value>com.arjuna.wscf.tests.WSCFTestSuite</param-value>
@@ -46,6 +56,11 @@
     <servlet-mapping>
         <servlet-name>JUnit Tests Servlet</servlet-name>
         <url-pattern>/index.html</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>JUnit Tests XML Servlet</servlet-name>
+        <url-pattern>/index.xml</url-pattern>
     </servlet-mapping>
     
     <welcome-file-list>

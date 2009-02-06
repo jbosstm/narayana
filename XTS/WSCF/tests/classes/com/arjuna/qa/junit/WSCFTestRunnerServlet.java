@@ -26,11 +26,23 @@
 
 package com.arjuna.qa.junit;
 
-import java.io.*;
-import java.util.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import junit.framework.*;
+import junit.framework.AssertionFailedError;
+import junit.framework.Test;
+import junit.framework.TestListener;
+import junit.framework.TestResult;
+import junit.framework.TestSuite;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.CharArrayWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 public class WSCFTestRunnerServlet extends HttpServlet
 {
@@ -41,6 +53,11 @@ public class WSCFTestRunnerServlet extends HttpServlet
         _testSuiteClassName = config.getInitParameter("TestSuiteClassName");
     }
 
+   protected String getContentType()
+   {
+       return "text/html";
+   }
+
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
@@ -48,7 +65,7 @@ public class WSCFTestRunnerServlet extends HttpServlet
         {
             PrintWriter writer = response.getWriter();
 
-            response.setContentType("text/html");
+            response.setContentType(getContentType());
             response.setHeader("Cache-Control", "no-cache");
 
             if (request.getParameter("failednumber") != null)
@@ -79,7 +96,7 @@ public class WSCFTestRunnerServlet extends HttpServlet
         {
             PrintWriter writer = response.getWriter();
 
-            response.setContentType("text/html");
+            response.setContentType(getContentType());
             response.setHeader("Cache-Control", "no-cache");
 
 	    if ((_runnerThread == null) || (! _runnerThread.isAlive()))
@@ -462,27 +479,27 @@ public class WSCFTestRunnerServlet extends HttpServlet
             doStatus(writer, request, response);
     }
 
-    private class PassedTest
+    protected class PassedTest
     {
         public Test test;
         public long duration;
     }
 
-    private class FailedTest
+    protected class FailedTest
     {
         public Test                 test;
         public long                 duration;
         public AssertionFailedError assertionFailedError;
     }
 
-    private class ErrorTest
+    protected class ErrorTest
     {
         public Test      test;
         public long      duration;
 	public Throwable throwable;
     }
 
-    private class RunnerThread extends Thread
+    protected class RunnerThread extends Thread
     {
         public void run()
         {
@@ -513,7 +530,7 @@ public class WSCFTestRunnerServlet extends HttpServlet
         }
     }
 
-    private class BasicTestListener implements TestListener
+    protected class BasicTestListener implements TestListener
     {
         public void startTest(Test test)
         {
@@ -595,13 +612,13 @@ public class WSCFTestRunnerServlet extends HttpServlet
             writer.print("null");
     }
 
-    private List         _passedTests        = new LinkedList();
-    private List         _failedTests        = new LinkedList();
-    private List         _errorTests         = new LinkedList();
-    private Test         _currentTest        = null;
-    private String       _testSuiteClassName = null;
-    private RunnerThread _runnerThread       = null;
-    private TestResult   _testResult         = null;
+    protected List         _passedTests        = new LinkedList();
+    protected List         _failedTests        = new LinkedList();
+    protected List         _errorTests         = new LinkedList();
+    protected Test         _currentTest        = null;
+    protected String       _testSuiteClassName = null;
+    protected RunnerThread _runnerThread       = null;
+    protected TestResult   _testResult         = null;
     private TestSuite    _testSuite          = null;
 
 }

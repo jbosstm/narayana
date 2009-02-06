@@ -101,6 +101,7 @@
             jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
             jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar"/>
     <property name="jboss.common.lib.jars" value="servlet-api.jar"/>
+    <property name="jboss.lib.jars" value="dom4j.jar"/>
 
     <property name="wsas.libs" value="wsas.jar"/>
     <property name="wsc.libs" value="ws-c.jar"/>
@@ -132,6 +133,7 @@
 
     <path id="com.arjuna.mwlabs.wstx.tests.lib.path">
         <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
+	<fileset dir="${jboss.lib.dir}" includes="${jboss.lib.jars}"/>
     </path>
 
     <!-- Define classpath builder task -->

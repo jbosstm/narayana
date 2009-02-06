@@ -84,6 +84,7 @@
             jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
             jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar"/>
     <property name="jboss.common.lib.jars" value="servlet-api.jar"/>
+    <property name="jboss.lib.jars" value="dom4j.jar"/>
 
     <property name="tests.libs" value="junit.jar"/>
 
@@ -95,6 +96,7 @@
         <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
         <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
         <fileset dir="${jboss.common.lib.dir}" includes="${jboss.common.lib.jars}"/>
+        <fileset dir="${jboss.lib.dir}" includes="${jboss.lib.jars}"/>
     </path>
 
     <path id="tests.lib.path">
