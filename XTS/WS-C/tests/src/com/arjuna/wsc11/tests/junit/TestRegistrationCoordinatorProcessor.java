@@ -44,7 +44,7 @@ public class TestRegistrationCoordinatorProcessor extends
 {
     private Map messageIdMap = new HashMap() ;
 
-    public RegisterResponseType register(final RegisterType register, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public RegisterResponseType register(final RegisterType register, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext, boolean isSecure)
     {
         final String messageId = addressingProperties.getMessageID().getURI().toString() ;
         synchronized(messageIdMap)

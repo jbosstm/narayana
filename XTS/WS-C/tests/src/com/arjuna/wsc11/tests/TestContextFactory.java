@@ -54,7 +54,7 @@ public class TestContextFactory implements ContextFactory
     }
 
     public CoordinationContext create(final String coordinationTypeURI,
-        final Long expires, final CoordinationContextType currentContext)
+        final Long expires, final CoordinationContextType currentContext, boolean isSecure)
         throws InvalidCreateParametersException
     {
         if (coordinationTypeURI.equals(TestUtil.INVALID_CREATE_PARAMETERS_COORDINATION_TYPE)) {

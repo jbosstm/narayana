@@ -52,7 +52,7 @@ public class TestActivationCoordinatorProcessor extends
     private Map messageIdMap = new HashMap() ;
 
     public CreateCoordinationContextResponseType createCoordinationContext(final CreateCoordinationContextType createCoordinationContext,
-        final AddressingProperties addressingProperties)
+        final AddressingProperties addressingProperties, boolean isSecure)
     {
         final String messageId = addressingProperties.getMessageID().getURI().toString() ;
         synchronized(messageIdMap)

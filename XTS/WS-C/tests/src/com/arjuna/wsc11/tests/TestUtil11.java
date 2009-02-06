@@ -44,8 +44,10 @@ public class TestUtil11
     final private static String PROTOCOL_COORDINATOR_ENDPOINT_NAME ="ProtocolCoordinatorEndpoint";
     final private static String PROTOCOL_COORDINATOR_SERVICE_NAME ="ProtocolCoordinatorService";
 
-    final public static String activationCoordinatorService = "http://localhost:8080/ws-c11/ActivationService";
-    final public static String registrationCoordinatorService = "http://localhost:8080/ws-c11/RegistrationService";
+    final private static String bindHost = System.getProperty(com.arjuna.wsc11.common.Environment.XTS_BIND_ADDRESS);
+
+    final public static String activationCoordinatorService = "http://" + bindHost + ":8080/ws-c11/ActivationService";
+    final public static String registrationCoordinatorService = "http://" + bindHost + ":8080/ws-c11/RegistrationService";
 
     final public static QName PROTOCOL_PARTICIPANT_SERVICE_QNAME = new QName(NAMESPACE, PROTOCOL_PARTICIPANT_SERVICE_NAME, TAG);
     final public static QName PROTOCOL_PARTICIPANT_ENDPOINT_QNAME = new QName(NAMESPACE, PROTOCOL_PARTICIPANT_ENDPOINT_NAME, TAG);

@@ -61,17 +61,19 @@ public class TestUtil
 
     public static final String NONEXISTENT_PARTICIPANT_IDENTIFIER                    = "NONE123456PI";
 
-    public static String participantServiceURI = "http://127.0.0.1:8080/ws-t11/ParticipantService";
-    public static String coordinatorServiceURI = "http://127.0.0.1:8080/ws-t11/CoordinatorService";
-    public static String completionInitiatorServiceURI = "http://127.0.0.1:8080/ws-t11/CompletionInitiatorService";
-    public static String completionCoordinatorServiceURI = "http://127.0.0.1:8080/ws-t11/CompletionCoordinatorService";
+    final private static String bindHost = System.getProperty(com.arjuna.wsc11.common.Environment.XTS_BIND_ADDRESS);
+
+    public static String participantServiceURI = "http://" + bindHost + ":8080/ws-t11/ParticipantService";
+    public static String coordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11/CoordinatorService";
+    public static String completionInitiatorServiceURI = "http://" + bindHost + ":8080/ws-t11/CompletionInitiatorService";
+    public static String completionCoordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11/CompletionCoordinatorService";
     private static AttributedURI atomicTransactionFaultAction = null;
     private static AttributedURI businessActivityFaultAction = null;
 
-    public static String participantCompletionParticipantServiceURI = "http://127.0.0.1:8080/ws-t11/BusinessAgreementWithParticipantCompletionParticipantService";
-    public static String participantCompletionCoordinatorServiceURI = "http://127.0.0.1:8080/ws-t11/BusinessAgreementWithParticipantCompletionCoordinatorService";
-    public static String coordinatorCompletionParticipantServiceURI = "http://127.0.0.1:8080/ws-t11/BusinessAgreementWithCoordinatorCompletionParticipantService";
-    public static String coordinatorCompletionCoordinatorServiceURI = "http://127.0.0.1:8080/ws-t11/BusinessAgreementWithCoordinatorCompletionCoordinatorService";
+    public static String participantCompletionParticipantServiceURI = "http://" + bindHost + ":8080/ws-t11/BusinessAgreementWithParticipantCompletionParticipantService";
+    public static String participantCompletionCoordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11/BusinessAgreementWithParticipantCompletionCoordinatorService";
+    public static String coordinatorCompletionParticipantServiceURI = "http://" + bindHost + ":8080/ws-t11/BusinessAgreementWithCoordinatorCompletionParticipantService";
+    public static String coordinatorCompletionCoordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11/BusinessAgreementWithCoordinatorCompletionCoordinatorService";
 
     public static synchronized AttributedURI getAtomicTransactionFaultAction()
     {

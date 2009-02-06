@@ -42,7 +42,7 @@ public class TestRegistrar implements Registrar
     {
     }
 
-    public W3CEndpointReference register(W3CEndpointReference participantProtocolService, String protocolIdentifier, InstanceIdentifier instanceIdentifier)
+    public W3CEndpointReference register(W3CEndpointReference participantProtocolService, String protocolIdentifier, InstanceIdentifier instanceIdentifier, boolean isSecure)
         throws AlreadyRegisteredException, InvalidProtocolException, InvalidStateException, NoActivityException
     {
         if (protocolIdentifier.equals(TestUtil.ALREADY_REGISTERED_PROTOCOL_IDENTIFIER))
