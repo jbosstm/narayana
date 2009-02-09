@@ -34,7 +34,6 @@ package com.arjuna.ats.internal.arjuna.objectstore;
 import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -43,13 +42,16 @@ import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.gandiva.ObjectName;
 import com.arjuna.ats.arjuna.utils.FileLock;
-import java.io.*;
+import com.arjuna.ats.arjuna.utils.Utility;
+
 import java.util.Hashtable;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import java.lang.NumberFormatException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 
 import com.arjuna.common.util.logging.*;
 
@@ -73,6 +75,7 @@ import com.arjuna.common.util.logging.*;
  * @message com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_6 [com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_6] - FileSystemStore::setupStore - error from unpack object store.
  * @message com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_7 [com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_7] - FileSystemStore::allTypes - could not pack entry string.
  * @message com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_8 [com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_8] - FileSystemStore::createHierarchy - null directory name.
+ * @message com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_20 [com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_20] - FileSystemStore.renameFromTo - from {0} not present. Possibly renamed by crash recovery.
  */
 
 public abstract class FileSystemStore extends ObjectStoreImple
@@ -467,6 +470,160 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	return fileLock.unlock();
     }
     
+    /**
+     * Unlock and close the file. Note that if the unlock fails we set
+     * the return value to false to indicate an error but rely on the
+     * close to really do the unlock.
+     */
+
+    protected boolean closeAndUnlock (File fd, FileInputStream ifile, FileOutputStream ofile)
+    {
+        if (tsLogger.arjLogger.debugAllowed())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
+                                     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.closeAndUnlock("+fd+", "+ifile+", "+ofile+")");
+        }
+        
+        boolean closedOk = unlock(fd);
+
+        try
+        {
+            if (ifile != null)
+                ifile.close();
+            else
+                ofile.close();
+        }
+        catch (Exception e)
+        {
+            closedOk = false;
+        }
+
+        return closedOk;
+    }
+
+    protected File openAndLock (String fname, int lmode, boolean create) throws ObjectStoreException
+    {
+        if (tsLogger.arjLogger.debugAllowed())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
+                                     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.openAndLock("+fname+", "+FileLock.modeString(lmode)+", "+create+")");
+        }
+        
+        //      File fd = (File) FdCache(fname);
+        File fd = null;
+        
+        if (fd == null)
+        {
+            fd = new File(fname);
+
+            if (!fd.exists())
+            {
+                if (createHierarchy(fname))
+                {
+                    if (!lock(fd, lmode, create))
+                    {
+                        return null;
+                    }
+                    else
+                        return fd;
+                }
+                else
+                    throw new ObjectStoreException("FileSystemStore.openAndLock failed to create hierarchy "+fname);
+            }
+
+            if (!lock(fd, lmode, create))
+                fd = null;
+        }
+
+        return fd;
+    }
+
+    /*
+     * Renaming on Unix works if the file to rename to already exists.
+     * However, on Windows if the file exists then rename fails! So, we
+     * need to delete the file to rename to before we can rename. But, we
+     * must ensure that we don't get into any race conditions, so we
+     * exclusively lock the file to be deleted first. Failure scenarios:
+     *
+     * (i) if we crash after deleting, but before we have had a chance to
+     *     rename the file, then the lock file will exist and prevent anyone
+     *     from deleting the shadow.
+     *
+     * (ii) if we crash after renaming and before the lock file is removed
+     *      then subsequent lock attempts will fail, and the sys admin will
+     *      have to resolve. But consistency will be maintained!
+     *
+     * When JDK 1.4 supports appears we will use the file-locking facility
+     * it provides.
+     *
+     * We have to use locks at deletion, but an implementation such as
+     * ShadowNoFileLockStore can still get away with no locking elsewhere
+     * to improve performance.
+     */
+
+    protected synchronized final boolean renameFromTo (File from, File to)
+    {
+        if (!isWindows)
+            return from.renameTo(to);
+        else
+        {
+            //      FileLock fl = new FileLock(to);
+                
+            if (!from.exists())
+            {
+                /*
+                 * from is in the cache, but not on disk. So, either
+                 *
+                 * (i) two different users are using the same state and
+                 *     should have been using the OS_SHARED flag.
+                 *
+                 * or
+                 *
+                 * (ii) crash recovery has recovered the state.
+                 *
+                 * If (ii) we can't force OS_SHARED on all users for the
+                 * minority case. So, assume (ii) and issue a warning.
+                 */
+
+                removeFromCache(from.toString());
+
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_20",
+                                                new Object[]{from});
+                }
+
+                return true;
+            }
+            
+            /*
+             * Let let crash recovery deal with this!
+             */
+
+            //      if (fl.lock(FileLock.F_WRLCK))
+            {
+                to.delete();
+
+                boolean res = from.renameTo(to);
+
+                //              fl.unlock();
+                
+                return true;
+            }
+            /*
+            else
+            {
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_21",
+                                                new Object[]{to});
+                }
+
+                return false;
+                }*/
+        }
+    }
+
     protected FileSystemStore (int ss)
     {
 	super(ss);
@@ -534,13 +691,13 @@ public abstract class FileSystemStore extends ObjectStoreImple
      */
 
     protected String genPathName (Uid objUid,
-				  String tName, int m) throws ObjectStoreException
+				  String tName, int ostype) throws ObjectStoreException
     {
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, 
-				     "FileSystemStore.genPathName("+objUid+", "+tName+", "+m+")");
+				     "FileSystemStore.genPathName("+objUid+", "+tName+", "+ostype+")");
 	}
 	
 	String storeName = locateStore(getStoreName());
@@ -879,5 +1036,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	    }
 	}
     }
+    
+    private static boolean isWindows = Utility.isWindows();
 
 }

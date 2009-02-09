@@ -33,7 +33,6 @@ package com.arjuna.ats.internal.arjuna;
 
 import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
 
-import com.arjuna.ats.internal.arjuna.objectstore.CacheStoreSetup;
 import com.arjuna.ats.internal.arjuna.objectstore.*;
 
 import com.arjuna.ats.internal.arjuna.gandiva.nameservice.JNSSetup;
@@ -76,7 +75,8 @@ public static synchronized void initialise ()
 	    Inventory.inventory().addToList(new JDBCActionStoreSetup());
 	    Inventory.inventory().addToList(new CacheStoreSetup());
         Inventory.inventory().addToList(new VolatileStoreSetup());
-
+        Inventory.inventory().addToList(new LogStoreSetup());
+        
         Inventory.inventory().addToList(new JNSSetup());
 	    Inventory.inventory().addToList(new PNSSetup());
 

@@ -44,7 +44,7 @@ import com.arjuna.common.util.logging.*;
  * @message com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_1 [com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_1] - RecoverAtomicAction.replayPhase2 recovering {0} ActionStatus is {1}
  * @message com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_2 [com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_2] - RecoverAtomicAction.replayPhase2: Unexpected status: {0}
  * @message com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_3 [com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_3] - RecoverAtomicAction.replayPhase2( {0} )  finished 
- * @message com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_4 [com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_4] - RecoverAtomicAction: transaction {0} not activated, unable to replay phase 2 commit
+ * @message com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_4 [com.arjuna.ats.arjuna.recovery.RecoverAtomicAction_4] - RecoverAtomicAction: transaction {0} not activated, unable to replay phase 2 commit. Check state has not already been completed.
 */
 
 public class RecoverAtomicAction extends AtomicAction

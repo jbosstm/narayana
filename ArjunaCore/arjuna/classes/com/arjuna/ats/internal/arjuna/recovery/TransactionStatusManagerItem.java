@@ -95,7 +95,7 @@ public class TransactionStatusManagerItem
     {
 	if ( _objectStore == null )
 	    {
-		_objectStore = TxControl.getStore();
+		_objectStore = TxControl.getRecoveryStore();
 	    }
 	return _objectStore;
     }
