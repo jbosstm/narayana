@@ -153,7 +153,7 @@ public class CoordinatorCompletionCoordinatorClient
     public void sendCompleted(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint);
+        EndpointReference participant = getParticipant(endpoint, addressingProperties);
         AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithCoordinatorCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, completedAction);
@@ -173,7 +173,7 @@ public class CoordinatorCompletionCoordinatorClient
         final QName exceptionIdentifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint);
+        EndpointReference participant = getParticipant(endpoint, addressingProperties);
         AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithCoordinatorCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, failAction);
@@ -193,7 +193,7 @@ public class CoordinatorCompletionCoordinatorClient
     public void sendCompensated(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint);
+        EndpointReference participant = getParticipant(endpoint, addressingProperties);
         AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithCoordinatorCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, compensatedAction);
@@ -212,7 +212,7 @@ public class CoordinatorCompletionCoordinatorClient
     public void sendClosed(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint);
+        EndpointReference participant = getParticipant(endpoint, addressingProperties);
         AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithCoordinatorCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, closedAction);
@@ -231,7 +231,7 @@ public class CoordinatorCompletionCoordinatorClient
     public void sendCancelled(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint);
+        EndpointReference participant = getParticipant(endpoint, addressingProperties);
         AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithCoordinatorCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, cancelledAction);
@@ -250,7 +250,7 @@ public class CoordinatorCompletionCoordinatorClient
     public void sendExit(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint);
+        EndpointReference participant = getParticipant(endpoint, addressingProperties);
         AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithCoordinatorCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, exitAction);
@@ -269,7 +269,7 @@ public class CoordinatorCompletionCoordinatorClient
     public void sendCannotComplete(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint);
+        EndpointReference participant = getParticipant(endpoint, addressingProperties);
         AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithCoordinatorCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, cannotCompleteAction);
@@ -288,7 +288,7 @@ public class CoordinatorCompletionCoordinatorClient
     public void sendGetStatus(W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint);
+        EndpointReference participant = getParticipant(endpoint, addressingProperties);
         AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithCoordinatorCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, getStatusAction);
@@ -308,7 +308,7 @@ public class CoordinatorCompletionCoordinatorClient
         final QName state)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint);
+        EndpointReference participant = getParticipant(endpoint, addressingProperties);
         AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
         BusinessAgreementWithCoordinatorCompletionCoordinatorPortType port;
         port = getPort(endpoint, addressingProperties, statusAction);
@@ -323,9 +323,15 @@ public class CoordinatorCompletionCoordinatorClient
      * @param endpoint
      * @return either the secure participant endpoint or the non-secure endpoint
      */
-    EndpointReference getParticipant(W3CEndpointReference endpoint)
+    EndpointReference getParticipant(W3CEndpointReference endpoint, AddressingProperties addressingProperties)
     {
-        String address = endpoint.getAddress();
+        String address;
+        if (endpoint != null) {
+            address = endpoint.getAddress();
+        } else {
+            address = addressingProperties.getTo().getURI().toString();
+        }
+
         if (address.startsWith("https")) {
             return secureCoordinatorCompletionParticipant;
         } else {

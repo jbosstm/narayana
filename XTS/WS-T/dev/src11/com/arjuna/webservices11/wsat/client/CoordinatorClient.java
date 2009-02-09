@@ -112,7 +112,7 @@ public class CoordinatorClient
     public void sendPrepared(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint);
+        EndpointReference participant = getParticipant(endpoint, addressingProperties);
         AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, preparedAction);
         Notification prepared = new Notification();
@@ -130,7 +130,7 @@ public class CoordinatorClient
     public void sendAborted(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint);
+        EndpointReference participant = getParticipant(endpoint, addressingProperties);
         AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, abortedAction);
         Notification aborted = new Notification();
@@ -148,7 +148,7 @@ public class CoordinatorClient
     public void sendReadOnly(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint);
+        EndpointReference participant = getParticipant(endpoint, addressingProperties);
         AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, readOnlyAction);
         Notification readOnly = new Notification();
@@ -166,7 +166,7 @@ public class CoordinatorClient
     public void sendCommitted(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint);
+        EndpointReference participant = getParticipant(endpoint, addressingProperties);
         AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
         CoordinatorPortType port = getPort(endpoint, addressingProperties, committedAction);
         Notification committed = new Notification();
@@ -195,9 +195,15 @@ public class CoordinatorClient
      * @param endpoint
      * @return either the secure participant endpoint or the non-secure endpoint
      */
-    EndpointReference getParticipant(W3CEndpointReference endpoint)
+    EndpointReference getParticipant(W3CEndpointReference endpoint, AddressingProperties addressingProperties)
     {
-        String address = endpoint.getAddress();
+        String address;
+        if (endpoint != null) {
+            address = endpoint.getAddress();
+        } else {
+            address = addressingProperties.getTo().getURI().toString();
+        }
+
         if (address.startsWith("https")) {
             return secureParticipant;
         } else {
