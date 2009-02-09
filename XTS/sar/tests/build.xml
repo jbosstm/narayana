@@ -54,7 +54,7 @@
   <!-- the directory in which the XTS library code resides -->
   <property name="xts.lib.dir" value="${xts.home}/lib"/>
   <!-- the list of jars containing the XTS API classes -->
-  <property name="xts.lib.jars" value="wstx10.jar wstx11.jar"/>
+  <property name="xts.lib.jars" value="jbossxts-api.jar"/>
 
   <property name="jboss.client.lib.dir" value="${jbossas.home}/client"/>
   <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
