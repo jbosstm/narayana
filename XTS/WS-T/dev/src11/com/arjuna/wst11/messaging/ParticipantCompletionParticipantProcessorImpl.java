@@ -414,7 +414,7 @@ public class ParticipantCompletionParticipantProcessorImpl extends ParticipantCo
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_1 [com.arjuna.wst11.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_1] - Unexpected exception thrown from getStatus:
-     * @message com.arjuna.wst11.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_2 [com.arjuna.wst11.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_2] - Complete called on unknown participant: {0}
+     * @message com.arjuna.wst11.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_2 [com.arjuna.wst11.messaging.ParticipantCompletionParticipantProcessorImpl.getStatus_2] - GetStatus called on unknown participant: {0}
      */
     public void getStatus(final NotificationType getStatus, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
     {
