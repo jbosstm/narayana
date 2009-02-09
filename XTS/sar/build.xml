@@ -93,6 +93,8 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     </path>
     <property name="com.arjuna.buildsystem.classpath" refid="com.arjuna.buildsystem.classpath"/>
 
+    <property name="bridge.api.class.files" value="org/jboss/jbossts/xts/bridge/at/BridgeWrapper.class"/>
+
     <target name="init">
         <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
@@ -109,7 +111,19 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <target name="sar" depends="sar-11"/>
 
     <target name="compile" depends="init">
-        <javac srcdir="src" destdir="${build.classes.dir}" debug="${javac.debug}">
+        <javac srcdir="src" destdir="${build.classes.dir}" debug="${javac.debug}" excludes="org/jboss/jbossts/xts/bridge/**/*" >
+            <classpath>
+                <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
+                <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
+                <fileset dir="${lib.dir}" includes="*.jar"/>
+                <fileset dir="${lib.dir}/ext" includes="jbossjta.jar jbossjts.jar jbossts-common.jar"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- compile the 1.1 specific classes in the sar source which support WS-AT 1.1. bridging -->
+    <target name="compile11" depends="compile">
+        <javac srcdir="src" destdir="${build.classes.dir}" debug="${javac.debug}" includes="org/jboss/jbossts/xts/bridge/**/*" >
             <classpath>
                 <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
                 <pathelement location="${jbossas.home}/lib/jboss-system-jmx.jar"/>
@@ -152,6 +166,10 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <unjar src="${lib.dir}/wstx-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/wstx10-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/wstx11-api.jar" dest="${build.dir}/tmp/api"/>
+        <!-- include bridge api class -->
+        <copy todir="${build.dir}/tmp/api">
+            <fileset dir="${build.classes.dir}" includes="${bridge.api.class.files}"/>
+        </copy>
         <jar file="${build.dir}/jbossxts-api.jar" basedir="${build.dir}/tmp/api"/>
         <copy file="${build.dir}/jbossxts-api.jar" tofile="${lib.dir}/jbossxts-api.jar"/>
         <delete dir="${build.dir}/tmp/api"/>
@@ -164,6 +182,10 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
         <unjar src="${lib.dir}/ws-t11-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/wstx-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/wstx11-api.jar" dest="${build.dir}/tmp/api"/>
+        <!-- include bridge api class -->
+        <copy todir="${build.dir}/tmp/api">
+            <fileset dir="${build.classes.dir}" includes="${bridge.api.class.files}"/>
+        </copy>
         <jar file="${build.dir}/jbossxts-api.jar" basedir="${build.dir}/tmp/api"/>
         <copy file="${build.dir}/jbossxts-api.jar" tofile="${lib.dir}/jbossxts-api.jar"/>
         <delete dir="${build.dir}/tmp/api"/>
@@ -182,7 +204,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     </target>
 
     <!-- build XTS service archive supporting both 1.0 and 1.1 WS-C/T protocols -->
-    <target name="sar-both" depends="init, compile, dev-resourcebundle, api-both-jar">
+    <target name="sar-both" depends="init, compile11, compile, dev-resourcebundle, api-both-jar">
         <!-- create config jar containing conf files for 1.0 and 1.1 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -218,13 +240,13 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <!-- include web service config -->
             <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
 
-            <!-- include sar boot and shutdown code -->
-	    <fileset dir="${build.classes.dir}" includes="**/*"/>
+            <!-- include sar boot and shutdown code and 1.1 bridge code *but* exclude the bridge API class -->
+	        <fileset dir="${build.classes.dir}" includes="**/*" excludes="${bridge.api.class.files}"/>
         </jar>
     </target>
 
     <!-- build XTS service archive supporting 1.1 WS-C/T protocols -->
-    <target name="sar-11" depends="init, compile, dev-resourcebundle, api11-jar">
+    <target name="sar-11" depends="init, compile11, compile, dev-resourcebundle, api11-jar">
         <!-- create config jar containing conf files for 1.1 -->
         <filter token="coordinator.hostname" value="${coordinator.hostname}"/>
         <filter token="coordinator.port" value="${coordinator.port}"/>
@@ -257,8 +279,8 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <!-- include web service config -->
             <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
 
-            <!-- include sar boot and shutdown code -->
-            <fileset dir="${build.classes.dir}" includes="**/*"/>
+            <!-- include sar boot and shutdown code and 1.1 bridge code *but* exclude the bridge API class -->
+	        <fileset dir="${build.classes.dir}" includes="**/*" excludes="${bridge.api.class.files}"/>
         </jar>
     </target>
 

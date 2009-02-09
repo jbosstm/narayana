@@ -43,12 +43,10 @@ import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorServiceImple;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
 import com.arjuna.mwlabs.wst11.at.context.ArjunaContextImple;
 import com.arjuna.mwlabs.wst11.at.participants.CleanupSynchronization;
-import com.arjuna.mwlabs.wst11.at.RegistrarImple;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsat.processors.ParticipantProcessor;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
-import com.arjuna.webservices11.wscoor.client.WSCOORClient;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.ContextFactory;
 import com.arjuna.wsc11.RegistrationCoordinator;
@@ -66,7 +64,6 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.Expires;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
-import javax.xml.ws.addressing.EndpointReference;
 import javax.xml.namespace.QName;
 
 public class ContextFactoryImple implements ContextFactory, LocalFactory
@@ -270,6 +267,78 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 
 		return null;
 	}
+
+    /**
+     * class used to return data required to manage a bridged to subordinate transaction
+     */
+    public class BridgeTxData
+    {
+        public CoordinationContext context;
+        public SubordinateCoordinator coordinator;
+        public String identifier;
+    }
+
+    /**
+     * create a bridged to subordinate WS-AT 1.1 transaction, associate it with the registrar and create and return
+     * a coordination context for it. n.b. this is a private, behind-the-scenes method for use by the JTA-AT
+     * transaction bridge code.
+     * @param expires the timeout for the bridged to AT transaction
+     * @param isSecure true if the registration cooridnator URL should use a secure address, otherwise false.
+     * @return a coordination context for the bridged to transaction
+     */
+    public BridgeTxData createBridgedTransaction (final Long expires, final boolean isSecure)
+    {
+        // we need to create a subordinate transaction and register it as both a durable and volatile
+        // participant with the registration service defined in the current context
+
+        SubordinateCoordinator subTx = null;
+        try {
+            subTx = (SubordinateCoordinator) createSubordinate();
+        } catch (NoActivityException e) {
+            // will not happen
+            return null;
+        } catch (InvalidProtocolException e) {
+            // will not happen
+            return null;
+        } catch (SystemException e) {
+            // may happen
+            return null;
+        }
+
+        // ok now create the context
+
+        final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+        final String registrationCoordinatorURI = serviceRegistry.getServiceURI(CoordinationConstants.REGISTRATION_SERVICE_NAME, isSecure) ;
+
+        final CoordinationContext coordinationContext = new CoordinationContext() ;
+        coordinationContext.setCoordinationType(AtomicTransactionConstants.WSAT_PROTOCOL);
+        CoordinationContextType.Identifier identifier = new CoordinationContextType.Identifier();
+        String txId = subTx.get_uid().stringForm();
+        identifier.setValue("urn:" + txId);
+        coordinationContext.setIdentifier(identifier) ;
+        if (expires != null && expires.longValue() > 0)
+        {
+            Expires expiresInstance = new Expires();
+            expiresInstance.setValue(expires);
+            coordinationContext.setExpires(expiresInstance);
+        }
+        W3CEndpointReference registrationCoordinator = getRegistrationCoordinator(registrationCoordinatorURI, txId);
+        coordinationContext.setRegistrationService(registrationCoordinator) ;
+
+        // now associate the tx id with the sub transaction
+
+        try {
+            _theRegistrar.associate(subTx);
+        } catch (Exception e) {
+            // will not happen
+        }
+        BridgeTxData bridgeTxData = new BridgeTxData();
+        bridgeTxData.context = coordinationContext;
+        bridgeTxData.coordinator = subTx;
+        bridgeTxData.identifier = txId;
+
+        return bridgeTxData;
+    }
 
     private W3CEndpointReference getParticipant(final String id, final boolean isSecure)
     {
