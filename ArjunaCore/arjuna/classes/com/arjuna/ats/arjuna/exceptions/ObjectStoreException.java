@@ -55,5 +55,10 @@ public class ObjectStoreException extends Exception
 	super(s);
     }
     
+    public ObjectStoreException (final Throwable ex)
+    {
+        super(ex);
+    }
+    
 }
 
