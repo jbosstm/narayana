@@ -72,6 +72,7 @@
     <property name="lib.dir" location="${xts.home}/lib"/>
     <property name="ext.dir" location="${lib.dir}/ext"/>
     <property name="jboss.client.lib.dir" location="${jboss.home}/client"/>
+    <property name="jboss.common.lib.dir" location="${jboss.home}/common/lib"/>
 
     <property name="lib.libs" value="jbossxts-api.jar"/>
 
@@ -79,6 +80,8 @@
     <property name="jboss.client.libs" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
             jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
             jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar"/>
+
+    <property name="jboss.common.libs" value="servlet-api.jar"/>
 
     <!-- ================================================================== -->
 
@@ -109,6 +112,7 @@
 
     <path id="jboss.client.path">
         <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.libs}"/>
+        <fileset dir="${jboss.common.lib.dir}" includes="${jboss.common.libs}"/>
     </path>
 
     <filterset id="webxmlrpc.filter">
