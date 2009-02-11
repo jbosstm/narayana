@@ -50,6 +50,26 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * The associated timer task or null.
      */
     private TimerTask timerTask ;
+
+    /**
+     * the time which will elapse before the next message resend. this is incrementally increased
+     * until it reaches RESEND_PERIOD_MAX
+     */
+    private long resendPeriod;
+
+    /**
+     * the initial period we will allow between resends.
+     */
+    private long initialResendPeriod;
+
+    /**
+     * the maximum period we will allow between resends. n.b. the coordinator uses the value returned
+     * by getTransportTimeout as the limit for how long it waits for a response. however, we can still
+     * employ a max resend period in excess of this value. if a message comes in after the coordinator
+     * has given up it will catch it on the next retry.
+     */
+    private long maxResendPeriod;
+
     /**
      * true if this participant has been recovered otherwise false
      */
@@ -86,6 +106,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
         this.coordinator = coordinator ;
         this.recovered = recovered;
         this.persisted = recovered;
+        this.initialResendPeriod = TransportTimer.getTransportPeriod();
+        this.maxResendPeriod = TransportTimer.getMaximumTransportPeriod();
+        this.resendPeriod = this.initialResendPeriod;
     }
 
     /**
@@ -544,6 +567,15 @@ public class ParticipantEngine implements ParticipantInboundEvents
                 return;
             }
 
+            // double the resend period up to our maximum limit
+
+            if (resendPeriod < maxResendPeriod) {
+                resendPeriod = resendPeriod * 14 / 10; // approximately doubles every two resends
+
+                if (resendPeriod > maxResendPeriod) {
+                    resendPeriod = maxResendPeriod;
+                }
+            }
             current = state ;
         }
 
@@ -696,9 +728,19 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Send the prepared message.
      *
-     * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.sendPrepared_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.sendPrepared_1] - Unexpected exception while sending Prepared
      */
     private void sendPrepared()
+    {
+        sendPrepared(false);
+    }
+
+    /**
+     * Send the prepared message.
+     *
+     * @param timedOut true if this is in response to a comms timeout
+     * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.sendPrepared_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.sendPrepared_1] - Unexpected exception while sending Prepared
+     */
+    private void sendPrepared(boolean timedOut)
     {
         final AddressingProperties responseAddressingContext = createContext() ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier(id) ;
@@ -714,7 +756,30 @@ public class ParticipantEngine implements ParticipantInboundEvents
             }
         }
 
+        updateResendPeriod(timedOut);
+
         initiateTimer() ;
+    }
+
+    private synchronized void updateResendPeriod(boolean timedOut)
+    {
+        // if we timed out then we multiply the resend period by ~= sqrt(2) up to the maximum
+        // if not we make sure it is reset to the initial period
+
+        if (timedOut) {
+            if (resendPeriod < maxResendPeriod) {
+                long newPeriod  = resendPeriod * 14 / 10;  // approximately doubles every two resends
+
+                if (newPeriod > maxResendPeriod) {
+                    newPeriod = maxResendPeriod;
+                }
+                resendPeriod = newPeriod;
+            }
+        } else {
+            if (resendPeriod > initialResendPeriod) {
+                resendPeriod = initialResendPeriod;
+            }
+        }
     }
 
     /**
@@ -778,7 +843,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
                     commsTimeout(this) ;
                 }
             } ;
-            TransportTimer.getTimer().schedule(timerTask, TransportTimer.getTransportPeriod()) ;
+            TransportTimer.getTimer().schedule(timerTask, resendPeriod) ;
         }
         else
         {

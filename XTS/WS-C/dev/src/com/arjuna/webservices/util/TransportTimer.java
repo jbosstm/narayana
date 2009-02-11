@@ -38,9 +38,14 @@ public class TransportTimer
      */
     private static long TIMEOUT = 30000 ;
     /**
-     * The transport period.
+     * The initial transport period.
      */
     private static long PERIOD = 5000 ;
+
+    /**
+     * The maximum transport period.
+     */
+    private static long MAX_PERIOD = 300000 ;
 
     /**
      * Get the transport timer.
@@ -70,12 +75,12 @@ public class TransportTimer
     }
     
     /**
-     * Set the transport period.
+     * Set the initial transport period.
      * @param period The transport period in milliseconds.
      */
-    public static void setTransportPeriod(final long period)
+    public static void setInitialTransportPeriod(final long period)
     {
-       PERIOD = period ; 
+       PERIOD = period ;
     }
     
     /**
@@ -85,5 +90,29 @@ public class TransportTimer
     public static long getTransportPeriod()
     {
         return PERIOD ;
+    }
+
+    /**
+     * Set the maximum transport period for engines which require an exponentially increasing period between
+     * message resends.
+     * @param period The transport period in milliseconds.
+     */
+    public static void setMaximumTransportPeriod(final long period)
+    {
+       MAX_PERIOD = period ;
+    }
+
+    /**
+     * Get the maximum transport period for engines which require an exponentially increasing period between
+     * message resends.
+     * @return The transport period in milliseconds.
+     */
+    public static long getMaximumTransportPeriod()
+    {
+        if (MAX_PERIOD < PERIOD) {
+            return PERIOD;
+        }
+
+        return MAX_PERIOD ;
     }
 }

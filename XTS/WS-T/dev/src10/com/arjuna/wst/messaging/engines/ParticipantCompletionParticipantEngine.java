@@ -71,6 +71,31 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
      * The associated timer task or null.
      */
     private TimerTask timerTask ;
+
+    /**
+     * the time which will elapse before the next message resend. this is incrementally increased
+     * until it reaches RESEND_PERIOD_MAX
+     */
+    private long resendPeriod;
+
+    /**
+     * the initial period we will allow between resends.
+     */
+    private long initialResendPeriod;
+
+    /**
+     * the maximum period we will allow between resends. n.b. the coordinator uses the value returned
+     * by getTransportTimeout as the limit for how long it waits for a response. however, we can still
+     * employ a max resend period in excess of this value. if a message comes in after the coordinator
+     * has given up it will catch it on the next retry.
+     */
+    private long maxResendPeriod;
+
+    /**
+     * the amount of time we will wait for a response to a dispatched message
+     */
+    private long timeout;
+
     /**
      * true id this is a recovered participant otherwise false.
      */
@@ -110,6 +135,10 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         this.state = state ;
         this.recovered = recovered;
         this.persisted = recovered;
+        this.initialResendPeriod = TransportTimer.getTransportPeriod();
+        this.maxResendPeriod = TransportTimer.getMaximumTransportPeriod();
+        this.timeout = TransportTimer.getTransportTimeout();
+        this.resendPeriod = this.initialResendPeriod;
     }
     
     /**
@@ -551,7 +580,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
             sendExit() ;
         }
         
-        return waitForState(State.STATE_EXITING, TransportTimer.getTransportTimeout()) ;
+        return waitForState(State.STATE_EXITING, timeout) ;
     }
     
     /**
@@ -587,14 +616,14 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         if ((current == State.STATE_ACTIVE) || (current == State.STATE_FAULTING_ACTIVE))
         {
             sendFault("Fault called when state active/faulting active") ;
-            return waitForState(State.STATE_FAULTING_ACTIVE, TransportTimer.getTransportTimeout()) ;
+            return waitForState(State.STATE_FAULTING_ACTIVE, timeout) ;
         }
         else if ((current == State.STATE_COMPENSATING) || (current == State.STATE_FAULTING_COMPENSATING))
         {
             sendFault("Fault called when state compensating/faulting compensating") ;
         }
         
-        return waitForState(State.STATE_FAULTING_COMPENSATING, TransportTimer.getTransportTimeout()) ;
+        return waitForState(State.STATE_FAULTING_COMPENSATING, timeout) ;
     }
     
     /**
@@ -618,7 +647,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
         
         if (current == State.STATE_COMPLETED)
         {
-            sendCompleted() ;
+            sendCompleted(true) ;
         }
     }
     
@@ -644,11 +673,21 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     }
     
     /**
+     * Send the completed message
+     */
+
+    private void sendCompleted()
+    {
+        sendCompleted(false);
+    }
+
+    /**
      * Send the completed message.
      * 
+     * @param timedOut true if this is in response to a comms timeout
      * @message com.arjuna.wst.messaging.engines.ParticipantCompletionParticipantEngine.sendCompleted_1 [com.arjuna.wst.messaging.engines.ParticipantCompletionParticipantEngine.sendCompleted_1] - Unexpected exception while sending Completed
      */
-    private void sendCompleted()
+    private void sendCompleted(boolean timedOut)
     {
         final AddressingContext addressingContext = createContext() ;
         try
@@ -663,9 +702,35 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
             }
         }
         
+        // if we timed out the increase the resend period otherwise make sure it is reset to the
+        // initial resend period
+
+        updateResendPeriod(timedOut);
+
         initiateTimer() ;
     }
     
+    private synchronized void updateResendPeriod(boolean timedOut)
+    {
+        // if we timed out then we multiply the resend period by ~= sqrt(2) up to the maximum
+        // if not we make sure it is reset to the initial period
+
+        if (timedOut) {
+            if (resendPeriod < maxResendPeriod) {
+                long newPeriod  = resendPeriod * 14 / 10;  // approximately doubles every two resends
+
+                if (newPeriod > maxResendPeriod) {
+                    newPeriod = maxResendPeriod;
+                }
+                resendPeriod = newPeriod;
+            }
+        } else {
+            if (resendPeriod > initialResendPeriod) {
+                resendPeriod = initialResendPeriod;
+            }
+        }
+    }
+
     /**
      * Send the fault message.
      * @param message The fault message.
@@ -1026,7 +1091,7 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
                     commsTimeout(this) ;
                 }
             } ;
-            TransportTimer.getTimer().schedule(timerTask, TransportTimer.getTransportPeriod()) ;
+            TransportTimer.getTimer().schedule(timerTask, resendPeriod) ;
         }
         else
         {

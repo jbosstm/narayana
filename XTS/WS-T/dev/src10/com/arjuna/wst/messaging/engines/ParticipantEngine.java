@@ -35,7 +35,6 @@ import com.arjuna.webservices.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsat.NotificationType;
 import com.arjuna.webservices.wsat.ParticipantInboundEvents;
 import com.arjuna.webservices.wsat.State;
-import com.arjuna.webservices.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices.wsat.client.CoordinatorClient;
 import com.arjuna.webservices.wsat.processors.ParticipantProcessor;
 import com.arjuna.webservices.wscoor.CoordinationConstants;
@@ -70,6 +69,25 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * The associated timer task or null.
      */
     private TimerTask timerTask ;
+
+    /**
+     * the time which will elapse before the next message resend. this is incrementally increased
+     * until it reaches RESEND_PERIOD_MAX
+     */
+    private long resendPeriod;
+
+    /**
+     * the initial period we will allow between resends.
+     */
+    private long initialResendPeriod;
+
+    /**
+     * the maximum period we will allow between resends. n.b. the coordinator uses the value returned
+     * by getTransportTimeout as the limit for how long it waits for a response. however, we can still
+     * employ a max resend period in excess of this value. if a message comes in after the coordinator
+     * has given up it will catch it on the next retry.
+     */
+    private long maxResendPeriod;
 
     /**
      * true id this is a recovered participant otherwise false.
@@ -107,6 +125,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
         this.coordinator = coordinator ;
         this.recovered = recovered;
         this.persisted = recovered;
+        this.initialResendPeriod = TransportTimer.getTransportPeriod();
+        this.maxResendPeriod = TransportTimer.getMaximumTransportPeriod();
+        this.resendPeriod = initialResendPeriod;
     }
     
     /**
@@ -174,6 +195,9 @@ public class ParticipantEngine implements ParticipantInboundEvents
             if (current == State.STATE_ACTIVE)
             {
                 state = State.STATE_PREPARING ;
+            } else if (current == State.STATE_PREPARED_SUCCESS) {
+                // hmm, client may have missed a prepared message -- reset the period
+                resendPeriod = TransportTimer.getTransportPeriod();
             }
         }
         
@@ -559,7 +583,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
         
         if (current == State.STATE_PREPARED_SUCCESS)
         {
-            sendPrepared() ;
+            sendPrepared(true) ;
         }
     }
     
@@ -702,13 +726,22 @@ public class ParticipantEngine implements ParticipantInboundEvents
             }
         }
     }
-    
+
     /**
      * Send the prepared message.
-     * 
-     * @message com.arjuna.wst.messaging.engines.ParticipantEngine.sendPrepared_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendPrepared_1] - Unexpected exception while sending Prepared
      */
     private void sendPrepared()
+    {
+        sendPrepared(false);
+    }
+
+    /**
+     * Send the prepared message.
+     *
+     * @param timedOut true if this is in response to a comms timeout
+     * @message com.arjuna.wst.messaging.engines.ParticipantEngine.sendPrepared_1 [com.arjuna.wst.messaging.engines.ParticipantEngine.sendPrepared_1] - Unexpected exception while sending Prepared
+     */
+    private void sendPrepared(boolean timedOut)
     {
         final AddressingContext responseAddressingContext = createContext() ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier(id) ;
@@ -723,10 +756,33 @@ public class ParticipantEngine implements ParticipantInboundEvents
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.engines.ParticipantEngine.sendPrepared_1", th) ;
             }
         }
-        
+
+        updateResendPeriod(timedOut);
+
         initiateTimer() ;
     }
     
+    private synchronized void updateResendPeriod(boolean timedOut)
+    {
+        // if we timed out then we multiply the resend period by ~= sqrt(2) up to the maximum
+        // if not we make sure it is reset to the initial period
+
+        if (timedOut) {
+            if (resendPeriod < maxResendPeriod) {
+                long newPeriod  = resendPeriod * 14 / 10;  // approximately doubles every two resends
+
+                if (newPeriod > maxResendPeriod) {
+                    newPeriod = maxResendPeriod;
+                }
+                resendPeriod = newPeriod;
+            }
+        } else {
+            if (resendPeriod > initialResendPeriod) {
+                resendPeriod = initialResendPeriod;
+            }
+        }
+    }
+
     /**
      * Send the aborted message.
      * 
