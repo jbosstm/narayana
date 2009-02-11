@@ -31,6 +31,12 @@
            </value-factory>
         </property>
 
+        <!-- uncomment to configure transport timing properties -->
+        <!--
+        <property name="initialTransportPeriod">5000</property>
+        <property name="maximumTransportPeriod">300000</property>
+        <property name="transportTimeout">30000</property>
+        -->
    </bean>
 
 </deployment>

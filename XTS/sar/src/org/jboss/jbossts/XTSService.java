@@ -76,6 +76,7 @@ import com.arjuna.services.framework.startup.Sequencer;
 //import com.arjuna.webservices.wsaddr.policy.AddressingPolicy;
 //import com.arjuna.wst.messaging.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.webservices.util.TransportTimer;
 
 import javax.management.MBeanServer;
 import java.net.InetAddress;
@@ -403,4 +404,53 @@ public class XTSService implements XTSServiceMBean {
     }
 
     int httpsPort = 0;
+
+    // transport timing property reads/writes are redirected to the TransportTimer class
+    // however we cap the period settings to a minimum of 5 seconds and the timeout setting
+    // to a minimum of 10 seconds
+
+    private static final long MIN_PERIOD = 5 * 1000;
+    private static final long MIN_TIMEOUT = 10 * 1000;
+
+    public long getInitialTransportPeriod()
+    {
+        return TransportTimer.getTransportPeriod();
+    }
+
+    public void setInitialTransportPeriod(long initialTransportPeriod)
+    {
+        if (initialTransportPeriod > MIN_PERIOD) {
+            TransportTimer.setTransportPeriod(initialTransportPeriod);
+        } else {
+            TransportTimer.setTransportPeriod(MIN_PERIOD);
+        }
+    }
+
+    public long getMaximumTransportPeriod()
+    {
+        return TransportTimer.getMaximumTransportPeriod();
+    }
+
+    public void setMaximumTransportPeriod(long maximumTransportPeriod)
+    {
+        if (maximumTransportPeriod > MIN_PERIOD) {
+            TransportTimer.setMaximumTransportPeriod(maximumTransportPeriod);
+        } else {
+            TransportTimer.setMaximumTransportPeriod(MIN_PERIOD);
+        }
+    }
+
+    public long getTransportTimeout()
+    {
+        return TransportTimer.getTransportTimeout();
+    }
+
+    public void setTransportTimeout(long transportTimeout)
+    {
+        if (transportTimeout > MIN_TIMEOUT) {
+            TransportTimer.setTransportTimeout(transportTimeout);
+        } else {
+            TransportTimer.setTransportTimeout(MIN_TIMEOUT);
+        }
+    }
 }

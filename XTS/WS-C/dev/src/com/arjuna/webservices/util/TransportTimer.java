@@ -78,7 +78,7 @@ public class TransportTimer
      * Set the initial transport period.
      * @param period The transport period in milliseconds.
      */
-    public static void setInitialTransportPeriod(final long period)
+    public static void setTransportPeriod(final long period)
     {
        PERIOD = period ;
     }
