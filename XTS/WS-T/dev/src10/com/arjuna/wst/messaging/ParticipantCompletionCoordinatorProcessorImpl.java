@@ -21,9 +21,14 @@
 package com.arjuna.wst.messaging;
 
 import com.arjuna.webservices.SoapFault;
+import com.arjuna.webservices.SoapFault10;
+import com.arjuna.webservices.SoapFaultType;
+import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.wsaddr.AddressingContext;
+import com.arjuna.webservices.wsaddr.AttributedURIType;
+import com.arjuna.webservices.wsaddr.RelationshipType;
 import com.arjuna.webservices.wsarj.ArjunaContext;
 import com.arjuna.webservices.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsba.ExceptionType;
@@ -324,6 +329,8 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
      * 
      * @message com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_1 [com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_1] - Unexpected exception thrown from getStatus:
      * @message com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_2 [com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_2] - GetStatus called on unknown coordinator: {0}
+     * @message com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_3 [com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_3] - Unexpected exception while sending InvalidStateFault to participant {0}
+     * @message com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_4 [com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_4] - GetStatus requested for unknown coordinator completion participant
      */
     public void getStatus(final NotificationType getStatus, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -344,9 +351,37 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
                 }
             }
         }
-        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        else
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_2", new Object[] {instanceIdentifier}) ;
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_2", new Object[] {instanceIdentifier}) ;
+            }
+            // send an invalid state fault
+
+            final String responseMessageId = MessageId.getMessageId() ;
+            final AddressingContext responseAddressingContext = AddressingContext.createRequestContext(addressingContext.getFrom(), responseMessageId) ;
+
+            final AttributedURIType requestMessageId = addressingContext.getMessageID() ;
+            if (requestMessageId != null)
+            {
+                responseAddressingContext.addRelatesTo(new RelationshipType(requestMessageId.getValue())) ;
+            }
+            final String messageId = MessageId.getMessageId();
+            final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
+            try
+            {
+                final String message = WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_4") ;
+                final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME, message) ;
+                ParticipantCompletionParticipantClient.getClient().sendSoapFault(responseAddressingContext, soapFault, instanceIdentifier) ;
+            }
+            catch (final Throwable th)
+            {
+                if (WSTLogger.arjLoggerI18N.isInfoEnabled())
+                {
+                    WSTLogger.arjLoggerI18N.info("com.arjuna.wst.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_3", new Object[] {instanceIdentifier},  th) ;
+                }
+            }
         }
     }
     

@@ -31,6 +31,7 @@ import com.arjuna.webservices11.wsba.State;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsba.client.CoordinatorCompletionCoordinatorClient;
 import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionParticipantProcessor;
+import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 import com.arjuna.wst.FaultedException;
@@ -109,6 +110,10 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
      */
     private boolean persisted;
 
+    /**
+     * true if the participant should send getstatus rather than resend a completed message
+     */
+    private boolean checkStatus;
 
     /**
      * Construct the initial engine for the participant.
@@ -144,6 +149,9 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
         this.maxResendPeriod = TransportTimer.getMaximumTransportPeriod();
         this.timeout = TransportTimer.getTransportTimeout();
         this.resendPeriod = this.initialResendPeriod;
+        // we always check the status of a recovered participant and we always start off sending completed
+        // if the participant is not recovered
+        this.checkStatus = recovered;
     }
 
     /**
@@ -500,7 +508,11 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
      */
     public void status(final StatusType status, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
     {
-        // KEV - implement
+        // TODO --  check that the status is actually what we expect
+
+        // revert to sending completed messages and reset the resend period to the initial period
+        checkStatus = false;
+        updateResendPeriod(false);
     }
 
     /**
@@ -528,7 +540,7 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
 
         if (current == State.STATE_COMPLETED)
         {
-            sendCompleted();
+            sendCompleted(true);
         }
     }
 
@@ -538,18 +550,39 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
      * @param addressingProperties The addressing context.
      * @param arjunaContext The arjuna context.
      * @message com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine.soapFault_1 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine.soapFault_1] - Unable to delete recovery record during soapFault processing for WS-BA participant {0}
+     * @message com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine.soapFault_2 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine.soapFault_2] - Cancelling participant {0}
+     * @message com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine.soapFault_3 [com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine.soapFault_3] - Notifying unexpected error for participant {0}
      */
     public void soapFault(final SoapFault soapFault, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
     {
         boolean deleteRequired;
+        boolean checkingStatus;
         synchronized(this) {
             deleteRequired = persisted;
+            // make sure delete is attempted only once
+            persisted = false;
+            checkingStatus = (state == State.STATE_COMPLETED && checkStatus);
             ended() ;
         }
-        // TODO -- clarify when and why this gets called and update doc in interface. also check unknown()
+        // TODO -- update doc in interface and user guide.
         try
         {
-            participant.error() ;
+            boolean isInvalidState = soapFault.getSubcode().equals(CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME);
+            if (checkingStatus && isInvalidState) {
+                // coordinator must have died before reaching close so just cancel
+                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine.soapFault_2", new Object[] {id}) ;
+                }
+                participant.compensate();
+            } else {
+                // hmm, something went wrong -- notify the participant of the error
+                if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine.soapFault_3", new Object[] {id}) ;
+                }
+                participant.error() ;
+            }
         }
         catch (final Throwable th) {} // ignore
         // if we just ended the participant ensure any log record gets deleted
@@ -858,7 +891,12 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
         final AddressingProperties addressingProperties = createContext() ;
         try
         {
-            CoordinatorCompletionCoordinatorClient.getClient().sendCompleted(coordinator, addressingProperties, instanceIdentifier) ;
+            // if we are trying to reestablish the participant state then send getStatus otherwise send completed
+            if (timedOut && checkStatus) {
+                CoordinatorCompletionCoordinatorClient.getClient().sendGetStatus(coordinator, addressingProperties, instanceIdentifier); ;
+            } else {
+                CoordinatorCompletionCoordinatorClient.getClient().sendCompleted(coordinator, addressingProperties, instanceIdentifier) ;
+            }
         }
         catch (final Throwable th)
         {
@@ -889,10 +927,17 @@ public class CoordinatorCompletionParticipantEngine implements CoordinatorComple
                     newPeriod = maxResendPeriod;
                 }
                 resendPeriod = newPeriod;
+            } else {
+                // ok, we hit our maximum period last time -- this time switch to sending getStatus
+                checkStatus = true;
             }
         } else {
             if (resendPeriod > initialResendPeriod) {
                 resendPeriod = initialResendPeriod;
+            }
+            // if we were previously checking status we need to revert to sending Completed
+            if (checkStatus) {
+                checkStatus = false;
             }
         }
     }

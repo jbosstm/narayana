@@ -26,6 +26,7 @@ import com.arjuna.webservices.HandlerRegistry;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapRegistry;
 import com.arjuna.webservices.SoapService;
+import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.webservices.base.policy.ClientPolicy;
 import com.arjuna.webservices.wsaddr.AddressingContext;
 import com.arjuna.webservices.wsaddr.AttributedURIType;
@@ -86,6 +87,12 @@ public class ParticipantCompletionParticipantClient extends BaseWSAddrClient
         new AttributedURIType(BusinessActivityConstants.WSBA_ACTION_STATUS) ;
     
     /**
+     * The SOAP fault action.
+     */
+    private final AttributedURIType soapFaultAction =
+        new AttributedURIType(CoordinationConstants.WSCOOR_ACTION_FAULT) ;
+
+    /**
      * The SOAP service representing the client.
      */
     private final SoapService soapService ;
@@ -93,7 +100,7 @@ public class ParticipantCompletionParticipantClient extends BaseWSAddrClient
      * The participant completion coordinator URI for replies.
      */
     private final AttributedURIType participantCompletionCoordinator ;
-    
+
     /**
      * Construct the participant completion coordinator client.
      */
@@ -223,6 +230,21 @@ public class ParticipantCompletionParticipantClient extends BaseWSAddrClient
             statusAction) ;
     }
     
+    /**
+     * Send a fault.
+     * @param addressingContext The addressing context.
+     * @param soapFault The SOAP fault.
+     * @param identifier The arjuna instance identifier.
+     * @throws SoapFault For any errors.
+     * @throws IOException for any transport errors.
+     */
+    public void sendSoapFault(final AddressingContext addressingContext, final SoapFault soapFault, final InstanceIdentifier identifier)
+        throws SoapFault, IOException
+    {
+        final EndpointReferenceType endpointReference = getEndpointReference(identifier) ;
+        sendSoapFault(soapFault, addressingContext, soapService, endpointReference, soapFaultAction) ;
+    }
+
     /**
      * Get the endpoint reference for the specified identifier.
      * @param identifier The endpoint reference identifier.

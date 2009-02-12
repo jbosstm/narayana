@@ -21,9 +21,14 @@
 package com.arjuna.wst.messaging;
 
 import com.arjuna.webservices.SoapFault;
+import com.arjuna.webservices.SoapFault10;
+import com.arjuna.webservices.SoapFaultType;
+import com.arjuna.webservices.wscoor.CoordinationConstants;
 import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.wsaddr.AddressingContext;
+import com.arjuna.webservices.wsaddr.AttributedURIType;
+import com.arjuna.webservices.wsaddr.RelationshipType;
 import com.arjuna.webservices.wsarj.ArjunaContext;
 import com.arjuna.webservices.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsba.CoordinatorCompletionCoordinatorInboundEvents;
@@ -34,6 +39,10 @@ import com.arjuna.webservices.wsba.client.CoordinatorCompletionParticipantClient
 import com.arjuna.webservices.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
 import com.arjuna.wsc.messaging.MessageId;
 import org.jboss.jbossts.xts.recovery.participant.ba.XTSBARecoveryManager;
+
+import javax.xml.ws.addressing.AttributedURI;
+import javax.xml.ws.addressing.AddressingBuilder;
+import java.net.URISyntaxException;
 
 
 /**
@@ -323,6 +332,8 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
      * 
      * @message com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.getStatus_1 [com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.getStatus_1] - Unexpected exception thrown from getStatus:
      * @message com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.getStatus_2 [com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.getStatus_2] - GetStatus called on unknown coordinator: {0}
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.getStatus_3 [com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.getStatus_3] - Unexpected exception while sending InvalidStateFault to participant {0}
+     * @message com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.getStatus_4 [com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.getStatus_4] - GetStatus requested for unknown coordinator completion participant
      */
     public void getStatus(final NotificationType getStatus, final AddressingContext addressingContext, final ArjunaContext arjunaContext)
     {
@@ -343,12 +354,56 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
                 }
             }
         }
-        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        else
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.getStatus_2", new Object[] {instanceIdentifier}) ;
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.getStatus_2", new Object[] {instanceIdentifier}) ;
+            }
+            // send an invalid state fault
+
+            final String responseMessageId = MessageId.getMessageId() ;
+            final AddressingContext responseAddressingContext = AddressingContext.createRequestContext(addressingContext.getFrom(), responseMessageId) ;
+
+            final AttributedURIType requestMessageId = addressingContext.getMessageID() ;
+            if (requestMessageId != null)
+            {
+                responseAddressingContext.addRelatesTo(new RelationshipType(requestMessageId.getValue())) ;
+            }
+            final String messageId = MessageId.getMessageId();
+            final AddressingContext faultAddressingContext = AddressingContext.createFaultContext(addressingContext, messageId) ;
+            try
+            {
+                final String message = WSTLogger.log_mesg.getString("com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.getStatus_4") ;
+                final SoapFault soapFault = new SoapFault10(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME, message) ;
+                CoordinatorCompletionParticipantClient.getClient().sendSoapFault(responseAddressingContext, soapFault, instanceIdentifier) ;
+            }
+            catch (final Throwable th)
+            {
+                if (WSTLogger.arjLoggerI18N.isInfoEnabled())
+                {
+                    WSTLogger.arjLoggerI18N.info("com.arjuna.wst.messaging.CoordinatorCompletionCoordinatorProcessorImpl.getStatus_3", new Object[] {instanceIdentifier},  th) ;
+                }
+            }
         }
     }
-    
+
+    private static AttributedURI faultAction = null;
+
+    private static synchronized AttributedURI getFaultAction()
+    {
+        if (faultAction == null) {
+            AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
+
+            try {
+                faultAction = builder.newURI(CoordinationConstants.WSCOOR_ACTION_FAULT);
+            } catch (URISyntaxException e) {
+                // TODO log error here
+            }
+        }
+
+        return faultAction;
+    }
     /**
      * Status.
      * @param status The status.

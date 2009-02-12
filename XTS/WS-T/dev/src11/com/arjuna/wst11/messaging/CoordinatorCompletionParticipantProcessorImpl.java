@@ -21,9 +21,11 @@
 package com.arjuna.wst11.messaging;
 
 import com.arjuna.webservices.SoapFault;
+import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsba.CoordinatorCompletionParticipantInboundEvents;
@@ -32,13 +34,18 @@ import com.arjuna.webservices11.wsba.State;
 import com.arjuna.webservices11.wsba.client.CoordinatorCompletionCoordinatorClient;
 import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionParticipantProcessor;
 import com.arjuna.webservices11.ServiceRegistry;
+import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.wsc11.messaging.MessageId;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
 import org.jboss.jbossts.xts.recovery.participant.ba.XTSBARecoveryManager;
 
 import javax.xml.ws.addressing.AddressingProperties;
+import javax.xml.ws.addressing.AttributedURI;
+import javax.xml.ws.addressing.AddressingBuilder;
 import javax.xml.namespace.QName;
+import java.net.URISyntaxException;
 
 
 /**
@@ -456,6 +463,8 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      *
      * @message com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_1 [com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_1] - Unexpected exception thrown from getStatus:
      * @message com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_2 [com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_2] - GetStatus called on unknown participant: {0}
+     * @message com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_3 [com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_3] - Unexpected exception while sending InvalidStateFault to coordinator for participant {0}
+     * @message com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_4 [com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_4] - GetStatus requested for unknown coordinator completion participant
      */
     public void getStatus(final NotificationType getStatus, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
     {
@@ -476,10 +485,48 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
                 }
             }
         }
-        else if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+        else
         {
-            WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_2", new Object[] {instanceIdentifier}) ;
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_2", new Object[] {instanceIdentifier}) ;
+            }
+            // send an invalid state fault
+
+            final String messageId = MessageId.getMessageId();
+            final AddressingProperties faultAddressingProperties = AddressingHelper.createFaultContext(addressingProperties, messageId) ;
+            try
+            {
+                final SoapFault11 soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME,
+                        WSTLogger.log_mesg.getString("com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_4")) ;
+                AddressingHelper.installNoneReplyTo(faultAddressingProperties);
+                SoapFaultClient.sendSoapFault(soapFault, faultAddressingProperties, getFaultAction()) ;
+            }
+            catch (final Throwable th)
+            {
+                if (WSTLogger.arjLoggerI18N.isInfoEnabled())
+                {
+                    WSTLogger.arjLoggerI18N.info("com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.getStatus_3", new Object[] {instanceIdentifier},  th) ;
+                }
+            }
         }
+    }
+
+    private static AttributedURI faultAction = null;
+
+    private static synchronized AttributedURI getFaultAction()
+    {
+        if (faultAction == null) {
+            AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
+
+            try {
+                faultAction = builder.newURI(CoordinationConstants.WSCOOR_ACTION_FAULT);
+            } catch (URISyntaxException e) {
+                // TODO log error here
+            }
+        }
+
+        return faultAction;
     }
 
     /**
