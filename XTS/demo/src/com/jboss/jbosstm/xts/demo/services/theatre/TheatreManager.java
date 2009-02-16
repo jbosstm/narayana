@@ -445,6 +445,38 @@ public class TheatreManager implements Serializable
     }
 
     /**
+     * Handle BA error for a specific booking.
+     *
+     * @param txID The transaction identifier
+     */
+    public synchronized void error(Object txID)
+    {
+        // undo any provisional or actual changes associated wiht the booking
+
+        Integer[] request = (Integer[]) unpreparedTransactions.remove(txID);
+        if (request != null) {
+            for (int i = 0; i < NUM_SEAT_AREAS; i++) {
+                nBookedSeats[i] -= request[i].intValue();
+            }
+        } else if ((request = (Integer[])preparedTransactions.remove(txID)) != null) {
+            for (int i = 0; i < NUM_SEAT_AREAS; i++) {
+                nFreeSeats[i] += request[i].intValue();
+                nPreparedSeats[i] -= request[i].intValue();
+                nBookedSeats[i] -= request[i].intValue();
+            }
+            updateState();
+        } else if ((request = (Integer[])compensatableTransactions.remove(txID)) != null) {
+            for (int i = 0; i < NUM_SEAT_AREAS; i++) {
+                nCompensatableSeats[i] -= request[i].intValue();
+
+                nCommittedSeats[i] -= request[i].intValue();
+                nFreeSeats[i] += request[i].intValue();
+            }
+            updateState();
+        }
+    }
+
+    /**
      * Determine if a specific transaction is known to the business logic.
      *
      * @param txID The uniq id for the transaction

@@ -162,8 +162,21 @@ public class TheatreParticipantBA implements BusinessAgreementWithParticipantCom
 
     public void error() throws SystemException
     {
-        // used for calbacks during crash recovery. This impl is not recoverable
+        System.out.println("TheatreParticipantBA.error");
+
+        getTheatreView().addMessage("id:" + txID + ". Received error for participant: " + this.getClass().toString());
+
+        getTheatreView().updateFields();
+
+        // tell the manager we had an error
+
+        getTheatreManager().error(txID);
+
+        getTheatreView().addMessage("id:" + txID + ". Notified error for participant: " + this.getClass().toString());
+
+        getTheatreView().updateFields();
     }
+
 
     /**
      * Id for the transaction which this participant instance relates to.

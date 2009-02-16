@@ -156,12 +156,23 @@ public class RestaurantParticipantBA implements BusinessAgreementWithParticipant
     
     public void unknown() throws SystemException
     {
-        // used for calbacks during crash recovery. This impl is not recoverable
     }
 
     public void error() throws SystemException
     {
-        // used for calbacks during crash recovery. This impl is not recoverable
+        System.out.println("RestaurantParticipantBA.error");
+
+        getRestaurantView().addMessage("id:" + txID + ". Received error for participant: " + this.getClass().toString());
+
+        getRestaurantView().updateFields();
+
+        // tell the manager we had an error
+
+        getRestaurantManager().error(txID);
+
+        getRestaurantView().addMessage("id:" + txID + ". Notified error for participant: " + this.getClass().toString());
+
+        getRestaurantView().updateFields();
     }
 
     /**

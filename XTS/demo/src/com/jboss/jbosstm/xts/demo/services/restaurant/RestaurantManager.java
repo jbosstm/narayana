@@ -396,6 +396,32 @@ public class RestaurantManager implements Serializable
     }
 
     /**
+     * Handle BA error for a specific booking.
+     *
+     * @param txID The transaction identifier
+     */
+    public synchronized void error(Object txID)
+    {
+        // undo any provisional or actual changes associated wiht the booking
+
+        Integer request = (Integer) unpreparedTransactions.remove(txID);
+        if (request != null) {
+            nBookedSeats -= request.intValue();
+        } else if ((request = (Integer)preparedTransactions.remove(txID)) != null) {
+            nFreeSeats += request.intValue();
+            nPreparedSeats -= request.intValue();
+            nBookedSeats -= request.intValue();
+            updateState();
+        } else if ((request = (Integer)compensatableTransactions.remove(txID)) != null) {
+            nCompensatableSeats -= request.intValue();
+
+            nCommittedSeats -= request.intValue();
+            nFreeSeats += request.intValue();
+            updateState();
+        }
+    }
+
+    /**
      * Determine if a specific transaction is known to the business logic.
      *
      * @param txID The uniq id for the transaction

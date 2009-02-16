@@ -158,7 +158,19 @@ public class TaxiParticipantBA implements BusinessAgreementWithParticipantComple
 
     public void error() throws SystemException
     {
-        // used for calbacks during crash recovery. This impl is not recoverable
+        System.out.println("TaxiParticipantBA.error");
+
+        getTaxiView().addMessage("id:" + txID + ". Received error for participant: " + this.getClass().toString());
+
+        getTaxiView().updateFields();
+
+        // tell the manager we had an error
+
+        getTaxiManager().error(txID);
+
+        getTaxiView().addMessage("id:" + txID + ". Notified error for participant: " + this.getClass().toString());
+
+        getTaxiView().updateFields();
     }
 
     /**
