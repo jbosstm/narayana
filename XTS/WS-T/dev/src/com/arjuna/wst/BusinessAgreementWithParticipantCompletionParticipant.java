@@ -75,14 +75,25 @@ public interface BusinessAgreementWithParticipantCompletionParticipant
      * If the participant enquires as to the status of the transaction it was
      * registered with and that transaction is no longer available (has rolled
      * back) then this operation will be invoked by the coordination service.
+     *
+     * This has been deprecated since the correct action when a GetStatus request fails
+     * is either to cancel or compensate the participant or to call error. GetStatus
+     * is only dispatched while the participant is completed so cancel will never be
+     * appropriate. compensate is called when the participant is unknown to the
+     * coordinator (it responds to the GetStatus request with an InvalidState fault).
+     * This will only happen if the coordinator crashed after the participant completed
+     * but before the client requested a close/cancel. error is called if any other fault
+     * response is received. So there is no other circumstance in which it would be
+     * appropriate for unknown to be called.
      */
 
+    @Deprecated
     public void unknown () throws SystemException;
 
     /**
      * If the participant enquired as to the status of the transaction it was
-     * registered with and an error occurs (e.g., the transaction service is
-     * unavailable) then this operation will be invoked.
+     * registered with and an unrecoverable error occurs then this operation will be
+     * invoked.
      */
 
     public void error () throws SystemException;
