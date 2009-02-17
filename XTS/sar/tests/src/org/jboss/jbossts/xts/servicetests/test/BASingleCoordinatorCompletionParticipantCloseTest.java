@@ -125,6 +125,8 @@ public class BASingleCoordinatorCompletionParticipantCloseTest implements XTSSer
         }
 
         System.out.println("BASingleCoordinatorCompletionParticipantCloseTest : completed");
+
+        isSuccessful = (exception == null);
     }
 
     public boolean isSuccessful() {

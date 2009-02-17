@@ -182,6 +182,8 @@ public class BAMultiServiceCoordinatorCompletionParticipantCloseTest implements 
         }
 
         System.out.println("BAMultiServiceCoordinatorCompletionParticipantCloseTest : completed");
+
+        isSuccessful = (exception == null);
     }
 
     public boolean isSuccessful() {

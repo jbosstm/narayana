@@ -105,8 +105,7 @@ public class BAMultiServiceParticipantCompletionParticipantCloseTest implements 
 
         // invoke the service to create a coordinaator completion participant and script it to complete and close
         commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
-        commands.getCommandList().add("complete");
+        commands.getCommandList().add("enlistParticipantCompletion");
         commands.getCommandList().add("close");
 
         try {
@@ -130,8 +129,7 @@ public class BAMultiServiceParticipantCompletionParticipantCloseTest implements 
         // invoke the second service to create a coordinator completion participant and script it to complete
         // and close
         commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
-        commands.getCommandList().add("complete");
+        commands.getCommandList().add("enlistParticipantCompletion");
         commands.getCommandList().add("close");
 
         try {
@@ -156,8 +154,7 @@ public class BAMultiServiceParticipantCompletionParticipantCloseTest implements 
         // complete and close
 
         commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
-        commands.getCommandList().add("complete");
+        commands.getCommandList().add("enlistParticipantCompletion");
         commands.getCommandList().add("close");
 
         try {
@@ -257,6 +254,8 @@ public class BAMultiServiceParticipantCompletionParticipantCloseTest implements 
         }
 
         System.out.println("BAMultiServiceParticipantCompletionParticipantCloseTest : completed");
+
+        isSuccessful = (exception == null);
     }
 
     public boolean isSuccessful() {

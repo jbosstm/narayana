@@ -93,7 +93,7 @@ public class BAMultiParticipantParticipantCompletionParticipantCloseTest impleme
 
         // invoke the service to create a coordinator completion participant and script it to close
         commands = new CommandsType();
-        commands.getCommandList().add("enlistPartiicpantCompletion");
+        commands.getCommandList().add("enlistParticipantCompletion");
         commands.getCommandList().add("close");
 
         try {
@@ -116,7 +116,7 @@ public class BAMultiParticipantParticipantCompletionParticipantCloseTest impleme
 
         // invoke the service again to create a coordinaator completion participant and script it to close
         commands = new CommandsType();
-        commands.getCommandList().add("enlistPartiicpantCompletion");
+        commands.getCommandList().add("enlistParticipantCompletion");
         commands.getCommandList().add("close");
 
         try {
@@ -141,7 +141,7 @@ public class BAMultiParticipantParticipantCompletionParticipantCloseTest impleme
         // close
 
         commands = new CommandsType();
-        commands.getCommandList().add("enlistPartiicpantCompletion");
+        commands.getCommandList().add("enlistParticipantCompletion");
         commands.getCommandList().add("close");
 
         try {
@@ -241,6 +241,8 @@ public class BAMultiParticipantParticipantCompletionParticipantCloseTest impleme
         }
 
         System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : completed");
+
+        isSuccessful = (exception == null);
     }
 
     public boolean isSuccessful() {

@@ -196,6 +196,8 @@ public class BAMultiParticipantCoordinatorCompletionParticipantCloseAndExitTest 
         }
 
         System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseAndExitTest : completed");
+
+        isSuccessful = (exception == null);
     }
 
     public boolean isSuccessful() {

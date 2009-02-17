@@ -167,6 +167,8 @@ public class ATMultiServicePrepareAndCommitTest implements XTSServiceTest
         }
 
         System.out.println("ATMultiServicePrepareAndCommitTest : completed");
+
+        isSuccessful = (exception == null);
     }
 
     public boolean isSuccessful() {

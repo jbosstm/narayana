@@ -123,6 +123,8 @@ public class ATSingleParticipantPrepareAndCommitTest implements XTSServiceTest
         }
 
         System.out.println("ATSingleParticipantPrepareAndCommitTest : completed");
+
+        isSuccessful = (exception == null);
     }
 
     public boolean isSuccessful() {

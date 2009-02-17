@@ -208,6 +208,8 @@ public class BAMultiServiceCoordinatorCompletionParticipantCloseAndExitTest impl
         }
 
         System.out.println("BAMultiServiceCoordinatorCompletionParticipantCloseAndExitTest : completed");
+
+        isSuccessful = (exception == null);
     }
 
     public boolean isSuccessful() {

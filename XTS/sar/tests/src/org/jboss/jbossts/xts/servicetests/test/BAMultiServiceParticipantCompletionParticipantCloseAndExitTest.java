@@ -103,11 +103,9 @@ public class BAMultiServiceParticipantCompletionParticipantCloseAndExitTest impl
             return;
         }
 
-        // invoke the service to create a coordinaator completion participant and script it to complete and close
+        // invoke the service to create a participant completion participant and script it to complete and close
         commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
-        commands.getCommandList().add("complete");
-        commands.getCommandList().add("close");
+        commands.getCommandList().add("enlistParticipantCompletion");
 
         try {
             results = client.serve(serviceURL1, commands);
@@ -127,10 +125,11 @@ public class BAMultiServiceParticipantCompletionParticipantCloseAndExitTest impl
             System.out.println("BAMultiServiceParticipantCompletionParticipantCloseAndExitTest : enlistCoordinatorCompletion " + s);
         }
 
-        // invoke the second service to create a coordinator completion participant
+        // invoke the second service to create a participant completion participant
         // and close
         commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
+        commands.getCommandList().add("enlistParticipantCompletion");
+        commands.getCommandList().add("close");
 
         try {
             results = client.serve(serviceURL2, commands);
@@ -154,8 +153,7 @@ public class BAMultiServiceParticipantCompletionParticipantCloseAndExitTest impl
         // complete and close
 
         commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
-        commands.getCommandList().add("complete");
+        commands.getCommandList().add("enlistParticipantCompletion");
         commands.getCommandList().add("close");
 
         try {
@@ -255,6 +253,8 @@ public class BAMultiServiceParticipantCompletionParticipantCloseAndExitTest impl
         }
 
         System.out.println("BAMultiServiceParticipantCompletionParticipantCloseAndExitTest : completed");
+
+        isSuccessful = (exception == null);
     }
 
     public boolean isSuccessful() {
