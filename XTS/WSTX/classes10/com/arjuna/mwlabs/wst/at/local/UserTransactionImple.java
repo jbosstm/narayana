@@ -98,6 +98,18 @@ public class UserTransactionImple extends UserTransaction
 		 */
 	}
 
+    public void beginSubordinate()
+        throws WrongStateException, SystemException
+    {
+        beginSubordinate(0);
+    }
+
+    public void beginSubordinate(final int timeout)
+        throws WrongStateException, SystemException
+    {
+        throw new SystemException("com.arjuna.mwlabs.wst.at.local.UserTransactionImple  : beginSubordinate not implemented");
+    }
+
 	public void commit () throws TransactionRolledBackException,
 			UnknownTransactionException, SystemException
 	{

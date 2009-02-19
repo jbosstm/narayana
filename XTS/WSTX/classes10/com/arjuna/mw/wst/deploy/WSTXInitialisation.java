@@ -126,17 +126,15 @@ public class WSTXInitialisation implements ServletContextListener
 
         final Element docElem = doc.getDocumentElement() ;
         final String userTx = getService(docElem, "UserTransaction") ;
-        final String userSubTx = getService(docElem, "UserSubtransaction") ;
         final String txManager = getService(docElem, "TransactionManager") ;
         final String userBa = getService(docElem, "UserBusinessActivity") ;
         final String baManager = getService(docElem, "BusinessActivityManager") ;
 
-        if ((userTx == null) || (userSubTx == null) || (txManager == null) || (userBa == null) || (baManager == null))
+        if ((userTx == null) || (txManager == null) || (userBa == null) || (baManager == null))
         {
             throw new FileNotFoundException(wstxLogger.log_mesg.getString("com.arjuna.mw.wst.deploy.WSTXI_23"));
         }
         UserTransaction.setUserTransaction((UserTransaction)ClassLoaderHelper.forName(getClass(), userTx).newInstance()) ;
-        UserSubtransaction.setUserTransaction((UserTransaction)ClassLoaderHelper.forName(getClass(), userSubTx).newInstance()) ;
         TransactionManager.setTransactionManager((TransactionManager)ClassLoaderHelper.forName(getClass(), txManager).newInstance()) ;
         UserBusinessActivity.setUserBusinessActivity((UserBusinessActivity)ClassLoaderHelper.forName(getClass(), userBa).newInstance()) ;
         BusinessActivityManager.setBusinessActivityManager((BusinessActivityManager)ClassLoaderHelper.forName(getClass(), baManager).newInstance()) ;

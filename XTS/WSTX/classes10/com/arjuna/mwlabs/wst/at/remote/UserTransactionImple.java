@@ -39,6 +39,7 @@ import com.arjuna.mw.wst.TransactionManager;
 import com.arjuna.mw.wst.UserTransaction;
 import com.arjuna.mw.wst.common.Environment;
 import com.arjuna.mw.wstx.logging.wstxLogger;
+import com.arjuna.mw.wsc.context.Context;
 import com.arjuna.mwlabs.wst.at.ContextImple;
 import com.arjuna.mwlabs.wst.at.context.TxContextImple;
 import com.arjuna.webservices.SoapFault;
@@ -103,7 +104,7 @@ public class UserTransactionImple extends UserTransaction
 			if (_ctxManager.currentTransaction() != null)
 				throw new WrongStateException();
 
-			com.arjuna.mw.wsc.context.Context ctx = startTransaction(timeout);
+			com.arjuna.mw.wsc.context.Context ctx = startTransaction(timeout, null);
 
 			_ctxManager.resume(new TxContextImple(ctx));
 
@@ -128,6 +129,47 @@ public class UserTransactionImple extends UserTransaction
 			throw ex;
 		}
 	}
+
+    public void beginSubordinate()
+        throws WrongStateException, SystemException
+    {
+        beginSubordinate(0);
+    }
+
+    public void beginSubordinate(final int timeout)
+        throws WrongStateException, SystemException
+    {
+        try
+        {
+            TxContextImple currentImple = (TxContextImple)_ctxManager.currentTransaction();
+            if (currentImple == null || !(currentImple instanceof TxContextImple))
+                throw new WrongStateException();
+
+            com.arjuna.mw.wsc.context.Context ctx = startTransaction(timeout, currentImple);
+
+            _ctxManager.resume(new TxContextImple(ctx));
+            // n.b. we don't enlist the subordinate transaction for completion
+            // that ensures that any attempt to commit or rollback will fail
+        }
+        catch (com.arjuna.wsc.InvalidCreateParametersException ex)
+        {
+            tidyup();
+
+            throw new SystemException(ex.toString());
+        }
+        catch (com.arjuna.wst.UnknownTransactionException ex)
+        {
+            tidyup();
+
+            throw new SystemException(ex.toString());
+        }
+        catch (SystemException ex)
+        {
+            tidyup();
+
+            throw ex;
+        }
+    }
 
 	public void commit () throws TransactionRolledBackException,
 			UnknownTransactionException, SecurityException, SystemException, WrongStateException
@@ -207,7 +249,18 @@ public class UserTransactionImple extends UserTransaction
 		}
 	}
 
-    private final com.arjuna.mw.wsc.context.Context startTransaction(int timeout)
+    /**
+     * fetch the coordination context type stashed in the current AT context implememtation
+     * @param current the current AT context implememtation
+     * @return the coordination context type stashed in the current AT context implememtation
+     */
+    private CoordinationContextType getContextType(TxContextImple current)
+    {
+        Context context = (Context)current.context();
+        return context.getCoordinationContext();
+    }
+
+    private final com.arjuna.mw.wsc.context.Context startTransaction(int timeout, TxContextImple current)
 			throws com.arjuna.wsc.InvalidCreateParametersException,
 			SystemException
 	{
@@ -219,8 +272,9 @@ public class UserTransactionImple extends UserTransaction
             
             final Long expires = (timeout > 0 ? new Long(timeout) : null) ;
             final String messageId = new Uid().stringForm() ;
+            final CoordinationContextType currentContext = (current != null ? getContextType(current) : null);
             final CoordinationContextType coordinationContext = ActivationCoordinator.createCoordinationContext(
-                    _activationCoordinatorService, messageId, AtomicTransactionConstants.WSAT_PROTOCOL, expires, null) ;
+                    _activationCoordinatorService, messageId, AtomicTransactionConstants.WSAT_PROTOCOL, expires, currentContext) ;
             if (coordinationContext == null)
             {
                 throw new SystemException(
@@ -264,12 +318,14 @@ public class UserTransactionImple extends UserTransaction
 			 * or rollback at this stage. The alternative would be to setup the completionParticipantURL
 			 * and throw the exception from the remote coordinator side (see enlistCompletionParticipants
 			 * for how to do this).
+			 *
+			 * The same applies for an interposed subordinate transaction created via beginSubordinate.
 			 */
 
 			final EndpointReferenceType completionCoordinator = (EndpointReferenceType) _completionCoordinators.get(id);
 
 			if (completionCoordinator == null)
-				throw new SecurityException();
+				throw new WrongStateException();
 
 			CompletionStub completionStub = new CompletionStub(id, completionCoordinator);
 
@@ -339,12 +395,14 @@ public class UserTransactionImple extends UserTransaction
 			 * or rollback at this stage. The alternative would be to setup the completionParticipantURL
 			 * and throw the exception from the remote coordinator side (see enlistCompletionParticipants
 			 * for how to do this).
+			 *
+			 * The same applies for an interposed subordinate transaction created via beginSubordinate.
 			 */
 
 			EndpointReferenceType completionCoordinator = (EndpointReferenceType) _completionCoordinators.get(id);
 
 			if (completionCoordinator == null)
-				throw new SecurityException();
+				throw new WrongStateException();
 
 			CompletionStub completionStub = new CompletionStub(id, completionCoordinator);
 

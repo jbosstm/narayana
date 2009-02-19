@@ -5,6 +5,7 @@ import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.common.Environment;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mw.wsc11.context.Context;
+import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mwlabs.wst11.at.ContextImple;
 import com.arjuna.mwlabs.wst11.at.remote.TransactionManagerImple;
 import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
@@ -23,6 +24,7 @@ import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.stub.CompletionStub;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
@@ -75,7 +77,7 @@ public class UserTransactionImple extends UserTransaction
 			if (_ctxManager.currentTransaction() != null)
 				throw new WrongStateException();
 
-			Context ctx = startTransaction(timeout);
+			Context ctx = startTransaction(timeout, null);
 
 			_ctxManager.resume(new TxContextImple(ctx));
 
@@ -100,6 +102,46 @@ public class UserTransactionImple extends UserTransaction
 			throw ex;
 		}
 	}
+
+    public void beginSubordinate () throws WrongStateException, SystemException
+    {
+        beginSubordinate(0);
+    }
+
+    public void beginSubordinate (int timeout) throws WrongStateException, SystemException
+    {
+        try
+        {
+            TxContext current = _ctxManager.currentTransaction();
+            if ((current == null) || !(current instanceof TxContextImple))
+                throw new WrongStateException();
+
+            TxContextImple currentImple = (TxContextImple) current;
+            Context ctx = startTransaction(timeout, currentImple);
+
+            _ctxManager.resume(new TxContextImple(ctx));
+            // n.b. we don't enlist the subordinate transaction for completion
+            // that ensures that any attempt to commit or rollback will fail
+        }
+        catch (com.arjuna.wsc.InvalidCreateParametersException ex)
+        {
+            tidyup();
+
+            throw new SystemException(ex.toString());
+        }
+        catch (com.arjuna.wst.UnknownTransactionException ex)
+        {
+            tidyup();
+
+            throw new SystemException(ex.toString());
+        }
+        catch (SystemException ex)
+        {
+            tidyup();
+
+            throw ex;
+        }
+    }
 
 	public void commit () throws TransactionRolledBackException,
             UnknownTransactionException, SecurityException, SystemException, WrongStateException
@@ -180,7 +222,37 @@ public class UserTransactionImple extends UserTransaction
 		}
 	}
 
-    private final Context startTransaction(int timeout)
+    /**
+     * fetch the coordination context type stashed in the current AT context implememtation
+     * and use it to construct an instance of the coordination context extension type we need to
+     * send down the wire to the activation coordinator
+     * @param current the current AT context implememtation
+     * @return an instance of the coordination context extension type
+     */
+    private CoordinationContext getContext(TxContextImple current)
+    {
+        CoordinationContextType contextType = getContextType(current);
+        CoordinationContext context = new CoordinationContext();
+        context.setCoordinationType(contextType.getCoordinationType());
+        context.setExpires(contextType.getExpires());
+        context.setIdentifier(contextType.getIdentifier());
+        context.setRegistrationService(contextType.getRegistrationService());
+
+        return context;
+    }
+
+    /**
+     * fetch the coordination context type stashed in the current AT context implememtation
+     * @param current the current AT context implememtation
+     * @return the coordination context type stashed in the current AT context implememtation
+     */
+    private CoordinationContextType getContextType(TxContextImple current)
+    {
+        ContextImple contextImple = (ContextImple)current.context();
+        return contextImple.getCoordinationContext();
+    }
+
+    private final Context startTransaction(int timeout, TxContextImple current)
 			throws com.arjuna.wsc.InvalidCreateParametersException,
 			SystemException
 	{
@@ -192,8 +264,9 @@ public class UserTransactionImple extends UserTransaction
 
             final Long expires = (timeout > 0 ? new Long(timeout) : null) ;
             final String messageId = MessageId.getMessageId() ;
+            final CoordinationContext currentContext = (current != null ? getContext(current) : null);
             final CoordinationContextType coordinationContext = ActivationCoordinator.createCoordinationContext(
-                    _activationCoordinatorService, messageId, AtomicTransactionConstants.WSAT_PROTOCOL, expires, null) ;
+                    _activationCoordinatorService, messageId, AtomicTransactionConstants.WSAT_PROTOCOL, expires, currentContext) ;
             if (coordinationContext == null)
             {
                 throw new SystemException(
@@ -237,12 +310,14 @@ public class UserTransactionImple extends UserTransaction
 			 * or rollback at this stage. The alternative would be to setup the completionParticipantURL
 			 * and throw the exception from the remote coordinator side (see enlistCompletionParticipants
 			 * for how to do this).
+			 *
+			 * The same applies for an interposed subordinate transaction created via beginSubordinate.
 			 */
 
 			final W3CEndpointReference completionCoordinator = (W3CEndpointReference) _completionCoordinators.get(id);
 
 			if (completionCoordinator == null)
-				throw new SecurityException();
+				throw new WrongStateException();
 
 			CompletionStub completionStub = new CompletionStub(id, completionCoordinator);
 
@@ -312,12 +387,14 @@ public class UserTransactionImple extends UserTransaction
 			 * or rollback at this stage. The alternative would be to setup the completionParticipantURL
 			 * and throw the exception from the remote coordinator side (see enlistCompletionParticipants
 			 * for how to do this).
+			 *
+			 * The same applies for an interposed subordinate transaction created via beginSubordinate.
 			 */
 
 			W3CEndpointReference completionCoordinator = (W3CEndpointReference) _completionCoordinators.get(id);
 
 			if (completionCoordinator == null)
-				throw new SecurityException();
+				throw new WrongStateException();
 
 			CompletionStub completionStub = new CompletionStub(id, completionCoordinator);
 

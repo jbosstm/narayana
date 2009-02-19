@@ -94,6 +94,23 @@ public abstract class UserTransaction
         throws WrongStateException, SystemException;
 
     /**
+     * Start a new subordinate transaction. If an AT transaction is not currently associated with
+     * this thread then the WrongStateException will be thrown. Upon success, this
+     * operation associates the newly created subordinate transaction with the current
+     * thread.
+     */
+    public abstract void beginSubordinate()
+        throws WrongStateException, SystemException;
+
+    /**
+     * Start a new transaction with the specified timeout as its lifetime.
+     * If an AT transaction is not currently associated with
+     * this thread then the WrongStateException will be thrown.
+     */
+    public abstract void beginSubordinate(final int timeout)
+        throws WrongStateException, SystemException;
+
+    /**
      * The transaction is committed by the commit method. This will execute
      * the PhaseZero, 2PC and OutcomeNotification protocols prior to returning.
      * If there is no transaction associated with the invoking thread then

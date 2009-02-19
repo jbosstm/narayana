@@ -23,7 +23,6 @@ package com.arjuna.wst.tests.junit.basic;
 
 import com.arjuna.mw.wst.TransactionManager;
 import com.arjuna.mw.wst.UserTransaction;
-import com.arjuna.mw.wst.UserSubtransaction;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.wst.tests.DemoDurableParticipant;
 import com.arjuna.wst.tests.DemoVolatileParticipant;
@@ -43,7 +42,6 @@ public class SubtransactionCommitFailInPrepare extends TestCase
             throws Exception
     {
         final UserTransaction ut = UserTransaction.getUserTransaction();
-        final UserTransaction ust = UserSubtransaction.getUserTransaction();
         final TransactionManager tm = TransactionManager.getTransactionManager();
 
         final DemoDurableParticipant p1 = new DemoDurableParticipant();
@@ -56,7 +54,7 @@ public class SubtransactionCommitFailInPrepare extends TestCase
         tm.resume(tx);
         tm.enlistForDurableTwoPhase(p1, p1.identifier());
         tm.enlistForVolatileTwoPhase(p2, p2.identifier());
-        ust.begin();
+        ut.beginSubordinate();
         final TxContext stx = tm.suspend();
         tm.resume(stx);
         tm.enlistForDurableTwoPhase(p3, "failure in prepare");

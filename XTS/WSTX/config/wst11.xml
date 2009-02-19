@@ -24,10 +24,6 @@
         <parameter name="className"
         value="com.arjuna.mwlabs.wst11.at.remote.UserTransactionImple"/>
     </service>
-    <service name="UserSubtransaction">
-        <parameter name="className"
-        value="com.arjuna.mwlabs.wst11.at.remote.UserSubtransactionImple"/>
-    </service>
 	<service name="TransactionManager">
 		<parameter name="className"
 		value="com.arjuna.mwlabs.wst11.at.remote.TransactionManagerImple"/>

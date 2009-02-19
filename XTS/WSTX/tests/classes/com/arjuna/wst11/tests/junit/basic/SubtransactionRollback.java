@@ -23,7 +23,6 @@ package com.arjuna.wst11.tests.junit.basic;
 
 import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst11.UserTransaction;
-import com.arjuna.mw.wst11.UserSubtransaction;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.wst.tests.DemoDurableParticipant;
 import com.arjuna.wst.tests.DemoVolatileParticipant;
@@ -41,7 +40,6 @@ public class SubtransactionRollback extends TestCase
             throws Exception
     {
         final UserTransaction ut = UserTransaction.getUserTransaction();
-        final UserTransaction ust = UserSubtransaction.getUserTransaction();
         final TransactionManager tm = TransactionManager.getTransactionManager();
 
         final DemoDurableParticipant p1 = new DemoDurableParticipant();
@@ -54,7 +52,7 @@ public class SubtransactionRollback extends TestCase
         tm.resume(tx);
         tm.enlistForDurableTwoPhase(p1, p1.identifier());
         tm.enlistForVolatileTwoPhase(p2, p2.identifier());
-        ust.begin();
+        ut.beginSubordinate();
         final TxContext stx = tm.suspend();
         tm.resume(stx);
         tm.enlistForDurableTwoPhase(p3, p3.identifier());
