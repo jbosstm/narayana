@@ -83,7 +83,18 @@ public class ATParticipantRecoveryModule implements RecoveryModule
     public void install()
     {
         XTSATRecoveryManager.setRecoveryManager(new XTSATRecoveryManagerImple(_objectStore));
+        // Subordinate Coordinators register durable participants with their parent transaction so
+        // we need to add an XTSATRecoveryModule which knows about the registered participants
+
+        subordinateRecoveryModule = new XTSATSubordinateRecoveryModule();
+         XTSATRecoveryManager.getRecoveryManager().registerRecoveryModule(subordinateRecoveryModule);
     }
+
+    /**
+     * a recovery module which knows hwo to recover the participants registered by Subordinate AT Coordinators
+     */
+
+    private XTSATSubordinateRecoveryModule subordinateRecoveryModule;
 
     /**
      * called by the service shutdown code after the recovery module is removed from the recovery managers
@@ -91,6 +102,7 @@ public class ATParticipantRecoveryModule implements RecoveryModule
      */
     public void uninstall()
     {
+        XTSATRecoveryManager.getRecoveryManager().unregisterRecoveryModule(subordinateRecoveryModule);
     }
 
     /**

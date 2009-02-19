@@ -10,12 +10,13 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import java.io.IOException;
 
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
+import org.jboss.jbossts.xts.recovery.participant.at.PersistableATParticipant;
 
 /**
  * A durable participant registered on behalf of an interposed WS-AT coordinator in order to ensure that
  * durable participants in the subtransaction prepared, committed and aborted at the right time.
  */
-public class SubordinateDurable2PCStub implements Durable2PCParticipant, PersistableParticipant
+public class SubordinateDurable2PCStub implements Durable2PCParticipant, PersistableParticipant, PersistableATParticipant
 {
     /**
      * normal constructor used when the subordinate coordinator is registered as a durable participant
@@ -215,4 +216,17 @@ public class SubordinateDurable2PCStub implements Durable2PCParticipant, Persist
      */
 
     private boolean recovered;
+
+    /**
+     * this participant implements the PersistableATarticipant interface so it can save its state.
+     * recovery is managed by an XTS recovery module
+     * @return
+     * @throws Exception
+     */
+    public byte[] getRecoveryState() throws Exception {
+        OutputObjectState oos = new OutputObjectState();
+        oos.packString(this.getClass().getName());
+        this.saveState(oos);
+        return oos.buffer();
+    }
 }

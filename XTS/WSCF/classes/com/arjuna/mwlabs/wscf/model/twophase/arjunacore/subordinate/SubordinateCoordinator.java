@@ -250,11 +250,16 @@ public class SubordinateCoordinator extends ACCoordinator
     }
 
     /**
+     * unique string used as prefix for participant ids to ensure they can be identified at recovery
+     */
+    public static String PARTICIPANT_PREFIX = "org.jboss.jbossts.xts.at.subordinate.participant.";
+
+    /**
      * return a uid for the volatile participant registered on behalf of this corodinator
      */
     public String getVolatile2PhaseId()
     {
-        return get_uid().stringForm() + "_V";
+        return PARTICIPANT_PREFIX + get_uid().stringForm() + "_V";
     }
 
     /**
@@ -262,7 +267,7 @@ public class SubordinateCoordinator extends ACCoordinator
      */
     public String getDurable2PhaseId()
     {
-        return get_uid().stringForm() + "_D";
+        return PARTICIPANT_PREFIX + get_uid().stringForm() + "_D";
     }
 
 
