@@ -40,11 +40,8 @@ import java.util.List;
  * Starts a transaction and enlists a single participant with instructions to prepare and commit
  * without error
  */
-public class BASingleParticipantCompletionParticipantCloseTest implements XTSServiceTest
+public class BASingleParticipantCompletionParticipantCloseTest extends XTSServiceTestBase implements XTSServiceTest
 {
-    private boolean isSuccessful = false;
-    private Exception exception;
-
     public void run() {
 
         // wait a while so the service has time to start
@@ -156,13 +153,5 @@ public class BASingleParticipantCompletionParticipantCloseTest implements XTSSer
         System.out.println("BASingleParticipantCompletionParticipantCloseTest : finished");
 
         isSuccessful = (exception == null);
-    }
-
-    public boolean isSuccessful() {
-        return isSuccessful;
-    }
-
-    public Exception getException() {
-        return exception;
     }
 }

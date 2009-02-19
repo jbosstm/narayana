@@ -36,11 +36,8 @@ import com.arjuna.wst.UnknownTransactionException;
  * Starts a transaction and enlist several participants for the same web service with instructions to
  * prepare and commit without error
  */
-public class ATMultiParticipantPrepareAndCommitTest implements XTSServiceTest
+public class ATMultiParticipantPrepareAndCommitTest extends XTSServiceTestBase implements XTSServiceTest
 {
-    private boolean isSuccessful = false;
-    private Exception exception;
-
     public void run() {
 
         try {
@@ -157,13 +154,5 @@ public class ATMultiParticipantPrepareAndCommitTest implements XTSServiceTest
         System.out.println("ATMultiParticipantPrepareAndCommitTest : completed");
 
         isSuccessful = (exception == null);
-    }
-
-    public boolean isSuccessful() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public Exception getException() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

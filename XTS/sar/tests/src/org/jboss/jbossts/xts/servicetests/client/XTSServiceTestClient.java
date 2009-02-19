@@ -46,7 +46,7 @@ import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
  * agreement participant such as completed, fail etc. The full list of available commands and associated
  * return values is
  *
- * enlistDureable (ATParticipantCommand)* ==> DurableId
+ * enlistDurable (ATParticipantCommand)* ==> DurableId
  * enlistVolatile  (ATParticipantCommand)* ==> VolatileId
  * enlistCoordinatorCompletion (BACoordinatorCompletionCommand)* ==> BACoordinatorCompletionId
  * enlistParticipantCompletion (BAParticipantCompletionCommand)* ==> BAParticipantCompletionId
@@ -55,6 +55,10 @@ import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
  * exit (BAParticipantCompletionId | BACoordinatorCompletionId) ==> "ok"
  * cannotComplete BAParticipantCompletionId ==> "ok"
  * completed BAParticipantCompletionId ==> "ok"
+ * subtransaction ==> subtransactionId
+ * subactivity ==> subactivityId
+ * subtransactioncommands subtransactionId serviceURL (command)
+ * subactivitycommands subactivityId serviceURL (command)
  *
  * where
  *
@@ -93,7 +97,18 @@ import com.arjuna.mw.wst11.client.JaxWSHeaderContextProcessor;
  * BAParticipantCompletionId is a String of the form
  *   "org.jboss.jbossts.xts.servicetests.ParticipantCompletionTestParticipant.NNNNNNNN"
  *
+ * subtransactionId is a String of the form
+ *   "transaction.at.NNNNNNNN"
+ *
+ * subactivityId is a String of the form
+ *   "transaction.ba.NNNNNNNN"
+ *
  * where NNNNNNNNN is a sequence of base 10 digits.
+ * 
+ * serviceURL is a URL identifying an instance of the test service to which commands are to be
+ * recursively dispatched within the relevant subtransaction or subactivity
+ *
+ * command is any sequence of command strings defined by the LHS of the preceding productions
  */
 
 public class XTSServiceTestClient

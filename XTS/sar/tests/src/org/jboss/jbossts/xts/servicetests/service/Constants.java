@@ -6,4 +6,5 @@ package org.jboss.jbossts.xts.servicetests.service;
 public class Constants
 {
     public static final String PARTICIPANT_ID_PREFIX = "org.jboss.jbossts.xts.servicetests.";
+    public static final String TRANSACTION_ID_PREFIX = "transaction.";
 }

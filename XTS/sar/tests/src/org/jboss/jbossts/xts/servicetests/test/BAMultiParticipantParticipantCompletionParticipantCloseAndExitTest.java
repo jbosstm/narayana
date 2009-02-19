@@ -40,11 +40,8 @@ import java.util.List;
  * Starts a transaction and enlists  multipleparticipants with instructions to prepare and commit
  * without error then gets one of them to exit before closing
  */
-public class BAMultiParticipantParticipantCompletionParticipantCloseAndExitTest implements XTSServiceTest
+public class BAMultiParticipantParticipantCompletionParticipantCloseAndExitTest extends XTSServiceTestBase implements XTSServiceTest
 {
-    private boolean isSuccessful = false;
-    private Exception exception;
-
     public void run() {
 
         // wait a while so the service has time to start
@@ -244,13 +241,5 @@ public class BAMultiParticipantParticipantCompletionParticipantCloseAndExitTest 
         System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseAndExitTest : completed");
 
         isSuccessful = (exception == null);
-    }
-
-    public boolean isSuccessful() {
-        return isSuccessful;
-    }
-
-    public Exception getException() {
-        return exception;
     }
 }

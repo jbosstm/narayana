@@ -36,11 +36,8 @@ import com.arjuna.wst.UnknownTransactionException;
  * Starts a transaction and enlists a single participant with instructions to prepare and commit
  * without error
  */
-public class ATSingleParticipantPrepareAndCommitTest implements XTSServiceTest
+public class ATSingleParticipantPrepareAndCommitTest extends XTSServiceTestBase implements XTSServiceTest
 {
-    private boolean isSuccessful = false;
-    private Exception exception;
-
     public void run() {
 
         // wait a while so the service has time to start
@@ -125,13 +122,5 @@ public class ATSingleParticipantPrepareAndCommitTest implements XTSServiceTest
         System.out.println("ATSingleParticipantPrepareAndCommitTest : completed");
 
         isSuccessful = (exception == null);
-    }
-
-    public boolean isSuccessful() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public Exception getException() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

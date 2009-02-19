@@ -27,23 +27,26 @@ import org.jboss.jbossts.xts.servicetests.generated.CommandsType;
 import org.jboss.jbossts.xts.servicetests.generated.XTSServiceTestPortType;
 import org.jboss.jbossts.xts.servicetests.service.participant.*;
 import org.jboss.jbossts.xts.servicetests.service.recovery.TestATRecoveryModule;
+import org.jboss.jbossts.xts.servicetests.client.XTSServiceTestClient;
 
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 import javax.xml.namespace.QName;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.HashMap;
 
-import com.arjuna.mw.wst11.TransactionManager;
-import com.arjuna.mw.wst11.TransactionManagerFactory;
-import com.arjuna.mw.wst11.BusinessActivityManager;
-import com.arjuna.mw.wst11.BusinessActivityManagerFactory;
+import com.arjuna.mw.wst11.*;
+import com.arjuna.mw.wst.TxContext;
 import com.arjuna.wst11.BAParticipantManager;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst.UnknownTransactionException;
@@ -83,6 +86,9 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
     {
         System.out.println("XTSServiceTestPortTypeImpl preDestroy");
     }
+
+    @Resource WebServiceContext context;
+
     /**
      *
      * @param commands
@@ -99,15 +105,21 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
         List<String> resultsList = results.getResultList();
         List<String> commandList = commands.getCommandList();
 
+        MessageContext messageContext = context.getMessageContext();
+        HttpServletRequest servletRequest = ((HttpServletRequest)messageContext.get(MessageContext.SERVLET_REQUEST));
+        String path = servletRequest.getServletPath();
+
+        System.out.println("service " + path);
         for (String s : commandList)
         {
-            System.out.println("service  " + this + " :  command " + s);
+            System.out.println("  command " + s);
         }
 
         int size = commandList.size();
         int idx = 0;
 
-        String command = commandList.get(idx);
+        String command = commandList.remove(idx);
+        size--;
 
         // check against each of the possible commands
 
@@ -122,7 +134,7 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
             } catch (Exception e) {
                 throw new WebServiceException("enlistDurable failed ", e);
             }
-            for (idx = 1; idx < size; idx++) {
+            for (idx = 0; idx < size; idx++) {
                 participant.addCommand(commandList.get(idx));
             }
             participantMap.put(id, participant);
@@ -136,7 +148,7 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
             } catch (Exception e) {
                 throw new WebServiceException("enlistVolatile failed ", e);
             }
-            for (idx = 1;idx < size; idx++) {
+            for (idx = 0; idx < size; idx++) {
                 participant.addCommand(commandList.get(idx));
             }
             participantMap.put(id, participant);
@@ -152,7 +164,7 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
             } catch (Exception e) {
                 throw new WebServiceException("enlistCoordinatorCompletion failed ", e);
             }
-            for (idx = 1;idx < size; idx++) {
+            for (idx = 0; idx < size; idx++) {
                 participant.addCommand(commandList.get(idx));
             }
             participantMap.put(id, participant);
@@ -168,17 +180,18 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
             } catch (Exception e) {
                 throw new WebServiceException("enlistParticipantCompletion failed ", e);
             }
-            for (idx = 1;idx < size; idx++) {
+            for (idx = 0; idx < size; idx++) {
                 participant.addCommand(commandList.get(idx));
             }
             participantMap.put(id, participant);
             resultsList.add(id);
         } else if (command.equals("commands")) {
-// add extra commands
-            String id = commandList.get(1);
+// add extra commands to a participant script
+            String id = commandList.remove(idx);
+            size--;
             ScriptedTestParticipant participant = participantMap.get(id);
             if (participant != null) {
-                for (idx = 2; idx < size; idx++)
+                for (idx = 0; idx < size; idx++)
                 {
                     participant.addCommand(commandList.get(idx));
                 }
@@ -188,7 +201,8 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
             }
         } else if (command.equals("exit")) {
 // initiate BA manager activities
-            String id = commandList.get(1);
+            String id = commandList.remove(idx);
+            size--;
             ScriptedTestParticipant participant = participantMap.get(id);
             if (participant != null ) {
                 if (participant instanceof ParticipantCompletionTestParticipant) {
@@ -207,7 +221,8 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
                 throw new WebServiceException("exit unknown participant " + id);
             }
         } else if (command.equals("completed")) {
-            String id = commandList.get(1);
+            String id = commandList.remove(idx);
+            size--;
             ScriptedTestParticipant participant = participantMap.get(id);
             if (participant != null ) {
                 if (participant instanceof ParticipantCompletionTestParticipant) {
@@ -226,7 +241,8 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
                 throw new WebServiceException("completed unknown participant " + id);
             }
         } else if (command.equals("fail")) {
-            String id = commandList.get(1);
+            String id = commandList.remove(idx);
+            size--;
             ScriptedTestParticipant participant = participantMap.get(id);
             if (participant != null ) {
                 if (participant instanceof ParticipantCompletionTestParticipant) {
@@ -246,7 +262,8 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
                 throw new WebServiceException("fail unknown participant " + id);
             }
         } else if (command.equals("cannotComplete")) {
-            String id = commandList.get(1);
+            String id = commandList.remove(idx);
+            size--;
             ScriptedTestParticipant participant = participantMap.get(id);
             if (participant != null ) {
                 if (participant instanceof ParticipantCompletionTestParticipant) {
@@ -264,11 +281,140 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
             } else {
                 throw new WebServiceException("cannotComplete unknown participant " + id);
             }
+        } else if (command.equals("subtransaction")) {
+// create subordinate AT transaction
+            TxContext currentTx;
+            TxContext newTx;
+            try {
+                currentTx = TransactionManager.getTransactionManager().currentTransaction();
+            } catch (SystemException e) {
+                throw new WebServiceException("subtransaction currentTransaction() failed with exception " + e);
+            }
+
+            try {
+                UserTransaction userTransaction = UserTransactionFactory.userTransaction();
+                userTransaction.beginSubordinate();
+                newTx = TransactionManager.getTransactionManager().currentTransaction();
+            } catch (Exception e) {
+                throw new WebServiceException("subtransaction begin() failed with exception " + e);
+            }
+            String id = transactionId("at");
+            subordinateTransactionMap.put(id, newTx);
+            resultsList.add(id);
+        } else if (command.equals("subactivity")) {
+// create subordinate BA transaction
+            TxContext currentTx;
+            TxContext newTx;
+            try {
+                currentTx = BusinessActivityManagerFactory.businessActivityManager().currentTransaction();
+            } catch (SystemException e) {
+                throw new WebServiceException("subtransaction currentTransaction() failed with exception " + e);
+            }
+
+            try {
+                UserBusinessActivity userBusinessActivity = UserBusinessActivityFactory.userBusinessActivity();
+                // this is nto implemented yet!!!
+                // userBusinessActivity.beginSubordinate();
+                // and this will fail with a WrongStateException
+                userBusinessActivity.begin();
+                newTx = BusinessActivityManager.getBusinessActivityManager().currentTransaction();
+            } catch (Exception e) {
+                throw new WebServiceException("subtransaction begin() failed with exception " + e);
+            }
+            String id = transactionId("ba");
+            subordinateActivityMap.put(id, newTx);
+            resultsList.add(id);
+        } else if (command.equals("subtransactioncommands")) {
+// dispatch commands in a subordinate transaction or activity
+            // we should find the id of a subordinate transaction, a web service URL
+            // and a list of commands to dispatch to that transaction
+            String txId = commandList.remove(idx);
+            size--;
+            String url = commandList.remove(idx);
+            size--;
+
+            TxContext newTx = subordinateTransactionMap.get(txId);
+            if (newTx != null) {
+                try {
+                    TransactionManager.getTransactionManager().resume(newTx);
+                } catch (Exception e) {
+                    throw new WebServiceException("subtransactioncommands resume() failed with exception " + e);
+                }
+            } else {
+                throw new WebServiceException("subtransactioncommands unknown subordinate transaction id " + txId);
+            }
+            // ok, now we install the relevant transaction and then just pass the commands on to
+            // the web service
+
+            CommandsType newCommands = new CommandsType();
+            List<String> newCommandList = newCommands.getCommandList();
+            for (int i = 0; i < size; i++) {
+                newCommandList.add(commandList.get(i));
+            }
+            ResultsType subResults = serveSubordinate(url, newCommands);
+            List<String> subResultsList = subResults.getResultList();
+            size = subResultsList.size();
+            for (idx = 0; idx < size; idx++) {
+                resultsList.add(subResultsList.get(idx));
+            }
+        } else if (command.equals("subactivitycommands")) {
+// dispatch commands in a subordinate transaction or activity
+            // we should find the id of a subordinate transaction, a web service URL
+            // and a list of commands to dispatch to that transaction
+            String txId = commandList.remove(idx);
+            size--;
+            String url = commandList.remove(idx);
+            size--;
+
+            TxContext newTx = subordinateActivityMap.get(txId);
+            if (newTx != null) {
+                try {
+                    TransactionManager.getTransactionManager().resume(newTx);
+                } catch (Exception e) {
+                    throw new WebServiceException("subactivitycommands resume() failed with exception " + e);
+                }
+            } else {
+                throw new WebServiceException("subactivitycommands unknown subordinate transaction id " + txId);
+            }
+            // ok, now we install the relevant transaction and then just pass the commands on to
+            // the web service
+
+            CommandsType newCommands = new CommandsType();
+            List<String> newCommandList = newCommands.getCommandList();
+            for (int i = 0; i < size; i++) {
+                newCommandList.add(commandList.get(i));
+            }
+            ResultsType subResults = serveSubordinate(url, newCommands);
+            List<String> subResultsList = subResults.getResultList();
+            size = subResultsList.size();
+            for (idx = 0; idx < size; idx++) {
+                resultsList.add(subResultsList.get(idx));
+            }
         }
 
         return results;
     }
 
+    /**
+     * utiilty method provided to simplify recursive dispatch of commands to another web service. this is
+     * intended to be used to create and drive partiicpants in subordinate transactions
+     * @param url
+     * @param commands
+     * @return
+     */
+    private ResultsType serveSubordinate(String url, CommandsType commands)
+    {
+        return getClient().serve(url, commands);
+    }
+
+    private synchronized XTSServiceTestClient getClient()
+    {
+        if (client == null) {
+            client = new XTSServiceTestClient();
+        }
+
+        return client;
+    }
     /**
      *  counter used to conjure up participant names
      */
@@ -288,6 +434,18 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
     }
 
     /**
+     * obtain a new transaction name starting with a transaction prefix and terminated
+     * with the supplied suffix and a unique trailing number
+     * @param suffix a component to be added to the name before the counter identifying the type of
+     * transaction
+     * @return
+     */
+    private synchronized String transactionId(String suffix)
+    {
+        return Constants.TRANSACTION_ID_PREFIX + suffix + "." + nextId++;
+    }
+
+    /**
      * a table used to retain a handle on enlisted participants so that they can be driven by the client to
      * perform actions not contained in the original command script.
      */
@@ -297,4 +455,20 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
      * a table used to retain a handle on managers for enlisted BA  participants.
      */
     private static HashMap<String, BAParticipantManager> managerMap = new HashMap<String, BAParticipantManager>();
+
+    /**
+     * a table used to retain a handle on AT subordinate transactions
+     */
+    private static HashMap<String, TxContext> subordinateTransactionMap = new HashMap<String, TxContext>();
+
+    /**
+     * a table used to retain a handle on BA subactivities
+     */
+    private static HashMap<String, TxContext> subordinateActivityMap = new HashMap<String, TxContext>();
+
+    /**
+     * a client used to propagate requests recursively from within subtransactions or subactivities
+     */
+
+    private static XTSServiceTestClient client = null;
 }
