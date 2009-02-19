@@ -259,7 +259,12 @@ public class TxControl
 		return maintainHeuristics;
 	}
 
-	public static final byte[] getXANodeName()
+    public static boolean isReadonlyOptimisation()
+    {
+        return readonlyOptimisation;
+    }
+
+    public static final byte[] getXANodeName()
 	{
 		return xaNodeName;
 	}

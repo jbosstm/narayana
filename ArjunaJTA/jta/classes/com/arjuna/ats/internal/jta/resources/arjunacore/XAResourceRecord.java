@@ -54,6 +54,7 @@ import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
@@ -262,6 +263,12 @@ public class XAResourceRecord extends AbstractRecord
 
 			if (_theXAResource.prepare(_tranID) == XAResource.XA_RDONLY)
 			{
+                if (TxControl.isReadonlyOptimisation())
+                {
+                    // we won't be called again, so we need to tidy up now
+                    removeConnection();
+                }
+                
 				return TwoPhaseOutcome.PREPARE_READONLY;
 			}
 			else
