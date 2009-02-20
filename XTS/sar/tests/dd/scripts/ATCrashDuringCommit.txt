@@ -120,17 +120,15 @@
 #
 # Available tests include:
 #
-# Tests still to be written include:
-#
-# org.jboss.jbossts.xts.servicetests.test.ATMultiParticipantPrepareAndCommitTest
-# this test invokes a single service registering 3 coordinator completion participants
+# org.jboss.jbossts.xts.servicetests.test.at.MultiParticipantPrepareAndCommitTest
+# this test invokes a single service registering 3 participants
 # the location of service is defined by defining a system property:
 #    org.jboss.jbossts.xts.servicetests.ServiceURL1
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
-# org.jboss.jbossts.xts.servicetests.test.ATMultiServicePrepareAndCommitTest
-# this test invokes 3 separate services registering a coordinator completion participant with each service
+# org.jboss.jbossts.xts.servicetests.test.at.MultiServicePrepareAndCommitTest
+# this test invokes 3 separate services registering a participant with each service
 # the location of service is defined by defining by system properties:
 #    org.jboss.jbossts.xts.servicetests.ServiceURL1
 #    org.jboss.jbossts.xts.servicetests.ServiceURL2
@@ -202,16 +200,16 @@ ENDRULE
 # (CoordinatorEngine) is sent a commit message. It exits the JVM,
 # simulating a crash. The trigger location is on entry
 
-RULE kill JVM at participant completion close
+RULE kill JVM at commit
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorEngine
-METHOD close
+METHOD commit
 AT ENTRY
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF (NOT recovered)
    AND
-   debug("close on non-recovered coordinator engine " + identifier)
+   debug("commit on non-recovered coordinator engine " + identifier)
 DO traceln("log", "JVM exit"),
    debug("!!!killing JVM!!!"),
    killJVM()
@@ -219,10 +217,10 @@ ENDRULE
 
 #######################################################################
 # This rule is triggered when a non-recovered coordinator engine
-# (CoordinatorEngine) is requested to send a prepared message. It
+# (CoordinatorEngine) is requested to send a prepare message. It
 # traces the call.
 
-RULE trace coordinator completion close
+RULE trace participant prepare
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorEngine
 METHOD prepare
 AFTER SYNCHRONIZE
@@ -230,15 +228,15 @@ BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF NOT recovered
-DO debug("close on recovered coordinator engine " + identifier),
-   traceln("log", "close on recovered coordinator engine " + identifier)
+DO debug("prepare on recovered coordinator engine " + identifier),
+   traceln("log", "prepare on recovered coordinator engine " + identifier)
 ENDRULE
 
 #######################################################################
 # This rule is triggered when a non-recovered coordinator engine
 # (CoordinatorEngine) receives a prepared message. It traces the call.
 
-RULE trace coordinator completion completed
+RULE trace participant prepared
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorEngine
 METHOD prepared(NotificationType, AddressingProperties, ArjunaContext)
 AT ENTRY
@@ -246,8 +244,8 @@ BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF NOT recovered
-DO debug("received completed message for coordinator engine " + identifier),
-   traceln("log", "received completed message for coordinator engine " + identifier)
+DO debug("received prepared message for coordinator engine " + identifier),
+   traceln("log", "received prepared message for coordinator engine " + identifier)
 ENDRULE
 
 #######################################################################
@@ -270,56 +268,21 @@ DO debug("created recovered coordinator engine " + identifier),
 ENDRULE
 
 #######################################################################
-# This rule is triggered when a coordinator engine
-# (CoordinatorCompletionCoordinatorEngine) is created from details
-# located in the log record. It traces the create operation
-# The trigger location is at entry but the rule should only be triggered
-# after calling the super constructor
-RULE trace coordinator completion engine create
-CLASS com.arjuna.wst11.messaging.engines.CoordinatorEngine
-METHOD <init>(String, boolean, W3CEndpointReference, State, boolean)
-AT ENTRY
-BIND identifier = $1,
-     recovered=$4
-IF recovered
-DO debug("created recovered coordinator engine " + identifier),
-   trace("log", "created recovered coordinator engine " + identifier)
-ENDRULE
-
-#######################################################################
 # This rule is triggered when a recovered coordinator engine
-# (CoordinatorEngine) is requested to send a close message. This
+# (CoordinatorEngine) is requested to send a commit message. This
 # happens during replay of a prepared TX from
 # the log. It traces the call.
 
-RULE trace participant completion close
-CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
+RULE trace recovered participant commit
+CLASS com.arjuna.wst11.messaging.engines.CoordinatorEngine
 METHOD close
 AFTER SYNCHRONIZE
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF recovered
-DO debug("close on recovered participant completion participant engine " + identifier),
-   traceln("log", "close on recovered participant completion participant engine " + identifier)
-ENDRULE
-
-#######################################################################
-# This rule is triggered when a recovered coordinator completion
-# participant stub (CoordinatorCompletionCoordinatorEngine) is requested
-# to send a close message. This happens during replay of a prepared TX from
-# the log. It traces the call.
-
-RULE trace coordinator completion close
-CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
-METHOD close
-AFTER SYNCHRONIZE
-BIND engine:CoordinatorEngine = $0,
-     recovered:boolean = engine.isRecovered(),
-     identifier:String = engine.getId()
-IF recovered
-DO debug("close on recovered coordinator completion participant engine " + identifier),
-   traceln("log", "close on recovered coordinator completion participant engine " + identifier)
+DO debug("commit on recovered coordinator engine " + identifier),
+   traceln("log", "commit on recovered coordinator engine " + identifier)
 ENDRULE
 
 #######################################################################
@@ -338,8 +301,8 @@ BIND coordinator = $0,
 IF (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.PREPARED)
      OR
      (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.COMMITTING)
-DO debug("replaying close for prepared activity " + uid),
-   traceln("log", "replaying close for prepared activity " + uid)
+DO debug("replaying close for prepared transaction " + uid),
+   traceln("log", "replaying commit for prepared transaction " + uid)
 ENDRULE
 
 #######################################################################
@@ -355,7 +318,7 @@ AFTER CALL remove_committed
 BIND action : BasicAction = $0,
      uid  = action.get_uid()
 IF TRUE
-DO traceln("log", "removed committed activity " + uid),
+DO traceln("log", "removed committed transaction " + uid),
    debug("removed committed transaction " + uid),
    debug("!!!killing JVM!!!"),
    killJVM()

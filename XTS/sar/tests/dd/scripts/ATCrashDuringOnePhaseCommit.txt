@@ -1,0 +1,443 @@
+##############################################################################
+# JBoss, Home of Professional Open Source
+# Copyright 2009, Red Hat Middleware LLC, and individual contributors
+# by the @authors tag. See the copyright.txt in the distribution for a
+# full listing of individual contributors.
+#
+# This is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; either version 2.1 of
+# the License, or (at your option) any later version.
+#
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this software; if not, write to the Free
+# Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+# 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+#
+# @authors Andrew Dinn
+#
+# AT Crash During One PhaseCommit
+#
+# This script automates testing of a specific recovery scenario for the
+# JBossTS XTS implementation of the WS-AT 1.1 protocol using orchestration
+# rules. The scenario employs a client, coordinator and 1 web service
+# running in a single JVM. It is also possible to run the test using
+# separate JVMs for the coordinator and participant web service but this
+# requires incluson of some extra rules which make sure the coordinator
+# and participant JVMs both crash.
+# The general scenario differentiates between events happening in the
+# coordinator JVM (AS1) and events happening in the participant JVM (AS2)
+# and rules are categorised according as to which AS they apply to.
+# The scenario is as follows (** indicates intercession by a TOAST rule):
+#
+# AS1 boots
+# AS2 boots
+# Client starts a WS-AT activity (AS1 or AS2 or even AS3)
+# Client invokes web service
+# Web service registers participant P1 (AS2)
+#
+# Client initiates transaction commit
+#
+# Coordinator initiates prepare of participant P1
+# ** AS1 Rule system traces dispatch of prepare to P1
+# ** AS2 Rule system traces receipt of prepare by P1
+# ** AS2 Rule system traces dispatch of prepared by P1
+# ** AS1 Rule system traces receipt of prepared from P1
+#
+# Coordinator sends commit of participant P1
+# -- Extra steps when AS1 != AS2
+# ** AS1 Rule system intercepts after send of commit
+#    has completed and kills AS1 JVM
+# -- End of extra steps
+# Participant P1 receives commit
+# ** AS2 Rule system intercepts commit and kills AS2 JVM
+#
+# -- Extra steps when AS1 != AS2
+# Coordinator resends commit of participant P1
+# ** AS1 Rule system intercepts commit and kills AS1 JVM
+# AS1 reboots
+# -- End of extra steps
+#
+# -- Extra steps when AS1 != AS2
+# AS1 reboots
+# -- End of extra steps
+#
+# AS2 reboots
+#
+# AS2 Recovery system starts after 2 minutes
+# Recovery system recreates participant stub for P1
+# ** AS2 Rule system traces create
+#
+# Participant P1 sends GetStatus to coordinator
+# ** AS2 Rule system traces dispatch of prepared by P1
+# Coordinator receives GetStatus message
+# ** AS1 Rule system traces receipt of GetStatus
+# Coordinator responds with rollback
+# ** AS1 Rule system traces send of rollback
+# -- Extra steps when AS1 != AS2
+# ** AS1 Rule system intercepts _after_ send of
+#    rollback has completed and kills AS1 JVM
+# -- End of extra steps
+# Participant P1 receives rollback
+# ** AS2 Rule system traces receipt of rollback
+# Participant P2 calls rollback
+# ** AS2 Rule system traces rollback call and then kills AS2 JVM
+#
+# Use of this script
+#
+# The default way of exercising this test is to deploy the xtstest war
+# to a single AS and configure it to run the relevant XTS Service Test.
+# The web service and coordinator will be located with the client.
+# The web service, client (i.e. the XTS Service Test which drives
+# the test) and coordinator service can optionally be located in separate
+# ASs. The participant AS should crash when a commit request is received.
+# If the coordinator is in a separate AS it need not be crashed.
+# At reboot of AS2 the rest of the test should run
+# automatically. The participant AS should be killed after the
+# participant recovery is attempted and the participant is rollback.
+# If the coordinator is in a separate AS then it will need to be killed
+# by the test driver
+#
+# This script needs to be passed to a TOAST agent in the JVM running
+# the coordinator service both at first boot and at reboot. Output will be
+# written to file testlog in the working directory of the AS.
+# If the participant is not running in the same JVM as the coordinator then
+# this script needs and the supplementary script ATCrashDuringOnePhaseCommitExtra.txt
+# needs to be passed to a TOAST agent in the JVM running the coordinator.
+# This script on its own eneds ot bepassed to a TOAST agent runing in the
+# participant JVM. Ouptut from the participant will be written to file
+# testlog in the working directory of this second JVM.
+#
+# XTS Service tests which can operate with this scenario can be selected for
+# execution at AS boot by the XTSServiceTestRunnerBean by setting system
+# property
+#    org.jboss.jbossts.xts.servicetests.XTSServiceTestName
+# to the name of a class which will execute the test. This property must
+# be defined in the JVM running the AS to which the xtstest war is deployed
+# i.e. the client AS. n.b. if the client is colocated with the coordinator or
+# participant then this property must be left undefined at AS reboot otherwise
+# the client will run again, starting a new TX which may interfere with
+# recovery of the crashed TX.
+#
+# Available tests include:
+#
+# org.jboss.jbossts.xts.servicetests.test.at.SingleParticipantPrepareAndCommitTest
+# this test invokes a single service registering a single participant
+# the location of participant web service is defined by defining a system property:
+#    org.jboss.jbossts.xts.servicetests.ServiceURL1
+# if this is not set the value used defaults to
+#    http://localhost:8080/xtstest/xtsservicetest1
+#
+# If the client is run in a different AS to the coordinator then the client
+# AS needs to be pointed at the coordinator AS. The easiest
+# way to do this is to define the system property
+#
+#    org.jboss.jbossts.xts11.coordinatorURL
+#
+# to something like
+#
+#    http://foo.bar.org:8080/ws-c11/soap/ActivationCoordinator
+#
+# or alternatively to redefine one or more of the component properties
+#
+#    org.jboss.jbossts.xts11.coordinator.host
+#    org.jboss.jbossts.xts11.coordinator.port
+#    org.jboss.jbossts.xts11.coordinator.path
+#
+# (you probably only need to reset the host component)
+#
+# Expected output
+#
+# After the first boot AS1 and AS2 should exit. File testlog written by
+# the coordinator AS (AS1) should contain output in the following format:
+#
+#   prepare sent for cordinator engine XXXXXX
+#   prepared received for cordinator engine XXXXXX
+#   commit sent for cordinator engine XXXXXX
+#   JVM exit
+#
+# File testlog written by the participant AS (AS2) should contain output
+# in the following format:
+#
+#   prepare received for participant XXXXXX
+#   prepared sent for participant XXXXXX
+#   commit received for participant XXXXXX
+#   JVM exit
+#
+# After reboot file testlog written by the coordinator AS (AS1) should
+# contain output in the following format:
+#
+#   prepare sent for cordinator engine XXXXXX
+#   prepared received for cordinator engine XXXXXX
+#   commit sent for cordinator engine XXXXXX
+#   JVM exit
+#   prepared received for unknown participant XXXXXX
+#   rollback sent for participant XXXXXX
+#
+# After reboot file testlog written by the participant AS (AS2) should
+# contain output in the following format:
+#
+#   prepare received for participant XXXXXX
+#   prepared sent for participant XXXXXX
+#   commit received for participant XXXXXX
+#   JVM exit
+#   created recovered participant engine XXXXXX
+#   prepared sent for recovered participant XXXXXX
+#   rollback received for participant XXXXXX
+#   rollback called for participant XXXXXX
+#   JVM exit
+#
+#######################################################################
+# This rule opens a file for the trace output during XTS startup
+# It will be opened for append at reboot so messages from both runs
+# will go to this file. n.b. this runs in both AS1 and AS2 so it is
+# important to ensure that they employ different working directories.
+# If not then the second open will trash the first one.
+#
+RULE open trace file
+CLASS org.jboss.jbossts.XTSService
+METHOD start()
+BIND NOTHING
+IF TRUE
+DO openTrace("log", "testlog")
+ENDRULE
+
+#######################################################################
+## rules for first run of coordinator AS (AS1)
+
+#######################################################################
+# This rule is triggered when a non-recovered coordinator engine
+# (CoordinatorEngine) is requested to send a prepare message. It
+# traces the call.
+
+RULE trace coordinator prepare
+CLASS com.arjuna.wst11.messaging.engines.CoordinatorEngine
+METHOD prepare
+AT INVOKE waitForState
+BIND engine:CoordinatorEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF NOT recovered
+DO debug("prepare sent for coordinator engine " + identifier),
+   traceln("log", "prepare sent for coordinator engine " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a non-recovered coordinator engine
+# (CoordinatorEngine) receives a prepared message. It traces the call.
+
+RULE trace coordinator prepared
+CLASS com.arjuna.wst11.messaging.engines.CoordinatorEngine
+METHOD prepared(Notification, AddressingProperties, ArjunaContext)
+AT ENTRY
+BIND engine:CoordinatorEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF NOT recovered
+DO debug("prepared received for coordinator engine " + identifier),
+   traceln("log", "prepared received for coordinator engine " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered after a non-recovered coordinator engine
+# (CoordinatorEngine) has sent a commit message. It exits the JVM,
+# simulating a crash. This needs to go in a separate
+# script used for the coordinator when it is not co-located with the
+# participant.
+
+# RULE kill JVM at commit
+# CLASS com.arjuna.wst11.messaging.engines.CoordinatorEngine
+#METHOD commit
+# AT INVOKE waitForState
+# BIND engine:CoordinatorEngine = $0,
+#      recovered:boolean = engine.isRecovered(),
+#      identifier:String = engine.getId()
+# IF (NOT recovered)
+#    AND
+#    debug("commit sent for coordinator engine " + identifier)
+#    AND
+#    traceln("log", "commit sent for coordinator engine " + identifier)
+# DO traceln("log", "JVM exit"),
+#    debug("!!!killing JVM!!!"),
+#    killJVM()
+# ENDRULE
+
+#######################################################################
+## rules for first run of participant AS (AS1)
+
+#######################################################################
+# This rule is triggered when a non-recovered participant engine
+# (ParticipantEngine) receives a prepare message. It traces the call.
+
+RULE trace coordinator prepare
+CLASS com.arjuna.wst11.messaging.engines.ParticipantEngine
+METHOD prepare
+AT SYNCHRONIZE
+BIND engine:ParticipantEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF NOT recovered
+DO debug("prepare received for participant engine " + identifier),
+   traceln("log", "prepare received for participant engine " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a non-recovered participant engine
+# (ParticipantEngine) sends a prepared message. It traces the call.
+
+RULE trace participant prepared
+CLASS com.arjuna.wst11.messaging.engines.ParticipantEngine
+METHOD sendPrepared(boolean)
+AT INVOKE updateResendPeriod
+BIND engine:ParticipantEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF NOT recovered
+DO debug("prepared sent for participant engine " + identifier),
+   traceln("log", "prepared sent for participant engine " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a non-recovered participant engine
+# (ParticipantEngine) receives a commit message. It exits the JVM,
+# simulating a crash.
+
+RULE kill JVM at commit
+CLASS com.arjuna.wst11.messaging.engines.ParticipantEngine
+METHOD commit
+AT SYNCHRONIZE
+BIND engine:ParticipantEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF (NOT recovered)
+   AND
+   debug("commit received for participant engine " + identifier)
+   AND
+   traceln("log", "commit received for participant engine " + identifier)
+DO traceln("log", "JVM exit"),
+   debug("!!!killing JVM!!!"),
+   killJVM()
+ENDRULE
+
+#######################################################################
+## rules for reboot run of coordinator AS (AS1)
+
+#######################################################################
+# This rule is triggered when a coordinator processor
+# (CoordinatorProcessorImpl) receives a prepared message for an
+# unknown coordinator. It traces the call.
+
+RULE trace unknown participant prepared
+CLASS com.arjuna.wst11.messaging.CoordinatorProcessorImpl
+METHOD prepared(boolean)
+AT INVOKE sendRollback
+BIND identifier:String = $3.getInstanceIdentifier().getInstanceIdentifier()
+IF TRUE
+DO debug("prepared received for unknown participant " + identifier),
+   traceln("log", "prepared received for unknown participant " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a coordinator processor
+# (CoordinatorProcessorImpl) sends a rollback prepared message for an
+# unknown coordinator. It traces the call.
+
+RULE trace participant rollback
+CLASS com.arjuna.wst11.messaging.CoordinatorProcessorImpl
+METHOD sendRollback
+AT INVOKE sendRollback
+BIND identifier:String = $2.getInstanceIdentifier().getInstanceIdentifier()
+IF TRUE
+DO debug("rollback send for participant " + identifier),
+   traceln("log", "rollback sent for participant " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a coordinator processor
+# (CoordinatorProcessorImpl) has sent a rollback prepared message for an
+# unknown coordinator. It exits the JVM. This needs to go in a separate
+# script used for the coordinator when it is not co-located with the
+# participant.
+
+# RULE trace unknown participant prepared
+# CLASS com.arjuna.wst11.messaging.CoordinatorProcessorImpl
+# METHOD prepared(boolean)
+# AFTER INVOKE sendRollback
+# BIND NOTHING
+# IF TRUE
+# DO debug("!!!killing JVM!!!"),
+#    traceln("log", "JVM exit")
+# ENDRULE
+
+#######################################################################
+## rules for reboot run of participant AS (AS2)
+
+#######################################################################
+# This rule is triggered when a participant engine (ParticipantEngine)
+# is created from details located in the log record. It traces the
+# create operation. The trigger location is at entry but the rule
+# should only be triggered after calling the super constructor
+
+RULE trace participant engine create
+CLASS com.arjuna.wst11.messaging.engines.ParticipantEngine
+METHOD <init>(Participant, String, State, W3CEndpointReference, boolean)
+AT ENTRY
+BIND identifier = $1,
+     recovered=$5
+IF recovered
+DO debug("created recovered participant engine " + identifier),
+   traceln("log", "created recovered participant engine " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a recovered participant engine
+# (ParticipantEngine) sends a prepared message. It traces the call.
+
+RULE trace recovered participant prepared
+CLASS com.arjuna.wst11.messaging.engines.ParticipantEngine
+METHOD sendPrepared(boolean)
+AT INVOKE updateResendPeriod
+BIND engine:ParticipantEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF recovered
+DO debug("prepared sent for recovered participant engine " + identifier),
+   traceln("log", "prepared sent for recovered participant engine " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a recovered participant engine
+# (ParticipantEngine) receives a rollback request. It traces the call.
+
+RULE trace recovered participant rollback
+CLASS com.arjuna.wst11.messaging.engines.ParticipantEngine
+METHOD rollback
+AFTER SYNCHRONIZE
+BIND engine:ParticipantEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF recovered
+DO debug("rollback received for recovered participant " + identifier),
+   traceln("log", "rollback received for recovered participant " + identifier)
+ENDRULE
+
+
+#######################################################################
+# This rule is triggered when a recovered participant engine
+# (ParticipantEngine) forgets a participant afer performing a rollback.
+# It kills the JVM.
+
+RULE kill JVM after rollback
+CLASS com.arjuna.wst11.messaging.engines.ParticipantEngine
+METHOD rollback
+AFTER INVOKE forget
+BIND NOTHING
+IF TRUE
+DO debug("!!!killing JVM!!!"),
+   traceln("log", "JVM exit")
+ENDRULE

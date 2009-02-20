@@ -149,23 +149,23 @@
 #
 # Available tests include:
 #
-# Tests still to be written include:
-#
-# org.jboss.jbossts.xts.servicetests.test.BAMultiCoordinatorCompletionParticipantCloseTest
+# org.jboss.jbossts.xts.servicetests.test.ba.MultiCoordinatorCompletionParticipantCloseTest
 # this test invokes a single service registering 3 coordinator completion participants
+# and then closing the activity
 # the location of service is defined by defining a system property:
 #    org.jboss.jbossts.xts.servicetests.ServiceURL1
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
-# org.jboss.jbossts.xts.servicetests.test.BAMultiParticipantCompletionParticipantCloseTest
+# org.jboss.jbossts.xts.servicetests.test.ba.MultiParticipantCompletionParticipantCloseTest
 # this test invokes a single service registering 3 participant completion participants
+# it sends completed to each of the 3 participants before closing the activity
 # the location of service is defined by defining a system property:
 #    org.jboss.jbossts.xts.servicetests.ServiceURL1
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
-# org.jboss.jbossts.xts.servicetests.test.BAMultiCoordinatorCompletionParticipantExitAndCloseTest
+# org.jboss.jbossts.xts.servicetests.test.ba.MultiCoordinatorCompletionParticipantExitAndCloseTest
 # this test invokes a single service registering 3 coordinator completion participants
 # it sends an exit to the first participant before closing the activity
 # the location of service is defined by defining a system property:
@@ -173,16 +173,18 @@
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
-# org.jboss.jbossts.xts.servicetests.test.BAMultiParticipantCompletionParticipantExitAndCloseTest
+# org.jboss.jbossts.xts.servicetests.test.ba.MultiParticipantCompletionParticipantExitAndCloseTest
 # this test invokes a single service registering 3 participant completion participants
-# it sends an exit to the first participant before closing the activity
+# it sends an exit to the first participant and completed to the other participants
+# before closing the activity
 # the location of service is defined by defining a system property:
 #    org.jboss.jbossts.xts.servicetests.ServiceURL1
 # if this is not set the value used defaults to
 #    http://localhost:8080/xtstest/xtsservicetest1
 #
-# org.jboss.jbossts.xts.servicetests.test.BAMultiServiceCoordinatorCompletionParticipantCloseTest
+# org.jboss.jbossts.xts.servicetests.test.ba.MultiServiceCoordinatorCompletionParticipantCloseTest
 # this test invokes 3 separate services registering a coordinator completion participant with each service
+# and then closing the activity
 # the location of service is defined by defining by system properties:
 #    org.jboss.jbossts.xts.servicetests.ServiceURL1
 #    org.jboss.jbossts.xts.servicetests.ServiceURL2
@@ -192,8 +194,9 @@
 #    http://localhost:8080/xtstest/xtsservicetest2
 #    http://localhost:8080/xtstest/xtsservicetest3
 #
-# org.jboss.jbossts.xts.servicetests.test.BAMultiServiceParticipantCompletionParticipantCloseTest
+# org.jboss.jbossts.xts.servicetests.test.ba.MultiServiceParticipantCompletionParticipantCloseTest
 # this test invokes 3 separate services registering a participant completion participant with each service
+# it sends completed to each of the 3 participants before closing the activity
 # the location of service is defined by defining by system properties:
 #    org.jboss.jbossts.xts.servicetests.ServiceURL1
 #    org.jboss.jbossts.xts.servicetests.ServiceURL2
@@ -203,7 +206,7 @@
 #    http://localhost:8080/xtstest/xtsservicetest2
 #    http://localhost:8080/xtstest/xtsservicetest3
 #
-# org.jboss.jbossts.xts.servicetests.test.BAMultiServiceCoordinatorCompletionParticipantCloseAndExitTest
+# org.jboss.jbossts.xts.servicetests.test.ba.MultiServiceCoordinatorCompletionParticipantCloseAndExitTest
 # this test invokes 3 separate services registering a coordinator completion participant with each service
 # it sends an exit to the first participant before closing the activity
 # the location of service is defined by defining by system properties:
@@ -215,9 +218,10 @@
 #    http://localhost:8080/xtstest/xtsservicetest2
 #    http://localhost:8080/xtstest/xtsservicetest3
 #
-# org.jboss.jbossts.xts.servicetests.test.BAMultiServiceParticipantCompletionParticipantCloseAndExitTest
+# org.jboss.jbossts.xts.servicetests.test.ba.MultiServiceParticipantCompletionParticipantCloseAndExitTest
 # this test invokes 3 separate services registering a participant completion participant with each service
-# it sends an exit to the first participant before closing the activity
+# it sends an exit to the first participant and completed to the other participants
+# before closing the activity
 # the location of service is defined by defining by system properties:
 #    org.jboss.jbossts.xts.servicetests.ServiceURL1
 #    org.jboss.jbossts.xts.servicetests.ServiceURL2
@@ -249,20 +253,31 @@
 #
 # After the first boot the JVM should exit leaving the following in file testlog
 #
-#   completed received for participant XXXXXX
-#   completed received for participant XXXXXX
-#   completed received for participant XXXXXX
+#   received exit message for XXXXXXX completion participant stub XXXXXX       (only for CloseAndExit tests)
+#   received completed message for XXXXXXX completion participant stub XXXXXX  (number of occcurences depends upon test)
+#   received completed message for XXXXXXX completion participant stub XXXXXX
+#   received completed message for XXXXXXX completion participant stub XXXXXX
 #   JVM exit
 #
 # After reboot the JVM should exit leaving output in the following format in file
-# testlog. Clearly the ids for the TX/participants may vary and the number of
-# countdown completed lines will depend upon the number of participants employed.
+# testlog.
 #
-#   completed received for participant XXXXXX
-#   completed received for participant XXXXXX
-#   completed received for participant XXXXXX
+#   received exit message for XXXXXXX completion participant stub XXXXXX       (only for CloseAndExit tests)
+#   received completed message for XXXXXXX completion participant stub XXXXXX
+#   received completed message for XXXXXXX completion participant stub XXXXXX
+#   received completed message for XXXXXXX completion participant stub XXXXXX
 #   JVM exit
-#   blah de blah
+#   created recovered XXXXXXX completion participant stub XXXXXX
+#   created recovered XXXXXXX completion participant stub XXXXXX
+#   created recovered XXXXXXX completion participant stub XXXXXX
+#   replaying close for prepared activity XXXXXX
+#   close on recovered XXXXXXX completion participant engine XXXXXX
+#   received closed message for XXXXXXX completion participant stub XXXXXX
+#   close on recovered XXXXXXX completion participant engine XXXXXX
+#   received closed message for XXXXXXX completion participant stub XXXXXX
+#   close on recovered XXXXXXX completion participant engine XXXXXX
+#   received closed message for XXXXXXX completion participant stub XXXXXX
+#   removed committed activity XXXXXX
 #
 #######################################################################
 # This rule opens a file for the trace output during XTS startup
@@ -324,7 +339,7 @@ ENDRULE
 #######################################################################
 # This rule is triggered when a non-recovered coordinator completion
 # participant stub (CoordinatorCompletionCoordinatorEngine) is requested
-# to send a complete message. t traces the call.
+# to send a complete message. It traces the call.
 
 RULE trace coordinator completion close
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
@@ -477,6 +492,40 @@ BIND engine:CoordinatorEngine = $0,
 IF recovered
 DO debug("close on recovered coordinator completion participant engine " + identifier),
    traceln("log", "close on recovered coordinator completion participant engine " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a non-recovered participant completion
+# participant stub (ParticipantCompletionCoordinatorEngine) receives a
+# closed message. It traces the call.
+
+RULE trace participant completion closed
+CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
+METHOD closed(NotificationType, AddressingProperties, ArjunaContext)
+AT ENTRY
+BIND engine:CoordinatorEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF NOT recovered
+DO debug("received closed message for participant completion participant stub " + identifier),
+   traceln("log", "received closed message for participant completion participant stub " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a non-recovered coordinator completion
+# participant stub (CoordinatorCompletionCoordinatorEngine) receives a
+# closed message. It traces the call.
+
+RULE trace coordinator completion closed
+CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
+METHOD closed(NotificationType, AddressingProperties, ArjunaContext)
+AT ENTRY
+BIND engine:CoordinatorEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF NOT recovered
+DO debug("received closed message for coordinator completion participant stub " + identifier),
+   traceln("log", "received closed message for coordinator completion participant stub " + identifier)
 ENDRULE
 
 #######################################################################
