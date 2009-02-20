@@ -330,7 +330,6 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_1] - Unexpected SOAP fault for participant {0}: {1} {2}
      * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_2 [com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_2] - Unrecoverable error for participant {0} : {1} {2}
      * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_3 [com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_3] - Unable to delete recovery record at commit for participant {0}
-     * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_4 [com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_4] - Unexpected error rolling back participant {0}
      */
     public void soapFault(final SoapFault soapFault, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
     {
@@ -368,14 +367,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
             if (current == State.STATE_PREPARED_SUCCESS &&
                     AtomicTransactionConstants.WSAT_ERROR_CODE_UNKNOWN_TRANSACTION_QNAME.equals(subcode)) {
                 // we need to tell this participant to roll back
-                try {
-                    participant.rollback();
-                } catch (Exception e) {
-                    if (WSTLogger.arjLoggerI18N.isErrorEnabled())
-                    {
-                        WSTLogger.arjLoggerI18N.error("com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_3", new Object[] {id}) ;
-                    }
-                }
+                executeRollback();
             }
 
             if (persisted && participant instanceof Durable2PCParticipant) {
