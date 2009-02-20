@@ -19,24 +19,30 @@
  * @author JBoss Inc.
  */
 
-package org.jboss.jbossts.xts.servicetests.test;
+package org.jboss.jbossts.xts.servicetests.test.ba;
 
 import org.jboss.jbossts.xts.servicetests.service.XTSServiceTestServiceManager;
 import org.jboss.jbossts.xts.servicetests.client.XTSServiceTestClient;
 import org.jboss.jbossts.xts.servicetests.generated.CommandsType;
 import org.jboss.jbossts.xts.servicetests.generated.ResultsType;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTestBase;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTest;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.mw.wst11.UserTransaction;
+import com.arjuna.mw.wst11.UserBusinessActivityFactory;
+import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 
+import java.util.List;
+
 /**
- * Starts a transaction and enlist a single participants for each of several web services with instructions to
+ * Starts a transaction and enlists a single participant in each of multiple services with instructions to
  * prepare and commit without error
  */
-public class ATMultiServicePrepareAndCommitTest extends XTSServiceTestBase implements XTSServiceTest
+public class MultiServiceParticipantCompletionParticipantCloseTest extends XTSServiceTestBase implements XTSServiceTest
 {
     public void run() {
 
@@ -68,7 +74,7 @@ public class ATMultiServicePrepareAndCommitTest extends XTSServiceTestBase imple
             serviceURL3 = "http://localhost:8080/xtstest/xtsservicetest3";
         }
 
-        UserTransaction tx = UserTransactionFactory.userTransaction();
+        UserBusinessActivity ba = UserBusinessActivityFactory.userBusinessActivity();
 
 
         // invoke the service via the client
@@ -76,11 +82,15 @@ public class ATMultiServicePrepareAndCommitTest extends XTSServiceTestBase imple
         XTSServiceTestClient client = new XTSServiceTestClient();
         CommandsType commands = new CommandsType();
         ResultsType results = null;
+        List<String> resultsList;
+        String participantId1;
+        String participantId2;
+        String participantId3;
 
         // start the transaction
 
         try {
-            tx.begin();
+            ba.begin();
         } catch (WrongStateException e) {
             exception = e;
         } catch (SystemException e) {
@@ -88,17 +98,14 @@ public class ATMultiServicePrepareAndCommitTest extends XTSServiceTestBase imple
         }
 
         if (exception != null) {
-            System.out.println("ATMultiServicePrepareAndCommitTest : txbegin failure " + exception);
+            error("txbegin failure " + exception);
             return;
         }
 
-        // invoke the service and tell it to prepare and  commit
+        // invoke the service to create a coordinaator completion participant and script it to complete and close
         commands = new CommandsType();
-        commands.getCommandList().add("enlistDurable");
-        commands.getCommandList().add("prepare");
-        commands.getCommandList().add("commit");
-
-        // call the same web service multiple times -- it's ok to use the samew commands list
+        commands.getCommandList().add("enlistParticipantCompletion");
+        commands.getCommandList().add("close");
 
         try {
             results = client.serve(serviceURL1, commands);
@@ -107,13 +114,22 @@ public class ATMultiServicePrepareAndCommitTest extends XTSServiceTestBase imple
         }
 
         if (exception != null) {
-            System.out.println("ATMultiServicePrepareAndCommitTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
+        resultsList = results.getResultList();
+        participantId1 = resultsList.get(0);
+
         for (String s : results.getResultList()) {
-            System.out.println("ATMultiServicePrepareAndCommitTest : enlistDurable " + s);
+            error("enlistCoordinatorCompletion " + s);
         }
+
+        // invoke the second service to create a coordinator completion participant and script it to complete
+        // and close
+        commands = new CommandsType();
+        commands.getCommandList().add("enlistParticipantCompletion");
+        commands.getCommandList().add("close");
 
         try {
             results = client.serve(serviceURL2, commands);
@@ -122,13 +138,23 @@ public class ATMultiServicePrepareAndCommitTest extends XTSServiceTestBase imple
         }
 
         if (exception != null) {
-            System.out.println("ATMultiServicePrepareAndCommitTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
+        resultsList = results.getResultList();
+        participantId2 = resultsList.get(0);
+
         for (String s : results.getResultList()) {
-            System.out.println("ATMultiServicePrepareAndCommitTest : enlistDurable " + s);
+            error("enlistCoordinatorCompletion " + s);
         }
+
+        // invoke the third service to create a coordinaator completion participant and script it to
+        // complete and close
+
+        commands = new CommandsType();
+        commands.getCommandList().add("enlistParticipantCompletion");
+        commands.getCommandList().add("close");
 
         try {
             results = client.serve(serviceURL3, commands);
@@ -137,18 +163,81 @@ public class ATMultiServicePrepareAndCommitTest extends XTSServiceTestBase imple
         }
 
         if (exception != null) {
-            System.out.println("ATMultiServicePrepareAndCommitTest : server failure " + exception);
+            error("server failure " + exception);
+            return;
+        }
+
+        resultsList = results.getResultList();
+        participantId3 = resultsList.get(0);
+
+        for (String s : results.getResultList()) {
+            error("enlistCoordinatorCompletion " + s);
+        }
+
+        // invoke the service scripting the first participant to complete
+        commands = new CommandsType();
+        commands.getCommandList().add("completed");
+        commands.getCommandList().add(participantId1);
+
+        try {
+            results = client.serve(serviceURL1, commands);
+        } catch (Exception e) {
+            exception = e;
+        }
+
+        if (exception != null) {
+            error("server failure " + exception);
             return;
         }
 
         for (String s : results.getResultList()) {
-            System.out.println("ATMultiServicePrepareAndCommitTest : enlistDurable " + s);
+            error("completed " + participantId1 + " " + s);
         }
 
-        // now commit the transaction
+        // invoke the service scripting the second participant to copmplete
+        commands = new CommandsType();
+        commands.getCommandList().add("completed");
+        commands.getCommandList().add(participantId2);
 
         try {
-            tx.commit();
+            results = client.serve(serviceURL2, commands);
+        } catch (Exception e) {
+            exception = e;
+        }
+
+        if (exception != null) {
+            error("server failure " + exception);
+            return;
+        }
+
+        for (String s : results.getResultList()) {
+            error("completed " + participantId2 + " " + s);
+        }
+
+        // invoke the service scripting the third participant to complete
+        commands = new CommandsType();
+        commands.getCommandList().add("completed");
+        commands.getCommandList().add(participantId3);
+
+        try {
+            results = client.serve(serviceURL3, commands);
+        } catch (Exception e) {
+            exception = e;
+        }
+
+        if (exception != null) {
+            error("server failure " + exception);
+            return;
+        }
+
+        for (String s : results.getResultList()) {
+            error("completed " + participantId3 + " " + s);
+        }
+
+        // now close the activity
+
+        try {
+            ba.close();
         } catch (TransactionRolledBackException e) {
             exception = e;
         } catch (UnknownTransactionException e) {
@@ -160,10 +249,10 @@ public class ATMultiServicePrepareAndCommitTest extends XTSServiceTestBase imple
         }
 
         if (exception != null) {
-            System.out.println("ATMultiServicePrepareAndCommitTest : commit failure " + exception);
+            error("commit failure " + exception);
         }
 
-        System.out.println("ATMultiServicePrepareAndCommitTest : completed");
+        error("completed");
 
         isSuccessful = (exception == null);
     }

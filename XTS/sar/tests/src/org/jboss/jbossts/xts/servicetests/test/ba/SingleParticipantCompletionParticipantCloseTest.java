@@ -19,12 +19,14 @@
  * @author JBoss Inc.
  */
 
-package org.jboss.jbossts.xts.servicetests.test;
+package org.jboss.jbossts.xts.servicetests.test.ba;
 
 import org.jboss.jbossts.xts.servicetests.service.XTSServiceTestServiceManager;
 import org.jboss.jbossts.xts.servicetests.client.XTSServiceTestClient;
 import org.jboss.jbossts.xts.servicetests.generated.CommandsType;
 import org.jboss.jbossts.xts.servicetests.generated.ResultsType;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTestBase;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTest;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
@@ -40,7 +42,7 @@ import java.util.List;
  * Starts a transaction and enlists a single participant with instructions to prepare and commit
  * without error
  */
-public class BASingleParticipantCompletionParticipantCloseTest extends XTSServiceTestBase implements XTSServiceTest
+public class SingleParticipantCompletionParticipantCloseTest extends XTSServiceTestBase implements XTSServiceTest
 {
     public void run() {
 
@@ -80,7 +82,7 @@ public class BASingleParticipantCompletionParticipantCloseTest extends XTSServic
         }
 
         if (exception != null) {
-            System.out.println("BASingleParticipantCompletionParticipantCloseTest : txbegin failure " + exception);
+            error("txbegin failure " + exception);
             return;
         }
 
@@ -99,7 +101,7 @@ public class BASingleParticipantCompletionParticipantCloseTest extends XTSServic
         }
 
         if (exception != null) {
-            System.out.println("BASingleParticipantCompletionParticipantCloseTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
@@ -107,7 +109,7 @@ public class BASingleParticipantCompletionParticipantCloseTest extends XTSServic
         participantId = resultsList.get(0);
 
         for (String s : resultsList) {
-            System.out.println("BASingleParticipantCompletionParticipantCloseTest : enlistParticipantCompletion " + s);
+            error("enlistParticipantCompletion " + s);
         }
 
         // invoke the service scripting the participant to send completed now
@@ -122,14 +124,14 @@ public class BASingleParticipantCompletionParticipantCloseTest extends XTSServic
         }
 
         if (exception != null) {
-            System.out.println("BASingleParticipantCompletionParticipantCloseTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
         resultsList = results.getResultList();
 
         for (String s : resultsList) {
-            System.out.println("BASingleParticipantCompletionParticipantCloseTest : completed(" + participantId + ") " + s);
+            error("completed(" + participantId + ") " + s);
         }
 
         // now close the activity
@@ -147,10 +149,10 @@ public class BASingleParticipantCompletionParticipantCloseTest extends XTSServic
         }
 
         if (exception != null) {
-            System.out.println("BASingleParticipantCompletionParticipantCloseTest : close failure " + exception);
+            error("close failure " + exception);
         }
 
-        System.out.println("BASingleParticipantCompletionParticipantCloseTest : finished");
+        error("finished");
 
         isSuccessful = (exception == null);
     }

@@ -19,12 +19,14 @@
  * @author JBoss Inc.
  */
 
-package org.jboss.jbossts.xts.servicetests.test;
+package org.jboss.jbossts.xts.servicetests.test.ba;
 
 import org.jboss.jbossts.xts.servicetests.service.XTSServiceTestServiceManager;
 import org.jboss.jbossts.xts.servicetests.client.XTSServiceTestClient;
 import org.jboss.jbossts.xts.servicetests.generated.CommandsType;
 import org.jboss.jbossts.xts.servicetests.generated.ResultsType;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTestBase;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTest;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
@@ -37,10 +39,10 @@ import com.arjuna.wst.UnknownTransactionException;
 import java.util.List;
 
 /**
- * Starts a transaction and enlists a single participant in each of multiple services with instructions to
- * prepare and commit without error
+ * Starts a transaction and enlists mulitple participants swith instructions to prepare and commit
+ * without error
  */
-public class BAMultiServiceParticipantCompletionParticipantCloseAndExitTest extends XTSServiceTestBase implements XTSServiceTest
+public class MultiParticipantParticipantCompletionParticipantCloseTest extends XTSServiceTestBase implements XTSServiceTest
 {
     public void run() {
 
@@ -53,23 +55,11 @@ public class BAMultiServiceParticipantCompletionParticipantCloseAndExitTest exte
         }
 
         String serviceURL1;
-        String serviceURL2;
-        String serviceURL3;
 
         serviceURL1 = System.getProperty(XTSServiceTest.SERVICE_URL1_KEY);
-        serviceURL2 = System.getProperty(XTSServiceTest.SERVICE_URL2_KEY);
-        serviceURL3 = System.getProperty(XTSServiceTest.SERVICE_URL3_KEY);
 
         if (serviceURL1 == null) {
             serviceURL1 = "http://localhost:8080/xtstest/xtsservicetest1";
-        }
-
-        if (serviceURL2 == null) {
-            serviceURL2 = "http://localhost:8080/xtstest/xtsservicetest2";
-        }
-
-        if (serviceURL3 == null) {
-            serviceURL3 = "http://localhost:8080/xtstest/xtsservicetest3";
         }
 
         UserBusinessActivity ba = UserBusinessActivityFactory.userBusinessActivity();
@@ -96,13 +86,14 @@ public class BAMultiServiceParticipantCompletionParticipantCloseAndExitTest exte
         }
 
         if (exception != null) {
-            System.out.println("BAMultiServiceParticipantCompletionParticipantCloseAndExitTest : txbegin failure " + exception);
+            error("txbegin failure " + exception);
             return;
         }
 
-        // invoke the service to create a participant completion participant and script it to complete and close
+        // invoke the service to create a coordinator completion participant and script it to close
         commands = new CommandsType();
         commands.getCommandList().add("enlistParticipantCompletion");
+        commands.getCommandList().add("close");
 
         try {
             results = client.serve(serviceURL1, commands);
@@ -111,7 +102,7 @@ public class BAMultiServiceParticipantCompletionParticipantCloseAndExitTest exte
         }
 
         if (exception != null) {
-            System.out.println("BAMultiServiceParticipantCompletionParticipantCloseAndExitTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
@@ -119,23 +110,22 @@ public class BAMultiServiceParticipantCompletionParticipantCloseAndExitTest exte
         participantId1 = resultsList.get(0);
 
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiServiceParticipantCompletionParticipantCloseAndExitTest : enlistCoordinatorCompletion " + s);
+            error("enlistPartiicpantCompletion " + s);
         }
 
-        // invoke the second service to create a participant completion participant
-        // and close
+        // invoke the service again to create a coordinaator completion participant and script it to close
         commands = new CommandsType();
         commands.getCommandList().add("enlistParticipantCompletion");
         commands.getCommandList().add("close");
 
         try {
-            results = client.serve(serviceURL2, commands);
+            results = client.serve(serviceURL1, commands);
         } catch (Exception e) {
             exception = e;
         }
 
         if (exception != null) {
-            System.out.println("BAMultiServiceParticipantCompletionParticipantCloseAndExitTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
@@ -143,24 +133,24 @@ public class BAMultiServiceParticipantCompletionParticipantCloseAndExitTest exte
         participantId2 = resultsList.get(0);
 
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiServiceParticipantCompletionParticipantCloseAndExitTest : enlistCoordinatorCompletion " + s);
+            error("enlistPartiicpantCompletion " + s);
         }
 
-        // invoke the third service to create a coordinaator completion participant and script it to
-        // complete and close
+        // invoke the service a third time to create a coordinaator completion participant and script it to
+        // close
 
         commands = new CommandsType();
         commands.getCommandList().add("enlistParticipantCompletion");
         commands.getCommandList().add("close");
 
         try {
-            results = client.serve(serviceURL3, commands);
+            results = client.serve(serviceURL1, commands);
         } catch (Exception e) {
             exception = e;
         }
 
         if (exception != null) {
-            System.out.println("BAMultiServiceParticipantCompletionParticipantCloseAndExitTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
@@ -168,12 +158,12 @@ public class BAMultiServiceParticipantCompletionParticipantCloseAndExitTest exte
         participantId3 = resultsList.get(0);
 
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiServiceParticipantCompletionParticipantCloseAndExitTest : enlistCoordinatorCompletion " + s);
+            error("enlistPartiicpantCompletion " + s);
         }
 
-        // invoke the service scripting the first participant to exit
+        // invoke the service scripting the first participant to complete
         commands = new CommandsType();
-        commands.getCommandList().add("exit");
+        commands.getCommandList().add("completed");
         commands.getCommandList().add(participantId1);
 
         try {
@@ -183,12 +173,12 @@ public class BAMultiServiceParticipantCompletionParticipantCloseAndExitTest exte
         }
 
         if (exception != null) {
-            System.out.println("BAMultiServiceParticipantCompletionParticipantCloseAndExitTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiServiceParticipantCompletionParticipantCloseAndExitTest : exit " + participantId1 + " " + s);
+            error("completed " + participantId1 + " " + s);
         }
 
         // invoke the service scripting the second participant to copmplete
@@ -197,18 +187,18 @@ public class BAMultiServiceParticipantCompletionParticipantCloseAndExitTest exte
         commands.getCommandList().add(participantId2);
 
         try {
-            results = client.serve(serviceURL2, commands);
+            results = client.serve(serviceURL1, commands);
         } catch (Exception e) {
             exception = e;
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseAndExitTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseAndExitTest : completed " + participantId2 + " " + s);
+            error("completed " + participantId2 + " " + s);
         }
 
         // invoke the service scripting the third participant to complete
@@ -217,18 +207,18 @@ public class BAMultiServiceParticipantCompletionParticipantCloseAndExitTest exte
         commands.getCommandList().add(participantId3);
 
         try {
-            results = client.serve(serviceURL3, commands);
+            results = client.serve(serviceURL1, commands);
         } catch (Exception e) {
             exception = e;
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseAndExitTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseAndExitTest : completed " + participantId3 + " " + s);
+            error("completed " + participantId3 + " " + s);
         }
 
         // now close the activity
@@ -246,10 +236,10 @@ public class BAMultiServiceParticipantCompletionParticipantCloseAndExitTest exte
         }
 
         if (exception != null) {
-            System.out.println("BAMultiServiceParticipantCompletionParticipantCloseAndExitTest : commit failure " + exception);
+            error("commit failure " + exception);
         }
 
-        System.out.println("BAMultiServiceParticipantCompletionParticipantCloseAndExitTest : completed");
+        error("completed");
 
         isSuccessful = (exception == null);
     }

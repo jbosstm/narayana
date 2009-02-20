@@ -21,4 +21,9 @@ public class XTSServiceTestBase
     public Exception getException() {
         return exception;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    public void error(String message)
+    {
+        System.err.println(this.getClass().getName() + " : " + message);
+    }
 }

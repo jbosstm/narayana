@@ -19,12 +19,14 @@
  * @author JBoss Inc.
  */
 
-package org.jboss.jbossts.xts.servicetests.test;
+package org.jboss.jbossts.xts.servicetests.test.ba;
 
 import org.jboss.jbossts.xts.servicetests.service.XTSServiceTestServiceManager;
 import org.jboss.jbossts.xts.servicetests.client.XTSServiceTestClient;
 import org.jboss.jbossts.xts.servicetests.generated.CommandsType;
 import org.jboss.jbossts.xts.servicetests.generated.ResultsType;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTestBase;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTest;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
@@ -34,11 +36,13 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 
+import java.util.List;
+
 /**
- * Starts a transaction and enlists a single participant in each of multiple services with instructions to
- * prepare and commit without error
+ * Starts a transaction and enlists  multipleparticipants with instructions to prepare and commit
+ * without error then gets one of them to exit before closing
  */
-public class BAMultiServiceCoordinatorCompletionParticipantCloseTest extends XTSServiceTestBase implements XTSServiceTest
+public class MultiParticipantCoordinatorCompletionParticipantCloseAndExitTest extends XTSServiceTestBase implements XTSServiceTest
 {
     public void run() {
 
@@ -51,23 +55,11 @@ public class BAMultiServiceCoordinatorCompletionParticipantCloseTest extends XTS
         }
 
         String serviceURL1;
-        String serviceURL2;
-        String serviceURL3;
 
         serviceURL1 = System.getProperty(XTSServiceTest.SERVICE_URL1_KEY);
-        serviceURL2 = System.getProperty(XTSServiceTest.SERVICE_URL2_KEY);
-        serviceURL3 = System.getProperty(XTSServiceTest.SERVICE_URL3_KEY);
 
         if (serviceURL1 == null) {
             serviceURL1 = "http://localhost:8080/xtstest/xtsservicetest1";
-        }
-
-        if (serviceURL2 == null) {
-            serviceURL2 = "http://localhost:8080/xtstest/xtsservicetest2";
-        }
-
-        if (serviceURL3 == null) {
-            serviceURL3 = "http://localhost:8080/xtstest/xtsservicetest3";
         }
 
         UserBusinessActivity ba = UserBusinessActivityFactory.userBusinessActivity();
@@ -78,6 +70,9 @@ public class BAMultiServiceCoordinatorCompletionParticipantCloseTest extends XTS
         XTSServiceTestClient client = new XTSServiceTestClient();
         CommandsType commands = new CommandsType();
         ResultsType results = null;
+        List<String> resultsList;
+        String participantId1;
+
 
         // start the transaction
 
@@ -90,11 +85,34 @@ public class BAMultiServiceCoordinatorCompletionParticipantCloseTest extends XTS
         }
 
         if (exception != null) {
-            System.out.println("BAMultiServiceCoordinatorCompletionParticipantCloseTest : txbegin failure " + exception);
+            error("txbegin failure " + exception);
             return;
         }
 
-        // invoke the service to create a coordinaator completion participant and script it to complete and close
+        // invoke the service to create a coordinaator completion participant
+        commands = new CommandsType();
+        commands.getCommandList().add("enlistCoordinatorCompletion");
+
+        try {
+            results = client.serve(serviceURL1, commands);
+        } catch (Exception e) {
+            exception = e;
+        }
+
+        if (exception != null) {
+            error("server failure " + exception);
+            return;
+        }
+
+        resultsList = results.getResultList();
+        participantId1 = resultsList.get(0);
+
+        for (String s : resultsList) {
+            error("enlistCoordinatorCompletion " + s);
+        }
+
+        // invoke the service again to create a coordinaator completion participant and script it to complete
+        // and close
         commands = new CommandsType();
         commands.getCommandList().add("enlistCoordinatorCompletion");
         commands.getCommandList().add("complete");
@@ -107,37 +125,15 @@ public class BAMultiServiceCoordinatorCompletionParticipantCloseTest extends XTS
         }
 
         if (exception != null) {
-            System.out.println("BAMultiServiceCoordinatorCompletionParticipantCloseTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiServiceCoordinatorCompletionParticipantCloseTest : enlistCoordinatorCompletion " + s);
+            error("enlistCoordinatorCompletion " + s);
         }
 
-        // invoke the second service to create a coordinator completion participant and script it to complete
-        // and close
-        commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
-        commands.getCommandList().add("complete");
-        commands.getCommandList().add("close");
-
-        try {
-            results = client.serve(serviceURL2, commands);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-        if (exception != null) {
-            System.out.println("BAMultiServiceCoordinatorCompletionParticipantCloseTest : server failure " + exception);
-            return;
-        }
-
-        for (String s : results.getResultList()) {
-            System.out.println("BAMultiServiceCoordinatorCompletionParticipantCloseTest : enlistCoordinatorCompletion " + s);
-        }
-
-        // invoke the third service to create a coordinaator completion participant and script it to
+        // invoke the service a third time to create a coordinaator completion participant and script it to
         // complete and close
 
         commands = new CommandsType();
@@ -146,18 +142,38 @@ public class BAMultiServiceCoordinatorCompletionParticipantCloseTest extends XTS
         commands.getCommandList().add("close");
 
         try {
-            results = client.serve(serviceURL3, commands);
+            results = client.serve(serviceURL1, commands);
         } catch (Exception e) {
             exception = e;
         }
 
         if (exception != null) {
-            System.out.println("BAMultiServiceCoordinatorCompletionParticipantCloseTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiServiceCoordinatorCompletionParticipantCloseTest : enlistCoordinatorCompletion " + s);
+            error("enlistCoordinatorCompletion " + s);
+        }
+
+        // invoke the service scripting the first participant to exit
+        commands = new CommandsType();
+        commands.getCommandList().add("exit");
+        commands.getCommandList().add(participantId1);
+
+        try {
+            results = client.serve(serviceURL1, commands);
+        } catch (Exception e) {
+            exception = e;
+        }
+
+        if (exception != null) {
+            error("server failure " + exception);
+            return;
+        }
+
+        for (String s : results.getResultList()) {
+            error("exit " + participantId1 + " " + s);
         }
 
         // now close the activity
@@ -175,10 +191,10 @@ public class BAMultiServiceCoordinatorCompletionParticipantCloseTest extends XTS
         }
 
         if (exception != null) {
-            System.out.println("BAMultiServiceCoordinatorCompletionParticipantCloseTest : commit failure " + exception);
+            error("commit failure " + exception);
         }
 
-        System.out.println("BAMultiServiceCoordinatorCompletionParticipantCloseTest : completed");
+        error("completed");
 
         isSuccessful = (exception == null);
     }

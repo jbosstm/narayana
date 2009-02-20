@@ -19,12 +19,14 @@
  * @author JBoss Inc.
  */
 
-package org.jboss.jbossts.xts.servicetests.test;
+package org.jboss.jbossts.xts.servicetests.test.at;
 
 import org.jboss.jbossts.xts.servicetests.service.XTSServiceTestServiceManager;
 import org.jboss.jbossts.xts.servicetests.client.XTSServiceTestClient;
 import org.jboss.jbossts.xts.servicetests.generated.CommandsType;
 import org.jboss.jbossts.xts.servicetests.generated.ResultsType;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTestBase;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTest;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.wst.WrongStateException;
@@ -33,14 +35,12 @@ import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 
 /**
- * Starts a transaction and enlists a single participant with instructions to prepare and commit
- * without error
+ * Starts a transaction and enlist several participants for the same web service with instructions to
+ * prepare and commit without error
  */
-public class ATSingleParticipantPrepareAndCommitTest extends XTSServiceTestBase implements XTSServiceTest
+public class MultiParticipantPrepareAndCommitTest extends XTSServiceTestBase implements XTSServiceTest
 {
     public void run() {
-
-        // wait a while so the service has time to start
 
         try {
             Thread.sleep(5000);
@@ -65,6 +65,8 @@ public class ATSingleParticipantPrepareAndCommitTest extends XTSServiceTestBase 
         CommandsType commands = new CommandsType();
         ResultsType results = null;
 
+        // wait a while so the service has time to start
+
         // start the transaction
 
         try {
@@ -76,7 +78,7 @@ public class ATSingleParticipantPrepareAndCommitTest extends XTSServiceTestBase 
         }
 
         if (exception != null) {
-            System.out.println("ATSingleParticipantPrepareAndCommitTest : txbegin failure " + exception);
+            error("txbegin failure " + exception);
             return;
         }
 
@@ -86,6 +88,8 @@ public class ATSingleParticipantPrepareAndCommitTest extends XTSServiceTestBase 
         commands.getCommandList().add("prepare");
         commands.getCommandList().add("commit");
 
+        // call the same web service multiple times -- it's ok to use the samew commands list
+
         try {
             results = client.serve(serviceURL1, commands);
         } catch (Exception e) {
@@ -93,12 +97,42 @@ public class ATSingleParticipantPrepareAndCommitTest extends XTSServiceTestBase 
         }
 
         if (exception != null) {
-            System.out.println("ATSingleParticipantPrepareAndCommitTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
         for (String s : results.getResultList()) {
-            System.out.println("ATSingleParticipantPrepareAndCommitTest : enlistDurable " + s);
+            error("enlistDurable " + s);
+        }
+
+        try {
+            results = client.serve(serviceURL1, commands);
+        } catch (Exception e) {
+            exception = e;
+        }
+
+        if (exception != null) {
+            error("server failure " + exception);
+            return;
+        }
+
+        for (String s : results.getResultList()) {
+            error("enlistDurable " + s);
+        }
+
+        try {
+            results = client.serve(serviceURL1, commands);
+        } catch (Exception e) {
+            exception = e;
+        }
+
+        if (exception != null) {
+            error("server failure " + exception);
+            return;
+        }
+
+        for (String s : results.getResultList()) {
+            error("enlistDurable " + s);
         }
 
         // now commit the transaction
@@ -116,10 +150,10 @@ public class ATSingleParticipantPrepareAndCommitTest extends XTSServiceTestBase 
         }
 
         if (exception != null) {
-            System.out.println("ATSingleParticipantPrepareAndCommitTest : commit failure " + exception);
+            error("commit failure " + exception);
         }
 
-        System.out.println("ATSingleParticipantPrepareAndCommitTest : completed");
+        error("completed");
 
         isSuccessful = (exception == null);
     }

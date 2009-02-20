@@ -19,12 +19,14 @@
  * @author JBoss Inc.
  */
 
-package org.jboss.jbossts.xts.servicetests.test;
+package org.jboss.jbossts.xts.servicetests.test.ba;
 
 import org.jboss.jbossts.xts.servicetests.service.XTSServiceTestServiceManager;
 import org.jboss.jbossts.xts.servicetests.client.XTSServiceTestClient;
 import org.jboss.jbossts.xts.servicetests.generated.CommandsType;
 import org.jboss.jbossts.xts.servicetests.generated.ResultsType;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTestBase;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTest;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
@@ -35,10 +37,10 @@ import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 
 /**
- * Starts a transaction and enlists mulitple participants swith instructions to prepare and commit
- * without error
+ * Starts a transaction and enlists a single participant in each of multiple services with instructions to
+ * prepare and commit without error
  */
-public class BAMultiParticipantCoordinatorCompletionParticipantCloseTest extends XTSServiceTestBase implements XTSServiceTest
+public class MultiServiceCoordinatorCompletionParticipantCloseTest extends XTSServiceTestBase implements XTSServiceTest
 {
     public void run() {
 
@@ -51,11 +53,23 @@ public class BAMultiParticipantCoordinatorCompletionParticipantCloseTest extends
         }
 
         String serviceURL1;
+        String serviceURL2;
+        String serviceURL3;
 
         serviceURL1 = System.getProperty(XTSServiceTest.SERVICE_URL1_KEY);
+        serviceURL2 = System.getProperty(XTSServiceTest.SERVICE_URL2_KEY);
+        serviceURL3 = System.getProperty(XTSServiceTest.SERVICE_URL3_KEY);
 
         if (serviceURL1 == null) {
             serviceURL1 = "http://localhost:8080/xtstest/xtsservicetest1";
+        }
+
+        if (serviceURL2 == null) {
+            serviceURL2 = "http://localhost:8080/xtstest/xtsservicetest2";
+        }
+
+        if (serviceURL3 == null) {
+            serviceURL3 = "http://localhost:8080/xtstest/xtsservicetest3";
         }
 
         UserBusinessActivity ba = UserBusinessActivityFactory.userBusinessActivity();
@@ -78,7 +92,7 @@ public class BAMultiParticipantCoordinatorCompletionParticipantCloseTest extends
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : txbegin failure " + exception);
+            error("txbegin failure " + exception);
             return;
         }
 
@@ -95,15 +109,15 @@ public class BAMultiParticipantCoordinatorCompletionParticipantCloseTest extends
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : enlistCoordinatorCompletion " + s);
+            error("enlistCoordinatorCompletion " + s);
         }
 
-        // invoke the service again to create a coordinaator completion participant and script it to complete
+        // invoke the second service to create a coordinator completion participant and script it to complete
         // and close
         commands = new CommandsType();
         commands.getCommandList().add("enlistCoordinatorCompletion");
@@ -111,21 +125,21 @@ public class BAMultiParticipantCoordinatorCompletionParticipantCloseTest extends
         commands.getCommandList().add("close");
 
         try {
-            results = client.serve(serviceURL1, commands);
+            results = client.serve(serviceURL2, commands);
         } catch (Exception e) {
             exception = e;
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : enlistCoordinatorCompletion " + s);
+            error("enlistCoordinatorCompletion " + s);
         }
 
-        // invoke the service a third time to create a coordinaator completion participant and script it to
+        // invoke the third service to create a coordinaator completion participant and script it to
         // complete and close
 
         commands = new CommandsType();
@@ -134,18 +148,18 @@ public class BAMultiParticipantCoordinatorCompletionParticipantCloseTest extends
         commands.getCommandList().add("close");
 
         try {
-            results = client.serve(serviceURL1, commands);
+            results = client.serve(serviceURL3, commands);
         } catch (Exception e) {
             exception = e;
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : enlistCoordinatorCompletion " + s);
+            error("enlistCoordinatorCompletion " + s);
         }
 
         // now close the activity
@@ -163,10 +177,10 @@ public class BAMultiParticipantCoordinatorCompletionParticipantCloseTest extends
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : commit failure " + exception);
+            error("commit failure " + exception);
         }
 
-        System.out.println("BAMultiParticipantCoordinatorCompletionParticipantCloseTest : completed");
+        error("completed");
 
         isSuccessful = (exception == null);
     }

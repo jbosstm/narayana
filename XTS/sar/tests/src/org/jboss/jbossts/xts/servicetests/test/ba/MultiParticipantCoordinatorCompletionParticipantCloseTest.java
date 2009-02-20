@@ -19,12 +19,14 @@
  * @author JBoss Inc.
  */
 
-package org.jboss.jbossts.xts.servicetests.test;
+package org.jboss.jbossts.xts.servicetests.test.ba;
 
 import org.jboss.jbossts.xts.servicetests.service.XTSServiceTestServiceManager;
 import org.jboss.jbossts.xts.servicetests.client.XTSServiceTestClient;
 import org.jboss.jbossts.xts.servicetests.generated.CommandsType;
 import org.jboss.jbossts.xts.servicetests.generated.ResultsType;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTestBase;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTest;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserBusinessActivityFactory;
@@ -35,10 +37,10 @@ import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 
 /**
- * Starts a transaction and enlists a single participant with instructions to prepare and commit
+ * Starts a transaction and enlists mulitple participants swith instructions to prepare and commit
  * without error
  */
-public class BASingleCoordinatorCompletionParticipantCloseTest extends XTSServiceTestBase implements XTSServiceTest
+public class MultiParticipantCoordinatorCompletionParticipantCloseTest extends XTSServiceTestBase implements XTSServiceTest
 {
     public void run() {
 
@@ -78,7 +80,7 @@ public class BASingleCoordinatorCompletionParticipantCloseTest extends XTSServic
         }
 
         if (exception != null) {
-            System.out.println("BASingleCoordinatorCompletionParticipantCloseTest : txbegin failure " + exception);
+            error("txbegin failure " + exception);
             return;
         }
 
@@ -95,12 +97,57 @@ public class BASingleCoordinatorCompletionParticipantCloseTest extends XTSServic
         }
 
         if (exception != null) {
-            System.out.println("BASingleCoordinatorCompletionParticipantCloseTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
         for (String s : results.getResultList()) {
-            System.out.println("BASingleCoordinatorCompletionParticipantCloseTest : enlistCoordinatorCompletion " + s);
+            error("enlistCoordinatorCompletion " + s);
+        }
+
+        // invoke the service again to create a coordinaator completion participant and script it to complete
+        // and close
+        commands = new CommandsType();
+        commands.getCommandList().add("enlistCoordinatorCompletion");
+        commands.getCommandList().add("complete");
+        commands.getCommandList().add("close");
+
+        try {
+            results = client.serve(serviceURL1, commands);
+        } catch (Exception e) {
+            exception = e;
+        }
+
+        if (exception != null) {
+            error("server failure " + exception);
+            return;
+        }
+
+        for (String s : results.getResultList()) {
+            error("enlistCoordinatorCompletion " + s);
+        }
+
+        // invoke the service a third time to create a coordinaator completion participant and script it to
+        // complete and close
+
+        commands = new CommandsType();
+        commands.getCommandList().add("enlistCoordinatorCompletion");
+        commands.getCommandList().add("complete");
+        commands.getCommandList().add("close");
+
+        try {
+            results = client.serve(serviceURL1, commands);
+        } catch (Exception e) {
+            exception = e;
+        }
+
+        if (exception != null) {
+            error("server failure " + exception);
+            return;
+        }
+
+        for (String s : results.getResultList()) {
+            error("enlistCoordinatorCompletion " + s);
         }
 
         // now close the activity
@@ -118,10 +165,10 @@ public class BASingleCoordinatorCompletionParticipantCloseTest extends XTSServic
         }
 
         if (exception != null) {
-            System.out.println("BASingleCoordinatorCompletionParticipantCloseTest : commit failure " + exception);
+            error("commit failure " + exception);
         }
 
-        System.out.println("BASingleCoordinatorCompletionParticipantCloseTest : completed");
+        error("completed");
 
         isSuccessful = (exception == null);
     }

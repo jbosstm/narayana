@@ -19,16 +19,16 @@
  * @author JBoss Inc.
  */
 
-package org.jboss.jbossts.xts.servicetests.test;
+package org.jboss.jbossts.xts.servicetests.test.at.subordinate;
 
 import org.jboss.jbossts.xts.servicetests.service.XTSServiceTestServiceManager;
 import org.jboss.jbossts.xts.servicetests.client.XTSServiceTestClient;
 import org.jboss.jbossts.xts.servicetests.generated.CommandsType;
 import org.jboss.jbossts.xts.servicetests.generated.ResultsType;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTestBase;
+import org.jboss.jbossts.xts.servicetests.test.XTSServiceTest;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.mw.wst11.UserTransaction;
-import com.arjuna.mw.wst11.UserBusinessActivityFactory;
-import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
@@ -37,14 +37,13 @@ import com.arjuna.wst.UnknownTransactionException;
 import java.util.List;
 
 /**
- * Starts a transaction and enlists mulitple participants swith instructions to prepare and commit
- * without error
+ * Starts a transaction, enlists a participant with a web service with instructions to prepare and commit
+ * without errot then gets the web service to start a subordinate transaction and enlist several participants
+ * for a second web service in the subtransaction also with instructions to prepare and commit without error
  */
-public class BAMultiParticipantParticipantCompletionParticipantCloseTest extends XTSServiceTestBase implements XTSServiceTest
+public class MultiParticipantPrepareAndCommitTest extends XTSServiceTestBase implements XTSServiceTest
 {
     public void run() {
-
-        // wait a while so the service has time to start
 
         try {
             Thread.sleep(5000);
@@ -53,6 +52,7 @@ public class BAMultiParticipantParticipantCompletionParticipantCloseTest extends
         }
 
         String serviceURL1;
+        String serviceURL2;
 
         serviceURL1 = System.getProperty(XTSServiceTest.SERVICE_URL1_KEY);
 
@@ -60,23 +60,26 @@ public class BAMultiParticipantParticipantCompletionParticipantCloseTest extends
             serviceURL1 = "http://localhost:8080/xtstest/xtsservicetest1";
         }
 
-        UserBusinessActivity ba = UserBusinessActivityFactory.userBusinessActivity();
+        serviceURL2 = System.getProperty(XTSServiceTest.SERVICE_URL2_KEY);
 
+        if (serviceURL2 == null) {
+            serviceURL2 = "http://localhost:8080/xtstest/xtsservicetest2";
+        }
+
+        UserTransaction tx = UserTransactionFactory.userTransaction();
 
         // invoke the service via the client
 
         XTSServiceTestClient client = new XTSServiceTestClient();
         CommandsType commands = new CommandsType();
         ResultsType results = null;
-        List<String> resultsList;
-        String participantId1;
-        String participantId2;
-        String participantId3;
+
+        // wait a while so the service has time to start
 
         // start the transaction
 
         try {
-            ba.begin();
+            tx.begin();
         } catch (WrongStateException e) {
             exception = e;
         } catch (SystemException e) {
@@ -84,14 +87,14 @@ public class BAMultiParticipantParticipantCompletionParticipantCloseTest extends
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : txbegin failure " + exception);
+            error("txbegin failure " + exception);
             return;
         }
 
-        // invoke the service to create a coordinator completion participant and script it to close
+        // invoke the service and tell it to create a subtransaction
+
         commands = new CommandsType();
-        commands.getCommandList().add("enlistParticipantCompletion");
-        commands.getCommandList().add("close");
+        commands.getCommandList().add("subtransaction");
 
         try {
             results = client.serve(serviceURL1, commands);
@@ -100,21 +103,26 @@ public class BAMultiParticipantParticipantCompletionParticipantCloseTest extends
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : server failure " + exception);
+            error("subtransaction failure " + exception);
             return;
         }
 
-        resultsList = results.getResultList();
-        participantId1 = resultsList.get(0);
-
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : enlistPartiicpantCompletion " + s);
+            error("subtransaction " + s);
         }
 
-        // invoke the service again to create a coordinaator completion participant and script it to close
+        List<String> resultList = results.getResultList();
+
+        String subTxId = resultList.get(0);
+
+        // enlist a durable participant in the original transaction and tell it to prepare and  commit
+
         commands = new CommandsType();
-        commands.getCommandList().add("enlistParticipantCompletion");
-        commands.getCommandList().add("close");
+        commands.getCommandList().add("enlistDurable");
+        commands.getCommandList().add("prepare");
+        commands.getCommandList().add("commit");
+
+        // call the web service multiple times
 
         try {
             results = client.serve(serviceURL1, commands);
@@ -123,23 +131,31 @@ public class BAMultiParticipantParticipantCompletionParticipantCloseTest extends
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : server failure " + exception);
+            error("server failure " + exception);
             return;
         }
 
-        resultsList = results.getResultList();
-        participantId2 = resultsList.get(0);
-
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : enlistPartiicpantCompletion " + s);
+            error("enlistDurable " + s);
         }
 
-        // invoke the service a third time to create a coordinaator completion participant and script it to
-        // close
+        try {
+            results = client.serve(serviceURL1, commands);
+        } catch (Exception e) {
+            exception = e;
+        }
+
+        // enlist a durable participant in the subtransaction and tell it to prepare and  commit
 
         commands = new CommandsType();
-        commands.getCommandList().add("enlistParticipantCompletion");
-        commands.getCommandList().add("close");
+        commands.getCommandList().add("subtransactioncommands");
+        commands.getCommandList().add(subTxId);
+        commands.getCommandList().add(serviceURL2);
+        commands.getCommandList().add("enlistDurable");
+        commands.getCommandList().add("prepare");
+        commands.getCommandList().add("commit");
+
+        // call the same web service multiple times -- it's ok to use the same commands list
 
         try {
             results = client.serve(serviceURL1, commands);
@@ -148,21 +164,13 @@ public class BAMultiParticipantParticipantCompletionParticipantCloseTest extends
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : server failure " + exception);
+            error("subtransactioncommands failure " + exception);
             return;
         }
 
-        resultsList = results.getResultList();
-        participantId3 = resultsList.get(0);
-
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : enlistPartiicpantCompletion " + s);
+            error("subtransactioncommands " + s);
         }
-
-        // invoke the service scripting the first participant to complete
-        commands = new CommandsType();
-        commands.getCommandList().add("completed");
-        commands.getCommandList().add(participantId1);
 
         try {
             results = client.serve(serviceURL1, commands);
@@ -171,18 +179,13 @@ public class BAMultiParticipantParticipantCompletionParticipantCloseTest extends
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : server failure " + exception);
+            error("subtransactioncommands failure " + exception);
             return;
         }
 
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : completed " + participantId1 + " " + s);
+            error("subtransactioncommands " + s);
         }
-
-        // invoke the service scripting the second participant to copmplete
-        commands = new CommandsType();
-        commands.getCommandList().add("completed");
-        commands.getCommandList().add(participantId2);
 
         try {
             results = client.serve(serviceURL1, commands);
@@ -191,38 +194,18 @@ public class BAMultiParticipantParticipantCompletionParticipantCloseTest extends
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : server failure " + exception);
+            error("subtransactioncommands failure " + exception);
             return;
         }
 
         for (String s : results.getResultList()) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : completed " + participantId2 + " " + s);
+            error("subtransactioncommands " + s);
         }
 
-        // invoke the service scripting the third participant to complete
-        commands = new CommandsType();
-        commands.getCommandList().add("completed");
-        commands.getCommandList().add(participantId3);
+        // now commit the transaction which should also commit the subtransaction
 
         try {
-            results = client.serve(serviceURL1, commands);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-        if (exception != null) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : server failure " + exception);
-            return;
-        }
-
-        for (String s : results.getResultList()) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : completed " + participantId3 + " " + s);
-        }
-
-        // now close the activity
-
-        try {
-            ba.close();
+            tx.commit();
         } catch (TransactionRolledBackException e) {
             exception = e;
         } catch (UnknownTransactionException e) {
@@ -234,10 +217,10 @@ public class BAMultiParticipantParticipantCompletionParticipantCloseTest extends
         }
 
         if (exception != null) {
-            System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : commit failure " + exception);
+            error("commit failure " + exception);
         }
 
-        System.out.println("BAMultiParticipantParticipantCompletionParticipantCloseTest : completed");
+        error("completed");
 
         isSuccessful = (exception == null);
     }
