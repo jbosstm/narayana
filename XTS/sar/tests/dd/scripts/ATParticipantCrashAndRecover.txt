@@ -218,7 +218,7 @@ ENDRULE
 
 RULE trace recovered participant recreate
 CLASS com.arjuna.wst11.messaging.engines.ParticipantEngine
-METHOD <init>(Participant, id, State, W3CEndpointReference, boolean)
+METHOD <init>(Participant, String, State, W3CEndpointReference, boolean)
 AFTER WRITE persisted
 BIND engine:ParticipantEngine = $0,
      recovered:boolean = engine.isRecovered(),
@@ -290,6 +290,6 @@ BIND engine : CoordinatorEngine = $0,
      identifier:String = engine.getId()
 IF debug("received committed for participant " + identifier)
    AND
-   signal(identifier)
+   signalWake(identifier)
 DO debug("signalled coordinator waiting on " + identifier)
 ENDRULE

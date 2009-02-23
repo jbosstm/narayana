@@ -334,7 +334,7 @@ ENDRULE
 
 RULE trace unknown participant prepared
 CLASS com.arjuna.wst11.messaging.CoordinatorProcessorImpl
-METHOD prepared(boolean)
+METHOD prepared
 AT INVOKE sendRollback
 BIND identifier:String = $3.getInstanceIdentifier().getInstanceIdentifier()
 IF TRUE
@@ -366,7 +366,7 @@ ENDRULE
 
 # RULE trace unknown participant prepared
 # CLASS com.arjuna.wst11.messaging.CoordinatorProcessorImpl
-# METHOD prepared(boolean)
+# METHOD prepared
 # AFTER INVOKE sendRollback
 # BIND NOTHING
 # IF TRUE

@@ -238,7 +238,7 @@ ENDRULE
 
 RULE trace participant prepared
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorEngine
-METHOD prepared(NotificationType, AddressingProperties, ArjunaContext)
+METHOD prepared(Notification, AddressingProperties, ArjunaContext)
 AT ENTRY
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
@@ -258,7 +258,7 @@ ENDRULE
 # should only be triggered after calling the super constructor
 RULE trace participant completion engine create
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorEngine
-METHOD <init>(String, boolean, W3CEndpointReference, State, boolean)
+METHOD <init>(String, boolean, W3CEndpointReference, boolean, State)
 AT ENTRY
 BIND identifier = $1,
      recovered=$4
@@ -275,7 +275,7 @@ ENDRULE
 
 RULE trace recovered participant commit
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorEngine
-METHOD close
+METHOD commit
 AFTER SYNCHRONIZE
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),

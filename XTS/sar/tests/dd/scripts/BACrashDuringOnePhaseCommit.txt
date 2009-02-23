@@ -1,0 +1,686 @@
+##############################################################################
+# JBoss, Home of Professional Open Source
+# Copyright 2009, Red Hat Middleware LLC, and individual contributors
+# by the @authors tag. See the copyright.txt in the distribution for a
+# full listing of individual contributors.
+#
+# This is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; either version 2.1 of
+# the License, or (at your option) any later version.
+#
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this software; if not, write to the Free
+# Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+# 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+#
+# @authors Andrew Dinn
+#
+# BA Crash During Commit
+#
+# This script automates testing of a specific recovery scenario for the
+# JBossTS XTS implementation of the WS-BA 1.1 protocol using orchestration
+# rules. The basic scenario employs a client, coordinator and a web service
+# running in a single JVM but it is possible for the coordinator and web
+# service to be lcoated in separate JVMs if a supplementary rule set is employed
+# in the coordinator JVM. The description below refers to two ASes AS1 and AS2
+# running the client/coordinator and web service, respectively. In the conventional
+# scenario these refer to the same AS running in one JVM.
+#
+# The scenario contains variations depending upon whether the web service employed
+# uses Participant Completion or Coordinator Completion. The same script can be
+# used for either of these cases, the choice of which participant is used being
+# determined by the test program.
+#
+# The scenario is as follows (** indicates intercession by a TOAST rule):
+#
+# AS1 boots
+# AS2 boots
+# AS1 Client starts a WS-BA activity
+# AS1 Client invokes web service
+# AS2 Web service registers participant P1
+#
+# Alternative A (assumes participant completion participants)
+# Client invokes web service with command P1 complete
+# Web service sends completed for participant 1
+# ** AS2 Rule system traces send of completed
+# Coordinator receives completed for participant 1
+# ** AS1 Rule system traces receipt of completed
+# End Alternative A
+#
+# AS1 Client closes WS-BA activity
+#
+# Alternative B (assumes coordinator completion participants)
+# AS1 Coordinator sends complete to participant P1
+# ** AS1 Rule system traces send of complete
+# Web service receives complete for participant 1
+# ** AS2 Rule system traces receipt of complete
+# Web service sends completed for participant 1
+# ** AS2 Rule system traces send of completed
+# Coordinator receives completed for participant 1
+# ** AS1 Rule system traces receipt of completed
+# End Alternative B
+#
+# AS1 Coordinator initiates close of participant P1
+# AS1 Coordinator sends close to participant P1
+# -- Extra steps if AS1 != AS2
+# ** AS1 Rule system intercepts after send of close has
+#    completed and crashes JVM
+# -- End of extra steps
+#
+# AS2 Participant receives close for participant P1
+# ** AS2 Rule system traces receipt of close and kills JVM
+#
+# AS1 reboots
+# AS2 reboots
+# AS2 Recovery system starts after 2 minutes
+# AS2 Recovery system recreates PREPARED WS-BA activity coordinator
+# ** AS2 Rule system traces create
+# AS2 Recovery system recreates participant stub for P1
+# ** AS2 Rule system traces create
+# AS2 Recovery system sends getstatus for P1
+# ** AS2 Rule system traces send of getstatus
+#
+# AS1 Coordinator receives getstatus for P1
+# ** AS1 Rule system traces receipt of getstatus
+# AS1 Coordinator sends invalidstate fault for P1
+# ** AS1 Rule system traces send of invalidstate fault
+# -- Extra steps if AS1 != AS2
+# AS1 Coordinator completes send invalidstate fault
+# ** AS1 Rule system kills JVM
+# -- End of extra steps
+#
+# AS2 P1 receives invalidstate fault
+# ** AS2 Rule system traces receipt of invalidstate fault
+# AS2 P1 calls participant compensate method
+# ** AS2 Rule system traces call of participant compensate method
+# AS2 P1 completes handling invalidstate fault
+# ** AS2 Rule system kills JVM
+#
+# Use of this script
+#
+# The default way of exercising this test is to deploy the xtstest war
+# to a single AS and configure it to run the relevant XTS Service Test.
+# The web service and coordinator will normally be located with the client.
+# The AS should crash when the participant is told to close. At reboot
+# the recovery should run automatically and the server should be killed
+# once the participant compensate method has returned.
+#
+# This script allows for registration of either participant completion
+# or coordinator completion participants (alternatives A or B). It is
+# legitimate to mix the different types. However, if participant completion
+# participants are used then the client must script the participants
+# to perform a complete.
+#
+# This script contians rules which respond to events triggered by either the
+# XTS coordinator services or the XTS participant services. It needs to be
+# passed to a TOAST agent in the JVM running these services both at first boot
+# and at reboot. Output will be written to file testlog in the working directory
+# of the coordinator/participant AS. If two separate ASes are employed for the
+# coordinator and participant then they need to employ different working
+# directories so that one AS does not trash the output from the other AS.
+# With two ASes the coordinator AS needs to be provided with a supplementary
+# script containing the extra rules needed to crash the coordinator JVM.
+#
+# XTS Service tests which can operate with this scenario can be selected for
+# execution by the XTSServiceTestRunnerBean at AS boot by setting system
+# property
+#    org.jboss.jbossts.xts.servicetests.XTSServiceTestName
+# to the name of a class which will execute the test. This property must
+# be defined in the JVM running the AS to which the xtstest war is deployed
+# i.e. the client AS. n.b. if the client is colocated with the coordinator then
+# this property must be left undefined at AS reboot otherwise the client
+# will run again, starting a new TX which may interfere with recovery of the
+# crashed TX.
+#
+# Available tests include:
+#
+# org.jboss.jbossts.xts.servicetests.test.ba.SingleCoordinatorCompletionParticipantCloseTest
+# this test invokes a single service registering a coordinator completion participant
+# and then closing the activity
+# the location of the service is defined by defining a system property:
+#    org.jboss.jbossts.xts.servicetests.ServiceURL1
+# if this is not set the value used defaults to
+#    http://localhost:8080/xtstest/xtsservicetest1
+#
+# org.jboss.jbossts.xts.servicetests.test.ba.SingleParticipantCompletionParticipantCloseTest
+# this test invokes a single service registering a participant completion participant
+# it sends completed to the participant before closing the activity
+# the location of service is defined by defining a system property:
+#    org.jboss.jbossts.xts.servicetests.ServiceURL1
+# if this is not set the value used defaults to
+#    http://localhost:8080/xtstest/xtsservicetest1
+#
+# If the client is run in a different AS to the coordinator then the client
+# AS needs to be pointed at the coordinator AS. The easiest
+# way to do this is to define the system property
+#
+#    org.jboss.jbossts.xts11.coordinatorURL
+#
+# to something like
+#
+#    http://foo.bar.org:8080/ws-c11/soap/ActivationCoordinator
+#
+# or alternatively to redefine one or more of the component properties
+#
+#    org.jboss.jbossts.xts11.coordinator.host
+#    org.jboss.jbossts.xts11.coordinator.port
+#    org.jboss.jbossts.xts11.coordinator.path
+#
+# (you probably only need to reset the host component)
+#
+# Expected output
+#
+# After the first boot AS1 should exit leaving output in the following
+# format in file testlog
+#
+#   sent complete message for XXXXXXX completion engine XXXXXX
+#   received completed message for XXXXXXX completion engine XXXXXX
+#   sent close message for XXXXXXX completion engine XXXXXX
+#   JVM exit
+#
+# AS2 should exit leaving output in the following format in file testlog
+#
+#   received complete message for XXXXXXX completion participant XXXXXX
+#   sent completed message for XXXXXXX completion participant XXXXXX
+#   received close message for XXXXXXX completion participant XXXXXX
+#   JVM exit
+#
+# After reboot AS1 should exit leaving output in the following format in file
+# testlog
+#
+#   sent complete message for XXXXXXX completion engine XXXXXX
+#   received completed message for XXXXXXX completion engine XXXXXX
+#   sent close message for XXXXXXX completion engine XXXXXX
+#   JVM exit
+#   received getstatus for unknown XXXXXXX completion participant XXXXXX
+#   sent invalidstate fault for unknown XXXXXXX completion participant XXXXXX
+#   JVM exit
+#
+# AS2 should exit leaving output in the following format in file testlog
+#
+#   received complete message for XXXXXXX completion participant XXXXXX
+#   sent completed message for XXXXXXX completion participant XXXXXX
+#   received close message for XXXXXXX completion participant XXXXXX
+#   JVM exit
+#   recreated XXXXXXX completion participant XXXXXX
+#   sent getstatus for XXXXXXX completion participant XXXXXX
+#   received invalidstate fault for XXXXXXX completion participant XXXXXX
+#   compensated recovered XXXXXXX completion participant XXXXXX
+#   JVM exit
+#
+#######################################################################
+# This rule opens a file for the trace output during XTS startup
+# It will be opened for append at reboot so messages from both runs
+# will go to this file
+#
+RULE open trace file
+CLASS org.jboss.jbossts.XTSService
+METHOD start()
+BIND NOTHING
+IF TRUE
+DO openTrace("log", "testlog")
+ENDRULE
+
+#######################################################################
+## rules for first run of AS1 (coordinator AS)
+
+#######################################################################
+# This rule is triggered when a non-recovered coordinator completion
+# participant stub (CoordinatorCompletionCoordinatorEngine) is sent
+# a complete message. It traces the message.
+# The trigger location is at the call to waitForState which ensures
+# that the complete message has been dispatched to the participant.
+
+RULE trace coordinator completion complete
+CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
+METHOD complete
+AT INVOKE waitForState
+BIND engine:CoordinatorCompletionCoordinatorEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF (NOT recovered)
+DO traceln("log", "sent complete message for coordinator completion engine " + identifier),
+   debug("sent complete message for coordinator completion engine " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a non-recovered coordinator completion
+# participant stub (CoordinatorCompletionCoordinatorEngine) receives
+# a completed message. It traces the message.
+
+RULE trace coordinator completion completed
+CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
+METHOD completed
+AT ENTRY
+BIND engine:CoordinatorCompletionCoordinatorEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF (NOT recovered)
+DO traceln("log", "received completed message for coordinator completion engine " + identifier),
+   debug("received completed message for coordinator completion engine " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a non-recovered participant completion
+# participant stub (CoordinatorCompletionCoordinatorEngine) receives
+# a completed message. It traces the message.
+
+RULE trace participant completion completed
+CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
+METHOD completed
+AT ENTRY
+BIND engine:ParticipantCompletionCoordinatorEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF (NOT recovered)
+DO traceln("log", "received completed message for participant completion engine " + identifier),
+   debug("received completed message for participant completion engine " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a non-recovered participant completion
+# participant stub (ParticipantCompletionCoordinatorEngine) is sent
+# a close message. It exits the JVM, simulating a crash.
+# The trigger location is at the call to waitForState which ensures
+# that the close message has been dispatched to the participant.
+# This rule is only required when the coordinator is located in a
+# separate JVM to the participant
+
+# RULE kill JVM at participant completion close
+# CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
+# METHOD close
+# AT INVOKE waitForState
+# BIND engine:ParticipantCompletionCoordinatorEngine = $0,
+#      recovered:boolean = engine.isRecovered(),
+#      identifier:String = engine.getId()
+# IF (NOT recovered)
+# DO traceln("log", "sent close message for participant completion engine " + identifier),
+#    debug("sent close message for participant completion engine " + identifier),
+#    traceln("log", "JVM exit"),
+#    debug("!!!killing JVM!!!"),
+#    killJVM()
+# ENDRULE
+
+#######################################################################
+# This rule is triggered when a non-recovered coordinator completion
+# participant stub (CoordinatorCompletionCoordinatorEngine) is sent
+# a close message. It exits the JVM, simulating a crash.
+# The trigger location is at the call to waitForState which ensures
+# that the close message has been dispatched to the participant.
+# This rule is only required when the coordinator is located in a
+# separate JVM to the participant
+
+# RULE kill JVM at coordinator completion close
+# CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
+# METHOD close
+# AT ENTRY
+# BIND engine:CoordinatorCompletionCoordinatorEngine = $0,
+#      recovered:boolean = engine.isRecovered(),
+#      identifier:String = engine.getId()
+# IF (NOT recovered)
+# DO traceln("log", "sent close message for coordinator completion engine " + identifier),
+#    debug("sent close message for coordinator completion engine " + identifier),
+#    traceln("log", "JVM exit"),
+#    debug("!!!killing JVM!!!"),
+#    killJVM()
+# ENDRULE
+
+#######################################################################
+## rules for first run of AS2 (participant)
+
+#######################################################################
+# This rule is triggered when a non-recovered participant completion
+# participant (ParticipantCompletionParticipantEngine) receives
+# a close message. It exits the JVM, simulating a crash.
+
+RULE kill JVM at participant completion participant close
+CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine
+METHOD close
+AT ENTRY
+BIND engine:ParticipantCompletionParticipantEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF (NOT recovered)
+DO traceln("log", "received close message for participant completion participant " + identifier),
+   debug("received close message for participant completion participant " + identifier),
+   traceln("log", "JVM exit"),
+   debug("!!!killing JVM!!!"),
+   killJVM()
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a non-recovered coordinator completion
+# participant (CoordinatorCompletionParticipantEngine) receives
+# a close message. It exits the JVM, simulating a crash.
+
+RULE kill JVM at participant completion participant close
+CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine
+METHOD close
+AT ENTRY
+BIND engine:CoordinatorCompletionParticipantEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF (NOT recovered)
+DO traceln("log", "received close message for coordinator completion participant " + identifier),
+   debug("received close message for coordinator completion participant " + identifier),
+   traceln("log", "JVM exit"),
+   debug("!!!killing JVM!!!"),
+   killJVM()
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a participant completion
+# participant (ParticipantCompletionParticipantEngine) sends
+# a completed message. It traces the call.
+
+RULE trace participant completion participant send completed
+CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine
+METHOD completed
+AFTER INVOKE sendCompleted
+BIND engine:ParticipantCompletionParticipantEngine = $0,
+     identifier:String = engine.getId()
+IF TRUE
+DO traceln("log", "sent completed message for participant completion participant " + identifier),
+   debug("sent completed message for participant completion participant " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a coordinator completion
+# participant (CoordinatorCompletionParticipantEngine) receives
+# a complete message. It traces the call.
+
+RULE trace coordinator completion participant receive complete
+CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine
+METHOD complete
+AT ENTRY
+BIND engine:CoordinatorCompletionParticipantEngine = $0,
+     identifier:String = engine.getId()
+IF TRUE
+DO traceln("log", "received complete message for coordinator completion participant " + identifier),
+   debug("received complete message for coordinator completion participant " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a coordinator completion
+# participant (CoordinatorCompletionParticipantEngine) sends
+# a completed message. It traces the call.
+
+RULE trace coordinator completion participant send completed
+CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine
+METHOD complete
+AFTER INVOKE sendCompleted
+BIND engine:CoordinatorCompletionParticipantEngine = $0,
+     identifier:String = engine.getId()
+IF TRUE
+DO traceln("log", "sent completed message for coordinator completion participant " + identifier),
+   debug("sent completed message for coordinator completion participant " + identifier)
+ENDRULE
+
+#######################################################################
+## rules for reboot run of AS1 (coordinator)
+
+#######################################################################
+# This rule is triggered when a coordinator completion coordinator
+# processor (CoordinatorCompletionCoordinatorProcessorImpl) receives
+# a getstatus message for an unknown participant. It traces the call.
+
+RULE trace getstatus for unknown coordinator completion participant
+CLASS com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl
+METHOD getStatus
+AT INVOKE sendSoapFault
+BIND identifier:String = $3.getInstanceIdentifier().getInstanceIdentifier()
+IF TRUE
+DO traceln("log", "received getstatus message for unknown coordinator completion participant engine " + identifier),
+   debug("received getstatus message for unknown coordinator completion participant engine " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a participant completion coordinator
+# processor (ParticipantCompletionCoordinatorProcessorImpl) receives
+# a getstatus message for an unknown participant. It traces the call.
+
+RULE trace getstatus for unknown participant completion participant
+CLASS com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl
+METHOD getStatus
+AT INVOKE sendSoapFault
+BIND identifier:String = $3.getInstanceIdentifier().getInstanceIdentifier()
+IF TRUE
+DO traceln("log", "received getstatus message for unknown participant completion participant engine " + identifier),
+   debug("received getstatus message for unknown participant completion participant engine " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered after a coordinator completion coordinator
+# processor (CoordinatorCompletionCoordinatorProcessorImpl) sends
+# an invalidstate fault for an unknown participant. It traces the call.
+
+RULE trace send invalidstate for coordinator completion participant
+CLASS com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl
+METHOD getStatus
+AFTER INVOKE sendSoapFault
+BIND identifier:String = $3.getInstanceIdentifier().getInstanceIdentifier()
+IF TRUE
+DO traceln("log", "sent invalidstate fault for coordinator completion participant engine " + identifier),
+   debug("sent invalidstate fault for coordinator completion participant engine " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered after a participant completion coordinator
+# processor (ParticipantCompletionCoordinatorProcessorImpl) receives
+# an invalidstate fault for an unknown participant. It traces the call.
+
+RULE trace send invalidstate for participant completion participant
+CLASS com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl
+METHOD getStatus
+AFTER INVOKE sendSoapFault
+BIND identifier:String = $3.getInstanceIdentifier().getInstanceIdentifier()
+IF TRUE
+DO traceln("log", "sent invalidstate fault for participant completion participant engine " + identifier),
+   debug("sent invalidstate fault for participant completion participant engine " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered after a coordinator completion coordinator
+# processor (CoordinatorCompletionCoordinatorProcessorImpl) sends
+# an invalidstate fault for an unknown participant. It exits the JVM.
+# This rule is only required when the coordinator is located in a
+# separate JVM to the participant
+
+# RULE kill JVM after send invalidstate for coordinator completion participant
+# CLASS com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl
+# METHOD getStatus
+# AFTER INVOKE sendSoapFault
+# BIND NOTHING
+# IF TRUE
+# DO traceln("log", "kill JVM"),
+#    debug("!!! killing JVM !!!")
+# ENDRULE
+
+#######################################################################
+# This rule is triggered after a participant completion coordinator
+# processor (ParticipantCompletionCoordinatorProcessorImpl) receives
+# an invalidstate fault for an unknown participant.It exits the JVM.
+# This rule is only required when the coordinator is located in a
+# separate JVM to the participant
+
+# RULE kill JVM after send invalidstate for participant completion participant
+# CLASS com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl
+# METHOD getStatus
+# AFTER INVOKE sendSoapFault
+# BIND NOTHING
+# IF TRUE
+# DO traceln("log", "kill JVM"),
+#    debug("!!! killing JVM !!!")
+# ENDRULE
+
+#######################################################################
+## rules for reboot run of AS2 (participant)
+
+#######################################################################
+# This rule is triggered when a participant completion participant
+# (ParticipantCompletionParticipantEngine) is created from details
+# located in the log record. It traces the create operation
+# The trigger location is at entry but the rule should only be triggered
+# after calling the super constructor
+RULE trace participant completion participant create
+CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine
+METHOD <init>(String, W3CEndpointReference, BusinessAgreementWithParticipantCompletionParticipant, State, boolean)
+AT ENTRY
+BIND identifier = $1,
+     recovered=$5
+IF recovered
+DO debug("created recovered participant completion participant " + identifier),
+   trace("log", "created recovered participant completion participant " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a coordinator completion participant
+# (CoordinatorCompletionParticipantEngine) is created from details
+# located in the log record. It traces the create operation
+# The trigger location is at entry but the rule should only be triggered
+# after calling the super constructor
+RULE trace coordinator completion participant create
+CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine
+METHOD <init>(String, W3CEndpointReference, BusinessAgreementWithCoordinatorCompletionParticipant, State, boolean)
+AT ENTRY
+BIND identifier = $1,
+     recovered=$5
+IF recovered
+DO debug("created recovered coordinator completion participant " + identifier),
+   trace("log", "created recovered coordinator completion participant " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a recovered participant completion
+# participant stub (ParticipantCompletionParticipantEngine) sends
+# a getstatus message. It traces the call.
+
+RULE trace participant completion participant send getstatus
+CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine
+METHOD sendCompleted(boolean)
+AFTER INVOKE sendGetStatus
+BIND engine:ParticipantCompletionParticipantEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF recovered
+DO debug("sent getstaus for recovered participant completion participant " + identifier),
+   traceln("log", "sent getstaus for recovered participant completion participant " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a recovered coordinator completion
+# participant stub (CoordinatorCompletionParticipantEngine) sends
+# a getstatus message. It traces the call.
+
+RULE trace coordinator completion participant send getstatus
+CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine
+METHOD sendCompleted(boolean)
+AFTER INVOKE sendGetStatus
+BIND engine:CoordinatorCompletionParticipantEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF recovered
+DO debug("sent getstaus for recovered coordinator completion participant " + identifier),
+   traceln("log", "sent getstaus for recovered coordinator completion participant " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a participant completion participant
+# processor (ParticipantCompletionParticipantProcessorImpl) receives an
+# invalidstate fault and notifies the participant engine. It traces the call.
+
+RULE trace participant completion participant receives invalidstate
+CLASS com.arjuna.wst11.messaging.ParticipantCompletionParticipantProcessorImpl
+METHOD soapFault
+AT INVOKE soapFault
+BIND identifier:String =  $3.getInstanceIdentifier().getInstanceIdentifier()
+IF TRUE
+DO debug("received invalidstate fault for participant completion participant " + identifier),
+   traceln("log", "received invalidstate fault for participant completion participant " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a coordinator completion participant
+# processor (CoordinatorCompletionParticipantProcessorImpl) receives an
+# invalidstate fault and notifies the participant engine. It traces the call.
+
+RULE trace coordinator completion participant receives invalidstate
+CLASS com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl
+METHOD soapFault
+AT INVOKE soapFault
+BIND identifier:String =  $3.getInstanceIdentifier().getInstanceIdentifier()
+IF TRUE
+DO debug("received invalidstate fault for coordinator completion participant " + identifier),
+   traceln("log", "received invalidstate fault for coordinator completion participant " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a recovered participant completion
+# participant stub (ParticipantCompletionParticipantEngine) handles an
+# invalidstate fault. It traces the call then exits the JVM.
+
+RULE trace participant completion participant handles invalidstate
+CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine
+METHOD soapFault
+AFTER INVOKE compensate
+BIND engine:ParticipantCompletionParticipantEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF recovered
+DO debug("compensated recovered participant completion participant " + identifier),
+   traceln("log", "compensated recovered participant completion participant " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a recovered coordinator completion
+# participant stub (CoordinatorCompletionParticipantEngine) handles an
+# invalidstate fault. It traces the call then exits the JVM.
+
+RULE trace coordinator completion participant handles invalidstate
+CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine
+METHOD soapFault
+AFTER INVOKE compensate
+BIND engine:CoordinatorCompletionParticipantEngine = $0,
+     recovered:boolean = engine.isRecovered(),
+     identifier:String = engine.getId()
+IF recovered
+DO debug("compensated recovered coordinator completion participant " + identifier),
+   traceln("log", "compensated recovered coordinator completion participant " + identifier)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a participant completion participant
+# processor (ParticipantCompletionParticipantProcessorImpl) has finished
+# handling an invalidstate fault. It exits the JVM.
+
+RULE exit after participant completion participant handles invalidstate
+CLASS com.arjuna.wst11.messaging.ParticipantCompletionParticipantProcessorImpl
+METHOD soapFault
+AFTER INVOKE soapFault
+BIND identifier:String =  $3.getInstanceIdentifier().getInstanceIdentifier()
+IF TRUE
+DO debug("!!! killing JVM !!! " + identifier),
+   traceln("log", "JVM exit")
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a coordinator completion participant
+# processor (CoordinatorCompletionParticipantProcessorImpl) has finished
+# handling an invalidstate fault. It exits the JVM.
+
+RULE exit after coordinator completion participant handles invalidstate
+CLASS com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl
+METHOD soapFault
+AFTER INVOKE soapFault
+BIND identifier:String =  $3.getInstanceIdentifier().getInstanceIdentifier()
+IF TRUE
+DO debug("!!! killing JVM !!! " + identifier),
+   traceln("log", "JVM exit")
+ENDRULE
+

@@ -72,7 +72,7 @@
 # ** Rule system traces receipt of completed
 # End Alternative C
 # Coordinator initiates close of participant P1
-# ** Rule system intercepts commit and crahses JVM
+# ** Rule system intercepts close and crashes JVM
 #
 # AS reboots
 # Recovery system starts after 2 minutes
@@ -87,20 +87,20 @@
 # Recovery system calls replay of PREPARED transaction
 # ** Rule system traces PREPARED replay invocation
 #
-# Coordinator sends commit to P1
-# P1 replies with committed
-# ** Rule system traces receipt ofcommitted
+# Coordinator sends close to P1
+# P1 replies with closed
+# ** Rule system traces receipt of closed
 #
-# Coordinator sends commit to P2
-# P2 replies with committed
-# ** Rule system traces receipt ofcommitted
+# Coordinator sends close to P2
+# P2 replies with closed
+# ** Rule system traces receipt of closed
 #
-# Coordinator sends commit to P3
-# P3 replies with committed
-# ** Rule system traces receipt ofcommitted
+# Coordinator sends close to P3
+# P3 replies with closed
+# ** Rule system traces receipt of closed
 #
-# Coordinator clears heuristic log record and completes commit
-# ** Rule system detects completed commit and kills JVM
+# Coordinator clears heuristic log record and completes close of activity
+# ** Rule system detects completed activity close and kills JVM
 #
 # Use of this script
 #
@@ -112,7 +112,7 @@
 # the test) and coordinator service can optionally be located in separate
 # ASs. It is also possible to use just a single web service and have the
 # client register multiple participants. The coordinator AS should crash
-# when the client commits. At reboot the rest of the test should run
+# when the client closes. At reboot the rest of the test should run
 # automatically and the server should be killed after a the heuristic
 # transaction is successfuly replayed.
 #
@@ -277,7 +277,7 @@
 #   received closed message for XXXXXXX completion participant stub XXXXXX
 #   close on recovered XXXXXXX completion participant engine XXXXXX
 #   received closed message for XXXXXXX completion participant stub XXXXXX
-#   removed committed activity XXXXXX
+#   removed closed activity XXXXXX
 #
 #######################################################################
 # This rule opens a file for the trace output during XTS startup
