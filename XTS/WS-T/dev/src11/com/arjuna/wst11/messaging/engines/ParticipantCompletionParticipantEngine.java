@@ -1009,6 +1009,15 @@ public class ParticipantCompletionParticipantEngine implements ParticipantComple
     }
 
     /**
+     * check whether this participant's details have been recovered from the log
+     * @return true if the participant is recovered otherwise false
+     */
+    public boolean isRecovered()
+    {
+        return recovered;
+    }
+
+    /**
      * Change the state and notify any listeners.
      * @param state The new state.
      */
