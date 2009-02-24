@@ -614,6 +614,8 @@ public class XAResourceRecord extends AbstractRecord
 						case XAException.XAER_NOTA:
 						    if (_recovered)
 							break; // committed previously and recovery completed
+						    else
+						        return TwoPhaseOutcome.HEURISTIC_HAZARD;  // something terminated the transaction!
 						case XAException.XAER_PROTO:
 						case XAException.XA_RETRY:
 							return TwoPhaseOutcome.FINISH_ERROR;
