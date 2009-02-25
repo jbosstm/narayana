@@ -48,6 +48,18 @@ class JaxBaseHeaderContextProcessor
      */
     protected boolean handleInboundMessage(final SOAPMessage soapMessage)
     {
+        return handleInboundMessage(soapMessage, false);
+    }
+
+    /**
+     * Handle the request.
+     * @param soapMessage The current message context.
+     * @param installSubordinateTx true if a subordinate transaction should be interposed and false
+     * if the handler should just resume the incoming transaction. currently only works for AT
+     * transactions but will eventually be extended to work for BA transactions too.
+     */
+    protected boolean handleInboundMessage(final SOAPMessage soapMessage, boolean installSubordinateTx)
+    {
         if (soapMessage != null)
         {
             try
@@ -65,12 +77,24 @@ class JaxBaseHeaderContextProcessor
                         final TxContext txContext = new com.arjuna.mwlabs.wst.at.context.TxContextImple(cc) ;
                         TransactionManagerFactory.transactionManager().resume(txContext) ;
                         clearMustUnderstand(soapHeader, soapHeaderElement) ;
+                        if (installSubordinateTx) {
+                            // since we are now in an AT Tx  we just need to start a subordinate one using the
+                            // UserSubordinateTransaction instance. the begin call will register the
+                            // Tx on the thread
+                            UserTransaction ust = UserTransactionFactory.userSubordinateTransaction();
+                            ust.begin();
+                        }
                     }
                     else if (BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME.equals(coordinationType))
                     {
+                        // interposition is not yet implemented for business activities
+                        clearMustUnderstand(soapHeader, soapHeaderElement) ;
+                        if (installSubordinateTx) {
+                            // throw an exception to force logging of a warning below
+                            throw new Exception("com.arjuna.mw.wst11.service.JaxBaseHeaderContextProcessor : interposition is not yet implemented for the WSBA protocol");
+                        }
                         final TxContext txContext = new com.arjuna.mwlabs.wst.ba.context.TxContextImple(cc);
                         BusinessActivityManagerFactory.businessActivityManager().resume(txContext) ;
-                        clearMustUnderstand(soapHeader, soapHeaderElement) ;
                     }
                     else
                     {
