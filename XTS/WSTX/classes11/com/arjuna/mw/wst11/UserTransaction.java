@@ -77,6 +77,14 @@ public abstract class UserTransaction
     }
 
     /**
+     * get the user subordinate transaction
+     *
+     * this is a UserTransaction whose begin method will create an interposed AT transaction
+     */
+
+    public abstract UserTransaction getUserSubordinateTransaction();
+
+    /**
      * Start a new transaction. If one is already associated with this thread
      * then the WrongStateException will be thrown. Upon success, this
      * operation associates the newly created transaction with the current
@@ -91,23 +99,6 @@ public abstract class UserTransaction
      * WrongStateException will be thrown.
      */
     public abstract void begin(final int timeout)
-        throws WrongStateException, SystemException;
-
-    /**
-     * Start a new subordinate transaction. If an AT transaction is not currently associated with
-     * this thread then the WrongStateException will be thrown. Upon success, this
-     * operation associates the newly created subordinate transaction with the current
-     * thread.
-     */
-    public abstract void beginSubordinate()
-        throws WrongStateException, SystemException;
-
-    /**
-     * Start a new transaction with the specified timeout as its lifetime.
-     * If an AT transaction is not currently associated with
-     * this thread then the WrongStateException will be thrown.
-     */
-    public abstract void beginSubordinate(final int timeout)
         throws WrongStateException, SystemException;
 
     /**

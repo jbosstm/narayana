@@ -59,7 +59,12 @@ public class UserTransactionImple extends UserTransaction
 		_contextManager.initialise(_factory);
 	}
 
-	public void begin () throws WrongStateException, SystemException
+    public UserTransaction getUserSubordinateTransaction() {
+        // local does not currently implement subordinate transactions
+        return this;
+    }
+
+    public void begin () throws WrongStateException, SystemException
 	{
 		begin(0);
 	}

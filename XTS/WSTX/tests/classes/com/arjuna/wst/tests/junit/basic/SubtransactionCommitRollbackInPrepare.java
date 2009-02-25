@@ -24,6 +24,7 @@ package com.arjuna.wst.tests.junit.basic;
 import com.arjuna.mw.wst.TransactionManager;
 import com.arjuna.mw.wst.UserTransaction;
 import com.arjuna.mw.wst.TxContext;
+import com.arjuna.mw.wst.UserTransactionFactory;
 import com.arjuna.wst.tests.DemoDurableParticipant;
 import com.arjuna.wst.tests.DemoVolatileParticipant;
 import com.arjuna.wst.tests.FailureParticipant;
@@ -41,7 +42,8 @@ public class SubtransactionCommitRollbackInPrepare extends TestCase
     public static void testSubTransactionCommitRollbackInPrepare()
             throws Exception
     {
-        final UserTransaction ut = UserTransaction.getUserTransaction();
+        final UserTransaction ut = UserTransactionFactory.userTransaction();
+        final UserTransaction ust = UserTransactionFactory.userSubordinateTransaction();
         final TransactionManager tm = TransactionManager.getTransactionManager();
 
         final DemoDurableParticipant p1 = new DemoDurableParticipant();
@@ -54,7 +56,7 @@ public class SubtransactionCommitRollbackInPrepare extends TestCase
         tm.resume(tx);
         tm.enlistForDurableTwoPhase(p1, p1.identifier());
         tm.enlistForVolatileTwoPhase(p2, p2.identifier());
-        ut.beginSubordinate();
+        ust.begin();
         final TxContext stx = tm.suspend();
         tm.resume(stx);
         tm.enlistForDurableTwoPhase(p3, "failure in prepare");

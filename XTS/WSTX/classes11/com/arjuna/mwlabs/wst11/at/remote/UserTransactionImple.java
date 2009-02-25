@@ -63,9 +63,14 @@ public class UserTransactionImple extends UserTransaction
 
 			ex.printStackTrace();
 		}
+        _userSubordinateTransaction = new UserSubordinateTransactionImple();
 	}
 
-	public void begin () throws WrongStateException, SystemException
+    public UserTransaction getUserSubordinateTransaction() {
+        return _userSubordinateTransaction;
+    }
+
+    public void begin () throws WrongStateException, SystemException
     {
 		begin(0);
 	}
@@ -102,46 +107,6 @@ public class UserTransactionImple extends UserTransaction
 			throw ex;
 		}
 	}
-
-    public void beginSubordinate () throws WrongStateException, SystemException
-    {
-        beginSubordinate(0);
-    }
-
-    public void beginSubordinate (int timeout) throws WrongStateException, SystemException
-    {
-        try
-        {
-            TxContext current = _ctxManager.currentTransaction();
-            if ((current == null) || !(current instanceof TxContextImple))
-                throw new WrongStateException();
-
-            TxContextImple currentImple = (TxContextImple) current;
-            Context ctx = startTransaction(timeout, currentImple);
-
-            _ctxManager.resume(new TxContextImple(ctx));
-            // n.b. we don't enlist the subordinate transaction for completion
-            // that ensures that any attempt to commit or rollback will fail
-        }
-        catch (com.arjuna.wsc.InvalidCreateParametersException ex)
-        {
-            tidyup();
-
-            throw new SystemException(ex.toString());
-        }
-        catch (com.arjuna.wst.UnknownTransactionException ex)
-        {
-            tidyup();
-
-            throw new SystemException(ex.toString());
-        }
-        catch (SystemException ex)
-        {
-            tidyup();
-
-            throw ex;
-        }
-    }
 
 	public void commit () throws TransactionRolledBackException,
             UnknownTransactionException, SecurityException, SystemException, WrongStateException
@@ -196,6 +161,50 @@ public class UserTransactionImple extends UserTransaction
 	{
 		return transactionIdentifier();
 	}
+
+    /**
+     * method provided for the benefit of UserSubordinateTransactionImple to allow it
+     * to begin a subordinate transaction which requires an existing context to be
+     * installed on the thread before it will start and instal la new transaction
+     *
+     * @param timeout
+     * @throws WrongStateException
+     * @throws SystemException
+     */
+    public void beginSubordinate(int timeout) throws WrongStateException, SystemException
+    {
+        try
+        {
+            TxContext current = _ctxManager.currentTransaction();
+            if ((current == null) || !(current instanceof TxContextImple))
+                throw new WrongStateException();
+
+            TxContextImple currentImple = (TxContextImple) current;
+            Context ctx = startTransaction(timeout, currentImple);
+
+            _ctxManager.resume(new TxContextImple(ctx));
+            // n.b. we don't enlist the subordinate transaction for completion
+            // that ensures that any attempt to commit or rollback will fail
+        }
+        catch (com.arjuna.wsc.InvalidCreateParametersException ex)
+        {
+            tidyup();
+
+            throw new SystemException(ex.toString());
+        }
+        catch (com.arjuna.wst.UnknownTransactionException ex)
+        {
+            tidyup();
+
+            throw new SystemException(ex.toString());
+        }
+        catch (SystemException ex)
+        {
+            tidyup();
+
+            throw ex;
+        }
+    }
 
 	/*
 	 * Not sure if this is right as it doesn't map to registering a participant
@@ -252,7 +261,7 @@ public class UserTransactionImple extends UserTransaction
         return contextImple.getCoordinationContext();
     }
 
-    private final Context startTransaction(int timeout, TxContextImple current)
+    protected final Context startTransaction(int timeout, TxContextImple current)
 			throws com.arjuna.wsc.InvalidCreateParametersException,
 			SystemException
 	{
@@ -456,7 +465,7 @@ public class UserTransactionImple extends UserTransaction
         return builder.build();
     }
 
-	private final void tidyup ()
+	protected final void tidyup ()
 	{
 		try
 		{
@@ -471,4 +480,5 @@ public class UserTransactionImple extends UserTransaction
 	protected ContextManager _ctxManager = new ContextManager();
 	protected String _activationCoordinatorService;
 	private Hashtable _completionCoordinators = new Hashtable();
+    private UserSubordinateTransactionImple _userSubordinateTransaction;
 }

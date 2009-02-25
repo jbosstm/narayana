@@ -38,4 +38,9 @@ public class UserTransactionFactory
     {
         return UserTransaction.getUserTransaction() ;
     }
+
+    public static UserTransaction userSubordinateTransaction ()
+    {
+        return UserTransaction.getUserTransaction().getUserSubordinateTransaction() ;
+    }
 }

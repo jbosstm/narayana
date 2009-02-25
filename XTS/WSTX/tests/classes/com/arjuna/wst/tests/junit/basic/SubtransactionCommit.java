@@ -25,6 +25,7 @@ package com.arjuna.wst.tests.junit.basic;
 import com.arjuna.mw.wst.TransactionManager;
 import com.arjuna.mw.wst.UserTransaction;
 import com.arjuna.mw.wst.TxContext;
+import com.arjuna.mw.wst.UserTransactionFactory;
 import com.arjuna.wst.tests.DemoDurableParticipant;
 import com.arjuna.wst.tests.DemoVolatileParticipant;
 import junit.framework.TestCase;
@@ -40,7 +41,8 @@ public class SubtransactionCommit extends TestCase
     public static void testSubTransactionCommit()
             throws Exception
     {
-        final UserTransaction ut = UserTransaction.getUserTransaction();
+        final UserTransaction ut = UserTransactionFactory.userTransaction();
+        final UserTransaction ust = UserTransactionFactory.userSubordinateTransaction();
         final TransactionManager tm = TransactionManager.getTransactionManager();
 
         final DemoDurableParticipant p1 = new DemoDurableParticipant();
@@ -53,7 +55,7 @@ public class SubtransactionCommit extends TestCase
         tm.resume(tx);
         tm.enlistForDurableTwoPhase(p1, p1.identifier());
         tm.enlistForVolatileTwoPhase(p2, p2.identifier());
-        ut.beginSubordinate();
+        ust.begin();
         final TxContext stx = tm.suspend();
         tm.resume(stx);
         tm.enlistForDurableTwoPhase(p3, p3.identifier());
