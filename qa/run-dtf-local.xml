@@ -42,6 +42,10 @@
         <pathelement location="ext/jdom.jar"/>
     </path>
 
+    <!-- General tests.
+        Some groups take a really long time and are disabled by default.
+        The remaining test should take a combined time of around 4hrs or so.
+    -->
     <target name="junit">
 
         <!-- currenttests01 : 36 tests, 3 minutes -->
@@ -102,6 +106,33 @@
 
     </target>
 
+    <!--  JDBC tests.
+        You'll need a qa/config/jdbc_profiles/<hostname>/JDBCProfiles file for your machine to run these ones.
+        Plus copies of the db drivers of course. And a set of servers to run against.
+        Did I mention it was complicated :-)
+    -->
+    <target  name="junit-jdbc">
+        
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01-oracle_thin_jndi"/></antcall> 
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources02-oracle_thin_jndi"/></antcall>
+        
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01_mssqlserver_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources02_mssqlserver_jndi"/></antcall>
+        
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01-ibmdb2_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources02-ibmdb2_jndi"/></antcall>
+
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01-pgsql_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources02-pgsql_jndi"/></antcall>
+
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01-mysql_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources02-mysql_jndi"/></antcall>
+
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01-sybase_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources02-sybase_jndi"/></antcall>
+        
+    </target>
+
     <target name="junit-tests">
 
         <echo message="Running test group ${tests} from basedir=${basedir}"/>
@@ -143,10 +174,10 @@
                 <path refid="tests.classpath"/>
             </classpath>
 
-            <arg value="./testdefs/jbossts-qa-otsserver-testdefs.xml"/>
+            <arg value="./testdefs/jbossts-qa-crashrecovery12-testdefs.xml"/>
             <arg value="config/JBossTS_JTS_JacORB_QA.xml"/>
             <arg value="config/nodeconfig.xml"/>
-            <arg value="OTSServer_Test001"/>
+            <arg value=".*"/>
 
             <jvmarg value="-Xdebug"/>
             <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>
