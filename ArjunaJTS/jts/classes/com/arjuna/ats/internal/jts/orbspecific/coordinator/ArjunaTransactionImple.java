@@ -56,13 +56,7 @@ import com.arjuna.ats.internal.jts.coordinator.CheckedActions;
 
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
-import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.coordinator.AddOutcome;
-import com.arjuna.ats.arjuna.coordinator.CheckedAction;
-import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
+import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.*;
@@ -350,7 +344,13 @@ public class ArjunaTransactionImple extends
 			try
 			{
 				if (_synchs != null)
-					doBeforeCompletion();
+                {
+					if(outcome == ActionStatus.RUNNING ||
+                            (outcome == ActionStatus.ABORT_ONLY && TxControl.isBeforeCompletionWhenRollbackOnly()))
+                    {
+                        doBeforeCompletion();
+                    }
+                }
 			}
 			catch (Exception e)
 			{
@@ -436,31 +436,32 @@ public class ArjunaTransactionImple extends
 				|| (status == ActionStatus.ABORT_ONLY)) // already aborted?
 		{
 
-			// TODO is this right - surely only before commit?
+            if (ArjunaTransactionImple._syncOn)
+            {
+                if(TxControl.isBeforeCompletionWhenRollbackOnly())
+                {
+                    try
+                    {
+                        if (_synchs != null)
+                            doBeforeCompletion();
+                    }
+                    catch (Exception e)
+                    {
+                        /*
+                           * Don't do anything - we're about to rollback anyway!
+                           */
+                    }
+                }
+            }
+            else
+            {
+                /*
+                     * If we have any synchronizations delete them now. Can only be
+                     * a top-level action.
+                     */
 
-			if (ArjunaTransactionImple._syncOn)
-			{
-				try
-				{
-					if (_synchs != null)
-						doBeforeCompletion();
-				}
-				catch (Exception e)
-				{
-					/*
-					 * Don't do anything - we're about to rollback anyway!
-					 */
-				}
-			}
-			else
-			{
-				/*
-				 * If we have any synchronizations delete them now. Can only be
-				 * a top-level action.
-				 */
-
-				_synchs = null;
-			}
+                _synchs = null;
+            }
 
 			/*
 			 * Remove uid of this action from parent even if remote.
@@ -1753,19 +1754,29 @@ public class ArjunaTransactionImple extends
 			 * top-level action.
 			 */
 
-			if (_synchs != null)
+			if (ArjunaTransactionImple._syncOn)
 			{
-				if (ArjunaTransactionImple._syncOn)
-				{
-					try
-					{
-						if (_synchs != null)
-							doBeforeCompletion();
-					}
-					catch (Exception e)
-					{
-					}
-				}
+                if(TxControl.isBeforeCompletionWhenRollbackOnly())
+                {
+                    try
+                    {
+                        if (_synchs != null)
+                            doBeforeCompletion();
+                    }
+                    catch (Exception e)
+                    {
+                        /*
+                           * Don't do anything - we're about to rollback anyway!
+                           */
+                    }
+                }
+			}
+			else
+			{
+				/*
+				 * If we have any synchronizations delete them now. Can only be
+				 * a top-level action.
+				 */
 
 				_synchs = null;
 			}

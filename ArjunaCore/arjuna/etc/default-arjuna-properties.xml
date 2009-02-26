@@ -239,5 +239,14 @@
           name="com.arjuna.ats.arjuna.common.varDir"
           value="var"/>
       -->
+      
+        <!-- Should beforeCompletion synchronizations be fired even when it is known the
+             transaction can't commit e.g. is marked rollbackOnly? (default NO).
+             Note that turning this on still does not guarantee the syncronizations will run in all cases
+             e.g. explicit rollback() calls. JTS users should also take into account the supportRollbackSync
+             property which affects both beforeCompletion and afterCompletion syncs. -->
+      <!--
+      <property name="com.arjuna.ats.coordinator.beforeCompletionWhenRollbackOnly" value="NO"/>
+      -->
     </properties>
 </transaction-service>

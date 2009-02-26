@@ -274,7 +274,12 @@ public class TxControl
 		xaNodeName = name;
 	}
 
-	private final static synchronized void createTransactionStatusManager ()
+    public static boolean isBeforeCompletionWhenRollbackOnly()
+    {
+        return beforeCompletionWhenRollbackOnly;
+    }
+
+    private final static synchronized void createTransactionStatusManager ()
 	{
 	    if (transactionStatusManager == null && _enableTSM)
 	    {
@@ -332,6 +337,8 @@ public class TxControl
 	static int _defaultTimeout = 60; // 60 seconds
 
 	static boolean _enableTSM = true;
+    
+    static boolean beforeCompletionWhenRollbackOnly = false;
 	
 	static Thread _shutdownHook = null;
 	
@@ -428,6 +435,15 @@ public class TxControl
 				TxControl.enable = false;
 		}
 
+        env = arjPropertyManager.propertyManager
+                .getProperty(Environment.BEFORECOMPLETION_WHEN_ROLLBACKONLY);
+        
+        if(env != null)
+        {
+            if(env.compareTo("YES") == 0)
+                TxControl.beforeCompletionWhenRollbackOnly = true;
+        }
+        
 		env = arjPropertyManager.propertyManager
 				.getProperty(Environment.XA_NODE_IDENTIFIER);
 		boolean writeNodeName = false;

@@ -153,6 +153,7 @@ public class Environment
     public static final String SOCKET_PROCESS_ID_MAX_PORTS= "com.arjuna.ats.internal.arjuna.utils.SocketProcessIdMaxPorts";
     public static final String PROCESS_IMPLEMENTATION = "com.arjuna.ats.internal.arjuna.utils.processImplementation";
     public static final String PROCESS_IDENTIFIER = "com.arjuna.ats.internal.arjuna.utils.pid";
+    public static final String BEFORECOMPLETION_WHEN_ROLLBACKONLY = "com.arjuna.ats.coordinator.beforeCompletionWhenRollbackOnly";
     
     /**
       * Constant that holds the name of the environment property

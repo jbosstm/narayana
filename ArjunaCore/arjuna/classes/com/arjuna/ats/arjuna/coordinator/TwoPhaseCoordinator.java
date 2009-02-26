@@ -82,8 +82,14 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 		if (parent() != null)
 			parent().removeChildAction(this);
-
-		if (beforeCompletion())
+        
+        boolean canEnd = true;
+        if(status() != ActionStatus.ABORT_ONLY || TxControl.isBeforeCompletionWhenRollbackOnly())
+        {
+            canEnd = beforeCompletion();
+        }
+        
+		if (canEnd)
 		{
 			outcome = super.End(report_heuristics);
 		}
