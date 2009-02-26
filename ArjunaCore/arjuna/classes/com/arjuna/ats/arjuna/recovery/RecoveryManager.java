@@ -40,6 +40,7 @@ import java.io.IOException;
 import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 
@@ -478,19 +479,50 @@ public class RecoveryManager
 	    }
 	}
 
-	try
-	{
-	    RecoveryManager man = manager();
+        try
+        {
+            RecoveryManager manager = null;
 
-	    if (testMode)
-		System.out.println("Ready");
+            try
+            {
+                manager = manager();
+            }
+            catch(FatalError e)
+            {
+                if(testMode)
+                {
+                    // in some test cases the recovery manager is killed and restarted in quick succession.
+                    // sometimes the O/S does not free up the port fast enough, so we can't reclaim it on restart.
+                    // For test mode only, we therefore have a simple backoff-retry kludge:
+                    System.err.println("Warning: got Fatal error '"+e.toString()+"' on startup, will retry in 5 seconds in the hope it is transient.");
+                    try
+                    {
+                        Thread.sleep(5000);
+                    }
+                    catch(InterruptedException interruptedException)
+                    {
+                        // do nothing
+                    }
+                    manager = manager();
+                }
+                else
+                {
+                    throw e;
+                }
+            }
 
-	    man.waitForTermination();
-	}
-	catch (Throwable e)
-	{
-	    e.printStackTrace();
-	}
+            if (testMode)
+            {
+                System.out.println("Ready");
+            }
+
+            manager.waitForTermination();
+
+        }
+        catch (Throwable e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private RecoveryManager (int mode)
