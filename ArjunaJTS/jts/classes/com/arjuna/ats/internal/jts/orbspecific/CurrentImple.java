@@ -47,6 +47,7 @@ import com.arjuna.ats.internal.jts.context.ContextManager;
 import com.arjuna.ats.internal.jts.coordinator.CheckedActions;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
+import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 
 import com.arjuna.ats.internal.arjuna.template.*;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
@@ -838,6 +839,7 @@ public class CurrentImple extends LocalObject implements
 		}
 		catch (NullPointerException npx)
 		{
+		    npx.printStackTrace();
 			invalidControl = true;
 		}
 
@@ -856,7 +858,14 @@ public class CurrentImple extends LocalObject implements
 
 		if (which != null)
 		{
-		    if (which.isLocal())
+		    /*
+		     * If this is a local transaction and we haven't zero-ed the transaction
+		     * reference then resume it. Otherwise go with the Control.
+		     */
+		    
+		    ArjunaTransactionImple tx = ((which.getImple() == null) ? null : which.getImple().getImplHandle());
+		    
+		    if (which.isLocal() && (tx != null))
 		        resumeImple(which.getImple());
 		    else
 		        resume(which.getControl());
