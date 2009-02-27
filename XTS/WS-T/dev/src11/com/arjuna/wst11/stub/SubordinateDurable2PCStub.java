@@ -73,17 +73,25 @@ public class SubordinateDurable2PCStub implements Durable2PCParticipant, Persist
         if (!isRecovered()) {
             coordinator.commit();
         } else {
-            // first check whether crashed coordinators have been recovered
-            XTSATRecoveryManager recoveryManager = XTSATRecoveryManager.getRecoveryManager();
-            boolean isRecoveryScanStarted = recoveryManager.isSubordinateCoordinatorRecoveryStarted();
-            // now look for a subordinate coordinator with the right id
-            coordinator = SubordinateCoordinator.getRecoveredCoordinator(coordinatorId);
+            XTSATRecoveryManager recoveryManager = null;
+            boolean isRecoveryScanStarted = false;
             if (coordinator == null) {
+                // try fetching coordinator from the recovery manager
+                recoveryManager = XTSATRecoveryManager.getRecoveryManager();
+                // check whether recovery has started before we check for the presence
+                // of the subordinate coordinator
+                isRecoveryScanStarted = recoveryManager.isSubordinateCoordinatorRecoveryStarted();
+                coordinator = SubordinateCoordinator.getRecoveredCoordinator(coordinatorId);
+            }
+            if (coordinator == null) {
+                // hmm, still null -- see if we have finished recovery scanning
                 if (!isRecoveryScanStarted) {
                     // the subtransaction may still be waiting to be resolved
                     // throw an exception causing the commit to be retried later
                     throw new SystemException();
                 }
+                // ok we have no transaction to commit so assume we already committed it and
+                // return without error
             } else if(!coordinator.isActivated()) {
                 // the transaction was logged but has not yet been recovered successfully
                 // throw an exception causing the commit to be retried later
@@ -91,7 +99,7 @@ public class SubordinateDurable2PCStub implements Durable2PCParticipant, Persist
             } else {
                 int status = coordinator.status();
 
-                if (status == ActionStatus.PREPARED) {
+                if (status == ActionStatus.PREPARED || status == ActionStatus.COMMITTING) {
                     // ok, the commit process was not previously initiated so start it now
                     coordinator.commit();
                     status = coordinator.status();
@@ -136,7 +144,10 @@ public class SubordinateDurable2PCStub implements Durable2PCParticipant, Persist
             } else {
                 int status = coordinator.status();
 
-                if (status == ActionStatus.PREPARED) {
+                if ((status ==  ActionStatus.ABORTED) ||
+                        (status == ActionStatus.H_ROLLBACK) ||
+                        (status == ActionStatus.ABORTING) ||
+                        (status == ActionStatus.ABORT_ONLY)) {
                     // ok, the rollback process was not previously initiated so start it now
                     coordinator.rollback();
                     status = coordinator.status();
@@ -184,7 +195,6 @@ public class SubordinateDurable2PCStub implements Durable2PCParticipant, Persist
      */
     public boolean restoreState(InputObjectState ios) {
         // restore the subordinate coordinator id so we can check to ensure it has been committed
-        String coordinatorId;
         try {
             coordinatorId = ios.unpackString();
             return true;

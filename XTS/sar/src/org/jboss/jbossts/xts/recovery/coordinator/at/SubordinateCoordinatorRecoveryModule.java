@@ -165,8 +165,17 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
     {
         boolean commitThisTransaction = true ;
 
+        // if the subordinate transaction has already been recovered and has not committed
+        // then we don't create a new one
+
+        if (SubordinateCoordinator.getRecoveredCoordinator(recoverUid.stringForm()) != null) {
+            return;
+        }
+
+        // if there is no entry and there is still a log entry then we need to create a new coordinator
+        
         // Retrieve the transaction status from its original process.
-        // n.b. for a non-active XTS TX this status wil l always be committed even
+        // n.b. for a non-active XTS TX this status will always be committed even
         // if it aborted or had a heuristic outcome. in that case we need to use
         // the logged action status which can only be retrieved after activation
 
@@ -193,7 +202,6 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
             {
                 XTSLogger.arjLogger.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                             FacilityCode.FAC_CRASH_RECOVERY, "jjh doing revovery here for "+recoverUid);
-                // TODO jjh
                 RecoverSubordinateCoordinator rcvSubordinateCoordinator =
                         new RecoverSubordinateCoordinator(recoverUid);
                 rcvSubordinateCoordinator.replayPhase2();

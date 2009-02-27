@@ -109,7 +109,7 @@ public class XTSService implements XTSServiceMBean {
     private final Logger log = org.jboss.logging.Logger.getLogger(XTSService.class);
 
     private ACCoordinatorRecoveryModule acCoordinatorRecoveryModule = null;
-    private SubordinateCoordinatorRecoveryModule subordinateCoordinatorRecoveryModule = null;
+    private SubordinateCoordinatorRecoveryModule atSubordinateCoordinatorRecoveryModule = null;
     private ATParticipantRecoveryModule atParticipantRecoveryModule = null;
 
     private BACoordinatorRecoveryModule baCoordinatorRecoveryModule = null;
@@ -261,9 +261,9 @@ public class XTSService implements XTSServiceMBean {
         // we don't need to install anything in the Inventory for this recovery module as it
         // uses the same records as those employed by ACCoordinatorRecoveryModule
 
-        subordinateCoordinatorRecoveryModule = new SubordinateCoordinatorRecoveryModule();
+        atSubordinateCoordinatorRecoveryModule = new SubordinateCoordinatorRecoveryModule();
 
-        subordinateCoordinatorRecoveryModule.install();
+        atSubordinateCoordinatorRecoveryModule.install();
 
         // we don't need to install anything in the Inventory for this recovery module as it
         // manages its own ObjectStore records but we do need it to create the recovery manager
@@ -295,13 +295,18 @@ public class XTSService implements XTSServiceMBean {
         //  recovery should perform better if we register partiicpants first since this allows the XTS client
         // recovery module to have a try at recreating the participant before its coordinator attempts to
         // talk to it when they are both in the same VM. it also means the participant nay attempt bottom-up
-        // recovery before the coordinator is ready but coordinator recoveyr is probably going to happen quicker.
+        // recovery before the coordinator is ready but coordinator recovery is probably going to happen quicker.
+
+        // similarly, it is better to recreate subordinate coordinators before recreating ordinary coordinators
+        // because the latter may need the former to be present when the parent and subordinate are both in the
+        // same VM.
 
         RecoveryManager.manager().addModule(atParticipantRecoveryModule);
         RecoveryManager.manager().addModule(baParticipantRecoveryModule);
 
+        RecoveryManager.manager().addModule(atSubordinateCoordinatorRecoveryModule);
+
         RecoveryManager.manager().addModule(acCoordinatorRecoveryModule);
-        RecoveryManager.manager().addModule(subordinateCoordinatorRecoveryModule);
         RecoveryManager.manager().addModule(baCoordinatorRecoveryModule);
     }
 
@@ -315,17 +320,17 @@ public class XTSService implements XTSServiceMBean {
             // ok, now it is safe to get the recovery manager to uninstall its Implementations from the inventory
             baCoordinatorRecoveryModule.uninstall();
         }
-        if (subordinateCoordinatorRecoveryModule != null) {
-            // remove the module, making sure any scan which might be using it has completed
-            RecoveryManager.manager().removeModule(subordinateCoordinatorRecoveryModule, true);
-            // ok, now it is safe to get the recovery manager to uninstall its Implementations from the inventory
-            subordinateCoordinatorRecoveryModule.uninstall();
-        }
         if (acCoordinatorRecoveryModule != null) {
             // remove the module, making sure any scan which might be using it has completed
             RecoveryManager.manager().removeModule(acCoordinatorRecoveryModule, true);
             // ok, now it is safe to get the recovery manager to uninstall its Implementations from the inventory
             acCoordinatorRecoveryModule.uninstall();
+        }
+        if (atSubordinateCoordinatorRecoveryModule != null) {
+            // remove the module, making sure any scan which might be using it has completed
+            RecoveryManager.manager().removeModule(atSubordinateCoordinatorRecoveryModule, true);
+            // ok, now it is safe to get the recovery manager to uninstall its Implementations from the inventory
+            atSubordinateCoordinatorRecoveryModule.uninstall();
         }
         if (baParticipantRecoveryModule != null) {
             // remove the module, making sure any scan which might be using it has completed

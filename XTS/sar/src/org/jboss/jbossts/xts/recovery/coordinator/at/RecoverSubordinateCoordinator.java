@@ -39,21 +39,25 @@ public class RecoverSubordinateCoordinator extends SubordinateCoordinator {
     public boolean activate()
     {
         boolean result = super.activate();
-        // record whether the activation worked
+        
+        // if we cannot activate we want the participant which was registered on behalf of this
+        // coordinator to produce a heuristic result for the transaction. it will do this if it
+        // finds no entry for the coordinate in the subordinate coordinators list. in this case
+        // the subordinate transaction record needs to left as is awaiting manual intervention.
+
         if (result) {
+            // record that the activation worked
             setActivated();
-        }
 
-        int status = status();
-        if (result == false || (status == ActionStatus.PREPARED || status == ActionStatus.COMMITTING)) {
-            // we need to install this coordinator in a global table so that the participant which
-            // was driving it will know that it has been recovered but not yet committed
-            // n.b. we do this even if the activation failed because we need to ensure the
-            // participant rejects a commit until this transaction has committed
-            
-            SubordinateCoordinator.addRecoveredCoordinator(this);
-        }
+            int status = status();
 
+            if (status == ActionStatus.PREPARED || status == ActionStatus.COMMITTING) {
+                // we need to install this coordinator in a global table so that the participant which
+                // was driving it will know that it has been recovered but not yet committed
+
+                SubordinateCoordinator.addRecoveredCoordinator(this);
+            }
+        }
         return result;
     }
 
@@ -74,25 +78,29 @@ public class RecoverSubordinateCoordinator extends SubordinateCoordinator {
 
        if ( _activated )
        {
-           // we don't run phase 2 again if status is PREPARED because we need to wait for the
-           // parent coordinator to tell us what to do
+           // we don't run phase 2 again if status is PREPARED or COMMITTING because we need to wait
+           // for the parent coordinator to tell us what to do. this is true if the coordinator has
+           // been recreated by the first recovery operation after a crash or by a reload from the
+           // log after it was saved in response to a comms tiemout from one of the participants.
+           // In either case the parent transaction should get back to us.
 
-           // we automatically rerun phase2 if the action status is COMMITTING, which happens when
-           // we get a comms timeout from one of the participants after sending it a COMMIT message.
-
-       if ((status == ActionStatus.COMMITTING) ||
+       if ((status == ActionStatus.PREPARED) ||
+               (status == ActionStatus.COMMITTING)||
                (status == ActionStatus.COMMITTED) ||
                (status == ActionStatus.H_COMMIT) ||
                (status == ActionStatus.H_MIXED) ||
                (status == ActionStatus.H_HAZARD))
 	   {
-	       super.phase2Commit( _reportHeuristics ) ;
+	       // ok, we are ready to commit but we wait
+           // for the parent transaction to drive phase2Commit
+           // so do nothing just now
 	   } else if ((status ==  ActionStatus.ABORTED) ||
                (status == ActionStatus.H_ROLLBACK) ||
                (status == ActionStatus.ABORTING) ||
                (status == ActionStatus.ABORT_ONLY))
        {
            super.phase2Abort( _reportHeuristics ) ;
+           SubordinateCoordinator.removeRecoveredCoordinator(this);
        }
 
        if (XTSLogger.arjLoggerI18N.debugAllowed())
@@ -106,11 +114,6 @@ public class RecoverSubordinateCoordinator extends SubordinateCoordinator {
        else
        {
 	   XTSLogger.arjLoggerI18N.warn("org.jboss.jbossts.xts.recovery.coordinator.at.RecoverSubordinateCoordinator_4", new Object[]{get_uid()});
-       }
-
-       if ((status == ActionStatus.PREPARED) ||
-               (status == ActionStatus.COMMITTING)) {
-           SubordinateCoordinator.removeRecoveredCoordinator(this);
        }
    }
 

@@ -183,6 +183,11 @@ public class SubordinateCoordinator extends ACCoordinator
 		}
 
         this.finalStatus = status;
+
+        // if we have completed then remove the coordinator from the recovered coordinatros table
+        if (status != ActionStatus.COMMITTING) {
+            SubordinateCoordinator.removeRecoveredCoordinator(this);
+        }
 	}
 
     /**
@@ -225,6 +230,9 @@ public class SubordinateCoordinator extends ACCoordinator
 			break;
 		}
 
+        // iemove the coordinator from the recovered coordinatros table
+        SubordinateCoordinator.removeRecoveredCoordinator(this);
+        
         this.finalStatus = status;
 	}
 

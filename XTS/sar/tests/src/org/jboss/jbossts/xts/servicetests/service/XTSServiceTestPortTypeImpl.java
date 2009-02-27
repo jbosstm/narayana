@@ -292,8 +292,8 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
             }
 
             try {
-                UserTransaction userTransaction = UserTransactionFactory.userTransaction();
-                userTransaction.beginSubordinate();
+                UserTransaction userTransaction = UserTransactionFactory.userSubordinateTransaction();
+                userTransaction.begin();
                 newTx = TransactionManager.getTransactionManager().currentTransaction();
             } catch (Exception e) {
                 throw new WebServiceException("subtransaction begin() failed with exception " + e);
