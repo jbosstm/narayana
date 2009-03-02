@@ -81,7 +81,7 @@ public InputObjectState (InputObjectState copyFrom)
 	    bufferUid = new Uid(copyFrom.bufferUid);
 	    super._valid = bufferUid.valid();
 	
-	    imageType = new String(copyFrom.imageType);
+	    imageType = new String((copyFrom.imageType == null) ? "" : copyFrom.imageType);
 	}
 	catch (Exception ex)
 	{
@@ -104,7 +104,7 @@ public InputObjectState (OutputObjectState copyFrom)
 	    bufferUid = new Uid(copyFrom.stateUid());
 	    super._valid = bufferUid.valid();
 	
-	    imageType = new String(copyFrom.type());
+	    imageType = new String((copyFrom.type() == null) ? "" : copyFrom.type());
 	}
 	catch (Exception ex)
 	{
