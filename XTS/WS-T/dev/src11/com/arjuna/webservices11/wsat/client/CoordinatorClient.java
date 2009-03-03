@@ -8,6 +8,8 @@ import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
+import com.arjuna.webservices11.wsaddr.EndpointHelper;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CoordinatorPortType;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
@@ -199,7 +201,8 @@ public class CoordinatorClient
     {
         String address;
         if (endpoint != null) {
-            address = endpoint.getAddress();
+            NativeEndpointReference nativeRef = EndpointHelper.transform(NativeEndpointReference.class, endpoint);
+            address = nativeRef.getAddress();
         } else {
             address = addressingProperties.getTo().getURI().toString();
         }

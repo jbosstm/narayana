@@ -34,7 +34,11 @@ package com.arjuna.mwlabs.wst11.ba.context;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wsc11.context.Context;
 import com.arjuna.mwlabs.wst11.ba.ContextImple;
+import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
+import com.arjuna.webservices11.wsaddr.EndpointHelper;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
+
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -95,7 +99,9 @@ public class TxContextImple implements TxContext
     {
         if (valid()) {
             CoordinationContextType coordinationContextType = _context.getCoordinationContext();
-            String address = coordinationContextType.getRegistrationService().getAddress();
+            W3CEndpointReference epref = coordinationContextType.getRegistrationService();
+            NativeEndpointReference nativeRef = EndpointHelper.transform(NativeEndpointReference.class, epref);
+            String address = nativeRef.getAddress();
             return address.startsWith("https");
         }
         return false;

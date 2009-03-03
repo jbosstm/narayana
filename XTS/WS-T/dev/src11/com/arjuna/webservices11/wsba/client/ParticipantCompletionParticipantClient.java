@@ -26,6 +26,8 @@ import com.arjuna.webservices11.wsba.client.WSBAClient;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
+import com.arjuna.webservices11.wsaddr.EndpointHelper;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.BusinessAgreementWithParticipantCompletionParticipantPortType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
@@ -300,7 +302,8 @@ public class ParticipantCompletionParticipantClient
     {
         String address;
         if (endpoint != null) {
-            address = endpoint.getAddress();
+            NativeEndpointReference nativeRef = EndpointHelper.transform(NativeEndpointReference.class, endpoint);
+            address = nativeRef.getAddress();
         } else {
             address = addressingProperties.getTo().getURI().toString();
         }

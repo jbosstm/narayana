@@ -28,6 +28,8 @@ import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
+import com.arjuna.webservices11.wsaddr.EndpointHelper;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 
@@ -250,7 +252,8 @@ public class TerminationParticipantClient
      */
     EndpointReference getCoordinator(W3CEndpointReference participant)
     {
-        String address = participant.getAddress();
+        NativeEndpointReference nativeRef = EndpointHelper.transform(NativeEndpointReference.class, participant);
+        String address = nativeRef.getAddress();
         if (address.startsWith("https")) {
             return secureTerminationCoordinator;
         } else {

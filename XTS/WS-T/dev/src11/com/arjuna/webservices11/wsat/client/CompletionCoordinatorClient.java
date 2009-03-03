@@ -6,6 +6,8 @@ import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsat.client.WSATClient;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
+import com.arjuna.webservices11.wsaddr.EndpointHelper;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CompletionCoordinatorPortType;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
@@ -128,7 +130,8 @@ public class CompletionCoordinatorClient
      */
     EndpointReference getCompletionInitiator(W3CEndpointReference participant)
     {
-        String address = participant.getAddress();
+        NativeEndpointReference nativeRef = EndpointHelper.transform(NativeEndpointReference.class, participant);
+        String address = nativeRef.getAddress();
         if (address.startsWith("https")) {
             return secureCompletionInitiator;
         } else {
