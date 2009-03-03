@@ -522,7 +522,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -568,7 +568,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -614,7 +614,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -660,7 +660,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -706,7 +706,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -752,7 +752,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -798,7 +798,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -844,7 +844,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -890,7 +890,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -936,7 +936,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -982,13 +982,13 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1016,7 +1016,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 							  runtime_id="cleanup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
@@ -1038,13 +1038,13 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1072,7 +1072,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 							  runtime_id="cleanup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
@@ -1094,13 +1094,13 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1128,7 +1128,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 							  runtime_id="cleanup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
@@ -1150,13 +1150,13 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1184,7 +1184,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 							  runtime_id="cleanup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
@@ -1206,13 +1206,13 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1240,7 +1240,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 							  runtime_id="cleanup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
@@ -1262,13 +1262,13 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1296,7 +1296,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 							  runtime_id="cleanup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
@@ -1318,13 +1318,13 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1352,7 +1352,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 							  runtime_id="cleanup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
@@ -1374,13 +1374,13 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1408,7 +1408,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 							  runtime_id="cleanup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
@@ -1430,13 +1430,13 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1464,7 +1464,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 							  runtime_id="cleanup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
@@ -1486,13 +1486,13 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1520,7 +1520,7 @@ Edit JDBCProfiles to define the 3 new MYSQL datasources
 							  runtime_id="cleanup">
 					<param>DB1_MYSQL_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_MYSQL_JNDI</param>
 				</perform_task>

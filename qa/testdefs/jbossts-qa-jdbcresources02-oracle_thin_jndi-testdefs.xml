@@ -514,7 +514,7 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -560,7 +560,7 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -606,7 +606,7 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -652,7 +652,7 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -698,7 +698,7 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -744,7 +744,7 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -790,7 +790,7 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -836,7 +836,7 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -882,7 +882,7 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -928,7 +928,7 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup1">
 					<param>DB_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -974,13 +974,13 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1008,7 +1008,7 @@
 							  runtime_id="cleanup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
@@ -1030,13 +1030,13 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1064,7 +1064,7 @@
 							  runtime_id="cleanup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
@@ -1086,13 +1086,13 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1120,7 +1120,7 @@
 							  runtime_id="cleanup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
@@ -1142,13 +1142,13 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1176,7 +1176,7 @@
 							  runtime_id="cleanup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
@@ -1198,13 +1198,13 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1232,7 +1232,7 @@
 							  runtime_id="cleanup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
@@ -1254,13 +1254,13 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1288,7 +1288,7 @@
 							  runtime_id="cleanup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
@@ -1310,13 +1310,13 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1344,7 +1344,7 @@
 							  runtime_id="cleanup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
@@ -1366,13 +1366,13 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1400,7 +1400,7 @@
 							  runtime_id="cleanup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
@@ -1422,13 +1422,13 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1456,7 +1456,7 @@
 							  runtime_id="cleanup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
@@ -1478,13 +1478,13 @@
 				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.Utils.JNDIManager" runtime_id="setup1">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup2">
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Setups.Setup02" runtime_id="setup3">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
 				<start_task id="com.arjuna.ats.arjuna.recovery.RecoveryManager" runtime_id="server0" location="all">
@@ -1512,7 +1512,7 @@
 							  runtime_id="cleanup">
 					<param>DB1_THIN_JNDI</param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup2"
+				<perform_task id="org.jboss.jbossts.qa.JDBCResources02Cleanups.Cleanup01" location="setup1"
 							  runtime_id="cleanup2">
 					<param>DB2_THIN_JNDI</param>
 				</perform_task>
