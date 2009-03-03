@@ -29,7 +29,7 @@
   2) Run the qa build:  cd qa; ant
   2) Run the tests:  ant -f run-dtf-local.xml
 
-  Paths are relative to the JVM's working dir - don't expect to be able to execure this from anywhere but 'qa'.
+  Paths are relative to the JVM's working dir - don't expect to be able to execute this from anywhere but 'qa'.
 
 -->
 <project name="Local DTF Test for JBossTS" default="junit" basedir=".">
@@ -42,9 +42,41 @@
         <pathelement location="ext/jdom.jar"/>
     </path>
 
+    <!-- a faster subset of the tests for smoke testing. aim to keep to under one hour total. -->
+    <target name="express">
+
+        <!-- currenttests01 : 36 tests, 3 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="currenttests01"/></antcall>
+        <!-- jtatests01 : 6 tests, 1 minute -->
+        <antcall target="junit-tests"><param name="tests" value="jtatests01"/></antcall>
+        <!-- otsserver : 20 tests, 7 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="otsserver"/></antcall>
+
+        <!-- rawresources01_1 : 6 tests, 1 minute -->
+        <antcall target="junit-tests"><param name="tests" value="rawresources01_1"/></antcall>
+        <!-- rawresources02_1 : 6 tests, 1 minute -->
+        <antcall target="junit-tests"><param name="tests" value="rawresources02_1"/></antcall>
+        <!-- rawsubtransactionawareresources01_1 : 6 tests, 1 minute -->
+        <antcall target="junit-tests"><param name="tests" value="rawsubtransactionawareresources01_1"/></antcall>
+        <!-- rawsubtransactionawareresources02_1 : 6 tests, 1 minute -->
+        <antcall target="junit-tests"><param name="tests" value="rawsubtransactionawareresources02_1"/></antcall>
+
+        <!-- crashrecovery01 : 24 tests, 6 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="crashrecovery01"/></antcall>
+        <!-- crashrecovery02_1 : 5 tests, 6 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="crashrecovery02_1"/></antcall>
+        <!-- crashrecovery03 : 1 tests, 1 minute -->
+        <antcall target="junit-tests"><param name="tests" value="crashrecovery03"/></antcall>
+        <!-- crashrecovery06 : 2 tests, 1 minute -->
+        <antcall target="junit-tests"><param name="tests" value="crashrecovery06"/></antcall>
+        <!-- crashrecovery12 : 7 tests, 5 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="crashrecovery12"/></antcall>
+        
+    </target>
+    
     <!-- General tests.
         Some groups take a really long time and are disabled by default.
-        The remaining test should take a combined time of around 4hrs or so.
+        The remaining tests should take a combined time of around 4hrs or so.
     -->
     <target name="junit">
 
