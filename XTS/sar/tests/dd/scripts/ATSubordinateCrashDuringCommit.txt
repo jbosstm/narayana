@@ -515,10 +515,10 @@ ENDRULE
 # (SubordinateDurable2PCStub) returns from sending a commit message. It
 # traces the call.
 
-RULE trace subordinate participant stub prepare
+RULE trace subordinate participant stub commit return
 CLASS com.arjuna.wst11.stub.SubordinateDurable2PCStub
 METHOD commit
-AFTER INVOKE commit 2
+AT EXIT
 BIND NOTHING
 IF TRUE
 DO debug("commit completed for pseudo-participant " + $0),
@@ -538,6 +538,21 @@ BIND NOTHING
 IF TRUE
 DO debug("commit called for subordinate coordinator " + $0),
    traceln("log", "commit called for subordinate coordinator " + $0)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when a subordinate coordinator
+# (SubordinateCoordinator) is requested to perform a commit. It
+# traces the call.
+
+RULE trace subordinate coordinator commit
+CLASS com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator
+METHOD commit
+AT EXIT
+BIND NOTHING
+IF TRUE
+DO debug("commit completed for subordinate coordinator " + $0),
+   traceln("log", "commit completed for subordinate coordinator " + $0)
 ENDRULE
 
 #######################################################################

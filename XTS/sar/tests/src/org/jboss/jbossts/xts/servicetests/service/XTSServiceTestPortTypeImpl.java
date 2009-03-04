@@ -283,6 +283,10 @@ public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
             }
         } else if (command.equals("subtransaction")) {
 // create subordinate AT transaction
+// this needs replacing since we should really be running against a service which uses
+// the subordinate interposition JaxWS handler to install a subordinate transaction before
+// entering the service method. we ought to test that handler rather than hand crank the
+// interposition in the service
             TxContext currentTx;
             TxContext newTx;
             try {
