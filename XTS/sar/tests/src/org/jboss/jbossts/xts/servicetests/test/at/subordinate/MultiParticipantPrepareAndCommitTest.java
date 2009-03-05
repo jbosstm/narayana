@@ -148,7 +148,7 @@ public class MultiParticipantPrepareAndCommitTest extends XTSServiceTestBase imp
         // enlist a durable participant in the subtransaction and tell it to prepare and  commit
 
         commands = new CommandsType();
-        commands.getCommandList().add("subtransactioncommands");
+        commands.getCommandList().add("subtransactionserve");
         commands.getCommandList().add(subTxId);
         commands.getCommandList().add(serviceURL2);
         commands.getCommandList().add("enlistDurable");

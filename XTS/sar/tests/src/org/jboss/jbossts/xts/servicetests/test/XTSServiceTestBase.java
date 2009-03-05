@@ -1,9 +1,12 @@
 package org.jboss.jbossts.xts.servicetests.test;
 
+import org.jboss.jbossts.xts.servicetests.service.XTSServiceTestInterpreter;
+
 /**
- * Class providing default behaviour for specific XTSServiceTest implementations
+ * Class providing default behaviour for specific XTSServiceTest implementations. n.b. this class
+ * extends
  */
-public class XTSServiceTestBase
+public class XTSServiceTestBase extends XTSServiceTestInterpreter
 {
     protected boolean isSuccessful;
     protected Exception exception;
