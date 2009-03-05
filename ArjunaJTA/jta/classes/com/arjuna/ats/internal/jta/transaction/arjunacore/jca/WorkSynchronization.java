@@ -31,7 +31,7 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
-import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
+import javax.transaction.Transaction;
 
 /**
  * Register a single instance of this thing when the first JCA worker is
@@ -46,7 +46,7 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.Transa
 public class WorkSynchronization implements javax.transaction.Synchronization
 {
 
-	public WorkSynchronization (TransactionImple current)
+	public WorkSynchronization (Transaction current)
 	{
 		_current = current;
 	}
@@ -93,6 +93,6 @@ public class WorkSynchronization implements javax.transaction.Synchronization
 		// do nothing
 	}
 	
-	private TransactionImple _current;
+	private Transaction _current;
 
 }

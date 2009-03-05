@@ -34,10 +34,7 @@ package com.arjuna.ats.internal.jta.transaction.jts.jca;
 import java.io.IOException;
 import java.util.Stack;
 
-import javax.transaction.HeuristicCommitException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.SystemException;
+import javax.transaction.*;
 import javax.transaction.xa.*;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -47,8 +44,8 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction;
-import com.arjuna.ats.jta.utils.XAHelper;
-import com.arjuna.ats.jta.xa.XidImple;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 
 /**
  * The XATerminator implementation.
@@ -64,7 +61,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 	{
 		try
 		{
-			TransactionImple tx = TxImporter.getImportedTransaction(xid);
+			SubordinateTransaction tx = SubordinationManager.getTransactionImporter().getImportedTransaction(xid);
 
 			if (tx == null)
 				throw new XAException(XAException.XAER_INVAL);
@@ -76,18 +73,25 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 				else
 					tx.doCommit();
 
-				TxImporter.removeImportedTransaction(xid);
+				SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
 			}
 			else
 				throw new XAException(XAException.XA_RETRY);
 		}
+        catch(RollbackException e)
+        {
+            SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
+            XAException xaException = new XAException(XAException.XA_RBROLLBACK);
+            xaException.initCause(e);
+            throw xaException;
+        }
 		catch (XAException ex)
 		{
 			// resource hasn't had a chance to recover yet
 
 			if (ex.errorCode != XAException.XA_RETRY)
 			{
-				TxImporter.removeImportedTransaction(xid);
+				SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
 			}
 
 			throw ex;
@@ -102,7 +106,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		}
 		catch (SystemException ex)
 		{
-			TxImporter.removeImportedTransaction(xid);
+			SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
 
 			throw new XAException(XAException.XAER_RMERR);
 		}
@@ -112,7 +116,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 	{
 		try
 		{
-			TransactionImple tx = TxImporter.getImportedTransaction(xid);
+			SubordinateTransaction tx = SubordinationManager.getTransactionImporter().getImportedTransaction(xid);
 
 			if (tx == null)
 				throw new XAException(XAException.XAER_INVAL);
@@ -125,7 +129,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		}
 		finally
 		{
-			TxImporter.removeImportedTransaction(xid);
+			SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
 		}
 	}
 
@@ -133,7 +137,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 	{
 		try
 		{
-			TransactionImple tx = TxImporter.getImportedTransaction(xid);
+			SubordinateTransaction tx = SubordinationManager.getTransactionImporter().getImportedTransaction(xid);
 
 			if (tx == null)
 				throw new XAException(XAException.XAER_INVAL);
@@ -141,11 +145,11 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 			switch (tx.doPrepare())
 			{
 			case TwoPhaseOutcome.PREPARE_READONLY:
-				TxImporter.removeImportedTransaction(xid);
+				SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
 
 				return XAResource.XA_RDONLY;
 			case TwoPhaseOutcome.PREPARE_NOTOK:
-				TxImporter.removeImportedTransaction(xid);  // TODO check if rollback is going to be called first
+				SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);  // TODO check if rollback is going to be called first
 
 				throw new XAException(XAException.XA_RBROLLBACK);
 			case TwoPhaseOutcome.PREPARE_OK:
@@ -154,10 +158,10 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 				throw new XAException(XAException.XA_RBOTHER);
 			}
 		}
-		catch (SystemException ex)
+		/*catch (SystemException ex)
 		{
 			throw new XAException(XAException.XAER_RMFAIL);
-		}
+		}*/
 		catch (XAException ex)
 		{
 			throw ex;
@@ -232,7 +236,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 
 					if (uid.notEquals(Uid.nullUid()))
 					{
-						TransactionImple tx = TxImporter.recoverTransaction(uid);
+						Transaction tx = SubordinationManager.getTransactionImporter().recoverTransaction(uid);
 
 						values.push(tx);
 					}
@@ -270,7 +274,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 	{
 		try
 		{
-			TransactionImple tx = TxImporter.getImportedTransaction(xid);
+			SubordinateTransaction tx = SubordinationManager.getTransactionImporter().getImportedTransaction(xid);
 
 			if (tx == null)
 				throw new XAException(XAException.XAER_INVAL);
@@ -279,7 +283,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 			{
 				tx.doRollback();
 
-				TxImporter.removeImportedTransaction(xid);
+				SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
 			}
 			else
 				throw new XAException(XAException.XA_RETRY);
@@ -290,7 +294,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 
 			if (ex.errorCode != XAException.XA_RETRY)
 			{
-				TxImporter.removeImportedTransaction(xid);
+				SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
 			}
 
 			throw ex;
@@ -305,7 +309,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		}
 		catch (SystemException ex)
 		{
-			TxImporter.removeImportedTransaction(xid);
+			SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
 
 			throw new XAException(XAException.XAER_RMERR);
 		}

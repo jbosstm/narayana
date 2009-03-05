@@ -189,6 +189,7 @@
 
 	<target name="com.hp.mwlabs.ts.jtax.tests.run" depends="com.hp.mwlabs.ts.jtax.tests.compile" if="com.hp.mwlabs.ts.jtax.tests.compile">
 	    <mkdir dir="${com.hp.mwlabs.ts.jtax.reports.dest}"/>
+        
 	    <junit printsummary="yes">
 	        <formatter type="plain"/>
 	        <classpath>
@@ -196,10 +197,14 @@
 	            <path location="${com.hp.mwlabs.ts.jtax.dest}"/>
 	            <path refid="com.hp.mwlabs.ts.jacorb.classpath"/>
 	            <pathelement path="${build.classpath}"/>
+                <pathelement location="../../ArjunaJTA/jta/build/tests"/>
 	        </classpath>
 	        <batchtest haltonerror="yes" haltonfailure="yes" fork="yes"
                     todir="${com.hp.mwlabs.ts.jtax.reports.dest}">
-                    <fileset dir="${com.hp.mwlabs.ts.jtax.tests.src}" includes="**/LastResource*TestCase.java"/>
+                    <fileset dir="${com.hp.mwlabs.ts.jtax.tests.src}">
+                        <include  name="**/LastResource*TestCase.java"/>
+                        <include  name="**/SubordinateTestCase.javaXX"/>
+                    </fileset>
 	        </batchtest>
 	    </junit>
 	</target>
@@ -241,6 +246,7 @@
             <classpath>
                 <path path="${build.classpath}"/>
                 <path path="${com.hp.mwlabs.ts.jtax.dest}"/>
+                <pathelement location="../../ArjunaJTA/jta/build/tests"/>
             </classpath>
 		</javac>
 

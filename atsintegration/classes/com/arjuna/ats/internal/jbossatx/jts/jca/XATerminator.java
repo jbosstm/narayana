@@ -37,13 +37,12 @@ import javax.resource.spi.work.WorkException;
 import javax.transaction.InvalidTransactionException;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
+import javax.transaction.Transaction;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
-import com.arjuna.ats.internal.jta.transaction.jts.jca.TxImporter;
 import com.arjuna.ats.internal.jta.transaction.jts.jca.WorkSynchronization;
 import com.arjuna.ats.internal.jta.transaction.jts.jca.XATerminatorImple;
-import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
 
 import org.jboss.tm.JBossXATerminator;
 import org.jboss.util.UnexpectedThrowable;
@@ -52,6 +51,7 @@ import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 import com.arjuna.ats.jta.TransactionManager;
 
 import com.arjuna.ats.internal.jta.transaction.jts.jca.TxWorkManager;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 
 /**
  * The implementation of JBossXATerminator using the JTS implementation of the
@@ -102,7 +102,7 @@ public class XATerminator extends XATerminatorImple implements
 			 * Remember to convert timeout to seconds.
 			 */
 
-			TransactionImple tx = TxImporter.importTransaction(xid, (int) timeout/1000);
+			Transaction tx = SubordinationManager.getTransactionImporter().importTransaction(xid, (int) timeout/1000);
 
 			switch (tx.getStatus())
 			{
@@ -168,7 +168,7 @@ public class XATerminator extends XATerminatorImple implements
 	{
 		try
 		{
-			TransactionImple tx = TxImporter.importTransaction(xid);
+			Transaction tx = SubordinationManager.getTransactionImporter().importTransaction(xid);
 
 			// JBoss doesn't seem to use the work parameter!
 
@@ -211,7 +211,7 @@ public class XATerminator extends XATerminatorImple implements
 	{
 		try
 		{
-			TransactionImple tx = TxImporter.importTransaction(xid);
+			Transaction tx = SubordinationManager.getTransactionImporter().importTransaction(xid);
 
 			TransactionManager.transactionManager().suspend();
 
@@ -235,7 +235,7 @@ public class XATerminator extends XATerminatorImple implements
 	{
 		try
 		{
-			TransactionImple tx = TxImporter.importTransaction(xid);
+			Transaction tx = SubordinationManager.getTransactionImporter().importTransaction(xid);
 
 			TxWorkManager.removeWork(work, tx);
 		}

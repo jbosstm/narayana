@@ -35,12 +35,13 @@ import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.jta.logging.*;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 
 import javax.transaction.xa.Xid;
 
 public class TransactionImple
 		extends
-		com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.TransactionImple
+		com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.TransactionImple implements SubordinateTransaction
 {
 
 	/**

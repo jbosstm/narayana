@@ -35,11 +35,12 @@ import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.jta.logging.*;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 
 import javax.transaction.xa.Xid;
 
 public class TransactionImple extends
-		com.arjuna.ats.internal.jta.transaction.jts.subordinate.TransactionImple
+		com.arjuna.ats.internal.jta.transaction.jts.subordinate.TransactionImple implements SubordinateTransaction
 {
 
 	/**
@@ -127,5 +128,13 @@ public class TransactionImple extends
 	{
 		return ((SubordinateAtomicTransaction) _theTransaction).getXid();
 	}
+    
+    public void recover() {
+        getControlWrapper().getImple().getImplHandle().activate();
+    }
+    
+    public boolean activated() {
+        return true; // TODO: more sensible implementation.
+    }
 	
 }

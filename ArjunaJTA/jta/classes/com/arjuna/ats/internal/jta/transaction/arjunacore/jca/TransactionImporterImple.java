@@ -26,7 +26,7 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: TxImporter.java 2342 2006-03-30 13:06:17Z  $
+ * $Id: TransactionImporterImple.java 2342 2006-03-30 13:06:17Z  $
  */
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
@@ -34,12 +34,13 @@ package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.transaction.xa.*;
+import javax.transaction.Transaction;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
 import com.arjuna.ats.jta.xa.XidImple;
 
-public class TxImporter
+public class TransactionImporterImple implements TransactionImporter
 {
 
 	/**
@@ -51,11 +52,11 @@ public class TxImporter
 	 * 
 	 * @return the subordinate transaction.
 	 * 
-	 * @throws XAException
+	 * @throws javax.transaction.xa.XAException
 	 *             thrown if there are any errors.
 	 */
 
-	public static TransactionImple importTransaction(Xid xid)
+	public SubordinateTransaction importTransaction(Xid xid)
 			throws XAException
 	{
 		return importTransaction(xid, 0);
@@ -72,11 +73,11 @@ public class TxImporter
 	 * 
 	 * @return the subordinate transaction.
 	 * 
-	 * @throws XAException
+	 * @throws javax.transaction.xa.XAException
 	 *             thrown if there are any errors.
 	 */
 
-	public static TransactionImple importTransaction(Xid xid, int timeout)
+	public SubordinateTransaction importTransaction(Xid xid, int timeout)
 			throws XAException
 	{
 		if (xid == null)
@@ -86,7 +87,7 @@ public class TxImporter
 		 * Check to see if we haven't already imported this thing.
 		 */
 
-		TransactionImple imported = getImportedTransaction(xid);
+		SubordinateTransaction imported = getImportedTransaction(xid);
 
 		if (imported == null)
 		{
@@ -104,10 +105,10 @@ public class TxImporter
 	 * @param actId
 	 *            the state to recover.
 	 * @return the recovered transaction object.
-	 * @throws XAException
+	 * @throws javax.transaction.xa.XAException
 	 */
 
-	public static TransactionImple recoverTransaction(Uid actId)
+	public TransactionImple recoverTransaction(Uid actId)
 			throws XAException
 	{
 		if (actId == null)
@@ -149,18 +150,17 @@ public class TxImporter
 	 * @return the subordinate transaction or <code>null</code> if there is
 	 *         none.
 	 * 
-	 * @throws XAException
+	 * @throws javax.transaction.xa.XAException
 	 *             thrown if there are any errors.
 	 */
 
-	public static TransactionImple getImportedTransaction(Xid xid)
+	public SubordinateTransaction getImportedTransaction(Xid xid)
 			throws XAException
 	{
 		if (xid == null)
 			throw new IllegalArgumentException();
 
-		TransactionImple tx = (TransactionImple) _transactions
-				.get(new XidImple(xid));
+		SubordinateTransaction tx = _transactions.get(new XidImple(xid));
 
 		if (tx == null)
 			return null;
@@ -181,11 +181,11 @@ public class TxImporter
 	 * @param xid
 	 *            the global transaction.
 	 * 
-	 * @throws XAException
+	 * @throws javax.transaction.xa.XAException
 	 *             thrown if there are any errors.
 	 */
 
-	public static void removeImportedTransaction(Xid xid) throws XAException
+	public void removeImportedTransaction(Xid xid) throws XAException
 	{
 		if (xid == null)
 			throw new IllegalArgumentException();
@@ -193,6 +193,6 @@ public class TxImporter
 		_transactions.remove(new XidImple(xid));
 	}
 
-	private static ConcurrentHashMap<Xid, TransactionImple> _transactions = new ConcurrentHashMap<Xid, TransactionImple>();
+	private static ConcurrentHashMap<Xid, SubordinateTransaction> _transactions = new ConcurrentHashMap<Xid, SubordinateTransaction>();
 
 }

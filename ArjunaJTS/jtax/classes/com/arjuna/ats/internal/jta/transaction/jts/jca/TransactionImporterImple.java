@@ -26,7 +26,7 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: TxImporter.java 2342 2006-03-30 13:06:17Z  $
+ * $Id: TransactionImporterImple.java 2342 2006-03-30 13:06:17Z  $
  */
 
 package com.arjuna.ats.internal.jta.transaction.jts.jca;
@@ -34,12 +34,15 @@ package com.arjuna.ats.internal.jta.transaction.jts.jca;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.transaction.xa.*;
+import javax.transaction.Transaction;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TransactionImporter;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 import com.arjuna.ats.jta.xa.XidImple;
 
-public class TxImporter
+public class TransactionImporterImple implements TransactionImporter
 {
 	
 	/**
@@ -54,7 +57,7 @@ public class TxImporter
 	 * @throws XAException thrown if there are any errors.
 	 */
 	
-	public static TransactionImple importTransaction (Xid xid) throws XAException
+	public SubordinateTransaction importTransaction (Xid xid) throws XAException
 	{
 		return importTransaction(xid, 0);
 	}
@@ -71,7 +74,7 @@ public class TxImporter
 	 * @throws XAException thrown if there are any errors.
 	 */
 	
-	public static TransactionImple importTransaction (Xid xid, int timeout) throws XAException
+	public SubordinateTransaction importTransaction (Xid xid, int timeout) throws XAException
 	{
 		if (xid == null)
 			throw new IllegalArgumentException();
@@ -80,7 +83,7 @@ public class TxImporter
 		 * Check to see if we haven't already imported this thing.
 		 */
 		
-		TransactionImple imported = getImportedTransaction(xid);
+		SubordinateTransaction imported = getImportedTransaction(xid);
 		
 		if (imported == null)
 		{	
@@ -92,7 +95,7 @@ public class TxImporter
 		return imported;
 	}
 
-	public static TransactionImple recoverTransaction (Uid actId) throws XAException
+	public SubordinateTransaction recoverTransaction (Uid actId) throws XAException
 	{
 		if (actId == null)
 			throw new IllegalArgumentException();
@@ -111,6 +114,7 @@ public class TxImporter
 		else
 			return tx;
 	}
+    
 	/**
 	 * Get the subordinate (imported) transaction associated with the
 	 * global transaction.
@@ -123,12 +127,12 @@ public class TxImporter
 	 * @throws XAException thrown if there are any errors.
 	 */
 	
-	public static TransactionImple getImportedTransaction (Xid xid) throws XAException
+	public SubordinateTransaction getImportedTransaction (Xid xid) throws XAException
 	{
 		if (xid == null)
 			throw new IllegalArgumentException();
 		
-		TransactionImple tx = (TransactionImple) _transactions.get(new XidImple(xid));
+		SubordinateTransaction tx = _transactions.get(new XidImple(xid));
 		
 		if (tx == null)
 			return null;
@@ -139,8 +143,7 @@ public class TxImporter
 			 * Try recovery again. If it fails we'll throw a RETRY to the caller who
 			 * should try again later.
 			 */
-			
-			tx.getControlWrapper().getImple().getImplHandle().activate();
+            tx.recover();
 
 			return tx;
 		}
@@ -156,7 +159,7 @@ public class TxImporter
 	 * @throws XAException thrown if there are any errors.
 	 */
 	
-	public static void removeImportedTransaction (Xid xid) throws XAException
+	public void removeImportedTransaction (Xid xid) throws XAException
 	{
 		if (xid == null)
 			throw new IllegalArgumentException();
@@ -164,6 +167,6 @@ public class TxImporter
 		_transactions.remove(new XidImple(xid));
 	}
 	
-	private static ConcurrentHashMap<Xid, TransactionImple> _transactions = new ConcurrentHashMap<Xid, TransactionImple>();
+	private static ConcurrentHashMap<Xid, SubordinateTransaction> _transactions = new ConcurrentHashMap<Xid, SubordinateTransaction>();
 	
 }

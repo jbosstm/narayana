@@ -33,10 +33,12 @@ package com.arjuna.ats.internal.jta.transaction.jts.jca;
 
 import java.util.HashMap;
 import java.util.Stack;
+import java.util.Map;
 
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkCompletedException;
 import javax.resource.spi.work.WorkException;
+import javax.transaction.Transaction;
 
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
 
@@ -65,17 +67,17 @@ public class TxWorkManager
 	 *          com.arjuna.ats.internal.jta.transaction.jts.jca.busy] Work already active!
 	 */
 
-	public static void addWork (Work work, TransactionImple tx) throws WorkCompletedException
+	public static void addWork (Work work, Transaction tx) throws WorkCompletedException
 	{
-		Stack workers;
+		Stack<Work> workers;
 
 		synchronized (_transactions)
 		{
-			workers = (Stack) _transactions.get(tx);
+			workers = _transactions.get(tx);
 
 			if (workers == null)
 			{
-				workers = new Stack();
+				workers = new Stack<Work>();
 
 				_transactions.put(tx, workers);
 			}
@@ -96,13 +98,13 @@ public class TxWorkManager
 	 * @param tx the transaction the work should be disassociated from.
 	 */
 
-	public static void removeWork (Work work, TransactionImple tx)
+	public static void removeWork (Work work, Transaction tx)
 	{
-		Stack workers;
+		Stack<Work> workers;
 
 		synchronized (_transactions)
 		{
-			workers = (Stack) _transactions.get(tx);
+			workers = _transactions.get(tx);
 		}
 
 		if (workers != null)
@@ -137,11 +139,11 @@ public class TxWorkManager
 	 * <code>false</code> otherwise.
 	 */
 
-	public static boolean hasWork (TransactionImple tx)
+	public static boolean hasWork (Transaction tx)
 	{
 		synchronized (_transactions)
 		{
-			Stack workers = (Stack) _transactions.get(tx);
+			Stack workers = _transactions.get(tx);
 
 			return (boolean) (workers != null);
 		}
@@ -155,13 +157,13 @@ public class TxWorkManager
 	 * @return the work, or <code>null</code> if there is none.
 	 */
 
-	public static Work getWork (TransactionImple tx)
+	public static Work getWork (Transaction tx)
 	{
-		Stack workers;
+		Stack<Work> workers;
 
 		synchronized (_transactions)
 		{
-			workers = (Stack) _transactions.get(tx);
+			workers = _transactions.get(tx);
 		}
 
 		if (workers != null)
@@ -169,13 +171,13 @@ public class TxWorkManager
 			synchronized (workers)
 			{
 				if (!workers.empty())
-					return (Work) workers.peek();
+					return workers.peek();
 			}
 		}
 
 		return null;
 	}
 
-	private static HashMap _transactions = new HashMap();
+	private static final Map<Transaction, Stack<Work>> _transactions = new HashMap<Transaction, Stack<Work>>();
 
 }

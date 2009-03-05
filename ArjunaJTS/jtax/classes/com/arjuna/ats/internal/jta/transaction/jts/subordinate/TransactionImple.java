@@ -48,6 +48,7 @@ import javax.transaction.HeuristicCommitException;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.SystemException;
+import javax.transaction.RollbackException;
 
 /**
  * @message com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate
@@ -139,7 +140,7 @@ public class TransactionImple extends
 	 * @throws SystemException thrown if any error occurs.
 	 */
 
-	public int doPrepare () throws SystemException
+	public int doPrepare ()
 	{
 		try
 		{
@@ -172,12 +173,6 @@ public class TransactionImple extends
 		catch (ClassCastException ex)
 		{
 			return TwoPhaseOutcome.INVALID_TRANSACTION;
-		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-
-			throw new SystemException();
 		}
 	}
 
@@ -303,7 +298,7 @@ public class TransactionImple extends
 	 * rolls back.
 	 */
 
-	public void doOnePhaseCommit () throws IllegalStateException,
+	public void doOnePhaseCommit () throws IllegalStateException, javax.transaction.RollbackException,
 			javax.transaction.HeuristicRollbackException, javax.transaction.SystemException
 	{
 		try
@@ -322,7 +317,7 @@ public class TransactionImple extends
         			}
 			}
 
-			int status = subAct.doOnePhaseCommit();
+			int status = subAct.doOnePhaseCommit(); // ActionStatus status = TwoPhaseOutcome
 
 			TransactionImple.removeTransaction(this);
 
@@ -332,6 +327,7 @@ public class TransactionImple extends
 			case ActionStatus.H_COMMIT:
 				break;
 			case ActionStatus.ABORTED:
+                throw new RollbackException();
 			case ActionStatus.ABORTING:
 			case ActionStatus.H_HAZARD:
 			case ActionStatus.H_MIXED:
