@@ -152,26 +152,14 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 	
 	public int doOnePhaseCommit () throws SystemException
 	{
+	    // https://jira.jboss.org/jira/browse/JBTM-504
+	    
 		try
 		{
-			int res = doPrepare();
-			
-			switch (res)
-			{
-				case TwoPhaseOutcome.PREPARE_OK:
-					doCommit();
-					break;
-				case TwoPhaseOutcome.PREPARE_NOTOK:
-					doRollback();
-				
-					return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
-				case TwoPhaseOutcome.PREPARE_READONLY:
-					return TwoPhaseOutcome.FINISH_OK;
-				default:
-					doRollback();
-				
-					return res;
-			}
+		    ServerTransaction stx = getTransaction();
+   
+		        if (stx != null)
+		            stx.doCommit();
 		}
 		catch (Exception ex)
 		{
@@ -179,8 +167,6 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		}
 		
 		return TwoPhaseOutcome.FINISH_OK;
-		
-		// TODO error
 	}
 	
 	public void doForget () throws SystemException
