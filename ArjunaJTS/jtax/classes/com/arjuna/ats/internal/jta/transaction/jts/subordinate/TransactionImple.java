@@ -322,6 +322,8 @@ public class TransactionImple extends
                         case TwoPhaseOutcome.FINISH_OK:
                         case TwoPhaseOutcome.HEURISTIC_COMMIT:
                                 break;
+                        case TwoPhaseOutcome.FINISH_ERROR:
+                            throw new RollbackException();
                         case TwoPhaseOutcome.HEURISTIC_ROLLBACK:
                         case TwoPhaseOutcome.HEURISTIC_HAZARD:  // should never happen in the 1PC case!
                         case TwoPhaseOutcome.HEURISTIC_MIXED:
