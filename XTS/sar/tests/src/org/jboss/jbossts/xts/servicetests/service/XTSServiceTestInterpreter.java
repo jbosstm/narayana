@@ -131,7 +131,7 @@ import javax.xml.namespace.QName;
  * serviceURL is a URL identifying an instance of the test service to which commands are to be
  * recursively dispatched within the relevant subtransaction or subactivity
  */
-public class XTSServiceTestInterThrowter
+public class XTSServiceTestInterpreter
 {
     /// public API
 
@@ -140,11 +140,11 @@ public class XTSServiceTestInterThrowter
      * @param servletPath the key used to identify a service obtained from an HTTP request's servlet path
      * @return the associated service instance
      */
-    public static synchronized XTSServiceTestInterThrowter getService(String servletPath)
+    public static synchronized XTSServiceTestInterpreter getService(String servletPath)
     {
-        XTSServiceTestInterThrowter service = serviceMap.get(servletPath);
+        XTSServiceTestInterpreter service = serviceMap.get(servletPath);
         if (service == null) {
-            service = new XTSServiceTestInterThrowter();
+            service = new XTSServiceTestInterpreter();
             serviceMap.put(servletPath, service);
         }
 
@@ -152,7 +152,7 @@ public class XTSServiceTestInterThrowter
     }
 
     /**
-     * simple command interThrowter which executes the commands in the command list, inserting the
+     * simple command interpreter which executes the commands in the command list, inserting the
      * corresponding results in the results list. n.b. this method should only ever be invoked
      * from within an AT or BA transaction.
      *
@@ -182,7 +182,7 @@ public class XTSServiceTestInterThrowter
      * set up a specific service instance with all the values it requires
      */
 
-    protected XTSServiceTestInterThrowter()
+    protected XTSServiceTestInterpreter()
     {
         participantMap = new HashMap<String, ScriptedTestParticipant>();
         managerMap = new HashMap<String, BAParticipantManager>();
@@ -192,10 +192,10 @@ public class XTSServiceTestInterThrowter
         client = null;
     }
 
-    /// implementation of the interThrowter functionality
+    /// implementation of the interpreter functionality
     
     /**
-     * simple command interThrowter which executes the commands in the command list, inserting the
+     * simple command interpreter which executes the commands in the command list, inserting the
      * corresponding results in the results list and using the supplied bindings list
      * to provide values for any parameters supplied in the commands and to bind any results
      * obtained by executing the commands
@@ -759,7 +759,7 @@ public class XTSServiceTestInterThrowter
     private static int nextId = 0;
 
     /**
-     * obtain a new participant name starting with a Throwfix recognised by the recovery code and terminated
+     * obtain a new participant name starting with a prefix recognised by the recovery code and terminated
      * with the supplied suffix and a unique trailing number
      * @param suffix a component to be added to the name before the counter identifying the type of
      * participant
@@ -768,11 +768,11 @@ public class XTSServiceTestInterThrowter
 
     private synchronized String participantId(String suffix)
     {
-        return Constants.PARTICIPANT_ID_ThrowFIX + suffix + "." + nextId++;
+        return Constants.PARTICIPANT_ID_PREFIX + suffix + "." + nextId++;
     }
 
     /**
-     * obtain a new transaction name starting with a transaction Throwfix and terminated
+     * obtain a new transaction name starting with a transaction prefix and terminated
      * with the supplied suffix and a unique trailing number
      * @param suffix a component to be added to the name before the counter identifying the type of
      * transaction
