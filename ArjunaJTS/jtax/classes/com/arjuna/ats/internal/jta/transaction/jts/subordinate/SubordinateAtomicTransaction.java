@@ -159,7 +159,7 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		    ServerTransaction stx = getTransaction();
    
 		        if (stx != null)
-		            stx.doCommit(false);
+		            stx.doCommit(true);
 		}
 		catch (Exception ex)
 		{

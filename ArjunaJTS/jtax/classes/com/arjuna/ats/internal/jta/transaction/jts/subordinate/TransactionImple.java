@@ -57,353 +57,350 @@ import javax.transaction.RollbackException;
  */
 
 public class TransactionImple extends
-		com.arjuna.ats.internal.jta.transaction.jts.TransactionImple
+                com.arjuna.ats.internal.jta.transaction.jts.TransactionImple
 {
 
-	/**
-	 * Create a new transaction with the specified timeout.
-	 */
+        /**
+         * Create a new transaction with the specified timeout.
+         */
 
-	public TransactionImple (AtomicTransaction imported)
-	{
-		super(imported);
+        public TransactionImple (AtomicTransaction imported)
+        {
+                super(imported);
 
-		TransactionImple.putTransaction(this);
-	}
+                TransactionImple.putTransaction(this);
+        }
 
-	/**
-	 * Overloads Object.equals()
-	 */
+        /**
+         * Overloads Object.equals()
+         */
 
-	public boolean equals (Object obj)
-	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.equals");
-		}
+        public boolean equals (Object obj)
+        {
+                if (jtaLogger.logger.isDebugEnabled())
+                {
+                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.equals");
+                }
 
-		if (obj == null)
-			return false;
+                if (obj == null)
+                        return false;
 
-		if (obj == this)
-			return true;
+                if (obj == this)
+                        return true;
 
-		if (obj instanceof TransactionImple)
-		{
-			return super.equals(obj);
-		}
+                if (obj instanceof TransactionImple)
+                {
+                        return super.equals(obj);
+                }
 
-		return false;
-	}
+                return false;
+        }
 
-	/**
-	 * This is a subordinate transaction, so any attempt to commit it or roll it
-	 * back directly, should fail.
-	 */
+        /**
+         * This is a subordinate transaction, so any attempt to commit it or roll it
+         * back directly, should fail.
+         */
 
-	public void commit () throws javax.transaction.RollbackException,
-			javax.transaction.HeuristicMixedException,
-			javax.transaction.HeuristicRollbackException,
-			java.lang.SecurityException, javax.transaction.SystemException,
-			java.lang.IllegalStateException
-	{
-		/*
-		 * throw new IllegalStateException(
-		 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
-		 */
+        public void commit () throws javax.transaction.RollbackException,
+                        javax.transaction.HeuristicMixedException,
+                        javax.transaction.HeuristicRollbackException,
+                        java.lang.SecurityException, javax.transaction.SystemException,
+                        java.lang.IllegalStateException
+        {
+                /*
+                 * throw new IllegalStateException(
+                 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
+                 */
 
-		throw new InvalidTerminationStateException();
-	}
+                throw new InvalidTerminationStateException();
+        }
 
-	/**
-	 * This is a subordinate transaction, so any attempt to commit it or roll it
-	 * back directly, should fail.
-	 */
+        /**
+         * This is a subordinate transaction, so any attempt to commit it or roll it
+         * back directly, should fail.
+         */
 
-	public void rollback () throws java.lang.IllegalStateException,
-			java.lang.SecurityException, javax.transaction.SystemException
-	{
-		/*
-		 * throw new IllegalStateException(
-		 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
-		 */
+        public void rollback () throws java.lang.IllegalStateException,
+                        java.lang.SecurityException, javax.transaction.SystemException
+        {
+                /*
+                 * throw new IllegalStateException(
+                 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
+                 */
 
-		throw new InvalidTerminationStateException();
-	}
+                throw new InvalidTerminationStateException();
+        }
 
-	/**
-	 * Drive the subordinate transaction through the prepare phase. Any
-	 * enlisted participants will also be prepared as a result.
-	 *
-	 * @return a TwoPhaseOutcome representing the result.
-	 *
-	 * @throws SystemException thrown if any error occurs.
-	 */
+        /**
+         * Drive the subordinate transaction through the prepare phase. Any
+         * enlisted participants will also be prepared as a result.
+         *
+         * @return a TwoPhaseOutcome representing the result.
+         *
+         * @throws SystemException thrown if any error occurs.
+         */
 
-	public int doPrepare ()
-	{
-		try
-		{
-			SubordinateAtomicTransaction subAct = (SubordinateAtomicTransaction) super._theTransaction;
+        public int doPrepare ()
+        {
+                try
+                {
+                        SubordinateAtomicTransaction subAct = (SubordinateAtomicTransaction) super._theTransaction;
 
-			if (!endSuspendedRMs())
-			{
-				try
-				{
-					_theTransaction.rollbackOnly();
-				}
-				catch (org.omg.CosTransactions.NoTransaction ex)
-				{
-					// shouldn't happen! ignore because prepare will fail next anyway.
-				}
-			}
+                        if (!endSuspendedRMs())
+                        {
+                                try
+                                {
+                                        _theTransaction.rollbackOnly();
+                                }
+                                catch (org.omg.CosTransactions.NoTransaction ex)
+                                {
+                                        // shouldn't happen! ignore because prepare will fail next anyway.
+                                }
+                        }
 
-			int res = subAct.doPrepare();
+                        int res = subAct.doPrepare();
 
-			switch (res)
-			{
-			case TwoPhaseOutcome.PREPARE_READONLY:
-			case TwoPhaseOutcome.PREPARE_NOTOK:
-				TransactionImple.removeTransaction(this);
-				break;
-			}
+                        switch (res)
+                        {
+                        case TwoPhaseOutcome.PREPARE_READONLY:
+                        case TwoPhaseOutcome.PREPARE_NOTOK:
+                                TransactionImple.removeTransaction(this);
+                                break;
+                        }
 
-			return res;
-		}
-		catch (ClassCastException ex)
-		{
-			return TwoPhaseOutcome.INVALID_TRANSACTION;
-		}
-	}
+                        return res;
+                }
+                catch (ClassCastException ex)
+                {
+                        return TwoPhaseOutcome.INVALID_TRANSACTION;
+                }
+        }
 
-	/**
-	 * Drive the subordinate transaction to commit. It must have previously
-	 * been prepared.
-	 *
-	 * @throws IllegalStateException thrown if the transaction has not been prepared
-	 * or is unknown.
-	 * @throws HeuristicMixedException thrown if a heuristic mixed outcome occurs
-	 * (where some participants committed whilst others rolled back).
-	 * @throws HeuristicRollbackException thrown if the transaction rolled back.
-	 * @throws SystemException thrown if some other error occurs.
-	 */
+        /**
+         * Drive the subordinate transaction to commit. It must have previously
+         * been prepared.
+         *
+         * @throws IllegalStateException thrown if the transaction has not been prepared
+         * or is unknown.
+         * @throws HeuristicMixedException thrown if a heuristic mixed outcome occurs
+         * (where some participants committed whilst others rolled back).
+         * @throws HeuristicRollbackException thrown if the transaction rolled back.
+         * @throws SystemException thrown if some other error occurs.
+         */
 
-	public void doCommit () throws IllegalStateException,
-			HeuristicMixedException, HeuristicRollbackException,
-			SystemException
-	{
-		try
-		{
-			SubordinateAtomicTransaction subAct = (SubordinateAtomicTransaction) super._theTransaction;
+        public void doCommit () throws IllegalStateException,
+                        HeuristicMixedException, HeuristicRollbackException,
+                        SystemException
+        {
+                try
+                {
+                        SubordinateAtomicTransaction subAct = (SubordinateAtomicTransaction) super._theTransaction;
 
-			int res = subAct.doCommit();
+                        int res = subAct.doCommit();
 
-			switch (res)
-			{
-			case ActionStatus.COMMITTED:
-			case ActionStatus.COMMITTING:
-			case ActionStatus.H_COMMIT:
-				break;
-			case ActionStatus.ABORTED:
-			case ActionStatus.ABORTING:
-				throw new HeuristicRollbackException();
-			case ActionStatus.H_ROLLBACK:
-				throw new HeuristicRollbackException();
-			case ActionStatus.H_HAZARD:
-			case ActionStatus.H_MIXED:
-				throw new HeuristicMixedException();
-			case ActionStatus.INVALID:
-				throw new IllegalStateException();
-			default:
-				throw new HeuristicMixedException(); // not sure what happened,
-			// so err on the safe side!
-			}
-		}
-		catch (ClassCastException ex)
-		{
-			ex.printStackTrace();
+                        switch (res)
+                        {
+                        case TwoPhaseOutcome.FINISH_OK:
+                        case TwoPhaseOutcome.HEURISTIC_COMMIT:
+                                break;
+                        case TwoPhaseOutcome.HEURISTIC_ROLLBACK:
+                                throw new HeuristicRollbackException();
+                        case TwoPhaseOutcome.FINISH_ERROR:
+                        case TwoPhaseOutcome.HEURISTIC_HAZARD:
+                        case TwoPhaseOutcome.HEURISTIC_MIXED:
+                            throw new HeuristicMixedException();
+                        case TwoPhaseOutcome.INVALID_TRANSACTION:
+                        case TwoPhaseOutcome.NOT_PREPARED:
+                                throw new IllegalStateException();
+                        default:
+                                throw new HeuristicMixedException(); // not sure what happened,
+                        // so err on the safe side!
+                        }
+                }
+                catch (ClassCastException ex)
+                {
+                        ex.printStackTrace();
 
-			throw new UnexpectedConditionException(ex.toString());
-		}
-		finally
-		{
-			TransactionImple.removeTransaction(this);
-		}
-	}
+                        throw new UnexpectedConditionException(ex.toString());
+                }
+                finally
+                {
+                        TransactionImple.removeTransaction(this);
+                }
+        }
 
-	/**
-	 * Drive the subordinate transaction to roll back. It need not have been previously
-	 * prepared.
-	 *
-	 * @throws IllegalStateException thrown if the transaction is not known by the
-	 * system or has been previously terminated.
-	 * @throws HeuristicMixedException thrown if a heuristic mixed outcome occurs
-	 * (can only happen if the transaction was previously prepared and then only if
-	 * some participants commit whilst others roll back).
-	 * @throws HeuristicCommitException thrown if the transaction commits (can only
-	 * happen if it was previously prepared).
-	 * @throws SystemException thrown if any other error occurs.
-	 */
+        /**
+         * Drive the subordinate transaction to roll back. It need not have been previously
+         * prepared.
+         *
+         * @throws IllegalStateException thrown if the transaction is not known by the
+         * system or has been previously terminated.
+         * @throws HeuristicMixedException thrown if a heuristic mixed outcome occurs
+         * (can only happen if the transaction was previously prepared and then only if
+         * some participants commit whilst others roll back).
+         * @throws HeuristicCommitException thrown if the transaction commits (can only
+         * happen if it was previously prepared).
+         * @throws SystemException thrown if any other error occurs.
+         */
 
-	public void doRollback () throws IllegalStateException,
-			HeuristicMixedException, HeuristicCommitException, SystemException
-	{
-		try
-		{
-			SubordinateAtomicTransaction subAct = (SubordinateAtomicTransaction) super._theTransaction;
+        public void doRollback () throws IllegalStateException,
+                        HeuristicMixedException, HeuristicCommitException, SystemException
+        {
+                try
+                {
+                        SubordinateAtomicTransaction subAct = (SubordinateAtomicTransaction) super._theTransaction;
 
-			if (!endSuspendedRMs())
-			{
-				if (jtaLogger.loggerI18N.isWarnEnabled())
-				{
-					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed1");
-				}
-			}
+                        if (!endSuspendedRMs())
+                        {
+                                if (jtaLogger.loggerI18N.isWarnEnabled())
+                                {
+                                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed1");
+                                }
+                        }
 
-			int res = subAct.doRollback();
+                        int res = subAct.doRollback();
 
-			switch (res)
-			{
-			case ActionStatus.ABORTED:
-			case ActionStatus.ABORTING:
-			case ActionStatus.H_ROLLBACK:
-				break;
-			case ActionStatus.H_COMMIT:
-				throw new HeuristicCommitException();
-			case ActionStatus.H_HAZARD:
-			case ActionStatus.H_MIXED:
-				throw new HeuristicMixedException();
-			default:
-				throw new HeuristicMixedException();
-			}
-		}
-		catch (ClassCastException ex)
-		{
-			ex.printStackTrace();
+                        switch (res)
+                        {
+                        case TwoPhaseOutcome.FINISH_OK:
+                        case TwoPhaseOutcome.HEURISTIC_ROLLBACK:
+                                break;
+                        case TwoPhaseOutcome.HEURISTIC_COMMIT:
+                                throw new HeuristicCommitException();
+                        case TwoPhaseOutcome.INVALID_TRANSACTION:
+                            throw new IllegalStateException();
+                        default:
+                                throw new HeuristicMixedException();
+                        }
+                }
+                catch (ClassCastException ex)
+                {
+                        ex.printStackTrace();
 
-			throw new UnexpectedConditionException(ex.toString());
-		}
-		finally
-		{
-			TransactionImple.removeTransaction(this);
-		}
-	}
+                        throw new UnexpectedConditionException(ex.toString());
+                }
+                finally
+                {
+                        TransactionImple.removeTransaction(this);
+                }
+        }
 
-	/**
-	 * Drive the transaction to commit. It should not have been previously
-	 * prepared and will be the only resource in the global transaction.
-	 *
-	 * @throws IllegalStateException if the transaction has already terminated
-	 * @throws javax.transaction.HeuristicRollbackException thrown if the transaction
-	 * rolls back.
-	 */
+        /**
+         * Drive the transaction to commit. It should not have been previously
+         * prepared and will be the only resource in the global transaction.
+         *
+         * @throws IllegalStateException if the transaction has already terminated
+         * @throws javax.transaction.HeuristicRollbackException thrown if the transaction
+         * rolls back.
+         */
 
-	public void doOnePhaseCommit () throws IllegalStateException, javax.transaction.RollbackException,
-			javax.transaction.HeuristicRollbackException, javax.transaction.SystemException
-	{
-		try
-		{
-			SubordinateAtomicTransaction subAct = (SubordinateAtomicTransaction) super._theTransaction;
+        public void doOnePhaseCommit () throws IllegalStateException, javax.transaction.RollbackException,
+                        javax.transaction.HeuristicRollbackException, javax.transaction.SystemException
+        {
+                try
+                {
+                        SubordinateAtomicTransaction subAct = (SubordinateAtomicTransaction) super._theTransaction;
 
-			if (!endSuspendedRMs())
-			{
-        			try
-        			{
-        				_theTransaction.rollbackOnly();
-        			}
-        			catch (org.omg.CosTransactions.NoTransaction ex)
-        			{
-        				// shouldn't happen! ignore because commit will fail next anyway.
-        			}
-			}
+                        if (!endSuspendedRMs())
+                        {
+                                try
+                                {
+                                        _theTransaction.rollbackOnly();
+                                }
+                                catch (org.omg.CosTransactions.NoTransaction ex)
+                                {
+                                        // shouldn't happen! ignore because commit will fail next anyway.
+                                }
+                        }
 
-			int status = subAct.doOnePhaseCommit(); // ActionStatus status = TwoPhaseOutcome
+                        int status = subAct.doOnePhaseCommit(); // ActionStatus status = TwoPhaseOutcome
 
-			TransactionImple.removeTransaction(this);
+                        TransactionImple.removeTransaction(this);
 
-			switch (status)
-			{
-			case ActionStatus.COMMITTED:
-			case ActionStatus.H_COMMIT:
-				break;
-			case ActionStatus.ABORTED:
-                throw new RollbackException();
-			case ActionStatus.ABORTING:
-			case ActionStatus.H_HAZARD:
-			case ActionStatus.H_MIXED:
-			default:
-				throw new javax.transaction.HeuristicRollbackException();
-			case ActionStatus.INVALID:
-				throw new InvalidTerminationStateException();
-			}
-		}
-		catch (ClassCastException ex)
-		{
-			ex.printStackTrace();
+                        switch (status)
+                        {
+                        case TwoPhaseOutcome.FINISH_OK:
+                        case TwoPhaseOutcome.HEURISTIC_COMMIT:
+                                break;
+                        case TwoPhaseOutcome.HEURISTIC_ROLLBACK:
+                        case TwoPhaseOutcome.HEURISTIC_HAZARD:  // should never happen in the 1PC case!
+                        case TwoPhaseOutcome.HEURISTIC_MIXED:
+                        default:
+                            // do not throw RollbackException in the case of a heuristic or heuristic resolution won't kick in later.
+                                throw new javax.transaction.HeuristicRollbackException();
+                        case TwoPhaseOutcome.INVALID_TRANSACTION:
+                            throw new IllegalStateException();
+                        case TwoPhaseOutcome.ONE_PHASE_ERROR:
+                                throw new InvalidTerminationStateException();
+                        }
+                }
+                catch (ClassCastException ex)
+                {
+                        ex.printStackTrace();
 
-			throw new IllegalStateException();
-		}
-	}
+                        throw new IllegalStateException();
+                }
+        }
 
-	/**
-	 * Called to tell the transaction to forget any heuristics.
-	 *
-	 * @throws IllegalStateException thrown if the transaction cannot
-	 * be found.
-	 */
+        /**
+         * Called to tell the transaction to forget any heuristics.
+         *
+         * @throws IllegalStateException thrown if the transaction cannot
+         * be found.
+         */
 
-	public void doForget () throws IllegalStateException
-	{
-		try
-		{
-			SubordinateAtomicTransaction subAct = (SubordinateAtomicTransaction) super._theTransaction;
+        public void doForget () throws IllegalStateException
+        {
+                try
+                {
+                        SubordinateAtomicTransaction subAct = (SubordinateAtomicTransaction) super._theTransaction;
 
-			subAct.doForget();
-		}
-		catch (ClassCastException ex)
-		{
-			ex.printStackTrace();
+                        subAct.doForget();
+                }
+                catch (ClassCastException ex)
+                {
+                        ex.printStackTrace();
 
-			throw new IllegalStateException();
-		}
-	}
+                        throw new IllegalStateException();
+                }
+        }
 
-	public String toString ()
-	{
-		if (super._theTransaction == null)
-			return "TransactionImple < jts-subordinate, NoTransaction >";
-		else
-		{
-			return "TransactionImple < jts-subordinate, "
-					+ super._theTransaction.get_uid() + " >";
-		}
-	}
+        public String toString ()
+        {
+                if (super._theTransaction == null)
+                        return "TransactionImple < jts-subordinate, NoTransaction >";
+                else
+                {
+                        return "TransactionImple < jts-subordinate, "
+                                        + super._theTransaction.get_uid() + " >";
+                }
+        }
 
-	protected void commitAndDisassociate ()
-			throws javax.transaction.RollbackException,
-			javax.transaction.HeuristicMixedException,
-			javax.transaction.HeuristicRollbackException,
-			java.lang.SecurityException, javax.transaction.SystemException,
-			java.lang.IllegalStateException
-	{
-		/*
-		 * throw new IllegalStateException(
-		 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
-		 */
+        protected void commitAndDisassociate ()
+                        throws javax.transaction.RollbackException,
+                        javax.transaction.HeuristicMixedException,
+                        javax.transaction.HeuristicRollbackException,
+                        java.lang.SecurityException, javax.transaction.SystemException,
+                        java.lang.IllegalStateException
+        {
+                /*
+                 * throw new IllegalStateException(
+                 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
+                 */
 
-		throw new InactiveTransactionException();
-	}
+                throw new InactiveTransactionException();
+        }
 
-	protected void rollbackAndDisassociate ()
-			throws java.lang.IllegalStateException,
-			java.lang.SecurityException, javax.transaction.SystemException
-	{
-		/*
-		 * throw new IllegalStateException(
-		 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
-		 */
+        protected void rollbackAndDisassociate ()
+                        throws java.lang.IllegalStateException,
+                        java.lang.SecurityException, javax.transaction.SystemException
+        {
+                /*
+                 * throw new IllegalStateException(
+                 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
+                 */
 
-		throw new InactiveTransactionException();
-	}
+                throw new InactiveTransactionException();
+        }
 
 }
