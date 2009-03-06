@@ -202,7 +202,7 @@ public class TransactionImple extends
 	}
 
 	public void doRollback () throws IllegalStateException,
-			HeuristicMixedException, HeuristicCommitException, SystemException
+			HeuristicMixedException, HeuristicCommitException, HeuristicRollbackException, SystemException
 	{
 		try
 		{
@@ -222,10 +222,11 @@ public class TransactionImple extends
 			{
 			case ActionStatus.ABORTED:
 			case ActionStatus.ABORTING:
-			case ActionStatus.H_ROLLBACK:
-				TransactionImple.removeTransaction(this);
+	                         TransactionImple.removeTransaction(this);
 
-				break;
+	                                break;
+			case ActionStatus.H_ROLLBACK:
+				throw new HeuristicRollbackException();
 			case ActionStatus.H_COMMIT:
 				throw new HeuristicCommitException();
 			case ActionStatus.H_HAZARD:
@@ -262,7 +263,7 @@ public class TransactionImple extends
 	}
 
 	public void doOnePhaseCommit () throws IllegalStateException,
-			javax.transaction.HeuristicRollbackException, javax.transaction.SystemException, RollbackException
+			javax.transaction.HeuristicMixedException, javax.transaction.SystemException, RollbackException
 	{
 		try
 		{
@@ -280,15 +281,17 @@ public class TransactionImple extends
 				TransactionImple.removeTransaction(this);
 				break;
 			case ActionStatus.ABORTED:
+	                 case ActionStatus.ABORTING:
                 TransactionImple.removeTransaction(this);
                 // JBTM-428. Note also this may be because the tx was set rollback only,
                 // in which case IllegalState may be a better option?
                 throw new RollbackException();
-			case ActionStatus.ABORTING:
+
 			case ActionStatus.H_HAZARD:
 			case ActionStatus.H_MIXED:
+			case ActionStatus.H_ROLLBACK:
 			default:
-				throw new javax.transaction.HeuristicRollbackException();
+				throw new javax.transaction.HeuristicMixedException();
 			case ActionStatus.INVALID:
 				throw new InvalidTerminationStateException();
 			}

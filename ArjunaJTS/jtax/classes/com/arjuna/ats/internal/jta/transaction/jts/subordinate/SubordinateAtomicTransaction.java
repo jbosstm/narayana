@@ -123,7 +123,7 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		
 		// TODO error
 		
-		return TwoPhaseOutcome.ONE_PHASE_ERROR;
+		return ActionStatus.H_HAZARD;
 	}
 	
 	/**
@@ -147,7 +147,7 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 			
 		// TODO error
 		
-		return TwoPhaseOutcome.FINISH_ERROR;
+		return ActionStatus.H_HAZARD;
 	}
 	
 	public int doOnePhaseCommit () throws SystemException
@@ -163,10 +163,10 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		}
 		catch (Exception ex)
 		{
-			return TwoPhaseOutcome.HEURISTIC_HAZARD;
+			return ActionStatus.H_HAZARD;
 		}
 		
-		return TwoPhaseOutcome.FINISH_OK;
+		return ActionStatus.COMMITTED;
 	}
 	
 	public void doForget () throws SystemException

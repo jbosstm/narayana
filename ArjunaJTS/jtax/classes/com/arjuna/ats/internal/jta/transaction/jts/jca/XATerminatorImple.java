@@ -96,6 +96,10 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 
 			throw ex;
 		}
+		catch (final HeuristicCommitException ex)
+		{
+		    throw new XAException(XAException.XA_HEURCOM);
+		}
 		catch (HeuristicRollbackException ex)
 		{
 			throw new XAException(XAException.XA_HEURRB);
@@ -103,6 +107,12 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		catch (HeuristicMixedException ex)
 		{
 			throw new XAException(XAException.XA_HEURMIX);
+		}
+		catch (final IllegalStateException ex)
+		{
+	            SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
+	                  
+		    throw new XAException(XAException.XAER_NOTA);
 		}
 		catch (SystemException ex)
 		{
@@ -149,19 +159,26 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 
 				return XAResource.XA_RDONLY;
 			case TwoPhaseOutcome.PREPARE_NOTOK:
-				SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);  // TODO check if rollback is going to be called first
+			    try
+			    {
+			        rollback(xid);
+			    }
+			    catch (final Throwable ex)
+			    {
+			        // if we failed to prepare then rollback should not fail!
+			    }
+			    
+				SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
 
 				throw new XAException(XAException.XA_RBROLLBACK);
 			case TwoPhaseOutcome.PREPARE_OK:
 				return XAResource.XA_OK;
+			case TwoPhaseOutcome.INVALID_TRANSACTION:
+			    throw new XAException(XAException.XAER_NOTA);
 			default:
 				throw new XAException(XAException.XA_RBOTHER);
 			}
 		}
-		/*catch (SystemException ex)
-		{
-			throw new XAException(XAException.XAER_RMFAIL);
-		}*/
 		catch (XAException ex)
 		{
 			throw ex;
@@ -303,9 +320,19 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		{
 			throw new XAException(XAException.XA_HEURCOM);
 		}
+		catch (final HeuristicRollbackException exx)
+		{
+		    throw new XAException(XAException.XA_HEURRB);
+		}
 		catch (HeuristicMixedException ex)
 		{
 			throw new XAException(XAException.XA_HEURMIX);
+		}
+		catch (final IllegalStateException ex)
+		{
+		    SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
+		    
+		    throw new XAException(XAException.XAER_NOTA);
 		}
 		catch (SystemException ex)
 		{

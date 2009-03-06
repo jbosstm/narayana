@@ -114,6 +114,16 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		{
 			throw new XAException(XAException.XA_HEURMIX);
 		}
+		catch (final HeuristicCommitException ex)
+		{
+		    throw new XAException(XAException.XA_HEURCOM);
+		}
+		catch (final IllegalStateException ex)
+                {
+                    SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
+                          
+                    throw new XAException(XAException.XAER_NOTA);
+                }
 		catch (SystemException ex)
 		{
 			SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
@@ -186,7 +196,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 			case TwoPhaseOutcome.PREPARE_NOTOK:
                 // the JCA API spec limits what we can do in terms of reporting problems.
                 // try to use the exception code and cause to provide info whilst
-                // ramining API compliant.  JBTM-427.
+                // remaining API compliant.  JBTM-427.
                 Exception initCause = null;
                 int xaExceptionCode = XAException.XA_RBROLLBACK;
                 try {
@@ -201,6 +211,11 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
                     initCause = e;
                     xaExceptionCode = XAException.XAER_RMERR;
                 }
+                catch (final HeuristicRollbackException e) {
+                    initCause = e;
+                    xaExceptionCode = XAException.XAER_RMERR;
+                }
+                
                 SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
                 XAException xaException = new XAException(xaExceptionCode);
                 if(initCause != null) {
@@ -209,6 +224,8 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 				throw xaException;
 			case TwoPhaseOutcome.PREPARE_OK:
 				return XAResource.XA_OK;
+			case TwoPhaseOutcome.INVALID_TRANSACTION:
+			    throw new XAException(XAException.XAER_NOTA);
 			default:
 				throw new XAException(XAException.XA_RBOTHER);
 			}
@@ -374,6 +391,10 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 
 			throw ex;
 		}
+		catch (final HeuristicRollbackException exx)
+		{
+		    throw new XAException(XAException.XA_HEURRB);
+		}
 		catch (HeuristicCommitException ex)
 		{
 			throw new XAException(XAException.XA_HEURCOM);
@@ -382,6 +403,12 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		{
 			throw new XAException(XAException.XA_HEURMIX);
 		}
+		catch (final IllegalStateException ex)
+		{
+                    SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
+                    
+                    throw new XAException(XAException.XAER_NOTA);
+                }
 		catch (SystemException ex)
 		{
 			SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);

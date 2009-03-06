@@ -49,7 +49,7 @@ public interface SubordinateTransaction extends Transaction
 	 * @throws SystemException thrown if some other error occurs.
 	 */
     public void doCommit () throws IllegalStateException,
-			HeuristicMixedException, HeuristicRollbackException,
+			HeuristicMixedException, HeuristicRollbackException, HeuristicCommitException,
 			SystemException;
         
 	/**
@@ -66,7 +66,7 @@ public interface SubordinateTransaction extends Transaction
 	 * @throws SystemException thrown if any other error occurs.
 	 */
     public void doRollback () throws IllegalStateException,
-            HeuristicMixedException, HeuristicCommitException, SystemException;
+            HeuristicMixedException, HeuristicCommitException, HeuristicRollbackException, SystemException;
     
 	/**
 	 * Drive the transaction to commit. It should not have been previously
@@ -77,7 +77,7 @@ public interface SubordinateTransaction extends Transaction
 	 * rolls back.
 	 */
     public void doOnePhaseCommit () throws IllegalStateException,
-			HeuristicRollbackException, SystemException, RollbackException;
+			HeuristicMixedException, SystemException, RollbackException;
     
 	/**
 	 * Called to tell the transaction to forget any heuristics.

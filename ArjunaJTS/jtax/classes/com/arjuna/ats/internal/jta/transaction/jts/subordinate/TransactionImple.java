@@ -189,7 +189,7 @@ public class TransactionImple extends
          */
 
         public void doCommit () throws IllegalStateException,
-                        HeuristicMixedException, HeuristicRollbackException,
+                        HeuristicMixedException, HeuristicRollbackException, HeuristicCommitException,
                         SystemException
         {
                 try
@@ -200,17 +200,19 @@ public class TransactionImple extends
 
                         switch (res)
                         {
-                        case TwoPhaseOutcome.FINISH_OK:
-                        case TwoPhaseOutcome.HEURISTIC_COMMIT:
+                        case ActionStatus.H_COMMIT:
+                            throw new HeuristicCommitException();
+                        case ActionStatus.COMMITTED:
+                        case ActionStatus.COMMITTING:
                                 break;
-                        case TwoPhaseOutcome.HEURISTIC_ROLLBACK:
+                        case ActionStatus.ABORTED:
+                        case ActionStatus.ABORTING:
+                        case ActionStatus.H_ROLLBACK:
                                 throw new HeuristicRollbackException();
-                        case TwoPhaseOutcome.FINISH_ERROR:
-                        case TwoPhaseOutcome.HEURISTIC_HAZARD:
-                        case TwoPhaseOutcome.HEURISTIC_MIXED:
+                        case ActionStatus.H_HAZARD:
+                        case ActionStatus.H_MIXED:
                             throw new HeuristicMixedException();
-                        case TwoPhaseOutcome.INVALID_TRANSACTION:
-                        case TwoPhaseOutcome.NOT_PREPARED:
+                        case ActionStatus.INVALID:
                                 throw new IllegalStateException();
                         default:
                                 throw new HeuristicMixedException(); // not sure what happened,
@@ -244,7 +246,7 @@ public class TransactionImple extends
          */
 
         public void doRollback () throws IllegalStateException,
-                        HeuristicMixedException, HeuristicCommitException, SystemException
+                        HeuristicMixedException, HeuristicCommitException, HeuristicRollbackException, SystemException
         {
                 try
                 {
@@ -262,13 +264,16 @@ public class TransactionImple extends
 
                         switch (res)
                         {
-                        case TwoPhaseOutcome.FINISH_OK:
-                        case TwoPhaseOutcome.HEURISTIC_ROLLBACK:
-                                break;
-                        case TwoPhaseOutcome.HEURISTIC_COMMIT:
+                        case ActionStatus.ABORTED:
+                        case ActionStatus.ABORTING:
+                            break;
+                        case ActionStatus.H_ROLLBACK:
+                            throw new HeuristicRollbackException();
+                        case ActionStatus.H_COMMIT:
                                 throw new HeuristicCommitException();
-                        case TwoPhaseOutcome.INVALID_TRANSACTION:
-                            throw new IllegalStateException();
+                        case ActionStatus.H_HAZARD:
+                        case ActionStatus.H_MIXED:
+                                throw new HeuristicMixedException();
                         default:
                                 throw new HeuristicMixedException();
                         }
@@ -295,7 +300,7 @@ public class TransactionImple extends
          */
 
         public void doOnePhaseCommit () throws IllegalStateException, javax.transaction.RollbackException,
-                        javax.transaction.HeuristicRollbackException, javax.transaction.SystemException
+                        javax.transaction.HeuristicMixedException, javax.transaction.SystemException
         {
                 try
                 {
@@ -319,20 +324,18 @@ public class TransactionImple extends
 
                         switch (status)
                         {
-                        case TwoPhaseOutcome.FINISH_OK:
-                        case TwoPhaseOutcome.HEURISTIC_COMMIT:
+                        case ActionStatus.COMMITTED:
+                        case ActionStatus.H_COMMIT:
                                 break;
-                        case TwoPhaseOutcome.FINISH_ERROR:
+                        case ActionStatus.ABORTED:
+                        case ActionStatus.ABORTING:
                             throw new RollbackException();
-                        case TwoPhaseOutcome.HEURISTIC_ROLLBACK:
-                        case TwoPhaseOutcome.HEURISTIC_HAZARD:  // should never happen in the 1PC case!
-                        case TwoPhaseOutcome.HEURISTIC_MIXED:
+                        case ActionStatus.H_ROLLBACK:
+                        case ActionStatus.H_HAZARD:
+                        case ActionStatus.H_MIXED:
                         default:
-                            // do not throw RollbackException in the case of a heuristic or heuristic resolution won't kick in later.
-                                throw new javax.transaction.HeuristicRollbackException();
-                        case TwoPhaseOutcome.INVALID_TRANSACTION:
-                            throw new IllegalStateException();
-                        case TwoPhaseOutcome.ONE_PHASE_ERROR:
+                                throw new javax.transaction.HeuristicMixedException();
+                        case ActionStatus.INVALID:
                                 throw new InvalidTerminationStateException();
                         }
                 }
