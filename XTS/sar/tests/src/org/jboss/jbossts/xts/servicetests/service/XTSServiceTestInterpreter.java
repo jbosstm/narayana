@@ -215,15 +215,14 @@ public class XTSServiceTestInterpreter
         // check against each of the possible commands
 
         if (command.equals("block")) {
+            // we don't bind the command block immediately since bindings may be produced
+            // by intermediate bind commands
             processCommandBlock(commandList, resultsList, bindings);
         } else {
-            int idx;
-            for (idx = 0; idx < size; idx++) {
-                bindCommands(commandList, bindings);
-            }
-            idx = 0;
+            int idx = 0;
             if (command.equals("enlistDurable")) {
 // enlistment commands
+                bindCommands(commandList, bindings);
                 String id = participantId("DurableTestParticipant");
                 DurableTestParticipant participant = new DurableTestParticipant(id);
                 TransactionManager txman = TransactionManagerFactory.transactionManager();
@@ -238,6 +237,7 @@ public class XTSServiceTestInterpreter
                 participantMap.put(id, participant);
                 resultsList.add(id);
             } else if (command.equals("enlistVolatile")) {
+                bindCommands(commandList, bindings);
                 String id = participantId("VolatileTestParticipant");
                 VolatileTestParticipant participant = new VolatileTestParticipant(id);
                 TransactionManager txman = TransactionManagerFactory.transactionManager();
@@ -252,6 +252,7 @@ public class XTSServiceTestInterpreter
                 participantMap.put(id, participant);
                 resultsList.add(id);
             } else if (command.equals("enlistCoordinatorCompletion")) {
+                bindCommands(commandList, bindings);
                 String id = participantId("CoordinatorCompletionParticipant");
                 CoordinatorCompletionTestParticipant participant = new CoordinatorCompletionTestParticipant(id);
                 BusinessActivityManager baman = BusinessActivityManagerFactory.businessActivityManager();
@@ -268,6 +269,7 @@ public class XTSServiceTestInterpreter
                 participantMap.put(id, participant);
                 resultsList.add(id);
             } else if (command.equals("enlistParticipantCompletion")) {
+                bindCommands(commandList, bindings);
                 String id = participantId("ParticipantCompletionParticipant");
                 ParticipantCompletionTestParticipant participant = new ParticipantCompletionTestParticipant(id);
                 BusinessActivityManager baman = BusinessActivityManagerFactory.businessActivityManager();
@@ -285,6 +287,7 @@ public class XTSServiceTestInterpreter
                 resultsList.add(id);
             } else if (command.equals("addCommands")) {
 // add extra commands to a participant script
+                bindCommands(commandList, bindings);
                 String id = commandList.remove(idx);
                 size--;
                 ScriptedTestParticipant participant = participantMap.get(id);
@@ -299,6 +302,7 @@ public class XTSServiceTestInterpreter
                 }
             } else if (command.equals("exit")) {
 // initiate BA manager activities
+                bindCommands(commandList, bindings);
                 String id = commandList.remove(idx);
                 size--;
                 ScriptedTestParticipant participant = participantMap.get(id);
@@ -319,6 +323,7 @@ public class XTSServiceTestInterpreter
                     throw new WebServiceException("exit unknown participant " + id);
                 }
             } else if (command.equals("completed")) {
+                bindCommands(commandList, bindings);
                 String id = commandList.remove(idx);
                 size--;
                 ScriptedTestParticipant participant = participantMap.get(id);
@@ -339,6 +344,7 @@ public class XTSServiceTestInterpreter
                     throw new WebServiceException("completed unknown participant " + id);
                 }
             } else if (command.equals("fail")) {
+                bindCommands(commandList, bindings);
                 String id = commandList.remove(idx);
                 size--;
                 ScriptedTestParticipant participant = participantMap.get(id);
@@ -360,6 +366,7 @@ public class XTSServiceTestInterpreter
                     throw new WebServiceException("fail unknown participant " + id);
                 }
             } else if (command.equals("cannotComplete")) {
+                bindCommands(commandList, bindings);
                 String id = commandList.remove(idx);
                 size--;
                 ScriptedTestParticipant participant = participantMap.get(id);
@@ -384,6 +391,14 @@ public class XTSServiceTestInterpreter
                 // we should find a web service URL and a list of commands to dispatch to that service
                 String url = commandList.remove(idx);
                 size--;
+                // we throw an error if the server url is unbound but we allow
+                // unbound variables in the command list passed on to the server
+                // since they may be bound by bind commands in the command list
+                // being served.
+
+                url = bindCommand(url, bindings, true);
+
+                bindCommands(commandList, bindings, false);
 
                 CommandsType newCommands = new CommandsType();
                 List<String> newCommandList = newCommands.getCommandList();
@@ -398,7 +413,7 @@ public class XTSServiceTestInterpreter
                 }
             } else if (command.equals("subtransaction")) {
 // create subordinate AT transaction
-// this is surplus ot requirements since we should really be running against a service which uses
+// this is surplus to requirements since we should really be running against a service which uses
 // the subordinate interposition JaxWS handler to install a subordinate transaction before
 // entering the service method. we ought to test that handler rather than hand crank the
 // interposition in the service
@@ -451,9 +466,10 @@ public class XTSServiceTestInterpreter
 // dispatch commands in a subordinate transaction or activity
                 // we should find the id of a subordinate transaction, a web service URL
                 // and a list of commands to dispatch to that transaction
-                String txId = commandList.remove(idx);
+                // the txid and url must be resolved if supplied as bindings
+                String txId = bindCommand(commandList.remove(idx), bindings, true);
                 size--;
-                String url = commandList.remove(idx);
+                String url = bindCommand(commandList.remove(idx), bindings,  true);
                 size--;
 
                 TxContext newTx = subordinateTransactionMap.get(txId);
@@ -468,6 +484,11 @@ public class XTSServiceTestInterpreter
                 }
                 // ok, now we install the relevant transaction and then just pass the commands on to
                 // the web service
+
+                // we allow unresolved variable references in the rest of the command list as
+                // they may be satisfied by embedded bind commands
+
+                bindCommands(commandList,  bindings,  false);
 
                 CommandsType newCommands = new CommandsType();
                 List<String> newCommandList = newCommands.getCommandList();
@@ -484,9 +505,10 @@ public class XTSServiceTestInterpreter
 // dispatch commands in a subordinate transaction or activity
                 // we should find the id of a subordinate transaction, a web service URL
                 // and a list of commands to dispatch to that transaction
-                String txId = commandList.remove(idx);
+                // the txid and url must be resolved if supplied as bindings
+                String txId = bindCommand(commandList.remove(idx), bindings, true);
                 size--;
-                String url = commandList.remove(idx);
+                String url = bindCommand(commandList.remove(idx), bindings,  true);
                 size--;
 
                 TxContext newTx = subordinateActivityMap.get(txId);
@@ -501,6 +523,11 @@ public class XTSServiceTestInterpreter
                 }
                 // ok, now we install the relevant transaction and then just pass the commands on to
                 // the web service
+
+                // we allow unresolved variable references in the rest of the command list as
+                // they may be satisfied by embedded bind commands
+
+                bindCommands(commandList, bindings,  false);
 
                 CommandsType newCommands = new CommandsType();
                 List<String> newCommandList = newCommands.getCommandList();
@@ -612,46 +639,86 @@ public class XTSServiceTestInterpreter
     private void bindCommands(List<String> commands, HashMap<String, String> bindings)
             throws WebServiceException
     {
+        bindCommands(commands, bindings, true);
+    }
+    /**
+     * for each command in the command list which contains variable references substitute a command containing
+     * the value for the variable found in bindings. variables are mentioned by wrappng their name in braces.
+     *
+     * @param commands the list of commands to be processed
+     * @param bindings a map from variable names to the associated values
+     * @param mustResolve is true if references to unbound variables should result in a thrown exception and false
+     * if they should be tolerated by being left unsubstituted
+     * @throws WebServiceException if a variable reference is invalidly formatted or refers
+     * to an unbound variable when mustResolve is true
+     */
+    private void bindCommands(List<String> commands, HashMap<String, String> bindings, boolean mustResolve)
+            throws WebServiceException
+    {
         int size = commands.size();
         int idx;
         for (idx = 0; idx < size; idx++) {
             // pop the command and append either the original or a substituted copy
             String command = commands.remove(0);
-            if (command.contains("$")) {
-                StringBuffer newCommand = new StringBuffer();
-                int len = command.length();
-                int pos =  0;
-                while (pos < len) {
-                    char c = command.charAt(pos);
-                    if (c == '{') {
-                        // must have room for at least one character and a closing brace
-                        if (pos > len-2) {
-                            throw new WebServiceException("bindCommands : invalid variable reference " + command + " @ " + pos);
-                        }
-                        // brace cannot be next character so start search at pos+2
-                        int endpos = command.indexOf('}', pos + 2);
-                        if (endpos < 0) {
-                            throw new WebServiceException("bindCommands : invalid variable reference " + command + " @ " + pos);
-                        }
-                        String var = command.substring(pos + 1, endpos);
-                        // var must be alphanumeric
-                        if (!var.matches("[0-9a-zA-Z]+")) {
-                            throw new WebServiceException("bindCommands : invalid variable name " + command + " @ " + pos);
-                        }
-                        String val = bindings.get(var);
-                        if (endpos < 0) {
-                            throw new WebServiceException("bindCommands : unbound variable " + command + " @ " + pos);
-                        }
-                        newCommand.append(val);
-                        pos = endpos+1;
-                    } else {
-                        newCommand.append(c);
+            String newCommand = bindCommand(command, bindings, mustResolve);
+            commands.add(newCommand.toString());
+        }
+    }
+
+    /**
+     * substitute any bound variables found in the supplied command
+     * @param command the command to be substituted
+     * @param bindings the map from currently bound variables to their string values
+     * @param mustResolve is true if references to unbound variables should result in a thrown exception and false
+     * if they should be tolerated by being left unsubstituted
+     * @return the substituted command or the original command if it contains no variable references
+     * @throws WebServiceException if a variable reference is invalidly formatted or refers
+     * to an unbound variable
+     */
+    private String bindCommand(String command, HashMap<String, String> bindings, boolean mustResolve)
+            throws WebServiceException
+    {
+        if (command.contains("{")) {
+            StringBuffer newCommandBuffer = new StringBuffer();
+            int len = command.length();
+            int pos =  0;
+            while (pos < len) {
+                char c = command.charAt(pos);
+                if (c == '{') {
+                    // must have room for at least one character and a closing brace
+                    if (pos > len-2) {
+                        throw new WebServiceException("bindCommand : invalid variable reference " + command + " @ " + pos);
                     }
+                    // brace cannot be next character so start search at pos+2
+                    int endpos = command.indexOf('}', pos + 2);
+                    if (endpos < 0) {
+                        throw new WebServiceException("bindCommand : invalid variable reference " + command + " @ " + pos);
+                    }
+                    String var = command.substring(pos + 1, endpos);
+                    // var must be alphanumeric
+                    if (!var.matches("[0-9a-zA-Z]+")) {
+                        throw new WebServiceException("bindCommand : invalid variable name " + command + " @ " + pos);
+                    }
+                    String val = bindings.get(var);
+                    if (val == null) {
+                        if (mustResolve) {
+                            throw new WebServiceException("bindCommand : unbound variable " + command + " @ " + pos);
+                        } else {
+                            newCommandBuffer.append('{');
+                            newCommandBuffer.append(var);
+                            newCommandBuffer.append('}');
+                        }
+                    } else {
+                        newCommandBuffer.append(val);
+                    }
+                    pos = endpos+1;
+                } else {
+                    newCommandBuffer.append(c);
                 }
-                commands.add(newCommand.toString());
-            } else {
-                commands.add(command);
             }
+            return newCommandBuffer.toString();
+        } else {
+            return command;
         }
     }
 
