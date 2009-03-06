@@ -171,6 +171,8 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 		if (!_interposedSynch)
 		{
+		    if ((s != org.omg.CosTransactions.Status.StatusMarkedRollback) || TxControl.isBeforeCompletionWhenRollbackOnly())
+		    {
 			try
 			{
 				doBeforeCompletion();
@@ -181,7 +183,8 @@ public class ServerTransaction extends ArjunaTransactionImple
 				 * Transaction will have been put into a state which forces it
 				 * to rollback, so do nothing here.
 				 */
-			}
+			}			
+		    }
 		}
 
 		if (!_beforeCompleted && (_sync != null))
@@ -215,7 +218,7 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 		if (res == TwoPhaseOutcome.PREPARE_READONLY)
 		{
-			doPhase2Commit(true);
+			doPhase2Commit();
 		}
 
 		return res;
@@ -231,7 +234,7 @@ public class ServerTransaction extends ArjunaTransactionImple
 	 *          {0} - transaction not in prepared state: {1}
 	 */
 
-	public final int doPhase2Commit (boolean readOnly)
+	public final int doPhase2Commit ()
 	{
 		if (jtsLogger.logger.isDebugEnabled())
 		{
@@ -256,8 +259,7 @@ public class ServerTransaction extends ArjunaTransactionImple
 			return finalStatus();
 		}
 
-		if (!readOnly)
-			super.phase2Commit(true);
+		super.phase2Commit(true);
 
 		/*
 		 * Now do after completion stuff.
@@ -290,7 +292,11 @@ public class ServerTransaction extends ArjunaTransactionImple
 		}
 
 		/*
-		 * If the transaction has already terminated, then return the status.
+		 * If the transaction has already terminated, then return the status. If
+		 * there hasn't been a heuristic outcome then we try to massage the result
+		 * to be consistent with what the caller expects: the fact that the
+		 * transaction is marked as committed during prepare without any problems means
+		 * that the intentions lists are zero so it's fine to say that it aborted instead.
 		 */
 
 		org.omg.CosTransactions.Status s = get_status();
@@ -298,7 +304,18 @@ public class ServerTransaction extends ArjunaTransactionImple
 		if ((s == org.omg.CosTransactions.Status.StatusCommitted)
 				|| (s == org.omg.CosTransactions.Status.StatusRolledBack))
 		{
-			return finalStatus();
+		    int status = finalStatus();
+		    
+		    switch (status)
+		    {
+		    case ActionStatus.COMMITTED:
+		    case ActionStatus.COMMITTING:
+		    case ActionStatus.ABORTED:
+		    case ActionStatus.ABORTING:
+		        return ActionStatus.ABORTED;
+		    default:
+		        return status;
+		    }
 		}
 
 		super.phase2Abort(true);
@@ -323,7 +340,7 @@ public class ServerTransaction extends ArjunaTransactionImple
 		super.destroyAction();
 
 		ActionManager.manager().remove(get_uid());
-		
+
 		return finalStatus();
 	}
 
@@ -342,6 +359,8 @@ public class ServerTransaction extends ArjunaTransactionImple
 		{
 			if (!_interposedSynch)
 			{
+			    if ((outcome != ActionStatus.ABORT_ONLY) || TxControl.isBeforeCompletionWhenRollbackOnly())
+			    {
 				try
 				{
 					doBeforeCompletion();
@@ -352,7 +371,8 @@ public class ServerTransaction extends ArjunaTransactionImple
 					 * Transaction will have been put into a state which forces
 					 * it to rollback, so do nothing here.
 					 */
-				}
+				}			
+			    }
 			}
 
 			outcome = super.End(report_heuristics);

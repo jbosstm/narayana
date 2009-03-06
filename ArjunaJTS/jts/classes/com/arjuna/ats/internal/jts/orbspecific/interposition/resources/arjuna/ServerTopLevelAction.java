@@ -418,7 +418,7 @@ public void commit () throws NotPrepared, HeuristicRollback, HeuristicMixed, Heu
 	     * registered synchronizations.
 	     */
 	    
-	    actionStatus = theTransaction.doPhase2Commit(false);
+	    actionStatus = theTransaction.doPhase2Commit();
 	}
 	else
 	{

@@ -269,6 +269,8 @@ public class TransactionImple extends
                             break;
                         case ActionStatus.H_ROLLBACK:
                             throw new HeuristicRollbackException();
+                        case ActionStatus.COMMITTED:
+                        case ActionStatus.COMMITTING:
                         case ActionStatus.H_COMMIT:
                                 throw new HeuristicCommitException();
                         case ActionStatus.H_HAZARD:

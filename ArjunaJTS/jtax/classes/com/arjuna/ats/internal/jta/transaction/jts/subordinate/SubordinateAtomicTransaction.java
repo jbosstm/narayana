@@ -33,6 +33,8 @@ import org.omg.CosTransactions.HeuristicHazard;
 import org.omg.CosTransactions.HeuristicMixed;
 import org.omg.CosTransactions.NoTransaction;
 import org.omg.CosTransactions.WrongTransaction;
+import org.omg.CORBA.INVALID_TRANSACTION;
+import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
@@ -115,7 +117,7 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		try
 		{
 			if (stx != null)
-				return stx.doPhase2Commit(false);
+				return stx.doPhase2Commit();
 		}
 		catch (Exception ex)
 		{
@@ -161,7 +163,15 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		        if (stx != null)
 		            stx.doCommit(true);
 		}
-		catch (Exception ex)
+		catch (final INVALID_TRANSACTION ex)
+		{
+		    return ActionStatus.INVALID;
+		}
+		catch (final TRANSACTION_ROLLEDBACK ex)
+		{
+		    return ActionStatus.ABORTED;
+		}
+		catch (final Exception ex)
 		{
 			return ActionStatus.H_HAZARD;
 		}

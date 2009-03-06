@@ -203,7 +203,7 @@
                     todir="${com.hp.mwlabs.ts.jtax.reports.dest}">
                     <fileset dir="${com.hp.mwlabs.ts.jtax.tests.src}">
                         <include  name="**/LastResource*TestCase.java"/>
-                        <include  name="**/SubordinateTestCase.javaXX"/>
+                        <include  name="**/SubordinateTestCase.java"/>
                     </fileset>
 	        </batchtest>
 	    </junit>
