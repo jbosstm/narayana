@@ -57,11 +57,11 @@ import javax.xml.namespace.QName;
  *
  * block_command ::= "block" command (block_trailing)* "endblock"
  *
- * block_trailing ::= (bind_command)? "next" command
+ * block_trailing ::= (bindings_command)? "next" command
  *
- * bind_command  ::= "bind" (bind_operation)+ "next"
+ * bindings_command  ::= "bindings" (binding_operation)+ "next"
  *
- * bind_operation ::= "set" <alphanum> <num> |
+ * binding_operation ::= "bind" <alphanum> <num> |
  *              "check" <num> <alphanum> |
  *              "output" <num>
  *
@@ -209,6 +209,9 @@ public class XTSServiceTestInterpreter
             throws WebServiceException
     {
         int size = commandList.size();
+        if (size == 0) {
+            throw new WebServiceException("empty command list");
+        }
         String command = commandList.remove(0);
         size--;
 
@@ -589,7 +592,7 @@ public class XTSServiceTestInterpreter
                     subcommandsList.add(subcommands);
                     subcommands = new ArrayList<String>();
                     subcommands.add(command);
-                } else if (command.equals("bind")) {
+                } else if (command.equals("bindings")) {
                     // create new sublist starting with bind
                     subcommandsList.add(subcommands);
                     subcommands = new ArrayList<String>();
@@ -600,6 +603,9 @@ public class XTSServiceTestInterpreter
                         throw new WebServiceException("block commands reached endblock before end of block list");
                     }
                     subcommandsList.add(subcommands);
+                } else {
+                    // just append command to current subcommands list
+                    subcommands.add(command);
                 }
             }
         }
@@ -619,7 +625,7 @@ public class XTSServiceTestInterpreter
                 subresultsList = new ArrayList<String>();
                 bindCommands(subcommands, bindings);
                 processCommands(subcommands, subresultsList);
-            } else if (command.equals("bind")) {
+            } else if (command.equals("bindings")) {
                 bindResults(subcommands, subresultsList, resultsList, bindings);
             }
         }
@@ -739,17 +745,21 @@ public class XTSServiceTestInterpreter
         int size = commands.size();
         int idx;
         for (idx = 0; idx < size; idx++) {
-            String command = commands.get(idx);
-            String[] tokens = command.split(" +");
-            if (tokens[0].equals("set")) {
-                // set var idx : var <== inResults[idx]
-                if ((tokens.length != 3) || !tokens[1].matches("[0-9a-zA-Z]+") || !tokens[2].matches("[0-9]")) {
+            String command = commands.get(idx).trim();
+            if (command.equals("bind")) {
+                // bind var idx : var <== inResults[idx]
+                if (idx + 2 >= size) {
                     throw new WebServiceException("bindResults : invalid set format " + command);
                 }
-                String var = tokens[1];
+                String var = commands.get(idx + 1).trim();
+                String resultIdxString = commands.get(idx + 2).trim();
+                idx += 2;
+                if (!var.matches("[0-9a-zA-Z]+") || !resultIdxString.matches("[0-9]")) {
+                    throw new WebServiceException("bindResults : invalid set format " + command);
+                }
                 Integer resultIdx;
                 try {
-                    resultIdx = Integer.valueOf(tokens[2]);
+                    resultIdx = Integer.valueOf(resultIdxString);
                 } catch (NumberFormatException nfe) {
                     throw new WebServiceException("bindResults : invalid set index " + command);
                 }
@@ -757,15 +767,20 @@ public class XTSServiceTestInterpreter
                     throw new WebServiceException("bindResults : invalid set index " + command);
                 }
                 bindings.put(var, inResults.get(resultIdx));
-            } else  if (tokens[0].equals("check")) {
-                // test value idx : ensure inResults[idx] == value
-                if ((tokens.length != 3) || !tokens[1].matches("[0-9a-zA-Z]+") || !tokens[2].matches("[0-9]")) {
+            } else  if (command.equals("check")) {
+                // check value idx : ensure inResults[idx] == value
+                if (idx + 2 >= size) {
                     throw new WebServiceException("bindResults : invalid check format " + command);
                 }
-                String val = tokens[1];
+                String val = commands.get(idx + 1).trim();
+                String resultIdxString = commands.get(idx + 2).trim();
+                if (!resultIdxString.matches("[0-9]")) {
+                    throw new WebServiceException("bindResults : invalid set format " + command);
+                }
+                idx += 2;
                 Integer resultIdx;
                 try {
-                    resultIdx = Integer.valueOf(tokens[2]);
+                    resultIdx = Integer.valueOf(resultIdxString);
                 } catch (NumberFormatException nfe) {
                     throw new WebServiceException("bindResults : invalid check index " + command);
                 }
@@ -776,14 +791,19 @@ public class XTSServiceTestInterpreter
                 if (!result.equals(val)) {
                     throw new WebServiceException("bindResults : check failed, expecting  " + val + " got " + result);
                 }
-            } else  if (tokens[0].equals("output")) {
+            } else  if (command.equals("output")) {
                 // output idx : outResults add inResults[idx];
-                if ((tokens.length != 2) || !tokens[1].matches("[0-9]")) {
+                if (idx + 1 >= size) {
                     throw new WebServiceException("bindResults : invalid output format " + command);
+                }
+                String resultIdxString = commands.get(idx + 1).trim();
+                idx += 1;
+                if (!resultIdxString.matches("[0-9]")) {
+                    throw new WebServiceException("bindResults : invalid set format " + command);
                 }
                 Integer resultIdx;
                 try {
-                    resultIdx = Integer.valueOf(tokens[1]);
+                    resultIdx = Integer.valueOf(resultIdxString);
                 } catch (NumberFormatException nfe) {
                     throw new WebServiceException("bindResults : invalid output index " + command);
                 }

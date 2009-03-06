@@ -92,6 +92,7 @@
       <mkdir dir="${build.classes.dir}/org/jboss/jbossts/xts/servicetests/generated/wsdl/"/>
       <copy toDir="${build.classes.dir}/org/jboss/jbossts/xts/servicetests/generated/wsdl/" file="${wsdl.dir}/xtsservicetests.wsdl"/>
       <copy toDir="${build.classes.dir}/org/jboss/jbossts/xts/servicetests/service/" file="${dd.dir}/handlers.xml"/>
+      <copy toDir="${build.classes.dir}/org/jboss/jbossts/xts/servicetests/service/subordinate" file="${dd.dir}/subordinatehandlers.xml"/>
      <war warfile="${build.webapps.dir}/xtstest.war" webxml="${web.inf.dir}/web.xml">
          <classes dir="${build.classes.dir}" includes="**/*"/>
          <metainf dir="${build.meta.inf.dir}"/>

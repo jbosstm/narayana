@@ -53,6 +53,12 @@
     </servlet>
 
     <servlet>
+      <servlet-name>XTS Service Test Subordinate Service One</servlet-name>
+      <servlet-class>org.jboss.jbossts.xts.servicetests.service.subordinate.XTSSubordinateServiceTestPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
       <servlet-name>XTS Service Test Web Runner</servlet-name>
       <servlet-class>org.jboss.jbossts.xts.servicetests.webbean.XTSHTTPServiceTestRunner</servlet-class>
       <load-on-startup>1</load-on-startup>
@@ -72,6 +78,11 @@
     <servlet-mapping>
       <servlet-name>XTS Service Test Service Three</servlet-name>
       <url-pattern>/xtsservicetest3</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+      <servlet-name>XTS Service Test Subordinate Service One</servlet-name>
+      <url-pattern>/xtssubordinateservicetest1</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

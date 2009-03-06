@@ -36,6 +36,9 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * Starts a transaction and enlists a single participant with instructions to prepare and commit
  * without error
@@ -60,14 +63,9 @@ public class SingleCoordinatorCompletionParticipantCloseTest extends XTSServiceT
             serviceURL1 = "http://localhost:8080/xtstest/xtsservicetest1";
         }
 
+        addDefaultBinding("service1", serviceURL1);
+
         UserBusinessActivity ba = UserBusinessActivityFactory.userBusinessActivity();
-
-
-        // invoke the service via the client
-
-        XTSServiceTestClient client = new XTSServiceTestClient();
-        CommandsType commands = new CommandsType();
-        ResultsType results = null;
 
         // start the transaction
 
@@ -84,25 +82,27 @@ public class SingleCoordinatorCompletionParticipantCloseTest extends XTSServiceT
             return;
         }
 
-        // invoke the service to create a coordinaator completion participant and script it to complete and close
-        commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
-        commands.getCommandList().add("complete");
-        commands.getCommandList().add("close");
+        List<String> resultsList;
+        String participantId;
+
+        List<String> commands = new ArrayList<String>();
+        List<String> results = new ArrayList<String>();
+
+        commands.add("serve");
+        commands.add("{service1}");
+        commands.add("enlistCoordinatorCompletion");
+        commands.add("complete");
+        commands.add("close");
 
         try {
-            results = client.serve(serviceURL1, commands);
+            processCommands(commands, results);
         } catch (Exception e) {
             exception = e;
         }
 
         if (exception != null) {
-            error("server failure " + exception);
+            error("test failure " + exception);
             return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("enlistCoordinatorCompletion " + s);
         }
 
         // now close the activity
@@ -123,7 +123,7 @@ public class SingleCoordinatorCompletionParticipantCloseTest extends XTSServiceT
             error("commit failure " + exception);
         }
 
-        error("completed");
+        message("completed");
 
         isSuccessful = (exception == null);
     }

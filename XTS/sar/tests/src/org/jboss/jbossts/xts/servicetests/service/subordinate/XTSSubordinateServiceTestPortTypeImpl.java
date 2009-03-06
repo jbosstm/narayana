@@ -19,12 +19,13 @@
  * @author JBoss Inc.
  */
 
-package org.jboss.jbossts.xts.servicetests.service;
+package org.jboss.jbossts.xts.servicetests.service.subordinate;
 
 import org.jboss.jbossts.xts.servicetests.generated.ObjectFactory;
 import org.jboss.jbossts.xts.servicetests.generated.ResultsType;
 import org.jboss.jbossts.xts.servicetests.generated.CommandsType;
 import org.jboss.jbossts.xts.servicetests.generated.XTSServiceTestPortType;
+import org.jboss.jbossts.xts.servicetests.service.XTSServiceTestInterpreter;
 
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
@@ -39,7 +40,10 @@ import java.util.List;
 /**
  * A general purpose web service used to test the WSAT and WSBA services. It implements
  * a single service method which accepts a command list and returns a reesult list. This
- * can be used to register participants and script their behaviour.  
+ * can be used to register participants and script their behaviour. This differs from the
+ * service in the parent package only in one detail It employs a handler which checks for
+ * an existing context, creates a subordinate transaction and installs the subordinate
+ * context. 
  */
 @WebService(targetNamespace = "http://jbossts.jboss.org/xts/servicetests/generated",
         wsdlLocation = "WEB-INF/wsdl/xtsservicetests.wsdl",
@@ -49,11 +53,11 @@ import java.util.List;
         )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 // @EndpointConfig(configName = "Standard WSAddressing Endpoint")
-@HandlerChain(file="handlers.xml")
+@HandlerChain(file="subordinatehandlers.xml")
 @XmlSeeAlso({
     ObjectFactory.class
 })
-public class XTSServiceTestPortTypeImpl implements XTSServiceTestPortType
+public class XTSSubordinateServiceTestPortTypeImpl implements XTSServiceTestPortType
 {
     protected @Resource WebServiceContext context;
 

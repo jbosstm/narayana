@@ -37,6 +37,7 @@ import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Starts a transaction and enlists a single participant with instructions to prepare and commit
@@ -62,14 +63,9 @@ public class SingleParticipantCompletionParticipantCloseTest extends XTSServiceT
             serviceURL1 = "http://localhost:8080/xtstest/xtsservicetest1";
         }
 
+        addDefaultBinding("service1", serviceURL1);
+
         UserBusinessActivity ba = UserBusinessActivityFactory.userBusinessActivity();
-
-
-        // invoke the service via the client
-
-        XTSServiceTestClient client = new XTSServiceTestClient();
-        CommandsType commands = new CommandsType();
-        ResultsType results = null;
 
         // start the transaction
 
@@ -89,49 +85,50 @@ public class SingleParticipantCompletionParticipantCloseTest extends XTSServiceT
         List<String> resultsList;
         String participantId;
 
-        // invoke the service to create a participant completion participant and script it to close
-        commands = new CommandsType();
-        commands.getCommandList().add("enlistParticipantCompletion");
-        commands.getCommandList().add("close");
+        List<String> commands = new ArrayList<String>();
+        List<String> results = new ArrayList<String>();
 
+        commands.add("block");
+        commands.add("serve");
+        commands.add("{service1}");
+        commands.add("enlistParticipantCompletion");
+        commands.add("close");
+        commands.add("bindings");
+        commands.add("bind");
+        commands.add("P1");
+        commands.add("0");
+        commands.add("next");
+        commands.add("serve");
+        commands.add("{service1}");
+        commands.add("completed");
+        commands.add("{P1}");
+        commands.add("endblock");
+
+        /*
+         * this can also be done by calling serve with a single block command
+        commands.add("serve");
+        commands.add("{service1}");
+        commands.add("block");
+        commands.add("enlistParticipantCompletion");
+        commands.add("close");
+        commands.add("bind");
+        commands.add("P1");
+        commands.add("0");
+        commands.add("next");
+        commands.add("completed");
+        commands.add("{P1}");
+        commands.add("endblock");
+        */
+        
         try {
-            results = client.serve(serviceURL1, commands);
+            processCommands(commands, results);
         } catch (Exception e) {
             exception = e;
         }
 
         if (exception != null) {
-            error("server failure " + exception);
+            error("test failure " + exception);
             return;
-        }
-
-        resultsList = results.getResultList();
-        participantId = resultsList.get(0);
-
-        for (String s : resultsList) {
-            error("enlistParticipantCompletion " + s);
-        }
-
-        // invoke the service scripting the participant to send completed now
-        commands = new CommandsType();
-        commands.getCommandList().add("completed");
-        commands.getCommandList().add(participantId);
-
-        try {
-            results = client.serve(serviceURL1, commands);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-        if (exception != null) {
-            error("server failure " + exception);
-            return;
-        }
-
-        resultsList = results.getResultList();
-
-        for (String s : resultsList) {
-            error("completed(" + participantId + ") " + s);
         }
 
         // now close the activity
@@ -152,7 +149,7 @@ public class SingleParticipantCompletionParticipantCloseTest extends XTSServiceT
             error("close failure " + exception);
         }
 
-        error("finished");
+        message("finished");
 
         isSuccessful = (exception == null);
     }

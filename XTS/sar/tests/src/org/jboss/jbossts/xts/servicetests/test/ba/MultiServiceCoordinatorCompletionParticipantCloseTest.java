@@ -36,6 +36,9 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * Starts a transaction and enlists a single participant in each of multiple services with instructions to
  * prepare and commit without error
@@ -72,14 +75,11 @@ public class MultiServiceCoordinatorCompletionParticipantCloseTest extends XTSSe
             serviceURL3 = "http://localhost:8080/xtstest/xtsservicetest3";
         }
 
+        addDefaultBinding("service1", serviceURL1);
+        addDefaultBinding("service2", serviceURL2);
+        addDefaultBinding("service3", serviceURL3);
+
         UserBusinessActivity ba = UserBusinessActivityFactory.userBusinessActivity();
-
-
-        // invoke the service via the client
-
-        XTSServiceTestClient client = new XTSServiceTestClient();
-        CommandsType commands = new CommandsType();
-        ResultsType results = null;
 
         // start the transaction
 
@@ -96,70 +96,41 @@ public class MultiServiceCoordinatorCompletionParticipantCloseTest extends XTSSe
             return;
         }
 
-        // invoke the service to create a coordinaator completion participant and script it to complete and close
-        commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
-        commands.getCommandList().add("complete");
-        commands.getCommandList().add("close");
+        List<String> resultsList;
+        String participantId;
+
+        List<String> commands = new ArrayList<String>();
+        List<String> results = new ArrayList<String>();
+
+        commands.add("block");
+        commands.add("serve");
+        commands.add("{service1}");
+        commands.add("enlistCoordinatorCompletion");
+        commands.add("complete");
+        commands.add("close");
+        commands.add("next");
+        commands.add("serve");
+        commands.add("{service2}");
+        commands.add("enlistCoordinatorCompletion");
+        commands.add("complete");
+        commands.add("close");
+        commands.add("next");
+        commands.add("serve");
+        commands.add("{service3}");
+        commands.add("enlistCoordinatorCompletion");
+        commands.add("complete");
+        commands.add("close");
+        commands.add("endblock");
 
         try {
-            results = client.serve(serviceURL1, commands);
+            processCommands(commands, results);
         } catch (Exception e) {
             exception = e;
         }
 
         if (exception != null) {
-            error("server failure " + exception);
+            error("test failure " + exception);
             return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("enlistCoordinatorCompletion " + s);
-        }
-
-        // invoke the second service to create a coordinator completion participant and script it to complete
-        // and close
-        commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
-        commands.getCommandList().add("complete");
-        commands.getCommandList().add("close");
-
-        try {
-            results = client.serve(serviceURL2, commands);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-        if (exception != null) {
-            error("server failure " + exception);
-            return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("enlistCoordinatorCompletion " + s);
-        }
-
-        // invoke the third service to create a coordinaator completion participant and script it to
-        // complete and close
-
-        commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
-        commands.getCommandList().add("complete");
-        commands.getCommandList().add("close");
-
-        try {
-            results = client.serve(serviceURL3, commands);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-        if (exception != null) {
-            error("server failure " + exception);
-            return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("enlistCoordinatorCompletion " + s);
         }
 
         // now close the activity

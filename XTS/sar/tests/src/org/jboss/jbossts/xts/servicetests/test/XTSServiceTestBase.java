@@ -29,4 +29,9 @@ public class XTSServiceTestBase extends XTSServiceTestInterpreter
     {
         System.err.println(this.getClass().getName() + " : " + message);
     }
+
+    public void message(String message)
+    {
+        System.out.println(this.getClass().getName() + " : " + message);
+    }
 }

@@ -26,8 +26,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee">
     <handler-chain>
 	<handler>
-		<handler-name>WS TX Context Handler</handler-name>
-		<handler-class>com.arjuna.mw.wst11.service.JaxWSHeaderContextProcessor</handler-class>
+		<handler-name>WS TX Subordinate Context Handler</handler-name>
+		<handler-class>com.arjuna.mw.wst11.service.JaxWSSubordinateHeaderContextProcessor</handler-class>
 	</handler>
     </handler-chain>
 </handler-chains>

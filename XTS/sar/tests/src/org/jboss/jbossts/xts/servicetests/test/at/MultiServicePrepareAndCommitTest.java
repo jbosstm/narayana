@@ -34,6 +34,9 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * Starts a transaction and enlist a single participants for each of several web services with instructions to
  * prepare and commit without error
@@ -70,14 +73,12 @@ public class MultiServicePrepareAndCommitTest extends XTSServiceTestBase impleme
             serviceURL3 = "http://localhost:8080/xtstest/xtsservicetest3";
         }
 
+        addDefaultBinding("service1", serviceURL1);
+        addDefaultBinding("service2", serviceURL2);
+        addDefaultBinding("service3", serviceURL3);
+
         UserTransaction tx = UserTransactionFactory.userTransaction();
 
-
-        // invoke the service via the client
-
-        XTSServiceTestClient client = new XTSServiceTestClient();
-        CommandsType commands = new CommandsType();
-        ResultsType results = null;
 
         // start the transaction
 
@@ -95,56 +96,38 @@ public class MultiServicePrepareAndCommitTest extends XTSServiceTestBase impleme
         }
 
         // invoke the service and tell it to prepare and  commit
-        commands = new CommandsType();
-        commands.getCommandList().add("enlistDurable");
-        commands.getCommandList().add("prepare");
-        commands.getCommandList().add("commit");
+        List<String> commands = new ArrayList<String>();
+        List<String> results = new ArrayList<String>();
 
-        // call the same web service multiple times -- it's ok to use the samew commands list
+        commands.add("block");
+        commands.add("serve");
+        commands.add("{service1}");
+        commands.add("enlistDurable");
+        commands.add("prepare");
+        commands.add("commit");
+        commands.add("next");
+        commands.add("serve");
+        commands.add("{service2}");
+        commands.add("enlistDurable");
+        commands.add("prepare");
+        commands.add("commit");
+        commands.add("next");
+        commands.add("serve");
+        commands.add("{service3}");
+        commands.add("enlistDurable");
+        commands.add("prepare");
+        commands.add("commit");
+        commands.add("endblock");
 
         try {
-            results = client.serve(serviceURL1, commands);
+            processCommands(commands, results);
         } catch (Exception e) {
             exception = e;
         }
 
         if (exception != null) {
-            error("server failure " + exception);
+            error("test failure " + exception);
             return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("enlistDurable " + s);
-        }
-
-        try {
-            results = client.serve(serviceURL2, commands);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-        if (exception != null) {
-            error("server failure " + exception);
-            return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("enlistDurable " + s);
-        }
-
-        try {
-            results = client.serve(serviceURL3, commands);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-        if (exception != null) {
-            error("server failure " + exception);
-            return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("enlistDurable " + s);
         }
 
         // now commit the transaction
@@ -165,7 +148,7 @@ public class MultiServicePrepareAndCommitTest extends XTSServiceTestBase impleme
             error("commit failure " + exception);
         }
 
-        error("completed");
+        message("completed");
 
         isSuccessful = (exception == null);
     }

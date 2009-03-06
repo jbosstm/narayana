@@ -37,6 +37,7 @@ import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Starts a transaction and enlists  multipleparticipants with instructions to prepare and commit
@@ -62,17 +63,9 @@ public class MultiParticipantCoordinatorCompletionParticipantCloseAndExitTest ex
             serviceURL1 = "http://localhost:8080/xtstest/xtsservicetest1";
         }
 
+        addDefaultBinding("service1", serviceURL1);
+
         UserBusinessActivity ba = UserBusinessActivityFactory.userBusinessActivity();
-
-
-        // invoke the service via the client
-
-        XTSServiceTestClient client = new XTSServiceTestClient();
-        CommandsType commands = new CommandsType();
-        ResultsType results = null;
-        List<String> resultsList;
-        String participantId1;
-
 
         // start the transaction
 
@@ -89,91 +82,48 @@ public class MultiParticipantCoordinatorCompletionParticipantCloseAndExitTest ex
             return;
         }
 
-        // invoke the service to create a coordinaator completion participant
-        commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
+        List<String> resultsList;
+        String participantId;
+
+        List<String> commands = new ArrayList<String>();
+        List<String> results = new ArrayList<String>();
+
+        commands.add("block");
+        commands.add("serve");
+        commands.add("{service1}");
+        commands.add("enlistCoordinatorCompletion");
+        commands.add("bindings");
+        commands.add("bind");
+        commands.add("P1");
+        commands.add("0");
+        commands.add("next");
+        commands.add("serve");
+        commands.add("{service1}");
+        commands.add("enlistCoordinatorCompletion");
+        commands.add("complete");
+        commands.add("close");
+        commands.add("next");
+        commands.add("serve");
+        commands.add("{service1}");
+        commands.add("enlistCoordinatorCompletion");
+        commands.add("complete");
+        commands.add("close");
+        commands.add("next");
+        commands.add("serve");
+        commands.add("{service1}");
+        commands.add("exit");
+        commands.add("{P1}");
+        commands.add("endblock");
 
         try {
-            results = client.serve(serviceURL1, commands);
+            processCommands(commands, results);
         } catch (Exception e) {
             exception = e;
         }
 
         if (exception != null) {
-            error("server failure " + exception);
+            error("test failure " + exception);
             return;
-        }
-
-        resultsList = results.getResultList();
-        participantId1 = resultsList.get(0);
-
-        for (String s : resultsList) {
-            error("enlistCoordinatorCompletion " + s);
-        }
-
-        // invoke the service again to create a coordinaator completion participant and script it to complete
-        // and close
-        commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
-        commands.getCommandList().add("complete");
-        commands.getCommandList().add("close");
-
-        try {
-            results = client.serve(serviceURL1, commands);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-        if (exception != null) {
-            error("server failure " + exception);
-            return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("enlistCoordinatorCompletion " + s);
-        }
-
-        // invoke the service a third time to create a coordinaator completion participant and script it to
-        // complete and close
-
-        commands = new CommandsType();
-        commands.getCommandList().add("enlistCoordinatorCompletion");
-        commands.getCommandList().add("complete");
-        commands.getCommandList().add("close");
-
-        try {
-            results = client.serve(serviceURL1, commands);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-        if (exception != null) {
-            error("server failure " + exception);
-            return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("enlistCoordinatorCompletion " + s);
-        }
-
-        // invoke the service scripting the first participant to exit
-        commands = new CommandsType();
-        commands.getCommandList().add("exit");
-        commands.getCommandList().add(participantId1);
-
-        try {
-            results = client.serve(serviceURL1, commands);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-        if (exception != null) {
-            error("server failure " + exception);
-            return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("exit " + participantId1 + " " + s);
         }
 
         // now close the activity
@@ -194,7 +144,7 @@ public class MultiParticipantCoordinatorCompletionParticipantCloseAndExitTest ex
             error("commit failure " + exception);
         }
 
-        error("completed");
+        message("completed");
 
         isSuccessful = (exception == null);
     }

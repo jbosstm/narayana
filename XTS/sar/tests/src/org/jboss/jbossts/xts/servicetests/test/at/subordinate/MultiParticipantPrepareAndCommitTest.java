@@ -35,6 +35,7 @@ import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Starts a transaction, enlists a participant with a web service with instructions to prepare and commit
@@ -52,7 +53,7 @@ public class MultiParticipantPrepareAndCommitTest extends XTSServiceTestBase imp
         }
 
         String serviceURL1;
-        String serviceURL2;
+        String subserviceURL1;
 
         serviceURL1 = System.getProperty(XTSServiceTest.SERVICE_URL1_KEY);
 
@@ -60,21 +61,16 @@ public class MultiParticipantPrepareAndCommitTest extends XTSServiceTestBase imp
             serviceURL1 = "http://localhost:8080/xtstest/xtsservicetest1";
         }
 
-        serviceURL2 = System.getProperty(XTSServiceTest.SERVICE_URL2_KEY);
+        subserviceURL1 = System.getProperty(XTSServiceTest.SUBORDINATE_SERVICE_URL1_KEY);
 
-        if (serviceURL2 == null) {
-            serviceURL2 = "http://localhost:8080/xtstest/xtsservicetest2";
+        if (subserviceURL1 == null) {
+            subserviceURL1 = "http://localhost:8080/xtstest/xtssubordinateservicetest1";
         }
 
+        addDefaultBinding("service1", serviceURL1);
+        addDefaultBinding("subservice1", subserviceURL1);
+
         UserTransaction tx = UserTransactionFactory.userTransaction();
-
-        // invoke the service via the client
-
-        XTSServiceTestClient client = new XTSServiceTestClient();
-        CommandsType commands = new CommandsType();
-        ResultsType results = null;
-
-        // wait a while so the service has time to start
 
         // start the transaction
 
@@ -91,115 +87,38 @@ public class MultiParticipantPrepareAndCommitTest extends XTSServiceTestBase imp
             return;
         }
 
-        // invoke the service and tell it to create a subtransaction
+        List<String> commands = new ArrayList<String>();
+        List<String> results = new ArrayList<String>();
 
-        commands = new CommandsType();
-        commands.getCommandList().add("subtransaction");
+        commands.add("block");
+        commands.add("serve");
+        commands.add("{service1}");
+        commands.add("enlistDurable");
+        commands.add("prepare");
+        commands.add("commit");
+        commands.add("next");
+        commands.add("serve");
+        commands.add("{subservice1}");
+        commands.add("block");
+        commands.add("enlistDurable");
+        commands.add("prepare");
+        commands.add("commit");
+        commands.add("next");
+        commands.add("enlistDurable");
+        commands.add("prepare");
+        commands.add("commit");
+        commands.add("endblock");
+        commands.add("endblock");
 
         try {
-            results = client.serve(serviceURL1, commands);
+            processCommands(commands, results);
         } catch (Exception e) {
             exception = e;
         }
 
         if (exception != null) {
-            error("subtransaction failure " + exception);
+            error("test failure " + exception);
             return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("subtransaction " + s);
-        }
-
-        List<String> resultList = results.getResultList();
-
-        String subTxId = resultList.get(0);
-
-        // enlist a durable participant in the original transaction and tell it to prepare and  commit
-
-        commands = new CommandsType();
-        commands.getCommandList().add("enlistDurable");
-        commands.getCommandList().add("prepare");
-        commands.getCommandList().add("commit");
-
-        // call the web service multiple times
-
-        try {
-            results = client.serve(serviceURL1, commands);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-        if (exception != null) {
-            error("server failure " + exception);
-            return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("enlistDurable " + s);
-        }
-
-        try {
-            results = client.serve(serviceURL1, commands);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-        // enlist a durable participant in the subtransaction and tell it to prepare and  commit
-
-        commands = new CommandsType();
-        commands.getCommandList().add("subtransactionserve");
-        commands.getCommandList().add(subTxId);
-        commands.getCommandList().add(serviceURL2);
-        commands.getCommandList().add("enlistDurable");
-        commands.getCommandList().add("prepare");
-        commands.getCommandList().add("commit");
-
-        // call the same web service multiple times -- it's ok to use the same commands list
-
-        try {
-            results = client.serve(serviceURL1, commands);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-        if (exception != null) {
-            error("subtransactioncommands failure " + exception);
-            return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("subtransactioncommands " + s);
-        }
-
-        try {
-            results = client.serve(serviceURL1, commands);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-        if (exception != null) {
-            error("subtransactioncommands failure " + exception);
-            return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("subtransactioncommands " + s);
-        }
-
-        try {
-            results = client.serve(serviceURL1, commands);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-        if (exception != null) {
-            error("subtransactioncommands failure " + exception);
-            return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("subtransactioncommands " + s);
         }
 
         // now commit the transaction which should also commit the subtransaction
@@ -220,7 +139,7 @@ public class MultiParticipantPrepareAndCommitTest extends XTSServiceTestBase imp
             error("commit failure " + exception);
         }
 
-        error("completed");
+        message("completed");
 
         isSuccessful = (exception == null);
     }

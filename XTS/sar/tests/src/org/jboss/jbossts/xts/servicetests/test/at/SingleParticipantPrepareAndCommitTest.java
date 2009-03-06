@@ -34,6 +34,9 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.UnknownTransactionException;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * Starts a transaction and enlists a single participant with instructions to prepare and commit
  * without error
@@ -58,14 +61,9 @@ public class SingleParticipantPrepareAndCommitTest extends XTSServiceTestBase im
             serviceURL1 = "http://localhost:8080/xtstest/xtsservicetest1";
         }
 
+        addDefaultBinding("service1", serviceURL1);
+
         UserTransaction tx = UserTransactionFactory.userTransaction();
-
-
-        // invoke the service via the client
-
-        XTSServiceTestClient client = new XTSServiceTestClient();
-        CommandsType commands = new CommandsType();
-        ResultsType results = null;
 
         // start the transaction
 
@@ -82,25 +80,24 @@ public class SingleParticipantPrepareAndCommitTest extends XTSServiceTestBase im
             return;
         }
 
-        // invoke the service and tell it to prepare and  commit
-        commands = new CommandsType();
-        commands.getCommandList().add("enlistDurable");
-        commands.getCommandList().add("prepare");
-        commands.getCommandList().add("commit");
+        List<String> commands = new ArrayList<String>();
+        List<String> results = new ArrayList<String>();
+
+        commands.add("serve");
+        commands.add("{service1}");
+        commands.add("enlistDurable");
+        commands.add("prepare");
+        commands.add("commit");
 
         try {
-            results = client.serve(serviceURL1, commands);
+            processCommands(commands, results);
         } catch (Exception e) {
             exception = e;
         }
 
         if (exception != null) {
-            error("server failure " + exception);
+            error("test failure " + exception);
             return;
-        }
-
-        for (String s : results.getResultList()) {
-            error("enlistDurable " + s);
         }
 
         // now commit the transaction
@@ -121,7 +118,7 @@ public class SingleParticipantPrepareAndCommitTest extends XTSServiceTestBase im
             error("commit failure " + exception);
         }
 
-        error("completed");
+        message("completed");
 
         isSuccessful = (exception == null);
     }
