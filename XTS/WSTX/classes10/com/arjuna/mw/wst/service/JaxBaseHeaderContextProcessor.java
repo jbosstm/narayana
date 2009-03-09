@@ -28,6 +28,7 @@ import com.arjuna.mw.wst.common.CoordinationContextHelper;
 import com.arjuna.mw.wst.common.SOAPUtil;
 import com.arjuna.mw.wst.*;
 import com.arjuna.mw.wstx.logging.wstxLogger;
+import com.arjuna.mwlabs.wst.at.SubordinateImporter;
 
 import javax.xml.soap.*;
 import java.util.Iterator;
@@ -74,16 +75,12 @@ class JaxBaseHeaderContextProcessor
                     final String coordinationType = cc.getCoordinationType().getValue() ;
                     if (AtomicTransactionConstants.WSAT_PROTOCOL.equals(coordinationType))
                     {
-                        final TxContext txContext = new com.arjuna.mwlabs.wst.at.context.TxContextImple(cc) ;
-                        TransactionManagerFactory.transactionManager().resume(txContext) ;
                         clearMustUnderstand(soapHeader, soapHeaderElement) ;
+                        TxContext txContext = new com.arjuna.mwlabs.wst.at.context.TxContextImple(cc) ;
                         if (installSubordinateTx) {
-                            // since we are now in an AT Tx  we just need to start a subordinate one using the
-                            // UserSubordinateTransaction instance. the begin call will register the
-                            // Tx on the thread
-                            UserTransaction ust = UserTransactionFactory.userSubordinateTransaction();
-                            ust.begin();
+                            txContext = SubordinateImporter.importContext(cc);
                         }
+                        TransactionManagerFactory.transactionManager().resume(txContext) ;
                     }
                     else if (BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME.equals(coordinationType))
                     {

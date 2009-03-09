@@ -2,7 +2,7 @@
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * See the copyritypeght.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -188,6 +188,11 @@ public class SubordinateCoordinator extends ACCoordinator
         if (status != ActionStatus.COMMITTING) {
             SubordinateCoordinator.removeRecoveredCoordinator(this);
         }
+        
+        // run any callback associated with this transaction
+
+        runCallback(get_uid().stringForm());
+
 	}
 
     /**
@@ -232,6 +237,10 @@ public class SubordinateCoordinator extends ACCoordinator
 
         // iemove the coordinator from the recovered coordinatros table
         SubordinateCoordinator.removeRecoveredCoordinator(this);
+
+        // run any callback associated with this transaction
+
+        runCallback(get_uid().stringForm());
         
         this.finalStatus = status;
 	}
@@ -317,4 +326,43 @@ public class SubordinateCoordinator extends ACCoordinator
     private boolean activated;
 
     private static final HashMap<String, SubordinateCoordinator> recoveredCoordinators = new HashMap<String, SubordinateCoordinator>();
+
+    /**
+     * we need to remove the association between parent and subordinate context at completion
+     * of commit or rollback -- we use a callback mechanism keyed by transaction id to achieve this
+     */
+
+    private static final HashMap<String, SubordinateCallback> callbacks = new HashMap<String, SubordinateCallback>();
+
+    /**
+     * class implemented by any code which wishes to register a callabck
+     */
+    public static abstract class SubordinateCallback
+    {
+        private SubordinateCallback next; // in case multiple callbacks are registered
+
+        public abstract void run();
+    }
+
+    /**
+     * register a callback to be called when a subordinate transaction with a specific key executes
+     * a commit or rollback. the callback will not be called in the case of a crash
+     * @param key
+     * @param callback
+     */
+    public static void addCallback(String key, SubordinateCallback callback)
+    {
+        SubordinateCallback old = callbacks.put(key, callback);
+        // chian any existign callback so we ensure to call them all
+        callback.next = old;
+    }
+
+    private void runCallback(String key)
+    {
+        SubordinateCallback callback = callbacks.get(key);
+        while (callback != null) {
+            callback.run();
+            callback = callback.next;
+        }
+    }
 }

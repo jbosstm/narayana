@@ -29,10 +29,16 @@ import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
+import com.arjuna.mwlabs.wst11.at.ContextFactoryImple;
+import com.arjuna.mwlabs.wst11.at.SubordinateImporter;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
+import com.arjuna.wsc11.ContextFactoryMapper;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 
 import javax.xml.soap.*;
 import java.util.Iterator;
+import java.util.HashMap;
 
 /**
  * Common base class for classes used to perform
@@ -76,16 +82,12 @@ class JaxBaseHeaderContextProcessor
                     final String coordinationType = cc.getCoordinationType();
                     if (AtomicTransactionConstants.WSAT_PROTOCOL.equals(coordinationType))
                     {
-                        final TxContext txContext = new TxContextImple(cc) ;
-                        TransactionManagerFactory.transactionManager().resume(txContext) ;
                         clearMustUnderstand(soapHeader, soapHeaderElement) ;
+                        TxContext txContext = new TxContextImple(cc) ;
                         if (installSubordinateTx) {
-                            // since we are now in an AT Tx  we just need to start a subordinate one using the
-                            // UserSubordinateTransaction instance. the begin call will register the
-                            // Tx on the thread
-                            UserTransaction ust = UserTransactionFactory.userSubordinateTransaction();
-                            ust.begin();
+                            txContext = SubordinateImporter.importContext(cc);
                         }
+                        TransactionManagerFactory.transactionManager().resume(txContext);
                     }
                     else if (BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME.equals(coordinationType))
                     {
