@@ -99,15 +99,15 @@ public class MultiParticipantPrepareAndCommitTest extends XTSServiceTestBase imp
         commands.add("next");
         commands.add("serve");
         commands.add("{subservice1}");
-        commands.add("block");
         commands.add("enlistDurable");
         commands.add("prepare");
         commands.add("commit");
         commands.add("next");
+        commands.add("serve");
+        commands.add("{subservice1}");
         commands.add("enlistDurable");
         commands.add("prepare");
         commands.add("commit");
-        commands.add("endblock");
         commands.add("endblock");
 
         try {
