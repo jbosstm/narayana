@@ -64,6 +64,7 @@
             com/arjuna/mw/wst/client/JaxRPCHeaderContextProcessor.class
             com/arjuna/mw/wst/client/JaxBaseHeaderContextProcessor.class
             com/arjuna/mw/wst/service/JaxWSHeaderContextProcessor.class
+            com/arjuna/mw/wst/service/JaxWSSubordinateHeaderContextProcessor.class
             com/arjuna/mw/wst/service/JaxRPCHeaderContextProcessor.class
             com/arjuna/mw/wst/service/JaxBaseHeaderContextProcessor.class"/>
     <property name="wstx11.api.classes" value="com/arjuna/mw/wst11/UserTransaction.class
@@ -74,6 +75,7 @@
             com/arjuna/mw/wst11/client/JaxWSHeaderContextProcessor.class
             com/arjuna/mw/wst11/client/JaxBaseHeaderContextProcessor.class
             com/arjuna/mw/wst11/service/JaxWSHeaderContextProcessor.class
+            com/arjuna/mw/wst11/service/JaxWSSubordinateHeaderContextProcessor.class
             com/arjuna/mw/wst11/service/JaxBaseHeaderContextProcessor.class"/>
 
 	<property name="com.arjuna.mwlabs.wstx.tests.src" value="tests/classes"/>
