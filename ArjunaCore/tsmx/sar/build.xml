@@ -82,7 +82,7 @@
                 <attribute name="Class-Path" value="tsmx-tools.jar tools/tsmx-objectstorebrowser.jar"/>
             </manifest>
             <fileset dir="${resources.dir}">
-                <include name="META-INF/jboss-service.xml"/>
+                <include name="META-INF/jboss-beans.xml"/>
             </fileset>
             <fileset dir="${build.dir}/apps" includes="embedded-tools.jar"/>
             <fileset dir="${jboss.ts.tools}/tools">
