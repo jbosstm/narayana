@@ -349,8 +349,8 @@ BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
      identifier:String = engine.getId()
 IF NOT recovered
-DO debug("close on recovered coordinator completion participant engine " + identifier),
-   traceln("log", "close on recovered coordinator completion participant engine " + identifier)
+DO debug("complete on recovered coordinator completion participant engine " + identifier),
+   traceln("log", "complete on recovered coordinator completion participant engine " + identifier)
 ENDRULE
 
 #######################################################################

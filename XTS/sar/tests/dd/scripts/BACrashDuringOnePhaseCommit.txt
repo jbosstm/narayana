@@ -456,14 +456,14 @@ DO traceln("log", "received getstatus message for unknown participant completion
 ENDRULE
 
 #######################################################################
-# This rule is triggered after a coordinator completion coordinator
+# This rule is triggered when a coordinator completion coordinator
 # processor (CoordinatorCompletionCoordinatorProcessorImpl) sends
 # an invalidstate fault for an unknown participant. It traces the call.
 
 RULE trace send invalidstate for coordinator completion participant
 CLASS com.arjuna.wst11.messaging.CoordinatorCompletionCoordinatorProcessorImpl
 METHOD getStatus
-AFTER INVOKE sendSoapFault
+AT INVOKE sendSoapFault
 BIND identifier:String = $3.getInstanceIdentifier().getInstanceIdentifier()
 IF TRUE
 DO traceln("log", "sent invalidstate fault for coordinator completion participant engine " + identifier),
@@ -471,14 +471,14 @@ DO traceln("log", "sent invalidstate fault for coordinator completion participan
 ENDRULE
 
 #######################################################################
-# This rule is triggered after a participant completion coordinator
-# processor (ParticipantCompletionCoordinatorProcessorImpl) receives
+# This rule is triggered when a participant completion coordinator
+# processor (ParticipantCompletionCoordinatorProcessorImpl) sends
 # an invalidstate fault for an unknown participant. It traces the call.
 
 RULE trace send invalidstate for participant completion participant
 CLASS com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl
 METHOD getStatus
-AFTER INVOKE sendSoapFault
+AT INVOKE sendSoapFault
 BIND identifier:String = $3.getInstanceIdentifier().getInstanceIdentifier()
 IF TRUE
 DO traceln("log", "sent invalidstate fault for participant completion participant engine " + identifier),
@@ -666,7 +666,8 @@ AFTER INVOKE soapFault
 BIND identifier:String =  $3.getInstanceIdentifier().getInstanceIdentifier()
 IF TRUE
 DO debug("!!! killing JVM !!! " + identifier),
-   traceln("log", "JVM exit")
+   traceln("log", "JVM exit"),
+   killJVM()
 ENDRULE
 
 #######################################################################
@@ -681,6 +682,7 @@ AFTER INVOKE soapFault
 BIND identifier:String =  $3.getInstanceIdentifier().getInstanceIdentifier()
 IF TRUE
 DO debug("!!! killing JVM !!! " + identifier),
-   traceln("log", "JVM exit")
+   traceln("log", "JVM exit"),
+   killJVM()
 ENDRULE
 

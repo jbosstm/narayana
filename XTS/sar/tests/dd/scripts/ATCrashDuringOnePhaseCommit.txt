@@ -439,5 +439,6 @@ AFTER INVOKE forget
 BIND NOTHING
 IF TRUE
 DO debug("!!!killing JVM!!!"),
-   traceln("log", "JVM exit")
+   traceln("log", "JVM exit"),
+   killJVM()
 ENDRULE
