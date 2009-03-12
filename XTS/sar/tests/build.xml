@@ -59,6 +59,8 @@
   <property name="jboss.client.lib.dir" value="${jbossas.home}/client"/>
   <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
             jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-jaxws.jar jboss-logging-spi.jar"/>
+    <property name="jboss.common.lib.dir" location="${jbossas.home}/common/lib"/>
+    <property name="jboss.common.lib.jars" value="servlet-api.jar"/>
 
   <target name="init">
     <delete dir="${build.dir}"/>
@@ -82,6 +84,7 @@
         <classpath>
             <fileset dir="${xts.lib.dir}" includes="${xts.lib.jars}"/>
             <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
+            <fileset dir="${jboss.common.lib.dir}" includes="${jboss.common.lib.jars}"/>
         </classpath>
     </javac>
   </target>
