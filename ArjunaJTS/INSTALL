@@ -1,12 +1,12 @@
 
-JBossTS 4.6.GA is designed for use standalone or with JBossAS 5.0.0.GA.
+JBossTS 4.6.GA is designed for use standalone or with JBossAS 5.1.0
 It is not suitable for use with earlier versions of JBossAS.
 
 The installation procedure has changed from earlier releases due to the move from
-a JMX configuration style to the POJO microcontainer used by AS 5.0. Upgrading users
-should take care to read the steps below carefully.
+a JMX configuration style to the POJO microcontainer used by AS 5.x, packaging and config files changes.
+Upgrading users should take care to read the steps below carefully.
 
-Installing JBossTS 4.6.GA JTA into JBossAS 5.0.0.GA
+Installing JBossTS 4.6.GA JTA into JBossAS 5.1.0
 ------------------------------------------------------------
 
 The application server ships with a earlier release of JBossTS JTA as its default transaction manager.
@@ -17,14 +17,16 @@ versions from JBossTS lib
 
  - Replace JBossAS  common/lib/jbossts-common.jar with the newer version from JBossTS lib/ext/
 
- - Replace JBossAS  server/xxx/conf/jbossjta-properties.xml with  JBossTS  etc/jbossts-properties.xml
+ - Remove JBossAS  server/xxx/conf/jbossjta-properties.xml if present
+ 
+ - Copy JBossTS  etc/jbossts-properties.xml to JBossAS server/xxx/conf
 
 
 Installing JBossTS 4.6.GA JTS into JBossAS 5.0.0.GA
 ------------------------------------------------------------
 
 The JTS binaries are now bundled with JBossAS. To change the default JTA to JTS in JBossAS,
-follow the instructions in the app server's docs/examples/jts/README.txt file.
+follow the instructions in the app server's docs/examples/transactions/README.txt file.
 
 To upgrade the version of JTS bundled with JBossAS to the one from this JBossTS release,
 locate and replace jbossjts.jar, jbossjts-integration.jar, jbossjts-jacorb.jar,
@@ -38,10 +40,13 @@ copies of the files in the AS tree that need replacing.
                          Web Services Transactions
                          -------------------------
 
-Deployment
+The Web Services Transactions component (XTS) binary now ships within JBossAS. It is recommended to install the
+bundled version by copying $JBOSS_HOME/docs/examples/transactions/jbossxts.sar to $JBOSS_HOME/server/<xxx>/deploy/
+
+Build and deploy from source
 ----------
 
-In JBossAS 5.0 XTS is deployed as a service archive (sar) which can be
+In JBossAS 5.x XTS is deployed as a service archive (sar) which can be
 deployed with either the JTA or JTS Transaction Service
 implementation. This sar implements both the participant and the
 coordinator services required to support web service transactions. By
