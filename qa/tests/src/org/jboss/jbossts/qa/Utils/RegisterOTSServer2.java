@@ -20,7 +20,6 @@
  */
 package org.jboss.jbossts.qa.Utils;
 
-import org.jboss.dtf.testframework.unittest.Test;
 import org.omg.CosTransactions.TransactionFactory;
 import org.omg.CosTransactions.TransactionFactoryHelper;
 
