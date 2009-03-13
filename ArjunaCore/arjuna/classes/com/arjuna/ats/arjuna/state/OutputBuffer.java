@@ -232,9 +232,6 @@ public final synchronized void packBytes (byte[] b) throws IOException
 	if (!_valid)
 	    throw new IOException(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.state.OutputBuffer_2"));
 
-	int index = -1;
-	
-	packInt(index);
 	packInt(b.length);
 
 	if (b.length > 0)

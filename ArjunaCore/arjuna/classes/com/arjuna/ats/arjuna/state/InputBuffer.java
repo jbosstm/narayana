@@ -222,7 +222,6 @@ public final synchronized byte[] unpackBytes () throws IOException
 	if (!_valid)
 	    throw new IOException(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.state.InputBuffer_2"));
 
-	int index = unpackInt();
 	int size = unpackInt();
 	byte b[] = new byte[size];
 

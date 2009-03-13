@@ -76,9 +76,10 @@ public class BasicObject extends StateManager
 
     public int get ()
     {
-	activate();
-	
-	return state;
+	if (activate())
+	    return state;
+	else
+	    return -1;
     }
 
     public String type ()
@@ -86,11 +87,22 @@ public class BasicObject extends StateManager
 	return "StateManager/BasicObject";
     }
     
+    public boolean deactivate ()
+    {
+        return super.deactivate();
+    }
+    
+    public boolean activate ()
+    {
+        return super.activate();
+    }
+    
     public boolean save_state (OutputObjectState os, int type)
     {
 	try
 	{
 	    os.packInt(state);
+	    os.packBytes(moreState);
 	}
 	catch (Exception ex)
 	{
@@ -104,7 +116,19 @@ public class BasicObject extends StateManager
     {
 	try
 	{
+	    state = -1;
+	    moreState = null;
+	    
 	    state = os.unpackInt();
+	    moreState = os.unpackBytes();
+	    
+	    if ((moreState[0] == 'a') && (moreState[1] == 'b')
+	            && (moreState[2] == 'c') && (moreState[3] == 'd'))
+	    {
+	        // ok
+	    }
+	    else
+	        return false;
 	}
 	catch (Exception ex)
 	{
@@ -115,5 +139,5 @@ public class BasicObject extends StateManager
     }
     
     private int state;
-    
+    private byte[] moreState = {'a', 'b', 'c', 'd'};
 }

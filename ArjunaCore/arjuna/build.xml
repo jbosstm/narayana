@@ -461,6 +461,10 @@
         	        	                todir="${com.hp.mwlabs.ts.arjuna.reports.dest}">
 				<fileset dir="${com.hp.mwlabs.ts.arjuna.tests.src}" includes="**/TxControlUnitTest.java"/>
         	</batchtest>
+        	<batchtest haltonerror="yes" haltonfailure="yes" fork="yes"
+        	        	        	                todir="${com.hp.mwlabs.ts.arjuna.reports.dest}">
+        					<fileset dir="${com.hp.mwlabs.ts.arjuna.tests.src}" includes="**/PersistenceUnitTest.java"/>
+        	</batchtest>
         </junit>
     </target>
 
