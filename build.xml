@@ -42,6 +42,8 @@
 
    <available property="jts.present" file="${jts.dir}" type="dir"/>
 
+   <property name="com.hp.mw.sourceid" value="unknown"/>
+    
    <property name="junit.jar" location="ext/junit.jar"/>
    <macrodef name="runant">
       <attribute name="target"/>
@@ -51,6 +53,7 @@
             fork="true" failonerror="true">
             <sysproperty key="ant.home" value="${ant.home}"/>
             <sysproperty key="ant.library.dir" value="${ant.library.dir}"/>
+            <sysproperty  key="com.hp.mw.sourceid" value="${com.hp.mw.sourceid}"/>
             <arg value="-cp"/>
             <arg value="${junit.jar}"/>
             <arg value="-f"/>
@@ -240,7 +243,6 @@ Targets supported in this build.xml file
         JTA or JTS. The actual content of the config file is not affected. -->
       <property name="com.hp.mw.ts.product.propertyfile" value="jbossts-properties.xml"/>
 
-      <property name="com.hp.mw.sourceid" value="unknown"/>
       <property name="com.hp.mw.version" value="unknown"/>
 
       <property name="com.hp.mw.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>

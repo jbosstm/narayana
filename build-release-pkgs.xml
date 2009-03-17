@@ -66,15 +66,14 @@
     <property name="mvn.url" value="dav:https://snapshots.jboss.org/maven2"/>
 -->
 
-
     <!-- a working direrctory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
     <property name="workdir" location="/tmp/packaged_builds"/>
     <!-- where to get the source -->
     <property name="svnbase" value="https://svn.jboss.org/repos/labs/labs/jbosstm/tags"/>
     <!-- The tag as it appears under svnbase -->
-    <property name="tag" value="JBOSSTS_4_6_0_CR1"/>
+    <property name="tag" value="JBOSSTS_4_6_0_GA"/>
     <!-- The file name base for the user downloadable files. Derive it from the tag -->
-    <property name="filename" value="4.6.0.CR1"/>
+    <property name="filename" value="4.6.0.GA"/>
     <!-- the location the JBossTS web site content svn is checked out to -->
     <property name="cmsdir" value="/home/jhalli/IdeaProjects/jboss/jbosstm-cms/"/>
     <!-- the location the maven repository svn is checked out to.
@@ -114,7 +113,9 @@
         <delete dir="${workdir}/build"/>
         <mkdir dir="${workdir}/build"/>
         <unzip src="${workdir}/jbossts-jta-${filename}-src.zip" dest="${workdir}/build"/>
-        <ant dir="${workdir}/build/${tag}" antfile="build.xml" target="jbossjta"/>
+        <ant dir="${workdir}/build/${tag}" antfile="build.xml" target="jbossjta">
+            <property name="com.hp.mw.source" value="${tag}"/>
+        </ant>
 
         <!-- package the JTA only binary release -->
         <copy todir="${workdir}/build/${tag}/${tag}">
@@ -128,7 +129,9 @@
         <delete dir="${workdir}/build"/>
         <mkdir dir="${workdir}/build"/>
         <unzip src="${workdir}/jbossts-full-${filename}-src.zip" dest="${workdir}/build"/>
-        <ant dir="${workdir}/build/${tag}" antfile="build.xml" target="jbossjts"/>
+        <ant dir="${workdir}/build/${tag}" antfile="build.xml" target="jbossjts">
+            <property name="com.hp.mw.source" value="${tag}"/>
+        </ant>
         <ant dir="${workdir}/build/${tag}/XTS" antfile="build.xml" target="install">
             <!-- build the jbossxts.sar with 1.1 only, not 1.0 (which is unsupported) -->
             <property  name="sartype" value="sar-11"/>
