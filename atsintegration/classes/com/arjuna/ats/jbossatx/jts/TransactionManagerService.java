@@ -50,6 +50,7 @@ import com.arjuna.ats.jta.utils.JNDIManager;
 import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
+import com.arjuna.ats.jts.common.Configuration;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.coordinator.TxStats;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
@@ -176,9 +177,9 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
             configured = true ;
         }
 
+        String tag = Configuration.getBuildTimeProperty("SOURCEID");
 
-
-        log.info("JBossTS Transaction Service (JTS version) - JBoss Inc.");
+        log.info("JBossTS Transaction Service (JTS version - tag:"+tag+") - JBoss Inc.");
 
         log.info("Setting up property manager MBean and JMX layer");
 

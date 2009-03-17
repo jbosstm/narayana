@@ -51,6 +51,7 @@ import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.common.Configuration;
 
 import com.arjuna.ats.internal.tsmx.mbeans.PropertyServiceJMXPlugin;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
@@ -164,8 +165,12 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
 
             configured = true ;
         }
+        
+        // Note that we use the arjunacore version of Configuration, as the jta one does not have
+        // build properties set when we are running from the jts version of the build.
+        String tag = Configuration.getBuildTimeProperty("SOURCEID");
 
-        log.info("JBossTS Transaction Service (JTA version) - JBoss Inc.");
+        log.info("JBossTS Transaction Service (JTA version - tag:"+tag+") - JBoss Inc.");
 
         log.info("Setting up property manager MBean and JMX layer");
 

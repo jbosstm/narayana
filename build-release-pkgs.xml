@@ -114,7 +114,7 @@
         <mkdir dir="${workdir}/build"/>
         <unzip src="${workdir}/jbossts-jta-${filename}-src.zip" dest="${workdir}/build"/>
         <ant dir="${workdir}/build/${tag}" antfile="build.xml" target="jbossjta">
-            <property name="com.hp.mw.source" value="${tag}"/>
+            <property name="com.hp.mw.sourceid" value="${tag}"/>
         </ant>
 
         <!-- package the JTA only binary release -->
@@ -130,7 +130,7 @@
         <mkdir dir="${workdir}/build"/>
         <unzip src="${workdir}/jbossts-full-${filename}-src.zip" dest="${workdir}/build"/>
         <ant dir="${workdir}/build/${tag}" antfile="build.xml" target="jbossjts">
-            <property name="com.hp.mw.source" value="${tag}"/>
+            <property name="com.hp.mw.sourceid" value="${tag}"/>
         </ant>
         <ant dir="${workdir}/build/${tag}/XTS" antfile="build.xml" target="install">
             <!-- build the jbossxts.sar with 1.1 only, not 1.0 (which is unsupported) -->
