@@ -21,6 +21,8 @@
 package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
 import com.arjuna.ats.jta.logging.jtaLogger;
+import com.arjuna.common.util.logging.DebugLevel;
+import com.arjuna.common.util.logging.VisibilityLevel;
 
 import javax.transaction.TransactionManager;
 import javax.resource.spi.XATerminator;
@@ -33,8 +35,11 @@ import javax.resource.spi.XATerminator;
  */
 public class SubordinationManager
 {
+    public enum TxType { JTA, JTS }    
+    
     private static TransactionImporter transactionImporter = null;
     private static XATerminator xaTerminator = null;
+    private static TxType txType;
 
     public static TransactionImporter getTransactionImporter()
     {
@@ -56,14 +61,36 @@ public class SubordinationManager
         return xaTerminator;
     }
 
+    public static TxType getTxType()
+    {
+        return txType;
+    }
+
+    public static void setTxType(TxType txType)
+    {
+		if (jtaLogger.logger.isDebugEnabled())
+		{
+			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "SubordinationManager.setTxType("+txType+")");
+		}
+        
+        if(SubordinationManager.txType != null && SubordinationManager.txType != txType)
+        {
+            throw new IllegalStateException("SubordinationManager can't change txType once it has been set.");
+        }
+        
+        SubordinationManager.txType = txType;
+    }
+
     /**
      * @message com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager.importerfailure Failed to create instance of TransactionImporter
      */
     private static void initTransactionImporter()
     {
-        TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        if(txType == null) {
+            setTxType( guessTxType() );
+        }
         
-        if(tm instanceof com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple)
+        if(txType == TxType.JTA)
         {
             // we are running in JTA mode
             transactionImporter = new TransactionImporterImple();
@@ -89,9 +116,13 @@ public class SubordinationManager
      */
     private static void initXATerminator()
     {
+        if(txType == null) {
+            setTxType( guessTxType() );
+        }
+
         TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
         
-        if(tm instanceof com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple)
+        if(txType == TxType.JTA)
         {
             // we are running in JTA mode
             xaTerminator = new XATerminatorImple();
@@ -109,6 +140,26 @@ public class SubordinationManager
             {
                 jtaLogger.loggerI18N.error("com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager.terminatorfailure", e);
             }
+        }
+    }
+
+    /**
+     * Its rather tricky to figure out if we are running in JTA or JTAX(JTS) mode. We can make a resonable guess
+     * based on the transaction manager implementation that is running, but it's going to break if some unknown
+     * or derived impl comes along. It's therefore safer to use setTxType explicitly in such cases.
+     * 
+     * @return best guess at the currently configured TxType.
+     */
+    private static TxType guessTxType() {
+        TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        
+        if(tm instanceof com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple)
+        {
+            return TxType.JTA;
+        } else if (tm.getClass().getName().contains(".jts.") || tm.getClass().getName().contains(".jtax.")) {
+            return TxType.JTS;
+        } else {
+            return TxType.JTA;
         }
     }
 }
