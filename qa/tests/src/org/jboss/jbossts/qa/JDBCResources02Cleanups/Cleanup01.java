@@ -85,14 +85,16 @@ public class Cleanup01
 				connection = DriverManager.getConnection(databaseURL, databaseUser, databasePassword);
 			}
 
+            String tableName = JDBCProfileStore.getTableName(databaseUser, "Infotable");
+            
 			while (trying)
 			{
 				try
 				{
 					Statement statement = connection.createStatement();
 
-					System.err.println("DROP TABLE " + databaseUser + "_InfoTable");
-					statement.executeUpdate("DROP TABLE " + databaseUser + "_InfoTable");
+					System.err.println("DROP TABLE " + tableName);
+					statement.executeUpdate("DROP TABLE " + tableName);
 
 					statement.close();
 					connection.close();

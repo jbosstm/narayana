@@ -86,11 +86,13 @@ public class Setup01
 			}
 
 			Statement statement = connection.createStatement();
+            
+            String tableName = JDBCProfileStore.getTableName(databaseUser, "Infotable");
 
 			try
 			{
-				System.err.println("DROP TABLE " + databaseUser + "_InfoTable");
-				statement.executeUpdate("DROP TABLE " + databaseUser + "_InfoTable");
+				System.err.println("DROP TABLE " + tableName);
+				statement.executeUpdate("DROP TABLE " + tableName);
 			}
 			catch (java.sql.SQLException s)
 			{
@@ -102,8 +104,8 @@ public class Setup01
 					System.err.println("SQL state is: <" + s.getSQLState() + ">");
 				}
 			}
-			System.err.println("CREATE TABLE " + databaseUser + "_InfoTable (Name VARCHAR(64), Value VARCHAR(64))");
-			statement.executeUpdate("CREATE TABLE " + databaseUser + "_InfoTable (Name VARCHAR(64), Value VARCHAR(64))");
+			System.err.println("CREATE TABLE " + tableName+" (Name VARCHAR(64), Value VARCHAR(64))");
+			statement.executeUpdate("CREATE TABLE " + tableName+" (Name VARCHAR(64), Value VARCHAR(64))");
 
 			statement.close();
 			connection.close();

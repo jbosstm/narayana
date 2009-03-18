@@ -32,6 +32,7 @@ package org.jboss.jbossts.qa.Utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
+import java.net.UnknownHostException;
 
 public class JDBCProfileStore
 {
@@ -142,6 +143,26 @@ public class JDBCProfileStore
 		return Integer.parseInt(loadedvalue);
 	}
 
+    public static String getTableName(String username, String suffix) throws UnknownHostException {
+        // read JBTM- before messing with this function.
+        // previously this would have been: username + "_" + suffix as in "DROP TABLE " + databaseUser + "_InfoTable");
+        String value = username+"_"+getLocalHostNameForTables()+"_"+suffix;
+        // in addition to the problems with the valid characters, there are issues with the max length.
+        // for oracle it's 30, but we stick a 4 char suffix on indexes, so the table name should not be more than 26
+        // in certain cases this may mean we wind up with non-uniq names, which is a pain.
+        if(value.length() > 26) {
+            value = value.substring(0, 26);
+        }
+        return value;
+    }
+    
+    private static String getLocalHostNameForTables() throws UnknownHostException { 
+        String hostName = java.net.InetAddress.getLocalHost().getHostName();
+        hostName = stripHostName(hostName); // strip to local portion, force lower case.
+        hostName = hostName.replace("-", "_"); // some db's don't like hyphens in identifiers
+        return hostName;
+    }
+    
 	private static void loadProfile()
 			throws Exception
 	{
@@ -156,12 +177,21 @@ public class JDBCProfileStore
 			}
 
 			_profile = new Properties();
+            
+            File file = new File(baseDir + File.separator + stripHostName(hostName) + File.separator + "JDBCProfiles");
+            
+            if(!file.exists()) {
+                // no host specific profile, fallback to a default one
+                file = new File(baseDir + File.separator + "default" + File.separator + "JDBCProfiles");
+            }
 
-			FileInputStream profileFileInputStream = new FileInputStream(baseDir + File.separator + stripHostName(hostName) + File.separator + "JDBCProfiles");
+			FileInputStream profileFileInputStream = new FileInputStream(file);
 			_profile.load(profileFileInputStream);
 			profileFileInputStream.close();
 		}
 	}
+    
+
 
 	private static String stripHostName(String hostName)
 	{

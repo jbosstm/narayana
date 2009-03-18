@@ -91,8 +91,10 @@ public class Cleanup01
 				{
 					Statement statement = connection.createStatement();
 
-					System.err.println("DROP TABLE " + databaseUser + "_InfoTable");
-					statement.executeUpdate("DROP TABLE " + databaseUser + "_InfoTable");
+                    String tableName = JDBCProfileStore.getTableName(databaseUser, "Infotable");
+                    
+					System.err.println("DROP TABLE " + tableName );
+					statement.executeUpdate("DROP TABLE " + tableName);
 
 					statement.close();
 					connection.close();

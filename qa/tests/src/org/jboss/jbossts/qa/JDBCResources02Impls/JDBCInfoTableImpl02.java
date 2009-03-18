@@ -33,6 +33,7 @@ package org.jboss.jbossts.qa.JDBCResources02Impls;
 
 import org.jboss.jbossts.qa.JDBCResources02.*;
 import org.jboss.jbossts.qa.Utils.OTS;
+import org.jboss.jbossts.qa.Utils.JDBCProfileStore;
 import org.omg.CORBA.StringHolder;
 import org.omg.CosTransactions.Control;
 import org.omg.CosTransactions.Status;
@@ -134,8 +135,10 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 					statement.setQueryTimeout(_databaseTimeout);
 				}
 
-				System.err.println("INSERT INTO " + _databaseUser + "_InfoTable VALUES(\'" + name + "\', \'" + value + "\')");
-				statement.executeUpdate("INSERT INTO " + _databaseUser + "_InfoTable VALUES(\'" + name + "\', \'" + value + "\')");
+                String tableName = JDBCProfileStore.getTableName(_databaseUser, "Infotable");
+                
+				System.err.println("INSERT INTO " + tableName + " VALUES(\'" + name + "\', \'" + value + "\')");
+				statement.executeUpdate("INSERT INTO " + tableName + " VALUES(\'" + name + "\', \'" + value + "\')");
 			}
 			catch (Exception exception)
 			{
@@ -259,8 +262,10 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 					statement.setQueryTimeout(_databaseTimeout);
 				}
 
-				System.err.println("UPDATE " + _databaseUser + "_InfoTable SET Value = \'" + value + "\' WHERE Name = \'" + name + "\'");
-				statement.executeUpdate("UPDATE " + _databaseUser + "_InfoTable SET Value = \'" + value + "\' WHERE Name = \'" + name + "\'");
+                String tableName = JDBCProfileStore.getTableName(_databaseUser, "Infotable");
+                
+				System.err.println("UPDATE " + tableName + " SET Value = \'" + value + "\' WHERE Name = \'" + name + "\'");
+				statement.executeUpdate("UPDATE " + tableName + " SET Value = \'" + value + "\' WHERE Name = \'" + name + "\'");
 			}
 			catch (Exception exception)
 			{
@@ -386,8 +391,10 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 					statement.setQueryTimeout(_databaseTimeout);
 				}
 
-				System.err.println("SELECT Value FROM " + _databaseUser + "_InfoTable WHERE Name = \'" + name + "\'");
-				resultSet = statement.executeQuery("SELECT Value FROM " + _databaseUser + "_InfoTable WHERE Name = \'" + name + "\'");
+                String tableName = JDBCProfileStore.getTableName(_databaseUser, "Infotable");
+                
+				System.err.println("SELECT Value FROM " + tableName + " WHERE Name = \'" + name + "\'");
+				resultSet = statement.executeQuery("SELECT Value FROM " + tableName + " WHERE Name = \'" + name + "\'");
 				resultSet.next();
 				value.value = resultSet.getString("Value");
 				if (resultSet.next())
@@ -530,8 +537,10 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 					statement.setQueryTimeout(_databaseTimeout);
 				}
 
-				System.err.println("DELETE FROM " + _databaseUser + "_InfoTable WHERE Name = \'" + name + "\'");
-				statement.executeUpdate("DELETE FROM " + _databaseUser + "_InfoTable WHERE Name = \'" + name + "\'");
+                String tableName = JDBCProfileStore.getTableName(_databaseUser, "Infotable");
+                
+				System.err.println("DELETE FROM " + tableName + " WHERE Name = \'" + name + "\'");
+				statement.executeUpdate("DELETE FROM " + tableName + " WHERE Name = \'" + name + "\'");
 			}
 			catch (Exception exception)
 			{

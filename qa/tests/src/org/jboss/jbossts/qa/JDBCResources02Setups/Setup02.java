@@ -91,10 +91,12 @@ public class Setup02
 
 			Statement statement = connection.createStatement();
 
+            String tableName = JDBCProfileStore.getTableName(databaseUser, "Infotable");
+            
 			try
 			{
-				System.err.println("DROP TABLE " + databaseUser + "_InfoTable");
-				statement.executeUpdate("DROP TABLE " + databaseUser + "_InfoTable");
+				System.err.println("DROP TABLE " + tableName);
+				statement.executeUpdate("DROP TABLE " + tableName);
 			}
 			catch (java.sql.SQLException s)
 			{
@@ -106,22 +108,22 @@ public class Setup02
 					System.err.println("SQL state is: <" + s.getSQLState() + ">");
 				}
 			}
-			System.err.println("CREATE TABLE " + databaseUser + "_InfoTable (Name VARCHAR(64), Value VARCHAR(64))");
-			statement.executeUpdate("CREATE TABLE " + databaseUser + "_InfoTable (Name VARCHAR(64), Value VARCHAR(64))");
+			System.err.println("CREATE TABLE " + tableName + " (Name VARCHAR(64), Value VARCHAR(64))");
+			statement.executeUpdate("CREATE TABLE " + tableName + " (Name VARCHAR(64), Value VARCHAR(64))");
 
 			// Create an Index for the table just created. Microsoft SQL requires an index for Row Locking.
-			System.err.println("CREATE UNIQUE INDEX " + databaseUser + "_IT_Ind " +
-					"ON " + databaseUser + "_InfoTable (Name) ");
-			statement.executeUpdate("CREATE UNIQUE INDEX " + databaseUser + "_IT_Ind " +
-					"ON " + databaseUser + "_InfoTable (Name) ");
+			System.err.println("CREATE UNIQUE INDEX " + tableName + "_idx " +
+					"ON " + tableName + " (Name) ");
+			statement.executeUpdate("CREATE UNIQUE INDEX " + tableName + "_idx " +
+					"ON " + tableName + " (Name) ");
 
             // sybase uses coarse grained locking by default and XA tx branches appear to be loose coupled i.e. do not share locks.
             // Unlike MSSQL, the presence of an index is not enough to cause the db to use row level locking. We need to configure
             // it explicitly instead. Without this the tests that use more than one server i.e. db conn/branch may block.
             if(useSybaseLockingHack) {
                 // force use of row level locking
-                System.err.println("configuring sybase row level locking: ALTER TABLE " + databaseUser + "_InfoTable lock datarows");
-                statement.executeUpdate("ALTER TABLE " + databaseUser + "_InfoTable lock datarows");
+                System.err.println("configuring sybase row level locking: ALTER TABLE " + tableName + " lock datarows");
+                statement.executeUpdate("ALTER TABLE " + tableName + " lock datarows");
             }
 
             for (int index = 0; index < 10; index++)
@@ -129,8 +131,8 @@ public class Setup02
 				String name = "Name_" + index;
 				String value = "Value_" + index;
 
-				System.err.println("INSERT INTO " + databaseUser + "_InfoTable VALUES(\'" + name + "\', \'" + value + "\')");
-				statement.executeUpdate("INSERT INTO " + databaseUser + "_InfoTable VALUES(\'" + name + "\', \'" + value + "\')");
+				System.err.println("INSERT INTO " + tableName + " VALUES(\'" + name + "\', \'" + value + "\')");
+				statement.executeUpdate("INSERT INTO " + tableName + " VALUES(\'" + name + "\', \'" + value + "\')");
 			}
 
 			statement.close();

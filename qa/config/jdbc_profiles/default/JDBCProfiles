@@ -1,0 +1,298 @@
+#
+# JBoss, Home of Professional Open Source
+# Copyright 2008, Red Hat Middleware LLC, and individual contributors
+# as indicated by the @author tags.
+# See the copyright.txt in the distribution for a
+# full listing of individual contributors.
+# This copyrighted material is made available to anyone wishing to use,
+# modify, copy, or redistribute it subject to the terms and conditions
+# of the GNU Lesser General Public License, v. 2.1.
+# This program is distributed in the hope that it will be useful, but WITHOUT A
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public License,
+# v.2.1 along with this distribution; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA  02110-1301, USA.
+#
+# (C) 2005-2008,
+# @author JBoss Inc.
+
+#########
+# This is the 'default' version of the profile, used by hosts that
+# can't find one mathcing their own name, which most means hudson slaves.
+#
+# The dbs it uses are in boston, so if running from a dev box on the vpn
+# you probably want to use the boston vpn endpoint or the tests will
+# be more likely to timeout.
+#########
+
+
+##########################################################################
+# PostgreSQL JNDI Profile
+##########################################################################
+
+DB_PGSQL_JNDI_NumberOfDrivers=2
+# the 'native' driver must come first. xa not required
+DB_PGSQL_JNDI_Driver0=org.postgresql.Driver
+DB_PGSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+# the uniq JNDI name
+DB_PGSQL_JNDI_Binding=pgsql
+# url is jdbc:arjuna:bindingname
+# the ts looks up bindingname in JNDI,
+# to which it is written by JNDIManager
+# The JNDI manager knows which XA datasource class to use
+# based on the non-xa driver class given above.
+DB_PGSQL_JNDI_DatabaseURL=jdbc:arjuna:pgsql
+# username and pass
+DB_PGSQL_JNDI_DatabaseUser=dtf11
+DB_PGSQL_JNDI_DatabasePassword=dtf11
+# datasource properties:
+DB_PGSQL_JNDI_DatabaseName=jbossts
+DB_PGSQL_JNDI_Host=dtfdb3.qa.atl2.redhat.com
+##DB_PGSQL_JNDI_Port=1521
+
+######################################################################
+# PostgreSQL JNDI Pair
+######################################################################
+
+DB1_PGSQL_JNDI_NumberOfDrivers=2
+DB1_PGSQL_JNDI_Driver0=org.postgresql.Driver
+DB1_PGSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB1_PGSQL_JNDI_Binding=pgsql1
+DB1_PGSQL_JNDI_DatabaseURL=jdbc:arjuna:pgsql1
+DB1_PGSQL_JNDI_DatabaseUser=dtf11
+DB1_PGSQL_JNDI_DatabasePassword=dtf11
+DB1_PGSQL_JNDI_DatabaseName=jbossts
+DB1_PGSQL_JNDI_Host=dtfdb3.qa.atl2.redhat.com
+
+DB2_PGSQL_JNDI_NumberOfDrivers=2
+DB2_PGSQL_JNDI_Driver0=org.postgresql.Driver
+DB2_PGSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB2_PGSQL_JNDI_Binding=pgsql2
+DB2_PGSQL_JNDI_DatabaseURL=jdbc:arjuna:pgsql2
+DB2_PGSQL_JNDI_DatabaseUser=dtf12
+DB2_PGSQL_JNDI_DatabasePassword=dtf12
+DB2_PGSQL_JNDI_DatabaseName=jbossts
+DB2_PGSQL_JNDI_Host=dtfdb3.qa.atl2.redhat.com
+
+##########################################################################
+# MySQL JNDI Profile
+##########################################################################
+
+DB_MYSQL_JNDI_NumberOfDrivers=2
+DB_MYSQL_JNDI_Driver0=com.mysql.jdbc.Driver
+DB_MYSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB_MYSQL_JNDI_Binding=mysql
+DB_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql
+DB_MYSQL_JNDI_DatabaseUser=dtf11
+DB_MYSQL_JNDI_DatabasePassword=dtf11
+DB_MYSQL_JNDI_DatabaseName=jbossts
+DB_MYSQL_JNDI_Host=dtfdb2.qa.atl2.redhat.com
+##DB_MYSQL_JNDI_Port=1521
+
+######################################################################
+# MySQL JNDI Pair
+######################################################################
+
+DB1_MYSQL_JNDI_NumberOfDrivers=2
+DB1_MYSQL_JNDI_Driver0=com.mysql.jdbc.Driver
+DB1_MYSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB1_MYSQL_JNDI_Binding=mysql1
+DB1_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql1
+DB1_MYSQL_JNDI_DatabaseUser=dtf11
+DB1_MYSQL_JNDI_DatabasePassword=dtf11
+DB1_MYSQL_JNDI_DatabaseName=jbossts
+DB1_MYSQL_JNDI_Host=dtfdb2.qa.atl2.redhat.com
+
+DB2_MYSQL_JNDI_NumberOfDrivers=2
+DB2_MYSQL_JNDI_Driver0=com.mysql.jdbc.Driver
+DB2_MYSQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB2_MYSQL_JNDI_Binding=mysql2
+DB2_MYSQL_JNDI_DatabaseURL=jdbc:arjuna:mysql2
+DB2_MYSQL_JNDI_DatabaseUser=dtf12
+DB2_MYSQL_JNDI_DatabasePassword=dtf12
+DB2_MYSQL_JNDI_DatabaseName=jbossts
+DB2_MYSQL_JNDI_Host=dtfdb2.qa.atl2.redhat.com
+
+########################################################################
+# MSSQL Server JNDI Profile
+########################################################################
+
+DB_SQL_JNDI_NumberOfDrivers=2
+DB_SQL_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+## dropped old sql2000 drive in favour of new sql2005 driver
+##DB_SQL_JNDI_Driver0=com.microsoft.jdbc.sqlserver.SQLServerDriver
+DB_SQL_JNDI_Driver0=com.microsoft.sqlserver.jdbc.SQLServerDriver
+DB_SQL_JNDI_Binding=sqlserver_jndi
+DB_SQL_JNDI_DatabaseURL=jdbc\:arjuna\:sqlserver_jndi
+DB_SQL_JNDI_DatabaseUser=dtf11
+DB_SQL_JNDI_DatabasePassword=dtf11
+DB_SQL_JNDI_DatabaseName=jbossts
+DB_SQL_JNDI_Host=dev30.qa.atl.jboss.com
+##DB_SQL_JNDI_Port=1433
+DB_SQL_JNDI_Port=3918
+
+######################################################################
+# MSSQL Server JNDI Pair
+######################################################################
+
+# DB1
+
+DB_SQL1_JNDI_NumberOfDrivers=2
+DB_SQL1_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+## dropped old sql2000 drive in favour of new sql2005 driver
+##DB_SQL1_JNDI_Driver0=com.microsoft.jdbc.sqlserver.SQLServerDriver
+DB_SQL1_JNDI_Driver0=com.microsoft.sqlserver.jdbc.SQLServerDriver
+DB_SQL1_JNDI_Binding=sqlserver_jndi1
+DB_SQL1_JNDI_DatabaseURL=jdbc\:arjuna\:sqlserver_jndi1
+DB_SQL1_JNDI_DatabaseUser=dtf11
+DB_SQL1_JNDI_DatabasePassword=dtf11
+DB_SQL1_JNDI_DatabaseName=jbossts
+DB_SQL1_JNDI_Host=dev30.qa.atl.jboss.com
+DB_SQL1_JNDI_Port=3918
+
+# DB2
+
+DB_SQL2_JNDI_NumberOfDrivers=2
+DB_SQL2_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+## dropped old sql2000 drive in favour of new sql2005 driver
+##DB_SQL2_JNDI_Driver0=com.microsoft.jdbc.sqlserver.SQLServerDriver
+DB_SQL2_JNDI_Driver0=com.microsoft.sqlserver.jdbc.SQLServerDriver
+DB_SQL2_JNDI_Binding=sqlserver_jndi2
+DB_SQL2_JNDI_DatabaseURL=jdbc\:arjuna\:sqlserver_jndi2
+DB_SQL2_JNDI_DatabaseUser=dtf12
+DB_SQL2_JNDI_DatabasePassword=dtf12
+DB_SQL2_JNDI_DatabaseName=jbossts
+DB_SQL2_JNDI_Host=dev30.qa.atl.jboss.com
+DB_SQL2_JNDI_Port=3918
+
+
+##########################################################################
+# Oracle thin JNDI Profile
+##########################################################################
+
+DB_THIN_JNDI_NumberOfDrivers=2
+DB_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
+DB_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB_THIN_JNDI_Binding=oracle_thin
+DB_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin
+DB_THIN_JNDI_DatabaseUser=dtf11
+DB_THIN_JNDI_DatabasePassword=dtf11
+DB_THIN_JNDI_DatabaseName=TSH1
+DB_THIN_JNDI_Host=dtfdb5.qa.atl2.redhat.com
+DB_THIN_JNDI_Port=1521
+
+######################################################################
+# Oracle thin JNDI Pair
+######################################################################
+
+# DB1
+
+DB1_THIN_JNDI_NumberOfDrivers=2
+DB1_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
+DB1_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB1_THIN_JNDI_Binding=oracle_thin1
+DB1_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin1
+DB1_THIN_JNDI_DatabaseUser=dtf11
+DB1_THIN_JNDI_DatabasePassword=dtf11
+DB1_THIN_JNDI_DatabaseName=TSH1
+DB1_THIN_JNDI_Host=dtfdb5.qa.atl2.redhat.com
+DB1_THIN_JNDI_Port=1521
+
+# DB2
+
+DB2_THIN_JNDI_NumberOfDrivers=2
+DB2_THIN_JNDI_Driver0=oracle.jdbc.driver.OracleDriver
+DB2_THIN_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB2_THIN_JNDI_Binding=oracle_thin2
+DB2_THIN_JNDI_DatabaseURL=jdbc:arjuna:oracle_thin2
+DB2_THIN_JNDI_DatabaseUser=dtf12
+DB2_THIN_JNDI_DatabasePassword=dtf12
+DB2_THIN_JNDI_DatabaseName=TSH1
+DB2_THIN_JNDI_Host=dtfdb5.qa.atl2.redhat.com
+DB2_THIN_JNDI_Port=1521
+
+
+##########################################################################
+# IBMDB2 JNDI Profile
+##########################################################################
+
+DB_IBMDB2_JNDI_NumberOfDrivers=2
+DB_IBMDB2_JNDI_Driver0=com.ibm.db2.jcc.DB2Driver
+DB_IBMDB2_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB_IBMDB2_JNDI_Binding=ibmdb2
+DB_IBMDB2_JNDI_DatabaseURL=jdbc:arjuna:ibmdb2
+DB_IBMDB2_JNDI_DatabaseUser=jbossts0
+DB_IBMDB2_JNDI_DatabasePassword=jbossts0
+DB_IBMDB2_JNDI_DatabaseName=jbossqa
+DB_IBMDB2_JNDI_Host=dev32.qa.atl.jboss.com
+DB_IBMDB2_JNDI_Port=50000
+
+######################################################################
+# IBMDB2 JNDI Pair
+######################################################################
+
+DB1_IBMDB2_JNDI_NumberOfDrivers=2
+DB1_IBMDB2_JNDI_Driver0=com.ibm.db2.jcc.DB2Driver
+DB1_IBMDB2_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB1_IBMDB2_JNDI_Binding=ibmdb21
+DB1_IBMDB2_JNDI_DatabaseURL=jdbc:arjuna:ibmdb21
+DB1_IBMDB2_JNDI_DatabaseUser=jbossts0
+DB1_IBMDB2_JNDI_DatabasePassword=jbossts0
+DB1_IBMDB2_JNDI_DatabaseName=jbossqa
+DB1_IBMDB2_JNDI_Host=dev32.qa.atl.jboss.com
+DB1_IBMDB2_JNDI_Port=50000
+
+DB2_IBMDB2_JNDI_NumberOfDrivers=2
+DB2_IBMDB2_JNDI_Driver0=com.ibm.db2.jcc.DB2Driver
+DB2_IBMDB2_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB2_IBMDB2_JNDI_Binding=ibmdb22
+DB2_IBMDB2_JNDI_DatabaseURL=jdbc:arjuna:ibmdb22
+DB2_IBMDB2_JNDI_DatabaseUser=jbossts1
+DB2_IBMDB2_JNDI_DatabasePassword=jbossts1
+DB2_IBMDB2_JNDI_DatabaseName=jbossqa
+DB2_IBMDB2_JNDI_Host=dev32.qa.atl.jboss.com
+DB2_IBMDB2_JNDI_Port=50000
+
+
+##########################################################################
+# Sybase JNDI Profile
+##########################################################################
+
+DB_SYBASE_JNDI_NumberOfDrivers=2
+DB_SYBASE_JNDI_Driver0=com.sybase.jdbc2.jdbc.SybDriver
+DB_SYBASE_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB_SYBASE_JNDI_Binding=sybase
+DB_SYBASE_JNDI_DatabaseURL=jdbc:arjuna:sybase
+DB_SYBASE_JNDI_DatabaseUser=jbossts0
+DB_SYBASE_JNDI_DatabasePassword=jbossts0
+DB_SYBASE_JNDI_DatabaseName=jbossts
+DB_SYBASE_JNDI_Host=dev01.qa.atl.jboss.com
+DB_SYBASE_JNDI_Port=4100
+
+######################################################################
+# Sybase JNDI Pair
+######################################################################
+
+DB1_SYBASE_JNDI_NumberOfDrivers=2
+DB1_SYBASE_JNDI_Driver0=com.sybase.jdbc2.jdbc.SybDriver
+DB1_SYBASE_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB1_SYBASE_JNDI_Binding=sybase1
+DB1_SYBASE_JNDI_DatabaseURL=jdbc:arjuna:sybase1
+DB1_SYBASE_JNDI_DatabaseUser=jbossts0
+DB1_SYBASE_JNDI_DatabasePassword=jbossts0
+DB1_SYBASE_JNDI_DatabaseName=jbossts
+DB1_SYBASE_JNDI_Host=dev01.qa.atl.jboss.com
+DB1_SYBASE_JNDI_Port=4100
+
+DB2_SYBASE_JNDI_NumberOfDrivers=2
+DB2_SYBASE_JNDI_Driver0=com.sybase.jdbc2.jdbc.SybDriver
+DB2_SYBASE_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
+DB2_SYBASE_JNDI_Binding=sybase2
+DB2_SYBASE_JNDI_DatabaseURL=jdbc:arjuna:sybase2
+DB2_SYBASE_JNDI_DatabaseUser=jbossts1
+DB2_SYBASE_JNDI_DatabasePassword=jbossts1
+DB2_SYBASE_JNDI_DatabaseName=jbossts
+DB2_SYBASE_JNDI_Host=dev01.qa.atl.jboss.com
+DB2_SYBASE_JNDI_Port=4100
