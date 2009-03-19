@@ -26,51 +26,44 @@
  * Tyne and Wear,
  * UK.
  *
- * $Id: SuspendResumeSingleParticipant.java,v 1.6.8.1 2005/11/22 10:36:11 kconner Exp $
+ * $Id: TwoPhaseSynchronization.java,v 1.1 2003/01/07 10:37:17 nmcl Exp $
  */
 
-package com.arjuna.wst11.tests.junit.basic;
+package com.arjuna.wscf11.tests;
 
-import com.arjuna.mw.wst11.TransactionManager;
-import com.arjuna.mw.wst.TxContext;
-import com.arjuna.mw.wst11.UserTransaction;
-import com.arjuna.wst.tests.common.DemoDurableParticipant;
-import junit.framework.TestCase;
+import com.arjuna.mw.wscf.model.twophase.common.*;
+import com.arjuna.mw.wscf.model.twophase.outcomes.*;
+import com.arjuna.mw.wscf.model.twophase.participants.*;
+import com.arjuna.mw.wscf.model.twophase.exceptions.*;
+import com.arjuna.mw.wscf.model.twophase.vote.*;
+
+import com.arjuna.mw.wscf.exceptions.*;
+
+import com.arjuna.mw.wsas.exceptions.SystemException;
+import com.arjuna.mw.wsas.exceptions.WrongStateException;
+import com.arjuna.mw.wsas.exceptions.ProtocolViolationException;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
- * @version $Id: SuspendResumeSingleParticipant.java,v 1.6.8.1 2005/11/22 10:36:11 kconner Exp $
+ * @version $Id: TwoPhaseSynchronization.java,v 1.1 2003/01/07 10:37:17 nmcl Exp $
  * @since 1.0.
  */
 
-public class SuspendResumeSingleParticipant extends TestCase
+public class TwoPhaseSynchronization implements Synchronization
 {
 
-    public static void testSuspendResumeSingleParticipant()
-            throws Exception
+    public TwoPhaseSynchronization()
     {
-	    UserTransaction ut = UserTransaction.getUserTransaction();
-	    TransactionManager tm = TransactionManager.getTransactionManager();
-	    DemoDurableParticipant p = new DemoDurableParticipant();
-	try {
-	    ut.begin();
-
-	    tm.enlistForDurableTwoPhase(p, p.identifier());
-
-	    TxContext ctx = tm.suspend();
-
-	    System.out.println("Suspended: "+ctx);
-
-	    tm.resume(ctx);
-
-	    System.out.println("\nResumed\n");
-    }  catch (Exception eouter) {
-        try {
-            ut.rollback();
-        } catch(Exception einner) {
-        }
-        throw eouter;
     }
-	    ut.commit();
+
+    public void beforeCompletion () throws SystemException
+    {
+	System.out.println("TwoPhaseSynchronization.beforeCompletion");
     }
+
+    public void afterCompletion (int status) throws SystemException
+    {
+	System.out.println("TwoPhaseSynchronization.afterCompletion ( "+CoordinationResult.stringForm(status)+" )");
+    }
+
 }

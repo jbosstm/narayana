@@ -33,7 +33,7 @@ package com.arjuna.wst11.tests.junit.ba;
 
 import com.arjuna.mw.wst11.BusinessActivityManager;
 import com.arjuna.mw.wst11.UserBusinessActivity;
-import com.arjuna.wst.tests.DemoBusinessParticipantWithComplete;
+import com.arjuna.wst.tests.common.DemoBusinessParticipantWithComplete;
 import junit.framework.TestCase;
 
 /**

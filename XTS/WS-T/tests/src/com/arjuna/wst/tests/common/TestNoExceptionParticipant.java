@@ -23,10 +23,10 @@
  *
  * Arjuna Technologies Limited.
  *
- * $Id: TestWrongStateExceptionParticipant.java,v 1.1.2.1 2005/11/22 10:37:38 kconner Exp $
+ * $Id: TestNoExceptionParticipant.java,v 1.1.2.1 2005/11/22 10:37:38 kconner Exp $
  */
 
-package com.arjuna.wst.tests;
+package com.arjuna.wst.tests.common;
 
 import com.arjuna.wst.Participant;
 import com.arjuna.wst.SystemException;
@@ -34,41 +34,36 @@ import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.Vote;
 import com.arjuna.wst.WrongStateException;
 
-public class TestWrongStateExceptionParticipant implements Participant
+public class TestNoExceptionParticipant implements Participant
 {
     public Vote prepare()
         throws WrongStateException, SystemException
     {
-        throw new WrongStateException();
+        throw new SystemException();
     }
 
     public void commit()
         throws WrongStateException, SystemException
     {
-        throw new WrongStateException();
     }
 
     public void rollback()
         throws WrongStateException, SystemException
     {
-        throw new WrongStateException();
     }
 
     public void commitOnePhase()
         throws TransactionRolledBackException, WrongStateException, SystemException
     {
-        throw new WrongStateException();
     }
 
     public void unknown()
         throws SystemException
     {
-        throw new SystemException();
     }
 
     public void error()
         throws SystemException
     {
-        throw new SystemException();
     }
 }

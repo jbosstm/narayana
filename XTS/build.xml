@@ -163,6 +163,10 @@
 
 	</target>
 
+    <target name="build-tests" depends="install-projects, com.arjuna.mwlabs.xts.tests.build">
+
+	</target>
+
     <target name="htdocs" depends="com.arjuna.mwlabs.xts.init">
 		<echo message="Building htdocs "/>
 		<mkdir dir="${com.arjuna.mwlabs.xts.htdocs.dest}"/>
@@ -265,13 +269,32 @@
         </copy>
     </target>
 
+    <target name="install-tests" depends="build-tests">
+        <echo message="Installing service tests"/>
+        <mkdir dir="${com.arjuna.mwlabs.installationdirectory}/tests"/>
+        <copy todir="${com.arjuna.mwlabs.installationdirectory}/tests">
+            <!-- ears providing test servlets -->
+            <fileset dir="WSAS/tests/build/webapps" includes="wsas-tests.ear"/>
+            <fileset dir="WSCF/tests/build/webapps" includes="wscf-tests.ear"/>
+            <fileset dir="WS-C/build/tests/webapps" includes="ws-c-tests.ear"/>
+            <fileset dir="WS-T/build/tests/webapps" includes="ws-t-tests.ear"/>
+            <fileset dir="WSTX/tests/build/webapps" includes="wstx-tests.ear"/>
+            <!-- ant script and client jar used to exercise servlets-->
+            <fileset dir="localjunit/build/" includes="localjunit.jar"/>
+            <fileset dir="localjunit" includes="run-tests.xml"/>
+        </copy>
+	<zip destfile="${com.arjuna.mwlabs.installationdirectory}/tests/jbossxts-tests.zip">
+	  <fileset dir="${com.arjuna.mwlabs.installationdirectory}/tests" includes="*.ear *.jar *.xml"/>
+	</zip>
+    </target>
+
     <!-- build target just builds the main projects but not the sar since
         the latter cannot be built until after the projects have been installed -->
     <target name="build" depends="build-projects"/>
 
     <!-- install target builds and installs the main projects
         then builds and installs the sar then installs the demo -->
-    <target name="install" depends="install-sar, install-demo"/>
+    <target name="install" depends="install-sar, install-tests, install-demo"/>
 
     <target name="clean" depends="com.arjuna.mwlabs.xts.init,
 		com.arjuna.mwlabs.xts.wsas.clean,
@@ -319,6 +342,19 @@
             thay contain only the supported version. -->
         <property name="sartype" value="sar-both"/>
         <ant dir="sar" target="${sartype}"/>
+    </target>
+
+    <target name="com.arjuna.mwlabs.xts.tests.build">
+        <!-- by default we build 1.0 and 1.1 for ease of testing,
+            but release bundles should use -Dtesttype=tests-11 so that
+            thay contain only the supported version. -->
+        <property name="testtype" value="tests-both"/>
+        <ant dir="WSAS" target="${testtype}"/>
+        <ant dir="WSCF" target="${testtype}"/>
+        <ant dir="WS-C" target="${testtype}"/>
+        <ant dir="WS-T" target="${testtype}"/>
+        <ant dir="WSTX" target="${testtype}"/>
+        <ant dir="localjunit" target="all"/>
     </target>
 
 	<target name="com.arjuna.mwlabs.xts.wsas.clean">

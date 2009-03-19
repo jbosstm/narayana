@@ -25,8 +25,8 @@ import com.arjuna.mw.wst.TransactionManager;
 import com.arjuna.mw.wst.UserTransaction;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wst.UserTransactionFactory;
-import com.arjuna.wst.tests.DemoDurableParticipant;
-import com.arjuna.wst.tests.DemoVolatileParticipant;
+import com.arjuna.wst.tests.common.DemoDurableParticipant;
+import com.arjuna.wst.tests.common.DemoVolatileParticipant;
 import junit.framework.TestCase;
 
 /**

@@ -29,7 +29,7 @@
  * $Id: DemoVolatileParticipant.java,v 1.1.2.1 2004/08/09 12:34:30 nmcl Exp $
  */
 
-package com.arjuna.wst.tests;
+package com.arjuna.wst.tests.common;
 
 import com.arjuna.ats.arjuna.common.Uid;
 

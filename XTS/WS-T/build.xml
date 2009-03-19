@@ -352,7 +352,8 @@
         </war>
     </target>
 
-    <target name="tests-compile" depends="dev-webapps">
+    <!-- this assumes all the required libs have been built -->
+    <target name="tests-compile">
         <javac destdir="${build.tests.classes.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
             <classpath>
                 <pathelement path="${build.dev.lib.dir}/ws-t.jar"/>
@@ -371,6 +372,28 @@
                 <path refid="wscf11.path"/>
             </classpath>
             <src path="${tests.src.dir}"/>
+        </javac>
+    </target>
+
+    <!-- this assumes all the required libs have been built -->
+    <target name="tests-compile11">
+        <javac destdir="${build.tests.classes.dir}" debug="${javac.debug}" optimize="${javac.optimize}">
+            <classpath>
+                <pathelement path="${build.dev.lib.dir}/ws-t.jar"/>
+                <pathelement path="${build.dev.lib.dir}/ws-t-api.jar"/>
+                <pathelement path="${build.dev.lib.dir}/ws-t11.jar"/>
+                <pathelement path="${build.dev.lib.dir}/ws-t11-api.jar"/>
+                <path refid="tests.lib.path"/>
+                <path refid="lib.ext.path"/>
+                <path refid="ws-c.path"/>
+                <path refid="ws-c11.path"/>
+                <path refid="wscf.path"/>
+                <path refid="wscf11.path"/>
+            </classpath>
+            <src path="${tests.src.dir}"/>
+	    <include name="com/arjuna/qa/**"/>
+        <include name="com/arjuna/wst/tests/common/**"/>
+        <include name="com/arjuna/wst11/tests/**"/>
         </javac>
     </target>
 
@@ -403,7 +426,31 @@
         </ear>
     </target>
 
+    <target name="tests-webapps11" depends="tests-compile11">
+        <jar jarfile="${build.tests.lib.dir}/ws-t-tests.jar">
+            <fileset dir="${build.tests.classes.dir}"/>
+        </jar>
+        <copy file="${tests.dd.dir}/ws-t11-tests_web-app.xml" tofile="${build.tests.dd.dir}/web-app11.xml">
+        </copy>
+        <war warfile="${build.tests.webapps.dir}/ws-t11-tests.war" webxml="${build.tests.dd.dir}/web-app11.xml">
+        </war>
+        <ear earfile="${build.tests.webapps.dir}/ws-t-tests.ear" appxml="${tests.dd.dir}/ws-t11-tests_application.xml">
+            <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
+            <fileset dir="${build.tests.webapps.dir}" includes="ws-t11-tests.war"/>
+            <fileset dir="${build.tests.lib.dir}" includes="ws-t-tests.jar"/>
+        </ear>
+    </target>
+
+    <!-- production target for 1.1 tests -->
+    <target name="tests-11" depends="tests-webapps11"/>
+
+    <target name="tests-both" depends="tests-webapps"/>
+
     <target name="tests-deploy" depends="tests-webapps, tests-undeploy">
+        <copy file="${build.tests.webapps.dir}/ws-t-tests.ear" tofile="${deploy.dir}/ws-t-tests.ear"/>
+    </target>
+
+    <target name="tests-deploy11" depends="tests-webapps11, tests-undeploy">
         <copy file="${build.tests.webapps.dir}/ws-t-tests.ear" tofile="${deploy.dir}/ws-t-tests.ear"/>
     </target>
 

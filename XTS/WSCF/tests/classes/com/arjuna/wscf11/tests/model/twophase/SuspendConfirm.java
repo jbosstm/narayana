@@ -38,7 +38,7 @@ import com.arjuna.mw.wscf11.model.twophase.UserCoordinatorFactory;
 import com.arjuna.mw.wsas.activity.*;
 
 import com.arjuna.mw.wscf.exceptions.*;
-import com.arjuna.wscf.tests.WSCFTestUtils;
+import com.arjuna.wscf11.tests.WSCF11TestUtils;
 import junit.framework.TestCase;
 
 /**
@@ -68,7 +68,7 @@ public class SuspendConfirm extends TestCase
 	    System.out.println("Suspended: "+hier+"\n");
 
 	    if (ua.currentActivity() != null) {
-            WSCFTestUtils.cleanup(ua);
+            WSCF11TestUtils.cleanup(ua);
             fail("Hierarchy still active.");
         }
 
@@ -77,11 +77,11 @@ public class SuspendConfirm extends TestCase
 	catch (NoCoordinatorException ex)
 	{
 	    // why is it ok to get here?
-        WSCFTestUtils.cleanup(ua);
+        WSCF11TestUtils.cleanup(ua);
     }
 	catch (Exception ex)
 	{
-	    WSCFTestUtils.cleanup(ua);
+	    WSCF11TestUtils.cleanup(ua);
         throw ex;
     }
     }

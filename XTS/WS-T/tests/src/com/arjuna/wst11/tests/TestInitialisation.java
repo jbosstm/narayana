@@ -34,23 +34,16 @@ import com.arjuna.wst11.BAParticipantManager;
 import com.arjuna.wst11.BusinessActivityTerminator;
 
 
-import com.arjuna.wst.tests.TestPreparedVoteParticipant;
-import com.arjuna.wst.tests.TestAbortedVoteParticipant;
-import com.arjuna.wst.tests.TestReadOnlyVoteParticipant;
-import com.arjuna.wst.tests.TestNoExceptionParticipant;
-import com.arjuna.wst.tests.TestTransactionRolledBackExceptionParticipant;
-import com.arjuna.wst.tests.TestWrongStateExceptionParticipant;
-import com.arjuna.wst.tests.TestSystemExceptionParticipant;
+import com.arjuna.wst.tests.common.TestTransactionRolledBackExceptionParticipant;
+import com.arjuna.wst.tests.common.TestWrongStateExceptionParticipant;
+import com.arjuna.wst.tests.common.TestSystemExceptionParticipant;
 
-import com.arjuna.wst.tests.TestSystemExceptionBusinessAgreementWithParticipantCompletionParticipant;
-import com.arjuna.wst.tests.TestWrongStateExceptionBusinessAgreementWithParticipantCompletionParticipant;
-import com.arjuna.wst.tests.TestNoExceptionBusinessAgreementWithParticipantCompletionParticipant;
-import com.arjuna.wst.tests.TestFaultedExceptionBusinessAgreementWithParticipantCompletionParticipant;
+import com.arjuna.wst.tests.common.TestSystemExceptionBusinessAgreementWithParticipantCompletionParticipant;
+import com.arjuna.wst.tests.common.TestWrongStateExceptionBusinessAgreementWithParticipantCompletionParticipant;
 
-import com.arjuna.wst.tests.TestSystemExceptionBusinessAgreementWithCoordinatorCompletionParticipant;
-import com.arjuna.wst.tests.TestWrongStateExceptionBusinessAgreementWithCoordinatorCompletionParticipant;
-import com.arjuna.wst.tests.TestNoExceptionBusinessAgreementWithCoordinatorCompletionParticipant;
-import com.arjuna.wst.tests.TestFaultedExceptionBusinessAgreementWithCoordinatorCompletionParticipant;
+import com.arjuna.wst.tests.common.TestSystemExceptionBusinessAgreementWithCoordinatorCompletionParticipant;
+import com.arjuna.wst.tests.common.TestWrongStateExceptionBusinessAgreementWithCoordinatorCompletionParticipant;
+import com.arjuna.wst.tests.common.*;
 
 /**
  * listener class to set up WSTX 1.1 tests

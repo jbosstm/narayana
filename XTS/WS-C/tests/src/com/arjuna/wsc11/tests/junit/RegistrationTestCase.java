@@ -26,30 +26,21 @@
 
 package com.arjuna.wsc11.tests.junit;
 
-import javax.xml.namespace.QName;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.addressing.AddressingProperties;
-
-import junit.framework.TestCase;
-
-import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices11.ServiceRegistry;
-import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wscoor.client.WSCOORClient;
 import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
-import com.arjuna.wsc11.tests.junit.TestRegistrationCoordinatorProcessor.RegisterDetails;
-import com.arjuna.wsc11.tests.junit.TestRegistrationCoordinatorProcessor;
 import com.arjuna.wsc11.tests.TestUtil11;
-import com.arjuna.wsc11.RegistrationCoordinator;
-import com.arjuna.wsc11.messaging.MessageId;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
+import com.arjuna.wsc11.tests.junit.TestRegistrationCoordinatorProcessor.RegisterDetails;
+import junit.framework.TestCase;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponseType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationPortType;
+
+import javax.xml.ws.addressing.AddressingProperties;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class RegistrationTestCase extends TestCase
 {

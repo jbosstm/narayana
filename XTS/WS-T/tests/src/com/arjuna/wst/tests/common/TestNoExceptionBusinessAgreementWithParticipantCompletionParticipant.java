@@ -19,57 +19,49 @@
  * @author JBoss Inc.
  */
 /*
- * Copyright (c) 2003, 2004,
+ * Copyright (c) 2003, Arjuna Technologies Limited.
  *
- * Arjuna Technologies Limited.
- *
- * $Id: TestAbortedVoteParticipant.java,v 1.1.2.1 2005/11/22 10:37:41 kconner Exp $
+ * $Id: TestNoExceptionBusinessAgreementWithParticipantCompletionParticipant.java,v 1.1.2.1 2004/05/26 10:04:52 nmcl Exp $
  */
 
-package com.arjuna.wst.tests;
+package com.arjuna.wst.tests.common;
 
-import com.arjuna.wst.Participant;
-import com.arjuna.wst.Aborted;
+import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
+import com.arjuna.wst.FaultedException;
+import com.arjuna.wst.Status;
 import com.arjuna.wst.SystemException;
-import com.arjuna.wst.TransactionRolledBackException;
-import com.arjuna.wst.Vote;
 import com.arjuna.wst.WrongStateException;
 
-public class TestAbortedVoteParticipant implements Participant
+public class TestNoExceptionBusinessAgreementWithParticipantCompletionParticipant implements BusinessAgreementWithParticipantCompletionParticipant
 {
-    public Vote prepare()
-        throws WrongStateException, SystemException
+
+    public void close () throws WrongStateException, SystemException
     {
-        return new Aborted();
+    }
+    
+    public void cancel () throws WrongStateException, SystemException
+    {
     }
 
-    public void commit()
-        throws WrongStateException, SystemException
+    public void compensate () throws FaultedException, WrongStateException, SystemException
     {
-        throw new SystemException();
     }
 
-    public void rollback()
-        throws WrongStateException, SystemException
+    public String status () throws SystemException
     {
-        throw new SystemException();
+	return Status.STATUS_ACTIVE;
+    }
+    
+    public void forget () throws WrongStateException, SystemException
+    {
     }
 
-    public void commitOnePhase()
-        throws TransactionRolledBackException, WrongStateException, SystemException
+    public void unknown () throws SystemException
     {
-        throw new SystemException();
     }
 
-    public void unknown()
-        throws SystemException
+    public void error () throws SystemException
     {
-        throw new SystemException();
     }
 
-    public void error()
-        throws SystemException
-    {
-        throw new SystemException();
-    }
 }

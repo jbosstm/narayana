@@ -26,26 +26,18 @@
 
 package com.arjuna.wsc11.tests.junit;
 
-import javax.xml.namespace.QName;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.addressing.AddressingProperties;
-
-import junit.framework.TestCase;
-
-import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices11.ServiceRegistry;
-import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wscoor.client.ActivationCoordinatorClient;
 import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
 import com.arjuna.wsc.tests.TestUtil;
-import com.arjuna.wsc11.tests.junit.TestActivationCoordinatorProcessor.CreateCoordinationContextDetails;
-import com.arjuna.wsc11.tests.junit.TestActivationCoordinatorProcessor;
 import com.arjuna.wsc11.tests.TestUtil11;
+import com.arjuna.wsc11.tests.junit.TestActivationCoordinatorProcessor.CreateCoordinationContextDetails;
+import junit.framework.TestCase;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.*;
-import org.omg.CosNaming.NamingContextExtPackage.AddressHelper;
+
+import javax.xml.ws.addressing.AddressingProperties;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class ActivationTestCase extends TestCase
 {

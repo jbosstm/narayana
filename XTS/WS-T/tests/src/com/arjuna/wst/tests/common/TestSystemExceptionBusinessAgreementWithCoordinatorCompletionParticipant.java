@@ -21,10 +21,10 @@
 /*
  * Copyright (c) 2004, Arjuna Technologies Limited.
  *
- * $Id: TestWrongStateExceptionBusinessAgreementWithCoordinatorCompletionParticipant.java,v 1.1.2.1 2004/05/26 10:04:53 nmcl Exp $
+ * $IdD$
  */
 
-package com.arjuna.wst.tests;
+package com.arjuna.wst.tests.common;
 
 import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 import com.arjuna.wst.FaultedException;
@@ -32,44 +32,46 @@ import com.arjuna.wst.Status;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.WrongStateException;
 
-public class TestWrongStateExceptionBusinessAgreementWithCoordinatorCompletionParticipant implements BusinessAgreementWithCoordinatorCompletionParticipant
+public class TestSystemExceptionBusinessAgreementWithCoordinatorCompletionParticipant implements BusinessAgreementWithCoordinatorCompletionParticipant
 {
 
     public void close () throws WrongStateException, SystemException
     {
-	throw new WrongStateException();
+	throw new SystemException();
     }
     
     public void cancel () throws WrongStateException, SystemException
     {
-	throw new WrongStateException();
+	throw new SystemException();
     }
 
     public void compensate () throws FaultedException, WrongStateException, SystemException
     {
-	throw new WrongStateException();
-    }
-
-    public String status () throws SystemException
-    {
-	return Status.STATUS_ACTIVE;
+	throw new SystemException();
     }
     
     public void forget () throws WrongStateException, SystemException
     {
-	throw new WrongStateException();
+	throw new SystemException();
     }
 
     public void complete () throws WrongStateException, SystemException
     {
     }
 
+    public String status () throws SystemException
+    {
+	return Status.STATUS_ACTIVE;
+    }
+
     public void unknown () throws SystemException
     {
+	throw new SystemException();
     }
 
     public void error () throws SystemException
     {
+	throw new SystemException();
     }
 
 }

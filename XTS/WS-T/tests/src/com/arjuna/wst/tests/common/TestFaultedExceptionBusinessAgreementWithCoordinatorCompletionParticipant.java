@@ -19,56 +19,54 @@
  * @author JBoss Inc.
  */
 /*
- * Copyright (c) 2003, 2004,
+ * Copyright (c) 2004, Arjuna Technologies Limited.
  *
- * Arjuna Technologies Limited.
- *
- * $Id: TestTransactionRolledBackExceptionParticipant.java,v 1.1.2.1 2005/11/22 10:37:40 kconner Exp $
+ * $Id: TestFaultedExceptionBusinessAgreementWithCoordinatorCompletionParticipant.java,v 1.1.2.1 2004/05/26 10:04:51 nmcl Exp $
  */
 
-package com.arjuna.wst.tests;
+package com.arjuna.wst.tests.common;
 
-import com.arjuna.wst.Participant;
+import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
+import com.arjuna.wst.FaultedException;
+import com.arjuna.wst.Status;
 import com.arjuna.wst.SystemException;
-import com.arjuna.wst.TransactionRolledBackException;
-import com.arjuna.wst.Vote;
 import com.arjuna.wst.WrongStateException;
 
-public class TestTransactionRolledBackExceptionParticipant implements Participant
+public class TestFaultedExceptionBusinessAgreementWithCoordinatorCompletionParticipant implements BusinessAgreementWithCoordinatorCompletionParticipant
 {
-    public Vote prepare()
-        throws WrongStateException, SystemException
+
+    public void close () throws WrongStateException, SystemException
     {
-        throw new SystemException();
+    }
+    
+    public void cancel () throws WrongStateException, SystemException
+    {
     }
 
-    public void commit()
-        throws WrongStateException, SystemException
+    public void compensate () throws FaultedException, WrongStateException, SystemException
     {
-        throw new SystemException();
+	throw new FaultedException();
+    }
+    
+    public String status () throws SystemException
+    {
+	return Status.STATUS_ACTIVE;
     }
 
-    public void rollback()
-        throws WrongStateException, SystemException
+    public void forget () throws WrongStateException, SystemException
     {
-        throw new SystemException();
     }
 
-    public void commitOnePhase()
-        throws TransactionRolledBackException, WrongStateException, SystemException
+    public void complete () throws WrongStateException, SystemException
     {
-        throw new TransactionRolledBackException();
+    }
+    
+    public void unknown () throws SystemException
+    {
     }
 
-    public void unknown()
-        throws SystemException
+    public void error () throws SystemException
     {
-        throw new SystemException();
     }
 
-    public void error()
-        throws SystemException
-    {
-        throw new SystemException();
-    }
 }

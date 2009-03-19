@@ -23,24 +23,23 @@
  *
  * Arjuna Technologies Limited.
  *
- * $Id: TestReadOnlyVoteParticipant.java,v 1.1.2.1 2005/11/22 10:37:39 kconner Exp $
+ * $Id: TestTransactionRolledBackExceptionParticipant.java,v 1.1.2.1 2005/11/22 10:37:40 kconner Exp $
  */
 
-package com.arjuna.wst.tests;
+package com.arjuna.wst.tests.common;
 
 import com.arjuna.wst.Participant;
-import com.arjuna.wst.ReadOnly;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.arjuna.wst.Vote;
 import com.arjuna.wst.WrongStateException;
 
-public class TestReadOnlyVoteParticipant implements Participant
+public class TestTransactionRolledBackExceptionParticipant implements Participant
 {
     public Vote prepare()
         throws WrongStateException, SystemException
     {
-        return new ReadOnly();
+        throw new SystemException();
     }
 
     public void commit()
@@ -58,7 +57,7 @@ public class TestReadOnlyVoteParticipant implements Participant
     public void commitOnePhase()
         throws TransactionRolledBackException, WrongStateException, SystemException
     {
-        throw new SystemException();
+        throw new TransactionRolledBackException();
     }
 
     public void unknown()

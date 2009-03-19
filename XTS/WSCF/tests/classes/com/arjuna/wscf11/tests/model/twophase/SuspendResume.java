@@ -36,7 +36,7 @@ import com.arjuna.mw.wscf.model.twophase.api.UserCoordinator;
 import com.arjuna.mw.wscf11.model.twophase.UserCoordinatorFactory;
 
 import com.arjuna.mw.wsas.activity.*;
-import com.arjuna.wscf.tests.WSCFTestUtils;
+import com.arjuna.wscf11.tests.WSCF11TestUtils;
 import junit.framework.TestCase;
 
 /**
@@ -67,7 +67,7 @@ public class SuspendResume extends TestCase
 
 	    if (ua.currentActivity() != null)
 	    {
-            WSCFTestUtils.cleanup(ua);
+            WSCF11TestUtils.cleanup(ua);
             fail("Hierarchy still active");
         }
 	    else
@@ -83,7 +83,7 @@ public class SuspendResume extends TestCase
 	}
 	catch (Exception ex)
 	{
-        WSCFTestUtils.cleanup(ua);
+        WSCF11TestUtils.cleanup(ua);
         throw ex;
     }
     }

@@ -34,7 +34,7 @@ package com.arjuna.wst11.tests.junit.basic;
 import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mw.wst11.UserTransaction;
-import com.arjuna.wst.tests.DemoDurableParticipant;
+import com.arjuna.wst.tests.common.DemoDurableParticipant;
 import junit.framework.TestCase;
 
 /**

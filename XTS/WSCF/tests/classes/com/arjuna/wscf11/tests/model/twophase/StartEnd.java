@@ -42,7 +42,7 @@ import com.arjuna.mw.wscf.model.twophase.outcomes.*;
 import com.arjuna.mw.wsas.activity.*;
 
 import com.arjuna.mw.wsas.exceptions.NoActivityException;
-import com.arjuna.wscf.tests.WSCFTestUtils;
+import com.arjuna.wscf11.tests.WSCF11TestUtils;
 import junit.framework.TestCase;
 
 /**
@@ -59,7 +59,7 @@ public class StartEnd extends TestCase
     {
         System.out.println("Running test : " + this.getClass().getName());
 
-	String className = "com.arjuna.mwlabs.wscf.model.twophase.arjunacore.TwoPhase11HLSImple";
+	String className = "com.arjuna.mwlabs.wscf11.model.twophase.arjunacore.TwoPhaseHLSImple";
 	org.w3c.dom.Document implementationDoc = null;
 
 	//	System.setProperty("com.arjuna.mw.wscf.protocolImplementation", className);
@@ -94,7 +94,7 @@ public class StartEnd extends TestCase
 	}
     catch (Exception ex)
     {
-        WSCFTestUtils.cleanup(ua);
+        WSCF11TestUtils.cleanup(ua);
         throw ex;
     }
     }

@@ -20,24 +20,23 @@
  */
 package com.arjuna.wsc11.tests.junit;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
-import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
-import com.arjuna.wsc11.tests.TestUtil11;
+import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
 import com.arjuna.wsc.tests.TestUtil;
-import com.arjuna.webservices.SoapFaultType;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
+import com.arjuna.wsc11.tests.TestUtil11;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponseType;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
 
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.soap.SOAPFaultException;
-import javax.xml.ws.ProtocolException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
+import javax.xml.ws.ProtocolException;
+import javax.xml.ws.addressing.AddressingProperties;
+import javax.xml.ws.soap.SOAPFaultException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TestRegistrationCoordinatorProcessor extends
         RegistrationCoordinatorProcessor

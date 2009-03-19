@@ -26,7 +26,7 @@
  * $Id: TestSystemExceptionParticipant.java,v 1.1.2.1 2005/11/22 10:37:39 kconner Exp $
  */
 
-package com.arjuna.wst.tests;
+package com.arjuna.wst.tests.common;
 
 import com.arjuna.wst.Participant;
 import com.arjuna.wst.SystemException;

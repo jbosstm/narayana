@@ -29,7 +29,7 @@
  * $Id: FailureParticipant.java,v 1.5 2004/09/09 08:48:40 kconner Exp $
  */
 
-package com.arjuna.wst.tests;
+package com.arjuna.wst.tests.common;
 
 import com.arjuna.wst.*;
 

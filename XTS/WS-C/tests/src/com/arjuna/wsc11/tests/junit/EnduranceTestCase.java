@@ -26,32 +26,23 @@
 
 package com.arjuna.wsc11.tests.junit;
 
-import javax.xml.namespace.QName;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.addressing.AddressingProperties;
-
-import junit.framework.TestCase;
-
-import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices.SoapFaultType;
-import com.arjuna.webservices11.SoapFault11;
-import com.arjuna.webservices.stax.URI;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
-import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wscoor.client.ActivationCoordinatorClient;
 import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
 import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
-import com.arjuna.wsc.tests.TestUtil;
 import com.arjuna.wsc.*;
+import com.arjuna.wsc.tests.TestUtil;
+import com.arjuna.wsc11.ActivationCoordinator;
+import com.arjuna.wsc11.RegistrationCoordinator;
 import com.arjuna.wsc11.tests.TestUtil11;
 import com.arjuna.wsc11.tests.junit.TestActivationCoordinatorProcessor.CreateCoordinationContextDetails;
 import com.arjuna.wsc11.tests.junit.TestRegistrationCoordinatorProcessor.RegisterDetails;
-import com.arjuna.wsc11.tests.junit.TestActivationCoordinatorProcessor;
-import com.arjuna.wsc11.tests.junit.TestRegistrationCoordinatorProcessor;
-import com.arjuna.wsc11.ActivationCoordinator;
-import com.arjuna.wsc11.RegistrationCoordinator;
+import junit.framework.TestCase;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.*;
+
+import javax.xml.ws.addressing.AddressingProperties;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class EnduranceTestCase extends TestCase
 {

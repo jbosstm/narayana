@@ -20,31 +20,25 @@
  */
 package com.arjuna.wsc11.tests.junit;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
-import com.arjuna.webservices11.wscoor.CoordinationConstants;
-import com.arjuna.wsc.tests.TestUtil;
-import com.arjuna.wsc.AlreadyRegisteredException;
-import com.arjuna.wsc.InvalidProtocolException;
-import com.arjuna.wsc.InvalidStateException;
-import com.arjuna.wsc.NoActivityException;
-import com.arjuna.wsc11.tests.TestRegistrar;
-import com.arjuna.wsc11.tests.TestUtil11;
 import com.arjuna.webservices.SoapFaultType;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextType;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponseType;
+import com.arjuna.webservices11.wscoor.CoordinationConstants;
+import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
+import com.arjuna.wsc.tests.TestUtil;
+import com.arjuna.wsc11.tests.TestUtil11;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponseType;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextType;
 
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
-import javax.xml.ws.soap.SOAPFaultException;
-import javax.xml.ws.ProtocolException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
+import javax.xml.ws.ProtocolException;
+import javax.xml.ws.addressing.AddressingProperties;
+import javax.xml.ws.soap.SOAPFaultException;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TestActivationCoordinatorProcessor extends
         ActivationCoordinatorProcessor

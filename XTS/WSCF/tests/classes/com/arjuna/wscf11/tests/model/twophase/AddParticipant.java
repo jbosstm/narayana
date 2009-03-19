@@ -35,8 +35,8 @@ import com.arjuna.mw.wscf.model.twophase.api.CoordinatorManager;
 
 import com.arjuna.mw.wscf11.model.twophase.CoordinatorManagerFactory;
 
-import com.arjuna.wscf.tests.TwoPhaseParticipant;
-import com.arjuna.wscf.tests.WSCFTestUtils;
+import com.arjuna.wscf11.tests.TwoPhaseParticipant;
+import com.arjuna.wscf11.tests.WSCF11TestUtils;
 import junit.framework.TestCase;
 
 /**
@@ -67,7 +67,7 @@ public class AddParticipant extends TestCase
 	}
 	catch (Exception ex)
 	{
-	    WSCFTestUtils.cleanup(cm);
+	    WSCF11TestUtils.cleanup(cm);
         throw ex;
     }
     }

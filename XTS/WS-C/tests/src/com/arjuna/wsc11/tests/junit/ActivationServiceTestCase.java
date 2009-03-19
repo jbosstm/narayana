@@ -26,17 +26,12 @@
 
 package com.arjuna.wsc11.tests.junit;
 
-import junit.framework.TestCase;
-
-import com.arjuna.webservices11.ServiceRegistry;
-import com.arjuna.webservices11.wscoor.CoordinationConstants;
-import com.arjuna.wsc11.ActivationCoordinator;
 import com.arjuna.wsc.InvalidCreateParametersException;
 import com.arjuna.wsc.tests.TestUtil;
+import com.arjuna.wsc11.ActivationCoordinator;
 import com.arjuna.wsc11.tests.TestUtil11;
+import junit.framework.TestCase;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
-
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class ActivationServiceTestCase extends TestCase
 {

@@ -33,8 +33,8 @@ package com.arjuna.wst11.tests.junit.ba;
 
 import com.arjuna.mw.wst11.BusinessActivityManager;
 import com.arjuna.mw.wst11.UserBusinessActivity;
-import com.arjuna.wst.tests.DemoBusinessParticipant;
-import com.arjuna.wst.tests.FailureBusinessParticipant;
+import com.arjuna.wst.tests.common.DemoBusinessParticipant;
+import com.arjuna.wst.tests.common.FailureBusinessParticipant;
 import com.arjuna.wst.SystemException;
 import junit.framework.TestCase;
 

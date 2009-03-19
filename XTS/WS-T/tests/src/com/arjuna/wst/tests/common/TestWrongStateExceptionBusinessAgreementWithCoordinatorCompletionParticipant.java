@@ -19,20 +19,20 @@
  * @author JBoss Inc.
  */
 /*
- * Copyright (c) 2003, Arjuna Technologies Limited.
+ * Copyright (c) 2004, Arjuna Technologies Limited.
  *
- * $Id: TestWrongStateExceptionBusinessAgreementWithParticipantCompletionParticipant.java,v 1.1.2.1 2004/05/26 10:04:54 nmcl Exp $
+ * $Id: TestWrongStateExceptionBusinessAgreementWithCoordinatorCompletionParticipant.java,v 1.1.2.1 2004/05/26 10:04:53 nmcl Exp $
  */
 
-package com.arjuna.wst.tests;
+package com.arjuna.wst.tests.common;
 
-import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
+import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 import com.arjuna.wst.FaultedException;
 import com.arjuna.wst.Status;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.WrongStateException;
 
-public class TestWrongStateExceptionBusinessAgreementWithParticipantCompletionParticipant implements BusinessAgreementWithParticipantCompletionParticipant
+public class TestWrongStateExceptionBusinessAgreementWithCoordinatorCompletionParticipant implements BusinessAgreementWithCoordinatorCompletionParticipant
 {
 
     public void close () throws WrongStateException, SystemException
@@ -58,6 +58,10 @@ public class TestWrongStateExceptionBusinessAgreementWithParticipantCompletionPa
     public void forget () throws WrongStateException, SystemException
     {
 	throw new WrongStateException();
+    }
+
+    public void complete () throws WrongStateException, SystemException
+    {
     }
 
     public void unknown () throws SystemException

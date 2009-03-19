@@ -251,7 +251,7 @@
 	<!-- Build htdocs for just mw, or mw and mwlabs -->
 	<property name="com.arjuna.mwlabs.wstx.htdocs.list" value="com.arjuna.mw.*"/>
 
-	<target name="com.arjuna.mw.wstx.war" depends="com.arjuna.mw.wstx.jar">
+    <target name="com.arjuna.mw.wstx.war" depends="com.arjuna.mw.wstx.jar">
         <war warfile="${com.arjuna.mwlabs.wstx.webapps.dest}/${com.arjuna.mwlabs.ts.modulename}10.war" webxml="xml/wstx_web-app.xml"/>
         <war warfile="${com.arjuna.mwlabs.wstx.webapps.dest}/${com.arjuna.mwlabs.ts.modulename}11.war" webxml="xml/wstx_web-app11.xml"/>
     </target>
@@ -355,7 +355,9 @@
 
         </target>
 
-	<target name="com.arjuna.mwlabs.wstx.tests.init" depends="com.arjuna.mw.wstx.clean">
+	<target name="com.arjuna.mwlabs.wstx.tests.init">
+        <!-- delete the test destination directories -->
+        <delete dir="${com.arjuna.mwlabs.wstx.tests.dest.root}"/>
 		<!-- make the test destination directories -->
 		<mkdir dir="${com.arjuna.mwlabs.wstx.tests.dest.root}"/>
 		<mkdir dir="${com.arjuna.mwlabs.wstx.tests.dest}"/>
@@ -364,7 +366,8 @@
 		<mkdir dir="${com.arjuna.mwlabs.wstx.tests.jar.dest}"/>
 	</target>
 
-	<target name="com.arjuna.mwlabs.wstx.tests.compile" depends="com.arjuna.mwlabs.wstx.tests.init, com.arjuna.mw.wstx.war">
+    <!-- this assumes all the rwuired libs have been built -->
+	<target name="com.arjuna.mwlabs.wstx.tests.compile" depends="com.arjuna.mwlabs.wstx.tests.init">
 	  <javac destdir="${com.arjuna.mwlabs.wstx.tests.dest}" debug="yes" optimize="no">
 	    <classpath>
             <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
@@ -381,6 +384,27 @@
 	    <src path="${com.arjuna.mwlabs.wstx.tests.src}"/>
 	  </javac>
 	</target>
+
+    <!-- this assumes all the rwuired libs have been built -->
+    <target name="com.arjuna.mwlabs.wstx.tests.compile11" depends="com.arjuna.mwlabs.wstx.tests.init">
+      <javac destdir="${com.arjuna.mwlabs.wstx.tests.dest}" debug="yes" optimize="no">
+        <classpath>
+            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
+            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}-api.jar"/>
+            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}11.jar"/>
+            <pathelement path="${com.arjuna.mwlabs.wstx.jar.dest}/${com.arjuna.mwlabs.ts.modulename}11-api.jar"/>
+            <path refid="com.arjuna.mwlabs.wstx.tests.lib.path"/>
+            <path refid="com.arjuna.mwlabs.wstx.lib.classpath10"/>
+            <path refid="com.arjuna.mwlabs.wstx.lib.classpath11"/>
+            <path refid="com.arjuna.mwlabs.wstx.lib.classpath"/>
+        </classpath>
+        <src path="${com.arjuna.mwlabs.wstx.tests.src}"/>
+        <include  name="com/arjuna/qa/**"/>
+        <include  name="com/arjuna/wst/tests/common/**"/>
+        <include  name="com/arjuna/wst11/tests/**"/>
+        <include  name="com/arjuna/wstx11/tests/**"/>
+      </javac>
+    </target>
 
 	<target name="com.arjuna.mwlabs.wstx.tests.webapps" depends="com.arjuna.mwlabs.wstx.tests.compile">
 	  <copy file="${com.arjuna.mwlabs.wstx.tests.dd}/wstx-tests_web-app.xml" tofile="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app.xml">
@@ -416,9 +440,26 @@
 	  </ear>
 	</target>
 
+	<target name="com.arjuna.mwlabs.wstx.tests.webapps11" depends="com.arjuna.mwlabs.wstx.tests.compile11">
+	  <copy file="${com.arjuna.mwlabs.wstx.tests.dd}/wstx11-tests_web-app.xml" tofile="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app11.xml">
+	  </copy>
+	  <jar jarfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.jar">
+	    <fileset dir="${com.arjuna.mwlabs.wstx.tests.dest}"/>
+	  </jar>
+	  <war warfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx11-tests.war" webxml="${com.arjuna.mwlabs.wstx.tests.dd.dest}/web-app11.xml"/>
+	  <ear earfile="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.ear" appxml="${com.arjuna.mwlabs.wstx.tests.dd}/wstx11-tests_application.xml">
+	    <fileset dir="${com.arjuna.xts.ext}" includes="${tests.libs}"/>
+	    <fileset dir="${com.arjuna.mwlabs.wstx.tests.webapps.dest}" includes="wstx11-tests.war wstx-tests.jar"/>
+	  </ear>
+	</target>
+
 	<target name="com.arjuna.mwlabs.wstx.tests.deploy" depends="com.arjuna.mwlabs.wstx.tests.webapps, com.arjuna.mwlabs.wstx.tests.undeploy">
 	  <copy file="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.ear" tofile="${deploy.dir}/wstx-tests.ear"/>
 	</target>
+
+    <target name="com.arjuna.mwlabs.wstx.tests.deploy11" depends="com.arjuna.mwlabs.wstx.tests.webapps11, com.arjuna.mwlabs.wstx.tests.undeploy">
+      <copy file="${com.arjuna.mwlabs.wstx.tests.webapps.dest}/wstx-tests.ear" tofile="${deploy.dir}/wstx-tests.ear"/>
+    </target>
 
 	<target name="com.arjuna.mwlabs.wstx.tests.undeploy">
 	  <delete file="${deploy.dir}/wstx-tests.ear"/>
@@ -442,6 +483,12 @@
 	<target name="war" depends="com.arjuna.mw.wstx.war"/>
 	<target name="clean" depends="com.arjuna.mw.wstx.clean"/>
 	<target name="tests-webapps" depends="com.arjuna.mwlabs.wstx.tests.webapps"/>
+	<target name="tests-webapps11" depends="com.arjuna.mwlabs.wstx.tests.webapps11"/>
+	<!-- production target for 1.1 tests -->
+    <target name="tests-11" depends="tests-webapps11"/>
+    <target name="tests-both" depends="tests-webapps"/>
+
 	<target name="tests-deploy" depends="com.arjuna.mwlabs.wstx.tests.deploy"/>
+	<target name="tests-deploy11" depends="com.arjuna.mwlabs.wstx.tests.deploy11"/>
 	<target name="tests-undeploy" depends="com.arjuna.mwlabs.wstx.tests.undeploy"/>
 </project>

@@ -25,9 +25,9 @@ import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.mw.wst11.UserTransaction;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.mw.wst.TxContext;
-import com.arjuna.wst.tests.DemoDurableParticipant;
-import com.arjuna.wst.tests.DemoVolatileParticipant;
-import com.arjuna.wst.tests.FailureParticipant;
+import com.arjuna.wst.tests.common.FailureParticipant;
+import com.arjuna.wst.tests.common.DemoDurableParticipant;
+import com.arjuna.wst.tests.common.DemoVolatileParticipant;
 import com.arjuna.wst.TransactionRolledBackException;
 import junit.framework.TestCase;
 

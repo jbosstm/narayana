@@ -193,7 +193,8 @@
         </target>
 
 	<!-- test targets -->
-	<target name="com.arjuna.mwlabs.wsas.tests.init" depends="com.arjuna.mw.wsas.clean">
+	<target name="com.arjuna.mwlabs.wsas.tests.init">
+        <delete dir="${com.arjuna.mwlabs.wsas.tests.dest.root}"/>
 		<!-- make the test destination directories -->
 		<mkdir dir="${com.arjuna.mwlabs.wsas.tests.dest.root}"/>
 		<mkdir dir="${com.arjuna.mwlabs.wsas.tests.dest}"/>
@@ -202,7 +203,9 @@
 		<mkdir dir="${com.arjuna.mwlabs.wsas.tests.jar.dest}"/>
 	</target>
 
-	<target name="com.arjuna.mwlabs.wsas.tests.compile" depends="com.arjuna.mwlabs.wsas.tests.init, com.arjuna.mw.wsas.jar">
+    <!-- this assumes the required libs have already been built -->
+    
+	<target name="com.arjuna.mwlabs.wsas.tests.compile" depends="com.arjuna.mwlabs.wsas.tests.init">
 	  <javac destdir="${com.arjuna.mwlabs.wsas.tests.dest}" debug="yes" optimize="no">
 	    <classpath>
 	      <pathelement path="${com.arjuna.mwlabs.wsas.jar.dest}/${com.arjuna.mwlabs.ts.modulename}.jar"/>
@@ -255,6 +258,9 @@
 	<target name="jar" depends="com.arjuna.mw.wsas.jar"/>
 	<target name="clean" depends="com.arjuna.mw.wsas.clean"/>
 	<target name="tests-webapps" depends="com.arjuna.mwlabs.wsas.tests.webapps"/>
+	<!-- production target for 1.1 tests - tests are not version specific -->
+    <target name="tests-11" depends="tests-webapps"/>
+    <target name="tests-both" depends="tests-webapps"/>
 	<target name="tests-deploy" depends="com.arjuna.mwlabs.wsas.tests.deploy"/>
 	<target name="tests-undeploy" depends="com.arjuna.mwlabs.wsas.tests.undeploy"/>
 </project>

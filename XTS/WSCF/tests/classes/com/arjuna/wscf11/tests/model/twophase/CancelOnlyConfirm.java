@@ -36,7 +36,7 @@ import com.arjuna.mw.wscf.model.twophase.api.UserCoordinator;
 import com.arjuna.mw.wscf11.model.twophase.UserCoordinatorFactory;
 
 import com.arjuna.mw.wscf.model.twophase.exceptions.*;
-import com.arjuna.wscf.tests.WSCFTestUtils;
+import com.arjuna.wscf11.tests.WSCF11TestUtils;
 import junit.framework.TestCase;
 
 /**
@@ -70,11 +70,11 @@ public class CancelOnlyConfirm extends TestCase
 	catch (CoordinatorCancelledException ex)
 	{
 	    // we should get here
-        WSCFTestUtils.cleanup(ua);
+        WSCF11TestUtils.cleanup(ua);
     }
 	catch (Exception ex)
 	{
-	    WSCFTestUtils.cleanup(ua);
+	    WSCF11TestUtils.cleanup(ua);
         throw ex;
     }
     }

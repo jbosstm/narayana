@@ -43,6 +43,7 @@ import com.arjuna.wst.BusinessActivityTerminator;
 import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
 import com.arjuna.wst.CompletionCoordinatorParticipant;
+import com.arjuna.wst.tests.common.*;
 import com.arjuna.wst.messaging.engines.ParticipantEngine;
 import com.arjuna.wst.messaging.engines.ParticipantCompletionParticipantEngine;
 import com.arjuna.wst.messaging.engines.CoordinatorCompletionParticipantEngine;

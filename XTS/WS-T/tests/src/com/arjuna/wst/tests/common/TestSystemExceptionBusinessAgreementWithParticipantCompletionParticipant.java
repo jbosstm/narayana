@@ -24,7 +24,7 @@
  * $Id: TestSystemExceptionBusinessAgreementWithParticipantCompletionParticipant.java,v 1.1.2.1 2004/05/26 10:04:53 nmcl Exp $
  */
 
-package com.arjuna.wst.tests;
+package com.arjuna.wst.tests.common;
 
 import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
 import com.arjuna.wst.FaultedException;

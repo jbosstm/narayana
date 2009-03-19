@@ -26,16 +26,14 @@
 
 package com.arjuna.wsc11.tests.junit;
 
-import junit.framework.TestCase;
-
-import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.wsc.AlreadyRegisteredException;
 import com.arjuna.wsc.InvalidProtocolException;
 import com.arjuna.wsc.InvalidStateException;
 import com.arjuna.wsc.NoActivityException;
+import com.arjuna.wsc.tests.TestUtil;
 import com.arjuna.wsc11.RegistrationCoordinator;
 import com.arjuna.wsc11.tests.TestUtil11;
-import com.arjuna.wsc.tests.TestUtil;
+import junit.framework.TestCase;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
