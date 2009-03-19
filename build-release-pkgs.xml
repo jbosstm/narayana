@@ -135,6 +135,7 @@
         <ant dir="${workdir}/build/${tag}/XTS" antfile="build.xml" target="install">
             <!-- build the jbossxts.sar with 1.1 only, not 1.0 (which is unsupported) -->
             <property  name="sartype" value="sar-11"/>
+            <property  name="testtype" value="tests-11"/>
         </ant>
 
         <!-- package the full release -->
@@ -277,6 +278,18 @@
             <arg value="-DrepositoryId=${mvn.repositoryId}"/>
             <arg value="-DgroupId=jboss.jbossts"/>
             <arg value="-DartifactId=jbossxts"/>
+            <arg value="-Dversion=${filename}"/>
+            <arg value="-DgeneratePom=true"/>
+        </exec>
+
+        <exec executable="mvn" dir="${workdir}">
+            <arg value="deploy:deploy-file"/>
+            <arg value="-Dfile=${workdir}/build/${tag}/xts/tests/jbossxts-tests.zip"/>
+            <arg value="-Dpackaging=zip"/>
+            <arg value="-Durl=${mvn.url}"/>
+            <arg value="-DrepositoryId=${mvn.repositoryId}"/>
+            <arg value="-DgroupId=jboss.jbossts"/>
+            <arg value="-DartifactId=jbossxts-tests"/>
             <arg value="-Dversion=${filename}"/>
             <arg value="-DgeneratePom=true"/>
         </exec>
