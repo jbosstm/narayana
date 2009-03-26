@@ -649,13 +649,8 @@ public class TransactionReaper
 				new Object[]{Thread.currentThread(),
 					     e._control.get_uid()});
 		    }
-
-		    synchronized(this)
-		    {
-		        removeElement(e);
-		    }
 		}
-		else
+		else if (e._control.running())
 		{
 		    if (exception != null)
 		    {
@@ -679,11 +674,6 @@ public class TransactionReaper
 				    new Object[]{Thread.currentThread(),
 						 e._control.get_uid()});
 			}
-		    }
-
-		    synchronized(this)
-		    {
-		        removeElement(e);
 		    }
 
 		    try
@@ -728,6 +718,12 @@ public class TransactionReaper
 			}
 		    }
 		}
+
+		synchronized(this)
+		{
+			removeElement(e);
+		}
+
 	    }
         }
 

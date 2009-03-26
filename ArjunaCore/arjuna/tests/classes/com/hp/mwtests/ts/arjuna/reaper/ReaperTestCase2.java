@@ -60,10 +60,10 @@ public class ReaperTestCase2 extends TestCase
         // to cancel requests and ensure that they get cancelled
         // and that the reaper does not get wedged
 
-	SlowReapable reapable1 = new SlowReapable(new Uid(), 2000, 0, true, true);
-	SlowReapable reapable2 = new SlowReapable(new Uid(), 0, 0, true, true);
-	SlowReapable reapable3 = new SlowReapable(new Uid(), 100, 2000, false, true);
-	SlowReapable reapable4 = new SlowReapable(new Uid(), 1000, 1000, false, false);
+	SlowReapable reapable1 = new SlowReapable(new Uid(), 2000, 0, true, true, false);
+	SlowReapable reapable2 = new SlowReapable(new Uid(), 0, 0, true, true, false);
+	SlowReapable reapable3 = new SlowReapable(new Uid(), 100, 2000, false, true, false);
+	SlowReapable reapable4 = new SlowReapable(new Uid(), 1000, 1000, false, false, false);
 
 	// insert reapables so they timeout at 1 second intervals then
 	// check progress of cancellations and rollbacks
@@ -131,8 +131,10 @@ public class ReaperTestCase2 extends TestCase
 	}
 
 	assertTrue(count < 10);
-	assertTrue(reapable1.getRollbackTried());
-	
+	// the first one should not be running because it marks itself ActionStatus.ABORTED
+	// - the reaper should not attempt to roll it back in this case
+	assertTrue(!reapable1.getRollbackTried());
+
 	// check that the third one refuses the cancel and gets marked
 	// for rollback instead
 
@@ -193,13 +195,14 @@ public class ReaperTestCase2 extends TestCase
 
     public class SlowReapable implements Reapable
     {
-	public SlowReapable(Uid uid, int callDelay, int interruptDelay, boolean doCancel, boolean doRollback)
+	public SlowReapable(Uid uid, int callDelay, int interruptDelay, boolean doCancel, boolean doRollback, boolean doComplete)
 	{
 	    this.uid = uid;
             this.callDelay = callDelay;
             this.interruptDelay = interruptDelay;
             this.doCancel = doCancel;
             this.doRollback = doRollback;
+            this.doComplete = doComplete;
 	    cancelTried = false;
 	    rollbackTried = false;
 	    running = true;
@@ -260,6 +263,7 @@ public class ReaperTestCase2 extends TestCase
         private int interruptDelay; // in milliseconds
         private boolean doCancel;
         private boolean doRollback;
+        private boolean doComplete;
 	private boolean cancelTried;
 	private boolean rollbackTried;
 	private boolean running;
