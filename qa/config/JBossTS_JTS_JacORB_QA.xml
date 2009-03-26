@@ -57,8 +57,8 @@
 			<properties>
 				<property name="Context.INITIAL_CONTEXT_FACTORY" value="com.sun.jndi.fscontext.RefFSContextFactory"/>
 				<property name="jdbcprofilestore.dir" value="$(PRODUCT.DIR)/qa/jdbc_profiles"/>
-				<property name="Context.PROVIDER_URL" value="file://$(PRODUCT.DIR)"/>
-				<property name="qa.debug" value="true"/>
+                <property name="Context.PROVIDER_URL" value="file:$(PRODUCT.DIR)"/>
+                <property name="qa.debug" value="true"/>
 				<property name="performanceprofilestore.dir" value="$(PRODUCT.DIR)/qa/perf_profiles/"/>
 				<property name="com.arjuna.ats.jta.jtaTMImplementation"
 						  value="com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple"/>
