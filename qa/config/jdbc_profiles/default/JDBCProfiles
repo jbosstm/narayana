@@ -261,7 +261,7 @@ DB2_IBMDB2_JNDI_Port=50000
 ##########################################################################
 
 DB_SYBASE_JNDI_NumberOfDrivers=2
-DB_SYBASE_JNDI_Driver0=com.sybase.jdbc2.jdbc.SybDriver
+DB_SYBASE_JNDI_Driver0=com.sybase.jdbc3.jdbc.SybDriver
 DB_SYBASE_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB_SYBASE_JNDI_Binding=sybase
 DB_SYBASE_JNDI_DatabaseURL=jdbc:arjuna:sybase
@@ -276,7 +276,7 @@ DB_SYBASE_JNDI_Port=4100
 ######################################################################
 
 DB1_SYBASE_JNDI_NumberOfDrivers=2
-DB1_SYBASE_JNDI_Driver0=com.sybase.jdbc2.jdbc.SybDriver
+DB1_SYBASE_JNDI_Driver0=com.sybase.jdbc3.jdbc.SybDriver
 DB1_SYBASE_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB1_SYBASE_JNDI_Binding=sybase1
 DB1_SYBASE_JNDI_DatabaseURL=jdbc:arjuna:sybase1
@@ -287,7 +287,7 @@ DB1_SYBASE_JNDI_Host=dev01.qa.atl.jboss.com
 DB1_SYBASE_JNDI_Port=4100
 
 DB2_SYBASE_JNDI_NumberOfDrivers=2
-DB2_SYBASE_JNDI_Driver0=com.sybase.jdbc2.jdbc.SybDriver
+DB2_SYBASE_JNDI_Driver0=com.sybase.jdbc3.jdbc.SybDriver
 DB2_SYBASE_JNDI_Driver1=com.arjuna.ats.jdbc.TransactionalDriver
 DB2_SYBASE_JNDI_Binding=sybase2
 DB2_SYBASE_JNDI_DatabaseURL=jdbc:arjuna:sybase2

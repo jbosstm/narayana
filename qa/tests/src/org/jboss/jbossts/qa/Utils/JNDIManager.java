@@ -35,7 +35,7 @@ import com.arjuna.ats.internal.jdbc.DynamicClass;
 //import com.microsoft.jdbcx.sqlserver.SQLServerDataSource;
 import com.microsoft.sqlserver.jdbc.*;
 
-import com.sybase.jdbc2.jdbc.SybXADataSource;
+import com.sybase.jdbc3.jdbc.SybXADataSource;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import com.mysql.jdbc.jdbc2.optional.MysqlXADataSource;
@@ -184,7 +184,7 @@ public class JNDIManager
 
 				xaDataSourceToBind = specificXaDataSource;
 			}
-			else if( driver.equals("com.sybase.jdbc2.jdbc.SybDriver")) {
+			else if( driver.equals("com.sybase.jdbc3.jdbc.SybDriver")) {
 
 				SybXADataSource specificXaDataSource = new SybXADataSource();
 
