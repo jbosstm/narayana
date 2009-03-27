@@ -1,18 +1,18 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
  * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
- * of individual contributors.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors. 
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  * 
  * (C) 2005-2006,
@@ -29,23 +29,16 @@
  * $Id: SimpleTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.jta.jts.timeout;
+package com.hp.mwtests.ts.jta.timeout;
 
-import com.arjuna.ats.internal.jts.ORBManager;
+import com.hp.mwtests.ts.jta.common.TestResource;
 
-import com.hp.mwtests.ts.jta.jts.common.*;
+import javax.transaction.Transaction;
+import javax.transaction.xa.XAResource;
 
-import com.arjuna.ats.jta.common.*;
-import com.arjuna.ats.jta.*;
-import com.arjuna.ats.jta.utils.*;
-
-import com.arjuna.ats.arjuna.common.*;
-
-import com.arjuna.orbportability.*;
-
-public class SimpleTest
+public class RollbackTest
 {
-    public SimpleTest ()
+    public RollbackTest ()
     {
         try
         {
@@ -66,14 +59,17 @@ public class SimpleTest
 
 	    try
 	    {
-		transactionManager.commit();
-	    }
-	    catch (final javax.transaction.RollbackException ex)
-	    {
+		transactionManager.rollback();
+		
 		passed = true;
+	    }
+	    catch (IllegalStateException ex)
+	    {
+		passed = false;
 	    }
 	    catch (Exception ex)
 	    {
+	        passed = false;
 	    }
 
 	    if (passed)
@@ -90,28 +86,7 @@ public class SimpleTest
 
     public static void main(String[] args)
     {
-	ORB myORB = null;
-	RootOA myOA = null;
-
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
-	    
-	    myORB.initORB(args, null);
-	    myOA.initOA();
-
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-
-	    System.exit(0);
-	}
-
-        new SimpleTest();
+        new RollbackTest();
     }
 
 }

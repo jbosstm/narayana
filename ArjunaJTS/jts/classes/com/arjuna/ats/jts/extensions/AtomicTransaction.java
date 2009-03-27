@@ -416,8 +416,6 @@ public class AtomicTransaction
 		catch (TRANSACTION_ROLLEDBACK e)
 		{
 			_theStatus = Status.StatusRolledBack;
-
-			throw e;
 		}
 		catch (SystemException e)
 		{

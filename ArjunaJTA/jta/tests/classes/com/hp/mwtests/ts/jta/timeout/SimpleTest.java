@@ -61,7 +61,7 @@ public class SimpleTest
 	    {
 		transactionManager.commit();
 	    }
-	    catch (IllegalStateException ex)
+	    catch (final javax.transaction.RollbackException ex)
 	    {
 		passed = true;
 	    }

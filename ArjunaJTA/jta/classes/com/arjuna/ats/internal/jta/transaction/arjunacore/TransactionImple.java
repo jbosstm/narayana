@@ -1417,6 +1417,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					case ActionStatus.COMMITTED:
 					case ActionStatus.COMMITTING: // in case of async commit
 						_theTransaction.commit(true); // assure thread disassociation
+						return;
 				}
 
 				switch (_theTransaction.commit(true))
@@ -1499,6 +1500,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 				{
 					case ActionStatus.ABORTED:
 					case ActionStatus.ABORTING: // in case of async rollback
+					    statusIsValid = true;
 						break;
 					default:
 						throw new InactiveTransactionException(

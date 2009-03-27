@@ -43,9 +43,9 @@ import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.orbportability.*;
 
-public class SimpleTest
+public class RollbackTest
 {
-    public SimpleTest ()
+    public RollbackTest ()
     {
         try
         {
@@ -66,14 +66,17 @@ public class SimpleTest
 
 	    try
 	    {
-		transactionManager.commit();
-	    }
-	    catch (final javax.transaction.RollbackException ex)
-	    {
+		transactionManager.rollback();
+		
 		passed = true;
+	    }
+	    catch (IllegalStateException ex)
+	    {
+		passed = false;
 	    }
 	    catch (Exception ex)
 	    {
+	        passed = false;
 	    }
 
 	    if (passed)
@@ -111,7 +114,7 @@ public class SimpleTest
 	    System.exit(0);
 	}
 
-        new SimpleTest();
+        new RollbackTest();
     }
 
 }
