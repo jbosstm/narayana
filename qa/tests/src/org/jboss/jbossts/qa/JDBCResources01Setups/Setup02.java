@@ -46,6 +46,7 @@ public class Setup02
 	public static void main(String[] args)
 	{
         boolean useSybaseLockingHack = false;
+        boolean useShortIndexNames = false;
 
 		boolean passed = true;
 
@@ -63,6 +64,9 @@ public class Setup02
 
                 if(driver.contains(".sybase.")) {
                     useSybaseLockingHack = true;
+                }
+                if(driver.contains(".db2.")) {
+                    useShortIndexNames = true;
                 }
 
 				Class.forName(driver);
@@ -112,10 +116,16 @@ public class Setup02
 			System.err.println("CREATE TABLE " + tableName+" (Name VARCHAR(64), Value VARCHAR(64))");
 			statement.executeUpdate("CREATE TABLE " + tableName + " (Name VARCHAR(64), Value VARCHAR(64))");
 
+            String indexName = tableName;
+            // db2 only allows index names max length 18 (for us that is 14 + "_idx")
+            if(useShortIndexNames && tableName.length() > 14) {
+                indexName = tableName.substring(0, 14);
+            }
+            
 			// Create an Index for the table just created. Microsoft SQL requires an index for Row Locking.
-			System.err.println("CREATE UNIQUE INDEX " + tableName+"_idx " +
+			System.err.println("CREATE UNIQUE INDEX " + indexName+"_idx " +
 					"ON " + tableName + " (Name) ");
-			statement.executeUpdate("CREATE UNIQUE INDEX " + tableName + "_idx " +
+			statement.executeUpdate("CREATE UNIQUE INDEX " + indexName + "_idx " +
 					"ON " + tableName + " (Name) ");
 
             // sybase uses coarse grained locking by default and XA tx branches appear to be loose coupled i.e. do not share locks.

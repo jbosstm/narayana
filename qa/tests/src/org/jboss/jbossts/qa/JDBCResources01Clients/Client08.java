@@ -35,6 +35,8 @@ import org.jboss.jbossts.qa.Utils.ORBInterface;
 import org.jboss.jbossts.qa.Utils.OTS;
 import org.jboss.jbossts.qa.Utils.ServerIORStore;
 
+import java.util.Date;
+
 public class Client08
 {
 	public static void main(String[] args)
@@ -56,6 +58,8 @@ public class Client08
 
 			for (int index = 0; index < 10; index++)
 			{
+                System.out.println(""+new Date()+" loop iteration "+index);
+                
 				String name = "Name_" + index;
 				String value = "Value_" + (9 - index);
 
@@ -78,6 +82,8 @@ public class Client08
 				}
 
 			}
+
+            System.out.println("updates done, trying to commit");
 
 			OTS.current().commit(true);
 
