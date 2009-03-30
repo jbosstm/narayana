@@ -28,6 +28,11 @@
   1) Run the top level JBossTS ant build:  ant jts
   2) Run the qa build:  cd qa; ant
   2) Run the tests:  ant -f run-dtf-local.xml
+  
+  For general tests plus JDBC (e.g. use on hudson):
+    cd qa
+    ant get.drivers dist
+    ant -f run-dtf-local.xml junit junit-jdbc
 
   Paths are relative to the JVM's working dir - don't expect to be able to execute this from anywhere but 'qa'.
 
@@ -41,7 +46,7 @@
         <pathelement location="${working.dir}/lib/ext/junit.jar"/>
         <pathelement location="ext/jdom.jar"/>
     </path>
-
+    
     <!-- a faster subset of the tests for smoke testing. aim to keep to under one hour total. -->
     <target name="express">
 
@@ -137,20 +142,28 @@
         <antcall target="junit-tests"><param name="tests" value="crashrecovery12"/></antcall>
 
     </target>
+    
+    <!-- long running crash rec test groups (the ones disabled in the 'junit' target) -->
+    <target name="junit-longer">
+        <antcall target="junit-tests"><param name="tests" value="crashrecovery02_2"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="crashrecovery05_2"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="crashrecovery08"/></antcall>
+    </target>
 
     <!--  JDBC tests.
-        You'll need a qa/config/jdbc_profiles/<hostname>/JDBCProfiles file for your machine to run these ones.
-        Plus copies of the db drivers of course. And a set of servers to run against.
-        Did I mention it was complicated :-)
+        You'll need a qa/config/jdbc_profiles/<hostname>/JDBCProfiles file for your machine to run these ones,
+          although using the 'default' one is also an option.
+        Plus copies of the db drivers of course (try 'ant get.drivers' if inside the redhat network).
+        And a set of servers to run against. Did I mention it was complicated :-)
     -->
     <target  name="junit-jdbc">
-        
+
         <antcall target="junit-tests"><param name="tests" value="jdbcresources01-oracle_thin_jndi"/></antcall> 
         <antcall target="junit-tests"><param name="tests" value="jdbcresources02-oracle_thin_jndi"/></antcall>
         
         <antcall target="junit-tests"><param name="tests" value="jdbcresources01_mssqlserver_jndi"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources02_mssqlserver_jndi"/></antcall>
-        
+
         <antcall target="junit-tests"><param name="tests" value="jdbcresources01-ibmdb2_jndi"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources02-ibmdb2_jndi"/></antcall>
 
