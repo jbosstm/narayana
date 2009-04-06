@@ -132,8 +132,8 @@ The JBoss server '${jboss.server}' does not appear to exist in the installation 
 
         <!-- jboss-common-core.jar has UnexpectedThrowable, jboss-logging-spi.jar has Logger, jboss-main.jar has ServerConfig -->
         <property name="jboss.libs" value="jboss-common-core.jar jboss-logging-spi.jar jboss-bootstrap.jar"/>
-        <!-- jboss-integration.jar has the transactions SPI, jmx-adaptor-plugin.jar has RMIAdaptor -->
-        <property name="jboss.common.shared.jta.libs" value="jboss-integration.jar jmx-adaptor-plugin.jar"/>
+        <!-- jboss-integration.jar has the transactions SPI, jmx-adaptor-plugin.jar has RMIAdaptor, jbosssx has security -->
+        <property name="jboss.common.shared.jta.libs" value="jboss-integration.jar jmx-adaptor-plugin.jar jbosssx.jar"/>
 
         <property name="jboss.common.shared.jts.libs" value="jboss-iiop.jar"/>
         <property name="jboss.server.all.jts.libs" value="jacorb.jar"/>
