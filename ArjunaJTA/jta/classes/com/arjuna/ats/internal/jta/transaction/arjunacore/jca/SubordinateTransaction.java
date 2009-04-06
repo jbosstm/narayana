@@ -20,6 +20,8 @@
  */
 package com.arjuna.ats.internal.jta.transaction.arjunacore.jca;
 
+import com.arjuna.ats.arjuna.common.Uid;
+
 import javax.transaction.*;
 import javax.transaction.xa.Xid;
 
@@ -92,4 +94,6 @@ public interface SubordinateTransaction extends Transaction
     public void recover();
     
     public Xid baseXid();
+    
+    public Uid get_uid();
 }
