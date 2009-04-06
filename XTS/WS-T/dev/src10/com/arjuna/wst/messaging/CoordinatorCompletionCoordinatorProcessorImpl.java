@@ -40,8 +40,6 @@ import com.arjuna.webservices.wsba.processors.CoordinatorCompletionCoordinatorPr
 import com.arjuna.wsc.messaging.MessageId;
 import org.jboss.jbossts.xts.recovery.participant.ba.XTSBARecoveryManager;
 
-import javax.xml.ws.addressing.AttributedURI;
-import javax.xml.ws.addressing.AddressingBuilder;
 import java.net.URISyntaxException;
 
 
@@ -388,22 +386,6 @@ public class CoordinatorCompletionCoordinatorProcessorImpl extends CoordinatorCo
         }
     }
 
-    private static AttributedURI faultAction = null;
-
-    private static synchronized AttributedURI getFaultAction()
-    {
-        if (faultAction == null) {
-            AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-
-            try {
-                faultAction = builder.newURI(CoordinationConstants.WSCOOR_ACTION_FAULT);
-            } catch (URISyntaxException e) {
-                // TODO log error here
-            }
-        }
-
-        return faultAction;
-    }
     /**
      * Status.
      * @param status The status.
