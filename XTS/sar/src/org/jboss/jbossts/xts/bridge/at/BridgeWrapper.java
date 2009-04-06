@@ -4,7 +4,7 @@ import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateC
 import com.arjuna.mwlabs.wst11.at.ContextFactoryImple;
 import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
 import com.arjuna.mw.wst.TxContext;
-import com.arjuna.mw.wst.exceptions.UnknownTransactionException;
+import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wsc11.ContextFactoryMapper;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.wst.SystemException;
