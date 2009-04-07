@@ -44,7 +44,8 @@ import java.lang.Exception;
 
 public class ObjectStoreException extends Exception
 {
-
+    static final long serialVersionUID = -1228565199285342890L;    
+    
     public ObjectStoreException ()
     {
 	super();
