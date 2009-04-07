@@ -606,6 +606,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				catch (Exception e2)
 				{
 					_committed = false;
+                    
+                    e2.printStackTrace();
 
 					throw new UNKNOWN();
 				}

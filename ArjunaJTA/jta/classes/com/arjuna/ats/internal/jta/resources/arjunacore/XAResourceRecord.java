@@ -517,8 +517,11 @@ public class XAResourceRecord extends AbstractRecord
 	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.commitxaerror
 	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.commitxaerror]
 	 *          {0} - xa error {1}
+	 *
+	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.commitexception
+	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.commitexception] {0}
+	 *          caught: {1}
 	 */
-
 	public int topLevelCommit()
 	{
 		if (jtaLogger.logger.isDebugEnabled())
@@ -631,7 +634,14 @@ public class XAResourceRecord extends AbstractRecord
 				}
 				catch (Exception e2)
 				{
-					return TwoPhaseOutcome.FINISH_ERROR;
+					if (jtaLogger.loggerI18N.isWarnEnabled())
+					{
+						jtaLogger.loggerI18N
+								.warn("com.arjuna.ats.internal.jta.resources.arjunacore.commitexception",
+										new Object[] { "XAResourceRecord.topLevelCommit", e2 }, e2);
+					}
+                    
+                    return TwoPhaseOutcome.FINISH_ERROR;
 				}
 				finally
 				{
