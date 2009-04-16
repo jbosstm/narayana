@@ -621,6 +621,11 @@ public class XAResourceRecord extends AbstractRecord
 						        return TwoPhaseOutcome.HEURISTIC_HAZARD;  // something terminated the transaction!
 						case XAException.XAER_PROTO:
 						case XAException.XA_RETRY:
+	                                            /*
+                                                     * Could do timeout retry here, but that could cause other resources in the list to go down the
+                                                     * heuristic path (some are far too keen to do this). Fail and let recovery retry. Meanwhile
+                                                     * the coordinator will continue to commit the other resources immediately.
+                                                     */
 							return TwoPhaseOutcome.FINISH_ERROR;
 						case XAException.XAER_INVAL:
 						case XAException.XAER_RMFAIL: // resource manager
