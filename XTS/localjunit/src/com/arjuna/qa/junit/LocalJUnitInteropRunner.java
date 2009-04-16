@@ -10,12 +10,11 @@ import java.io.FileWriter;
 import java.io.BufferedWriter;
 
 /**
- * Runs XTS Testsuite at a serveruURL, waits until it finishes
- * and writes the test result into an outfile.
+ * Runs XTS Interop Testsuite at a serveruURL and writes the test result into an outfile.
  * @author <a href="mailto:istudens@redhat.com">Ivo Studensky</a>
  * @version <tt>$Revision$</tt>
  */
-public class LocalJUnitRunner extends TestCase
+public class LocalJUnitInteropRunner extends TestCase
 {
     private String serverUrl    = null;
     private String outfile      = null;
@@ -34,30 +33,14 @@ public class LocalJUnitRunner extends TestCase
         try
         {
             // run tests by calling a servlet
-            Header runParam = new Header("run", "run");
+            Header runParam = new Header("Execute", "run");
             HttpMethodBase request = HttpUtils.accessURL(
                     new URL(serverUrl), null,
                     HttpURLConnection.HTTP_OK,
                     new Header[] {runParam},
                     HttpUtils.POST);
 
-            String response = null;
-            int index = 0;
-            do
-            {
-                System.err.println("_____________ " +( index++) + "th round");
-                // we have to give some time to the tests to finish
-                Thread.sleep(10000);     // 10 secs
-
-                // tries to get results
-                request = HttpUtils.accessURL(
-                        new URL(serverUrl), null,
-                        HttpURLConnection.HTTP_OK,
-                        HttpUtils.GET);
-
-                response = request.getResponseBodyAsString();
-            }
-            while (response != null && response.indexOf("finished") == -1);
+           String response = request.getResponseBodyAsString();
 
             System.err.println("======================================================");
             System.err.println("====================   RESULT    =====================");
@@ -74,8 +57,8 @@ public class LocalJUnitRunner extends TestCase
             e.printStackTrace();
             result = false;
         }
-        
+
         assertTrue(result);
     }
-    
+
 }
