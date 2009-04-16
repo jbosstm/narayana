@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * JBoss, Home of Professional Open Source
+ * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA  02110-1301, USA.
+ *
+ * (C) 2007, 2009
+ * @author JBoss Inc.
+-->
+
+<project name="TxBridge" default="dist" basedir=".">
+	<description>
+		JBossTS Transaction Bridge
+	</description>
+
+    <property name="jbossas.home" location="/home/jhalli/IdeaProjects/jboss/jbossas_branch5x/build/output/jboss-5.1.0.CR1"/>
+    <property name="jbossas.server" value="default"/>
+
+    <property name="jbossts.home" location=".."/>
+
+	<property name="src" location="src"/>
+	<property name="lib" location="lib"/>
+	<property name="resources" location="resources"/>
+	<property name="build" location="build"/>
+
+	<path id="build-prereqs">
+        <fileset dir="${jbossts.home}/install/lib">
+            <include name="jbossjts.jar"/>
+            <include name="ext/jbossts-common.jar"/>
+            <include name="ext/log4j-1.2.14.jar"/>
+            <include name="ext/jta-1_1-classes.zip"/>
+            <include name="ext/connector-api.jar"/>
+        </fileset>
+
+        <fileset dir="${jbossts.home}/XTS/sar/build">
+            <include  name="jbossxts-api.jar"/>
+        </fileset>
+
+        <fileset dir="${jbossas.home}/common/lib">
+            <include name="jbossws-native-jaxws.jar"/>
+        </fileset>
+	</path>
+
+	<target name="clean" description="clean up">
+		<delete dir="${build}"/>
+	</target>
+
+	<target name="init">
+		<tstamp/>
+		<mkdir dir="${build}"/>
+	</target>
+
+	<target name="compile" depends="init"
+			description="compile the source ">
+		<mkdir dir="${build}/classes"/>
+		<javac srcdir="${src}" destdir="${build}/classes" debug="true">
+			<classpath refid="build-prereqs"/>
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile"
+			description="generate the distribution">
+		<jar jarfile="${build}/txbridge.jar">
+			<fileset dir="${build}/classes">
+				<include name="org/jboss/**"/>
+			</fileset>
+            <fileset dir=".">
+                <include name="META-INF/*"/>
+            </fileset>
+		</jar>
+	</target>
+
+    <target name="deploy" depends="dist" description="deploy to JBossAS">
+        <copy file="${build}/txbridge.jar" todir="${jbossas.home}/server/${jbossas.server}/deploy/"/>
+    </target>
+
+    <!-- ##################################################################################### -->
+
+    <!-- the following targets are utility functions for the JBossTS dev team.
+            You probably don't need to worry about them. -->
+
+    <target name="install-jts">
+        <copy todir="${jbossas.home}/common/lib">
+            <fileset dir="${jbossts.home}/install/lib" includes="*.jar"/>
+            <fileset dir="${jbossts.home}/install/lib/ext/" includes="jbossts-common.jar"/>
+        </copy>
+    </target>
+
+    <target name="copy-xts">
+        <copy todir="${jbossas.home}/docs/examples/transactions">
+            <fileset dir="${jbossts.home}/XTS/xts-install/sar" includes="jbossxts.sar"/>
+        </copy>
+    </target>
+
+    <target name="install-xts">
+        <delete dir="${jbossas.home}/server/${jbossas.server}/deploy/jbossxts.sar"/>
+        <mkdir dir="${jbossas.home}/server/${jbossas.server}/deploy/jbossxts.sar"/>
+        <unzip src="${jbossas.home}/docs/examples/transactions/jbossxts.sar"
+               dest="${jbossas.home}/server/${jbossas.server}/deploy/jbossxts.sar"/>
+    </target>
+
+</project>
+

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * JBoss, Home of Professional Open Source
+ * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA  02110-1301, USA.
+ *
+ * (C) 2009
+ * @author JBoss Inc.
+-->
+
+<project name="TxBridgeDemo" default="dist" basedir=".">
+	<description>
+		JBossTS Transaction Bridge Demo App
+	</description>
+
+    <property name="jbossas.home" location="/home/jhalli/IdeaProjects/jboss/jbossas_branch5x/build/output/jboss-5.1.0.CR1"/>
+    <property name="jbossas.server" value="default"/>
+
+	<property name="src" location="src"/>
+    <property name="dd" location="dd"/>
+    <property name="web" location="web"/>
+	<property name="build" location="build"/>
+
+	<path id="build-prereqs">
+		<fileset dir="${jbossas.home}/common/lib">
+            <include name="jboss-javaee.jar"/>
+            <include name="ejb3-persistence.jar"/>
+            <include name="servlet-api.jar"/>
+            <include name="jbossws-native-jaxws.jar"/>
+			<include name="log4j.jar"/>
+
+            <include name="jbossjts.jar"/>
+            <include name="jbossts-common.jar"/>
+
+		</fileset>
+
+        <fileset dir="${jbossas.home}/server/${jbossas.server}/deploy/jbossxts.sar">
+            <include  name="jbossxts-api.jar"/>
+        </fileset>
+
+        <!-- TODO get from deployed loc instead -->
+        <fileset dir="../build/">
+            <include name="txbridge.jar"/>
+        </fileset>
+
+	</path>
+
+	<target name="clean" description="clean up">
+		<delete dir="${build}"/>
+	</target>
+
+	<target name="init">
+		<tstamp/>
+		<mkdir dir="${build}"/>
+	</target>
+
+	<target name="compile" depends="init"
+			description="compile the source ">
+		<mkdir dir="${build}/classes"/>
+		<javac srcdir="${src}" destdir="${build}/classes" debug="true">
+			<classpath refid="build-prereqs"/>
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile"
+			description="generate the distribution">
+
+        <copy file="${dd}/jaxws-handlers-server.xml" todir="${build}/classes/org/jboss/jbossts/txbridge/demo/bistro"/>
+        <jar destfile="${build}/txbridge-demo-service.jar">
+			<metainf dir="${dd}" includes="persistence.xml"/>
+			<fileset dir="${build}/classes">
+				<include name="org/jboss/jbossts/txbridge/demo/bistro/*"/>
+			</fileset>
+		</jar>
+
+        <copy file="${dd}/jaxws-handlers-client.xml" todir="${build}/classes/org/jboss/jbossts/txbridge/demo/client"/>
+        <war warfile="${build}/txbridge-demo-client.war" webxml="${dd}/web.xml">
+			<classes dir="${build}/classes">
+                <include name="org/jboss/jbossts/txbridge/demo/client/*"/>
+			</classes>
+            <!-- jsp files -->
+            <fileset dir="${web}" includes="*.jsp"/>
+		</war>
+
+	</target>
+
+    <target name="deploy-service" depends="dist" description="deploy EJB to JBossAS">
+        <copy file="${build}/txbridge-demo-service.jar" todir="${jbossas.home}/server/${jbossas.server}/deploy"/>
+    </target>
+
+    <target name="deploy-client" depends="dist" description="deploy Servlet to JBossAS">
+        <copy file="${build}/txbridge-demo-client.war" todir="${jbossas.home}/server/${jbossas.server}/deploy"/>
+    </target>
+
+</project>
+
