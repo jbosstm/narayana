@@ -19,34 +19,45 @@
   @author JBoss Inc.
 -->
 
-<project name="Local JUnit Test for basic XTS testsuite" default="run" basedir=".">
+<project name="Local JUnit Test for basic XTS testsuite" default="tests-both" basedir=".">
 
     <property environment="env"/>
     <property name="server.hostname" value="${env.MYTESTIP_1}"/>
-    <!--property name="server.hostname" value="localhost"/-->
     <property name="base.url" value="http://${server.hostname}:8080"/>
     <property name="reports.dir" value="reports"/>
+    <property name="localjunit.lib.dir" value="build" />
+    <property name="apache.httpclient.lib.dir" value="ext" />
+    <property name="apache.logging.lib.dir" value="ext" />
+    <property name="apache.codec.lib.dir" value="ext" />
+    <property name="junit.lib.dir" value="../ext" />
+    <property name="testtype" value="tests-both" />
 
     <path id="tests.classpath">
-        <pathelement location="build/localjunit.jar"/>
-        <pathelement location="ext/commons-httpclient.jar"/>
-        <pathelement location="ext/commons-logging.jar"/>
-        <pathelement location="ext/commons-codec.jar"/>
-        <pathelement location="../ext/junit.jar"/>
+        <pathelement location="${localjunit.lib.dir}/localjunit.jar"/>
+        <pathelement location="${apache.httpclient.lib.dir}/commons-httpclient.jar"/>
+        <pathelement location="${apache.logging.lib.dir}/commons-logging.jar"/>
+        <pathelement location="${apache.codec.lib.dir}/commons-codec.jar"/>
+        <pathelement location="${junit.lib.dir}/junit.jar"/>
     </path>
 
 
-    <target name="run">
+    <!-- target for 1.1 tests -->
+    <target name="tests-11">
         <run-localjunit-test serverUrl="${base.url}/wsas-tests/index.xml" outfile="TEST-wsas-test.xml" />
-        <run-localjunit-test serverUrl="${base.url}/wscf-tests/index.xml" outfile="TEST-wscf-test.xml" />
-        <run-localjunit-test serverUrl="${base.url}/ws-c-tests/index.xml" outfile="TEST-ws-c-test.xml" />
         <run-localjunit-test serverUrl="${base.url}/ws-c11-tests/index.xml" outfile="TEST-ws-c11-test.xml" />
-        <run-localjunit-test serverUrl="${base.url}/ws-t-tests/index.xml" outfile="TEST-ws-t-test.xml" />
         <run-localjunit-test serverUrl="${base.url}/ws-t11-tests/index.xml" outfile="TEST-ws-t11-test.xml" />
-        <run-localjunit-test serverUrl="${base.url}/wstx-tests/index.xml" outfile="TEST-wstx-test.xml" />
+        <run-localjunit-test serverUrl="${base.url}/wscf11-tests/index.xml" outfile="TEST-wscf11-test.xml" />
+        <run-localjunit-test serverUrl="${base.url}/wstx11-tests/index.xml" outfile="TEST-wstx11-test.xml" />
     </target>
 
-    
+    <!-- target for both 1.0 and 1.1 tests -->
+    <target name="tests-both" depends="tests-11">
+        <run-localjunit-test serverUrl="${base.url}/wscf-tests/index.xml" outfile="TEST-wscf-test.xml" />
+        <run-localjunit-test serverUrl="${base.url}/wstx-tests/index.xml" outfile="TEST-wstx-test.xml" />
+        <run-localjunit-test serverUrl="${base.url}/ws-c-tests/index.xml" outfile="TEST-ws-c-test.xml" />
+        <run-localjunit-test serverUrl="${base.url}/ws-t-tests/index.xml" outfile="TEST-ws-t-test.xml" />
+    </target>
+ 
     <macrodef name="run-localjunit-test">
         <attribute name="serverUrl" />
         <attribute name="outfile" />
