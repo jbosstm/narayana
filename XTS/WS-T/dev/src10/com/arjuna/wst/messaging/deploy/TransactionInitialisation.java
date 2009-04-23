@@ -23,7 +23,6 @@ package com.arjuna.wst.messaging.deploy;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import com.arjuna.common.util.SharedTimer;
 import com.arjuna.webservices.wsarjtx.processors.TerminationCoordinatorProcessor;
 import com.arjuna.webservices.wsat.processors.CompletionCoordinatorProcessor;
 import com.arjuna.webservices.wsat.processors.CoordinatorProcessor;
