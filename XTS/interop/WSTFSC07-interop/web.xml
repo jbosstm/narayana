@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	version="2.4">
+    <display-name>JBoss WSTF interop</display-name>
+
+    <description>JBoss WSTF interop</description>
+
+    <!-- base URL for location of Interop services -->
+    <context-param>
+        <param-name>BaseURI</param-name>
+        <param-value>http://@HOST@:@PORT@/sc007</param-value>
+    </context-param>
+
+    <!-- Initialise Interop 11 services -->
+    <listener>
+        <listener-class>com.jboss.transaction.wstf.webservices.sc007.server.ParticipantInitialisation</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.jboss.transaction.wstf.webservices.sc007.server.InitiatorInitialisation</listener-class>
+    </listener>
+
+    <!-- Define Interop 11 Server Endpoints -->
+    <servlet>
+      <servlet-name>WSTF Sc007 Initiator Service</servlet-name>
+      <servlet-class>com.jboss.transaction.wstf.webservices.sc007.sei.InitiatorPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+      <servlet-name>WSTF Sc007 Participant Service</servlet-name>
+      <servlet-class>com.jboss.transaction.wstf.webservices.sc007.sei.ParticipantPortTypeImpl</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- Define Sc007 JaxWS Server Endpoint Mappings -->
+    <servlet-mapping>
+      <servlet-name>WSTF Sc007 Initiator Service</servlet-name>
+      <url-pattern>/InitiatorService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>WSTF Sc007 Participant Service</servlet-name>
+      <url-pattern>/ParticipantService</url-pattern>
+    </servlet-mapping>
+
+    <!-- define proxy, logging and junit test runner servlets -->
+    <servlet>
+        <servlet-name>HTTP Proxy Servlet</servlet-name>
+        <servlet-class>com.jboss.transaction.wstf.proxy.ProxyListenerService</servlet-class>
+        <!--
+          The base URI of the proxy servlet.
+         -->
+        <init-param>
+            <param-name>proxyServiceURI</param-name>
+            <param-value>http://@HOST@:@PORT@/sc007/proxy</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>JUnit test servlet</servlet-name>
+        <servlet-class>com.jboss.transaction.wstf.test.TestServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>XML results servlet</servlet-name>
+        <servlet-class>com.jboss.transaction.wstf.test.XMLResultsServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Log servlet</servlet-name>
+        <servlet-class>com.jboss.transaction.wstf.test.TestLogServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+	<!-- servlet mappings -->
+    <servlet-mapping>
+        <servlet-name>HTTP Proxy Servlet</servlet-name>
+        <url-pattern>/proxy/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>JUnit test servlet</servlet-name>
+        <url-pattern>/test</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>XML results servlet</servlet-name>
+        <url-pattern>/xmlresults</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Log servlet</servlet-name>
+        <url-pattern>/logs/*</url-pattern>
+    </servlet-mapping>
+    
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>

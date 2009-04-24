@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<project name="project" default="war">
+    <description>
+        JBoss Transactions WS-Addressing interop test
+    </description>
+
+	<property environment="env"/>
+	
+	<property name="host" value="localhost"/>
+	<property name="port" value="8080"/>
+	
+	<property name="jboss.dir" location="${env.JBOSS_HOME}"/>
+	<property name="jboss.deploy.dir" location="${jboss.dir}/server/default/deploy"/>
+	
+	<property name="build.dir" location="build"/>
+	<property name="build.classes.dir" location="${build.dir}/classes"/>
+	<property name="build.lib.dir" location="${build.dir}/lib"/>
+	<property name="build.war.file" location="${build.lib.dir}/interop11.war"/>
+	<property name="build.webxml.file" location="${build.lib.dir}/web.xml"/>
+	
+	<property name="src.dir" location="src"/>
+	<property name="dd.dir" location="dd/"/>
+	<property name="webxml.file" location="web.xml"/>
+	<property name="lib.dir" location="lib"/>
+	<property name="web.dir" location="web"/>
+	
+	<property name="jboss.client.lib.dir" location="${jboss.dir}/client"/>
+	<property name="jboss.lib.dir" location="${jboss.dir}/lib"/>
+	<property name="jboss.common.lib.dir" location="${jboss.dir}/common/lib"/>
+	<!-- export XTS_HOME=/home/adinn/jboss/jbossts/trunk/XTS/xts-install -->
+	<property name="xts.home" location="${env.XTS_HOME}"/>
+	<property name="xts.lib.dir" location="${xts.home}/lib"/>
+	<property name="xts.ext.lib.dir" location="${xts.lib.dir}/ext"/>
+
+	<echo>jboss.dir = ${jboss.dir}</echo>
+	<echo>xts.home = ${xts.home}</echo>
+
+	<!--
+	<property name="dist.compile.libs" value="ws-c.jar ws-t.jar wscf.jar wstx.jar wsas.jar jbossjta.jar jbossts-common.jar stax-api-1.0.jar junit-3.8.1.jar saxon8.jar"/>
+	-->
+	<property name="xts11.compile.libs" value="ws-c11.jar ws-t11.jar wscf11.jar wstx11.jar"/>
+	<property name="xts.compile.libs" value="jbossxts-api.jar ws-c.jar ws-t.jar wscf.jar wstx.jar wsas.jar"/>
+	<property name="xts.ext.compile.libs" value="jbossjta.jar jbossjts.jar"/>
+	<property name="jboss.compile.client.libs" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
+            jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar"/>
+	<property name="jboss.compile.lib.jars" value="dom4j.jar"/>
+	<property name="jboss.compile.common.libs" value="servlet-api.jar"/>
+
+	<property name="dist.compile.libs" value="junit.jar saxon.jar"/>
+
+	<!--
+	<property name="dist.dependency.libs" value="wstx-asl-2.0.3.jar"/>
+	<property name="dist.libs" value="${dist.compile.libs} ${dist.dependency.libs}"/>
+	-->
+	<property name="dist.libs" value="${dist.compile.libs}"/>
+	<property name="dist.xts.libs" value="${xts11.compile.libs} ${xts.compile.libs}"/>
+	<property name="dist.xts.ext.libs" value="${xts.ext.compile.libs}"/>
+
+	<property name="compile.debug" value="true"/>
+	
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="${dist.compile.libs}"/>
+		<fileset dir="${xts.lib.dir}" includes="${dist.xts.libs}"/>
+		<fileset dir="${xts.ext.lib.dir}" includes="${dist.xts.ext.libs}"/>
+		<fileset dir="${jboss.client.lib.dir}" includes="${jboss.compile.client.libs}"/>
+		<fileset dir="${jboss.lib.dir}" includes="${jboss.compile.lib.jars}"/>
+		<fileset dir="${jboss.common.lib.dir}" includes="${jboss.compile.common.libs}"/>
+	</path>
+	<property name="classpath" refid="classpath"/>
+	
+	<target name="init">
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${build.classes.dir}"/>
+		<mkdir dir="${build.lib.dir}"/>
+	</target>
+	
+	<target name="compile" depends="init">
+		<javac classpathref="classpath" destdir="${build.classes.dir}" srcdir="${src.dir}" debug="${compile.debug}"/>
+	</target>
+	
+    <target name="war" depends="compile">
+    	    <copy file="${webxml.file}" tofile="${build.webxml.file}" overwrite="yes">
+    	    		<filterset>
+    	    			<filter token="HOST" value="${host}"/>
+    	    			<filter token="PORT" value="${port}"/>
+    	    		</filterset>
+            </copy>
+        <!-- todo put one copy of each handler file in WEB-INF and refer to it correctly from SEI class annotation-->
+        <copy file="${dd.dir}/interop11/initiatorhandlers.xml" toDir="${build.classes.dir}/com/jboss/transaction/txinterop/webservices/atinterop/sei" overwrite="yes">
+        </copy>
+        <copy file="${dd.dir}/interop11/participanthandlers.xml" toDir="${build.classes.dir}/com/jboss/transaction/txinterop/webservices/atinterop/sei" overwrite="yes">
+        </copy>
+        <copy file="${dd.dir}/interop11/initiatorhandlers.xml" toDir="${build.classes.dir}/com/jboss/transaction/txinterop/webservices/bainterop/sei" overwrite="yes">
+        </copy>
+        <copy file="${dd.dir}/interop11/participanthandlers.xml" toDir="${build.classes.dir}/com/jboss/transaction/txinterop/webservices/bainterop/sei" overwrite="yes">
+        </copy>
+	<!-- wsdl gets loaded relative to service implementation class -->
+        <copy toDir="${build.classes.dir}/com/jboss/transaction/txinterop/webservices/atinterop/generated"
+	      overwrite="yes">
+            <fileset dir="${dd.dir}/interop11"
+                    includes="wsdl/interopat*.wsdl"/>
+        </copy>
+        <copy toDir="${build.classes.dir}/com/jboss/transaction/txinterop/webservices/bainterop/generated"
+	      overwrite="yes">
+            <fileset dir="${dd.dir}/interop11"
+                    includes="wsdl/interopba*.wsdl"/>
+        </copy>
+        <copy toDir="${build.classes.dir}/com/jboss/transaction/txinterop/webservices/soapfault/generated"
+	      overwrite="yes">
+            <fileset dir="${dd.dir}/interop11"
+                    includes="wsdl/soapfault.wsdl"/>
+        </copy>
+            <war destfile="${build.war.file}" webxml="${build.webxml.file}">
+    			<classes dir="${build.classes.dir}"/>
+    			<classes dir="${src.dir}" excludes="**/*.java"/>
+                <lib dir="${lib.dir}" includes="${dist.libs}"/>
+                <!--
+		    <lib dir="${xts.lib.dir}" includes="${dist.xts.libs}"/>
+		-->
+                <webinf dir="${dd.dir}/interop11" includes="wsdl/*.wsdl"/>
+		<fileset dir="${web.dir}"/>
+    		</war>
+    </target>
+	
+	<target name="deploy" depends="war">
+		<copy file="${build.war.file}" todir="${jboss.deploy.dir}"/>
+	</target>
+	
+	<target name="undeploy">
+		<delete file="${jboss.deploy.dir}/interop11.war"/>
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+	</target>
+</project>
+

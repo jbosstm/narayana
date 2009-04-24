@@ -30,7 +30,6 @@
     <property name="apache.logging.lib.dir" value="ext" />
     <property name="apache.codec.lib.dir" value="ext" />
     <property name="junit.lib.dir" value="../ext" />
-    <property name="testtype" value="tests-both" />
 
     <path id="tests.classpath">
         <pathelement location="${localjunit.lib.dir}/localjunit.jar"/>

@@ -167,6 +167,10 @@
 
 	</target>
 
+    <target name="build-interop-tests" depends="install-projects, com.arjuna.mwlabs.xts.interop-tests.build">
+
+	</target>
+
     <target name="htdocs" depends="com.arjuna.mwlabs.xts.init">
 		<echo message="Building htdocs "/>
 		<mkdir dir="${com.arjuna.mwlabs.xts.htdocs.dest}"/>
@@ -288,13 +292,29 @@
 	</zip>
     </target>
 
+    <target name="install-interop-tests" depends="build-interop-tests">   
+        <echo message="Installing service tests"/>
+        <mkdir dir="${com.arjuna.mwlabs.installationdirectory}/interop-tests"/>
+        <copy todir="${com.arjuna.mwlabs.installationdirectory}/interop-tests">
+            <!-- wars providing test servlets -->
+            <fileset dir="interop/WSTFSC07-interop/build/lib" includes="sc007.war"/>
+            <fileset dir="interop/WSTX11-interop/build/lib" includes="interop11.war"/>
+            <!-- ant script and client jar used to exercise servlets-->
+            <fileset dir="localjunit/build/" includes="localjunit.jar"/>
+            <fileset dir="localjunit" includes="run-interop-tests.xml"/>
+        </copy>
+	<zip destfile="${com.arjuna.mwlabs.installationdirectory}/interop-tests/jbossxts-interop-tests.zip">
+	  <fileset dir="${com.arjuna.mwlabs.installationdirectory}/interop-tests" includes="*.war *.jar *.xml"/>
+	</zip>
+    </target>
+
     <!-- build target just builds the main projects but not the sar since
         the latter cannot be built until after the projects have been installed -->
     <target name="build" depends="build-projects"/>
 
     <!-- install target builds and installs the main projects
         then builds and installs the sar then installs the demo -->
-    <target name="install" depends="install-sar, install-tests, install-demo"/>
+    <target name="install" depends="install-sar, install-tests, install-interop-tests, install-demo"/>
 
     <target name="clean" depends="com.arjuna.mwlabs.xts.init,
 		com.arjuna.mwlabs.xts.wsas.clean,
@@ -302,7 +322,8 @@
 		com.arjuna.mwlabs.xts.wscf.clean,
 		com.arjuna.mwlabs.xts.ws-t.clean,
 		com.arjuna.mwlabs.xts.wstx.clean,
-		com.arjuna.mwlabs.xts.sar.clean">
+		com.arjuna.mwlabs.xts.sar.clean,
+		com.arjuna.mwlabs.xts.interop-tests.clean">
 
 		<delete dir="${com.arjuna.mwlabs.xts.htdocs.dest}"/>
 		<delete dir="${com.arjuna.mwlabs.xts.jar.dest}"/>
@@ -355,6 +376,19 @@
         <ant dir="WS-T" target="${testtype}"/>
         <ant dir="WSTX" target="${testtype}"/>
         <ant dir="localjunit" target="all"/>
+    </target>
+
+    <target name="com.arjuna.mwlabs.xts.interop-tests.build">
+        <property name="xts.home" location="${com.arjuna.mw.installationdirectory}"/>
+        <ant dir="interop/WSTFSC07-interop" target="war"/>
+        <ant dir="interop/WSTX11-interop" target="war"/>
+        <ant dir="localjunit" target="all"/>
+    </target>
+
+    <target name="com.arjuna.mwlabs.xts.interop-tests.clean">
+        <property name="xts.home" location="${com.arjuna.mw.installationdirectory}"/>
+        <ant dir="interop/WSTFSC07-interop" target="clean"/>
+        <ant dir="interop/WSTX11-interop" target="clean"/>
     </target>
 
 	<target name="com.arjuna.mwlabs.xts.wsas.clean">

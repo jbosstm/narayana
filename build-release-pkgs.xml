@@ -294,6 +294,18 @@
             <arg value="-DgeneratePom=true"/>
         </exec>
 
+        <exec executable="mvn" dir="${workdir}">
+            <arg value="deploy:deploy-file"/>
+            <arg value="-Dfile=${workdir}/build/${tag}/xts/tests/jbossxts-interop-tests.zip"/>
+            <arg value="-Dpackaging=zip"/>
+            <arg value="-Durl=${mvn.url}"/>
+            <arg value="-DrepositoryId=${mvn.repositoryId}"/>
+            <arg value="-DgroupId=jboss.jbossts"/>
+            <arg value="-DartifactId=jbossxts-interop-tests"/>
+            <arg value="-Dversion=${filename}"/>
+            <arg value="-DgeneratePom=true"/>
+        </exec>
+
     </target>
 
 </project>

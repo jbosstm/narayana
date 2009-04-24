@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions
+        xmlns:s="http://www.w3.org/2001/XMLSchema"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:wsaw="http://www.w3.org/2006/02/addressing/wsdl"
+        xmlns:tns="http://fabrikam123.com/wsba"
+        targetNamespace="http://fabrikam123.com/wsba"
+        xmlns="http://schemas.xmlsoap.org/wsdl/">
+    <import
+       namespace="http://fabrikam123.com/wsba"
+       location="interopba.wsdl"/>
+
+    <binding name="Initiator_SOAPBinding" type="tns:InitiatorPortType">
+      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+      <operation name="Response">
+        <soap:operation soapAction="http://fabrikam123.com/wsba/Response"/>
+        <input message="tns:Response">
+          <soap:body use="literal"/>
+        </input>
+      </operation>
+    </binding>
+
+    <service name="InitiatorService">
+      <port binding="tns:Initiator_SOAPBinding" name="InitiatorPortType">
+	<wsaw:UsingAddressing required="true"/>
+	<soap:address location="http://localhost:9000/interopba/InitiatorService"/>
+      </port>
+    </service>
+
+</definitions>

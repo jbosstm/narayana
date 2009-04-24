@@ -1,0 +1,72 @@
+package com.jboss.transaction.wstf.webservices.sc007.sei;
+
+import com.jboss.transaction.wstf.webservices.sc007.processors.InitiatorProcessor;
+import com.arjuna.webservices11.SoapFault11;
+
+import javax.xml.ws.RequestWrapper;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.addressing.AddressingProperties;
+import javax.xml.ws.addressing.JAXWSAConstants;
+import javax.xml.ws.handler.MessageContext;
+import javax.annotation.Resource;
+
+/**
+ * Implementor class for OASIS WS-Interop 1.1 Initiator Service
+ */
+import javax.jws.Oneway;
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+import javax.jws.WebParam;
+import javax.jws.*;
+import javax.jws.soap.SOAPBinding;
+
+import org.jboss.jbossts.xts.soapfault.Fault;
+
+
+/**
+ * Implementation class for WSTX 1.1 AT Interop Test Initiator service
+ */
+@WebService(name = "InitiatorPortType",
+        targetNamespace = "http://www.wstf.org/sc007",
+        wsdlLocation="/WEB-INF/wsdl/sc007.wsdl",
+        portName = "sc007InitiatorPort",
+        serviceName="Sc007Service")
+// @EndpointConfig(configName = "Standard WSAddressing Endpoint")
+@HandlerChain(file="initiatorhandlers.xml")
+public class InitiatorPortTypeImpl {
+
+    /**
+     * injected resource providing access to WSA addressing properties
+     */
+    @Resource
+    private WebServiceContext webServiceCtx;
+
+    /**
+     *
+     */
+    @WebMethod(operationName = "Response", action = "http://www.wstf.org/docs/scenarios/sc007/Response")
+    @Oneway
+    @RequestWrapper(localName = "Response", targetNamespace = "http://www.wstf.org/sc007", className = "com.jboss.transaction.txinterop.webservices.sc007.generated.TestMessageType")
+    public void response()
+    {
+        MessageContext ctx = webServiceCtx.getMessageContext();
+        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+
+        InitiatorProcessor.getInitiator().handleResponse(inboundAddressProperties) ;
+    }
+
+    @WebMethod(operationName = "SoapFault", action = "http://www.wstf.org/docs/scenarios/sc007/SoapFault")
+    @Oneway
+    @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
+    public void soapFault(
+            @WebParam(name = "Fault", targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/", partName = "parameters")
+            Fault fault)
+    {
+        MessageContext ctx = webServiceCtx.getMessageContext();
+        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+
+        SoapFault11 soapFaultInternal = SoapFault11.fromFault(fault);
+        InitiatorProcessor.getInitiator().handleSoapFault(soapFaultInternal, inboundAddressProperties) ;
+    }
+
+}
