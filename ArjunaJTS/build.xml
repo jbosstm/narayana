@@ -312,11 +312,20 @@
         <copy todir="${com.hp.mwlabs.installationdirectory}/services">
             <fileset dir="services">
                 <include name="**/**"/>
+                <exclude name="bin/**" />
+                <exclude name="lib/**" />
             </fileset>
             <filterset>
                 <filter token="PRODUCT_NAME" value="${com.hp.mw.ts.product.name.lowercase}"/>
                 <filter token="HOME_DIRECTORY" value="${com.hp.mw.ts.product.shortened.name.uppercase}_HOME"/>
             </filterset>
+        </copy>
+
+        <copy todir="${com.hp.mwlabs.installationdirectory}/services">
+            <fileset dir="services">
+                <include name="bin/**"/>
+                <include name="lib/**"/>
+            </fileset>
         </copy>
 
         <mkdir dir="${com.hp.mwlabs.installationdirectory}/services/lib"/>
