@@ -1,9 +1,9 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2007, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags.
- * See the copyright.txt in the distribution for a full listing
- * of individual contributors.
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.

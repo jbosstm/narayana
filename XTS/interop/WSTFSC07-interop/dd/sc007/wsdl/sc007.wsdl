@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+ This file (sc007.wsdl) belongs to the WSTF
+ and resides at http://www.wstf.org/docs/scenarios/sc007/sc007.wsdl .     
+-->
 <definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
   xmlns:s="http://www.w3.org/2001/XMLSchema" 
