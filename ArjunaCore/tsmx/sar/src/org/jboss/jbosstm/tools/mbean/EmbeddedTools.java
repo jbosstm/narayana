@@ -28,6 +28,8 @@ import org.jboss.jbosstm.tools.embedded.EmbeddedToolsFramework;
  */
 public class EmbeddedTools implements EmbeddedToolsMBean
 {
+    private static String MBEAN_NAME = "Transaction Tools";
+
     public void startEmbeddedTools()
     {
       new Thread()
@@ -42,7 +44,7 @@ public class EmbeddedTools implements EmbeddedToolsMBean
 
     public String getName()
     {
-        return null;
+        return MBEAN_NAME;
     }
 
     public int getState() {

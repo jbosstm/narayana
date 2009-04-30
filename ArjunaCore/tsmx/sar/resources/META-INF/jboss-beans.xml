@@ -22,7 +22,7 @@
 -->
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
-	<bean name="EmbeddedTools" class="org.jboss.jbosstm.tools.mbean.EmbeddedTools">
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss:service=EmbeddedTools", exposedInterface=org.jboss.jbosstm.tools.mbean.EmbeddedTools.class, registerDirectly=true)</annotation>
+	<bean name="Transaction Tools" class="org.jboss.jbosstm.tools.mbean.EmbeddedTools">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss:service=Transaction Tools", exposedInterface=org.jboss.jbosstm.tools.mbean.EmbeddedTools.class, registerDirectly=true)</annotation>
 	</bean>
 </deployment>
