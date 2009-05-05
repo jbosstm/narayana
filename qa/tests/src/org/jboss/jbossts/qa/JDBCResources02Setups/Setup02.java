@@ -39,6 +39,7 @@ import org.jboss.jbossts.qa.Utils.ORBInterface;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.sql.SQLException;
 import java.util.Properties;
 
 public class Setup02
@@ -96,7 +97,7 @@ public class Setup02
 			Statement statement = connection.createStatement();
 
             String tableName = JDBCProfileStore.getTableName(databaseUser, "Infotable");
-            
+
 			try
 			{
 				System.err.println("DROP TABLE " + tableName);
@@ -120,12 +121,31 @@ public class Setup02
             if(useShortIndexNames && tableName.length() > 14) {
                 indexName = tableName.substring(0, 14);
             }
-            
+
 			// Create an Index for the table just created. Microsoft SQL requires an index for Row Locking.
 			System.err.println("CREATE UNIQUE INDEX " + indexName+"_idx " +
 					"ON " + tableName + " (Name) ");
-			statement.executeUpdate("CREATE UNIQUE INDEX " + indexName + "_idx " +
+
+            try
+            {
+                statement.executeUpdate("CREATE UNIQUE INDEX " + indexName + "_idx " +
 					"ON " + tableName + " (Name) ");
+            }
+            catch(SQLException s)
+            {
+                if(!useShortIndexNames) {
+                    throw s;
+                }
+
+                // the shortening of the name may have made in non-uniq. Try a different name...
+                s.printStackTrace(System.err);
+                indexName = "x"+Integer.toHexString(tableName.hashCode());
+                System.err.println("CREATE INDEX failed, retrying with hashcode in the hope it's a name collision problem");
+                System.err.println("CREATE UNIQUE INDEX " + indexName+"_idx " +"ON " + tableName + " (Name) ");
+                statement.executeUpdate("CREATE UNIQUE INDEX " + indexName + "_idx " +
+					"ON " + tableName + " (Name) ");
+            }
+
 
             // sybase uses coarse grained locking by default and XA tx branches appear to be loose coupled i.e. do not share locks.
             // Unlike MSSQL, the presence of an index is not enough to cause the db to use row level locking. We need to configure

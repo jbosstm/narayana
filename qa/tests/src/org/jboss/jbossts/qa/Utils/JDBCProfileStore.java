@@ -144,7 +144,7 @@ public class JDBCProfileStore
 	}
 
     public static String getTableName(String username, String suffix) throws UnknownHostException {
-        // read JBTM- before messing with this function.
+        // read JBTM-390 before messing with this function.
         // previously this would have been: username + "_" + suffix as in "DROP TABLE " + databaseUser + "_InfoTable");
         String value = username+"_"+getLocalHostNameForTables()+"_"+suffix;
         // in addition to the problems with the valid characters, there are issues with the max length.
@@ -155,14 +155,14 @@ public class JDBCProfileStore
         }
         return value;
     }
-    
-    private static String getLocalHostNameForTables() throws UnknownHostException { 
+
+    private static String getLocalHostNameForTables() throws UnknownHostException {
         String hostName = java.net.InetAddress.getLocalHost().getHostName();
         hostName = stripHostName(hostName); // strip to local portion, force lower case.
         hostName = hostName.replace("-", "_"); // some db's don't like hyphens in identifiers
         return hostName;
     }
-    
+
 	private static void loadProfile()
 			throws Exception
 	{
@@ -177,9 +177,9 @@ public class JDBCProfileStore
 			}
 
 			_profile = new Properties();
-            
+
             File file = new File(baseDir + File.separator + stripHostName(hostName) + File.separator + "JDBCProfiles");
-            
+
             if(!file.exists()) {
                 // no host specific profile, fallback to a default one
                 file = new File(baseDir + File.separator + "default" + File.separator + "JDBCProfiles");
@@ -190,7 +190,7 @@ public class JDBCProfileStore
 			profileFileInputStream.close();
 		}
 	}
-    
+
 
 
 	private static String stripHostName(String hostName)
