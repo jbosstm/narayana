@@ -42,6 +42,7 @@
 
 	<fileset id="mssql.drivers" dir="${driver.home}/mssql2005_sqljdbc_2.0/enu/">
 		<include name="sqljdbc.jar"/>
+        <include name="sqljdbc4.jar"/>
 	</fileset>
 
 	<!-- 8.1.408 is broken, use something more recent. -->
@@ -64,7 +65,7 @@
 	</fileset>
 
 	<!-- you should not need to configure anything below here -->
-    
+
     <property name="driver.url" value="http://reports.qa.atl.jboss.com/jdbc-drivers/"/>
 
 	<property name="org.jboss.jbossts.qa.server_manager_location" location="ext/jboss-server-manager-0.1.1.GA.jar"/>
@@ -78,35 +79,37 @@
         <fileset refid="ibmdb2.drivers"/>
         <fileset refid="sybase.drivers"/>
     </path>
-    
+
     <target  name="get.drivers">
-        
+
         <mkdir dir="${driver.home}/oracle_10_2_0_4"/>
         <get src="${driver.url}/ojdbc14.jar"
              dest="${driver.home}/oracle_10_2_0_4/ojdbc14.jar"/>
-        
+
         <mkdir dir="${driver.home}/mssql2005_sqljdbc_2.0/enu"/>
         <get src="${driver.url}/sqljdbc_2.0/enu/sqljdbc.jar"
              dest="${driver.home}/mssql2005_sqljdbc_2.0/enu/sqljdbc.jar"/>
-        
+        <get src="${driver.url}/sqljdbc_2.0/enu/sqljdbc4.jar"
+             dest="${driver.home}/mssql2005_sqljdbc_2.0/enu/sqljdbc4.jar"/>
+
         <get src="http://jdbc.postgresql.org/download/postgresql-8.3-604.jdbc3.jar"
              dest="${driver.home}/postgresql-8.3-603.jdbc3.jar"/>
-        
+
         <get src="${driver.url}/mysql-connector-java-5.1.7-bin.jar"
              dest="${driver.home}/mysql-connector-java-5.1.7-bin.jar"/>
-        
+
         <mkdir dir="${driver.home}/DB2_v9"/>
         <get src="${driver.url}/DB2_v9/db2jcc.jar"
              dest="${driver.home}/DB2_v9/db2jcc.jar"/>
         <get src="${driver.url}/DB2_v9/db2jcc_license_cu.jar"
              dest="${driver.home}/DB2_v9/db2jcc_license_cu.jar"/>
-        
+
         <mkdir dir="${driver.home}/jConnect-6_0/classes"/>
         <get src="${driver.url}/jConnect-6_0/classes/jconn3.jar"
              dest="${driver.home}/jConnect-6_0/classes/jconn3.jar"/>
-        
+
     </target>
-    
+
 
     <target name="buildtype">
 		<available file="${jbossts.install.lib}/jbossjts.jar" property="buildtype" value="jts"/>
@@ -180,7 +183,7 @@
 			<fileset file="tests/build/java.policy"/>
 			<fileset file="${org.jboss.jbossts.qa.server_manager_location}"/>
         </copy>
-        <copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/lib" failonerror="${have.dbdrivers}">
+        <copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/lib/all_dbdrivers/" failonerror="${have.dbdrivers}">
             <fileset refid="oracle.drivers"/>
 			<fileset refid="mssql.drivers"/>
 			<fileset refid="pgsql.drivers"/>

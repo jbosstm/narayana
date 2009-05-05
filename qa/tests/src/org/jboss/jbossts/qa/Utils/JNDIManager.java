@@ -32,21 +32,12 @@ package org.jboss.jbossts.qa.Utils;
 
 import com.arjuna.ats.internal.jdbc.DynamicClass;
 
-//import com.microsoft.jdbcx.sqlserver.SQLServerDataSource;
-import com.microsoft.sqlserver.jdbc.*;
-
-import com.sybase.jdbc3.jdbc.SybXADataSource;
-
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
-import com.mysql.jdbc.jdbc2.optional.MysqlXADataSource;
-import org.postgresql.xa.PGXADataSource;
-import com.ibm.db2.jcc.DB2XADataSource;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.XADataSource;
 import java.util.Hashtable;
-
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 public class JNDIManager
 {
@@ -70,6 +61,9 @@ public class JNDIManager
 				throw new Exception("Driver or binding was not specified");
 			}
 
+            // We use reflection to configure the data source so as to avoid a compile or runtime
+            // dependency on all the drivers. see JBTM-543
+
 			if (driver.equals("com.arjuna.ats.jdbc.TransactionalDriver"))
 			{
 				if ((dynamicClass == null) || (databaseURL == null))
@@ -84,19 +78,6 @@ public class JNDIManager
 
 				xaDataSourceToBind = xaDataSource;
 			}
-			/*
-						else if (driver.equals ("COM.cloudscape.core.JDBCDriver"))
-						{
-							if (databaseName == null)
-								throw new Exception ("DatabaseName was not specified for profile: " + profileName);
-
-							COM.cloudscape.core.XaDataSource specificXaDataSource = (COM.cloudscape.core.XaDataSource )COM.cloudscape.core.DataSourceFactory.getXADataSource();
-							specificXaDataSource.setDatabaseName (databaseName);
-							specificXaDataSource.setCreateDatabase ("create"); // create db if not present
-
-							xaDataSourceToBind = (XADataSource )specificXaDataSource;
-						}
-					*/
 			else if (driver.equals("oracle.jdbc.driver.OracleDriver"))
 			{
 				if (databaseName == null)
@@ -104,55 +85,34 @@ public class JNDIManager
 					throw new Exception("DatabaseName was not specified for profile: " + profileName);
 				}
 
-				Class c = Class.forName("oracle.jdbc.xa.client.OracleXADataSource");
-				oracle.jdbc.xa.client.OracleXADataSource specificXaDataSource = (oracle.jdbc.xa.client.OracleXADataSource) c.newInstance();
-				specificXaDataSource.setDatabaseName(databaseName);
-				specificXaDataSource.setServerName(host);
-				specificXaDataSource.setPortNumber((new Integer(port)).intValue());
-				specificXaDataSource.setDriverType("thin");
+                XADataSourceReflectionWrapper wrapper = new XADataSourceReflectionWrapper("oracle.jdbc.xa.client.OracleXADataSource");
 
-				xaDataSourceToBind = specificXaDataSource;
+                wrapper.setProperty("databaseName", databaseName);
+                wrapper.setProperty("serverName", host);
+                wrapper.setProperty("portNumber", Integer.valueOf(port));
+                wrapper.setProperty("driverType", "thin");
+
+				xaDataSourceToBind = wrapper.getWrappedXADataSource();
 			}
-			/*
-			else if (driver.equals("com.microsoft.jdbc.sqlserver.SQLServerDriver"))
-			{
-				// old MS SQL 2005 JDBC driver
-
-				if (databaseName == null)
-				{
-					throw new Exception("DatabaseName was not specified for profile: " + profileName);
-				}
-
-				SQLServerDataSource specificXaDataSource = new SQLServerDataSource();
-				specificXaDataSource.setDatabaseName(databaseName);
-				specificXaDataSource.setServerName(host);
-				specificXaDataSource.setPortNumber((new Integer(port)).intValue());
-				specificXaDataSource.setSelectMethod("cursor");
-				specificXaDataSource.setSendStringParametersAsUnicode(false);
-				xaDataSourceToBind = specificXaDataSource;
-			}
-			*/
 			else if( driver.equals("com.microsoft.sqlserver.jdbc.SQLServerDriver")) {
-				// new MS SQL 2005 driver
 
-				SQLServerXADataSource specificXaDataSource = new SQLServerXADataSource();
-				specificXaDataSource.setServerName(host);
-				specificXaDataSource.setPortNumber(Integer.parseInt(port));
-				specificXaDataSource.setDatabaseName(databaseName);
-				//ds.setUser("jbossts1");
-				//ds.setPassword("jbossts1");
-				specificXaDataSource.setSendStringParametersAsUnicode(false);
-				xaDataSourceToBind = specificXaDataSource;
+                XADataSourceReflectionWrapper wrapper = new XADataSourceReflectionWrapper("com.microsoft.sqlserver.jdbc.SQLServerXADataSource");
+
+                wrapper.setProperty("databaseName", databaseName);
+                wrapper.setProperty("serverName", host);
+                wrapper.setProperty("portNumber", Integer.valueOf(port));
+                wrapper.setProperty("sendStringParametersAsUnicode", false);
+
+				xaDataSourceToBind = wrapper.getWrappedXADataSource();
 			}
 			else if( driver.equals("org.postgresql.Driver")) {
 
-				PGXADataSource specificXaDataSource = new PGXADataSource();
-				specificXaDataSource.setServerName(host);
-				specificXaDataSource.setDatabaseName(databaseName);
-				//specificXaDataSource.setUser("test");
-				//specificXaDataSource.setPassword("testpass");
+                XADataSourceReflectionWrapper wrapper = new XADataSourceReflectionWrapper("org.postgresql.xa.PGXADataSource");
 
-				xaDataSourceToBind = specificXaDataSource;
+                wrapper.setProperty("databaseName", databaseName);
+                wrapper.setProperty("serverName", host);
+
+                xaDataSourceToBind = wrapper.getWrappedXADataSource();
 			}
 			else if( driver.equals("com.mysql.jdbc.Driver")) {
 
@@ -162,48 +122,37 @@ public class JNDIManager
 				// doing this config on a per connection basis instead is
 				// possible but would require lots of code changes :-(
 
-				MysqlXADataSource specificXaDataSource = new MysqlXADataSource();
-				specificXaDataSource.setDatabaseName(databaseName);
-				specificXaDataSource.setServerName(host);
+                XADataSourceReflectionWrapper wrapper = new XADataSourceReflectionWrapper("com.mysql.jdbc.jdbc2.optional.MysqlXADataSource");
 
-				specificXaDataSource.setPinGlobalTxToPhysicalConnection(true); // Bad Things happen if you forget this bit.
+                wrapper.setProperty("databaseName", databaseName);
+                wrapper.setProperty("serverName", host);
+                wrapper.setProperty("pinGlobalTxToPhysicalConnection", true); // Bad Things happen if you forget this bit.
 
-				xaDataSourceToBind = specificXaDataSource;
+				xaDataSourceToBind = wrapper.getWrappedXADataSource();
 			}
 			else if( driver.equals("com.ibm.db2.jcc.DB2Driver")) {
 
 				// for DB2 version 8.2
 
-				DB2XADataSource specificXaDataSource = new DB2XADataSource();
-				specificXaDataSource.setDriverType(4);
-				specificXaDataSource.setDatabaseName(databaseName);
-				specificXaDataSource.setServerName(host);
-				specificXaDataSource.setPortNumber(Integer.parseInt(port));
-				//specificXaDataSource.setUser("jbossts");
-    	        //specificXaDataSource.setPassword("jbossts");
+                XADataSourceReflectionWrapper wrapper = new XADataSourceReflectionWrapper("com.ibm.db2.jcc.DB2XADataSource");
 
-				xaDataSourceToBind = specificXaDataSource;
+                wrapper.setProperty("databaseName", databaseName);
+                wrapper.setProperty("serverName", host);
+                wrapper.setProperty("driverType", 4);
+                wrapper.setProperty("portNumber", Integer.valueOf(port));
+
+                xaDataSourceToBind = wrapper.getWrappedXADataSource();
 			}
 			else if( driver.equals("com.sybase.jdbc3.jdbc.SybDriver")) {
 
-				SybXADataSource specificXaDataSource = new SybXADataSource();
+                XADataSourceReflectionWrapper wrapper = new XADataSourceReflectionWrapper("com.sybase.jdbc3.jdbc.SybXADataSource");
 
-				specificXaDataSource.setServerName(host);
-				specificXaDataSource.setPortNumber(Integer.parseInt(port));
-				specificXaDataSource.setDatabaseName(databaseName);
-				//ds.setUser("jbossts0");
-				//ds.setPassword("jbossts0");
+                wrapper.setProperty("databaseName", databaseName);
+                wrapper.setProperty("serverName", host);
+                wrapper.setProperty("portNumber", Integer.valueOf(port));
 
-				xaDataSourceToBind = specificXaDataSource;
+                xaDataSourceToBind = wrapper.getWrappedXADataSource();
 			}
-			/*else if (driver.equals("COM.FirstSQL.Dbcp.DbcpXADataSource"))
-			{
-				COM.FirstSQL.Dbcp.DbcpXADataSource specificXaDataSource = new COM.FirstSQL.Dbcp.DbcpXADataSource();
-				specificXaDataSource.setServerName(host);
-				specificXaDataSource.setPortNumber((new Integer(port)).intValue());
-				xaDataSourceToBind = specificXaDataSource;
-			}
-			*/
 			else
 			{
 				throw new Exception("JDBC2 driver " + driver + " not recognised");
@@ -217,7 +166,7 @@ public class JNDIManager
 				Hashtable env = new Hashtable();
 				String initialCtx = System.getProperty("Context.INITIAL_CONTEXT_FACTORY");
 				String bindingsLocation = System.getProperty("Context.PROVIDER_URL");
-		
+
 				if (bindingsLocation != null)
 				{
 					env.put(Context.PROVIDER_URL, bindingsLocation);
@@ -246,4 +195,35 @@ public class JNDIManager
 			System.out.println("Failed");
 		}
 	}
-};
+}
+
+class XADataSourceReflectionWrapper {
+    private XADataSource xaDataSource;
+    XADataSourceReflectionWrapper(String classname) {
+        try {
+            xaDataSource = (XADataSource)Class.forName(classname).newInstance();
+        } catch(Exception e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    public void setProperty(String name, Object value)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        name = "set"+name.substring(0,1).toUpperCase()+name.substring(1);
+
+        Class type = value.getClass();
+        if(value instanceof Integer) {
+            type = Integer.TYPE;
+        }
+        if(value instanceof Boolean) {
+            type = Boolean.TYPE;
+        }
+
+        Method method = xaDataSource.getClass().getMethod(name, type);
+        method.invoke(xaDataSource, value);
+    }
+
+    public XADataSource getWrappedXADataSource() {
+        return xaDataSource;
+    }
+}

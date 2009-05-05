@@ -37,6 +37,7 @@
 			<jar name="$(DTF_HOME)/lib/ext/fscontext.jar"/>
 			<jar name="$(DTF_HOME)/lib/ext/providerutil.jar"/>
 
+            <jar name="$(PRODUCT.DIR)/qa/lib/selected_dbdriver/*.jar"/>
 
 			<!-- These are no longer required:
 			<jar name="$(ORB_HOME)/lib/avalon-framework-4.1.5.jar"/>
