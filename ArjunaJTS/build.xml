@@ -277,9 +277,12 @@
 	<target name="com.hp.mwlabs.ts.product.docs.install">
 		<echo message="Installing ${com.hp.mwlabs.ts.module.name} docs"/>
 		<mkdir dir="${com.hp.mwlabs.installationdirectory}/docs/"/>
-                <copy todir="${com.hp.mwlabs.installationdirectory}/docs/">
-                    <fileset dir="docs" includes="**/*.pdf"/>
-                </copy>
+        <copy todir="${com.hp.mwlabs.installationdirectory}/docs/">
+            <fileset dir="docs" includes="**/*.pdf"/>
+        </copy>
+        <copy todir="${com.hp.mwlabs.installationdirectory}/docs/user_guide/">
+            <fileset dir="orbportability/docs/programmers_guide" includes="*.pdf"/>
+        </copy>
 	</target>
 
 	<target name="com.hp.mwlabs.ts.product.docs.html.install">
