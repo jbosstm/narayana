@@ -371,8 +371,7 @@ public class LogFactory {
             }
 
         } catch (LogConfigurationException e) {
-            //throw new ExceptionInInitializerError("An unexpected exception occurred while creating the logger factory:" + e);
-            throw new RuntimeException("An unexpected exception occurred while creating the logger factory: " + e.getMessage());
+            throw new RuntimeException("An unexpected exception occurred while creating the logger factory: " + e.getMessage(), e);
         }
         m_isInitialized = true;
     }
