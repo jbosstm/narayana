@@ -106,17 +106,6 @@
 		<format property="com.arjuna.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
 	  	</tstamp>
 
-		<condition property="JDK_VERSION_OK">
-			<or>
-				<equals arg1="${java.specification.version}" arg2="1.5"/>
-			</or>
-		</condition>
-
-        <!-- jaxws-api pre-req is not available in a jdk1.4 flavor -->
-        <fail unless="JDK_VERSION_OK">
-			JBossTS XTS currently requires jdk1.5 to build.
-		</fail>
-
 		<property name="com.arjuna.mw.installationdirectory" location="xts-install"/>
 		<property name="com.arjuna.mw.sourceid" value="unknown"/>
 		<property name="com.arjuna.mw.version" value="unknown"/>
@@ -292,7 +281,7 @@
 	</zip>
     </target>
 
-    <target name="install-interop-tests" depends="build-interop-tests">   
+    <target name="install-interop-tests" depends="build-interop-tests">
         <echo message="Installing service tests"/>
         <mkdir dir="${com.arjuna.mwlabs.installationdirectory}/interop-tests"/>
         <copy todir="${com.arjuna.mwlabs.installationdirectory}/interop-tests">
