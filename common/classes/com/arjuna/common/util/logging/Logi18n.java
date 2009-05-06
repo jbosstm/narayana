@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -117,14 +117,6 @@ public interface Logi18n
    void debug(String key);
 
    /**
-    * Log a throwable message with DEBUG Level
-    *
-    * @param throwable The Throwable to log
-    * @deprecated Use debug(String key, Throwable throwable) instead
-    */
-   void debug(Throwable throwable);
-
-   /**
     * Log a message with the DEBUG Level and with a throwable arguments
     * @param key resource bundle key for the message to log
     * @param throwable The Throwable to log
@@ -158,13 +150,6 @@ public interface Logi18n
    void info(String key);
 
    /**
-    * Log a throwable message with te INFO Level
-    * @param throwable The Throwable to log
-    * @deprecated Use info(String key, Throwable throwable) instead
-    */
-   void info(Throwable throwable);
-
-   /**
     * Log a message with the INFO Level and with a throwable arguments
     * @param key resource bundle key for the message to log
     * @param throwable Throwable associated to the logging message
@@ -194,13 +179,6 @@ public interface Logi18n
     * @param key resource bundle key for the message to log
     */
    void warn(String key);
-
-   /**
-    * Log a throwable message with te WARN Level
-    * @param throwable Throwable associated with the logging request
-    * @deprecated Use warn(String key, Throwable throwable) instead
-    */
-   void warn(Throwable throwable);
 
    /**
     * Log a message with the WARN Level and with a throwable arguments
@@ -234,13 +212,6 @@ public interface Logi18n
    void error(String key);
 
    /**
-    * Log a throwable message with te ERROR Level
-    * @param throwable Throwable associated with the logging request
-    * @deprecated Use error(String key, Throwable throwable) instead
-    */
-   void error(Throwable throwable);
-
-   /**
     * Log a message with the ERROR Level and with a throwable arguments
     * @param key resource bundle key for the message to log
     * @param throwable Throwable associated with the logging request
@@ -269,13 +240,6 @@ public interface Logi18n
     * @param key resource bundle key for the message to log
     */
    void fatal(String key);
-
-   /**
-    * Log a throwable message with te FATAL Level
-    * @param throwable Throwable associated with the logging request
-    * @deprecated Use fatal(String key, Throwable throwable) instead
-    */
-   void fatal(Throwable throwable);
 
    /**
     * Log a message with the FATAL Level and with a throwable arguments
@@ -467,6 +431,7 @@ public interface Logi18n
     * Log a message with the DEBUG Level
     * @param baseName The name of resource bundle to localize message
     * @param key The resource bundle key to retrieve a localised string
+    * @deprecated
     */
    void debugb(String baseName, String key);
 
@@ -476,6 +441,7 @@ public interface Logi18n
     * @param baseName The name of resource bundle to localize message
     * @param key The resource bundle key to retrieve a localised string
     * @param throwable Throwable associated with the log message
+    * @deprecated
     */
    void debugb(String baseName, String key, Throwable throwable);
 
@@ -484,6 +450,7 @@ public interface Logi18n
     * @param baseName The name of resource bundle to localize message
     * @param key The resource bundle key to retrieve a localised string
     * @param params parameters passed to the message
+    * @deprecated
     */
    void debugb(String baseName, String key, Object[] params);
 
@@ -493,6 +460,7 @@ public interface Logi18n
     * @param key The resource bundle key to retrieve a localised string
     * @param params parameters passed to the message
     * @param throwable Throwable associated with the log message
+    * @deprecated
     */
    void debugb(String baseName, String key, Object[] params, Throwable throwable);
 
@@ -505,6 +473,7 @@ public interface Logi18n
     * Log a message with the INFO Level
     * @param baseName The name of resource bundle to localize message
     * @param key resource bundle key for the message to log
+    * @deprecated
     */
    void infob(String baseName, String key);
 
@@ -513,6 +482,7 @@ public interface Logi18n
     * @param baseName The name of resource bundle to localize message
     * @param key resource bundle key for the message to log
     * @param throwable Throwable associated with the log message
+    * @deprecated
     */
    void infob(String baseName, String key, Throwable throwable);
 
@@ -521,6 +491,7 @@ public interface Logi18n
     * @param baseName The name of resource bundle to localize message
     * @param key resource bundle key for the message to log
     * @param params parameters passed to the message
+    * @deprecated
     */
    void infob(String baseName, String key, Object[] params);
 
@@ -530,6 +501,7 @@ public interface Logi18n
     * @param key resource bundle key for the message to log
     * @param params parameters passed to the message
     * @param throwable Throwable associated with the log message
+    * @deprecated
     */
    void infob(String baseName, String key, Object[] params, Throwable throwable);
 
@@ -540,6 +512,7 @@ public interface Logi18n
     * Log a message with the WARN Level
     * @param baseName The name of resource bundle to localize message
     * @param key resource bundle key for the message to log
+    * @deprecated
     */
    void warnb(String baseName, String key);
 
@@ -548,6 +521,7 @@ public interface Logi18n
     * @param baseName The name of resource bundle to localize message
     * @param key resource bundle key for the message to log
     * @param throwable Throwable associated with the log message
+    * @deprecated
     */
    void warnb(String baseName, String key, Throwable throwable);
 
@@ -556,6 +530,7 @@ public interface Logi18n
     * @param baseName The name of resource bundle to localize message
     * @param key resource bundle key for the message to log
     * @param params parameters passed to the message
+    * @deprecated
     */
    void warnb(String baseName, String key, Object[] params);
 
@@ -565,6 +540,7 @@ public interface Logi18n
     * @param key resource bundle key for the message to log
     * @param params parameters passed to the message
     * @param throwable Throwable associated with the log message
+    * @deprecated
     */
    void warnb(String baseName, String key, Object[] params, Throwable throwable);
 
@@ -575,6 +551,7 @@ public interface Logi18n
     * Log a message with the ERROR Level
     * @param baseName The name of resource bundle to localize message
     * @param key resource bundle key for the message to log
+    * @deprecated
     */
    void errorb(String baseName, String key);
 
@@ -583,6 +560,7 @@ public interface Logi18n
     * @param baseName The name of resource bundle to localize message
     * @param key resource bundle key for the message to log
     * @param throwable Throwable associated with the log message
+    * @deprecated
     */
    void errorb(String baseName, String key, Throwable throwable);
 
@@ -591,6 +569,7 @@ public interface Logi18n
     * @param baseName The name of resource bundle to localize message
     * @param key resource bundle key for the message to log
     * @param params parameters passed to the message
+    * @deprecated
     */
    void errorb(String baseName, String key, Object[] params);
 
@@ -601,6 +580,7 @@ public interface Logi18n
     * @param key resource bundle key for the message to log
     * @param params parameters passed to the message
     * @param throwable Throwable associated with the log message
+    * @deprecated
     */
    void errorb(String baseName, String key, Object[] params, Throwable throwable);
 
@@ -612,6 +592,7 @@ public interface Logi18n
     * Log a message with the FATAL Level
     * @param baseName The name of resource bundle to localize message
     * @param key resource bundle key for the message to log
+    * @deprecated
     */
    void fatalb(String baseName, String key);
 
@@ -621,6 +602,7 @@ public interface Logi18n
     * @param baseName The name of resource bundle to localize message
     * @param key resource bundle key for the message to log
     * @param throwable Throwable associated with the log message
+    * @deprecated
     */
    void fatalb(String baseName, String key, Throwable throwable);
 
@@ -630,6 +612,7 @@ public interface Logi18n
     * @param baseName The name of resource bundle to localize message
     * @param key resource bundle key for the message to log
     * @param params parameters passed to the message
+    * @deprecated
     */
    void fatalb(String baseName, String key, Object[] params);
 
@@ -640,6 +623,7 @@ public interface Logi18n
     * @param key resource bundle key for the message to log
     * @param params parameters passed to the message
     * @param throwable Throwable associated with the log message
+    * @deprecated
     */
    void fatalb(String baseName, String key, Object[] params, Throwable throwable);
 

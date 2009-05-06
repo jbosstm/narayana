@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -85,21 +85,6 @@ public class LogImpl extends AbstractLogImpl implements Logi18n
         super(logInterface, resBundle);
         m_logInterface = logInterface;
         setupDefaultLog(resBundle);
-    }
-
-    /**
-     * constructor
-     *
-     * @param logInterface
-     * @param resBundles a set of resource bundles (if a resource bundle is used per logger)
-     * @deprecated Note: This implementation is optimised for using a single per-module resource bundle or direct
-     *   resource use of multiple resource bundles reduces performance -- use this only if really necessary.
-     */
-    public LogImpl(LogInterface logInterface, String[] resBundles)
-    {
-        super(logInterface, resBundles);
-        m_logInterface = logInterface;
-        setupDefaultLog(resBundles[0]);
     }
 
     private void setupDefaultLog(String name)
@@ -269,54 +254,6 @@ public class LogImpl extends AbstractLogImpl implements Logi18n
         if (defaultLogSet)
             m_defaultLog.debug(message, throwable);
     }
-
-    /**
-     * Log a message with DEBUG Level, with arguments and with a throwable arguments
-     *
-     * @param key resource bundle key for the message to log
-     * @param param0 parameters passed to the message
-     *
-     * @deprecated only provided temporarily to ease transition of the AMS server to clf-2.0. this invocation should
-     *    be changed to <code>debug(key, new Object[] {param0, param1})</code>.
-     */
-    //public void debug(String key, Object param0)
-    //{
-    //   if (!isDebugEnabled()) return;
-    //   debug(key, new Object[]{param0});
-    //}
-
-    /**
-     * Log a message with DEBUG Level, with arguments and with a throwable arguments
-     *
-     * @param key resource bundle key for the message to log
-     * @param param0 parameters passed to the message
-     * @param param1 parameters passed to the message
-     *
-     * @deprecated only provided temporarily to ease transition of the AMS server to clf-2.0. this invocation should
-     *    be changed to <code>debug(key, new Object[] {param0})</code>.
-     */
-    //public void debug(String key, Object param0, Object param1)
-    //{
-    //   if (!isDebugEnabled()) return;
-    //   debug(key, new Object[]{param0, param1});
-    //}
-
-    /**
-     * Log a message with DEBUG Level, with arguments and with a throwable arguments
-     *
-     * @param key resource bundle key for the message to log
-     * @param param0 parameters passed to the message
-     * @param param1 parameters passed to the message
-     * @param param2 parameters passed to the message
-     *
-     * @deprecated only provided temporarily to ease transition of the AMS server to clf-2.0. this invocation should
-     *    be changed to <code>debug(key, new Object[] {param0, param1, param2})</code>.
-     */
-    //public void debug(String key, Object param0, Object param1, Object param2)
-    //{
-    //   if (!isDebugEnabled()) return;
-    //   debug(key, new Object[]{param0, param1, param2});
-    //}
 
     /**
      * Log a message with INFO Level
@@ -531,55 +468,6 @@ public class LogImpl extends AbstractLogImpl implements Logi18n
         if (defaultLogSet)
             m_defaultLog.error(message, throwable);
     }
-
-
-    /**
-     * Log a message with ERROR Level, with arguments and with a throwable arguments
-     *
-     * @param key resource bundle key for the message to log
-     * @param param0 parameters passed to the message
-     *
-     * @deprecated only provided temporarily to ease transition of the AMS server to clf-2.0. this invocation should
-     *    be changed to <code>error(key, new Object[] {param0, param1})</code>.
-     */
-    //public void error(String key, Object param0)
-    //{
-    //   if (!isErrorEnabled()) return;
-    //   error(key, new Object[]{param0});
-    //}
-
-    /**
-     * Log a message with ERROR Level, with arguments and with a throwable arguments
-     *
-     * @param key resource bundle key for the message to log
-     * @param param0 parameters passed to the message
-     * @param param1 parameters passed to the message
-     *
-     * @deprecated only provided temporarily to ease transition of the AMS server to clf-2.0. this invocation should
-     *    be changed to <code>error(key, new Object[] {param0})</code>.
-     */
-    //public void error(String key, Object param0, Object param1)
-    //{
-    //   if (!isErrorEnabled()) return;
-    //   error(key, new Object[]{param0, param1});
-    //}
-
-    /**
-     * Log a message with ERROR Level, with arguments and with a throwable arguments
-     *
-     * @param key resource bundle key for the message to log
-     * @param param0 parameters passed to the message
-     * @param param1 parameters passed to the message
-     * @param param2 parameters passed to the message
-     *
-     * @deprecated only provided temporarily to ease transition of the AMS server to clf-2.0. this invocation should
-     *    be changed to <code>error(key, new Object[] {param0, param1, param2})</code>.
-     */
-    //public void error(String key, Object param0, Object param1, Object param2)
-    //{
-    //   if (!isErrorEnabled()) return;
-    //   error(key, new Object[]{param0, param1, param2});
-    //}
 
     /**
      * Log a message with the FATAL Level

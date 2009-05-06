@@ -254,25 +254,6 @@ public class LogFactory {
      * Convenience method to return a named logger, without the application
      * having to care about factories.
      *
-     * @param clazz Class for which a log name will be derived
-     * @param resBundles set of resource bundles to use for the logger
-     *
-     * @deprecated Note: This implementation is optimised for using a single per-module resource bundle or direct
-     *   resource use of multiple resource bundles reduces performance -- use this only if really necessary.
-     */
-    public static Logi18n getLogi18n(Class clazz, String[] resBundles) {
-        Logi18n log = null;
-        setupLogSystem();
-        AbstractLogInterface logInterface = m_logFactory.getLog(clazz);
-        log = new LogImpl((LogInterface) logInterface, resBundles);
-        log.setLevels(m_debugLevel, m_visLevel, m_facLevel);
-        return log;
-    }
-
-    /**
-     * Convenience method to return a named logger, without the application
-     * having to care about factories.
-     *
      * @param name Logical name of the <code>Log</code> instance to be
      *  returned (the meaning of this name is only known to the underlying
      *  logging implementation that is being wrapped)
@@ -283,24 +264,6 @@ public class LogFactory {
         setupLogSystem();
         AbstractLogInterface logInterface = m_logFactory.getLog(name);
         log = new LogImpl((LogInterface) logInterface, resBundle);
-        log.setLevels(m_debugLevel, m_visLevel, m_facLevel);
-        return log;
-    }
-
-    /**
-     * Convenience method to return a named logger, without the application
-     * having to care about factories.
-     *
-     * @param name Logical name of the <code>Log</code> instance to be
-     *  returned (the meaning of this name is only known to the underlying
-     *  logging implementation that is being wrapped)
-     * @param resBundles set of resource bundles to use for the logger
-     */
-    public static Logi18n getLogi18n(String name, String[] resBundles) {
-        Logi18n log = null;
-        setupLogSystem();
-        AbstractLogInterface logInterface = m_logFactory.getLog(name);
-        log = new LogImpl((LogInterface) logInterface, resBundles);
         log.setLevels(m_debugLevel, m_visLevel, m_facLevel);
         return log;
     }

@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -39,57 +39,59 @@ package com.arjuna.common.util.exceptions;
  */
 public class LogConfigurationException extends RuntimeException
 {
-   /**
-    * Construct a new exception with <code>null</code> as its detail message.
-    */
-   public LogConfigurationException() {
-      super();
-   }
+    /**
+     * Constructs a new runtime exception with <code>null</code> as its
+     * detail message.  The cause is not initialized, and may subsequently be
+     * initialized by a call to {@link #initCause}.
+     */
+    public LogConfigurationException() {
+        super();
+    }
 
+    /**
+     * Constructs a new runtime exception with the specified detail message.
+     * The cause is not initialized, and may subsequently be initialized by a
+     * call to {@link #initCause}.
+     *
+     * @param message the detail message. The detail message is saved for
+     *                later retrieval by the {@link #getMessage()} method.
+     */
+    public LogConfigurationException(String message) {
+        super(message);
+    }
 
-   /**
-    * Construct a new exception with the specified detail message.
-    *
-    * @param message The detail message
-    */
-   public LogConfigurationException(String message) {
-      super(message);
-   }
+    /**
+     * Constructs a new runtime exception with the specified detail message and
+     * cause.  <p>Note that the detail message associated with
+     * <code>cause</code> is <i>not</i> automatically incorporated in
+     * this runtime exception's detail message.
+     *
+     * @param message the detail message (which is saved for later retrieval
+     *                by the {@link #getMessage()} method).
+     * @param cause   the cause (which is saved for later retrieval by the
+     *                {@link #getCause()} method).  (A <tt>null</tt> value is
+     *                permitted, and indicates that the cause is nonexistent or
+     *                unknown.)
+     * @since 1.4
+     */
+    public LogConfigurationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-
-   /**
-    * Construct a new exception with the specified cause and a derived
-    * detail message.
-    *
-    * @param cause The underlying cause
-    */
-   public LogConfigurationException(Throwable cause) {
-      this((cause == null) ? null : cause.toString(), cause);
-   }
-
-
-   /**
-    * Construct a new exception with the specified detail message and cause.
-    *
-    * @param message The detail message
-    * @param cause The underlying cause
-    */
-   public LogConfigurationException(String message, Throwable cause) {
-      super(message);
-      this.cause = cause; // Two-argument version requires JDK 1.4 or later
-   }
-
-
-   /**
-    * The underlying cause of this exception.
-    */
-   protected Throwable cause = null;
-
-
-   /**
-    * Return the underlying cause of this exception (if any).
-    */
-   public Throwable getCause() {
-      return (this.cause);
-   }
+    /**
+     * Constructs a new runtime exception with the specified cause and a
+     * detail message of <tt>(cause==null ? null : cause.toString())</tt>
+     * (which typically contains the class and detail message of
+     * <tt>cause</tt>).  This constructor is useful for runtime exceptions
+     * that are little more than wrappers for other throwables.
+     *
+     * @param cause the cause (which is saved for later retrieval by the
+     *              {@link #getCause()} method).  (A <tt>null</tt> value is
+     *              permitted, and indicates that the cause is nonexistent or
+     *              unknown.)
+     * @since 1.4
+     */
+    public LogConfigurationException(Throwable cause) {
+        super(cause);
+    }
 }

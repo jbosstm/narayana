@@ -62,7 +62,7 @@ public class JakartaLogFactory implements LogFactoryInterface
       }
       catch (org.apache.commons.logging.LogConfigurationException lce)
       {
-         throw new LogConfigurationException(lce.getMessage());
+         throw new LogConfigurationException(lce.getMessage(), lce);
       }
       finally
       {
@@ -93,7 +93,7 @@ public class JakartaLogFactory implements LogFactoryInterface
       }
       catch (org.apache.commons.logging.LogConfigurationException lce)
       {
-         throw new LogConfigurationException(lce.getMessage());
+         throw new LogConfigurationException(lce.getMessage(), lce);
       }
       finally
       {

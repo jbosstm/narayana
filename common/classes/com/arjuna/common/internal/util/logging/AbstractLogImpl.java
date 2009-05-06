@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -57,18 +57,6 @@ public abstract class AbstractLogImpl implements Logi18n
     */
    private AbstractLogInterface m_logInterface = null;
 
-   /**
-    * default resource bundle for this logger.
-    *
-    * Note that it is also possible to use a resource bundle name as argument in log statements if so required.
-    * (this is only used by the AMS client library and we might remove this feature because of performance)
-    *
-    * all extra resource bundles are kept in {@link #m_extraResourceBundles m_extraResourceBundles}.
-    *
-    * @deprecated only used temporariliy for support of CSF
-    */
-   protected String m_resourceBundleName = "no resource bundle set";
-
    private ResourceBundle m_defaultResourceBundle = null;
 
    /**
@@ -78,7 +66,6 @@ public abstract class AbstractLogImpl implements Logi18n
     *
     * @see #m_defaultResourceBundle.
     */
-   //protected String[] m_extraResBundles = null;
    private ResourceBundle[] m_extraResourceBundles = null;
 
    /**
@@ -128,24 +115,6 @@ public abstract class AbstractLogImpl implements Logi18n
    }
 
    /**
-    * constructor
-    *
-    * @param logInterface
-    * @param resBundles a set of resource bundles (if a resource bundle is used per logger)
-    * @deprecated Note: This implementation is optimised for using a single per-module resource bundle or direct
-    *   resource use of multiple resource bundles reduces performance -- use this only if really necessary.
-    */
-   public AbstractLogImpl(AbstractLogInterface logInterface, String[] resBundles)
-   {
-      m_logInterface = logInterface;
-      for (int i = 0; i < resBundles.length; i++)
-      {
-         addResourceBundle(resBundles[i]);
-      }
-   }
-
-
-   /**
     * Set the name of the resource bundle name that the logger will use
     * to retreive national text
     *
@@ -155,7 +124,6 @@ public abstract class AbstractLogImpl implements Logi18n
    {
       try
       {
-         m_resourceBundleName = baseName;
          m_defaultResourceBundle = PropertyResourceBundle.getBundle(baseName, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
       }
       catch (MissingResourceException mre)
@@ -177,7 +145,6 @@ public abstract class AbstractLogImpl implements Logi18n
          if (m_defaultResourceBundle == null)
          {
             m_defaultResourceBundle = PropertyResourceBundle.getBundle(bundleName, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
-            m_resourceBundleName = bundleName;
          }
 
          // otherwise, add it to the extra resource bundles supported by this logger
