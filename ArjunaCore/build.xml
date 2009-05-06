@@ -60,17 +60,6 @@
 			<format property="com.hp.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
 		</tstamp>
 
-		<condition property="JDK_VERSION_OK">
-			<or>
-				<equals arg1="${java.specification.version}" arg2="1.4"/>
-				<equals arg1="${java.specification.version}" arg2="1.5"/>
-			</or>
-		</condition>
-
-		<fail unless="JDK_VERSION_OK">
-			JBossTS Core currently requires jdk1.4 or jdk1.5 to build.
-		</fail>
-
 		<property name="com.hp.mw.installationdirectory" location="install"/>
 		<property name="com.hp.mw.sourceid" value="unknown"/>
 		<property name="com.hp.mw.version" value="unknown"/>
@@ -178,7 +167,7 @@
 			</fileset>
 		</jar>
 		<delete file="built_using_java_${java.specification.version}"/>
-		
+
 		<mkdir dir="${com.hp.mwlabs.ts.product.services.jar.dest}"/>
         <module-to-product destdir="${com.hp.mwlabs.ts.product.services.jar.dest}" destfile="${com.hp.mw.ts.module.name.lowercase}-services">
             <fileset dir=".">

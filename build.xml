@@ -43,7 +43,7 @@
    <available property="jts.present" file="${jts.dir}" type="dir"/>
 
    <property name="com.hp.mw.sourceid" value="unknown"/>
-    
+
    <property name="junit.jar" location="ext/junit.jar"/>
    <macrodef name="runant">
       <attribute name="target"/>
@@ -226,17 +226,6 @@ Targets supported in this build.xml file
       <tstamp>
          <format property="com.hp.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
       </tstamp>
-
-      <condition property="JDK_VERSION_OK">
-		  <or>
-			  <equals arg1="${java.specification.version}" arg2="1.4"/>
-			  <equals arg1="${java.specification.version}" arg2="1.5"/>
-		  </or>
-      </condition>
-
-      <fail unless="JDK_VERSION_OK">
-         JBossTS currently requires jdk1.4 or jdk1.5 to build.
-      </fail>
 
       <!-- starting from 4.6 we change from ${com.hp.mw.ts.product.name.lowercase}-properties.xml
         to a common name of jbossts-properties.xml to facilitate using the JTS binaries for either

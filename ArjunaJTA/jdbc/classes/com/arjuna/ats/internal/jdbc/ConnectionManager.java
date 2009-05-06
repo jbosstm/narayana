@@ -15,7 +15,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  *
- * (C) 2005-2006,
+ * (C) 2005-2009,
  * @author JBoss Inc.
  */
 /*
@@ -37,6 +37,7 @@ import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import java.util.*;
 
 import java.sql.SQLException;
+import java.sql.Connection;
 import java.lang.reflect.Constructor;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
@@ -46,7 +47,6 @@ import javax.transaction.TransactionManager;
  * user/password/url/dynamic_class options. If the connection we have cached
  * has been closed, then create a new one.
  */
-
 public class ConnectionManager
 {
 
@@ -54,109 +54,111 @@ public class ConnectionManager
      * Connections are pooled for the duration of a transaction.
      */
 
-	/**
-	 * @message com.arjuna.ats.internal.jdbc.nojdbc3 Can't load JDBC 3.0 wrapper, falling back to JDBC 2.0
-	 */
-	public static synchronized ConnectionImple create (String dbUrl, Properties info) throws SQLException
+    /**
+     * @message com.arjuna.ats.internal.jdbc.nojdbcimple Can't load ConnectionImple class.
+     */
+    public static synchronized Connection create (String dbUrl, Properties info) throws SQLException
     {
-	String user = info.getProperty(TransactionalDriver.userName);
-	String passwd = info.getProperty(TransactionalDriver.password);
-	String dynamic = info.getProperty(TransactionalDriver.dynamicClass);
-	Enumeration e = _connections.elements();
-	ConnectionImple conn = null;
+        String user = info.getProperty(TransactionalDriver.userName);
+        String passwd = info.getProperty(TransactionalDriver.password);
+        String dynamic = info.getProperty(TransactionalDriver.dynamicClass);
+        if (dynamic == null)
+            dynamic = "";
 
-	if (dynamic == null)
-	    dynamic = "";
+        for (ConnectionImple conn : _connections)
+        {
+            ConnectionControl connControl = conn.connectionControl();
+            TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+            Transaction tx1, tx2 = null;
 
-	while (e.hasMoreElements())
-	{
-	    conn = (ConnectionImple) e.nextElement();
+            tx1 = connControl.transaction();
+            try
+            {
+                tx2 = tm.getTransaction();
+            }
+            catch (javax.transaction.SystemException se)
+            {
+                /* Ignore: tx2 is null already */
+            }
 
-	    ConnectionControl connControl = conn.connectionControl();
-	    TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-	    Transaction tx1, tx2 = null;
+            /* Check transaction and database connection. */
+            if ((tx1 != null && tx1.equals(tx2))
+                    && connControl.url().equals(dbUrl)
+                    && connControl.user().equals(user)
+                    && connControl.password().equals(passwd)
+                    && connControl.dynamicClass().equals(dynamic))
+            {
+                try
+                {
+                    /*
+                  * Should not overload the meaning of closed. Change!
+                  */
 
-	    tx1 = connControl.transaction();
-	    try
-	    {
-	    	tx2 = tm.getTransaction();
-	    }
-	    catch (javax.transaction.SystemException se)
-	    {
-		/* Ignore: tx2 is null already */
-	    }
+                    if (!conn.isClosed())
+                    {
+                        // ConnectionImple does not actually implement Connection, but its
+                        // concrete child classes do. See ConnectionImple javadoc.
+                        return (Connection)conn;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ex.printStackTrace();
+                    throw new SQLException(ex.getMessage());
+                }
+            }
+        }
 
-	    /* Check transaction and database connection. */
-	    if ((tx1 != null && tx1.equals(tx2))
-	      && connControl.url().equals(dbUrl)
-	      && connControl.user().equals(user)
-	      && connControl.password().equals(passwd)
-	      && connControl.dynamicClass().equals(dynamic))
-	    {
-		try
-		{
-		    /*
-		     * Should not overload the meaning of closed. Change!
-		     */
+        // the ConnectionImple subclass is loaded dynamically because we only have one or the
+        // other available at build time, so we can't reference either directly in the code.
+        // See ConnectionImple javadoc.
 
-		    if (!conn.isClosed())
-		    {
-			return conn;
-		    }
-		}
-		catch (Exception ex)
-		{
-		    ex.printStackTrace();
-		    throw new SQLException(ex.getMessage());
-		}
-	    }
-	}
+        String connectionImpleClassName = "com.arjuna.ats.internal.jdbc.ConnectionImpleJDBC4";
+        ConnectionImple conn;
+        try
+        {
+            Class clazz = Class.forName(connectionImpleClassName);
+            Constructor ctor = clazz.getConstructor(new Class[] { String.class, Properties.class} );
+            conn =  (ConnectionImple)ctor.newInstance(new Object[] { dbUrl, info });
+        }
+        catch(Exception exception)
+        {
+            // not necessarily an error, we may have a JDK5 build that does not include the JDBC4 driver.
+            // try to fallback to the older driver
+            connectionImpleClassName = "com.arjuna.ats.internal.jdbc.ConnectionImpleJDBC3";
+            try
+            {
+                Class clazz = Class.forName(connectionImpleClassName);
+                Constructor ctor = clazz.getConstructor(new Class[] { String.class, Properties.class} );
+                conn =  (ConnectionImple)ctor.newInstance(new Object[] { dbUrl, info });
+            }
+            catch(Exception e)
+            {
+                if (jdbcLogger.logger.isErrorEnabled())
+                {
+                    jdbcLogger.logger.error(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.nojdbcimple")+exception.toString());
+                }
+                throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.nojdbcimple")+exception.toString());
+            }
+        }
 
-	conn = null;
-	if(System.getProperty("java.specification.version").equals("1.5"))
-	{
-		// the 1.5 (JDBC3) wrapper version is loaded dynamically because classloading
-		// it on earlier versions of the platform is not possible.
-		try
-		{
-			Class clazz = Class.forName("com.arjuna.ats.internal.jdbc.ConnectionImpleJDBC3");
-			Constructor ctor = clazz.getConstructor(new Class[] { String.class, Properties.class} );
-			conn =  (ConnectionImple)ctor.newInstance(new Object[] { dbUrl, info });
-		}
-		catch(Exception exception)
-		{
-			// not necessarily an errror - maybe we are running the 1.4 build on 1.5 vm.
-			if (jdbcLogger.logger.isDebugEnabled())
-			{
-				jdbcLogger.logger.warn(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.nojdbc3")+": "+e.toString());
-			}
-		}
-	}
+        /*
+       * Will replace any old (closed) connection which had the
+       * same connection information.
+       */
 
-	if(conn == null)
-	{
-		// we are probably either on Java < 1.5 or running a build that was
-		// done on Java 1.5 and thus does not have the JDBC3 wrapper.
-		// Either way we use the default JDBC 2.0 implementation
-		conn = new ConnectionImple(dbUrl, info);
-	}
+        _connections.add(conn);
 
-
-	/*
-	 * Will replace any old (closed) connection which had the
-	 * same connection information.
-	 */
-
-	_connections.put(conn, conn);
-
-	return conn;
+        // ConnectionImple does not actually implement Connection, but its
+        // concrete child classes do. See ConnectionImple javadoc.
+        return (Connection)conn;
     }
 
     public static synchronized void remove (ConnectionImple conn)
     {
-	_connections.remove(conn);
+        _connections.remove(conn);
     }
 
-    private static Hashtable _connections = new Hashtable();
+    private static Set<ConnectionImple> _connections = new HashSet<ConnectionImple>();
 
 }

@@ -56,13 +56,14 @@
 	<property name="com.hp.mwlabs.ts.jdbc.jar.dest" location="lib"/>
 	<property name="com.hp.mwlabs.ts.jdbc.tests.destdir" location="${com.hp.mwlabs.ts.jdbc.jar.dest}/tests/"/>
 
-	<!-- don't try and build JDBC3 support if we are on jdk 1.4 -->
-	<condition property="com.hp.mwlabs.ts.jdbc.compile.excludes.jdbc3" value="**/*JDBC3*.java" else="">
-		<equals arg1="${java.specification.version}" arg2="1.4"/>
+	<!-- TODO don't try and build JDBC4 support if we are on jdk 1.5, it won't work -->
+	<condition property="com.hp.mwlabs.ts.jdbc.compile.excludes.jdbc"
+               value="**/ConnectionImpleJDBC4.java" else="**/ConnectionImpleJDBC3.java">
+		<equals arg1="${java.specification.version}" arg2="1.5"/>
 	</condition>
 
 		<!-- Relative path for files to exclude in main compile -->
-	<property name="com.hp.mwlabs.ts.jdbc.compile.excludes" value="**/oracle_8*.java, **/oracle_9*.java, **/sequelink*.java, **/cloudscape*.java, ${com.hp.mwlabs.ts.jdbc.compile.excludes.jdbc3}"/>
+	<property name="com.hp.mwlabs.ts.jdbc.compile.excludes" value="**/oracle_8*.java, **/oracle_9*.java, **/sequelink*.java, **/cloudscape*.java, ${com.hp.mwlabs.ts.jdbc.compile.excludes.jdbc}"/>
         <property name="com.hp.mwlabs.ts.jdbc.resourcebundle"
 	value="jdbc_msg_en_US.properties"/>
 

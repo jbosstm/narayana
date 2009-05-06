@@ -15,7 +15,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  *
- * (C) 2005-2006,
+ * (C) 2005-2009,
  * @author JBoss Inc.
  */
 /*
@@ -38,12 +38,8 @@ import com.arjuna.ats.jdbc.TransactionalDriver;
 import com.arjuna.ats.jdbc.logging.*;
 import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
 
-import com.arjuna.ats.jta.*;
-import com.arjuna.ats.jta.recovery.*;
 import com.arjuna.ats.jta.xa.XAModifier;
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
-
-import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.common.util.logging.*;
 
@@ -56,24 +52,30 @@ import javax.transaction.RollbackException;
 import java.sql.SQLException;
 
 /**
- * A transactional JDBC 2.0 connection. This wraps the real connection and
+ * A transactional JDBC connection. This wraps the real connection and
  * registers it with the transaction at appropriate times to ensure that all
  * worked performed by it may be committed or rolled back.
- * 
+ *
  * Once a connection is used within a transaction, that instance is bound to
  * that transaction for the duration. It can be used by any number of threads,
  * as long as they all have the same notion of the "current" transaction. When
  * the transaction terminates, the connection is freed for use in another
  * transaction.
- * 
+ *
  * Applications must not use this class directly.
- * 
+ *
+ * Because of API changes between JDBC 3.0 (jdk 5) and JDBC 4.0 (jdk 6)
+ * it is not possible to write a single class that 'implements Connection'
+ * and compiles on both JDKs. Thus this class does not implement the interface
+ * but provides a home for methods that will compile on either. See also
+ * ConnectionImpleJDBC3, ConnectionImpleJDBC4 and ConnectionManager
+ *
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: ConnectionImple.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 2.0.
  */
 
-public class ConnectionImple implements java.sql.Connection
+public abstract class ConnectionImple
 {
 
 	public ConnectionImple(String dbName, Properties info) throws SQLException
@@ -223,14 +225,15 @@ public class ConnectionImple implements java.sql.Connection
 		return getConnection().getTypeMap();
 	}
 
-	public void setTypeMap(Map map) throws SQLException
+/*
+    public void setTypeMap(Map map) throws SQLException
 	{
 		getConnection().setTypeMap(map);
 	}
-
+*/
 	/**
 	 * Not allowed if within a transaction.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jdbc.autocommit AutoCommit is not
 	 *          allowed by the transaction service.
 	 */
@@ -364,7 +367,7 @@ public class ConnectionImple implements java.sql.Connection
 				_recoveryConnection.closeCloseCurrentConnection();
                 if (_theConnection != null && !_theConnection.isClosed())
                     _theConnection.close();
-                
+
                 _theConnection = null;
 			}
 
@@ -411,7 +414,7 @@ public class ConnectionImple implements java.sql.Connection
 	/**
 	 * Can only set readonly before we use the connection in a given
 	 * transaction!
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jdbc.setreadonly Cannot set readonly
 	 *          when within a transaction!
 	 */
@@ -493,77 +496,147 @@ public class ConnectionImple implements java.sql.Connection
 
 	/*
 	 * ******************************************************************* *
-	 * JDBC 3.0 section, needed to compile under jdk1.4 * We don't support this
-	 * stuff yet, so we just throw exceptions.
+	 * JDBC 3.0 section
 	 */
 
-	public void setHoldability(int holdability) throws SQLException
-	{
-		throw new SQLException("feature not supported");
-	}
+    public void setTypeMap(Map<String, Class<?>> map) throws SQLException
+    {
+        getConnection().setTypeMap(map);
+    }
 
-	public int getHoldability() throws SQLException
-	{
-		throw new SQLException("feature not supported");
-	}
+    public void setHoldability(int holdability) throws SQLException
+    {
+        checkTransaction();
 
-	public Savepoint setSavepoint() throws SQLException
-	{
-		throw new SQLException("feature not supported");
-	}
+        registerDatabase();
 
-	public Savepoint setSavepoint(String name) throws SQLException
-	{
-		throw new SQLException("feature not supported");
-	}
+        getConnection().setHoldability(holdability);
+    }
 
+    public int getHoldability() throws SQLException
+    {
+        return getConnection().getHoldability();
+    }
+
+    /**
+     * @message com.arjuna.ats.internal.jdbc.setsavepointerror setSavepoint not allowed inside distributed tx.
+     */
+    public Savepoint setSavepoint() throws SQLException
+    {
+        if (transactionRunning())
+        {
+            throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.setsavepointerror"));
+        }
+        else
+        {
+            return getConnection().setSavepoint();
+        }
+    }
+
+    public Savepoint setSavepoint(String name) throws SQLException
+    {
+        if (transactionRunning())
+        {
+            throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.setsavepointerror"));
+        }
+        else
+        {
+            return getConnection().setSavepoint(name);
+        }
+    }
+
+    // The JDBC 3.0 spec (section 12.4) prohibits calling setSavepoint indide an XA tx.
+    // It does not explicitly disallow calling rollback(savepoint) or releaseSavepoint(savepoint)
+    // but allowing them does not make a whole lot of sense, so we don't:
+
+	/**
+	 * @message com.arjuna.ats.internal.jdbc.rollbacksavepointerror rollback(Savepoint) not allowed inside distributed tx.
+	 */
 	public void rollback(Savepoint savepoint) throws SQLException
 	{
-		throw new SQLException("feature not supported");
+		if (transactionRunning())
+		{
+			throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.rollbacksavepointerror"));
+		}
+		else
+		{
+			getConnection().rollback(savepoint);
+		}
 	}
 
+	/**
+	 * @message com.arjuna.ats.internal.jdbc.releasesavepointerror rollback(Savepoint) not allowed inside distributed tx.
+	 */
 	public void releaseSavepoint(Savepoint savepoint) throws SQLException
 	{
-		throw new SQLException("feature not supported");
+		if (transactionRunning())
+		{
+			throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.releasesavepointerror"));
+		}
+		else
+		{
+			getConnection().releaseSavepoint(savepoint);
+		}
 	}
 
-	public Statement createStatement(int resultSetType,
-			int resultSetConcurrency, int resultSetHoldability)
-			throws SQLException
+	public Statement createStatement(int resultSetType, int resultSetConcurrency,
+									 int resultSetHoldability) throws SQLException
 	{
-		throw new SQLException("feature not supported");
+		checkTransaction();
+
+		registerDatabase();
+
+		return getConnection().createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
 	}
 
 	public PreparedStatement prepareStatement(String sql, int resultSetType,
-			int resultSetConcurrency, int resultSetHoldability)
-			throws SQLException
+											  int resultSetConcurrency, int resultSetHoldability) throws SQLException
 	{
-		throw new SQLException("feature not supported");
+		checkTransaction();
+
+		registerDatabase();
+
+		return getConnection().prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
 	}
 
 	public CallableStatement prepareCall(String sql, int resultSetType,
-			int resultSetConcurrency, int resultSetHoldability)
-			throws SQLException
+										 int resultSetConcurrency, int resultSetHoldability) throws SQLException
 	{
-		throw new SQLException("feature not supported");
+		checkTransaction();
+
+		registerDatabase();
+
+		return getConnection().prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
 	}
 
 	public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
 			throws SQLException
 	{
-		throw new SQLException("feature not supported");
+		checkTransaction();
+
+		registerDatabase();
+
+		return getConnection().prepareStatement(sql, autoGeneratedKeys);
 	}
 
 	public PreparedStatement prepareStatement(String sql, int columnIndexes[])
 			throws SQLException
 	{
-		throw new SQLException("feature not supported");
+		checkTransaction();
+
+		registerDatabase();
+
+		return getConnection().prepareStatement(sql, columnIndexes);
 	}
 
 	public PreparedStatement prepareStatement(String sql, String columnNames[])
 			throws SQLException
 	{
-		throw new SQLException("feature not supported");
+		checkTransaction();
+
+		registerDatabase();
+
+		return getConnection().prepareStatement(sql, columnNames);
 	}
 
 	/*
@@ -571,7 +644,10 @@ public class ConnectionImple implements java.sql.Connection
 	 * *******************************************************************
 	 */
 
-	/**
+
+
+
+    /**
 	 * @return the XAResource associated with the current XAConnection.
 	 */
 
@@ -701,7 +777,7 @@ public class ConnectionImple implements java.sql.Connection
 	 * and not do a registration at all. This would require the connection
 	 * object to be informed whenever a transaction completes so that it could
 	 * flush its cache of XAResources though.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jdbc.rollbackerror {0} - could not mark
 	 *          transaction rollback
 	 * @message com.arjuna.ats.internal.jdbc.enlistfailed enlist of resource
@@ -849,7 +925,7 @@ public class ConnectionImple implements java.sql.Connection
 
 			if (tx == null)
 				return;
-			
+
 			if (tx.getStatus() != Status.STATUS_ACTIVE)
 				throw new SQLException(jdbcLogger.logMesg
 						.getString("com.arjuna.ats.internal.jdbc.inactivetransaction"));
@@ -951,5 +1027,4 @@ public class ConnectionImple implements java.sql.Connection
 			}
 		}
 	}
-
 }
