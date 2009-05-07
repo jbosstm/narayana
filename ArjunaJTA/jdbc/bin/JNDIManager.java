@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,8 +24,8 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
- * 
+ * UK.
+ *
  * $Id: JNDIManager.java 2342 2006-03-30 13:06:17Z  $
  */
 
@@ -38,6 +38,9 @@ import javax.sql.*;
 import javax.transaction.xa.*;
 import javax.naming.*;
 
+/**
+ * @deprecated
+ */
 public class JNDIManager
 {
 
@@ -45,7 +48,7 @@ public static void main (String[] args)
     {
 	String url = "jdbc:arjuna:oracle:thin:@reshend.ncl.ac.uk:1521:JDBCTest";
 	String dynamicClass = "com.arjuna.JDBC2.drivers.oracle_8_1_6";
-	
+
 	for (int i = 0; i < args.length; i++)
 	{
 	    if (args[i].equals("-help"))
@@ -67,11 +70,11 @@ public static void main (String[] args)
 
 	    Hashtable env = new Hashtable();
 	    String initialCtx = PropertyManager.getProperty("Context.INITIAL_CONTEXT_FACTORY");
-	    
+
 	    env.put(Context.INITIAL_CONTEXT_FACTORY, initialCtx);
 
 	    InitialContext ctx = new InitialContext(env);
-	    
+
 	    ctx.bind("/tmp/foo", ds);
 
 	    System.out.println("Ready");

@@ -44,13 +44,14 @@ import oracle.jdbc.xa.OracleXid;
 
 import java.sql.SQLException;
 
-/*
+/**
  * This is a stateless class to allow us to get round
  * problems in Oracle. For example, they can't work with
  * an arbitrary implementation of Xid - it has to be their
  * own implementation!
+ *
+ * @deprecated
  */
-
 public class oracle_8_1 implements XAModifier, ConnectionModifier
 {
 

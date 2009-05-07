@@ -46,12 +46,13 @@ import javax.sql.XADataSource;
 
 import java.sql.SQLException;
 
-/*
+/**
  * This is a stateless class to allow us access to the Oracle
  * specific API without hardwiring the code into the generic
  * JDBC2 driver.
+ *
+ * @deprecated
  */
-
 public class oracle_8_1_6 implements DynamicClass
 {
 

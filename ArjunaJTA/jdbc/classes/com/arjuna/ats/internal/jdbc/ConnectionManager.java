@@ -138,9 +138,9 @@ public class ConnectionManager
             {
                 if (jdbcLogger.logger.isErrorEnabled())
                 {
-                    jdbcLogger.logger.error(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.nojdbcimple")+exception.toString());
+                    jdbcLogger.logger.error(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.nojdbcimple")+" "+e.toString());
                 }
-                SQLException sqlException = new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.nojdbcimple")+exception.toString());
+                SQLException sqlException = new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.nojdbcimple")+" "+e.toString());
                 sqlException.initCause(e);
                 throw sqlException;
             }
