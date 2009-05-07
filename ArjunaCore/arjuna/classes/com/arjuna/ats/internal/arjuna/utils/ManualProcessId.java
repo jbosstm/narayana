@@ -39,13 +39,13 @@ import com.arjuna.ats.arjuna.exceptions.FatalError;
 
 /**
  * Obtains a unique value to represent the process id via configuration.
- * 
+ *
  * Other options include ...
- * 
+ *
  * int pid = Integer.parseInt((new File("/proc/self")).getCanonicalFile().getName());  // linux specific
- * 
+ *
  * Un*x specific ...
- * 
+ *
  * String[] cmd = {"/bin/sh", "-c", "echo $PPID"};
  *                     Process proc = Runtime.getRuntime().exec(cmd);
  *
@@ -55,29 +55,29 @@ import com.arjuna.ats.arjuna.exceptions.FatalError;
  *                       _pid = field.getInt(proc);  // although this is the child pid!
  *
  *                       proc.destroy();
- * 
+ *
  * byte[] ba = new byte[100];
  * String[] cmd = {"/bin/sh", "-c", "echo $PPID"};
  * Process proc = Runtime.getRuntime().exec(cmd);
  * proc.getInputStream().read(ba);
  * System.out.println(new String(ba));
- * 
+ *
  * http://java.sun.com/javase/6/docs/jdk/api/attach/spec/com/sun/tools/attach/VirtualMachine.html  // JDK 6 only
- * 
+ *
  * and ...
- * 
+ *
  * MonitoredHost host = MonitoredHost.getMonitoredHost(null);
  *
  * for (Object activeVmPid : host.activeVms())
  * int pid = (Integer) activeVmPid;
- * 
+ *
  * and ...
- * 
+ *
  * Process proc = Runtime.getRuntime().exec(cmd);
- *  
+ *
  * Field field = proc.getClass().getDeclaredField("pid");
  * field.setAccessible(true);
- *                   
+ *
  * _pid = field.getInt(proc);  // although this is the child pid!
  */
 
@@ -105,24 +105,24 @@ public class ManualProcessId implements com.arjuna.ats.arjuna.utils.Process
             if (_pid == -1)
             {
                 String pid = arjPropertyManager.getPropertyManager().getProperty(Environment.PROCESS_IDENTIFIER);
-                
+
                 if (pid == null)
                     throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.utils.ManualProcessId_1"));
-                
+
                 try
                 {
                     _pid = Integer.parseInt(pid);
                 }
                 catch (final Exception ex)
                 {
-                    throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.utils.ManualProcessId_3")+" "+pid);
+                    throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.utils.ManualProcessId_3")+" "+pid, ex);
                 }
             }
         }
-        
+
         if (_pid == -1)
             throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.utils.ManualProcessId_1"));
-        
+
         return _pid;
     }
 

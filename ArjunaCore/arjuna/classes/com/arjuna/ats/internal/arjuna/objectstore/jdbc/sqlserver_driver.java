@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -98,7 +98,7 @@ public class sqlserver_driver extends JDBCImple
 					if(! rs.next()) {
 						return null; // no matching state in db
 					}
-					
+
 					byte[] buffer = rs.getBytes(1);
 
 					if (buffer != null)
@@ -115,7 +115,7 @@ public class sqlserver_driver extends JDBCImple
 					if(retryConnection(e, pool)) {
 						return read_state(objUid, tName, ft, tableName);
 					} else {
-						throw new ObjectStoreException(e.toString());
+						throw new ObjectStoreException(e.toString(), e);
 					}
 				}
 				finally
@@ -136,7 +136,7 @@ public class sqlserver_driver extends JDBCImple
 		return newImage;
 	}
 
-	
+
 	public boolean write_state (Uid objUid, String tName, OutputObjectState state, int s, String tableName) throws ObjectStoreException
 	{
 		boolean result = false;

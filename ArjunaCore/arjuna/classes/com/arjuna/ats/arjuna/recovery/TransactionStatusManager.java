@@ -115,7 +115,7 @@ public class TransactionStatusManager
     * Removes the TransactionStatusManager from the object store
     * and closes down the listener thread.
     */
-   
+
    // TODO consider adding a shutdown operation (signature change)
    public void finalize()
    {
@@ -183,7 +183,7 @@ public class TransactionStatusManager
 					  new Object[]{getListenerHostName(), getListenerPort(-1)});
 	  }
 
-	  throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_9"));
+	  throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_9"), ex);
       }
    }
 

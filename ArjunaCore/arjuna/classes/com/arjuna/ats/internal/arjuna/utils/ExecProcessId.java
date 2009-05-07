@@ -89,12 +89,12 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                     {
                         // http://www.scheibli.com/projects/getpids/index.html (GPL)
                         tempFile = File.createTempFile("getpids", "ts");
-    
+
                         byte[] bytes = new byte[1024];
                         int read;
                         InputStream in  = ExecProcessId.class.getResourceAsStream("getpids.exe");
                         OutputStream out = new FileOutputStream(tempFile);
-                        
+
                         try
                         {
                             while ((read = in.read(bytes)) != -1)
@@ -105,21 +105,21 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                             in.close();
                             out.close();
                         }
-    
+
                         cmd = new String[] { tempFile.getAbsolutePath() };
                     }
                     catch (final Exception ex)
                     {
                         throw new FatalError(
                                 tsLogger.log_mesg
-                                        .getString("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_2")+" "+ex);
+                                        .getString("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_2")+" "+ex, ex);
                     }
                 }
-                
+
                 if (cmd != null)
                 {
                     Process p = null;
-                    
+
                     try
                     {
                         p = Runtime.getRuntime().exec(cmd);
@@ -128,13 +128,13 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                     {
                         throw new FatalError(
                                 tsLogger.log_mesg
-                                        .getString("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_3")+" "+ex);
+                                        .getString("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_3")+" "+ex, ex);
                     }
-                    
-                    ByteArrayOutputStream bstream = new ByteArrayOutputStream();                    
+
+                    ByteArrayOutputStream bstream = new ByteArrayOutputStream();
                     byte[] bytes = new byte[1024];
                     int read;
-                    
+
                     try
                     {
                         while ((read = p.getInputStream().read(bytes)) != -1)
@@ -144,7 +144,7 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                     {
                         throw new FatalError(
                                 tsLogger.log_mesg
-                                        .getString("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_4")+" "+ex);
+                                        .getString("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_4")+" "+ex, ex);
                     }
                     finally
                     {
@@ -161,13 +161,13 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                             }
                         }
                     }
-                    
+
                     if (tempFile != null)
                         tempFile.delete();
 
                     StringTokenizer theTokenizer = new StringTokenizer(bstream.toString());
                     theTokenizer.nextToken();
-                    
+
                     String pid = theTokenizer.nextToken();
 
                     try
@@ -176,7 +176,7 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                     }
                     catch (final Exception ex)
                     {
-                        
+
                     }
                 }
             }

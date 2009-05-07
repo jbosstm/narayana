@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Hewlett-Packard Arjuna Labs,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: ContextManager.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -100,7 +100,7 @@ public class ContextManager
      */
 
     public ContextManager ()
-    {	
+    {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
 	    jtsLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
@@ -120,7 +120,7 @@ public class ContextManager
 
 	    ex.printStackTrace();
 
-	    throw new FatalError("ContextManager "+jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.context.picreffail")+" "+ex);
+	    throw new FatalError("ContextManager "+jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.context.picreffail")+" "+ex, ex);
 	}
 	catch (Exception ex)
 	{
@@ -131,7 +131,7 @@ public class ContextManager
 
 	    ex.printStackTrace();
 
-	    throw new FatalError("ContextManager "+jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.context.picreffail")+" "+ex);
+	    throw new FatalError("ContextManager "+jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.context.picreffail")+" "+ex, ex);
 	}
     }
 
@@ -227,7 +227,7 @@ public class ContextManager
 		}
 
 		ex.printStackTrace();
-		
+
 		throw new BAD_OPERATION();
 	    }
 	}
@@ -262,12 +262,12 @@ public class ContextManager
 	    catch (EmptyStackException e)
 	    {
 	    }
-	
+
 	    /*
 	     * If size now zero we can delete from thread
 	     * specific data.
 	     */
-	
+
 	    if (sl.size() == 0)
 	    {
 		sl = null;
@@ -277,12 +277,12 @@ public class ContextManager
 		disassociateContext();
 	    }
 	}
-	
+
 	/*
 	 * Now update action in thread's notion of current if
 	 * this action is local.
 	 */
-    
+
 	// Check that action is local and not a proxy.
 
 	if (action != null)
@@ -291,7 +291,7 @@ public class ContextManager
 	     * Now update action in thread's notion of current if
 	     * this action is local.
 	     */
-    
+
 	    // Check that action is local and not a proxy.
 
 	    if (action.isLocal())
@@ -311,7 +311,7 @@ public class ContextManager
 		}
 	    }
 	}
-	
+
 	return action;
     }
 
@@ -334,7 +334,7 @@ public class ContextManager
 	 * finished with them does not mean other threads
 	 * are!
 	 */
-	
+
 	ControlWrapper ptr = popAction(threadId);
 
 	while (ptr != null)
@@ -342,7 +342,7 @@ public class ContextManager
 	    ptr = null;
 
 	    ptr = popAction(threadId);
-	    
+
 	} while (ptr != null);
     }
 
@@ -358,7 +358,7 @@ public class ContextManager
      * @since JTS 2.1.1.
      */
 
-    public void associate () throws SystemException 
+    public void associate () throws SystemException
     {
 	current();
     }
@@ -392,7 +392,7 @@ public class ContextManager
 	else
 	{
 	    boolean isError = false;
-    
+
 	    try
 	    {
 		Coordinator coord = cont.get_coordinator();
@@ -403,7 +403,7 @@ public class ContextManager
 		    /*
 		     * Depth must be non-zero or we wouldn't be here!
 		     */
-	    
+
 		    int depth = ctx.parents.length;
 
 		    for (int i = depth -1; i >= 0; i--)
@@ -417,10 +417,10 @@ public class ContextManager
 			Terminator tmpTerm = ctx.parents[i].term;
 
 			Control theControl = TransactionFactoryImple.createProxy(tmpCoord, tmpTerm);
-		
+
 			pushAction(new ControlWrapper(theControl));  // takes care of thread/BasicAction for us.
 		    }
-		    
+
 		    ctx = null;
 		}
 		else
@@ -429,7 +429,7 @@ public class ContextManager
 		     * If we can't get a propagation context then we cannot
 		     * create the hierarchy!
 		     */
-	    
+
 		    isError = true;
 		}
 
@@ -457,7 +457,7 @@ public class ContextManager
 	}
 
 	boolean isError = false;
-    
+
 	try
 	{
 	    ActionControl actControl = cont;
@@ -486,13 +486,13 @@ public class ContextManager
 	    try
 	    {
 		ControlWrapper wrapper = (ControlWrapper) hier.pop();
-	    
+
 		while (wrapper != null)
 		{
 		    pushAction(wrapper);
-		
+
 		    wrapper = null;
-		
+
 		    wrapper = (ControlWrapper) hier.pop();
 		}
 	    }
@@ -509,7 +509,7 @@ public class ContextManager
 	    }
 
 	    e.printStackTrace();
-	    
+
 	    isError = true;
 	}
 
@@ -530,7 +530,7 @@ public class ContextManager
 	}
 
 	boolean isError = false;
-    
+
 	try
 	{
 	    ControlImple curr = which.getParentImple();
@@ -546,13 +546,13 @@ public class ContextManager
 	    try
 	    {
 		ControlWrapper wrapper = (ControlWrapper) hier.pop();
-	    
+
 		while (wrapper != null)
 		{
 		    pushAction(wrapper);
-		
+
 		    wrapper = null;
-		
+
 		    wrapper = (ControlWrapper) hier.pop();
 		}
 	    }
@@ -567,15 +567,15 @@ public class ContextManager
 		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.genfail",
 					  new Object[] { "ContextManager.addActionControlImple", e} );
 	    }
-	    
+
 	    e.printStackTrace();
-	    
+
 	    isError = true;
 	}
 
 	return isError;
     }
-    
+
     /**
      * If we have a hierarchy of remote actions (controls) then they will not
      * be registered with BasicAction.
@@ -595,7 +595,7 @@ public class ContextManager
 	final String threadId = ThreadUtil.getThreadId() ;
 	Stack sl = (Stack) otsCurrent.get(threadId);
 	boolean isNew = false;
-	
+
 	if (sl == null)
 	{
 	    isNew = true;
@@ -655,7 +655,7 @@ public class ContextManager
 	    try
 	    {
 		int slotId = OTSManager.getReceivedSlotId();
-		
+
 		if (slotId == -1)
 		    return null;
 
@@ -670,7 +670,7 @@ public class ContextManager
 		if (ctx.type().kind().value() != TCKind._tk_null)
 		{
 		    ControlWrapper control = null;
-		    
+
 		    // Is this just a Coordinator, or a full blown context?
 
 		    if (ctx.type().kind().value() == TCKind._tk_string)
@@ -702,7 +702,7 @@ public class ContextManager
 	    catch (InvalidSlot is)
 	    {
 		// Something very wrong
-		
+
 		throw new org.omg.CORBA.INTERNAL();
 	    }
 	}
@@ -717,7 +717,7 @@ public class ContextManager
     public final ControlWrapper createProxy (org.omg.CORBA.Any ctx) throws SystemException
     {
 	String stringRef = null;
-	
+
 	try
 	{
 	    stringRef = ctx.extract_string();
@@ -742,7 +742,7 @@ public class ContextManager
 	    {
 		org.omg.CORBA.Object obj = ORBManager.getORB().orb().string_to_object(stringRef);
 		Coordinator theCoordinator = org.omg.CosTransactions.CoordinatorHelper.narrow(obj);
-	    
+
 		if (theCoordinator == null)
 		    throw new BAD_PARAM();
 
@@ -782,7 +782,7 @@ public class ContextManager
 	    try
 	    {
 		PropagationContext theContext = org.omg.CosTransactions.PropagationContextHelper.extract(ctx);
-	    
+
 		if (OTSImpleManager.localFactory())
 		{
 		    TransactionFactoryImple theFactory = OTSImpleManager.factory();
@@ -792,7 +792,7 @@ public class ContextManager
 		else
 		{
 		    TransactionFactory theFactory = OTSImpleManager.get_factory();
-		    
+
 		    return new ControlWrapper(theFactory.recreate(theContext));
 		}
 	    }
@@ -815,7 +815,7 @@ public class ContextManager
 		}
 
 		e.printStackTrace();
-		
+
 		throw new UNKNOWN();
 	    }
 	}
@@ -830,7 +830,7 @@ public class ContextManager
 	    try
 	    {
 		int slotId = OTSManager.getLocalSlotId();
-		
+
 		if (slotId != -1)
 		{
 		    org.omg.CORBA.Any localDataAny = ORBManager.getORB().orb().create_any();
@@ -856,7 +856,7 @@ public class ContextManager
 	    try
 	    {
 		int slotId = OTSManager.getLocalSlotId();
-		
+
 		if (slotId != -1)
 		{
 		    _piCurrent.set_slot(slotId, null);
@@ -876,5 +876,5 @@ public class ContextManager
     private org.omg.PortableInterceptor.Current _piCurrent = null;
 
     private static final String IORTag = "IOR";
-    
+
 }

@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: ActionStore.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -70,7 +70,7 @@ public int typeIs ()
     {
 	return ObjectStoreType.ACTION;
     }
-    
+
     /**
      * @return current state of object. Assumes that genPathName allocates
      * enough extra space to allow extra chars to be added.
@@ -82,7 +82,7 @@ public int typeIs ()
 public int currentState (Uid objUid, String tName) throws ObjectStoreException
     {
 	int theState = ObjectStore.OS_UNKNOWN;
-    
+
 	if (storeValid())
 	{
 	    String path = genPathName(objUid, tName, ObjectStore.OS_ORIGINAL);
@@ -96,11 +96,11 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	if (tsLogger.arjLoggerI18N.debugAllowed())
 	{
 	    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					 FacilityCode.FAC_OBJECT_STORE, 
-					 "com.arjuna.ats.internal.arjuna.objectstore.ActionStore_1", 
+					 FacilityCode.FAC_OBJECT_STORE,
+					 "com.arjuna.ats.internal.arjuna.objectstore.ActionStore_1",
 					 new Object[]{objUid, tName,ObjectStore.stateStatusString(theState)});
 	}
-	
+
 	return theState;
     }
 
@@ -116,7 +116,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, 
+				     FacilityCode.FAC_OBJECT_STORE,
 				     "ActionStore.commit_state("+objUid+", "+tName+")");
 	}
 
@@ -129,7 +129,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 
 	if (currentState(objUid, tName) == ObjectStore.OS_COMMITTED)
 	    result = true;
-    
+
 	return result;
     }
 
@@ -140,7 +140,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.hide_state("+u+", "+tn+")");
 	}
-	
+
 	return false;
     }
 
@@ -151,7 +151,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.reveal_state("+u+", "+tn+")");
 	}
-	
+
 	return false;
     }
 
@@ -162,7 +162,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.read_committed("+storeUid+", "+tName+")");
 	}
-	
+
 	return super.read_committed(storeUid, tName);
     }
 
@@ -173,7 +173,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.read_uncommitted("+u+", "+tn+")");
 	}
-	
+
 	return null;
     }
 
@@ -184,7 +184,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.remove_committed("+storeUid+", "+tName+")");
 	}
-	
+
 	return super.remove_committed(storeUid, tName);
     }
 
@@ -195,7 +195,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.remove_uncommitted("+u+", "+tn+")");
 	}
-	
+
 	return false;
     }
 
@@ -206,7 +206,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.write_committed("+storeUid+", "+tName+")");
 	}
-	
+
 	return super.write_committed(storeUid, tName, state);
     }
 
@@ -217,7 +217,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.write_uncommitted("+u+", "+tn+", "+s+")");
 	}
-	
+
 	return false;
     }
 
@@ -229,13 +229,13 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
     public static ClassName name ()
     {
 	return ArjunaNames.Implementation_ObjectStore_ActionStore();
-    }    
+    }
 
     /**
      * Have to return as a ShadowingStore because of
      * inheritence.
      */
-    
+
     public static ShadowingStore create ()
     {
 	return new ActionStore("");
@@ -253,7 +253,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	String location = (String) param[0];
 	Integer shareStatus = (Integer) param[1];
 	int ss = ObjectStore.OS_UNSHARED;
-	
+
 	if (shareStatus != null)
 	{
 	    try
@@ -270,7 +270,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 		}
 	    }
 	}
-	
+
 	return new ActionStore(location, ss);
     }
 
@@ -281,7 +281,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	else
 	    return new ActionStore(param);
     }
-    
+
     protected ActionStore (String locationOfStore)
     {
 	this(locationOfStore, ObjectStore.OS_UNSHARED);
@@ -301,8 +301,8 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 		tsLogger.arjLogger.warn(e.getMessage());
 
 	    super.makeInvalid();
-	    
-	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+
+	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	}
     }
 
@@ -310,7 +310,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
     {
 	this(ObjectStore.OS_UNSHARED);
     }
-    
+
     protected ActionStore (int shareStatus)
     {
 	super(shareStatus);
@@ -320,7 +320,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
     {
 	super(objName);
     }
-    
+
     protected synchronized boolean setupStore (String location) throws ObjectStoreException
     {
 	if (!checkSync)
@@ -342,7 +342,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 
 	return super.setupStore(location);
     }
-    
+
     private static boolean checkSync = false;
 
 }

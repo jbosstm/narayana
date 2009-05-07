@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: ContextORBInitializerImpl.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -45,8 +45,8 @@ import com.arjuna.common.util.logging.*;
 
 import org.omg.CosTransactions.*;
 import org.omg.CORBA.*;
-import org.omg.PortableInterceptor.*; 
-import org.omg.PortableInterceptor.ORBInitInfoPackage.*; 
+import org.omg.PortableInterceptor.*;
+import org.omg.PortableInterceptor.ORBInitInfoPackage.*;
 import org.omg.IOP.*;
 import org.omg.IOP.CodecFactoryPackage.*;
 
@@ -94,13 +94,13 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
      */
 
     public void post_init (ORBInitInfo init_info)
-    {    
+    {
 	if (jtsLogger.logger.isDebugEnabled())
 	{
 	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					       (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "ContextORBInitializer.post_init ()");
 	}
-	
+
 	/*
 	 * These value should be part of the standard.
 	 */
@@ -110,7 +110,7 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 
 	com.arjuna.ats.jts.OTSManager.setLocalSlotId(localSlot);
 	com.arjuna.ats.jts.OTSManager.setReceivedSlotId(receivedSlot);
-	
+
 	/*
 	 * Get the CDR codec; used for encoding/decoding the service
 	 * context and IOR components.
@@ -140,9 +140,9 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 
 	    ex.printStackTrace();
 
-	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.context.codeccreate"));
+	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.context.codeccreate"), ex);
 	}
-    
+
 	/*
 	 * Register client interceptor to propogate the context.
 	 */
@@ -169,9 +169,9 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 
 	    ex.printStackTrace();
 
-	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.context.cie"));
+	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.context.cie"), ex);
 	}
-  
+
 	/*
 	 * Register a server interceptor to receive the context.
 	 */
@@ -198,8 +198,8 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 
 	    ex.printStackTrace();
 
-	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.context.sie"));
+	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.context.sie"), ex);
 	}
     }
-  
+
 }

@@ -39,7 +39,7 @@ import com.arjuna.ats.arjuna.exceptions.FatalError;
 
 /**
  * Obtains a unique value to represent the process id via ManagementFactory.getRuntimeMXBean().getName().
- * 
+ *
  * WARNING: use with care because the contents of getName may change between OSes and versions of
  * JDK.
  */
@@ -64,23 +64,23 @@ public class MBeanProcessId implements com.arjuna.ats.arjuna.utils.Process
         {
             if (_pid == -1)
             {
-                String name = ManagementFactory.getRuntimeMXBean().getName(); 
+                String name = ManagementFactory.getRuntimeMXBean().getName();
                 String[] parsed = name.split("@");
-               
+
                 try
                 {
                     _pid = Integer.valueOf(parsed[0]);
                 }
                 catch (final Exception ex)
                 {
-                    throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.utils.MBeanProcessId_2")+" "+name);
+                    throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.utils.MBeanProcessId_2")+" "+name, ex);
                 }
             }
         }
-        
+
         if (_pid == -1)
             throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.utils.MBeanProcessId_1"));
-        
+
         return _pid;
     }
 

@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -61,7 +61,7 @@ import java.io.IOException;
  *
  * @message com.arjuna.ats.arjuna.StateManager_1 [com.arjuna.ats.arjuna.StateManager_1] - StateManager::terminate() should be invoked in every destructor
  * @message com.arjuna.ats.arjuna.StateManager_2 [com.arjuna.ats.arjuna.StateManager_2] - Activate of object with id = {0} and type {1} unexpectedly failed"
- * @message com.arjuna.ats.arjuna.StateManager_3 [com.arjuna.ats.arjuna.StateManager_3] - StateManager::deactivate - object store error 
+ * @message com.arjuna.ats.arjuna.StateManager_3 [com.arjuna.ats.arjuna.StateManager_3] - StateManager::deactivate - object store error
  * @message com.arjuna.ats.arjuna.StateManager_4 [com.arjuna.ats.arjuna.StateManager_4] - StateManager::deactivate - save_state error
  * @message com.arjuna.ats.arjuna.StateManager_5 [com.arjuna.ats.arjuna.StateManager_5] - StateManager::destroy for object-id {0}
  * @message com.arjuna.ats.arjuna.StateManager_6 [com.arjuna.ats.arjuna.StateManager_6] - StateManager.destroy - failed to add abstract record.
@@ -134,7 +134,7 @@ public boolean restore_state (InputObjectState os, int ot)
 	    {
 		Uid txId = new Uid(Uid.nullUid());
 		Uid processUid = new Uid(Uid.nullUid());
-		
+
 		unpackHeader(os, txId, processUid);
 	    }
 	    catch (IOException e)
@@ -145,7 +145,7 @@ public boolean restore_state (InputObjectState os, int ot)
 
 	return true;
     }
-    
+
     /**
      * Destructor.
      */
@@ -161,7 +161,7 @@ public void finalize () throws Throwable
 	if (currentStatus == ObjectStatus.ACTIVE_NEW)
 	{
 	    BasicAction action = BasicAction.Current();
- 
+
 	    if ((action != null) && (action.status() == ActionStatus.RUNNING))
 	    {
 		if (tsLogger.arjLoggerI18N.isWarnEnabled())
@@ -215,15 +215,15 @@ public boolean activate ()
      * @return <code>true</code> on success, <code>false</code> otherwise.
      * @see com.arjuna.ats.arjuna.objectstore.ObjectStore
      */
-    
+
 public synchronized boolean activate (String rootName)
     {
 	if (tsLogger.arjLogger.debugAllowed())
 	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN, 
+	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN,
 				     "StateManager::activate( "+((rootName != null) ? rootName : "null")+") for object-id "+objectUid);
 	}
-	
+
 	if (myType == ObjectType.NEITHER)
 	{
 	    return true;
@@ -285,7 +285,7 @@ public synchronized boolean activate (String rootName)
 	    }
 
 	    /* Only really activate if object is PASSIVE */
-	    
+
 	    if (currentStatus == ObjectStatus.PASSIVE)
 	    {
 		/*
@@ -298,7 +298,7 @@ public synchronized boolean activate (String rootName)
 		if (loadObjectState())
 		{
 		    InputObjectState oldState = null;
-		
+
 		    try
 		    {
 			oldState = objectStore.read_committed(objectUid, type());
@@ -348,7 +348,7 @@ public synchronized boolean activate (String rootName)
 	     * Create ActivationRecord if status changed Passive->Active or if
 	     * object is a new persistent object.
 	     */
-	
+
 	    if (forceAR || ((currentStatus == ObjectStatus.ACTIVE) ||
 			    (currentStatus == ObjectStatus.PASSIVE_NEW)) && (action != null))
 	    {
@@ -366,7 +366,7 @@ public synchronized boolean activate (String rootName)
 			    usingActions.remove(action.topLevelAction().get_uid());
 			}
 		    }
-		    
+
 		    if (arStatus == AddOutcome.AR_REJECTED)
 			result = false;
 		}
@@ -376,15 +376,15 @@ public synchronized boolean activate (String rootName)
 		     * We never reset activated, so we can optimise state
 		     * loading/unloading in the case of SINGLE object model
 		     */
-		    
+
 		    currentlyActivated = activated = true;
 		}
 	    }
 	}
-	
+
 	return result;
     }
-    
+
     /**
      * This operation deactivates a persistent object.
      * It behaves in a similar manner to the activate operation, but has an
@@ -431,10 +431,10 @@ public synchronized boolean deactivate (String rootName, boolean commit)
     {
 	if (tsLogger.arjLogger.debugAllowed())
 	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN, 
+	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN,
 				     "StateManager::deactivate("+((rootName != null) ? rootName : "null")+", "+commit+") for object-id " +objectUid);
 	}
-	
+
 	boolean result = false;
 
 	if ((currentlyActivated  && (myType == ObjectType.ANDPERSISTENT)) || loadObjectState())
@@ -464,7 +464,7 @@ public synchronized boolean deactivate (String rootName, boolean commit)
 		    {
 			if (tsLogger.arjLoggerI18N.isWarnEnabled())
 			    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.StateManager_3",e);
-			
+
 			result = false;
 		    }
 		}
@@ -473,7 +473,7 @@ public synchronized boolean deactivate (String rootName, boolean commit)
 		    if (tsLogger.arjLoggerI18N.isWarnEnabled())
 			tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.StateManager_4");
 		}
-		
+
 		/*
 		 * Not needed any more because activation record does this when
 		 * all actions are forgotten.
@@ -488,7 +488,7 @@ public synchronized boolean deactivate (String rootName, boolean commit)
 	{
 	    result = true;
 	}
-	
+
 	return result;
     }
 
@@ -518,7 +518,7 @@ public final Uid get_uid ()
     {
 	return objectUid;
     }
-    
+
     /**
      * Destroy the object (e.g., remove its state from the persistent
      * store.)
@@ -528,22 +528,22 @@ public final Uid get_uid ()
      *
      * @return <code>true</code> on success, <code>false</code> otherwise.
      */
-    
+
 public synchronized boolean destroy ()
     {
 	if (tsLogger.arjLoggerI18N.debugAllowed())
 	{
 	    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					 FacilityCode.FAC_STATE_MAN, 
+					 FacilityCode.FAC_STATE_MAN,
 					 "com.arjuna.ats.arjuna.StateManager_5", new Object[]{objectUid});
 	}
 
 	boolean result = false;
-    
+
 	if (objectStore != null)
 	{
 	    BasicAction action = BasicAction.Current();
-	
+
 	    if (action != null)  // add will fail if the status is wrong!
 	    {
 		DisposeRecord dr = new DisposeRecord(objectStore, this);
@@ -587,13 +587,13 @@ public synchronized boolean destroy ()
 	    /*
 	     * Not a persistent object!
 	     */
-	    
+
 	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
 	    {
 		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.StateManager_8");
 	    }
 	}
-	
+
 	return result;
     }
 
@@ -643,7 +643,7 @@ public void print (PrintWriter strm)
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_STATE_MAN, "StateManager::getStoreRoot ()");
 	}
-	
+
 	return storeRoot;
     }
 
@@ -694,7 +694,7 @@ protected void packHeader (OutputObjectState os, Uid txId,
 	    // pack the marker first.
 
 	    os.packString(StateManager.marker);
-		
+
 	    /*
 	     * Only pack something if there is a transaction. Otherwise
 	     * the application is driving this object manually, and all
@@ -715,7 +715,7 @@ protected void packHeader (OutputObjectState os, Uid txId,
 	}
 	catch (Exception e)
 	{
-	    throw new IOException(e.toString());
+	    throw new IOException(e.toString(), e);
 	}
     }
 
@@ -735,7 +735,7 @@ protected void unpackHeader (InputObjectState os, Uid txId,
 	try
 	{
 	    String myState = os.unpackString();
-		
+
 	    if (myState.equals(StateManager.marker))
 	    {
 		txId.unpack(os);
@@ -743,7 +743,7 @@ protected void unpackHeader (InputObjectState os, Uid txId,
 		/*
 		 * Is there going to be a Uid to unpack?
 		 */
-		
+
 		if (!txId.equals(Uid.nullUid()))
 		    processUid.unpack(os);
 	    }
@@ -753,7 +753,7 @@ protected void unpackHeader (InputObjectState os, Uid txId,
 		{
 		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.StateManager_9");
 		}
-		
+
 		throw new IOException(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.StateManager_15"));
 	    }
 	}
@@ -763,7 +763,9 @@ protected void unpackHeader (InputObjectState os, Uid txId,
 	}
 	catch (Exception e)
 	{
-	    throw new IOException(e.toString());
+	    IOException ioException = new IOException(e.toString());
+        ioException.initCause(e);
+        throw ioException;
 	}
     }
 
@@ -777,10 +779,10 @@ protected void unpackHeader (InputObjectState os, Uid txId,
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_STATE_MAN, 
+				     FacilityCode.FAC_STATE_MAN,
 				     "StateManager::terminate() for object-id "+get_uid());
 	}
-	
+
 	cleanup(true);
     }
 
@@ -788,7 +790,7 @@ protected void unpackHeader (InputObjectState os, Uid txId,
     {
 	currentStatus = s;
     }
-    
+
     /**
      * Create object with specific uid. This constructor
      * is primarily used when recreating an existing object. The object type
@@ -805,7 +807,7 @@ protected StateManager (Uid objUid, ObjectName attr)
     {
 	this(objUid, ObjectType.ANDPERSISTENT, attr);
     }
-    
+
 protected StateManager (Uid objUid, int ot)
     {
 	this(objUid, ot, null);
@@ -814,7 +816,7 @@ protected StateManager (Uid objUid, int ot)
 protected StateManager (Uid objUid, int ot, ObjectName objName)
     {
 	objectName = objName;
-	
+
 	parseObjectName();
 
 	if (ot == ObjectType.NEITHER)
@@ -827,7 +829,7 @@ protected StateManager (Uid objUid, int ot, ObjectName objName)
 	    modifyingActions = new Hashtable();
 	    usingActions = new Hashtable();
 	}
-	
+
 	activated = false;
 	currentlyActivated = false;
 	currentStatus = ObjectStatus.PASSIVE;
@@ -843,13 +845,13 @@ protected StateManager (Uid objUid, int ot, ObjectName objName)
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_STATE_MAN, "StateManager::StateManager( "+get_uid()+" )");
 	}
-    }    
+    }
 
 protected StateManager ()
     {
 	this(ObjectType.RECOVERABLE, null);
     }
-    
+
 protected StateManager (int ot)
     {
 	this(ot, null);
@@ -858,9 +860,9 @@ protected StateManager (int ot)
 protected StateManager (int ot, ObjectName objName)
     {
 	objectName = objName;
-	
+
 	parseObjectName();
-	
+
 	if (ot == ObjectType.NEITHER)
 	{
 	    modifyingActions = null;
@@ -892,7 +894,7 @@ protected StateManager (int ot, ObjectName objName)
 protected StateManager (ObjectName objName)
     {
 	objectName = objName;
-	
+
 	parseObjectName();
 
 	if (myType == ObjectType.NEITHER)
@@ -905,7 +907,7 @@ protected StateManager (ObjectName objName)
 	    modifyingActions = new Hashtable();
 	    usingActions = new Hashtable();
 	}
-	
+
 	activated = false;
 	currentlyActivated = false;
 	currentStatus = ObjectStatus.PASSIVE;
@@ -922,11 +924,11 @@ protected StateManager (ObjectName objName)
 				     FacilityCode.FAC_STATE_MAN, "StateManager::StateManager( "+objName+" )");
 	}
     }
-    
+
     /*
      * Protected non-virtual functions.
      */
-    
+
     /**
      * The object's state is about to be modified, and StateManager should
      * take a snapshot of the state if the object is being used within
@@ -942,29 +944,29 @@ protected StateManager (ObjectName objName)
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_STATE_MAN, "StateManager::modified() for object-id "+get_uid());
 	}
-	
+
 	BasicAction action = BasicAction.Current();
 	RecoveryRecord record = null;
-	
+
 	if ((myType == ObjectType.NEITHER) || (currentStatus == ObjectStatus.DESTROYED)) /*  NEITHER => no recovery info */
 	{
 	    return true;
 	}
-    
+
 	if (currentStatus == ObjectStatus.PASSIVE)
 	{
 	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
 		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.StateManager_10");
 	    activate();
 	}
-	
+
 	/*
 	 * Need not have gone through active if new object.
 	 */
 
 	if (currentStatus == ObjectStatus.PASSIVE_NEW)
 	    currentStatus = ObjectStatus.ACTIVE_NEW;
-    
+
 	if (action != null)
 	{
 	    /*
@@ -983,12 +985,12 @@ protected StateManager (ObjectName objName)
 		else
 		    modifyingActions.put(action.get_uid(), action);
 	    }
-	
+
 	    /* If here then its a new action */
-	
+
 	    OutputObjectState state = new OutputObjectState(objectUid, type());
 	    int rStatus = AddOutcome.AR_ADDED;
-	
+
 	    if (save_state(state, ObjectType.RECOVERABLE))
 	    {
 		if ((myType == ObjectType.RECOVERABLE) && (smAttributes.objectModel == ObjectModel.SINGLE))
@@ -997,14 +999,14 @@ protected StateManager (ObjectName objName)
 		}
 		else
 		    record = new PersistenceRecord(state, objectStore, this);
-	    
+
 		if ((rStatus = action.add(record)) != AddOutcome.AR_ADDED)
 		{
 		    synchronized(modifyingActions)
 		    {
 			modifyingActions.remove(action.get_uid());  // remember to unregister with action
 		    }
-		    
+
 		    record = null;
 
 		    return false;
@@ -1013,7 +1015,7 @@ protected StateManager (ObjectName objName)
 	    else
 		return false;
 	}
-	
+
 	return true;
     }
 
@@ -1033,14 +1035,14 @@ protected final synchronized void persist ()
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_STATE_MAN, "StateManager::persist() for object-id "+get_uid());
 	}
-     
+
 	if (currentStatus == ObjectStatus.ACTIVE)
 	{
 	    currentStatus = ObjectStatus.PASSIVE_NEW;
 	    myType = ObjectType.ANDPERSISTENT;
 	}
     }
-    
+
     /**
      * Object cleanup.
      * Attempt sane cleanup when object is deleted. Handle perverse cases
@@ -1050,7 +1052,7 @@ protected final synchronized void persist ()
      * from the <code>terminate</code> method, or from elsewhere.
      * @see StateManager#terminate
      */
-    
+
 protected final synchronized void cleanup (boolean fromTerminate)
     {
 	if (tsLogger.arjLogger.debugAllowed())
@@ -1058,7 +1060,7 @@ protected final synchronized void cleanup (boolean fromTerminate)
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_STATE_MAN, "StateManager::cleanup() for object-id "+get_uid());
 	}
-	
+
 	if (myType == ObjectType.NEITHER)
 	    return;
 
@@ -1069,16 +1071,16 @@ protected final synchronized void cleanup (boolean fromTerminate)
 	    if (usingActions != null)
 	    {
 		Enumeration e = usingActions.keys();
-	    
+
 		while (e.hasMoreElements())
 		{
 		    action = (BasicAction) usingActions.remove(e.nextElement());
-		    
+
 		    if (action != null)
 		    {
 			/*
 			 * Pop actions off using list.
-			 * 
+			 *
 			 * Don't check if action is running below so that
 			 * cadavers can be created in commit protocol too.
 			 */
@@ -1101,36 +1103,36 @@ protected final synchronized void cleanup (boolean fromTerminate)
 			     * If we get here via terminate its ok to do
 			     * a save_state.
 			     */
-	    
+
 			    if (fromTerminate)
 			    {
 				state = new OutputObjectState(objectUid, type());
-		
+
 				if (!save_state(state, myType))
 				{
 				    if (tsLogger.arjLoggerI18N.isWarnEnabled())
 					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.StateManager_12");
 				    /* force action abort */
-				    
+
 				    action.preventCommit();
 				}
 			    }
 			    else
 			    {
 				/* otherwise force action abort */
-				
+
 				action.preventCommit();
 			    }
-			    
+
 			    /*
 			     * This should be unnecessary - but just in
 			     * case.
 			     */
-	    
+
 			    setupStore(storeRoot);
-				
+
 			    record = new CadaverRecord(state, objectStore, this);
-			
+
 			    if ((rStatus = action.add(record)) != AddOutcome.AR_ADDED)
 				record = null;
 			}
@@ -1138,7 +1140,7 @@ protected final synchronized void cleanup (boolean fromTerminate)
 			if (currentlyActivated && (currentStatus != ObjectStatus.DESTROYED))
 			{
 			    record = new CadaverActivationRecord(this);
-			    
+
 			    if ((rStatus = action.add(record)) == AddOutcome.AR_ADDED)
 			    {
 				currentStatus = ObjectStatus.PASSIVE;
@@ -1150,7 +1152,7 @@ protected final synchronized void cleanup (boolean fromTerminate)
 		}
 	    }
 	}
-	
+
 	/*
 	 * Here the object must be either RECOVERABLE or PERSISTENT.
 	 * Whether or not an action exists we still need to reset the
@@ -1159,7 +1161,7 @@ protected final synchronized void cleanup (boolean fromTerminate)
 	 * changed from ACTIVE_NEW which might cause any running action to
 	 * abort.
 	 */
-    
+
 	if (currentStatus == ObjectStatus.ACTIVE_NEW)
 	{
 	    if ((myType == ObjectType.RECOVERABLE) && (smAttributes.objectModel == ObjectModel.SINGLE))
@@ -1190,18 +1192,18 @@ protected final void setupStore ()
      *
      * @param rootName indicates the root of the object store.
      */
-    
+
 protected synchronized void setupStore (String rootName)
     {
 	if (tsLogger.arjLogger.debugAllowed())
 	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_STATE_MAN, 
+	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_STATE_MAN,
 				     "StateManager::setupStore ( "+((rootName != null) ? rootName : "null")+" )");
 	}
-	
+
 	if (!loadObjectState())
 	    return;
-	
+
 	/*
 	 * Already setup?
 	 * Assume type will not change once object is created.
@@ -1235,7 +1237,7 @@ protected synchronized void setupStore (String rootName)
 	    }
 
 	    /* No - destroy old store and create new */
-	    
+
 	    objectStore = null;
 	}
 
@@ -1257,7 +1259,7 @@ protected synchronized void setupStore (String rootName)
 
 	    int sharedStatus = ((smAttributes.objectModel == ObjectModel.SINGLE) ? ObjectStore.OS_UNSHARED : ObjectStore.OS_SHARED);
 	    ObjectName osObjName = null;
-	    
+
 	    if (objectName != null)
 	    {
 		try
@@ -1290,9 +1292,9 @@ protected synchronized void setupStore (String rootName)
 
 	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
 		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.StateManager_13");
-	    
+
 	    throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.StateManager_14"));
-		
+
 	    //		objectStore = new ObjectStore(ArjunaNames.Implementation_ObjectStore_VolatileStore(), storeRoot);
 	}
 
@@ -1311,11 +1313,11 @@ protected synchronized void setupStore (String rootName)
      * @return <code>true</code> if the object state should be loaded,
      * <code>false</code> otherwise.
      */
-    
+
 protected final boolean loadObjectState ()
     {
 	boolean load = (smAttributes.objectModel != ObjectModel.SINGLE);
-    
+
 	/*
 	 * MULTIPLE object model requires loading of state every
 	 * time, even if we are RECOVERABLE - we use the volatile
@@ -1328,14 +1330,14 @@ protected final boolean loadObjectState ()
 	     * Must be SINGLE object model. So, is this the first
 	     * time? If so, load state.
 	     */
-		
+
 	    if ((myType != ObjectType.RECOVERABLE) && (!activated))
 		load = true;
 	}
 
 	return load;
     }
-    
+
     /*
      * Called ONLY by ActivationRecords!
      */
@@ -1346,7 +1348,7 @@ protected final boolean loadObjectState ()
      * The second param tells why the action should be forgotten.
      * This aids in resetting the state correctly.
      */
-      
+
 protected final synchronized boolean forgetAction (BasicAction action,
 						   boolean committed,
 						   int recordType)
@@ -1358,7 +1360,7 @@ protected final synchronized boolean forgetAction (BasicAction action,
 				     +((action != null) ? action.get_uid() : Uid.nullUid())+")"
 				     +" for object-id "+objectUid);
 	}
-	
+
 	synchronized (modifyingActions)
 	{
 	    modifyingActions.remove(action.get_uid());
@@ -1371,7 +1373,7 @@ protected final synchronized boolean forgetAction (BasicAction action,
 		if (usingActions != null)
 		{
 		    usingActions.remove(action.get_uid());
-	
+
 		    if (usingActions.size() == 0)
 		    {
 			if (committed)
@@ -1408,7 +1410,7 @@ protected final synchronized boolean rememberAction (BasicAction action, int rec
 				     +((action != null) ? action.get_uid() : Uid.nullUid())+")"
 				     +" for object-id "+objectUid);
 	}
-	
+
 	boolean result = false;
 
 	if (recordType != RecordType.RECOVERY)
@@ -1466,7 +1468,7 @@ protected final boolean unlockMutex ()
 	else
 	    return false;
     }
-    
+
     /**
      * @return <code>true</code> if the object was locked,
      * <code>false</code> if the attempt would cause the thread to block.
@@ -1572,12 +1574,12 @@ protected Uid	                objectUid;
 private boolean     activated;
 private boolean     currentlyActivated;
 private int	    currentStatus;
-private int	    initialStatus;    
+private int	    initialStatus;
 private int	    myType;
 private ObjectStore objectStore;
 private String      storeRoot;
 private Mutex       mutex = new Mutex();
-    
+
 private static final String marker = "#ARJUNA#";
 
 

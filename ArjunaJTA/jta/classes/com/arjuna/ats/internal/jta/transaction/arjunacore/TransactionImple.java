@@ -1700,7 +1700,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 								{ e });
 			}
 
-			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 		}
 
 		return false;
@@ -1767,7 +1767,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 										XAHelper.printXAErrorCode(ex) });
 			}
 
-			throw new com.arjuna.ats.arjuna.exceptions.FatalError(ex.toString());
+			throw new com.arjuna.ats.arjuna.exceptions.FatalError(ex.toString(), ex);
 		}
 		catch (Exception e)
 		{
@@ -1780,7 +1780,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 								{ e });
 			}
 
-			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 		}
 
 		return null;
@@ -1906,7 +1906,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private final boolean _xaTransactionTimeoutEnabled;
 
 	private Map _txLocalResources;
-    
+
     private Throwable _rollbackOnlyCallerStacktrace;
 
 	/**

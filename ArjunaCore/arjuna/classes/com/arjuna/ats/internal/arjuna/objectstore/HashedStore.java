@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -156,7 +156,7 @@ public class HashedStore extends ShadowNoFileLockStore
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, 
+				     FacilityCode.FAC_OBJECT_STORE,
 				     "HashedStore.allObjUids("+tName+", "+state+", "+match+")");
 	}
 
@@ -191,7 +191,7 @@ public class HashedStore extends ShadowNoFileLockStore
 		    if (dir.isDirectory())
 		    {
 			String[] dirEnt = dir.list();
-    
+
 			for (int j = 0; j < dirEnt.length; j++)
 			{
 			    try
@@ -224,7 +224,7 @@ public class HashedStore extends ShadowNoFileLockStore
 			    }
 			    catch (IOException e)
 			    {
-				throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_5"));
+				throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_5"), e);
 			    }
 			}
 		    }
@@ -244,7 +244,7 @@ public class HashedStore extends ShadowNoFileLockStore
 	}
 	catch (IOException e)
 	{
-	    throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_6"));
+	    throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_6"), e);
 	}
 
 	state.setBuffer(store.buffer());
@@ -288,7 +288,7 @@ public class HashedStore extends ShadowNoFileLockStore
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "HashedStore.HashedStore("+locationOfStore+")");
 	}
-	
+
 	try
 	{
 	    setupStore(locationOfStore);
@@ -304,13 +304,13 @@ public class HashedStore extends ShadowNoFileLockStore
     protected HashedStore (ObjectName objName)
     {
 	super(objName);
-	
+
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "HashedStore.HashedStore("+objName+")");
 	}
-	
+
 	try
 	{
 	    setupStore("");
@@ -319,7 +319,7 @@ public class HashedStore extends ShadowNoFileLockStore
 	{
 	    tsLogger.arjLogger.warn(e.getMessage());
 
-	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	}
     }
 
@@ -331,14 +331,14 @@ public class HashedStore extends ShadowNoFileLockStore
 	if (lastIndex != -1)
 	{
 	    int nextIndex = value.lastIndexOf(HashedStore.HASH_SEPARATOR, lastIndex - 1);
-	    
+
 	    if (nextIndex != -1)
 	    {
 		char[] bitInbetween = new char[lastIndex - nextIndex - 1];
 		boolean isDigit = true;
-		
+
 		value.getChars(nextIndex + 1, lastIndex, bitInbetween, 0);
-		
+
 		for (int i = 0; (i < bitInbetween.length) && isDigit; i++)
 		{
 		    if (!Character.isDigit(bitInbetween[i]))
@@ -354,18 +354,18 @@ public class HashedStore extends ShadowNoFileLockStore
 
 	return toReturn;
     }
-    
+
     /**
      * @return the file name for the state of the object
-     * identified by the Uid and TypeName. 
+     * identified by the Uid and TypeName.
      */
-    
+
     protected String genPathName (Uid objUid, String tName, int otype) throws ObjectStoreException
     {
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE, 
+				     FacilityCode.FAC_OBJECT_STORE,
 				     "HashedStore.genPathName("+objUid+", "+tName+", "+ObjectStore.stateTypeString(otype)+")");
 	}
 
@@ -428,13 +428,13 @@ public class HashedStore extends ShadowNoFileLockStore
 	    if (list[i].equals(id))
 		return true;
 	}
-	
+
 	return false;
     }
-    
+
     private static final int DEFAULT_NUMBER_DIRECTORIES = 255;
     private static final String HASH_SEPARATOR = "#";
-    
+
     private static int NUMBEROFDIRECTORIES = DEFAULT_NUMBER_DIRECTORIES;
 
     static
@@ -446,7 +446,7 @@ public class HashedStore extends ShadowNoFileLockStore
 	    try
 	    {
 		Integer i = new Integer(numberOfDirs);
-		
+
 		NUMBEROFDIRECTORIES = i.intValue();
 
 		if (NUMBEROFDIRECTORIES <= 0)
@@ -456,7 +456,7 @@ public class HashedStore extends ShadowNoFileLockStore
 			tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_2",
 						    new Object[]{numberOfDirs});
 		    }
-		    
+
 		    NUMBEROFDIRECTORIES = DEFAULT_NUMBER_DIRECTORIES;
 		}
 	    }
@@ -467,8 +467,8 @@ public class HashedStore extends ShadowNoFileLockStore
 		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_3",
 						new Object[]{numberOfDirs});
 		}
-		
-		throw new com.arjuna.ats.arjuna.exceptions.FatalError("Invalid hash directory number: "+numberOfDirs);
+
+		throw new com.arjuna.ats.arjuna.exceptions.FatalError("Invalid hash directory number: "+numberOfDirs, e);
 	    }
 	    catch (Exception e)
 	    {
@@ -477,8 +477,8 @@ public class HashedStore extends ShadowNoFileLockStore
 		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_4",
 						new Object[]{e});
 		}
-		
-		throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+
+		throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	    }
 	}
     }

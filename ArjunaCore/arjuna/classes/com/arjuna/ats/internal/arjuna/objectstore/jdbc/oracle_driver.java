@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -65,7 +65,7 @@ import oracle.sql.BLOB;
 public class oracle_driver extends JDBCImple
 {
     private static final int MAX_RETRIES = 10 ;
-    
+
 	public InputObjectState read_state (Uid objUid, String tName, int ft, String tableName) throws ObjectStoreException
 	{
 		InputObjectState newImage = null;
@@ -87,27 +87,27 @@ public class oracle_driver extends JDBCImple
         				try
         				{
         					PreparedStatement pstmt = _preparedStatements[pool][READ_STATE];
-        
+
         					if (pstmt == null)
         					{
         						pstmt = _theConnection[pool].prepareStatement("SELECT ObjectState FROM "+tableName+" WHERE UidString = ? AND TypeName = ? AND StateType = ?");
-        
+
         						_preparedStatements[pool][READ_STATE] = pstmt;
         					}
-        
+
         					pstmt.setString(1, objUid.stringForm());
         					pstmt.setString(2, tName);
         					pstmt.setInt(3, ft);
-        
+
         					rs = pstmt.executeQuery();
-        
+
         					if(! rs.next()) {
         						return null; // no matching state in db
         					}
-        					
+
         					Blob myBlob = (Blob)rs.getBlob(1);
         					byte[] buffer = myBlob.getBytes(1, (int)myBlob.length());
-        
+
         					if (buffer != null)
         					{
         						newImage = new InputObjectState(objUid, tName, buffer);
@@ -123,7 +123,7 @@ public class oracle_driver extends JDBCImple
         				{
                             if (count == MAX_RETRIES-1)
                             {
-                                throw new ObjectStoreException(e.toString());
+                                throw new ObjectStoreException(e.toString(), e);
                             }
                             try
                             {
@@ -131,7 +131,7 @@ public class oracle_driver extends JDBCImple
                             }
                             catch (final Throwable th)
                             {
-                                throw new ObjectStoreException(e.toString());
+                                throw new ObjectStoreException(e.toString(), th);
                             }
         				}
                     }
@@ -154,7 +154,7 @@ public class oracle_driver extends JDBCImple
 			throw new ObjectStoreException("oracle.read_state - object with uid "+objUid+" has no TypeName");
 	}
 
-	
+
 	public boolean write_state (Uid objUid, String tName, OutputObjectState state, int s, String tableName) throws ObjectStoreException
 	{
 		int imageSize = (int) state.length();
@@ -177,9 +177,9 @@ public class oracle_driver extends JDBCImple
         			try
         			{
         				PreparedStatement pstmt = _preparedStatements[pool][READ_WRITE_SHORTCUT];
-        
+
         				_theConnection[pool].setAutoCommit(false);
-        
+
         				if (pstmt == null)
         				{
         					pstmt = _theConnection[pool].prepareStatement("SELECT ObjectState FROM "+tableName+" WHERE UidString = ? AND StateType = ? AND TypeName = ? FOR UPDATE", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
@@ -188,51 +188,51 @@ public class oracle_driver extends JDBCImple
         				pstmt.setString(1, objUid.stringForm());
         				pstmt.setInt(2, s);
         				pstmt.setString(3, tName);
-        
+
         				rs = pstmt.executeQuery();
-        
+
         				if( rs.next() ) {
-        
+
         					BLOB myBlob = (BLOB)rs.getBlob(1);
         					myBlob.putBytes(1, b);
-        
+
         				} else {
         					// not in database, do insert:
         					PreparedStatement pstmt2 = _preparedStatements[pool][WRITE_STATE_NEW];
-        
+
         					if (pstmt2 == null)
         					{
         						pstmt2 = _theConnection[pool].prepareStatement("INSERT INTO "+tableName+" (StateType,TypeName,UidString,ObjectState) VALUES (?,?,?,empty_blob())");
-        
+
         						_preparedStatements[pool][WRITE_STATE_NEW] = pstmt2;
         					}
-        
+
         					pstmt2.setInt(1, s);
         					pstmt2.setString(2, tName);
         					pstmt2.setString(3, objUid.stringForm());
-        
+
         					pstmt2.executeUpdate();
         					_theConnection[pool].commit();
-        
+
         					PreparedStatement pstmt3 = _preparedStatements[pool][SELECT_FOR_WRITE_STATE];
         					if(pstmt3 == null) {
         						pstmt3 = _theConnection[pool].prepareStatement("SELECT ObjectState FROM "+tableName+" WHERE UidString = ? AND TypeName = ? AND StateType = ? FOR UPDATE");
         						_preparedStatements[pool][SELECT_FOR_WRITE_STATE] = pstmt3;
         					}
-        
+
         					pstmt3.setString(1, objUid.stringForm());
         					pstmt3.setString(2, tName);
         					pstmt3.setInt(3, s);
-        
+
         					rs3 = pstmt3.executeQuery();
         					rs3.next();
         					BLOB myBlob = (BLOB)rs3.getBlob(1);
         					myBlob.putBytes(1, b);
         				}
-        
+
         				_theConnection[pool].commit();
                         return true ;
-        
+
         			}
         			catch(Throwable e)
         			{
@@ -249,7 +249,7 @@ public class oracle_driver extends JDBCImple
                         }
                         catch (final Throwable th)
                         {
-                            throw new ObjectStoreException(e.toString());
+                            throw new ObjectStoreException(e.toString(), th);
                         }
         			}
                 }

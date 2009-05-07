@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: ActionHierarchy.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -69,7 +69,7 @@ public class ActionHierarchy
 				     VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ATOMIC_ACTION, "ActionHierarchy::ActionHierarchy("+depth+")");
 	}
-	
+
 	hierarchy = null;
 	maxHierarchyDepth = depth;
 	currentDepth = 0;
@@ -92,7 +92,7 @@ public class ActionHierarchy
 	hierarchy = null;
 	maxHierarchyDepth = theCopy.maxHierarchyDepth;
 	currentDepth = theCopy.currentDepth;
-	
+
 	if (maxHierarchyDepth > 0)
 	{
 	    hierarchy = new ActionInfo[maxHierarchyDepth];
@@ -100,7 +100,7 @@ public class ActionHierarchy
 	    for (int i = 0; i < maxHierarchyDepth; i++)
 		hierarchy[i] = null;
 	}
-    
+
 	for (int i = 0; i < currentDepth; i++)
 	{
 	    hierarchy[i] = new ActionInfo(theCopy.hierarchy[i]);
@@ -119,13 +119,13 @@ public class ActionHierarchy
 	    strm.println("\tAction Uids : NULL");
 	else
 	{
-	    strm.println("\tAction Uids :");	    
+	    strm.println("\tAction Uids :");
 
 	    /*
 	     * No need to check if hierarchy[i] is set, since currentDepth
 	     * implies it is.
 	     */
-	
+
 	    for (int i = 0; i < currentDepth; i++)
 		strm.println("\t\t"+hierarchy[i].actionUid);
 	}
@@ -142,16 +142,16 @@ public class ActionHierarchy
     public synchronized void copy (ActionHierarchy c)
     {
 	/* Beware of A = A */
-    
+
 	if (this == c)
 	    return;
 
 	if (hierarchy != null)
 	    hierarchy = null;
-	
+
 	currentDepth = c.currentDepth;
 	maxHierarchyDepth = c.maxHierarchyDepth;
-      
+
 	if (maxHierarchyDepth > 0)
 	{
 	    hierarchy = new ActionInfo[maxHierarchyDepth];
@@ -167,7 +167,7 @@ public class ActionHierarchy
     /**
      * Overloads Object.equals.
      */
-    
+
     public final boolean equals (ActionHierarchy other)
     {
 	boolean same = true;
@@ -201,7 +201,7 @@ public class ActionHierarchy
     {
 	return add(actionId, ActionType.TOP_LEVEL);
     }
-    
+
     /**
      * Add the transaction id at the specified level.
      *
@@ -216,7 +216,7 @@ public class ActionHierarchy
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ATOMIC_ACTION, "ActionHierarchy::add("+actionId+", "+at+")");
 	}
-	
+
 	boolean result = true;
 
 	if (currentDepth >= maxHierarchyDepth)
@@ -229,7 +229,7 @@ public class ActionHierarchy
 	    if (newHier != null)
 	    {
 		maxHierarchyDepth = newDepth;
-	    
+
 		for (int i = 0; i < currentDepth; i++)
 		    newHier[i] = hierarchy[i];
 
@@ -307,7 +307,7 @@ public class ActionHierarchy
      * CAREFULLY unpack the 'new' hierarchy. We unpack into
      * a temporary to ensure that the current hierarchy is not corrupted.
      *
-     * @message com.arjuna.ats.arjuna.coordinator.ActionHierarchy_1 [com.arjuna.ats.arjuna.coordinator.ActionHierarchy_1] - Memory exhausted. 
+     * @message com.arjuna.ats.arjuna.coordinator.ActionHierarchy_1 [com.arjuna.ats.arjuna.coordinator.ActionHierarchy_1] - Memory exhausted.
      */
 
     public void unpack (InputBuffer state) throws IOException
@@ -324,14 +324,16 @@ public class ActionHierarchy
 	}
 	catch (OutOfMemoryError ex)
 	{
-	    throw new IOException(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.coordinator.ActionHierarchy_1"));
+        IOException ioException = new IOException(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.coordinator.ActionHierarchy_1"));
+        ioException.initCause(ex);
+        throw ioException;
 	}
-	
+
 	for (int i = 0; i < newDepth; i++)
 	{
 	    temp.actionUid.unpack(state);
 	    temp.actionType = state.unpackInt();
-	    
+
 	    newHier.add(temp.actionUid, temp.actionType);
 	}
 
@@ -374,7 +376,7 @@ public class ActionHierarchy
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ATOMIC_ACTION, "ActionHierarchy::findCommonPrefix()");
 	}
-	
+
 	int common = 0;
 	int max = oldHierarchy.depth();
 
@@ -386,11 +388,11 @@ public class ActionHierarchy
 
 	if (tsLogger.arjLogger.debugAllowed())
 	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-				     FacilityCode.FAC_ATOMIC_ACTION, 
+	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+				     FacilityCode.FAC_ATOMIC_ACTION,
 				     "ActionHierarchy::::findCommonPrefix(): prefix is "+common);
 	}
-	
+
 	return common;
     }
 
@@ -441,7 +443,7 @@ public class ActionHierarchy
     }
 
     public static final int DEFAULT_HIERARCHY_DEPTH = 5;
-    
+
     private ActionInfo[] hierarchy;
     private int          maxHierarchyDepth;
     private int          currentDepth;

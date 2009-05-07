@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: ShadowingStore.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -99,7 +99,7 @@ public int typeIs ()
     {
 	return ObjectStoreType.SHADOWING;
     }
-    
+
     /**
      * @return current state of object. Assumes that genPathName allocates
      * enough extra space to allow extra chars to be added.
@@ -110,7 +110,7 @@ public int typeIs ()
 public int currentState (Uid objUid, String tName) throws ObjectStoreException
     {
 	int theState = ObjectStore.OS_UNKNOWN;
-    
+
 	if (storeValid())
 	{
 	    String path = genPathName(objUid, tName, ObjectStore.OS_SHADOW);
@@ -150,8 +150,8 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	if (tsLogger.arjLoggerI18N.debugAllowed())
 	{
 	    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					 FacilityCode.FAC_OBJECT_STORE, 
-					 "com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_22", 
+					 FacilityCode.FAC_OBJECT_STORE,
+					 "com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_22",
 					 new Object[]{objUid, tName, ObjectStore.stateStatusString(theState)});
 	}
 
@@ -171,7 +171,7 @@ public boolean commit_state (Uid objUid, String tName) throws ObjectStoreExcepti
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.commit_state("+objUid+", "+tName+")");
 	}
-	
+
 	boolean result = false;
 
 	/* Bail out if the object store is not set up */
@@ -195,7 +195,7 @@ public boolean commit_state (Uid objUid, String tName) throws ObjectStoreExcepti
 	    {
 		shadow = genPathName(objUid, tName, ObjectStore.OS_SHADOW);
 		filename = genPathName(objUid, tName, ObjectStore.OS_ORIGINAL);
-	    
+
 		if (state == ObjectStore.OS_UNCOMMITTED_HIDDEN)
 		{
 		    /* maintain hidden status on rename */
@@ -229,7 +229,7 @@ public boolean commit_state (Uid objUid, String tName) throws ObjectStoreExcepti
 		    super.addToCache(filename);
 		    super.removeFromCache(shadow);
 		}
-		
+
 		shadowState = null;
 		originalState = null;
 	    }
@@ -255,7 +255,7 @@ public boolean hide_state (Uid objUid, String tName) throws ObjectStoreException
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.hide_state("+objUid+", "+tName+")");
 	}
-	
+
 	boolean hiddenOk = true;
 
 	/* Bail out if the object store is not set up */
@@ -265,7 +265,7 @@ public boolean hide_state (Uid objUid, String tName) throws ObjectStoreException
 	    int state = currentState(objUid, tName);
 	    String path1 = null;
 	    String path2 = null;
-	    
+
 	    switch (state)
 	    {
 	    case ObjectStore.OS_UNCOMMITTED_HIDDEN:
@@ -295,7 +295,7 @@ public boolean hide_state (Uid objUid, String tName) throws ObjectStoreException
 
 		    newState = null;
 		    oldState = null;
-		    
+
 		    break;
 		}
 	    case ObjectStore.OS_UNCOMMITTED:
@@ -322,7 +322,7 @@ public boolean hide_state (Uid objUid, String tName) throws ObjectStoreException
 
 		    newState = null;
 		    oldState = null;
-		    
+
 		    break;
 		}
 	    default:
@@ -343,7 +343,7 @@ public boolean reveal_state (Uid objUid,
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.reveal_state("+objUid+", "+tName+")");
 	}
-	
+
 	boolean revealedOk = true;
 
 	if (storeValid())
@@ -378,14 +378,14 @@ public boolean reveal_state (Uid objUid,
 
 		    newState = null;
 		    oldState = null;
-		    
+
 		    break;
 		}
 	    case ObjectStore.OS_COMMITTED_HIDDEN:
 		{
 		    path1 = genPathName(objUid, tName, ObjectStore.OS_ORIGINAL);
 		    path2 = new String(path1) + HIDDINGCHAR;
-		    
+
 		    File newState = new File(path2);
 		    File oldState = new File(path1);
 
@@ -405,7 +405,7 @@ public boolean reveal_state (Uid objUid,
 
 		    newState = null;
 		    oldState = null;
-		    
+
 		    break;
 		}
 	    case ObjectStore.OS_COMMITTED:
@@ -420,12 +420,12 @@ public boolean reveal_state (Uid objUid,
 
 	return revealedOk;
     }
-    
+
 public ClassName className ()
     {
 	return ArjunaNames.Implementation_ObjectStore_ShadowingStore();
     }
-    
+
 public static ClassName name ()
     {
 	return ArjunaNames.Implementation_ObjectStore_ShadowingStore();
@@ -444,7 +444,7 @@ public static ShadowingStore create (Object[] param)
 	String location = (String) param[0];
 	Integer shareStatus = (Integer) param[1];
 	int ss = ObjectStore.OS_UNSHARED;
-	
+
 	if (shareStatus != null)
 	{
 	    try
@@ -461,7 +461,7 @@ public static ShadowingStore create (Object[] param)
 		}
 	    }
 	}
-	
+
 	return new ShadowingStore(location, ss);
     }
 
@@ -488,7 +488,7 @@ protected String genPathName (Uid objUid, String tName, int ft) throws ObjectSto
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.genPathName("+objUid+", "+tName+", "+ObjectStore.stateTypeString(ft)+")");
 	}
-	
+
 	String fname = super.genPathName(objUid, tName, ft);
 
 	if (ft == ObjectStore.OS_SHADOW)
@@ -500,10 +500,10 @@ protected String genPathName (Uid objUid, String tName, int ft) throws ObjectSto
 protected String revealedId (String name)
     {
 	int index = name.indexOf(HIDDINGCHAR);
-	
+
 	if (index == -1)
 	    index = name.indexOf(SHADOWCHAR);
-	    
+
 	if (index != -1)
 	    return name.substring(0, index);
 	else
@@ -518,7 +518,7 @@ protected InputObjectState read_state (Uid objUid, String tName,
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.read_state("+objUid+", "+tName+", "+ObjectStore.stateTypeString(ft)+")");
 	}
-	
+
 	if (!storeValid())
 	{
 	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
@@ -545,7 +545,7 @@ protected InputObjectState read_state (Uid objUid, String tName,
 		{
 		    return null;
 		}
-		
+
 		String fname = genPathName(objUid, tName, ft);
 		File fd = openAndLock(fname, FileLock.F_RDLCK, false);
 
@@ -562,8 +562,8 @@ protected InputObjectState read_state (Uid objUid, String tName,
 		    catch (FileNotFoundException e)
 		    {
 			closeAndUnlock(fd, ifile, null);
-			
-			throw new ObjectStoreException("ShadowingStore::read_state error: "+e);
+
+			throw new ObjectStoreException("ShadowingStore::read_state error: "+e, e);
 		    }
 
 		    /* now try to read the actual image out of the store */
@@ -581,10 +581,10 @@ protected InputObjectState read_state (Uid objUid, String tName,
 		    catch (IOException e)
 		    {
 			closeAndUnlock(fd, ifile, null);
-			
-			throw new ObjectStoreException("ShadowingStore::read_state failed: "+e);
+
+			throw new ObjectStoreException("ShadowingStore::read_state failed: "+e, e);
 		    }
-		    
+
 		    if (!closeAndUnlock(fd, ifile, null))
 		    {
 			if (tsLogger.arjLoggerI18N.isWarnEnabled()){
@@ -608,12 +608,12 @@ protected boolean remove_state (Uid objUid, String name, int ft) throws ObjectSt
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.remove_state("+objUid+", "+name+", "+ObjectStore.stateTypeString(ft)+")");
 	}
-	
+
 	boolean removeOk = true;
 
 	if (!storeValid())
 	    return false;
-    
+
 	if (name != null)
 	{
 	    int state = currentState(objUid, name);
@@ -661,7 +661,7 @@ protected boolean remove_state (Uid objUid, String name, int ft) throws ObjectSt
 			    }
 			}
 		    }
-		    
+
 		    closeAndUnlock(fd, null, null);
 		}
 		else
@@ -698,7 +698,7 @@ protected boolean remove_state (Uid objUid, String name, int ft) throws ObjectSt
 					    new Object[]{objUid});
 	    }
 	}
-    
+
 	return removeOk;
     }
 
@@ -718,16 +718,16 @@ protected boolean write_state (Uid objUid, String tName,
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.write_state("+objUid+", "+tName+", "+ObjectStore.stateTypeString(ft)+")");
 	}
-	
+
 	if (!storeValid())
 	    return false;
-    
+
 	if (tName != null)
 	{
 	    String fname = genPathName(objUid, tName, ft);
 	    File fd = openAndLock(fname, FileLock.F_WRLCK, true);
 	    int imageSize = (int) state.length();
-	
+
 	    if (fd == null)
 	    {
 		if (tsLogger.arjLoggerI18N.isWarnEnabled())
@@ -740,7 +740,7 @@ protected boolean write_state (Uid objUid, String tName,
 	    }
 
 	    FileOutputStream ofile = null;
-	    
+
 	    if (imageSize > 0)
 	    {
 		try
@@ -752,9 +752,9 @@ protected boolean write_state (Uid objUid, String tName,
 		    if (synchronousWrites())
 		    {
 			// must flush any in-memory buffering prior to sync
-		    
+
 			ofile.flush();
-		    
+
 			FileDescriptor fileDesc = ofile.getFD();  // assume it's valid!
 			fileDesc.sync();
 		    }
@@ -762,27 +762,27 @@ protected boolean write_state (Uid objUid, String tName,
 		catch (SyncFailedException e)
 		{
 		    closeAndUnlock(fd, null, ofile);
-		    
-		    throw new ObjectStoreException("ShadowingStore::write_state() - write failed to sync for "+fname);
+
+		    throw new ObjectStoreException("ShadowingStore::write_state() - write failed to sync for "+fname, e);
 		}
 		catch (FileNotFoundException e)
 		{
 		    closeAndUnlock(fd, null, ofile);
 
 		    e.printStackTrace();
-		    
-		    throw new ObjectStoreException("ShadowingStore::write_state() - write failed to locate file "+fname+": "+e);
+
+		    throw new ObjectStoreException("ShadowingStore::write_state() - write failed to locate file "+fname+": "+e, e);
 		}
 		catch (IOException e)
 		{
 		    closeAndUnlock(fd, null, ofile);
 
 		    e.printStackTrace();
-		    
-		    throw new ObjectStoreException("ShadowingStore::write_state() - write failed for "+fname+": "+e);
+
+		    throw new ObjectStoreException("ShadowingStore::write_state() - write failed for "+fname+": "+e, e);
 		}
 	    }
-	    
+
 	    if (!closeAndUnlock(fd, null, ofile))
 	    {
 		if (tsLogger.arjLoggerI18N.isWarnEnabled())
@@ -793,7 +793,7 @@ protected boolean write_state (Uid objUid, String tName,
 	    }
 
 	    super.addToCache(fname);
-	    
+
 	    return true;
 	}
 	else
@@ -804,7 +804,7 @@ protected ShadowingStore (String locationOfStore)
     {
 	this(locationOfStore, ObjectStore.OS_UNSHARED);
     }
-    
+
 protected ShadowingStore (String locationOfStore, int shareStatus)
     {
 	super(shareStatus);
@@ -814,7 +814,7 @@ protected ShadowingStore (String locationOfStore, int shareStatus)
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.ShadowingStore("+locationOfStore+")");
 	}
-	
+
 	try
 	{
 	    setupStore(locationOfStore);
@@ -823,15 +823,15 @@ protected ShadowingStore (String locationOfStore, int shareStatus)
 	{
 	    tsLogger.arjLogger.fatal(e.getMessage());
 
-	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	}
     }
-    
+
 protected ShadowingStore ()
     {
 	this(ObjectStore.OS_UNSHARED);
     }
-    
+
 protected ShadowingStore (int shareStatus)
     {
 	super(shareStatus);

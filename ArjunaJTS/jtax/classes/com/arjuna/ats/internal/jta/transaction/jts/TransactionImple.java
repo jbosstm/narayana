@@ -1419,7 +1419,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			     * In JTS/OTS we can indicate that something was terminated by another thread.
 			     * JTA doesn't really prevent this, but ...
 			     */
-			    
+
 				//throw new IllegalStateException(
 				//		jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
 			}
@@ -1676,7 +1676,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 				jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.threaderror", e);
 			}
 
-			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 		}
 
 		return false;
@@ -1736,7 +1736,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 				{ "TransactionImple.isNewRM", XAHelper.printXAErrorCode(ex) });
 			}
 
-			throw new com.arjuna.ats.arjuna.exceptions.FatalError(ex.toString());
+			throw new com.arjuna.ats.arjuna.exceptions.FatalError(ex.toString(), ex);
 		}
 		catch (Exception e)
 		{
@@ -1745,7 +1745,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 				jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.rmerror", e);
 			}
 
-			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 		}
 
 		return null;
@@ -1881,7 +1881,7 @@ public class TransactionImple implements javax.transaction.Transaction,
     private Map _txLocalResources;
 
     private Throwable _rollbackOnlyCallerStacktrace;
-    
+
         /**
          * Count of last resources seen in this transaction.
          */

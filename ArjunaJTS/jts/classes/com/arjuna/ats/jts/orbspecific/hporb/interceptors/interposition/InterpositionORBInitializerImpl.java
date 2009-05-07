@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: InterpositionORBInitializerImpl.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -45,8 +45,8 @@ import com.arjuna.common.util.logging.*;
 
 import org.omg.CosTransactions.*;
 import org.omg.CORBA.*;
-import org.omg.PortableInterceptor.*; 
-import org.omg.PortableInterceptor.ORBInitInfoPackage.*; 
+import org.omg.PortableInterceptor.*;
+import org.omg.PortableInterceptor.ORBInitInfoPackage.*;
 import org.omg.IOP.*;
 import org.omg.IOP.CodecFactoryPackage.*;
 
@@ -74,7 +74,7 @@ public InterpositionORBInitializerImpl ()
 
 	ThreadActionData.addSetup(new InterpositionThreadSetup());
     }
-  
+
 public void pre_init (ORBInitInfo init_info)
     {
 	if (jtsLogger.logger.isDebugEnabled())
@@ -92,7 +92,7 @@ public void pre_init (ORBInitInfo init_info)
      * @message com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.interposition.codeccreate Cannot create a codec of the required encoding.
      * @message com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.interposition.sie A server-side request interceptor already exists with that name.
      */
-  
+
 public void post_init (ORBInitInfo init_info)
     {
 	if (jtsLogger.logger.isDebugEnabled())
@@ -110,7 +110,7 @@ public void post_init (ORBInitInfo init_info)
 
 	com.arjuna.ats.jts.OTSManager.setLocalSlotId(localSlot);
 	com.arjuna.ats.jts.OTSManager.setReceivedSlotId(receivedSlot);
-	
+
 	/*
 	 * Get the CDR codec; used for encoding/decoding the service
 	 * context and IOR components.
@@ -140,9 +140,9 @@ public void post_init (ORBInitInfo init_info)
 
 	    ex.printStackTrace();
 
-	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.interposition.codeccreate"));
+	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.interposition.codeccreate"), ex);
 	}
-    
+
 	/*
 	 * Register client interceptor to propogate the context.
 	 */
@@ -169,9 +169,9 @@ public void post_init (ORBInitInfo init_info)
 
 	    ex.printStackTrace();
 
-	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.interposition.cie"));
+	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.interposition.cie"), ex);
 	}
-  
+
 	/*
 	 * Register a server interceptor to receive the context.
 	 */
@@ -198,8 +198,8 @@ public void post_init (ORBInitInfo init_info)
 
 	    ex.printStackTrace();
 
-	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.interposition.sie"));
+	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.interposition.sie"), ex);
 	}
     }
-  
+
 }

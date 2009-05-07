@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Technologies Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: NullActionStore.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -70,7 +70,7 @@ public int typeIs ()
     {
 	return ObjectStoreType.NULL_ACTION;
     }
-    
+
     /**
      * @return current state of object. Assumes that genPathName allocates
      * enough extra space to allow extra chars to be added.
@@ -142,13 +142,13 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
     public static ClassName name ()
     {
 	return ArjunaNames.Implementation_ObjectStore_NullActionStore();
-    }    
+    }
 
     /**
      * Have to return as a ShadowingStore because of
      * inheritence.
      */
-    
+
     public static ShadowingStore create ()
     {
 	return new NullActionStore("");
@@ -166,7 +166,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	String location = (String) param[0];
 	Integer shareStatus = (Integer) param[1];
 	int ss = ObjectStore.OS_UNSHARED;
-	
+
 	if (shareStatus != null)
 	{
 	    try
@@ -183,7 +183,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 		}
 	    }
 	}
-	
+
 	return new NullActionStore(location, ss);
     }
 
@@ -194,7 +194,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	else
 	    return new NullActionStore(param);
     }
-    
+
     protected NullActionStore (String locationOfStore)
     {
 	this(locationOfStore, ObjectStore.OS_UNSHARED);
@@ -214,8 +214,8 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 		tsLogger.arjLogger.warn(e.getMessage());
 
 	    super.makeInvalid();
-	    
-	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+
+	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	}
     }
 
@@ -223,7 +223,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
     {
 	this(ObjectStore.OS_UNSHARED);
     }
-    
+
     protected NullActionStore (int shareStatus)
     {
 	super(shareStatus);
@@ -233,7 +233,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
     {
 	super(objName);
     }
-    
+
     protected synchronized boolean setupStore (String location) throws ObjectStoreException
     {
 	return true;

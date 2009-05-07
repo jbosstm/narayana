@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: FileSystemStore.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -84,14 +84,14 @@ public abstract class FileSystemStore extends ObjectStoreImple
     public FileSystemStore (String locationOfStore, int ss)
     {
 	super(ss);
-	
+
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, 
+				     FacilityCode.FAC_OBJECT_STORE,
 				     "FileSystemStore.FileSystemStore("+locationOfStore+")");
 	}
-	
+
 	fullStoreName = null;
 	localStoreRoot = null;
 	isValid = true;
@@ -106,7 +106,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
 	    tsLogger.arjLogger.warn(e.getMessage());
 
-	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	}
     }
 
@@ -140,17 +140,17 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
 	    tsLogger.arjLogger.warn(e.getMessage());
 
-	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	}
     }
-    
+
     public String getStoreName ()
     {
 	return localStoreRoot;
     }
 
     /*
-     * read an uncommitted instance of State out of the object store. 
+     * read an uncommitted instance of State out of the object store.
      * The instance is identified by the unique id and type
      */
 
@@ -172,7 +172,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.read_uncommitted("+storeUid+", "+tName+")");
 	}
-	
+
 	return read_state(storeUid, tName, ObjectStore.OS_SHADOW);
     }
 
@@ -181,7 +181,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, 
+				     FacilityCode.FAC_OBJECT_STORE,
 				     "FileSystemStore.remove_committed("+storeUid+", "+tName+")");
 	}
 
@@ -193,10 +193,10 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	if (tsLogger.arjLogger.debugAllowed())
 	{
        	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, 
+				     FacilityCode.FAC_OBJECT_STORE,
 				     "FileSystemStore.remove_uncommitted("+storeUid+", "+tName+")");
 	}
-	
+
 	return remove_state(storeUid, tName, ObjectStore.OS_SHADOW);
     }
 
@@ -205,10 +205,10 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, 
+				     FacilityCode.FAC_OBJECT_STORE,
 				     "FileSystemStore.write_committed("+storeUid+", "+tName+")");
 	}
-	
+
 	return write_state(storeUid, tName, state, ObjectStore.OS_ORIGINAL);
     }
 
@@ -217,10 +217,10 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, 
+				     FacilityCode.FAC_OBJECT_STORE,
 				     "FileSystemStore.write_uncommitted("+storeUid+", "+tName+", "+state+")");
 	}
-	
+
 	return write_state(storeUid, tName, state, ObjectStore.OS_SHADOW);
     }
 
@@ -233,12 +233,12 @@ public abstract class FileSystemStore extends ObjectStoreImple
     {
 	isValid = false;
     }
-    
+
     public final synchronized void makeValid ()
     {
 	isValid = true;
     }
-    
+
     /**
      * Given a type name initialise the <code>state</code> to contains all of
      * the Uids of objects of that type
@@ -249,17 +249,17 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	if (tsLogger.arjLogger.debugAllowed())
 	{
        	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, 
+				     FacilityCode.FAC_OBJECT_STORE,
 				     "FileSystemStore.allObjUids("+tName+", "+state+", "+match+")");
 	}
-	
+
 	String directory = null;
 	OutputObjectState store = new OutputObjectState();
-	
+
 	/*
 	 * If typename starts with a '/' then skip over it.
 	 */
-	
+
 	if ((tName != null) && (tName.charAt(0) == File.separatorChar))
 	{
 	    String s = tName.substring(1, tName.length());
@@ -270,7 +270,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
 	File f = new File(directory);
 	String[] entry = f.list();
-    
+
 	if ((entry != null) && (entry.length > 0))
 	{
 	    for (int i = 0; i < entry.length; i++)
@@ -282,7 +282,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 		    if (!aUid.valid() || (aUid.equals(Uid.nullUid())))
 		    {
 			String revealed = revealedId(entry[i]);
-			
+
 			// don't want to give the same id twice.
 
 			if (present(revealed, entry))
@@ -308,7 +308,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 		}
 		catch (IOException e)
 		{
-		    throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_2a"));
+		    throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_2a"), e);
 		}
 	    }
 	}
@@ -319,7 +319,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	}
 	catch (IOException e)
 	{
-	    throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_3"));
+	    throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_3"), e);
 	}
 
 	state.setBuffer(store.buffer());
@@ -328,7 +328,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
 	return true;
     }
- 
+
     public boolean allTypes (InputObjectState foundTypes) throws ObjectStoreException
     {
 	if (tsLogger.arjLogger.debugAllowed())
@@ -336,7 +336,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.allTypes("+foundTypes+")");
 	}
-	
+
 	boolean result = true;
 	String directory = new String(fullStoreName);
 	File f = new File(directory);
@@ -346,13 +346,13 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	    return true;
 
 	OutputObjectState store = new OutputObjectState();
-	
+
 	for (int i = 0; i < entry.length; i++)
 	{
 	    if (!supressEntry(entry[i]))
 	    {
 		File tmpFile = new File(directory+File.separator+entry[i]);
-		
+
 		if (tmpFile.isDirectory())
 		{
 		    try
@@ -363,7 +363,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 		    }
 		    catch (IOException e)
 		    {
-			throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_4"));
+			throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_4"), e);
 		    }
 		}
 
@@ -377,7 +377,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	}
 	catch (IOException e)
 	{
-	    throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_5"));
+	    throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_5"), e);
 	}
 
 	foundTypes.setBuffer(store.buffer());
@@ -418,9 +418,9 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     public static ClassName name ()
     {
-	return ArjunaNames.Implementation_ObjectStore_FileSystemStore();	
-    }    
-    
+	return ArjunaNames.Implementation_ObjectStore_FileSystemStore();
+    }
+
     protected abstract InputObjectState read_state (Uid u, String tn, int s) throws ObjectStoreException;
     protected abstract boolean remove_state (Uid u, String tn, int s) throws ObjectStoreException;
     protected abstract boolean write_state (Uid u, String tn, OutputObjectState buff, int s) throws ObjectStoreException;
@@ -428,12 +428,12 @@ public abstract class FileSystemStore extends ObjectStoreImple
     /**
      * Turn file sync on and off.
      */
-    
+
     protected synchronized final void syncOn ()
     {
 	FileSystemStore.doSync = true;
     }
-    
+
     protected synchronized final void syncOff ()
     {
 	FileSystemStore.doSync = false;
@@ -469,7 +469,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
 	return fileLock.unlock();
     }
-    
+
     /**
      * Unlock and close the file. Note that if the unlock fails we set
      * the return value to false to indicate an error but rely on the
@@ -483,7 +483,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
                                      FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.closeAndUnlock("+fd+", "+ifile+", "+ofile+")");
         }
-        
+
         boolean closedOk = unlock(fd);
 
         try
@@ -508,10 +508,10 @@ public abstract class FileSystemStore extends ObjectStoreImple
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
                                      FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.openAndLock("+fname+", "+FileLock.modeString(lmode)+", "+create+")");
         }
-        
+
         //      File fd = (File) FdCache(fname);
         File fd = null;
-        
+
         if (fd == null)
         {
             fd = new File(fname);
@@ -568,7 +568,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
         else
         {
             //      FileLock fl = new FileLock(to);
-                
+
             if (!from.exists())
             {
                 /*
@@ -595,7 +595,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
                 return true;
             }
-            
+
             /*
              * Let let crash recovery deal with this!
              */
@@ -607,7 +607,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
                 boolean res = from.renameTo(to);
 
                 //              fl.unlock();
-                
+
                 return true;
             }
             /*
@@ -627,7 +627,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
     protected FileSystemStore (int ss)
     {
 	super(ss);
-	
+
 	fullStoreName = null;
 	localStoreRoot = null;
 	isValid = true;
@@ -638,10 +638,10 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE, 
+				     FacilityCode.FAC_OBJECT_STORE,
 				     "FileSystemStore.allTypes("+foundTypes+", "+root+")");
 	}
-	
+
 	boolean result = true;
 	String directory = new String(fullStoreName + File.separator + root);
 	File f = new File(directory);
@@ -664,7 +664,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
                 if ( pack.length() > 0 )
                 {
 			        foundTypes.packString(root+File.separator+pack);
-			
+
 			        result = allTypes(foundTypes, root+File.separator+pack);
                 }
 			}
@@ -673,7 +673,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 		    }
 		    catch (IOException e)
 		    {
-			throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_7"));
+			throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_7"), e);
 		    }
 		}
 	    }
@@ -681,7 +681,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
 	return result;
     }
-    
+
     /**
      * @return the file name for the state of the object
      * identified by the Uid and TypeName. If the StateType argument
@@ -696,10 +696,10 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE, 
+				     FacilityCode.FAC_OBJECT_STORE,
 				     "FileSystemStore.genPathName("+objUid+", "+tName+", "+ostype+")");
 	}
-	
+
 	String storeName = locateStore(getStoreName());
 	String cPtr = null;
 	String fname = null;
@@ -725,7 +725,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	 * storeName always ends in '/' so we can remove any
 	 * at the start of the type name.
 	 */
-	
+
 	if (cPtr.charAt(0) == File.separatorChar)
 	    cPtr = cPtr.substring(1, cPtr.length());
 
@@ -737,7 +737,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	/*
 	 * Make sure we don't end in a '/'.
 	 */
-	
+
 	if (fname.charAt(fname.length() -1) == File.separatorChar)
 	    fname = fname.substring(0, fname.length() -2);
 
@@ -751,9 +751,9 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.setupStore("+localOSRoot+")");
 	}
-	
+
 	isValid = true;
-    
+
 	if (localOSRoot == null)
 	    localOSRoot = "";
 
@@ -788,7 +788,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
     {
 	return value;
     }
-    
+
     /**
      * Attempt to build up the object store in the file system dynamically.
      * This creates directories as required as new types are added to the
@@ -812,7 +812,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
        	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.createHierarchy("+path+")");
 	}
-	
+
 	if ((path != null) && (path.length() > 0))
 	{
 	    File f = null;
@@ -821,7 +821,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	     * Is string a complete directory list, or is it an
 	     * absolute file name?
 	     */
-	    
+
 	    if (path.charAt(path.length() -1) != File.separatorChar)
 	    {
 		int index = path.lastIndexOf(File.separator);
@@ -847,7 +847,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 		    if (!f.mkdirs())
 		    {
 			retryLimit--;
-			
+
 			if (retryLimit == 0)
 			    return false;
 
@@ -888,7 +888,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	    if (FileSystemStore.fileCache.get(path) != null)
 		return true;
 	}
-	
+
 	/*
 	 * If here then we need to check the file system. If there, we will
 	 * put it into the cache (if appropriate).
@@ -899,7 +899,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
 	if (doesExist)
 	    addToCache(path);
-	
+
 	return doesExist;
     }
 
@@ -915,7 +915,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
     {
 	removeFromCache(fname, true);
     }
-    
+
     /**
      * Print a warning if the file to be removed is not in the cache.
      *
@@ -944,10 +944,10 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	    if (list[i].equals(id))
 		return true;
 	}
-	
+
 	return false;
     }
-    
+
     static final char unixSeparator = '/';
 
     static boolean rewriteSeparator = false;
@@ -955,7 +955,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
     // allow derived classes to specify sync on a per instance basis
 
     protected boolean syncWrites = true;
-    
+
     private String  fullStoreName;
     private String  localStoreRoot;
     private boolean isValid;
@@ -997,19 +997,19 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	    try
 	    {
 		Integer i = new Integer(retry);
-		
+
 		createRetry = i.intValue();
-	    
+
 		if (createRetry < 0)
 		    createRetry = 100;
 	    }
 	    catch (NumberFormatException e)
 	    {
-		throw new com.arjuna.ats.arjuna.exceptions.FatalError("Invalid retry for hierarchy creation: "+createRetry);
+		throw new com.arjuna.ats.arjuna.exceptions.FatalError("Invalid retry for hierarchy creation: "+createRetry, e);
 	    }
 	    catch (Exception e)
 	    {
-		throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+		throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	    }
 	}
 
@@ -1020,23 +1020,23 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	    try
 	    {
 		Integer i = new Integer(timeout);
-		
+
 		createTimeout = i.intValue();
-	    
+
 		if (createTimeout < 0)
 		    createTimeout = 100;
 	    }
 	    catch (NumberFormatException e)
 	    {
-		throw new com.arjuna.ats.arjuna.exceptions.FatalError("Invalid timeout for hierarchy creation: "+createTimeout);
+		throw new com.arjuna.ats.arjuna.exceptions.FatalError("Invalid timeout for hierarchy creation: "+createTimeout, e);
 	    }
 	    catch (Exception e)
 	    {
-		throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+		throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	    }
 	}
     }
-    
+
     private static boolean isWindows = Utility.isWindows();
 
 }

@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -136,7 +136,7 @@ public abstract class JDBCImple
 				}
 				else
 				{
-					throw new ObjectStoreException(e.toString());
+					throw new ObjectStoreException(e.toString(), e);
 				}
 			}
 			finally
@@ -236,7 +236,7 @@ public abstract class JDBCImple
 				}
 				else
 				{
-					throw new ObjectStoreException(e.toString());
+					throw new ObjectStoreException(e.toString(), e);
 				}
 			}
 			finally
@@ -335,7 +335,7 @@ public abstract class JDBCImple
 				}
 				else
 				{
-					throw new ObjectStoreException(e.toString());
+					throw new ObjectStoreException(e.toString(), e);
 				}
 			}
 			finally
@@ -356,7 +356,7 @@ public abstract class JDBCImple
 	 * currentState - determine the current state of an object. State search is
 	 * ordered OS_UNCOMMITTED, OS_UNCOMMITTED_HIDDEN, OS_COMMITTED,
 	 * OS_COMMITTED_HIDDEN
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_3
 	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_3] -
 	 *          currentState caught exception: {0}
@@ -490,7 +490,7 @@ public abstract class JDBCImple
 	/**
 	 * allObjUids - Given a type name, return an ObjectState that contains all
 	 * of the uids of objects of that type.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_4
 	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_4] -
 	 *          allObjUids caught exception: {0}
@@ -589,8 +589,7 @@ public abstract class JDBCImple
 			}
 			catch (IOException e)
 			{
-				throw new ObjectStoreException(
-						"allObjUids - could not pack end of list Uid.");
+				throw new ObjectStoreException("allObjUids - could not pack end of list Uid.", e);
 			}
 
 			state.setBuffer(store.buffer());
@@ -716,7 +715,7 @@ public abstract class JDBCImple
 			}
 			catch (IOException e)
 			{
-				throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.packProblem"));
+				throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.packProblem"), e);
 			}
 
 			foundTypes.setBuffer(store.buffer());
@@ -856,7 +855,7 @@ public abstract class JDBCImple
 
 	/**
 	 * Set up the store for use.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_11
 	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_11] -
 	 *          invalid initial pool size: {0}
@@ -1036,7 +1035,7 @@ public abstract class JDBCImple
 
 	/**
 	 * Add a new table to an existing implementation.
-	 * 
+	 *
 	 */
 	protected void addTable(String tableName) throws Exception
 	{
@@ -1115,7 +1114,7 @@ public abstract class JDBCImple
 
 	/**
 	 * Print a warning if the file to be removed is not in the cache.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_15
 	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_15] -
 	 *          removeFromCache - no entry for {0}
@@ -1147,7 +1146,7 @@ public abstract class JDBCImple
 	 * retryConnection. Called in exeption handlers where the problem may be due
 	 * to use of a stale (broken) cached connection. If this is the case, we
 	 * re-establish the connection before returning.
-	 * 
+	 *
 	 * @param e
 	 *            The exception, which may be due to a bad connection.
 	 * @param pool
@@ -1225,7 +1224,7 @@ public abstract class JDBCImple
 	 * Allocate a database connection from the pool: Walks the array and
 	 * allocates the first available connection. If non are free, waits before
 	 * trying again.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_16
 	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_16] -
 	 *          getPool caught exception: {0}
@@ -1299,7 +1298,7 @@ public abstract class JDBCImple
 
 	/**
 	 * return a connection to the free pool, optionally closing it.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_18
 	 *          [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_18] -
 	 *          freePool - freeing a connection which is already free!

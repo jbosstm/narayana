@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: HashedActionStore.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -94,7 +94,7 @@ public static ClassName name ()
      * Have to return as a ShadowingStore because of
      * inheritence.
      */
-    
+
 public static ShadowingStore create ()
     {
 	return new HashedActionStore("");
@@ -112,7 +112,7 @@ public static ShadowingStore create (Object[] param)
 	String location = (String) param[0];
 	Integer shareStatus = (Integer) param[1];
 	int ss = ObjectStore.OS_UNSHARED;
-	
+
 	if (shareStatus != null)
 	{
 	    try
@@ -157,7 +157,7 @@ protected HashedActionStore (int shareStatus)
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE, 
+				     FacilityCode.FAC_OBJECT_STORE,
 				     "HashedStore.HashedActionStore( "+shareStatus+" )");
 	}
     }
@@ -166,7 +166,7 @@ protected HashedActionStore (String locationOfStore)
     {
 	this(locationOfStore, ObjectStore.OS_UNSHARED);
     }
-    
+
 protected HashedActionStore (String locationOfStore, int shareStatus)
     {
 	super(shareStatus);
@@ -174,10 +174,10 @@ protected HashedActionStore (String locationOfStore, int shareStatus)
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE, 
+				     FacilityCode.FAC_OBJECT_STORE,
 				     "HashedStore.HashedActionStore("+locationOfStore+")");
 	}
-	
+
 	try
 	{
 	    setupStore(locationOfStore);
@@ -186,20 +186,20 @@ protected HashedActionStore (String locationOfStore, int shareStatus)
 	{
 	    tsLogger.arjLogger.warn(e.getMessage());
 
-	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	}
     }
 
 protected HashedActionStore (ObjectName objName)
     {
 	super(objName);
-   
+
 	if (tsLogger.arjLogger.debugAllowed())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "HashedStore.HashedActionStore( "+objName+")");
 	}
-	
+
 	try
 	{
 	    setupStore("");
@@ -208,7 +208,7 @@ protected HashedActionStore (ObjectName objName)
 	{
 	    tsLogger.arjLogger.warn(e.getMessage());
 
-	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	}
     }
 
@@ -233,7 +233,7 @@ protected HashedActionStore (ObjectName objName)
 
 	return super.setupStore(location);
     }
-    
+
     private static boolean checkSync = false;
 
 }

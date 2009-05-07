@@ -140,7 +140,7 @@ public class PropertyServiceMBeanWrapper implements DynamicMBean
 			}
 			catch (java.io.IOException e)
 			{
-				throw new MappingsNotFoundException("Failed to load property-to-attribute mappings (" + name + MAPPINGS_FILENAME_SUFFIX + ")");
+				throw new MappingsNotFoundException("Failed to load property-to-attribute mappings (" + name + MAPPINGS_FILENAME_SUFFIX + ")", e);
 			}
 		}
 		else

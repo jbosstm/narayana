@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: JNS.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -93,28 +93,28 @@ public int attributeType (String objName, String attrName) throws IOException
 public String firstAttributeName (String objName) throws IOException
     {
 	Enumeration e = arjPropertyManager.propertyManager.propertyNames();
-	
+
 	if (e.hasMoreElements())
 	    return (String) e.nextElement();
 	else
 	    throw new IOException("No attributes.");
     }
-    
+
 public String nextAttributeName (String objName, String attrName) throws IOException
     {
 	Enumeration e = arjPropertyManager.propertyManager.propertyNames();
-	
+
 	while (e.hasMoreElements())
 	{
 	    String s = (String) e.nextElement();
-	    
+
 	    if (s.equals(objName+"."+attrName))
 	    {
 		if (e.hasMoreElements())
 		    return (String) e.nextElement();
 	    }
 	}
-	
+
 	throw new IOException("No more attributes.");
     }
 
@@ -145,7 +145,7 @@ public long getLongAttribute (String objName, String attrName) throws IOExceptio
 	else
 	    throw new IOException("No such attribute.");
     }
-    
+
 public String getStringAttribute (String objName, String attrName) throws IOException
     {
 	String attr = arjPropertyManager.propertyManager.getProperty(objName+"."+attrName, null);
@@ -191,9 +191,9 @@ public ObjectName getObjectNameAttribute (String objName, String attrName) throw
 		throw new IOException("Not an ObjectName.");
 	}
 	else
-	    throw new IOException("No such attribute.");	
+	    throw new IOException("No such attribute.");
     }
-    
+
 public ClassName getClassNameAttribute (String objName, String attrName) throws IOException
     {
 	String attr = arjPropertyManager.propertyManager.getProperty(objName+"."+attrName, null);
@@ -215,9 +215,9 @@ public ClassName getClassNameAttribute (String objName, String attrName) throws 
 		throw new IOException("Not a ClassName.");
 	}
 	else
-	    throw new IOException("No such attribute.");	
+	    throw new IOException("No such attribute.");
     }
-    
+
 public Uid getUidAttribute (String objName, String attrName) throws IOException
     {
 	String attr = arjPropertyManager.propertyManager.getProperty(objName+"."+attrName, null);
@@ -239,37 +239,37 @@ public Uid getUidAttribute (String objName, String attrName) throws IOException
 		throw new IOException("Not a Uid.");
 	}
 	else
-	    throw new IOException("No such attribute.");	
+	    throw new IOException("No such attribute.");
     }
-    
+
 public String setLongAttribute (String objName, String attrName, long value) throws IOException
     {
 	arjPropertyManager.propertyManager.setProperty(objName+"."+attrName, new String(SIGNED_NUMBER+""+value));
 
 	return null;
     }
-    
+
 public String setStringAttribute (String objName, String attrName, String value) throws IOException
     {
 	arjPropertyManager.propertyManager.setProperty(objName+"."+attrName, new String(STRING+""+value));
 
 	return null;
     }
-    
+
 public String setObjectNameAttribute (String objName, String attrName, ObjectName value) throws IOException
     {
 	arjPropertyManager.propertyManager.setProperty(objName+"."+attrName, new String(OBJECTNAME+""+value.stringForm()));
 
 	return null;
     }
-    
+
 public String setClassNameAttribute (String objName, String attrName, ClassName value) throws IOException
     {
 	arjPropertyManager.propertyManager.setProperty(objName+"."+attrName, new String(CLASSNAME+""+value.stringForm()));
 
 	return null;
     }
-    
+
 public String setUidAttribute (String objName, String attrName, Uid value) throws IOException
     {
 	arjPropertyManager.propertyManager.setProperty(objName+"."+attrName, new String(CLASSNAME+""+value.stringForm()));
@@ -281,14 +281,14 @@ public String removeAttribute (String objName, String attrName) throws IOExcepti
     {
 	return arjPropertyManager.propertyManager.removeProperty(objName+"."+attrName);
     }
-    
+
 public String uniqueAttributeName (String objName) throws IOException
     {
 	Uid u = new Uid();
 
 	return u.stringForm();
     }
-    
+
 public ObjectName uniqueObjectName () throws IOException
     {
 	Uid uid = new Uid();
@@ -320,5 +320,5 @@ private static final char CLASSNAME = '-';
 private static final char UID = '+';
 
 private static final String jnsName = "JNS:";
-    
+
 }
