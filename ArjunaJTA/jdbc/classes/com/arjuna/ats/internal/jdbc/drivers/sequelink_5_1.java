@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: sequelink_5_1.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -55,19 +55,19 @@ public class sequelink_5_1 implements DynamicClass
     public sequelink_5_1 ()
     {
     }
-    
+
     public XADataSource getDataSource (String dbName) throws SQLException
     {
 	return getDataSource(dbName, true);
     }
-    
+
     public synchronized XADataSource getDataSource (String dbName, boolean create) throws SQLException
     {
 	try
 	{
 	    SequeLinkDataSource xads = new SequeLinkDataSource();
 	    int index1 = dbName.indexOf(sequelink_5_1.driverName);
-	    
+
 	    if (index1 == -1)
 		throw new SQLException("sequelink_5_1.getDataSource - "+jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.drivers.invaliddb")+" Merant");
 	    else
@@ -98,11 +98,11 @@ public class sequelink_5_1 implements DynamicClass
 		String theDbName = null;
 
 		index1 = dbName.indexOf(sequelink_5_1.databaseName);
-		    
+
 		if (index1 != -1)
 		{
 		    index2 = dbName.indexOf(sequelink_5_1.semicolon, index1);
-		    
+
 		    if (index2 == -1)
 		    {
 			theDbName = dbName.substring(index1+sequelink_5_1.databaseName.length());
@@ -117,18 +117,20 @@ public class sequelink_5_1 implements DynamicClass
 		    xads.setDatabaseName(theDbName);
 
 		index1 = theUrl.indexOf(sequelink_5_1.colon);
-		
+
 		if (index1 != -1)
 		{
 		    try
 		    {
 			Integer i = new Integer(theUrl.substring(index1+1));
-			
+
 			thePort = i.intValue();
 		    }
 		    catch (Exception e)
 		    {
-			throw new SQLException(e.toString());
+                SQLException sqlException = new SQLException(e.toString());
+                sqlException.initCause(e);
+                throw sqlException;
 		    }
 
 		    theServer = theUrl.substring(0, index1);
@@ -137,7 +139,7 @@ public class sequelink_5_1 implements DynamicClass
 		{
 		    theServer = theUrl;
 		}
-		
+
 		xads.setServerName(theServer);
 		xads.setPortNumber(thePort);
 
@@ -150,10 +152,12 @@ public class sequelink_5_1 implements DynamicClass
 	}
 	catch (Exception e2)
 	{
-	    throw new SQLException("sequelink_5_1 "+jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.drivers.exception")+e2);
+	    SQLException sqlException = new SQLException("sequelink_5_1 "+jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.drivers.exception")+e2);
+        sqlException.initCause(e2);
+        throw sqlException;
 	}
     }
-    
+
     public synchronized void shutdownDataSource (XADataSource ds) throws SQLException
     {
     }

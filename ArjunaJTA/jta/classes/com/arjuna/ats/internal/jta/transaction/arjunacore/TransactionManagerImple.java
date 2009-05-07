@@ -1,28 +1,28 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
 /*
  * Copyright (C) 2002,
- * 
+ *
  * Hewlett-Packard Arjuna Labs, Newcastle upon Tyne, Tyne and Wear, UK.
- * 
+ *
  * $Id: TransactionManagerImple.java 2342 2006-03-30 13:06:17Z  $
  */
 
@@ -80,7 +80,9 @@ public class TransactionManagerImple extends BaseTransaction implements
 		}
 		catch (Exception e)
 		{
-			throw new javax.transaction.SystemException(e.toString());
+            javax.transaction.SystemException systemException = new javax.transaction.SystemException(e.toString());
+            systemException.initCause(e);
+            throw systemException;
 		}
 	}
 
@@ -106,7 +108,7 @@ public class TransactionManagerImple extends BaseTransaction implements
 		 * If we are here then there is no transaction associated with the
 		 * thread.
 		 */
-		
+
 		if ((which == null) || (which instanceof TransactionImple))
 		{
 		    TransactionImple theTransaction = (TransactionImple) which;
@@ -114,7 +116,7 @@ public class TransactionManagerImple extends BaseTransaction implements
 		    try
 		    {
 		        AtomicAction act = ((theTransaction == null) ? null : theTransaction.getAtomicAction());
-		        
+
 		        if (!AtomicAction.resume(act))
 		            throw new InvalidTransactionException();
 
@@ -122,7 +124,9 @@ public class TransactionManagerImple extends BaseTransaction implements
 		    }
 		    catch (final Exception e2)
 		    {
-		        throw new javax.transaction.SystemException();
+		        javax.transaction.SystemException systemException = new javax.transaction.SystemException();
+                systemException.initCause(e2);
+                throw systemException;
 		    }
 		}
 		else
@@ -132,7 +136,7 @@ public class TransactionManagerImple extends BaseTransaction implements
 
 	/**
 	 * Creates a TransactionManageImple from the given information.
-	 * 
+	 *
 	 * @param obj
 	 * @param name
 	 * @param nameCtx

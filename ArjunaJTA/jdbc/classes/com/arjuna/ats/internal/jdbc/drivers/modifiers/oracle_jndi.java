@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Technologies Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: oracle_jndi.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -59,7 +59,7 @@ public class oracle_jndi implements XAModifier, ConnectionModifier
     {
 	int index = dbName.indexOf(extensions.reuseConnectionTrue);
 	int end = extensions.reuseConnectionTrue.length();
-	
+
 	if (index != -1)
 	    _reuseConnection  = false;
 	else
@@ -77,7 +77,7 @@ public class oracle_jndi implements XAModifier, ConnectionModifier
 	else
 	    return dbName.substring(end + 1);  // remember colon
     }
-    
+
     public Xid createXid (XidImple xid) throws SQLException, NotImplementedException
     {
 	try
@@ -87,7 +87,9 @@ public class oracle_jndi implements XAModifier, ConnectionModifier
 	}
 	catch (Exception e)
 	{
-	    throw new SQLException(e.toString());
+        SQLException sqlException = new SQLException(e.toString());
+        sqlException.initCause(e);
+	    throw sqlException;
 	}
     }
 
@@ -126,7 +128,7 @@ public class oracle_jndi implements XAModifier, ConnectionModifier
 	    conn.setTransactionIsolation(level);
 
     }
-    
+
     private boolean _reuseConnection = false;
- 
+
 }

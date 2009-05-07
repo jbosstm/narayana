@@ -197,7 +197,9 @@ public class TransactionImple extends
 		{
 			ex.printStackTrace();
 
-			throw new UnexpectedConditionException(ex.toString());
+            UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
+            unexpectedConditionException.initCause(ex);
+			throw unexpectedConditionException;
 		}
 	}
 
@@ -240,7 +242,9 @@ public class TransactionImple extends
 		{
 			ex.printStackTrace();
 
-			throw new UnexpectedConditionException(ex.toString());
+            UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
+            unexpectedConditionException.initCause(ex);
+			throw unexpectedConditionException;
 		}
 	}
 
@@ -254,7 +258,7 @@ public class TransactionImple extends
 		}
 		catch (ClassCastException ex)
 		{
-			throw new IllegalStateException();
+			throw new IllegalStateException(ex);
 		}
 		finally
 		{
@@ -300,7 +304,9 @@ public class TransactionImple extends
 		{
 			ex.printStackTrace();
 
-			throw new UnexpectedConditionException(ex.toString());
+            UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
+            unexpectedConditionException.initCause(ex);
+			throw unexpectedConditionException;
 		}
 	}
 
@@ -322,11 +328,6 @@ public class TransactionImple extends
 			java.lang.SecurityException, javax.transaction.SystemException,
 			java.lang.IllegalStateException
 	{
-		/*
-		 * throw new IllegalStateException(
-		 * jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
-		 */
-
 		throw new InvalidTerminationStateException();
 	}
 
@@ -334,11 +335,6 @@ public class TransactionImple extends
 			throws java.lang.IllegalStateException,
 			java.lang.SecurityException, javax.transaction.SystemException
 	{
-		/*
-		 * throw new IllegalStateException(
-		 * jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
-		 */
-
 		throw new InvalidTerminationStateException();
 	}
 

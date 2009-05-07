@@ -209,7 +209,9 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 	}
 	catch (Exception e)
 	{
-	    throw new SQLException(e.toString());
+        SQLException sqlException = new SQLException(e.toString());
+        sqlException.initCause(e);
+	    throw sqlException;
 	}
     }
 
@@ -303,8 +305,9 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 	{
 	    e.printStackTrace();
 
-	    throw new SQLException(e.toString());
-	}
+        SQLException sqlException = new SQLException(e.toString());
+        sqlException.initCause(e);
+	    throw sqlException;	}
     }
 
     public XADataSource getDataSource () throws SQLException
@@ -410,8 +413,9 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 	{
 	    e.printStackTrace();
 
-	    throw new SQLException(e.toString());
-	}
+        SQLException sqlException = new SQLException(e.toString());
+        sqlException.initCause(e);
+	    throw sqlException;	}
     }
 
     private final void createConnection () throws SQLException
@@ -434,8 +438,9 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 	{
 	    e.printStackTrace();
 
-	    throw new SQLException(e.toString());
-	}
+        SQLException sqlException = new SQLException(e.toString());
+        sqlException.initCause(e);
+	    throw sqlException;	}
     }
 
     /*

@@ -94,7 +94,7 @@ public class InFlightTransactionPseudoStore extends ObjectStoreImple implements 
         }
         catch (IOException e)
         {
-            throw new ObjectStoreException("allObjUids - could not pack end of list Uid.");
+            throw new ObjectStoreException("allObjUids - could not pack end of list Uid.", e);
         }
 
         buff.setBuffer(store.buffer());
@@ -116,7 +116,7 @@ public class InFlightTransactionPseudoStore extends ObjectStoreImple implements 
         }
         catch (IOException e)
         {
-            throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.packProblem"));
+            throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.packProblem"), e);
         }
     }
 

@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, JBoss Inc., and others contributors as indicated 
- * by the @authors tag. All rights reserved. 
+ * Copyright 2006, JBoss Inc., and others contributors as indicated
+ * by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -45,8 +45,8 @@ import oracle.jdbc.xa.client.OracleXADataSource;
 
 /**
  * This provides resource recovery for Oracle JDBC drivers.
- * 
- * Users are responsible for DataSource creation information in a property file to 
+ *
+ * Users are responsible for DataSource creation information in a property file to
  * setup this class. Username and password values may also be provided in
  * the same property file.
  */
@@ -76,7 +76,7 @@ public class OracleXARecovery implements XAResourceRecovery
      * The recovery module will have chopped off this class name already. The
      * parameter should specify a property file from which the url, user name,
      * password can be read.
-     * 
+     *
      * @message com.arjuna.ats.internal.jdbc.recovery.oracle.initexp An exception
      *          occurred during initialisation.
      */
@@ -139,7 +139,7 @@ public class OracleXARecovery implements XAResourceRecovery
             {
                 return false;
             }
-        
+
         if (_dataSource != null)
         {
             _hasMoreResources = ! _hasMoreResources;
@@ -153,7 +153,7 @@ public class OracleXARecovery implements XAResourceRecovery
     /**
      * Creating and initalising an OracleXADataSource instance. We got the relevant information from the
      * property file provided at input to this instance.
-     * 
+     *
      * @message com.arjuna.ats.internal.jdbc.oracle.recjndierror Could not resolve JNDI
      *          XADataSource
      */
@@ -184,7 +184,9 @@ public class OracleXARecovery implements XAResourceRecovery
         {
             e.printStackTrace();
 
-            throw new SQLException(e.toString());
+            SQLException sqlException = new SQLException(e.toString());
+            sqlException.initCause(e);
+            throw sqlException;
         }
     }
 
@@ -220,7 +222,9 @@ public class OracleXARecovery implements XAResourceRecovery
         {
             e.printStackTrace();
 
-            throw new SQLException(e.toString());
+            SQLException sqlException = new SQLException(e.toString());
+            sqlException.initCause(e);
+            throw sqlException;
         }
     }
 
@@ -238,7 +242,7 @@ public class OracleXARecovery implements XAResourceRecovery
             _connection = null;
         }
     }
-    
+
     private XAConnection                 _connection;
     private XADataSource                 _dataSource;
     private LocalConnectionEventListener _connectionEventListener;

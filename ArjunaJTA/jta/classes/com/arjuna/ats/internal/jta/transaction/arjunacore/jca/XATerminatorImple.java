@@ -108,27 +108,37 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		}
 		catch (HeuristicRollbackException ex)
 		{
-			throw new XAException(XAException.XA_HEURRB);
+            XAException xaException = new XAException(XAException.XA_HEURRB);
+            xaException.initCause(ex);
+			throw xaException;
 		}
 		catch (HeuristicMixedException ex)
 		{
-			throw new XAException(XAException.XA_HEURMIX);
+            XAException xaException = new XAException(XAException.XA_HEURMIX);
+            xaException.initCause(ex);
+			throw xaException;
 		}
 		catch (final HeuristicCommitException ex)
 		{
-		    throw new XAException(XAException.XA_HEURCOM);
+            XAException xaException = new XAException(XAException.XA_HEURCOM);
+            xaException.initCause(ex);
+			throw xaException;
 		}
 		catch (final IllegalStateException ex)
-                {
-                    SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
-                          
-                    throw new XAException(XAException.XAER_NOTA);
-                }
+        {
+            SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
+
+            XAException xaException = new XAException(XAException.XAER_NOTA);
+            xaException.initCause(ex);
+            throw xaException;
+        }
 		catch (SystemException ex)
 		{
 			SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
 
-			throw new XAException(XAException.XAER_RMERR);
+            XAException xaException = new XAException(XAException.XAER_RMERR);
+            xaException.initCause(ex);
+            throw xaException;
 		}
 	}
 
@@ -156,7 +166,9 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 		}
 		catch (Exception ex)
 		{
-			throw new XAException(XAException.XAER_RMERR);
+            XAException xaException = new XAException(XAException.XAER_RMERR);
+            xaException.initCause(ex);
+            throw xaException;
 		}
 		finally
 		{
@@ -215,7 +227,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
                     initCause = e;
                     xaExceptionCode = XAException.XAER_RMERR;
                 }
-                
+
                 SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
                 XAException xaException = new XAException(xaExceptionCode);
                 if(initCause != null) {
@@ -391,24 +403,32 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator
 
 			throw ex;
 		}
-		catch (final HeuristicRollbackException exx)
+		catch (final HeuristicRollbackException ex)
 		{
-		    throw new XAException(XAException.XA_HEURRB);
+            XAException xaException = new XAException(XAException.XA_HEURRB);
+            xaException.initCause(ex);
+            throw xaException;
 		}
 		catch (HeuristicCommitException ex)
 		{
-			throw new XAException(XAException.XA_HEURCOM);
+            XAException xaException = new XAException(XAException.XA_HEURCOM);
+            xaException.initCause(ex);
+            throw xaException;
 		}
 		catch (HeuristicMixedException ex)
 		{
-			throw new XAException(XAException.XA_HEURMIX);
+            XAException xaException = new XAException(XAException.XA_HEURMIX);
+            xaException.initCause(ex);
+            throw xaException;
 		}
 		catch (final IllegalStateException ex)
 		{
-                    SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
-                    
-                    throw new XAException(XAException.XAER_NOTA);
-                }
+            SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);
+
+            XAException xaException = new XAException(XAException.XAER_NOTA);
+            xaException.initCause(ex);
+            throw xaException;
+        }
 		catch (SystemException ex)
 		{
 			SubordinationManager.getTransactionImporter().removeImportedTransaction(xid);

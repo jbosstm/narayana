@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, JBoss Inc., and others contributors as indicated 
- * by the @authors tag. All rights reserved. 
+ * Copyright 2006, JBoss Inc., and others contributors as indicated
+ * by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -47,7 +47,7 @@ import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 /**
  * This provides recovery for compliant JDBC drivers. It is not meant to be
  * implementation specific.
- * 
+ *
  * Users are responsible for deploying an appropriate XADataSource into JNDI and
  * then providing the relevant JNDI lookup information in a property file to an
  * instance of this class. Username and password values may also be provided in
@@ -81,7 +81,7 @@ public class JDBCXARecovery implements XAResourceRecovery
      * The recovery module will have chopped off this class name already. The
      * parameter should specify a property file from which the jndi name, user name,
      * password can be read.
-     * 
+     *
      * @message com.arjuna.ats.internal.jdbc.recovery.xa.initexp An exception
      *          occurred during initialisation.
      */
@@ -144,7 +144,7 @@ public class JDBCXARecovery implements XAResourceRecovery
             {
                 return false;
             }
-        
+
         if (_dataSource != null)
         {
             _hasMoreResources = ! _hasMoreResources;
@@ -158,7 +158,7 @@ public class JDBCXARecovery implements XAResourceRecovery
     /**
      * Lookup the XADataSource in JNDI. We got the relevant information from the
      * property file provided at input to this instance.
-     * 
+     *
      * @message com.arjuna.ats.internal.jdbc.xa.recjndierror Could not resolve JNDI
      *          XADataSource
      */
@@ -187,7 +187,9 @@ public class JDBCXARecovery implements XAResourceRecovery
         {
             e.printStackTrace();
 
-            throw new SQLException(e.toString());
+            SQLException sqlException = new SQLException(e.toString());
+            sqlException.initCause(e);
+            throw sqlException;
         }
     }
 
@@ -223,7 +225,9 @@ public class JDBCXARecovery implements XAResourceRecovery
         {
             e.printStackTrace();
 
-            throw new SQLException(e.toString());
+            SQLException sqlException = new SQLException(e.toString());
+            sqlException.initCause(e);
+            throw sqlException;
         }
     }
 

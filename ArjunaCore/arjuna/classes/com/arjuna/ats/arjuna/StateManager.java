@@ -715,7 +715,9 @@ protected void packHeader (OutputObjectState os, Uid txId,
 	}
 	catch (Exception e)
 	{
-	    throw new IOException(e.toString(), e);
+        IOException ioException = new IOException(e.toString());
+        ioException.initCause(e);
+        throw ioException;
 	}
     }
 

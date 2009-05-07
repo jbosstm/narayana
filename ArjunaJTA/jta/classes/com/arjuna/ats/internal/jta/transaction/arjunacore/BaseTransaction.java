@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -41,6 +41,7 @@ import com.arjuna.common.util.logging.*;
 import java.util.Hashtable;
 
 import javax.transaction.NotSupportedException;
+import javax.transaction.SystemException;
 
 import java.lang.IllegalStateException;
 
@@ -77,11 +78,15 @@ public class BaseTransaction
 			}
 			catch (IllegalStateException e1)
 			{
-				throw new NotSupportedException(e1.getMessage());
+                NotSupportedException notSupportedException = new NotSupportedException(e1.getMessage());
+                notSupportedException.initCause(e1);
+                throw notSupportedException;
 			}
 			catch (Exception e2)
 			{
-				throw new javax.transaction.SystemException(e2.toString());
+                javax.transaction.SystemException systemException = new javax.transaction.SystemException(e2.toString());
+                systemException.initCause(e2);
+                throw systemException;
 			}
 		}
 
@@ -106,7 +111,7 @@ public class BaseTransaction
 	 * other resources, this is then the same as having simply been forced to
 	 * rollback the transaction during phase 1. The OTS interfaces do not allow
 	 * a differentiation.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.cmfailunknownstatus
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.cmfailunknownstatus]
 	 *          commit failed with status:
@@ -253,30 +258,34 @@ public class BaseTransaction
 					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
 					"BaseTransaction.createSubordinate");
 		}
-		
+
 		try
 		{
 			checkTransactionState();
 		}
 		catch (IllegalStateException e1)
 		{
-			throw new NotSupportedException();
+            NotSupportedException notSupportedException = new NotSupportedException();
+            notSupportedException.initCause(e1);
+            throw notSupportedException;
 		}
 		catch (Exception e2)
 		{
-			throw new javax.transaction.SystemException(e2.toString());
+            javax.transaction.SystemException systemException = new javax.transaction.SystemException(e2.toString());
+            systemException.initCause(e2);
+            throw systemException;
 		}
-		
+
 		Integer value = _timeouts.get();
 		int v = 0; // if not set then assume 0. What else can we do?
-		
+
 		if (value != null)
 		{
 			v = value.intValue();
 		}
-		
+
 		// TODO set default timeout
-		
+
 		return new com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.TransactionImple(v);
 	}
 
@@ -287,7 +296,7 @@ public class BaseTransaction
 	/**
 	 * Called when we want to make sure this thread does not already have a
 	 * transaction associated with it.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.alreadyassociated
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.alreadyassociated]
 	 *          thread is already associated with a transaction!
@@ -302,7 +311,7 @@ public class BaseTransaction
 
 		if (theTransaction == null)
 			return;
-		else 
+		else
 		{
 			if ((theTransaction.getStatus() != javax.transaction.Status.STATUS_NO_TRANSACTION)
 					&& !_supportSubtransactions)

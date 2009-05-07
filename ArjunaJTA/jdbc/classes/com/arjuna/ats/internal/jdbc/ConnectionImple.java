@@ -385,9 +385,11 @@ public abstract class ConnectionImple
 		{
 			e1.printStackTrace();
 
-			throw new SQLException(jdbcLogger.logMesg
+            SQLException sqlException = new SQLException(jdbcLogger.logMesg
 					.getString("com.arjuna.ats.internal.jdbc.closeerror")
 					+ e1);
+            sqlException.initCause(e1);
+            throw sqlException;
 		}
 	}
 
@@ -730,10 +732,12 @@ public abstract class ConnectionImple
 									{ "ConnectionImple.getConnection", e });
 				}
 
-				throw new SQLException(
+                SQLException sqlException = new SQLException(
 						jdbcLogger.logMesg
 								.getString("com.arjuna.ats.internal.jdbc.conniniterror")
 								+ ":" + e);
+                sqlException.initCause(e);
+                throw sqlException;
 			}
 
 			return _theConnection;
@@ -763,7 +767,9 @@ public abstract class ConnectionImple
 		}
 		catch (Exception e)
 		{
-			throw new SQLException(e.toString());
+            SQLException sqlException = new SQLException(e.toString());
+            sqlException.initCause(e);
+            throw sqlException;
 		}
 	}
 
@@ -861,7 +867,9 @@ public abstract class ConnectionImple
 											{ "ConnectionImple.registerDatabase" });
 						}
 
-						throw new SQLException(e.toString());
+                        SQLException sqlException = new SQLException(e.toString());
+                        sqlException.initCause(e);
+						throw sqlException;
 					}
 
 					throw new SQLException(
@@ -877,13 +885,15 @@ public abstract class ConnectionImple
 			}
 			catch (RollbackException e1)
 			{
-				throw new SQLException("ConnectionImple.registerDatabase - "
-						+ e1);
+                SQLException sqlException = new SQLException("ConnectionImple.registerDatabase - " + e1);
+                sqlException.initCause(e1);
+				throw sqlException;
 			}
 			catch (SystemException e2)
 			{
-				throw new SQLException("ConnectionImple.registerDatabase - "
-						+ e2);
+                SQLException sqlException = new SQLException("ConnectionImple.registerDatabase - "+ e2);
+                sqlException.initCause(e2);
+                throw sqlException;
 			}
 			catch (SQLException e3)
 			{
@@ -891,7 +901,9 @@ public abstract class ConnectionImple
 			}
 			catch (Exception e4)
 			{
-				throw new SQLException(e4.toString());
+                SQLException sqlException = new SQLException(e4.toString());
+                sqlException.initCause(e4);
+                throw sqlException;
 			}
 		}
 	}
@@ -945,8 +957,10 @@ public abstract class ConnectionImple
 		}
 		catch (Exception e3)
 		{
-			throw new SQLException(jdbcLogger.logMesg
+            SQLException sqlException = new SQLException(jdbcLogger.logMesg
 					.getString("com.arjuna.ats.internal.jdbc.infoerror"));
+            sqlException.initCause(e3);
+            throw sqlException;
 		}
 	}
 

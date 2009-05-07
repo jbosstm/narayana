@@ -104,7 +104,9 @@ public class ConnectionManager
                 catch (Exception ex)
                 {
                     ex.printStackTrace();
-                    throw new SQLException(ex.getMessage());
+                    SQLException sqlException = new SQLException(ex.getMessage());
+                    sqlException.initCause(ex);
+                    throw sqlException;
                 }
             }
         }
@@ -138,7 +140,9 @@ public class ConnectionManager
                 {
                     jdbcLogger.logger.error(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.nojdbcimple")+exception.toString());
                 }
-                throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.nojdbcimple")+exception.toString());
+                SQLException sqlException = new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.nojdbcimple")+exception.toString());
+                sqlException.initCause(e);
+                throw sqlException;
             }
         }
 
