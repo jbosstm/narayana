@@ -32,6 +32,8 @@ package com.arjuna.ats.tsmx.agent.exceptions;
 
 public class AgentNotFoundException extends Exception
 {
+    static final long serialVersionUID = 9022506088052261418L;
+    
     /**
      * Constructs a new exception with <code>null</code> as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a

@@ -33,6 +33,8 @@ package com.arjuna.common.util.exceptions;
 
 public class ManagementPluginException extends Exception
 {
+    static final long serialVersionUID = -575951072304555978L;
+    
     /**
      * Constructs a new exception with <code>null</code> as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a

@@ -44,6 +44,8 @@ import java.lang.Error;
 
 public class FatalError extends Error
 {
+    static final long serialVersionUID = -3878263281474052106L;
+
     /**
      * Constructs a new error with <code>null</code> as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a

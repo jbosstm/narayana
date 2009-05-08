@@ -39,6 +39,8 @@ package com.arjuna.common.util.exceptions;
  */
 public class LogConfigurationException extends RuntimeException
 {
+    static final long serialVersionUID = 9209718713963293426L;
+    
     /**
      * Constructs a new runtime exception with <code>null</code> as its
      * detail message.  The cause is not initialized, and may subsequently be

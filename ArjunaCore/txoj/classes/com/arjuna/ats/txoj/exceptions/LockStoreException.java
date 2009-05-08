@@ -44,6 +44,8 @@ import java.lang.Exception;
 
 public class LockStoreException extends Exception
 {
+    static final long serialVersionUID = -2279290201672202208L;
+    
     /**
      * Constructs a new exception with <code>null</code> as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a

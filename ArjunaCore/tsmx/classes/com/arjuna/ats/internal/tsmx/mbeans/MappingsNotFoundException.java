@@ -32,6 +32,8 @@ package com.arjuna.ats.internal.tsmx.mbeans;
 
 public class MappingsNotFoundException extends Exception
 {
+    static final long serialVersionUID = -3207090445167241488L;
+    
     /**
      * Constructs a new exception with <code>null</code> as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a

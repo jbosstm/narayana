@@ -35,6 +35,8 @@ package com.arjuna.ats.internal.tsmx.agent.exceptions;
  */
 public class NotSupportedException extends Exception
 {
+    static final long serialVersionUID = 9060486491681857217L;
+    
     /**
      * Constructs a new exception with the specified cause and a detail
      * message of <tt>(cause==null ? null : cause.toString())</tt> (which
