@@ -278,7 +278,7 @@ com.arjuna.ats.jbossatx.jts.TransactionManagerServiceMBean.class, registerDirect
             {
                 log.fatal("Problem encountered while trying to register transaction manager with ORB!");
 
-                throw new Exception("Problem encountered while trying to register transaction manager with ORB! "+ex);
+                throw new Exception("Problem encountered while trying to register transaction manager with ORB! "+ex, ex);
             }
 
 

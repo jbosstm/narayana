@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -65,9 +65,11 @@ public class JBossAgentImpl implements AgentInterface
 		}
 		catch (final NamingException ne)
 		{
-			throw new ExceptionInInitializerError("Failed to initialize naming context: " + ne);
+            ExceptionInInitializerError exceptionInInitializerError = new ExceptionInInitializerError("Failed to initialize naming context: " + ne);
+            exceptionInInitializerError.initCause(ne);
+			throw exceptionInInitializerError;
 		}
-		
+
 		RMIAdaptor adaptor = null ;
 		try
 		{
@@ -81,10 +83,12 @@ public class JBossAgentImpl implements AgentInterface
 			}
 			catch (final NamingException ne2)
 			{
-				throw new ExceptionInInitializerError("Failed to retrieve reference to remote MBean server: " + ne2) ;
+                ExceptionInInitializerError exceptionInInitializerError = new ExceptionInInitializerError("Failed to retrieve reference to remote MBean server: " + ne2);
+                exceptionInInitializerError.initCause(ne);
+                throw exceptionInInitializerError;
 			}
 		}
-		
+
 		final Class serverClass = MBeanServer.class ;
 		_server = (MBeanServer)Proxy.newProxyInstance(serverClass.getClassLoader(),
 				new Class[] {serverClass},new RemoteInvocationHandler(adaptor)) ;
@@ -97,10 +101,10 @@ public class JBossAgentImpl implements AgentInterface
 
 		return _server;
 	}
-	
+
 	/**
      * Remote Invocation Handler using RMIAdaptor.
-     * 
+     *
      * @author kevin
      */
     public static class RemoteInvocationHandler implements InvocationHandler
@@ -117,7 +121,7 @@ public class JBossAgentImpl implements AgentInterface
 
         /**
          * Construct the Remote Invocation Handler.
-         * 
+         *
          * @param adaptor
          */
         public RemoteInvocationHandler(final RMIAdaptor adaptor)
@@ -127,7 +131,7 @@ public class JBossAgentImpl implements AgentInterface
 
         /**
          * Invoke the method.
-         * 
+         *
          * @param proxy The current proxy.
          * @param method The method to invoke.
          * @param args The arguments for the invocation.
@@ -147,7 +151,7 @@ public class JBossAgentImpl implements AgentInterface
             catch (final NoSuchMethodException nsme)
             {
                 throw new UnsupportedOperationException("Operation "
-                        + methodName + " not supported with remote proxy") ;
+                        + methodName + " not supported with remote proxy", nsme) ;
             }
 
             try

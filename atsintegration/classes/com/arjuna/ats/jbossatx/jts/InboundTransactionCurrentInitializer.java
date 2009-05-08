@@ -60,7 +60,7 @@ public class InboundTransactionCurrentInitializer extends LocalObject implements
         catch(InvalidName e)
         {
             throw new RuntimeException("Could not register initial " +
-                    "reference for InboundTransactionCurrent implementation: " + e);
+                    "reference for InboundTransactionCurrent implementation: " + e, e);
         }
     }
 

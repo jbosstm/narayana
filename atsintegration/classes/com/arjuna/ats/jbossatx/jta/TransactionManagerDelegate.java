@@ -116,7 +116,10 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
     	}
     	catch (final SystemException se)
     	{
-    		throw new RollbackException(jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_2")) ;
+            RollbackException rollbackException = new RollbackException(
+                    jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_2")) ;
+            rollbackException.initCause(se);
+            throw rollbackException;
     	}
         return -1 ;
     }

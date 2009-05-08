@@ -60,17 +60,17 @@ import org.jboss.logging.Logger;
  * To use this class, add an XAResourceRecovery entry in the jta section of jbossjta-properties.xml
  * for each database for which you need recovery, ensuring the value ends with ;jndiname=<datasource-name>
  * i.e. the same value as is in the -ds.xml jndi-name element.
- * 
+ *
  * Note for users with secured JMX invokers, use the extended format:
  *   ;jndiname=MyExampleDbName,username=foo,password=bar
  * The username and password refer to the JMX invoker, NOT the datasource.
- * 
+ *
  * It's not possible to override the jdbc username and password given in the -ds.xml file at present.
  * Since the recovery system sometimes needs greater db user privs than the app code, it may be preferable to
  * set up a -ds.xml file only for recovery usage. This approach works for databases which allow users to
  * recover one another's transactions, which is most of them. But consult
  * your db docs or friendly neighbourhood DBA to be sure, then test it anyhow.
- * 
+ *
  * You also need the XARecoveryModule enabled and appropriate values for nodeIdentifier and xaRecoveryNode set.
  * See the JBossTS recovery guide if you are unclear on how the recovery system works.
  *
@@ -78,7 +78,7 @@ import org.jboss.logging.Logger;
  * if you configure the recovery manager to run as a separate process. (JMX can be accessed remotely,
  * but it would need code changes to the lookup function and some classpath additions).
  *
- * 
+ *
  *  <properties depends="arjuna" name="jta">
  *  ...
  *    <property name="com.arjuna.ats.jta.recovery.XAResourceRecovery1"
@@ -118,7 +118,7 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
 
         if (parameter == null)
             return false;
-        
+
         retrieveData(parameter, _DELIMITER);
 
         return true;
@@ -179,13 +179,13 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
                 InitialContext context = new InitialContext();
                 MBeanServerConnection server = (MBeanServerConnection)context.lookup("jmx/invoker/RMIAdaptor");
                 ObjectName objectName = new ObjectName("jboss.jca:name="+_dataSourceId+",service=ManagedConnectionFactory");
-                
+
                 if(_username !=null && _password !=null)
                 {
                 	SecurityAssociation.setPrincipal(new SimplePrincipal(_username));
                 	SecurityAssociation.setCredential(_password);
                 }
-                
+
                 String className = (String)server.invoke(objectName, "getManagedConnectionFactoryAttribute", new Object[] {"XADataSourceClass"}, new String[] {"java.lang.String"});
                 log.debug("AppServerJDBCXARecovery datasource classname = "+className);
 
@@ -194,7 +194,7 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
                 	SecurityAssociation.setPrincipal(new SimplePrincipal(_username));
                 	SecurityAssociation.setCredential(_password);
                 }
-                
+
                 String properties = (String)server.invoke(objectName, "getManagedConnectionFactoryAttribute", new Object[] {"XADataSourceProperties"}, new String[] {"java.lang.String"});
                 // debug disabled due to security paranoia - it may log datasource password in cleartext.
                 // log.debug("AppServerJDBCXARecovery.result="+properties);
@@ -205,7 +205,9 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
                 } catch(Exception e) {
                     _dataSource = null;
                     log.error("AppServerJDBCXARecovery.createDataSource got exception during getXADataSource call: "+e.toString(), e);
-                    throw new SQLException(e.toString());
+                    SQLException sqlException = new SQLException(e.toString());
+                    sqlException.initCause(e);
+                    throw sqlException;
                 }
             }
         }
@@ -222,7 +224,9 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
                 log.error("AppServerJDBCXARecovery.createDataSource(name="+_dataSourceId+") got exception " + mbe.toString(), mbe);
             }
 
-            throw new SQLException(mbe.toString());
+            SQLException sqlException = new SQLException(mbe.toString());
+            sqlException.initCause(mbe);
+            throw sqlException;
         }
         catch (SQLException ex)
         {
@@ -234,7 +238,9 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
         {
             log.error("AppServerJDBCXARecovery.createDataSource got exception "+e.toString(), e);
 
-            throw new SQLException(e.toString());
+            SQLException sqlException = new SQLException(e.toString());
+            sqlException.initCause(e);
+            throw sqlException;
         }
     }
 
@@ -299,7 +305,9 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
         {
             log.error("AppServerJDBCXARecovery.createConnection got exception "+e.toString(), e);
 
-            throw new SQLException(e.toString());
+            SQLException sqlException = new SQLException(e.toString());
+            sqlException.initCause(e);
+            throw sqlException;
         }
     }
 
@@ -372,7 +380,7 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
         }
         return xads;
     }
-    
+
     public void retrieveData(String parameter,String delimiter)
     {
         StringTokenizer st = new StringTokenizer(parameter,delimiter);
@@ -395,13 +403,13 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
                 }
             }
         }
-        
+
         if(_dataSourceId == null && parameter != null && !parameter.contains("=")) {
             // try to fallback to old parameter format where only the dataSourceId is given, without jndiname= prefix
             _dataSourceId = parameter;
         }
     }
-    
+
     private boolean _supportsIsValidMethod;
     private XAConnection _connection;
     private XADataSource                 _dataSource;
@@ -411,11 +419,11 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
     private String _dataSourceId;
     private String _username;
     private String _password;
-    
+
     private final String _JNDINAME = "jndiname";
     private final String _USERNAME = "username";
     private final String _PASSWORD = "password";
     private final String _DELIMITER = ",";
-    
+
     private Logger log = org.jboss.logging.Logger.getLogger(AppServerJDBCXARecovery.class);
 }
