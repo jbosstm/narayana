@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -73,11 +73,11 @@ import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 
 /**
  * Some common methods for UserTransaction and TransactionManager.
- * 
+ *
  * @author Mark Little (mark_little@hp.com)
  * @version $Id: BaseTransaction.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 2.1.
- * 
+ *
  * @message com.arjuna.ats.internal.jta.transaction.jts.notx
  *          [com.arjuna.ats.internal.jta.transaction.jts.notx] - no transaction!
  * @message com.arjuna.ats.internal.jta.transaction.jts.invalidtx
@@ -115,11 +115,15 @@ public class BaseTransaction
 			}
 			catch (IllegalStateException e1)
 			{
-				throw new NotSupportedException(e1.getMessage());
+                NotSupportedException notSupportedException = new NotSupportedException(e1.getMessage());
+                notSupportedException.initCause(e1);
+				throw notSupportedException;
 			}
 			catch (org.omg.CORBA.SystemException e2)
 			{
-				throw new javax.transaction.SystemException(e2.toString());
+                javax.transaction.SystemException systemException = new javax.transaction.SystemException(e2.toString());
+                systemException.initCause(e2);
+				throw systemException;
 			}
 		}
 
@@ -131,11 +135,15 @@ public class BaseTransaction
 		{
 			// shouldn't happen if we get here from the previous checks!
 
-			throw new NotSupportedException(e3.getMessage());
+            NotSupportedException notSupportedException = new NotSupportedException(e3.getMessage());
+            notSupportedException.initCause(e3);
+            throw notSupportedException;
 		}
 		catch (org.omg.CORBA.SystemException e4)
 		{
-			throw new javax.transaction.SystemException(e4.toString());
+            javax.transaction.SystemException systemException = new javax.transaction.SystemException(e4.toString());
+            systemException.initCause(e4);
+            throw systemException;
 		}
 	}
 
@@ -171,7 +179,7 @@ public class BaseTransaction
 			throw new IllegalStateException(
 					"BaseTransaction.commit - "
 							+ jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notxe")
-							+ ex);
+							+ ex, ex);
 		}
 
 		checkTransactionState();
@@ -193,7 +201,7 @@ public class BaseTransaction
 		}
 		catch (NullPointerException ex)
 		{
-			throw new IllegalStateException();
+			throw new IllegalStateException(ex);
 		}
 
 		checkTransactionState();
@@ -216,7 +224,7 @@ public class BaseTransaction
 		catch (NullPointerException ex)
 		{
 			throw new IllegalStateException(
-					jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.nosuchtx"));
+					jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.nosuchtx"), ex);
 		}
 	}
 
@@ -239,7 +247,9 @@ public class BaseTransaction
 		}
 		catch (Exception e)
 		{
-			throw new javax.transaction.SystemException(e.toString());
+            javax.transaction.SystemException systemException = new javax.transaction.SystemException(e.toString());
+            systemException.initCause(e);
+            throw systemException;
 		}
 	}
 
@@ -252,7 +262,9 @@ public class BaseTransaction
 		}
 		catch (Exception e)
 		{
-			throw new javax.transaction.SystemException(e.toString());
+            javax.transaction.SystemException systemException = new javax.transaction.SystemException(e.toString());
+            systemException.initCause(e);
+            throw systemException;
 		}
 	}
 
@@ -264,7 +276,9 @@ public class BaseTransaction
 		}
 		catch (Exception e)
 		{
-			throw new javax.transaction.SystemException(e.toString());
+            javax.transaction.SystemException systemException = new javax.transaction.SystemException(e.toString());
+            systemException.initCause(e);
+            throw systemException;
 		}
 	}
 
@@ -275,7 +289,7 @@ public class BaseTransaction
 	/**
 	 * Called when we want to make sure this thread does not already have a
 	 * transaction associated with it.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.transaction.jts.alreadyassociated
 	 *          [com.arjuna.ats.internal.jta.transaction.jts.alreadyassociated]
 	 *          thread is already associated with a transaction and
@@ -313,7 +327,9 @@ public class BaseTransaction
 		}
 		catch (org.omg.CORBA.SystemException e1)
 		{
-			throw new javax.transaction.SystemException(e1.toString());
+            javax.transaction.SystemException systemException = new javax.transaction.SystemException(e1.toString());
+            systemException.initCause(e1);
+            throw systemException;
 		}
 		catch (org.omg.CosTransactions.Unavailable e2)
 		{

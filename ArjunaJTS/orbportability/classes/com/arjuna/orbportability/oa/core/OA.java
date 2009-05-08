@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -65,7 +65,7 @@ public class OA
 public OA (com.arjuna.orbportability.orb.core.ORB theORB)
     {
 	initialise();
-	
+
 	_theORB = theORB;
     }
 
@@ -89,7 +89,7 @@ public void destroyRootPOA () throws SystemException
     {
 	((POAImple) _theOA).destroyRootPOA();
     }
-    
+
 public void destroyPOA (String adapterName) throws SystemException
     {
 	((POAImple) _theOA).destroyPOA(adapterName);
@@ -99,17 +99,17 @@ public org.omg.PortableServer.POA rootPoa () throws SystemException
     {
 	return ((POAImple) _theOA).rootPoa();
     }
-    
+
 public void rootPoa (org.omg.PortableServer.POA thePOA) throws SystemException
     {
 	((POAImple) _theOA).rootPoa(thePOA);
     }
- 
+
 public org.omg.PortableServer.POA poa (String adapterName) throws SystemException
     {
 	return ((POAImple) _theOA).poa(adapterName);
     }
-    
+
 public void poa (String adapterName, org.omg.PortableServer.POA thePOA) throws SystemException
     {
 	((POAImple) _theOA).poa(adapterName, thePOA);
@@ -119,7 +119,7 @@ public void run (String name) throws SystemException
     {
 	_theOA.run(_theORB, name);
     }
-    
+
 public void run () throws SystemException
     {
 	_theOA.run(_theORB);
@@ -132,13 +132,13 @@ public void run () throws SystemException
 private final void initialise ()
     {
 	String className = opPropertyManager.propertyManager.getProperty(com.arjuna.orbportability.common.Environment.OA_IMPLEMENTATION);
-	
+
 	if (className == null)
 	{
 	    try
 	    {
 		Thread.currentThread().getContextClassLoader().loadClass("com.iona.corba.art.artimpl.ORBImpl");
-	    	
+
 	    	className = "com.arjuna.orbportability.internal.orbspecific.orbix2000.oa.implementations.orbix2000_2_0";
 	    }
 	    catch (ClassNotFoundException oe)
@@ -146,7 +146,7 @@ private final void initialise ()
     		try
     		{
     		    Thread.currentThread().getContextClassLoader().loadClass("com.hp.mw.hporb.ORB");
-    			
+
 	    	    className = "com.arjuna.orbportability.internal.orbspecific.hporb.oa.implementations.hporb_1_2";
     		}
     		catch (ClassNotFoundException he)
@@ -171,7 +171,10 @@ private final void initialise ()
 			    {
 				opLogger.loggerI18N.fatal( "com.arjuna.orbportability.oa.core.OA.nosupportedorb" );
 			    }
-			    throw new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.oa.core.OA.nosupportedorb") );
+                ExceptionInInitializerError exceptionInInitializerError =
+                        new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.oa.core.OA.nosupportedorb") );
+                exceptionInInitializerError.initCause(je);
+                throw exceptionInInitializerError;
 			}
 		    }
 	    	}
@@ -199,12 +202,15 @@ private final void initialise ()
                                 new Object[] { e } );
             }
 
-	    throw new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.oa.core.OA.caughtexception") );
+        ExceptionInInitializerError exceptionInInitializerError =
+                new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.oa.core.OA.caughtexception") );
+        exceptionInInitializerError.initCause(e);
+        throw exceptionInInitializerError;
 	}
     }
 
 private com.arjuna.orbportability.orb.core.ORB     _theORB;
 private com.arjuna.orbportability.oa.core.POAImple _theOA;
- 
+
 }
 

@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Hewlett-Packard Arjuna Labs,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: Utility.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -65,12 +65,12 @@ import org.omg.CORBA.BAD_PARAM;
 
 public class Utility
 {
- 
+
     public static String getHierarchy (PropagationContext ctx)
     {
 	int depth = ((ctx.parents != null) ? ctx.parents.length : 0);
 	String hier = "PropagationContext:";
-    
+
 	for (int i = depth -1; i >= 0; i--)
 	{
 	    if (ctx.parents[i] != null)
@@ -104,7 +104,7 @@ public class Utility
     public static PrintWriter printStatus (PrintWriter strm, org.omg.CosTransactions.Status res)
     {
 	strm.print(stringStatus(res));
-	
+
 	return strm;
     }
 
@@ -150,7 +150,7 @@ public class Utility
     {
 	return XATxConverter.getXid(uid, branch, ArjunaTransactionImple.interpositionType());
     }
-    
+
     public static com.arjuna.ats.arjuna.xa.XID getXid (org.omg.CosTransactions.Control cont, boolean branch) throws IllegalStateException
     {
 	if (cont == null)
@@ -176,7 +176,7 @@ public class Utility
 	    }
 	    catch (Exception e)
 	    {
-		throw new IllegalStateException();
+		throw new IllegalStateException(e);
 	    }
 	}
     }
@@ -216,29 +216,29 @@ public class Utility
     {
 	return ((theUid != null) ? uidToOtid(theUid.stringForm()) : null);
     }
-    
+
     public static final org.omg.CosTransactions.otid_t uidToOtid (String theUid)
     {
 	if (theUid == null)
 	    return null;
-	
+
 	otid_t otid = new otid_t();
 	byte[] b = theUid.getBytes();
 	byte[] nodeName = TxControl.getXANodeName();
-	
+
 	otid.tid = new byte[b.length+nodeName.length+2];
 	otid.bqual_length = b.length+nodeName.length+2;
 
 	System.arraycopy(nodeName, 0, otid.tid, 0, nodeName.length);
-	
+
 	otid.tid[nodeName.length] = XATxConverter.NODE_SEPARATOR;
-	
+
 	System.arraycopy(b, 0, otid.tid, nodeName.length+1, b.length);
 
 	otid.tid[otid.bqual_length-1] = (byte) '\0';
 
 	b = null;
-	
+
 	return otid;
     }
 
@@ -248,13 +248,13 @@ public class Utility
      * the transaction either retransmits it or the application asks
      * for it (e.g., via the PropagationContext).
      */
-    
+
     public static final Uid otidToUid (org.omg.CosTransactions.otid_t otid)
     {
 	if (otid.bqual_length > 0)
 	{
 	    int nodeNameIndex = 0;
-	    
+
 	    for (int i = 0; i < otid.bqual_length; i++)
 	    {
 		if (otid.tid[i] == XATxConverter.NODE_SEPARATOR)

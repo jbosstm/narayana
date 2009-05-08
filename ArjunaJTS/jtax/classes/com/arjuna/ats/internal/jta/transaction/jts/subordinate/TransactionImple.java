@@ -221,9 +221,11 @@ public class TransactionImple extends
                 }
                 catch (ClassCastException ex)
                 {
-                        ex.printStackTrace();
+                    ex.printStackTrace();
 
-                        throw new UnexpectedConditionException(ex.toString());
+                    UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
+                    unexpectedConditionException.initCause(ex);
+                    throw unexpectedConditionException;
                 }
                 finally
                 {
@@ -282,9 +284,11 @@ public class TransactionImple extends
                 }
                 catch (ClassCastException ex)
                 {
-                        ex.printStackTrace();
+                    ex.printStackTrace();
 
-                        throw new UnexpectedConditionException(ex.toString());
+                    UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
+                    unexpectedConditionException.initCause(ex);
+                    throw unexpectedConditionException;
                 }
                 finally
                 {
@@ -345,7 +349,7 @@ public class TransactionImple extends
                 {
                         ex.printStackTrace();
 
-                        throw new IllegalStateException();
+                        throw new IllegalStateException(ex);
                 }
         }
 
@@ -368,7 +372,7 @@ public class TransactionImple extends
                 {
                         ex.printStackTrace();
 
-                        throw new IllegalStateException();
+                        throw new IllegalStateException(ex);
                 }
         }
 

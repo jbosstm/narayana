@@ -73,6 +73,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.*;
 
 import javax.transaction.RollbackException;
+import javax.transaction.HeuristicMixedException;
 import java.lang.SecurityException;
 import java.lang.IllegalStateException;
 import org.omg.CosTransactions.SubtransactionsUnavailable;
@@ -270,39 +271,52 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (org.omg.CosTransactions.WrongTransaction wt)
 			{
-				throw new InactiveTransactionException(
+                InactiveTransactionException inactiveTransactionException = new InactiveTransactionException(
 						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"));
+                inactiveTransactionException.initCause(wt);
+                throw inactiveTransactionException;
 			}
 			catch (org.omg.CosTransactions.NoTransaction e1)
 			{
-				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"));
+                IllegalStateException illegalStateException = new IllegalStateException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"));
+                illegalStateException.initCause(e1);
+                throw illegalStateException;
 			}
 			catch (org.omg.CosTransactions.HeuristicMixed e2)
 			{
-				throw new javax.transaction.HeuristicMixedException();
+                HeuristicMixedException heuristicMixedException = new javax.transaction.HeuristicMixedException();
+                heuristicMixedException.initCause(e2);
+                throw heuristicMixedException;
 			}
 			catch (org.omg.CosTransactions.HeuristicHazard e3)
 			{
-				throw new javax.transaction.HeuristicMixedException();
+                HeuristicMixedException heuristicMixedException = new javax.transaction.HeuristicMixedException();
+                heuristicMixedException.initCause(e3);
+                throw heuristicMixedException;
 			}
 			catch (TRANSACTION_ROLLEDBACK e4)
 			{
-				throw new RollbackException(e4.toString());
+                RollbackException rollbackException = new RollbackException(e4.toString());
+                rollbackException.initCause(e4);
+                throw e4;
 			}
 			catch (org.omg.CORBA.NO_PERMISSION e5)
 			{
-				throw new SecurityException();
+				throw new SecurityException(e5);
 			}
 			catch (INVALID_TRANSACTION e6)
 			{
-				throw new InactiveTransactionException(
+				InactiveTransactionException inactiveTransactionException = new InactiveTransactionException(
 						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
+                inactiveTransactionException.initCause(e6);
+                throw inactiveTransactionException;
 			}
 			catch (org.omg.CORBA.SystemException e7)
 			{
-				throw new javax.transaction.SystemException();
-			}
+                javax.transaction.SystemException systemException = new javax.transaction.SystemException(e7.toString());
+                systemException.initCause(e7);
+        		throw systemException;
+            }
 			finally
 			{
 				TransactionImple.removeTransaction(this);
@@ -355,26 +369,32 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (org.omg.CosTransactions.WrongTransaction e1)
 			{
-				throw new InactiveTransactionException(
+                InactiveTransactionException inactiveTransactionException =new InactiveTransactionException(
 						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"));
+                inactiveTransactionException.initCause(e1);
+                throw inactiveTransactionException;
 			}
 			catch (org.omg.CORBA.NO_PERMISSION e2)
 			{
-				throw new SecurityException();
+				throw new SecurityException(e2);
 			}
 			catch (INVALID_TRANSACTION e3)
 			{
-				throw new InactiveTransactionException(
+                InactiveTransactionException inactiveTransactionException = new InactiveTransactionException(
 						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
+                inactiveTransactionException.initCause(e3);
+                throw inactiveTransactionException;
 			}
 			catch (NoTransaction e4)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"));
+						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"), e4);
 			}
 			catch (org.omg.CORBA.SystemException e5)
 			{
-				throw new javax.transaction.SystemException();
+                javax.transaction.SystemException systemException = new javax.transaction.SystemException(e5.toString());
+                systemException.initCause(e5);
+        		throw systemException;
 			}
 			finally
 			{
@@ -411,13 +431,15 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (org.omg.CosTransactions.NoTransaction e3)
 			{
-				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"));
+                throw new IllegalStateException(
+						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"), e3);
 			}
 			catch (org.omg.CORBA.SystemException e4)
 			{
-				throw new javax.transaction.SystemException();
-			}
+                javax.transaction.SystemException systemException = new javax.transaction.SystemException(e4.toString());
+                systemException.initCause(e4);
+		        throw systemException;
+            }
 		}
 		else
 			throw new IllegalStateException(
@@ -441,7 +463,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (org.omg.CORBA.SystemException e2)
 			{
-				throw new javax.transaction.SystemException();
+                javax.transaction.SystemException systemException = new javax.transaction.SystemException(e2.toString());
+                systemException.initCause(e2);
+		        throw systemException;
 			}
 		}
 
@@ -490,26 +514,30 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (TRANSACTION_ROLLEDBACK e2)
 			{
-				throw new javax.transaction.RollbackException(e2.toString());
+                RollbackException rollbackException = new javax.transaction.RollbackException(e2.toString());
+                rollbackException.initCause(e2);
+                throw rollbackException;
 			}
 			catch (org.omg.CosTransactions.Inactive e3)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
+						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"), e3);
 			}
 			catch (org.omg.CosTransactions.SynchronizationUnavailable e4)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.syncerror"));
+						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.syncerror"), e4);
 			}
 			catch (INVALID_TRANSACTION e5)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
+						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"), e5);
 			}
 			catch (org.omg.CORBA.SystemException e6)
 			{
-				throw new javax.transaction.SystemException();
+                javax.transaction.SystemException systemException = new javax.transaction.SystemException(e6.toString());
+                systemException.initCause(e6);
+		        throw systemException;
 			}
 		}
 		else
@@ -1385,20 +1413,24 @@ public class TransactionImple implements javax.transaction.Transaction,
 			catch (org.omg.CosTransactions.WrongTransaction wt)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"));
+						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"), wt);
 			}
 			catch (org.omg.CosTransactions.NoTransaction e1)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"));
+						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"), e1);
 			}
 			catch (org.omg.CosTransactions.HeuristicMixed e2)
 			{
-				throw new javax.transaction.HeuristicMixedException();
+                HeuristicMixedException heuristicMixedException = new javax.transaction.HeuristicMixedException();
+                heuristicMixedException.initCause(e2);
+                throw heuristicMixedException;
 			}
 			catch (org.omg.CosTransactions.HeuristicHazard e3)
 			{
-				throw new javax.transaction.HeuristicMixedException();
+                HeuristicMixedException heuristicMixedException = new javax.transaction.HeuristicMixedException();
+                heuristicMixedException.initCause(e3);
+                throw heuristicMixedException;
 			}
 			catch (TRANSACTION_ROLLEDBACK e4)
 			{
@@ -1411,7 +1443,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (org.omg.CORBA.NO_PERMISSION e5)
 			{
-				throw new SecurityException();
+				throw new SecurityException(e5);
 			}
 			catch (INVALID_TRANSACTION e6)
 			{
@@ -1425,7 +1457,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (org.omg.CORBA.SystemException e7)
 			{
-				throw new InvalidTerminationStateException();
+                InvalidTerminationStateException invalidTerminationStateException = new InvalidTerminationStateException();
+                invalidTerminationStateException.initCause(e7);
+                throw invalidTerminationStateException;
 			}
 			finally
 			{
@@ -1455,25 +1489,27 @@ public class TransactionImple implements javax.transaction.Transaction,
 			catch (org.omg.CosTransactions.WrongTransaction e1)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"));
+						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"), e1);
 			}
 			catch (org.omg.CORBA.NO_PERMISSION e2)
 			{
-				throw new SecurityException();
+				throw new SecurityException(e2);
 			}
 			catch (INVALID_TRANSACTION e3)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
+						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"), e3);
 			}
 			catch (NoTransaction e4)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"));
+						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"), e4);
 			}
 			catch (org.omg.CORBA.SystemException e5)
 			{
-				throw new javax.transaction.SystemException();
+                javax.transaction.SystemException systemException = new javax.transaction.SystemException(e5.toString());
+                systemException.initCause(e5);
+		        throw systemException;
 			}
 			finally
 			{
@@ -1819,8 +1855,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 				}
 				catch (org.omg.CORBA.SystemException e3)
 				{
-					throw new javax.transaction.SystemException();
-				}
+                    javax.transaction.SystemException systemException = new javax.transaction.SystemException(e3.toString());
+                    systemException.initCause(e3);
+		            throw systemException;
+                }
 			}
 		}
 		catch (Exception ex)

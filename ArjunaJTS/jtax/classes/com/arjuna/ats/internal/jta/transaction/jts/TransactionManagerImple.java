@@ -79,7 +79,9 @@ public class TransactionManagerImple extends BaseTransaction implements
 		}
 		catch (Exception e)
 		{
-			throw new javax.transaction.SystemException();
+            javax.transaction.SystemException systemException = new javax.transaction.SystemException(e.toString());
+            systemException.initCause(e);
+		    throw systemException;
 		}
 	}
 
@@ -103,8 +105,10 @@ public class TransactionManagerImple extends BaseTransaction implements
 		}
 		catch (Exception e)
 		{
-			throw new javax.transaction.SystemException();
-		}
+            javax.transaction.SystemException systemException = new javax.transaction.SystemException(e.toString());
+            systemException.initCause(e);
+            throw systemException;
+        }
 	}
 
 	/**
@@ -142,11 +146,15 @@ public class TransactionManagerImple extends BaseTransaction implements
 	        }
 	        catch (org.omg.CosTransactions.InvalidControl e1)
 	        {
-	            throw new InvalidTransactionException();
+                InvalidTransactionException invalidTransactionException = new InvalidTransactionException();
+                invalidTransactionException.initCause(e1);
+                throw invalidTransactionException;
 	        }
 	        catch (org.omg.CORBA.SystemException e2)
 	        {
-	            throw new javax.transaction.SystemException();
+                javax.transaction.SystemException systemException = new javax.transaction.SystemException(e2.toString());
+                systemException.initCause(e2);
+                throw systemException;
 	        }
 	    }
 	    else
