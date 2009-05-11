@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -53,7 +53,7 @@ import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
  * the name of the property file in which the db connection information is
  * specified, as well as the number of connections that this file contains
  * information on (separated by ;).
- * 
+ *
  * IMPORTANT: this is only an *example* of the sorts of things an
  * XAResourceRecovery implementor could do. This implementation uses a property
  * file which is assumed to contain sufficient information to recreate
@@ -61,17 +61,27 @@ import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
  * perform recovery on them. It is not recommended that information such as user
  * name and password appear in such a raw text format as it opens up a potential
  * security hole.
- * 
+ *
  * The db parameters specified in the property file are assumed to be in the
  * format:
- * 
- * DB_x_DatabaseURL= DB_x_DatabaseUser= DB_x_DatabasePassword=
- * DB_x_DatabaseDynamicClass=
- * 
- * DB_JNDI_x_DatabaseURL= DB_JNDI_x_DatabaseUser= DB_JNDI_x_DatabasePassword=
- * 
- * where x is the number of the connection information.
- * 
+ *
+ * <transaction-service>
+ *   <properties name="jdbc">
+ *     <property name="DB_X_DatabaseUser" value="username"/>
+ *     <property name="DB_X_DatabasePassword" value="password"/>
+ *     <property name="DB_X_DatabaseDynamicClassA" value="DynamicClass"/>
+ *     <property name="DB_X_DatabaseURL" value="theURL"/>
+ *   </properties>
+ * </transaction-service>
+ *
+ * where X is the number of the connection information, starting from 1.
+ * The DynamicClass is optional. If not present, JNDI will be used for resolving
+ * the DatabaseURL value into a XADataSource.
+ *
+ * <properties depends="arjuna" name="jta">
+ *   <property name="com.arjuna.ats.jta.recovery.XAResourceRecovery1"
+ *      value="com.arjuna.ats.internal.jdbc.recovery.BasicXARecovery;jbossts-properties.xml[;X]"/>
+ *
  * @since JTS 2.1.
  */
 
@@ -104,7 +114,7 @@ public class BasicXARecovery implements XAResourceRecovery
 	 * The recovery module will have chopped off this class name already. The
 	 * parameter should specify a property file from which the url, user name,
 	 * password, etc. can be read.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jdbc.recovery.basic.initexp An exception
 	 *          occurred during initialisation.
 	 */
@@ -121,7 +131,7 @@ public class BasicXARecovery implements XAResourceRecovery
 							"BasicXARecovery.setDetail(" + parameter + ")");
 		}
 
-		if (parameter == null) 
+		if (parameter == null)
 			return true;
 
 		int breakPosition = parameter.indexOf(BREAKCHARACTER);
@@ -151,10 +161,8 @@ public class BasicXARecovery implements XAResourceRecovery
 
 		try
 		{
-			String uri = com.arjuna.common.util.FileLocator
-					.locateFile(fileName);
 			jdbcPropertyManager.propertyManager.load(XMLFilePlugin.class
-					.getName(), uri);
+					.getName(), fileName);
 
 			props = jdbcPropertyManager.propertyManager.getProperties();
 		}
@@ -196,9 +204,7 @@ public class BasicXARecovery implements XAResourceRecovery
 		{
 			connectionIndex++;
 
-			conn = getStandardConnection();
-
-			if (conn == null) conn = getJNDIConnection();
+			conn = getConnection();
 
 			if (conn == null)
 			{
@@ -216,13 +222,13 @@ public class BasicXARecovery implements XAResourceRecovery
 
 	public synchronized boolean hasMoreResources ()
 	{
-		if (connectionIndex == numberOfConnections) 
+		if (connectionIndex == numberOfConnections)
 			return false;
 		else
 			return true;
 	}
 
-	private final JDBC2RecoveryConnection getStandardConnection ()
+	private final JDBC2RecoveryConnection getConnection ()
 			throws SQLException
 	{
 		String number = new String("" + connectionIndex);
@@ -235,6 +241,7 @@ public class BasicXARecovery implements XAResourceRecovery
 
 		String theUser = props.getProperty(user);
 		String thePassword = props.getProperty(password);
+        String theURL = props.getProperty(url);
 
 		if (theUser != null)
 		{
@@ -246,31 +253,7 @@ public class BasicXARecovery implements XAResourceRecovery
 			if (dc != null)
 				dbProperties.put(TransactionalDriver.dynamicClass, dc);
 
-			return new JDBC2RecoveryConnection(url, dbProperties);
-		}
-		else
-			return null;
-	}
-
-	private final JDBC2RecoveryConnection getJNDIConnection ()
-			throws SQLException
-	{
-		String number = new String("" + connectionIndex);
-		String url = new String(dbTag + jndiTag + number + urlTag);
-		String password = new String(dbTag + jndiTag + number + passwordTag);
-		String user = new String(dbTag + jndiTag + number + userTag);
-
-		Properties dbProperties = new Properties();
-
-		String theUser = props.getProperty(user);
-		String thePassword = props.getProperty(password);
-
-		if (theUser != null)
-		{
-			dbProperties.put(TransactionalDriver.userName, theUser);
-			dbProperties.put(TransactionalDriver.password, thePassword);
-
-			return new JDBC2RecoveryConnection(url, dbProperties);
+			return new JDBC2RecoveryConnection(theURL, dbProperties);
 		}
 		else
 			return null;
@@ -291,20 +274,6 @@ public class BasicXARecovery implements XAResourceRecovery
 	private static final String userTag = "_DatabaseUser";
 
 	private static final String dynamicClassTag = "_DatabaseDynamicClass";
-
-	private static final String jndiTag = "JNDI_";
-
-	/*
-	 * Example:
-	 * 
-	 * DB2_DatabaseURL=jdbc\:arjuna\:sequelink\://qa02\:20001
-	 * DB2_DatabaseUser=tester2 DB2_DatabasePassword=tester
-	 * DB2_DatabaseDynamicClass=com.arjuna.ats.internal.jdbc.drivers.sequelink_5_1
-	 * 
-	 * DB_JNDI_DatabaseURL=jdbc\:arjuna\:jndi DB_JNDI_DatabaseUser=tester1
-	 * DB_JNDI_DatabasePassword=tester DB_JNDI_DatabaseName=empay
-	 * DB_JNDI_Host=qa02 DB_JNDI_Port=20000
-	 */
 
 	private static final char BREAKCHARACTER = ';'; // delimiter for parameters
 
