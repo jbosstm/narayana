@@ -49,6 +49,8 @@ import oracle.jdbc.xa.client.OracleXADataSource;
  * Users are responsible for DataSource creation information in a property file to
  * setup this class. Username and password values may also be provided in
  * the same property file.
+ *
+ * @deprecated Use BasicXARecovery instead for standalone cases. Use AppServerJDBCRecovery for JBossAS embedded cases.
  */
 
 public class OracleXARecovery implements XAResourceRecovery
