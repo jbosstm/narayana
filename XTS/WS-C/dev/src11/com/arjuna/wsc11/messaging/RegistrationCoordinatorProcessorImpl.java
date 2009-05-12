@@ -26,6 +26,7 @@ import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.wsc.*;
 import com.arjuna.wsc11.RegistrarMapper;
 import com.arjuna.wsc11.Registrar;
@@ -35,7 +36,6 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.ProtocolException;
-import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.soap.SOAPFaultException;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
@@ -55,10 +55,10 @@ public class RegistrationCoordinatorProcessorImpl extends RegistrationCoordinato
     /**
      * Register the participant in the protocol.
      * @param register The register request.
-     * @param addressingContext The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public RegisterResponseType register(final RegisterType register, final AddressingProperties addressingContext,
+    public RegisterResponseType register(final RegisterType register, final MAP map,
         final ArjunaContext arjunaContext, final boolean isSecure)
     {
         final com.arjuna.wsc11.RegistrarMapper registrarMapper = RegistrarMapper.getFactory() ;

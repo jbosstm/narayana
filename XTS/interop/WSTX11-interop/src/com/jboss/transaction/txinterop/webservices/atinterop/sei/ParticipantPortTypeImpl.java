@@ -20,12 +20,11 @@
  */
 package com.jboss.transaction.txinterop.webservices.atinterop.sei;
 
-import com.jboss.transaction.txinterop.webservices.atinterop.generated.ObjectFactory;
 import com.jboss.transaction.txinterop.webservices.atinterop.processors.ATParticipantProcessor;
 import com.jboss.transaction.txinterop.webservices.atinterop.client.InitiatorClient;
 import com.jboss.transaction.txinterop.webservices.CoordinationContextManager;
-import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.wsc11.messaging.MessageId;
 
@@ -34,17 +33,11 @@ import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.ProtocolException;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.JAXWSAConstants;
+import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.handler.MessageContext;
 import javax.annotation.Resource;
 
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
-
-import java.net.URI;
-
 
 /**
  * Implementation class for WSTX 1.1 AT Interop Test Initiator service
@@ -54,7 +47,7 @@ import java.net.URI;
         portName="ParticipantPortType",
         wsdlLocation="/WEB-INF/wsdl/interopat-participant-binding.wsdl",
         serviceName="ParticipantService")
-// @EndpointConfig(configName = "Standard WSAddressing Endpoint")
+@Addressing(required=true)
 @HandlerChain(file="participanthandlers.xml")
 public class ParticipantPortTypeImpl {
 
@@ -76,14 +69,14 @@ public class ParticipantPortTypeImpl {
             String parameters)
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         try {
-            ATParticipantProcessor.getParticipant().completionCommit(parameters, inboundAddressProperties);
+            ATParticipantProcessor.getParticipant().completionCommit(parameters, inboundMap);
         } catch (SoapFault11 sf) {
-            sendSoapFault(inboundAddressProperties, sf);
+            sendSoapFault(inboundMap, sf);
             return;
         }
-        sendResponse(inboundAddressProperties);
+        sendResponse(inboundMap);
     }
 
     /**
@@ -98,14 +91,14 @@ public class ParticipantPortTypeImpl {
         String parameters)
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         try {
-            ATParticipantProcessor.getParticipant().completionRollback(parameters, inboundAddressProperties);
+            ATParticipantProcessor.getParticipant().completionRollback(parameters, inboundMap);
         } catch (SoapFault11 sf) {
-            sendSoapFault(inboundAddressProperties, sf);
+            sendSoapFault(inboundMap, sf);
             return;
         }
-        sendResponse(inboundAddressProperties);
+        sendResponse(inboundMap);
     }
 
     /**
@@ -117,15 +110,15 @@ public class ParticipantPortTypeImpl {
     public void commit()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         CoordinationContextType coordinationContext = CoordinationContextManager.getContext(ctx);
         try {
-            ATParticipantProcessor.getParticipant().commit(coordinationContext, inboundAddressProperties);
+            ATParticipantProcessor.getParticipant().commit(coordinationContext, inboundMap);
         } catch (SoapFault11 sf) {
-            sendSoapFault(inboundAddressProperties, sf);
+            sendSoapFault(inboundMap, sf);
             return;
         }
-        sendResponse(inboundAddressProperties);
+        sendResponse(inboundMap);
     }
 
     /**
@@ -137,15 +130,15 @@ public class ParticipantPortTypeImpl {
     public void rollback()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         CoordinationContextType coordinationContext = CoordinationContextManager.getContext(ctx);
         try {
-            ATParticipantProcessor.getParticipant().rollback(coordinationContext, inboundAddressProperties);
+            ATParticipantProcessor.getParticipant().rollback(coordinationContext, inboundMap);
         } catch (SoapFault11 sf) {
-            sendSoapFault(inboundAddressProperties, sf);
+            sendSoapFault(inboundMap, sf);
             return;
         }
-        sendResponse(inboundAddressProperties);
+        sendResponse(inboundMap);
     }
 
     /**
@@ -157,15 +150,15 @@ public class ParticipantPortTypeImpl {
     public void phase2Rollback()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         CoordinationContextType coordinationContext = CoordinationContextManager.getContext(ctx);
         try {
-            ATParticipantProcessor.getParticipant().phase2Rollback(coordinationContext, inboundAddressProperties);
+            ATParticipantProcessor.getParticipant().phase2Rollback(coordinationContext, inboundMap);
         } catch (SoapFault11 sf) {
-            sendSoapFault(inboundAddressProperties, sf);
+            sendSoapFault(inboundMap, sf);
             return;
         }
-        sendResponse(inboundAddressProperties);
+        sendResponse(inboundMap);
     }
 
     /**
@@ -177,15 +170,15 @@ public class ParticipantPortTypeImpl {
     public void readonly()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         CoordinationContextType coordinationContext = CoordinationContextManager.getContext(ctx);
         try {
-            ATParticipantProcessor.getParticipant().readonly(coordinationContext, inboundAddressProperties);
+            ATParticipantProcessor.getParticipant().readonly(coordinationContext, inboundMap);
         } catch (SoapFault11 sf) {
-            sendSoapFault(inboundAddressProperties, sf);
+            sendSoapFault(inboundMap, sf);
             return;
         }
-        sendResponse(inboundAddressProperties);
+        sendResponse(inboundMap);
     }
 
     /**
@@ -197,15 +190,15 @@ public class ParticipantPortTypeImpl {
     public void volatileAndDurable()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         CoordinationContextType coordinationContext = CoordinationContextManager.getContext(ctx);
         try {
-            ATParticipantProcessor.getParticipant().volatileAndDurable(coordinationContext, inboundAddressProperties);
+            ATParticipantProcessor.getParticipant().volatileAndDurable(coordinationContext, inboundMap);
         } catch (SoapFault11 sf) {
-            sendSoapFault(inboundAddressProperties, sf);
+            sendSoapFault(inboundMap, sf);
             return;
         }
-        sendResponse(inboundAddressProperties);
+        sendResponse(inboundMap);
     }
 
     /**
@@ -217,15 +210,15 @@ public class ParticipantPortTypeImpl {
     public void earlyReadonly()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         CoordinationContextType coordinationContext = CoordinationContextManager.getContext(ctx);
         try {
-            ATParticipantProcessor.getParticipant().earlyReadonly(coordinationContext, inboundAddressProperties);
+            ATParticipantProcessor.getParticipant().earlyReadonly(coordinationContext, inboundMap);
         } catch (SoapFault11 sf) {
-            sendSoapFault(inboundAddressProperties, sf);
+            sendSoapFault(inboundMap, sf);
             return;
         }
-        sendResponse(inboundAddressProperties);
+        sendResponse(inboundMap);
     }
 
     /**
@@ -237,15 +230,15 @@ public class ParticipantPortTypeImpl {
     public void earlyAborted()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         CoordinationContextType coordinationContext = CoordinationContextManager.getContext(ctx);
         try {
-            ATParticipantProcessor.getParticipant().earlyAborted(coordinationContext, inboundAddressProperties);
+            ATParticipantProcessor.getParticipant().earlyAborted(coordinationContext, inboundMap);
         } catch (SoapFault11 sf) {
-            sendSoapFault(inboundAddressProperties, sf);
+            sendSoapFault(inboundMap, sf);
             return;
         }
-        sendResponse(inboundAddressProperties);
+        sendResponse(inboundMap);
     }
 
     /**
@@ -257,15 +250,15 @@ public class ParticipantPortTypeImpl {
     public void replayCommit()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         CoordinationContextType coordinationContext = CoordinationContextManager.getContext(ctx);
         try {
-            ATParticipantProcessor.getParticipant().replayCommit(coordinationContext, inboundAddressProperties);
+            ATParticipantProcessor.getParticipant().replayCommit(coordinationContext, inboundMap);
         } catch (SoapFault11 sf) {
-            sendSoapFault(inboundAddressProperties, sf);
+            sendSoapFault(inboundMap, sf);
             return;
         }
-        sendResponse(inboundAddressProperties);
+        sendResponse(inboundMap);
     }
 
     /**
@@ -277,15 +270,15 @@ public class ParticipantPortTypeImpl {
     public void retryPreparedCommit()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         CoordinationContextType coordinationContext = CoordinationContextManager.getContext(ctx);
         try {
-            ATParticipantProcessor.getParticipant().retryPreparedCommit(coordinationContext, inboundAddressProperties);
+            ATParticipantProcessor.getParticipant().retryPreparedCommit(coordinationContext, inboundMap);
         } catch (SoapFault11 sf) {
-            sendSoapFault(inboundAddressProperties, sf);
+            sendSoapFault(inboundMap, sf);
             return;
         }
-        sendResponse(inboundAddressProperties);
+        sendResponse(inboundMap);
     }
 
     /**
@@ -297,15 +290,15 @@ public class ParticipantPortTypeImpl {
     public void retryPreparedAbort()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         CoordinationContextType coordinationContext = CoordinationContextManager.getContext(ctx);
         try {
-            ATParticipantProcessor.getParticipant().retryPreparedAbort(coordinationContext, inboundAddressProperties);
+            ATParticipantProcessor.getParticipant().retryPreparedAbort(coordinationContext, inboundMap);
         } catch (SoapFault11 sf) {
-            sendSoapFault(inboundAddressProperties, sf);
+            sendSoapFault(inboundMap, sf);
             return;
         }
-        sendResponse(inboundAddressProperties);
+        sendResponse(inboundMap);
     }
 
     /**
@@ -317,15 +310,15 @@ public class ParticipantPortTypeImpl {
     public void retryCommit()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         CoordinationContextType coordinationContext = CoordinationContextManager.getContext(ctx);
         try {
-            ATParticipantProcessor.getParticipant().retryCommit(coordinationContext, inboundAddressProperties);
+            ATParticipantProcessor.getParticipant().retryCommit(coordinationContext, inboundMap);
         } catch (SoapFault11 sf) {
-            sendSoapFault(inboundAddressProperties, sf);
+            sendSoapFault(inboundMap, sf);
             return;
         }
-        sendResponse(inboundAddressProperties);
+        sendResponse(inboundMap);
     }
 
     /**
@@ -337,15 +330,15 @@ public class ParticipantPortTypeImpl {
     public void preparedAfterTimeout()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         CoordinationContextType coordinationContext = CoordinationContextManager.getContext(ctx);
         try {
-            ATParticipantProcessor.getParticipant().preparedAfterTimeout(coordinationContext, inboundAddressProperties);
+            ATParticipantProcessor.getParticipant().preparedAfterTimeout(coordinationContext, inboundMap);
         } catch (SoapFault11 sf) {
-            sendSoapFault(inboundAddressProperties, sf);
+            sendSoapFault(inboundMap, sf);
             return;
         }
-        sendResponse(inboundAddressProperties);
+        sendResponse(inboundMap);
     }
 
     /**
@@ -357,31 +350,31 @@ public class ParticipantPortTypeImpl {
     public void lostCommitted()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         CoordinationContextType coordinationContext = CoordinationContextManager.getContext(ctx);
         try {
-            ATParticipantProcessor.getParticipant().lostCommitted(coordinationContext, inboundAddressProperties);
+            ATParticipantProcessor.getParticipant().lostCommitted(coordinationContext, inboundMap);
         } catch (SoapFault11 sf) {
-            sendSoapFault(inboundAddressProperties, sf);
+            sendSoapFault(inboundMap, sf);
             return;
         }
-        sendResponse(inboundAddressProperties);
+        sendResponse(inboundMap);
     }
 
     /**
      * send an acknowledgement notifying a successfuly processed request
      *
-     * @param inboundAddressProperties identifes who to reply to and what message id the response should relate to
+     * @param inboundMap identifes who to reply to and what message id the response should relate to
      */
-    private void sendResponse(AddressingProperties inboundAddressProperties)
+    private void sendResponse(MAP inboundMap)
     {
-        AddressingProperties outboundAddressProperties = AddressingHelper.createResponseContext(inboundAddressProperties, MessageId.getMessageId());
+        MAP outboundMap = AddressingHelper.createResponseContext(inboundMap, MessageId.getMessageId());
 
         try {
-            InitiatorClient.getClient().sendResponse(outboundAddressProperties);
+            InitiatorClient.getClient().sendResponse(outboundMap);
         } catch (Throwable th) {
-            URI uri = outboundAddressProperties.getTo().getURI();
-            System.out.println("com.jboss.transaction.txinterop.webservices.atinterop.sei.ParticipantPortTypeImpl_1: unable to send response to " + uri);
+            String to = outboundMap.getTo();
+            System.out.println("com.jboss.transaction.txinterop.webservices.atinterop.sei.ParticipantPortTypeImpl_1: unable to send response to " + to);
             throw new ProtocolException(th);
         }
     }
@@ -389,12 +382,12 @@ public class ParticipantPortTypeImpl {
     /**
      * send a soap fault notifying an unsuccessfuly processed request
      *
-     * @param inboundAddressProperties identifes who to reply to and what message id the fault message should relate to
+     * @param inboundMap identifes who to reply to and what message id the fault message should relate to
      */
-    private void sendSoapFault(AddressingProperties inboundAddressProperties, SoapFault11 sf)
+    private void sendSoapFault(MAP inboundMap, SoapFault11 sf)
     {
         try {
-            InitiatorClient.getClient().sendSoapFault(inboundAddressProperties, sf);
+            InitiatorClient.getClient().sendSoapFault(inboundMap, sf);
         } catch (Throwable th) {
             System.out.println("com.jboss.transaction.txinterop.webservices.atinterop.sei.ParticipantPortTypeImpl_2: unable to log soap fault " + sf);
             throw new ProtocolException(th);

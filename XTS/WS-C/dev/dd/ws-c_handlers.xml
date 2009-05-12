@@ -29,9 +29,11 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee">
 		<handler-name>Instance Identifier Handler</handler-name>
 		<handler-class>com.arjuna.webservices11.wsarj.handler.InstanceIdentifierInHandler</handler-class>
 	</handler>
+        <!-- should not need this any more
 	<handler>
 		<handler-name>WS Addressing Server Handler</handler-name>
 		<handler-class>org.jboss.ws.extensions.addressing.jaxws.WSAddressingServerHandler</handler-class>
 	</handler>
+	-->
     </handler-chain>
 </handler-chains>

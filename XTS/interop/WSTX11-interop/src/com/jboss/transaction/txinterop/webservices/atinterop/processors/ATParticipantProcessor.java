@@ -21,11 +21,11 @@
 package com.jboss.transaction.txinterop.webservices.atinterop.processors;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.webservices.SoapFault;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import com.arjuna.wst.CompletionCoordinatorParticipant;
 import com.arjuna.wst11.messaging.engines.ParticipantEngine;
 import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.jboss.transaction.txinterop.webservices.atinterop.ATInteropUtil;
 import com.jboss.transaction.txinterop.webservices.atinterop.participant.CommitDurable2PCParticipant;
 import com.jboss.transaction.txinterop.webservices.atinterop.participant.CommitFailureDurable2PCParticipant;
@@ -34,8 +34,6 @@ import com.jboss.transaction.txinterop.webservices.atinterop.participant.CommitV
 import com.jboss.transaction.txinterop.webservices.atinterop.participant.ReadonlyDurable2PCParticipant;
 import com.jboss.transaction.txinterop.webservices.atinterop.participant.RollbackDurable2PCParticipant;
 import com.jboss.transaction.txinterop.webservices.atinterop.participant.VolatileAndDurableVolatile2PCParticipant;
-
-import javax.xml.ws.addressing.AddressingProperties;
 
 /**
  * The Participant processor.
@@ -60,10 +58,10 @@ public class ATParticipantProcessor
     /**
      * Execute the CompletionCommit
      * @param coordinatorURI The address of the coordinator to employ
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @throws SoapFault11 for errors during processing
      */
-    public void completionCommit(final String coordinatorURI, final AddressingProperties addressingProperties)
+    public void completionCommit(final String coordinatorURI, final MAP map)
         throws SoapFault11
     {
         try
@@ -81,11 +79,11 @@ public class ATParticipantProcessor
     /**
      * Execute the CompletionRollback
      * @param coordinatorURI The address of the coordinator to employ.
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void completionRollback(final String coordinatorURI, final AddressingProperties addressingProperties)
+    public void completionRollback(final String coordinatorURI, final MAP map)
         throws SoapFault11
     {
         try
@@ -102,11 +100,11 @@ public class ATParticipantProcessor
     
     /**
      * Execute the Commit
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void commit(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void commit(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -121,11 +119,11 @@ public class ATParticipantProcessor
     
     /**
      * Execute the Rollback
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void rollback(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void rollback(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -140,11 +138,11 @@ public class ATParticipantProcessor
     
     /**
      * Execute the Phase2Rollback
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void phase2Rollback(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void phase2Rollback(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -160,11 +158,11 @@ public class ATParticipantProcessor
     
     /**
      * Execute the Readonly
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void readonly(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void readonly(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -180,11 +178,11 @@ public class ATParticipantProcessor
     
     /**
      * Execute the VolatileAndDurable
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void volatileAndDurable(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void volatileAndDurable(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -199,11 +197,11 @@ public class ATParticipantProcessor
     
     /**
      * Execute the EarlyReadonly
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void earlyReadonly(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void earlyReadonly(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -220,11 +218,11 @@ public class ATParticipantProcessor
     
     /**
      * Execute the EarlyAborted
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void earlyAborted(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void earlyAborted(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -241,11 +239,11 @@ public class ATParticipantProcessor
     
     /**
      * Execute the ReplayCommit
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void replayCommit(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void replayCommit(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -262,11 +260,11 @@ public class ATParticipantProcessor
     
     /**
      * Execute the RetryPreparedCommit
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void retryPreparedCommit(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void retryPreparedCommit(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -282,11 +280,11 @@ public class ATParticipantProcessor
     
     /**
      * Execute the RetryPreparedAbort
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void retryPreparedAbort(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void retryPreparedAbort(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -301,11 +299,11 @@ public class ATParticipantProcessor
     
     /**
      * Execute the RetryCommit
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void retryCommit(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void retryCommit(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -320,11 +318,11 @@ public class ATParticipantProcessor
     
     /**
      * Execute the PreparedAfterTimeout
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void preparedAfterTimeout(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void preparedAfterTimeout(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -340,11 +338,11 @@ public class ATParticipantProcessor
     
     /**
      * Execute the LostCommitted
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void lostCommitted(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void lostCommitted(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try

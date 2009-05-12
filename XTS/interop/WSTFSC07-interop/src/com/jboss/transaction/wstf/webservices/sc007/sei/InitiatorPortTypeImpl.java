@@ -22,11 +22,12 @@ package com.jboss.transaction.wstf.webservices.sc007.sei;
 
 import com.jboss.transaction.wstf.webservices.sc007.processors.InitiatorProcessor;
 import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.JAXWSAConstants;
+import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.handler.MessageContext;
 import javax.annotation.Resource;
 
@@ -37,11 +38,9 @@ import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.WebParam;
-import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 
 import org.jboss.jbossts.xts.soapfault.Fault;
-
 
 /**
  * Implementation class for WSTX 1.1 AT Interop Test Initiator service
@@ -50,9 +49,8 @@ import org.jboss.jbossts.xts.soapfault.Fault;
         targetNamespace = "http://www.wstf.org/sc007",
         wsdlLocation="/WEB-INF/wsdl/sc007.wsdl",
         portName = "sc007InitiatorPort",
-        serviceName="Sc007Service")
-// @EndpointConfig(configName = "Standard WSAddressing Endpoint")
-@HandlerChain(file="initiatorhandlers.xml")
+        serviceName="sc007Service")
+@Addressing(required=true)
 public class InitiatorPortTypeImpl {
 
     /**
@@ -70,9 +68,9 @@ public class InitiatorPortTypeImpl {
     public void response()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
 
-        InitiatorProcessor.getInitiator().handleResponse(inboundAddressProperties) ;
+        InitiatorProcessor.getInitiator().handleResponse(inboundMap) ;
     }
 
     @WebMethod(operationName = "SoapFault", action = "http://www.wstf.org/docs/scenarios/sc007/SoapFault")
@@ -83,10 +81,10 @@ public class InitiatorPortTypeImpl {
             Fault fault)
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
 
         SoapFault11 soapFaultInternal = SoapFault11.fromFault(fault);
-        InitiatorProcessor.getInitiator().handleSoapFault(soapFaultInternal, inboundAddressProperties) ;
+        InitiatorProcessor.getInitiator().handleSoapFault(soapFaultInternal, inboundMap) ;
     }
 
 }

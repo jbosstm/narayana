@@ -2,12 +2,10 @@ package com.arjuna.webservices11.wsat.processors;
 
 import com.arjuna.webservices11.wsarj.processor.BaseNotificationProcessor;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
-import com.arjuna.webservices11.wsat.processors.CompletionInitiatorCallback;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices.base.processors.Callback;
 import com.arjuna.webservices.SoapFault;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
-
-import javax.xml.ws.addressing.AddressingProperties;
 
 /**
  * The Completion Initiator processor.
@@ -32,49 +30,49 @@ public class CompletionInitiatorProcessor extends BaseNotificationProcessor
     /**
      * Handle an aborted response.
      * @param aborted The aborted notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void handleAborted(final Notification aborted, final AddressingProperties addressingProperties,
+    public void handleAborted(final Notification aborted, final MAP map,
         final ArjunaContext arjunaContext)
     {
         handleCallbacks(new CallbackExecutorAdapter() {
             public void execute(final Callback callback) {
-                ((CompletionInitiatorCallback)callback).aborted(aborted, addressingProperties, arjunaContext) ;
+                ((CompletionInitiatorCallback)callback).aborted(aborted, map, arjunaContext) ;
             }
-        }, getIDs(addressingProperties, arjunaContext)) ;
+        }, getIDs(arjunaContext)) ;
     }
 
     /**
      * Handle a committed response.
      * @param committed The committed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void handleCommitted(final Notification committed, final AddressingProperties addressingProperties,
+    public void handleCommitted(final Notification committed, final MAP map,
         final ArjunaContext arjunaContext)
     {
         handleCallbacks(new CallbackExecutorAdapter() {
             public void execute(final Callback callback) {
-                ((CompletionInitiatorCallback)callback).committed(committed, addressingProperties, arjunaContext) ;
+                ((CompletionInitiatorCallback)callback).committed(committed, map, arjunaContext) ;
             }
-        }, getIDs(addressingProperties, arjunaContext)) ;
+        }, getIDs(arjunaContext)) ;
     }
 
     /**
      * Handle a SOAP fault response.
      * @param soapFault The SOAP fault.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void handleSoapFault(final SoapFault soapFault, final AddressingProperties addressingProperties,
+    public void handleSoapFault(final SoapFault soapFault, final MAP map,
         final ArjunaContext arjunaContext)
     {
         handleCallbacks(new CallbackExecutorAdapter() {
             public void execute(final Callback callback) {
-                ((CompletionInitiatorCallback)callback).soapFault(soapFault, addressingProperties, arjunaContext) ;
+                ((CompletionInitiatorCallback)callback).soapFault(soapFault, map, arjunaContext) ;
             }
-        }, getIDs(addressingProperties, arjunaContext)) ;
+        }, getIDs(arjunaContext)) ;
     }
 
     /**

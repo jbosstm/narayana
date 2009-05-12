@@ -28,7 +28,6 @@ package com.arjuna.wst11.tests.junit;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.addressing.AddressingProperties;
 
 import junit.framework.TestCase;
 
@@ -40,9 +39,9 @@ import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.client.CompletionInitiatorClient;
 import com.arjuna.webservices11.wsat.processors.CompletionInitiatorProcessor;
-import com.arjuna.wst11.tests.junit.TestCompletionInitiatorCallback;
 import com.arjuna.wst11.tests.TestUtil;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
 public class CompletionCoordinatorTestCase extends TestCase
@@ -58,18 +57,18 @@ public class CompletionCoordinatorTestCase extends TestCase
         final String messageId = "123456" ;
         final String instanceIdentifier = "testSendCommitted" ;
         final W3CEndpointReference completionInitiatorEndpoint = TestUtil.getCompletionInitiatorEndpoint(instanceIdentifier);
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.completionInitiatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.completionInitiatorServiceURI, messageId) ;
 
         final TestCompletionInitiatorCallback callback = new TestCompletionInitiatorCallback() {
-            public void committed(final Notification committed, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+            public void committed(final Notification committed, final MAP map, final ArjunaContext arjunaContext)
             {
-                assertEquals(addressingProperties.getTo().getURI().toString(), TestUtil.completionInitiatorServiceURI);
-                assertNull(addressingProperties.getFrom());
-                assertNotNull(addressingProperties.getFaultTo());
-                assertEquals(addressingProperties.getFaultTo().getAddress().getURI().toString(), TestUtil.completionCoordinatorServiceURI);
-                assertNotNull(addressingProperties.getReplyTo());
-                assertTrue(AddressingHelper.isNoneReplyTo(addressingProperties));
-                assertEquals(addressingProperties.getMessageID().getURI().toString(), messageId);
+                assertEquals(map.getTo(), TestUtil.completionInitiatorServiceURI);
+                assertNull(map.getFrom());
+                assertNotNull(map.getFaultTo());
+                assertEquals(map.getFaultTo().getAddress(), TestUtil.completionCoordinatorServiceURI);
+                assertNotNull(map.getReplyTo());
+                assertTrue(AddressingHelper.isNoneReplyTo(map));
+                assertEquals(map.getMessageID(), messageId);
 
                 assertNotNull(arjunaContext) ;
                 assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
@@ -80,7 +79,7 @@ public class CompletionCoordinatorTestCase extends TestCase
 
         try
         {
-            CompletionInitiatorClient.getClient().sendCommitted(completionInitiatorEndpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+            CompletionInitiatorClient.getClient().sendCommitted(completionInitiatorEndpoint, map, new InstanceIdentifier("sender")) ;
             callback.waitUntilTriggered() ;
         }
         finally
@@ -98,19 +97,19 @@ public class CompletionCoordinatorTestCase extends TestCase
         final String messageId = "123456" ;
         final String instanceIdentifier = "testSendAborted" ;
         final W3CEndpointReference completionInitiatorEndpoint = TestUtil.getCompletionInitiatorEndpoint(instanceIdentifier);
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.completionInitiatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.completionInitiatorServiceURI, messageId) ;
 
         final TestCompletionInitiatorCallback callback = new TestCompletionInitiatorCallback() {
-            public void aborted(final Notification aborted, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+            public void aborted(final Notification aborted, final MAP map, final ArjunaContext arjunaContext)
             {
-                assertEquals(addressingProperties.getTo().getURI().toString(), TestUtil.completionInitiatorServiceURI);
-                assertNull(addressingProperties.getFrom());
-                assertNotNull(addressingProperties.getFaultTo());
-                assertEquals(addressingProperties.getFaultTo().getAddress().getURI().toString(), TestUtil.completionCoordinatorServiceURI);
-                assertNotNull(addressingProperties.getReplyTo());
-                assertTrue(AddressingHelper.isNoneReplyTo(addressingProperties));
-                assertNotNull(addressingProperties.getMessageID());
-                assertEquals(addressingProperties.getMessageID().getURI().toString(), messageId);
+                assertEquals(map.getTo(), TestUtil.completionInitiatorServiceURI);
+                assertNull(map.getFrom());
+                assertNotNull(map.getFaultTo());
+                assertEquals(map.getFaultTo().getAddress(), TestUtil.completionCoordinatorServiceURI);
+                assertNotNull(map.getReplyTo());
+                assertTrue(AddressingHelper.isNoneReplyTo(map));
+                assertNotNull(map.getMessageID());
+                assertEquals(map.getMessageID(), messageId);
 
                 assertNotNull(arjunaContext) ;
                 assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
@@ -121,7 +120,7 @@ public class CompletionCoordinatorTestCase extends TestCase
 
         try
         {
-            CompletionInitiatorClient.getClient().sendAborted(completionInitiatorEndpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+            CompletionInitiatorClient.getClient().sendAborted(completionInitiatorEndpoint, map, new InstanceIdentifier("sender")) ;
             callback.waitUntilTriggered() ;
         }
         finally
@@ -140,22 +139,22 @@ public class CompletionCoordinatorTestCase extends TestCase
         final String reason = "testSendErrorReason" ;
         final String instanceIdentifier = "testSendError" ;
         final W3CEndpointReference completionInitiatorEndpoint = TestUtil.getCompletionInitiatorEndpoint(instanceIdentifier);
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.completionInitiatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.completionInitiatorServiceURI, messageId) ;
 
         final SoapFaultType soapFaultType = SoapFaultType.FAULT_SENDER ;
         final QName subcode = ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME ;
         final SoapFault soapFault = new SoapFault11(soapFaultType, subcode, reason) ;
 
         final TestCompletionInitiatorCallback callback = new TestCompletionInitiatorCallback() {
-            public void soapFault(final SoapFault soapFault, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+            public void soapFault(final SoapFault soapFault, final MAP map, final ArjunaContext arjunaContext)
             {
-                assertEquals(addressingProperties.getTo().getURI().toString(), TestUtil.completionInitiatorServiceURI);
-                assertNull(addressingProperties.getFrom());
-                assertNull(addressingProperties.getFaultTo());
-                assertNotNull(addressingProperties.getReplyTo());
-                assertTrue(AddressingHelper.isNoneReplyTo(addressingProperties));
-                assertNotNull(addressingProperties.getMessageID());
-                assertEquals(addressingProperties.getMessageID().getURI().toString(), messageId);
+                assertEquals(map.getTo(), TestUtil.completionInitiatorServiceURI);
+                assertNull(map.getFrom());
+                assertNull(map.getFaultTo());
+                assertNotNull(map.getReplyTo());
+                assertTrue(AddressingHelper.isNoneReplyTo(map));
+                assertNotNull(map.getMessageID());
+                assertEquals(map.getMessageID(), messageId);
 
                 assertNotNull(arjunaContext) ;
                 assertEquals(instanceIdentifier, arjunaContext.getInstanceIdentifier().getInstanceIdentifier()) ;
@@ -171,7 +170,7 @@ public class CompletionCoordinatorTestCase extends TestCase
 
         try
         {
-            CompletionInitiatorClient.getClient().sendSoapFault(completionInitiatorEndpoint, addressingProperties, soapFault, new InstanceIdentifier("sender")) ;
+            CompletionInitiatorClient.getClient().sendSoapFault(completionInitiatorEndpoint, map, soapFault, new InstanceIdentifier("sender")) ;
             callback.waitUntilTriggered() ;
         }
         finally

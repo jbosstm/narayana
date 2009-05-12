@@ -10,9 +10,11 @@ This document and the information contained herein is provided on an "AS IS" bas
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wscoor="http://docs.oasis-open.org/ws-tx/wscoor/2006/06" targetNamespace="http://docs.oasis-open.org/ws-tx/wscoor/2006/06">
         <wsdl:types>
           <xs:schema>
+	    <!--
             <xs:import
                 namespace='http://www.w3.org/2005/08/addressing'
                 schemaLocation='ws-addr.xsd' />
+	    -->
             <xs:import
                 namespace='http://docs.oasis-open.org/ws-tx/wscoor/2006/06'
                 schemaLocation='wscoor.xsd' />

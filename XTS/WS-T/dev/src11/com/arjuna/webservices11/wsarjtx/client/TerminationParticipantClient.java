@@ -26,22 +26,17 @@ import com.arjuna.schemas.ws._2005._10.wsarjtx.TerminationParticipantPortType;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
-import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
 import com.arjuna.webservices11.wsaddr.EndpointHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
+import com.arjuna.webservices11.wsaddr.map.MAPEndpoint;
+import com.arjuna.webservices11.wsaddr.map.MAPBuilder;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 
-import javax.xml.ws.addressing.AddressingBuilder;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.AttributedURI;
-import javax.xml.ws.addressing.EndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URI;
 
 /**
  * The Client side of the Terminator Coordinator.
@@ -57,86 +52,67 @@ public class TerminationParticipantClient
     /**
      * The completed action.
      */
-    private AttributedURI completedAction = null;
+    private String completedAction = null;
     /**
      * The closed action.
      */
-    private AttributedURI closedAction = null;
+    private String closedAction = null;
     /**
      * The cancelled action.
      */
-    private AttributedURI cancelledAction = null;
+    private String cancelledAction = null;
     /**
      * The faulted action.
      */
-    private AttributedURI faultedAction = null;
+    private String faultedAction = null;
     /**
      * The SOAP fault action.
      */
-    private AttributedURI soapFaultAction = null;
+    private String soapFaultAction = null;
 
     /**
      * The participant URI for replies.
      */
-    private EndpointReference terminationCoordinator ;
+    private MAPEndpoint terminationCoordinator ;
 
     /**
      * The participant URI for securereplies.
      */
-    private EndpointReference secureTerminationCoordinator ;
+    private MAPEndpoint secureTerminationCoordinator ;
 
     /**
      * Construct the terminator coordinator client.
      */
     private TerminationParticipantClient()
     {
-        final AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-        try {
-            completedAction = builder.newURI(ArjunaTXConstants.WSARJTX_ACTION_COMPLETED);
-            closedAction = builder.newURI(ArjunaTXConstants.WSARJTX_ACTION_CLOSED);
-            cancelledAction = builder.newURI(ArjunaTXConstants.WSARJTX_ACTION_CANCELLED);
-            faultedAction = builder.newURI(ArjunaTXConstants.WSARJTX_ACTION_FAULTED);
-            soapFaultAction = builder.newURI(ArjunaTXConstants.WSARJTX_ACTION_SOAP_FAULT);
-        } catch (URISyntaxException use) {
-            // TODO - log fault and throw exception
-        }
-        // final HandlerRegistry handlerRegistry = new HandlerRegistry() ;
+        final MAPBuilder builder = MAPBuilder.getBuilder();
+        completedAction = ArjunaTXConstants.WSARJTX_ACTION_COMPLETED;
+        closedAction = ArjunaTXConstants.WSARJTX_ACTION_CLOSED;
+        cancelledAction = ArjunaTXConstants.WSARJTX_ACTION_CANCELLED;
+        faultedAction = ArjunaTXConstants.WSARJTX_ACTION_FAULTED;
+        soapFaultAction = ArjunaTXConstants.WSARJTX_ACTION_SOAP_FAULT;
 
-        // Add WS-Addressing
-        // AddressingPolicy.register(handlerRegistry) ;
-        // Add client policies
-        // ClientPolicy.register(handlerRegistry) ;
         final String terminationCoordinatorURIString =
             ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_COORDINATOR_SERVICE_NAME, false);
         final String secureTerminationCoordinatorURIString =
             ServiceRegistry.getRegistry().getServiceURI(ArjunaTX11Constants.TERMINATION_COORDINATOR_SERVICE_NAME, true);
-        try {
-            URI terminationCoordinatorURI = new URI(terminationCoordinatorURIString);
-            terminationCoordinator = builder.newEndpointReference(terminationCoordinatorURI);
-        } catch (URISyntaxException use) {
-            // TODO - log fault and throw exception
-        }
-        try {
-            URI secureTerminationCoordinatorURI = new URI(secureTerminationCoordinatorURIString);
-            secureTerminationCoordinator = builder.newEndpointReference(secureTerminationCoordinatorURI);
-        } catch (URISyntaxException use) {
-            // TODO - log fault and throw exception
-        }
+        terminationCoordinator = builder.newEndpoint(terminationCoordinatorURIString);
+        secureTerminationCoordinator = builder.newEndpoint(secureTerminationCoordinatorURIString);
     }
 
     /**
      * Send a completed request.
-     * @param addressingProperties addressing context initialised with to and message ID.
+     * @param map addressing context initialised with to and message ID.
      * @param identifier The identifier of the initiator.
      * @throws com.arjuna.webservices.SoapFault For any errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendCompleted(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
+    public void sendCompleted(final W3CEndpointReference participant, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference coordinator = getCoordinator(participant);
-        AddressingHelper.installFromFaultTo(addressingProperties, coordinator, identifier);
-        final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, completedAction);
+        MAPEndpoint coordinator = getCoordinator(participant);
+        AddressingHelper.installFromFaultTo(map, coordinator, identifier);
+        final TerminationParticipantPortType port = getPort(participant, map, identifier, completedAction);
         final NotificationType completed = new NotificationType();
 
         port.completedOperation(completed);
@@ -144,17 +120,17 @@ public class TerminationParticipantClient
 
     /**
      * Send a closed request.
-     * @param addressingProperties addressing context initialised with to and message ID.
+     * @param map addressing context initialised with to and message ID.
      * @param identifier The identifier of the initiator.
      * @throws com.arjuna.webservices.SoapFault For any errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendClosed(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
+    public void sendClosed(final W3CEndpointReference participant, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference coordinator = getCoordinator(participant);
-        AddressingHelper.installFromFaultTo(addressingProperties, coordinator, identifier);
-        final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, closedAction);
+        MAPEndpoint coordinator = getCoordinator(participant);
+        AddressingHelper.installFromFaultTo(map, coordinator, identifier);
+        final TerminationParticipantPortType port = getPort(participant, map, identifier, closedAction);
         final NotificationType closed = new NotificationType();
 
         port.closedOperation(closed);
@@ -162,17 +138,17 @@ public class TerminationParticipantClient
 
     /**
      * Send a cancelled request.
-     * @param addressingProperties addressing context initialised with to and message ID.
+     * @param map addressing context initialised with to and message ID.
      * @param identifier The identifier of the initiator.
      * @throws com.arjuna.webservices.SoapFault For any errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendCancelled(final W3CEndpointReference participant,final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
+    public void sendCancelled(final W3CEndpointReference participant,final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference coordinator = getCoordinator(participant);
-        AddressingHelper.installFromFaultTo(addressingProperties, coordinator, identifier);
-        final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, cancelledAction);
+        MAPEndpoint coordinator = getCoordinator(participant);
+        AddressingHelper.installFromFaultTo(map, coordinator, identifier);
+        final TerminationParticipantPortType port = getPort(participant, map, identifier, cancelledAction);
         final NotificationType cancelled = new NotificationType();
 
         port.cancelledOperation(cancelled);
@@ -180,17 +156,17 @@ public class TerminationParticipantClient
 
     /**
      * Send a faulted request.
-     * @param addressingProperties addressing context initialised with to and message ID.
+     * @param map addressing context initialised with to and message ID.
      * @param identifier The identifier of the initiator.
      * @throws com.arjuna.webservices.SoapFault For any errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendFaulted(final W3CEndpointReference participant, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
+    public void sendFaulted(final W3CEndpointReference participant, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference coordinator = getCoordinator(participant);
-        AddressingHelper.installFromFaultTo(addressingProperties, coordinator, identifier);
-        final TerminationParticipantPortType port = getPort(participant, addressingProperties, identifier, faultedAction);
+        MAPEndpoint coordinator = getCoordinator(participant);
+        AddressingHelper.installFromFaultTo(map, coordinator, identifier);
+        final TerminationParticipantPortType port = getPort(participant, map, identifier, faultedAction);
         final NotificationType faulted = new NotificationType();
 
         port.faultedOperation(faulted);
@@ -199,18 +175,18 @@ public class TerminationParticipantClient
     /**
      * Send a fault.
      * @param endpoint the endpoint reference to notify
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param soapFault The SOAP fault.
      * @param identifier The arjuna  instance identifier.
      * @throws com.arjuna.webservices.SoapFault For any errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendSoapFault(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final SoapFault soapFault, final InstanceIdentifier identifier)
+    public void sendSoapFault(final W3CEndpointReference endpoint, final MAP map, final SoapFault soapFault, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        //AddressingHelper.installFrom(addressingProperties, terminationCoordinator, identifier);
-        AddressingHelper.installNoneReplyTo(addressingProperties);
-        final TerminationParticipantPortType port = getPort(endpoint, addressingProperties, identifier, soapFaultAction);
+        //AddressingHelper.installFrom(map, terminationCoordinator, identifier);
+        AddressingHelper.installNoneReplyTo(map);
+        final TerminationParticipantPortType port = getPort(endpoint, map, identifier, soapFaultAction);
         final ExceptionType fault = new ExceptionType();
         // we pass the fault type, reason and subcode. we cannot pass the detail and header elements as they are
         // built from Kev's element types rather than dom element types. this is all we need anyway since we only
@@ -224,16 +200,16 @@ public class TerminationParticipantClient
 
     /**
      * Send a fault.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param soapFault The SOAP fault.
      * @param identifier The arjuna  instance identifier.
      * @throws com.arjuna.webservices.SoapFault For any errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendSoapFault(final SoapFault soapFault, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
+    public void sendSoapFault(final SoapFault soapFault, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        final TerminationParticipantPortType port = getPort(addressingProperties, identifier, soapFaultAction);
+        final TerminationParticipantPortType port = getPort(map, identifier, soapFaultAction);
         final ExceptionType fault = new ExceptionType();
         // we pass the fault type, reason and subcode. we cannot pass the detail and header elements as they are
         // built from Kev's element types rather than dom element types. this is all we need anyway since we only
@@ -250,7 +226,7 @@ public class TerminationParticipantClient
      * @param participant
      * @return either the secure terminaton participant endpoint or the non-secure endpoint
      */
-    EndpointReference getCoordinator(W3CEndpointReference participant)
+    MAPEndpoint getCoordinator(W3CEndpointReference participant)
     {
         NativeEndpointReference nativeRef = EndpointHelper.transform(NativeEndpointReference.class, participant);
         String address = nativeRef.getAddress();
@@ -271,22 +247,22 @@ public class TerminationParticipantClient
     }
 
     private TerminationParticipantPortType getPort(final W3CEndpointReference endpoint,
-                                                   final AddressingProperties addressingProperties,
+                                                   final MAP map,
                                                    final InstanceIdentifier identifier,
-                                                   final AttributedURI action)
+                                                   final String action)
     {
         // we only need the message id from the addressing properties as the address is already wrapped up
         // in the ednpoint reference. also the identifier should already be installed in the endpoint
         // reference as a reference parameter so we don't need that either
-        return WSARJTXClient.getTerminationParticipantPort(endpoint, action, addressingProperties);
+        return WSARJTXClient.getTerminationParticipantPort(endpoint, action, map);
     }
 
-    private TerminationParticipantPortType getPort(final AddressingProperties addressingProperties,
+    private TerminationParticipantPortType getPort(final MAP map,
                                                    final InstanceIdentifier identifier,
-                                                   final AttributedURI action)
+                                                   final String action)
     {
         // create a port specific to the incoming addressing properties
-        AddressingHelper.installNoneReplyTo(addressingProperties);
-        return WSARJTXClient.getTerminationParticipantPort(identifier, action, addressingProperties);
+        AddressingHelper.installNoneReplyTo(map);
+        return WSARJTXClient.getTerminationParticipantPort(identifier, action, map);
     }
 }

@@ -5,6 +5,7 @@ import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.util.TransportTimer;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
@@ -20,7 +21,6 @@ import org.jboss.jbossts.xts11.recovery.participant.at.ATParticipantRecoveryReco
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.util.TimerTask;
 
@@ -114,7 +114,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Handle the commit event.
      * @param commit The commit notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * None -> None (send committed)
@@ -124,7 +124,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * Committing -> Committing (do nothing)
      * Aborting -> Aborting (do nothing)
      */
-    public void commit(final Notification commit, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void commit(final Notification commit, final MAP map, final ArjunaContext arjunaContext)
     {
         final State current ;
         synchronized(this)
@@ -157,7 +157,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Handle the prepare event.
      * @param prepare The prepare notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * None -> None (send aborted)
@@ -167,7 +167,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * Committing -> Committing (ignore)
      * Aborting -> Aborting (send aborted and forget)
      */
-    public void prepare(final Notification prepare, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void prepare(final Notification prepare, final MAP map, final ArjunaContext arjunaContext)
     {
         final State current ;
         synchronized(this)
@@ -197,7 +197,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Handle the rollback event.
      * @param rollback The rollback notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * None -> None (send aborted)
@@ -209,7 +209,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
      *
      *  @message com.arjuna.wst11.messaging.engines.ParticipantEngine.rollback_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.rollback_1] could not delete recovery record for participant {0}
      */
-    public void rollback(final Notification rollback, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void rollback(final Notification rollback, final MAP map, final ArjunaContext arjunaContext)
     {
         final State current ;
         synchronized(this)
@@ -324,14 +324,14 @@ public class ParticipantEngine implements ParticipantInboundEvents
     /**
      * Handle the soap fault event.
      * @param soapFault The soap fault.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_1 [com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_1] - Unexpected SOAP fault for participant {0}: {1} {2}
      * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_2 [com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_2] - Unrecoverable error for participant {0} : {1} {2}
      * @message com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_3 [com.arjuna.wst11.messaging.engines.ParticipantEngine.soapFault_3] - Unable to delete recovery record at commit for participant {0}
      */
-    public void soapFault(final SoapFault soapFault, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void soapFault(final SoapFault soapFault, final MAP map, final ArjunaContext arjunaContext)
     {
         if (WSTLogger.arjLoggerI18N.isDebugEnabled())
         {
@@ -718,7 +718,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
      */
     private void sendCommitted()
     {
-        final AddressingProperties responseAddressingContext = createContext() ;
+        final MAP responseAddressingContext = createContext() ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier(id) ;
         try
         {
@@ -750,7 +750,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
      */
     private void sendPrepared(boolean timedOut)
     {
-        final AddressingProperties responseAddressingContext = createContext() ;
+        final MAP responseAddressingContext = createContext() ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier(id) ;
         try
         {
@@ -797,7 +797,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
      */
     private void sendAborted()
     {
-        final AddressingProperties responseAddressingContext = createContext() ;
+        final MAP responseAddressingContext = createContext() ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier(id) ;
         try
         {
@@ -819,7 +819,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
      */
     private void sendReadOnly()
     {
-        final AddressingProperties responseAddressingContext = createContext() ;
+        final MAP responseAddressingContext = createContext() ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier(id) ;
         try
         {
@@ -863,7 +863,7 @@ public class ParticipantEngine implements ParticipantInboundEvents
      * Create a response context from the incoming context.
      * @return The addressing context.
      */
-    private AddressingProperties createContext()
+    private MAP createContext()
     {
         final String messageId = MessageId.getMessageId() ;
         return AddressingHelper.createNotificationContext(messageId) ;

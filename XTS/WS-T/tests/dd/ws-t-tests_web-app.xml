@@ -33,7 +33,7 @@
     </listener>
     
     <servlet>
-        <servlet-name>JUnit Tests Servlet</servlet-name>
+        <servlet-name>JUnitTestsServlet</servlet-name>
         <servlet-class>com.arjuna.qa.junit.TestRunnerServlet</servlet-class>
         <init-param>
             <param-name>TestSuiteClassName</param-name>
@@ -43,7 +43,7 @@
     </servlet>
 
     <servlet>
-        <servlet-name>JUnit Tests XML Servlet</servlet-name>
+        <servlet-name>JUnitTestsXMLServlet</servlet-name>
         <servlet-class>com.arjuna.qa.junit.TestRunnerXMLServlet</servlet-class>
         <init-param>
             <param-name>TestSuiteClassName</param-name>
@@ -54,12 +54,12 @@
 
 	<!-- servlet mappings -->
     <servlet-mapping>
-        <servlet-name>JUnit Tests Servlet</servlet-name>
+        <servlet-name>JUnitTestsServlet</servlet-name>
         <url-pattern>/index.html</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>JUnit Tests XML Servlet</servlet-name>
+        <servlet-name>JUnitTestsXMLServlet</servlet-name>
         <url-pattern>/index.xml</url-pattern>
     </servlet-mapping>
     

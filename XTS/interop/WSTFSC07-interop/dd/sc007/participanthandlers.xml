@@ -28,9 +28,5 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee">
 		<handler-name>Coordination Context Handler</handler-name>
 		<handler-class>com.jboss.transaction.wstf.webservices.handlers.CoordinationContextHandler</handler-class>
 	</handler>
-	<handler>
-		<handler-name>WS Addressing Server Handler</handler-name>
-		<handler-class>org.jboss.ws.extensions.addressing.jaxws.WSAddressingServerHandler</handler-class>
-	</handler>
     </handler-chain>
 </handler-chains>

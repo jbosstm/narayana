@@ -26,13 +26,11 @@ import java.util.Map;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsba.CoordinatorCompletionParticipantInboundEvents;
 import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionParticipantProcessor;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
-
-import javax.xml.ws.addressing.AddressingProperties;
-
 
 public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCompletionParticipantProcessor
 {
@@ -93,10 +91,10 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
         return false;
     }
 
-    public void cancel(NotificationType cancel, AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+    public void cancel(NotificationType cancel, MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(map, arjunaContext) ;
         details.setCancel(true) ;
 
         synchronized(messageIdMap)
@@ -106,10 +104,10 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
         }
     }
 
-    public void close(NotificationType close, AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+    public void close(NotificationType close, MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(map, arjunaContext) ;
         details.setClose(true) ;
 
         synchronized(messageIdMap)
@@ -119,10 +117,10 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
         }
     }
 
-    public void compensate(NotificationType compensate, AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+    public void compensate(NotificationType compensate, MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(map, arjunaContext) ;
         details.setCompensate(true) ;
 
         synchronized(messageIdMap)
@@ -132,10 +130,10 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
         }
     }
 
-    public void complete(NotificationType complete, AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+    public void complete(NotificationType complete, MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(map, arjunaContext) ;
         details.setComplete(true) ;
 
         synchronized(messageIdMap)
@@ -149,12 +147,12 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
      * Exited.
      *
      * @param exited            The exited notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext     The arjuna context.
      */
-    public void exited(NotificationType exited, AddressingProperties addressingProperties, ArjunaContext arjunaContext) {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+    public void exited(NotificationType exited, MAP map, ArjunaContext arjunaContext) {
+        final String messageId = map.getMessageID() ;
+        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(map, arjunaContext) ;
         details.setExited(true) ;
 
         synchronized(messageIdMap)
@@ -168,12 +166,12 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
      * Not Completed.
      *
      * @param notCompleted         The not completed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext        The arjuna context.
      */
-    public void notCompleted(NotificationType notCompleted, AddressingProperties addressingProperties, ArjunaContext arjunaContext) {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+    public void notCompleted(NotificationType notCompleted, MAP map, ArjunaContext arjunaContext) {
+        final String messageId = map.getMessageID() ;
+        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(map, arjunaContext) ;
         details.setNotCompleted(true) ;
 
         synchronized(messageIdMap)
@@ -187,12 +185,12 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
      * Faulted.
      *
      * @param failed           The failed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext     The arjuna context.
      */
-    public void failed(NotificationType failed, AddressingProperties addressingProperties, ArjunaContext arjunaContext) {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+    public void failed(NotificationType failed, MAP map, ArjunaContext arjunaContext) {
+        final String messageId = map.getMessageID() ;
+        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(map, arjunaContext) ;
         details.setFailed(true) ;
 
         synchronized(messageIdMap)
@@ -202,10 +200,10 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
         }
     }
 
-    public void getStatus(NotificationType getStatus, AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+    public void getStatus(NotificationType getStatus, MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(map, arjunaContext) ;
         details.setGetStatus(true) ;
 
         synchronized(messageIdMap)
@@ -219,12 +217,12 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
      * Status.
      *
      * @param status            The status.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext     The arjuna context.
      */
-    public void status(StatusType status, AddressingProperties addressingProperties, ArjunaContext arjunaContext) {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+    public void status(StatusType status, MAP map, ArjunaContext arjunaContext) {
+        final String messageId = map.getMessageID() ;
+        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(map, arjunaContext) ;
         details.setStatus(status) ;
 
         synchronized(messageIdMap)
@@ -238,12 +236,12 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
      * SOAP fault.
      *
      * @param soapFault         The SOAP fault.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext     The arjuna context.
      */
-    public void soapFault(SoapFault soapFault, AddressingProperties addressingProperties, ArjunaContext arjunaContext) {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+    public void soapFault(SoapFault soapFault, MAP map, ArjunaContext arjunaContext) {
+        final String messageId = map.getMessageID() ;
+        final CoordinatorCompletionParticipantDetails details = new CoordinatorCompletionParticipantDetails(map, arjunaContext) ;
         details.setSoapFault(soapFault) ;
 
         synchronized(messageIdMap)
@@ -263,7 +261,7 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
 
     public static class CoordinatorCompletionParticipantDetails
     {
-        private final AddressingProperties addressingProperties ;
+        private final MAP map ;
         private final ArjunaContext arjunaContext ;
         private boolean cancel ;
         private boolean close ;
@@ -276,15 +274,15 @@ public class TestCoordinatorCompletionParticipantProcessor extends CoordinatorCo
         private boolean getStatus ;
         private SoapFault soapFault ;
 
-        CoordinatorCompletionParticipantDetails(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+        CoordinatorCompletionParticipantDetails(final MAP map, final ArjunaContext arjunaContext)
         {
-            this.addressingProperties = addressingProperties ;
+            this.map = map ;
             this.arjunaContext = arjunaContext ;
         }
 
-        public AddressingProperties getAddressingProperties()
+        public MAP getMAP()
         {
-            return addressingProperties ;
+            return map ;
         }
 
         public ArjunaContext getArjunaContext()

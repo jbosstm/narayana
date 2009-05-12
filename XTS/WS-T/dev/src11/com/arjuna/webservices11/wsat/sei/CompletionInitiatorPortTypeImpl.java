@@ -9,13 +9,13 @@ import javax.jws.soap.SOAPBinding;
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.JAXWSAConstants;
 import javax.xml.ws.handler.MessageContext;
 
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsat.processors.CompletionInitiatorProcessor;
 import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wsaddr.map.MAP;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.services.framework.task.TaskManager;
 import com.arjuna.services.framework.task.Task;
 import com.arjuna.webservices.SoapFault;
@@ -32,7 +32,7 @@ import com.arjuna.webservices.SoapFault;
         portName = "CompletionInitiatorPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-@HandlerChain(file="handlers.xml")
+@HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
 public class CompletionInitiatorPortTypeImpl implements CompletionInitiatorPortType
 {
@@ -52,13 +52,12 @@ public class CompletionInitiatorPortTypeImpl implements CompletionInitiatorPortT
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final Notification committed = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CompletionInitiatorProcessor.getProcessor().handleCommitted(committed, inboundAddressProperties, arjunaContext) ;
+                CompletionInitiatorProcessor.getProcessor().handleCommitted(committed, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -75,13 +74,12 @@ public class CompletionInitiatorPortTypeImpl implements CompletionInitiatorPortT
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final Notification aborted = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CompletionInitiatorProcessor.getProcessor().handleAborted(aborted, inboundAddressProperties, arjunaContext) ;
+                CompletionInitiatorProcessor.getProcessor().handleAborted(aborted, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -93,13 +91,13 @@ public class CompletionInitiatorPortTypeImpl implements CompletionInitiatorPortT
             Fault fault)
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        final AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
         final SoapFault soapFault = SoapFault11.fromFault(fault);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CompletionInitiatorProcessor.getProcessor().handleSoapFault(soapFault, inboundAddressProperties, arjunaContext); ;
+                CompletionInitiatorProcessor.getProcessor().handleSoapFault(soapFault, inboundMap, arjunaContext); ;
             }
         }) ;
     }

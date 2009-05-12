@@ -21,12 +21,9 @@
 package com.arjuna.webservices11.wscoor.processors;
 
 import com.arjuna.webservices11.wsarj.ArjunaContext;
-import com.arjuna.wsc11.messaging.RegistrationCoordinatorProcessorImpl;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponseType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
-
-import javax.xml.ws.addressing.AddressingProperties;
-
 
 /**
  * The Registration Coordinator processor.
@@ -63,9 +60,9 @@ public abstract class RegistrationCoordinatorProcessor
     /**
      * Register the participant in the protocol.
      * @param register The register request.
-     * @param addressingContext The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract RegisterResponseType register(final RegisterType register, final AddressingProperties addressingContext,
+    public abstract RegisterResponseType register(final RegisterType register, final MAP map,
         final ArjunaContext arjunaContext, final boolean isSecure) ;
 }

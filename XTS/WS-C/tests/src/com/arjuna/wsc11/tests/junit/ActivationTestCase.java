@@ -28,6 +28,7 @@ package com.arjuna.wsc11.tests.junit;
 
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wscoor.client.ActivationCoordinatorClient;
 import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
 import com.arjuna.wsc.tests.TestUtil;
@@ -36,7 +37,6 @@ import com.arjuna.wsc11.tests.junit.TestActivationCoordinatorProcessor.CreateCoo
 import junit.framework.TestCase;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.*;
 
-import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class ActivationTestCase extends TestCase
@@ -151,7 +151,7 @@ public class ActivationTestCase extends TestCase
     private void executeRequestTest(final String messageId, final String coordinationType, final Long expires, final CoordinationContext coordinationContext)
         throws Exception
     {
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil11.activationCoordinatorService, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil11.activationCoordinatorService, messageId) ;
         Expires expiresInstance;
         if (expires == null) {
             expiresInstance = null;
@@ -162,19 +162,19 @@ public class ActivationTestCase extends TestCase
         CreateCoordinationContextResponseType createCoordinationContextResponseType;
 
         createCoordinationContextResponseType =
-                ActivationCoordinatorClient.getClient().sendCreateCoordination(addressingProperties, coordinationType, expiresInstance, coordinationContext) ;
+                ActivationCoordinatorClient.getClient().sendCreateCoordination(map, coordinationType, expiresInstance, coordinationContext) ;
 
         final CreateCoordinationContextDetails details = testActivationCoordinatorProcessor.getCreateCoordinationContextDetails(messageId, 10000) ;
         final CreateCoordinationContextType requestCreateCoordinationContext = details.getCreateCoordinationContext() ;
-        final AddressingProperties requestAddressingProperties = details.getAddressingProperties() ;
+        final MAP requestMAP = details.getMAP() ;
 
-        assertNotNull(requestAddressingProperties.getTo());
-        assertEquals(requestAddressingProperties.getTo().getURI().toString(), TestUtil11.activationCoordinatorService);
+        assertNotNull(requestMAP.getTo());
+        assertEquals(requestMAP.getTo(), TestUtil11.activationCoordinatorService);
         // we don't care about the reply to field --  this is an RPC style message
-        // assertNotNull(requestAddressingProperties.getReplyTo());
-        // assertTrue(AddressingHelper.isNoneReplyTo(requestAddressingProperties));
-        assertNotNull(requestAddressingProperties.getMessageID());
-        assertEquals(requestAddressingProperties.getMessageID().getURI().toString(), messageId);
+        // assertNotNull(requestMAP.getReplyTo());
+        // assertTrue(AddressingHelper.isNoneReplyTo(requestMAP));
+        assertNotNull(requestMAP.getMessageID());
+        assertEquals(requestMAP.getMessageID(), messageId);
 
         if (expires == null)
         {

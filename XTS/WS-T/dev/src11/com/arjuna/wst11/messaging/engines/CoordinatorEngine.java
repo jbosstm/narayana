@@ -6,6 +6,7 @@ import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.util.TransportTimer;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.CoordinatorInboundEvents;
@@ -17,7 +18,6 @@ import com.arjuna.wsc11.messaging.MessageId;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.util.TimerTask;
 
@@ -101,7 +101,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Handle the aborted event.
      * @param aborted The aborted notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * None -> None (ignore)
@@ -111,7 +111,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * Committing -> Committing (invalid state)
      * Aborting -> Aborting (forget)
      */
-    public synchronized void aborted(final Notification aborted, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public synchronized void aborted(final Notification aborted, final MAP map, final ArjunaContext arjunaContext)
     {
         final State current = state ;
         if (current == State.STATE_ACTIVE)
@@ -127,7 +127,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Handle the committed event.
      * @param committed The committed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * None -> None (ignore)
@@ -137,7 +137,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * Committing -> Committing (forget)
      * Aborting -> Aborting (invalid state)
      */
-    public synchronized void committed(final Notification committed, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public synchronized void committed(final Notification committed, final MAP map, final ArjunaContext arjunaContext)
     {
         final State current = state ;
         if (current == State.STATE_ACTIVE)
@@ -153,7 +153,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Handle the prepared event.
      * @param prepared The prepared notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * None -> Durable: (send rollback), Volatile: Invalid state: none
@@ -163,7 +163,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * Committing -> Committing (resend Commit)
      * Aborting -> Aborting (resend Rollback and forget)
      */
-    public void prepared(final Notification prepared, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void prepared(final Notification prepared, final MAP map, final ArjunaContext arjunaContext)
     {
         final State current ;
         synchronized(this)
@@ -187,7 +187,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
             if (durable) {
                 sendRollback();
             } else {
-                sendUnknownTransaction(addressingProperties, arjunaContext) ;
+                sendUnknownTransaction(map, arjunaContext) ;
             }
             forget();
         }
@@ -199,7 +199,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
             }
             else
             {
-        	sendUnknownTransaction(addressingProperties, arjunaContext) ;
+        	sendUnknownTransaction(map, arjunaContext) ;
             }
         }
     }
@@ -207,7 +207,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Handle the readOnly event.
      * @param readOnly The readOnly notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * None -> None (ignore)
@@ -217,7 +217,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * Committing -> Committing (invalid state)
      * Aborting -> Aborting (forget)
      */
-    public synchronized void readOnly(final Notification readOnly, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public synchronized void readOnly(final Notification readOnly, final MAP map, final ArjunaContext arjunaContext)
     {
         final State current = state ;
         if ((current == State.STATE_ACTIVE) || (current == State.STATE_PREPARING) ||
@@ -234,12 +234,12 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
     /**
      * Handle the soap fault event.
      * @param soapFault The soap fault.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.engines.CoordinatorEngine.soapFault_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.soapFault_1] - Unexpected SOAP fault for coordinator {0}: {1} {2}
      */
-    public void soapFault(final SoapFault soapFault, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void soapFault(final SoapFault soapFault, final MAP map, final ArjunaContext arjunaContext)
     {
         if (WSTLogger.arjLoggerI18N.isDebugEnabled())
         {
@@ -692,16 +692,16 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * @message com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_1 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_1] - Unknown transaction
      * @message com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_2 [com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_2] - Unexpected exception while sending UnknownTransaction for participant {0}
      */
-    private void sendUnknownTransaction(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    private void sendUnknownTransaction(final MAP map, final ArjunaContext arjunaContext)
     {
         try
         {
-            final AddressingProperties faultAddressingProperties = AddressingHelper.createFaultContext(addressingProperties, MessageId.getMessageId()) ;
+            final MAP faultMAP = AddressingHelper.createFaultContext(map, MessageId.getMessageId()) ;
             final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
 
             final String message = WSTLogger.log_mesg.getString("com.arjuna.wst11.messaging.engines.CoordinatorEngine.sendUnknownTransaction_1") ;
             final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, AtomicTransactionConstants.WSAT_ERROR_CODE_UNKNOWN_TRANSACTION_QNAME, message) ;
-            ParticipantClient.getClient().sendSoapFault(faultAddressingProperties, soapFault, instanceIdentifier) ;
+            ParticipantClient.getClient().sendSoapFault(faultMAP, soapFault, instanceIdentifier) ;
         }
         catch (final Throwable th)
         {
@@ -764,7 +764,7 @@ public class CoordinatorEngine implements CoordinatorInboundEvents
      * Create a context for the outgoing message.
      * @return The addressing context.
      */
-    private AddressingProperties createContext()
+    private MAP createContext()
     {
         final String messageId = MessageId.getMessageId() ;
 

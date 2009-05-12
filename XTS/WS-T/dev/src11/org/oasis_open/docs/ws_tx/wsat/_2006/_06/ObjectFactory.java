@@ -40,19 +40,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ATAssertion }
-     * 
-     */
-    public ATAssertion createATAssertion() {
-        return new ATAssertion();
-    }
-
-    /**
      * Create an instance of {@link Notification }
      * 
      */
     public Notification createNotification() {
         return new Notification();
+    }
+
+    /**
+     * Create an instance of {@link ATAssertion }
+     * 
+     */
+    public ATAssertion createATAssertion() {
+        return new ATAssertion();
     }
 
     /**

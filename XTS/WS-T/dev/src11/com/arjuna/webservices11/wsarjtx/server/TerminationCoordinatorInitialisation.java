@@ -25,7 +25,6 @@ import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.common.Environment;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 

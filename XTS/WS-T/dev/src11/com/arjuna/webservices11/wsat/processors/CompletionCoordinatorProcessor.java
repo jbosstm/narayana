@@ -2,8 +2,7 @@ package com.arjuna.webservices11.wsat.processors;
 
 import com.arjuna.wst11.CompletionCoordinatorParticipant;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
-
-import javax.xml.ws.addressing.AddressingProperties;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
@@ -55,18 +54,18 @@ public abstract class CompletionCoordinatorProcessor
     /**
      * Commit.
      * @param commit The commit notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void commit(final Notification commit, final AddressingProperties addressingProperties,
+    public abstract void commit(final Notification commit, final MAP map,
         final ArjunaContext arjunaContext) ;
 
     /**
      * Rollback.
      * @param rollback The rollback notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void rollback(final Notification rollback, final AddressingProperties addressingProperties,
+    public abstract void rollback(final Notification rollback, final MAP map,
         final ArjunaContext arjunaContext) ;
 }

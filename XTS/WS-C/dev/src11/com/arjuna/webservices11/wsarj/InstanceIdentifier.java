@@ -27,9 +27,9 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
-import javax.xml.ws.addressing.EndpointReference;
 
 import com.arjuna.webservices.wsarj.ArjunaConstants;
+import com.arjuna.webservices11.wsaddr.map.MAPEndpoint;
 
 /**
  * Representation of an InstanceIdentifier element.
@@ -120,7 +120,7 @@ public class InstanceIdentifier
     * @param epReference The WS Addressing endpoint reference.
     * @param instanceIdentifier The identifier.
     */
-   public static void setEndpointInstanceIdentifier(final EndpointReference epReference, final InstanceIdentifier instanceIdentifier)
+   public static void setEndpointInstanceIdentifier(final MAPEndpoint epReference, final InstanceIdentifier instanceIdentifier)
    {
        setEndpointInstanceIdentifier(epReference, instanceIdentifier.getInstanceIdentifier());
    }
@@ -130,9 +130,9 @@ public class InstanceIdentifier
     * @param epReference The WS Addressing endpoint reference.
     * @param instanceIdentifier The identifier string.
     */
-   public static void setEndpointInstanceIdentifier(final EndpointReference epReference, final String instanceIdentifier)
+   public static void setEndpointInstanceIdentifier(final MAPEndpoint epReference, final String instanceIdentifier)
    {
-       epReference.getReferenceParameters().addElement(createInstanceIdentifierElement(instanceIdentifier));
+       epReference.addReferenceParameter(createInstanceIdentifierElement(instanceIdentifier));
    }
 
     /**

@@ -25,6 +25,7 @@ import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
@@ -38,12 +39,6 @@ import org.oasis_open.docs.ws_tx.wsba._2006._06.ExceptionType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
 import org.jboss.jbossts.xts.recovery.participant.ba.XTSBARecoveryManager;
-
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.AttributedURI;
-import javax.xml.ws.addressing.AddressingBuilder;
-import java.net.URISyntaxException;
-
 
 /**
  * The Participant Completion Coordinator processor.
@@ -98,13 +93,13 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
     /**
      * Cancelled.
      * @param cancelled The cancelled notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.cancelled_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.cancelled_1] - Unexpected exception thrown from cancelled:
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.cancelled_2 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.cancelled_2] - Cancelled called on unknown coordinator: {0}
      */
-    public void cancelled(final NotificationType cancelled, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void cancelled(final NotificationType cancelled, final MAP map, final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
         final ParticipantCompletionCoordinatorInboundEvents coordinator = getCoordinator(instanceIdentifier) ;
@@ -113,7 +108,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
         {
             try
             {
-                coordinator.cancelled(cancelled, addressingProperties, arjunaContext) ;
+                coordinator.cancelled(cancelled, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -132,13 +127,13 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
     /**
      * Closed.
      * @param closed The closed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.closed_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.closed_1] - Unexpected exception thrown from closed:
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.closed_2 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.closed_2] - Closed called on unknown coordinator: {0}
      */
-    public void closed(final NotificationType closed, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void closed(final NotificationType closed, final MAP map, final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
         final ParticipantCompletionCoordinatorInboundEvents coordinator = getCoordinator(instanceIdentifier) ;
@@ -147,7 +142,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
         {
             try
             {
-                coordinator.closed(closed, addressingProperties, arjunaContext) ;
+                coordinator.closed(closed, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -166,13 +161,13 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
     /**
      * Compensated.
      * @param compensated The compensated notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.compensated_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.compensated_1] - Unexpected exception thrown from compensated:
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.compensated_2 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.compensated_2] - Compensated called on unknown coordinator: {0}
      */
-    public void compensated(final NotificationType compensated, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void compensated(final NotificationType compensated, final MAP map, final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
         final ParticipantCompletionCoordinatorInboundEvents coordinator = getCoordinator(instanceIdentifier) ;
@@ -181,7 +176,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
         {
             try
             {
-                coordinator.compensated(compensated, addressingProperties, arjunaContext) ;
+                coordinator.compensated(compensated, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -200,14 +195,14 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
     /**
      * Completed.
      * @param completed The completed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_1] - Unexpected exception thrown from completed:
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_2 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_2] - Completed called on unknown coordinator: {0}
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_3 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_3] - Ignoring completed called on unidentified coordinator until recovery pass is complete: {0}
      */
-    public void completed(final NotificationType completed, final AddressingProperties addressingProperties,
+    public void completed(final NotificationType completed, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
@@ -217,7 +212,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
         {
             try
             {
-                coordinator.completed(completed, addressingProperties, arjunaContext) ;
+                coordinator.completed(completed, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -242,13 +237,13 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
     /**
      * Completed.
      * @param cannotComplete The cannot complete notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.cannotComplete_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.cannotComplete_1] - Unexpected exception thrown from cannot complete:
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.cannotComplete_2 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.cannotComplete_2] - Cannot complete called on unknown coordinator: {0}
      */
-    public void cannotComplete(final NotificationType cannotComplete, final AddressingProperties addressingProperties,
+    public void cannotComplete(final NotificationType cannotComplete, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
@@ -258,7 +253,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
         {
             try
             {
-                coordinator.cannotComplete(cannotComplete, addressingProperties, arjunaContext) ;
+                coordinator.cannotComplete(cannotComplete, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -273,20 +268,20 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.completed_2", new Object[] {instanceIdentifier}) ;
             }
 
-            sendNotCompleted(addressingProperties, arjunaContext) ;
+            sendNotCompleted(map, arjunaContext) ;
         }
     }
 
     /**
      * Exit.
      * @param exit The exit notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.exit_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.exit_1] - Unexpected exception thrown from exit:
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.exit_2 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.exit_2] - Exit called on unknown coordinator: {0}
      */
-    public void exit(final NotificationType exit, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void exit(final NotificationType exit, final MAP map, final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
         final ParticipantCompletionCoordinatorInboundEvents coordinator = getCoordinator(instanceIdentifier) ;
@@ -295,7 +290,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
         {
             try
             {
-                coordinator.exit(exit, addressingProperties, arjunaContext) ;
+                coordinator.exit(exit, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -309,21 +304,21 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.exit_2", new Object[] {instanceIdentifier}) ;
             }
-            sendExited(addressingProperties, arjunaContext) ;
+            sendExited(map, arjunaContext) ;
         }
     }
 
     /**
      * Fail.
      * @param fail The fail notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_1] - Unexpected exception thrown from fail:
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_2 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_2] - Fail called on unknown coordinator: {0}
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_3 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_3] - Ignoring fail called on unidentified coordinator until recovery pass is complete: {0}
      */
-    public void fail(final ExceptionType fail, final AddressingProperties addressingProperties,
+    public void fail(final ExceptionType fail, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
@@ -333,7 +328,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
         {
             try
             {
-                coordinator.fail(fail, addressingProperties, arjunaContext) ;
+                coordinator.fail(fail, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -348,7 +343,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
             {
                 WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.fail_2", new Object[] {instanceIdentifier}) ;
             }
-            sendFailed(addressingProperties, arjunaContext) ;
+            sendFailed(map, arjunaContext) ;
         } else {
             // we must delay responding until we can be sure there is no participant pending recovery
             if (WSTLogger.arjLoggerI18N.isDebugEnabled())
@@ -361,7 +356,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
     /**
      * Get Status.
      * @param getStatus The get status notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_1] - Unexpected exception thrown from getStatus:
@@ -369,7 +364,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_3 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_3] - Unexpected exception while sending InvalidStateFault to participant {0}
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_4 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_4] - GetStatus requested for unknown participant completion participant
      */
-    public void getStatus(final NotificationType getStatus, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void getStatus(final NotificationType getStatus, final MAP map, final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
         final ParticipantCompletionCoordinatorInboundEvents coordinator = getCoordinator(instanceIdentifier) ;
@@ -378,7 +373,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
         {
             try
             {
-                coordinator.getStatus(getStatus, addressingProperties, arjunaContext) ;
+                coordinator.getStatus(getStatus, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -398,13 +393,13 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
             // send an invalid state fault
 
             final String messageId = MessageId.getMessageId();
-            final AddressingProperties faultAddressingProperties = AddressingHelper.createFaultContext(addressingProperties, messageId) ;
+            final MAP faultMAP = AddressingHelper.createFaultContext(map, messageId) ;
             try
             {
                 final SoapFault11 soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, CoordinationConstants.WSCOOR_ERROR_CODE_INVALID_STATE_QNAME,
                         WSTLogger.log_mesg.getString("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_4")) ;
-                AddressingHelper.installNoneReplyTo(faultAddressingProperties);
-                SoapFaultClient.sendSoapFault(soapFault, faultAddressingProperties, getFaultAction()) ;
+                AddressingHelper.installNoneReplyTo(faultMAP);
+                SoapFaultClient.sendSoapFault(soapFault, faultMAP, getFaultAction()) ;
             }
             catch (final Throwable th)
             {
@@ -416,33 +411,21 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
         }
     }
 
-    private static AttributedURI faultAction = null;
-
-    private static synchronized AttributedURI getFaultAction()
+    private static String getFaultAction()
     {
-        if (faultAction == null) {
-            AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-
-            try {
-                faultAction = builder.newURI(CoordinationConstants.WSCOOR_ACTION_FAULT);
-            } catch (URISyntaxException e) {
-                // TODO log error here
-            }
-        }
-
-        return faultAction;
+        return CoordinationConstants.WSCOOR_ACTION_FAULT;
     }
 
     /**
      * Status.
      * @param status The status.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.status_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.status_1] - Unexpected exception thrown from status:
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.status_2 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.status_2] - Status called on unknown coordinator: {0}
      */
-    public void status(final StatusType status, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void status(final StatusType status, final MAP map, final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
         final ParticipantCompletionCoordinatorInboundEvents coordinator = getCoordinator(instanceIdentifier) ;
@@ -451,7 +434,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
         {
             try
             {
-                coordinator.status(status, addressingProperties, arjunaContext) ;
+                coordinator.status(status, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -470,13 +453,13 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
     /**
      * SOAP fault.
      * @param soapFault The SOAP fault.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.soapFault_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.soapFault_1] - Unexpected exception thrown from soapFault:
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.soapFault_2 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.soapFault_2] - SoapFault called on unknown coordinator: {0}
      */
-    public void soapFault(final SoapFault soapFault, final AddressingProperties addressingProperties,
+    public void soapFault(final SoapFault soapFault, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
@@ -486,7 +469,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
         {
             try
             {
-                coordinator.soapFault(soapFault, addressingProperties, arjunaContext) ;
+                coordinator.soapFault(soapFault, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -505,20 +488,20 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
     /**
      * Send an exited message.
      *
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendExited_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendExited_1] - Unexpected exception while sending Exited
      */
-    private void sendExited(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    private void sendExited(final MAP map, final ArjunaContext arjunaContext)
     {
         // KEV add check for recovery
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingProperties = AddressingHelper.createOneWayResponseContext(addressingProperties, messageId) ;
+        final MAP responseMAP = AddressingHelper.createOneWayResponseContext(map, messageId) ;
         try
         {
             // supply null endpoint so that addressing properties are used to deliver message
-            ParticipantCompletionParticipantClient.getClient().sendExited(null, responseAddressingProperties, arjunaContext.getInstanceIdentifier()) ;
+            ParticipantCompletionParticipantClient.getClient().sendExited(null, responseMAP, arjunaContext.getInstanceIdentifier()) ;
         }
         catch (final Throwable th)
         {
@@ -532,20 +515,20 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
     /**
      * Send a failed message.
      *
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendFailed_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendFailed_1] - Unexpected exception while sending Failed
      */
-    private void sendFailed(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    private void sendFailed(final MAP map, final ArjunaContext arjunaContext)
     {
         // KEV add check for recovery
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingProperties = AddressingHelper.createOneWayResponseContext(addressingProperties, messageId) ;
+        final MAP responseMAP = AddressingHelper.createOneWayResponseContext(map, messageId) ;
         try
         {
             // supply null endpoint so that addressing properties are used to deliver message
-            ParticipantCompletionParticipantClient.getClient().sendFailed(null, responseAddressingProperties, arjunaContext.getInstanceIdentifier()) ;
+            ParticipantCompletionParticipantClient.getClient().sendFailed(null, responseMAP, arjunaContext.getInstanceIdentifier()) ;
         }
         catch (final Throwable th)
         {
@@ -559,20 +542,20 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
     /**
      * Send a not completed message.
      *
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendNotCompleted_1 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.sendNotCompleted_1] - Unexpected exception while sending NotCompleted
      */
-    private void sendNotCompleted(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    private void sendNotCompleted(final MAP map, final ArjunaContext arjunaContext)
     {
         // KEV add check for recovery
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingProperties = AddressingHelper.createOneWayResponseContext(addressingProperties, messageId) ;
+        final MAP responseMAP = AddressingHelper.createOneWayResponseContext(map, messageId) ;
         try
         {
             // supply null endpoint so that addressing properties are used to deliver message
-            ParticipantCompletionParticipantClient.getClient().sendNotCompleted(null, responseAddressingProperties, arjunaContext.getInstanceIdentifier()); ;
+            ParticipantCompletionParticipantClient.getClient().sendNotCompleted(null, responseMAP, arjunaContext.getInstanceIdentifier()); ;
         }
         catch (final Throwable th)
         {

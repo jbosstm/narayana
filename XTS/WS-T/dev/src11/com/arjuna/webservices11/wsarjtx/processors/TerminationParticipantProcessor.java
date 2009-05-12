@@ -25,8 +25,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.base.processors.Callback;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.processor.BaseNotificationProcessor;
-
-import javax.xml.ws.addressing.AddressingProperties;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 
 /**
  * The Terminator Coordinator processor.
@@ -51,81 +50,81 @@ public class TerminationParticipantProcessor extends BaseNotificationProcessor
     /**
      * Handle a cancelled response.
      * @param cancelled The cancelled notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void handleCancelled(final NotificationType cancelled, final AddressingProperties addressingProperties,
+    public void handleCancelled(final NotificationType cancelled, final MAP map,
         final ArjunaContext arjunaContext)
     {
         handleCallbacks(new CallbackExecutorAdapter() {
             public void execute(final Callback callback) {
-                ((TerminationParticipantCallback)callback).cancelled(cancelled, addressingProperties, arjunaContext) ;
+                ((TerminationParticipantCallback)callback).cancelled(cancelled, map, arjunaContext) ;
             }
-        }, getIDs(addressingProperties, arjunaContext)) ;
+        }, getIDs(arjunaContext)) ;
     }
 
     /**
      * Handle a closed response.
      * @param closed The closed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void handleClosed(final NotificationType closed, final AddressingProperties addressingProperties,
+    public void handleClosed(final NotificationType closed, final MAP map,
         final ArjunaContext arjunaContext)
     {
         handleCallbacks(new CallbackExecutorAdapter() {
             public void execute(final Callback callback) {
-                ((TerminationParticipantCallback)callback).closed(closed, addressingProperties, arjunaContext) ;
+                ((TerminationParticipantCallback)callback).closed(closed, map, arjunaContext) ;
             }
-        }, getIDs(addressingProperties, arjunaContext)) ;
+        }, getIDs(arjunaContext)) ;
     }
 
     /**
      * Handle a completed response.
      * @param completed The completed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void handleCompleted(final NotificationType completed, final AddressingProperties addressingProperties,
+    public void handleCompleted(final NotificationType completed, final MAP map,
         final ArjunaContext arjunaContext)
     {
         handleCallbacks(new CallbackExecutorAdapter() {
             public void execute(final Callback callback) {
-                ((TerminationParticipantCallback)callback).completed(completed, addressingProperties, arjunaContext) ;
+                ((TerminationParticipantCallback)callback).completed(completed, map, arjunaContext) ;
             }
-        }, getIDs(addressingProperties, arjunaContext)) ;
+        }, getIDs(arjunaContext)) ;
     }
 
     /**
      * Handle a faulted response.
      * @param faulted The faulted notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void handleFaulted(final NotificationType faulted, final AddressingProperties addressingProperties,
+    public void handleFaulted(final NotificationType faulted, final MAP map,
         final ArjunaContext arjunaContext)
     {
         handleCallbacks(new CallbackExecutorAdapter() {
             public void execute(final Callback callback) {
-                ((TerminationParticipantCallback)callback).faulted(faulted, addressingProperties, arjunaContext) ;
+                ((TerminationParticipantCallback)callback).faulted(faulted, map, arjunaContext) ;
             }
-        }, getIDs(addressingProperties, arjunaContext)) ;
+        }, getIDs(arjunaContext)) ;
     }
 
     /**
      * Handle a SOAP fault response.
      * @param soapFault The SOAP fault.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void handleSoapFault(final SoapFault soapFault, final AddressingProperties addressingProperties,
+    public void handleSoapFault(final SoapFault soapFault, final MAP map,
         final ArjunaContext arjunaContext)
     {
         handleCallbacks(new CallbackExecutorAdapter() {
             public void execute(final Callback callback) {
-                ((TerminationParticipantCallback)callback).soapFault(soapFault, addressingProperties, arjunaContext) ;
+                ((TerminationParticipantCallback)callback).soapFault(soapFault, map, arjunaContext) ;
             }
-        }, getIDs(addressingProperties, arjunaContext)) ;
+        }, getIDs(arjunaContext)) ;
     }
 
     /**

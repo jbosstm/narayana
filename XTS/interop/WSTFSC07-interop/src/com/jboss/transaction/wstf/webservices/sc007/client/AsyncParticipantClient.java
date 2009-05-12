@@ -21,19 +21,16 @@
 package com.jboss.transaction.wstf.webservices.sc007.client;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URI;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.ServiceRegistry;
+import com.arjuna.webservices11.wsaddr.map.MAPEndpoint;
+import com.arjuna.webservices11.wsaddr.map.MAPBuilder;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.jboss.transaction.wstf.webservices.CoordinationContextManager;
 import com.jboss.transaction.wstf.webservices.sc007.InteropConstants;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import com.jboss.transaction.wstf.webservices.sc007.generated.ParticipantPortType;
-
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.EndpointReference;
-import javax.xml.ws.addressing.AddressingBuilder;
 
 /**
  * The participant client.
@@ -110,75 +107,59 @@ public class AsyncParticipantClient
     /**
      * The initiator URI for replies.
      */
-    private EndpointReference initiator = null;
+    private MAPEndpoint initiator = null;
 
     /**
      * Construct the interop synch client.
      */
     private AsyncParticipantClient()
     {
-        //final HandlerRegistry handlerRegistry = new HandlerRegistry() ;
-
-        // Add WS-Addressing
-        //AddressingPolicy.register(handlerRegistry) ;
-        // Add coordination context
-        //CoordinationContextPolicy.register(handlerRegistry) ;
-        // Add client policies
-        //ClientPolicy.register(handlerRegistry) ;
-
-        //soapService = new SoapService(handlerRegistry) ;
-        AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
+        MAPBuilder builder = MAPBuilder.getBuilder();
         final String initiatorURIString = ServiceRegistry.getRegistry().getServiceURI(InteropConstants.SERVICE_INITIATOR) ;
-        URI uri = null;
-        try {
-            uri = new URI(initiatorURIString);
-            initiator = builder.newEndpointReference(uri);
-        } catch (URISyntaxException e) {
-            // TODO log error here
-        }
+        initiator = builder.newEndpoint(initiatorURIString);
     }
     /**
      * Send a completion commit request.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @param coordinatorURI The coordinator URI.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendCompletionCommit(final AddressingProperties addressingProperties, final String coordinatorURI)
+    public void sendCompletionCommit(final MAP map, final String coordinatorURI)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = InteropClient.getParticipantPort(addressingProperties, completionCommitAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = InteropClient.getParticipantPort(map, completionCommitAction);
         port.completionCommit(coordinatorURI);
     }
 
     /**
      * Send a completion rollback request.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @param coordinatorURI The coordinator URI.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendCompletionRollback(final AddressingProperties addressingProperties, final String coordinatorURI)
+    public void sendCompletionRollback(final MAP map, final String coordinatorURI)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = InteropClient.getParticipantPort(addressingProperties, completionRollbackAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = InteropClient.getParticipantPort(map, completionRollbackAction);
         port.completionRollback(coordinatorURI);
     }
 
     /**
      * Send a commit request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendCommit(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendCommit(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = InteropClient.getParticipantPort(addressingProperties, commitAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = InteropClient.getParticipantPort(map, commitAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try
         {
@@ -193,15 +174,15 @@ public class AsyncParticipantClient
     /**
      * Send a rollback request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendRollback(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendRollback(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = InteropClient.getParticipantPort(addressingProperties, rollbackAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = InteropClient.getParticipantPort(map, rollbackAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try
         {
@@ -216,15 +197,15 @@ public class AsyncParticipantClient
     /**
      * Send a phase2Rollback request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendPhase2Rollback(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendPhase2Rollback(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = InteropClient.getParticipantPort(addressingProperties, phase2RollbackAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = InteropClient.getParticipantPort(map, phase2RollbackAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try
         {
@@ -239,15 +220,15 @@ public class AsyncParticipantClient
     /**
      * Send a readonly request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendReadonly(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendReadonly(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = InteropClient.getParticipantPort(addressingProperties, readonlyAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = InteropClient.getParticipantPort(map, readonlyAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try
         {
@@ -262,15 +243,15 @@ public class AsyncParticipantClient
     /**
      * Send a volatileAndDurable request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendVolatileAndDurable(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendVolatileAndDurable(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = InteropClient.getParticipantPort(addressingProperties, volatileAndDurableAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = InteropClient.getParticipantPort(map, volatileAndDurableAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try
         {
@@ -285,15 +266,15 @@ public class AsyncParticipantClient
     /**
      * Send an earlyReadonly request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendEarlyReadonly(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendEarlyReadonly(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = InteropClient.getParticipantPort(addressingProperties, earlyReadonlyAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = InteropClient.getParticipantPort(map, earlyReadonlyAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try
         {
@@ -308,15 +289,15 @@ public class AsyncParticipantClient
     /**
      * Send a earlyAborted request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendEarlyAborted(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendEarlyAborted(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = InteropClient.getParticipantPort(addressingProperties, earlyAbortedAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = InteropClient.getParticipantPort(map, earlyAbortedAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try
         {
@@ -331,15 +312,15 @@ public class AsyncParticipantClient
     /**
      * Send a replayCommit request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendReplayCommit(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendReplayCommit(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = InteropClient.getParticipantPort(addressingProperties, replayCommitAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = InteropClient.getParticipantPort(map, replayCommitAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try
         {
@@ -354,15 +335,15 @@ public class AsyncParticipantClient
     /**
      * Send a retryPreparedCommit request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendRetryPreparedCommit(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendRetryPreparedCommit(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = InteropClient.getParticipantPort(addressingProperties, retryPreparedCommitAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = InteropClient.getParticipantPort(map, retryPreparedCommitAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try
         {
@@ -377,15 +358,15 @@ public class AsyncParticipantClient
     /**
      * Send a retryPreparedAbort request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendRetryPreparedAbort(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendRetryPreparedAbort(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = InteropClient.getParticipantPort(addressingProperties, retryPreparedAbortAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = InteropClient.getParticipantPort(map, retryPreparedAbortAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try
         {
@@ -400,14 +381,14 @@ public class AsyncParticipantClient
     /**
      * Send a retryCommit request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws IOException for any transport errors.
      */
-    public void sendRetryCommit(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendRetryCommit(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = InteropClient.getParticipantPort(addressingProperties, retryCommitAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = InteropClient.getParticipantPort(map, retryCommitAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try
         {
@@ -422,15 +403,15 @@ public class AsyncParticipantClient
     /**
      * Send a preparedAfterTimeout request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendPreparedAfterTimeout(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendPreparedAfterTimeout(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = InteropClient.getParticipantPort(addressingProperties, preparedAfterTimeoutAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = InteropClient.getParticipantPort(map, preparedAfterTimeoutAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try
         {
@@ -445,15 +426,15 @@ public class AsyncParticipantClient
     /**
      * Send a lostCommitted request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendLostCommitted(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendLostCommitted(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = InteropClient.getParticipantPort(addressingProperties, lostCommittedAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = InteropClient.getParticipantPort(map, lostCommittedAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try
         {

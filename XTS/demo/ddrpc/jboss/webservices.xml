@@ -38,7 +38,7 @@
 			</service-impl-bean>
 			<handler>
 				<handler-name>serverHandler</handler-name>
-				<handler-class>com.arjuna.mw.wst.service.JaxRPCHeaderContextProcessor</handler-class>
+				<handler-class>com.arjuna.mw.wst.server.JaxRPCHeaderContextProcessor</handler-class>
 			</handler>
 		</port-component>
 	</webservice-description>
@@ -57,7 +57,7 @@
 			</service-impl-bean>
 			<handler>
 				<handler-name>serverHandler</handler-name>
-				<handler-class>com.arjuna.mw.wst.service.JaxRPCHeaderContextProcessor</handler-class>
+				<handler-class>com.arjuna.mw.wst.server.JaxRPCHeaderContextProcessor</handler-class>
 			</handler>
 		</port-component>
 	</webservice-description>
@@ -76,7 +76,7 @@
 			</service-impl-bean>
 			<handler>
 				<handler-name>serverHandler</handler-name>
-				<handler-class>com.arjuna.mw.wst.service.JaxRPCHeaderContextProcessor</handler-class>
+				<handler-class>com.arjuna.mw.wst.server.JaxRPCHeaderContextProcessor</handler-class>
 			</handler>
 		</port-component>
 	</webservice-description>
@@ -95,7 +95,7 @@
 			</service-impl-bean>
 			<handler>
 				<handler-name>serverHandler</handler-name>
-				<handler-class>com.arjuna.mw.wst.service.JaxRPCHeaderContextProcessor</handler-class>
+				<handler-class>com.arjuna.mw.wst.server.JaxRPCHeaderContextProcessor</handler-class>
 			</handler>
 		</port-component>
 	</webservice-description>
@@ -114,7 +114,7 @@
 			</service-impl-bean>
 			<handler>
 				<handler-name>serverHandler</handler-name>
-				<handler-class>com.arjuna.mw.wst.service.JaxRPCHeaderContextProcessor</handler-class>
+				<handler-class>com.arjuna.mw.wst.server.JaxRPCHeaderContextProcessor</handler-class>
 			</handler>
 		</port-component>
 	</webservice-description>
@@ -133,7 +133,7 @@
 			</service-impl-bean>
 			<handler>
 				<handler-name>serverHandler</handler-name>
-				<handler-class>com.arjuna.mw.wst.service.JaxRPCHeaderContextProcessor</handler-class>
+				<handler-class>com.arjuna.mw.wst.server.JaxRPCHeaderContextProcessor</handler-class>
 			</handler>
 		</port-component>
 	</webservice-description>

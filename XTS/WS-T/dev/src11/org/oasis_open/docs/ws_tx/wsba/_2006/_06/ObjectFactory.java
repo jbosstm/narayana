@@ -49,22 +49,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link StatusType }
-     * 
-     */
-    public StatusType createStatusType() {
-        return new StatusType();
-    }
-
-    /**
-     * Create an instance of {@link BAAtomicOutcomeAssertion }
-     * 
-     */
-    public BAAtomicOutcomeAssertion createBAAtomicOutcomeAssertion() {
-        return new BAAtomicOutcomeAssertion();
-    }
-
-    /**
      * Create an instance of {@link ExceptionType }
      * 
      */
@@ -81,11 +65,27 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link StatusType }
+     * 
+     */
+    public StatusType createStatusType() {
+        return new StatusType();
+    }
+
+    /**
      * Create an instance of {@link NotificationType }
      * 
      */
     public NotificationType createNotificationType() {
         return new NotificationType();
+    }
+
+    /**
+     * Create an instance of {@link BAAtomicOutcomeAssertion }
+     * 
+     */
+    public BAAtomicOutcomeAssertion createBAAtomicOutcomeAssertion() {
+        return new BAAtomicOutcomeAssertion();
     }
 
     /**

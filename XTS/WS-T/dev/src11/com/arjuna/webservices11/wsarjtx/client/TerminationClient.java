@@ -1,14 +1,11 @@
 package com.arjuna.webservices11.wsarjtx.client;
 
 import com.arjuna.schemas.ws._2005._10.wsarjtx.*;
+import com.arjuna.webservices11.wsaddr.map.MAP;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 
 import javax.xml.ws.BindingProvider;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.JAXWSAConstants;
 import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.handler.Handler;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,28 +39,25 @@ public class TerminationClient
         return terminationCoordinatorService.get();
     }
 
-    public static TerminationParticipantPortType getTerminationParticipantPort(AddressingProperties addressingProperties)
+    public static TerminationParticipantPortType getTerminationParticipantPort(MAP map)
     {
         TerminationParticipantService service = getTerminationParticipantService();
         TerminationParticipantPortType port = service.getPort(TerminationParticipantPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
         Map<String, Object> requestContext = bindingProvider.getRequestContext();
-	    requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES, addressingProperties);
-	    // jbossws should do this for us . . .
-	    requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES_OUTBOUND, addressingProperties);
+        AddressingHelper.configureRequestContext(requestContext, map);
 
         return port;
     }
 
-    public static TerminationCoordinatorPortType getRegistrationPort(AddressingProperties addressingProperties)
+    public static TerminationCoordinatorPortType getRegistrationPort(MAP map)
     {
         TerminationCoordinatorService service = getTerminationCoordinatorService();
         TerminationCoordinatorPortType port = service.getPort(TerminationCoordinatorPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
         Map<String, Object> requestContext = bindingProvider.getRequestContext();
-	    requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES, addressingProperties);
-	    // jbossws should do this for us . . .
-	    requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES_OUTBOUND, addressingProperties);
+        AddressingHelper.configureRequestContext(requestContext, map);
+        AddressingHelper.configureRequestContext(requestContext, map);
 
         return port;
     }

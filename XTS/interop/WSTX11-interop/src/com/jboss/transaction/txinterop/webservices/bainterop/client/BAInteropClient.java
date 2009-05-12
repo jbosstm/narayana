@@ -20,24 +20,21 @@
  */
 package com.jboss.transaction.txinterop.webservices.bainterop.client;
 
-import org.jboss.ws.extensions.addressing.jaxws.WSAddressingClientHandler;
-
-import javax.xml.ws.addressing.AddressingBuilder;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.AttributedURI;
-import javax.xml.ws.addressing.JAXWSAConstants;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.handler.Handler;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-import java.net.URISyntaxException;
 
 import com.jboss.transaction.txinterop.webservices.bainterop.generated.InitiatorService;
 import com.jboss.transaction.txinterop.webservices.bainterop.generated.ParticipantService;
 import com.jboss.transaction.txinterop.webservices.bainterop.generated.InitiatorPortType;
 import com.jboss.transaction.txinterop.webservices.bainterop.generated.ParticipantPortType;
 import com.jboss.transaction.txinterop.webservices.handlers.CoordinationContextHandler;
+import com.arjuna.webservices11.wsaddr.map.MAPBuilder;
+import com.arjuna.webservices11.wsaddr.map.MAP;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 
 /**
  * Created by IntelliJ IDEA.
@@ -61,7 +58,7 @@ public class BAInteropClient {
     /**
      *  builder used to construct addressing info for calls
      */
-    private static AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
+    private static MAPBuilder builder = MAPBuilder.getBuilder();
 
     /**
      * fetch a coordinator activation service unique to the current thread
@@ -87,66 +84,49 @@ public class BAInteropClient {
         return participantService.get();
     }
 
-    public static InitiatorPortType getInitiatorPort(AddressingProperties addressingProperties,
-                                                       String action)
+    public static InitiatorPortType getInitiatorPort(MAP map, String action)
     {
-        // TODO - we need the 2.1 verison of Service so we can specify that we want to use the WS Addressing feature
         InitiatorService service = getInitiatorService();
-        InitiatorPortType port = service.getPort(InitiatorPortType.class);
+        InitiatorPortType port = service.getPort(InitiatorPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
-        AttributedURI toUri = addressingProperties.getTo();
-        List<Handler> customHandlerChain = new ArrayList<Handler>();
+        String to = map.getTo();
         /*
-         * we have to add the JaxWS WSAddressingClientHandler because we cannot specify the WSAddressing feature
-         */
+         * we no longer have to add the JaxWS WSAddressingClientHandler because we can specify the WSAddressing feature
+        List<Handler> customHandlerChain = new ArrayList<Handler>();
 		customHandlerChain.add(new WSAddressingClientHandler());
 		bindingProvider.getBinding().setHandlerChain(customHandlerChain);
-
+         */
         Map<String, Object> requestContext = bindingProvider.getRequestContext();
-        requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES, addressingProperties);
-	    // jbossws should do this for us . . .
-	    requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES_OUTBOUND, addressingProperties);
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, toUri.getURI().toString());
-        try {
-            addressingProperties.setAction(builder.newURI(action));
-        } catch (URISyntaxException use) {
-            // TODO log this error
-        }
+
+        map.setAction(action);
+        AddressingHelper.configureRequestContext(requestContext, map, to, action);
 
         return port;
     }
 
     // don't think we ever need this as we get a registration port from the endpoint ref returned by
     // the activation port request
-    public static ParticipantPortType getParticipantPort(AddressingProperties addressingProperties, String action)
+    public static ParticipantPortType getParticipantPort(MAP map, String action)
     {
-        // TODO - we need the 2.1 verison of Service so we can specify that we want to use the WS Addressing feature
         ParticipantService service = getParticipantService();
-        ParticipantPortType port = service.getPort(ParticipantPortType.class);
+        ParticipantPortType port = service.getPort(ParticipantPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
-        AttributedURI toUri = addressingProperties.getTo();
+        String to = map.getTo();
         List<Handler> customHandlerChain = new ArrayList<Handler>();
         /*
-         * we have to add the JaxWS WSAddressingClientHandler because we cannot specify the WSAddressing feature
-         */
+         * we no longer have to add the JaxWS WSAddressingClientHandler because we can specify the WSAddressing feature
 		customHandlerChain.add(new WSAddressingClientHandler());
+         */
         /*
          * we need to add the coordination context handler in the case where we are passing a
          * coordination context via a header element
          */
         customHandlerChain.add(new CoordinationContextHandler());
 		bindingProvider.getBinding().setHandlerChain(customHandlerChain);
-
         Map<String, Object> requestContext = bindingProvider.getRequestContext();
-        requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES, addressingProperties);
-	    // jbossws should do this for us . . .
-	    requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES_OUTBOUND, addressingProperties);
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, toUri.getURI().toString());
-        try {
-            addressingProperties.setAction(builder.newURI(action));
-        } catch (URISyntaxException use) {
-            // TODO log this error
-        }
+
+        map.setAction(action);
+        AddressingHelper.configureRequestContext(requestContext, map, to, action);
 
         return port;
     }

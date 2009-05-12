@@ -3,13 +3,12 @@ package com.arjuna.wst11.stub;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.client.CompletionCoordinatorClient;
 import com.arjuna.webservices11.wsat.processors.CompletionInitiatorCallback;
 import com.arjuna.webservices11.wsat.processors.CompletionInitiatorProcessor;
-import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
-import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
@@ -17,7 +16,6 @@ import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.CompletionCoordinatorParticipant;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
-import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class CompletionStub implements
@@ -36,14 +34,14 @@ public class CompletionStub implements
 	public void commit () throws TransactionRolledBackException,
             UnknownTransactionException, SystemException
     {
-        final AddressingProperties addressingProperties = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
+        final MAP map = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
 
         final CompletionStub.RequestCallback callback = new CompletionStub.RequestCallback() ;
         final CompletionInitiatorProcessor completionInitiator = CompletionInitiatorProcessor.getProcessor() ;
         completionInitiator.registerCallback(_id, callback) ;
         try
         {
-            CompletionCoordinatorClient.getClient().sendCommit(_completionCoordinator, addressingProperties, new InstanceIdentifier(_id)) ;
+            CompletionCoordinatorClient.getClient().sendCommit(_completionCoordinator, map, new InstanceIdentifier(_id)) ;
             callback.waitUntilTriggered() ;
         }
         catch (final Throwable th)
@@ -78,14 +76,14 @@ public class CompletionStub implements
 
 	public void rollback () throws UnknownTransactionException, SystemException
 	{
-        final AddressingProperties addressingProperties = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
+        final MAP map = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
 
         final CompletionStub.RequestCallback callback = new CompletionStub.RequestCallback() ;
         final CompletionInitiatorProcessor completionInitiator = CompletionInitiatorProcessor.getProcessor() ;
         completionInitiator.registerCallback(_id, callback) ;
         try
         {
-            CompletionCoordinatorClient.getClient().sendRollback(_completionCoordinator, addressingProperties, new InstanceIdentifier(_id)) ;
+            CompletionCoordinatorClient.getClient().sendRollback(_completionCoordinator, map, new InstanceIdentifier(_id)) ;
             callback.waitUntilTriggered() ;
         }
         catch (final Throwable th)
@@ -119,7 +117,7 @@ public class CompletionStub implements
         /**
          * The addressing context.
          */
-        private AddressingProperties addressingProperties ;
+        private MAP map ;
         /**
          * The arjuna context.
          */
@@ -141,9 +139,9 @@ public class CompletionStub implements
          * Get the addressing context.
          * @return The addressing context.
          */
-        AddressingProperties getAddressingProperties()
+        MAP getMAP()
         {
-            return addressingProperties ;
+            return map ;
         }
 
         /**
@@ -185,42 +183,42 @@ public class CompletionStub implements
         /**
          * A aborted response.
          * @param aborted The aborted notification.
-         * @param addressingProperties The addressing context.
+         * @param map The addressing context.
          * @param arjunaContext The arjuna context.
          */
-        public void aborted(final Notification aborted, final AddressingProperties addressingProperties,
+        public void aborted(final Notification aborted, final MAP map,
             final ArjunaContext arjunaContext)
         {
             this.aborted = true ;
-            this.addressingProperties = addressingProperties ;
+            this.map = map ;
             this.arjunaContext = arjunaContext ;
         }
 
         /**
          * An committed response.
          * @param committed The committed notification.
-         * @param addressingProperties The addressing context.
+         * @param map The addressing context.
          * @param arjunaContext The arjuna context.
          */
-        public void committed(final Notification committed, final AddressingProperties addressingProperties,
+        public void committed(final Notification committed, final MAP map,
             final ArjunaContext arjunaContext)
         {
             this.committed  = true ;
-            this.addressingProperties = addressingProperties ;
+            this.map = map ;
             this.arjunaContext = arjunaContext ;
         }
 
         /**
          * A SOAP fault response.
          * @param soapFault The SOAP fault.
-         * @param addressingProperties The addressing context.
+         * @param map The addressing context.
          * @param arjunaContext The arjuna context.
          */
-        public void soapFault(final SoapFault soapFault, final AddressingProperties addressingProperties,
+        public void soapFault(final SoapFault soapFault, final MAP map,
             final ArjunaContext arjunaContext)
         {
             this.soapFault = soapFault ;
-            this.addressingProperties = addressingProperties ;
+            this.map = map ;
             this.arjunaContext = arjunaContext ;
         }
     }

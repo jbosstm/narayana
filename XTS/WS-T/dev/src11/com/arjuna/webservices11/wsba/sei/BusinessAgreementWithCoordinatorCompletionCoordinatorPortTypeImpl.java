@@ -6,6 +6,8 @@ import com.arjuna.services.framework.task.TaskManager;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionCoordinatorProcessor;
 import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wsaddr.map.MAP;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices.SoapFault;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.BusinessAgreementWithCoordinatorCompletionCoordinatorPortType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.ExceptionType;
@@ -18,8 +20,6 @@ import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.JAXWSAConstants;
 import javax.xml.ws.handler.MessageContext;
 
 
@@ -35,7 +35,7 @@ import javax.xml.ws.handler.MessageContext;
         portName = "BusinessAgreementWithCoordinatorCompletionCoordinatorPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-@HandlerChain(file="handlers.xml")
+@HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
 public class BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl implements BusinessAgreementWithCoordinatorCompletionCoordinatorPortType
 {
@@ -54,13 +54,12 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl i
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType completed = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorCompletionCoordinatorProcessor.getProcessor().completed(completed, inboundAddressProperties, arjunaContext) ;
+                CoordinatorCompletionCoordinatorProcessor.getProcessor().completed(completed, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -77,13 +76,12 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl i
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final ExceptionType fail = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorCompletionCoordinatorProcessor.getProcessor().fail(fail, inboundAddressProperties, arjunaContext) ;
+                CoordinatorCompletionCoordinatorProcessor.getProcessor().fail(fail, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -100,13 +98,12 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl i
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType compensated = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorCompletionCoordinatorProcessor.getProcessor().compensated(compensated, inboundAddressProperties, arjunaContext) ;
+                CoordinatorCompletionCoordinatorProcessor.getProcessor().compensated(compensated, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -123,13 +120,12 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl i
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType closed = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorCompletionCoordinatorProcessor.getProcessor().closed(closed, inboundAddressProperties, arjunaContext) ;
+                CoordinatorCompletionCoordinatorProcessor.getProcessor().closed(closed, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -146,13 +142,12 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl i
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType canceled = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorCompletionCoordinatorProcessor.getProcessor().cancelled(canceled, inboundAddressProperties, arjunaContext) ;
+                CoordinatorCompletionCoordinatorProcessor.getProcessor().cancelled(canceled, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -169,13 +164,12 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl i
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType exit = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorCompletionCoordinatorProcessor.getProcessor().exit(exit, inboundAddressProperties, arjunaContext) ;
+                CoordinatorCompletionCoordinatorProcessor.getProcessor().exit(exit, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -192,13 +186,12 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl i
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType cannotComplete = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorCompletionCoordinatorProcessor.getProcessor().cannotComplete(cannotComplete, inboundAddressProperties, arjunaContext) ;
+                CoordinatorCompletionCoordinatorProcessor.getProcessor().cannotComplete(cannotComplete, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -215,13 +208,12 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl i
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType getStatus = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorCompletionCoordinatorProcessor.getProcessor().getStatus(getStatus, inboundAddressProperties, arjunaContext) ;
+                CoordinatorCompletionCoordinatorProcessor.getProcessor().getStatus(getStatus, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -238,13 +230,12 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl i
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final StatusType status = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorCompletionCoordinatorProcessor.getProcessor().status(status, inboundAddressProperties, arjunaContext) ;
+                CoordinatorCompletionCoordinatorProcessor.getProcessor().status(status, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -256,13 +247,13 @@ public class BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl i
             Fault fault)
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        final AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
         final SoapFault soapFault = SoapFault11.fromFault(fault);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorCompletionCoordinatorProcessor.getProcessor().soapFault(soapFault, inboundAddressProperties, arjunaContext); ;
+                CoordinatorCompletionCoordinatorProcessor.getProcessor().soapFault(soapFault, inboundMap, arjunaContext); ;
             }
         }) ;
     }

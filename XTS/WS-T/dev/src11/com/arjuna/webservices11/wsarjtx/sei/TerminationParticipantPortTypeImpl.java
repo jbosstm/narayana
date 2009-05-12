@@ -10,6 +10,8 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wsaddr.map.MAP;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarjtx.processors.TerminationParticipantProcessor;
 
@@ -19,8 +21,6 @@ import javax.jws.soap.SOAPBinding;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.WebServiceException;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.JAXWSAConstants;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.Addressing;
 
@@ -37,7 +37,7 @@ import javax.xml.ws.soap.Addressing;
         portName = "TerminationParticipantPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-@HandlerChain(file="handlers.xml")
+@HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
 public class TerminationParticipantPortTypeImpl implements TerminationParticipantPortType
 {
@@ -57,13 +57,12 @@ public class TerminationParticipantPortTypeImpl implements TerminationParticipan
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType completed = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                TerminationParticipantProcessor.getProcessor().handleCompleted(completed, inboundAddressProperties, arjunaContext);
+                TerminationParticipantProcessor.getProcessor().handleCompleted(completed, inboundMap, arjunaContext);
             }
         }) ;
     }
@@ -80,13 +79,12 @@ public class TerminationParticipantPortTypeImpl implements TerminationParticipan
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType closed = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                TerminationParticipantProcessor.getProcessor().handleClosed(closed, inboundAddressProperties, arjunaContext);
+                TerminationParticipantProcessor.getProcessor().handleClosed(closed, inboundMap, arjunaContext);
             }
         }) ;
     }
@@ -103,13 +101,12 @@ public class TerminationParticipantPortTypeImpl implements TerminationParticipan
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType cancelled = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                TerminationParticipantProcessor.getProcessor().handleCancelled(cancelled, inboundAddressProperties, arjunaContext);
+                TerminationParticipantProcessor.getProcessor().handleCancelled(cancelled, inboundMap, arjunaContext);
             }
         }) ;
     }
@@ -126,13 +123,12 @@ public class TerminationParticipantPortTypeImpl implements TerminationParticipan
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType faulted = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                TerminationParticipantProcessor.getProcessor().handleFaulted(faulted, inboundAddressProperties, arjunaContext);
+                TerminationParticipantProcessor.getProcessor().handleFaulted(faulted, inboundMap, arjunaContext);
             }
         }) ;
     }
@@ -154,8 +150,7 @@ public class TerminationParticipantPortTypeImpl implements TerminationParticipan
         String reason = parameters.getReason();
         QName subcode = parameters.getSubCode();
         final SoapFault soapFault;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
         try {
             SoapFaultType soapFaultType = SoapFaultType.toState(soapFaultTypeName);
@@ -167,7 +162,7 @@ public class TerminationParticipantPortTypeImpl implements TerminationParticipan
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                TerminationParticipantProcessor.getProcessor().handleSoapFault(soapFault, inboundAddressProperties, arjunaContext);
+                TerminationParticipantProcessor.getProcessor().handleSoapFault(soapFault, inboundMap, arjunaContext);
             }
         }) ;
     }

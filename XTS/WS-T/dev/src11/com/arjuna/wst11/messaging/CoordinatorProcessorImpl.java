@@ -5,19 +5,18 @@ import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.CoordinatorInboundEvents;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsat.client.ParticipantClient;
 import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
-import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.wsc11.messaging.MessageId;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
 
-import javax.xml.ws.addressing.AddressingProperties;
 
 /**
  * The Coordinator processor.
@@ -73,13 +72,13 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
     /**
      * Aborted.
      * @param aborted The aborted notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.aborted_1 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.aborted_1] - Unexpected exception thrown from aborted:
      * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.aborted_2 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.aborted_2] - Aborted called on unknown coordinator: {0}
      */
-    public void aborted(final Notification aborted, final AddressingProperties addressingProperties,
+    public void aborted(final Notification aborted, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
@@ -89,7 +88,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         {
             try
             {
-                coordinator.aborted(aborted, addressingProperties, arjunaContext) ;
+                coordinator.aborted(aborted, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -108,13 +107,13 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
     /**
      * Committed.
      * @param committed The committed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.committed_1 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.committed_1] - Unexpected exception thrown from committed:
      * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.committed_2 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.committed_2] - Committed called on unknown coordinator: {0}
      */
-    public void committed(final Notification committed, final AddressingProperties addressingProperties,
+    public void committed(final Notification committed, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
@@ -124,7 +123,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         {
             try
             {
-                coordinator.committed(committed, addressingProperties, arjunaContext) ;
+                coordinator.committed(committed, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -143,14 +142,14 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
     /**
      * Prepared.
      * @param prepared The prepared notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.prepared_1 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.prepared_1] - Unexpected exception thrown from prepared:
      * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.prepared_2 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.prepared_2] - Prepared called on unknown coordinator: {0}
      * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.prepared_3 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.prepared_3] - Ignoring prepared called on unidentified coordinator until recovery pass is complete: {0}
      */
-    public void prepared(final Notification prepared, final AddressingProperties addressingProperties,
+    public void prepared(final Notification prepared, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
@@ -160,7 +159,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         {
             try
             {
-                coordinator.prepared(prepared, addressingProperties, arjunaContext) ;
+                coordinator.prepared(prepared, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -180,11 +179,11 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
             final String identifierValue = instanceIdentifier.getInstanceIdentifier() ;
             if ((identifierValue != null) && (identifierValue.length() > 0) && (identifierValue.charAt(0) == 'D'))
             {
-        	    sendRollback(addressingProperties, arjunaContext) ;
+        	    sendRollback(map, arjunaContext) ;
             }
             else
             {
-                sendUnknownTransaction(addressingProperties, arjunaContext) ;
+                sendUnknownTransaction(map, arjunaContext) ;
             }
         }
         else
@@ -202,13 +201,13 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
     /**
      * Read only.
      * @param readOnly The read only notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.readOnly_1 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.readOnly_1] - Unexpected exception thrown from readOnly:
      * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.readOnly_2 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.readOnly_2] - ReadOnly called on unknown coordinator: {0}
      */
-    public void readOnly(final Notification readOnly, final AddressingProperties addressingProperties,
+    public void readOnly(final Notification readOnly, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
@@ -218,7 +217,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         {
             try
             {
-                coordinator.readOnly(readOnly, addressingProperties, arjunaContext) ;
+                coordinator.readOnly(readOnly, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -237,13 +236,13 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
     /**
      * SOAP Fault.
      * @param fault The SOAP fault notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.soapFault_1 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.soapFault_1] - Unexpected exception thrown from soapFault:
      * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.soapFault_2 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.soapFault_2] - SoapFault called on unknown coordinator: {0}
      */
-    public void soapFault(final SoapFault fault, final AddressingProperties addressingProperties,
+    public void soapFault(final SoapFault fault, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
@@ -253,7 +252,7 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
         {
             try
             {
-                coordinator.soapFault(fault, addressingProperties, arjunaContext) ;
+                coordinator.soapFault(fault, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -275,16 +274,16 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
     /**
      * Send an unknown transaction fault.
      *
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_1 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_1] - Unknown Transaction.
      * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_2 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendUnknownTransaction_2] - Unexpecting exception while sending InvalidState
      */
-    private void sendUnknownTransaction(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    private void sendUnknownTransaction(final MAP map, final ArjunaContext arjunaContext)
     {
         // KEV add check for recovery
-        final AddressingProperties faultAddressingContext = AddressingHelper.createFaultContext(addressingProperties, MessageId.getMessageId()) ;
+        final MAP faultAddressingContext = AddressingHelper.createFaultContext(map, MessageId.getMessageId()) ;
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
 
         try {
@@ -302,16 +301,16 @@ public class CoordinatorProcessorImpl extends CoordinatorProcessor
     /**
      * Send a rollback message.
      *
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendRollback_1 [com.arjuna.wst11.messaging.CoordinatorProcessorImpl.sendRollback_1] - Unexpected exception while sending Rollback
      */
-    private void sendRollback(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    private void sendRollback(final MAP map, final ArjunaContext arjunaContext)
     {
         // KEV add check for recovery
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingContext = AddressingHelper.createOneWayResponseContext(addressingProperties, messageId) ;
+        final MAP responseAddressingContext = AddressingHelper.createOneWayResponseContext(map, messageId) ;
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
         try
         {

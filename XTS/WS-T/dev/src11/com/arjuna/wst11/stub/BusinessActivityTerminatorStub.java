@@ -32,14 +32,13 @@ import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices11.SoapFault11;
-import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsarjtx.client.TerminationCoordinatorClient;
 import com.arjuna.webservices11.wsarjtx.processors.TerminationParticipantCallback;
 import com.arjuna.webservices11.wsarjtx.processors.TerminationParticipantProcessor;
-import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.wst.FaultedException;
 import com.arjuna.wst.SystemException;
@@ -48,7 +47,6 @@ import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst11.BusinessActivityTerminator;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class BusinessActivityTerminatorStub implements BusinessActivityTerminator
@@ -66,14 +64,14 @@ public class BusinessActivityTerminatorStub implements BusinessActivityTerminato
     public void close ()
         throws TransactionRolledBackException, UnknownTransactionException, SystemException
     {
-        final AddressingProperties addressingProperties = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
+        final MAP map = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
 
         final RequestCallback callback = new RequestCallback() ;
         final TerminationParticipantProcessor terminationParticipantProcessor = TerminationParticipantProcessor.getProcessor() ;
         terminationParticipantProcessor.registerCallback(_id, callback) ;
         try
         {
-            TerminationCoordinatorClient.getClient().sendClose(_terminationCoordinator, addressingProperties, new InstanceIdentifier(_id)) ;
+            TerminationCoordinatorClient.getClient().sendClose(_terminationCoordinator, map, new InstanceIdentifier(_id)) ;
             callback.waitUntilTriggered() ;
         }
         catch (final Throwable th)
@@ -111,14 +109,14 @@ public class BusinessActivityTerminatorStub implements BusinessActivityTerminato
     public void cancel ()
         throws FaultedException, UnknownTransactionException, SystemException
     {
-        final AddressingProperties addressingProperties = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
+        final MAP map = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
 
         final RequestCallback callback = new RequestCallback() ;
         final TerminationParticipantProcessor terminationParticipantProcessor = TerminationParticipantProcessor.getProcessor() ;
         terminationParticipantProcessor.registerCallback(_id, callback) ;
         try
         {
-            TerminationCoordinatorClient.getClient().sendCancel(_terminationCoordinator, addressingProperties, new InstanceIdentifier(_id)) ;
+            TerminationCoordinatorClient.getClient().sendCancel(_terminationCoordinator, map, new InstanceIdentifier(_id)) ;
             callback.waitUntilTriggered() ;
         }
         catch (final Throwable th)
@@ -156,14 +154,14 @@ public class BusinessActivityTerminatorStub implements BusinessActivityTerminato
     public void complete ()
         throws FaultedException, UnknownTransactionException, SystemException
     {
-        final AddressingProperties addressingProperties = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
+        final MAP map = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
 
         final RequestCallback callback = new RequestCallback() ;
         final TerminationParticipantProcessor terminationParticipantProcessor = TerminationParticipantProcessor.getProcessor() ;
         terminationParticipantProcessor.registerCallback(_id, callback) ;
         try
         {
-            TerminationCoordinatorClient.getClient().sendComplete(_terminationCoordinator, addressingProperties, new InstanceIdentifier(_id)) ;
+            TerminationCoordinatorClient.getClient().sendComplete(_terminationCoordinator, map, new InstanceIdentifier(_id)) ;
             callback.waitUntilTriggered() ;
         }
         catch (final Throwable th)
@@ -220,12 +218,12 @@ public class BusinessActivityTerminatorStub implements BusinessActivityTerminato
     public void error ()
         throws SystemException
     {
-        final AddressingProperties addressingProperties = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
+        final MAP map = AddressingHelper.createNotificationContext(MessageId.getMessageId()) ;
         final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME,
                 WSTLogger.log_mesg.getString("com.arjuna.wst11.stub.BusinessActivityTerminatorStub_1")) ;
         try
         {
-            TerminationCoordinatorClient.getClient().sendSoapFault(_terminationCoordinator, addressingProperties, soapFault, new InstanceIdentifier(_id)) ;
+            TerminationCoordinatorClient.getClient().sendSoapFault(_terminationCoordinator, map, soapFault, new InstanceIdentifier(_id)) ;
         }
         catch (final Throwable th)
         {
@@ -238,7 +236,7 @@ public class BusinessActivityTerminatorStub implements BusinessActivityTerminato
         /**
          * The addressing context.
          */
-        private AddressingProperties addressingProperties ;
+        private MAP map ;
         /**
          * The arjuna context.
          */
@@ -268,9 +266,9 @@ public class BusinessActivityTerminatorStub implements BusinessActivityTerminato
          * Get the addressing context.
          * @return The addressing context.
          */
-        AddressingProperties getAddressingProperties()
+        MAP getAddressingProperties()
         {
-            return addressingProperties ;
+            return map ;
         }
 
         /**
@@ -330,72 +328,72 @@ public class BusinessActivityTerminatorStub implements BusinessActivityTerminato
         /**
          * A completed response.
          * @param completed The completed notification.
-         * @param addressingProperties The addressing context.
+         * @param map The addressing context.
          * @param arjunaContext The arjuna context.
          */
-        public void completed(final NotificationType completed, final AddressingProperties addressingProperties,
+        public void completed(final NotificationType completed, final MAP map,
             final ArjunaContext arjunaContext)
         {
             this.completed = true ;
-            this.addressingProperties = addressingProperties ;
+            this.map = map ;
             this.arjunaContext = arjunaContext ;
         }
 
         /**
          * A cancelled response.
          * @param cancelled The cancelled notification.
-         * @param addressingProperties The addressing context.
+         * @param map The addressing context.
          * @param arjunaContext The arjuna context.
          */
-        public void cancelled(final NotificationType cancelled, final AddressingProperties addressingProperties,
+        public void cancelled(final NotificationType cancelled, final MAP map,
             final ArjunaContext arjunaContext)
         {
             this.cancelled  = true ;
-            this.addressingProperties = addressingProperties ;
+            this.map = map ;
             this.arjunaContext = arjunaContext ;
         }
 
         /**
          * A closed response.
          * @param closed The closed notification.
-         * @param addressingProperties The addressing context.
+         * @param map The addressing context.
          * @param arjunaContext The arjuna context.
          */
-        public void closed(final NotificationType closed, final AddressingProperties addressingProperties,
+        public void closed(final NotificationType closed, final MAP map,
             final ArjunaContext arjunaContext)
         {
             this.closed = true ;
-            this.addressingProperties = addressingProperties ;
+            this.map = map ;
             this.arjunaContext = arjunaContext ;
         }
 
         /**
          * A faulted response.
          * @param faulted The faulted notification.
-         * @param addressingProperties The addressing context.
+         * @param map The addressing context.
          * @param arjunaContext The arjuna context.
          */
-        public void faulted(final NotificationType faulted, final AddressingProperties addressingProperties,
+        public void faulted(final NotificationType faulted, final MAP map,
             final ArjunaContext arjunaContext)
         {
             // TODO - convert wsdl to use NotificationType instead of ExceptionType
             this.faulted = true ;
-            this.addressingProperties = addressingProperties ;
+            this.map = map ;
             this.arjunaContext = arjunaContext ;
         }
 
         /**
          * A SOAP fault response.
          * @param soapFault The SOAP fault.
-         * @param addressingProperties The addressing context.
+         * @param map The addressing context.
          * @param arjunaContext The arjuna context.
          */
-        public void soapFault(final SoapFault soapFault, final AddressingProperties addressingProperties,
+        public void soapFault(final SoapFault soapFault, final MAP map,
             final ArjunaContext arjunaContext)
         {
             // TODO - pass soap fault to this callback
             this.soapFault = soapFault ;
-            this.addressingProperties = addressingProperties ;
+            this.map = map ;
             this.arjunaContext = arjunaContext ;
         }
     }

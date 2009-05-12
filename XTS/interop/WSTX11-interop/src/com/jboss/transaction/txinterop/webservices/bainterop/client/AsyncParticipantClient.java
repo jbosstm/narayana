@@ -21,19 +21,16 @@
 package com.jboss.transaction.txinterop.webservices.bainterop.client;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.ServiceRegistry;
+import com.arjuna.webservices11.wsaddr.map.MAPEndpoint;
+import com.arjuna.webservices11.wsaddr.map.MAPBuilder;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.jboss.transaction.txinterop.webservices.CoordinationContextManager;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import com.jboss.transaction.txinterop.webservices.bainterop.BAInteropConstants;
 import com.jboss.transaction.txinterop.webservices.bainterop.generated.ParticipantPortType;
-
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.EndpointReference;
-import javax.xml.ws.addressing.AddressingBuilder;
 
 /**
  * The participant client.
@@ -98,7 +95,7 @@ public class AsyncParticipantClient
     /**
      * The initiator URI for replies.
      */
-    private EndpointReference initiator = null;
+    private MAPEndpoint initiator = null;
     
     /**
      * Construct the interop synch client.
@@ -116,28 +113,22 @@ public class AsyncParticipantClient
         
         // soapService = new SoapService(handlerRegistry) ;
         final String initiatorURIString = ServiceRegistry.getRegistry().getServiceURI(BAInteropConstants.SERVICE_INITIATOR) ;
-        AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-        URI uri = null;
-        try {
-            uri = new URI(initiatorURIString);
-            initiator = builder.newEndpointReference(uri);
-        } catch (URISyntaxException e) {
-            // TODO log error here
-        }
+        MAPBuilder builder = MAPBuilder.getBuilder();
+        initiator = builder.newEndpoint(initiatorURIString);
     }
     
     /**
      * Send a cancel request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendCancel(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendCancel(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = BAInteropClient.getParticipantPort(addressingProperties, cancelAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = BAInteropClient.getParticipantPort(map, cancelAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try {
             port.cancel();
@@ -149,15 +140,15 @@ public class AsyncParticipantClient
     /**
      * Send a exit request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendExit(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendExit(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = BAInteropClient.getParticipantPort(addressingProperties, exitAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = BAInteropClient.getParticipantPort(map, exitAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try {
             port.exit();
@@ -169,15 +160,15 @@ public class AsyncParticipantClient
     /**
      * Send a fail request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendFail(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendFail(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = BAInteropClient.getParticipantPort(addressingProperties, failAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = BAInteropClient.getParticipantPort(map, failAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try {
             port.fail();
@@ -189,15 +180,15 @@ public class AsyncParticipantClient
     /**
      * Send a cannot complete request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendCannotComplete(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendCannotComplete(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = BAInteropClient.getParticipantPort(addressingProperties, cannotCompleteAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = BAInteropClient.getParticipantPort(map, cannotCompleteAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try {
             port.cannotComplete();
@@ -209,15 +200,15 @@ public class AsyncParticipantClient
     /**
      * Send a participant complete close request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendParticipantCompleteClose(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendParticipantCompleteClose(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = BAInteropClient.getParticipantPort(addressingProperties, participantCompleteCloseAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = BAInteropClient.getParticipantPort(map, participantCompleteCloseAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try {
             port.participantCompleteClose();
@@ -229,15 +220,15 @@ public class AsyncParticipantClient
     /**
      * Send a coordinator complete close request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendCoordinatorCompleteClose(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendCoordinatorCompleteClose(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = BAInteropClient.getParticipantPort(addressingProperties, coordinatorCompleteCloseAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = BAInteropClient.getParticipantPort(map, coordinatorCompleteCloseAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try {
             port.coordinatorCompleteClose();
@@ -249,15 +240,15 @@ public class AsyncParticipantClient
     /**
      * Send a unsolicited complete request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendUnsolicitedComplete(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendUnsolicitedComplete(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = BAInteropClient.getParticipantPort(addressingProperties, unsolicitedCompleteAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = BAInteropClient.getParticipantPort(map, unsolicitedCompleteAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try {
             port.unsolicitedComplete();
@@ -269,15 +260,15 @@ public class AsyncParticipantClient
     /**
      * Send a compensate request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendCompensate(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendCompensate(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = BAInteropClient.getParticipantPort(addressingProperties, compensateAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = BAInteropClient.getParticipantPort(map, compensateAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try {
             port.compensate();
@@ -289,15 +280,15 @@ public class AsyncParticipantClient
     /**
      * Send a compensation fail request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendCompensationFail(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendCompensationFail(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = BAInteropClient.getParticipantPort(addressingProperties, participantCompensationFailAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = BAInteropClient.getParticipantPort(map, participantCompensationFailAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try {
             port.compensationFail();
@@ -309,15 +300,15 @@ public class AsyncParticipantClient
     /**
      * Send a participant cancel completed race request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendParticipantCancelCompletedRace(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendParticipantCancelCompletedRace(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = BAInteropClient.getParticipantPort(addressingProperties, participantCancelCompletedRaceAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = BAInteropClient.getParticipantPort(map, participantCancelCompletedRaceAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try {
             port.participantCancelCompletedRace();
@@ -329,15 +320,15 @@ public class AsyncParticipantClient
     /**
      * Send a message loss and recovery request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendMessageLossAndRecovery(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendMessageLossAndRecovery(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = BAInteropClient.getParticipantPort(addressingProperties, messageLossAndRecoveryAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = BAInteropClient.getParticipantPort(map, messageLossAndRecoveryAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try {
             port.messageLossAndRecovery();
@@ -349,15 +340,15 @@ public class AsyncParticipantClient
     /**
      * Send a mixed outcome request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendMixedOutcome(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendMixedOutcome(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
-        addressingProperties.setReplyTo(initiator) ;
-        ParticipantPortType port = BAInteropClient.getParticipantPort(addressingProperties, mixedOutcomeAction);
+        map.setReplyTo(initiator) ;
+        ParticipantPortType port = BAInteropClient.getParticipantPort(map, mixedOutcomeAction);
         CoordinationContextManager.setThreadContext(coordinationContext) ;
         try {
             port.mixedOutcome();

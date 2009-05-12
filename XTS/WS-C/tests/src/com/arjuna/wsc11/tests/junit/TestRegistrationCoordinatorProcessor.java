@@ -25,6 +25,7 @@ import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.wsc.tests.TestUtil;
 import com.arjuna.wsc11.tests.TestUtil11;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponseType;
@@ -33,7 +34,6 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.ProtocolException;
-import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.soap.SOAPFaultException;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,12 +43,12 @@ public class TestRegistrationCoordinatorProcessor extends
 {
     private Map messageIdMap = new HashMap() ;
 
-    public RegisterResponseType register(final RegisterType register, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext, boolean isSecure)
+    public RegisterResponseType register(final RegisterType register, final MAP map, final ArjunaContext arjunaContext, boolean isSecure)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
+        final String messageId = map.getMessageID() ;
         synchronized(messageIdMap)
         {
-            messageIdMap.put(messageId, new RegisterDetails(register, addressingProperties, arjunaContext)) ;
+            messageIdMap.put(messageId, new RegisterDetails(register, map, arjunaContext)) ;
             messageIdMap.notifyAll() ;
         }
         String protocolIdentifier = register.getProtocolIdentifier();
@@ -135,15 +135,15 @@ public class TestRegistrationCoordinatorProcessor extends
     public static class RegisterDetails
     {
         private final RegisterType register ;
-        private final AddressingProperties addressingProperties ;
+        private final MAP map ;
         private final ArjunaContext arjunaContext ;
 
         RegisterDetails(final RegisterType register,
-            final AddressingProperties addressingProperties,
+            final MAP map,
             final ArjunaContext arjunaContext)
         {
             this.register = register ;
-            this.addressingProperties = addressingProperties ;
+            this.map = map ;
             this.arjunaContext = arjunaContext ;
         }
 
@@ -152,9 +152,9 @@ public class TestRegistrationCoordinatorProcessor extends
             return register ;
         }
 
-        public AddressingProperties getAddressingProperties()
+        public MAP getMAP()
         {
-            return addressingProperties ;
+            return map ;
         }
 
         public ArjunaContext getArjunaContext()

@@ -3,22 +3,18 @@ package com.arjuna.webservices11.wsat.client;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
-import com.arjuna.webservices11.wsat.client.WSATClient;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
 import com.arjuna.webservices11.wsaddr.EndpointHelper;
+import com.arjuna.webservices11.wsaddr.map.MAPEndpoint;
+import com.arjuna.webservices11.wsaddr.map.MAPBuilder;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CompletionCoordinatorPortType;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
-import javax.xml.ws.addressing.AddressingBuilder;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.AttributedURI;
-import javax.xml.ws.addressing.EndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URI;
 
 /**
  * The Client side of the Completion Coordinator.
@@ -34,34 +30,30 @@ public class CompletionCoordinatorClient
     /**
      * The commit action.
      */
-    private AttributedURI commitAction = null;
+    private String commitAction = null;
     /**
      * The rollback action.
      */
-    private AttributedURI rollbackAction = null;
+    private String rollbackAction = null;
 
     /**
      * The completion initiator URI for replies.
      */
-    private EndpointReference completionInitiator ;
+    private MAPEndpoint completionInitiator ;
 
     /**
      * The completion initiator URI for secure replies.
      */
-    private EndpointReference secureCompletionInitiator ;
+    private MAPEndpoint secureCompletionInitiator ;
 
     /**
      * Construct the completion coordinator client.
      */
     private CompletionCoordinatorClient()
     {
-        final AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-        try {
-            commitAction = builder.newURI(AtomicTransactionConstants.WSAT_ACTION_COMMIT);
-            rollbackAction = builder.newURI(AtomicTransactionConstants.WSAT_ACTION_ROLLBACK);
-        } catch (URISyntaxException use) {
-            // TODO - log fault and throw exception
-        }
+        final MAPBuilder builder = MAPBuilder.getBuilder();
+            commitAction = AtomicTransactionConstants.WSAT_ACTION_COMMIT;
+            rollbackAction = AtomicTransactionConstants.WSAT_ACTION_ROLLBACK;
         // final HandlerRegistry handlerRegistry = new HandlerRegistry() ;
 
         // Add WS-Addressing
@@ -73,33 +65,23 @@ public class CompletionCoordinatorClient
             ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_NAME, false) ;
         final String secureCompletionInitiatorURIString =
             ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.COMPLETION_INITIATOR_SERVICE_NAME, true) ;
-        try {
-            URI completionInitiatorURI = new URI(completionInitiatorURIString) ;
-            completionInitiator = builder.newEndpointReference(completionInitiatorURI);
-        } catch (URISyntaxException use) {
-            // TODO - log fault and throw exception
-        }
-        try {
-            URI secureCompletionInitiatorURI = new URI(secureCompletionInitiatorURIString) ;
-            secureCompletionInitiator = builder.newEndpointReference(secureCompletionInitiatorURI);
-        } catch (URISyntaxException use) {
-            // TODO - log fault and throw exception
-        }
+        completionInitiator = builder.newEndpoint(completionInitiatorURIString);
+        secureCompletionInitiator = builder.newEndpoint(secureCompletionInitiatorURIString);
     }
 
     /**
      * Send a commit request.
-     * @param addressingProperties addressing context initialised with to and message ID.
+     * @param map addressing context initialised with to and message ID.
      * @param identifier The identifier of the initiator.
      * @throws com.arjuna.webservices.SoapFault For any errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendCommit(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
+    public void sendCommit(final W3CEndpointReference endpoint, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference initiator = getCompletionInitiator(endpoint);
-        AddressingHelper.installFromFaultTo(addressingProperties, initiator, identifier);
-        CompletionCoordinatorPortType port = getPort(endpoint, addressingProperties, commitAction);
+        MAPEndpoint initiator = getCompletionInitiator(endpoint);
+        AddressingHelper.installFromFaultTo(map, initiator, identifier);
+        CompletionCoordinatorPortType port = getPort(endpoint, map, commitAction);
         Notification commit = new Notification();
 
         port.commitOperation(commit);
@@ -107,17 +89,17 @@ public class CompletionCoordinatorClient
 
     /**
      * Send a rollback request.
-     * @param addressingProperties addressing context initialised with to and message ID.
+     * @param map addressing context initialised with to and message ID.
      * @param identifier The identifier of the initiator.
      * @throws com.arjuna.webservices.SoapFault For any errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendRollback(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
+    public void sendRollback(final W3CEndpointReference endpoint, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference initiator = getCompletionInitiator(endpoint);
-        AddressingHelper.installFromFaultTo(addressingProperties, initiator, identifier);
-        CompletionCoordinatorPortType port = getPort(endpoint, addressingProperties, rollbackAction);
+        MAPEndpoint initiator = getCompletionInitiator(endpoint);
+        AddressingHelper.installFromFaultTo(map, initiator, identifier);
+        CompletionCoordinatorPortType port = getPort(endpoint, map, rollbackAction);
         Notification rollback = new Notification();
                 
         port.rollbackOperation(rollback);
@@ -128,7 +110,7 @@ public class CompletionCoordinatorClient
      * @param participant
      * @return either the secure terminaton participant endpoint or the non-secure endpoint
      */
-    EndpointReference getCompletionInitiator(W3CEndpointReference participant)
+    MAPEndpoint getCompletionInitiator(W3CEndpointReference participant)
     {
         NativeEndpointReference nativeRef = EndpointHelper.transform(NativeEndpointReference.class, participant);
         String address = nativeRef.getAddress();
@@ -152,15 +134,15 @@ public class CompletionCoordinatorClient
      * obtain a port from the completion coordinator endpoint configured with the instance identifier handler and the supplied
      * addressing properties supplemented with the given action
      * @param endpoint
-     * @param addressingProperties
+     * @param map
      * @param action
      * @return
      */
     private CompletionCoordinatorPortType getPort(final W3CEndpointReference endpoint,
-                                                  final AddressingProperties addressingProperties,
-                                                  final AttributedURI action)
+                                                  final MAP map,
+                                                  final String action)
     {
-        AddressingHelper.installNoneReplyTo(addressingProperties);
-        return WSATClient.getCompletionCoordinatorPort(endpoint, action, addressingProperties);
+        AddressingHelper.installNoneReplyTo(map);
+        return WSATClient.getCompletionCoordinatorPort(endpoint, action, map);
     }
 }

@@ -24,23 +24,18 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-import java.net.URISyntaxException;
 
-import javax.xml.namespace.QName;
-import javax.xml.ws.addressing.*;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.handler.Handler;
 
-import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsarj.InstanceIdentifier;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
 import org.jboss.jbossts.xts.soapfault.Fault;
 import org.jboss.jbossts.xts.soapfault.SoapFaultService;
-import org.jboss.ws.extensions.addressing.jaxws.WSAddressingClientHandler;
-import org.w3c.dom.Element;
 
 /**
  * Base client.
@@ -51,22 +46,22 @@ public class SoapFaultClient
     /**
      * Send a fault.
      * @param soapFault The SOAP fault.
-     * @param addressingProperties addressing context initialised with to and message ID.
+     * @param map addressing context initialised with to and message ID.
      * @param action The action URI for the request.
      * @throws com.arjuna.webservices.SoapFault For any errors.
      * @throws java.io.IOException for any transport errors.
      */
     public static void sendSoapFault(final SoapFault11 soapFault,
-                                     final AddressingProperties addressingProperties,
-                                     final AttributedURI action)
+                                     final MAP map,
+                                     final String action)
         throws SoapFault11, IOException
     {
         if (action != null)
         {
-            soapFault.setAction(action.getURI().toString()) ;
+            soapFault.setAction(action) ;
         }
 
-        final SoapFaultPortType faultPort = getSoapFaultPort(addressingProperties, action);
+        final SoapFaultPortType faultPort = getSoapFaultPort(map, action);
         Fault fault = soapFault.toFault();
         faultPort.soapFault(fault);
     }
@@ -75,23 +70,23 @@ public class SoapFaultClient
      * Send a fault to a specific endpoint.
      * @param soapFault The SOAP fault.
      * @param endpoint an endpoint ot dispatch the fault to.
-     * @param addressingProperties addressing context initialised with to and message ID.
+     * @param map addressing context initialised with to and message ID.
      * @param action The action URI for the request.
      * @throws com.arjuna.webservices.SoapFault For any errors.
      * @throws java.io.IOException for any transport errors.
      */
     public static void sendSoapFault(final SoapFault11 soapFault,
                                      W3CEndpointReference endpoint,
-                                     final AddressingProperties addressingProperties,
-                                     final AttributedURI action)
+                                     final MAP map,
+                                     final String action)
         throws SoapFault11, IOException
     {
         if (action != null)
         {
-            soapFault.setAction(action.getURI().toString()) ;
+            soapFault.setAction(action) ;
         }
 
-        final SoapFaultPortType faultPort = getSoapFaultPort(endpoint, addressingProperties, action);
+        final SoapFaultPortType faultPort = getSoapFaultPort(endpoint, map, action);
         Fault fault = soapFault.toFault();
         faultPort.soapFault(fault);
     }
@@ -108,57 +103,50 @@ public class SoapFaultClient
         return soapFaultService.get();
     }
 
-    private static SoapFaultPortType getSoapFaultPort(final AddressingProperties addressingProperties,
-                                                      final AttributedURI action)
+    private static SoapFaultPortType getSoapFaultPort(final MAP map,
+                                                      final String action)
     {
         SoapFaultService service = getSoapFaultService();
-        SoapFaultPortType port = service.getPort(SoapFaultPortType.class);
+        SoapFaultPortType port = service.getPort(SoapFaultPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
-        AttributedURI toUri = addressingProperties.getTo();
-        List<Handler> customHandlerChain = new ArrayList<Handler>();
+        String to = map.getTo();
         /*
-         * we have to add the JaxWS WSAddressingClientHandler because we cannot specify the WSAddressing feature
-         */
+         * we no longer have to add the JaxWS WSAddressingClientHandler because we can specify the WSAddressing feature
+        List<Handler> customHandlerChain = new ArrayList<Handler>();
 		customHandlerChain.add(new WSAddressingClientHandler());
         bindingProvider.getBinding().setHandlerChain(customHandlerChain);
+         */
 
         Map<String, Object> requestContext = bindingProvider.getRequestContext();
         if (action != null) {
-            addressingProperties.setAction(action);
+            map.setAction(action);
         }
-        requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES, addressingProperties);
-	    // jbossws should do this for us . . .
-	    requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES_OUTBOUND, addressingProperties);
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, toUri.getURI().toString());
-        // need to set soap action header based upon what the client asks for
-        requestContext.put(BindingProvider.SOAPACTION_URI_PROPERTY, action.getURI().toString());
+        AddressingHelper.configureRequestContext(requestContext, map, to, action);
 
         return port;
     }
 
     private static SoapFaultPortType getSoapFaultPort(final W3CEndpointReference endpoint,
-                                                      final AddressingProperties addressingProperties,
-                                                      final AttributedURI action)
+                                                      final MAP map,
+                                                      final String action)
     {
         SoapFaultService service = getSoapFaultService();
-        SoapFaultPortType port = service.getPort(endpoint, SoapFaultPortType.class);
+        SoapFaultPortType port = service.getPort(endpoint, SoapFaultPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
         Map<String, Object> requestContext = bindingProvider.getRequestContext();
-        AddressingProperties requestProperties = (AddressingProperties)requestContext.get(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES_OUTBOUND);
+        MAP requestMap = AddressingHelper.outboundMap(requestContext);
         if (action != null) {
-            addressingProperties.setAction(action);
+            map.setAction(action);
         }
-        AddressingHelper.installCallerProperties(addressingProperties, requestProperties);
-        AttributedURI toUri = requestProperties.getTo();
-        List<Handler> customHandlerChain = new ArrayList<Handler>();
+        AddressingHelper.installCallerProperties(map, requestMap);
+        String to = requestMap.getTo();
         /*
-         * we have to add the JaxWS WSAddressingClientHandler because we cannot specify the WSAddressing feature
-         */
+         * we no longer have to add the JaxWS WSAddressingClientHandler because we can specify the WSAddressing feature
+        List<Handler> customHandlerChain = new ArrayList<Handler>();
 		customHandlerChain.add(new WSAddressingClientHandler());
         bindingProvider.getBinding().setHandlerChain(customHandlerChain);
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, toUri.getURI().toString());
-        // need to set soap action header based upon what the client asks for
-        requestContext.put(BindingProvider.SOAPACTION_URI_PROPERTY, action.getURI().toString());
+        */
+        AddressingHelper.configureRequestContext(requestContext, to, action);
 
         return port;
     }

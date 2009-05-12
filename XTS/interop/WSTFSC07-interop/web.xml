@@ -44,29 +44,29 @@
 
     <!-- Define Interop 11 Server Endpoints -->
     <servlet>
-      <servlet-name>WSTF Sc007 Initiator Service</servlet-name>
+      <servlet-name>WSTFSc007InitiatorService</servlet-name>
       <servlet-class>com.jboss.transaction.wstf.webservices.sc007.sei.InitiatorPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
-      <servlet-name>WSTF Sc007 Participant Service</servlet-name>
+      <servlet-name>WSTFSc007ParticipantService</servlet-name>
       <servlet-class>com.jboss.transaction.wstf.webservices.sc007.sei.ParticipantPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
 
     <!-- Define Sc007 JaxWS Server Endpoint Mappings -->
     <servlet-mapping>
-      <servlet-name>WSTF Sc007 Initiator Service</servlet-name>
+      <servlet-name>WSTFSc007InitiatorService</servlet-name>
       <url-pattern>/InitiatorService</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-      <servlet-name>WSTF Sc007 Participant Service</servlet-name>
+      <servlet-name>WSTFSc007ParticipantService</servlet-name>
       <url-pattern>/ParticipantService</url-pattern>
     </servlet-mapping>
 
     <!-- define proxy, logging and junit test runner servlets -->
     <servlet>
-        <servlet-name>HTTP Proxy Servlet</servlet-name>
+        <servlet-name>HTTPProxyServlet</servlet-name>
         <servlet-class>com.jboss.transaction.wstf.proxy.ProxyListenerService</servlet-class>
         <!--
           The base URI of the proxy servlet.
@@ -79,40 +79,40 @@
     </servlet>
 
     <servlet>
-        <servlet-name>JUnit test servlet</servlet-name>
+        <servlet-name>JUnittestservlet</servlet-name>
         <servlet-class>com.jboss.transaction.wstf.test.TestServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet>
-        <servlet-name>XML results servlet</servlet-name>
+        <servlet-name>XMLresultsservlet</servlet-name>
         <servlet-class>com.jboss.transaction.wstf.test.XMLResultsServlet</servlet-class>
     </servlet>
 
     <servlet>
-        <servlet-name>Log servlet</servlet-name>
+        <servlet-name>Logservlet</servlet-name>
         <servlet-class>com.jboss.transaction.wstf.test.TestLogServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
 	<!-- servlet mappings -->
     <servlet-mapping>
-        <servlet-name>HTTP Proxy Servlet</servlet-name>
+        <servlet-name>HTTPProxyServlet</servlet-name>
         <url-pattern>/proxy/*</url-pattern>
     </servlet-mapping>
     
     <servlet-mapping>
-        <servlet-name>JUnit test servlet</servlet-name>
+        <servlet-name>JUnittestservlet</servlet-name>
         <url-pattern>/test</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>XML results servlet</servlet-name>
+        <servlet-name>XMLresultsservlet</servlet-name>
         <url-pattern>/xmlresults</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>Log servlet</servlet-name>
+        <servlet-name>Logservlet</servlet-name>
         <url-pattern>/logs/*</url-pattern>
     </servlet-mapping>
     

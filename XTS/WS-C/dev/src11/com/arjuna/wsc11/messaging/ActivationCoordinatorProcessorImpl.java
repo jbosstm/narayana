@@ -23,13 +23,13 @@ package com.arjuna.wsc11.messaging;
 import com.arjuna.webservices.logging.WSCLogger;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.wsc11.ContextFactory;
 import com.arjuna.wsc.InvalidCreateParametersException;
 import com.arjuna.wsc11.ContextFactoryMapper;
 
 import javax.xml.ws.soap.SOAPFaultException;
-import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.ProtocolException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPFactory;
@@ -45,14 +45,14 @@ public class ActivationCoordinatorProcessorImpl extends ActivationCoordinatorPro
     /**
      * Create the coordination context.
      * @param createCoordinationContext The create coordination context request.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @message com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_1 [com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_1] - Invalid create coordination context parameters
      * @message com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_2 [com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_2] - Unexpected exception thrown from create:
      * @message com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_3 [com.arjuna.wsc11.messaging.ActivationCoordinatorProcessorImpl_3] - CreateCoordinationContext called for unknown coordination type: {0}
      */
     public CreateCoordinationContextResponseType
         createCoordinationContext(final CreateCoordinationContextType createCoordinationContext,
-                                  final AddressingProperties addressingProperties,
+                                  final MAP map,
                                   final boolean isSecure)
     {
         final ContextFactoryMapper contextFactoryMapper = ContextFactoryMapper.getFactory() ;

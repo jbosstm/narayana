@@ -80,46 +80,46 @@
       <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
-      <servlet-name>Completion Coordinator</servlet-name>
+      <servlet-name>CompletionCoordinator</servlet-name>
       <servlet-class>com.arjuna.webservices11.wsat.sei.CompletionCoordinatorPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
-      <servlet-name>Completion Initiator</servlet-name>
+      <servlet-name>CompletionInitiator</servlet-name>
       <servlet-class>com.arjuna.webservices11.wsat.sei.CompletionInitiatorPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
 
     <!-- Define WSBA 1.1 JaxWS Server Endpoints -->
     <servlet>
-      <servlet-name>Business Agreement With Coordinator Completion Coordinator</servlet-name>
+      <servlet-name>BusinessAgreementWithCoordinatorCompletionCoordinator</servlet-name>
       <servlet-class>com.arjuna.webservices11.wsba.sei.BusinessAgreementWithCoordinatorCompletionCoordinatorPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
-      <servlet-name>Business Agreement With Coordinator Completion Participant</servlet-name>
+      <servlet-name>BusinessAgreementWithCoordinatorCompletionParticipant</servlet-name>
       <servlet-class>com.arjuna.webservices11.wsba.sei.BusinessAgreementWithCoordinatorCompletionParticipantPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
-      <servlet-name>Business Agreement With Participant Completion Coordinator</servlet-name>
+      <servlet-name>BusinessAgreementWithParticipantCompletionCoordinator</servlet-name>
       <servlet-class>com.arjuna.webservices11.wsba.sei.BusinessAgreementWithParticipantCompletionCoordinatorPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
-      <servlet-name>Business Agreement With Participant Completion Participant</servlet-name>
+      <servlet-name>BusinessAgreementWithParticipantCompletionParticipant</servlet-name>
       <servlet-class>com.arjuna.webservices11.wsba.sei.BusinessAgreementWithParticipantCompletionParticipantPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
 
     <!-- Define WSArjTX JaxWS Server Endpoints -->
     <servlet>
-      <servlet-name>Termination Coordinator</servlet-name>
+      <servlet-name>TerminationCoordinator</servlet-name>
       <servlet-class>com.arjuna.webservices11.wsarjtx.sei.TerminationCoordinatorPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
-      <servlet-name>Termination Participant</servlet-name>
+      <servlet-name>TerminationParticipant</servlet-name>
       <servlet-class>com.arjuna.webservices11.wsarjtx.sei.TerminationParticipantPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
@@ -134,39 +134,39 @@
       <url-pattern>/ParticipantService</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-      <servlet-name>Completion Coordinator</servlet-name>
+      <servlet-name>CompletionCoordinator</servlet-name>
       <url-pattern>/CompletionCoordinatorService</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-      <servlet-name>Completion Initiator</servlet-name>
+      <servlet-name>CompletionInitiator</servlet-name>
       <url-pattern>/CompletionInitiatorService</url-pattern>
     </servlet-mapping>
 
     <!-- Define WSBA 1.1 JaxWS Server Endpoint Mappings -->
     <servlet-mapping>
-      <servlet-name>Business Agreement With Coordinator Completion Coordinator</servlet-name>
+      <servlet-name>BusinessAgreementWithCoordinatorCompletionCoordinator</servlet-name>
       <url-pattern>/BusinessAgreementWithCoordinatorCompletionCoordinatorService</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-      <servlet-name>Business Agreement With Coordinator Completion Participant</servlet-name>
+      <servlet-name>BusinessAgreementWithCoordinatorCompletionParticipant</servlet-name>
       <url-pattern>/BusinessAgreementWithCoordinatorCompletionParticipantService</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-      <servlet-name>Business Agreement With Participant Completion Coordinator</servlet-name>
+      <servlet-name>BusinessAgreementWithParticipantCompletionCoordinator</servlet-name>
       <url-pattern>/BusinessAgreementWithParticipantCompletionCoordinatorService</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-      <servlet-name>Business Agreement With Participant Completion Participant</servlet-name>
+      <servlet-name>BusinessAgreementWithParticipantCompletionParticipant</servlet-name>
       <url-pattern>/BusinessAgreementWithParticipantCompletionParticipantService</url-pattern>
     </servlet-mapping>
 
     <!-- Define WSArjTX JaxWS Server Endpoint Mappings -->
     <servlet-mapping>
-      <servlet-name>Termination Coordinator</servlet-name>
+      <servlet-name>TerminationCoordinator</servlet-name>
       <url-pattern>/TerminationCoordinatorService</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-      <servlet-name>Termination Participant</servlet-name>
+      <servlet-name>TerminationParticipant</servlet-name>
       <url-pattern>/TerminationParticipantService</url-pattern>
     </servlet-mapping>
 </web-app>

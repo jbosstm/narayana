@@ -8,6 +8,9 @@ import com.arjuna.services.framework.task.TaskManager;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarjtx.processors.TerminationCoordinatorProcessor;
 import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wsaddr.map.MAP;
+import com.arjuna.webservices11.wsaddr.map.MAPConstants;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices.SoapFault;
 
 import javax.annotation.Resource;
@@ -15,8 +18,6 @@ import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.JAXWSAConstants;
 import javax.xml.ws.handler.MessageContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,7 +36,7 @@ import org.jboss.jbossts.xts.soapfault.Fault;
         portName = "TerminationCoordinatorPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-@HandlerChain(file="handlers.xml")
+@HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
 public class TerminationCoordinatorPortTypeImpl implements TerminationCoordinatorPortType
 {
@@ -57,13 +58,12 @@ public class TerminationCoordinatorPortTypeImpl implements TerminationCoordinato
         HttpServletRequest request = (HttpServletRequest)ctx.get(MessageContext.SERVLET_REQUEST);
         boolean isSecure = request.getScheme().equals("https");
         final NotificationType complete = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                TerminationCoordinatorProcessor.getProcessor().complete(complete, inboundAddressProperties, arjunaContext) ;
+                TerminationCoordinatorProcessor.getProcessor().complete(complete, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -80,13 +80,12 @@ public class TerminationCoordinatorPortTypeImpl implements TerminationCoordinato
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType close = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                TerminationCoordinatorProcessor.getProcessor().close(close, inboundAddressProperties, arjunaContext) ;
+                TerminationCoordinatorProcessor.getProcessor().close(close, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -103,13 +102,12 @@ public class TerminationCoordinatorPortTypeImpl implements TerminationCoordinato
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final NotificationType cancel = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                TerminationCoordinatorProcessor.getProcessor().cancel(cancel, inboundAddressProperties, arjunaContext) ;
+                TerminationCoordinatorProcessor.getProcessor().cancel(cancel, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -121,13 +119,13 @@ public class TerminationCoordinatorPortTypeImpl implements TerminationCoordinato
             Fault fault)
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        final AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
         final SoapFault soapFault = SoapFault11.fromFault(fault);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                TerminationCoordinatorProcessor.getProcessor().soapFault(soapFault, inboundAddressProperties, arjunaContext); ;
+                TerminationCoordinatorProcessor.getProcessor().soapFault(soapFault, inboundMap, arjunaContext); ;
             }
         }) ;
     }

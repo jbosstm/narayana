@@ -7,13 +7,13 @@ import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.JAXWSAConstants;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.Addressing;
 
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsat.processors.CompletionCoordinatorProcessor;
+import com.arjuna.webservices11.wsaddr.map.MAP;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.services.framework.task.TaskManager;
 import com.arjuna.services.framework.task.Task;
 
@@ -29,7 +29,7 @@ import com.arjuna.services.framework.task.Task;
         portName = "CompletionCoordinatorPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-@HandlerChain(file="handlers.xml")
+@HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
 public class CompletionCoordinatorPortTypeImpl implements CompletionCoordinatorPortType
 {
@@ -48,13 +48,12 @@ public class CompletionCoordinatorPortTypeImpl implements CompletionCoordinatorP
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final Notification commit = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CompletionCoordinatorProcessor.getProcessor().commit(commit, inboundAddressProperties, arjunaContext) ;
+                CompletionCoordinatorProcessor.getProcessor().commit(commit, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -71,13 +70,12 @@ public class CompletionCoordinatorPortTypeImpl implements CompletionCoordinatorP
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final Notification rollback = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CompletionCoordinatorProcessor.getProcessor().rollback(rollback, inboundAddressProperties, arjunaContext) ;
+                CompletionCoordinatorProcessor.getProcessor().rollback(rollback, inboundMap, arjunaContext) ;
             }
         }) ;
     }

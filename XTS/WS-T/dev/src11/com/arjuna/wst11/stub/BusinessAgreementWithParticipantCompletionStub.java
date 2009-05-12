@@ -48,7 +48,6 @@ import com.arjuna.wst.PersistableParticipant;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine;
-import com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl;
 
 public class BusinessAgreementWithParticipantCompletionStub implements BusinessAgreementWithParticipantCompletionParticipant, PersistableParticipant
 {

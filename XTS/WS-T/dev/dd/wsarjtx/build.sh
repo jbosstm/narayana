@@ -24,9 +24,9 @@ rm -rf tmp/classes/* tmp/src/*
 
 # generate termination participant and coordinator code
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsarjtx-termination-participant-binding.wsdl -d tmp/classes -s tmp/src -target 2.0 wsdl/wsarjtx-termination-participant-binding.wsdl
+$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsarjtx-termination-participant-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsarjtx-termination-participant-binding.wsdl
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsarjtx-termination-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.0 wsdl/wsarjtx-termination-coordinator-binding.wsdl
+$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsarjtx-termination-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsarjtx-termination-coordinator-binding.wsdl
 
 # we need to patch the resource lookup used to provide a jar base URL
 # for the wsdl location supplied above wsimport generates

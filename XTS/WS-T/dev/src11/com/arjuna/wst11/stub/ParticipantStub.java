@@ -5,7 +5,6 @@ import com.arjuna.wst.stub.SystemCommunicationException;
 import com.arjuna.wst11.messaging.engines.CoordinatorEngine;
 import com.arjuna.wst11.messaging.CoordinatorProcessorImpl;
 import com.arjuna.webservices11.wsat.State;
-import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
 import com.arjuna.webservices11.util.StreamHelper;
 import com.arjuna.webservices.soap.SoapUtils;
 import com.arjuna.webservices.logging.WSTLogger;

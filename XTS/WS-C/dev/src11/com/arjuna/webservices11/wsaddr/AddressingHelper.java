@@ -2,19 +2,12 @@ package com.arjuna.webservices11.wsaddr;
 
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
-import com.arjuna.webservices.wsarj.ArjunaConstants;
+import com.arjuna.webservices11.wsaddr.map.*;
 
-import javax.xml.ws.addressing.*;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPException;
-import java.net.URISyntaxException;
-import java.net.URI;
-import java.util.List;
-import java.util.Iterator;
-
-import org.w3c.dom.Element;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.handler.MessageContext;
+import javax.xml.namespace.QName;
+import java.util.Map;
 
 /**
  * The complete addressing context.
@@ -26,12 +19,12 @@ public class AddressingHelper
     {
     }
 
-    public static AddressingProperties createOneWayResponseContext(final AddressingProperties addressingProperties, final String messageID)
+    public static MAP createOneWayResponseContext(final MAP map, final String messageID)
     {
         // create this each time so it uses the current thread classloader
         // this allows the builder class to be redefined via a property
-        AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-        final AddressingProperties responseProperties = builder.newAddressingProperties();
+        MAPBuilder builder = MAPBuilder.getBuilder();
+        final MAP responseMap = builder.newMap();
         // ok just calling initializeAsDestination directly fails when the FaultTo/ReplyTo/From
         // contains reference parameter elements. these get installed into the target element extensions
         // list for insertion into the outgoing message. however, the insertion fails.
@@ -39,77 +32,64 @@ public class AddressingHelper
         // elements but this ignores the fact that they have a DOM node attached. when the
         // appendElement is called it barfs because the target and source belong to different
         // documents. we patch this by copying the FaultTo or ReplyTo or from here if need be.
-        EndpointReference epref = addressingProperties.getReplyTo();
+        MAPEndpoint epref = map.getReplyTo();
         if (isNoneAddress(epref)) {
-            epref = addressingProperties.getFrom();
+            epref = map.getFrom();
         }
-        if (!isNoneAddress(epref)) {
-            epref = patchEndpointReference(epref);
-        }
-        responseProperties.initializeAsDestination(epref);
-        responseProperties.setMessageID(makeURI(builder, messageID)) ;
+        responseMap.initializeAsDestination(epref);
+        responseMap.setMessageID(messageID) ;
 
-        if (addressingProperties.getMessageID() != null)
+        if (map.getMessageID() != null)
         {
-           Relationship rel = builder.newRelationship(addressingProperties.getMessageID().getURI());
-           responseProperties.setRelatesTo(new Relationship[] { rel });
+            MAPRelatesTo relatesTo = builder.newRelatesTo(map.getMessageID(), REPLY_RELATIONSHIP_TYPE_QNAME);
+            responseMap.setRelatesTo(relatesTo);
         }
 
-        return responseProperties ;
+        return responseMap ;
     }
 
     /**
      * Create an addressing context that represents an inline reply to the specified addressing context.
-     * @param addressingProperties The addressing context being replied to.
+     * @param map The addressing context being replied to.
      * @param messageID The message id of the new message.
      * @return The reply addressing context.
      */
-    public static AddressingProperties createResponseContext(final AddressingProperties addressingProperties, final String messageID)
+    public static MAP createResponseContext(final MAP map, final String messageID)
     {
         // create this each time so it uses the current thread classloader
         // this allows the builder class to be redefined via a property
-        AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-        final AddressingProperties responseProperties = builder.newAddressingProperties();
-        // ok just calling initializeAsDestination directly fails when the FaultTo/ReplyTo/From
-        // contains reference parameter elements. these get installed into the target element extensions
-        // list for insertion into the outgoing message. however, the insertion fails.
-        // JBossWS decides they can be inserted as is without copying because they are SOAP
-        // elements but this ignores the fact that they have a DOM node attached. when the
-        // appendElement is called it barfs because the target and source belong to different
-        // documents. we patch this by copying the FaultTo or ReplyTo or from here if need be.
-        EndpointReference epref = addressingProperties.getReplyTo();
+        MAPBuilder builder = MAPBuilder.getBuilder();
+        final MAP responseMap = builder.newMap();
+        MAPEndpoint epref = map.getReplyTo();
         if (isNoneAddress(epref)) {
-            epref = addressingProperties.getFrom();
+            epref = map.getFrom();
         }
-        if (!isNoneAddress(epref)) {
-            epref = patchEndpointReference(epref);
-        }
-        responseProperties.initializeAsDestination(epref);
-        responseProperties.setMessageID(makeURI(builder, messageID)) ;
+        responseMap.initializeAsDestination(epref);
+        responseMap.setMessageID(messageID) ;
 
-        if (addressingProperties.getMessageID() != null)
+        if (map.getMessageID() != null)
         {
-           Relationship rel = builder.newRelationship(addressingProperties.getMessageID().getURI());
-           responseProperties.setRelatesTo(new Relationship[] { rel });
+            MAPRelatesTo relatesTo = builder.newRelatesTo(map.getMessageID(), REPLY_RELATIONSHIP_TYPE_QNAME);
+            responseMap.setRelatesTo(relatesTo);
         }
 
-        return responseProperties ;
+        return responseMap ;
     }
 
     /**
      * Create an addressing context that represents a fault to the specified addressing context.
-     * @param addressingProperties The addressing context being replied to.
+     * @param map The addressing context being replied to.
      * @param messageID The message id of the new message.
      * @return The fault addressing context.
      *
      * N.B. Still need to do From, Action, ReplyTo, FaultTo if needed.
      */
-    public static AddressingProperties createFaultContext(final AddressingProperties addressingProperties, final String messageID)
+    public static MAP createFaultContext(final MAP map, final String messageID)
     {
         // create this each time so it uses the current thread classloader
         // this allows the builder class to be redefined via a property
-        AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-        final AddressingProperties faultProperties = builder.newAddressingProperties();
+        MAPBuilder builder = MAPBuilder.getBuilder();
+        final MAP faultMap = builder.newMap();
         // ok just calling initializeAsDestination directly fails when the FaultTo/ReplyTo/From
         // contains reference parameter elements. these get installed into the target element extensions
         // list for insertion into the outgoing message. however, the insertion fails.
@@ -117,66 +97,23 @@ public class AddressingHelper
         // elements but this ignores the fact that they have a DOM node attached. when the
         // appendElement is called it barfs because the target and source belong to different
         // documents. we patch this by copying the FaultTo or ReplyTo or from here if need be.
-        EndpointReference epref= addressingProperties.getFaultTo();
+        MAPEndpoint epref= map.getFaultTo();
         if (isNoneAddress(epref)) {
-            epref = addressingProperties.getReplyTo();
+            epref = map.getReplyTo();
             if (isNoneAddress(epref)) {
-                epref = addressingProperties.getFrom();
+                epref = map.getFrom();
             }
         }
-        if (!isNoneAddress(epref)) {
-            epref = patchEndpointReference(epref);
-            faultProperties.initializeAsDestination(epref);
-        } else {
-            faultProperties.initializeAsDestination(getNoneAddress());
-        }
-        faultProperties.setMessageID(makeURI(builder, messageID)) ;
+        faultMap.initializeAsDestination(epref);
+        faultMap.setMessageID(messageID) ;
 
-        if (addressingProperties.getMessageID() != null)
+        if (map.getMessageID() != null)
         {
-           Relationship rel = builder.newRelationship(addressingProperties.getMessageID().getURI());
-           faultProperties.setRelatesTo(new Relationship[] { rel });
+            MAPRelatesTo relatesTo = builder.newRelatesTo(map.getMessageID(), REPLY_RELATIONSHIP_TYPE_QNAME);
+            faultMap.setRelatesTo(relatesTo);
         }
 
-        return faultProperties ;
-    }
-
-    // patch the case where we have an epref with a single reference parameter which is an
-    // Arjuna TX InstanceIdentifier
-    private static EndpointReference patchEndpointReference(EndpointReference epr)
-    {
-        ReferenceParameters refParams = epr.getReferenceParameters();
-        List<Object> list = refParams.getElements();
-        /*
-        Object obj;
-        if (list.size() == 1 && ((obj = list.get(0)) instanceof Element)) {
-            Element element = (Element) obj;
-            if (ArjunaConstants.WSARJ_NAMESPACE.equals(element.getNamespaceURI()) &&
-                    ArjunaConstants.WSARJ_ELEMENT_INSTANCE_IDENTIFIER.equals(element.getLocalName())) {
-                String identifier = element.getFirstChild().getNodeValue();
-                // ok, cerate a copy of the epref with a new reference parameter element
-                AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-                EndpointReference newEpr = builder.newEndpointReference(epr.getAddress().getURI());
-                InstanceIdentifier.setEndpointInstanceIdentifier(newEpr, identifier);
-                return newEpr;
-            }
-        }
-        */
-        if (list.size() > 0) {
-            Iterator iterator = list.iterator();
-            // ok, create a copy of the epref with a cloned reference parameter list
-            AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-            EndpointReference newEpr = builder.newEndpointReference(epr.getAddress().getURI());
-            ReferenceParameters newRefParams = newEpr.getReferenceParameters();
-            while (iterator.hasNext()) {
-                SOAPElement element = (SOAPElement) iterator.next();
-                SOAPElement newElement = cloneElement(element);
-                newRefParams.addElement(newElement);
-            }
-            return newEpr;
-        } else {
-            return epr;
-        }
+        return faultMap ;
     }
 
     /**
@@ -187,23 +124,23 @@ public class AddressingHelper
      *
      * N.B. Still need to do From, Action, ReplyTo, FaultTo if needed.
      */
-    public static AddressingProperties createRequestContext(final String address, final String messageID)
+    public static MAP createRequestContext(final String address, final String messageID)
     {
         // create this each time so it uses the current thread classloader
         // this allows the builder class to be redefined via a property
-        AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-        final AddressingProperties requestProperties = builder.newAddressingProperties();
-        requestProperties.setTo(makeURI(builder, address));
+        MAPBuilder builder = MAPBuilder.getBuilder();
+        final MAP requestMap = builder.newMap();
+        requestMap.setTo(address);
         if (messageID != null) {
-            requestProperties.setMessageID(makeURI(builder, messageID));
+            requestMap.setMessageID(messageID);
         } else {
             // client does not care about id but we have to set some id or WSA will complain
 
             final String dummyID = MessageId.getMessageId();
 
-            requestProperties.setMessageID(makeURI(builder, dummyID));
+            requestMap.setMessageID(dummyID);
         }
-        return requestProperties;
+        return requestMap;
     }
 
     /**
@@ -215,41 +152,41 @@ public class AddressingHelper
      *
      * N.B. Still need to do From, Action, ReplyTo, FaultTo if needed.
      */
-    public static AddressingProperties createRequestContext(final String address, final String action, final String messageID)
+    public static MAP createRequestContext(final String address, final String action, final String messageID)
     {
         // create this each time so it uses the current thread classloader
         // this allows the builder class to be redefined via a property
-        AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-        final AddressingProperties requestProperties = builder.newAddressingProperties();
-        requestProperties.setTo(makeURI(builder, address));
+        MAPBuilder builder = MAPBuilder.getBuilder();
+        final MAP requestMap = builder.newMap();
+        requestMap.setTo(address);
         if (messageID != null) {
-            requestProperties.setMessageID(makeURI(builder, messageID));
+            requestMap.setMessageID(messageID);
         } else {
             // client does not care about id but we have to set some id or WSA will complain
 
             final String dummyID = MessageId.getMessageId();
 
-            requestProperties.setMessageID(makeURI(builder, dummyID));
+            requestMap.setMessageID(dummyID);
         }
-        requestProperties.setAction(makeURI(builder, action));
+        requestMap.setAction(action);
 
-        return requestProperties;
+        return requestMap;
     }
 
     /**
      * Create an addressing context that represents a notification to the specified context.
-     * @param addressingProperties The addressing properties used to derive the notification addressing context.
+     * @param map The addressing properties used to derive the notification addressing context.
      * @param messageID The message id of the new message.
      * @return The notification addressing context.
      *
      * N.B. Still need to do From, Action, ReplyTo, FaultTo if needed.
      */
-    public static AddressingProperties createRequestContext(final AddressingProperties addressingProperties, final String messageID)
+    public static MAP createRequestContext(final MAP map, final String messageID)
     {
         // create this each time so it uses the current thread classloader
         // this allows the builder class to be redefined via a property
-        AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-        final AddressingProperties requestProperties = builder.newAddressingProperties();
+        MAPBuilder builder = MAPBuilder.getBuilder();
+        final MAP requestMap = builder.newMap();
         // ok just calling initializeAsDestination directly fails when the FaultTo/ReplyTo/From
         // contains reference parameter elements. these get installed into the target element extensions
         // list for insertion into the outgoing message. however, the insertion fails.
@@ -257,26 +194,23 @@ public class AddressingHelper
         // elements but this ignores the fact that they have a DOM node attached. when the
         // appendElement is called it barfs because the target and source belong to different
         // documents. we patch this by copying the FaultTo or ReplyTo or from here if need be.
-        EndpointReference epref = addressingProperties.getReplyTo();
+        MAPEndpoint epref = map.getReplyTo();
         if (isNoneAddress(epref)) {
-            epref = addressingProperties.getFrom();
+            epref = map.getFrom();
         }
-        if (!isNoneAddress(epref)) {
-            epref = patchEndpointReference(epref);
-        }
-        requestProperties.initializeAsDestination(epref);
+        requestMap.initializeAsDestination(epref);
         if (messageID != null)
         {
-            requestProperties.setMessageID (makeURI(builder, messageID));
+            requestMap.setMessageID (messageID);
         }
 
-        if (addressingProperties.getMessageID() != null)
+        if (map.getMessageID() != null)
         {
-           Relationship rel = builder.newRelationship(addressingProperties.getMessageID().getURI());
-           requestProperties.setRelatesTo(new Relationship[] { rel });
+            MAPRelatesTo relatesTo = builder.newRelatesTo(map.getMessageID(), REPLY_RELATIONSHIP_TYPE_QNAME);
+            requestMap.setRelatesTo(relatesTo);
         }
 
-        return requestProperties;
+        return requestMap;
     }
 
     /**
@@ -284,161 +218,179 @@ public class AddressingHelper
      * @param messageID The message id of the new message.
      * @return The notification addressing context.
      */
-    public static AddressingProperties createNotificationContext(final String messageID)
+    public static MAP createNotificationContext(final String messageID)
     {
         // create this each time so it uses the current thread classloader
         // this allows the builder class to be redefined via a property
-        AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-        final AddressingProperties requestProperties = builder.newAddressingProperties();
-        requestProperties.setMessageID (makeURI(builder, messageID));
-        requestProperties.setAction(makeURI(builder, ""));
-        URI noneURI = URI.create(builder.newAddressingConstants().getNoneURI());
-        requestProperties.setReplyTo(builder.newEndpointReference(noneURI));
+        MAPBuilder builder = MAPBuilder.getBuilder();
+        final MAP requestMap = builder.newMap();
+        requestMap.setMessageID (messageID);
+        requestMap.setAction("");
+        String noneURI = builder.newConstants().getNoneURI();
+        requestMap.setReplyTo(builder.newEndpoint(noneURI));
 
-        return requestProperties;
+        return requestMap;
     }
 
 
-    public static void installActionMessageID(AddressingProperties addressingProperties, final String action, final String messageID)
+    public static void installActionMessageID(MAP map, final String action, final String messageID)
     {
         // requestProperties has been derived from an endpoint so To and ReferenceParameters will be set. we
         // need to install the action and messageID
 
         // create this each time so it uses the current thread classloader
         // this allows the builder class to be redefined via a property
-        AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-        addressingProperties.setMessageID(makeURI(builder, messageID));
-        addressingProperties.setAction(makeURI(builder, action));
+        MAPBuilder builder = MAPBuilder.getBuilder();
+        map.setMessageID(messageID);
+        map.setAction(action);
     }
 
 
-    public static void installCallerProperties(AddressingProperties addressingProperties, AddressingProperties requestProperties)
+    public static void installCallerProperties(MAP map, MAP requestMap)
     {
-        // requestProperties has been derived from an endpoint so To and ReferenceParameters will be set. we
-        // need to install alll the other fields supplied in addressingProperties
+        // requestMap has been derived from an endpoint so To and ReferenceParameters will be set. we
+        // need to install alll the other fields supplied in map
 
-        AttributedURI uri;
-        Relationship[] relatesTo;
-        EndpointReference epr;
-        uri = addressingProperties.getAction();
+        String uri;
+        MAPRelatesTo relatesTo;
+        MAPEndpoint epr;
+        uri = map.getAction();
         if (uri != null) {
-            requestProperties.setAction(uri);
+            requestMap.setAction(uri);
         }
-        uri = addressingProperties.getMessageID();
+        uri = map.getMessageID();
         if (uri != null) {
-            requestProperties.setMessageID(uri);
+            requestMap.setMessageID(uri);
         }
-        epr = addressingProperties.getFrom();
+        epr = map.getFrom();
         if (epr != null) {
-            requestProperties.setFrom(epr);
+            requestMap.setFrom(epr);
         }
-        epr = addressingProperties.getFaultTo();
+        epr = map.getFaultTo();
         if (epr != null) {
-            requestProperties.setFaultTo(epr);
+            requestMap.setFaultTo(epr);
         }
-        epr = addressingProperties.getReplyTo();
+        epr = map.getReplyTo();
         if (epr != null) {
-            requestProperties.setReplyTo(epr);
+            requestMap.setReplyTo(epr);
         }
-        relatesTo = addressingProperties.getRelatesTo();
+        relatesTo = map.getRelatesTo();
         if (relatesTo != null) {
-            requestProperties.setRelatesTo(relatesTo);
+            requestMap.setRelatesTo(relatesTo);
         }
     }
     
-    public static void installFaultTo(AddressingProperties addressingProperties, EndpointReference epReference, InstanceIdentifier identifier)
+    public static void installFaultTo(MAP map, MAPEndpoint epReference, InstanceIdentifier identifier)
     {
-        AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-        EndpointReference from = builder.newEndpointReference(epReference.getAddress().getURI());
+        MAPBuilder builder = MAPBuilder.getBuilder();
+        MAPEndpoint from = builder.newEndpoint(epReference.getAddress());
         InstanceIdentifier.setEndpointInstanceIdentifier(from, identifier);
-        addressingProperties.setFaultTo(from);
+        map.setFaultTo(from);
     }
 
-    public static void installFromFaultTo(AddressingProperties addressingProperties, EndpointReference epReference, InstanceIdentifier identifier)
+    public static void installFromFaultTo(MAP map, MAPEndpoint epReference, InstanceIdentifier identifier)
     {
-        AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-        EndpointReference from = builder.newEndpointReference(epReference.getAddress().getURI());
+        MAPBuilder builder = MAPBuilder.getBuilder();
+        MAPEndpoint from = builder.newEndpoint(epReference.getAddress());
         InstanceIdentifier.setEndpointInstanceIdentifier(from, identifier);
-        addressingProperties.setFrom(from);
-        EndpointReference faultTo = builder.newEndpointReference(epReference.getAddress().getURI());
+        map.setFrom(from);
+        MAPEndpoint faultTo = builder.newEndpoint(epReference.getAddress());
         InstanceIdentifier.setEndpointInstanceIdentifier(faultTo, identifier);
-        addressingProperties.setFaultTo(faultTo);
+        map.setFaultTo(faultTo);
     }
 
-    private static EndpointReference noneAddress = null;
-
-    private static synchronized EndpointReference getNoneAddress()
+    public static boolean isNoneReplyTo(MAP map)
     {
-        if (noneAddress == null) {
-            AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-            AddressingConstants addressingConstants = builder.newAddressingConstants();
-            try {
-                URI noneURI = new URI(addressingConstants.getNoneURI());
-                noneAddress = builder.newEndpointReference(noneURI);
-            } catch (URISyntaxException e) {
-                // will not happen
-            }
-        }
-
-        return noneAddress;
+        return isNoneAddress(map.getReplyTo());
     }
 
-    public static boolean isNoneReplyTo(AddressingProperties addressingProperties)
-    {
-        return isNoneAddress(addressingProperties.getReplyTo());
-    }
-
-    public static boolean isNoneAddress(EndpointReference epref)
+    public static boolean isNoneAddress(MAPEndpoint epref)
     {
         if (epref != null) {
-            String noneAddress = getNoneAddress().getAddress().getURI().toString();
-            String eprefAddress = epref.getAddress().getURI().toString();
+            String noneAddress = getNoneAddress().getAddress();
+            String eprefAddress = epref.getAddress();
 
             return noneAddress.equals(eprefAddress);
         } else {
             return true;
         }
     }
-    public static void installNoneReplyTo(AddressingProperties addressingProperties)
-    {
-        addressingProperties.setReplyTo(getNoneAddress());
-    }
 
-    public static javax.xml.ws.addressing.AttributedURI makeURI(AddressingBuilder builder, String messageID)
+    public static void installNoneReplyTo(MAP map)
     {
-        try {
-            return builder.newURI(messageID);
-        } catch (URISyntaxException use) {
-            return null;
-        }
-    }
-
-    private static SOAPFactory factory = createSoapFactory();
-
-    private static SOAPFactory createSoapFactory()
-    {
-        try {
-            SOAPFactory factory = SOAPFactory.newInstance();
-            return factory;
-        } catch (SOAPException e) {
-            // TODO log error here (should never happen)
-        }
-        return null;
+        map.setReplyTo(getNoneAddress());
     }
 
     /**
-     * create a SOAPElement which is a deep copy of the supplied SOAPElement
-     * @param element
-     * @return
+     * JBossWS Native version to configure request context with MAP, to and action
+     * @param requestContext
+     * @param map
+     * @param to
+     * @param action
      */
-    private static SOAPElement cloneElement(SOAPElement element)
+    public static void configureRequestContext(Map<String, Object> requestContext, MAP map, String to, String action)
     {
-        try {
-            Element copy = (Element)element.cloneNode(true);
-            SOAPElement newElement = factory.createElement(copy);
-            return newElement;
-        } catch (SOAPException e) {
-            return element;
+        configureRequestContext(requestContext, map);
+        configureRequestContext(requestContext, to, action);
+    }
+
+    /**
+     * JBossWS Native version to configure request context with MAP
+     * @param requestContext
+     */
+    public static void configureRequestContext(Map<String, Object> requestContext, MAP map)
+    {
+        map.installOutboundMap(requestContext, map);
+    }
+
+    /**
+     * JBossWS Native version to configure request context with to and action
+     * @param requestContext
+     * @param to
+     * @param action
+     */
+    public static void configureRequestContext(Map<String, Object> requestContext, String to, String action) {
+        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, to);
+        if (action != null) {
+            // need to set soap action header based upon what the client asks for
+            requestContext.put(BindingProvider.SOAPACTION_URI_PROPERTY, action);
         }
     }
+    
+    /**
+     * retrieve the inbound server message address properties attached to a message context
+     * @param ctx the server message context
+     * @return
+     */
+    public static MAP inboundMap(MessageContext ctx)
+    {
+        return MAPBuilder.getBuilder().inboundMap(ctx);
+    }
+
+    /**
+     * retrieve the outbound client message address properties attached to a message request map
+     * @param ctx the client request properties map
+     * @return
+     */
+    public static MAP outboundMap(Map<String, Object>  ctx) {
+        return MAPBuilder.getBuilder().outboundMap(ctx);
+    }
+
+    private static MAPEndpoint noneAddress = null;
+
+    private static synchronized MAPEndpoint getNoneAddress()
+    {
+        if (noneAddress == null) {
+            MAPBuilder builder = MAPBuilder.getBuilder();
+            MAPConstants mapConstants = builder.newConstants();
+            String noneURI = mapConstants.getNoneURI();
+            noneAddress = builder.newEndpoint(noneURI);
+        }
+
+        return noneAddress;
+    }
+
+    private static String REPLY_RELATIONSHIP_TYPE_NS = "org.jboss.jbossts.xts";
+    private static String REPLY_RELATIONSHIP_TYPE_STRING = "reply";
+    private static QName REPLY_RELATIONSHIP_TYPE_QNAME = new QName(REPLY_RELATIONSHIP_TYPE_NS, REPLY_RELATIONSHIP_TYPE_STRING);
 }

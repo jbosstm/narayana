@@ -23,6 +23,7 @@ package com.arjuna.wsc11;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wscoor.client.ActivationCoordinatorClient;
 import com.arjuna.wsc.InvalidCreateParametersException;
@@ -33,7 +34,6 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.Expires;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPFault;
-import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.soap.SOAPFaultException;
 import java.io.IOException;
 
@@ -59,7 +59,7 @@ public class ActivationCoordinator
         final CoordinationContext currentContext)
         throws InvalidCreateParametersException, SoapFault
     {
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(activationCoordinatorURI, messageID) ;
+        final MAP map = AddressingHelper.createRequestContext(activationCoordinatorURI, messageID) ;
         
         final Expires expiresValue;
         if (expires == null) {
@@ -73,7 +73,7 @@ public class ActivationCoordinator
         {
             CreateCoordinationContextResponseType response;
             ActivationCoordinatorClient client = ActivationCoordinatorClient.getClient();
-            response = client.sendCreateCoordination(addressingProperties, coordinationTypeURI, expiresValue, currentContext) ;
+            response = client.sendCreateCoordination(map, coordinationTypeURI, expiresValue, currentContext) ;
             return response.getCoordinationContext();
         }
         catch (final IOException ioe)

@@ -41,19 +41,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ExceptionType }
-     * 
-     */
-    public ExceptionType createExceptionType() {
-        return new ExceptionType();
-    }
-
-    /**
      * Create an instance of {@link NotificationType }
      * 
      */
     public NotificationType createNotificationType() {
         return new NotificationType();
+    }
+
+    /**
+     * Create an instance of {@link ExceptionType }
+     * 
+     */
+    public ExceptionType createExceptionType() {
+        return new ExceptionType();
     }
 
     /**

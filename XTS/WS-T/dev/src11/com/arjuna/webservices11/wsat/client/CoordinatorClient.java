@@ -3,24 +3,20 @@ package com.arjuna.webservices11.wsat.client;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
-import com.arjuna.webservices11.wsat.client.WSATClient;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
 import com.arjuna.webservices11.wsaddr.EndpointHelper;
+import com.arjuna.webservices11.wsaddr.map.MAPEndpoint;
+import com.arjuna.webservices11.wsaddr.map.MAPBuilder;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CoordinatorPortType;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
-import javax.xml.ws.addressing.AddressingBuilder;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.AttributedURI;
-import javax.xml.ws.addressing.EndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URI;
 
 /**
  * The Client side of the Coordinator.
@@ -36,87 +32,67 @@ public class CoordinatorClient
     /**
      * The prepared action.
      */
-    private AttributedURI preparedAction = null;
+    private String preparedAction = null;
     /**
      * The aborted action.
      */
-    private AttributedURI abortedAction = null;
+    private String abortedAction = null;
     /**
      * The read only action.
      */
-    private AttributedURI readOnlyAction = null;
+    private String readOnlyAction = null;
     /**
      * The committed action.
      */
-    private AttributedURI committedAction = null;
+    private String committedAction = null;
     /**
      * The fault action.
      */
-    private AttributedURI faultAction = null;
+    private String faultAction = null;
 
     /**
      * The participant URI for replies.
      */
-    private EndpointReference participant ;
+    private MAPEndpoint participant ;
 
     /**
      * The participant URI for secure replies.
      */
-    private EndpointReference secureParticipant ;
+    private MAPEndpoint secureParticipant ;
 
     /**
      * Construct the coordinator client.
      */
     private CoordinatorClient()
     {
-        final AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-        try {
-            preparedAction = builder.newURI(AtomicTransactionConstants.WSAT_ACTION_PREPARED);
-            abortedAction = builder.newURI(AtomicTransactionConstants.WSAT_ACTION_ABORTED);
-            readOnlyAction = builder.newURI(AtomicTransactionConstants.WSAT_ACTION_READ_ONLY);
-            committedAction = builder.newURI(AtomicTransactionConstants.WSAT_ACTION_COMMITTED);
-            faultAction = builder.newURI(AtomicTransactionConstants.WSAT_ACTION_FAULT);
-        } catch (URISyntaxException use) {
-            // TODO - log fault and throw exception
-        }
-        // final HandlerRegistry handlerRegistry = new HandlerRegistry() ;
-
-        // Add WS-Addressing
-        // AddressingPolicy.register(handlerRegistry) ;
-        // Add client policies
-        // ClientPolicy.register(handlerRegistry) ;
+        final MAPBuilder builder = MAPBuilder.getBuilder();
+        preparedAction = AtomicTransactionConstants.WSAT_ACTION_PREPARED;
+        abortedAction = AtomicTransactionConstants.WSAT_ACTION_ABORTED;
+        readOnlyAction = AtomicTransactionConstants.WSAT_ACTION_READ_ONLY;
+        committedAction = AtomicTransactionConstants.WSAT_ACTION_COMMITTED;
+        faultAction = AtomicTransactionConstants.WSAT_ACTION_FAULT;
 
         final String participantURIString =
             ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, false);
         final String secureParticipantURIString =
             ServiceRegistry.getRegistry().getServiceURI(AtomicTransactionConstants.PARTICIPANT_SERVICE_NAME, true);
-        try {
-            URI participantURI = new URI(participantURIString);
-            participant = builder.newEndpointReference(participantURI);
-        } catch (URISyntaxException use) {
-            // TODO - log fault and throw exception
-        }
-        try {
-            URI secureParticipantURI = new URI(secureParticipantURIString);
-            secureParticipant = builder.newEndpointReference(secureParticipantURI);
-        } catch (URISyntaxException use) {
-            // TODO - log fault and throw exception
-        }
+        participant = builder.newEndpoint(participantURIString);
+        secureParticipant = builder.newEndpoint(secureParticipantURIString);
     }
 
     /**
      * Send a prepared request.
-     * @param addressingProperties addressing context initialised with to and message ID.
+     * @param map addressing context initialised with to and message ID.
      * @param identifier The identifier of the initiator.
      * @throws com.arjuna.webservices.SoapFault For any SOAP errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendPrepared(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
+    public void sendPrepared(final W3CEndpointReference endpoint, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint, addressingProperties);
-        AddressingHelper.installFromFaultTo(addressingProperties, participant, identifier);
-        CoordinatorPortType port = getPort(endpoint, addressingProperties, preparedAction);
+        MAPEndpoint participant = getParticipant(endpoint, map);
+        AddressingHelper.installFromFaultTo(map, participant, identifier);
+        CoordinatorPortType port = getPort(endpoint, map, preparedAction);
         Notification prepared = new Notification();
 
         port.preparedOperation(prepared);
@@ -124,17 +100,17 @@ public class CoordinatorClient
 
     /**
      * Send an aborted request.
-     * @param addressingProperties addressing context initialised with to and message ID.
+     * @param map addressing context initialised with to and message ID.
      * @param identifier The identifier of the initiator.
      * @throws com.arjuna.webservices.SoapFault For any SOAP errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendAborted(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
+    public void sendAborted(final W3CEndpointReference endpoint, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint, addressingProperties);
-        AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
-        CoordinatorPortType port = getPort(endpoint, addressingProperties, abortedAction);
+        MAPEndpoint participant = getParticipant(endpoint, map);
+        AddressingHelper.installFaultTo(map, participant, identifier);
+        CoordinatorPortType port = getPort(endpoint, map, abortedAction);
         Notification aborted = new Notification();
 
         port.abortedOperation(aborted);
@@ -142,17 +118,17 @@ public class CoordinatorClient
 
     /**
      * Send a read only request.
-     * @param addressingProperties addressing context initialised with to and message ID.
+     * @param map addressing context initialised with to and message ID.
      * @param identifier The identifier of the initiator.
      * @throws com.arjuna.webservices.SoapFault For any SOAP errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendReadOnly(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
+    public void sendReadOnly(final W3CEndpointReference endpoint, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint, addressingProperties);
-        AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
-        CoordinatorPortType port = getPort(endpoint, addressingProperties, readOnlyAction);
+        MAPEndpoint participant = getParticipant(endpoint, map);
+        AddressingHelper.installFaultTo(map, participant, identifier);
+        CoordinatorPortType port = getPort(endpoint, map, readOnlyAction);
         Notification readOnly = new Notification();
 
         port.readOnlyOperation(readOnly);
@@ -160,17 +136,17 @@ public class CoordinatorClient
 
     /**
      * Send a committed request.
-     * @param addressingProperties addressing context initialised with to and message ID.
+     * @param map addressing context initialised with to and message ID.
      * @param identifier The identifier of the initiator.
      * @throws com.arjuna.webservices.SoapFault For any SOAP errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendCommitted(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final InstanceIdentifier identifier)
+    public void sendCommitted(final W3CEndpointReference endpoint, final MAP map, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        EndpointReference participant = getParticipant(endpoint, addressingProperties);
-        AddressingHelper.installFaultTo(addressingProperties, participant, identifier);
-        CoordinatorPortType port = getPort(endpoint, addressingProperties, committedAction);
+        MAPEndpoint participant = getParticipant(endpoint, map);
+        AddressingHelper.installFaultTo(map, participant, identifier);
+        CoordinatorPortType port = getPort(endpoint, map, committedAction);
         Notification committed = new Notification();
 
         port.committedOperation(committed);
@@ -178,18 +154,18 @@ public class CoordinatorClient
 
     /**
      * Send a fault.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param soapFault The SOAP fault.
      * @param identifier The arjuna instance identifier.
      * @throws com.arjuna.webservices.SoapFault For any SOAP errors.
      * @throws java.io.IOException for any transport errors.
      */
-    public void sendSoapFault(final W3CEndpointReference endpoint, final AddressingProperties addressingProperties, final SoapFault soapFault, final InstanceIdentifier identifier)
+    public void sendSoapFault(final W3CEndpointReference endpoint, final MAP map, final SoapFault soapFault, final InstanceIdentifier identifier)
         throws SoapFault, IOException
     {
-        AddressingHelper.installNoneReplyTo(addressingProperties);
+        AddressingHelper.installNoneReplyTo(map);
         // use the SoapFaultService to format a soap fault and send it back to the faultto address
-        SoapFaultClient.sendSoapFault((SoapFault11)soapFault, endpoint, addressingProperties, faultAction);
+        SoapFaultClient.sendSoapFault((SoapFault11)soapFault, endpoint, map, faultAction);
     }
 
     /**
@@ -197,14 +173,14 @@ public class CoordinatorClient
      * @param endpoint
      * @return either the secure participant endpoint or the non-secure endpoint
      */
-    EndpointReference getParticipant(W3CEndpointReference endpoint, AddressingProperties addressingProperties)
+    MAPEndpoint getParticipant(W3CEndpointReference endpoint, MAP map)
     {
         String address;
         if (endpoint != null) {
             NativeEndpointReference nativeRef = EndpointHelper.transform(NativeEndpointReference.class, endpoint);
             address = nativeRef.getAddress();
         } else {
-            address = addressingProperties.getTo().getURI().toString();
+            address = map.getTo();
         }
 
         if (address.startsWith("https")) {
@@ -227,19 +203,19 @@ public class CoordinatorClient
      * obtain a port from the coordinator endpoint configured with the instance identifier handler and the supplied
      * addressing properties supplemented with the given action
      * @param endpoint
-     * @param addressingProperties
+     * @param map
      * @param action
      * @return
      */
     private CoordinatorPortType getPort(final W3CEndpointReference endpoint,
-                                                final AddressingProperties addressingProperties,
-                                                final AttributedURI action)
+                                                final MAP map,
+                                                final String action)
     {
-        AddressingHelper.installNoneReplyTo(addressingProperties);
+        AddressingHelper.installNoneReplyTo(map);
         if (endpoint != null) {
-            return WSATClient.getCoordinatorPort(endpoint, action, addressingProperties);
+            return WSATClient.getCoordinatorPort(endpoint, action, map);
         } else {
-            return WSATClient.getCoordinatorPort(action, addressingProperties);
+            return WSATClient.getCoordinatorPort(action, map);
         }
     }
 }

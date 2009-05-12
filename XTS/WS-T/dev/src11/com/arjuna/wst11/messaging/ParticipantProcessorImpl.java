@@ -4,6 +4,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.processors.ParticipantProcessor;
@@ -12,8 +13,6 @@ import com.arjuna.webservices11.wsat.client.CoordinatorClient;
 import com.arjuna.wsc11.messaging.MessageId;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import org.jboss.jbossts.xts.recovery.participant.at.XTSATRecoveryManager;
-
-import javax.xml.ws.addressing.AddressingProperties;
 
 /**
  * The Participant processor.
@@ -70,7 +69,7 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
     /**
      * Commit.
      * @param commit The commit notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantProcessorImpl.commit_1 [com.arjuna.wst11.messaging.ParticipantProcessorImpl.commit_1] - Unexpected exception thrown from commit:
@@ -79,7 +78,7 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
      * @message com.arjuna.wst11.messaging.ParticipantProcessorImpl.commit_4 [com.arjuna.wst11.messaging.ParticipantProcessorImpl.commit_4] - Commit request dropped pending WS-AT participant recovery manager scan for unknown participant: {0}
      * @message com.arjuna.wst11.messaging.ParticipantProcessorImpl.commit_5 [com.arjuna.wst11.messaging.ParticipantProcessorImpl.commit_5] - Commit request dropped pending registration of application-specific recovery module for WS-AT participant: {0}
      */
-    public void commit(final Notification commit, final AddressingProperties addressingProperties,
+    public void commit(final Notification commit, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
@@ -105,7 +104,7 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
         {
             try
             {
-                participant.commit(commit, addressingProperties, arjunaContext) ;
+                participant.commit(commit, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -135,20 +134,20 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
             {
                 WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.ParticipantProcessorImpl.commit_2", new Object[] {instanceIdentifier}) ;
             }
-            sendCommitted(addressingProperties, arjunaContext) ;
+            sendCommitted(map, arjunaContext) ;
         }
     }
 
     /**
      * Prepare.
      * @param prepare The prepare notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantProcessorImpl.prepare_1 [com.arjuna.wst11.messaging.ParticipantProcessorImpl.prepare_1] - Unexpected exception thrown from prepare:
      * @message com.arjuna.wst11.messaging.ParticipantProcessorImpl.prepare_2 [com.arjuna.wst11.messaging.ParticipantProcessorImpl.prepare_2] - Prepare called on unknown participant: {0}
      */
-    public void prepare(final Notification prepare, final AddressingProperties addressingProperties,
+    public void prepare(final Notification prepare, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
@@ -158,7 +157,7 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
         {
             try
             {
-                participant.prepare(prepare, addressingProperties, arjunaContext) ;
+                participant.prepare(prepare, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -174,14 +173,14 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
             {
                 WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.ParticipantProcessorImpl.prepare_2", new Object[] {instanceIdentifier}) ;
             }
-            sendAborted(addressingProperties, arjunaContext) ;
+            sendAborted(map, arjunaContext) ;
         }
     }
 
     /**
      * Rollback.
      * @param rollback The rollback notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantProcessorImpl.rollback_1 [com.arjuna.wst11.messaging.ParticipantProcessorImpl.rollback_1] - Unexpected exception thrown from rollback:
@@ -190,7 +189,7 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
      * @message com.arjuna.wst11.messaging.ParticipantProcessorImpl.rollback_4 [com.arjuna.wst11.messaging.ParticipantProcessorImpl.rollback_4] - Rollback request dropped pending WS-AT participant recovery manager scan for unknown participant: {0}
      * @message com.arjuna.wst11.messaging.ParticipantProcessorImpl.rollback_5 [com.arjuna.wst11.messaging.ParticipantProcessorImpl.rollback_5] - Rollback request dropped pending registration of application-specific recovery module for WS-AT participant: {0}
      */
-    public void rollback(final Notification rollback, final AddressingProperties addressingProperties,
+    public void rollback(final Notification rollback, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
@@ -215,7 +214,7 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
         {
             try
             {
-                participant.rollback(rollback, addressingProperties, arjunaContext) ;
+                participant.rollback(rollback, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -245,20 +244,20 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
             {
                 WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.ParticipantProcessorImpl.rollback_2", new Object[] {instanceIdentifier}) ;
             }
-            sendAborted(addressingProperties, arjunaContext) ;
+            sendAborted(map, arjunaContext) ;
         }
     }
 
     /**
      * SOAP Fault.
      * @param fault The SOAP fault notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantProcessorImpl.soapFault_1 [com.arjuna.wst11.messaging.ParticipantProcessorImpl.soapFault_1] - Unexpected exception thrown from soapFault:
      * @message com.arjuna.wst11.messaging.ParticipantProcessorImpl.soapFault_2 [com.arjuna.wst11.messaging.ParticipantProcessorImpl.soapFault_2] - SoapFault called on unknown participant: {0}
      */
-    public void soapFault(final SoapFault fault, final AddressingProperties addressingProperties,
+    public void soapFault(final SoapFault fault, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
@@ -268,7 +267,7 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
         {
             try
             {
-                participant.soapFault(fault, addressingProperties, arjunaContext) ;
+                participant.soapFault(fault, map, arjunaContext) ;
             }
             catch (final Throwable th)
             {
@@ -290,20 +289,20 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
     /**
      * Send a committed message.
      *
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantProcessorImpl.sendCommitted_1 [com.arjuna.wst11.messaging.ParticipantProcessorImpl.sendCommitted_1] - Unexpected exception while sending Committed
      */
-    private void sendCommitted(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    private void sendCommitted(final MAP map, final ArjunaContext arjunaContext)
     {
         // KEV add check for recovery
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingProperties = AddressingHelper.createResponseContext(addressingProperties, messageId) ;
+        final MAP responseMAP = AddressingHelper.createResponseContext(map, messageId) ;
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
         try
         {
-            CoordinatorClient.getClient().sendCommitted(null, responseAddressingProperties, instanceIdentifier) ;
+            CoordinatorClient.getClient().sendCommitted(null, responseMAP, instanceIdentifier) ;
         }
         catch (final Throwable th)
         {
@@ -317,20 +316,20 @@ public class ParticipantProcessorImpl extends ParticipantProcessor
     /**
      * Send an aborted message.
      *
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * @message com.arjuna.wst11.messaging.ParticipantProcessorImpl.sendAborted_1 [com.arjuna.wst11.messaging.ParticipantProcessorImpl.sendAborted_1] - Unexpected exception while sending Aborted
      */
-    private void sendAborted(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    private void sendAborted(final MAP map, final ArjunaContext arjunaContext)
     {
         // KEV add check for recovery
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties responseAddressingProperties = AddressingHelper.createResponseContext(addressingProperties, messageId) ;
+        final MAP responseMAP = AddressingHelper.createResponseContext(map, messageId) ;
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
         try
         {
-            CoordinatorClient.getClient().sendAborted(null, responseAddressingProperties, instanceIdentifier) ;
+            CoordinatorClient.getClient().sendAborted(null, responseMAP, instanceIdentifier) ;
         }
         catch (final Throwable th)
         {

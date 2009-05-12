@@ -21,14 +21,13 @@
 package com.jboss.transaction.txinterop.webservices.atinterop.sei;
 
 import com.jboss.transaction.txinterop.webservices.atinterop.processors.ATInitiatorProcessor;
-import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wsaddr.map.MAP;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.JAXWSAConstants;
+import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.handler.MessageContext;
 import javax.annotation.Resource;
 
@@ -39,17 +38,8 @@ import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.WebParam;
-import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.namespace.QName;
-
-import org.w3c.dom.Element;
 import org.jboss.jbossts.xts.soapfault.Fault;
-
-import java.util.Iterator;
-import java.util.Vector;
-
 
 /**
  * Implementation class for WSTX 1.1 AT Interop Test Initiator service
@@ -59,8 +49,7 @@ import java.util.Vector;
         portName = "InitiatorPortType",
         wsdlLocation="/WEB-INF/wsdl/interopat-initiator-binding.wsdl",
         serviceName="InitiatorService")
-// @EndpointConfig(configName = "Standard WSAddressing Endpoint")
-@HandlerChain(file="initiatorhandlers.xml")
+@Addressing(required=true)
 public class InitiatorPortTypeImpl {
 
     /**
@@ -78,9 +67,9 @@ public class InitiatorPortTypeImpl {
     public void response()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
 
-        ATInitiatorProcessor.getInitiator().handleResponse(inboundAddressProperties) ;
+        ATInitiatorProcessor.getInitiator().handleResponse(inboundMap) ;
     }
 
     @WebMethod(operationName = "SoapFault", action = "http://fabrikam123.com/SoapFault")
@@ -91,10 +80,10 @@ public class InitiatorPortTypeImpl {
             Fault fault)
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
 
         SoapFault11 soapFaultInternal = SoapFault11.fromFault(fault);
-        ATInitiatorProcessor.getInitiator().handleSoapFault(soapFaultInternal, inboundAddressProperties) ;
+        ATInitiatorProcessor.getInitiator().handleSoapFault(soapFaultInternal, inboundMap) ;
     }
 
 }

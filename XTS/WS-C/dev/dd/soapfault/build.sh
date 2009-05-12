@@ -19,4 +19,4 @@ fi
 
 rm -rf tmp/classes/* tmp/src/*
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/soapfault.wsdl -d tmp/classes -s tmp/src -target 2.0 -p org.jboss.jbossts.xts.soapfault wsdl/soapfault.wsdl
+$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/soapfault.wsdl -d tmp/classes -s tmp/src -target 2.1 -p org.jboss.jbossts.xts.soapfault wsdl/soapfault.wsdl

@@ -25,12 +25,9 @@ import java.util.Map;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
-import com.arjuna.webservices11.wsat.ParticipantInboundEvents;
 import com.arjuna.webservices11.wsat.CoordinatorInboundEvents;
-import com.arjuna.webservices11.wsat.processors.ParticipantProcessor;
 import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
-
-import javax.xml.ws.addressing.AddressingProperties;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
@@ -95,10 +92,10 @@ public class TestCoordinatorProcessor extends CoordinatorProcessor
     }
 
     public void aborted(Notification aborted,
-            AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+            MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorDetails details = new CoordinatorDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final CoordinatorDetails details = new CoordinatorDetails(map, arjunaContext) ;
         details.setAborted(true) ;
 
         synchronized(messageIdMap)
@@ -109,10 +106,10 @@ public class TestCoordinatorProcessor extends CoordinatorProcessor
     }
 
     public void committed(Notification committed,
-            AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+            MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorDetails details = new CoordinatorDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final CoordinatorDetails details = new CoordinatorDetails(map, arjunaContext) ;
         details.setCommitted(true) ;
 
         synchronized(messageIdMap)
@@ -123,10 +120,10 @@ public class TestCoordinatorProcessor extends CoordinatorProcessor
     }
 
     public void prepared(Notification prepared,
-            AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+            MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorDetails details = new CoordinatorDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final CoordinatorDetails details = new CoordinatorDetails(map, arjunaContext) ;
         details.setPrepared(true) ;
 
         synchronized(messageIdMap)
@@ -137,10 +134,10 @@ public class TestCoordinatorProcessor extends CoordinatorProcessor
     }
 
     public void readOnly(Notification readOnly,
-            AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+            MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorDetails details = new CoordinatorDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final CoordinatorDetails details = new CoordinatorDetails(map, arjunaContext) ;
         details.setReadOnly(true) ;
 
         synchronized(messageIdMap)
@@ -151,10 +148,10 @@ public class TestCoordinatorProcessor extends CoordinatorProcessor
     }
 
     public void replay(Notification replay,
-            AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+            MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorDetails details = new CoordinatorDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final CoordinatorDetails details = new CoordinatorDetails(map, arjunaContext) ;
         details.setReplay(true) ;
 
         synchronized(messageIdMap)
@@ -164,11 +161,11 @@ public class TestCoordinatorProcessor extends CoordinatorProcessor
         }
     }
 
-    public void soapFault(SoapFault soapFault, AddressingProperties addressingProperties,
+    public void soapFault(SoapFault soapFault, MAP map,
             ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CoordinatorDetails details = new CoordinatorDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final CoordinatorDetails details = new CoordinatorDetails(map, arjunaContext) ;
         details.setSoapFault(soapFault) ;
 
         synchronized(messageIdMap)
@@ -180,7 +177,7 @@ public class TestCoordinatorProcessor extends CoordinatorProcessor
 
     public static class CoordinatorDetails
     {
-        private final AddressingProperties addressingProperties ;
+        private final MAP map ;
         private final ArjunaContext arjunaContext ;
         private boolean aborted ;
         private boolean committed ;
@@ -189,15 +186,15 @@ public class TestCoordinatorProcessor extends CoordinatorProcessor
         private boolean replay ;
         private SoapFault soapFault ;
 
-        CoordinatorDetails(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+        CoordinatorDetails(final MAP map, final ArjunaContext arjunaContext)
         {
-            this.addressingProperties = addressingProperties ;
+            this.map = map ;
             this.arjunaContext = arjunaContext ;
         }
 
-        public AddressingProperties getAddressingProperties()
+        public MAP getMAP()
         {
-            return addressingProperties ;
+            return map ;
         }
 
         public ArjunaContext getArjunaContext()

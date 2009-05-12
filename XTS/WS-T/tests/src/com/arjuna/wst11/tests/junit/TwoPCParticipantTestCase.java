@@ -30,12 +30,9 @@ package com.arjuna.wst11.tests.junit;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.AttributedURI;
 
 import junit.framework.TestCase;
 
-import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
@@ -43,12 +40,10 @@ import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices11.wsat.client.CoordinatorClient;
 import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
-import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.wst11.tests.junit.TestCoordinatorProcessor.CoordinatorDetails;
-import com.arjuna.wst11.tests.junit.TestCoordinatorProcessor;
 import com.arjuna.wst11.tests.TestUtil;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 
 public class TwoPCParticipantTestCase extends TestCase
 {
@@ -68,9 +63,9 @@ public class TwoPCParticipantTestCase extends TestCase
         final String messageId = "testSendPrepared" ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("1") ;
         W3CEndpointReference coordinatorEndpoint = TestUtil.getCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.coordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.coordinatorServiceURI, messageId) ;
 
-        CoordinatorClient.getClient().sendPrepared(coordinatorEndpoint, addressingProperties, new InstanceIdentifier("sender"));
+        CoordinatorClient.getClient().sendPrepared(coordinatorEndpoint, map, new InstanceIdentifier("sender"));
 
         CoordinatorDetails details = testCoordinatorProcessor.getCoordinatorDetails(messageId, 10000);
         assertTrue(details.hasPrepared());
@@ -84,9 +79,9 @@ public class TwoPCParticipantTestCase extends TestCase
         final String messageId = "testSendAborted" ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("2") ;
         W3CEndpointReference coordinatorEndpoint = TestUtil.getCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.coordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.coordinatorServiceURI, messageId) ;
 
-        CoordinatorClient.getClient().sendAborted(coordinatorEndpoint, addressingProperties, new InstanceIdentifier("sender"));
+        CoordinatorClient.getClient().sendAborted(coordinatorEndpoint, map, new InstanceIdentifier("sender"));
 
         CoordinatorDetails details = testCoordinatorProcessor.getCoordinatorDetails(messageId, 10000);
         assertTrue(details.hasAborted());
@@ -100,9 +95,9 @@ public class TwoPCParticipantTestCase extends TestCase
         final String messageId = "testSendReadOnly" ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("3") ;
         W3CEndpointReference coordinatorEndpoint = TestUtil.getCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.coordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.coordinatorServiceURI, messageId) ;
 
-        CoordinatorClient.getClient().sendReadOnly(coordinatorEndpoint, addressingProperties, new InstanceIdentifier("sender"));
+        CoordinatorClient.getClient().sendReadOnly(coordinatorEndpoint, map, new InstanceIdentifier("sender"));
 
         CoordinatorDetails details = testCoordinatorProcessor.getCoordinatorDetails(messageId, 10000);
         assertTrue(details.hasReadOnly());
@@ -116,9 +111,9 @@ public class TwoPCParticipantTestCase extends TestCase
         final String messageId = "testSendCommitted" ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("4") ;
         W3CEndpointReference coordinatorEndpoint = TestUtil.getCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.coordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.coordinatorServiceURI, messageId) ;
 
-        CoordinatorClient.getClient().sendCommitted(coordinatorEndpoint, addressingProperties, new InstanceIdentifier("sender"));
+        CoordinatorClient.getClient().sendCommitted(coordinatorEndpoint, map, new InstanceIdentifier("sender"));
 
         CoordinatorDetails details = testCoordinatorProcessor.getCoordinatorDetails(messageId, 10000);
         assertTrue(details.hasCommitted());
@@ -132,13 +127,13 @@ public class TwoPCParticipantTestCase extends TestCase
         final String messageId = "testSendError" ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("5");
         W3CEndpointReference coordinatorEndpoint = TestUtil.getCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.coordinatorServiceURI, messageId);
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.coordinatorServiceURI, messageId);
         final String reason = "testSendErrorReason" ;
         final SoapFaultType soapFaultType = SoapFaultType.FAULT_SENDER ;
         final QName subcode = ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME ;
         final SoapFault11 soapFault = new SoapFault11(soapFaultType, subcode, reason) ;
 
-        CoordinatorClient.getClient().sendSoapFault(coordinatorEndpoint, addressingProperties, soapFault, new InstanceIdentifier("sender"));
+        CoordinatorClient.getClient().sendSoapFault(coordinatorEndpoint, map, soapFault, new InstanceIdentifier("sender"));
 
         CoordinatorDetails details = testCoordinatorProcessor.getCoordinatorDetails(messageId, 10000);
         assertNotNull(details.hasSoapFault());
@@ -167,26 +162,26 @@ public class TwoPCParticipantTestCase extends TestCase
 
     private void checkDetails(CoordinatorDetails details, boolean hasFrom, boolean hasFaultTo, String messageId, InstanceIdentifier instanceIdentifier)
     {
-        AddressingProperties inAddressingProperties = details.getAddressingProperties();
+        MAP inMAP = details.getMAP();
         ArjunaContext inArjunaContext = details.getArjunaContext();
 
-        assertEquals(inAddressingProperties.getTo().getURI().toString(), TestUtil.coordinatorServiceURI);
-        assertNotNull(inAddressingProperties.getReplyTo());
-        assertTrue(AddressingHelper.isNoneReplyTo(inAddressingProperties));
+        assertEquals(inMAP.getTo(), TestUtil.coordinatorServiceURI);
+        assertNotNull(inMAP.getReplyTo());
+        assertTrue(AddressingHelper.isNoneReplyTo(inMAP));
         if (hasFrom) {
-            assertNotNull(inAddressingProperties.getFrom());
-            assertEquals(inAddressingProperties.getFrom().getAddress().getURI().toString(), TestUtil.participantServiceURI);
+            assertNotNull(inMAP.getFrom());
+            assertEquals(inMAP.getFrom().getAddress(), TestUtil.participantServiceURI);
         } else {
-            assertNull(inAddressingProperties.getFrom());
+            assertNull(inMAP.getFrom());
         }
         if (hasFaultTo) {
-            assertNotNull(inAddressingProperties.getFaultTo());
-            assertEquals(inAddressingProperties.getFaultTo().getAddress().getURI().toString(), TestUtil.participantServiceURI);
+            assertNotNull(inMAP.getFaultTo());
+            assertEquals(inMAP.getFaultTo().getAddress(), TestUtil.participantServiceURI);
         } else {
-            assertNull(inAddressingProperties.getFrom());
+            assertNull(inMAP.getFrom());
         }
-        assertNotNull(inAddressingProperties.getMessageID());
-        assertEquals(inAddressingProperties.getMessageID().getURI().toString(), messageId);
+        assertNotNull(inMAP.getMessageID());
+        assertEquals(inMAP.getMessageID(), messageId);
 
         if (instanceIdentifier == null) {
             assertNull(inArjunaContext);

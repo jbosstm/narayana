@@ -2,9 +2,8 @@ package com.arjuna.webservices11.wsat.processors;
 
 import com.arjuna.webservices11.wsat.CoordinatorInboundEvents;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices.SoapFault;
-
-import javax.xml.ws.addressing.AddressingProperties;
 
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
@@ -62,37 +61,37 @@ public abstract class CoordinatorProcessor
     /**
      * Aborted.
      * @param aborted The aborted notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void aborted(final Notification aborted, final AddressingProperties addressingProperties,
+    public abstract void aborted(final Notification aborted, final MAP map,
         final ArjunaContext arjunaContext) ;
 
     /**
      * Committed.
      * @param committed The committed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void committed(final Notification committed, final AddressingProperties addressingProperties,
+    public abstract void committed(final Notification committed, final MAP map,
         final ArjunaContext arjunaContext) ;
 
     /**
      * Prepared.
      * @param prepared The prepared notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void prepared(final Notification prepared, final AddressingProperties addressingProperties,
+    public abstract void prepared(final Notification prepared, final MAP map,
         final ArjunaContext arjunaContext) ;
 
     /**
      * Read only.
      * @param readOnly The read only notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void readOnly(final Notification readOnly, final AddressingProperties addressingProperties,
+    public abstract void readOnly(final Notification readOnly, final MAP map,
         final ArjunaContext arjunaContext) ;
 
     /**
@@ -101,6 +100,6 @@ public abstract class CoordinatorProcessor
      * @param addressingContext The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void soapFault(final SoapFault soapFault, final AddressingProperties addressingContext,
+    public abstract void soapFault(final SoapFault soapFault, final MAP addressingContext,
         final ArjunaContext arjunaContext) ;
 }

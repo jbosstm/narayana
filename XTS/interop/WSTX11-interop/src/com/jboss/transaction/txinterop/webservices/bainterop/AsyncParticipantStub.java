@@ -28,11 +28,10 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.jboss.transaction.txinterop.webservices.bainterop.client.AsyncParticipantClient;
 import com.jboss.transaction.txinterop.webservices.bainterop.processors.BAInitiatorCallback;
 import com.jboss.transaction.txinterop.webservices.bainterop.processors.BAInitiatorProcessor;
-
-import javax.xml.ws.addressing.AddressingProperties;
 
 /**
  * The participant stub.
@@ -64,14 +63,14 @@ public class AsyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
         final RequestCallback callback = new RequestCallback() ;
         final BAInitiatorProcessor initiator = BAInitiatorProcessor.getInitiator() ;
         initiator.registerCallback(messageId, callback) ;
         try
         {
-            AsyncParticipantClient.getClient().sendCancel(coordinationContext, addressingProperties) ;
+            AsyncParticipantClient.getClient().sendCancel(coordinationContext, map) ;
             callback.waitUntilTriggered(15000) ;
         }
         finally
@@ -93,14 +92,14 @@ public class AsyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
         final RequestCallback callback = new RequestCallback() ;
         final BAInitiatorProcessor initiator = BAInitiatorProcessor.getInitiator() ;
         initiator.registerCallback(messageId, callback) ;
         try
         {
-            AsyncParticipantClient.getClient().sendExit(coordinationContext, addressingProperties) ;
+            AsyncParticipantClient.getClient().sendExit(coordinationContext, map) ;
             callback.waitUntilTriggered(15000) ;
         }
         finally
@@ -122,14 +121,14 @@ public class AsyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
         final RequestCallback callback = new RequestCallback() ;
         final BAInitiatorProcessor initiator = BAInitiatorProcessor.getInitiator() ;
         initiator.registerCallback(messageId, callback) ;
         try
         {
-            AsyncParticipantClient.getClient().sendFail(coordinationContext, addressingProperties) ;
+            AsyncParticipantClient.getClient().sendFail(coordinationContext, map) ;
             callback.waitUntilTriggered(15000) ;
         }
         finally
@@ -151,14 +150,14 @@ public class AsyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
         final RequestCallback callback = new RequestCallback() ;
         final BAInitiatorProcessor initiator = BAInitiatorProcessor.getInitiator() ;
         initiator.registerCallback(messageId, callback) ;
         try
         {
-            AsyncParticipantClient.getClient().sendCannotComplete(coordinationContext, addressingProperties) ;
+            AsyncParticipantClient.getClient().sendCannotComplete(coordinationContext, map) ;
             callback.waitUntilTriggered(15000) ;
         }
         finally
@@ -180,14 +179,14 @@ public class AsyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
         final RequestCallback callback = new RequestCallback() ;
         final BAInitiatorProcessor initiator = BAInitiatorProcessor.getInitiator() ;
         initiator.registerCallback(messageId, callback) ;
         try
         {
-            AsyncParticipantClient.getClient().sendParticipantCompleteClose(coordinationContext, addressingProperties) ;
+            AsyncParticipantClient.getClient().sendParticipantCompleteClose(coordinationContext, map) ;
             callback.waitUntilTriggered(15000) ;
         }
         finally
@@ -209,14 +208,14 @@ public class AsyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
         final RequestCallback callback = new RequestCallback() ;
         final BAInitiatorProcessor initiator = BAInitiatorProcessor.getInitiator() ;
         initiator.registerCallback(messageId, callback) ;
         try
         {
-            AsyncParticipantClient.getClient().sendCoordinatorCompleteClose(coordinationContext, addressingProperties) ;
+            AsyncParticipantClient.getClient().sendCoordinatorCompleteClose(coordinationContext, map) ;
             callback.waitUntilTriggered(15000) ;
         }
         finally
@@ -238,14 +237,14 @@ public class AsyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
         final RequestCallback callback = new RequestCallback() ;
         final BAInitiatorProcessor initiator = BAInitiatorProcessor.getInitiator() ;
         initiator.registerCallback(messageId, callback) ;
         try
         {
-            AsyncParticipantClient.getClient().sendUnsolicitedComplete(coordinationContext, addressingProperties) ;
+            AsyncParticipantClient.getClient().sendUnsolicitedComplete(coordinationContext, map) ;
             callback.waitUntilTriggered(15000) ;
         }
         finally
@@ -267,14 +266,14 @@ public class AsyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
         final RequestCallback callback = new RequestCallback() ;
         final BAInitiatorProcessor initiator = BAInitiatorProcessor.getInitiator() ;
         initiator.registerCallback(messageId, callback) ;
         try
         {
-            AsyncParticipantClient.getClient().sendCompensate(coordinationContext, addressingProperties) ;
+            AsyncParticipantClient.getClient().sendCompensate(coordinationContext, map) ;
             callback.waitUntilTriggered(15000) ;
         }
         finally
@@ -296,14 +295,14 @@ public class AsyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
         final RequestCallback callback = new RequestCallback() ;
         final BAInitiatorProcessor initiator = BAInitiatorProcessor.getInitiator() ;
         initiator.registerCallback(messageId, callback) ;
         try
         {
-            AsyncParticipantClient.getClient().sendCompensationFail(coordinationContext, addressingProperties) ;
+            AsyncParticipantClient.getClient().sendCompensationFail(coordinationContext, map) ;
             callback.waitUntilTriggered(15000) ;
         }
         finally
@@ -325,14 +324,14 @@ public class AsyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
         final RequestCallback callback = new RequestCallback() ;
         final BAInitiatorProcessor initiator = BAInitiatorProcessor.getInitiator() ;
         initiator.registerCallback(messageId, callback) ;
         try
         {
-            AsyncParticipantClient.getClient().sendParticipantCancelCompletedRace(coordinationContext, addressingProperties) ;
+            AsyncParticipantClient.getClient().sendParticipantCancelCompletedRace(coordinationContext, map) ;
             callback.waitUntilTriggered(15000) ;
         }
         finally
@@ -354,14 +353,14 @@ public class AsyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
         final RequestCallback callback = new RequestCallback() ;
         final BAInitiatorProcessor initiator = BAInitiatorProcessor.getInitiator() ;
         initiator.registerCallback(messageId, callback) ;
         try
         {
-            AsyncParticipantClient.getClient().sendMessageLossAndRecovery(coordinationContext, addressingProperties) ;
+            AsyncParticipantClient.getClient().sendMessageLossAndRecovery(coordinationContext, map) ;
             callback.waitUntilTriggered(15000) ;
         }
         finally
@@ -383,14 +382,14 @@ public class AsyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
         final RequestCallback callback = new RequestCallback() ;
         final BAInitiatorProcessor initiator = BAInitiatorProcessor.getInitiator() ;
         initiator.registerCallback(messageId, callback) ;
         try
         {
-            AsyncParticipantClient.getClient().sendMixedOutcome(coordinationContext, addressingProperties) ;
+            AsyncParticipantClient.getClient().sendMixedOutcome(coordinationContext, map) ;
             callback.waitUntilTriggered(15000) ;
         }
         finally
@@ -439,9 +438,9 @@ public class AsyncParticipantStub implements ParticipantStub
         
         /**
          * A response.
-         * @param addressingProperties The current addressing context.
+         * @param map The current addressing context.
          */
-        public void response(final AddressingProperties addressingProperties)
+        public void response(final MAP map)
         {
             this.response = true ;
         }
@@ -449,9 +448,9 @@ public class AsyncParticipantStub implements ParticipantStub
         /**
          * A SOAP fault response.
          * @param soapFault The SOAP fault response.
-         * @param addressingProperties The current addressing context.
+         * @param map The current addressing context.
          */
-        public void soapFault(final SoapFault soapFault, final AddressingProperties addressingProperties)
+        public void soapFault(final SoapFault soapFault, final MAP map)
         {
             this.soapFault = soapFault ;
         }

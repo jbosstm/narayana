@@ -31,7 +31,6 @@ import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.wsc.tests.TestUtil;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 

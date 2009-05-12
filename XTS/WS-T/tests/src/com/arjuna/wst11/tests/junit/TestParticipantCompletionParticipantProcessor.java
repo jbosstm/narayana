@@ -26,13 +26,10 @@ import java.util.Map;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsba.ParticipantCompletionParticipantInboundEvents;
 import com.arjuna.webservices11.wsba.processors.ParticipantCompletionParticipantProcessor;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices.SoapFault;
-import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
-
-import javax.xml.ws.addressing.AddressingProperties;
-
 
 public class TestParticipantCompletionParticipantProcessor extends ParticipantCompletionParticipantProcessor
 {
@@ -93,10 +90,10 @@ public class TestParticipantCompletionParticipantProcessor extends ParticipantCo
         return false;
     }
 
-    public void cancel(NotificationType cancel, AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+    public void cancel(NotificationType cancel, MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(map, arjunaContext) ;
         details.setCancel(true) ;
 
         synchronized(messageIdMap)
@@ -106,10 +103,10 @@ public class TestParticipantCompletionParticipantProcessor extends ParticipantCo
         }
     }
 
-    public void close(NotificationType close, AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+    public void close(NotificationType close, MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(map, arjunaContext) ;
         details.setClose(true) ;
 
         synchronized(messageIdMap)
@@ -119,10 +116,10 @@ public class TestParticipantCompletionParticipantProcessor extends ParticipantCo
         }
     }
 
-    public void compensate(NotificationType compensate, AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+    public void compensate(NotificationType compensate, MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(map, arjunaContext) ;
         details.setCompensate(true) ;
 
         synchronized(messageIdMap)
@@ -136,12 +133,12 @@ public class TestParticipantCompletionParticipantProcessor extends ParticipantCo
      * Exited.
      *
      * @param exited            The exited notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext     The arjuna context.
      */
-    public void exited(NotificationType exited, AddressingProperties addressingProperties, ArjunaContext arjunaContext) {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+    public void exited(NotificationType exited, MAP map, ArjunaContext arjunaContext) {
+        final String messageId = map.getMessageID() ;
+        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(map, arjunaContext) ;
         details.setExited(true); ;
 
         synchronized(messageIdMap)
@@ -155,12 +152,12 @@ public class TestParticipantCompletionParticipantProcessor extends ParticipantCo
      * Not Completed.
      *
      * @param notCompleted         The not completed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext        The arjuna context.
      */
-    public void notCompleted(NotificationType notCompleted, AddressingProperties addressingProperties, ArjunaContext arjunaContext) {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+    public void notCompleted(NotificationType notCompleted, MAP map, ArjunaContext arjunaContext) {
+        final String messageId = map.getMessageID() ;
+        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(map, arjunaContext) ;
         details.setNotCompleted(true); ;
 
         synchronized(messageIdMap)
@@ -174,12 +171,12 @@ public class TestParticipantCompletionParticipantProcessor extends ParticipantCo
      * Faulted.
      *
      * @param faulted           The faulted notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext     The arjuna context.
      */
-    public void failed(NotificationType faulted, AddressingProperties addressingProperties, ArjunaContext arjunaContext) {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+    public void failed(NotificationType faulted, MAP map, ArjunaContext arjunaContext) {
+        final String messageId = map.getMessageID() ;
+        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(map, arjunaContext) ;
         details.setFaulted(true); ;
 
         synchronized(messageIdMap)
@@ -189,10 +186,10 @@ public class TestParticipantCompletionParticipantProcessor extends ParticipantCo
         }
     }
 
-    public void getStatus(NotificationType getStatus, AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+    public void getStatus(NotificationType getStatus, MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(map, arjunaContext) ;
         details.setGetStatus(true) ;
 
         synchronized(messageIdMap)
@@ -206,12 +203,12 @@ public class TestParticipantCompletionParticipantProcessor extends ParticipantCo
      * Status.
      *
      * @param status            The status.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext     The arjuna context.
      */
-    public void status(StatusType status, AddressingProperties addressingProperties, ArjunaContext arjunaContext) {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+    public void status(StatusType status, MAP map, ArjunaContext arjunaContext) {
+        final String messageId = map.getMessageID() ;
+        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(map, arjunaContext) ;
         details.setStatus(status); ;
 
         synchronized(messageIdMap)
@@ -225,12 +222,12 @@ public class TestParticipantCompletionParticipantProcessor extends ParticipantCo
      * SOAP fault.
      *
      * @param soapFault         The SOAP fault.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext     The arjuna context.
      */
-    public void soapFault(SoapFault soapFault, AddressingProperties addressingProperties, ArjunaContext arjunaContext) {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(addressingProperties, arjunaContext) ;
+    public void soapFault(SoapFault soapFault, MAP map, ArjunaContext arjunaContext) {
+        final String messageId = map.getMessageID() ;
+        final ParticipantCompletionParticipantDetails details = new ParticipantCompletionParticipantDetails(map, arjunaContext) ;
         details.setSoapFault(soapFault) ;
 
         synchronized(messageIdMap)
@@ -243,7 +240,7 @@ public class TestParticipantCompletionParticipantProcessor extends ParticipantCo
 
     public static class ParticipantCompletionParticipantDetails
     {
-        private final AddressingProperties addressingProperties ;
+        private final MAP map ;
         private final ArjunaContext arjunaContext ;
         private boolean cancel ;
         private boolean close ;
@@ -255,15 +252,15 @@ public class TestParticipantCompletionParticipantProcessor extends ParticipantCo
         private StatusType status;
         private SoapFault soapFault;
 
-        ParticipantCompletionParticipantDetails(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+        ParticipantCompletionParticipantDetails(final MAP map, final ArjunaContext arjunaContext)
         {
-            this.addressingProperties = addressingProperties ;
+            this.map = map ;
             this.arjunaContext = arjunaContext ;
         }
 
-        public AddressingProperties getAddressingProperties()
+        public MAP getMAP()
         {
-            return addressingProperties ;
+            return map ;
         }
 
         public ArjunaContext getArjunaContext()

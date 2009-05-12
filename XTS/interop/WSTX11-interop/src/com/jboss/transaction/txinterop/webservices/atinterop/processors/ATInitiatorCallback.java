@@ -22,8 +22,7 @@ package com.jboss.transaction.txinterop.webservices.atinterop.processors;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.base.processors.Callback;
-
-import javax.xml.ws.addressing.AddressingProperties;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 
 /**
  * The callback for the initiator client.
@@ -33,14 +32,14 @@ public abstract class ATInitiatorCallback extends Callback
 {
     /**
      * A response.
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      */
-    public abstract void response(final AddressingProperties addressingProperties) ;
+    public abstract void response(final MAP map) ;
 
     /**
      * A SOAP fault response.
      * @param soapFault The SOAP fault response.
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      */
-    public abstract void soapFault(final SoapFault soapFault, final AddressingProperties addressingProperties) ;
+    public abstract void soapFault(final SoapFault soapFault, final MAP map) ;
 }

@@ -27,6 +27,7 @@
 package com.arjuna.wsc11.tests.junit;
 
 import com.arjuna.webservices11.ServiceRegistry;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
@@ -39,7 +40,6 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponseType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationPortType;
 
-import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class RegistrationTestCase extends TestCase
@@ -84,11 +84,11 @@ public class RegistrationTestCase extends TestCase
 
         final RegisterDetails details = testRegistrationCoordinatorProcessor.getRegisterDetails(messageId, 10000) ;
         final RegisterType requestRegister = details.getRegister() ;
-        final AddressingProperties requestAddressingProperties = details.getAddressingProperties() ;
+        final MAP requestMap = details.getMAP() ;
         final ArjunaContext requestArjunaContext = details.getArjunaContext() ;
 
-        assertEquals(requestAddressingProperties.getTo().getURI().toString(), TestUtil11.registrationCoordinatorService);
-        assertEquals(requestAddressingProperties.getMessageID().getURI().toString(), messageId);
+        assertEquals(requestMap.getTo(), TestUtil11.registrationCoordinatorService);
+        assertEquals(requestMap.getMessageID(), messageId);
 
         if (instanceIdentifier == null)
         {

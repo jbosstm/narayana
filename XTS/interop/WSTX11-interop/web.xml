@@ -63,49 +63,49 @@
 
     <!-- Define Interop 11 Server Endpoints -->
     <servlet>
-      <servlet-name>Interop 11 AT Initiator Service</servlet-name>
+      <servlet-name>Interop11ATInitiatorService</servlet-name>
       <servlet-class>com.jboss.transaction.txinterop.webservices.atinterop.sei.InitiatorPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
-      <servlet-name>Interop 11 AT Participant Service</servlet-name>
+      <servlet-name>Interop11ATParticipantService</servlet-name>
       <servlet-class>com.jboss.transaction.txinterop.webservices.atinterop.sei.ParticipantPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet>
-      <servlet-name>Interop 11 BA Initiator Service</servlet-name>
+      <servlet-name>Interop11BAInitiatorService</servlet-name>
       <servlet-class>com.jboss.transaction.txinterop.webservices.bainterop.sei.InitiatorPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
-      <servlet-name>Interop 11 BA Participant Service</servlet-name>
+      <servlet-name>Interop11BAParticipantService</servlet-name>
       <servlet-class>com.jboss.transaction.txinterop.webservices.bainterop.sei.ParticipantPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
 
     <!-- Define Interop 11 JaxWS Server Endpoint Mappings -->
     <servlet-mapping>
-      <servlet-name>Interop 11 AT Initiator Service</servlet-name>
+      <servlet-name>Interop11ATInitiatorService</servlet-name>
       <url-pattern>/ATInitiatorService</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-      <servlet-name>Interop 11 AT Participant Service</servlet-name>
+      <servlet-name>Interop11ATParticipantService</servlet-name>
       <url-pattern>/ATParticipantService</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-      <servlet-name>Interop 11 BA Initiator Service</servlet-name>
+      <servlet-name>Interop11BAInitiatorService</servlet-name>
       <url-pattern>/BAInitiatorService</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-      <servlet-name>Interop 11 BA Participant Service</servlet-name>
+      <servlet-name>Interop11BAParticipantService</servlet-name>
       <url-pattern>/BAParticipantService</url-pattern>
     </servlet-mapping>
 
     <!-- define proxy, logging and junit test runner servlets -->
     <servlet>
-        <servlet-name>HTTP Proxy Servlet</servlet-name>
+        <servlet-name>HTTPProxyServlet</servlet-name>
         <servlet-class>com.jboss.transaction.txinterop.proxy.ProxyListenerService</servlet-class>
         <!--
           The base URI of the proxy servlet.
@@ -118,40 +118,40 @@
     </servlet>
 
     <servlet>
-        <servlet-name>JUnit test servlet</servlet-name>
+        <servlet-name>JUnittestservlet</servlet-name>
         <servlet-class>com.jboss.transaction.txinterop.test.TestServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet>
-        <servlet-name>XML results servlet</servlet-name>
+        <servlet-name>XMLresultsservlet</servlet-name>
         <servlet-class>com.jboss.transaction.txinterop.test.XMLResultsServlet</servlet-class>
     </servlet>
 
     <servlet>
-        <servlet-name>Log servlet</servlet-name>
+        <servlet-name>Logservlet</servlet-name>
         <servlet-class>com.jboss.transaction.txinterop.test.TestLogServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
 	<!-- servlet mappings -->
     <servlet-mapping>
-        <servlet-name>HTTP Proxy Servlet</servlet-name>
+        <servlet-name>HTTPProxyServlet</servlet-name>
         <url-pattern>/proxy/*</url-pattern>
     </servlet-mapping>
     
     <servlet-mapping>
-        <servlet-name>JUnit test servlet</servlet-name>
+        <servlet-name>JUnittestservlet</servlet-name>
         <url-pattern>/test</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>XML results servlet</servlet-name>
+        <servlet-name>XMLresultsservlet</servlet-name>
         <url-pattern>/xmlresults</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>Log servlet</servlet-name>
+        <servlet-name>Logservlet</servlet-name>
         <url-pattern>/logs/*</url-pattern>
     </servlet-mapping>
     

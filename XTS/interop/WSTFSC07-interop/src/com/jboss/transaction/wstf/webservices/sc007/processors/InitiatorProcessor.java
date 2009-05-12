@@ -23,8 +23,7 @@ package com.jboss.transaction.wstf.webservices.sc007.processors;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.base.processors.Callback;
 import com.arjuna.webservices11.wsaddr.processor.BaseWSAddrResponseProcessor;
-
-import javax.xml.ws.addressing.AddressingProperties;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 
 /**
  * The Initiator processor.
@@ -48,29 +47,29 @@ public class InitiatorProcessor extends BaseWSAddrResponseProcessor
 
     /**
      * Handle a response response.
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      */
-    public void handleResponse(final AddressingProperties addressingProperties)
+    public void handleResponse(final MAP map)
     {
         handleCallbacks(new CallbackExecutorAdapter() {
             public void execute(final Callback callback) {
-                ((InitiatorCallback)callback).response(addressingProperties) ;
+                ((InitiatorCallback)callback).response(map) ;
             }
-        }, getIDs(addressingProperties)) ;
+        }, getIDs(map)) ;
     }
 
     /**
      * Register a SOAP fault response.
      * @param soapFault The SOAP fault response.
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      */
-    public void handleSoapFault(final SoapFault soapFault, final AddressingProperties addressingProperties)
+    public void handleSoapFault(final SoapFault soapFault, final MAP map)
     {
         handleCallbacks(new CallbackExecutorAdapter() {
             public void execute(final Callback callback) {
-                ((InitiatorCallback)callback).soapFault(soapFault, addressingProperties) ;
+                ((InitiatorCallback)callback).soapFault(soapFault, map) ;
             }
-        }, getIDs(addressingProperties)) ;
+        }, getIDs(map)) ;
     }
 
     /**

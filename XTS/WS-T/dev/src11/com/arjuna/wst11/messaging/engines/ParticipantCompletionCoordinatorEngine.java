@@ -24,6 +24,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.util.TransportTimer;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsba.ParticipantCompletionCoordinatorInboundEvents;
@@ -37,7 +38,6 @@ import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 /**
@@ -121,7 +121,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Handle the cancelled event.
      * @param cancelled The cancelled notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * Active -> Active (invalid state)
@@ -136,7 +136,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      * Exiting -> Exiting (invalid state)
      * Ended -> Ended
      */
-    public void cancelled(final NotificationType cancelled, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void cancelled(final NotificationType cancelled, final MAP map, final ArjunaContext arjunaContext)
     {
         final State current ;
         synchronized(this)
@@ -152,7 +152,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Handle the closed event.
      * @param closed The closed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * Active -> Active (invalid state)
@@ -167,7 +167,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      * Exiting -> Exiting (invalid state)
      * Ended -> Ended
      */
-    public void closed(final NotificationType closed, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void closed(final NotificationType closed, final MAP map, final ArjunaContext arjunaContext)
     {
         final State current ;
         synchronized(this)
@@ -183,7 +183,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Handle the compensated event.
      * @param compensated The compensated notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * Active -> Active (invalid state)
@@ -198,7 +198,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      * Exiting -> Exiting (invalid state)
      * Ended -> Ended
      */
-    public void compensated(final NotificationType compensated, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void compensated(final NotificationType compensated, final MAP map, final ArjunaContext arjunaContext)
     {
         final State current ;
         synchronized(this)
@@ -214,7 +214,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Handle the completed event.
      * @param completed The completed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * Active -> Completed
@@ -229,7 +229,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      * Exiting -> Exiting (invalid state)
      * Ended -> Ended
      */
-    public void completed(final NotificationType completed, final AddressingProperties addressingProperties,
+    public void completed(final NotificationType completed, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final State current ;
@@ -259,7 +259,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Handle the exit event.
      * @param exit The exit notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * Active -> Exiting
@@ -274,7 +274,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      * Exiting -> Exiting
      * Ended -> Ended (resend Exited)
      */
-    public void exit(final NotificationType exit, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void exit(final NotificationType exit, final MAP map, final ArjunaContext arjunaContext)
     {
         final State current ;
         synchronized(this)
@@ -299,7 +299,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Handle the fail event.
      * @param fail The fail exception.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * Active -> Failing-Active
@@ -343,7 +343,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      * next time the coordinator calls cancel, compensate or close it receives a fault indicating a failure
      * rather than just detecting that the pariticpant  has ended.
      */
-    public void fail(final ExceptionType fail, final AddressingProperties addressingProperties,
+    public void fail(final ExceptionType fail, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final State current ;
@@ -380,7 +380,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Handle the cannot complete event.
      * @param cannotComplete The cannotComplete exception.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      *
      * Active -> NotCompleting
@@ -395,7 +395,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      * Exiting -> Exiting (invalid state)
      * Ended -> Ended (resend NotCompleted)
      */
-    public void cannotComplete(final NotificationType cannotComplete, final AddressingProperties addressingProperties,
+    public void cannotComplete(final NotificationType cannotComplete, final MAP map,
         final ArjunaContext arjunaContext)
     {
         final State current ;
@@ -420,10 +420,10 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Handle the getStatus event.
      * @param getStatus The getStatus notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void getStatus(final NotificationType getStatus, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void getStatus(final NotificationType getStatus, final MAP map, final ArjunaContext arjunaContext)
     {
 	final State current ;
 	synchronized(this)
@@ -436,10 +436,10 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Handle the status event.
      * @param status The status.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void status(final StatusType status, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void status(final StatusType status, final MAP map, final ArjunaContext arjunaContext)
     {
         // TODO - is this correct?
 
@@ -621,10 +621,10 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
     /**
      * Handle the soap fault event.
      * @param soapFault The soap fault.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void soapFault(final SoapFault soapFault, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+    public void soapFault(final SoapFault soapFault, final MAP map, final ArjunaContext arjunaContext)
     {
 	ended() ;
 	try
@@ -641,10 +641,10 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      */
     private void sendClose()
     {
-        final AddressingProperties addressingProperties = createContext() ;
+        final MAP map = createContext() ;
         try
         {
-            ParticipantCompletionParticipantClient.getClient().sendClose(participant, addressingProperties, instanceIdentifier) ;
+            ParticipantCompletionParticipantClient.getClient().sendClose(participant, map, instanceIdentifier) ;
         }
         catch (final Throwable th)
         {
@@ -662,10 +662,10 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      */
     private void sendCompensate()
     {
-        final AddressingProperties addressingProperties = createContext() ;
+        final MAP map = createContext() ;
         try
         {
-            ParticipantCompletionParticipantClient.getClient().sendCompensate(participant, addressingProperties, instanceIdentifier) ;
+            ParticipantCompletionParticipantClient.getClient().sendCompensate(participant, map, instanceIdentifier) ;
         }
         catch (final Throwable th)
         {
@@ -683,10 +683,10 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      */
     private void sendCancel()
     {
-        final AddressingProperties addressingProperties = createContext() ;
+        final MAP map = createContext() ;
         try
         {
-            ParticipantCompletionParticipantClient.getClient().sendCancel(participant, addressingProperties, instanceIdentifier) ;
+            ParticipantCompletionParticipantClient.getClient().sendCancel(participant, map, instanceIdentifier) ;
         }
         catch (final Throwable th)
         {
@@ -704,10 +704,10 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      */
     private void sendExited()
     {
-        final AddressingProperties addressingProperties  = createContext() ;
+        final MAP map  = createContext() ;
         try
         {
-            ParticipantCompletionParticipantClient.getClient().sendExited(participant, addressingProperties, instanceIdentifier) ;
+            ParticipantCompletionParticipantClient.getClient().sendExited(participant, map, instanceIdentifier) ;
         }
         catch (final Throwable th)
         {
@@ -725,10 +725,10 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      */
     private void sendFailed()
     {
-        final AddressingProperties addressingProperties = createContext() ;
+        final MAP map = createContext() ;
         try
         {
-            ParticipantCompletionParticipantClient.getClient().sendFailed(participant, addressingProperties, instanceIdentifier) ;
+            ParticipantCompletionParticipantClient.getClient().sendFailed(participant, map, instanceIdentifier) ;
         }
         catch (final Throwable th)
         {
@@ -746,10 +746,10 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      */
     private void sendNotCompleted()
     {
-        final AddressingProperties addressingProperties = createContext() ;
+        final MAP map = createContext() ;
         try
         {
-            ParticipantCompletionParticipantClient.getClient().sendNotCompleted(participant, addressingProperties, instanceIdentifier) ;
+            ParticipantCompletionParticipantClient.getClient().sendNotCompleted(participant, map, instanceIdentifier) ;
         }
         catch (final Throwable th)
         {
@@ -768,10 +768,10 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      */
     private void sendStatus(final State state)
     {
-        final AddressingProperties addressingProperties = createContext() ;
+        final MAP map = createContext() ;
         try
         {
-            ParticipantCompletionParticipantClient.getClient().sendStatus(participant, addressingProperties, instanceIdentifier, state.getValue()) ;
+            ParticipantCompletionParticipantClient.getClient().sendStatus(participant, map, instanceIdentifier, state.getValue()) ;
         }
         catch (final Throwable th)
         {
@@ -976,7 +976,7 @@ public class ParticipantCompletionCoordinatorEngine implements ParticipantComple
      * Create a context for the outgoing message.
      * @return The addressing context.
      */
-    private AddressingProperties createContext()
+    private MAP createContext()
     {
         final String messageId = MessageId.getMessageId() ;
 

@@ -106,9 +106,7 @@
     	    			<filter token="PORT" value="${port}"/>
     	    		</filterset>
             </copy>
-        <!-- todo put one copy of each handler file in WEB-INF and refer to it correctly from SEI class annotation-->
-        <copy file="${dd.dir}/sc007/initiatorhandlers.xml" toDir="${build.classes.dir}/com/jboss/transaction/wstf/webservices/sc007/sei" overwrite="yes">
-        </copy>
+        <!-- todo put a copy of the handler file in WEB-INF and refer to it correctly from SEI class annotation-->
         <copy file="${dd.dir}/sc007/participanthandlers.xml" toDir="${build.classes.dir}/com/jboss/transaction/wstf/webservices/sc007/sei" overwrite="yes">
         </copy>
 	<!-- wsdl gets loaded relative to service implementation class -->

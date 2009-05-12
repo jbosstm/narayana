@@ -45,11 +45,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CreateCoordinationContextResponseType }
+     * Create an instance of {@link CreateCoordinationContextType.CurrentContext }
      * 
      */
-    public CreateCoordinationContextResponseType createCreateCoordinationContextResponseType() {
-        return new CreateCoordinationContextResponseType();
+    public CreateCoordinationContextType.CurrentContext createCreateCoordinationContextTypeCurrentContext() {
+        return new CreateCoordinationContextType.CurrentContext();
     }
 
     /**
@@ -61,27 +61,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CoordinationContextType }
-     * 
-     */
-    public CoordinationContextType createCoordinationContextType() {
-        return new CoordinationContextType();
-    }
-
-    /**
-     * Create an instance of {@link CreateCoordinationContextType.CurrentContext }
-     * 
-     */
-    public CreateCoordinationContextType.CurrentContext createCreateCoordinationContextTypeCurrentContext() {
-        return new CreateCoordinationContextType.CurrentContext();
-    }
-
-    /**
      * Create an instance of {@link RegisterResponseType }
      * 
      */
     public RegisterResponseType createRegisterResponseType() {
         return new RegisterResponseType();
+    }
+
+    /**
+     * Create an instance of {@link CoordinationContext }
+     * 
+     */
+    public CoordinationContext createCoordinationContext() {
+        return new CoordinationContext();
     }
 
     /**
@@ -93,6 +85,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link CreateCoordinationContextResponseType }
+     * 
+     */
+    public CreateCoordinationContextResponseType createCreateCoordinationContextResponseType() {
+        return new CreateCoordinationContextResponseType();
+    }
+
+    /**
      * Create an instance of {@link RegisterType }
      * 
      */
@@ -101,11 +101,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CoordinationContext }
+     * Create an instance of {@link CoordinationContextType }
      * 
      */
-    public CoordinationContext createCoordinationContext() {
-        return new CoordinationContext();
+    public CoordinationContextType createCoordinationContextType() {
+        return new CoordinationContextType();
     }
 
     /**

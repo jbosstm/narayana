@@ -23,11 +23,10 @@ package com.arjuna.wst11.tests.junit;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsat.processors.CompletionInitiatorCallback;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
-import javax.xml.ws.addressing.AddressingProperties;
-
-/**
+/**              B
  * Base callback class for tests.
  * @author kevin
  */
@@ -36,10 +35,10 @@ public class TestCompletionInitiatorCallback extends CompletionInitiatorCallback
     /**
      * An aborted response.
      * @param aborted The aborted notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void aborted(final Notification aborted, final AddressingProperties addressingProperties,
+    public void aborted(final Notification aborted, final MAP map,
         final ArjunaContext arjunaContext)
     {
         throw new RuntimeException("Unexpected aborted response") ;
@@ -48,10 +47,10 @@ public class TestCompletionInitiatorCallback extends CompletionInitiatorCallback
     /**
      * A committed response.
      * @param committed The committed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void committed(final Notification committed, final AddressingProperties addressingProperties,
+    public void committed(final Notification committed, final MAP map,
         final ArjunaContext arjunaContext)
     {
         throw new RuntimeException("Unexpected committed response") ;
@@ -60,10 +59,10 @@ public class TestCompletionInitiatorCallback extends CompletionInitiatorCallback
     /**
      * A SOAP fault response.
      * @param soapFault The SOAP fault.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void soapFault(final SoapFault soapFault, final AddressingProperties addressingProperties,
+    public void soapFault(final SoapFault soapFault, final MAP map,
         final ArjunaContext arjunaContext)
     {
         throw new RuntimeException("Unexpected SOAP fault response") ;

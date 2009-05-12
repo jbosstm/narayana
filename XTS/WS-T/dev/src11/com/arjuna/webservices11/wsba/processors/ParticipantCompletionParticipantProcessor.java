@@ -23,10 +23,9 @@ package com.arjuna.webservices11.wsba.processors;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsba.ParticipantCompletionParticipantInboundEvents;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
-
-import javax.xml.ws.addressing.AddressingProperties;
 
 /**
  * The Participant Completion Participant processor.
@@ -82,73 +81,73 @@ public abstract class ParticipantCompletionParticipantProcessor
     /**
      * Cancel.
      * @param cancel The cancel notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void cancel(final NotificationType cancel, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext) ;
+    public abstract void cancel(final NotificationType cancel, final MAP map, final ArjunaContext arjunaContext) ;
 
     /**
      * Close.
      * @param close The close notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void close(final NotificationType close, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext) ;
+    public abstract void close(final NotificationType close, final MAP map, final ArjunaContext arjunaContext) ;
 
     /**
      * Compensate.
      * @param compensate The compensate notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void compensate(final NotificationType compensate, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext) ;
+    public abstract void compensate(final NotificationType compensate, final MAP map, final ArjunaContext arjunaContext) ;
 
     /**
      * Exited.
      * @param exited The exited notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void exited(final NotificationType exited, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext) ;
+    public abstract void exited(final NotificationType exited, final MAP map, final ArjunaContext arjunaContext) ;
 
     /**
      * Not Completed.
      * @param notCompleted The not completed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void notCompleted(final NotificationType notCompleted, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext) ;
+    public abstract void notCompleted(final NotificationType notCompleted, final MAP map, final ArjunaContext arjunaContext) ;
 
     /**
      * Faulted.
      * @param failed The failed notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void failed(final NotificationType failed, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext) ;
+    public abstract void failed(final NotificationType failed, final MAP map, final ArjunaContext arjunaContext) ;
 
     /**
      * Get Status.
      * @param getStatus The get status notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void getStatus(final NotificationType getStatus, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext) ;
+    public abstract void getStatus(final NotificationType getStatus, final MAP map, final ArjunaContext arjunaContext) ;
 
     /**
      * Status.
      * @param status The status.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void status(final StatusType status, final AddressingProperties addressingProperties, final ArjunaContext arjunaContext) ;
+    public abstract void status(final StatusType status, final MAP map, final ArjunaContext arjunaContext) ;
 
     /**
      * SOAP fault.
      * @param soapFault The SOAP fault.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public abstract void soapFault(final SoapFault soapFault, final AddressingProperties addressingProperties,
+    public abstract void soapFault(final SoapFault soapFault, final MAP map,
         final ArjunaContext arjunaContext) ;
 }

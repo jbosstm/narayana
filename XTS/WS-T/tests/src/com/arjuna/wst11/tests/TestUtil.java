@@ -26,17 +26,13 @@
 
 package com.arjuna.wst11.tests;
 
-import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
-import javax.xml.ws.addressing.AttributedURI;
-import javax.xml.ws.addressing.AddressingBuilder;
 import javax.xml.namespace.QName;
-import java.net.URISyntaxException;
 
 public class TestUtil
 {
@@ -67,40 +63,22 @@ public class TestUtil
     public static String coordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11/CoordinatorService";
     public static String completionInitiatorServiceURI = "http://" + bindHost + ":8080/ws-t11/CompletionInitiatorService";
     public static String completionCoordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11/CompletionCoordinatorService";
-    private static AttributedURI atomicTransactionFaultAction = null;
-    private static AttributedURI businessActivityFaultAction = null;
+    private final static String ATOMIC_TRANSACTION_FAULT_ACTION = "http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault";
+    private final static String BUSINESS_ACTIVITY_FAULT_ACTION = "http://docs.oasis-open.org/ws-tx/wscoor/2006/06/fault";
 
     public static String participantCompletionParticipantServiceURI = "http://" + bindHost + ":8080/ws-t11/BusinessAgreementWithParticipantCompletionParticipantService";
     public static String participantCompletionCoordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11/BusinessAgreementWithParticipantCompletionCoordinatorService";
     public static String coordinatorCompletionParticipantServiceURI = "http://" + bindHost + ":8080/ws-t11/BusinessAgreementWithCoordinatorCompletionParticipantService";
     public static String coordinatorCompletionCoordinatorServiceURI = "http://" + bindHost + ":8080/ws-t11/BusinessAgreementWithCoordinatorCompletionCoordinatorService";
 
-    public static synchronized AttributedURI getAtomicTransactionFaultAction()
+    public static synchronized String getAtomicTransactionFaultAction()
     {
-        if (atomicTransactionFaultAction == null) {
-            AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-            try {
-                atomicTransactionFaultAction = builder.newURI("http://docs.oasis-open.org/ws-tx/wsat/2006/06/fault");
-            } catch (URISyntaxException use) {
-                // not going to happen
-            }
-        }
-
-        return atomicTransactionFaultAction;
+        return ATOMIC_TRANSACTION_FAULT_ACTION;
     }
 
-    public static synchronized AttributedURI getBusinessActivityFaultAction()
+    public static synchronized String getBusinessActivityFaultAction()
     {
-        if (businessActivityFaultAction == null) {
-            AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
-            try {
-                businessActivityFaultAction = builder.newURI("http://docs.oasis-open.org/ws-tx/wscoor/2006/06/fault");
-            } catch (URISyntaxException use) {
-                // not going to happen
-            }
-        }
-
-        return businessActivityFaultAction;
+        return BUSINESS_ACTIVITY_FAULT_ACTION;
     }
 
     public static W3CEndpointReference getParticipantEndpoint(String id)

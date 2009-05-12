@@ -10,12 +10,12 @@ import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.JAXWSAConstants;
 
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsat.processors.ParticipantProcessor;
 import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wsaddr.map.MAP;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.services.framework.task.TaskManager;
 import com.arjuna.services.framework.task.Task;
 import com.arjuna.webservices.SoapFault;
@@ -32,7 +32,7 @@ import com.arjuna.webservices.SoapFault;
         portName = "ParticipantPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-@HandlerChain(file="handlers.xml")
+@HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
 public class ParticipantPortTypeImpl implements ParticipantPortType
 {
@@ -52,13 +52,12 @@ public class ParticipantPortTypeImpl implements ParticipantPortType
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final Notification prepare = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                ParticipantProcessor.getProcessor().prepare(prepare, inboundAddressProperties, arjunaContext) ;
+                ParticipantProcessor.getProcessor().prepare(prepare, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -75,13 +74,12 @@ public class ParticipantPortTypeImpl implements ParticipantPortType
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final Notification commit = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                ParticipantProcessor.getProcessor().commit(commit, inboundAddressProperties, arjunaContext) ;
+                ParticipantProcessor.getProcessor().commit(commit, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -98,13 +96,12 @@ public class ParticipantPortTypeImpl implements ParticipantPortType
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final Notification rollback = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                ParticipantProcessor.getProcessor().rollback(rollback, inboundAddressProperties, arjunaContext) ;
+                ParticipantProcessor.getProcessor().rollback(rollback, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -116,13 +113,13 @@ public class ParticipantPortTypeImpl implements ParticipantPortType
             Fault fault)
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        final AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
         final SoapFault soapFault = SoapFault11.fromFault(fault);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                ParticipantProcessor.getProcessor().soapFault(soapFault, inboundAddressProperties, arjunaContext); ;
+                ParticipantProcessor.getProcessor().soapFault(soapFault, inboundMap, arjunaContext); ;
             }
         }) ;
     }

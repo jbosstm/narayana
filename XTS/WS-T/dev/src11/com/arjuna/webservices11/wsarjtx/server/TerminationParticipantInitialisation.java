@@ -22,7 +22,6 @@ package com.arjuna.webservices11.wsarjtx.server;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.ServletContext;
 
 import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 import com.arjuna.webservices11.ServiceRegistry;

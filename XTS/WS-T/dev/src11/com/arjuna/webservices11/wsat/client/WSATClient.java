@@ -1,19 +1,14 @@
 package com.arjuna.webservices11.wsat.client;
 
-import com.arjuna.webservices11.wsarj.handler.InstanceIdentifierHandler;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAPBuilder;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.*;
-import org.jboss.ws.extensions.addressing.jaxws.WSAddressingClientHandler;
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.addressing.AddressingBuilder;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.AttributedURI;
-import javax.xml.ws.addressing.JAXWSAConstants;
 import javax.xml.ws.handler.Handler;
-import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import java.net.URISyntaxException;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.soap.AddressingFeature;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +46,7 @@ public class WSATClient
     /**
      *  builder used to construct addressing info for calls
      */
-    private static AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
+    private static MAPBuilder builder = MAPBuilder.getBuilder();
 
     /**
      * fetch a coordinator service unique to the current thread
@@ -104,165 +99,134 @@ public class WSATClient
     // fetch ports when we HAVE an endpoint
 
     public static CoordinatorPortType getCoordinatorPort(W3CEndpointReference endpointReference,
-                                                         AttributedURI action,
-                                                         AddressingProperties addressingProperties)
+                                                         String action,
+                                                         MAP map)
     {
-        // TODO - we need the 2.1 verison of Service so we can specify that we want to use the WS Addressing feature
         CoordinatorService service = getCoordinatorService();
-        // CoordinatorPortType port = service.getPort(endpointReference, CoordinatorPortType.class, new AddressingFeature(true, true));
-        CoordinatorPortType port = service.getPort(endpointReference, CoordinatorPortType.class);
+        CoordinatorPortType port = service.getPort(endpointReference, CoordinatorPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
 
-        configureEndpointPort(bindingProvider, action, addressingProperties);
+        configureEndpointPort(bindingProvider, action, map);
 
         return port;
     }
 
     public static ParticipantPortType getParticipantPort(W3CEndpointReference endpointReference,
-                                                         AttributedURI action,
-                                                         AddressingProperties addressingProperties)
+                                                         String action,
+                                                         MAP map)
     {
-        // TODO - we need the 2.1 verison of Service so we can specify that we want to use the WS Addressing feature
         ParticipantService service = getParticipantService();
-        // ParticipantPortType port = service.getPort(endpointReference, ParticipantPortType.class, new AddressingFeature(true, true));
-        ParticipantPortType port = service.getPort(endpointReference, ParticipantPortType.class);
+        ParticipantPortType port = service.getPort(endpointReference, ParticipantPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
 
-        configureEndpointPort(bindingProvider, action, addressingProperties);
+        configureEndpointPort(bindingProvider, action, map);
 
         return port;
     }
 
     public static CompletionCoordinatorPortType getCompletionCoordinatorPort(W3CEndpointReference endpointReference,
-                                                                             AttributedURI action,
-                                                                             AddressingProperties addressingProperties)
+                                                                             String action,
+                                                                             MAP map)
     {
-        // TODO - we need the 2.1 verison of Service so we can specify that we want to use the WS Addressing feature
         CompletionCoordinatorService service = getCompletionCoordinatorService();
-        // CompletionCoordinatorPortType port = service.getPort(endpointReference, CompletionCoordinatorPortType.class, new AddressingFeature(true, true));
-        CompletionCoordinatorPortType port = service.getPort(endpointReference, CompletionCoordinatorPortType.class);
+        CompletionCoordinatorPortType port = service.getPort(endpointReference, CompletionCoordinatorPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
 
-        configureEndpointPort(bindingProvider, action, addressingProperties);
+        configureEndpointPort(bindingProvider, action, map);
 
         return port;
     }
 
     public static CompletionInitiatorPortType getCompletionInitiatorPort(W3CEndpointReference endpointReference,
-                                                                         AttributedURI action,
-                                                                         AddressingProperties addressingProperties)
+                                                                         String action,
+                                                                         MAP map)
     {
-        // TODO - we need the 2.1 verison of Service so we can specify that we want to use the WS Addressing feature
         CompletionInitiatorService service = getCompletionInitiatorService();
-        // CompletionInitiatorPortType port = service.getPort(endpointReference, CompletionInitiatorPortType.class, new AddressingFeature(true, true));
-        CompletionInitiatorPortType port = service.getPort(endpointReference, CompletionInitiatorPortType.class);
+        CompletionInitiatorPortType port = service.getPort(endpointReference, CompletionInitiatorPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
 
-        configureEndpointPort(bindingProvider, action, addressingProperties);
+        configureEndpointPort(bindingProvider, action, map);
 
         return port;
     }
 
     // fetch ports when we have NO endpoint
 
-    public static CoordinatorPortType getCoordinatorPort(AttributedURI action,
-                                                         AddressingProperties addressingProperties)
+    public static CoordinatorPortType getCoordinatorPort(String action,
+                                                         MAP map)
     {
-        // TODO - we need the 2.1 verison of Service so we can specify that we want to use the WS Addressing feature
         CoordinatorService service = getCoordinatorService();
-        // CoordinatorPortType port = service.getPort(CoordinatorPortType.class, new AddressingFeature(true, true));
-        CoordinatorPortType port = service.getPort(CoordinatorPortType.class);
+        CoordinatorPortType port = service.getPort(CoordinatorPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
 
-        configurePort(bindingProvider, action, addressingProperties);
+        configurePort(bindingProvider, action, map);
 
         return port;
     }
 
-    public static ParticipantPortType getParticipantPort(AttributedURI action,
-                                                         AddressingProperties addressingProperties)
+    public static ParticipantPortType getParticipantPort(String action,
+                                                         MAP map)
     {
-        // TODO - we need the 2.1 verison of Service so we can specify that we want to use the WS Addressing feature
         ParticipantService service = getParticipantService();
-        // ParticipantPortType port = service.getPort(ParticipantPortType.class, new AddressingFeature(true, true));
-        ParticipantPortType port = service.getPort(ParticipantPortType.class);
+        ParticipantPortType port = service.getPort(ParticipantPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
 
-        configurePort(bindingProvider, action, addressingProperties);
+        configurePort(bindingProvider, action, map);
 
         return port;
     }
 
-    public static CompletionCoordinatorPortType getCompletionCoordinatorPort(AttributedURI action,
-                                                                             AddressingProperties addressingProperties)
+    public static CompletionCoordinatorPortType getCompletionCoordinatorPort(String action,
+                                                                             MAP map)
     {
-        // TODO - we need the 2.1 verison of Service so we can specify that we want to use the WS Addressing feature
         CompletionCoordinatorService service = getCompletionCoordinatorService();
-        // CompletionCoordinatorPortType port = service.getPort(CompletionCoordinatorPortType.class, new AddressingFeature(true, true));
-        CompletionCoordinatorPortType port = service.getPort(CompletionCoordinatorPortType.class);
+        CompletionCoordinatorPortType port = service.getPort(CompletionCoordinatorPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
 
-        configurePort(bindingProvider, action, addressingProperties);
+        configurePort(bindingProvider, action, map);
 
         return port;
     }
 
-    public static CompletionInitiatorPortType getCompletionInitiatorPort(AttributedURI action,
-                                                                         AddressingProperties addressingProperties)
+    public static CompletionInitiatorPortType getCompletionInitiatorPort(String action,
+                                                                         MAP map)
     {
-        // TODO - we need the 2.1 verison of Service so we can specify that we want to use the WS Addressing feature
         CompletionInitiatorService service = getCompletionInitiatorService();
-        // CompletionInitiatorPortType port = service.getPort(CompletionInitiatorPortType.class, new AddressingFeature(true, true));
-        CompletionInitiatorPortType port = service.getPort(CompletionInitiatorPortType.class);
+        CompletionInitiatorPortType port = service.getPort(CompletionInitiatorPortType.class, new AddressingFeature(true, true));
         BindingProvider bindingProvider = (BindingProvider)port;
 
-        configurePort(bindingProvider, action, addressingProperties);
+        configurePort(bindingProvider, action, map);
 
         return port;
     }
 
-    private static void configureEndpointPort(BindingProvider bindingProvider,
-                                          AttributedURI action,
-                                          AddressingProperties addressingProperties)
+    private static void configureEndpointPort(BindingProvider bindingProvider, String action, MAP map)
     {
         /*
-         * we have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
-         */
+         * we no longer have to add the JaxWS WSAddressingClientHandler because we can specify the WSAddressing feature
         List<Handler> customHandlerChain = new ArrayList<Handler>();
         customHandlerChain.add(new WSAddressingClientHandler());
         bindingProvider.getBinding().setHandlerChain(customHandlerChain);
-        // ok, JBossWS native has hacked this by pulling the address and reference parameters out of the endpoint
-        // and storing them in an AddressingProperties instance hung off the context under CLIENT_ADDRESSING_PROPERTIES_OUTBOUND.
-        // we still need to set the action and message id and possibly relatesTo -- this is all distinctly non-portable :-/
-        // n.b. Metro installs the address in requestContext under ENDPOINT_ADDRESS_PROPERTY. it also seems to ensure
-        // that the reference parameters get installed -- but how?
-
-        // the address will have been pulled out of the endpoint by getPort but we still have to set it in the
-        // addressing properties along with the action and message id
+         */
         Map<String, Object> requestContext = bindingProvider.getRequestContext();
-        AddressingProperties requestProperties = (AddressingProperties)requestContext.get(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES_OUTBOUND);
-        addressingProperties.setAction(action);
-        AddressingHelper.installCallerProperties(addressingProperties, requestProperties);
-        // we should not need to do this but JBossWS does not pick up the value in the addressing properties
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, requestProperties.getTo().getURI().toString());
+        MAP requestMap = AddressingHelper.outboundMap(requestContext);
+        map.setAction(action);
+        AddressingHelper.installCallerProperties(map, requestMap);
+        AddressingHelper.configureRequestContext(requestContext, requestMap.getTo(), action);
     }
 
     private static void configurePort(BindingProvider bindingProvider,
-                                      AttributedURI action,
-                                      AddressingProperties addressingProperties)
+                                      String action,
+                                      MAP map)
     {
         /*
-         * we have to add the JaxWS WSAddressingClientHandler because we cannoy specify the WSAddressing feature
-         */
+         * we no longer have to add the JaxWS WSAddressingClientHandler because we can specify the WSAddressing feature
         List<Handler> customHandlerChain = new ArrayList<Handler>();
         customHandlerChain.add(new WSAddressingClientHandler());
         bindingProvider.getBinding().setHandlerChain(customHandlerChain);
+         */
         Map<String, Object> requestContext = bindingProvider.getRequestContext();
-        addressingProperties.setAction(action);
-        requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES, addressingProperties);
-        // JaxWS should do this for us
-        requestContext.put(JAXWSAConstants.CLIENT_ADDRESSING_PROPERTIES_OUTBOUND, addressingProperties);
-        // we should not need to do this but JBossWS does not pick up the value in the addressing properties
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, addressingProperties.getTo().getURI().toString());
+        map.setAction(action);
+        AddressingHelper.configureRequestContext(requestContext, map, map.getTo(), action);
     }
 }

@@ -29,7 +29,7 @@
  * $Id$
  */
 
-package com.arjuna.mw.wst.service;
+package com.arjuna.mw.wst.server;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.handler.Handler;
@@ -46,6 +46,7 @@ import javax.xml.soap.SOAPMessage;
 
 
 import com.arjuna.webservices.wscoor.CoordinationConstants;
+import com.arjuna.mw.wst.service.JaxBaseHeaderContextProcessor;
 
 /**
  * The class is used to perform WS-Transaction context insertion

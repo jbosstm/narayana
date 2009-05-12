@@ -28,23 +28,23 @@ rm -rf tmp/classes/* tmp/src/*
 
 # first the at services
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-completion-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.0 wsdl/wsat-completion-coordinator-binding.wsdl
+$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-completion-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsat-completion-coordinator-binding.wsdl
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-completion-initiator-binding.wsdl -d tmp/classes -s tmp/src -target 2.0 wsdl/wsat-completion-initiator-binding.wsdl
+$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-completion-initiator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsat-completion-initiator-binding.wsdl
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.0 wsdl/wsat-coordinator-binding.wsdl
+$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsat-coordinator-binding.wsdl
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-participant-binding.wsdl -d tmp/classes -s tmp/src -target 2.0 wsdl/wsat-participant-binding.wsdl
+$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsat-participant-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsat-participant-binding.wsdl
 
 # now the ba services
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-coordinator-completion-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.0 wsdl/wsba-coordinator-completion-coordinator-binding.wsdl
+$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-coordinator-completion-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsba-coordinator-completion-coordinator-binding.wsdl
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-coordinator-completion-participant-binding.wsdl -d tmp/classes -s tmp/src -target 2.0 wsdl/wsba-coordinator-completion-participant-binding.wsdl
+$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-coordinator-completion-participant-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsba-coordinator-completion-participant-binding.wsdl
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-participant-completion-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.0 wsdl/wsba-participant-completion-coordinator-binding.wsdl
+$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-participant-completion-coordinator-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsba-participant-completion-coordinator-binding.wsdl
 
-$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-participant-completion-participant-binding.wsdl -d tmp/classes -s tmp/src -target 2.0 wsdl/wsba-participant-completion-participant-binding.wsdl
+$GF_HOME/bin/wsimport -verbose -keep -wsdllocation wsdl/wsba-participant-completion-participant-binding.wsdl -d tmp/classes -s tmp/src -target 2.1 wsdl/wsba-participant-completion-participant-binding.wsdl
 
 # we need to patch the resource lookup used to provide a jar base URL
 # for the wsdl location supplied above wsimport generates

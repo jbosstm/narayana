@@ -25,10 +25,9 @@ import java.util.Map;
 
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsat.processors.CompletionCoordinatorProcessor;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.wst11.CompletionCoordinatorParticipant;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
-
-import javax.xml.ws.addressing.AddressingProperties;
 
 public class TestCompletionCoordinatorProcessor extends CompletionCoordinatorProcessor
 {
@@ -66,14 +65,14 @@ public class TestCompletionCoordinatorProcessor extends CompletionCoordinatorPro
     /**
      * Commit.
      * @param commit The commit notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void commit(final Notification commit, final AddressingProperties addressingProperties,
+    public void commit(final Notification commit, final MAP map,
         final ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString();
-        final CompletionCoordinatorDetails details = new CompletionCoordinatorDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID();
+        final CompletionCoordinatorDetails details = new CompletionCoordinatorDetails(map, arjunaContext) ;
         details.setCommit(true) ;
 
         synchronized(messageIdMap)
@@ -86,14 +85,14 @@ public class TestCompletionCoordinatorProcessor extends CompletionCoordinatorPro
     /**
      * Rollback.
      * @param rollback The rollback notification.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param arjunaContext The arjuna context.
      */
-    public void rollback(final Notification rollback, final AddressingProperties addressingProperties,
+    public void rollback(final Notification rollback, final MAP map,
         final ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final CompletionCoordinatorDetails details = new CompletionCoordinatorDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final CompletionCoordinatorDetails details = new CompletionCoordinatorDetails(map, arjunaContext) ;
         details.setRollback(true) ;
 
         synchronized(messageIdMap)
@@ -122,20 +121,20 @@ public class TestCompletionCoordinatorProcessor extends CompletionCoordinatorPro
 
     public static class CompletionCoordinatorDetails
     {
-        private final AddressingProperties addressingProperties ;
+        private final MAP map ;
         private final ArjunaContext arjunaContext ;
         private boolean commit ;
         private boolean rollback ;
 
-        CompletionCoordinatorDetails(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+        CompletionCoordinatorDetails(final MAP map, final ArjunaContext arjunaContext)
         {
-            this.addressingProperties = addressingProperties ;
+            this.map = map ;
             this.arjunaContext = arjunaContext ;
         }
 
-        public AddressingProperties getAddressingProperties()
+        public MAP getMAP()
         {
-            return addressingProperties ;
+            return map ;
         }
 
         public ArjunaContext getArjunaContext()

@@ -22,10 +22,9 @@ package com.arjuna.webservices11.wscoor.client;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
-import com.arjuna.webservices11.wscoor.client.WSCOORClient;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.*;
 
-import javax.xml.ws.addressing.AddressingProperties;
 import java.io.IOException;
 
 /**
@@ -48,7 +47,7 @@ public class ActivationCoordinatorClient
     
     /**
      * Send a create coordination request.
-     * @param addressingProperties addressing context initialised with to and message ID.
+     * @param map addressing context initialised with to and message ID.
      * @param coordinationType The type of the coordination.
      * @param expires The expiry interval of the context.
      * @param currentContext The current coordination context.
@@ -56,7 +55,7 @@ public class ActivationCoordinatorClient
      * @throws IOException for any transport errors.
      */
     public CreateCoordinationContextResponseType
-    sendCreateCoordination(final AddressingProperties addressingProperties,
+    sendCreateCoordination(final MAP map,
         final String coordinationType, final Expires expires, final CoordinationContext currentContext)
         throws SoapFault, IOException
     {
@@ -80,7 +79,7 @@ public class ActivationCoordinatorClient
         }
 
         // get proxy with required message id and end point address
-        ActivationPortType port = WSCOORClient.getActivationPort(addressingProperties, CoordinationConstants.WSCOOR_ACTION_CREATE_COORDINATION_CONTEXT);
+        ActivationPortType port = WSCOORClient.getActivationPort(map, CoordinationConstants.WSCOOR_ACTION_CREATE_COORDINATION_CONTEXT);
 
         // invoke remote method
         return port.createCoordinationContextOperation(request);

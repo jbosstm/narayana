@@ -2,16 +2,10 @@ package com.arjuna.webservices11;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
-import com.arjuna.webservices.util.InvalidEnumerationException;
 import org.w3c.dom.Element;
 import org.jboss.jbossts.xts.soapfault.Fault;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.StringWriter;
 
 /**
  * Created by IntelliJ IDEA.

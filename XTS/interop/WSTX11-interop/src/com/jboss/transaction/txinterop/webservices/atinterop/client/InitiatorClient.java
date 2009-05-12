@@ -21,31 +21,16 @@
 package com.jboss.transaction.txinterop.webservices.atinterop.client;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.net.URISyntaxException;
 
 import com.arjuna.webservices.SoapFault;
-import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.jboss.transaction.txinterop.webservices.atinterop.ATInteropConstants;
 import com.jboss.transaction.txinterop.webservices.atinterop.generated.InitiatorPortType;
-
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.AttributedURI;
-import javax.xml.ws.addressing.JAXWSAConstants;
-import javax.xml.ws.addressing.AddressingBuilder;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.handler.Handler;
-import javax.xml.namespace.QName;
-
-import org.jboss.ws.extensions.addressing.jaxws.WSAddressingClientHandler;
-import org.jboss.jbossts.xts.soapfault.SoapFaultService;
 
 /**
  * The initiator client.
@@ -80,45 +65,38 @@ public class InitiatorClient
 
     /**
      * Send a response.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendResponse(final AddressingProperties addressingProperties)
+    public void sendResponse(final MAP map)
         throws SoapFault, IOException
     {
-        InitiatorPortType port = ATInteropClient.getInitiatorPort(addressingProperties, responseAction);
+        InitiatorPortType port = ATInteropClient.getInitiatorPort(map, responseAction);
         port.response();
     }
 
     /**
      * Send a fault.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @param soapFault The SOAP fault.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendSoapFault(final AddressingProperties addressingProperties, final SoapFault11 soapFault)
+    public void sendSoapFault(final MAP map, final SoapFault11 soapFault)
         throws SoapFault, IOException
     {
         String soapFaultAction = soapFault.getAction() ;
-        AttributedURI actionURI = null;
         if (soapFaultAction == null)
         {
             soapFaultAction = faultAction;
         }
-        try {
-            actionURI = builder.newURI(soapFaultAction);
-        } catch (URISyntaxException e) {
-            // TODO log error here
-        }
-        AddressingProperties replyProperties = AddressingHelper.createFaultContext(addressingProperties, MessageId.getMessageId());
+        MAP replyProperties = AddressingHelper.createFaultContext(map, MessageId.getMessageId());
         AddressingHelper.installNoneReplyTo(replyProperties);
-        SoapFaultClient.sendSoapFault(soapFault, addressingProperties, actionURI);
+        SoapFaultClient.sendSoapFault(soapFault, map, soapFaultAction);
     }
 
     private static final String faultAction = AtomicTransactionConstants.WSAT_ACTION_FAULT;
-    private static final AddressingBuilder builder = AddressingBuilder.getAddressingBuilder();
     /**
      * Get the Interop client singleton.
      * @return The Interop client singleton.

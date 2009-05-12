@@ -21,8 +21,8 @@
 package com.arjuna.webservices11.wsaddr.processor;
 
 import com.arjuna.webservices.base.processors.BaseProcessor;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.Relationship;
+import com.arjuna.webservices11.wsaddr.map.MAP;
+import com.arjuna.webservices11.wsaddr.map.MAPRelatesTo;
 
 /**
  * Utility class handling common response functionality.
@@ -32,20 +32,16 @@ public abstract class BaseWSAddrResponseProcessor extends BaseProcessor
 {
     /**
      * Get the callback ids.
-     * @param addressingProperties The addressing context.
+     * @param map The addressing context.
      * @return The callback ids.
      */
-    protected String[] getIDs(final AddressingProperties addressingProperties)
+    protected String[] getIDs(final MAP map)
     {
-        final Relationship[] relationships = addressingProperties.getRelatesTo() ;
-        if (relationships != null)
+        final MAPRelatesTo relatesTo = map.getRelatesTo() ;
+        if (relatesTo != null)
         {
-            final int numRelationships = relationships.length ;
-            final String[] ids = new String[numRelationships] ;
-            for(int count = 0 ; count < numRelationships ; count++)
-            {
-                ids[count] = relationships[count].getID().toString();
-            }
+            final String[] ids = new String[1] ;
+            ids[0] = relatesTo.getRelatesTo();
             return ids ;
         }
         return null ;

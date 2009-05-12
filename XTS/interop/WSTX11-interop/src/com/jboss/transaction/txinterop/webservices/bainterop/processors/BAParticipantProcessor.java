@@ -21,11 +21,11 @@
 package com.jboss.transaction.txinterop.webservices.bainterop.processors;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.webservices.SoapFault;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine;
 import com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine;
 import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.jboss.transaction.txinterop.webservices.bainterop.BAInteropUtil;
 import com.jboss.transaction.txinterop.webservices.bainterop.participant.CancelParticipant;
 import com.jboss.transaction.txinterop.webservices.bainterop.participant.CoordinatorCompleteCloseParticipant;
@@ -35,8 +35,6 @@ import com.jboss.transaction.txinterop.webservices.bainterop.participant.FailPar
 import com.jboss.transaction.txinterop.webservices.bainterop.participant.CannotCompleteParticipant;
 import com.jboss.transaction.txinterop.webservices.bainterop.participant.CompletedParticipant;
 import com.jboss.transaction.txinterop.webservices.bainterop.participant.FailedCompensateParticipant;
-
-import javax.xml.ws.addressing.AddressingProperties;
 
 /**
  * The Participant processor.
@@ -60,11 +58,11 @@ public class BAParticipantProcessor
     
     /**
      * Execute the Cancel
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void cancel(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void cancel(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -79,11 +77,11 @@ public class BAParticipantProcessor
     
     /**
      * Execute the Exit
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void exit(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void exit(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -101,11 +99,11 @@ public class BAParticipantProcessor
     
     /**
      * Execute the Fail
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void fail(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void fail(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -123,11 +121,11 @@ public class BAParticipantProcessor
     
     /**
      * Execute the CannotComplete
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void cannotComplete(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void cannotComplete(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -145,11 +143,11 @@ public class BAParticipantProcessor
     
     /**
      * Execute the ParticipantCompleteClose
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void participantCompleteClose(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void participantCompleteClose(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -167,11 +165,11 @@ public class BAParticipantProcessor
     
     /**
      * Execute the CoordinatorCompleteClose
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void coordinatorCompleteClose(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void coordinatorCompleteClose(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -186,11 +184,11 @@ public class BAParticipantProcessor
     
     /**
      * Execute the UnsolicitedComplete
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void unsolicitedComplete(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void unsolicitedComplete(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -208,11 +206,11 @@ public class BAParticipantProcessor
     
     /**
      * Execute the Compensate
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void compensate(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void compensate(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -230,11 +228,11 @@ public class BAParticipantProcessor
     
     /**
      * Execute the ParticipantCompensationFail
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void participantCompensationFail(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void participantCompensationFail(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -252,11 +250,11 @@ public class BAParticipantProcessor
     
     /**
      * Execute the ParticipantCancelCompletedRace
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void participantCancelCompletedRace(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void participantCancelCompletedRace(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -274,11 +272,11 @@ public class BAParticipantProcessor
     
     /**
      * Execute the MessageLossAndRecovery
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void messageLossAndRecovery(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void messageLossAndRecovery(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
         try
@@ -293,11 +291,11 @@ public class BAParticipantProcessor
     
     /**
      * Execute the MixedOutcome
-     * @param addressingProperties The current addressing context.
+     * @param map The current addressing context.
      * @return The response.
      * @throws SoapFault11 for errors during processing
      */
-    public void mixedOutcome(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void mixedOutcome(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault11
     {
     }

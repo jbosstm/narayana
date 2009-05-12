@@ -9,13 +9,13 @@ import javax.jws.soap.SOAPBinding;
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.JAXWSAConstants;
 import javax.xml.ws.handler.MessageContext;
 
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
 import com.arjuna.webservices11.SoapFault11;
+import com.arjuna.webservices11.wsaddr.map.MAP;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.services.framework.task.TaskManager;
 import com.arjuna.services.framework.task.Task;
 import com.arjuna.webservices.SoapFault;
@@ -32,7 +32,7 @@ import com.arjuna.webservices.SoapFault;
         portName = "CoordinatorPortType"
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-@HandlerChain(file="handlers.xml")
+@HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
 public class CoordinatorPortTypeImpl implements CoordinatorPortType
 {
@@ -52,13 +52,12 @@ public class CoordinatorPortTypeImpl implements CoordinatorPortType
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final Notification prepared = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorProcessor.getProcessor().prepared(prepared, inboundAddressProperties, arjunaContext) ;
+                CoordinatorProcessor.getProcessor().prepared(prepared, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -75,13 +74,12 @@ public class CoordinatorPortTypeImpl implements CoordinatorPortType
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final Notification aborted = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorProcessor.getProcessor().aborted(aborted, inboundAddressProperties, arjunaContext) ;
+                CoordinatorProcessor.getProcessor().aborted(aborted, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -98,13 +96,12 @@ public class CoordinatorPortTypeImpl implements CoordinatorPortType
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final Notification readOnly = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorProcessor.getProcessor().readOnly(readOnly, inboundAddressProperties, arjunaContext) ;
+                CoordinatorProcessor.getProcessor().readOnly(readOnly, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -121,13 +118,12 @@ public class CoordinatorPortTypeImpl implements CoordinatorPortType
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
         final Notification committed = parameters;
-        final AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorProcessor.getProcessor().committed(committed, inboundAddressProperties, arjunaContext) ;
+                CoordinatorProcessor.getProcessor().committed(committed, inboundMap, arjunaContext) ;
             }
         }) ;
     }
@@ -139,13 +135,13 @@ public class CoordinatorPortTypeImpl implements CoordinatorPortType
             Fault fault)
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        final AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        final MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx);
         final SoapFault soapFault = SoapFault11.fromFault(fault);
 
         TaskManager.getManager().queueTask(new Task() {
             public void executeTask() {
-                CoordinatorProcessor.getProcessor().soapFault(soapFault, inboundAddressProperties, arjunaContext); ;
+                CoordinatorProcessor.getProcessor().soapFault(soapFault, inboundMap, arjunaContext); ;
             }
         }) ;
     }

@@ -26,9 +26,8 @@ import com.arjuna.webservices.SoapFault;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.jboss.transaction.txinterop.webservices.bainterop.client.SyncParticipantClient;
-
-import javax.xml.ws.addressing.AddressingProperties;
 
 /**
  * The participant stub.
@@ -60,9 +59,9 @@ public class SyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
-        SyncParticipantClient.getClient().sendCancel(coordinationContext, addressingProperties) ;
+        SyncParticipantClient.getClient().sendCancel(coordinationContext, map) ;
     }
     
     /**
@@ -76,9 +75,9 @@ public class SyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
-        SyncParticipantClient.getClient().sendExit(coordinationContext, addressingProperties) ;
+        SyncParticipantClient.getClient().sendExit(coordinationContext, map) ;
     }
     
     /**
@@ -92,9 +91,9 @@ public class SyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
-        SyncParticipantClient.getClient().sendFail(coordinationContext, addressingProperties) ;
+        SyncParticipantClient.getClient().sendFail(coordinationContext, map) ;
     }
     
     /**
@@ -108,9 +107,9 @@ public class SyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
-        SyncParticipantClient.getClient().sendCannotComplete(coordinationContext, addressingProperties) ;
+        SyncParticipantClient.getClient().sendCannotComplete(coordinationContext, map) ;
     }
     
     /**
@@ -124,9 +123,9 @@ public class SyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
-        SyncParticipantClient.getClient().sendParticipantCompleteClose(coordinationContext, addressingProperties) ;
+        SyncParticipantClient.getClient().sendParticipantCompleteClose(coordinationContext, map) ;
     }
     
     /**
@@ -140,9 +139,9 @@ public class SyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
-        SyncParticipantClient.getClient().sendCoordinatorCompleteClose(coordinationContext, addressingProperties) ;
+        SyncParticipantClient.getClient().sendCoordinatorCompleteClose(coordinationContext, map) ;
     }
     
     /**
@@ -156,9 +155,9 @@ public class SyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
-        SyncParticipantClient.getClient().sendUnsolicitedComplete(coordinationContext, addressingProperties) ;
+        SyncParticipantClient.getClient().sendUnsolicitedComplete(coordinationContext, map) ;
     }
     
     /**
@@ -172,9 +171,9 @@ public class SyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
-        SyncParticipantClient.getClient().sendCompensate(coordinationContext, addressingProperties) ;
+        SyncParticipantClient.getClient().sendCompensate(coordinationContext, map) ;
     }
     
     /**
@@ -188,9 +187,9 @@ public class SyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
-        SyncParticipantClient.getClient().sendCompensationFail(coordinationContext, addressingProperties) ;
+        SyncParticipantClient.getClient().sendCompensationFail(coordinationContext, map) ;
     }
     
     /**
@@ -204,9 +203,9 @@ public class SyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
-        SyncParticipantClient.getClient().sendParticipantCancelCompletedRace(coordinationContext, addressingProperties) ;
+        SyncParticipantClient.getClient().sendParticipantCancelCompletedRace(coordinationContext, map) ;
     }
     
     /**
@@ -220,9 +219,9 @@ public class SyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
-        SyncParticipantClient.getClient().sendMessageLossAndRecovery(coordinationContext, addressingProperties) ;
+        SyncParticipantClient.getClient().sendMessageLossAndRecovery(coordinationContext, map) ;
     }
     
     /**
@@ -236,8 +235,8 @@ public class SyncParticipantStub implements ParticipantStub
         throws SoapFault, IOException
     {
         final String messageId = MessageId.getMessageId() ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(serviceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(serviceURI, messageId) ;
         
-        SyncParticipantClient.getClient().sendMixedOutcome(coordinationContext, addressingProperties) ;
+        SyncParticipantClient.getClient().sendMixedOutcome(coordinationContext, map) ;
     }
 }

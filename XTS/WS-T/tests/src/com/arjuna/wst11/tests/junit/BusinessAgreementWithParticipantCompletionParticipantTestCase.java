@@ -28,25 +28,21 @@ package com.arjuna.wst11.tests.junit;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.addressing.AddressingProperties;
 
 import junit.framework.TestCase;
 
-import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
-import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
-import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsba.State;
 import com.arjuna.webservices11.wsba.client.ParticipantCompletionCoordinatorClient;
 import com.arjuna.webservices11.wsba.processors.ParticipantCompletionCoordinatorProcessor;
 import com.arjuna.wst11.tests.junit.TestParticipantCompletionCoordinatorProcessor.ParticipantCompletionCoordinatorDetails;
-import com.arjuna.wst11.tests.junit.TestParticipantCompletionCoordinatorProcessor;
 import com.arjuna.wst11.tests.TestUtil;
 
 public class BusinessAgreementWithParticipantCompletionParticipantTestCase extends TestCase
@@ -66,9 +62,9 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         final String messageId = "testSendClosed" ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("1") ;
         W3CEndpointReference endpoint = TestUtil.getParticipantCompletionCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
 
-        ParticipantCompletionCoordinatorClient.getClient().sendClosed(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+        ParticipantCompletionCoordinatorClient.getClient().sendClosed(endpoint, map, new InstanceIdentifier("sender")) ;
 
         final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
 
@@ -83,9 +79,9 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         final String messageId = "testSendCancelled" ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("2") ;
         W3CEndpointReference endpoint = TestUtil.getParticipantCompletionCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
 
-        ParticipantCompletionCoordinatorClient.getClient().sendCancelled(endpoint, addressingProperties, new InstanceIdentifier("sender")); ;
+        ParticipantCompletionCoordinatorClient.getClient().sendCancelled(endpoint, map, new InstanceIdentifier("sender")); ;
 
         final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
 
@@ -100,9 +96,9 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         final String messageId = "testSendCompensated" ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("3") ;
         W3CEndpointReference endpoint = TestUtil.getParticipantCompletionCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
 
-        ParticipantCompletionCoordinatorClient.getClient().sendCompensated(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+        ParticipantCompletionCoordinatorClient.getClient().sendCompensated(endpoint, map, new InstanceIdentifier("sender")) ;
 
         final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
 
@@ -117,9 +113,9 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         final String messageId = "testSendCompleted" ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("4") ;
         W3CEndpointReference endpoint = TestUtil.getParticipantCompletionCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
 
-        ParticipantCompletionCoordinatorClient.getClient().sendCompleted(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+        ParticipantCompletionCoordinatorClient.getClient().sendCompleted(endpoint, map, new InstanceIdentifier("sender")) ;
 
         final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
 
@@ -134,11 +130,11 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         final String messageId = "testSendStatus" ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("5") ;
         W3CEndpointReference endpoint = TestUtil.getParticipantCompletionCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
 
         final State state = State.STATE_ENDED ;
 
-        ParticipantCompletionCoordinatorClient.getClient().sendStatus(endpoint, addressingProperties, new InstanceIdentifier("sender"), state.getValue()) ;
+        ParticipantCompletionCoordinatorClient.getClient().sendStatus(endpoint, map, new InstanceIdentifier("sender"), state.getValue()) ;
 
         final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
 
@@ -152,15 +148,15 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         throws Exception
     {
         final String messageId = "testSendError" ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("6") ;
         final String reason = "testSendErrorReason" ;
         final SoapFaultType soapFaultType = SoapFaultType.FAULT_SENDER ;
         final QName subcode = ArjunaTXConstants.UNKNOWNERROR_ERROR_CODE_QNAME ;
         final SoapFault11 soapFault = new SoapFault11(soapFaultType, subcode, reason) ;
 
-        AddressingHelper.installNoneReplyTo(addressingProperties);
-        SoapFaultClient.sendSoapFault(soapFault, addressingProperties, TestUtil.getBusinessActivityFaultAction()) ;
+        AddressingHelper.installNoneReplyTo(map);
+        SoapFaultClient.sendSoapFault(soapFault, map, TestUtil.getBusinessActivityFaultAction()) ;
 
         final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
 
@@ -178,9 +174,9 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         final String messageId = "testSendExit" ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("7") ;
         W3CEndpointReference endpoint = TestUtil.getParticipantCompletionCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
 
-        ParticipantCompletionCoordinatorClient.getClient().sendExit(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+        ParticipantCompletionCoordinatorClient.getClient().sendExit(endpoint, map, new InstanceIdentifier("sender")) ;
 
         final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
 
@@ -195,11 +191,11 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         final String messageId = "testSendFault" ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("8") ;
         W3CEndpointReference endpoint = TestUtil.getParticipantCompletionCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
 
         final State state = State.STATE_FAILING_ACTIVE;
 
-        ParticipantCompletionCoordinatorClient.getClient().sendFail(endpoint, addressingProperties, new InstanceIdentifier("sender"), state.getValue()); ;
+        ParticipantCompletionCoordinatorClient.getClient().sendFail(endpoint, map, new InstanceIdentifier("sender"), state.getValue()); ;
 
         final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
 
@@ -215,9 +211,9 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         final String messageId = "testSendGetStatus" ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("9") ;
         W3CEndpointReference endpoint = TestUtil.getParticipantCompletionCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
 
-        ParticipantCompletionCoordinatorClient.getClient().sendGetStatus(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+        ParticipantCompletionCoordinatorClient.getClient().sendGetStatus(endpoint, map, new InstanceIdentifier("sender")) ;
 
         final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
 
@@ -232,9 +228,9 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
         final String messageId = "testSendCannotComplete" ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("10") ;
         W3CEndpointReference endpoint = TestUtil.getParticipantCompletionCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.participantCompletionCoordinatorServiceURI, messageId) ;
 
-        ParticipantCompletionCoordinatorClient.getClient().sendCannotComplete(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+        ParticipantCompletionCoordinatorClient.getClient().sendCannotComplete(endpoint, map, new InstanceIdentifier("sender")) ;
 
         final ParticipantCompletionCoordinatorDetails details = testParticipantCompletionCoordinatorProcessor.getParticipantCompletionCoordinatorDetails(messageId, 10000) ;
 
@@ -261,26 +257,26 @@ public class BusinessAgreementWithParticipantCompletionParticipantTestCase exten
 
     private void checkDetails(ParticipantCompletionCoordinatorDetails details, boolean hasFrom, boolean hasFaultTo, String messageId, InstanceIdentifier instanceIdentifier)
     {
-        AddressingProperties inAddressingProperties = details.getAddressingProperties();
+        MAP inMAP = details.getMAP();
         ArjunaContext inArjunaContext = details.getArjunaContext();
 
-        assertEquals(inAddressingProperties.getTo().getURI().toString(), TestUtil.participantCompletionCoordinatorServiceURI);
-        assertNotNull(inAddressingProperties.getReplyTo());
-        assertTrue(AddressingHelper.isNoneReplyTo(inAddressingProperties));
+        assertEquals(inMAP.getTo(), TestUtil.participantCompletionCoordinatorServiceURI);
+        assertNotNull(inMAP.getReplyTo());
+        assertTrue(AddressingHelper.isNoneReplyTo(inMAP));
         if (hasFrom) {
-            assertNotNull(inAddressingProperties.getFrom());
-            assertEquals(inAddressingProperties.getFrom().getAddress().getURI().toString(), TestUtil.participantCompletionParticipantServiceURI);
+            assertNotNull(inMAP.getFrom());
+            assertEquals(inMAP.getFrom().getAddress(), TestUtil.participantCompletionParticipantServiceURI);
         } else {
-            assertNull(inAddressingProperties.getFrom());
+            assertNull(inMAP.getFrom());
         }
         if (hasFaultTo) {
-            assertNotNull(inAddressingProperties.getFaultTo());
-            assertEquals(inAddressingProperties.getFaultTo().getAddress().getURI().toString(), TestUtil.participantCompletionParticipantServiceURI);
+            assertNotNull(inMAP.getFaultTo());
+            assertEquals(inMAP.getFaultTo().getAddress(), TestUtil.participantCompletionParticipantServiceURI);
         } else {
-            assertNull(inAddressingProperties.getFrom());
+            assertNull(inMAP.getFrom());
         }
-        assertNotNull(inAddressingProperties.getMessageID());
-        assertEquals(inAddressingProperties.getMessageID().getURI().toString(), messageId);
+        assertNotNull(inMAP.getMessageID());
+        assertEquals(inMAP.getMessageID(), messageId);
 
         if (instanceIdentifier == null) {
             assertNull(inArjunaContext);

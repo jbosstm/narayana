@@ -20,10 +20,9 @@
  */
 package com.arjuna.webservices11.wscoor.processors;
 
-import javax.xml.ws.addressing.AddressingProperties;
-
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponseType;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 
 /**
  * The Activation Coordinator processor.
@@ -60,11 +59,11 @@ public abstract class ActivationCoordinatorProcessor
     /**
      * Create the coordination context.
      * @param createCoordinationContext The create coordination context request.
-     * @param addressingContext The addressing context.
+     * @param map The addressing context.
      * @return a response message containing the desired coordinaton context
      */
     public abstract CreateCoordinationContextResponseType
         createCoordinationContext(final CreateCoordinationContextType createCoordinationContext,
-                                  final AddressingProperties addressingProperties,
+                                  final MAP map,
                                   final boolean isSecure) ;
 }

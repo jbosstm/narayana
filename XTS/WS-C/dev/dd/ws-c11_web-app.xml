@@ -42,23 +42,23 @@
 
     <!-- Define WSCOOR 1.1 JaxWS Server Endpoints -->
     <servlet>
-      <servlet-name>Activation Service</servlet-name>
+      <servlet-name>ActivationService</servlet-name>
       <servlet-class>com.arjuna.webservices11.wscoor.sei.ActivationPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
-      <servlet-name>Registration Service</servlet-name>
+      <servlet-name>RegistrationService</servlet-name>
       <servlet-class>com.arjuna.webservices11.wscoor.sei.RegistrationPortTypeImpl</servlet-class>
       <load-on-startup>1</load-on-startup>
     </servlet>
 
     <!-- Define WSCOOR 1.1 JaxWS Server Endpoint Mappings -->
     <servlet-mapping>
-      <servlet-name>Activation Service</servlet-name>
+      <servlet-name>ActivationService</servlet-name>
       <url-pattern>/ActivationService</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-      <servlet-name>Registration Service</servlet-name>
+      <servlet-name>RegistrationService</servlet-name>
       <url-pattern>/RegistrationService</url-pattern>
     </servlet-mapping>
 </web-app>

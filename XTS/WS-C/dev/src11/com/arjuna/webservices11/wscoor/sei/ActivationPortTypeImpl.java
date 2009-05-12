@@ -2,6 +2,8 @@ package com.arjuna.webservices11.wscoor.sei;
 
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
+import com.arjuna.webservices11.wsaddr.map.MAP;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.ActivationPortType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponseType;
@@ -10,8 +12,6 @@ import javax.annotation.Resource;
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.JAXWSAConstants;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.Addressing;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 // @EndpointConfig(configName = "Standard WSAddressing Endpoint")
-@HandlerChain(file="handlers.xml")
+@HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
 public class ActivationPortTypeImpl implements ActivationPortType
 {
@@ -46,8 +46,7 @@ public class ActivationPortTypeImpl implements ActivationPortType
         MessageContext ctx = webServiceCtx.getMessageContext();
         HttpServletRequest request = (HttpServletRequest)ctx.get(MessageContext.SERVLET_REQUEST);
         boolean isSecure = request.getScheme().equals("https");
-        AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
-        return ActivationCoordinatorProcessor.getCoordinator().createCoordinationContext(parameters, inboundAddressProperties, isSecure);
+        MAP inboundMAP = AddressingHelper.inboundMap(ctx);
+        return ActivationCoordinatorProcessor.getCoordinator().createCoordinationContext(parameters, inboundMAP, isSecure);
    }
 }

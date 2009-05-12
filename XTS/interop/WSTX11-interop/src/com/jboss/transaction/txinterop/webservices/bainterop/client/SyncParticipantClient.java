@@ -22,9 +22,8 @@ package com.jboss.transaction.txinterop.webservices.bainterop.client;
 
 import java.io.IOException;
 
-import javax.xml.ws.addressing.AddressingProperties;
-
 import com.arjuna.webservices.SoapFault;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import com.jboss.transaction.txinterop.webservices.bainterop.BAInteropConstants;
 
@@ -98,11 +97,11 @@ public class SyncParticipantClient
     /**
      * Send a cancel request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendCancel(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendCancel(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
     }
@@ -110,11 +109,11 @@ public class SyncParticipantClient
     /**
      * Send a exit request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendExit(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendExit(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
     }
@@ -122,11 +121,11 @@ public class SyncParticipantClient
     /**
      * Send a fail request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendFail(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendFail(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
     }
@@ -134,11 +133,11 @@ public class SyncParticipantClient
     /**
      * Send a cannot complete request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendCannotComplete(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendCannotComplete(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
     }
@@ -146,11 +145,11 @@ public class SyncParticipantClient
     /**
      * Send a participant complete close request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendParticipantCompleteClose(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendParticipantCompleteClose(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
     }
@@ -158,11 +157,11 @@ public class SyncParticipantClient
     /**
      * Send a coordinator complete close request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendCoordinatorCompleteClose(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendCoordinatorCompleteClose(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
     }
@@ -170,11 +169,11 @@ public class SyncParticipantClient
     /**
      * Send a unsolicited complete request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendUnsolicitedComplete(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendUnsolicitedComplete(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
     }
@@ -182,11 +181,11 @@ public class SyncParticipantClient
     /**
      * Send a compensate request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendCompensate(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendCompensate(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
     }
@@ -194,11 +193,11 @@ public class SyncParticipantClient
     /**
      * Send a compensation fail request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendCompensationFail(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendCompensationFail(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
     }
@@ -206,11 +205,11 @@ public class SyncParticipantClient
     /**
      * Send a participant cancel completed race request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendParticipantCancelCompletedRace(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendParticipantCancelCompletedRace(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
     }
@@ -218,11 +217,11 @@ public class SyncParticipantClient
     /**
      * Send a message loss and recovery request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendMessageLossAndRecovery(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendMessageLossAndRecovery(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
     }
@@ -230,11 +229,11 @@ public class SyncParticipantClient
     /**
      * Send a mixed outcome request.
      * @param coordinationContext The coordination context.
-     * @param addressingProperties The addressing context initialised with to, message ID and relates to.
+     * @param map The addressing context initialised with to, message ID and relates to.
      * @throws SoapFault For any errors.
      * @throws IOException for any transport errors.
      */
-    public void sendMixedOutcome(final CoordinationContextType coordinationContext, final AddressingProperties addressingProperties)
+    public void sendMixedOutcome(final CoordinationContextType coordinationContext, final MAP map)
         throws SoapFault, IOException
     {
     }

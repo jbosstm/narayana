@@ -7,8 +7,6 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationPortType;
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.JAXWSAConstants;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
 import javax.annotation.Resource;
@@ -16,6 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
+import com.arjuna.webservices11.wsaddr.map.MAP;
+import com.arjuna.webservices11.wsaddr.map.MAPBuilder;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,7 +34,7 @@ import com.arjuna.webservices11.wsarj.ArjunaContext;
 )
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 // @EndpointConfig(configName = "Standard WSAddressing Endpoint")
-@HandlerChain(file="handlers.xml")
+@HandlerChain(file="/handlers.xml")
 @Addressing(required=true)
 public class RegistrationPortTypeImpl implements RegistrationPortType
 {
@@ -49,11 +50,10 @@ public class RegistrationPortTypeImpl implements RegistrationPortType
         MessageContext ctx = webServiceCtx.getMessageContext();
         HttpServletRequest request = (HttpServletRequest)ctx.get(MessageContext.SERVLET_REQUEST);
         boolean isSecure = request.getScheme().equals("https");
-        AddressingProperties inboundAddressProperties
-            = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
         final ArjunaContext arjunaContext = ArjunaContext.getCurrentContext(ctx) ;
 
-        return RegistrationCoordinatorProcessor.getCoordinator().register(parameters, inboundAddressProperties, arjunaContext, isSecure);
+        return RegistrationCoordinatorProcessor.getCoordinator().register(parameters, inboundMap, arjunaContext, isSecure);
 
     }
 }

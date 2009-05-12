@@ -1,7 +1,6 @@
 package com.arjuna.wst11.stub;
 
 import com.arjuna.wst.Durable2PCParticipant;
-import com.arjuna.wst11.stub.ParticipantStub;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 

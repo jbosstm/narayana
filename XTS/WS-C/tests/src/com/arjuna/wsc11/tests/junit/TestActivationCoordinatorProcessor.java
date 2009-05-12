@@ -23,6 +23,7 @@ package com.arjuna.wsc11.tests.junit;
 import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.wsc.tests.TestUtil;
 import com.arjuna.wsc11.tests.TestUtil11;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
@@ -33,7 +34,6 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextType;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.ProtocolException;
-import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.soap.SOAPFaultException;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
@@ -46,12 +46,12 @@ public class TestActivationCoordinatorProcessor extends
     private Map messageIdMap = new HashMap() ;
 
     public CreateCoordinationContextResponseType createCoordinationContext(final CreateCoordinationContextType createCoordinationContext,
-        final AddressingProperties addressingProperties, boolean isSecure)
+        final MAP map, boolean isSecure)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
+        final String messageId = map.getMessageID() ;
         synchronized(messageIdMap)
         {
-            messageIdMap.put(messageId, new CreateCoordinationContextDetails(createCoordinationContext, addressingProperties)) ;
+            messageIdMap.put(messageId, new CreateCoordinationContextDetails(createCoordinationContext, map)) ;
             messageIdMap.notifyAll() ;
         }
         String coordinationType = createCoordinationContext.getCoordinationType();
@@ -119,13 +119,13 @@ public class TestActivationCoordinatorProcessor extends
     public static class CreateCoordinationContextDetails
     {
         private final CreateCoordinationContextType createCoordinationContext ;
-        private final AddressingProperties addressingProperties ;
+        private final MAP map ;
 
         CreateCoordinationContextDetails(final CreateCoordinationContextType createCoordinationContext,
-            final AddressingProperties addressingProperties)
+            final MAP map)
         {
             this.createCoordinationContext = createCoordinationContext ;
-            this.addressingProperties = addressingProperties ;
+            this.map = map ;
         }
 
         public CreateCoordinationContextType getCreateCoordinationContext()
@@ -133,9 +133,9 @@ public class TestActivationCoordinatorProcessor extends
             return createCoordinationContext ;
         }
 
-        public AddressingProperties getAddressingProperties()
+        public MAP getMAP()
         {
-            return addressingProperties ;
+            return map ;
         }
     }
 

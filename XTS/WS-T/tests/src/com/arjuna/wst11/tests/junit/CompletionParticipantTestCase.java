@@ -29,15 +29,14 @@ package com.arjuna.wst11.tests.junit;
 import junit.framework.TestCase;
 
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsat.client.CompletionCoordinatorClient;
 import com.arjuna.webservices11.wsat.processors.CompletionCoordinatorProcessor;
 import com.arjuna.wst11.tests.junit.TestCompletionCoordinatorProcessor.CompletionCoordinatorDetails;
-import com.arjuna.wst11.tests.junit.TestCompletionCoordinatorProcessor;
 import com.arjuna.wst11.tests.TestUtil;
 
-import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class CompletionParticipantTestCase extends TestCase
@@ -56,11 +55,11 @@ public class CompletionParticipantTestCase extends TestCase
         throws Exception
     {
         final String messageId = "testSendCommit" ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.completionCoordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.completionCoordinatorServiceURI, messageId) ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("1") ;
         final W3CEndpointReference endpoint = TestUtil.getCompletionCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
 
-        CompletionCoordinatorClient.getClient().sendCommit(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+        CompletionCoordinatorClient.getClient().sendCommit(endpoint, map, new InstanceIdentifier("sender")) ;
 
         final CompletionCoordinatorDetails details = testCompletionCoordinatorProcessor.getCompletionCoordinatorDetails(messageId, 10000) ;
 
@@ -73,11 +72,11 @@ public class CompletionParticipantTestCase extends TestCase
         throws Exception
     {
         final String messageId = "testSendRollback" ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil.completionCoordinatorServiceURI, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil.completionCoordinatorServiceURI, messageId) ;
         final InstanceIdentifier instanceIdentifier = new InstanceIdentifier("2") ;
         final W3CEndpointReference endpoint = TestUtil.getCompletionCoordinatorEndpoint(instanceIdentifier.getInstanceIdentifier());
 
-        CompletionCoordinatorClient.getClient().sendRollback(endpoint, addressingProperties, new InstanceIdentifier("sender")) ;
+        CompletionCoordinatorClient.getClient().sendRollback(endpoint, map, new InstanceIdentifier("sender")) ;
 
         final CompletionCoordinatorDetails details = testCompletionCoordinatorProcessor.getCompletionCoordinatorDetails(messageId, 10000) ;
 
@@ -94,26 +93,26 @@ public class CompletionParticipantTestCase extends TestCase
 
     private void checkDetails(CompletionCoordinatorDetails details, boolean hasFrom, boolean hasFaultTo, String messageId, InstanceIdentifier instanceIdentifier)
     {
-        AddressingProperties inAddressingProperties = details.getAddressingProperties();
+        MAP inMAP = details.getMAP();
         ArjunaContext inArjunaContext = details.getArjunaContext();
 
-        assertEquals(inAddressingProperties.getTo().getURI().toString(), TestUtil.completionCoordinatorServiceURI);
-        assertNotNull(inAddressingProperties.getReplyTo());
-        assertTrue(AddressingHelper.isNoneReplyTo(inAddressingProperties));
+        assertEquals(inMAP.getTo(), TestUtil.completionCoordinatorServiceURI);
+        assertNotNull(inMAP.getReplyTo());
+        assertTrue(AddressingHelper.isNoneReplyTo(inMAP));
         if (hasFrom) {
-            assertNotNull(inAddressingProperties.getFrom());
-            assertEquals(inAddressingProperties.getFrom().getAddress().getURI().toString(), TestUtil.completionInitiatorServiceURI);
+            assertNotNull(inMAP.getFrom());
+            assertEquals(inMAP.getFrom().getAddress(), TestUtil.completionInitiatorServiceURI);
         } else {
-            assertNull(inAddressingProperties.getFrom());
+            assertNull(inMAP.getFrom());
         }
         if (hasFaultTo) {
-            assertNotNull(inAddressingProperties.getFaultTo());
-            assertEquals(inAddressingProperties.getFaultTo().getAddress().getURI().toString(), TestUtil.completionInitiatorServiceURI);
+            assertNotNull(inMAP.getFaultTo());
+            assertEquals(inMAP.getFaultTo().getAddress(), TestUtil.completionInitiatorServiceURI);
         } else {
-            assertNull(inAddressingProperties.getFrom());
+            assertNull(inMAP.getFrom());
         }
-        assertNotNull(inAddressingProperties.getMessageID());
-        assertEquals(inAddressingProperties.getMessageID().getURI().toString(), messageId);
+        assertNotNull(inMAP.getMessageID());
+        assertEquals(inMAP.getMessageID(), messageId);
 
         if (instanceIdentifier == null) {
             assertNull(inArjunaContext);

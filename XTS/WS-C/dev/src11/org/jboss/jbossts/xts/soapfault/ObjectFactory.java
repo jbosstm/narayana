@@ -53,14 +53,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Header }
-     * 
-     */
-    public Header createHeader() {
-        return new Header();
-    }
-
-    /**
      * Create an instance of {@link Fault }
      * 
      */
@@ -74,6 +66,14 @@ public class ObjectFactory {
      */
     public Body createBody() {
         return new Body();
+    }
+
+    /**
+     * Create an instance of {@link Header }
+     * 
+     */
+    public Header createHeader() {
+        return new Header();
     }
 
     /**

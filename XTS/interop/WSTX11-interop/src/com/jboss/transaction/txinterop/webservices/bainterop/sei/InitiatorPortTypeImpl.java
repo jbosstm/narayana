@@ -20,13 +20,12 @@
  */
 package com.jboss.transaction.txinterop.webservices.bainterop.sei;
 
-import com.jboss.transaction.txinterop.webservices.atinterop.processors.ATInitiatorProcessor;
 import com.jboss.transaction.txinterop.webservices.bainterop.processors.BAInitiatorProcessor;
+import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.addressing.AddressingProperties;
-import javax.xml.ws.addressing.JAXWSAConstants;
 import javax.xml.ws.handler.MessageContext;
 import javax.annotation.Resource;
 
@@ -36,11 +35,7 @@ import javax.annotation.Resource;
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import javax.jws.*;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.RequestWrapper;
-
+import javax.xml.ws.soap.Addressing;
 
 /**
  * Implementation class for WSTX 1.1 AT Interop Test Initiator service
@@ -50,8 +45,7 @@ import javax.xml.ws.RequestWrapper;
         portName = "InitiatorPortType",
         wsdlLocation="/WEB-INF/wsdl/interopba-initiator-binding.wsdl",
         serviceName="InitiatorService")
-// @EndpointConfig(configName = "Standard WSAddressing Endpoint")
-@HandlerChain(file="initiatorhandlers.xml")
+@Addressing(required=true)
 public class InitiatorPortTypeImpl {
 
     /**
@@ -69,9 +63,9 @@ public class InitiatorPortTypeImpl {
     public void response()
     {
         MessageContext ctx = webServiceCtx.getMessageContext();
-        AddressingProperties inboundAddressProperties = (AddressingProperties)ctx.get(JAXWSAConstants.SERVER_ADDRESSING_PROPERTIES_INBOUND);
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
 
-        BAInitiatorProcessor.getInitiator().handleResponse(inboundAddressProperties) ;
+        BAInitiatorProcessor.getInitiator().handleResponse(inboundMap) ;
     }
 
 }

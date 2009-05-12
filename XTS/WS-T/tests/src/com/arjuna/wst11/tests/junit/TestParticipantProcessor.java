@@ -27,9 +27,8 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsat.ParticipantInboundEvents;
 import com.arjuna.webservices11.wsat.processors.ParticipantProcessor;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
-
-import javax.xml.ws.addressing.AddressingProperties;
 
 public class TestParticipantProcessor extends ParticipantProcessor
 {
@@ -93,10 +92,10 @@ public class TestParticipantProcessor extends ParticipantProcessor
     }
 
     public void commit(Notification commit,
-            AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+            MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final ParticipantDetails details = new ParticipantDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final ParticipantDetails details = new ParticipantDetails(map, arjunaContext) ;
         details.setCommit(true) ;
 
         synchronized(messageIdMap)
@@ -107,10 +106,10 @@ public class TestParticipantProcessor extends ParticipantProcessor
     }
 
     public void prepare(Notification prepare,
-            AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+            MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final ParticipantDetails details = new ParticipantDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final ParticipantDetails details = new ParticipantDetails(map, arjunaContext) ;
         details.setPrepare(true) ;
 
         synchronized(messageIdMap)
@@ -121,10 +120,10 @@ public class TestParticipantProcessor extends ParticipantProcessor
     }
 
     public void rollback(Notification rollback,
-            AddressingProperties addressingProperties, ArjunaContext arjunaContext)
+            MAP map, ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final ParticipantDetails details = new ParticipantDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final ParticipantDetails details = new ParticipantDetails(map, arjunaContext) ;
         details.setRollback(true) ;
 
         synchronized(messageIdMap)
@@ -134,11 +133,11 @@ public class TestParticipantProcessor extends ParticipantProcessor
         }
     }
 
-    public void soapFault(SoapFault soapFault, AddressingProperties addressingProperties,
+    public void soapFault(SoapFault soapFault, MAP map,
             ArjunaContext arjunaContext)
     {
-        final String messageId = addressingProperties.getMessageID().getURI().toString() ;
-        final ParticipantDetails details = new ParticipantDetails(addressingProperties, arjunaContext) ;
+        final String messageId = map.getMessageID() ;
+        final ParticipantDetails details = new ParticipantDetails(map, arjunaContext) ;
         details.setSoapFault(soapFault) ;
 
         synchronized(messageIdMap)
@@ -150,22 +149,22 @@ public class TestParticipantProcessor extends ParticipantProcessor
 
     public static class ParticipantDetails
     {
-        private final AddressingProperties addressingProperties ;
+        private final MAP map ;
         private final ArjunaContext arjunaContext ;
         private boolean commit ;
         private boolean prepare ;
         private boolean rollback ;
         private SoapFault soapFault ;
 
-        ParticipantDetails(final AddressingProperties addressingProperties, final ArjunaContext arjunaContext)
+        ParticipantDetails(final MAP map, final ArjunaContext arjunaContext)
         {
-            this.addressingProperties = addressingProperties ;
+            this.map = map ;
             this.arjunaContext = arjunaContext ;
         }
 
-        public AddressingProperties getAddressingProperties()
+        public MAP getMAP()
         {
-            return addressingProperties ;
+            return map ;
         }
 
         public ArjunaContext getArjunaContext()

@@ -27,6 +27,7 @@
 package com.arjuna.wsc11.tests.junit;
 
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wscoor.client.ActivationCoordinatorClient;
 import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
@@ -41,7 +42,6 @@ import com.arjuna.wsc11.tests.junit.TestRegistrationCoordinatorProcessor.Registe
 import junit.framework.TestCase;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.*;
 
-import javax.xml.ws.addressing.AddressingProperties;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 public class EnduranceTestCase extends TestCase
@@ -142,16 +142,16 @@ public class EnduranceTestCase extends TestCase
         throws Exception
     {
         final String coordinationType = TestUtil.COORDINATION_TYPE ;
-        final AddressingProperties addressingProperties = AddressingHelper.createRequestContext(TestUtil11.activationCoordinatorService, messageId) ;
+        final MAP map = AddressingHelper.createRequestContext(TestUtil11.activationCoordinatorService, messageId) ;
         CreateCoordinationContextResponseType response =
-                ActivationCoordinatorClient.getClient().sendCreateCoordination(addressingProperties, coordinationType, null, null) ;
+                ActivationCoordinatorClient.getClient().sendCreateCoordination(map, coordinationType, null, null) ;
 
         final CreateCoordinationContextDetails details = testActivationCoordinatorProcessor.getCreateCoordinationContextDetails(messageId, 10000) ;
         final CreateCoordinationContextType requestCreateCoordinationContext = details.getCreateCoordinationContext() ;
-        final AddressingProperties requestAddressingProperties = details.getAddressingProperties() ;
+        final MAP requestMap = details.getMAP() ;
 
-        assertEquals(requestAddressingProperties.getTo().getURI().toString(), TestUtil11.activationCoordinatorService);
-        assertEquals(requestAddressingProperties.getMessageID().getURI().toString(), messageId);
+        assertEquals(requestMap.getTo(), TestUtil11.activationCoordinatorService);
+        assertEquals(requestMap.getMessageID(), messageId);
 
         assertNull(requestCreateCoordinationContext.getExpires()) ;
         assertNull(requestCreateCoordinationContext.getCurrentContext()) ;
@@ -173,9 +173,9 @@ public class EnduranceTestCase extends TestCase
         } catch (InvalidCreateParametersException icpe) {
             final CreateCoordinationContextDetails details = testActivationCoordinatorProcessor.getCreateCoordinationContextDetails(messageId, 10000) ;
             final CreateCoordinationContextType requestCreateCoordinationContext = details.getCreateCoordinationContext() ;
-            final AddressingProperties requestAddressingProperties = details.getAddressingProperties() ;
-            assertEquals(requestAddressingProperties.getTo().getURI().toString(), TestUtil11.activationCoordinatorService);
-            assertEquals(requestAddressingProperties.getMessageID().getURI().toString(), messageId);
+            final MAP requestMap = details.getMAP() ;
+            assertEquals(requestMap.getTo(), TestUtil11.activationCoordinatorService);
+            assertEquals(requestMap.getMessageID(), messageId);
 
             assertNull(requestCreateCoordinationContext.getExpires()) ;
             assertNull(requestCreateCoordinationContext.getCurrentContext()) ;
@@ -201,11 +201,11 @@ public class EnduranceTestCase extends TestCase
 
         final RegisterDetails details = testRegistrationCoordinatorProcessor.getRegisterDetails(messageId, 10000) ;
         final RegisterType requestRegister = details.getRegister() ;
-        final AddressingProperties requestAddressingProperties = details.getAddressingProperties() ;
+        final MAP requestMap = details.getMAP() ;
         final ArjunaContext requestArjunaContext = details.getArjunaContext() ;
 
-        assertEquals(requestAddressingProperties.getTo().getURI().toString(), TestUtil11.registrationCoordinatorService);
-        assertEquals(requestAddressingProperties.getMessageID().getURI().toString(), messageId);
+        assertEquals(requestMap.getTo(), TestUtil11.registrationCoordinatorService);
+        assertEquals(requestMap.getMessageID(), messageId);
 
         assertNotNull(requestArjunaContext) ;
         assertEquals(requestArjunaContext.getInstanceIdentifier().getInstanceIdentifier(), identifierInstance.getValue()) ;
@@ -275,11 +275,11 @@ public class EnduranceTestCase extends TestCase
 
         final RegisterDetails details = testRegistrationCoordinatorProcessor.getRegisterDetails(messageId, 10000) ;
         final RegisterType requestRegister = details.getRegister() ;
-        final AddressingProperties requestAddressingProperties = details.getAddressingProperties() ;
+        final MAP requestMap = details.getMAP() ;
         final ArjunaContext requestArjunaContext = details.getArjunaContext() ;
 
-        assertEquals(requestAddressingProperties.getTo().getURI().toString(), TestUtil11.registrationCoordinatorService);
-        assertEquals(requestAddressingProperties.getMessageID().getURI().toString(), messageId);
+        assertEquals(requestMap.getTo(), TestUtil11.registrationCoordinatorService);
+        assertEquals(requestMap.getMessageID(), messageId);
 
         assertNotNull(requestArjunaContext) ;
         assertEquals(requestArjunaContext.getInstanceIdentifier().getInstanceIdentifier(), identifierInstance.getValue()); ;
