@@ -130,84 +130,66 @@ public void run () throws SystemException
      * @message com.arjuna.orbportability.oa.core.OA.caughtexception OA ORB specific class creation failed with: {0}
      */
 private final void initialise ()
+{
+    String className = opPropertyManager.propertyManager.getProperty(com.arjuna.orbportability.common.Environment.OA_IMPLEMENTATION);
+
+    if (className == null)
     {
-	String className = opPropertyManager.propertyManager.getProperty(com.arjuna.orbportability.common.Environment.OA_IMPLEMENTATION);
 
-	if (className == null)
-	{
-	    try
-	    {
-		Thread.currentThread().getContextClassLoader().loadClass("com.iona.corba.art.artimpl.ORBImpl");
+        try
+        {
+            Thread.currentThread().getContextClassLoader().loadClass("org.jacorb.orb.ORB");
 
-	    	className = "com.arjuna.orbportability.internal.orbspecific.orbix2000.oa.implementations.orbix2000_2_0";
-	    }
-	    catch (ClassNotFoundException oe)
-	    {
-    		try
-    		{
-    		    Thread.currentThread().getContextClassLoader().loadClass("com.hp.mw.hporb.ORB");
+            className = "com.arjuna.orbportability.internal.orbspecific.jacorb.oa.implementations.jacorb_2_0";
+        }
+        catch (ClassNotFoundException ce)
+        {
+            try
+            {
+                Thread.currentThread().getContextClassLoader().loadClass("com.sun.corba.se.internal.corba.ORB");
 
-	    	    className = "com.arjuna.orbportability.internal.orbspecific.hporb.oa.implementations.hporb_1_2";
-    		}
-    		catch (ClassNotFoundException he)
-    		{
-		    try
-		    {
-			Thread.currentThread().getContextClassLoader().loadClass("org.jacorb.orb.ORB");
-
-			className = "com.arjuna.orbportability.internal.orbspecific.jacorb.oa.implementations.jacorb_2_0";
-		    }
-		    catch (ClassNotFoundException ce)
-		    {
-			try
-			{
-			    Thread.currentThread().getContextClassLoader().loadClass("com.sun.corba.se.internal.corba.ORB");
-
-			    className = "com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4";
-			}
-			catch (ClassNotFoundException je)
-			{
-			    if (opLogger.loggerI18N.isFatalEnabled())
-			    {
-				opLogger.loggerI18N.fatal( "com.arjuna.orbportability.oa.core.OA.nosupportedorb" );
-			    }
+                className = "com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4";
+            }
+            catch (ClassNotFoundException je)
+            {
+                if (opLogger.loggerI18N.isFatalEnabled())
+                {
+                    opLogger.loggerI18N.fatal( "com.arjuna.orbportability.oa.core.OA.nosupportedorb" );
+                }
                 ExceptionInInitializerError exceptionInInitializerError =
                         new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.oa.core.OA.nosupportedorb") );
                 exceptionInInitializerError.initCause(je);
                 throw exceptionInInitializerError;
-			}
-		    }
-	    	}
-	    }
-
-	}
-
-        if (opLogger.logger.isDebugEnabled())
-        {
-            opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                                  FacilityCode.FAC_ORB_PORTABILITY, "OA.initialise() - using OA Implementation "+className);
-        }
-
-	try
-	{
-	    Class c = Thread.currentThread().getContextClassLoader().loadClass(className);
-
-	    _theOA = (POAImple) c.newInstance();
-	}
-	catch (Exception e)
-	{
-            if (opLogger.loggerI18N.isFatalEnabled())
-            {
-                opLogger.loggerI18N.fatal( "com.arjuna.orbportability.oa.core.OA.caughtexception",
-                                new Object[] { e } );
             }
+        }
+    }
+
+    if (opLogger.logger.isDebugEnabled())
+    {
+        opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                FacilityCode.FAC_ORB_PORTABILITY, "OA.initialise() - using OA Implementation "+className);
+    }
+
+    try
+    {
+        Class c = Thread.currentThread().getContextClassLoader().loadClass(className);
+
+        _theOA = (POAImple) c.newInstance();
+    }
+    catch (Exception e)
+    {
+        if (opLogger.loggerI18N.isFatalEnabled())
+        {
+            opLogger.loggerI18N.fatal( "com.arjuna.orbportability.oa.core.OA.caughtexception",
+                    new Object[] { e } );
+        }
 
         ExceptionInInitializerError exceptionInInitializerError =
                 new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.oa.core.OA.caughtexception") );
         exceptionInInitializerError.initCause(e);
         throw exceptionInInitializerError;
-	}
     }
+}
 
 private com.arjuna.orbportability.orb.core.ORB     _theORB;
 private com.arjuna.orbportability.oa.core.POAImple _theOA;

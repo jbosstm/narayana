@@ -114,62 +114,40 @@ private final void initialise ()
 
 	String className = opPropertyManager.propertyManager.getProperty(com.arjuna.orbportability.common.Environment.ORB_IMPLEMENTATION);
 
-	if (className == null)
-	{
-	    try
-	    {
-                Thread.currentThread().getContextClassLoader().loadClass("com.iona.corba.art.artimpl.ORBImpl");
+        if (className == null)
+        {
+            try
+            {
+                Thread.currentThread().getContextClassLoader().loadClass("org.jacorb.orb.ORB");
 
-	    	className = "com.arjuna.orbportability.internal.orbspecific.orbix2000.orb.implementations.orbix2000_2_0";
-	    }
-	    catch (ClassNotFoundException oe)
-	    {
-		//		oe.printStackTrace();
+                className = "com.arjuna.orbportability.internal.orbspecific.jacorb.orb.implementations.jacorb_2_0";
+            }
+            catch (ClassNotFoundException ce)
+            {
+                //			ce.printStackTrace();
 
-    		try
-    		{
-    		    Thread.currentThread().getContextClassLoader().loadClass("com.hp.mw.hporb.ORB");
+                try
+                {
+                    Thread.currentThread().getContextClassLoader().loadClass("com.sun.corba.se.internal.corba.ORB");
 
-    		    className = "com.arjuna.orbportability.internal.orbspecific.hporb.orb.implementations.hporb_1_2";
-    		}
-    		catch (ClassNotFoundException he)
-    		{
-		    //		    he.printStackTrace();
+                    className = "com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4";
+                }
+                catch (ClassNotFoundException je)
+                {
+                    //			    je.printStackTrace();
 
-		    try
-		    {
-			Thread.currentThread().getContextClassLoader().loadClass("org.jacorb.orb.ORB");
+                    if (opLogger.loggerI18N.isFatalEnabled())
+                    {
+                        opLogger.loggerI18N.fatal( "com.arjuna.orbportability.orb.core.ORB.unsupportedorb" );
+                    }
 
-			className = "com.arjuna.orbportability.internal.orbspecific.jacorb.orb.implementations.jacorb_2_0";
-		    }
-		    catch (ClassNotFoundException ce)
-		    {
-			//			ce.printStackTrace();
-
-			try
-			{
-			    Thread.currentThread().getContextClassLoader().loadClass("com.sun.corba.se.internal.corba.ORB");
-
-			    className = "com.arjuna.orbportability.internal.orbspecific.javaidl.orb.implementations.javaidl_1_4";
-			}
-			catch (ClassNotFoundException je)
-			{
-			    //			    je.printStackTrace();
-
-			    if (opLogger.loggerI18N.isFatalEnabled())
-			    {
-				opLogger.loggerI18N.fatal( "com.arjuna.orbportability.orb.core.ORB.unsupportedorb" );
-			    }
-
-                ExceptionInInitializerError exceptionInInitializerError =
-                        new ExceptionInInitializerError(opLogger.logMesg.getString("com.arjuna.orbportability.orb.core.ORB.unsupportedorb"));
-                exceptionInInitializerError.initCause(je);
-                throw exceptionInInitializerError;
-			}
-		    }
-	    	}
-	    }
-	}
+                    ExceptionInInitializerError exceptionInInitializerError =
+                            new ExceptionInInitializerError(opLogger.logMesg.getString("com.arjuna.orbportability.orb.core.ORB.unsupportedorb"));
+                    exceptionInInitializerError.initCause(je);
+                    throw exceptionInInitializerError;
+                }
+            }
+        }
 
         if (opLogger.logger.isDebugEnabled())
         {

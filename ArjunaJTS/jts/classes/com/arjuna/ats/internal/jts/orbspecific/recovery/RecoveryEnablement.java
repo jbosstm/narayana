@@ -138,15 +138,6 @@ public class RecoveryEnablement implements RecoveryActivator
 	{
 	    switch (orbType)
 	    {
-	    case ORBType.ORBIX2000:
-		{
-		    theClassName = "com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit";
-		    recoveryService = (RecoveryServiceInit) Thread.currentThread().getContextClassLoader().loadClass(theClassName).newInstance();
-		    recoveryService.startRCservice();
-
-		    result = true;
-		}
-		break;
 	    case ORBType.JACORB:
 		{
 		    theClassName = "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit";

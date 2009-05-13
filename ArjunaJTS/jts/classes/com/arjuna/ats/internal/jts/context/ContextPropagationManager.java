@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -78,22 +78,6 @@ public class ContextPropagationManager
 
 	switch (orbType)
 	{
-	case ORBType.ORBIX2000:
-	    {
-		if (interposition)
-		    System.setProperty("org.omg.PortableInterceptor.ORBInitializerClass.com.arjuna.ats.jts.orbspecific.orbix2000.interceptors.interposition.InterpositionORBInitializerImpl", "com.arjuna.ats.jts.orbspecific.orbix2000.interceptors.interposition.InterpositionORBInitializerImpl");
-		else
-		    System.setProperty("org.omg.PortableInterceptor.ORBInitializerClass.com.arjuna.ats.jts.orbspecific.orbix2000.interceptors.context.ContextORBInitializerImpl", "com.arjuna.ats.jts.orbspecific.orbix2000.interceptors.context.ContextORBInitializerImpl");
-	    }
-	    break;
-	case ORBType.HPORB:
-	    {
-		if (interposition)
-		    System.setProperty("org.omg.PortableInterceptor.ORBInitializerClass.com.arjuna.ats.jts.orbspecific.hporb.interceptors.interposition.InterpositionORBInitializerImpl", "com.arjuna.ats.jts.orbspecific.hporb.interceptors.interposition.InterpositionORBInitializerImpl");
-		else
-		    System.setProperty("org.omg.PortableInterceptor.ORBInitializerClass.com.arjuna.ats.jts.orbspecific.hporb.interceptors.context.ContextORBInitializerImpl", "com.arjuna.ats.jts.orbspecific.hporb.interceptors.context.ContextORBInitializerImpl");
-	    }
-	    break;
 	case ORBType.JAVAIDL:
 	    {
 		if (interposition)

@@ -101,12 +101,6 @@ public class RecoveryInit
 
 		    switch (orbType)
 		    {
-		    case ORBType.ORBIX2000:
-			{
-			    InitClassName = "com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRecoveryInit";
-			    recoveryCoordinatorInitialiser = Thread.currentThread().getContextClassLoader().loadClass(InitClassName).newInstance();
-			}
-			break;
 		    case ORBType.JACORB:
 			{
 			    InitClassName = "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRecoveryInit";

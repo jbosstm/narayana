@@ -197,14 +197,6 @@ public static void main(String[] args)
 						</td>
 					</tr>
 					<tr>
-						<td>IONA Orbix 2000 v2.0 (obsolete)</td>
-						<td>com.arjuna.orbportability.internal.orbspecific.orbix2000.orb.implementations.orbix2000_2_0</td>
-					</tr>
-					<tr>
-						<td>HP-ORB v1.2 (obsolete)</td>
-						<td>com.arjuna.orbportability.internal.orbspecific.hporb.orb.implementations.hporb_1_2</td>
-					</tr>
-					<tr>
 						<td>JacORB v2.0</td>
 						<td>com.arjuna.orbportability.internal.orbspecific.jacorb.orb.implementations.jacorb_2_0</td>
 					</tr>

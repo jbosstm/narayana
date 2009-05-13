@@ -164,77 +164,59 @@ public class ORBInfo
 
     static
     {
-	String className = null;
+        String className = null;
 
         try
         {
-	    Thread.currentThread().getContextClassLoader().loadClass("com.iona.corba.art.artimpl.ORBImpl");
+            Thread.currentThread().getContextClassLoader().loadClass("org.jacorb.orb.ORB");
 
-    	    className = _versionPackage+".orbix2000_2_0";
+            className = _versionPackage+".jacorb_2_0";
         }
-        catch (ClassNotFoundException oe)
+        catch (ClassNotFoundException je)
         {
-	    try
-	    {
-	    	Thread.currentThread().getContextClassLoader().loadClass("com.hp.mw.hporb.ORB");
+            try
+            {
+                Thread.currentThread().getContextClassLoader().loadClass("com.sun.corba.se.internal.Interceptors.PIORB");
 
-		className = _versionPackage+".hporb_1_2";
-	    }
-	    catch (ClassNotFoundException he)
-	    {
-		try
-		{
-			Thread.currentThread().getContextClassLoader().loadClass("org.jacorb.orb.ORB");
-
-			className = _versionPackage+".jacorb_2_0";
-		}
-		catch (ClassNotFoundException je)
-		{
-			try
-			{
-				Thread.currentThread().getContextClassLoader().loadClass("com.sun.corba.se.internal.Interceptors.PIORB");
-
-				className = _versionPackage+".javaidl_1_4";
-			}
-			catch (ClassNotFoundException joe)
-			{
-				if (opLogger.loggerI18N.isFatalEnabled())
-				{
-				opLogger.loggerI18N.fatal( "com.arjuna.orbportability.ORBInfo.unsupportedorb" );
-				}
+                className = _versionPackage+".javaidl_1_4";
+            }
+            catch (ClassNotFoundException joe)
+            {
+                if (opLogger.loggerI18N.isFatalEnabled())
+                {
+                    opLogger.loggerI18N.fatal( "com.arjuna.orbportability.ORBInfo.unsupportedorb" );
+                }
 
                 ExceptionInInitializerError exceptionInInitializerError =
                         new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.ORBInfo.unsupportedorb"));
                 exceptionInInitializerError.initCause(joe);
                 throw exceptionInInitializerError;
-			}
-		}
-    	    }
-    	}
+            }
+        }
 
-	try
-	{
-	    Class c = Thread.currentThread().getContextClassLoader().loadClass(className);
+        try
+        {
+            Class c = Thread.currentThread().getContextClassLoader().loadClass(className);
 
-	    _theData = (ORBData) c.newInstance();
+            _theData = (ORBData) c.newInstance();
 
             _xml = new SimpleXMLParser(_theData.getORBdata() );
-	}
-	catch (Exception e)
-	{
+        }
+        catch (Exception e)
+        {
 
             if (opLogger.loggerI18N.isFatalEnabled())
             {
                 opLogger.loggerI18N.fatal( "com.arjuna.orbportability.ORBInfo.creationfailed",
-                                new Object[] { e } );
+                        new Object[] { e } );
             }
 
-        ExceptionInInitializerError exceptionInInitializerError = new ExceptionInInitializerError(
-                MessageFormat.format(opLogger.logMesg.getString("com.arjuna.orbportability.ORBInfo.creationfailed"),
-                                                                        new Object[] { e } ));
-        exceptionInInitializerError.initCause(e);
-        throw exceptionInInitializerError;
-	}
+            ExceptionInInitializerError exceptionInInitializerError = new ExceptionInInitializerError(
+                    MessageFormat.format(opLogger.logMesg.getString("com.arjuna.orbportability.ORBInfo.creationfailed"),
+                            new Object[] { e } ));
+            exceptionInInitializerError.initCause(e);
+            throw exceptionInInitializerError;
+        }
     }
 
 }

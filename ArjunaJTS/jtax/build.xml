@@ -60,14 +60,6 @@
 
 		<!-- Files that need word substitutions -->
 
-    <property
-    name="com.hp.mw.orbportability.orbspecific.orbix.classpath"
-    value="../lib/jts.jar:../../common/lib/common.jar:../../orbportability/lib/orbportability.jar:../../orbportability/lib/ext/orbportability-ant.jar:../../arjuna/lib/arjuna.jar:../../txoj/lib/txoj.jar"/>
-
-    <property
-    name="com.hp.mw.orbportability.orbspecific.hporb.classpath"
-    value="../lib/jts.jar:../../common/lib/common.jar:../../orbportability/lib/orbportability.jar:../../orbportability/lib/ext/orbportability-ant.jar:../../arjuna/lib/arjuna.jar:../../txoj/lib/txoj.jar"/>
-
     <property name="com.hp.mwlabs.ts.jacorb.lib" location="../jacorb/lib"/>
     <path id="com.hp.mwlabs.ts.jacorb.classpath">
         <fileset dir="${com.hp.mwlabs.ts.jacorb.lib}" includes="*.jar"/>
@@ -189,7 +181,7 @@
 
 	<target name="com.hp.mwlabs.ts.jtax.tests.run" depends="com.hp.mwlabs.ts.jtax.tests.compile" if="com.hp.mwlabs.ts.jtax.tests.compile">
 	    <mkdir dir="${com.hp.mwlabs.ts.jtax.reports.dest}"/>
-        
+
 	    <junit printsummary="yes">
 	        <formatter type="plain"/>
 	        <classpath>
