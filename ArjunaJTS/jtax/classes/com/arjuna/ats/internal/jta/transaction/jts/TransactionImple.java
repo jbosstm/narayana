@@ -1863,12 +1863,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
-
 			if (jtaLogger.loggerI18N.isWarnEnabled())
 			{
 				jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.rollbackerror", new Object[]
-				{ "TransactionImple.markRollbackOnly -", ex });
+				{ "TransactionImple.markRollbackOnly -", ex }, ex);
 			}
 		}
 	}

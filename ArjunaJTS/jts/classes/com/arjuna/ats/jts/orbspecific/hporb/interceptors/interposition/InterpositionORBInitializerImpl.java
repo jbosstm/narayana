@@ -135,10 +135,8 @@ public void post_init (ORBInitInfo init_info)
 	    if (jtsLogger.loggerI18N.isWarnEnabled())
 	    {
 		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.interposition.codecerror",
-					  new java.lang.Object[] { "InterpositionORBInitializerImpl", "ENCODING_CDR_ENCAPS" });
+					  new java.lang.Object[] { "InterpositionORBInitializerImpl", "ENCODING_CDR_ENCAPS" }, ex);
 	    }
-
-	    ex.printStackTrace();
 
 	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.interposition.codeccreate"), ex);
 	}
@@ -164,10 +162,8 @@ public void post_init (ORBInitInfo init_info)
 	    if (jtsLogger.loggerI18N.isWarnEnabled())
 	    {
 		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.interposition.duplicatename",
-					  new java.lang.Object[] { "InterpositionORBInitializerImpl", "ClientRequestInterceptor" });
+					  new java.lang.Object[] { "InterpositionORBInitializerImpl", "ClientRequestInterceptor" }, ex);
 	    }
-
-	    ex.printStackTrace();
 
 	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.interposition.cie"), ex);
 	}
@@ -193,10 +189,8 @@ public void post_init (ORBInitInfo init_info)
 	    if (jtsLogger.loggerI18N.isWarnEnabled())
 	    {
 		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.interposition.duplicatename",
-					  new java.lang.Object[] { "InterpositionORBInitializerImpl", "ServerRequestInterceptor" });
+					  new java.lang.Object[] { "InterpositionORBInitializerImpl", "ServerRequestInterceptor" }, ex);
 	    }
-
-	    ex.printStackTrace();
 
 	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.interposition.sie"), ex);
 	}

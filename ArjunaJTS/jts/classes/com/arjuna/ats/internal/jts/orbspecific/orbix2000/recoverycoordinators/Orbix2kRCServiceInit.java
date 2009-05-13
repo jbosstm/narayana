@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: Orbix2kRCServiceInit.java 2342 2006-03-30 13:06:17Z  $
  *
@@ -65,15 +65,15 @@ import com.iona.corba.IT_PortableServer.PersistenceModePolicyValue;
  * All orbs are likely to be the same, constructing a GenericRecoveryCreator,
  * but with an orb-specific manager
  *
- * @message com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit_1 [com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit_1] - Failed to create poa for recoverycoordinators 
+ * @message com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit_1 [com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit_1] - Failed to create poa for recoverycoordinators
  * @message com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit_2 [com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit_2] - Orbix2kRCServiceInit - set default servant and activated
- * @message com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit_3 [com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit_3] - Orbix2kRCServiceInit - Failed to start RC service 
+ * @message com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit_3 [com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit_3] - Orbix2kRCServiceInit - Failed to start RC service
  * @message com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit_4 [com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit_4] - Failed to create default ORB or POA
  */
 
 public class Orbix2kRCServiceInit implements RecoveryServiceInit
 {
-	
+
 public Orbix2kRCServiceInit()
 {
 }
@@ -84,24 +84,24 @@ public Orbix2kRCServiceInit()
  * but the policies are usable by the Orbix2kRCManager to create the IOR's in
  * TS-using processes.
  */
- 
+
 static POA getRCPOA (String domainName)
 {
     String rcServiceName = GenericRecoveryCreator.getRecCoordServiceName();
 
     if (jtsLogger.logger.isDebugEnabled())
     {
-	jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-			       FacilityCode.FAC_CRASH_RECOVERY, 
+	jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+			       FacilityCode.FAC_CRASH_RECOVERY,
 			       "Orbix2kRCServiceInit.getRCPOA " + rcServiceName );
     }
-    
+
     if (_poa == null)
     {
 	String poaName = POA_NAME_PREFIX + GenericRecoveryCreator.getRecCoordServiceName();
-    
+
 	_orb = com.arjuna.orbportability.internal.InternalORB.getInstance("RecoveryServer");
-	
+
 	// init it !!
 	String[] params = new String[2];
 	params[0] = "-ORBname";
@@ -131,13 +131,13 @@ static POA getRCPOA (String domainName)
 	    // specify direct persistence
 	    Any persistenceValue = theORB.create_any();
 	    PersistenceModePolicyValueHelper.insert(persistenceValue, PersistenceModePolicyValue.DIRECT_PERSISTENCE);
-	    
+
 	    // create direct persistent POA
 
 	    // make the policy lists, with standard policies
 
 	    org.omg.CORBA.Policy[] policies = null;
-	    
+
 	    policies = new Policy []
 	    {
 		rootPOA.create_lifespan_policy(LifespanPolicyValue.PERSISTENT),
@@ -157,7 +157,7 @@ static POA getRCPOA (String domainName)
 	}
     }
 
-    return _poa;    
+    return _poa;
 }
 
 /**
@@ -176,9 +176,9 @@ public boolean startRCservice ()
 
     com.arjuna.orbportability.ORB mainORB = com.arjuna.orbportability.ORB.getInstance("default");
     com.arjuna.orbportability.RootOA mainPOA = com.arjuna.orbportability.OA.getRootOA(mainORB);
-    
+
     String[] args = null;
-    
+
     try
     {
 	/*
@@ -190,8 +190,6 @@ public boolean startRCservice ()
     }
     catch (Exception ex)
     {
-	ex.printStackTrace();
-
 	jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit_4", ex);
 
 	return false;
@@ -202,31 +200,31 @@ public boolean startRCservice ()
 
     try {
 	// get the orb, so we can pass it to the default servant
-	
+
 	// make the default servant
 	Orbix2kRCDefaultServant theButler = new Orbix2kRCDefaultServant(_orb.orb());
 
 	// register it on the POA
 	ourPOA.set_servant(theButler);
 
-	// activate the poa 
+	// activate the poa
 	ourPOA.the_POAManager().activate();
 
 	if (jtsLogger.loggerI18N.isDebugEnabled())
 	{
-	    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-				   FacilityCode.FAC_CRASH_RECOVERY, 
+	    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+				   FacilityCode.FAC_CRASH_RECOVERY,
 				   "com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit_2");
 	}
-    
+
 	runOaOrbix _runOA = new runOaOrbix();
 
 	return true;
     } catch (Exception ex) {
 	jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit_3", ex);
 	return false;
-    }    
-    
+    }
+
 }
 
 public static void shutdownRCService ()

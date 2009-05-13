@@ -202,7 +202,6 @@ public class sqlserver_driver extends JDBCImple
 			}
 			catch(Throwable e)
 			{
-e.printStackTrace();
 				if(retryConnection(e, pool)) {
 					return write_state(objUid, tName, state, s, tableName);
 				} else {

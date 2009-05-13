@@ -606,7 +606,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				catch (Exception e2)
 				{
 					_committed = false;
-                    
+
                     e2.printStackTrace();
 
 					throw new UNKNOWN();
@@ -880,10 +880,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						jtaLogger.loggerI18N
 								.warn(
 										"com.arjuna.ats.internal.jta.resources.jts.orbspecific.coperror",
-										e2);
+										new Object[] {e2}, e2);
 					}
-
-					e2.printStackTrace();
 
 					throw new UNKNOWN();
 				}
@@ -1148,10 +1146,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						.warn(
 								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.restoreerror2",
 								new Object[]
-								{ e });
+								{ e }, e);
 			}
-
-			e.printStackTrace();
 
 			res = false;
 		}
@@ -1262,8 +1258,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
-
 				/*
 				 * Unknown error, so better to do nothing at this stage.
 				 */
@@ -1274,7 +1268,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 							.warn(
 									"com.arjuna.ats.internal.jta.resources.jts.orbspecific.unexpected",
 									new Object[]
-									{ "XAResourceRecord", e });
+									{ "XAResourceRecord", e }, e);
 				}
 
 				return XARecoveryResource.FAILED_TO_RECOVER;
@@ -1573,15 +1567,13 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			}
 			catch (Exception e2)
 			{
-				e2.printStackTrace();
-
 				if (jtaLogger.loggerI18N.isWarnEnabled())
 				{
 					jtaLogger.loggerI18N
 							.warn(
 									"com.arjuna.ats.internal.jta.resources.jts.orbspecific.recfailed",
 									new Object[]
-									{ ((commit) ? "commit" : "rollback"), e2 });
+									{ ((commit) ? "commit" : "rollback"), e2 }, e2);
 				}
 			}
 		}

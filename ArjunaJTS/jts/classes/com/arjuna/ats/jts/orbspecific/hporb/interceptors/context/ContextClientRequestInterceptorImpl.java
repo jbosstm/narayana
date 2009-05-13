@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: ContextClientRequestInterceptorImpl.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -56,7 +56,7 @@ import org.omg.PortableInterceptor.ClientRequestInfo;
 import org.omg.PortableInterceptor.ClientRequestInterceptor;
 
 /**
- * PortableInterceptor::ClientRequestInterceptor implementation which adds a 
+ * PortableInterceptor::ClientRequestInterceptor implementation which adds a
  * service context carrying the transaction context.
  */
 
@@ -117,7 +117,7 @@ class ContextClientRequestInterceptorImpl extends LocalObject implements ClientR
     public void destroy ()
     {
     }
-    
+
     /**
      * @message com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.context.error Context interceptor caught an unexpected exception:
      * @message com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.context.invalidparam Invalid portable interceptor transaction parameter!
@@ -133,14 +133,14 @@ class ContextClientRequestInterceptorImpl extends LocalObject implements ClientR
 
 	if (systemCall(request_info))
 	    return;
-	
+
 	final boolean otsAlwaysPropagate = InterceptorInfo.getAlwaysPropagate() ;
 	try
 	{
 	    if (!otsAlwaysPropagate)
 	    {
 		TransactionalObject ptr = org.omg.CosTransactions.TransactionalObjectHelper.narrow(request_info.target());
-	    
+
 		if (ptr == null)
 		    throw new BAD_PARAM();
 	    }
@@ -212,7 +212,7 @@ class ContextClientRequestInterceptorImpl extends LocalObject implements ClientR
 			{
 			    problem = true;
 			}
-			
+
 			theControl = null;
 		    }
 		    else
@@ -227,7 +227,7 @@ class ContextClientRequestInterceptorImpl extends LocalObject implements ClientR
 		     * Only throw an exception if we have no
 		     * transaction context and we require one.
 		     */
-			
+
 		    if (InterceptorInfo.getNeedTranContext())
 			throw new TRANSACTION_REQUIRED();
 		    else
@@ -239,7 +239,7 @@ class ContextClientRequestInterceptorImpl extends LocalObject implements ClientR
 		    org.omg.CORBA.Any data = ORBManager.getORB().orb().create_any();
 
 		    data.insert_string(stringRef);
-			
+
 		    byte[] octets = _codec.encode_value(data);
 		    ServiceContext service_context = new ServiceContext(OTSManager.serviceId, octets);
 
@@ -256,8 +256,6 @@ class ContextClientRequestInterceptorImpl extends LocalObject implements ClientR
 		{
 		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.hporb.interceptors.context.error", ex);
 		}
-		
-		ex.printStackTrace();
 
 		throw new UNKNOWN(ex.toString());
 	    }
@@ -321,7 +319,7 @@ class ContextClientRequestInterceptorImpl extends LocalObject implements ClientR
 	else
 	    return false;
     }
-    
+
     private int   _localSlot;
     private Codec _codec;
     private ThreadLocal _inUse = new ThreadLocal();

@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: InterpositionServerRequestInterceptorImpl.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -52,8 +52,8 @@ import com.arjuna.common.util.logging.*;
 
 import org.omg.CosTransactions.*;
 import org.omg.CORBA.*;
-import org.omg.PortableInterceptor.*; 
-import org.omg.PortableInterceptor.ORBInitInfoPackage.*; 
+import org.omg.PortableInterceptor.*;
+import org.omg.PortableInterceptor.ORBInitInfoPackage.*;
 import org.omg.IOP.*;
 import org.omg.IOP.CodecFactoryPackage.*;
 
@@ -66,7 +66,7 @@ import org.omg.CORBA.TRANSACTION_REQUIRED;
 import org.omg.CosTransactions.Unavailable;
 
 /**
- * PortableInterceptor::ServerRequestInterceptor implementation which checks 
+ * PortableInterceptor::ServerRequestInterceptor implementation which checks
  * that a transaction context was received.
  *
  * @message com.arjuna.ats.internal.jts.orbspecific.orbix2000.interceptors.interposition.srie {0} caught an unexpected exception: {1}
@@ -132,7 +132,7 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
 	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 						 (com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS | com.arjuna.ats.jts.logging.FacilityCode.FAC_INTERCEPTOR), "InterpositionServerRequestInterceptorImpl::receive_request_service_contexts ( "+request_info.operation()+" )");
 	}
-	
+
 	try
 	{
 	    try
@@ -147,7 +147,7 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
 	    {
 		// just in case the object isn't in the IR.
 	    }
-	    
+
 	    /*
 	     * OK, we may be transactional and expect some context information,
 	     * even if it zero.
@@ -156,7 +156,7 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
 	    try
 	    {
 		ServiceContext serviceContext = null;
-		
+
 		try
 		{
 		    serviceContext = request_info.get_request_service_context(OTSManager.serviceId);
@@ -188,7 +188,7 @@ public void receive_request_service_contexts (ServerRequestInfo request_info) th
 		     * Only throw an exception if we have no transaction
 		     * context and we require one.
 		     */
-	    
+
 		    if (InterceptorInfo.getNeedTranContext())
 			throw new TRANSACTION_REQUIRED();
 		}
@@ -240,10 +240,8 @@ public void send_reply (ServerRequestInfo request_info) throws SystemException
 	    if (jtsLogger.loggerI18N.isWarnEnabled())
 	    {
 		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.orbix2000.interceptors.interposition.srie",
-					  new java.lang.Object[] {"InterpositionServerRequestInterceptorImpl::send_reply", ex} );
+					  new java.lang.Object[] {"InterpositionServerRequestInterceptorImpl::send_reply", ex}, ex);
 	    }
-
-	    ex.printStackTrace();
 	    
 	    throw ex;
 	}
@@ -355,7 +353,7 @@ private void suspendContext (ServerRequestInfo request_info) throws SystemExcept
 		if ((threadId = data.extract_string()) != null)
 		{
 		    ControlWrapper ctx = OTSImpleManager.current().contextManager().popAction(threadId);
-		
+
 		    OTSImpleManager.current().contextManager().purgeActions(threadId);
 		}
 	    }
@@ -363,7 +361,7 @@ private void suspendContext (ServerRequestInfo request_info) throws SystemExcept
 	    {
 		// not a string, so still a pgcts
 	    }
-	    
+
 	    request_info.set_slot(_dataSlot, null);
 	}
     }

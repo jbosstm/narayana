@@ -1139,10 +1139,8 @@ public class XARecoveryModule implements RecoveryModule
 						.warn(
 								"com.arjuna.ats.internal.jta.recovery.generalrecoveryerror",
 								new Object[]
-								{ _logName + ".xaRecovery", e });
+								{ _logName + ".xaRecovery", e }, e);
 			}
-
-			e.printStackTrace();
 		}
 
 		try

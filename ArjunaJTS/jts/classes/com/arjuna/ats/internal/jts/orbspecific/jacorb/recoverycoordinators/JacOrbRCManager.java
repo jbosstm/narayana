@@ -124,7 +124,7 @@ public JacOrbRCManager ()
 		//End for IOR Template
 
 		rc = RecoveryCoordinatorHelper.narrow(rcAsObject);
-		
+
 		if (jtsLogger.loggerI18N.isDebugEnabled())
 		{
 		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS,
@@ -149,8 +149,6 @@ public JacOrbRCManager ()
 	catch (Exception ex)
 	{
 	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCManager_2", ex);
-
-	    ex.printStackTrace();
 	}
 
 	return rc;

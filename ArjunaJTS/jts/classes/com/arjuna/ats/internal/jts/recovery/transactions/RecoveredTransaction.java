@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -65,15 +65,15 @@ import org.omg.CORBA.SystemException;
  * @version $Id: RecoveredTransaction.java 2342 2006-03-30 13:06:17Z  $
  *
  * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_1 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_1] - RecoveredTransaction {0} created
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_2 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_2] - RecoveredTransaction activate of {0} failed 
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_2 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_2] - RecoveredTransaction activate of {0} failed
  * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_3 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_3] - RecoveredTransaction activate of {0} failed - {1}
  * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_5 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_5] - RecoveredTransaction.replayPhase2 ({0}) - status = {1}
  * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_6 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_6] - RecoveredTransaction.replayPhase2 for {0} failed
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_7 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_7] - RecoveredTransaction.replayPhase2 ({0}) finished 
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_8 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_8] - RecoveredTransaction.removeOldStoreEntry - problem 
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_7 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_7] - RecoveredTransaction.replayPhase2 ({0}) finished
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_8 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_8] - RecoveredTransaction.removeOldStoreEntry - problem
  */
 
-public class RecoveredTransaction extends ArjunaTransactionImple 
+public class RecoveredTransaction extends ArjunaTransactionImple
 			implements RecoveringTransaction
 {
     public RecoveredTransaction ( Uid actionUid )
@@ -87,25 +87,25 @@ public class RecoveredTransaction extends ArjunaTransactionImple
 
 	if (jtsLogger.loggerI18N.isDebugEnabled())
 	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
+		jtsLogger.loggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
+					   FacilityCode.FAC_CRASH_RECOVERY,
 					   "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_1", new Object[]{get_uid()});
 	    }
-		
+
 
 	// Don't bother trying to activate a transaction that isn't in
 	// the store. This saves an error message.
 	_recoveryStatus = RecoveryStatus.ACTIVATE_FAILED;
-	
+
 	String effectiveTypeName = typeName();
-	
+
 	if ( changedTypeName.length() < 1) {
 	    _typeName = null;
 	} else {
 	    _typeName = changedTypeName;
 	    effectiveTypeName = changedTypeName;
 	}
-	
+
 	_originalProcessUid = new Uid(Uid.nullUid());
 
 	try
@@ -122,9 +122,7 @@ public class RecoveredTransaction extends ArjunaTransactionImple
 	}
 	catch (Exception e)
 	{
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_3", new Object[]{actionUid, e});
-
-	    e.printStackTrace();
+	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_3", new Object[]{actionUid, e}, e);
 	}
 
 	_txStatus = Status.StatusUnknown;
@@ -139,19 +137,19 @@ public class RecoveredTransaction extends ArjunaTransactionImple
     {
 	if (_txStatus != Status.StatusUnknown)
 	    return _txStatus;
-	
+
 	Status theStatus = Status.StatusUnknown;
 
 	if (_recoveryStatus == RecoveryStatus.ACTIVATE_FAILED)
 	    theStatus = Status.StatusRolledBack;
 	else
 	    theStatus = super.get_status();
-	
+
 	return theStatus;
     }
 
 /**
- *  
+ *
  */
 public Status getOriginalStatus()
 {
@@ -202,8 +200,8 @@ public Status getOriginalStatus()
 
 	if (jtsLogger.loggerI18N.isDebugEnabled())
 	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
+		jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+					   FacilityCode.FAC_CRASH_RECOVERY,
 					   "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_5", new Object[]{get_uid(), Utility.stringStatus(theStatus)});
 	    }
 
@@ -235,8 +233,8 @@ public Status getOriginalStatus()
 
 	if (jtsLogger.loggerI18N.isDebugEnabled())
 	    {
-		jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
-					   FacilityCode.FAC_CRASH_RECOVERY, 
+		jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+					   FacilityCode.FAC_CRASH_RECOVERY,
 					   "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_5", new Object[]{get_uid()});
 	    }
     }
@@ -267,7 +265,7 @@ public Status getOriginalStatus()
 
 	    if ((super.failedList != null) && (super.failedList.size() > 0))
 		return false;
-	    
+
 	    if ((super.pendingList != null) && (super.pendingList.size() > 0))
 		return false;
 
@@ -277,7 +275,7 @@ public Status getOriginalStatus()
 	    return true;
 	}
     }
-    
+
     public String type()
     {
 	if (_typeName == null) {
@@ -295,7 +293,7 @@ public Status getOriginalStatus()
 	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredTransaction_8", ex);
 	}
     }
-    
+
     public boolean assumeComplete()
     {
 	_typeName = AssumedCompleteTransaction.typeName();
@@ -317,7 +315,7 @@ protected void packHeader (OutputObjectState os, Uid txId,
 	 * If there is a transaction present than pack the process Uid of
 	 * this JVM and the tx id. Otherwise pack a null Uid.
 	 */
-	
+
 	super.packHeader(os, txId, _originalProcessUid);
     }
 
@@ -339,7 +337,7 @@ public boolean save_state (OutputObjectState objectState, int ot)
 {
     // do the other stuff
     boolean result = super.save_state(objectState,ot);
-    
+
     // iff assumed complete, include the time (this should happen only once)
     if (_typeName != null && result) {
 	Date lastActiveTime = new Date();

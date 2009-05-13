@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: PersistenceRecord.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -53,12 +53,12 @@ import java.io.IOException;
  * created/read/modified within the scope of a transaction. It is responsible
  * for ensuring that state changes are committed or rolled back on behalf of the
  * object depending upon the outcome of the transaction.
- * 
+ *
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: PersistenceRecord.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
- * 
- * 
+ *
+ *
  * @message com.arjuna.ats.arjuna.PersistenceRecord_1
  *          [com.arjuna.ats.arjuna.PersistenceRecord_1]
  *          PersistenceRecord::topLevelCommit() : About to commit state, uid =
@@ -211,11 +211,8 @@ public class PersistenceRecord extends RecoveryRecord
 		{
 			if (tsLogger.arjLoggerI18N.isWarnEnabled())
 			{
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_20", new Object[]
-				{ e });
+				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_20", new Object[] { e }, e);
 			}
-
-			e.printStackTrace();
 
 			return TwoPhaseOutcome.FINISH_ERROR;
 		}
@@ -626,7 +623,7 @@ public class PersistenceRecord extends RecoveryRecord
 	protected ObjectStore store;
 	protected OutputObjectState topLevelState;
 	protected static boolean classicPrepare = false;
-	
+
 	private static boolean writeOptimisation = false;
 
 	static

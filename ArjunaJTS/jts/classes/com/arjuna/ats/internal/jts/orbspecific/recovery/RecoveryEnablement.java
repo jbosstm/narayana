@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: RecoveryEnablement.java 2342 2006-03-30 13:06:17Z  $
  *
@@ -50,7 +50,7 @@ import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.orbportability.*;
 import com.arjuna.common.util.propertyservice.PropertyManager;
- 
+
 import com.arjuna.ats.internal.jts.Implementations;
 
 import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCreator;
@@ -70,7 +70,7 @@ import java.net.*;
  *  The class also includes the static startRCservice method (package access),
  *  used by the RecoveryManager, which is orb-specific
  *
- *  
+ *
  * @author Peter Furniss (peter.furniss@arjuna.com), Mark Little (mark@arjuna.com), Malik Saheb (malik.saheb@arjuna.com)
  * @version $Id: RecoveryEnablement.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 2.1.
@@ -85,14 +85,14 @@ import java.net.*;
 
 public class RecoveryEnablement implements RecoveryActivator
 {
-    
+
     private static boolean _isNormalProcess = true;
     private static String  _RecoveryManagerTag = null;
 
     // no accessible variable for this first property name prefix
     private static final String eventHandlerPropertyPrefix = Environment.EVENT_HANDLER;
 
-    /** 
+    /**
      * Constructor does the work as a result of being registered as an ORBPreInit
      * class
      */
@@ -101,30 +101,30 @@ public class RecoveryEnablement implements RecoveryActivator
     {
 	Implementations.initialise();
     }
-    
+
     /**
-     * This static method is used by the RecoveryManager to suppress 
+     * This static method is used by the RecoveryManager to suppress
      * aspects of recovery enablement in it's own
      * process, without requiring further property manipulations
      */
-    
-    public static void isNotANormalProcess() 
+
+    public static void isNotANormalProcess()
     {
 	_isNormalProcess = false;
     }
-    
+
     public static boolean isNormalProcess ()
     {
 	return _isNormalProcess;
     }
-    
+
     /**
-     *  Used by the RecoveryManager to start the recoverycoordinator 
+     *  Used by the RecoveryManager to start the recoverycoordinator
      *  service, using whatever orb-specific techniques are appropriate.
-     *  This is placed here because it may need to set post-orbinitialisation 
+     *  This is placed here because it may need to set post-orbinitialisation
      *  properties, like the regular enabler.
      */
-    
+
     public boolean startRCservice()
     {
 	int orbType = ORBInfo.getOrbEnumValue();
@@ -132,9 +132,9 @@ public class RecoveryEnablement implements RecoveryActivator
 	RecoveryServiceInit recoveryService = null;
 
 	String theClassName = null;
-	
+
 	// The class that should start the service shall not be called directly. An intermediate class shall be used
-	try 
+	try
 	{
 	    switch (orbType)
 	    {
@@ -143,7 +143,7 @@ public class RecoveryEnablement implements RecoveryActivator
 		    theClassName = "com.arjuna.ats.internal.jts.orbspecific.orbix2000.recoverycoordinators.Orbix2kRCServiceInit";
 		    recoveryService = (RecoveryServiceInit) Thread.currentThread().getContextClassLoader().loadClass(theClassName).newInstance();
 		    recoveryService.startRCservice();
-		    
+
 		    result = true;
 		}
 		break;
@@ -152,7 +152,7 @@ public class RecoveryEnablement implements RecoveryActivator
 		    theClassName = "com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit";
 		    recoveryService = (RecoveryServiceInit) Thread.currentThread().getContextClassLoader().loadClass(theClassName).newInstance();
 		    recoveryService.startRCservice();
-		    
+
 		    result = true;
 		}
 		break;
@@ -168,11 +168,9 @@ public class RecoveryEnablement implements RecoveryActivator
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace();
-	    
-	    jtsLogger.loggerI18N.fatal("com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_6", new Object[] {e});
+	    jtsLogger.loggerI18N.fatal("com.arjuna.ats.internal.jts.recovery.RecoveryEnablement_6", new Object[] {e}, e);
 	}
-	
+
 	return result;
     }
 
@@ -187,7 +185,7 @@ public class RecoveryEnablement implements RecoveryActivator
 	    return null;
 	}
     }
-    
+
     static{
 
 	// tell the recovery init we aren't a normal TS-user
@@ -196,9 +194,9 @@ public class RecoveryEnablement implements RecoveryActivator
 
 	// see if there is a property defining the recoverymanager
 	// servicename
-		
+
 	//	_RecoveryManagerTag = System.getProperty(RecoveryEnvironment.RECOVERY_MANAGER_TAG);
-	
+
 	if (_RecoveryManagerTag == null)
 	{
 	    // if no property, use the hostname/ip address
@@ -213,7 +211,7 @@ public class RecoveryEnablement implements RecoveryActivator
 	    {
 		uhe.printStackTrace();
 	    }
-	    
+
 	}
 	// prune off any spaces
 	if (_RecoveryManagerTag != null)
@@ -221,6 +219,6 @@ public class RecoveryEnablement implements RecoveryActivator
 	    _RecoveryManagerTag =_RecoveryManagerTag.trim();
 	}
     }
-    
+
 }
 

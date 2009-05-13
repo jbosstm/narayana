@@ -124,10 +124,8 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 	    if (jtsLogger.loggerI18N.isWarnEnabled())
 	    {
 		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.orbix2000.interceptors.context.codecerror",
-					  new java.lang.Object[] { "ContextORBInitializerImpl", "ENCODING_CDR_ENCAPS" });
+					  new java.lang.Object[] { "ContextORBInitializerImpl", "ENCODING_CDR_ENCAPS" }, ex);
 	    }
-
-	    ex.printStackTrace();
 
 	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.orbix2000.interceptors.context.codeccreate"), ex);
 	}
@@ -153,10 +151,8 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 	    if (jtsLogger.loggerI18N.isWarnEnabled())
 	    {
 		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.orbix2000.interceptors.context.duplicatename",
-					  new java.lang.Object[] { "ContextORBInitializerImpl", "ClientRequestInterceptor" });
+					  new java.lang.Object[] { "ContextORBInitializerImpl", "ClientRequestInterceptor" }, ex);
 	    }
-
-	    ex.printStackTrace();
 
 	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.orbix2000.interceptors.context.cie"), ex);
 	}
@@ -182,10 +178,8 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 	    if (jtsLogger.loggerI18N.isWarnEnabled())
 	    {
 		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.orbix2000.interceptors.context.duplicatename",
-					  new java.lang.Object[] { "ContextORBInitializerImpl", "ServerRequestInterceptor" });
+					  new java.lang.Object[] { "ContextORBInitializerImpl", "ServerRequestInterceptor" }, ex);
 	    }
-
-	    ex.printStackTrace();
 
 	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.orbix2000.interceptors.context.sie"), ex);
 	}

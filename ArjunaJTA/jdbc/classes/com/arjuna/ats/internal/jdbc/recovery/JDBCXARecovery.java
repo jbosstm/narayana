@@ -109,9 +109,7 @@ public class JDBCXARecovery implements XAResourceRecovery
         {
             if (jdbcLogger.loggerI18N.isWarnEnabled())
             {
-                jdbcLogger.loggerI18N.warn("com.arjuna.ats.internal.jdbc.recovery.xa.initexp", new Object[] { e });
-
-                e.printStackTrace();
+                jdbcLogger.loggerI18N.warn("com.arjuna.ats.internal.jdbc.recovery.xa.initexp", new Object[] { e }, e);
             }
 
             return false;

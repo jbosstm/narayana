@@ -223,10 +223,8 @@ public class ContextManager
 		if (jtsLogger.loggerI18N.isWarnEnabled())
 		{
 		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.genfail",
-					      new Object[] { "ContextManager.current", ex} );
+					      new Object[] { "ContextManager.current", ex}, ex );
 		}
-
-		ex.printStackTrace();
 
 		throw new BAD_OPERATION();
 	    }
@@ -505,10 +503,8 @@ public class ContextManager
 	    if (jtsLogger.loggerI18N.isWarnEnabled())
 	    {
 		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.genfail",
-					  new Object[] { "ContextManager.addActionControlHierarchy", e} );
+					  new Object[] { "ContextManager.addActionControlHierarchy", e}, e);
 	    }
-
-	    e.printStackTrace();
 
 	    isError = true;
 	}
@@ -565,10 +561,8 @@ public class ContextManager
 	    if (jtsLogger.loggerI18N.isWarnEnabled())
 	    {
 		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.genfail",
-					  new Object[] { "ContextManager.addActionControlImple", e} );
+					  new Object[] { "ContextManager.addActionControlImple", e}, e);
 	    }
-
-	    e.printStackTrace();
 
 	    isError = true;
 	}
@@ -756,10 +750,8 @@ public class ContextManager
 	    if (jtsLogger.loggerI18N.isWarnEnabled())
 	    {
 		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.genfail",
-					  new Object[] { "ContextManager", stringRef} );
+					  new Object[] { "ContextManager", stringRef}, e1 );
 	    }
-
-	    e1.printStackTrace();
 	}
 	catch (Exception e2)
 	{
@@ -811,10 +803,8 @@ public class ContextManager
 		if (jtsLogger.loggerI18N.isWarnEnabled())
 		{
 		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.context.genfail",
-					      new Object[] { "ContextManager.createHierarchy", e} );
+					      new Object[] { "ContextManager.createHierarchy", e}, e );
 		}
-
-		e.printStackTrace();
 
 		throw new UNKNOWN();
 	    }

@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Hewlett Packard Arjuna Labs,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: ServerTopLevelAction.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -124,7 +124,7 @@ public ServerTopLevelAction (ServerControl control)
 	     *
 	     *		ATTACH_THREAD_FILTER_(_theResource);
 	     */
-	    
+
 	    Coordinator realCoordinator = _theControl.originalCoordinator();
 
 	    if (!(_valid = registerResource(realCoordinator)))
@@ -134,7 +134,7 @@ public ServerTopLevelAction (ServerControl control)
 		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.ipfailed",
 					      new Object[] {"ServerTopLevelAction"});
 		}
-	    
+
 		/*
 		 * Failed to register. Valid is set, and the interposition
 		 * controller will now deal with this.
@@ -146,7 +146,7 @@ public ServerTopLevelAction (ServerControl control)
 	else
 	    _valid = false;
     }
- 
+
 public Resource getReference ()
     {
 	if ((_resourceRef == null) && _valid)
@@ -162,10 +162,10 @@ public Resource getReference ()
 	    else
 		_valid = false;
 	}
-	
+
 	return _resourceRef;
     }
- 
+
 /*
  * Will only be called by the remote top-level transaction.
  */
@@ -190,7 +190,7 @@ public org.omg.CosTransactions.Vote prepare () throws HeuristicMixed, HeuristicH
 	}
 
 	ServerTransaction theTransaction = (ServerTransaction) _theControl.getImplHandle();
-	
+
 	//	ThreadActionData.pushAction(theTransaction); // unnecessary if context goes with all calls.
 
 	int result = TwoPhaseOutcome.PREPARE_NOTOK;
@@ -220,7 +220,7 @@ public org.omg.CosTransactions.Vote prepare () throws HeuristicMixed, HeuristicH
 		break;
 	    }
 	}
-    
+
 	ThreadActionData.popAction();
 
 	if (jtsLogger.logger.isDebugEnabled())
@@ -256,7 +256,7 @@ public org.omg.CosTransactions.Vote prepare () throws HeuristicMixed, HeuristicH
 		result = TwoPhaseOutcome.HEURISTIC_HAZARD;
 	    }
 	}
-	    
+
 	switch (result)
 	{
 	case TwoPhaseOutcome.INVALID_TRANSACTION:
@@ -269,9 +269,9 @@ public org.omg.CosTransactions.Vote prepare () throws HeuristicMixed, HeuristicH
 	    return Vote.VoteRollback;
 	case TwoPhaseOutcome.PREPARE_READONLY:
 	    destroyResource();  // won't necessarily get another invocation!
-	    
+
 	    // what is we subsequently rollback?
-	    
+
 	    return Vote.VoteReadOnly;
 	case TwoPhaseOutcome.HEURISTIC_MIXED:
 	    if (TxControl.getMaintainHeuristics())
@@ -303,13 +303,13 @@ public void rollback () throws HeuristicCommit, HeuristicMixed, HeuristicHazard,
 	    destroyResource();
 	    return;
 	}
-	
+
 	ServerTransaction theTransaction = (ServerTransaction) _theControl.getImplHandle();
-	
+
 	//	ThreadActionData.pushAction(theTransaction);
 
 	int actionStatus = theTransaction.status();
-    
+
 	if (actionStatus == ActionStatus.PREPARED)
 	{
 	    /*
@@ -397,7 +397,7 @@ public void commit () throws NotPrepared, HeuristicRollback, HeuristicMixed, Heu
 	{
 	    throw new INVALID_TRANSACTION(ExceptionCodes.SERVERAA_NO_CONTROL, CompletionStatus.COMPLETED_NO);
 	}
-	
+
 	if (_theControl.isWrapper())
 	{
 	    destroyResource();
@@ -405,9 +405,9 @@ public void commit () throws NotPrepared, HeuristicRollback, HeuristicMixed, Heu
 	}
 
 	ServerTransaction theTransaction = (ServerTransaction) _theControl.getImplHandle();
-	
+
 	//	ThreadActionData.pushAction(theTransaction);
-	
+
 	int actionStatus = theTransaction.status();
 	boolean notPrepared = false;
 
@@ -417,7 +417,7 @@ public void commit () throws NotPrepared, HeuristicRollback, HeuristicMixed, Heu
 	     * This will also call any after_completions on
 	     * registered synchronizations.
 	     */
-	    
+
 	    actionStatus = theTransaction.doPhase2Commit();
 	}
 	else
@@ -444,7 +444,7 @@ public void commit () throws NotPrepared, HeuristicRollback, HeuristicMixed, Heu
 	    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				   com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ServerTopLevelAction::commit for "+_theUid+" : "+ActionStatus.stringForm(actionStatus));
 	}
-	
+
 	switch (actionStatus)
 	{
 	case ActionStatus.PREPARED:
@@ -526,7 +526,7 @@ public void commit_one_phase () throws HeuristicHazard, SystemException
 
 	    throw new INVALID_TRANSACTION(ExceptionCodes.NO_TRANSACTION, CompletionStatus.COMPLETED_NO);
 	}
-	
+
 	//	ThreadActionData.pushAction(theTransaction);
 
 	try
@@ -617,7 +617,7 @@ protected synchronized void destroyResource ()
 					      new Object[] {"ServerTopLevelAction.destroyResource", e});
 		}
 	    }
-	    
+
 	    try
 	    {
 		if (_theResource != null)
@@ -655,7 +655,7 @@ protected boolean registerResource (Coordinator theCoordinator)
 		 * Register resource and pass RecoveryCoordinator reference
 		 * to the interposed transaction to save and restore.
 		 */
-		
+
 		RecoveryCoordinator recoveryCoord = theCoordinator.register_resource(_resourceRef);
 
 		if (!_theControl.isWrapper())
@@ -711,10 +711,8 @@ protected boolean registerResource (Coordinator theCoordinator)
 		if (jtsLogger.loggerI18N.isWarnEnabled())
 		{
 		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.generror",
-					      new Object[] {"ServerTopLevelAction.registerResource", e});
+					      new Object[] {"ServerTopLevelAction.registerResource", e}, e);
 		}
-
-		e.printStackTrace();
 	    }
 	}
 	else

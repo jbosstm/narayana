@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -52,12 +52,12 @@ import com.arjuna.common.util.logging.*;
 /**
  * @message com.arjuna.ats.arjuna.recovery.ActionStatusService_1 [com.arjuna.ats.arjuna.recovery.ActionStatusService_1] - transactionType: {0} uid: {1} \n Status is {2}
  * @message com.arjuna.ats.arjuna.recovery.ActionStatusService_2 [com.arjuna.ats.arjuna.recovery.ActionStatusService_2] - Other Exception: {0}
- * @message com.arjuna.ats.arjuna.recovery.ActionStatusService_3 [com.arjuna.ats.arjuna.recovery.ActionStatusService_3] - Exception retrieving action status 
+ * @message com.arjuna.ats.arjuna.recovery.ActionStatusService_3 [com.arjuna.ats.arjuna.recovery.ActionStatusService_3] - Exception retrieving action status
  * @message com.arjuna.ats.arjuna.recovery.ActionStatusService_4 [com.arjuna.ats.arjuna.recovery.ActionStatusService_4] - matching Uid {0} found
  * @message com.arjuna.ats.arjuna.recovery.ActionStatucService_5 [com.arjuna.ats.arjuna.recovery.ActionStatusService_5] - ActionStatusService: searching for uid: {0}
  * @message com.arjuna.ats.arjuna.recovery.ActionStatusService_6 [com.arjuna.ats.arjuna.recovery.ActionStatusService_6] - Exception when accessing transaction store {0}
  * @message com.arjuna.ats.arjuna.recovery.ActionStatusService_7 [com.arjuna.ats.arjuna.recovery.ActionStatusService_7] - Connection Lost to Recovery Manager
-*/ 
+*/
 
 public class ActionStatusService implements Service
 {
@@ -100,7 +100,7 @@ public class ActionStatusService implements Service
 
    /**
     * Does the main work of reading in a uid and transaction type
-    * from the recovery manager, retrieving the status of the 
+    * from the recovery manager, retrieving the status of the
     * transaction and sending it back to the Recovery Manager.
     */
 
@@ -147,7 +147,7 @@ public class ActionStatusService implements Service
 
 	       if ((transactionType == null) && (strUid == null))
 		   return;
-	       
+
                int status = getTransactionStatus( transactionType, strUid );
                String strStatus = Integer.toString( status );
 
@@ -156,7 +156,7 @@ public class ActionStatusService implements Service
 
 	       if (tsLogger.arjLoggerI18N.isInfoEnabled())
 	       {
-		   tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.recovery.ActionStatusService_1", 
+		   tsLogger.arjLoggerI18N.info("com.arjuna.ats.arjuna.recovery.ActionStatusService_1",
 						new Object[]{transactionType, strUid, strStatus});
 	       }
 	    }
@@ -169,15 +169,13 @@ public class ActionStatusService implements Service
       }
       catch ( Exception ex )
       {
-	  if (tsLogger.arjLoggerI18N.isWarnEnabled()){
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_2", 
-					  new Object[]{ex});
-	  }
-
-	  ex.printStackTrace();
+          if (tsLogger.arjLoggerI18N.isWarnEnabled()) {
+              tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_2",
+                      new Object[]{ex}, ex);
+          }
       }
    }
-    
+
     /**
      * Check for transaction status in the local hash table,
      * if does not exist, then retrieve the status from the
@@ -186,12 +184,12 @@ public class ActionStatusService implements Service
     private int getActionStatus( Uid tranUid, String transactionType )
     {
 	int action_status = ActionStatus.INVALID;
-	
+
 	try
 	{
 	    // check in local hash table
 	    BasicAction basic_action = null;
-				
+
 	    synchronized ( ActionManager.manager() )
 	    {
 		basic_action = (BasicAction)ActionManager.manager().get( tranUid );
@@ -214,11 +212,11 @@ public class ActionStatusService implements Service
 	{
 	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
 	    {
-		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_3", 
+		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_3",
 					    new Object[]{ex});
 	    }
 	}
-	
+
 	return action_status;
     }
 
@@ -256,7 +254,7 @@ public class ActionStatusService implements Service
       {
 	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
 	  {
-	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_3", 
+	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.ActionStatusService_3",
 					  new Object[]{ex});
 	  }
       }
@@ -272,10 +270,10 @@ public class ActionStatusService implements Service
    private int getOsStatus( Uid tranUid )
    {
       int action_status = ActionStatus.INVALID;
-      
+
       Vector matchingUidVector = new Vector();
       Vector matchingUidTypeVector = new Vector();
-      
+
       try
       {
          InputObjectState types = new InputObjectState();
@@ -309,7 +307,7 @@ public class ActionStatusService implements Service
                         if ( _objectStore.allObjUids( theTypeName, uids ) )
                         {
                            Uid theUid = new Uid( Uid.nullUid() );
-                           
+
                            while ( !endOfUids )
                            {
                               // extract a uid
@@ -378,7 +376,7 @@ public class ActionStatusService implements Service
       {
          Uid uid = (Uid)matchingUidVector.get( first_index );
          String typeName = (String)matchingUidTypeVector.get( first_index );
-         
+
          action_status = getObjectStoreStatus( uid, typeName );
       }
 
@@ -397,7 +395,7 @@ public class ActionStatusService implements Service
                rootUid = (Uid)matchingUidVector.get( index );
             }
          }
-         
+
          action_status = getObjectStoreStatus( rootUid, rootTypeName );
       }
 
