@@ -80,6 +80,12 @@ public void run ()
     
             synchronized(reaperObject)
             {
+                // test our condition -- things may have changed while we were checking
+
+                if (_shutdown) {
+                    return;
+                }
+
 		sleepPeriod = reaperObject.checkingPeriod();
         
                 if (sleepPeriod > 0)
@@ -98,6 +104,12 @@ public void run ()
                           reaperObject.wait(sleepPeriod);
                      }
                      catch (InterruptedException e1) {}
+
+                    // test our condition -- things may have changed while we were waiting
+
+                    if (_shutdown) {
+                        return;
+                    }
                 }
             }
     
@@ -107,9 +119,6 @@ public void run ()
                                           FacilityCode.FAC_ATOMIC_ACTION, "ReaperThread.run ()");
             }
 
-    	    if (_shutdown)
-    	        return;
-    
     	    reaperObject.check();
     	}
     }
