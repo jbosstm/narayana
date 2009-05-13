@@ -894,13 +894,13 @@
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<param>4</param>
-					<param>250</param>
+					<param>150</param>
 				</start_task>
 				<start_task id="org.jboss.jbossts.qa.OTSServerClients.Client14" runtime_id="client1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<param>4</param>
-					<param>250</param>
+					<param>150</param>
 				</start_task>
 				<wait_for_task runtime_id="client0"/>
 				<wait_for_task runtime_id="client1"/>
