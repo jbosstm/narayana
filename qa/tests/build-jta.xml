@@ -92,7 +92,6 @@
 			<include name="**/org/jboss/jbossts/qa/astests/**/*.java"/>
 
             <exclude name="**/astests/**"/>
-            <exclude name="**/JNDIManager.java"/>
 
             <classpath>
 				<path refid="jta.classpath"/>
@@ -100,21 +99,6 @@
 				<pathelement location="${org.jboss.jbossts.qa.testingframework_location}"/>
 			</classpath>
 		</javac>
-    </target>
-
-    <target name="jdbc-compile" depends="org.jboss.jbossts.qa.clean, org.jboss.jbossts.qa.init" if="have.dbdrivers">
-        <javac srcdir="${org.jboss.jbossts.qa.src}"
-               destdir="${org.jboss.jbossts.qa.build.classes}"
-               debug="on" includes="**/JNDIManager.java">
-
-            <classpath>
-                <path refid="jta.classpath"/>
-                <pathelement location="${org.jboss.jbossts.qa.build.classes}"/>
-                <pathelement location="${org.jboss.jbossts.qa.testingframework_location}"/>
-                <!-- additional dependency, which is why we don't just do this in compile task above: -->
-                <path refid="database.drivers.path"/>
-            </classpath>
-        </javac>
     </target>
 
     <target name="astests-compile" depends="org.jboss.jbossts.qa.clean, org.jboss.jbossts.qa.init" if="integration.build">
@@ -149,7 +133,7 @@
       </copy>
    </target>
 
-	<target name="org.jboss.jbossts.qa.jar" depends="org.jboss.jbossts.qa.compile, jdbc-compile, as-ejbjar">
+	<target name="org.jboss.jbossts.qa.jar" depends="org.jboss.jbossts.qa.compile, as-ejbjar">
         <jar jarfile="${org.jboss.jbossts.qa.buildroot}/jbossts-jta-qa.jar"
 			 basedir="${org.jboss.jbossts.qa.build.classes}"/>
 	</target>

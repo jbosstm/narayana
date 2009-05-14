@@ -39,6 +39,10 @@ import java.util.Hashtable;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * Uses reflection to configure the datasources to avoid the need for
+ * compile time linking against specific drivers jars
+ */
 public class JNDIManager
 {
 	public static void main(String[] args)
