@@ -3,6 +3,7 @@ package com.arjuna.webservices11.wsat.sei;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CoordinatorPortType;
 import org.jboss.jbossts.xts.soapfault.Fault;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
@@ -14,7 +15,6 @@ import javax.xml.ws.handler.MessageContext;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsat.processors.CoordinatorProcessor;
 import com.arjuna.webservices11.SoapFault11;
-import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.services.framework.task.TaskManager;
 import com.arjuna.services.framework.task.Task;

@@ -1,7 +1,7 @@
 package com.arjuna.webservices11.wsat;
 
 import com.arjuna.webservices11.wsarj.ArjunaContext;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import com.arjuna.webservices.SoapFault;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;

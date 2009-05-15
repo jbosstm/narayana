@@ -28,9 +28,9 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import com.arjuna.webservices11.ServiceRegistry;
-import com.arjuna.webservices11.wsaddr.map.MAP;
-import com.arjuna.webservices11.wsaddr.map.MAPEndpoint;
-import com.arjuna.webservices11.wsaddr.map.MAPBuilder;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAPEndpoint;
+import org.jboss.jbossts.xts.wsaddr.map.MAPBuilder;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.jboss.transaction.txinterop.webservices.atinterop.generated.InitiatorService;
 import com.jboss.transaction.txinterop.webservices.atinterop.generated.ParticipantService;

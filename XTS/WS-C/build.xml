@@ -64,6 +64,15 @@
     <property name="build.tests.dd.dir"      value="${build.dir}/tests/dd"/>
     <property name="build.tests.webapps.dir" value="${build.dir}/tests/webapps"/>
 
+    <!-- location of extra dir containing map code depends upon whether this is a native or cxf build -->
+    <condition property="dev.src11.map.dir"  value="dev/src11-native">
+        <not><isset  property="cxf.build"/></not>
+    </condition>
+
+    <condition property="dev.src11.map.dir"  value="dev/src11-cxf">
+        <isset  property="cxf.build"/>
+    </condition>
+
     <!-- classes provided for clients via api jar -->
     <property name="ws-c.api.classes" value="com/arjuna/wsc/AlreadyRegisteredException.class"/>
     
@@ -80,9 +89,13 @@
     <property name="jta.lib.jars" value="jbossjta.jar jbossjts.jar"/>
     <property name="jta.ext.jars" value="jbossts-common.jar commons-logging.jar"/>
     <property name="xts.ext.jars" value=""/>
+    <condition property="cxf.client.lib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
+            geronimo-ws-metadata_2.0_spec.jar">
+        <isset property="cxf.build"/>
+    </condition>
     <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
             jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
-            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar"/>
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar ${cxf.client.lib.jars}"/>
     <property name="jboss.common.lib.jars" value="servlet-api.jar"/>
     <property name="jboss.lib.jars" value="dom4j.jar"/>
 
@@ -175,6 +188,7 @@
                 <path refid="lib.ext.path"/>
             </classpath>
             <src path="${dev.src11.dir}"/>
+            <src path="${dev.src11.map.dir}"/>
         </javac>
     </target>
 
@@ -201,6 +215,10 @@
 
             <packageset dir="${dev.src11.dir}" defaultexcludes="yes">
               <include name="com/arjuna/**"/>
+            </packageset>
+
+            <packageset dir="${dev.src11.map.dir}" defaultexcludes="yes">
+              <include name="org.jboss/**"/>
             </packageset>
 
              <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">

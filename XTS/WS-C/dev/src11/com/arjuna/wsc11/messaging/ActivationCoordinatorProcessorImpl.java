@@ -23,7 +23,7 @@ package com.arjuna.wsc11.messaging;
 import com.arjuna.webservices.logging.WSCLogger;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.wsc11.ContextFactory;
 import com.arjuna.wsc.InvalidCreateParametersException;

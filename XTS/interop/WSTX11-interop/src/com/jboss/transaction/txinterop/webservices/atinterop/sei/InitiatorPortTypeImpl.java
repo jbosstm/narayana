@@ -22,7 +22,7 @@ package com.jboss.transaction.txinterop.webservices.atinterop.sei;
 
 import com.jboss.transaction.txinterop.webservices.atinterop.processors.ATInitiatorProcessor;
 import com.arjuna.webservices11.SoapFault11;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 
 import javax.xml.ws.RequestWrapper;

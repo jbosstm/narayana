@@ -1,10 +1,9 @@
-package com.arjuna.webservices11.wsaddr.map;
+package org.jboss.jbossts.xts.wsaddr.map;
 
-import javax.xml.ws.addressing.Relationship;
 import javax.xml.namespace.QName;
 
 /**
- * MAPRelationship is a wrapper class which works with class MAP. This is the JBossWS Native implementation.
+ * MAPRelationship is a wrapper class which works with class MAP. This is the JBossWS CXF implementation.
  */
 public class MAPRelatesTo
 {

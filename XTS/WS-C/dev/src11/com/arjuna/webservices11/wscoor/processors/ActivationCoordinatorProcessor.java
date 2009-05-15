@@ -22,7 +22,7 @@ package com.arjuna.webservices11.wscoor.processors;
 
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponseType;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 
 /**
  * The Activation Coordinator processor.

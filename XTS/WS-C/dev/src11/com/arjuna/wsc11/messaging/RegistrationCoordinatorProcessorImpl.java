@@ -26,7 +26,7 @@ import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import com.arjuna.wsc.*;
 import com.arjuna.wsc11.RegistrarMapper;
 import com.arjuna.wsc11.Registrar;

@@ -47,10 +47,13 @@
     <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
     <property name="com.arjuna.jta.install.lib.jars" value="jbossjta.jar jbossjts.jar"/>
     <property name="com.arjuna.jta.install.ext.jars" value="jbossts-common.jar commons-logging-1.1.jar"/>
+    <condition property="cxf.client.lib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
+            geronimo-ws-metadata_2.0_spec.jar">
+        <isset property="cxf.build"/>
+    </condition>
     <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
             jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
-            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar"/>
-
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar ${cxf.client.lib.jars}"/>
     <condition property="jboss.home" value="${env.JBOSS_HOME}">
         <isset property="env.JBOSS_HOME"/>
     </condition>

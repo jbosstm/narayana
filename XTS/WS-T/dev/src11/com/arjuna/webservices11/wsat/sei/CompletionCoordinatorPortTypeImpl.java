@@ -2,6 +2,7 @@ package com.arjuna.webservices11.wsat.sei;
 
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CompletionCoordinatorPortType;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;
@@ -12,7 +13,6 @@ import javax.xml.ws.soap.Addressing;
 
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsat.processors.CompletionCoordinatorProcessor;
-import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.services.framework.task.TaskManager;
 import com.arjuna.services.framework.task.Task;

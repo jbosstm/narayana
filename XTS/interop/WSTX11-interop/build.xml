@@ -53,7 +53,7 @@
 	<property name="xts.ext.lib.dir" location="${xts.lib.dir}/ext"/>
 
 	<echo>jboss.dir = ${jboss.dir}</echo>
-	<echo>xts.home = ${xts.home}</echo>
+	<echo>xts.home = ${xts.homexf}</echo>
 
 	<!--
 	<property name="dist.compile.libs" value="ws-c.jar ws-t.jar wscf.jar wstx.jar wsas.jar jbossjta.jar jbossts-common.jar stax-api-1.0.jar junit-3.8.1.jar saxon8.jar"/>
@@ -61,9 +61,14 @@
 	<property name="xts11.compile.libs" value="ws-c11.jar ws-t11.jar wscf11.jar wstx11.jar"/>
 	<property name="xts.compile.libs" value="jbossxts-api.jar ws-c.jar ws-t.jar wscf.jar wstx.jar wsas.jar"/>
 	<property name="xts.ext.compile.libs" value="jbossjta.jar jbossjts.jar"/>
-	<property name="jboss.compile.client.libs" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
+    <condition property="cxf.client.lib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
+            geronimo-ws-metadata_2.0_spec.jar">
+        <isset property="cxf.build"/>
+    </condition>
+    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
             jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
-            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar"/>
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar ${cxf.client.lib.jars}"/>
+	<property name="jboss.compile.client.libs" value="${jboss.client.lib.jars}"/>
 	<property name="jboss.compile.lib.jars" value="dom4j.jar"/>
 	<property name="jboss.compile.common.libs" value="servlet-api.jar"/>
 

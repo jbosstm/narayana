@@ -27,7 +27,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsat.ParticipantInboundEvents;
 import com.arjuna.webservices11.wsat.processors.ParticipantProcessor;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
 public class TestParticipantProcessor extends ParticipantProcessor

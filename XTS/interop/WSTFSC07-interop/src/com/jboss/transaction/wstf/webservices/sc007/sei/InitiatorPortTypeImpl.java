@@ -23,7 +23,7 @@ package com.jboss.transaction.wstf.webservices.sc007.sei;
 import com.jboss.transaction.wstf.webservices.sc007.processors.InitiatorProcessor;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;

@@ -25,7 +25,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.base.processors.Callback;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.processor.BaseNotificationProcessor;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 
 /**
  * The Terminator Coordinator processor.

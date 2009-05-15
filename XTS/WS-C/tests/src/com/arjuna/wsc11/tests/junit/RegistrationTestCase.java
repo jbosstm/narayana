@@ -27,7 +27,7 @@
 package com.arjuna.wsc11.tests.junit;
 
 import com.arjuna.webservices11.ServiceRegistry;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;

@@ -1,7 +1,7 @@
 package com.arjuna.webservices11.wscoor.client;
 
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.ActivationPortType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.ActivationService;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationPortType;
@@ -9,10 +9,7 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationService;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.handler.Handler;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**

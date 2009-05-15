@@ -27,7 +27,7 @@ import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.jboss.transaction.wstf.webservices.sc007.InteropConstants;
 import com.jboss.transaction.wstf.webservices.sc007.generated.InitiatorPortType;

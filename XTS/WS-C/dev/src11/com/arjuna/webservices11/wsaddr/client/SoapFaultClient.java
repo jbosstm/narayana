@@ -21,18 +21,15 @@
 package com.arjuna.webservices11.wsaddr.client;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import javax.xml.ws.handler.Handler;
 
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
 import org.jboss.jbossts.xts.soapfault.Fault;
 import org.jboss.jbossts.xts.soapfault.SoapFaultService;

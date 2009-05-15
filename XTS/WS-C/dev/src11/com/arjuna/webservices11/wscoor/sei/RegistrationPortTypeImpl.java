@@ -1,6 +1,7 @@
 package com.arjuna.webservices11.wscoor.sei;
 
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegistrationPortType;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 
 // import org.jboss.ws.annotation.EndpointConfig;
 
@@ -14,8 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.arjuna.webservices11.wscoor.processors.RegistrationCoordinatorProcessor;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
-import com.arjuna.webservices11.wsaddr.map.MAP;
-import com.arjuna.webservices11.wsaddr.map.MAPBuilder;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 
 /**

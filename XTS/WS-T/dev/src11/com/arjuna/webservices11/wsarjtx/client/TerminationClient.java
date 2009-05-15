@@ -1,7 +1,7 @@
 package com.arjuna.webservices11.wsarjtx.client;
 
 import com.arjuna.schemas.ws._2005._10.wsarjtx.*;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 
 import javax.xml.ws.BindingProvider;

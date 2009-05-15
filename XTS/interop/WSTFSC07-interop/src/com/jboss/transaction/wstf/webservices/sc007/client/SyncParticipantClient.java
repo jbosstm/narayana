@@ -23,7 +23,7 @@ package com.jboss.transaction.wstf.webservices.sc007.client;
 import java.io.IOException;
 
 import com.arjuna.webservices.*;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import com.jboss.transaction.wstf.webservices.sc007.InteropConstants;
 

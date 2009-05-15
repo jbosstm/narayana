@@ -24,7 +24,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices.util.TransportTimer;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsba.ParticipantCompletionParticipantInboundEvents;

@@ -1,11 +1,10 @@
-package com.arjuna.webservices11.wsaddr.map;
+package org.jboss.jbossts.xts.wsaddr.map;
 
-import javax.xml.ws.addressing.AddressingConstants;
-import javax.xml.ws.addressing.JAXWSAConstants;
-import javax.xml.namespace.QName;
+import org.apache.cxf.ws.addressing.AddressingConstants;
+import org.apache.cxf.ws.addressing.JAXWSAConstants;
 
 /**
- * MAPConstants is a wrapper class which works with class MAP
+ * MAPConstants is a wrapper class which works with class MAP. This is the JBossWS CXF version
  */
 public class MAPConstants
 {

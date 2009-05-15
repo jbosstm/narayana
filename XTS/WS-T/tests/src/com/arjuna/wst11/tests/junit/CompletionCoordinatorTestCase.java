@@ -41,7 +41,7 @@ import com.arjuna.webservices11.wsat.client.CompletionInitiatorClient;
 import com.arjuna.webservices11.wsat.processors.CompletionInitiatorProcessor;
 import com.arjuna.wst11.tests.TestUtil;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
 public class CompletionCoordinatorTestCase extends TestCase

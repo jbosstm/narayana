@@ -1,16 +1,13 @@
 package com.arjuna.webservices11.wsba.client;
 
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.map.MAPBuilder;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAPBuilder;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.*;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.handler.Handler;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**

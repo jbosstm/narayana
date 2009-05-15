@@ -1,4 +1,4 @@
-package com.arjuna.webservices11.wsaddr.map;
+package org.jboss.jbossts.xts.wsaddr.map;
 
 import org.w3c.dom.Element;
 

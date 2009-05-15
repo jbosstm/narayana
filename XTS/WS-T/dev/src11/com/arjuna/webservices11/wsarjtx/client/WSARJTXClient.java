@@ -6,16 +6,12 @@ import com.arjuna.schemas.ws._2005._10.wsarjtx.TerminationParticipantPortType;
 import com.arjuna.schemas.ws._2005._10.wsarjtx.TerminationParticipantService;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.map.MAPBuilder;
-import com.arjuna.webservices11.wsaddr.map.MAP;
-import com.arjuna.webservices11.wsaddr.map.MAPConstants;
+import org.jboss.jbossts.xts.wsaddr.map.MAPBuilder;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.handler.Handler;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import org.w3c.dom.Element;
 

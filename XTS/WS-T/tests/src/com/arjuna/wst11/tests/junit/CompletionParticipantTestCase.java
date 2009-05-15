@@ -29,7 +29,7 @@ package com.arjuna.wst11.tests.junit;
 import junit.framework.TestCase;
 
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsat.client.CompletionCoordinatorClient;

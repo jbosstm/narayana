@@ -35,7 +35,7 @@ import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices.wsarjtx.ArjunaTXConstants;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;

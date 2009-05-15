@@ -2,12 +2,13 @@ package com.arjuna.webservices11.wsaddr;
 
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
-import com.arjuna.webservices11.wsaddr.map.*;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.namespace.QName;
 import java.util.Map;
+
+import org.jboss.jbossts.xts.wsaddr.map.*;
 
 /**
  * The complete addressing context.
@@ -350,7 +351,9 @@ public class AddressingHelper
      * @param action
      */
     public static void configureRequestContext(Map<String, Object> requestContext, String to, String action) {
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, to);
+        if (to != null) {
+            requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, to);
+        }
         if (action != null) {
             // need to set soap action header based upon what the client asks for
             requestContext.put(BindingProvider.SOAPACTION_URI_PROPERTY, action);

@@ -4,7 +4,7 @@ import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.base.processors.ActivatedObjectProcessor;
 import com.arjuna.webservices.logging.WSTLogger;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsat.processors.ParticipantProcessor;

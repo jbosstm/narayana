@@ -22,7 +22,7 @@ package com.jboss.transaction.txinterop.webservices.bainterop.sei;
 
 import com.jboss.transaction.txinterop.webservices.bainterop.processors.BAInitiatorProcessor;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;

@@ -22,10 +22,10 @@ package com.jboss.transaction.wstf.webservices.sc007.processors;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import com.arjuna.wst.CompletionCoordinatorParticipant;
 import com.arjuna.wst11.messaging.engines.ParticipantEngine;
 import com.arjuna.webservices11.SoapFault11;
-import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.jboss.transaction.wstf.webservices.sc007.InteropUtil;
 import com.jboss.transaction.wstf.webservices.sc007.participant.CommitDurable2PCParticipant;
 import com.jboss.transaction.wstf.webservices.sc007.participant.CommitFailureDurable2PCParticipant;

@@ -24,9 +24,9 @@ import java.io.IOException;
 
 import com.arjuna.webservices.SoapFault;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.jboss.transaction.txinterop.webservices.atinterop.client.SyncParticipantClient;
 
 /**

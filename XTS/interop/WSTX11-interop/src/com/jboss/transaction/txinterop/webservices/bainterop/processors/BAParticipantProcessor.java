@@ -22,10 +22,10 @@ package com.jboss.transaction.txinterop.webservices.bainterop.processors;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine;
 import com.arjuna.wst11.messaging.engines.ParticipantCompletionParticipantEngine;
 import com.arjuna.webservices11.SoapFault11;
-import com.arjuna.webservices11.wsaddr.map.MAP;
 import com.jboss.transaction.txinterop.webservices.bainterop.BAInteropUtil;
 import com.jboss.transaction.txinterop.webservices.bainterop.participant.CancelParticipant;
 import com.jboss.transaction.txinterop.webservices.bainterop.participant.CoordinatorCompleteCloseParticipant;

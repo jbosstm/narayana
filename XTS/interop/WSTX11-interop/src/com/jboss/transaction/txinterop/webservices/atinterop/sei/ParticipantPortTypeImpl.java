@@ -24,7 +24,7 @@ import com.jboss.transaction.txinterop.webservices.atinterop.processors.ATPartic
 import com.jboss.transaction.txinterop.webservices.atinterop.client.InitiatorClient;
 import com.jboss.transaction.txinterop.webservices.CoordinationContextManager;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import com.arjuna.webservices11.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.wsaddr.map.MAP;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.wsc11.messaging.MessageId;
 
