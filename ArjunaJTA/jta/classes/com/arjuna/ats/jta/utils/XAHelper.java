@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -32,6 +32,7 @@
 package com.arjuna.ats.jta.utils;
 
 import com.arjuna.ats.jta.logging.jtaLogger;
+import com.arjuna.ats.arjuna.xa.XID;
 
 import javax.transaction.xa.*;
 
@@ -44,7 +45,7 @@ public class XAHelper
 
 	/**
 	 * Print a human-readable version of the XAException.
-	 * 
+	 *
 	 * @message com.arjuna.ats.jta.utils.nullexception Null exception!
 	 * @message com.arjuna.ats.jta.utils.unknownerrorcode Unknown error code:
 	 */
@@ -112,12 +113,12 @@ public class XAHelper
 
 	/**
 	 * Compares two Xid instances.
-	 * 
+	 *
 	 * @param Xid
 	 *            x1 first Xid
 	 * @param Xid
 	 *            x2 second Xid
-	 * 
+	 *
 	 * @return <code>true</code> if the two instances are the same,
 	 *         <code>false</code> otherwise.
 	 */
@@ -169,12 +170,12 @@ public class XAHelper
 
 	/**
 	 * Compares two Xid instances at the gtid level only.
-	 * 
+	 *
 	 * @param Xid
 	 *            x1 first Xid
 	 * @param Xid
 	 *            x2 second Xid
-	 * 
+	 *
 	 * @return <code>true</code> if the two instances are the same,
 	 *         <code>false</code> otherwise.
 	 */
@@ -215,6 +216,11 @@ public class XAHelper
 
 	public static String xidToString (Xid xid)
 	{
+        if(xid instanceof XID) {
+            // ensure consistent representation of our native XIDs in the log output.
+            return xid.toString();
+        }
+
 	    byte[] gid = xid.getGlobalTransactionId();
 	    byte[] bqual = xid.getBranchQualifier();
 	    String toReturn = "< " + xid.getFormatId() + ", " + gid.length + ", "
