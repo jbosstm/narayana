@@ -113,6 +113,7 @@
     <property name="ws-c.libs"               value="ws-c.jar"/>
     <property name="ws-c.api.libs"               value="ws-c-api.jar"/>
     <property name="ws-c10.libs"               value="ws-c10.jar"/>
+    <property name="ws-c10.api.libs"               value="ws-c10-api.jar"/>
     <property name="ws-c11.libs"               value="ws-c11.jar"/>
     <property name="wscf.libs"               value="wscf.jar"/>
     <property name="wscf10.libs"               value="wscf10.jar"/>
@@ -125,7 +126,7 @@
         <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c.libs} ${ws-c.api.libs}"/>
     </path>
     <path id="ws-c10.path">
-        <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c10.libs}"/>
+        <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c10.libs} ${ws-c10.api.libs}"/>
     </path>
     <path id="ws-c11.path">
         <fileset dir="${ws-c.build.dev.lib.dir}" includes="${ws-c11.libs}"/>

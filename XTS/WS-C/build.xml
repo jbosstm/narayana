@@ -75,7 +75,9 @@
 
     <!-- classes provided for clients via api jar -->
     <property name="ws-c.api.classes" value="com/arjuna/wsc/AlreadyRegisteredException.class"/>
-    
+    <!-- we had to delete the JaxRPC handlers so we export the bist needed to allow clients to create them -->
+    <property name="ws-c10.api.classes" value="com/arjuna/webservices/wscoor/CoordinationConstants.class"/>
+
     <property name="com.arjuna.buildsystem.dir" location="../../antbuildsystem"/>
     <property name="com.arjuna.jta.install" location="../../install"/>
 
@@ -255,7 +257,10 @@
             <fileset dir="${build.dev.classes.dir}" includes="${ws-c.api.classes}"/>
         </jar>
         <jar jarfile="${build.dev.lib.dir}/ws-c10.jar">
-            <fileset dir="${build.dev.classes10.dir}"/>
+            <fileset dir="${build.dev.classes10.dir}" excludes="${ws-c10.api.classes}"/>
+        </jar>
+        <jar jarfile="${build.dev.lib.dir}/ws-c10-api.jar">
+            <fileset dir="${build.dev.classes10.dir}" includes="${ws-c10.api.classes}"/>
         </jar>
         <jar jarfile="${build.dev.lib.dir}/ws-c11.jar">
             <fileset dir="${build.dev.classes11.dir}">
@@ -285,6 +290,7 @@
                 <pathelement path="${build.dev.lib.dir}/ws-c.jar"/>
                 <pathelement path="${build.dev.lib.dir}/ws-c-api.jar"/>
                 <pathelement path="${build.dev.lib.dir}/ws-c10.jar"/>
+                <pathelement path="${build.dev.lib.dir}/ws-c10-api.jar"/>
                 <pathelement path="${build.dev.lib.dir}/ws-c11.jar"/>
                 <path refid="tests.lib.path"/>
                 <path refid="lib.ext.path"/>

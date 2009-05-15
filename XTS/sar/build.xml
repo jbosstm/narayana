@@ -78,6 +78,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
             jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
             jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar ${cxf.client.lib.jars}"/>
+
     <property name="jboss.client.lib.dir" value="${jbossas.home}/client"/>
     <!-- enable debugging of XTS service code -->
 
@@ -164,6 +165,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <target name="api-both-jar">
         <mkdir dir="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-c-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/ws-c10-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-t-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-t10-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-t11-api.jar" dest="${build.dir}/tmp/api"/>
@@ -198,6 +200,7 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
     <target name="api10-jar">
         <mkdir dir="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-c-api.jar" dest="${build.dir}/tmp/api"/>
+        <unjar src="${lib.dir}/ws-c10-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-t-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/ws-t10-api.jar" dest="${build.dir}/tmp/api"/>
         <unjar src="${lib.dir}/wstx-api.jar" dest="${build.dir}/tmp/api"/>

@@ -46,7 +46,7 @@ import java.util.Iterator;
  * @message com.arjuna.mw.wst.client.JaxHCP_1 [com.arjuna.mw.wst.client.JaxHCP_1] - Error in:
  * @message com.arjuna.mw.wst.client.JaxHCP_2 [com.arjuna.mw.wst.client.JacHCP_2] - Stack trace:
  */
-class JaxBaseHeaderContextProcessor
+public class JaxBaseHeaderContextProcessor
 {
     /**
      * Handle the request.

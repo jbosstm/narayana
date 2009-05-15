@@ -41,7 +41,7 @@ import java.util.Iterator;
  * @message com.arjuna.mw.wst.service.JaxHCP_2 [com.arjuna.mw.wst.service.JaxHCP_2] - Stack trace:
  * @message com.arjuna.mw.wst.service.JaxHCP_3 [com.arjuna.mw.wst.service.JaxHCP_3] - Unknown context type:
  */
-class JaxBaseHeaderContextProcessor
+public class JaxBaseHeaderContextProcessor
 {
     /**
      * Handle the request.

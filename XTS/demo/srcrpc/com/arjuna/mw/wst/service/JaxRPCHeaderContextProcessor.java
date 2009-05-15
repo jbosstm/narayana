@@ -29,24 +29,17 @@
  * $Id$
  */
 
-package com.arjuna.mw.wst.server;
+package com.arjuna.mw.wst.service;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.handler.Handler;
 import javax.xml.rpc.handler.HandlerInfo;
 import javax.xml.rpc.handler.MessageContext;
 import javax.xml.rpc.handler.soap.SOAPMessageContext;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 
 
 import com.arjuna.webservices.wscoor.CoordinationConstants;
-import com.arjuna.mw.wst.service.JaxBaseHeaderContextProcessor;
 
 /**
  * The class is used to perform WS-Transaction context insertion

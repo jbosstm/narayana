@@ -188,6 +188,8 @@
             <patternset>
                 <include name="com/arjuna/xts/nightout/clients/jboss/**"/>
                 <include name="com/arjuna/xts/nightout/services/**"/>
+                <!-- JaxRPC handlers have been removed from the XTS src as part of CXF port -->
+                <include name="com/arjuna/mw/**"/>
             </patternset>
         </javac>
     </target>
@@ -244,6 +246,7 @@
             <webinf dir="${jboss.ddrpc.dir}" excludes="client-web-app.xml service-web-app.xml application.xml client-jaxrpc-mapping.xml"/>
             <classes dir="${buildrpc.dir}/classes">
                 <include name="com/arjuna/xts/nightout/services/**"/>
+                <include name="com/arjuna/mw/wst/service/**/*"/>
             </classes>
         </war>
     </target>
@@ -290,6 +293,7 @@
         <war warfile="${buildrpc.dir}/xts-demorpc.war" webxml="${buildrpc.dir}/client-web-app.xml">
             <classes dir="${buildrpc.dir}/classes">
                 <exclude name="com/arjuna/xts/nightout/services/**/*"/>
+                <exclude name="com/arjuna/mw/wst/service/**/*"/>
             </classes>
             <fileset dir="${web.dir}" excludes="index.jsp indexrpc.jsp"/>
             <fileset dir="${build.web.dir}" includes="index.jsp"/>

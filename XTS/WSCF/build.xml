@@ -90,6 +90,7 @@
     <property name="wsc.libs" value="ws-c.jar"/>
     <property name="wsc.api.libs" value="ws-c-api.jar"/>
     <property name="wsc10.libs" value="ws-c10.jar"/>
+    <property name="wsc10.api.libs" value="ws-c10-api.jar"/>
     <property name="wsc11.libs" value="ws-c11.jar"/>
 
     <property name="com.arjuna.mwlabs.wscf.resourcebundle"
@@ -171,6 +172,7 @@
                 <path>
                     <pathelement path="${com.arjuna.mwlabs.wscf.dest}"/>
                     <pathelement path="${com.arjuna.mwlabs.wsc.jar.dest}/${wsc10.libs}"/>
+                    <pathelement path="${com.arjuna.mwlabs.wsc.jar.dest}/${wsc10.api.libs}"/>
                 </path>
 				<path refid="com.arjuna.mwlabs.wscf.lib.classpath"/>
 			</classpath>
@@ -320,6 +322,7 @@
           <pathelement path="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}10.jar"/>
           <pathelement path="${com.arjuna.mwlabs.wscf.jar.dest}/${com.arjuna.mwlabs.ts.modulename}11.jar"/>
           <pathelement path="${com.arjuna.mwlabs.wsc.jar.dest}/${wsc10.libs}"/>
+          <pathelement path="${com.arjuna.mwlabs.wsc.jar.dest}/${wsc10.api.libs}"/>
           <pathelement path="${com.arjuna.mwlabs.wsc.jar.dest}/${wsc11.libs}"/>
 	      <path refid="com.arjuna.mwlabs.wscf.tests.lib.path"/>
 	      <path refid="com.arjuna.mwlabs.wscf.lib.classpath"/>

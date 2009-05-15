@@ -29,7 +29,7 @@
  * $Id$
  */
 
-package com.arjuna.mw.wst.server;
+package com.arjuna.mw.wst.service;
 
 import javax.xml.rpc.handler.Handler;
 import javax.xml.rpc.handler.MessageContext;

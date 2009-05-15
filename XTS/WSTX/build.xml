@@ -113,6 +113,7 @@
     <property name="wsc.libs" value="ws-c.jar"/>
     <property name="wsc-api.libs" value="ws-c-api.jar"/>
     <property name="wsc10.libs" value="ws-c10.jar"/>
+    <property name="wsc10-api.libs" value="ws-c10-api.jar"/>
     <property name="wsc11.libs" value="ws-c11.jar"/>
     <property name="wsc.all.libs" value="${wsc.libs} ${wsc10.libs} ${wsc11.libs}"/>
     <property name="wscf.libs" value="wscf.jar"/>
@@ -174,7 +175,7 @@
     </path>
 
     <path id="com.arjuna.mwlabs.wstx.lib.classpath10">
-        <fileset dir="${com.arjuna.mwlabs.wsc.jar.dest}" includes="${wsc10.libs}"/>
+        <fileset dir="${com.arjuna.mwlabs.wsc.jar.dest}" includes="${wsc10.libs} ${wsc10-api.libs}"/>
         <fileset dir="${com.arjuna.mwlabs.wscf.jar.dest}" includes="${wscf10.libs}"/>
         <fileset dir="${com.arjuna.mwlabs.wst.jar.dest}" includes="${wst10.libs}  ${wst10-api.libs}"/>
     </path>
