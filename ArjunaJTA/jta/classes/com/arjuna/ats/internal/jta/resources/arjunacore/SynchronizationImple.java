@@ -165,7 +165,11 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
 		}
 	}
 
-	private javax.transaction.Synchronization _theSynch;
+    public String toString() {
+        return "SynchronizationImple< "+_theUid.stringForm()+", "+_theSynch+" >";
+    }
+
+    private javax.transaction.Synchronization _theSynch;
     private Uid _theUid;
 	private boolean _isInterposed;
 }

@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -97,7 +97,7 @@ public class XAResourceRecord extends AbstractRecord
 	 * The params represent specific parameters we need to recreate the
 	 * connection to the database in the event of a failure. If they're not set
 	 * then recovery is out of our control.
-	 * 
+	 *
 	 * Could also use it to pass other information, such as the readonly flag.
 	 */
 
@@ -111,9 +111,9 @@ public class XAResourceRecord extends AbstractRecord
 			jtaLogger.logger.debug(DebugLevel.CONSTRUCTORS,
 					VisibilityLevel.VIS_PUBLIC,
 					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"XAResourceRecord.XAResourceRecord ( " + xid + " )");
+					"XAResourceRecord.XAResourceRecord ( " + xid + ", "+res+" )");
 		}
-		
+
 		_theXAResource = res;
 		_recoveryObject = null;
 		_tranID = xid;
@@ -216,7 +216,7 @@ public class XAResourceRecord extends AbstractRecord
 	 *          {0} - null transaction!
 	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.preparefailed
 	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.preparefailed]
-	 *          {0} - prepare failed with exception {1}
+	 *          prepare on {0} ({1}) failed with exception {2}
 	 */
 
 	public int topLevelPrepare()
@@ -268,7 +268,7 @@ public class XAResourceRecord extends AbstractRecord
                     // we won't be called again, so we need to tidy up now
                     removeConnection();
                 }
-                
+
 				return TwoPhaseOutcome.PREPARE_READONLY;
 			}
 			else
@@ -278,12 +278,9 @@ public class XAResourceRecord extends AbstractRecord
 		{
 			if (jtaLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.resources.arjunacore.preparefailed",
-								new Object[]
-								{ "XAResourceRecord.prepare",
-										XAHelper.printXAErrorCode(e1) });
+                jtaLogger.loggerI18N.warn(
+                        "com.arjuna.ats.internal.jta.resources.arjunacore.preparefailed",
+                        new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
 			}
 
 			/*
@@ -318,11 +315,9 @@ public class XAResourceRecord extends AbstractRecord
 		{
 			if (jtaLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.resources.arjunacore.preparefailed",
-								new Object[]
-								{ "XAResourceRecord.prepare", e2 });
+                jtaLogger.loggerI18N.warn(
+                        "com.arjuna.ats.internal.jta.resources.arjunacore.preparefailed",
+                        new Object[] { _tranID, _theXAResource, e2.toString() }, e2);
 			}
 
 			if (_rollbackOptimization) // won't have rollback called on it
@@ -336,9 +331,9 @@ public class XAResourceRecord extends AbstractRecord
 	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.rollbacknulltx
 	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.rollbacknulltx]
 	 *          {0} - null transaction!
-	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.rollbackxaerror
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.rollbackxaerror]
-	 *          {0} - xa error {1}
+	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror
+	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror]
+	 *          attempted rollback of {0} ({1}) failed with exception {2}
 	 */
 
 	public int topLevelAbort()
@@ -363,7 +358,7 @@ public class XAResourceRecord extends AbstractRecord
 
 			return TwoPhaseOutcome.FINISH_OK;
 		}
-		
+
 		if (_tranID == null)
 		{
 			if (jtaLogger.loggerI18N.isWarnEnabled())
@@ -409,12 +404,30 @@ public class XAResourceRecord extends AbstractRecord
 				    }
 				    else
 				    {
-					removeConnection();
-					
-					return TwoPhaseOutcome.FINISH_ERROR;
+                        if (jtaLogger.loggerI18N.isWarnEnabled())
+                        {
+                            jtaLogger.loggerI18N.warn(
+                                    "com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror",
+                                    new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
+                        }
+
+    					removeConnection();
+
+	    				return TwoPhaseOutcome.FINISH_ERROR;
 				    }
 				}
-				
+                catch(RuntimeException e)
+                {
+                    if (jtaLogger.loggerI18N.isWarnEnabled())
+                    {
+                        jtaLogger.loggerI18N.warn(
+                                "com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror",
+                                new Object[] { _tranID, _theXAResource, e.toString() }, e);
+                    }
+
+                    throw e;
+                }
+
 				try
 				{
 					_theXAResource.rollback(_tranID);
@@ -429,14 +442,9 @@ public class XAResourceRecord extends AbstractRecord
 					{
 						if (jtaLogger.loggerI18N.isWarnEnabled())
 						{
-							jtaLogger.loggerI18N
-									.warn(
-											"com.arjuna.ats.internal.jta.resources.arjunacore.rollbackxaerror",
-											new Object[]
-											{
-													"XAResourceRecord.rollback",
-													XAHelper
-															.printXAErrorCode(e1) });
+                            jtaLogger.loggerI18N.warn(
+                                    "com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror",
+                                    new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
 						}
 
 						switch (e1.errorCode)
@@ -470,7 +478,12 @@ public class XAResourceRecord extends AbstractRecord
 				}
 				catch (Exception e2)
 				{
-					e2.printStackTrace();
+                    if (jtaLogger.loggerI18N.isWarnEnabled())
+                    {
+                        jtaLogger.loggerI18N.warn(
+                                "com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror",
+                                new Object[] { _tranID, _theXAResource, e2.toString() }, e2);
+                    }
 
 					return TwoPhaseOutcome.FINISH_ERROR;
 				}
@@ -516,11 +529,7 @@ public class XAResourceRecord extends AbstractRecord
 	 *          {0} - null transaction!
 	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.commitxaerror
 	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.commitxaerror]
-	 *          {0} - xa error {1}
-	 *
-	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.commitexception
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.commitexception] {0}
-	 *          caught: {1}
+	 *          commit on {0} ({1}) failed with exception {2}
 	 */
 	public int topLevelCommit()
 	{
@@ -562,7 +571,7 @@ public class XAResourceRecord extends AbstractRecord
 				 * No need for end call here since we can only get to this
 				 * point by going through prepare.
 				 */
-				
+
 				try
 				{
 					_theXAResource.commit(_tranID, false);
@@ -577,14 +586,9 @@ public class XAResourceRecord extends AbstractRecord
 					{
 						if (jtaLogger.loggerI18N.isWarnEnabled())
 						{
-							jtaLogger.loggerI18N
-									.warn(
-											"com.arjuna.ats.internal.jta.resources.arjunacore.commitxaerror",
-											new Object[]
-											{
-													"XAResourceRecord.commit",
-													XAHelper
-															.printXAErrorCode(e1) });
+                            jtaLogger.loggerI18N.warn(
+                                    "com.arjuna.ats.internal.jta.resources.arjunacore.commitxaerror",
+                                    new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
 						}
 
 						/*
@@ -641,11 +645,11 @@ public class XAResourceRecord extends AbstractRecord
 				{
 					if (jtaLogger.loggerI18N.isWarnEnabled())
 					{
-						jtaLogger.loggerI18N
-								.warn("com.arjuna.ats.internal.jta.resources.arjunacore.commitexception",
-										new Object[] { "XAResourceRecord.topLevelCommit", e2 }, e2);
+                        jtaLogger.loggerI18N.warn(
+                                "com.arjuna.ats.internal.jta.resources.arjunacore.commitxaerror",
+                                new Object[] { _tranID, _theXAResource, e2.toString() }, e2);
 					}
-                    
+
                     return TwoPhaseOutcome.FINISH_ERROR;
 				}
 				finally
@@ -703,13 +707,14 @@ public class XAResourceRecord extends AbstractRecord
 	 * outcome is whatever we want. Therefore, we do not need to save any
 	 * additional recoverable state, such as a reference to the transaction
 	 * coordinator, since it will not have an intentions list anyway.
-	 * 
+	 *
 	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.opcnulltx
 	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.opcnulltx] {0} -
 	 *          null transaction!
 	 * @message com.arjuna.ats.internal.jta.resources.arjunacore.opcerror
-	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.opcerror] {0}
-	 *          caught: {1}
+	 *          [com.arjuna.ats.internal.jta.resources.arjunacore.opcerror]
+     *          onePhaseCommit on {0} ({1}) failed with exception {2}
+     *
 	 */
 
 	public int topLevelOnePhaseCommit()
@@ -744,7 +749,7 @@ public class XAResourceRecord extends AbstractRecord
 
 				boolean commit = true;
 				XAException endHeuristic = null;
-				
+
 				try
 				{
 					/*
@@ -758,7 +763,7 @@ public class XAResourceRecord extends AbstractRecord
 					}
 				}
 				catch (XAException e1)
-				{    
+				{
 				    /*
 				     * Now it's not legal to return a heuristic from end, but
 				     * apparently Oracle does (http://jira.jboss.com/jira/browse/JBTM-343)
@@ -786,7 +791,7 @@ public class XAResourceRecord extends AbstractRecord
 					 * Has been marked as rollback-only. We still
 					 * need to call rollback.
 					 */
-					
+
 					commit = false;
 					break;
 				    case XAException.XAER_RMERR:
@@ -796,22 +801,41 @@ public class XAResourceRecord extends AbstractRecord
 				    case XAException.XAER_RMFAIL:
 				    default:
 				    {
-					removeConnection();
-					return TwoPhaseOutcome.FINISH_ERROR;
+                        if (jtaLogger.loggerI18N.isWarnEnabled())
+                        {
+                            jtaLogger.loggerI18N.warn(
+                                    "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
+                                    new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
+                        }
+
+
+                        removeConnection();
+                        return TwoPhaseOutcome.FINISH_ERROR;
 				    }
 				    }
 				}
-				
+                catch(RuntimeException e)
+                {
+                    if (jtaLogger.loggerI18N.isWarnEnabled())
+                    {
+                        jtaLogger.loggerI18N.warn(
+                                "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
+                                new Object[] { _tranID, _theXAResource, e.toString() }, e);
+                    }
+
+                    throw e;
+                }
+
 				try
 				{
 				    /*
 				     * Not strictly necessary since calling commit will
 				     * do the rollback if end failed as above.
 				     */
-				    
+
 				    if (endHeuristic != null) // catch those RMs that terminate in end rather than follow the spec
 					throw endHeuristic;
-				    
+
 				    if (commit)
 					_theXAResource.commit(_tranID, true);
 				    else
@@ -819,6 +843,13 @@ public class XAResourceRecord extends AbstractRecord
 				}
 				catch (XAException e1)
 				{
+                    if (jtaLogger.loggerI18N.isWarnEnabled())
+                    {
+                        jtaLogger.loggerI18N.warn(
+                                "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
+                                new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
+                    }
+
 					/*
 					 * XA_HEURHAZ, XA_HEURCOM, XA_HEURRB, XA_HEURMIX,
 					 * XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
@@ -860,12 +891,9 @@ public class XAResourceRecord extends AbstractRecord
 				{
 					if (jtaLogger.loggerI18N.isWarnEnabled())
 					{
-						jtaLogger.loggerI18N
-								.warn(
-										"com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
-										new Object[]
-										{ "XAResourceRecord.commit_one_phase",
-												e2 });
+                        jtaLogger.loggerI18N.warn(
+                                "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
+                                new Object[] { _tranID, _theXAResource, e2.toString() }, e2);
 					}
 
 					return TwoPhaseOutcome.FINISH_ERROR;
@@ -976,12 +1004,12 @@ public class XAResourceRecord extends AbstractRecord
         				{
         					ByteArrayOutputStream s = new ByteArrayOutputStream();
         					ObjectOutputStream o = new ObjectOutputStream(s);
-        
+
         					o.writeObject(_theXAResource);
         					o.close();
-        
+
         					os.packBoolean(true);
-        
+
         					os.packBytes(s.toByteArray());
         				}
         				catch (NotSerializableException ex)
@@ -991,14 +1019,14 @@ public class XAResourceRecord extends AbstractRecord
         				        jtaLogger.loggerI18N
         				            .warn("com.arjuna.ats.internal.jta.resources.arjunacore.savestate");
         				    }
-                                            
+
                                             return false;
         				}
                                 }
                                 else
                                 {
                                     // have to rely upon XAResource.recover!
-                                    
+
                                     os.packBoolean(false);
                                 }
 			}
@@ -1109,7 +1137,7 @@ public class XAResourceRecord extends AbstractRecord
 						 * other participants that can still recover. Plus, we will
 						 * try to get a new XAResource later for this instance.
 						 */
-						
+
 						res = true;
 					}
 				}
