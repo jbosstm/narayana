@@ -39,9 +39,11 @@ import com.arjuna.mw.wsas.status.*;
 import com.arjuna.mw.wsas.completionstatus.*;
 
 import com.arjuna.mw.wsas.common.Environment;
-
-import com.arjuna.ats.internal.arjuna.template.OrderedList;
 import com.arjuna.ats.internal.arjuna.template.OrderedListIterator;
+
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.Iterator;
 
 /**
  * Class to record activities with non-zero timeout values, and
@@ -56,12 +58,24 @@ import com.arjuna.ats.internal.arjuna.template.OrderedListIterator;
 public class ActivityReaper
 {
 
-    public static final String NORMAL = "NORMAL";
-    public static final String DYNAMIC = "DYNAMIC";
-
-    public final long checkingPeriod ()
+    public final long sleepPeriod ()
     {
-	return _checkPeriod;
+        synchronized (_list) {
+            if (_list.isEmpty()) {
+                // sleep until a wakeup is notified
+                return 0;
+            } else {
+                long currentTime = System.currentTimeMillis();
+                long firstTimeout = _list.first()._absoluteTimeout;
+                if (currentTime >= firstTimeout) {
+                    // don't sleep just start work now
+                    return -1;
+                } else {
+                    // sleep for required number of milliseconds
+                    return (firstTimeout - currentTime);
+                }
+            }
+        }
     }
 
     /*
@@ -79,27 +93,19 @@ public class ActivityReaper
     
     public final boolean check (long timeout)
     {
-	if (_list == null)
-	    return true;
-	
-	OrderedListIterator iter = new OrderedListIterator(_list);
-	ReaperElement e = null;
+        ReaperElement element = null;
 
-	while ((e = (ReaperElement) iter.iterate()) != null)
-	{
-	    if (timeout >= e._absoluteTimeout)
-		break;
-	    else
-	    {
-		iter = null;
-		return true;
-	    }
-	}
+        synchronized(_list) {
+            if (_list.isEmpty()) {
+                return false;
+            }
+            
+            element = _list.first();
+            if (timeout < element._absoluteTimeout) {
+                return false;
+            }
+        }
 
-	iter = null;
-	
-	if (e != null)
-	{
 	    /*
 	     * Only force rollback if the activity is still running.
 	     */
@@ -108,7 +114,7 @@ public class ActivityReaper
 	    
 	    try
 	    {
-		status = e._activity.status();
+		status = element._activity.status();
 	    }
 	    catch (Exception ex)
 	    {
@@ -123,8 +129,6 @@ public class ActivityReaper
 
 		boolean problem = false;
 		
-		try
-		{
 		    try
 		    {
 			/*
@@ -139,7 +143,7 @@ public class ActivityReaper
 
 			//			e._activity.end(Failure.instance());
 
-			UserActivityFactory.userActivity().resume(new ActivityHierarchyImple(e._activity));
+			UserActivityFactory.userActivity().resume(new ActivityHierarchyImple(element._activity));
 			UserActivityFactory.userActivity().end(Failure.instance());
 			UserActivityFactory.userActivity().suspend();
 		    }
@@ -147,19 +151,14 @@ public class ActivityReaper
 		    {
 			problem = true;
 		    }
-		}
-		catch (Exception ex2)
-		{
-		    problem = true;
-		}
-		
+
 		if (problem)
 		{
 		    boolean error = false;
 		     
 		    try
 		    {
-			e._activity.setCompletionStatus(FailureOnly.instance());
+			element._activity.setCompletionStatus(FailureOnly.instance());
 		    }
 		    catch (Exception ex3)
 		    {
@@ -172,12 +171,11 @@ public class ActivityReaper
 		    }
 		}
 	    }
-	    
-	    _list.remove(e);
-	}
-	
-	System.gc();  // do some garbage collection while we're at it!
-	
+
+        synchronized (_list) {
+            _list.remove(element);
+        }
+
 	return true;
     }
     
@@ -185,16 +183,18 @@ public class ActivityReaper
      * @return the number of items in the reaper's list.
      */
 
-    public final synchronized long numberOfActivities ()
+    public final long numberOfActivities ()
     {
-	return ((_list == null) ? 0 : _list.size());
+        synchronized(_list) {
+            return _list.size();
+        }
     }
     
     /**
      * timeout is given in seconds, but we work in milliseconds.
      */
  
-    public final synchronized boolean insert (ActivityImple activity, int timeout)
+    public final boolean insert (ActivityImple activity, int timeout)
     {
 	/*
 	 * Ignore if the timeout is zero, since this means the activity
@@ -204,64 +204,46 @@ public class ActivityReaper
 	if (timeout == 0)
 	    return true;
     
-	ActivityReaper._lifetime += timeout;
-	
-	/*
-	 * If the timeout for this activity is less than the
-	 * current timeout for the reaper thread (or one is not set for
-	 * the reaper thread) then use that timeout and interrupt the thread
-	 * to get it to recheck.
-	 */
-
-	if ((timeout < _checkPeriod) || (_checkPeriod == Long.MAX_VALUE))
-	{
-	    _checkPeriod = timeout*1000;  // convert to milliseconds!
-	    ActivityReaper._reaperThread.interrupt();
-	}
-	
 	ReaperElement e = new ReaperElement(activity, timeout);
 
-	if ((_list != null) && _list.insert(e))
-	    return true;
-	else
-	{
-	    e = null;
-	    return false;
-	}
+        synchronized (_list) {
+            _list.add(e);
+        }
+        
+        // notify the reaper thread that the list has changed
+        synchronized (_reaperThread) {
+            _reaperThread.notify();
+        }
+
+        return true;
     }
 
-    public final synchronized boolean remove (ActivityImple act)
+    public final boolean remove (ActivityImple act)
     {
-	if ((_list == null) || (act == null))
-	    return false;
-    
-	ReaperElement e = null;
-	OrderedListIterator iter = new OrderedListIterator(_list);
-	boolean result = false;
-	boolean found = false;
-	
-	while (((e = (ReaperElement) iter.iterate()) != null) && !found)
-	{
-	    try
-	    {
-		found = e._activity.equals(act);
-	    }
-	    catch (Exception e2)
-	    {
-		break;
-	    }
-	}
+        if (act == null) {
+            return false;
+        }
 
-	iter = null;
+        boolean found = false;
+        synchronized (_list) {
+            Iterator<ReaperElement> iter = _list.iterator();
+            ReaperElement e = null;
+            while (iter.hasNext() && !found) {
+                e = iter.next();
+                if (e._activity.equals(act)) {
+                    _list.remove(e);
+                    found = true;
+                }
+            }
+        }
 
-	if (found)
-	{
-	    result = _list.remove(e);
-
-	    e = null;
-	}
-
-	return result;
+        if (found) {
+            // notify the reaper thread that the list has changed
+            synchronized (_reaperThread) {
+                _reaperThread.notify();
+            }
+        }
+        return false;
     }
 
     /**
@@ -269,43 +251,13 @@ public class ActivityReaper
      * threads. Could get priority from environment.
      */
 
-    public static synchronized ActivityReaper create (long checkPeriod)
+    public static synchronized ActivityReaper create ()
     {
-	if (ActivityReaper._theReaper == null)
+        // TODO -- problem here because nothing calls shutdown
+        
+	if (_theReaper == null)
 	{
-	    String mode = System.getProperty(Environment.REAPER_MODE);
-	    
-	    if (mode != null)
-	    {
-		if (mode.compareTo(ActivityReaper.DYNAMIC) == 0)
-		    ActivityReaper._dynamic = true;
-	    }
-	    
-	    if (!ActivityReaper._dynamic)
-	    {
-		String timeoutEnv = System.getProperty(Environment.REAPER_TIMEOUT);
-
-		if (timeoutEnv != null)
-		{
-		    Long l = null;
-		
-		    try
-		    {
-			l = new Long(timeoutEnv);
-			checkPeriod = l.longValue();
-			
-			l = null;
-		    }
-		    catch (NumberFormatException e)
-		    {
-			e.printStackTrace();
-		    }
-		}
-	    }
-	    else
-		checkPeriod = Long.MAX_VALUE;
-		
-	    ActivityReaper._theReaper = new ActivityReaper(checkPeriod);
+	    ActivityReaper._theReaper = new ActivityReaper();
 	    
 	    _reaperThread = new ReaperThread(ActivityReaper._theReaper);
 	    //	    _reaperThread.setPriority(Thread.MIN_PRIORITY);
@@ -315,14 +267,9 @@ public class ActivityReaper
 	    _reaperThread.start();
 	}
 
-	return ActivityReaper._theReaper;
+	return _theReaper;
     }
 
-    public static synchronized ActivityReaper create ()
-    {
-	return create(ActivityReaper.defaultCheckPeriod);
-    }
-    
     public static synchronized ActivityReaper activityReaper ()
     {
 	return activityReaper(false);
@@ -344,22 +291,11 @@ public class ActivityReaper
      * Don't bother synchronizing as this is only an estimate anyway.
      */
 
-    public static final long activityLifetime ()
-    {
-	return ActivityReaper._lifetime;
-    }
-
     public static final long defaultCheckPeriod = 120000;  // in milliseconds
 
-    ActivityReaper (long checkPeriod)
+    ActivityReaper ()
     {
-	_list = new OrderedList();
-	_checkPeriod = checkPeriod;
-
-	if (_list == null)
-	{
-	    throw new OutOfMemoryError();
-	}
+        _list = new TreeSet<ReaperElement>();
     }
 
     static final void reset ()
@@ -367,14 +303,11 @@ public class ActivityReaper
 	_theReaper = null;
     }
     
-    private OrderedList _list;
-    private long        _checkPeriod;
-    
+    private SortedSet<ReaperElement> _list;
+
     private static ActivityReaper _theReaper = null;
     private static ReaperThread   _reaperThread = null;
-    private static boolean        _dynamic = false;
-    private static long           _lifetime = 0;
- 
+
 }
 
 

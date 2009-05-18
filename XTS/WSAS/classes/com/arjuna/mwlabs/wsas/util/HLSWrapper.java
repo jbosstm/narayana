@@ -43,7 +43,7 @@ import com.arjuna.mw.wsas.exceptions.SystemException;
  * @since 1.0.
  */
 
-public class HLSWrapper implements OrderedListElement
+public class HLSWrapper implements Comparable<HLSWrapper>
 {
 
     public HLSWrapper (HLS hls)
@@ -51,75 +51,50 @@ public class HLSWrapper implements OrderedListElement
 	_theHLS = hls;
     }
     
-    /**
-     * Are the two entries equal?
-     */
-
-    public boolean equals (OrderedListElement e)
-    {
-	if (e instanceof HLSWrapper)
-	{
-	    try
-	    {
-		return (boolean) (((HLSWrapper) e).hls().priority() == hls().priority());
-	    }
-	    catch (SystemException ex)
-	    {
-		return false;
-	    }
-	}
-	else
-	    return false;
-    }
-
-    /**
-     * Is the current entry less than the one in the parameter?
-     */
-
-    public boolean lessThan (OrderedListElement e)
-    {
-	if (e instanceof HLSWrapper)
-	{
-	    try
-	    {
-		return (boolean) (((HLSWrapper) e).hls().priority() < hls().priority());
-	    }
-	    catch (SystemException ex)
-	    {
-		return false;
-	    }
-	}
-	else
-	    return false;
-    }	
-
-    /**
-     * Is the current entry greater than the one in the parameter?
-     */
- 
-    public boolean greaterThan (OrderedListElement e)
-    {
-	if (e instanceof HLSWrapper)
-	{
-	    try
-	    {
-		return (boolean) (((HLSWrapper) e).hls().priority() > hls().priority());
-	    }
-	    catch (SystemException ex)
-	    {
-		return false;
-	    }
-	}
-	else
-	    return false;
-    }		
-
     public final HLS hls ()
     {
 	return _theHLS;
     }
     
     private HLS _theHLS;
-    
+
+    public int compareTo(HLSWrapper o) {
+        if (this == o) {
+            return 0;
+        }
+
+        // HLSes are sorted in priority order
+
+        int priority;
+        int otherPriority;
+        // services which barf are the lowest of the low
+        try {
+            priority = hls().priority();
+        } catch (SystemException se) {
+            priority = Integer.MIN_VALUE;
+        }
+        try {
+            otherPriority = o.hls().priority();
+        } catch (SystemException se) {
+            otherPriority = Integer.MIN_VALUE;
+        }
+        if (priority < otherPriority) {
+            return -1;
+        } else if (priority > otherPriority) {
+            return 1;
+        } else {
+            // be sure to enforce trichotomy
+            int hashcode = this.hashCode();
+            int otherHashcode = o.hashCode();
+            if (hashcode < otherHashcode) {
+                return -1;
+            } else if (hashcode > otherHashcode) {
+                return 1;
+            } else {
+                // hmm, should not happen (often :-)
+                return 0;
+            }
+        }
+    }
 }
 

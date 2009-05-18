@@ -70,6 +70,7 @@ import com.arjuna.mw.wsas.exceptions.HLSException;
 import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * The Activity.
@@ -299,12 +300,13 @@ public class ActivityImple
 
 				try
 				{
-					OrderedList hls = HLSManager.HLServices();
-					OrderedListIterator iter = new OrderedListIterator(hls);
-					HLSWrapper elem = (HLSWrapper) iter.iterate();
+					Iterator<HLSWrapper> iter = HLSManager.HLServices();
+					HLSWrapper elem;
 
-					while (elem != null)
+					while (iter.hasNext())
 					{
+                        elem = iter.next();
+
 						Outcome result = null;
 
 						try
@@ -318,8 +320,6 @@ public class ActivityImple
 						}
 
 						current = HLSManager.getOutcomeManager().processOutcome(current, result);
-
-						elem = (HLSWrapper) iter.iterate();
 					}
 				}
 				catch (SystemException ex)

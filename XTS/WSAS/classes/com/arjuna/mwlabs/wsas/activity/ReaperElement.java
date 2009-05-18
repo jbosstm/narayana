@@ -31,9 +31,7 @@
 
 package com.arjuna.mwlabs.wsas.activity;
 
-import com.arjuna.ats.internal.arjuna.template.OrderedListElement;
-
-public class ReaperElement implements OrderedListElement
+public class ReaperElement implements Comparable<ReaperElement>
 {
 
     /*
@@ -56,34 +54,35 @@ public class ReaperElement implements OrderedListElement
 	_absoluteTimeout = timeout*1000 + System.currentTimeMillis();
     }
 
-    public final boolean equals (OrderedListElement e)
-    {
-	if (e instanceof ReaperElement)
-	    return (_absoluteTimeout == ((ReaperElement) e)._absoluteTimeout);
-	else
-	    return false;
-    }
-
-    public final boolean lessThan (OrderedListElement e)
-    {
-	if (e instanceof ReaperElement)
-	    return (_absoluteTimeout < ((ReaperElement)e)._absoluteTimeout);
-	else
-	    return false;
-    }
-
-    public final boolean greaterThan (OrderedListElement e)
-    {
-	if (e instanceof ReaperElement)
-	    return (_absoluteTimeout > ((ReaperElement)e)._absoluteTimeout);
-	else
-	    return false;
-    }
-
     public ActivityImple _activity;
     public long          _absoluteTimeout;
     public int           _timeout;
-    
+
+    public int compareTo(ReaperElement o)
+    {
+        if (this == o) {
+            return 0;
+        }
+
+        long otherAbsoluteTimeout = o._absoluteTimeout;
+        if (_absoluteTimeout < otherAbsoluteTimeout) {
+            return -1;
+        } else if (_absoluteTimeout > otherAbsoluteTimeout) {
+            return 1;
+        } else {
+            // enforce law of trichotomy
+            int hashcode = this.hashCode();
+            int otherHashcode = o.hashCode();
+            if (hashcode < otherHashcode) {
+                return -1;
+            } else if (hashcode > otherHashcode) {
+                return 1;
+            } else {
+                // should not happen (often :-)
+                return 0;
+            }
+        }
+    }
 }
 
 

@@ -41,9 +41,7 @@ import com.arjuna.mwlabs.wsas.util.HLSWrapper;
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wsas.exceptions.InvalidHLSException;
 
-import com.arjuna.ats.internal.arjuna.template.OrderedList;
-import com.arjuna.ats.internal.arjuna.template.OrderedListElement;
-import com.arjuna.ats.internal.arjuna.template.OrderedListIterator;
+import java.util.*;
 
 /**
  * The HLS manager is the way in which an HLS can register
@@ -64,10 +62,13 @@ public class HLSManager
 
     public static final void addHLS (HLS service) throws InvalidHLSException, SystemException
     {
-	if (service == null)
+	if (service == null) {
 	    throw new InvalidHLSException();
-	else
-	    _hls.insert(new HLSWrapper(service));
+    } else {
+        synchronized(_hls) {
+	    _hls.add(new HLSWrapper(service));
+        }
+    }
     }
 
     /**
@@ -82,20 +83,22 @@ public class HLSManager
 	{
 	    synchronized (_hls)
 	    {
-		OrderedListIterator iter = new OrderedListIterator(_hls);
-		OrderedListElement elem = iter.iterate();
-		
-		while ((elem != null) && (((HLSWrapper) elem).hls() != service))
-		{
-		    elem = iter.iterate();
-		}
-		
-		if (elem == null)
-		    throw new InvalidHLSException(wsasLogger.log_mesg.getString("com.arjuna.mwlabs.wsas.activity.HLSManager_1"));
-		else
-		    _hls.remove(elem);
-	    }
-	}
+            HLSWrapper elem = null;
+            boolean found = false;
+            Iterator<HLSWrapper> iter = _hls.iterator();
+            while (!found && iter.hasNext()) {
+                elem = iter.next();
+                if (elem.hls() == service) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                throw new InvalidHLSException(wsasLogger.log_mesg.getString("com.arjuna.mwlabs.wsas.activity.HLSManager_1"));
+            } else {
+                _hls.remove(elem);
+            }
+        }
+    }
     }
 
     public static final HLS[] allHighLevelServices () throws SystemException
@@ -103,15 +106,14 @@ public class HLSManager
 	synchronized (_hls)
 	{
 	    HLS[] toReturn = new HLS[(int) _hls.size()];
-	    OrderedListIterator iter = new OrderedListIterator(_hls);
-	    OrderedListElement elem = iter.iterate();
+        Iterator<HLSWrapper> iter = _hls.iterator();
+	    HLSWrapper elem;
 	    int i = 0;
 	    
-	    while (elem != null)
+	    while (iter.hasNext())
 	    {
-		toReturn[i] = ((HLSWrapper) elem).hls();
-		i++;
-		elem = iter.iterate();
+            elem = iter.next();
+            toReturn[i++] = ((HLSWrapper) elem).hls();
 	    }
 	    
 	    return toReturn;
@@ -137,12 +139,12 @@ public class HLSManager
 	}
     }
 
-    static final OrderedList HLServices ()
+    static final Iterator<HLSWrapper> HLServices ()
     {
-	return _hls;
+	return _hls.iterator();
     }
     
-    private static OrderedList _hls = new OrderedList(false); // order decreasing as higher is first
+    private static SortedSet<HLSWrapper> _hls = new TreeSet(); // order decreasing as higher is first
     private static OutcomeManager _outcomeManager = new OutcomeManagerImple();
     
 }

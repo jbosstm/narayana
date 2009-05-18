@@ -47,7 +47,7 @@ public class ReaperThread extends Thread
     public ReaperThread (ActivityReaper arg)
     {
 	_reaperObject = arg;
-	_sleepPeriod = _reaperObject.checkingPeriod();
+	_sleepPeriod = 0;
 	_shutdown = false;
 
 	this.setDaemon(true);
@@ -55,70 +55,43 @@ public class ReaperThread extends Thread
     
     public void run ()
     {
-	for (;;)
-	{
-	    /*
-	     * Cannot assume we sleep for the entire period. We may
-	     * be interrupted. If we are, just run a check anyway and
-	     * ignore.
-	     */
+        for (;;)
+        {
+            synchronized(this) {
+                // see if we need to stop checking
+                if (_shutdown) {
+                    return;
+                }
 
-	    boolean done = false;
-	    
-	    while (!done)
-	    {
-		_sleepPeriod = _reaperObject.checkingPeriod();
+                _sleepPeriod = _reaperObject.sleepPeriod();
+                if (_sleepPeriod > 0) {
+                    try {
+                        wait(_sleepPeriod);
+                    } catch (InterruptedException e) {
+                        // do nothing
+                    }
+                } else if (_sleepPeriod == 0) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        // do nothing
+                    }
+                }
+                // we might have let go of the lock so see once again if we need to stop checking
+                if (_shutdown) {
+                    return;
+                }
+            }
 
-		long oldPeriod = _sleepPeriod;
-		long beforeTime = System.currentTimeMillis();
+            // see if we have any work to do
 
-		try
-		{
-		    Thread.sleep(_sleepPeriod);
-
-		    done = true;
-		}
-		catch (InterruptedException e1)
-		{
-		    /*
-		     * Has timeout been changed?
-		     */
-
-		    if (_reaperObject.checkingPeriod() != oldPeriod)
-		    {
-			done = true;
-		    }
-		    else
-		    {
-			long afterTime = System.currentTimeMillis();
-
-			if (afterTime - beforeTime < _reaperObject.checkingPeriod())
-			{
-			    done = true;
-			}
-		    }
-		}
-		catch (Exception e2)
-		{
-		    done = true;
-		}
-	    }
-
-	    if (_shutdown)
-		return;
-
-	    _reaperObject.check(System.currentTimeMillis());
-
-	    if (_reaperObject.numberOfActivities() == 0)
-	    {
-		_sleepPeriod = Long.MAX_VALUE;
-	    }
-	}
+            _reaperObject.check(System.currentTimeMillis());
+        }
     }
 
-    public void shutdown ()
+    public synchronized void shutdown ()
     {
-	_shutdown = true;
+        _shutdown = true;
     }
 
     private ActivityReaper _reaperObject;
