@@ -48,7 +48,6 @@ import com.arjuna.ats.jts.extensions.*;
 import com.arjuna.ats.jts.OTSManager;
 import com.arjuna.ats.jts.logging.*;
 
-import com.arjuna.ats.internal.arjuna.template.*;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
 import com.arjuna.ats.arjuna.common.*;

@@ -37,8 +37,6 @@ import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.common.util.logging.*;
 
-import com.arjuna.ats.internal.arjuna.template.*;
-
 import org.omg.CosTransactions.Synchronization;
 
 /**
@@ -50,7 +48,7 @@ import org.omg.CosTransactions.Synchronization;
  * @since JTS 1.0.
  */
 
-public class SynchronizationRecord implements ListElement, Comparable
+public class SynchronizationRecord implements Comparable
 {
 
     public SynchronizationRecord (Synchronization ptr)

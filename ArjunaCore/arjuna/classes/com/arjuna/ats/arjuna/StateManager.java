@@ -38,7 +38,6 @@ import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.gandiva.*;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
-import com.arjuna.ats.internal.arjuna.template.*;
 import java.io.PrintWriter;
 import java.util.*;
 

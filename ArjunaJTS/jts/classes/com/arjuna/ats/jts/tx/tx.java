@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Hewlett-Packard Arjuna Labs,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: tx.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -33,8 +33,6 @@ package com.arjuna.ats.jts.tx;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-
-import com.arjuna.ats.internal.arjuna.template.*;
 
 import com.arjuna.ats.arjuna.common.Uid;
 
@@ -78,11 +76,11 @@ public class tx
     public static final int TX_EINVAL = -9;
     public static final int TX_ROLLBACK = -10;
     public static final int TX_ROLLBACK_NO_BEGIN = -11;
-    
+
     public static final synchronized int tx_open ()
     {
 	int toReturn = tx.TX_ERROR;  // what to return?
-    
+
 	if (!__tx_open)
 	{
 	    __tx_open = true;
@@ -101,7 +99,7 @@ public class tx
     public static final synchronized int tx_close ()
     {
 	int toReturn = tx.TX_ERROR;
-    
+
 	if (__tx_open)
 	{
 	    __tx_open = false;
@@ -153,7 +151,7 @@ public class tx
 	    catch (Exception e)
 	    {
 		// something went wrong!
-		
+
 		toReturn = tx.TX_FAIL;
 	    }
 	}
@@ -169,7 +167,7 @@ public class tx
 		toReturn = tx.TX_FAIL;
 	    }
 	}
-    
+
 	return toReturn;
     }
 
@@ -203,7 +201,7 @@ public class tx
     {
 	int toReturn = tx.TX_OK;
 	boolean b = ((when_return == 0) ? false : true);
-	
+
 	if ((when_return == tx.TX_COMMIT_COMPLETED) ||
 	    (when_return == tx.TX_COMMIT_DESICION_LOGGED))
 	{
@@ -214,7 +212,7 @@ public class tx
 
 	return toReturn;
     }
-    
+
     public static final synchronized int tx_commit ()
     {
 	int toReturn = tx.TX_OK;
@@ -223,11 +221,11 @@ public class tx
 
 	if (report_heuristics == null)
 	    report_heuristics = new Boolean(true);  // default TRUE
-	    
+
 	try
 	{
 	    boolean when_return = report_heuristics.booleanValue();
-		
+
 	    current.commit(when_return);
 	}
 	catch (NoTransaction e1)
@@ -275,9 +273,9 @@ public class tx
 
 	return toReturn;
     }
-    
+
     private static boolean   __tx_open = false;
     private static boolean   __tx_allow_nesting = false;
     private static Hashtable __tx_report_heuristics = new Hashtable();
- 
+
 }

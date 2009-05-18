@@ -35,7 +35,6 @@ import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.coordinator.Reapable;
-import com.arjuna.ats.internal.arjuna.template.*;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.interposition.ServerFactory;
@@ -58,7 +57,7 @@ import org.omg.CORBA.SystemException;
  * @since JTS 1.0.
  */
 
-public class ServerResource implements ListElement
+public class ServerResource
 {
 
     /*

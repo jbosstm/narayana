@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Hewlett-Packard Arjuna Labs,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: CurrentImple.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -49,7 +49,6 @@ import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 
-import com.arjuna.ats.internal.arjuna.template.*;
 import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
 
 import com.arjuna.ats.arjuna.common.*;
@@ -82,7 +81,7 @@ import java.util.EmptyStackException;
 
 /**
  * The implementation of CosTransactions::Current.
- * 
+ *
  * In a multi-threaded environment where threads can terminate transactions they
  * may not have started, then it is possible for a thread to call
  * commit/rollback/rollback_only on a transaction which has already been (or is
@@ -92,7 +91,7 @@ import java.util.EmptyStackException;
  * NoTransaction, so we would return INVALID_TRANSACTION. This allows us to
  * distinguish between the situation where there really is no transaction
  * associated with the thread.
- * 
+ *
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: CurrentImple.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
@@ -214,10 +213,10 @@ public class CurrentImple extends LocalObject implements
 	/**
 	 * It's not possible to commit/abort out of order using the current
 	 * interface.
-	 * 
+	 *
 	 * Do we delete the control if the transaction gives an heuristic result?
 	 * CurrentImplely we do.
-	 * 
+	 *
 	 * If another thread has already terminated the transaction then: (i) if it
 	 * committed, we do nothing - could throw TransactionRequired of
 	 * INVALID_TRANSACTION, or NoTransaction. Probably not NoTransaction, since
@@ -225,7 +224,7 @@ public class CurrentImple extends LocalObject implements
 	 * transaction has already been terminated and there really is no
 	 * transaction for this thread. (ii) if it rolledback, we throw
 	 * TRANSACTION_ROLLEDBACK.
-	 *  
+	 *
 	 */
 
 	public void commit (boolean report_heuristics) throws NoTransaction,
@@ -584,10 +583,10 @@ public class CurrentImple extends LocalObject implements
 	 * return value once it has been sent to the caller. However, in the local
 	 * case, if we call duplicate then there is nothing to call release and we
 	 * get memory leaks!
-	 * 
+	 *
 	 * Also assume that BasicAction's notion of current is the same as
 	 * CurrentImple's, if the action is local.
-	 *  
+	 *
 	 */
 
 	/**
@@ -604,7 +603,7 @@ public class CurrentImple extends LocalObject implements
 		{
 			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "CurrentImple::suspend ()");
 		}
-		
+
 		ControlWrapper actPtr = _theManager.popAction();
 
 		if (actPtr == null)
@@ -635,18 +634,18 @@ public class CurrentImple extends LocalObject implements
 	/**
 	 * To support checked transactions we can only resume if the action is local
 	 * or we received it implicitly.
-	 * 
+	 *
 	 * If the control refers to a nested transaction then we must recreate the
 	 * entire hierarchy, i.e., the effect of a suspend/resume on the same
 	 * control should be the same as never calling suspend in the first place.
-	 * 
+	 *
 	 * If the control is for a local transaction then it is simple to recreate
 	 * the hierarchy. Otherwise we rely upon the PropagationContext to recreate
 	 * it.
-	 * 
+	 *
 	 * If this control is a "proxy" then create a new proxy instance, so we can
 	 * delete proxies whenever suspend is called.
-	 * 
+	 *
 	 * Should check if "new" transaction is not actually the current one anyway.
 	 * If so, just return. The spec. doesn't mention what to do in this case, so
 	 * for now we go to the overhead of the work regardless.
@@ -787,7 +786,7 @@ public class CurrentImple extends LocalObject implements
 	/**
 	 * Returns the internal context manager implementation. Applications should
 	 * not use this method.
-	 * 
+	 *
 	 * @since JTS 2.1.
 	 */
 
@@ -862,9 +861,9 @@ public class CurrentImple extends LocalObject implements
 		     * If this is a local transaction and we haven't zero-ed the transaction
 		     * reference then resume it. Otherwise go with the Control.
 		     */
-		    
+
 		    ArjunaTransactionImple tx = ((which.getImple() == null) ? null : which.getImple().getImplHandle());
-		    
+
 		    if (which.isLocal() && (tx != null))
 		        resumeImple(which.getImple());
 		    else

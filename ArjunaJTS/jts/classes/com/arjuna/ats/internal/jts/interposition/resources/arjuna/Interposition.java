@@ -31,8 +31,6 @@
 
 package com.arjuna.ats.internal.jts.interposition.resources.arjuna;
 
-import com.arjuna.ats.internal.arjuna.template.*;
-
 import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.ats.jts.utils.Utility;

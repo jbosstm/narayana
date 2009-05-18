@@ -33,8 +33,6 @@ package com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restrict
 
 import com.arjuna.ats.arjuna.common.*;
 
-import com.arjuna.ats.internal.arjuna.template.*;
-
 import com.arjuna.ats.jts.exceptions.ExceptionCodes;
 import com.arjuna.ats.jts.logging.*;
 

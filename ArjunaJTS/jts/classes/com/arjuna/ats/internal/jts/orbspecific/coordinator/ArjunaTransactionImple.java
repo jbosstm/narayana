@@ -61,8 +61,6 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.*;
 
-import com.arjuna.ats.internal.arjuna.template.*;
-
 import org.omg.CosTransactions.*;
 
 import com.arjuna.ArjunaOTS.*;

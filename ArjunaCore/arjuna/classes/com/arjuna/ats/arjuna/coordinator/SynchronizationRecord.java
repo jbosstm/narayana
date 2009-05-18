@@ -31,7 +31,7 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
-import com.arjuna.ats.internal.arjuna.template.ListElement;
+import com.arjuna.ats.arjuna.common.Uid;
 
 /*
  * @author Mark Little (mark@arjuna.com)
@@ -39,11 +39,11 @@ import com.arjuna.ats.internal.arjuna.template.ListElement;
  * @since 3.0.
  */
 
-public interface SynchronizationRecord extends ListElement, Comparable
+public interface SynchronizationRecord extends Comparable
 {
+    public Uid get_uid ();
 
     public boolean beforeCompletion ();
 
     public boolean afterCompletion (int status);
-
 }
