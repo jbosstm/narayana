@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -37,9 +37,6 @@ import com.arjuna.mw.wsas.UserActivityFactory;
 import com.arjuna.mw.wsas.status.*;
 
 import com.arjuna.mw.wsas.completionstatus.*;
-
-import com.arjuna.mw.wsas.common.Environment;
-import com.arjuna.ats.internal.arjuna.template.OrderedListIterator;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -90,7 +87,7 @@ public class ActivityReaper
      *
      * @message com.arjuna.mwlabs.wsas.activity.ActivityReaper_1 [com.arjuna.mwlabs.wsas.activity.ActivityReaper_1] - ActivityReaper: could not terminate.
      */
-    
+
     public final boolean check (long timeout)
     {
         ReaperElement element = null;
@@ -99,7 +96,7 @@ public class ActivityReaper
             if (_list.isEmpty()) {
                 return false;
             }
-            
+
             element = _list.first();
             if (timeout < element._absoluteTimeout) {
                 return false;
@@ -111,7 +108,7 @@ public class ActivityReaper
 	     */
 
 	    Status status = com.arjuna.mw.wsas.status.Unknown.instance();
-	    
+
 	    try
 	    {
 		status = element._activity.status();
@@ -119,7 +116,7 @@ public class ActivityReaper
 	    catch (Exception ex)
 	    {
 	    }
-	    
+
 	    if (status instanceof Active)
 	    {
 		/*
@@ -128,7 +125,7 @@ public class ActivityReaper
 		 */
 
 		boolean problem = false;
-		
+
 		    try
 		    {
 			/*
@@ -155,7 +152,7 @@ public class ActivityReaper
 		if (problem)
 		{
 		    boolean error = false;
-		     
+
 		    try
 		    {
 			element._activity.setCompletionStatus(FailureOnly.instance());
@@ -164,7 +161,7 @@ public class ActivityReaper
 		    {
 			error = true;
 		    }
-		     
+
 		    if (error)
 		    {
 			wsasLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wsas.activity.ActivityReaper_1");
@@ -178,7 +175,7 @@ public class ActivityReaper
 
 	return true;
     }
-    
+
     /**
      * @return the number of items in the reaper's list.
      */
@@ -189,11 +186,11 @@ public class ActivityReaper
             return _list.size();
         }
     }
-    
+
     /**
      * timeout is given in seconds, but we work in milliseconds.
      */
- 
+
     public final boolean insert (ActivityImple activity, int timeout)
     {
 	/*
@@ -203,13 +200,13 @@ public class ActivityReaper
 
 	if (timeout == 0)
 	    return true;
-    
+
 	ReaperElement e = new ReaperElement(activity, timeout);
 
         synchronized (_list) {
             _list.add(e);
         }
-        
+
         // notify the reaper thread that the list has changed
         synchronized (_reaperThread) {
             _reaperThread.notify();
@@ -254,16 +251,16 @@ public class ActivityReaper
     public static synchronized ActivityReaper create ()
     {
         // TODO -- problem here because nothing calls shutdown
-        
+
 	if (_theReaper == null)
 	{
 	    ActivityReaper._theReaper = new ActivityReaper();
-	    
+
 	    _reaperThread = new ReaperThread(ActivityReaper._theReaper);
 	    //	    _reaperThread.setPriority(Thread.MIN_PRIORITY);
 
 	    _reaperThread.setDaemon(true);
-	    
+
 	    _reaperThread.start();
 	}
 
@@ -286,7 +283,7 @@ public class ActivityReaper
 	else
 	    return _theReaper;
     }
-    
+
     /*
      * Don't bother synchronizing as this is only an estimate anyway.
      */
@@ -302,7 +299,7 @@ public class ActivityReaper
     {
 	_theReaper = null;
     }
-    
+
     private SortedSet<ReaperElement> _list;
 
     private static ActivityReaper _theReaper = null;

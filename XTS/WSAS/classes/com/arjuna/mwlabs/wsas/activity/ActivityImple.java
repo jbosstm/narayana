@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -32,9 +32,6 @@
 package com.arjuna.mwlabs.wsas.activity;
 
 import com.arjuna.mw.wsas.logging.wsasLogger;
-
-import com.arjuna.ats.internal.arjuna.template.OrderedList;
-import com.arjuna.ats.internal.arjuna.template.OrderedListIterator;
 
 import com.arjuna.mw.wsas.activity.Outcome;
 
@@ -74,7 +71,7 @@ import java.util.Iterator;
 
 /**
  * The Activity.
- * 
+ *
  * @author Mark Little (mark.little@arjuna.com)
  * @version $Id: ActivityImple.java,v 1.6 2005/05/19 12:13:18 nmcl Exp $
  * @since 1.0.
@@ -101,7 +98,7 @@ public class ActivityImple
 
 	/**
 	 * Start a new activity.
-	 * 
+	 *
 	 * @param int
 	 *            timeout The timeout associated with the activity. If the
 	 *            activity has not been terminated by the time this period
@@ -131,7 +128,7 @@ public class ActivityImple
 	/**
 	 * Start a new activity. If there is already an activity associated with the
 	 * thread then it will be nested.
-	 * 
+	 *
 	 * @param int
 	 *            timeout The timeout associated with the activity. If the
 	 *            activity has not been terminated by the time this period
@@ -145,7 +142,7 @@ public class ActivityImple
 	 *                current working environment.
 	 * @exception SystemException
 	 *                Thrown in any other situation.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_1
 	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_1] - State
 	 *          incompatible to start activity:
@@ -194,7 +191,7 @@ public class ActivityImple
 
 	/**
 	 * Complete the activity with the current completion status.
-	 * 
+	 *
 	 * @exception InvalidActivityException
 	 *                Thrown if the current activity is not known about by the
 	 *                activity system.
@@ -209,10 +206,10 @@ public class ActivityImple
 	 *                terminate the transaction.
 	 * @exception SystemException
 	 *                Thrown if some other error occurred.
-	 * 
+	 *
 	 * @return the result of completing the activity. Null is valid and must be
 	 *         interpreted within the context of any HLS that may exist.
-	 * 
+	 *
 	 * @see com.arjuna.mw.wsas.Outcome
 	 */
 
@@ -224,7 +221,7 @@ public class ActivityImple
 
 	/**
 	 * Complete the activity with the completion status provided.
-	 * 
+	 *
 	 * @exception InvalidActivityException
 	 *                Thrown if the current activity is not known about by the
 	 *                activity system.
@@ -240,15 +237,15 @@ public class ActivityImple
 	 *                terminate the transaction.
 	 * @exception SystemException
 	 *                Thrown if some other error occurred.
-	 * 
+	 *
 	 * @param CompletionStatus
 	 *            cs The CompletionStatus to use.
-	 * 
+	 *
 	 * @return the result of completing the activity. Null is valid and must be
 	 *         interpreted within the context of any HLS that may exist.
-	 * 
+	 *
 	 * @see com.arjuna.mw.wsas.Outcome
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_2
 	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_2] - Activity
 	 *          cannot complete as it has active children:
@@ -264,7 +261,7 @@ public class ActivityImple
 	{
 		/*
 		 * TODO
-		 * 
+		 *
 		 * We need an exception that can be thrown to say that the activity is
 		 * completing.
 		 */
@@ -369,13 +366,13 @@ public class ActivityImple
 
 	/**
 	 * Set the termination status for the current activity, if any.
-	 * 
+	 *
 	 * @param CompletionStatus
 	 *            endStatus The state in which the activity should attempt to
 	 *            terminate. This may be one of the default values provided by
 	 *            WSAS or may be extended in an implementation specific manner
 	 *            by an HLS.
-	 * 
+	 *
 	 * @exception NoActivityException
 	 *                Thrown if there is no activity associated with the
 	 *                invoking thread.
@@ -384,7 +381,7 @@ public class ActivityImple
 	 *                current state of the activity.
 	 * @exception SystemException
 	 *                Thrown if any other error occurs.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_4
 	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_4] - Cannot set
 	 *          completion status on activity as the status is incompatible:
@@ -410,13 +407,13 @@ public class ActivityImple
 
 	/**
 	 * Get the completion status currently associated with the activity.
-	 * 
+	 *
 	 * @exception NoActivityException
 	 *                Thrown if there is no activity associated with the current
 	 *                thread.
 	 * @exception SystemException
 	 *                Thrown if any other error occurs.
-	 * 
+	 *
 	 * @return the termination status for the current activity, if any.
 	 */
 
@@ -430,10 +427,10 @@ public class ActivityImple
 
 	/**
 	 * Get the timeout value currently associated with activities.
-	 * 
+	 *
 	 * @exception SystemException
 	 *                Thrown if any error occurs.
-	 * 
+	 *
 	 * @return the timeout value in seconds, or 0 if no application specified
 	 *         timeout has been provided.
 	 */
@@ -446,10 +443,10 @@ public class ActivityImple
 	/**
 	 * @exception SystemException
 	 *                Thrown if any error occurs.
-	 * 
+	 *
 	 * @return the status of the current activity. If there is no activity
 	 *         associated with the thread then NoActivity will be returned.
-	 * 
+	 *
 	 * @see com.arjuna.mw.wsas.status.Status
 	 */
 
@@ -464,13 +461,13 @@ public class ActivityImple
 	/**
 	 * What is the name of the current activity? Use only for debugging
 	 * purposes!
-	 * 
+	 *
 	 * @exception NoActivityException
 	 *                Thrown if there is no activity associated with the
 	 *                invoking thread.
 	 * @exception SystemException
 	 *                Thrown if any other error occurs.
-	 * 
+	 *
 	 * @return the name of the activity.
 	 */
 
@@ -553,14 +550,14 @@ public class ActivityImple
 	/**
 	 * Check whether the specified completion status is compatible with the one
 	 * currently assigned to the activity.
-	 * 
+	 *
 	 * @param CompletionStatus
 	 *            cs The completion status to check.
-	 * 
+	 *
 	 * @exception WrongStateException
 	 *                Thrown if the specified status is incompatible with that
 	 *                currently possessed by this activity.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_5
 	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_5] - Cannot
 	 *          change completion status, value is incompatible:
@@ -585,10 +582,10 @@ public class ActivityImple
 
 	/**
 	 * Add the specified activity as a child of this activity.
-	 * 
+	 *
 	 * @param ActivityImple
 	 *            child The child activity.
-	 * 
+	 *
 	 * @exception WrongStateException
 	 *                Thrown if the parent activity is not in a state that
 	 *                allows children to be added.
@@ -596,7 +593,7 @@ public class ActivityImple
 	 *                Thrown if the child activity is invalid.
 	 * @exception SystemException
 	 *                Thrown if some other error occurs.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_6
 	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_6] - Cannot
 	 *          enlist null child!
@@ -627,10 +624,10 @@ public class ActivityImple
 
 	/**
 	 * Remove the specified child activity from this activity.
-	 * 
+	 *
 	 * @param ActivityImple
 	 *            child The child activity to remove.
-	 * 
+	 *
 	 * @exception WrongStateException
 	 *                Thrown if the parent activity is not in a state that
 	 *                allows children to be removed.
@@ -638,7 +635,7 @@ public class ActivityImple
 	 *                Thrown if the child activity is invalid.
 	 * @exception SystemException
 	 *                Thrown if some other error occurs.
-	 * 
+	 *
 	 * @message com.arjuna.mwlabs.wsas.activity.ActivityImple_8
 	 *          [com.arjuna.mwlabs.wsas.activity.ActivityImple_8] - Cannot
 	 *          remove null child!
