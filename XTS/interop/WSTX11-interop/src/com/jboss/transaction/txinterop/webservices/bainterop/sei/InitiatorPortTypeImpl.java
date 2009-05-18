@@ -21,8 +21,12 @@
 package com.jboss.transaction.txinterop.webservices.bainterop.sei;
 
 import com.jboss.transaction.txinterop.webservices.bainterop.processors.BAInitiatorProcessor;
+import com.jboss.transaction.txinterop.webservices.bainterop.generated.InitiatorPortType;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
+import com.arjuna.webservices11.SoapFault11;
 import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
+import org.jboss.jbossts.xts.soapfault.Fault;
 
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;
@@ -35,6 +39,7 @@ import javax.annotation.Resource;
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+import javax.jws.WebParam;
 import javax.xml.ws.soap.Addressing;
 
 /**
@@ -46,7 +51,7 @@ import javax.xml.ws.soap.Addressing;
         wsdlLocation="/WEB-INF/wsdl/interopba-initiator-binding.wsdl",
         serviceName="InitiatorService")
 @Addressing(required=true)
-public class InitiatorPortTypeImpl {
+public class InitiatorPortTypeImpl implements InitiatorPortType, SoapFaultPortType {
 
     /**
      * injected resource providing access to WSA addressing properties
@@ -68,4 +73,14 @@ public class InitiatorPortTypeImpl {
         BAInitiatorProcessor.getInitiator().handleResponse(inboundMap) ;
     }
 
+    public void soapFault(
+            @WebParam(name = "Fault", targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/", partName = "fault")
+            Fault fault)
+    {
+        MessageContext ctx = webServiceCtx.getMessageContext();
+        MAP inboundMap = AddressingHelper.inboundMap(ctx);
+
+        SoapFault11 soapFaultInternal = SoapFault11.fromFault(fault);
+        BAInitiatorProcessor.getInitiator().handleSoapFault(soapFaultInternal, inboundMap) ;
+    }
 }

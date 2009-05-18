@@ -21,6 +21,7 @@
 package com.jboss.transaction.wstf.webservices.sc007.sei;
 
 import com.jboss.transaction.wstf.webservices.sc007.processors.InitiatorProcessor;
+import com.jboss.transaction.wstf.webservices.sc007.generated.InitiatorPortType;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.jbossts.xts.wsaddr.map.MAP;
@@ -41,6 +42,7 @@ import javax.jws.WebParam;
 import javax.jws.soap.SOAPBinding;
 
 import org.jboss.jbossts.xts.soapfault.Fault;
+import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
 
 /**
  * Implementation class for WSTX 1.1 AT Interop Test Initiator service
@@ -51,7 +53,7 @@ import org.jboss.jbossts.xts.soapfault.Fault;
         portName = "sc007InitiatorPort",
         serviceName="sc007Service")
 @Addressing(required=true)
-public class InitiatorPortTypeImpl {
+public class InitiatorPortTypeImpl implements InitiatorPortType, SoapFaultPortType {
 
     /**
      * injected resource providing access to WSA addressing properties

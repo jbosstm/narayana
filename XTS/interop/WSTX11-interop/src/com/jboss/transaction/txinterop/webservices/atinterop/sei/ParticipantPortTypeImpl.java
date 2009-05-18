@@ -22,9 +22,12 @@ package com.jboss.transaction.txinterop.webservices.atinterop.sei;
 
 import com.jboss.transaction.txinterop.webservices.atinterop.processors.ATParticipantProcessor;
 import com.jboss.transaction.txinterop.webservices.atinterop.client.InitiatorClient;
+import com.jboss.transaction.txinterop.webservices.atinterop.generated.ParticipantPortType;
 import com.jboss.transaction.txinterop.webservices.CoordinationContextManager;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
+import org.jboss.jbossts.xts.soapfault.Fault;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.wsc11.messaging.MessageId;
 
@@ -49,7 +52,7 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
         serviceName="ParticipantService")
 @Addressing(required=true)
 @HandlerChain(file="participanthandlers.xml")
-public class ParticipantPortTypeImpl {
+public class ParticipantPortTypeImpl implements ParticipantPortType, SoapFaultPortType {
 
     /**
      * injected resource providing access to WSA addressing properties
@@ -392,5 +395,14 @@ public class ParticipantPortTypeImpl {
             System.out.println("com.jboss.transaction.txinterop.webservices.atinterop.sei.ParticipantPortTypeImpl_2: unable to log soap fault " + sf);
             throw new ProtocolException(th);
         }
+    }
+
+    public void soapFault(
+            @WebParam(name = "Fault", targetNamespace = "http://schemas.xmlsoap.org/soap/envelope/", partName = "fault")
+            Fault fault)
+    {
+        // hmm, probably ought not to happen -- just log this as an error
+        SoapFault11 soapFaultInternal = SoapFault11.fromFault(fault);
+        System.out.println("com.jboss.transaction.txinterop.webservices.atinterop.sei.ParticipantPortTypeImpl_3: unexpected soap fault " + soapFaultInternal);
     }
 }
