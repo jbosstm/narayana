@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: ServerResource.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -46,6 +46,7 @@ import com.arjuna.common.util.logging.*;
 
 import org.omg.CosTransactions.*;
 import java.io.PrintWriter;
+import java.util.*;
 
 import org.omg.CORBA.SystemException;
 
@@ -108,44 +109,39 @@ public final ServerControl control ()
      * transaction's notion of its parent to us.
      */
 
-public final boolean addChild (ServerNestedAction c)
+    public final boolean addChild (ServerNestedAction c)
     {
-	if (_children != null)
-	{
-	    if (_children.add(c))
-	    {
-		c.setParentHandle(this);
-	    
-		return true;
-	    }
-	}
-    
-	return false;
+        if (_children.add(c))
+        {
+            c.setParentHandle(this);
+            return true;
+        }
+
+        return false;
     }
 
-public final boolean removeChild (ServerNestedAction c)
+    public final boolean removeChild (ServerNestedAction c)
     {
-	if (_children != null)
-	{
-	    c.setParentHandle(null);
-	    
-	    return _children.remove(c);
-	}
-	else
-	    return false;
+            c.setParentHandle(null);
+            return _children.remove(c);
     }
 
-public final ServerNestedAction getChild (Uid id)
+    public final ServerNestedAction getChild (Uid actUid)
     {
-	if (_children != null)
-	    return (ServerNestedAction) _children.lookFor(id);
-	else
-	    return null;
+        synchronized (_children) {
+            for(ServerNestedAction action : _children) {
+                if(actUid.equals(action.get_uid())) {
+                    return action;
+                }
+            }
+        }
+
+        return null;
     }
 
-public final HashList getChildren ()
+    public final List<ServerNestedAction> getChildren ()
     {
-	return _children;
+        return _children;
     }
 
     /**
@@ -155,10 +151,16 @@ public final HashList getChildren ()
 
 public final boolean abortChild (ServerNestedAction toAbort)
     {
-	if ((_children != null) && (toAbort != null))
+	if (toAbort != null)
 	{
-	    ServerNestedAction child = (ServerNestedAction) _children.remove(toAbort.get_uid());
-	
+        ServerNestedAction child;
+        synchronized (_children) {
+            child = getChild(toAbort.get_uid());
+            if(child != null) {
+                _children.remove(child);
+            }
+        }
+
 	    if (child != null)
 	    {
 		org.omg.CosTransactions.Status nestedStatus = child.otsStatus();
@@ -231,30 +233,24 @@ public final org.omg.CosTransactions.Status otsStatus ()
 	}
     }
 
-public final String getChildren (int depth)
+    public final String getChildren (int depth)
     {
-	String children = "";
-	
-	if (_children != null)
-	{
-	    HashListIterator iter = new HashListIterator(_children);
-	    ServerNestedAction childPtr = (ServerNestedAction) iter.iterate();
+        String children = "";
 
-	    while (childPtr != null)
-	    {
-		children += "\n";
-	    
-		for (int i = 0; i < depth; i++)
-		    children += " ";
+        synchronized (_children) {
+            for(ServerNestedAction child : _children) {
 
-		children += childPtr.get_uid();
+                children += "\n";
 
-		children += childPtr.getChildren(depth+1);
-		childPtr = (ServerNestedAction) iter.iterate();
-	    }
-	}
+                for (int i = 0; i < depth; i++)
+                    children += " ";
 
-	return children;
+                children += child.get_uid();
+                children += child.getChildren(depth+1);
+            }
+        }
+
+        return children;
     }
 
 protected ServerResource ()
@@ -266,7 +262,6 @@ protected ServerResource ()
 	}
 
 	_theControl = null;
-	_children = null;
 	_parent = null;
 	_valid = true;
 	_destroyed = false;
@@ -275,7 +270,6 @@ protected ServerResource ()
 protected ServerResource (ServerControl control)
     {
 	_theControl = control;
-	_children = new HashList(11);
 	_theUid = control.get_uid();
 	_parent = null;
 	_valid = true;
@@ -288,60 +282,52 @@ protected ServerResource (ServerControl control)
 	}
     }
 
-protected void tidyup ()
+    protected void tidyup ()
     {
-	if (_children != null)
-	{
-	    ServerNestedAction ptr = (ServerNestedAction) _children.orderedPop();
+        synchronized (_children) {
+            while(_children.size() > 0) {
+                ServerNestedAction child = _children.remove(0);
+                child.setParentHandle(null);
+                try
+                {
+                    ORBManager.getPOA().shutdownObject(child.theResource());
+                }
+                catch (Exception e)
+                {
+                }
+            }
+        }
 
-	    while (ptr != null)
-	    {
-		ptr.setParentHandle(null);
-		
-		try
-		{
-		    ORBManager.getPOA().shutdownObject(ptr.theResource());
-		}
-		catch (Exception e)
-		{
-		}
+        if (_theControl != null)
+        {
+            /*
+            * If it's a wrapper, then the control
+            * will not have been driven to commit or
+            * rollback or forget, and hence will not have destroyed
+            * itself. So, do so now.
+            */
 
-		ptr = (ServerNestedAction) _children.orderedPop();
-	    }
+            if (_theControl.isWrapper())
+            {
+                try
+                {
+                    _theControl.destroy();  // will delete itself
+                }
+                catch (Exception e)
+                {
+                }
+            }
 
-	    _children = null;
-	}
-
-	if (_theControl != null)
-	{
-	    /*
-	     * If it's a wrapper, then the control
-	     * will not have been driven to commit or
-	     * rollback or forget, and hence will not have destroyed
-	     * itself. So, do so now.
-	     */
-
-	    if (_theControl.isWrapper())
-	    {
-		try
-		{
-		    _theControl.destroy();  // will delete itself
-		}
-		catch (Exception e)
-		{
-		}
-	    }
-
-	    _theControl = null;
-	}
+            _theControl = null;
+        }
     }
 
 protected ServerControl  _theControl;
-protected HashList       _children;
+protected final List<ServerNestedAction> _children = Collections.synchronizedList(new LinkedList<ServerNestedAction>());
 protected Uid            _theUid;
 protected ServerResource _parent;
 protected boolean        _valid;
 protected boolean        _destroyed;
-    
+
 }
 

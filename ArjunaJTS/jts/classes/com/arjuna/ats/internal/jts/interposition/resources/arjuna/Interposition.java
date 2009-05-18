@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: Interposition.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -55,12 +55,15 @@ import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UNKNOWN;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 
+import java.util.List;
+import java.util.LinkedList;
+
 public class Interposition
 {
 
-public Interposition ()
+    public Interposition ()
     {
-	_head = new HashList(11);
+        _head = new LinkedList(); // not synchronized as the methods that access it all are synchronized.
     }
 
 public static ControlImple create (PropagationContext context) throws SystemException
@@ -78,7 +81,7 @@ public static boolean destroy (Uid act)
 	else
 	    return false;
     }
-    
+
     /*
      * Assume that all actions in the imported hierarchy are of the same
      * type, i.e., all JBoss transactions.
@@ -91,7 +94,7 @@ public synchronized ControlImple setupHierarchy (PropagationContext context) thr
     {
 	ControlImple controlPtr = null;
 	Uid theUid = null;
-	InterposedHierarchy proxyAction = null;
+	ServerTopLevelAction proxyAction = null;
 
 	if (context.parents.length == 0)
 	    theUid = Utility.otidToUid(context.current.otid);
@@ -122,9 +125,19 @@ public synchronized ControlImple setupHierarchy (PropagationContext context) thr
 	return controlPtr;
     }
 
-protected final synchronized InterposedHierarchy present (Uid actUid)
+    protected final synchronized ServerTopLevelAction present (Uid actUid)
     {
-	return (InterposedHierarchy) _head.lookFor(actUid);
+        if(_head == null) {
+            return null;
+        }
+
+        for(ServerTopLevelAction action : _head) {
+            if(actUid.equals(action.get_uid())) {
+                return action;
+            }
+        }
+
+        return null;
     }
 
 protected synchronized ControlImple createHierarchy (PropagationContext ctx, Uid tlUid) throws SystemException
@@ -141,7 +154,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx, Uid
 	ServerResource action = null;
 	Coordinator tmpCoord = null;
 	Terminator tmpTerm = null;
-	
+
 	/*
 	 * First deal with top-level transaction, which may be
 	 * the current transaction.
@@ -180,8 +193,8 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx, Uid
 
 	    throw new TRANSACTION_ROLLEDBACK();
 	}
-		
-	InterposedHierarchy newElement = new InterposedHierarchy((ServerTopLevelAction) action);
+
+	ServerTopLevelAction newElement = (ServerTopLevelAction)action;
 
 	_head.add(newElement);
 
@@ -193,12 +206,12 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx, Uid
 	     */
 
 	    ServerResource nestedAction = null;
-    
+
 	    for (int i = depth -2; i >= 0; i--)
 	    {
 		tmpCoord = ctx.parents[i].coord;
 		tmpTerm = ctx.parents[i].term;
-	
+
 		control = ServerFactory.create_subtransaction(Utility.otidToUid(ctx.parents[i].otid),
 								  tmpCoord, tmpTerm, control);
 
@@ -211,7 +224,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx, Uid
 		     * registered successfully, and will be deal with automatically
 		     * when the parent transaction terminates.
 		     */
-		
+
 		    try
 		    {
 			((ServerNestedAction) nestedAction).rollback_subtransaction();  // does dispose as well!
@@ -223,7 +236,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx, Uid
 
 		    throw new TRANSACTION_ROLLEDBACK();
 		}
-		
+
 		/*
 		 * Add transaction resource to list.
 		 */
@@ -239,10 +252,10 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx, Uid
 
 	    tmpCoord = ctx.current.coord;
 	    tmpTerm = ctx.current.term;
-	    
+
 	    control = ServerFactory.create_subtransaction(Utility.otidToUid(ctx.current.otid),
 							      tmpCoord, tmpTerm, control);
-	    
+
 	    nestedAction = new ServerNestedAction(control);
 
 	    if (!nestedAction.valid())
@@ -252,7 +265,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx, Uid
 		 * registered successfully, and will be deal with automatically
 		 * when the parent transaction terminates.
 		 */
-		
+
 		try
 		{
 		    ((ServerNestedAction) nestedAction).rollback_subtransaction();  // does dispose as well!
@@ -264,7 +277,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx, Uid
 
 		throw new TRANSACTION_ROLLEDBACK();
 	    }
- 
+
 	    action.addChild((ServerNestedAction) nestedAction);
 	}
 
@@ -273,7 +286,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx, Uid
 
 	return control;
     }
-    
+
     /*
      * In a single threaded environment we could walk down the hierarchy,
      * aborting any actions which are no longer valid, and creating any new
@@ -287,15 +300,15 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx, Uid
      * current representation, we begin to assemble a new subtree in much the
      * same way as we did for creating a completely new hierarchy.
      */
-    
-protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
+
+protected synchronized ControlImple checkHierarchy (ServerTopLevelAction hier,
 						   PropagationContext context) throws SystemException
     {
 	ServerControl control = null;
-	ServerResource currentAction = hier.action();  // top-level transaction
+	ServerResource currentAction = hier;  // top-level transaction
 	int depth = context.parents.length;
 	int differenceIndex = -1;  // index of the new transactions in the hierarchy
-	
+
 	/*
 	 * Find the point at which our notion of the hierarchy deviates from
 	 * the one we have just received.
@@ -315,12 +328,12 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 	     * the control to return.
 	     */
 
-	    control = hier.action().control();  // top-level transaction's control
+	    control = hier.control();  // top-level transaction's control
 	}
 	else
 	{
 	    ServerResource nestedAction = null;
-	    
+
 	    /*
 	     * Start at -2 and work our way down the hierarchy. We
 	     * use -2 since the length gives us the *number* of elements,
@@ -343,7 +356,7 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 		     * currentAction *always* points to the last known
 		     * good transaction in our hierarchy.
 		     */
-		
+
 		    currentAction = nestedAction;
 		}
 	    }
@@ -359,12 +372,12 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 
 		Coordinator tmpCoord;
 		Terminator tmpTerm;
-		
+
 		for (int j = differenceIndex; j >= 0; j--)
 		{
 		    tmpCoord = context.parents[j].coord;
 		    tmpTerm = context.parents[j].term;
-		    
+
 		    control = ServerFactory.create_subtransaction(Utility.otidToUid(context.parents[j].otid),
 								      tmpCoord, tmpTerm, control);
 		    nestedAction = new ServerNestedAction(control);
@@ -376,7 +389,7 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 			 * registered successfully, and will be deal with automatically
 			 * when the parent transaction terminates.
 			 */
-		
+
 			try
 			{
 			    ((ServerNestedAction) nestedAction).rollback();  // does dispose as well!
@@ -411,7 +424,7 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 	     */
 
 	    nestedAction = currentAction.getChild(currentUid);
-	    
+
 	    if (nestedAction == null)
 	    {
 		/*
@@ -420,11 +433,11 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 		 */
 
 		control = currentAction.control();
-		
+
 		/*
 		 * Now deal with the current transaction.
 		 */
-	    
+
 		TransIdentity currentID = context.current;
 
 		control = ServerFactory.create_subtransaction(currentUid,
@@ -438,7 +451,7 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 		     * been registered successfully, and will be deal with
 		     * automatically when the parent transaction terminates.
 		     */
-		
+
 		    try
 		    {
 			((ServerNestedAction) nestedAction).rollback();  // does dispose as well!
@@ -450,7 +463,7 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 
 		    throw new TRANSACTION_ROLLEDBACK();
 		}
-		
+
 		currentAction.addChild((ServerNestedAction) nestedAction);
 	    }
 	    else
@@ -473,29 +486,28 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
      * @message com.arjuna.ats.internal.jts.interposition.resources.arjuna.ipfail {0} - could not find {1} to remove.
      */
 
-protected final synchronized boolean removeHierarchy (Uid action)
+    protected final synchronized boolean removeHierarchy (Uid theUid)
     {
-	InterposedHierarchy hier = ((_head != null) ? (InterposedHierarchy) _head.remove(action) : null);
+        ServerTopLevelAction action = present(theUid);
 
-	if (hier != null)
-	{
-	    hier = null;
+        if (action != null)
+        {
+            _head.remove(action);
+            return true;
+        }
+        else
+        {
+            if (jtsLogger.logger.isDebugEnabled())
+            {
+                if (jtsLogger.loggerI18N.isWarnEnabled())
+                {
+                    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.resources.arjuna.ipfail",
+                            new Object[] {"Interposition.removeHeirarchy", theUid} );
+                }
+            }
+        }
 
-	    return true;
-	}
-	else
-	{
-	    if (jtsLogger.logger.isDebugEnabled())
-	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.resources.arjuna.ipfail",
-					      new Object[] {"Interposition.removeHeirarchy", action} );
-		}
-	    }
-	}
-    
-	return false;
+        return false;
     }
 
     /**
@@ -504,12 +516,12 @@ protected final synchronized boolean removeHierarchy (Uid action)
      * @message com.arjuna.ats.internal.jts.interposition.resources.arjuna.ipnull Interposed hierarchy is null!
      */
 
-protected final void compareHierarchies (PropagationContext ctx, InterposedHierarchy ih)
+protected final void compareHierarchies (PropagationContext ctx, ServerTopLevelAction action)
     {
 	int depth = ctx.parents.length;
 	Uid[] ctxHierarchy = new Uid [depth+1];
 	boolean printHierarchies = false;
-    
+
 	for (int i = depth -1; i >= 0; i--)
 	{
 	    ctxHierarchy[i+1] = new Uid(Utility.otidToUid(ctx.parents[i].otid));
@@ -517,7 +529,6 @@ protected final void compareHierarchies (PropagationContext ctx, InterposedHiera
 
 	ctxHierarchy[0] = new Uid(Utility.otidToUid(ctx.current.otid));
 
-	ServerTopLevelAction action = ih.action();
 	boolean problem = false;
 
 	if (action != null)
@@ -559,7 +570,7 @@ protected final void compareHierarchies (PropagationContext ctx, InterposedHiera
 		    else
 			problem = true;
 		}
-		
+
 		if (problem)
 		{
 		    if (jtsLogger.loggerI18N.isWarnEnabled())
@@ -567,7 +578,7 @@ protected final void compareHierarchies (PropagationContext ctx, InterposedHiera
 			jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.resources.arjuna.ipnt");
 		    }
 
-		    printHierarchies = true;		    
+		    printHierarchies = true;
 		}
 	    }
 	}
@@ -583,7 +594,7 @@ protected final void compareHierarchies (PropagationContext ctx, InterposedHiera
 
 	if (!printHierarchies)
 	    printHierarchies = jtsLogger.logger.isDebugEnabled();
-	
+
 	if (printHierarchies)
 	{
 	    synchronized (jtsLogger.logger)
@@ -595,11 +606,11 @@ protected final void compareHierarchies (PropagationContext ctx, InterposedHiera
 			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, Utility.getHierarchy(ctx));
 		    }
-		    
+
 		    if (jtsLogger.logger.isDebugEnabled())
 		    {
 			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, ih.hierarchy());
+					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, hierarchytoString(action));
 		    }
 		}
 		else
@@ -611,7 +622,7 @@ protected final void compareHierarchies (PropagationContext ctx, InterposedHiera
 
 		    if (jtsLogger.logger.isWarnEnabled())
 		    {
-			jtsLogger.logger.warn(ih.hierarchy());
+			jtsLogger.logger.warn(hierarchytoString(action));
 		    }
 		}
 	    }
@@ -629,7 +640,30 @@ protected final void compareHierarchies (PropagationContext ctx, InterposedHiera
 	}
     }
 
-protected HashList _head;
+    private final String hierarchytoString(ServerTopLevelAction action)
+    {
+        String hier = "InterposedHierarchy:";
+
+        if (action != null)
+        {
+            hier += action.get_uid();
+
+            List<ServerNestedAction> children = action.getChildren();
+
+            synchronized (children) {
+                for(ServerNestedAction child : children) {
+                    hier += "\n"+child.get_uid();
+                    hier += child.getChildren(2);
+                }
+            }
+        }
+        else
+            hier += "EMPTY";
+
+        return hier;
+    }
+
+protected List<ServerTopLevelAction> _head;
 
 private static Interposition __list = new Interposition();
 

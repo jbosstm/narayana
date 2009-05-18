@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -51,6 +51,8 @@ import org.omg.CORBA.CompletionStatus;
 
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UNKNOWN;
+
+import java.util.List;
 
 /*
  * This looks like an atomic action, but is not actually derived from
@@ -96,42 +98,35 @@ public final synchronized ServerControl deepestControl ()
      * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contxfound_3 {0} - found concurrent transactions!
      * @message com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contx_4 {0} Concurrent children found for restricted interposition!
      */
-
-public final synchronized ServerRestrictedNestedAction child ()
+    public final synchronized ServerRestrictedNestedAction child ()
     {
-	ServerRestrictedNestedAction toReturn = null;
-	HashList children = getChildren();
-    
-	/*
-	 * There should be only one child!
-	 */
-    
-	if (children != null)
-	{
-	    if (children.size() != 1)
-	    {
-		if (jtsLogger.loggerI18N.isWarnEnabled())
-		{
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contxfound_3",
-					      new Object[] {"ServerRestrictedTopLevelAction.child"});
-		}
+        ServerRestrictedNestedAction toReturn = null;
+        List<ServerNestedAction> children = getChildren();
 
-		throw new com.arjuna.ats.jts.exceptions.TxError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contx_4"));
-	    }
-	    else
-	    {
-		toReturn = (ServerRestrictedNestedAction) children.orderedPop();
-	    }
-	}
-    
-	return toReturn;
+        // There should be only one child!
+        if (children.size() != 1)
+        {
+            if (jtsLogger.loggerI18N.isWarnEnabled())
+            {
+                jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contxfound_3",
+                        new Object[] {"ServerRestrictedTopLevelAction.child"});
+            }
+
+            throw new com.arjuna.ats.jts.exceptions.TxError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contx_4"));
+        }
+        else
+        {
+            toReturn = (ServerRestrictedNestedAction) children.remove(0);
+        }
+
+        return toReturn;
     }
 
 public String type ()
     {
 	return "/Resources/Arjuna/ServerTopLevelAction/ServerRestrictedTopLevelAction";
     }
-    
+
 }
 
 

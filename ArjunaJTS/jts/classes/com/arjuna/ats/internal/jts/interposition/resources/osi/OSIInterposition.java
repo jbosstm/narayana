@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2006, Red Hat Middleware LLC, and individual contributors
- * as indicated by the @author tags. 
- * See the copyright.txt in the distribution for a full listing 
+ * as indicated by the @author tags.
+ * See the copyright.txt in the distribution for a full listing
  * of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
@@ -14,7 +14,7 @@
  * v.2.1 along with this distribution; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: OSIInterposition.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -74,11 +74,11 @@ public synchronized ControlImple setupHierarchy (PropagationContext context) thr
 	/*
 	 * Map otid to a Uid.
 	 */
-    
+
 	Uid theUid = OTIDMap.find(context.current.otid);
-	InterposedHierarchy proxyAction = present(theUid);
+	ServerTopLevelAction proxyAction = present(theUid);
 	ControlImple controlPtr = null;
-	
+
 	if (proxyAction == null)
 	{
 	    /*
@@ -98,7 +98,7 @@ public synchronized ControlImple setupHierarchy (PropagationContext context) thr
 protected OSIInterposition ()
     {
     }
-    
+
 protected synchronized ControlImple createHierarchy (PropagationContext ctx,
 						    Uid currentUid) throws SystemException
     {
@@ -120,7 +120,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx,
 	ServerResource action = null;
 	Coordinator tmpCoord = null;
 	Terminator tmpTerm = null;
-	
+
 	/*
 	 * First deal with top-level transaction, which may be
 	 * the current transaction.
@@ -141,7 +141,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx,
 	{
 	    return null;
 	}
-    
+
 	ServerControl control = ServerFactory.create_transaction(currentUid, null,
 									 null, tmpCoord, tmpTerm,
 								       ctx.timeout);
@@ -161,9 +161,9 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx,
 
 	    throw new TRANSACTION_ROLLEDBACK();
 	}
-	
-	InterposedHierarchy newElement = new InterposedHierarchy((ServerOSITopLevelAction) action);
-    
+
+	ServerTopLevelAction newElement = (ServerOSITopLevelAction)action;
+
 	_head.add(newElement);
 
 	if (depth > 0)  // current is a nested transaction
@@ -174,7 +174,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx,
 	     */
 
 	    ServerResource nestedAction = null;
-	
+
 	    for (int i = depth -2; i >= 0; i--)
 	    {
 		tmpCoord = ctx.parents[i].coord;
@@ -182,7 +182,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx,
 
 		control = ServerFactory.create_subtransaction(OTIDMap.find(ctx.parents[i].otid),
 								  tmpCoord, tmpTerm, control);
-	    
+
 		nestedAction = new ServerOSINestedAction(control, false);  // not current, so don't register
 
 		if (!nestedAction.valid())
@@ -192,7 +192,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx,
 		     * registered successfully, and will be deal with automatically
 		     * when the parent transaction terminates.
 		     */
-		
+
 		    try
 		    {
 			((ServerOSINestedAction) nestedAction).rollback_subtransaction();  // does dispose as well!
@@ -201,7 +201,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx,
 		    catch (Exception e)
 		    {
 		    }
-		
+
 		    throw new TRANSACTION_ROLLEDBACK();
 		}
 
@@ -223,7 +223,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx,
 
 	    control = ServerFactory.create_subtransaction(OTIDMap.find(ctx.current.otid),
 							      tmpCoord, tmpTerm, control);
-	
+
 	    nestedAction = new ServerOSINestedAction(control, true);  // current, so register
 
 	    if (!nestedAction.valid())
@@ -233,7 +233,7 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx,
 		 * registered successfully, and will be deal with automatically
 		 * when the parent transaction terminates.
 		 */
-		
+
 		try
 		{
 		    ((ServerOSINestedAction) nestedAction).rollback_subtransaction();  // does dispose as well!
@@ -242,10 +242,10 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx,
 		catch (Exception e)
 		{
 		}
-	    
+
 		throw new TRANSACTION_ROLLEDBACK();
 	    }
-	
+
 	    action.addChild((ServerOSINestedAction) nestedAction);
 	}
 
@@ -292,11 +292,11 @@ protected synchronized ControlImple createHierarchy (PropagationContext ctx,
      * the right hierarchy gets sent out!
      */
 
-protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
+protected synchronized ControlImple checkHierarchy (ServerTopLevelAction hier,
 						   PropagationContext context)
     {
 	ServerControl control = null;
-	ServerResource currentAction = hier.action();  // top-level transaction
+	ServerResource currentAction = hier;  // top-level transaction
 	int depth = context.parents.length;
 	int differenceIndex = -1;  // index of the new transactions in the hierarchy
 
@@ -319,17 +319,17 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 	     * the control to return. However, make sure it has registered
 	     * itself with the "real" transaction.
 	     */
-	    
-	    ServerOSITopLevelAction tx = (ServerOSITopLevelAction) hier.action();
+
+	    ServerOSITopLevelAction tx = (ServerOSITopLevelAction) hier;
 
 	    tx.interposeResource();
-	
+
 	    control = tx.control();  // top-level transaction's control
 	}
 	else
 	{
 	    ServerResource nestedAction = null;
-	
+
 	    /*
 	     * Start at -2 and work our way down the hierarchy. We
 	     * use -2 since the length gives us the *number* of elements,
@@ -352,7 +352,7 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 		     * currentAction *always* points to the last known
 		     * good transaction in our hierarchy.
 		     */
-		
+
 		    currentAction = nestedAction;
 		}
 	    }
@@ -365,10 +365,10 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 	    if (differenceIndex != -1)
 	    {
 		control = currentAction.control();
-		
+
 		Coordinator tmpCoord = null;
 		Terminator tmpTerm = null;
-		
+
 		for (int j = differenceIndex; j >= 0; j--)
 		{
 		    tmpCoord = context.parents[j].coord;
@@ -376,7 +376,7 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 
 		    control = ServerFactory.create_subtransaction(OTIDMap.find(context.parents[j].otid),
 								      tmpCoord, tmpTerm, control);
-		
+
 		    nestedAction = new ServerOSINestedAction(control, false);
 
 		    if (!nestedAction.valid())
@@ -386,7 +386,7 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 			 * registered successfully, and will be deal with automatically
 			 * when the parent transaction terminates.
 			 */
-		
+
 			try
 			{
 			    ((ServerOSINestedAction) nestedAction).rollback();  // does dispose as well!
@@ -410,7 +410,7 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 		 * Remember to check!
 		 */
 	    }
-	
+
 	    Uid currentUid = OTIDMap.find(context.current.otid);
 
 	    /*
@@ -419,18 +419,18 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 	     * structure. So, ask it if the sent hierarchy's child is
 	     * one of its children.
 	     */
-	    
+
 	    nestedAction = currentAction.getChild(currentUid);
-	
+
 	    if (nestedAction == null)
 	    {
 		/*
 		 * Different notion of current in sent hierarchy.
 		 * So, add it to the hierarchy here.
 		 */
-	    
+
 		control = currentAction.control();
-		
+
 		/*
 		 * Now deal with the current transaction.
 		 */
@@ -438,7 +438,7 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 		TransIdentity currentID = context.current;
 
 		control = ServerFactory.create_subtransaction(currentUid, currentID.coord, currentID.term, control);
-	    
+
 		nestedAction = new ServerOSINestedAction(control, true);
 
 		if (!nestedAction.valid())
@@ -460,7 +460,7 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 
 		    throw new TRANSACTION_ROLLEDBACK();
 		}
-		
+
 		currentAction.addChild((ServerOSINestedAction) nestedAction);
 	    }
 	    else
@@ -472,17 +472,17 @@ protected synchronized ControlImple checkHierarchy (InterposedHierarchy hier,
 		 */
 
 		nestedAction.interposeResource();
-	    
+
 		control = nestedAction.control();
 	    }
 	}
-	
+
 	if (jtsLogger.logger.isDebugEnabled())
 	    compareHierarchies(context, hier);
 
 	return control;
     }
-    
+
 private static OSIInterposition __list = new OSIInterposition();
- 
+
 }
