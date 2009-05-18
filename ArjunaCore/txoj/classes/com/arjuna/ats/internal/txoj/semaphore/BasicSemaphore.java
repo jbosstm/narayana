@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: BasicSemaphore.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -33,7 +33,6 @@ package com.arjuna.ats.internal.txoj.semaphore;
 
 import com.arjuna.ats.txoj.TxOJNames;
 import com.arjuna.ats.txoj.semaphore.*;
-import com.arjuna.ats.internal.arjuna.template.KeyedList;
 import com.arjuna.ats.txoj.common.*;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 
@@ -43,6 +42,8 @@ import com.arjuna.ats.txoj.logging.FacilityCode;
 import com.arjuna.common.util.logging.*;
 
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.HashMap;
 
 import java.lang.InterruptedException;
 
@@ -52,7 +53,7 @@ import java.lang.InterruptedException;
 
 public class BasicSemaphore extends SemaphoreImple
 {
-    
+
 public BasicSemaphore (String key)
     {
 	owner = null;
@@ -89,7 +90,7 @@ public void finalize ()
     /**
      * Classic semaphore operations.
      */
-    
+
 public int lock ()
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
@@ -102,7 +103,7 @@ public int lock ()
 	synchronized (this)
 	{
 	    Thread t = Thread.currentThread();
-	
+
 	    if (owner == null)
 		owner = t;
 	    else
@@ -110,7 +111,7 @@ public int lock ()
 		if (owner != t)
 		{
 		    waiters.put(t, t);
-		    
+
 		    while (owner != null)
 		    {
 			try
@@ -123,7 +124,7 @@ public int lock ()
 		    }
 
 		    waiters.remove(t);
-		    
+
 		    owner = t;
 		}
 	    }
@@ -133,7 +134,7 @@ public int lock ()
 
 	return Semaphore.SM_LOCKED;
     }
-	    
+
 public int unlock ()
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
@@ -146,7 +147,7 @@ public int unlock ()
 	synchronized (this)
 	{
 	    Thread t = Thread.currentThread();
-	
+
 	    if (owner != t)
 		return Semaphore.SM_ERROR;
 	    else
@@ -154,7 +155,7 @@ public int unlock ()
 		if (--useCount == 0)
 		{
 		    owner = null;
-		    
+
 		    if (waiters.size() > 0)
 		    {
 			this.notify();
@@ -165,7 +166,7 @@ public int unlock ()
 
 	return Semaphore.SM_UNLOCKED;
     }
-    
+
 public int tryLock ()
     {
 	if (txojLogger.aitLogger.isDebugEnabled())
@@ -188,50 +189,42 @@ public ClassName className ()
     {
 	return TxOJNames.Implementation_Semaphore_BasicSemaphore();
     }
-    
+
 public static ClassName name ()
     {
-	return TxOJNames.Implementation_Semaphore_BasicSemaphore();	
+	return TxOJNames.Implementation_Semaphore_BasicSemaphore();
     }
-    
+
     /**
      * Create semaphore with value of 1.
      */
-    
-public static BasicSemaphore create (Object[] param)
+
+    public static BasicSemaphore create (Object[] param)
     {
-	if (param == null)
-	    return null;
-	
-	String key = (String) param[0];
-	Object ptr = semaphoreList.get(key);
+        if (param == null)
+            return null;
 
-	if (ptr != null)
-	{
-	    if (ptr instanceof BasicSemaphore)
-		return (BasicSemaphore) ptr;
-	    else
-		return null;
-	}
+        String key = (String) param[0];
+        BasicSemaphore basicSemaphore = null;
 
-	/*
-	 * Not in list, so create and add before returning.
-	 */
-	
-	BasicSemaphore sem = new BasicSemaphore(key);
+        synchronized (semaphores) {
+            basicSemaphore = semaphores.get(key);
+            if(basicSemaphore == null) {
+                basicSemaphore = new BasicSemaphore(key);
+                semaphores.put(key, basicSemaphore);
+            }
+        }
 
-	semaphoreList.add(sem, key);
-	
-	return sem;
+        return basicSemaphore;
     }
-    
+
 private Thread    owner;
 private int       useCount;
 private Hashtable waiters;
 private int       numberOfResources;
 private String    semKey;
 
-private static KeyedList semaphoreList = new KeyedList();
-    
+private static final Map<String, BasicSemaphore> semaphores = new HashMap<String, BasicSemaphore>();
+
 }
 
