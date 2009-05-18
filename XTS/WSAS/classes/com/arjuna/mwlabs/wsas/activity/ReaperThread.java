@@ -92,6 +92,7 @@ public class ReaperThread extends Thread
     public synchronized void shutdown ()
     {
         _shutdown = true;
+        notify();
     }
 
     private ActivityReaper _reaperObject;

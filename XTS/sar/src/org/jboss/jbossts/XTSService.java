@@ -77,6 +77,7 @@ import com.arjuna.services.framework.startup.Sequencer;
 //import com.arjuna.wst.messaging.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.webservices.util.TransportTimer;
+import com.arjuna.mwlabs.wsas.activity.ActivityReaper;
 
 import javax.management.MBeanServer;
 import java.net.InetAddress;
@@ -347,6 +348,10 @@ public class XTSService implements XTSServiceMBean {
 
         TaskManager.getManager().shutdown() ; // com.arjuna.services.framework.admin.TaskManagerInitialisation
 
+        // shutdown the activity service reaper
+
+        ActivityReaper.shutdown();
+        
         /*
          * this will be done by the servlet shutdown code
         // HttpClientInitialisation

@@ -83,7 +83,7 @@ public class ActivityReaper
     /**
      * Only check for one at a time to prevent starvation.
      *
-     * Timeout is given in milliseconds.
+     * Timeout is given in millisecon>ds.
      *
      * @message com.arjuna.mwlabs.wsas.activity.ActivityReaper_1 [com.arjuna.mwlabs.wsas.activity.ActivityReaper_1] - ActivityReaper: could not terminate.
      */
@@ -284,11 +284,15 @@ public class ActivityReaper
 	    return _theReaper;
     }
 
-    /*
-     * Don't bother synchronizing as this is only an estimate anyway.
+    /**
+     * make sure the reaper thread exits
      */
-
-    public static final long defaultCheckPeriod = 120000;  // in milliseconds
+    public static synchronized void shutdown()
+    {
+        if (_theReaper != null) {
+            _reaperThread.shutdown();
+        }
+    }
 
     ActivityReaper ()
     {
