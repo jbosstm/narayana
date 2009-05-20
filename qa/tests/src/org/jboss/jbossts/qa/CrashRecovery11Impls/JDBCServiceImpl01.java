@@ -62,6 +62,7 @@ package org.jboss.jbossts.qa.CrashRecovery11Impls;
 import com.arjuna.ats.arjuna.coordinator.AddOutcome;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import org.jboss.jbossts.qa.CrashRecovery11.*;
+import org.jboss.jbossts.qa.Utils.JDBCProfileStore;
 import org.omg.CORBA.IntHolder;
 
 import java.sql.*;
@@ -94,7 +95,9 @@ public class JDBCServiceImpl01 implements BeforeCrashServiceOperations
 
 			Statement statement = _connection.createStatement();
 
-			statement.executeUpdate("INSERT INTO " + _dbUser + "_Service VALUES (\'" + _rowName + "\' , \'0\')");
+            String tableName = JDBCProfileStore.getTableName(databaseUser, "Service");
+
+			statement.executeUpdate("INSERT INTO " + tableName + " VALUES ('" + _rowName + "', 0)");
 
 			statement.close();
 		}
@@ -131,7 +134,9 @@ public class JDBCServiceImpl01 implements BeforeCrashServiceOperations
 			{
 				Statement statement = _connection.createStatement();
 
-				statement.executeUpdate("UPDATE " + _dbUser + "_Service SET Value = \'" + value + "\' WHERE Name = \'" + _rowName + "\'");
+                String tableName = JDBCProfileStore.getTableName(_dbUser, "Service");
+
+                statement.executeUpdate("UPDATE " + tableName + " SET VALUE="+value+" WHERE Name='"+_rowName+"'");
 
 				statement.close();
 			}
@@ -164,7 +169,9 @@ public class JDBCServiceImpl01 implements BeforeCrashServiceOperations
 			{
 				Statement statement = _connection.createStatement();
 
-				ResultSet resultSet = statement.executeQuery("SELECT Value FROM " + _dbUser + "_Service WHERE Name = \'" + _rowName + "\'");
+                String tableName = JDBCProfileStore.getTableName(_dbUser, "Service");
+
+				ResultSet resultSet = statement.executeQuery("SELECT Value FROM " + tableName +" WHERE Name = '" + _rowName + "'");
 				resultSet.next();
 				value.value = resultSet.getInt("Value");
 				if (resultSet.next())

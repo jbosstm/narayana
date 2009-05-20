@@ -60,6 +60,7 @@ package org.jboss.jbossts.qa.CrashRecovery11Impls;
 
 
 import org.jboss.jbossts.qa.CrashRecovery11.*;
+import org.jboss.jbossts.qa.Utils.JDBCProfileStore;
 import org.omg.CORBA.IntHolder;
 
 import java.sql.*;
@@ -129,10 +130,10 @@ public class JDBCServiceImpl02 implements AfterCrashServiceOperations
                 throw new Exception();
 */
 
-			System.err.println("JDBCServiceImpl02.get: " + "SELECT Value FROM " + _dbUser + "_Service WHERE Name = \'" + _rowName + "\'");
+            String tableName = JDBCProfileStore.getTableName(_dbUser, "Service");
 
-			ResultSet resultSet = statement.executeQuery("SELECT Value FROM " + _dbUser + "_Service WHERE Name = \'" + _rowName + "\'");
-
+            ResultSet resultSet = statement.executeQuery("SELECT Value FROM " + tableName +" WHERE Name = '" + _rowName + "'");
+            
 			ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
 
 			String columnTypeName = resultSetMetaData.getColumnTypeName(1);

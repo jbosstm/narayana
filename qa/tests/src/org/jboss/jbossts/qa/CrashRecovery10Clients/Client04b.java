@@ -85,7 +85,7 @@ public class Client04b
 
 			OTS.current().begin();
 
-			service2.set(OTS.current().get_control(), 0);
+			service1.set(OTS.current().get_control(), 0);
 			service2.set(OTS.current().get_control(), 0);
 
 			OTS.current().commit(true);
