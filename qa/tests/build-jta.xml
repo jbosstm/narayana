@@ -92,6 +92,7 @@
 			<include name="**/org/jboss/jbossts/qa/astests/**/*.java"/>
 
             <exclude name="**/astests/**"/>
+            <exclude name="**/junit/**"/>
 
             <classpath>
 				<path refid="jta.classpath"/>
