@@ -1,4 +1,4 @@
-<project name="server-config" default="help"
+<project name="as-tests-server-config" default="help"
          xmlns:astest="http://jboss.org/ns/test/ant/astest">
 
   <taskdef name="config" classname="org.jboss.jbossts.qa.astests.taskdefs.ASTestConfig"
@@ -81,8 +81,38 @@
        <sysproperty key="org.jboss.resolver.warning" value="true" />
        <sysproperty key="sun.rmi.dgc.client.gcInterval" value="3600000" />
        <sysproperty key="sun.rmi.dgc.server.gcInterval" value="3600000" />
+       <sysproperty key="xb.builder.useUnorderedSequence" value="true" />
        <sysproperty key="server.binding.name" value="ports-02" />
        <sysproperty key="server.binding.location" value="qa/resources/sample-bindings.xml" />
      </server>
+
+
+     <!--
+         Profiles for JBossAS Testsuite integration
+       -->
+     <server name="crashrecovery-jta" host="${node0}">
+       <jvmarg value="-Xms128m" />
+       <jvmarg value="-Xmx512m" />
+       <jvmarg value="-XX:MaxPermSize=512m" />
+       <jvmarg value="-server" />
+       <sysproperty key="java.net.preferIPv4Stack" value="true" />
+       <sysproperty key="org.jboss.resolver.warning" value="true" />
+       <sysproperty key="sun.rmi.dgc.client.gcInterval" value="3600000" />
+       <sysproperty key="sun.rmi.dgc.server.gcInterval" value="3600000" />
+       <sysproperty key="xb.builder.useUnorderedSequence" value="true" />
+     </server>
+
+     <server name="crashrecovery-jts" host="${node0}">
+       <jvmarg value="-Xms128m" />
+       <jvmarg value="-Xmx512m" />
+       <jvmarg value="-XX:MaxPermSize=512m" />
+       <jvmarg value="-server" />
+       <sysproperty key="java.net.preferIPv4Stack" value="true" />
+       <sysproperty key="org.jboss.resolver.warning" value="true" />
+       <sysproperty key="sun.rmi.dgc.client.gcInterval" value="3600000" />
+       <sysproperty key="sun.rmi.dgc.server.gcInterval" value="3600000" />
+       <sysproperty key="xb.builder.useUnorderedSequence" value="true" />
+     </server>
+
   </astest:config>
 </project>
