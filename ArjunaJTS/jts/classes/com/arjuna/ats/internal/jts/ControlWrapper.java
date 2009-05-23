@@ -283,9 +283,12 @@ public class ControlWrapper implements Reapable
 					throw new Unavailable();
 			}
 		}
-		catch (NullPointerException ex)  // if local handle is null then it was terminated (reaper)
+		catch (NullPointerException ex)  // if local handle is null then it was terminated (probably by reaper)
 		{
-			throw new TRANSACTION_ROLLEDBACK();
+		    // check termination status
+		    
+		    if (_controlImpl.getFinalStatus() != org.omg.CosTransactions.Status.StatusCommitted)
+                        throw new TRANSACTION_ROLLEDBACK();
 		}
 	}
 
