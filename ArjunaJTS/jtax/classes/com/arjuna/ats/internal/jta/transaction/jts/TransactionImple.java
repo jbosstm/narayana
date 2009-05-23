@@ -52,6 +52,7 @@ import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.jta.xa.*;
 import com.arjuna.ats.jta.common.Configuration;
 import com.arjuna.ats.jta.common.Environment;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
 import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
 import com.arjuna.ats.jta.logging.*;
@@ -130,6 +131,9 @@ import org.omg.CORBA.UNKNOWN;
  *          [com.arjuna.ats.internal.jta.transaction.jts.lastResource.startupWarning]
  *          You have chosen to enable multiple last resources in the transaction manager.
  *          This is transactionally unsafe and should not be relied upon.
+ * @message com.arjuna.ats.internal.jta.transaction.jts.lastResource.disableWarning
+ *          [com.arjuna.ats.internal.jta.transaction.jts.lastResource.disableWarning]
+ *          You have chosen to disable the Multiple Last Resources warning. You will see it only once.
  */
 
 public class TransactionImple implements javax.transaction.Transaction,
@@ -496,12 +500,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	// package-private method also for use by
 	// TransactionSynchronizationRegistryImple
-	/**
-	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.syncwhenaborted
-	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.syncwhenaborted]
-	 *          Can't register synchronization because the transaction is in
-	 *          aborted state
-	 */
+
 	void registerSynchronizationImple(SynchronizationImple synchronizationImple)
 			throws javax.transaction.RollbackException,
 			java.lang.IllegalStateException, javax.transaction.SystemException
@@ -951,17 +950,22 @@ public class TransactionImple implements javax.transaction.Transaction,
                 {
                     if (ALLOW_MULTIPLE_LAST_RESOURCES)
                     {
-                        jtaLogger.loggerI18N
-                                .warn(
-                                        "com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning",
-                                        new Object[]
-                                                { xaRes });
+                        if (!_disableMLRWarning || (_disableMLRWarning && !_issuedWarning))
+                        {
+                            jtaLogger.loggerI18N
+                                    .warn(
+                                            "com.arjuna.ats.internal.jta.transaction.jts.lastResource.multipleWarning",
+                                            new Object[]
+                                                    { xaRes });
+                            
+                            _issuedWarning = true;
+                        }
                     }
                     else
                     {
                         jtaLogger.loggerI18N
                                 .warn(
-                                        "com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.disallow",
+                                        "com.arjuna.ats.internal.jta.transaction.jts.lastResource.disallow",
                                         new Object[]
                                                 { xaRes });
                     }
@@ -1930,6 +1934,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED ;
 	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE ;
+	
+	private static boolean _disableMLRWarning = false;
+        private static boolean _issuedWarning = false;
 
 	static
 	{
@@ -1966,6 +1973,15 @@ public class TransactionImple implements javax.transaction.Transaction,
                 if (ALLOW_MULTIPLE_LAST_RESOURCES && jtaLogger.loggerI18N.isWarnEnabled())
                 {
                     jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.lastResource.startupWarning");
+                }
+                
+                String disableMLRW = jtaPropertyManager.getPropertyManager().getProperty(Environment.DISABLE_MULTIPLE_LAST_RESOURCES_WARNING, "false");
+                
+                if ("true".equalsIgnoreCase(disableMLRW))
+                {
+                    jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.lastResource.disableWarning");
+                    
+                    _disableMLRWarning = true;
                 }
 	}
 

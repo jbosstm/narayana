@@ -100,6 +100,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *          You have chosen to enable multiple last resources in the transaction
  *          manager. This is transactionally unsafe and should not be relied
  *          upon.
+ * @message com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.disableWarning
+ *          [com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.disableWarning]
+ *          You have chosen to disable the Multiple Last Resources warning. You will see it only once.
  */
 
 public class TransactionImple implements javax.transaction.Transaction,
@@ -967,11 +970,16 @@ public class TransactionImple implements javax.transaction.Transaction,
                 {
                     if (ALLOW_MULTIPLE_LAST_RESOURCES)
                     {
-                        jtaLogger.loggerI18N
-                                .warn(
-                                        "com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning",
-                                        new Object[]
-                                                { xaRes });
+                        if (!_disableMLRWarning || (_disableMLRWarning && !_issuedWarning))
+                        {
+                            jtaLogger.loggerI18N
+                                    .warn(
+                                            "com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.multipleWarning",
+                                            new Object[]
+                                                    { xaRes });
+                            
+                            _issuedWarning = true;
+                        }
                     }
                     else
                     {
@@ -1922,7 +1930,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED;
 
 	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE;
-
+	
+	private static boolean _disableMLRWarning = false;
+	private static boolean _issuedWarning = false;
+	
 	static
 	{
 		final String xaTransactionTimeoutEnabled = jtaPropertyManager.propertyManager
@@ -1972,6 +1983,15 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 			jtaLogger.loggerI18N
 					.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.startupWarning");
+		}
+		
+		String disableMLRW = jtaPropertyManager.getPropertyManager().getProperty(Environment.DISABLE_MULTIPLE_LAST_RESOURCES_WARNING, "false");
+		
+		if ("true".equalsIgnoreCase(disableMLRW))
+		{
+		    jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.lastResource.disableWarning");
+		    
+		    _disableMLRWarning = true;
 		}
 	}
 
