@@ -82,6 +82,12 @@ import javax.transaction.xa.XAException;
  * @message com.arjuna.ats.internal.jta.resources.arjunacore.assumecomplete
  *          [com.arjuna.ats.internal.jta.resources.arjunacore.assumecomplete]
  *          Being told to assume complete on Xid {0}
+ * @message com.arjuna.ats.internal.jta.resources.arjunacore.savestateerror
+ *          [com.arjuna.ats.internal.jta.resources.arjunacore.savestateerror]
+ *          An error occurred during save_state for XAResource {0} and transaction {1}
+ * @message com.arjuna.ats.internal.jta.resources.arjunacore.restorestateerror
+ *          [com.arjuna.ats.internal.jta.resources.arjunacore.restorestateerror]
+ *          An error occurred during restore_state for XAResource {0} and transaction {1}
  */
 
 public class XAResourceRecord extends AbstractRecord
@@ -263,13 +269,13 @@ public class XAResourceRecord extends AbstractRecord
 
 			if (_theXAResource.prepare(_tranID) == XAResource.XA_RDONLY)
 			{
-                if (TxControl.isReadonlyOptimisation())
-                {
-                    // we won't be called again, so we need to tidy up now
-                    removeConnection();
-                }
+			    if (TxControl.isReadonlyOptimisation())
+			    {
+			        // we won't be called again, so we need to tidy up now
+			        removeConnection();
+			    }
 
-				return TwoPhaseOutcome.PREPARE_READONLY;
+			    return TwoPhaseOutcome.PREPARE_READONLY;
 			}
 			else
 				return TwoPhaseOutcome.PREPARE_OK;
@@ -1042,8 +1048,15 @@ public class XAResourceRecord extends AbstractRecord
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
-
+		    if (jtaLogger.loggerI18N.isWarnEnabled())
+                    {
+                            jtaLogger.loggerI18N
+                                            .warn(
+                                                            "com.arjuna.ats.internal.jta.resources.arjunacore.savestateerror",
+                                                            new Object[]
+                                                            { _theXAResource, _tranID }, e);
+                    }
+		    
 			res = false;
 		}
 
@@ -1167,9 +1180,16 @@ public class XAResourceRecord extends AbstractRecord
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+		    if (jtaLogger.loggerI18N.isWarnEnabled())
+		    {
+		        jtaLogger.loggerI18N
+		        .warn(
+		                "com.arjuna.ats.internal.jta.resources.arjunacore.restorestateerror",
+		                new Object[]
+		                           { _theXAResource, _tranID }, e);
+		    }
 
-			res = false;
+		    res = false;
 		}
 
 		if (res)

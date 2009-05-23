@@ -82,10 +82,13 @@ import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
  *          {0} - null transaction!
  * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror
  *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror] {0}
- *          caused an XA error: {1}
+ *          caused an XA error: {1} from resource {2} in transaction {3}
  * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.loadstateread
  *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.loadstateread]
  *          Reading state caught: {1}
+ * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.generror
+ *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.generror] {0}
+ *          caused an error from resource {1} in transaction {2}
  */
 
 public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
@@ -180,7 +183,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	/**
 	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed
 	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed]
-	 *          XAResource prepare failed with: {1}
+	 *          XAResource prepare failed on resource {1} for transaction {2} with: {3}
 	 */
 
 	public org.omg.CosTransactions.Vote prepare() throws HeuristicMixed,
@@ -266,7 +269,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						.warn(
 								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed",
 								new Object[]
-								{ XAHelper
+								{ _theXAResource, _tranID, XAHelper
 										.printXAErrorCode(e1) });
 			}
 
@@ -306,7 +309,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						.warn(
 								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed",
 								new Object[]
-								{ e2 });
+								{ _theXAResource, _tranID, e2 });
 			}
 
 			if (_rollbackOptimization) // won't have rollback called on it
@@ -414,7 +417,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 											{
 													"XAResourceRecord.rollback",
 													XAHelper
-															.printXAErrorCode(e1) });
+															.printXAErrorCode(e1), _theXAResource, _tranID });
 						}
 
 						switch (e1.errorCode)
@@ -457,8 +460,17 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				}
 				catch (Exception e2)
 				{
-					e2.printStackTrace();
 
+                                    if (jtaLogger.loggerI18N.isWarnEnabled())
+                                    {
+                                            jtaLogger.loggerI18N
+                                                            .warn(
+                                                                            "com.arjuna.ats.internal.jta.resources.jts.orbspecific.generror",
+                                                                            new Object[]
+                                                                            {
+                                                                                            "XAResourceRecord.rollback",
+                                                                                             _theXAResource, _tranID }, e2);
+                                    }
 					throw new UNKNOWN();
 				}
 				finally
@@ -546,7 +558,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 											{
 													"XAResourceRecord.commit",
 													XAHelper
-															.printXAErrorCode(e1) });
+															.printXAErrorCode(e1), _theXAResource, _tranID });
 						}
 
 						/*
@@ -607,7 +619,16 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				{
 					_committed = false;
 
-                    e2.printStackTrace();
+					if (jtaLogger.loggerI18N.isWarnEnabled())
+                                        {
+                                                jtaLogger.loggerI18N
+                                                                .warn(
+                                                                                "com.arjuna.ats.internal.jta.resources.jts.orbspecific.generror",
+                                                                                new Object[]
+                                                                                {
+                                                                                                "XAResourceRecord.commit",
+                                                                                                 _theXAResource, _tranID }, e2);
+                                        }
 
 					throw new UNKNOWN();
 				}
