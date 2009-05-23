@@ -83,6 +83,7 @@ package com.arjuna.ats.arjuna.common;
  * <li> RECOVERY_MANAGER_PORT = com.arjuna.ats.internal.arjuna.recovery.recoveryPort
  * <li> XA_NODE_IDENTIFIER = com.arjuna.ats.arjuna.xa.nodeIdentifier
  * <li> DEFAULT_TIMEOUT = com.arjuna.ats.arjuna.coordinator.defaultTimeout
+ * <li> CHECKEDACTION_FACTORY = com.arjuna.ats.coordinator.checkedActionFactory
  * </ul>
  *
  * @author Mark Little (mark@arjuna.com)
@@ -154,6 +155,7 @@ public class Environment
     public static final String PROCESS_IMPLEMENTATION = "com.arjuna.ats.internal.arjuna.utils.processImplementation";
     public static final String PROCESS_IDENTIFIER = "com.arjuna.ats.internal.arjuna.utils.pid";
     public static final String BEFORECOMPLETION_WHEN_ROLLBACKONLY = "com.arjuna.ats.coordinator.beforeCompletionWhenRollbackOnly";
+    public static final String CHECKEDACTION_FACTORY = "com.arjuna.ats.coordinator.checkedActionFactory";
     
     /**
       * Constant that holds the name of the environment property

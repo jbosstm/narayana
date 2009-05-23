@@ -41,6 +41,7 @@ import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.utils.ThreadUtil;
 import com.arjuna.ats.arjuna.utils.Utility;
+import com.arjuna.ats.internal.arjuna.coordinator.CheckedActionFactoryImple;
 import com.arjuna.ats.internal.arjuna.thread.*;
 import java.util.*;
 
@@ -48,6 +49,7 @@ import java.io.IOException;
 
 import com.arjuna.common.util.logging.*;
 
+import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 /**
@@ -278,6 +280,12 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
  * @message com.arjuna.ats.arjuna.coordinator.BasicAction_71
  *          [com.arjuna.ats.arjuna.coordinator.BasicAction_71] - Deactivation of
  *          atomic action with id {0} and type {1} unexpectedly failed
+ * @message com.arjuna.ats.arjuna.coordinator.checkedactionfactory
+ *          [com.arjuna.ats.arjuna.coordinator.checkedactionfactory] - Failed to resolve
+ *          CheckedActionFactory class {0}
+ * @message com.arjuna.ats.arjuna.coordinator.cafactoryerror
+ *          [com.arjuna.ats.arjuna.coordinator.cafactoryerror] - Cannot continue due to
+ *          CheckedActionFactory resolution problem with
  */
 
 public class BasicAction extends StateManager
@@ -309,7 +317,7 @@ public class BasicAction extends StateManager
 		recordBeingHandled = null;
 
 		heuristicDecision = TwoPhaseOutcome.PREPARE_OK;
-		_checkedAction = new CheckedAction();
+		_checkedAction = _checkedActionFactory.getCheckedAction(get_uid(), type());
 
 		_childThreads = null;
 		_childActions = null;
@@ -347,7 +355,7 @@ public class BasicAction extends StateManager
 		recordBeingHandled = null;
 
 		heuristicDecision = TwoPhaseOutcome.PREPARE_OK;
-		_checkedAction = new CheckedAction();
+		_checkedAction = _checkedActionFactory.getCheckedAction(get_uid(), type());
 
 		_childThreads = null;
 		_childActions = null;
@@ -1975,7 +1983,7 @@ public class BasicAction extends StateManager
 		recordBeingHandled = null;
 
 		heuristicDecision = TwoPhaseOutcome.PREPARE_OK;
-		_checkedAction = new CheckedAction();
+		_checkedAction = _checkedActionFactory.getCheckedAction(get_uid(), type());
 
 		_childThreads = null;
 		_childActions = null;
@@ -2010,7 +2018,7 @@ public class BasicAction extends StateManager
 		recordBeingHandled = null;
 
 		heuristicDecision = TwoPhaseOutcome.PREPARE_OK;
-		_checkedAction = new CheckedAction();
+		_checkedAction = _checkedActionFactory.getCheckedAction(get_uid(), type());
 
 		_childThreads = null;
 		_childActions = null;
@@ -4002,8 +4010,7 @@ public class BasicAction extends StateManager
 	private BasicAction parentAction;
 	private AbstractRecord recordBeingHandled;
 	private int heuristicDecision;
-	private CheckedAction _checkedAction; // control what happens if threads
-										  // active when terminating.
+	private CheckedAction _checkedAction; // control what happens if threads active when terminating.
 
 	/*
 	 * We need to keep track of the number of threads associated with each
@@ -4015,6 +4022,42 @@ public class BasicAction extends StateManager
 	private Hashtable _childActions;
 
 	//    private Mutex _lock = new Mutex(); // TODO
+	
+	private static CheckedActionFactory _checkedActionFactory;
+	
+	static
+	{
+	    /*
+	     * Make sure this can only be set once. Bad things can happen if the factory changes
+	     * during execution.
+	     */
+	    
+	    String checkedActionFactory = arjPropertyManager.getPropertyManager().getProperty(Environment.CHECKEDACTION_FACTORY);
+	    
+	    if (checkedActionFactory != null)
+	    {
+	        try
+	        {
+	            Class factory = Thread.currentThread().getContextClassLoader().loadClass(checkedActionFactory);
+	            
+	            _checkedActionFactory = (CheckedActionFactory) factory.newInstance();
+	        }
+	        catch (final Exception ex)
+	        {
+	            ex.printStackTrace();
+	            
+	            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+	            {
+	                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.checkedactionfactory",
+	                                            new Object[]{ checkedActionFactory }, ex);
+	            }
+	            
+	            throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.coordinator.cafactoryerror")+" "+checkedActionFactory, ex);	            
+	        }
+	    }
+	    else
+	        _checkedActionFactory = new CheckedActionFactoryImple();
+	}
 
 }
 
