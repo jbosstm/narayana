@@ -125,13 +125,6 @@
         <zip basedir="${workdir}/build/${tag}" destfile="${workdir}/jbossts-jta-${filename}.zip"
              includes="${tag}/**"/>
         
-        <!-- build and package as-tests -->
-        <ant dir="${workdir}/build/${tag}/qa" antfile="build.xml" />
-        <zip destfile="${workdir}/jbossts-as-tests.zip">
-            <fileset file="${workdir}/build/${tag}/qa/build/qa/lib/astest.jar" />
-            <fileset dir="${workdir}/build/${tag}/qa/build/qa" includes="scripts/**,resources/java.policy" />
-        </zip>
-
         <!-- build the full release (assumes XTS builds against JTS) -->
         <delete dir="${workdir}/build"/>
         <mkdir dir="${workdir}/build"/>
@@ -252,18 +245,6 @@
             <arg value="-DrepositoryId=${mvn.repositoryId}"/>
             <arg value="-DgroupId=jboss.jbossts"/>
             <arg value="-DartifactId=jbossts-tools"/>
-            <arg value="-Dversion=${filename}"/>
-            <arg value="-DgeneratePom=true"/>
-        </exec>
-
-        <exec executable="mvn" dir="${workdir}">
-            <arg value="deploy:deploy-file"/>
-            <arg value="-Dfile=${workdir}/build/${tag}/bin/jbossts-as-tests.zip"/>
-            <arg value="-Dpackaging=zip"/>
-            <arg value="-Durl=${mvn.url}"/>
-            <arg value="-DrepositoryId=${mvn.repositoryId}"/>
-            <arg value="-DgroupId=jboss.jbossts"/>
-            <arg value="-DartifactId=jbossts-as-tests"/>
             <arg value="-Dversion=${filename}"/>
             <arg value="-DgeneratePom=true"/>
         </exec>
