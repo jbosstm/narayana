@@ -285,13 +285,8 @@ public class LogFactory {
         {
             try
             {
-                // find out which log subsystem to use; by default Jakarta Commons Logging:
-                logSystem = commonPropertyManager.propertyManager.getProperty(LOGGER_PROPERTY, null);
-                // if the property manager has no info set, use the system property
-                // and if this isn't set either, default to JAKARTA simple logging.
-                if (logSystem == null) {
-                    logSystem = System.getProperty(LOGGER_PROPERTY, NOOP);
-                }
+                // find out which log subsystem to use; by default log4j:
+                logSystem = commonPropertyManager.propertyManager.getProperty(LOGGER_PROPERTY, "log4j");
 
                 debugLevel = commonPropertyManager.propertyManager.getProperty(DEBUG_LEVEL, "0xffffffff");
                 facLevel = commonPropertyManager.propertyManager.getProperty(FACILITY_LEVEL, "0xfffffff");

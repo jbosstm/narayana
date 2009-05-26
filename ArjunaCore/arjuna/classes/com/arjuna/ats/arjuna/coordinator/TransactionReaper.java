@@ -1116,6 +1116,10 @@ public class TransactionReaper
                         }
                     }
 				}
+                else
+                {
+                    checkPeriod = defaultCheckPeriod;
+                }
 			}
 			else
 				checkPeriod = Long.MAX_VALUE;

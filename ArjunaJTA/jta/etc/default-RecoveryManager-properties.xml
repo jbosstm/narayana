@@ -29,55 +29,21 @@
   xsi:noNamespaceSchemaLocation="transaction-service-2_0.xsd">
     <properties name="recoverymanager" depends="arjuna,txoj,jta">
       <!--
-        Properties used only by the RecoveryManager.
-      -->
-      <!--
-        Periodic recovery settings.
-        Time values in this section are in seconds.
-      -->
-      <!--
-        Interval in seconds between initiating the periodic recovery modules.
-        Default is 120 seconds.
-      -->
-      <property
-        name="com.arjuna.ats.arjuna.recovery.periodicRecoveryPeriod"
-        value="120"/>
-      <!--
-        Interval in seconds between first and second pass of periodic recovery.
-        Default is 10 seconds.
-      -->
-      <property
-        name="com.arjuna.ats.arjuna.recovery.recoveryBackoffPeriod"
-        value="10"/>
-      <!--
-        The port number on which the recovery manager listens.
-      -->
-      <property
-        name="com.arjuna.ats.arjuna.recovery.recoveryPort"
-        value="4712"/>
-      <!--
-        The address on which the recovery manager listens.
-        If running within an AS then the address the AS is bound to (jboss.bind.address) takes precedence
-      -->
-      <property
-        name="com.arjuna.ats.arjuna.recovery.recoveryAddress"
-        value=""/>
-
-      <!--
         Periodic recovery modules to use.  Invoked in sort-order of names.
+       	Check http://www.jboss.org/community/docs/DOC-10788 for more information
+       	on recovery modules and their configuration when running in various
+       	deployments.
       -->
-      <property
-        name="com.arjuna.ats.arjuna.recovery.recoveryExtension1"
-        value="com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule"/>
-      <property
-        name="com.arjuna.ats.arjuna.recovery.recoveryExtension2"
-        value="com.arjuna.ats.internal.txoj.recovery.TORecoveryModule"/>
-      <property
-        name="com.arjuna.ats.arjuna.recovery.recoveryExtension3"
-        value="com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule"/>
-      <!--
-        Expired entry removal
-      -->
+        <property
+                name="com.arjuna.ats.arjuna.recovery.recoveryExtension1"
+                value="com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule"/>
+        <property
+                name="com.arjuna.ats.arjuna.recovery.recoveryExtension2"
+                value="com.arjuna.ats.internal.txoj.recovery.TORecoveryModule"/>
+        <property
+                name="com.arjuna.ats.arjuna.recovery.recoveryExtension3"
+                value="com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule"/>
+
       <!--
         Expiry scanners to use (order of invocation is random).
         Names must begin with "com.arjuna.ats.arjuna.recovery.expiryScanner"
@@ -85,26 +51,22 @@
       <property
         name="com.arjuna.ats.arjuna.recovery.expiryScannerTransactionStatusManager"
         value="com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner"/>
+        <!-- Enable the following to move logs that cannot be completed by failure recovery. But
+        be sure you know what you are doing and why! -->
+        <!-- property
+            name="com.arjuna.ats.arjuna.recovery.expiryScannerAtomicActionLog" value="com.arjuna.ats.internal.arjuna.recovery.AtomicActionExpiryScanner"/ -->
 
       <!--
-        Interval, in hours, between running the expiry scanners.
-        This can be quite long. The absolute value determines the interval -
-        if the value is negative, the scan will NOT be run until after one
-        interval has elapsed. If positive the first scan will be immediately
-        after startup. Zero will prevent any scanning.
-        Default  = 12 = run immediately, then every 12 hours.
+        The address and port number on which the recovery manager listens
+        If running within an AS then the address the AS is bound to (jboss.bind.address) takes precedence
       -->
       <property
-        name="com.arjuna.ats.arjuna.recovery.expiryScanInterval"
-        value="12"/>
-      <!--
-        This is the interval, in hours, after which a process that cannot be contacted will be considered dead.
-        It should be long enough to avoid accidentally removing valid entries due to short lived
-        transient errors such as network downtime. Zero = Never removed.  Default is 12.
-      -->
+        name="com.arjuna.ats.arjuna.recovery.recoveryPort"
+        value="4712"/>
       <property
-        name="com.arjuna.ats.arjuna.recovery.transactionStatusManagerExpiryTime"
-        value="12"/>
+        name="com.arjuna.ats.arjuna.recovery.recoveryAddress"
+        value=""/>
+
       <!--
         Use this to fix the port on which the TransactionStatusManager listens,
         The default behaviour is to use any free port.
@@ -128,9 +90,8 @@
           Caution: use of this property can allow multiple recovery processes to run on the same ObjectStore
           if you are not careful. That in turn can lead to incorrect transaction processing. Use with care.
         -->
-        <property
-            name="com.arjuna.ats.arjuna.recovery.recoveryListener"
-            value="YES"/>
-
+      <property
+          name="com.arjuna.ats.arjuna.recovery.recoveryListener"
+          value="YES"/>
     </properties>
 </transaction-service>
