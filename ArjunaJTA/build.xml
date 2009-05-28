@@ -39,6 +39,7 @@
 	<property name="com.arjuna.buildsystem.build.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
 
 	<property name="com.arjuna.common.build.lib" location="${com.arjuna.common.dir}/build/lib"/>
+    <property name="com.arjuna.common.build.classes" location="${com.arjuna.common.dir}/build/classes"/>
 	<property name="com.arjuna.arjunacore.build.lib" location="${com.arjuna.arjunacore.dir}/lib"/>
 
 	<!-- Set external property defaults -->
@@ -168,6 +169,13 @@
 			</fileset>
 		</jar>
 		<delete file="built_using_java_${java.specification.version}"/>
+
+        <!-- bundle jbossts-common into the product .jar -->
+        <jar destfile="${com.hp.mwlabs.ts.product.jar.dest}/${com.hp.mw.ts.module.name.lowercase}.jar" update="true">
+			<fileset dir="${com.arjuna.common.build.classes}">
+				<exclude name="build_using*"/>
+			</fileset>
+		</jar>
 
 	</target>
 
