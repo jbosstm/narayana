@@ -726,8 +726,6 @@ protected void packHeader (OutputObjectState os, Uid txId,
      * @since JTS 2.1.
      * @param txId the identity of the transaction that last caused the
      * state to be written to the object store.
-     * @return the <code>Uid</code> of the process that last managed this
-     * state.
      */
 
 protected void unpackHeader (InputObjectState os, Uid txId,

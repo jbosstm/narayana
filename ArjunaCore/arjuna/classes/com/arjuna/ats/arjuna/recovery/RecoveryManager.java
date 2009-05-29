@@ -106,7 +106,7 @@ public class RecoveryManager
      * been created yet then it will be. The manager will be created in the
      * INDIRECT_MANAGEMENT mode.
      *
-     * @throw IllegalArgumentException thrown if the manager has already been
+     * @throws IllegalArgumentException thrown if the manager has already been
      * created in a different mode to that requested.
      *
      * @return the manager.
@@ -124,7 +124,7 @@ public class RecoveryManager
      *
      * @param mode the management mode for the manager.
      *
-     * @throw IllegalArgumentException thrown if the manager has already been
+     * @throws IllegalArgumentException thrown if the manager has already been
      * created in a different mode to that requested.
      *
      * @return the manager.
@@ -154,14 +154,14 @@ public class RecoveryManager
     /**
      * Force a recovery scan now. This is a blocking operation
      * and will only return once the recovery scan has completed.
-     * 
+     *
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
 
     public final void scan ()
     {
         checkState();
-        
+
         _theImple.scan();
     }
 
@@ -173,14 +173,14 @@ public class RecoveryManager
      * @param callback callback The callback mechanism used to
      * inform users that the scan has completed. If this is <code>null</code>
      * then no callback will happen and asynchronous scanning will occur.
-     * 
+     *
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
 
     public final void scan (RecoveryScan callback)
     {
         checkState();
-        
+
 	ScanThread st = new ScanThread(_theImple, callback);
 
 	st.start();
@@ -188,9 +188,9 @@ public class RecoveryManager
 
     /**
      * Stop the periodic recovery manager waiting for any recovery scan in progress to complete.
-     * 
+     *
      * @throws IllegalStateException if the recovery manager has been shutdown.
-     * 
+     *
      * @deprecated use terminate instead.
      */
 
@@ -203,51 +203,51 @@ public class RecoveryManager
      * Stop the periodic recovery manager.
      * @param async false means wait for any recovery scan in progress to complete.
      * @throws IllegalStateException if the recovery manager has been shutdown.
-     * 
+     *
      * @deprecated use terminate instead.
      */
 
     public final void stop (boolean async)
     {
         checkState();
-        
+
         _theImple.stop(async);
     }
-    
+
     /**
      * Terminate and cleanup the recovery manager. There is no going back from this. This is a
      * synchronous operation so return means that the recovery has completed.
-     * 
+     *
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
-    
+
     public final void terminate ()
     {
         terminate(false);
     }
-    
+
     /**
      * Terminate and cleanup the recovery manager. There is no going back from this. Can be called
      * synchronous or asynchronously. If you have any intention of restarting the recovery manager
      * later then you MUST use the async=false option.
-     * 
+     *
      * @param async false means wait for any recovery scan in progress to complete.
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
-    
+
     public final synchronized void terminate (boolean async)
     {
         checkState();
-        
+
         _theImple.stop(async);
         _theImple = null;
     }
-    
+
     /**
      * If the recovery manager has been shutdown previously then recreate it in
      * the same mode as before. Otherwise ignore.
      */
-    
+
     public final synchronized void initialize ()
     {
         if (_theImple == null)
@@ -258,21 +258,21 @@ public class RecoveryManager
                 _theImple = new RecoveryManagerImple(false);
         }
     }
-    
+
     // does nothing when running embedded.
-    
+
     /**
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
-    
+
     public void waitForTermination ()
     {
         checkState();
-        
+
         _theImple.waitForTermination();
         _theImple = null;
     }
-    
+
     /**
      * Suspend the recovery manager. If the recovery manager is in the process of
      * doing recovery scans then it will be suspended afterwards, in order to
@@ -296,19 +296,19 @@ public class RecoveryManager
      * @param async false means wait for the recovery manager to finish any scans before returning.
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
-    
+
     public void suspend (boolean async)
     {
         checkState();
-        
+
         _theImple.suspendScan(async);
     }
-    
+
     /**
      * @throws IllegalStateException if the recovery manager has been shutdown.
      * @deprecated use resume
      */
-    
+
     public void resumeScan ()
     {
         resume();
@@ -317,23 +317,23 @@ public class RecoveryManager
     /**
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
-    
+
     public void resume ()
     {
         checkState();
-        
+
         _theImple.resumeScan();
     }
-    
+
     /**
      * Start the recovery manager thread.
-     * 
+     *
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
     public void startRecoveryManagerThread()
     {
         checkState();
-        
+
         _theImple.start() ;
     }
 
@@ -347,7 +347,7 @@ public class RecoveryManager
     public final void addModule (RecoveryModule module)
     {
         checkState();
-        
+
 	_theImple.addModule(module);
     }
 
@@ -362,13 +362,13 @@ public class RecoveryManager
     public final void removeModule (RecoveryModule module, boolean waitOnScan)
     {
         checkState();
-        
+
 	_theImple.removeModule(module, waitOnScan);
     }
 
     /**
      * Obtain a snapshot list of available recovery modules.
-     * 
+     *
      * @return a snapshot list of the currently installed recovery modules
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
@@ -376,7 +376,7 @@ public class RecoveryManager
     public final Vector getModules ()
     {
         checkState();
-        
+
 	return _theImple.getModules();
     }
 
@@ -534,7 +534,7 @@ public class RecoveryManager
 
 	_mode = mode;
     }
-    
+
     private final void checkState ()
     {
         if (_theImple == null)

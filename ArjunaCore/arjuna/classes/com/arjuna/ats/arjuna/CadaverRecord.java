@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: CadaverRecord.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -65,41 +65,41 @@ public class CadaverRecord extends PersistenceRecord
     /**
      * Create a new instance, passing in the object that is being managed.
      *
-     * @param OutputObjectState os the state of the object that is being
+     * @param os the state of the object that is being
      * removed.
-     * @ObjectStore objStore the object store instance used to manipulate the
+     * @param objStore the object store instance used to manipulate the
      * persistent state.
-     * @param StateManager sm the object being removed.
+     * @param sm the object being removed.
      */
 
     public CadaverRecord (OutputObjectState os, ObjectStore objStore,
 			  StateManager sm)
     {
 	super(os, objStore, sm);
-	
+
 	newStateIsValid = ((os != null) ? true : false);
 	oldState = null;
 	oType = RecordType.NONE_RECORD;
 	store = objStore;  // implicit ref count in Java
-	
+
 	if (store != null)
 	{
 	    /*
 	     * If the object goes out of scope its object store may
 	     * be inaccessable - increase reference count to compensate
 	     */
-		
+
 	    /*
 	     * Don't need this in Java.
 	     */
-		
+
 	    //	    ObjectStore.reference(store);
 	}
 
 	if (tsLogger.arjLogger.debugAllowed())
 	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
-				     FacilityCode.FAC_ABSTRACT_REC, 
+	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
+				     FacilityCode.FAC_ABSTRACT_REC,
 				     "CadaverRecord::CadaverRecord("+os+", "+sm.get_uid()+")");
 	}
     }
@@ -127,7 +127,7 @@ public class CadaverRecord extends PersistenceRecord
     {
 	return RecordType.PERSISTENCE;
     }
-    
+
     /**
      * The ClassName representation of this class.
      */
@@ -136,7 +136,7 @@ public class CadaverRecord extends PersistenceRecord
     {
 	return ArjunaNames.Implementation_AbstractRecord_CadaverRecord();
     }
-    
+
     /**
      * The nested transaction has aborted. The record will invalidate any
      * new state.
@@ -151,10 +151,10 @@ public class CadaverRecord extends PersistenceRecord
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::nestedAbort() for "+order());
 	}
-	
+
 	if (oldState != null)
 	    newStateIsValid = false;
-	
+
 	if (oType == RecordType.RECOVERY)
 	{
 	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
@@ -163,18 +163,18 @@ public class CadaverRecord extends PersistenceRecord
 					    new Object[]{ order(), getTypeOfObject() } );
 	    }
 	}
-	
+
 	/*
 	 * No need to forget the action since this object is
 	 * being deleted so it is unlikely to have modified called
 	 * on it!
 	 */
-	
+
 	//	super.forgetAction(false);
-	
+
 	return TwoPhaseOutcome.FINISH_OK;
     }
-    
+
     /**
      * The nested transaction is preparing. If there is any new state for
      * the object being removed, and that state is valid, then this record
@@ -183,7 +183,7 @@ public class CadaverRecord extends PersistenceRecord
      * If we have no new state then we cannot commit and must force an
      * abort. Do this by failing the prepare phase.
      */
-    
+
     public int nestedPrepare ()
     {
 	if (tsLogger.arjLogger.debugAllowed())
@@ -191,7 +191,7 @@ public class CadaverRecord extends PersistenceRecord
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::nestedPrepare() for "+order());
 	}
-	
+
 	if (newStateIsValid)
 	    return super.nestedPrepare();
 	else
@@ -209,9 +209,9 @@ public class CadaverRecord extends PersistenceRecord
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::topLevelAbort() for "+order());
 	}
-	
+
 	newStateIsValid = false;
-	
+
 	if (oType == RecordType.RECOVERY)
 	{
 	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
@@ -220,19 +220,19 @@ public class CadaverRecord extends PersistenceRecord
 					    new Object[]{ order(), getTypeOfObject() } );
 	    }
 	}
-	
+
 	// super.forgetAction(false);
-	
+
 	return TwoPhaseOutcome.FINISH_OK;
     }
-    
+
     /**
      * At topLevelCommit we commit the uncommitted version already saved
      * into object store.
      * Cannot use inherited version since that assumes object is alive
      * instead talk directly to the object store itself.
      */
-    
+
     public int topLevelCommit ()
     {
 	if (tsLogger.arjLogger.debugAllowed())
@@ -240,15 +240,15 @@ public class CadaverRecord extends PersistenceRecord
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::topLevelCommit() for "+order());
 	}
-	
+
 	boolean res = true;
 	OutputObjectState oState = super.state;
-	
+
 	if ((oState != null) && (oType == RecordType.PERSISTENCE))
 	{
 	    if (store == null)
 		return TwoPhaseOutcome.FINISH_ERROR;
-		
+
 	    try
 	    {
 		res = store.commit_state(oState.stateUid(), oState.type());
@@ -258,18 +258,18 @@ public class CadaverRecord extends PersistenceRecord
 		res = false;
 	    }
 	}
-	
+
 	// super.forgetAction(false);
-	
+
 	return ((res) ? TwoPhaseOutcome.FINISH_OK : TwoPhaseOutcome.FINISH_ERROR);
     }
-    
+
     /**
      * At topLevelPrepare write uncommitted version into object store.
      * Cannot use inherited version since that assumes object is alive
      * instead talk directly to the object store itself.
      */
-    
+
     public int topLevelPrepare ()
     {
 	if (tsLogger.arjLogger.debugAllowed())
@@ -277,10 +277,10 @@ public class CadaverRecord extends PersistenceRecord
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::topLevelPrepare() for "+order());
 	}
-	
+
 	int tlpOk = TwoPhaseOutcome.PREPARE_NOTOK;
 	OutputObjectState oState = (newStateIsValid ? super.state : oldState);
-	
+
 	if (oState != null)
 	{
 	    if (oType == RecordType.PERSISTENCE)
@@ -303,7 +303,7 @@ public class CadaverRecord extends PersistenceRecord
 	    else
 		tlpOk = TwoPhaseOutcome.PREPARE_OK;
 	}
-    
+
 	return tlpOk;
     }
 
@@ -311,7 +311,7 @@ public class CadaverRecord extends PersistenceRecord
      * Override AbstractRecord.print to write specific information to
      * the specified stream.
      *
-     * @param PrintWriter strm the stream to use.
+     * @param strm the stream to use.
      */
 
     public void print (PrintWriter strm)
@@ -353,12 +353,12 @@ public class CadaverRecord extends PersistenceRecord
      *
      * @return a new CadaverRecord.
      */
-    
+
     public static AbstractRecord create ()
     {
 	return new CadaverRecord();
     }
-    
+
     /**
      * merge takes the information from the incoming PersistenceRecord and
      * uses it to initialise the oldState information. This is required
@@ -366,20 +366,20 @@ public class CadaverRecord extends PersistenceRecord
      * final state of an object normally - which is required if the action
      * commits.
      *
-     * @param AbstractRecord mergewith The record to merge with.
+     * @param mergewith The record to merge with.
      */
- 
+
     public void merge (AbstractRecord mergewith)
     {
 	/*
-	 *  Following assumes that value returns a pointer to the 
+	 *  Following assumes that value returns a pointer to the
 	 *  old state maintained in the PersistenceRecord (as an ObjectState).
 	 *  Here we create a copy of that state allowing the original
 	 *  to be deleted
 	 */
 
 	oType = mergewith.typeIs();
-    
+
 	if (oldState != null)
 	{
 	    if (newStateIsValid)
@@ -387,19 +387,19 @@ public class CadaverRecord extends PersistenceRecord
 		oldState = null;
 	    }
 	    else
-	    { 
+	    {
 		setValue(oldState);
 		newStateIsValid = true;
 	    }
 	}
-    
+
 	oldState = new OutputObjectState((OutputObjectState)(mergewith.value()));
     }
 
     /**
      * Overrides AbstractRecord.shouldMerge
      *
-     * @param AbstractRecord ar the record to potentially merge with.
+     * @param ar the record to potentially merge with.
      *
      * @return <code>true</code> if this instance and the parameter have the
      * same id (order()) and the parameter is either persistent or recoverable.
@@ -418,7 +418,7 @@ public class CadaverRecord extends PersistenceRecord
     /**
      * Overrides AbstractRecord.shouldReplace
      *
-     * @param AbstractRecord ar the record to potentially replace this
+     * @param ar the record to potentially replace this
      * instance.
      *
      * @return <code>true</code> if this instance and the parameter have the
@@ -426,7 +426,7 @@ public class CadaverRecord extends PersistenceRecord
      * <code>false</code> otherwise.
      * @see com.arjuna.ats.arjuna.coordinator.RecordType
      */
-    
+
     public boolean shouldReplace (AbstractRecord ar)
     {
 	return (((order().equals(ar.order())) &&
@@ -455,10 +455,10 @@ public class CadaverRecord extends PersistenceRecord
 				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::CadaverRecord ()");
 	}
     }
-    
+
     private boolean           newStateIsValid;
     private OutputObjectState oldState;
     private int               oType;
     private ObjectStore       store;
-    
+
 }

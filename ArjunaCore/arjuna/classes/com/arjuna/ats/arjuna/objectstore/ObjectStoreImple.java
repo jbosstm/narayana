@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: ObjectStoreImple.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -74,9 +74,9 @@ public abstract class ObjectStoreImple
     /**
      * Obtain all of the Uids for a specified type.
      *
-     * @param String s The type to scan for.
-     * @param InputObjectState buff The object state in which to store the Uids
-     * @param int m The file type to look for (e.g., committed, shadowed).
+     * @param s The type to scan for.
+     * @param buff The object state in which to store the Uids
+     * @param m The file type to look for (e.g., committed, shadowed).
      *
      * @return <code>true</code> if no errors occurred, <code>false</code>
      * otherwise.
@@ -87,7 +87,7 @@ public abstract class ObjectStoreImple
     /**
      * Obtain all types of objects stored in the object store.
      *
-     * @param InputObjectState buff The state in which to store the types.
+     * @param buff The state in which to store the types.
      *
      * @return <code>true</code> if no errors occurred, <code>false</code>
      * otherwise.
@@ -96,8 +96,8 @@ public abstract class ObjectStoreImple
     public abstract boolean allTypes (InputObjectState buff) throws ObjectStoreException;
 
     /**
-     * @param Uid u The object to query.
-     * @param String tn The type of the object to query.
+     * @param u The object to query.
+     * @param tn The type of the object to query.
      *
      * @return the current state of the object's state (e.g., shadowed,
      * committed ...)
@@ -114,8 +114,8 @@ public abstract class ObjectStoreImple
     /**
      * Commit the object's state in the object store.
      *
-     * @param Uid u The object to work on.
-     * @param String tn The type of the object to work on.
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
      *
      * @return <code>true</code> if no errors occurred, <code>false</code>
      * otherwise.
@@ -127,9 +127,9 @@ public abstract class ObjectStoreImple
      * Hide the object's state in the object store. Used by crash
      * recovery.
      *
-     * @param Uid u The object to work on.
-     * @param String tn The type of the object to work on.
-     * 
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
+     *
      * @return <code>true</code> if no errors occurred, <code>false</code>
      * otherwise.
      */
@@ -139,9 +139,9 @@ public abstract class ObjectStoreImple
     /**
      * Reveal a hidden object's state.
      *
-     * @param Uid u The object to work on.
-     * @param String tn The type of the object to work on.
-     * 
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
+     *
      * @return <code>true</code> if no errors occurred, <code>false</code>
      * otherwise.
      */
@@ -151,20 +151,20 @@ public abstract class ObjectStoreImple
     /**
      * Read the object's committed state.
      *
-     * @param Uid u The object to work on.
-     * @param String tn The type of the object to work on.
-     * 
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
+     *
      * @return the state of the object.
      */
 
     public abstract InputObjectState read_committed (Uid u, String tn) throws ObjectStoreException;
-    
+
     /**
      * Read the object's shadowed state.
      *
-     * @param Uid u The object to work on.
-     * @param String tn The type of the object to work on.
-     * 
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
+     *
      * @return the state of the object.
      */
 
@@ -173,9 +173,9 @@ public abstract class ObjectStoreImple
     /**
      * Remove the object's committed state.
      *
-     * @param Uid u The object to work on.
-     * @param String tn The type of the object to work on.
-     * 
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
+     *
      * @return <code>true</code> if no errors occurred, <code>false</code>
      * otherwise.
      */
@@ -185,9 +185,9 @@ public abstract class ObjectStoreImple
     /**
      * Remove the object's uncommitted state.
      *
-     * @param Uid u The object to work on.
-     * @param String tn The type of the object to work on.
-     * 
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
+     *
      * @return <code>true</code> if no errors occurred, <code>false</code>
      * otherwise.
      */
@@ -197,10 +197,10 @@ public abstract class ObjectStoreImple
     /**
      * Write a new copy of the object's committed state.
      *
-     * @param Uid u The object to work on.
-     * @param String tn The type of the object to work on.
-     * @param OutputObjectState buff The state to write.
-     * 
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
+     * @param buff The state to write.
+     *
      * @return <code>true</code> if no errors occurred, <code>false</code>
      * otherwise.
      */
@@ -210,10 +210,10 @@ public abstract class ObjectStoreImple
     /**
      * Write a copy of the object's uncommitted state.
      *
-     * @param Uid u The object to work on.
-     * @param String tn The type of the object to work on.
-     * @param OutputObjectState buff The state to write.
-     * 
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
+     * @param buff The state to write.
+     *
      * @return <code>true</code> if no errors occurred, <code>false</code>
      * otherwise.
      */
@@ -229,9 +229,9 @@ public abstract class ObjectStoreImple
     public void sync () throws java.io.SyncFailedException, ObjectStoreException
     {
     }
-    
+
     /**
-     * @param String localOSRoot the root of the store.
+     * @param localOSRoot the root of the store.
      *
      * @return the full path of the store. localOSRoot is always a relative
      * name. NOTE this path always ends in a /
@@ -250,7 +250,7 @@ public abstract class ObjectStoreImple
 
 	    if (_objectStoreDir == null || _objectStoreDir.length() == 0)
 		throw new ObjectStoreException(Environment.OBJECTSTORE_DIR+" not set.");
-	
+
 	    if (!_objectStoreDir.endsWith(File.separator))
 		_objectStoreDir = _objectStoreDir + File.separator;
 
@@ -258,12 +258,12 @@ public abstract class ObjectStoreImple
 	     * We use the classname of the object store implementation to
 	     * specify the directory for the object store.
 	     */
-	
+
 	    _objectStoreDir = _objectStoreDir + className().stringForm();
 	}
 
 	String toReturn = null;
-	
+
 	if ((localOSRoot == null) || (localOSRoot.length() == 0))
 	{
 	    if ((_objectStoreRoot != null) && (_objectStoreRoot.length() > 0))
@@ -271,16 +271,16 @@ public abstract class ObjectStoreImple
 	    else
 		localOSRoot = "defaultStore"+File.separator;
 	}
-    
+
 	if ((localOSRoot != null) && (localOSRoot.length() > 0))
 	    toReturn = _objectStoreDir + File.separator+localOSRoot;
 
 	if (!toReturn.endsWith(File.separator))
 	    toReturn = toReturn + File.separator;
-	
+
 	return toReturn;
     }
-    
+
     /**
      * Does this store need to do the full write_uncommitted/commit protocol?
      *
@@ -297,9 +297,9 @@ public abstract class ObjectStoreImple
      * Is the current state of the object the same as that provided as the last
      * parameter?
      *
-     * @param Uid u The object to work on.
-     * @param String tn The type of the object.
-     * @param int st The expected type of the object.
+     * @param u The object to work on.
+     * @param tn The type of the object.
+     * @param st The expected type of the object.
      *
      * @return <code>true</code> if the current state is as expected,
      * <code>false</code> otherwise.
@@ -345,27 +345,27 @@ public abstract class ObjectStoreImple
     {
 	return shareStatus;
     }
-    
+
     public final String storeDir ()
     {
 	return _objectStoreDir;
     }
-    
+
     public final String storeRoot ()
     {
 	return _objectStoreRoot;
     }
-    
+
     public static ClassName name ()
     {
 	return ObjectStoreImple._className;
     }
-    
+
     protected ObjectStoreImple ()
     {
 	this(ObjectStore.OS_UNSHARED);
     }
-    
+
     protected ObjectStoreImple (int ss)
     {
 	shareStatus = ss;
@@ -375,7 +375,7 @@ public abstract class ObjectStoreImple
     {
 	parseObjectName(objName);
     }
-    
+
     /**
      * Suppress directories of the specified type from
      * allTypes etc?
@@ -433,7 +433,7 @@ public abstract class ObjectStoreImple
 
     private String _objectStoreRoot = null;
     private String _objectStoreDir = null;
-    
+
     private static final ClassName _className = new ClassName("ObjectStoreImple");
-    
+
 }

@@ -82,13 +82,13 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 		if (parent() != null)
 			parent().removeChildAction(this);
-        
+
         boolean canEnd = true;
         if(status() != ActionStatus.ABORT_ONLY || TxControl.isBeforeCompletionWhenRollbackOnly())
         {
             canEnd = beforeCompletion();
         }
-        
+
 		if (canEnd)
 		{
 			outcome = super.End(report_heuristics);
@@ -105,7 +105,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 	{
 		if (TxControl.enableStatistics)
 			TxStats.incrementApplicationRollbacks();
-		
+
 		if (parent() != null)
 			parent().removeChildAction(this);
 
@@ -188,7 +188,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 	/**
 	 * Get any Throwable that was caught during commit processing but not directly rethrown.
-	 * @return
+	 * @return the Throwable, if any
 	 */
 	public Throwable getDeferredThrowable() {
 		return _deferredThrowable;
@@ -223,7 +223,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 			if (!_beforeCalled)
 			{
 				_beforeCalled = true;
-		
+
 				/*
 				 * If we have a synchronization list then we must be top-level.
 				 */
@@ -365,9 +365,9 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 					while(iterator.hasNext()) {
 						stack.push(iterator.next());
 					}
-		
+
 					iterator = stack.iterator();
-		
+
 					/*
 					 * Regardless of failures, we must tell all synchronizations what
 					 * happened.
@@ -375,14 +375,14 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 					while(!stack.isEmpty())
 					{
 						SynchronizationRecord record = (SynchronizationRecord)stack.pop();
-		
+
 						try
 						{
 							if (!record.afterCompletion(myStatus))
 							{
 								tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4", new Object[]
 								{ record });
-		
+
 								problem = true;
 							}
 						}
@@ -399,14 +399,14 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 							problem = true;
 						}
 					}
-		
+
 					_synchs = null;
 					_currentRecord = null;
 				}
 			}
 			else
 			{
-				
+
 			}
 		}
 
@@ -435,9 +435,9 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
     private SortedSet _synchs;
 	private SynchronizationRecord _currentRecord; // the most recently processed Synchronization.
 	private Throwable _deferredThrowable;
-	
+
 	private Object _syncLock = new Object();
-	
+
 	private boolean _beforeCalled = false;
 	private boolean _afterCalled = false;
 }

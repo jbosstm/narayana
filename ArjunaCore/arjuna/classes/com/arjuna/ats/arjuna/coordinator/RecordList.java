@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: RecordList.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -64,7 +64,7 @@ import com.arjuna.common.util.logging.*;
  * @message com.arjuna.ats.arjuna.coordinator.RecordList_2 [com.arjuna.ats.arjuna.coordinator.RecordList_2] - RecordList::insert({0}) : replacing {1} and {2} for {3}
  * @message com.arjuna.ats.arjuna.coordinator.RecordList_3 [com.arjuna.ats.arjuna.coordinator.RecordList_3] - RecordList::insert({0}) : adding extra record of type {1} before {2} for {3}
  * @message com.arjuna.ats.arjuna.coordinator.RecordList_4 [com.arjuna.ats.arjuna.coordinator.RecordList_4] - RecordList::insert({0}) : inserting {1} for {2} before {3}
- * @message com.arjuna.ats.arjuna.coordinator.RecordList_5 [com.arjuna.ats.arjuna.coordinator.RecordList_5] - RecordList::insert({0}) : appending {1} for {2} 
+ * @message com.arjuna.ats.arjuna.coordinator.RecordList_5 [com.arjuna.ats.arjuna.coordinator.RecordList_5] - RecordList::insert({0}) : appending {1} for {2}
  * @message com.arjuna.ats.arjuna.coordinator.RecordList_6 [com.arjuna.ats.arjuna.coordinator.RecordList_6] - RecordList::insert({0}) : inserting {1} for {2} before {3} for {4}
  */
 
@@ -77,14 +77,14 @@ public class RecordList
 	listTail = null;
 	noEntries = 0;
     }
-    
+
     public RecordList (RecordList copy)
     {
 	listHead = copy.listHead;
 	listTail = copy.listTail;
 	noEntries = copy.noEntries;
     }
-    
+
     /**
      * Remove and return the element at the front of the list.
      *
@@ -141,7 +141,7 @@ public final AbstractRecord getRear ()
 public AbstractRecord getNext (AbstractRecord current)
     {
 	AbstractRecord rec = current.getNext();
-	
+
 	if (remove(rec))
 	    return rec;
 	else
@@ -188,7 +188,7 @@ public final void putFront (AbstractRecord newRecord)
 	    newRecord.setNext(listHead);
 	    listHead = newRecord;
 	}
-	
+
 	noEntries++;
     }
 
@@ -211,7 +211,7 @@ public final void putRear (AbstractRecord newRecord)
 	    newRecord.setNext(null);
 	    listTail = newRecord;
 	}
-	
+
 	noEntries++;
     }
 
@@ -229,7 +229,7 @@ public final AbstractRecord peekNext (AbstractRecord curr)
     {
 	return curr.getNext();
     }
-    
+
     /*
      * Assume it's in this list!
      */
@@ -238,7 +238,7 @@ public final boolean remove (AbstractRecord oldRecord)
     {
 	if (oldRecord == null)
 	    return false;
-	
+
 	if (noEntries == 1)
 	{
 	    listHead = listTail = null;
@@ -266,7 +266,7 @@ public final boolean remove (AbstractRecord oldRecord)
 		{
 		    if (oldRecord.getPrevious() != null)
 			oldRecord.getPrevious().setNext(oldRecord.getNext());
-		    
+
 		    if (oldRecord.getNext() != null)
 			oldRecord.getNext().setPrevious(oldRecord.getPrevious());
 		}
@@ -302,10 +302,10 @@ public String toString ()
 		rec = rec.getNext();
 	    }
 	}
-	
+
 	return s;
     }
-    
+
     /**
      * This is a variation on ordered insertion.
      * Insertion obeys the following algorithm.
@@ -319,7 +319,7 @@ public String toString ()
      *    INSERT the new record IN PLACE OF the old and exit
      * 3) If the new record should be added in addition to the old then
      *    INSERT the new record BEFORE the old and exit
-     * 4) If the two records are the same (determined by the 
+     * 4) If the two records are the same (determined by the
      *    == operator) simply exit
      * 5) Otherwise determine if the new record should be added here
      *    regardless due to the ordering constraints on the list and if so
@@ -333,7 +333,7 @@ public String toString ()
      * Step 5 ensures that if no existing record exists insertion takes
      * place at the correct point
      *
-     * @returns <code>true</code> if insertion/replacement took place,
+     * @return <code>true</code> if insertion/replacement took place,
      * <code>false</code> otherwise.
      */
 
@@ -352,7 +352,7 @@ private final boolean insert (AbstractRecord newRecord, AbstractRecord startAt)
 		if (tsLogger.arjLoggerI18N.debugAllowed())
 		{
 		    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-						 FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.coordinator.RecordList_1", 
+						 FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.coordinator.RecordList_1",
 						 new Object[]{this, newRecord.type(),
 							      current.type(), newRecord.order()});
 		}
@@ -369,7 +369,7 @@ private final boolean insert (AbstractRecord newRecord, AbstractRecord startAt)
 		    if (tsLogger.arjLoggerI18N.debugAllowed())
 		    {
 			tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-						     FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.coordinator.RecordList_2", 
+						     FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.coordinator.RecordList_2",
 						     new Object[]{this, current.type(),
 								  newRecord.type(), newRecord.order()});
 		    }
@@ -385,7 +385,7 @@ private final boolean insert (AbstractRecord newRecord, AbstractRecord startAt)
 			if (tsLogger.arjLoggerI18N.debugAllowed())
 			{
 			    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-							 FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.coordinator.RecordList_3", 
+							 FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.coordinator.RecordList_3",
 							 new Object[]{this, newRecord.type(),
 								      current.type(), newRecord.order()});
 			}
@@ -429,7 +429,7 @@ private final boolean insert (AbstractRecord newRecord, AbstractRecord startAt)
 	    if (tsLogger.arjLoggerI18N.debugAllowed())
 	    {
 		tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-					     FacilityCode.FAC_ABSTRACT_REC, 
+					     FacilityCode.FAC_ABSTRACT_REC,
 					     "com.arjuna.ats.arjuna.coordinator.RecordList_5",new Object[]{this,newRecord.type(),newRecord.order()});
 	    }
 
@@ -440,14 +440,14 @@ private final boolean insert (AbstractRecord newRecord, AbstractRecord startAt)
 	    if (tsLogger.arjLoggerI18N.debugAllowed())
 	    {
 		tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-					     FacilityCode.FAC_ABSTRACT_REC, 
+					     FacilityCode.FAC_ABSTRACT_REC,
 					     "com.arjuna.ats.arjuna.coordinator.RecordList_6", new Object[]{this, newRecord.type(),newRecord.order(),
 									  current.type(), current.order()});
 	    }
 
 	    insertBefore(newRecord, current);
 	}
-    
+
 	return true;
     }
 
@@ -470,7 +470,7 @@ private final void insertBefore (AbstractRecord newRecord, AbstractRecord before
 	else
 	    /* must be pointing to the head of the list  */
 	    listHead = newRecord;
-	
+
 	noEntries++;
     }
 
@@ -478,12 +478,12 @@ private final void replace (AbstractRecord newRecord, AbstractRecord oldRecord)
     {
 	newRecord.setPrevious(oldRecord.getPrevious());
 	newRecord.setNext(oldRecord.getNext());
-    
+
 	if (newRecord.getPrevious() != null)
 	    (newRecord.getPrevious()).setNext(newRecord);
 	else
 	    listHead = newRecord;
-    
+
 	if (newRecord.getNext() != null)
 	    (newRecord.getNext()).setPrevious(newRecord);
 	else
@@ -491,10 +491,10 @@ private final void replace (AbstractRecord newRecord, AbstractRecord oldRecord)
 
 	oldRecord = null;
     }
-    
+
     protected AbstractRecord listHead;
-    
+
     private AbstractRecord listTail;
     private int            noEntries;
-    
+
 }

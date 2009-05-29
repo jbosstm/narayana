@@ -459,8 +459,7 @@ public class JDBCStore extends ObjectStoreImple
 	/**
 	 * Set the JDBC access class name.
 	 *
-	 * @param The
-	 *            access class name.
+	 * @param jdbcAccessClassName access class name.
 	 */
 	protected void setAccessClassName(String jdbcAccessClassName)
 	{
@@ -480,8 +479,7 @@ public class JDBCStore extends ObjectStoreImple
 	/**
 	 * Get the JDBC access class name from an object.
 	 *
-	 * @param The
-	 *            object name.
+	 * @param objName the object name.
 	 * @return The access class name.
 	 */
 	protected String getAccessClassNameFromObject(ObjectName objName)
@@ -493,8 +491,7 @@ public class JDBCStore extends ObjectStoreImple
 	/**
 	 * Get the JDBC table name from an object.
 	 *
-	 * @param The
-	 *            object name.
+	 * @param objName the object name.
 	 * @return The table name.
 	 */
 	protected String getTableNameFromObject(ObjectName objName)

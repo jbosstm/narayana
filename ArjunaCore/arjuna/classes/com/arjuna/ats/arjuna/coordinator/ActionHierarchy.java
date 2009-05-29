@@ -432,7 +432,7 @@ public class ActionHierarchy
     }
 
     /**
-     * @eturn the ActionInfo for the transaction at the
+     * @return the ActionInfo for the transaction at the
      * specified level. ActionInfo is not a public class so this is of
      * limited use outside of the transaction system.
      */

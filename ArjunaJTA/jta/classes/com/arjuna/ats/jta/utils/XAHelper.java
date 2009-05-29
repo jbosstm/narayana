@@ -114,10 +114,8 @@ public class XAHelper
 	/**
 	 * Compares two Xid instances.
 	 *
-	 * @param Xid
-	 *            x1 first Xid
-	 * @param Xid
-	 *            x2 second Xid
+	 * @param x1 first Xid
+	 * @param x2 second Xid
 	 *
 	 * @return <code>true</code> if the two instances are the same,
 	 *         <code>false</code> otherwise.
@@ -171,10 +169,8 @@ public class XAHelper
 	/**
 	 * Compares two Xid instances at the gtid level only.
 	 *
-	 * @param Xid
-	 *            x1 first Xid
-	 * @param Xid
-	 *            x2 second Xid
+	 * @param x1 first Xid
+	 * @param x2 second Xid
 	 *
 	 * @return <code>true</code> if the two instances are the same,
 	 *         <code>false</code> otherwise.

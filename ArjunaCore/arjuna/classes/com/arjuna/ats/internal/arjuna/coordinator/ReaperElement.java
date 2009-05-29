@@ -74,8 +74,8 @@ public class ReaperElement implements Comparable
 	 * This is required so that the set maintained by the TransactionReaper
 	 * is in timeout order for efficient processing.
 	 *
-	 * @param o
-	 * @return
+	 * @param o the Object to compare
+	 * @return 0 if equal, 1 if this is greater, -1 if this is smaller
 	 */
 	public int compareTo(Object o)
 	{

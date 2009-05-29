@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Hewlett Packard Arjuna Labs,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: AbstractRecord.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -47,14 +47,14 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 /**
  * Abstract Record Class
- * 
+ *
  * This class provides an abstract template that defines the interface that the
  * atomic action system uses to notify objects that various state transitions
  * have occurred as the 2PC protocol executes. Record types derived from this
  * class manage certain properties of objects such as recovery information,
  * concurrency control information etc, and all must redifine the operations
  * defined here as abstract to take appropriate action.
- * 
+ *
  * Many functions are declared pure virtual to force a definition to occur in
  * any derived class. These are currently all functions dealing with atomic
  * action coordination as well as the following list management functions:
@@ -67,7 +67,7 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
  * records should be merged into a single record, FALSE if it should be
  * discarded shouldReplace: returns TRUE if the record should replace an
  * existing one, FALSE otherwise.
- * 
+ *
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: AbstractRecord.java 2342 2006-03-30 13:06:17Z  $
  * @since 1.0.
@@ -85,7 +85,7 @@ public abstract class AbstractRecord extends StateManager
 	/**
 	 * If this abstract record caused a heuristic then it should return an
 	 * object which implements <code>HeuristicInformation</code>
-	 * 
+	 *
 	 * @return <code>Object</code> to be used to order.
 	 */
 
@@ -95,7 +95,7 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * Only used for crash recovery, so most records don't need it.
-	 * 
+	 *
 	 * @return <code>ClassName</code> to identify this abstract record.
 	 */
 
@@ -110,7 +110,7 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * A rollback of a nested transaction has occurred.
-	 * 
+	 *
 	 * @return <code>TwoPhaseOutcome</code> to indicate success/failure.
 	 * @see com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome
 	 */
@@ -119,7 +119,7 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * A commit of a nested transaction has occurred.
-	 * 
+	 *
 	 * @return <code>TwoPhaseOutcome</code> to indicate success/failure.
 	 * @see com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome
 	 */
@@ -128,7 +128,7 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * A prepare for a nested transaction has occurred.
-	 * 
+	 *
 	 * @return <code>TwoPhaseOutcome</code> to indicate success/failure.
 	 * @see com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome
 	 */
@@ -137,7 +137,7 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * A rollback of a top-level transaction has occurred.
-	 * 
+	 *
 	 * @return <code>TwoPhaseOutcome</code> to indicate success/failure.
 	 * @see com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome
 	 */
@@ -146,7 +146,7 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * A commit of a top-level transaction has occurred.
-	 * 
+	 *
 	 * @return <code>TwoPhaseOutcome</code> to indicate success/failure.
 	 * @see com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome
 	 */
@@ -155,7 +155,7 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * A prepare for a top-level transaction has occurred.
-	 * 
+	 *
 	 * @return <code>TwoPhaseOutcome</code> to indicate success/failure.
 	 * @see com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome
 	 */
@@ -166,7 +166,7 @@ public abstract class AbstractRecord extends StateManager
 	 * Return the Uid of this abstract record so that it can be ordered in the
 	 * intentions list. This is also the Uid that the record was saved with in
 	 * the object store.
-	 * 
+	 *
 	 * @return <code>Uid</Uid> for this instance.
 	 * @see com.arjuna.ats.arjuna.common.Uid
 	 */
@@ -186,7 +186,7 @@ public abstract class AbstractRecord extends StateManager
 	 * Return the type of the abstract record. Used in ordering the instances in
 	 * the intentions list. This is also the type that the record was saved with
 	 * in the object store.
-	 * 
+	 *
 	 * @return <code>String</code> representing type.
 	 */
 
@@ -198,7 +198,7 @@ public abstract class AbstractRecord extends StateManager
 	/**
 	 * Determine if records are discarded on action abort or must be propagated
 	 * to parents.
-	 * 
+	 *
 	 * @return <code>true</code> if the record should be propagated to the
 	 *         parent transaction if the current transaction rolls back,
 	 *         <code>false</code> otherwise. The default is <code>false</code>.
@@ -212,7 +212,7 @@ public abstract class AbstractRecord extends StateManager
 	/**
 	 * Determine if records are discarded on action commit or must be propagated
 	 * to parents.
-	 * 
+	 *
 	 * @return <code>true</code> if the record should be propagated to the
 	 *         parent transaction if the current transaction commits,
 	 *         <code>false</code> otherwise. The default is <code>true</code>.
@@ -232,7 +232,7 @@ public abstract class AbstractRecord extends StateManager
 	/**
 	 * Determine if two records are equal in that both are the same type and
 	 * have the same order value (determined via 'order()').
-	 * 
+	 *
 	 * @return <code>true</code> if equal, <code>false</code> otherwise.
 	 */
 
@@ -245,7 +245,7 @@ public abstract class AbstractRecord extends StateManager
 	/**
 	 * Determine if two records are less than in that both are the same type and
 	 * their Uids are less than.
-	 * 
+	 *
 	 * @return <code>true</code> if equal, <code>false</code> otherwise.
 	 */
 
@@ -258,7 +258,7 @@ public abstract class AbstractRecord extends StateManager
 	/**
 	 * Determine if two records are greater than in that both are the same type
 	 * and their Uids are greater than.
-	 * 
+	 *
 	 * @return <code>true</code> if equal, <code>false</code> otherwise.
 	 */
 
@@ -270,10 +270,10 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * Cleanup is called if a top-level action is detected to be an orphan.
-	 * 
+	 *
 	 * NOTE nested actions are never orphans since their parents would be
 	 * aborted we may as well abort them as well.
-	 * 
+	 *
 	 * @return <code>TwoPhaseOutcome</code> as default is the same as
 	 *         topLevelAbort.
 	 */
@@ -285,10 +285,10 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * Cleanup is called if a nested is detected to be an orphan.
-	 * 
+	 *
 	 * NOTE nested actions are never orphans since their parents would be
 	 * aborted we may as well abort them as well.
-	 * 
+	 *
 	 * @return <code>TwoPhaseOutcome</code> as default is the same as
 	 *         nestedAbort.
 	 */
@@ -303,7 +303,7 @@ public abstract class AbstractRecord extends StateManager
 	 * saved, then it may be recovered later in the event of a failure. Note,
 	 * however, that the size of the intentions list on disk is critical to the
 	 * performance of the system (disk I/O is a bottleneck).
-	 * 
+	 *
 	 * @return <code>true</code> if it should be saved, <code>false</code>
 	 *         otherwise. <code>false</code> is the default.
 	 */
@@ -324,9 +324,8 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * Write information about this specific instance to the specified stream.
-	 * 
-	 * @param PrintWriter
-	 *            strm the stream on which to output.
+	 *
+	 * @param strm the stream on which to output.
 	 */
 
 	public void print (PrintWriter strm)
@@ -343,7 +342,7 @@ public abstract class AbstractRecord extends StateManager
 	 * called and the record instance must save enough information to enable it
 	 * to be restored from that state later. The basic AbstractRecord save_state
 	 * will save common data that is required by the base class during recovery.
-	 * 
+	 *
 	 * @return <code>true</code> if successful, <code>false</code>
 	 *         otherwise.
 	 */
@@ -370,7 +369,7 @@ public abstract class AbstractRecord extends StateManager
 	 * recreated AbstractRecord the state that that was saved during transaction
 	 * persistence. The base class will restore information that it needs from
 	 * the log.
-	 * 
+	 *
 	 * @return <code>true</code> if successful, <code>false</code>
 	 *         otherwise.
 	 */
@@ -394,7 +393,7 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * Forget any heuristic outcome which this implementation may have produced.
-	 * 
+	 *
 	 * @return <code>true</code> by default. If <code>false</code> is
 	 *         returned then the instance must be remembered by the transaction
 	 *         (in the log) in order for recovery to retry later or for a system
@@ -409,7 +408,7 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * Perform a nested one phase commit.
-	 * 
+	 *
 	 * @return <code>TwoPhaseOutcome</code> to indicate success/failure.
 	 * @see com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome
 	 */
@@ -431,7 +430,7 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * Perform a top-level one phase commit.
-	 * 
+	 *
 	 * @return <code>TwoPhaseOutcome</code> to indicate success/failure.
 	 * @see com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome
 	 */
@@ -484,27 +483,24 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * Merge the current record with the one presented.
-	 * 
-	 * @param AbstractRecord
-	 *            a the record with which to merge.
+	 *
+	 * @param a the record with which to merge.
 	 */
 
 	public abstract void merge (AbstractRecord a);
 
 	/**
 	 * Alter the current record with the one presented.
-	 * 
-	 * @param AbstractRecord
-	 *            a the record with which to alter.
+	 *
+	 * @param a the record with which to alter.
 	 */
 
 	public abstract void alter (AbstractRecord a);
 
 	/**
 	 * Should we add the record presented to the intentions list?
-	 * 
-	 * @param AbstractRecord
-	 *            a The record to try to add.
+	 *
+	 * @param a The record to try to add.
 	 * @return <code>true</code> if the record should be added,
 	 *         <code>false</code> otherwise.
 	 */
@@ -513,9 +509,8 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * Should we alter the current record with the one presented?
-	 * 
-	 * @param AbstractRecord
-	 *            a The record to try to alter.
+	 *
+	 * @param a The record to try to alter.
 	 * @return <code>true</code> if the record should be altered,
 	 *         <code>false</code> otherwise.
 	 */
@@ -524,9 +519,8 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * Should we merge the current record with the one presented?
-	 * 
-	 * @param AbstractRecord
-	 *            a The record to try to merge.
+	 *
+	 * @param a The record to try to merge.
 	 * @return <code>true</code> if the record should be merged,
 	 *         <code>false</code> otherwise.
 	 */
@@ -535,9 +529,8 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * Should we replace the record presented with the current record?
-	 * 
-	 * @param AbstractRecord
-	 *            a The record to try to replace.
+	 *
+	 * @param a The record to try to replace.
 	 * @return <code>true</code> if the record should be replaced,
 	 *         <code>false</code> otherwise.
 	 */
@@ -548,9 +541,8 @@ public abstract class AbstractRecord extends StateManager
 	 * The current record is about to replace the one presented. This method is
 	 * invoked to give the current record a chance to copy information, for
 	 * example, from the record being replaced.
-	 * 
-	 * @param AbstractRecord
-	 *            a the record that will replace this instance.
+	 *
+	 * @param a the record that will replace this instance.
 	 */
 
 	public void replace (AbstractRecord a)
@@ -560,7 +552,7 @@ public abstract class AbstractRecord extends StateManager
 	/**
 	 * These few functions are link manipulation primitives used by the
 	 * RecordList processing software to chain instances together.
-	 * 
+	 *
 	 * @return the previous element in the intentions list, or null.
 	 */
 
@@ -580,9 +572,8 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * Set the previous element in the list to the specified instance.
-	 * 
-	 * @param AbstractRecord
-	 *            ar the instance to become previous.
+	 *
+	 * @param ar the instance to become previous.
 	 */
 
 	protected final void setPrevious (AbstractRecord ar)
@@ -592,9 +583,8 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * Set the next element in the list to the specified instance.
-	 * 
-	 * @param AbstractRecord
-	 *            ar the instance to become next.
+	 *
+	 * @param ar the instance to become next.
 	 */
 
 	protected final void setNext (AbstractRecord ar)
@@ -604,13 +594,10 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * Create a new instance with the specified paramaters.
-	 * 
-	 * @param Uid
-	 *            storeUid the unique id for this instance.
-	 * @param String
-	 *            objType the type of the instance.
-	 * @param int
-	 *            otype the ObjectType of the object.
+	 *
+	 * @param storeUid the unique id for this instance.
+	 * @param objType the type of the instance.
+	 * @param otype the ObjectType of the object.
 	 * @see com.arjuna.ats.arjuna.ObjectType
 	 */
 
@@ -632,9 +619,8 @@ public abstract class AbstractRecord extends StateManager
 
 	/**
 	 * Create a new instance with the specified paramaters.
-	 * 
-	 * @param Uid
-	 *            storeUid the unique id for this instance.
+	 *
+	 * @param storeUid the unique id for this instance.
 	 */
 
 	protected AbstractRecord (Uid storeUid)
@@ -656,7 +642,7 @@ public abstract class AbstractRecord extends StateManager
 	/**
 	 * Creates a 'blank' abstract record. This is used during crash recovery
 	 * when recreating the prepared list of a server atomic action.
-	 * 
+	 *
 	 * @message com.arjuna.ats.arjuna.coordinator.AbstractRecord_1
 	 *          [com.arjuna.ats.arjuna.coordinator.AbstractRecord_1] -
 	 *          AbstractRecord::AbstractRecord () - crash recovery constructor

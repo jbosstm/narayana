@@ -61,9 +61,9 @@ public class VolatileStore extends ObjectStoreImple
     /**
      * Obtain all of the Uids for a specified type.
      *
-     * @param String           s The type to scan for.
-     * @param InputObjectState buff The object state in which to store the Uids
-     * @param int              m The file type to look for (e.g., committed, shadowed).
+     * @param s The type to scan for.
+     * @param buff The object state in which to store the Uids
+     * @param m The file type to look for (e.g., committed, shadowed).
      * @return <code>true</code> if no errors occurred, <code>false</code>
      *         otherwise.
      */
@@ -76,7 +76,7 @@ public class VolatileStore extends ObjectStoreImple
     /**
      * Obtain all types of objects stored in the object store.
      *
-     * @param InputObjectState buff The state in which to store the types.
+     * @param buff The state in which to store the types.
      * @return <code>true</code> if no errors occurred, <code>false</code>
      *         otherwise.
      */
@@ -87,8 +87,8 @@ public class VolatileStore extends ObjectStoreImple
     }
 
     /**
-     * @param Uid    u The object to query.
-     * @param String tn The type of the object to query.
+     * @param u The object to query.
+     * @param tn The type of the object to query.
      * @return the current state of the object's state (e.g., shadowed,
      *         committed ...)
      */
@@ -117,8 +117,8 @@ public class VolatileStore extends ObjectStoreImple
     /**
      * Commit the object's state in the object store.
      *
-     * @param Uid    u The object to work on.
-     * @param String tn The type of the object to work on.
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
      * @return <code>true</code> if no errors occurred, <code>false</code>
      *         otherwise.
      */
@@ -132,8 +132,8 @@ public class VolatileStore extends ObjectStoreImple
      * Hide the object's state in the object store. Used by crash
      * recovery.
      *
-     * @param Uid    u The object to work on.
-     * @param String tn The type of the object to work on.
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
      * @return <code>true</code> if no errors occurred, <code>false</code>
      *         otherwise.
      */
@@ -146,8 +146,8 @@ public class VolatileStore extends ObjectStoreImple
     /**
      * Reveal a hidden object's state.
      *
-     * @param Uid    u The object to work on.
-     * @param String tn The type of the object to work on.
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
      * @return <code>true</code> if no errors occurred, <code>false</code>
      *         otherwise.
      */
@@ -160,8 +160,8 @@ public class VolatileStore extends ObjectStoreImple
     /**
      * Read the object's committed state.
      *
-     * @param Uid    u The object to work on.
-     * @param String tn The type of the object to work on.
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
      * @return the state of the object.
      */
 
@@ -180,8 +180,8 @@ public class VolatileStore extends ObjectStoreImple
     /**
      * Read the object's shadowed state.
      *
-     * @param Uid    u The object to work on.
-     * @param String tn The type of the object to work on.
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
      * @return the state of the object.
      */
 
@@ -193,8 +193,8 @@ public class VolatileStore extends ObjectStoreImple
     /**
      * Remove the object's committed state.
      *
-     * @param Uid    u The object to work on.
-     * @param String tn The type of the object to work on.
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
      * @return <code>true</code> if no errors occurred, <code>false</code>
      *         otherwise.
      */
@@ -214,8 +214,8 @@ public class VolatileStore extends ObjectStoreImple
     /**
      * Remove the object's uncommitted state.
      *
-     * @param Uid    u The object to work on.
-     * @param String tn The type of the object to work on.
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
      * @return <code>true</code> if no errors occurred, <code>false</code>
      *         otherwise.
      */
@@ -228,9 +228,9 @@ public class VolatileStore extends ObjectStoreImple
     /**
      * Write a new copy of the object's committed state.
      *
-     * @param Uid               u The object to work on.
-     * @param String            tn The type of the object to work on.
-     * @param OutputObjectState buff The state to write.
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
+     * @param buff The state to write.
      * @return <code>true</code> if no errors occurred, <code>false</code>
      *         otherwise.
      */
@@ -250,9 +250,9 @@ public class VolatileStore extends ObjectStoreImple
     /**
      * Write a copy of the object's uncommitted state.
      *
-     * @param Uid               u The object to work on.
-     * @param String            tn The type of the object to work on.
-     * @param OutputObjectState buff The state to write.
+     * @param u The object to work on.
+     * @param tn The type of the object to work on.
+     * @param buff The state to write.
      * @return <code>true</code> if no errors occurred, <code>false</code>
      *         otherwise.
      */

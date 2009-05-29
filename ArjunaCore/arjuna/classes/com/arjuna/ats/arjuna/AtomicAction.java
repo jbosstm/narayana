@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -24,7 +24,7 @@
  * Arjuna Solutions Limited,
  * Newcastle upon Tyne,
  * Tyne and Wear,
- * UK.  
+ * UK.
  *
  * $Id: AtomicAction.java 2342 2006-03-30 13:06:17Z  $
  */
@@ -41,12 +41,12 @@ import com.arjuna.ats.arjuna.common.*;
  * This is a user-level transaction class, unlike BasicAction. AtomicAction
  * takes care of thread-to-action scoping. This is a "one-shot" object, i.e.,
  * once terminated, the instance cannot be re-used for another transaction.
- * 
+ *
  * An instance of this class is a transaction that can be started and terminated
  * (either committed or rolled back). There are also methods to allow
  * participants (AbstractRecords) to be enlisted with the transaction and to
  * associate/disassociate threads with the transaction.
- * 
+ *
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: AtomicAction.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
@@ -56,12 +56,12 @@ public class AtomicAction extends TwoPhaseCoordinator
 {
 
 	public static final int NO_TIMEOUT = -1;
-	
+
 	/**
 	 * Create a new transaction. If there is already a transaction associated
 	 * with the thread then this new transaction will be automatically nested.
 	 * The transaction is *not* running at this point.
-	 * 
+	 *
 	 * No timeout is associated with this transaction, i.e., it will not be
 	 * automatically rolled back by the system.
 	 */
@@ -100,10 +100,10 @@ public class AtomicAction extends TwoPhaseCoordinator
 
 	/**
 	 * Start the transaction running.
-	 * 
+	 *
 	 * If the transaction is already running or has terminated, then an error
 	 * code will be returned. No timeout is associated with the transaction.
-	 * 
+	 *
 	 * @return <code>ActionStatus</code> indicating outcome.
 	 */
 
@@ -114,22 +114,21 @@ public class AtomicAction extends TwoPhaseCoordinator
 
 	/**
 	 * Start the transaction running.
-	 * 
+	 *
 	 * If the transaction is already running or has terminated, then an error
 	 * code will be returned.
-	 * 
-	 * @param int
-	 *            timeout the timeout associated with the transaction. If the
+	 *
+	 * @param timeout the timeout associated with the transaction. If the
 	 *            transaction is still active when this timeout elapses, the
 	 *            system will automatically roll it back.
-	 * 
+	 *
 	 * @return <code>ActionStatus</code> indicating outcome.
 	 */
 
 	public int begin (int timeout)
 	{
 		int status = super.start();
-        
+
 		if (status == ActionStatus.RUNNING)
 		{
 			/*
@@ -139,10 +138,10 @@ public class AtomicAction extends TwoPhaseCoordinator
 			ThreadActionData.pushAction(this);
 
 			_timeout = timeout;
-	
+
 			if (_timeout == 0)
 				_timeout = TxControl.getDefaultTimeout();
-			
+
 			if (_timeout > 0)
 				TransactionReaper.transactionReaper(true).insert(this, _timeout);
 		}
@@ -153,7 +152,7 @@ public class AtomicAction extends TwoPhaseCoordinator
 	/**
 	 * Commit the transaction, and have heuristic reporting. Heuristic reporting
 	 * via the return code is enabled.
-	 * 
+	 *
 	 * @return <code>ActionStatus</code> indicating outcome.
 	 */
 
@@ -165,10 +164,10 @@ public class AtomicAction extends TwoPhaseCoordinator
 	/**
 	 * Commit the transaction. The report_heuristics parameter can be used to
 	 * determine whether or not heuristic outcomes are reported.
-	 * 
+	 *
 	 * If the transaction has already terminated, or has not begun, then an
 	 * appropriate error code will be returned.
-	 * 
+	 *
 	 * @return <code>ActionStatus</code> indicating outcome.
 	 */
 
@@ -189,10 +188,10 @@ public class AtomicAction extends TwoPhaseCoordinator
 
 	/**
 	 * Abort (rollback) the transaction.
-	 * 
+	 *
 	 * If the transaction has already terminated, or has not been begun, then an
 	 * appropriate error code will be returned.
-	 * 
+	 *
 	 * @return <code>ActionStatus</code> indicating outcome.
 	 */
 
@@ -238,7 +237,7 @@ public class AtomicAction extends TwoPhaseCoordinator
 
 		return outcome;
 	}
-	
+
 	/*
 	 * @return the timeout associated with this instance.
 	 */
@@ -251,9 +250,9 @@ public class AtomicAction extends TwoPhaseCoordinator
 	/**
 	 * The type of the class is used to locate the state of the transaction log
 	 * in the object store.
-	 * 
+	 *
 	 * Overloads BasicAction.type()
-	 * 
+	 *
 	 * @return a string representation of the hierarchy of the class for storing
 	 *         logs in the transaction object store.
 	 */
@@ -266,7 +265,7 @@ public class AtomicAction extends TwoPhaseCoordinator
 	/**
 	 * Register the current thread with the transaction. This operation is not
 	 * affected by the state of the transaction.
-	 * 
+	 *
 	 * @return <code>true</code> if successful, <code>false</code>
 	 *         otherwise.
 	 */
@@ -279,7 +278,7 @@ public class AtomicAction extends TwoPhaseCoordinator
 	/**
 	 * Register the specified thread with the transaction. This operation is not
 	 * affected by the state of the transaction.
-	 * 
+	 *
 	 * @return <code>true</code> if successful, <code>false</code>
 	 *         otherwise.
 	 */
@@ -298,7 +297,7 @@ public class AtomicAction extends TwoPhaseCoordinator
 	/**
 	 * Unregister the current thread from the transaction. This operation is not
 	 * affected by the state of the transaction.
-	 * 
+	 *
 	 * @return <code>true</code> if successful, <code>false</code>
 	 *         otherwise.
 	 */
@@ -311,7 +310,7 @@ public class AtomicAction extends TwoPhaseCoordinator
 	/**
 	 * Unregister the specified thread from the transaction. This operation is
 	 * not affected by the state of the transaction.
-	 * 
+	 *
 	 * @return <code>true</code> if successful, <code>false</code>
 	 *         otherwise.
 	 */
@@ -330,13 +329,13 @@ public class AtomicAction extends TwoPhaseCoordinator
 	/**
 	 * Suspend all transaction association from the invoking thread. When this
 	 * operation returns, the thread will be associated with no transactions.
-	 * 
+	 *
 	 * If the current transaction is not an AtomicAction then this method will
 	 * not suspend.
-	 * 
+	 *
 	 * @return a handle on the current AtomicAction (if any) so that the thread
 	 *         can later resume association if required.
-	 * 
+	 *
 	 * message com.arjuna.ats.atomicaction_1 Attempt to suspend a
 	 * non-AtomicAction transaction. Type is {0}
 	 */
@@ -369,12 +368,11 @@ public class AtomicAction extends TwoPhaseCoordinator
 	 * transaction is null, then this is the same as doing a suspend. If the
 	 * current thread is associated with transactions then those associations
 	 * will be lost.
-	 * 
-	 * @param AtomicAction
-	 *            act the transaction to associate. If this is a nested
+	 *
+	 * @param act the transaction to associate. If this is a nested
 	 *            transaction, then the thread will be associated with all of
 	 *            the transactions in the hierarchy.
-	 * 
+	 *
 	 * @return <code>true</code> if association is successful,
 	 *         <code>false</code> otherwise.
 	 */
@@ -404,7 +402,7 @@ public class AtomicAction extends TwoPhaseCoordinator
 	 * By default the BasicAction class only allows the termination of a
 	 * transaction if it's the one currently associated with the thread. We
 	 * override this here.
-	 * 
+	 *
 	 * @return <code>true</code> to indicate that this transaction can only be
 	 *         terminated by the right thread.
 	 */

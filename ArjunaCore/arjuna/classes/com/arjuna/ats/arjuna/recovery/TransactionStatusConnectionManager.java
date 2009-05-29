@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -28,7 +28,7 @@
  *
  * $Id: TransactionStatusConnectionManager.java 2342 2006-03-30 13:06:17Z  $
  */
- 
+
 package com.arjuna.ats.arjuna.recovery ;
 
 import java.util.* ;
@@ -50,7 +50,7 @@ import com.arjuna.common.util.logging.*;
 /**
  * @message com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_1 [com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_1] - Exception when accessing data store {0}
  * @message com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_2 [com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_2] - Object store exception {0}
- * @message com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_3 [com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_3] - found process uid {0} 
+ * @message com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_3 [com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_3] - found process uid {0}
  * @message com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_4 [com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_4] - added TransactionStatusConnector to table for process uid {0}
 */
 
@@ -68,7 +68,7 @@ public class TransactionStatusConnectionManager
 
 	updateTSMI() ;
     }
-    
+
     /**
      * Obtain the transaction status for the specified transaction.
      * At this point we don't know the type of the transaction, only it's
@@ -82,9 +82,9 @@ public class TransactionStatusConnectionManager
     public int getTransactionStatus( Uid tranUid )
     {
 	String transactionType = "" ;
-	
+
 	int status = getTransactionStatus( transactionType, tranUid );
-	
+
 	return status ;
     }
 
@@ -140,10 +140,10 @@ public class TransactionStatusConnectionManager
     /**
      * Use the TransactionStatusConnector to remotly query a transaction manager to get the tx status.
      *
-     * @param process_id
-     * @param transactionType
-     * @param tranUid
-     * @return
+     * @param process_id the process identifier
+     * @param transactionType the type of the transaction
+     * @param tranUid the Uid of the transaction
+     * @return the remote transaction status
      */
     private int getRemoteTransactionStatus(String process_id, String transactionType, Uid tranUid ) {
 
@@ -179,7 +179,7 @@ public class TransactionStatusConnectionManager
 
         return status;
     }
-    
+
     /**
      * Examine the Object Store for any new TrasactionStatusManagerItem
      * objects, and add to local hash table.
@@ -188,10 +188,10 @@ public class TransactionStatusConnectionManager
     public void updateTSMI()
     {
 	boolean tsmis = false ;
-	
+
 	InputObjectState uids = new InputObjectState() ;
 	Vector tsmiVector = new Vector() ;
-	
+
 	try
 	{
 	    tsmis = _objStore.allObjUids( _typeName, uids ) ;
@@ -203,22 +203,22 @@ public class TransactionStatusConnectionManager
 		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_2", new Object[]{ex});
 	    }
 	}
-	
+
 	// cycle through each item, and update tsmTable with any
 	// new TransactionStatusManagerItems
 
 	if ( tsmis )
 	{
 	    Uid theUid = new Uid(Uid.nullUid()) ;
-		
+
 	    boolean moreUids = true ;
-		
+
 	    while (moreUids)
 	    {
 		try
 		{
 		    theUid.unpack( uids ) ;
-		    
+
 		    if ( theUid.equals( Uid.nullUid() ) )
 		    {
 			moreUids = false ;
@@ -229,9 +229,9 @@ public class TransactionStatusConnectionManager
 
 			if (tsLogger.arjLoggerI18N.debugAllowed())
 			{
-			    tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, 
+			    tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS,
 							  VisibilityLevel.VIS_PUBLIC,
-							  FacilityCode.FAC_CRASH_RECOVERY, 
+							  FacilityCode.FAC_CRASH_RECOVERY,
 							  "com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_3", new Object[]{newUid});
 			}
 			tsmiVector.addElement(newUid) ;
@@ -243,21 +243,21 @@ public class TransactionStatusConnectionManager
 		}
 	    }
 	}
-	
+
 	// for each TransactionStatusManager found, if their is
 	// not an entry in the local hash table for it then add it.
 	Enumeration tsmiEnum = tsmiVector.elements() ;
-	
+
 	while ( tsmiEnum.hasMoreElements() )
 	{
 	    Uid currentUid = (Uid) tsmiEnum.nextElement() ;
-		
+
 	    String process_id = get_process_id( currentUid ) ;
-		
+
 	    if ( ! _tscTable.containsKey( process_id ) )
 	    {
 		TransactionStatusConnector tsc = new TransactionStatusConnector ( process_id, currentUid ) ;
-			
+
 		if ( tsc.isDead() )
 		{
 		    tsc.delete() ;
@@ -271,13 +271,13 @@ public class TransactionStatusConnectionManager
 		if (tsLogger.arjLoggerI18N.debugAllowed())
 		{
 		    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						 FacilityCode.FAC_CRASH_RECOVERY, 
+						 FacilityCode.FAC_CRASH_RECOVERY,
 						 "com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager_4", new Object[]{process_id});
 		}
 	    }
 	}
     }
-    
+
     /**
      * Extract the process identifier from the supplied Uid.
      */
@@ -289,22 +289,22 @@ public class TransactionStatusConnectionManager
 	StringTokenizer st = new StringTokenizer( strUid, ":" ) ;
 	st.nextToken() ;
 	String process_id_in_Hex = st.nextToken() ;
-	
+
 	return process_id_in_Hex ;
     }
-    
+
     // Type within ObjectStore.
     private static String _typeName = TransactionStatusManagerItem.typeName() ;
-    
+
     // Table of process ids and their transaction status managers items.
    private Hashtable _tscTable  = new Hashtable() ;
-    
+
     // Reference to object store.
     private static ObjectStore _objStore = null ;
-      
+
     private static Uid _localUid = new Uid();
 }
-	  
+
 
 
 

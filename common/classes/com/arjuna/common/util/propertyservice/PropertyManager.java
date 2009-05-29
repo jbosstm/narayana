@@ -1,20 +1,20 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
- * as indicated by the @author tags. 
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
- * full listing of individual contributors. 
+ * full listing of individual contributors.
  * This copyrighted material is made available to anyone wishing to use,
  * modify, copy, or redistribute it subject to the terms and conditions
  * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License,
  * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
- * 
+ *
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
@@ -65,7 +65,7 @@ public interface PropertyManager
 	 * @param name The name of the property to set.
 	 * @param value The value of the property being set.
 	 * @param setSystemProperty True - set the system property if it has a value
-	 * @return
+	 * @return The previous value of the property.
 	 */
 	public String setProperty(String name, String value, boolean setSystemProperty);
 
@@ -73,27 +73,27 @@ public interface PropertyManager
 	 * Set the value of the property <code>name</code> to <code>value</code>
 	 * @param name The name of the property to set.
 	 * @param value The value of the property to set.
-	 * @return
+	 * @return The previous value of the property.
 	 */
 	public String setProperty(String name, String value);
 
 	/**
 	 * Removes the property from the property manager.
 	 * @param name The name of the property to remove.
-	 * @return
+	 * @return The previous value of the property.
 	 */
 	public String removeProperty(String name);
 
 	/**
 	 * Get all the properties stored in this property manager
 	 *
-	 * @return
+	 * @return the Properties
 	 */
 	public Properties getProperties();
 
 	/**
 	 * Returns an enumeration of the property names
-	 * @return
+	 * @return the Enumeration
 	 */
     public Enumeration propertyNames();
 
@@ -134,7 +134,7 @@ public interface PropertyManager
 
 	/**
 	 * Returns true if the property manager is in verbose mode
-	 * @return
+	 * @return true if verbose, false otherwise
 	 */
 	public boolean verbose();
 }

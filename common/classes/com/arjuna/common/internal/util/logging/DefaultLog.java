@@ -269,6 +269,7 @@ public class DefaultLog implements Log, Serializable {
 
     /**
      * <p> Get logging level. </p>
+     * @return the current logging level
      */
     public int getLevel() {
 
@@ -363,6 +364,7 @@ public class DefaultLog implements Log, Serializable {
      * Is the given log level currently enabled?
      *
      * @param logLevel is this level enabled?
+     * @return true is enabled, false otherwise
      */
     protected boolean isLevelEnabled(int logLevel) {
         // log level are numerically ordered so can use simple numeric

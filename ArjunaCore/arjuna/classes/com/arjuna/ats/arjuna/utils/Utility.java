@@ -45,7 +45,7 @@ import java.lang.NumberFormatException;
  * Various useful functions that we wrap in a single class. Some of these
  * functions are needed simply for backwards compatibility with older versions
  * of Java.
- * 
+ *
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: Utility.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
@@ -199,7 +199,7 @@ public class Utility
 
     /**
      * Convert a host name into an InetAddress object
-     * 
+     *
      * @param host
      *            if empty or null then the loopback address is used
      * @param messageKey
@@ -229,13 +229,13 @@ public class Utility
 
     /**
      * Lookup and valid a port number.
-     * 
+     *
      * @param intProperty
      *            property name of an integer valued property
      * @param defValue
      *            a value to return if intProperty is invalid. If a null value
      *            is used and intProperty is invalid then
-     *            @com.arjuna.ats.arjuna.exceptions.FatalError is thrown
+     *            @see com.arjuna.ats.arjuna.exceptions.FatalError is thrown
      * @param warnMsgKey
      *            message key to report a warning if property values is invalid
      * @param minValue

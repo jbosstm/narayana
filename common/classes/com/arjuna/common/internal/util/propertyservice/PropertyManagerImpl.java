@@ -94,7 +94,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 
     /**
      * Retrieve the name of this property manager
-     * @return
+     * @return the property manager name
      */
 	public String getName()
 	{
@@ -103,7 +103,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 
     /**
      * Retrieves the URI associated with this property manager
-     * @return
+     * @return the URI
      */
     public String getUri()
     {
@@ -112,7 +112,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 
     /**
      * Set the URI associated with this property manager
-     * @param uri
+     * @param uri the URI
      */
     public void setUri(String uri)
     {
@@ -149,8 +149,8 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
     /**
      * Get the property from the sub-tree without checking the system
      * properties.
-     * @param name
-     * @return
+     * @param name the property name
+     * @return the property value
      */
     private String getPropertyFromSubTree(String name)
     {
@@ -204,7 +204,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 	 * @param name The name of the property to set.
 	 * @param value The value of the property being set.
 	 * @param setSystemProperty True - set the system property if it has a value
-	 * @return
+	 * @return the previous value of the property
 	 */
 	public String setProperty(String name, String value, boolean setSystemProperty)
 	{
@@ -227,7 +227,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 	/**
 	 * Removes the property from the property manager.
 	 * @param name The name of the property to remove.
-	 * @return
+	 * @return previous value of the property
 	 */
 	public String removeProperty(String name)
 	{
@@ -284,7 +284,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 
 	/**
 	 * Get the properties stored in this property manager only.
-	 * @return
+	 * @return the Properties
 	 */
 	public Properties getLocalProperties()
 	{
@@ -295,7 +295,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 	 * Get all the properties stored in this property manager and it's parents.
      * It also includes the system properties.
 	 *
-	 * @return
+	 * @return the Properties
 	 */
 	public Properties getProperties()
 	{
@@ -311,7 +311,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
      * in this property manager and it's parents.  But it does not include
      * the properties stored in system.
      *
-     * @return
+     * @return the Properties
      */
     public Properties getAllProperties()
     {
@@ -331,7 +331,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 
 	/**
 	 * Returns an enumeration of the property names
-	 * @return
+	 * @return the enumeration
 	 */
 	public Enumeration propertyNames()
 	{
@@ -444,8 +444,8 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 
 	/**
 	 * This method creates a property manager with the name <code>moduleName</code>.
-	 * @param modulename
-	 * @return
+	 * @param modulename the name of the module
+	 * @return the PropertyManagerPluginInterface
 	 */
 	public PropertyManagerPluginInterface createPropertyManager(String modulename)
 	{
@@ -454,7 +454,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 
 	/**
 	 * This method returns an array of parents to the property manager.
-	 * @return
+	 * @return a PropertyManagerPluginInterface[]
 	 */
 	public PropertyManagerPluginInterface[] getParents()
 	{
@@ -465,7 +465,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 
 	/**
 	 * This method returns an array of the children of the current property manager.
-	 * @return
+	 * @return a PropertyManagerPluginInterface[]
 	 */
 	public PropertyManagerPluginInterface[] getChildren()
 	{

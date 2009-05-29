@@ -333,7 +333,7 @@ public class PropertyServiceMBeanWrapper implements DynamicMBean
 
 	/**
 	 * Get the object name for this MBean
-	 * @return
+	 * @return the ObjectName
 	 * @throws MalformedObjectNameException
 	 */
 	public ObjectName getObjectName() throws MalformedObjectNameException

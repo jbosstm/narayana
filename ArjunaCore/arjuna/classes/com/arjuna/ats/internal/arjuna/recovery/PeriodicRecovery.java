@@ -448,7 +448,7 @@ public class PeriodicRecovery extends Thread
     /**
      * Perform a recovery scan on all registered modules.
      *
-     * @caveats if a scan is already in progress this method will wait for it to complete otherwise it will
+     * <b>Caveats:</b> if a scan is already in progress this method will wait for it to complete otherwise it will
      * perform its own scan before returning. If scanning is suspended this will require waiting for scanning
      * to resume.
      */
@@ -611,7 +611,7 @@ public class PeriodicRecovery extends Thread
     /**
      * fetch the current activity status either INACTIVE or SCANNING
      *
-     * @caveats must only be called while synchronized on {@link PeriodicRecovery#_stateLock}
+     * <b>Caveats:</b> must only be called while synchronized on {@link PeriodicRecovery#_stateLock}
      * @return INACTIVE if no scan is in progress or SCANNING if some thread is performing a scan
      */
     private int getStatus ()
@@ -622,7 +622,7 @@ public class PeriodicRecovery extends Thread
     /**
      * fetch the current recovery operation mode either ENABLED, SUSPENDED or TERMINATED
      *
-     * @caveats must only be called while synchronized on {@link PeriodicRecovery#_stateLock}
+     * <b>Caveats:</b> must only be called while synchronized on {@link PeriodicRecovery#_stateLock}
      * @return the current recovery operation mode
      */
     private int getMode ()
@@ -651,7 +651,7 @@ public class PeriodicRecovery extends Thread
     /**
      * wait for the required backoff period or less if the scanning status or scan mode changes
      *
-     * @caveats this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} and when
+     * <b>Caveats:</b> this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} and when
      * _currentStatus is SCANNING and _currentMode is ENABLED
      */
     private void doBackoffWait()
@@ -666,7 +666,7 @@ public class PeriodicRecovery extends Thread
     /**
      * wait for the required recovery period or less if the scanning status or scan mode changes
      *
-     * @caveats this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} and when
+     * <b>Caveats:</b> this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} and when
      * _currentStatus is INACTIVE and _currentMode is ENABLED
      */
     private void doPeriodicWait()
@@ -681,7 +681,7 @@ public class PeriodicRecovery extends Thread
     /**
      * wait until the we move out of SUSPENDED mode
      *
-     * @caveats this must only be called when synchronized on {@link PeriodicRecovery#_stateLock}
+     * <b>Caveats:</b> this must only be called when synchronized on {@link PeriodicRecovery#_stateLock}
      */
     private void doSuspendedWait()
     {
@@ -697,7 +697,7 @@ public class PeriodicRecovery extends Thread
     /**
      * wait until some other thread stops scanning
      *
-     * @caveats this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} and when
+     * <b>Caveats:</b> this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} and when
      * _currentStatus is SCANNING
      */
     private void doScanningWait()
@@ -714,7 +714,7 @@ public class PeriodicRecovery extends Thread
     /**
      * start performing a scan continuing to completion unless we are terminating
      *
-     * @caveats this must only be called when _currentStatus is SCANNING. on return _currentStatus is always
+     * <b>Caveats:</b> this must only be called when _currentStatus is SCANNING. on return _currentStatus is always
      * still SCANNING
      */
 
@@ -813,7 +813,7 @@ public class PeriodicRecovery extends Thread
     /**
      * notify the listener worker that a scan has completed
      *
-     * @caveats this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} at the point
+     * <b>Caveats:</b> this must only be called when synchronized on {@link PeriodicRecovery#_stateLock} at the point
      * where Status transitions from SCANNING to INACTIVE
      */
 

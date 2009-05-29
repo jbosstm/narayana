@@ -39,10 +39,8 @@ import java.text.MessageFormat;
 /**
  * Abstract implementation of the Log interface.
  *
- * Abstract superclass for {@link LogImpl LogImpl (without i18n support)}
- * and the {@link Logi18nImpl Logi18nImpl (built-in i18n support if the logger
- * does not provide this}. This contains the functionality common to both,
- * essentially support for finer-grained logging and guards (e.g.,
+ * Abstract superclass for {@link LogImpl LogImpl}
+ * This contains the support for finer-grained logging and guards (e.g.,
  * isWarnEnabled(), etc.).
  *
  * @author Thomas Rischbeck <thomas.rischbeck@arjuna.com>
@@ -64,7 +62,7 @@ public abstract class AbstractLogImpl implements Logi18n
     *
     * Note that there is a performance issue when more than one resource bundles is in use.
     *
-    * @see #m_defaultResourceBundle.
+    * @see #m_defaultResourceBundle
     */
    private ResourceBundle[] m_extraResourceBundles = null;
 
@@ -93,7 +91,7 @@ public abstract class AbstractLogImpl implements Logi18n
    /**
     * constructor
     *
-    * @param logInterface
+    * @param logInterface the AbstractLogInterface
     */
    public AbstractLogImpl(AbstractLogInterface logInterface)
    {
@@ -103,7 +101,7 @@ public abstract class AbstractLogImpl implements Logi18n
    /**
     * constructor
     *
-    * @param logInterface
+    * @param logInterface the AbstractLogInterface
     * @param resBundle bundle used for this logger (if a resource bundle is used per logger)
     */
    public AbstractLogImpl(AbstractLogInterface logInterface, String resBundle)
@@ -676,7 +674,7 @@ public abstract class AbstractLogImpl implements Logi18n
    /**
     *
     * @param key
-    * @return
+    * @return the resource bundle String
     * @throws MissingResourceException
     */
    protected synchronized String getResourceBundleString(String key) throws MissingResourceException
