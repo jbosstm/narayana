@@ -174,7 +174,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 	public boolean running ()
 	{
-		return (boolean) (status() == ActionStatus.RUNNING);
+		return (status() == ActionStatus.RUNNING || status() == ActionStatus.ABORT_ONLY);
 	}
 
 	/**
