@@ -69,8 +69,6 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.*;
  *          com.arjuna.ats.jbossatx.jta.jca.unknownwork] Work not registered!
  */
 
-// what is the timeout period (seconds or milliseconds)?
-
 public class XATerminator extends XATerminatorImple implements
 		JBossXATerminator
 {

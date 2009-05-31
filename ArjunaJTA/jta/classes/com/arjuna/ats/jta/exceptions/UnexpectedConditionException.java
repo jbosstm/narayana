@@ -54,6 +54,5 @@ public class UnexpectedConditionException extends SystemException
     {
 	super(s);
     }
-
 }
 

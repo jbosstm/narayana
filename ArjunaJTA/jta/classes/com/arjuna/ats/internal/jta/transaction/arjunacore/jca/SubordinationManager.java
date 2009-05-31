@@ -144,7 +144,7 @@ public class SubordinationManager
     }
 
     /**
-     * Its rather tricky to figure out if we are running in JTA or JTAX(JTS) mode. We can make a resonable guess
+     * Its rather tricky to figure out if we are running in JTA or JTAX(JTS) mode. We can make a reasonable guess
      * based on the transaction manager implementation that is running, but it's going to break if some unknown
      * or derived impl comes along. It's therefore safer to use setTxType explicitly in such cases.
      * 

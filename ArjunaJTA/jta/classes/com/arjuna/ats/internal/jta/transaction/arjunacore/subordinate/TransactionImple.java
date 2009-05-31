@@ -309,6 +309,44 @@ public class TransactionImple extends
 			throw unexpectedConditionException;
 		}
 	}
+	
+	public boolean doBeforeCompletion () throws javax.transaction.SystemException
+	{
+	    try
+	    {
+	        SubordinateAtomicAction subAct = (SubordinateAtomicAction) super._theTransaction;
+	        
+	        return subAct.doBeforeCompletion();
+	    }
+	    catch (final Exception ex)
+	    {
+	        ex.printStackTrace();
+
+	        UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
+	        unexpectedConditionException.initCause(ex);
+	        
+	        throw unexpectedConditionException;
+	    }
+	}
+	
+	public boolean doAfterCompletion (int status) throws javax.transaction.SystemException
+	{
+	    try
+            {
+                SubordinateAtomicAction subAct = (SubordinateAtomicAction) super._theTransaction;
+                
+                return subAct.doAfterCompletion(status);
+            }
+            catch (final Exception ex)
+            {
+                ex.printStackTrace();
+
+                UnexpectedConditionException unexpectedConditionException = new UnexpectedConditionException(ex.toString());
+                unexpectedConditionException.initCause(ex);
+                
+                throw unexpectedConditionException;
+            }
+	}
 
 	public String toString ()
 	{
@@ -350,4 +388,5 @@ public class TransactionImple extends
     {
     	return true;
     }
+
 }

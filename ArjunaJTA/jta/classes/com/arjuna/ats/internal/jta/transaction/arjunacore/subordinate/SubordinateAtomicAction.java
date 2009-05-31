@@ -129,7 +129,7 @@ public class SubordinateAtomicAction extends
         // note it's not perfect- async timeout/rollback means there is a race condition in which we
         // can still call beforeCompletion on rollbacks, but that's not too bad as skipping it is really
         // just an optimization anyhow.  JBTM-429
-        if ( !(status == ActionStatus.ABORT_ONLY || status == ActionStatus.ABORTING) && super.beforeCompletion())
+        if ( !(status == ActionStatus.ABORT_ONLY || status == ActionStatus.ABORTING) && doBeforeCompletion())
         {
             int outcome = super.prepare(true);
             if(outcome == TwoPhaseOutcome.PREPARE_READONLY) {
@@ -213,33 +213,70 @@ public class SubordinateAtomicAction extends
 	}
 
 	public int doOnePhaseCommit ()
-    {
-        int status = super.status();
+	{
+	    int status = super.status();
+	    
+	    // In JTA spec, beforeCompletions are run on commit attempts only, not rollbacks.
+	    // We attempt to mimic that here, even though we are outside the scope of the spec.
+	    // note it's not perfect- async timeout/rollback means there is a race condition in which we
+	    // can still call beforeCompletion on rollbacks, but that's not too bad as skipping it is really
+	    // just an optimization anyhow. JBTM-429
 
-        // In JTA spec, beforeCompletions are run on commit attempts only, not rollbacks.
-        // We attempt to mimic that here, even though we are outside the scope of the spec.
-        // note it's not perfect- async timeout/rollback means there is a race condition in which we
-        // can still call beforeCompletion on rollbacks, but that's not too bad as skipping it is really
-        // just an optimization anyhow. JBTM-429
-        // behaviour relies on java's lazy evaluation of the if clause:
-        if (status == ActionStatus.ABORT_ONLY || super.beforeCompletion())
-        {
-            status = super.End(true);
-        }
-        else
-        {
-            status = ActionStatus.ABORTED;
-        }
+	    if (status == ActionStatus.ABORT_ONLY || doBeforeCompletion())
+	    {
+	        status = super.End(true);
+	    }
+	    else
+	    {
+	        status = ActionStatus.ABORTED;
+	    }
 
-        afterCompletion(status);
-        return status;
-    }
+	    afterCompletion(status);
+	    
+	    return status;
+	}
 
 	public void doForget ()
 	{
 		super.forgetHeuristics();
 	}
 
+	public boolean doBeforeCompletion ()
+	{
+	    // should not need synchronizing at this level
+	    
+	    if (!_doneBefore)
+	    {
+	        _beforeOutcome = super.beforeCompletion();
+	        
+	        _doneBefore = true;
+	    }
+	    
+	    return _beforeOutcome;
+	}
+	
+	public boolean doAfterCompletion (int status)
+	{
+	    if (!_doneAfter)
+	    {
+	        /*
+	         * We don't need to convert from JTA status to AC status because
+	         * the interpretation of the status is left up to the
+	         * Synchronization instance and not the transaction.
+	         * 
+	         * TODO this is a potential problem in the case where we
+	         * allow mixtures of Synchronization types in the same transaction
+	         * and they expect status values that conflict.
+	         */
+	        
+	        _afterOutcome = super.afterCompletion(status);
+	        
+	        _doneAfter = true;
+	    }
+	    
+	    return _afterOutcome;
+	}
+	
 	/**
 	 * For crash recovery purposes.
 	 *
@@ -269,4 +306,17 @@ public class SubordinateAtomicAction extends
     {
     	return true;
     }
+    
+    /*
+     * We have these here because it's possible that synchronizations aren't
+     * called explicitly either side of commit/rollback due to JCA API not supporting
+     * them directly. We do though and in which case it's possible that they
+     * can be driven through two routes and we don't want to get into a mess
+     * due to that.
+     */
+    
+    private boolean _doneBefore = false;
+    private boolean _beforeOutcome = false;
+    private boolean _doneAfter = false;
+    private boolean _afterOutcome = false;
 }

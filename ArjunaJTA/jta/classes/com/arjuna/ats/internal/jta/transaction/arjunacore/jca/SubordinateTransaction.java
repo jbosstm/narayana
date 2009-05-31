@@ -89,6 +89,22 @@ public interface SubordinateTransaction extends Transaction
 	 */
     public void doForget () throws IllegalStateException;
 
+    /**
+     * Run beforeCompletion on Synchronizations.
+     * 
+     * @return outcome
+     */
+    
+    public boolean doBeforeCompletion () throws SystemException;
+    
+    /**
+     * Run afterCompletion on Synchronizations.
+     * 
+     * @return outcome
+     */
+    
+    public boolean doAfterCompletion (int status) throws SystemException;
+    
     public boolean activated();
     
     public void recover();

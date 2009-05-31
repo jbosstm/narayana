@@ -28,6 +28,8 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts.subordinate;
 
+import javax.transaction.Status;
+
 import org.omg.CORBA.SystemException;
 import org.omg.CosTransactions.HeuristicHazard;
 import org.omg.CosTransactions.HeuristicMixed;
@@ -99,9 +101,9 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		// require registration of synchronization interposed resource as well!
 		
 		if (stx != null)
-			return stx.doPrepare();
-		else
-			return TwoPhaseOutcome.INVALID_TRANSACTION;
+                    return stx.doPrepare();
+            else
+                    return TwoPhaseOutcome.INVALID_TRANSACTION;
 	}
 	
 	/**
@@ -113,18 +115,18 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 	public int doCommit () throws SystemException
 	{	
 		ServerTransaction stx = getTransaction();
+		int outcome = ActionStatus.INVALID;
 		
 		try
 		{
-			if (stx != null)
-				return stx.doPhase2Commit();
+		    if (stx != null)
+                        return stx.doPhase2Commit();
 		}
-		catch (Exception ex)
+		catch (final Exception ex)
 		{
+		    ex.printStackTrace();
 		}
-		
-		// TODO error
-		
+
 		return ActionStatus.H_HAZARD;
 	}
 	
@@ -137,46 +139,48 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 	public int doRollback () throws SystemException
 	{
 		ServerTransaction stx = getTransaction();
+		int outcome = ActionStatus.INVALID;
 		
 		try
 		{	
-			if (stx != null)
-				return stx.doPhase2Abort();
+		    if (stx != null)
+                        return stx.doPhase2Abort();
 		}
-		catch (Exception ex)
+		catch (final Exception ex)
 		{
+		    ex.printStackTrace();
 		}
-			
-		// TODO error
 		
-		return ActionStatus.H_HAZARD;
+                return ActionStatus.H_HAZARD;
 	}
 	
 	public int doOnePhaseCommit () throws SystemException
 	{
 	    // https://jira.jboss.org/jira/browse/JBTM-504
 	    
-		try
-		{
-		    ServerTransaction stx = getTransaction();
-   
-		        if (stx != null)
-		            stx.doCommit(true);
-		}
-		catch (final INVALID_TRANSACTION ex)
-		{
-		    return ActionStatus.INVALID;
-		}
-		catch (final TRANSACTION_ROLLEDBACK ex)
-		{
-		    return ActionStatus.ABORTED;
-		}
-		catch (final Exception ex)
-		{
-			return ActionStatus.H_HAZARD;
-		}
-		
-		return ActionStatus.COMMITTED;
+	    try
+	    {
+	        // TODO check if we should be using TxControl.isBeforeCompletionWhenRollbackOnly in local JTA too.
+	        
+	        ServerTransaction stx = getTransaction();
+
+	        if (stx != null)
+	            stx.doCommit(true);
+	    }
+	    catch (final INVALID_TRANSACTION ex)
+	    {
+	        return ActionStatus.INVALID;
+	    }
+	    catch (final TRANSACTION_ROLLEDBACK ex)
+	    {
+	        return ActionStatus.ABORTED;
+	    }
+	    catch (final Exception ex)
+	    {
+	        return ActionStatus.H_HAZARD;
+	    }
+
+	    return ActionStatus.COMMITTED;
 	}
 	
 	public void doForget () throws SystemException
@@ -188,9 +192,59 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 			if (stx != null)
 				stx.doForget();
 		}
-		catch (Exception ex)
+		catch (final Exception ex)
 		{
+		    ex.printStackTrace();
 		}
+	}
+	
+	public boolean doBeforeCompletion () throws SystemException
+	{
+	    ServerTransaction stx = getTransaction();
+	    
+	    try
+	    {
+	        if (stx != null)
+	        {
+	            stx.doBeforeCompletion();
+	            
+	            return true;
+	        }
+	    }
+	    catch (final Exception ex)
+	    {
+	        ex.printStackTrace();
+	    }
+	           
+            return false;
+	}
+	
+	public boolean doAfterCompletion (int status) throws SystemException
+	{
+	    ServerTransaction stx = getTransaction();
+            
+            try
+            {
+                if (stx != null)
+                {
+                    /*
+                     * Convert from JTA status to OTS status.
+                     */
+                    
+                    org.omg.CosTransactions.Status s = ((status == Status.STATUS_COMMITTED) ? org.omg.CosTransactions.Status.StatusCommitted : 
+                                                                                              org.omg.CosTransactions.Status.StatusRolledBack);
+                    
+                    stx.doAfterCompletion(s);
+                    
+                    return true;
+                }
+            }
+            catch (final Exception ex)
+            {
+                ex.printStackTrace();
+            }
+                   
+            return false;
 	}
 	
 	/**
@@ -214,5 +268,18 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		
 		return (ServerTransaction) sc.getImplHandle();
 	}
+	
+	    /*
+	     * We have these here because it's possible that synchronizations aren't
+	     * called explicitly either side of commit/rollback due to JCA API not supporting
+	     * them directly. We do though and in which case it's possible that they
+	     * can be driven through two routes and we don't want to get into a mess
+	     * due to that.
+	     */
+	    
+	    private boolean _doneBefore = false;
+	    private boolean _beforeOutcome = false;
+	    private boolean _doneAfter = false;
+	    private boolean _afterOutcome = false;
 	
 }
