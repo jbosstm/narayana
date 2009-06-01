@@ -52,14 +52,23 @@ public interface XATerminatorExtensions
      * OTS. But it's not a big deal.
      */
     
+    /**
+     * Call beforeCompletion on the registered instance. Exceptions will cause the transaction
+     * to rollback.
+     * 
+     * @param xid the transaction instance.
+     * @return success (or not).
+     */
+    
     public boolean beforeCompletion (Xid xid) throws javax.transaction.SystemException;
     
     /**
-     * Status should be in JTA status values.
+     * Call afterCompletion on the registered instance. Exceptions will be logged but have no
+     * affect on the transaction (which has already completed.)
      * 
-     * @param xid
-     * @param status
-     * @return
+     * @param xid the transaction instance
+     * @param status the transaction status (values from JTA Status).
+     * @return success (or not).
      * @throws javax.transaction.SystemException
      */
     
