@@ -28,6 +28,8 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate;
 
+import javax.transaction.Status;
+
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
@@ -259,17 +261,9 @@ public class SubordinateAtomicAction extends
 	{
 	    if (!_doneAfter)
 	    {
-	        /*
-	         * We don't need to convert from JTA status to AC status because
-	         * the interpretation of the status is left up to the
-	         * Synchronization instance and not the transaction.
-	         * 
-	         * TODO this is a potential problem in the case where we
-	         * allow mixtures of Synchronization types in the same transaction
-	         * and they expect status values that conflict.
-	         */
+	        int theStatus = (status == Status.STATUS_COMMITTED) ? ActionStatus.COMMITTED : ActionStatus.ABORTED;
 	        
-	        _afterOutcome = super.afterCompletion(status);
+	        _afterOutcome = super.afterCompletion(theStatus);
 	        
 	        _doneAfter = true;
 	    }
