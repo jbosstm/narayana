@@ -47,6 +47,7 @@ import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionIm
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TxWorkManager;
 import com.arjuna.ats.jta.exceptions.UnexpectedConditionException;
 
 /**
@@ -56,8 +57,7 @@ import com.arjuna.ats.jta.exceptions.UnexpectedConditionException;
  */
 
 public class XATerminatorImple implements javax.resource.spi.XATerminator, XATerminatorExtensions
-{
-
+{   
     public void commit (Xid xid, boolean onePhase) throws XAException
     {
         try
@@ -74,31 +74,18 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
                     tx.doOnePhaseCommit();
                 else
                     tx.doCommit();
-
-                SubordinationManager.getTransactionImporter()
-                        .removeImportedTransaction(xid);
             }
             else
                 throw new XAException(XAException.XA_RETRY);
         }
         catch (RollbackException e)
         {
-            SubordinationManager.getTransactionImporter()
-                    .removeImportedTransaction(xid);
             XAException xaException = new XAException(XAException.XA_RBROLLBACK);
             xaException.initCause(e);
             throw xaException;
         }
         catch (XAException ex)
         {
-            // resource hasn't had a chance to recover yet
-
-            if (ex.errorCode != XAException.XA_RETRY)
-            {
-                SubordinationManager.getTransactionImporter()
-                        .removeImportedTransaction(xid);
-            }
-
             throw ex;
         }
         catch (final HeuristicCommitException ex)
@@ -121,18 +108,12 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
         }
         catch (final IllegalStateException ex)
         {
-            SubordinationManager.getTransactionImporter()
-                    .removeImportedTransaction(xid);
-
             XAException xaException = new XAException(XAException.XAER_NOTA);
             xaException.initCause(ex);
             throw xaException;
         }
         catch (SystemException ex)
         {
-            SubordinationManager.getTransactionImporter()
-                    .removeImportedTransaction(xid);
-
             XAException xaException = new XAException(XAException.XAER_RMERR);
             xaException.initCause(ex);
             throw xaException;
@@ -157,11 +138,6 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
             xaException.initCause(ex);
             throw xaException;
         }
-        finally
-        {
-            SubordinationManager.getTransactionImporter()
-                    .removeImportedTransaction(xid);
-        }
     }
 
     public int prepare (Xid xid) throws XAException
@@ -177,9 +153,6 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
             switch (tx.doPrepare())
             {
             case TwoPhaseOutcome.PREPARE_READONLY:
-                SubordinationManager.getTransactionImporter()
-                        .removeImportedTransaction(xid);
-
                 return XAResource.XA_RDONLY;
             case TwoPhaseOutcome.PREPARE_NOTOK:
                 try
@@ -190,10 +163,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
                 {
                     // if we failed to prepare then rollback should not fail!
                 }
-
-                SubordinationManager.getTransactionImporter()
-                        .removeImportedTransaction(xid);
-
+                
                 throw new XAException(XAException.XA_RBROLLBACK);
             case TwoPhaseOutcome.PREPARE_OK:
                 return XAResource.XA_OK;
@@ -329,23 +299,12 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
             if (tx.baseXid() != null)
             {
                 tx.doRollback();
-
-                SubordinationManager.getTransactionImporter()
-                        .removeImportedTransaction(xid);
             }
             else
                 throw new XAException(XAException.XA_RETRY);
         }
         catch (XAException ex)
         {
-            // resource hasn't had a chance to recover yet
-
-            if (ex.errorCode != XAException.XA_RETRY)
-            {
-                SubordinationManager.getTransactionImporter()
-                        .removeImportedTransaction(xid);
-            }
-
             throw ex;
         }
         catch (HeuristicCommitException ex)
@@ -368,18 +327,12 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
         }
         catch (final IllegalStateException ex)
         {
-            SubordinationManager.getTransactionImporter()
-                    .removeImportedTransaction(xid);
-
             XAException xaException = new XAException(XAException.XAER_NOTA);
             xaException.initCause(ex);
             throw xaException;
         }
         catch (SystemException ex)
         {
-            SubordinationManager.getTransactionImporter()
-                    .removeImportedTransaction(xid);
-
             XAException xaException = new XAException(XAException.XAER_RMERR);
             xaException.initCause(ex);
             throw xaException;

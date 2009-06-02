@@ -34,10 +34,12 @@ package com.arjuna.ats.internal.jta.transaction.jts.jca;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.transaction.xa.*;
-import javax.transaction.Transaction;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
+import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.CleanupSynchronization;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.TransactionImporter;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 import com.arjuna.ats.jta.xa.XidImple;
@@ -92,6 +94,23 @@ public class TransactionImporterImple implements TransactionImporter
 			_transactions.put(new XidImple(xid), imported);
 		}
 		
+		/*
+                 * Register the cleanup synchronization immediately.
+                 */
+                
+                try
+                {
+                    imported.registerSynchronization(new CleanupSynchronization(xid));
+                }
+                catch (final SystemException ex)
+                {
+                    throw new XAException(XAException.XAER_RMERR);
+                }
+                catch (final RollbackException ex)
+                {
+                    throw new XAException(XAException.XA_RBROLLBACK);
+                }
+                
 		return imported;
 	}
 
