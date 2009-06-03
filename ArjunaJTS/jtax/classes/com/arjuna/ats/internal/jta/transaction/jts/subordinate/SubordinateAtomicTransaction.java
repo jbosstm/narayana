@@ -219,34 +219,6 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
             return false;
 	}
 	
-	public boolean doAfterCompletion (int status) throws SystemException
-	{
-	    ServerTransaction stx = getTransaction();
-            
-            try
-            {
-                if (stx != null)
-                {
-                    /*
-                     * Convert from JTA status to OTS status.
-                     */
-                    
-                    org.omg.CosTransactions.Status s = ((status == Status.STATUS_COMMITTED) ? org.omg.CosTransactions.Status.StatusCommitted : 
-                                                                                              org.omg.CosTransactions.Status.StatusRolledBack);
-                    
-                    stx.doAfterCompletion(s);
-                    
-                    return true;
-                }
-            }
-            catch (final Exception ex)
-            {
-                ex.printStackTrace();
-            }
-                   
-            return false;
-	}
-	
 	/**
 	 * By default the BasicAction class only allows the termination of a
 	 * transaction if it's the one currently associated with the thread. We
@@ -279,7 +251,4 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 	    
 	    private boolean _doneBefore = false;
 	    private boolean _beforeOutcome = false;
-	    private boolean _doneAfter = false;
-	    private boolean _afterOutcome = false;
-	
 }

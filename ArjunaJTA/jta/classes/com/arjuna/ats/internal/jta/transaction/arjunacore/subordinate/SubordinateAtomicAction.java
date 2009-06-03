@@ -28,8 +28,6 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate;
 
-import javax.transaction.Status;
-
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
@@ -257,20 +255,6 @@ public class SubordinateAtomicAction extends
 	    return _beforeOutcome;
 	}
 	
-	public boolean doAfterCompletion (int status)
-	{
-	    if (!_doneAfter)
-	    {
-	        int theStatus = (status == Status.STATUS_COMMITTED) ? ActionStatus.COMMITTED : ActionStatus.ABORTED;
-	        
-	        _afterOutcome = super.afterCompletion(theStatus);
-	        
-	        _doneAfter = true;
-	    }
-	    
-	    return _afterOutcome;
-	}
-	
 	/**
 	 * For crash recovery purposes.
 	 *
@@ -311,6 +295,4 @@ public class SubordinateAtomicAction extends
     
     private boolean _doneBefore = false;
     private boolean _beforeOutcome = false;
-    private boolean _doneAfter = false;
-    private boolean _afterOutcome = false;
 }

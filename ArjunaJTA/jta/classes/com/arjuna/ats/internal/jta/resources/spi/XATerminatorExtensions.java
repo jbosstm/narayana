@@ -49,7 +49,11 @@ public interface XATerminatorExtensions
     /*
      * Synchronizations aren't part of XA, so that's why it would be nice to have these
      * handled by a separate instance, as well as being architecturally symmetrical with
-     * OTS. But it's not a big deal.
+     * OTS. But it's not a big deal. Plus, this isn't really symmetrical either, since we
+     * don't need afterCompletion.
+     * 
+     * TODO check whether it makes sense to resurrect afterCompletion here for, say,
+     * compensations.
      */
     
     /**
@@ -61,16 +65,4 @@ public interface XATerminatorExtensions
      */
     
     public boolean beforeCompletion (Xid xid) throws javax.transaction.SystemException;
-    
-    /**
-     * Call afterCompletion on the registered instance. Exceptions will be logged but have no
-     * affect on the transaction (which has already completed.)
-     * 
-     * @param xid the transaction instance
-     * @param status the transaction status (values from JTA Status).
-     * @return success (or not).
-     * @throws javax.transaction.SystemException
-     */
-    
-    public boolean afterCompletion (Xid xid, int status) throws javax.transaction.SystemException;
 }

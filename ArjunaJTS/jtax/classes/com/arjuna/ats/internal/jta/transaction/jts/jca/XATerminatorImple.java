@@ -408,33 +408,6 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
         }
     }
     
-    /*
-     * Remember that status is JTS status.
-     * @see com.arjuna.ats.internal.jta.resources.spi.XATerminatorExtensions#afterCompletion(javax.transaction.xa.Xid, int)
-     */
-    
-    public boolean afterCompletion (Xid xid, int status) throws javax.transaction.SystemException
-    {
-        try
-        {
-            SubordinateTransaction tx = SubordinationManager
-                    .getTransactionImporter().getImportedTransaction(xid);
-
-            if (tx == null)
-                throw new UnexpectedConditionException();
-
-           return tx.doAfterCompletion(status);
-        }
-        catch (final Exception ex)
-        {
-            UnexpectedConditionException e = new UnexpectedConditionException();
-            
-            e.initCause(ex);
-            
-            throw e;
-        }
-    }
-    
     private boolean _recoveryStarted = false;
 
 }
