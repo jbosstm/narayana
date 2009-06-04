@@ -290,7 +290,7 @@ public class TransactionReaper
 			synchronized (_workQueue)
 			{
 			    _workQueue.add(e);
-			    _workQueue.notify();
+			    _workQueue.notifyAll();
 			}
 		    }
 		    break;
@@ -547,7 +547,7 @@ public class TransactionReaper
 		{
 		    e._worker = Thread.currentThread();
 		    e._status = ReaperElement.CANCEL;
-		    e.notify();
+		    e.notifyAll();
 		}
 
 		// we are now exposed to at most one interrupt from
@@ -624,14 +624,14 @@ public class TransactionReaper
 
 			cancelled = false;
 			e._status = ReaperElement.FAIL;
-			e.notify();
+			e.notifyAll();
 		    }
 		    else
 		    {
 			e._status = (cancelled
 				     ? ReaperElement.COMPLETE
 				     : ReaperElement.FAIL);
-			e.notify();
+			e.notifyAll();
 		    }
 		}
 
@@ -787,7 +787,7 @@ public class TransactionReaper
 
 			if(_dynamic)
 			{
-				notify(); // force recalc of next wakeup time, taking into account the newly inserted element
+				notifyAll(); // force recalc of next wakeup time, taking into account the newly inserted element
 			}
 
 			return rtn;
@@ -1001,7 +1001,7 @@ public class TransactionReaper
 
 	            synchronized (this)
 	            {
-	                notify();
+	                notifyAll();
 	            }
 
 	            try
@@ -1049,7 +1049,7 @@ public class TransactionReaper
 
 	        if (_inShutdown && (_transactions.size() == 0))
 	        {
-	            _shutdownLock.notify();
+	            _shutdownLock.notifyAll();
 	        }
 	    }
 	}
