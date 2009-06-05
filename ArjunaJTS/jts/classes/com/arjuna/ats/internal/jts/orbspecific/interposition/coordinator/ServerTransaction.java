@@ -539,9 +539,12 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 	public void doBeforeCompletion () throws SystemException
 	{
+	    if (!_beforeCompleted)
+	    {
 		_beforeCompleted = true;
 
 		super.doBeforeCompletion();
+	    }
 	}
 
 	public void doAfterCompletion (org.omg.CosTransactions.Status s)
