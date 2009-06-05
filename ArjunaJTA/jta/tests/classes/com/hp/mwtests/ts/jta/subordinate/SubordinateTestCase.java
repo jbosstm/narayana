@@ -28,10 +28,12 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.jca.TransactionImple;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinationManager;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
+import com.arjuna.ats.internal.jta.resources.spi.XATerminatorExtensions;
 import com.arjuna.ats.jta.xa.XidImple;
 
 import javax.transaction.RollbackException;
 import javax.transaction.Transaction;
+import javax.transaction.Status;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import javax.transaction.xa.XAException;
@@ -45,7 +47,6 @@ public class SubordinateTestCase extends TestCase
         return new TransactionImple(0); // implicit begin
     }
 
-    
 	public void testCleanupCommit () throws Exception
 	{
 		for (int i = 0; i < 1000; i++)
@@ -276,4 +277,205 @@ public class SubordinateTestCase extends TestCase
         assertTrue(sync.isAfterCompletionDone());
         assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
     }
+
+    /////////////
+
+    public void testOnePhaseCommitSyncWithSeparateSync() throws Exception
+    {
+        final SubordinateTransaction tm = createTransaction();
+        final TestSynchronization sync = new TestSynchronization();
+        tm.registerSynchronization(sync);
+        tm.doBeforeCompletion();
+        tm.doOnePhaseCommit();
+        assertTrue(sync.isBeforeCompletionDone());
+        assertTrue(sync.isAfterCompletionDone());
+        assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
+    }
+
+    public void testOnePhaseCommitSyncViaXATerminatorWithSeparateSync() throws Exception
+    {
+        final Xid xid = new XidImple(new Uid());
+        final Transaction t = SubordinationManager.getTransactionImporter().importTransaction(xid);
+        final TestSynchronization sync = new TestSynchronization();
+        t.registerSynchronization(sync);
+        final XATerminator xaTerminator = SubordinationManager.getXATerminator();
+        final XATerminatorExtensions xaTerminatorExtensions = (XATerminatorExtensions)xaTerminator;
+        xaTerminatorExtensions.beforeCompletion(xid);
+        xaTerminator.commit(xid, true);
+        assertTrue(sync.isBeforeCompletionDone());
+        assertTrue(sync.isAfterCompletionDone());
+        assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
+    }
+
+    public void testOnePhaseCommitSyncWithRollbackOnlyWithSeparateSync() throws Exception
+    {
+        final SubordinateTransaction tm = createTransaction();
+        final TestSynchronization sync = new TestSynchronization();
+        tm.registerSynchronization(sync);
+        tm.setRollbackOnly();
+        tm.doBeforeCompletion();
+        try {
+            tm.doOnePhaseCommit();
+            fail("did not get expected rollback exception");
+        } catch(RollbackException e) {
+            // expected - we tried to commit a rollbackonly tx.
+        }
+        assertTrue(sync.isBeforeCompletionDone());
+        assertTrue(sync.isAfterCompletionDone());
+        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
+    }
+
+    public void testOnePhaseCommitSyncWithRollbackOnlyViaXATerminatorWithSeparateSync() throws Exception
+    {
+        final Xid xid = new XidImple(new Uid());
+        final Transaction t = SubordinationManager.getTransactionImporter().importTransaction(xid);
+        final TestSynchronization sync = new TestSynchronization();
+        t.registerSynchronization(sync);
+        t.setRollbackOnly();
+        final XATerminator xaTerminator = SubordinationManager.getXATerminator();
+        final XATerminatorExtensions xaTerminatorExtensions = (XATerminatorExtensions)xaTerminator;
+        xaTerminatorExtensions.beforeCompletion(xid);
+        try {
+            xaTerminator.commit(xid, true);
+            ((TransactionImple)t).doOnePhaseCommit();
+            fail("did not get expected rollback exception");
+        } catch(XAException e) {
+            assertEquals("javax.transaction.RollbackException", e.getCause().getClass().getName());
+            assertEquals(XAException.XA_RBROLLBACK, e.errorCode);
+            // expected - we tried to commit a rollbackonly tx.
+        }
+        assertTrue(sync.isBeforeCompletionDone());
+        assertTrue(sync.isAfterCompletionDone());
+        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
+    }
+
+    public void testRollbackSyncWithSeparateSync() throws Exception
+    {
+        final SubordinateTransaction tm = createTransaction();
+        final TestSynchronization sync = new TestSynchronization();
+        tm.registerSynchronization(sync);
+        tm.doBeforeCompletion();
+        tm.doRollback();
+        assertTrue(sync.isBeforeCompletionDone());
+        assertTrue(sync.isAfterCompletionDone());
+        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
+    }
+
+    public void testRollbackSyncViaXATerminatorWithSeparateSync() throws Exception
+    {
+        final Xid xid = new XidImple(new Uid());
+        final Transaction t = SubordinationManager.getTransactionImporter().importTransaction(xid);
+        final TestSynchronization sync = new TestSynchronization();
+        t.registerSynchronization(sync);
+        final XATerminator xaTerminator = SubordinationManager.getXATerminator();
+        final XATerminatorExtensions xaTerminatorExtensions = (XATerminatorExtensions)xaTerminator;
+        xaTerminatorExtensions.beforeCompletion(xid);
+        xaTerminator.rollback(xid);
+        assertTrue(sync.isBeforeCompletionDone());
+        assertTrue(sync.isAfterCompletionDone());
+        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
+    }
+
+
+    public void testTwoPhaseCommitSyncWithSeparateSync() throws Exception
+    {
+        final SubordinateTransaction tm = createTransaction();
+        final TestSynchronization sync = new TestSynchronization();
+        tm.registerSynchronization(sync);
+        tm.doBeforeCompletion();
+        assertEquals(TwoPhaseOutcome.PREPARE_READONLY, tm.doPrepare());
+        tm.doCommit();
+        assertTrue(sync.isBeforeCompletionDone());
+        assertTrue(sync.isAfterCompletionDone());
+        assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
+    }
+
+    public void testTwoPhaseCommitSyncViaXATerminatorWithSeparateSync() throws Exception
+    {
+        final Xid xid = new XidImple(new Uid());
+        final Transaction t = SubordinationManager.getTransactionImporter().importTransaction(xid);
+        final TestSynchronization sync = new TestSynchronization();
+        t.registerSynchronization(sync);
+        final XATerminator xaTerminator = SubordinationManager.getXATerminator();
+        final XATerminatorExtensions xaTerminatorExtensions = (XATerminatorExtensions)xaTerminator;
+        xaTerminatorExtensions.beforeCompletion(xid);
+        assertEquals(XAResource.XA_RDONLY, xaTerminator.prepare(xid));
+        // note that unlike the above test we don't call commit - the XA_RDONLY means its finished, per XA semantics.
+        assertTrue(sync.isBeforeCompletionDone());
+        assertTrue(sync.isAfterCompletionDone());
+        assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
+    }
+
+    public void testTwoPhaseCommitSyncWithXAOKWithSeparateSync() throws Exception
+    {
+        final SubordinateTransaction tm = createTransaction();
+        final TestSynchronization sync = new TestSynchronization();
+        tm.registerSynchronization(sync);
+        final TestXAResource xaResource = new TestXAResource();
+        xaResource.setPrepareReturnValue(XAResource.XA_OK);
+        tm.enlistResource(xaResource);
+        tm.doBeforeCompletion();
+        assertEquals(TwoPhaseOutcome.PREPARE_OK, tm.doPrepare());
+        tm.doCommit();
+        assertTrue(sync.isBeforeCompletionDone());
+        assertTrue(sync.isAfterCompletionDone());
+        assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
+    }
+
+    public void testTwoPhaseCommitSyncWithXAOKViaXATerminatorWithSeparateSync() throws Exception
+    {
+        final Xid xid = new XidImple(new Uid());
+        final Transaction t = SubordinationManager.getTransactionImporter().importTransaction(xid);
+        final TestSynchronization sync = new TestSynchronization();
+        t.registerSynchronization(sync);
+        final TestXAResource xaResource = new TestXAResource();
+        xaResource.setPrepareReturnValue(XAResource.XA_OK);
+        t.enlistResource(xaResource);
+        final XATerminator xaTerminator = SubordinationManager.getXATerminator();
+        final XATerminatorExtensions xaTerminatorExtensions = (XATerminatorExtensions)xaTerminator;
+        xaTerminatorExtensions.beforeCompletion(xid);
+        assertEquals(XAResource.XA_OK, xaTerminator.prepare(xid));
+        xaTerminator.commit(xid, false);
+        assertTrue(sync.isBeforeCompletionDone());
+        assertTrue(sync.isAfterCompletionDone());
+        assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
+    }
+
+    public void testTwoPhaseCommitSyncWithRollbackOnlyWithSeparateSync() throws Exception
+    {
+        final SubordinateTransaction tm = createTransaction();
+        final TestSynchronization sync = new TestSynchronization();
+        tm.registerSynchronization(sync);
+        tm.setRollbackOnly();
+        tm.doBeforeCompletion();
+        assertEquals(TwoPhaseOutcome.PREPARE_NOTOK, tm.doPrepare());
+        tm.doRollback();
+        assertTrue(sync.isBeforeCompletionDone());
+        assertTrue(sync.isAfterCompletionDone());
+        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
+    }
+
+    public void testTwoPhaseCommitSyncWithRollbackOnlyViaXATerminatorWithSeparateSync() throws Exception
+    {
+        final Xid xid = new XidImple(new Uid());
+        final Transaction t = SubordinationManager.getTransactionImporter().importTransaction(xid);
+        final TestSynchronization sync = new TestSynchronization();
+        t.registerSynchronization(sync);
+        t.setRollbackOnly();
+        final XATerminator xaTerminator = SubordinationManager.getXATerminator();
+        final XATerminatorExtensions xaTerminatorExtensions = (XATerminatorExtensions)xaTerminator;
+        xaTerminatorExtensions.beforeCompletion(xid);
+
+        try {
+            xaTerminator.prepare(xid);
+        } catch(XAException e) {
+            assertEquals(XAException.XA_RBROLLBACK, e.errorCode);
+            // expected - we tried to prepare a rollbackonly tx.
+        }
+        // no need to call rollback - the XA_RBROLLBACK code indicates its been done.
+        assertTrue(sync.isBeforeCompletionDone());
+        assertTrue(sync.isAfterCompletionDone());
+        assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
+    }
+
 }

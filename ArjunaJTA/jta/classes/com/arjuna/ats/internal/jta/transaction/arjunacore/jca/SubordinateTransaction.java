@@ -38,7 +38,7 @@ public interface SubordinateTransaction extends Transaction
 	 * @return a TwoPhaseOutcome representing the result.
 	 */
     public int doPrepare();
-    
+
 	/**
 	 * Drive the subordinate transaction to commit. It must have previously
 	 * been prepared.
@@ -53,7 +53,7 @@ public interface SubordinateTransaction extends Transaction
     public void doCommit () throws IllegalStateException,
 			HeuristicMixedException, HeuristicRollbackException, HeuristicCommitException,
 			SystemException;
-        
+
 	/**
 	 * Drive the subordinate transaction to roll back. It need not have been previously
 	 * prepared.
@@ -69,7 +69,7 @@ public interface SubordinateTransaction extends Transaction
 	 */
     public void doRollback () throws IllegalStateException,
             HeuristicMixedException, HeuristicCommitException, HeuristicRollbackException, SystemException;
-    
+
 	/**
 	 * Drive the transaction to commit. It should not have been previously
 	 * prepared and will be the only resource in the global transaction.
@@ -80,7 +80,7 @@ public interface SubordinateTransaction extends Transaction
 	 */
     public void doOnePhaseCommit () throws IllegalStateException,
 			HeuristicMixedException, SystemException, RollbackException;
-    
+
 	/**
 	 * Called to tell the transaction to forget any heuristics.
 	 *
@@ -91,17 +91,19 @@ public interface SubordinateTransaction extends Transaction
 
     /**
      * Run beforeCompletion on Synchronizations.
-     * 
+     * Note: this will run beforeCompletion even on setRollbackOnly transactions.
+     * Users may wish to avoid calling this method in such cases, or prior to calling rollback.
+     *
      * @return outcome
      */
-    
+
     public boolean doBeforeCompletion () throws SystemException;
 
     public boolean activated();
-    
+
     public void recover();
-    
+
     public Xid baseXid();
-    
+
     public Uid get_uid();
 }

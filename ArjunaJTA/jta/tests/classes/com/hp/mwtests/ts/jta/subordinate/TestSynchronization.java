@@ -41,11 +41,21 @@ public class TestSynchronization implements Synchronization
     }
 
     public void beforeCompletion() {
+        if(beforeCompletionDone) {
+            System.out.println("beforeCompletion called more than once");
+            throw new RuntimeException("beforeCompletion called more than once");
+        }
+
         beforeCompletionDone = true;
         System.out.println("TestSynchronization.beforeCompletion()");
     }
 
     public void afterCompletion(int i) {
+        if(afterCompletionDone) {
+            System.out.println("afterCompletion called more than once");
+            throw new RuntimeException("afterCompletion called more than once");
+        }
+
         afterCompletionDone = true;
         System.out.println("TestSynchronization.afterCompletion("+i+")");
     }
