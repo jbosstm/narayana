@@ -28,6 +28,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wst11.UserTransactionFactory;
 
 import com.arjuna.mw.wst11.TransactionManagerFactory;
+import com.arjuna.mw.wst11.TransactionManager;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wsc.AlreadyRegisteredException;
@@ -82,6 +83,21 @@ public class InboundBridgeManager
 	}
 
     /**
+     * Return an InboundBridge instance for the specified WS-AT transaction context.
+     *
+     * This method exists only to allow BridgeVolatileParticipant to get tx context and may go away
+     * once its no longer needed for that purpose. Therefore it should probably not be relied upon.
+     *
+     * @deprecated
+     * @param externalTxId The WS-AT tx identifier.
+     * @return
+     */
+    static InboundBridge getInboundBridge(String externalTxId)
+    {
+        return inboundBridgeMappings.get(externalTxId);
+    }
+
+    /**
      * Remove the mapping for the given externalTxId. This should be called for gc when the tx is finished.
      *
      * @param externalTxId The WS-AT tx identifier.
@@ -114,15 +130,19 @@ public class InboundBridgeManager
 			return;
 		}
 
+        TransactionManager transactionManager = TransactionManagerFactory.transactionManager();
+
         // Xid for driving the subordinate,
         // shared by the bridge (thread assoc) and Participant (termination via XATerminator)
 		Xid xid = new XidImple(new Uid());
 
-		BridgeParticipantAT bridgeParticipantAT = new BridgeParticipantAT(externalTxId, xid);
-
+		BridgeDurableParticipant bridgeDurableParticipant = new BridgeDurableParticipant(externalTxId, xid);
         // construct the participantId in such as way as we can recognise it at recovery time:
-        String participantId = BridgeParticipantAT.TYPE_IDENTIFIER+new Uid().toString();
-		TransactionManagerFactory.transactionManager().enlistForDurableTwoPhase(bridgeParticipantAT, participantId);
+        String participantId = BridgeDurableParticipant.TYPE_IDENTIFIER+new Uid().toString();
+		transactionManager.enlistForDurableTwoPhase(bridgeDurableParticipant, participantId);
+
+        BridgeVolatileParticipant bridgeVolatileParticipant = new BridgeVolatileParticipant(externalTxId, xid);
+        transactionManager.enlistForVolatileTwoPhase(bridgeVolatileParticipant, new Uid().toString());
 
         inboundBridgeMappings.put(externalTxId, new InboundBridge(xid));
 	}

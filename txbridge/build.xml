@@ -26,18 +26,17 @@
 		JBossTS Transaction Bridge
 	</description>
 
-    <property name="jbossas.home" location="/home/jhalli/IdeaProjects/jboss/jbossas_branch5x/build/output/jboss-5.1.0.CR1"/>
+    <property name="jbossas.home" location="/home/jhalli/IdeaProjects/jboss/jbossas_510ga/build/output/jboss-5.1.0.GA"/>
     <property name="jbossas.server" value="default"/>
 
     <property name="jbossts.home" location=".."/>
 
 	<property name="src" location="src"/>
-	<property name="lib" location="lib"/>
-	<property name="resources" location="resources"/>
 	<property name="build" location="build"/>
 
 	<path id="build-prereqs">
         <fileset dir="${jbossts.home}/install/lib">
+            <include name="jbossjta.jar"/>
             <include name="jbossjts.jar"/>
             <include name="ext/jbossts-common.jar"/>
             <include name="ext/log4j-1.2.14.jar"/>
@@ -95,7 +94,6 @@
     <target name="install-jts">
         <copy todir="${jbossas.home}/common/lib">
             <fileset dir="${jbossts.home}/install/lib" includes="*.jar"/>
-            <fileset dir="${jbossts.home}/install/lib/ext/" includes="jbossts-common.jar"/>
         </copy>
     </target>
 

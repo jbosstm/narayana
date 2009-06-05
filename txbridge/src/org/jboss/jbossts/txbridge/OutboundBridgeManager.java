@@ -29,6 +29,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 
 import javax.transaction.SystemException;
 import javax.transaction.RollbackException;
+import javax.transaction.Synchronization;
 import javax.transaction.xa.XAResource;
 
 import org.apache.log4j.Logger;
@@ -63,7 +64,8 @@ public class OutboundBridgeManager
 	{
 		log.trace("getOutboundBridge()");
 
-        try {
+        try
+        {
             Transaction transaction = (Transaction)TransactionManager.transactionManager().getTransaction();
 
             Uid externalTxId = transaction.get_uid();
@@ -74,7 +76,9 @@ public class OutboundBridgeManager
 
             return outboundBridgeMappings.get(externalTxId);
 
-        } catch(SystemException e) {
+        }
+        catch(SystemException e)
+        {
             log.error("problem", e);
         }
 
@@ -114,13 +118,16 @@ public class OutboundBridgeManager
 
         OutboundBridge outboundBridge = new OutboundBridge(bridgeWrapper);
         XAResource xaResource = new BridgeXAResource(externalTxId, bridgeWrapper);
+        Synchronization synchronization = new BridgeSynchronization(bridgeWrapper);
 
         try
         {
             transaction.enlistResource(xaResource);
-        } catch(RollbackException e)
+            transaction.registerSynchronization(synchronization);
+        }
+        catch(RollbackException e)
         {
-            log.error("Unable to enlist BridgeXAResource: ", e);
+            log.error("Unable to enlist BridgeXAResource or register BridgeSynchronization: ", e);
             throw new SystemException(e.toString());
         }
 

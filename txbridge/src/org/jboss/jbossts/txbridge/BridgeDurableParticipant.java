@@ -40,14 +40,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * Provides method call mapping between WS-AT Participant interface
+ * Provides method call mapping between WS-AT Durable Participant interface
  * and an underlying JTA subtransaction coordinator.
  *
  * @author jonathan.halliday@redhat.com, 2007-04-30
  */
-public class BridgeParticipantAT implements Durable2PCParticipant, Serializable
+public class BridgeDurableParticipant implements Durable2PCParticipant, Serializable
 {
-	private static Logger log = Logger.getLogger(BridgeParticipantAT.class);
+	private static Logger log = Logger.getLogger(BridgeDurableParticipant.class);
 
     /*
      * Uniq String used to prefix ids at participant registration,
@@ -68,14 +68,14 @@ public class BridgeParticipantAT implements Durable2PCParticipant, Serializable
     private Uid subordinateTransactionId;
 
     /**
-     * Create a new WS-AT Participant which wraps the subordinate XA tx terminator.
+     * Create a new WS-AT Durable Participant which wraps the subordinate XA tx terminator.
      *
      * @param externalTxId the WS-AT Tx identifier
      * @param xid the Xid to use when driving the subordinate XA transaction.
      */
-	BridgeParticipantAT(String externalTxId, Xid xid)
+	BridgeDurableParticipant(String externalTxId, Xid xid)
     {
-		log.trace("BridgeParticipantAT(TxId="+externalTxId+", Xid="+xid+")");
+		log.trace("BridgeDurableParticipant(TxId="+externalTxId+", Xid="+xid+")");
 
         this.xid = xid;
         this.externalTxId = externalTxId;

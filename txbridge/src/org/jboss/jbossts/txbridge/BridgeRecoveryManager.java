@@ -75,10 +75,10 @@ public class BridgeRecoveryManager implements XTSATRecoveryModule
     {
         log.trace("deserialize(id="+id+")");
 
-        if(id.startsWith(BridgeParticipantAT.TYPE_IDENTIFIER))
+        if(id.startsWith(BridgeDurableParticipant.TYPE_IDENTIFIER))
         {
             Object participant = objectInputStream.readObject();
-            return (BridgeParticipantAT)participant;
+            return (BridgeDurableParticipant)participant;
         }
         else
         {

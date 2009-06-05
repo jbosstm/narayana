@@ -98,6 +98,13 @@ public class InboundBridge
 		TransactionManager.transactionManager().suspend();
 	}
 
+    public void setRollbackOnly() throws XAException, SystemException
+    {
+        log.trace("setRollbackOnly("+xid+")");
+
+        getTransaction().setRollbackOnly();
+    }
+
 	/**
 	 * Get the JTA Transaction which corresponds to the Xid of the instance.
 	 *
