@@ -841,7 +841,7 @@ public class TransactionReaper
 
 		        return true;
 		    }
-                }
+        }
 	}
 
     /**
@@ -955,7 +955,9 @@ public class TransactionReaper
 
 	private final void shutdown (boolean waitForTransactions)
 	{
-	    synchronized (_shutdownLock)
+        // the reaper thread synchronizes and waits on this
+
+	    synchronized (this)
 	    {
 	        _inShutdown = true;
 
@@ -987,71 +989,64 @@ public class TransactionReaper
 	        {
 	            try
 	            {
-	                _shutdownLock.wait();
+	                this.wait();
 	            }
 	            catch (final Exception ex)
 	            {
 	            }
 	        }
 
-	        synchronized (_reaperThread)
-	        {
-	            _reaperThread.shutdown();
-	            _reaperThread.interrupt();  // by this stage there should be no transactions left anyway.
 
-	            synchronized (this)
-	            {
-	                notifyAll();
-	            }
+            _reaperThread.shutdown();
 
-	            try
-	            {
-	                _reaperThread.join();
-	            }
-	            catch (final Exception ex)
-	            {
-	            }
-	        }
+            notifyAll();
+        }
+        try
+        {
+            _reaperThread.join();
+        }
+        catch (final Exception ex)
+        {
+        }
 
-	        _reaperThread = null;
+        _reaperThread = null;
 
-	        _reaperWorkerThread.shutdown();
+        // the reaper worker thread synchronizes and wais on the work queue
 
-	        synchronized (_reaperWorkerThread)
-	        {
-	            try
-	            {
-	                _reaperWorkerThread.interrupt();
-	                _reaperWorkerThread.join();
-	            }
-	            catch (final Exception ex)
-	            {
-	            }
-	        }
+        synchronized(_workQueue) {
+            _reaperWorkerThread.shutdown();
+            _workQueue.notifyAll();
+            // hmm, not sure we really need to do this but . . .
+            _reaperWorkerThread.interrupt();
+        }
 
-	        _reaperWorkerThread = null;
+        try
+        {
+            _reaperWorkerThread.join();
+        }
+        catch (final Exception ex)
+        {
+        }
 
-	        _inShutdown = false;
-	    }
+        _reaperWorkerThread = null;
 	}
 
 	/*
 	 * Remove element from list and trigger waiter if we are
 	 * being shutdown.
+	 *
+	 * n.b. must only be called when synchronized on this
 	 */
 
 	private final void removeElement (ReaperElement e)
 	{
-	    synchronized (_shutdownLock)
-	    {
-                _timeouts.remove(e._control);
-                _transactions.remove(e);
+        _timeouts.remove(e._control);
+        _transactions.remove(e);
 
-	        if (_inShutdown && (_transactions.size() == 0))
-	        {
-	            _shutdownLock.notifyAll();
-	        }
-	    }
+        if (_inShutdown && (_transactions.size() == 0))
+        {
+            this.notifyAll();
+        }
 	}
 
 	/**
@@ -1260,7 +1255,7 @@ public class TransactionReaper
 	 * the transactions.
 	 */
 
-	public static void terminate (boolean waitForTransactions)
+	public static synchronized void terminate (boolean waitForTransactions)
 	{
 	    if (_theReaper != null)
 	    {
@@ -1331,10 +1326,5 @@ public class TransactionReaper
 
 	private static int _zombieCount = 0;
 
-	/*
-	 * Shutdown lock.
-	 */
-
-	private static final Object _shutdownLock = new Object();
-	private static boolean _inShutdown = false;
+	private boolean _inShutdown = false;
 }
