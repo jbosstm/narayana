@@ -72,7 +72,7 @@
 	<property name="jboss.compile.lib.jars" value="dom4j.jar"/>
 	<property name="jboss.compile.common.libs" value="servlet-api.jar"/>
 
-	<property name="dist.compile.libs" value="junit.jar saxon.jar"/>
+	<property name="dist.compile.libs" value="junit.jar"/>
 
 	<!--
 	<property name="dist.dependency.libs" value="wstx-asl-2.0.3.jar"/>
