@@ -400,8 +400,10 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 						}
 					}
 
-					_synchs = null;
-					_currentRecord = null;
+                    synchronized (_synchs) {
+                        // nulling _syncs causes concurrency problems, so dispose contents instead:
+                        _synchs.clear();
+                    }
 				}
 			}
 			else
