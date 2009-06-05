@@ -353,7 +353,7 @@ public class XMLFilePlugin implements PropertyManagerIOPlugin
         }
         catch (Exception e)
         {
-            throw new ExceptionInInitializerError("Failed to create document builder:"+e);
+            throw new ExceptionInInitializerError(e);
         }
     }
 }

@@ -1727,7 +1727,7 @@ public class LogStore extends FileSystemStore
 		}
 		catch (final Exception ex)
 		{
-			throw new ExceptionInInitializerError(ex.toString());
+			throw new ExceptionInInitializerError(ex);
 		}
 	}
 }

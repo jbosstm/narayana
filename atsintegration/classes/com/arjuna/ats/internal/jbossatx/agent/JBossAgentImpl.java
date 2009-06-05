@@ -65,9 +65,7 @@ public class JBossAgentImpl implements AgentInterface
 		}
 		catch (final NamingException ne)
 		{
-            ExceptionInInitializerError exceptionInInitializerError = new ExceptionInInitializerError("Failed to initialize naming context: " + ne);
-            exceptionInInitializerError.initCause(ne);
-			throw exceptionInInitializerError;
+            throw new ExceptionInInitializerError(ne);
 		}
 
 		RMIAdaptor adaptor = null ;
@@ -83,9 +81,7 @@ public class JBossAgentImpl implements AgentInterface
 			}
 			catch (final NamingException ne2)
 			{
-                ExceptionInInitializerError exceptionInInitializerError = new ExceptionInInitializerError("Failed to retrieve reference to remote MBean server: " + ne2);
-                exceptionInInitializerError.initCause(ne);
-                throw exceptionInInitializerError;
+                throw new ExceptionInInitializerError(ne2);
 			}
 		}
 

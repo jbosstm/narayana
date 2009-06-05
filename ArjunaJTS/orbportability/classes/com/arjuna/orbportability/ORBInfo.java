@@ -184,13 +184,10 @@ public class ORBInfo
             {
                 if (opLogger.loggerI18N.isFatalEnabled())
                 {
-                    opLogger.loggerI18N.fatal( "com.arjuna.orbportability.ORBInfo.unsupportedorb" );
+                    opLogger.loggerI18N.fatal( "com.arjuna.orbportability.ORBInfo.unsupportedorb", joe);
                 }
 
-                ExceptionInInitializerError exceptionInInitializerError =
-                        new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.ORBInfo.unsupportedorb"));
-                exceptionInInitializerError.initCause(joe);
-                throw exceptionInInitializerError;
+                throw new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.ORBInfo.unsupportedorb"));
             }
         }
 
@@ -211,11 +208,9 @@ public class ORBInfo
                         new Object[] { e } );
             }
 
-            ExceptionInInitializerError exceptionInInitializerError = new ExceptionInInitializerError(
+            throw new ExceptionInInitializerError(
                     MessageFormat.format(opLogger.logMesg.getString("com.arjuna.orbportability.ORBInfo.creationfailed"),
                             new Object[] { e } ));
-            exceptionInInitializerError.initCause(e);
-            throw exceptionInInitializerError;
         }
     }
 

@@ -62,9 +62,7 @@ public class commonPropertyManager
       }
       catch (Exception e)
       {
-          ExceptionInInitializerError error = new ExceptionInInitializerError(e.toString());
-          error.initCause(e);
-          throw error;
+          throw new ExceptionInInitializerError(e);
       }
    }
 }

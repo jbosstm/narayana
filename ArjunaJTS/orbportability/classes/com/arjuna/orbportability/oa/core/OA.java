@@ -154,12 +154,9 @@ private final void initialise ()
             {
                 if (opLogger.loggerI18N.isFatalEnabled())
                 {
-                    opLogger.loggerI18N.fatal( "com.arjuna.orbportability.oa.core.OA.nosupportedorb" );
+                    opLogger.loggerI18N.fatal( "com.arjuna.orbportability.oa.core.OA.nosupportedorb", je );
                 }
-                ExceptionInInitializerError exceptionInInitializerError =
-                        new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.oa.core.OA.nosupportedorb") );
-                exceptionInInitializerError.initCause(je);
-                throw exceptionInInitializerError;
+                throw new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.oa.core.OA.nosupportedorb") );
             }
         }
     }
@@ -181,13 +178,10 @@ private final void initialise ()
         if (opLogger.loggerI18N.isFatalEnabled())
         {
             opLogger.loggerI18N.fatal( "com.arjuna.orbportability.oa.core.OA.caughtexception",
-                    new Object[] { e } );
+                    new Object[] { e } , e);
         }
 
-        ExceptionInInitializerError exceptionInInitializerError =
-                new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.oa.core.OA.caughtexception") );
-        exceptionInInitializerError.initCause(e);
-        throw exceptionInInitializerError;
+        throw new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.oa.core.OA.caughtexception") );
     }
 }
 

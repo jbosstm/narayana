@@ -67,9 +67,7 @@ public class opPropertyManager
         }
         catch (Exception e)
         {
-            ExceptionInInitializerError exceptionInInitializerError = new ExceptionInInitializerError(e.toString());
-            exceptionInInitializerError.initCause(e);
-            throw exceptionInInitializerError;
+            throw new ExceptionInInitializerError(e);
         }
     }
 }
