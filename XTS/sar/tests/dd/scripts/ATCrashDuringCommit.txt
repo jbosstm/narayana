@@ -264,7 +264,7 @@ BIND identifier = $1,
      recovered=$4
 IF recovered
 DO debug("created recovered coordinator engine " + identifier),
-   trace("log", "created recovered coordinator engine " + identifier)
+   traceln("log", "created recovered coordinator engine " + identifier)
 ENDRULE
 
 #######################################################################
