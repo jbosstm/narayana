@@ -846,12 +846,166 @@ public abstract class JDBCImple
 		return removeOk;
 	}
 
-	public abstract InputObjectState read_state(Uid objUid, String typeName,
-			int ft, String tableName) throws ObjectStoreException;
+    /**
+     * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_readfailed [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_readfailed] - JDBCImple:read_state failed
+     */
+	public InputObjectState read_state (Uid objUid, String tName, int ft, String tableName) throws ObjectStoreException
+	{
+		InputObjectState newImage = null;
 
-	public abstract boolean write_state(Uid objUid, String typeName,
-			OutputObjectState state, int s, String tableName)
-			throws ObjectStoreException;
+		if (!storeValid())
+			return newImage;
+
+		if (tName != null)
+		{
+			if ((ft == ObjectStore.OS_COMMITTED) || (ft == ObjectStore.OS_UNCOMMITTED))
+			{
+				int pool = getPool();
+				ResultSet rs = null;
+
+				try
+				{
+					PreparedStatement pstmt = _preparedStatements[pool][READ_STATE];
+
+					if (pstmt == null)
+					{
+						pstmt = _theConnection[pool].prepareStatement("SELECT ObjectState FROM "+tableName+" WHERE UidString = ? AND TypeName = ? AND StateType = ?");
+
+						_preparedStatements[pool][READ_STATE] = pstmt;
+					}
+
+					pstmt.setString(1, objUid.stringForm());
+					pstmt.setString(2, tName);
+					pstmt.setInt(3, ft);
+
+					rs = pstmt.executeQuery();
+
+					if(! rs.next()) {
+						return null; // no matching state in db
+					}
+
+					byte[] buffer = rs.getBytes(1);
+
+					if (buffer != null)
+					{
+						newImage = new InputObjectState(objUid, tName, buffer);
+					}
+					else {
+					    if (tsLogger.arjLoggerI18N.isWarnEnabled())
+						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_readfailed");
+					}
+				}
+				catch (Throwable e)
+				{
+					if(retryConnection(e, pool)) {
+						return read_state(objUid, tName, ft, tableName);
+					} else {
+						throw new ObjectStoreException(e.toString(), e);
+					}
+				}
+				finally
+				{
+					try
+					{
+						rs.close();
+					}
+					// Ignore
+					catch (Exception re) {}
+					freePool(pool);
+				}
+			}
+		}
+		else
+			throw new ObjectStoreException("JDBCImple.read_state - object with uid "+objUid+" has no TypeName");
+
+		return newImage;
+	}
+
+
+    /**
+     * @message com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_writefailed [com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_writefailed] - JDBCImple:write_state caught exception: {0}
+     */
+    public boolean write_state (Uid objUid, String tName, OutputObjectState state, int s, String tableName) throws ObjectStoreException
+	{
+		boolean result = false;
+
+		int imageSize = (int) state.length();
+
+		if (imageSize > getMaxStateSize())
+			throw new ObjectStoreException("Object state is too large - maximum size allowed: " + getMaxStateSize());
+
+		byte[] b = state.buffer();
+
+		if (imageSize > 0 && storeValid())
+		{
+			int pool = getPool();
+			ResultSet rs = null;
+
+			try
+			{
+				PreparedStatement pstmt = _preparedStatements[pool][READ_WRITE_SHORTCUT];
+
+				if (pstmt == null)
+				{
+					pstmt = _theConnection[pool].prepareStatement("SELECT ObjectState FROM "+tableName+" WHERE UidString = ? AND StateType = ? AND TypeName = ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
+
+					_preparedStatements[pool][READ_WRITE_SHORTCUT] = pstmt;
+				}
+
+				pstmt.setString(1, objUid.stringForm());
+				pstmt.setInt(2, s);
+				pstmt.setString(3, tName);
+
+				rs = pstmt.executeQuery();
+
+				if( rs.next() ) {
+
+					rs.updateBytes(1, b);
+					rs.updateRow();
+
+				} else {
+					// not in database, do insert:
+					PreparedStatement pstmt2 = _preparedStatements[pool][WRITE_STATE_NEW];
+
+					if (pstmt2 == null)
+					{
+						pstmt2 = _theConnection[pool].prepareStatement("INSERT INTO "+tableName+" (StateType,TypeName,UidString,ObjectState) VALUES (?,?,?,?)");
+
+						_preparedStatements[pool][WRITE_STATE_NEW] = pstmt2;
+					}
+
+					pstmt2.setInt(1, s);
+					pstmt2.setString(2, tName);
+					pstmt2.setString(3, objUid.stringForm());
+					pstmt2.setBytes(4, b);
+
+					pstmt2.executeUpdate();
+				}
+
+				result = true;
+			}
+			catch(Throwable e)
+			{
+				if(retryConnection(e, pool)) {
+					return write_state(objUid, tName, state, s, tableName);
+				} else {
+				    if (tsLogger.arjLoggerI18N.isWarnEnabled())
+					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_writefailed", new Object[] {e});
+				}
+			}
+			finally
+			{
+				try
+				{
+					rs.close();
+				}
+				// Ignore
+				catch (Exception re) {}
+				freePool(pool);
+			}
+		}
+		return result;
+	}
 
 	/**
 	 * Set up the store for use.
@@ -942,6 +1096,7 @@ public abstract class JDBCImple
 		_jdbcAccess = jdbcAccess;
 		_theConnection = new Connection[_poolSizeMax];
 		_theConnection[0] = conn;
+        conn.setAutoCommit(true);
 
 		try
 		{
@@ -1065,6 +1220,8 @@ public abstract class JDBCImple
 			throws SQLException;
 
 	public abstract String name();
+
+    protected abstract int getMaxStateSize();
 
 	// protected abstract boolean exists (String state);
 

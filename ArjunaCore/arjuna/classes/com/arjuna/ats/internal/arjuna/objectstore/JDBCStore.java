@@ -843,6 +843,8 @@ public class JDBCStore extends ObjectStoreImple
 		if (index != -1)
 			name = name.substring(0, index);
 
+        name = name.replaceAll("-", "_");
+
 		name = name.toLowerCase();
 
 		final ClassLoader classLoader = Thread.currentThread()

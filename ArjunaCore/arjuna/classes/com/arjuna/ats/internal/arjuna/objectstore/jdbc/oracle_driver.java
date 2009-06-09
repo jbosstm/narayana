@@ -55,8 +55,6 @@ import com.arjuna.ats.internal.arjuna.objectstore.JDBCImple;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
-import oracle.sql.BLOB;
-
 /**
  * @message com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_1 [com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_1] - oracle:read_state failed
  * @message com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_2 [com.arjuna.ats.internal.arjuna.objectstore.jdbc.oracle_2] - oracle:write_state caught exception: {0}
@@ -159,8 +157,8 @@ public class oracle_driver extends JDBCImple
 	{
 		int imageSize = (int) state.length();
 
-		if (imageSize > _maxStateSize)
-			throw new ObjectStoreException("Object state is too large - maximum size allowed: " + _maxStateSize);
+		if (imageSize > getMaxStateSize())
+			throw new ObjectStoreException("Object state is too large - maximum size allowed: " + getMaxStateSize());
 
 		byte[] b = state.buffer();
 
@@ -193,8 +191,8 @@ public class oracle_driver extends JDBCImple
 
         				if( rs.next() ) {
 
-        					BLOB myBlob = (BLOB)rs.getBlob(1);
-        					myBlob.putBytes(1, b);
+        					Blob myBlob = rs.getBlob(1);
+        					myBlob.setBytes(1, b);
 
         				} else {
         					// not in database, do insert:
@@ -226,8 +224,8 @@ public class oracle_driver extends JDBCImple
 
         					rs3 = pstmt3.executeQuery();
         					rs3.next();
-        					BLOB myBlob = (BLOB)rs3.getBlob(1);
-        					myBlob.putBytes(1, b);
+        					Blob myBlob = rs3.getBlob(1);
+        					myBlob.setBytes(1, b);
         				}
 
         				_theConnection[pool].commit();
@@ -283,7 +281,6 @@ public class oracle_driver extends JDBCImple
 		return false ;
 	}
 
-
 	protected void createTable (Statement stmt, String tableName) throws SQLException
 	{
 		stmt.executeUpdate("CREATE TABLE "+tableName+" (StateType INTEGER, TypeName VARCHAR(1024),UidString VARCHAR(255), ObjectState BLOB, CONSTRAINT "+tableName+"_pk PRIMARY KEY(UidString, StateType, TypeName))");
@@ -294,8 +291,9 @@ public class oracle_driver extends JDBCImple
 		return "oracle";
 	}
 
-	// private static final int  _maxStateSize = 65535;
-	// Oracle BLOBs should be OK up to > 4 GB, but cap @ 10 MB for testing:
-	private static final int _maxStateSize = 1024 * 1024 * 10;
-
+    protected int getMaxStateSize()
+    {
+        // Oracle BLOBs should be OK up to > 4 GB, but cap @ 10 MB for testing/performance:
+        return 1024 * 1024 * 10;
+    }
 }
