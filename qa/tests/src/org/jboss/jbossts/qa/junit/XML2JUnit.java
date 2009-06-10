@@ -270,14 +270,17 @@ public class XML2JUnit
         TaskDefinition taskDefinition = getTaskDef(action, testDefinition);
         String outputDirectory;
         String filename;
+        int timeout;
+
         switch(action.getType()) {
             case Action.PERFORM_TASK:
                 String name = (action.getAssociatedRuntimeTaskId() == null ? ("task"+(nameCount++)) : action.getAssociatedRuntimeTaskId());
                 outputDirectory = testOutputDirectory(testDefinition, isSetup);
                 filename = testOutputFilename(testDefinition, name);
+                timeout = testTimeout(action, testDefinition);
                 buffer.append("\t\tTask "+name+" = createTask(");
                 buffer.append(taskDefinition.getClassName()+".class, Task.TaskType."+taskDefinition.getTypeText());
-                buffer.append(", \"" + outputDirectory + filename + "\", 600);\n");
+                buffer.append(", \"" + outputDirectory + filename + "\", " + timeout + ");\n");
                 if(action.getParameterList().length != 0) {
                     buffer.append("\t\t"+name+".perform("); // new String[] {
 
@@ -303,9 +306,10 @@ public class XML2JUnit
                 }
                 outputDirectory = testOutputDirectory(testDefinition, isSetup);
                 filename = testOutputFilename(testDefinition, action.getAssociatedRuntimeTaskId());
+                timeout = testTimeout(action, testDefinition);
                 buffer.append(action.getAssociatedRuntimeTaskId() + " = createTask(");
                 buffer.append(taskDefinition.getClassName()+".class, Task.TaskType."+taskDefinition.getTypeText());
-                buffer.append(", \"" + outputDirectory + filename + "\", 600);\n");
+                buffer.append(", \"" + outputDirectory + filename + "\", " + timeout + ");\n");
                 if(action.getParameterList().length != 0) {
                     buffer.append("\t\t"+action.getAssociatedRuntimeTaskId()+".start("); // new String[] {
 
@@ -359,6 +363,21 @@ public class XML2JUnit
 
             return "./testoutput/" + groupId + "/" + testId.replace("-", "_") + "/";
         }
+    }
+
+    private int testTimeout(Action action, TestDefinition testDefinition)
+    {
+        int timeout = 480;
+        try {
+            TaskDefinition taskDef = getTaskDef(action, testDefinition);
+            if (taskDef != null) {
+                timeout = taskDef.getTimeout();
+            }
+        } catch (Exception e) {
+            // ignore -- just use default timeout
+        }
+
+        return timeout;
     }
 
     public void generateTest(TestDefinition testDefinition) throws Exception {
