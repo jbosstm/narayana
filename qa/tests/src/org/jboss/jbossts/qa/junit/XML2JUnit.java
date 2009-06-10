@@ -141,13 +141,10 @@ public class XML2JUnit
         // EmptyObjectStore is in the test base class, don't generate for it
         for(TestDefinition testDefinition : testDefs) {
             ArrayList<Action> actionList = testDefinition.getActionList();
-            for(Action action : actionList) {
-                TaskDefinition taskDefinition = getTaskDef(actionList.get(0), testDefinition);
-                if(taskDefinition == null || !taskDefinition.getClassName().equals("org.jboss.jbossts.qa.Utils.EmptyObjectStore")) {
-                    throw new IllegalArgumentException("Test does not start with EmptyObjectStore");
-                }
+            TaskDefinition taskDefinition = getTaskDef(actionList.remove(0), testDefinition);
+            if(taskDefinition == null || !taskDefinition.getClassName().equals("org.jboss.jbossts.qa.Utils.EmptyObjectStore")) {
+                throw new IllegalArgumentException("Test does not start with EmptyObjectStore");
             }
-            actionList.remove(0);
         }
 
         int startingBufferPosition = buffer.length();
@@ -166,10 +163,15 @@ public class XML2JUnit
 
         buffer.append("\t@After public void tearDown()\n");
         buffer.append("\t{\n");
+        // do the per server terminates inside a try blockso we can guarantee to call super.tearDown in
+        // a finally block if any of them fails
+        buffer.append("\t\ttry {\n");
 
         generateCommonTasks(true, outstandingActions); // tearDown method
 
-        buffer.append("\t\tsuper.tearDown();\n");
+        buffer.append("\t\t} finally {\n");
+        buffer.append("\t\t\tsuper.tearDown();\n");
+        buffer.append("\t\t}\n");
         buffer.append("\t}\n\n");
     }
 
@@ -183,7 +185,7 @@ public class XML2JUnit
 
         if(terminationActions != null) {
             for(Action action : terminationActions) {
-                generateTask(action,testDefs.get(0), false);
+                generateTask(action,testDefs.get(0), true);
             }
         }
 
@@ -266,11 +268,16 @@ public class XML2JUnit
     public void generateTask(Action action, TestDefinition testDefinition, boolean isSetup) throws Exception {
 
         TaskDefinition taskDefinition = getTaskDef(action, testDefinition);
-
+        String outputDirectory;
+        String filename;
         switch(action.getType()) {
             case Action.PERFORM_TASK:
                 String name = (action.getAssociatedRuntimeTaskId() == null ? ("task"+(nameCount++)) : action.getAssociatedRuntimeTaskId());
-                buffer.append("\t\tTask "+name+" = createTask("+taskDefinition.getClassName()+".class, Task.TaskType."+taskDefinition.getTypeText()+");\n");
+                outputDirectory = testOutputDirectory(testDefinition, isSetup);
+                filename = testOutputFilename(testDefinition, name);
+                buffer.append("\t\tTask "+name+" = createTask(");
+                buffer.append(taskDefinition.getClassName()+".class, Task.TaskType."+taskDefinition.getTypeText());
+                buffer.append(", \"" + outputDirectory + filename + "\", 600);\n");
                 if(action.getParameterList().length != 0) {
                     buffer.append("\t\t"+name+".perform("); // new String[] {
 
@@ -294,7 +301,11 @@ public class XML2JUnit
                 } else {
                     buffer.append("\t\tTask ");
                 }
-                buffer.append(action.getAssociatedRuntimeTaskId()+" = createTask("+taskDefinition.getClassName()+".class, Task.TaskType."+taskDefinition.getTypeText()+");\n");
+                outputDirectory = testOutputDirectory(testDefinition, isSetup);
+                filename = testOutputFilename(testDefinition, action.getAssociatedRuntimeTaskId());
+                buffer.append(action.getAssociatedRuntimeTaskId() + " = createTask(");
+                buffer.append(taskDefinition.getClassName()+".class, Task.TaskType."+taskDefinition.getTypeText());
+                buffer.append(", \"" + outputDirectory + filename + "\", 600);\n");
                 if(action.getParameterList().length != 0) {
                     buffer.append("\t\t"+action.getAssociatedRuntimeTaskId()+".start("); // new String[] {
 
@@ -313,13 +324,40 @@ public class XML2JUnit
                 }
                 break;
             case Action.TERMINATE_TASK:
-                buffer.append("\t\t"+action.getAssociatedRuntimeTaskId()+".terminate();\n");
+                if (isSetup) {
+                    buffer.append("\t\t\t"+action.getAssociatedRuntimeTaskId()+".terminate();\n");
+                } else {
+                    buffer.append("\t\t"+action.getAssociatedRuntimeTaskId()+".terminate();\n");
+                }
                 break;
             case Action.WAIT_FOR_TASK:
                 buffer.append("\t\t"+action.getAssociatedRuntimeTaskId()+".waitFor();\n");
                 break;
             default:
                 throw new IllegalArgumentException("Unknown Action type "+action.getType());
+        }
+    }
+
+    private String testOutputFilename(TestDefinition testDefinition, String name) {
+        // TODO - identify a better naming scheme
+        return name + "_output.txt";
+    }
+
+    private String testOutputDirectory(TestDefinition testDefinition, boolean isSetup) {
+        // TODO - identify a better naming scheme
+
+        String groupId = testDefinition.getGroupId();
+        if (isSetup) {
+            // setup tasks write their output in the parent directory
+            return "./testoutput/" + groupId + "/";
+        } else {
+            String testId = testDefinition.getId();
+
+            if (testId.startsWith(groupId + "_")) {
+                testId = testId.substring(groupId.length() + 1);
+            }
+
+            return "./testoutput/" + groupId + "/" + testId.replace("-", "_") + "/";
         }
     }
 
