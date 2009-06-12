@@ -302,7 +302,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			{
                 RollbackException rollbackException = new RollbackException(e4.toString());
                 rollbackException.initCause(e4);
-                throw e4;
+                throw rollbackException;
 			}
 			catch (org.omg.CORBA.NO_PERMISSION e5)
 			{
@@ -957,7 +957,7 @@ public class TransactionImple implements javax.transaction.Transaction,
                                             "com.arjuna.ats.internal.jta.transaction.jts.lastResource.multipleWarning",
                                             new Object[]
                                                     { xaRes });
-                            
+
                             _issuedWarning = true;
                         }
                     }
@@ -1934,7 +1934,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED ;
 	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE ;
-	
+
 	private static boolean _disableMLRWarning = false;
         private static boolean _issuedWarning = false;
 
@@ -1974,13 +1974,13 @@ public class TransactionImple implements javax.transaction.Transaction,
                 {
                     jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.lastResource.startupWarning");
                 }
-                
+
                 String disableMLRW = jtaPropertyManager.getPropertyManager().getProperty(Environment.DISABLE_MULTIPLE_LAST_RESOURCES_WARNING, "false");
-                
+
                 if ("true".equalsIgnoreCase(disableMLRW))
                 {
                     jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.lastResource.disableWarning");
-                    
+
                     _disableMLRWarning = true;
                 }
 	}
