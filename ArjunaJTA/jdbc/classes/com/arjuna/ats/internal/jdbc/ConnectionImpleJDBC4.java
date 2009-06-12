@@ -23,11 +23,8 @@
  */
 package com.arjuna.ats.internal.jdbc;
 
-import com.arjuna.ats.jdbc.logging.jdbcLogger;
-
 import java.sql.*;
 import java.util.Properties;
-import java.util.Map;
 
 /**
  * JDBC 4.0 extention to the Connection wrapper.
@@ -144,16 +141,42 @@ public class ConnectionImpleJDBC4 extends ConnectionImple implements Connection
         return getConnection().createStruct(typeName, attributes);
     }
 
-    /**
-     * @message com.arjuna.ats.internal.jdbc.nounwrapping Unwrapping is not supported.
-     */
     public <T> T unwrap(Class<T> iface) throws SQLException
     {
-        throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.nounwrapping"));
+        if (iface != null) {
+            if (iface.isInstance(this)) {
+                return (T) this;
+            } else {
+                Connection conn = getConnection();
+                if (conn != null) {
+                    if (iface.isInstance(conn)) {
+                        return (T) conn;
+                    } else if(conn.isWrapperFor(iface)) {
+                        return conn.unwrap(iface);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.nounwrapping"));
+    public boolean isWrapperFor(Class<?> iface) throws SQLException
+    {
+        if (iface != null) {
+            if (iface.isInstance(this)) {
+                return true;
+            } else {
+                Connection conn = getConnection();
+                if (conn != null) {
+                    if (iface.isInstance(conn)) {
+                        return true;
+                    } else {
+                        return conn.isWrapperFor(iface);
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /*
