@@ -106,31 +106,37 @@ public class SynchronizationImple implements SynchronizationRecord, Comparable
 	    return false;
     }
 
+    /**
+     * @message com.arjuna.ats.internal.jta.resources.arjunacore.SynchronizationImple SynchronizationImple.afterCompletion - failed for {0} with exception {1}
+     */
     public boolean afterCompletion (int status)
     {
-	if (jtaLogger.logger.isDebugEnabled())
-	{
-	    jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-				  "SynchronizationImple.afterCompletion");
-	}
+        if (jtaLogger.logger.isDebugEnabled())
+        {
+            jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+                    "SynchronizationImple.afterCompletion");
+        }
 
-	if (_theSynch != null)
-	{
-	    int s = StatusConverter.convert(status);
+        if (_theSynch != null)
+        {
+            int s = StatusConverter.convert(status);
 
-	    try
-	    {
-		_theSynch.afterCompletion(s);
+            try
+            {
+                _theSynch.afterCompletion(s);
 
-		return true;
-	    }
-	    catch (Exception e)
-	    {
-		return false; // should not cause any affect!
-	    }
-	}
-	else
-	    return false; // should not cause any affect!
+                return true;
+            }
+            catch (Exception e)
+            {
+                jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.arjunacore.SynchronizationImple",
+                        new Object[] { _theSynch, e }, e);
+
+                return false; // should not cause any affect!
+            }
+        }
+        else
+            return false; // should not cause any affect!
     }
 
 	/*

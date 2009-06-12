@@ -389,13 +389,13 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 						catch (Exception ex)
 						{
 							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4a", new Object[]
-							{ record, ex });
+							{ record, ex }, ex);
 							problem = true;
 						}
 						catch (Error er)
 						{
 							tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator_4b", new Object[]
-							{ record, er });
+							{ record, er }, er);
 							problem = true;
 						}
 					}
