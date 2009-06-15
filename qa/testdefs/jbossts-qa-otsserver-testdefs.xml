@@ -384,7 +384,7 @@
 				<start_task id="org.jboss.jbossts.qa.OTSServerClients.Client07" runtime_id="client0">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
-					<param>1000</param>
+					<param>800</param>
 				</start_task>
 				<wait_for_task runtime_id="client0"/>
 				<terminate_task runtime_id="server3"/>
@@ -426,7 +426,7 @@
 				<start_task id="org.jboss.jbossts.qa.OTSServerClients.Client08" runtime_id="client0">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
-					<param>1000</param>
+					<param>800</param>
 				</start_task>
 				<wait_for_task runtime_id="client0"/>
 				<terminate_task runtime_id="server3"/>
@@ -468,7 +468,7 @@
 				<start_task id="org.jboss.jbossts.qa.OTSServerClients.Client09" runtime_id="client0">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
-					<param>1000</param>
+					<param>800</param>
 				</start_task>
 				<wait_for_task runtime_id="client0"/>
 				<terminate_task runtime_id="server3"/>
@@ -510,7 +510,7 @@
 				<start_task id="org.jboss.jbossts.qa.OTSServerClients.Client10" runtime_id="client0">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
-					<param>1000</param>
+					<param>800</param>
 				</start_task>
 				<wait_for_task runtime_id="client0"/>
 				<terminate_task runtime_id="server3"/>
@@ -552,7 +552,7 @@
 				<start_task id="org.jboss.jbossts.qa.OTSServerClients.Client11" runtime_id="client0">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
-					<param>1000</param>
+					<param>800</param>
 				</start_task>
 				<wait_for_task runtime_id="client0"/>
 				<terminate_task runtime_id="server3"/>
@@ -594,7 +594,7 @@
 				<start_task id="org.jboss.jbossts.qa.OTSServerClients.Client12" runtime_id="client0">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
-					<param>1000</param>
+					<param>800</param>
 				</start_task>
 				<wait_for_task runtime_id="client0"/>
 				<terminate_task runtime_id="server3"/>
@@ -851,7 +851,7 @@
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<param>4</param>
-					<param>250</param>
+					<param>200</param>
 				</start_task>
 				<wait_for_task runtime_id="client0"/>
 				<terminate_task runtime_id="server3"/>
@@ -894,13 +894,13 @@
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<param>4</param>
-					<param>150</param>
+					<param>100</param>
 				</start_task>
 				<start_task id="org.jboss.jbossts.qa.OTSServerClients.Client14" runtime_id="client1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<param>4</param>
-					<param>150</param>
+					<param>100</param>
 				</start_task>
 				<wait_for_task runtime_id="client0"/>
 				<wait_for_task runtime_id="client1"/>
@@ -944,19 +944,19 @@
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<param>4</param>
-					<param>100</param>
+					<param>75</param>
 				</start_task>
 				<start_task id="org.jboss.jbossts.qa.OTSServerClients.Client14" runtime_id="client1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<param>4</param>
-					<param>100</param>
+					<param>75</param>
 				</start_task>
 				<start_task id="org.jboss.jbossts.qa.OTSServerClients.Client14" runtime_id="client2">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<param>4</param>
-					<param>100</param>
+					<param>75</param>
 				</start_task>
 				<wait_for_task runtime_id="client0"/>
 				<wait_for_task runtime_id="client1"/>
@@ -1001,25 +1001,25 @@
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<param>4</param>
-					<param>100</param>
+					<param>75</param>
 				</start_task>
 				<start_task id="org.jboss.jbossts.qa.OTSServerClients.Client14" runtime_id="client1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<param>4</param>
-					<param>100</param>
+					<param>75</param>
 				</start_task>
 				<start_task id="org.jboss.jbossts.qa.OTSServerClients.Client14" runtime_id="client2">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<param>4</param>
-					<param>100</param>
+					<param>75</param>
 				</start_task>
 				<start_task id="org.jboss.jbossts.qa.OTSServerClients.Client14" runtime_id="client3">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<param>4</param>
-					<param>100</param>
+					<param>75</param>
 				</start_task>
 				<wait_for_task runtime_id="client0"/>
 				<wait_for_task runtime_id="client1"/>
