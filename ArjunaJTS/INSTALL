@@ -1,37 +1,37 @@
 
-JBossTS 4.6.GA is designed for use standalone or with JBossAS 5.1.0
+JBossTS 4.7.GA is designed for use standalone or with JBossAS 5.1.0.GA
 It is not suitable for use with earlier versions of JBossAS.
 
 The installation procedure has changed from earlier releases due to the move from
 a JMX configuration style to the POJO microcontainer used by AS 5.x, packaging and config files changes.
 Upgrading users should take care to read the steps below carefully.
 
-Installing JBossTS 4.6.GA JTA into JBossAS 5.1.0
+Installing JBossTS 4.7.GA JTA into JBossAS 5.1.0.GA
 ------------------------------------------------------------
 
-The application server ships with a earlier release of JBossTS JTA as its default transaction manager.
-To update the JTA the following steps are necessary:
+The application server ships with an earlier release of JBossTS JTS, configured to run in JTA local mode,
+as its default transaction manager. It is not recommended to install the JTA only, but should you wish to
+do so the steps are as follows:
 
- - Replace JBossAS  common/lib/jbossjta.jar and common/lib/jbossjta-integration.jar with the newer
-versions from JBossTS lib
+- Delete JBossAS common/lib/jbossjts* and jbossts-common.jar
 
- - Replace JBossAS  common/lib/jbossts-common.jar with the newer version from JBossTS lib/ext/
+- Copy JBossTS lib/*.jar to JBossAS common/lib/
 
- - Remove JBossAS  server/xxx/conf/jbossjta-properties.xml if present
- 
- - Copy JBossTS  etc/jbossts-properties.xml to JBossAS server/xxx/conf
+- Replace JBossAS server/xxx/conf/jbossts-properties.xml with JBossTS  etc/jbossts-properties.xml
 
 
-Installing JBossTS 4.6.GA JTS into JBossAS 5.0.0.GA
+
+Installing JBossTS 4.7.GA JTS into JBossAS 5.1.0.GA
 ------------------------------------------------------------
 
 The JTS binaries are now bundled with JBossAS. To change the default JTA to JTS in JBossAS,
 follow the instructions in the app server's docs/examples/transactions/README.txt file.
 
 To upgrade the version of JTS bundled with JBossAS to the one from this JBossTS release,
-locate and replace jbossjts.jar, jbossjts-integration.jar, jbossjts-jacorb.jar,
-jbossts-common.jar and jbossjts-properties.jar in the app server tree with the versions
-from this release bundle. Note that you must still install the JTS per the above instructions
+locate and replace jbossjts.jar, jbossjts-integration.jar, jbossjts-jacorb.jar and the
+jbossts-properties.xml file in the app server tree with the versions from this release bundle.
+Delete any existing jbossts-common.jar file in the app server.
+Note that you must still install the JTS per the above instructions
 for it to take effect and that if you upgrade after installation there may be multiple
 copies of the files in the AS tree that need replacing.
 
