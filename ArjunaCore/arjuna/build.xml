@@ -449,10 +449,13 @@
         	                todir="${com.hp.mwlabs.ts.arjuna.reports.dest}">
         	                <fileset dir="${com.hp.mwlabs.ts.arjuna.tests.src}" includes="**/ReaperTestCase.java"/>
         	            </batchtest>
+            <!-- decommission this until a better version of it can be provided which is not susceptible
+            to timing failures
 		<batchtest haltonerror="yes" haltonfailure="yes" fork="yes"
 		                todir="${com.hp.mwlabs.ts.arjuna.reports.dest}">
 		                <fileset dir="${com.hp.mwlabs.ts.arjuna.tests.src}" includes="**/ReaperTestCase2.java"/>
 		            </batchtest>
+		            -->
             <batchtest haltonerror="yes" haltonfailure="yes" fork="yes"
                 todir="${com.hp.mwlabs.ts.arjuna.reports.dest}">
                 <fileset dir="${com.hp.mwlabs.ts.arjuna.tests.src}" includes="**/ReaperTestCase3.java"/>
