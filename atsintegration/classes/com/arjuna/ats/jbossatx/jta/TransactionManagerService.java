@@ -212,7 +212,8 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
 
                 RecoveryManager.delayRecoveryManagerThread() ;
                 _recoveryManager = RecoveryManager.manager() ;
-                _recoveryManager.initialize();
+                // this is done in start()
+                // _recoveryManager.initialize();
 
                 log.info("Recovery manager configured");
             }
@@ -272,12 +273,15 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
 
     public void start()
     {
+        if (_runRM)
+        {
         log.info("Starting transaction recovery manager");
 
         // TODO: any point in breaking out the recovery mgr into its own bean w/ own lifecycle?
         // may impact recovery config e.g. beans injection instead of XAResourceRecoveryRegistry lookup?
         _recoveryManager.initialize();
         _recoveryManager.startRecoveryManagerThread() ;
+        }
     }
 
     private boolean isRecoveryManagerRunning() throws Exception
