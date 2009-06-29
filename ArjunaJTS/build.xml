@@ -1,9 +1,9 @@
 <!--
   JBoss, Home of Professional Open Source
-  Copyright 2006, Red Hat Middleware LLC, and individual contributors
+  Copyright 2009, Red Hat Middleware LLC, and individual contributors
   as indicated by the @author tags.
-  See the copyright.txt in the distribution for a full listing
-  of individual contributors.
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
   of the GNU Lesser General Public License, v. 2.1.
@@ -15,447 +15,184 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
 
-
-  (C) 2005-2006,
-  @author JBoss Inc.
+  (C) 2009,
+  @author JBoss, a division of Red Hat.
 -->
-<!--$Id: build.xml 2317 2005-07-12 13:32:04Z nmcl $ -->
-<project name="product" default="com.hp.mw.ts.product.build" basedir=".">
+<project name="module-jbossjts" default="dist" basedir=".">
 
-	<!-- class path behaviour -->
-	<property name="build.sysclasspath" value="last"/>
+    <!--
+    old system: from clean, j6, 'ant jts': 69 s
+    new system: from clean, j6: 'ant':  45 s
+    TODO: for each module, add test execution
 
-	<!-- Set default properties filename -->
-	<property name="com.hp.mw.ts.properties" value="product.properties"/>
 
-	<!-- Load Build Properties File -->
-	<property file="${com.hp.mw.ts.properties}"/>
+./ArjunaJTS/jtax/build/reports/TEST-com.hp.mwtests.ts.jta.jts.lastresource.LastResourceAllowedTestCase.txt
+./ArjunaJTS/jtax/build/reports/TEST-com.hp.mwtests.ts.jta.jts.lastresource.LastResourceDisallowTestCase.txt
+./ArjunaJTS/jtax/build/reports/TEST-com.hp.mwtests.ts.jta.jts.subordinate.SubordinateTestCase.txt
 
-        <!-- configure dependencies -->
-        <property name="com.arjuna.buildsystem.dir" location="${buildsystem.dir}"/>
-        <property name="com.arjuna.ext.dir" location="${ext.dir}"/>
-        <property name="com.arjuna.common.dir" location="${common.dir}"/>
-        <property name="com.arjuna.arjunacore.dir" location="${core.dir}"/>
-        <property name="com.arjuna.arjunajta.dir" location="${jta.dir}"/>
+    -->
+    <property name="modulename" value="jbossjts"/>
 
-        <property name="com.arjuna.buildsystem.build.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
+    <import file="../sharedbuild.xml"/>
 
-        <property name="com.arjuna.common.build.lib" location="${com.arjuna.common.dir}/build/lib"/>
-        <property name="com.arjuna.common.build.classes" location="${com.arjuna.common.dir}/build/classes"/>
-        <property name="com.arjuna.arjunacore.build.lib" location="${com.arjuna.arjunacore.dir}/lib"/>
-        <property name="com.arjuna.arjunajta.build.lib" location="${com.arjuna.arjunajta.dir}/lib"/>
+    <property name="component-module-list" value="../common,../ArjunaCore/arjuna,../ArjunaCore/txoj,../ArjunaCore/tsmx,../ArjunaJTA/jta,../ArjunaJTA/jdbc,orbportability,jts,jtax"/>
 
-	<!-- Set external property defaults -->
-	<property name="com.hp.mw.ts.module.name" value="JBossJTS"/>
-	<property name="com.hp.mw.ts.module.name.lowercase" value="jbossjts"/>
-
-	<property name="com.hp.mw.ts.product.htdocs.internal" value="no"/>
-	<property name="com.hp.mw.csf.compile" value="no"/>
-
-	<!-- Set internal property defaults -->
-	<property name="com.hp.mwlabs.ts.product.jar.dest" location="lib"/>
-	<property name="com.hp.mwlabs.ts.product.htdocs.dest" location="htdocs"/>
-	<property name="com.hp.mwlabs.classpathbuilderfilename" location="buildsystem.classpath"/>
-    <property name="com.hp.mwlabs.ts.product.services.jar.dest" location="services/lib/"/>
-
-	<property name="com.hp.mw.orbportability.orbspecific.jacorb-home" location="jacorb"/>
-	<!-- Initialisation -->
-	<target name="com.hp.mwlabs.ts.product.init">
-		<!-- Define default build properties -->
-		<tstamp>
-		<format property="com.hp.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
-	  	</tstamp>
-
-		<property name="com.hp.mw.installationdirectory" location="install"/>
-		<property name="com.hp.mw.sourceid" value="unknown"/>
-		<property name="com.hp.mw.version" value="unknown"/>
-
-		<property name="com.hp.mw.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
-		<property name="com.hp.mw.notes" value=""/>
-
-		<echo message="Initialising product ${com.hp.mw.ts.product.name}"/>
-		<echo message="Source ID = ${com.hp.mw.sourceid}"/>
-		<echo message="Version   = ${com.hp.mw.version}"/>
-		<echo message="Builder   = ${com.hp.mw.builder}"/>
-		<echo message="Date      = ${com.hp.mw.date}"/>
-		<echo message="Notes     = ${com.hp.mw.notes}"/>
-
-                <path id="com.arjuna.buildsystem.classpath">
-                    <fileset dir="${com.arjuna.buildsystem.build.lib}"/>
-                </path>
-                <property name="com.arjuna.buildsystem.classpath" refid="com.arjuna.buildsystem.classpath"/>
-
-		<!-- Tests -->
-                <property name="com.hp.mw.orbportability.tests.compile" value="${com.hp.mw.alltests.build}"/>
-                <property name="com.hp.mw.ts.jts.tests.compile" value="${com.hp.mw.alltests.build}"/>
-                <property name="com.hp.mw.ts.jtax.tests.compile" value="${com.hp.mw.alltests.build}"/>
-
-		<!-- Installation directory -->
-		<property name="com.hp.mwlabs.installationdirectory"
-		    location="${com.hp.mw.installationdirectory}"/>
-
-		<!-- Compile with debugging? -->
-		<condition property="com.hp.mwlabs.debug" value="no">
-			<equals arg1="${com.hp.mw.debug}" arg2="no"/>
-		</condition>
-		<property name="com.hp.mwlabs.debug" value="yes"/>
-
-		<!-- Compile with deprecation? -->
-		<condition property="com.hp.mwlabs.deprecation" value="yes">
-			<equals arg1="${com.hp.mw.deprecation}" arg2="yes"/>
-		</condition>
-		<property name="com.hp.mwlabs.deprecation" value="no"/>
-
-		<!-- Build htdocs for just mw, or mw and mwlabs -->
-		<condition property="com.hp.mwlabs.ts.product.htdocs.list" value="com.arjuna.ats.*,com.arjuna.orbportability.*">
-			<equals arg1="${com.hp.mw.ts.product.htdocs.internal}" arg2="yes"/>
-		</condition>
-		<condition property="com.hp.mwlabs.ts.product.htdocs.exclude" value="">
-			<equals arg1="${com.hp.mw.ts.product.htdocs.internal}" arg2="yes"/>
-		</condition>
-		<condition property="com.hp.mwlabs.ts.product.htdocs.private" value="yes">
-			<equals arg1="${com.hp.mw.ts.product.htdocs.internal}" arg2="yes"/>
-		</condition>
-		<property name="com.hp.mwlabs.ts.product.htdocs.list" value="com.arjuna.ats.arjuna.*,com.arjuna.ats.txoj.*,com.arjuna.orbportability.*,com.arjuna.ats.jts.*,com.arjuna.ats.jta.*,com.arjuna.ats.jtax.*,com.arjuna.ats.jdbc.*,com.arjuna.ats.tsmx.*,com.arjuna.ats.csfx.*"/>
-		<property name="com.hp.mwlabs.ts.product.htdocs.exclude" value="com.arjuna.orbportability.internal.*"/>
-		<property name="com.hp.mwlabs.ts.product.htdocs.private" value="no"/>
-
-		<!-- Define classpath builder task and add this JAR to the classpath -->
-		<taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpathref="com.arjuna.buildsystem.classpath"/>
-
-		<!-- Clear build classpath file and add all JARs within lib/ext/ -->
-		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" clear="true">
-            <classpath>
-                <fileset dir="${com.arjuna.ext.dir}">
-                    <include name="**.jar"/>
-                    <include name="**.zip"/>
-                </fileset>
-                <fileset dir="${com.arjuna.common.build.lib}" includes="jbossts-common.jar"/>
-                <fileset dir="${com.arjuna.arjunacore.build.lib}" excludes="*-tests.jar"/>
-                <fileset dir="${com.arjuna.arjunajta.build.lib}" excludes="*-tests.jar"/>
-            </classpath>
-        </classpath-builder>
-
-	</target>
-
-	<!-- Project targets - must add all module names to each target -->
-	<target name="com.hp.mw.ts.product.build" depends="com.hp.mw.ts.product.compile, com.hp.mw.ts.product.dojar, com.hp.mw.ts.product.htdocs">
-
-	</target>
-
-	<target name="com.hp.mw.ts.product.compile"
-	depends="com.hp.mwlabs.ts.product.init,
-	com.hp.mwlabs.ts.product.orbportability.compile,
-	com.hp.mwlabs.ts.product.jts.compile,
-	com.hp.mwlabs.ts.product.jtax.compile,
-	com.hp.mwlabs.ts.product.tsmx.compile"/>
-
-	<target name="com.hp.mw.ts.product.jar"
-	depends="com.hp.mwlabs.ts.product.init,
-	com.hp.mwlabs.ts.product.orbportability.jar,
-	com.hp.mwlabs.ts.product.jts.jar,
-	com.hp.mwlabs.ts.product.jtax.jar,
-	com.hp.mwlabs.ts.product.tsmx.jar,
-	com.hp.mw.ts.product.tests.dojar,
-	com.hp.mw.ts.product.dojar">
-
-	</target>
-
-	<target name="com.hp.mw.ts.product.dojar">
-		<taskdef name="module-to-product" classname="com.hp.mw.buildsystem.ant.ModuleToProduct" classpath="${com.arjuna.buildsystem.classpath}"/>
-
-		<module-to-product destdir="${com.hp.mwlabs.ts.product.jar.dest}" destfile="${com.hp.mw.ts.product.name}">
-			<fileset dir="${com.arjuna.arjunacore.build.lib}" excludes="*-tests.jar"/>
-			<fileset dir="${com.arjuna.arjunajta.build.lib}" excludes="*-tests.jar"/>
-			<fileset dir=".">
-				<include name="orbportability/lib/*.jar"/>
-				<include name="jts/lib/*.jar"/>
-				<include name="jtax/lib/*.jar"/>
-			</fileset>
-		</module-to-product>
-
-		<touch file="built_using_java_${java.specification.version}"/>
-		<jar destfile="${com.hp.mwlabs.ts.product.jar.dest}/${com.hp.mw.ts.product.name.lowercase}.jar" update="true">
-			<fileset dir=".">
-				<filename name="built_using_java_${java.specification.version}"/>
-			</fileset>
-		</jar>
-
-        <!-- bundle jbossts-common into the product .jar -->
-        <jar destfile="${com.hp.mwlabs.ts.product.jar.dest}/${com.hp.mw.ts.module.name.lowercase}.jar" update="true">
-			<fileset dir="${com.arjuna.common.build.classes}">
-				<exclude name="build_using*"/>
-			</fileset>
-		</jar>
-
-		<!-- TODO: clean ugly hardcoding of orb name -->
-		<jar destfile="${com.hp.mwlabs.ts.product.jar.dest}/${com.hp.mw.ts.product.name.lowercase}-jacorb.jar" update="true">
-			<fileset dir=".">
-				<filename name="built_using_java_${java.specification.version}"/>
-			</fileset>
-		</jar>
-		<delete file="built_using_java_${java.specification.version}"/>
-
-		<mkdir dir="${com.hp.mwlabs.ts.product.services.jar.dest}"/>
-        <module-to-product destdir="${com.hp.mwlabs.ts.product.services.jar.dest}" destfile="${com.hp.mw.ts.product.name}-services" ignoreorb="true">
-            <fileset dir="${com.arjuna.arjunacore.dir}/services"/>
-            <fileset dir=".">
-                <include name="jts/lib/services/*.jar"/>
-            </fileset>
-        </module-to-product>
-
-	</target>
-
-	<target name="com.hp.mw.ts.product.tests.dojar">
-		<taskdef name="module-to-product" classname="com.hp.mw.buildsystem.ant.ModuleToProduct"/>
-
-		<module-to-product destdir="${com.hp.mwlabs.ts.product.jar.dest}" destfile="${com.hp.mw.ts.product.name}-tests">
-			<fileset dir="${com.arjuna.arjunacore.build.lib" includes="*-tests.jar"/>
-			<fileset dir="${com.arjuna.arjunajta.build.lib" includes="*-tests.jar"/>
-			<fileset dir=".">
-				<include name="orbportability/lib/tests/*.jar"/>
-				<include name="jts/lib/tests/*.jar"/>
-				<include name="jtax/lib/tests/*.jar"/>
-			</fileset>
-		</module-to-product>
-
-	</target>
-
-	<target name="com.hp.mw.ts.product.htdocs"
-				depends="com.hp.mwlabs.ts.product.init"
-        if="com.hp.mwlabs.ts.build.jts">
-		<echo message="Building htdocs "/>
-		<mkdir dir="${com.hp.mwlabs.ts.product.htdocs.dest}"/>
-
-		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
-
-		<javadoc
-			sourcepath="${com.hp.mwlabs.ts.product.htdocs.path}"
-			destdir="${com.hp.mwlabs.ts.product.htdocs.dest}"
-			packagenames="${com.hp.mwlabs.ts.product.htdocs.list}"
-			excludepackagenames="${com.hp.mwlabs.ts.product.htdocs.exclude}"
-			private="${com.hp.mwlabs.ts.product.htdocs.private}"
-            		classpath="${build.classpath}"
-		>
-		</javadoc>
-	</target>
-
-    <target name="com.hp.mw.ts.product.install-all"
-            depends="com.hp.mw.ts.product.install,
-            com.hp.mwlabs.ts.product.htdocs.install,
-            com.hp.mwlabs.ts.product.docs.install,
-            com.hp.mwlabs.ts.product.jacorb.install,
-            com.hp.mwlabs.ts.product.trailmap.install"/>
-
-    <target name="com.hp.mwlabs.ts.product.htdocs.install" depends="com.hp.mw.ts.product.htdocs" if="com.hp.mwlabs.ts.build.jts">
-
-            <echo message="Installing htdocs"/>
-            <mkdir dir="${com.hp.mwlabs.installationdirectory}/htdocs"/>
-            <copy
-                    todir="${com.hp.mwlabs.installationdirectory}/htdocs"
-            >
-                    <fileset dir="htdocs"/>
-            </copy>
-
+    <target name="dist" depends="dist.compositenode, install.docs, install.scripts, install.services, install.etc, install.jacorb, install.trailmap, install.tools, install.idl">
+        <copy file="INSTALL" todir="${build.dir}/install"/>
     </target>
 
-    <target name="com.hp.mw.ts.product.install"
-        depends="com.hp.mwlabs.ts.product.init,
-            com.hp.mwlabs.ts.product.orbportability.install,
-            com.hp.mwlabs.ts.product.jts.install,
-            com.hp.mwlabs.ts.product.jtax.install,
-            com.hp.mwlabs.ts.product.tsmx.install,
-            com.hp.mw.ts.product.dojar,
-            com.hp.mwlabs.ts.product.services.install,
-            com.hp.mwlabs.ts.product.docs.html.install"
-        if="com.hp.mwlabs.ts.build.jts">
-
-            <echo message="Installation directory : ${com.hp.mwlabs.installationdirectory}"/>
-
-            <mkdir dir="${com.hp.mwlabs.installationdirectory}/lib"/>
-
-			<touch file="${com.hp.mwlabs.installationdirectory}/lib/built_using_java_${java.specification.version}"/>
-
-            <copy todir="${com.hp.mwlabs.installationdirectory}/lib">
-                <fileset dir="${com.hp.mwlabs.ts.product.jar.dest}" excludes="*-tests.jar"/>
-            </copy>
-            <copy todir="${com.hp.mwlabs.installationdirectory}" file="copyright.txt"/>
-            <copy todir="${com.hp.mwlabs.installationdirectory}" file="INSTALL"/>
+    <target name="clean" depends="sharedbuild.clean">
+        <ant dir="tsmx" inheritall="false" target="clean"/>
+        <ant dir="trailmap" antfile="build_docs.xml" inheritall="false" target="clean"/>
+        <delete>
+            <fileset dir="." includes="**/idl-compiler.*"/>
+        </delete>
     </target>
 
-	<target name="com.hp.mwlabs.ts.product.docs.install">
-		<echo message="Installing ${com.hp.mwlabs.ts.module.name} docs"/>
-		<mkdir dir="${com.hp.mwlabs.installationdirectory}/docs/"/>
-        <copy todir="${com.hp.mwlabs.installationdirectory}/docs/">
+    <target name="htdocs">
+        <htdocs.composite.macro>
+            <packagesets>
+                <packageset dir="../common/classes" excludes="**/internal/**"/>
+
+                <packageset dir="../ArjunaCore/arjuna/classes" excludes="**/internal/**"/>
+                <packageset dir="../ArjunaCore/txoj/classes" excludes="**/internal/**"/>
+                <packageset dir="../ArjunaCore/tsmx/classes" excludes="**/internal/**"/>
+
+                <packageset dir="../ArjunaJTA/jta/classes" excludes="**/internal/**"/>
+                <packageset dir="../ArjunaJTA/jdbc/classes" excludes="**/internal/**"/>
+
+                <packageset dir="../ArjunaJTS/orbportability/classes" excludes="**/internal/**"/>
+                <packageset dir="../ArjunaJTS/jts/classes" excludes="**/internal/**"/>
+                <packageset dir="../ArjunaJTS/jtax/classes" excludes="**/internal/**"/>
+            </packagesets>
+        </htdocs.composite.macro>
+    </target>
+
+    <target name="install.docs">
+
+        <property name="dest.dir" value="docs"/>
+
+        <copy todir="${build.dir}/install/${dest.dir}" overwrite="true">
             <fileset dir="docs" includes="**/*.pdf"/>
+            <fileset dir="docs" includes="images/*"/>
+            <fileset dir="docs" includes="index.html"/>
         </copy>
-        <copy todir="${com.hp.mwlabs.installationdirectory}/docs/user_guide/">
+
+        <copy todir="${build.dir}/install/${dest.dir}/user_guide" overwrite="true">
             <fileset dir="orbportability/docs/programmers_guide" includes="*.pdf"/>
         </copy>
-	</target>
 
-	<target name="com.hp.mwlabs.ts.product.docs.html.install">
-		<echo message="Installing html docs"/>
-		<mkdir dir="${com.hp.mwlabs.installationdirectory}/docs/images"/>
-		<copy todir="${com.hp.mwlabs.installationdirectory}/docs">
-                    <fileset dir="docs" includes="index.html"/>
-                </copy>
-		<copy todir="${com.hp.mwlabs.installationdirectory}/docs/images"
-			file="docs/images/JBoss_DivOfRH_RGB.gif"/>
-	</target>
+        <copy todir="${build.dir}/install/${dest.dir}/user_guide/transaction_core" overwrite="true">
+            <fileset dir="../ArjunaCore/docs/user_guide" includes="*.pdf" excludes="Admin*"/>
+        </copy>
 
-    <target name="com.hp.mwlabs.ts.product.services.install">
+        <copy todir="${build.dir}/install/${dest.dir}/user_guide/jta" overwrite="true">
+            <fileset dir="../ArjunaJTA/docs/user_guide/" includes="*.pdf" excludes="Admin*"/>
+        </copy>
 
-        <echo>Installing services</echo>
+    </target>
 
-        <mkdir dir="${com.hp.mwlabs.installationdirectory}/services"/>
+    <target name="install.scripts">
+        <ant dir="../ArjunaCore" target="install.scripts" inheritall="false">
+            <property name="scripts.dest.dir" value="${basedir}/${build.dir}/install/bin"/>
+            <property name="product_name" value="${modulename}"/>
+            <property name="home_directory" value="JBOSSTS_HOME"/>
+            <property name="orbprefix" value="with"/>
+            <property name="extra_scripts" value="start-transaction-service.*"/>
+        </ant>
+    </target>
 
-        <copy todir="${com.hp.mwlabs.installationdirectory}/services">
-            <fileset dir="services">
-                <include name="**/**"/>
-                <exclude name="bin/**" />
-                <exclude name="lib/**" />
-            </fileset>
+    <target name="install.services">
+
+        <property name="services.dest.dir" value="${basedir}/${build.dir}/install/services"/>
+
+        <ant dir="../ArjunaCore" target="install.services" inheritall="false">
+            <property name="services.dest.dir" value="${services.dest.dir}"/>
+            <property name="product_name" value="${modulename}"/>
+        </ant>
+
+        <copy todir="${services.dest.dir}/bin">
+            <fileset dir="services/bin" includes="**"/>
+        </copy>
+
+        <copy todir="${services.dest.dir}" filtering="on" overwrite="true">
+            <fileset dir="services" includes="installer/**"/>
             <filterset>
-                <filter token="PRODUCT_NAME" value="${com.hp.mw.ts.product.name.lowercase}"/>
-                <filter token="HOME_DIRECTORY" value="${com.hp.mw.ts.product.shortened.name.uppercase}_HOME"/>
+                <filter token="HOME_DIRECTORY" value="JBOSSTS_HOME"/>
             </filterset>
         </copy>
 
-        <copy todir="${com.hp.mwlabs.installationdirectory}/services">
-            <fileset dir="services">
-                <include name="bin/**"/>
-                <include name="lib/**"/>
-            </fileset>
-        </copy>
+        <!-- TODO jbossjts-serices.jar -->
 
-        <mkdir dir="${com.hp.mwlabs.installationdirectory}/services/lib"/>
+        <install.services.files.macro services.dest.dir="${services.dest.dir}" productname="${product_name}" modulename="jts"/>
 
-		<copy overwrite="true"
-                todir="${com.hp.mwlabs.installationdirectory}/services/lib">
-                <fileset dir="${com.hp.mwlabs.ts.product.services.jar.dest}">
-                    <include name="*.jar"/>
-                </fileset>
-        </copy>
-
-	<mkdir dir="${com.hp.mwlabs.installationdirectory}/services/logs/"/>
     </target>
 
-	<target name="com.hp.mwlabs.ts.product.trailmap.install">
-		<echo message="Installing trail map"/>
+    <target name="install.etc">
 
-		<mkdir dir="${com.hp.mwlabs.installationdirectory}/trail_map"/>
+        <property name="etc.dest.dir" value="${basedir}/${build.dir}/install/etc"/>
+
+        <ant dir="../ArjunaJTA" target="install.etc" inheritall="false">
+            <property name="etc.dest.dir" value="${etc.dest.dir}"/>
+            <property name="jta_depends" value="jts"/>
+            <property name="module1" value="jts"/>
+            <property name="module2" value="arjunacore"/>
+        </ant>
+
+        <taskdef name="merge-property-files"
+            classname="com.hp.mw.buildsystem.ant.MergePropertyFiles"
+            classpath="../antbuildsystem/build/lib/buildsystem.jar"/>
+
+        <merge-property-files master="${etc.dest.dir}/jbossts-properties.xml"
+            merge="${basedir}/orbportability/etc/default-orbportability-properties.xml"/>
+
+        <merge-property-files master="${etc.dest.dir}/jbossts-properties.xml"
+            merge="${basedir}/jts/etc/default-jts-properties.xml"/>
+
+        <merge-property-files master="${etc.dest.dir}/jbossts-properties.xml"
+            merge="${basedir}/jts/etc/default-RecoveryManager-properties.xml" override="true"/>
+
+    </target>
+
+    <target name="install.jacorb">
+        <copy todir="${build.dir}/install/">
+            <fileset dir="${basedir}" includes="jacorb/**"/>
+        </copy>
+    </target>
+
+    <target name="install.trailmap">
 
 		<!-- build the trail map html pages from xml src -->
-		<ant antfile="build_docs.xml" dir="trailmap"/>
+		<ant dir="trailmap" antfile="build_docs.xml" />
 
-		<copy todir="${com.hp.mwlabs.installationdirectory}/trail_map">
-			<fileset dir="trailmap">
+        <copy todir="${build.dir}/install/trail_map">
+            <fileset dir="trailmap">
 				<include name="build.xml"/>
 				<include name="README.txt"/>
 				<include name="html/**"/>
 				<include name="src/**"/>
-			</fileset>
-		</copy>
-	</target>
+            </fileset>
+        </copy>
+    </target>
 
-	<target name="com.hp.mwlabs.ts.product.jacorb.install">
-		<echo message="Installing JacORB"/>
+    <target name="install.tools">
+        <ant dir="tsmx" target="tools" inheritall="false">
+            <property name="install.dir" value="${basedir}/${build.dir}/install/bin/tools"/>
+        </ant>
+        <move file="${build.dir}/install/bin/tools/tsmx-tools.jar" todir="${build.dir}/install/bin"/>
+    </target>
 
-		<mkdir dir="${com.hp.mwlabs.installationdirectory}/jacorb"/>
-
-		<copy todir="${com.hp.mwlabs.installationdirectory}/jacorb">
-			<fileset dir="jacorb"/>
-		</copy>
-	</target>
-
-	<target name="com.hp.mw.ts.product.clean"
-		depends="com.hp.mwlabs.ts.product.orbportability.clean,
-		com.hp.mwlabs.ts.product.jts.clean,
-		com.hp.mwlabs.ts.product.jtax.clean,
-		com.hp.mwlabs.ts.product.tsmx.clean">
-		<delete dir="${com.hp.mwlabs.ts.product.jar.dest}" quiet="true"/>
-		<delete dir="${com.hp.mwlabs.ts.product.htdocs.dest}" quiet="true"/>
-		<delete dir="${com.hp.mwlabs.ts.product.services.jar.dest}" quiet="true"/>
-	</target>
-
-
-	<!-- Module targets -->
-	<target name="com.hp.mwlabs.ts.product.orbportability.compile">
-		<ant dir="orbportability" />
-	</target>
-
-	<target name="com.hp.mwlabs.ts.product.jts.compile">
-		<ant dir="jts" />
-	</target>
-
-	<target name="com.hp.mwlabs.ts.product.jtax.compile">
-		<ant dir="jtax" />
-	</target>
-
-	<target name="com.hp.mwlabs.ts.product.tsmx.compile">
-		<ant dir="tsmx" target="compile"/>
-	</target>
-
-	<target name="com.hp.mwlabs.ts.product.orbportability.jar">
-		<ant dir="orbportability" target="com.hp.mw.orbportability.jar" />
-	</target>
-
-	<target name="com.hp.mwlabs.ts.product.jts.jar">
-		<ant dir="jts" target="com.hp.mw.ts.jts.jar" />
-	</target>
-
-	<target name="com.hp.mwlabs.ts.product.jtax.jar">
-		<ant dir="jtax" target="com.hp.mw.ts.jtax.build" />
-	</target>
-
-	<target name="com.hp.mwlabs.ts.product.tsmx.jar">
-		<ant dir="tsmx" target="jar" />
-	</target>
-
-	<target name="com.hp.mwlabs.ts.product.orbportability.install">
-		<ant dir="orbportability" target="com.hp.mw.orbportability.install" />
-	</target>
-
-	<target name="com.hp.mwlabs.ts.product.jts.install">
-		<ant dir="jts" target="com.hp.mw.ts.jts.install" />
-	</target>
-
-	<target name="com.hp.mwlabs.ts.product.jtax.install">
-		<ant dir="jtax" target="com.hp.mw.ts.jtax.install"/>
-	</target>
-
-	<target name="com.hp.mwlabs.ts.product.tsmx.install">
-		<ant dir="tsmx" target="install"/>
-	</target>
-
-	<target name="com.hp.mwlabs.ts.product.orbportability.clean">
-		<ant dir="orbportability" target="com.hp.mw.orbportability.clean" />
-	</target>
-
-	<target name="com.hp.mwlabs.ts.product.jts.clean">
-		<ant dir="jts" target="com.hp.mw.ts.jts.clean" />
-	</target>
-
-	<target name="com.hp.mwlabs.ts.product.jtax.clean">
-		<ant dir="jtax" target="com.hp.mw.ts.jtax.clean" />
-	</target>
-
-	<target name="com.hp.mwlabs.ts.product.tsmx.clean">
-		<ant dir="tsmx" target="clean" />
-	</target>
-
-	<!-- Short target names -->
-	<target name="build" depends="com.hp.mw.ts.product.build"/>
-
-	<target name="clean" depends="com.hp.mw.ts.product.clean"/>
-
-	<target name="jar" depends="com.hp.mw.ts.product.jar"/>
-
-	<target name="htdocs" depends="com.hp.mw.ts.product.htdocs"/>
-
-	<target name="install" depends="com.hp.mw.ts.product.install"/>
-
-	<target name="install-all" depends="com.hp.mw.ts.product.install-all"/>
+    <target name="install.idl">
+        <mkdir dir="${build.dir}/install/idl"/>
+        <copy todir="${build.dir}/install/idl">
+            <fileset dir="jts/idl/arjuna">
+                <include name="ArjunaOTS.idl"/>
+            </fileset>
+            <fileset dir="jts/idl/omg">
+                <include name="CosTransactions.idl"/>
+                <include name="XA.idl"/>
+            </fileset>
+        </copy>
+    </target>
 
 </project>

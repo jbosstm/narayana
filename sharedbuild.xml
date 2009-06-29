@@ -1,0 +1,400 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2009, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  (C) 2009,
+  @author JBoss, a division of Red Hat.
+-->
+<project name="sharedbuild">
+
+    <property name="modulename" value="override-this-in-module-specific-files"/>
+
+    <!-- ############################# -->
+
+    <property name="debug" value="true"/>
+    <property name="deprecation" value="true"/>
+
+    <property name="build.dir" value="build"/>
+    <property name="src.dir" value="classes"/>
+    <property name="tests.dir" value="tests"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="etc.dir" value="etc"/>
+
+    <dirname property="sharedbuild.base.dir" file="${ant.file.sharedbuild}" />
+    <property name="global.ext.lib.dir" value="${sharedbuild.base.dir}/ext"/>
+
+    <property name="global.ext.libs" value="none"/>
+    <property name="global.ext.test.libs" value="junit.jar"/>
+
+    <property name="excluded.classes" value=""/>
+    <property name="excluded.test.classes" value=""/>
+
+    <property name="mappingfile" value="${modulename}-properties.mappings"/>
+
+    <macrodef name="import-module.macro">
+        <attribute name="module"/>
+        <sequential>
+            <copy todir="${build.dir}/lib/ext" flatten="true">
+                <fileset dir="${sharedbuild.base.dir}" includes="**/${build.dir}/lib/@{module}.jar"/>
+            </copy>
+        </sequential>
+    </macrodef>
+
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="${sharedbuild.base.dir}/antbuildsystem/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+
+        <property name="component-module-list" value=""/>
+        <for list="${component-module-list}" param="module">
+            <sequential>
+                <ant dir="@{module}" antfile="build.xml" inheritall="false" target="clean"/>
+            </sequential>
+        </for>
+    </target>
+
+    <target name="init">
+
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dir}/lib"/>
+        <mkdir dir="${build.dir}/lib/ext"/>
+
+    </target>
+
+    <target name="compile" depends="init">
+        <compile.macro/>
+    </target>
+
+    <macrodef name="compile.macro">
+
+        <attribute name="excluded.classes" default="${excluded.classes}"/>
+        <element name="additional.classpath" optional="true"/>
+        <element name="additional.src.dirs" optional="true"/>
+        <sequential>
+        <mkdir dir="${build.dir}/classes"/>
+        <property name="excludes.list" value="${excluded.classes}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}/classes" debug="${debug}"
+               deprecation="${deprecation}" excludes="@{excluded.classes}" fork="true">
+            <classpath>
+                <fileset dir="${build.dir}/lib/ext/" includes="*"/>
+                <fileset dir="." includes="${lib.dir}/ext/*"/>
+                <fileset dir="${global.ext.lib.dir}" includes="${global.ext.libs}"/>
+                <additional.classpath/>
+            </classpath>
+            <additional.src.dirs/>
+        </javac>
+
+        <copy
+            file="${etc.dir}/${mappingfile}"
+            tofile="${build.dir}/classes/${mappingfile}"
+            failonerror="false"/>
+
+        <delete file="${build.dir}/lib/${modulename}.jar"/>
+        <jar jarfile="${build.dir}/lib/${modulename}.jar"
+             basedir="${build.dir}/classes"/>
+
+        </sequential>
+   </macrodef>
+
+    <target name="compile-tests" depends="compile">
+        <compile-tests.macro/>
+    </target>
+
+    <macrodef name="compile-tests.macro">
+
+        <element name="additional.classpath" optional="true"/>
+        <element name="additional.src.dirs" optional="true"/>
+        <sequential>
+        <mkdir dir="${build.dir}/tests"/>
+
+        <javac srcdir="${tests.dir}" destdir="${build.dir}/tests" debug="${debug}"
+               deprecation="${deprecation}" excludes="${excluded.test.classes}">
+            <classpath>
+                <pathelement location="${build.dir}/classes"/>
+                <fileset dir="${build.dir}/lib/ext/" includes="*"/>
+                <fileset dir="." includes="${lib.dir}/ext/*"/>
+                <fileset dir="${global.ext.lib.dir}" includes="${global.ext.libs}"/>
+                <fileset dir="${global.ext.lib.dir}" includes="${global.ext.test.libs}"/>
+                <additional.classpath/>
+            </classpath>
+            <additional.src.dirs/>
+        </javac>
+
+        <delete file="${build.dir}/lib/${modulename}_tests.jar"/>
+        <jar jarfile="${build.dir}/lib/${modulename}_tests.jar"
+            basedir="${build.dir}/tests"/>
+        </sequential>
+    </macrodef>
+
+    <target name="htdocs" depends="init">
+        <mkdir dir="${build.dir}/htdocs"/>
+
+        <javadoc sourcepath="${src.dir}"
+            packagenames="*"
+            destdir="${build.dir}/htdocs"
+            failonerror="yes"
+            private="yes"
+            defaultexcludes="yes">
+            <tag name="message" enabled="false"/>
+        </javadoc>
+
+        <delete file="${build.dir}/lib/${modulename}_jdocs.jar"/>
+        <jar jarfile="${build.dir}/lib/${modulename}_jdocs.jar"
+            basedir="${build.dir}/htdocs"/>
+    </target>
+
+    <macrodef name="generateresourcebundle.macro">
+
+        <element name="args" optional="true"/>
+        <sequential>
+        <javadoc sourcepath="${src.dir}"
+                 packagenames="*"
+                 failonerror="yes"
+                 private="yes"
+                 defaultexcludes="yes">
+
+            <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
+                <path>
+                    <pathelement location="${sharedbuild.base.dir}/antbuildsystem/build/lib/buildsystem.jar"/>
+                </path>
+                <!-- force absolute path for -basedir or bad things happen -->
+                <param name="-basedir" value="${basedir}/${build.dir}/classes"/>
+                <param name="-resourcebundle" value="${modulename}_msg_en_US.properties"/>
+                <args/>
+            </doclet>
+
+        </javadoc>
+
+        <jar jarfile="${build.dir}/lib/${modulename}.jar" update="true">
+            <fileset dir="${build.dir}/classes/" includes="${modulename}_msg_en_US.properties"/>
+        </jar>
+
+        </sequential>
+
+    </macrodef>
+
+    <target name="generateresourcebundle" depends="init">
+        <generateresourcebundle.macro/>
+    </target>
+
+    <target name="propertyfile" depends="init">
+
+        <!-- Process the properties -->
+        <property name="property.file" value="${modulename}.properties"/>
+        <property name="buildproperty.modulename" value="${modulename}"/>
+        <property name="buildproperty.sourceid" value="unknown"/>
+        <property name="buildproperty.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
+        <property name="buildproperty.version" value="unknown"/>
+        <tstamp>
+            <format property="buildproperty.date" pattern="yyyy/MMM/dd HH:mm"/>
+        </tstamp>
+        <property name="buildproperty.notes" value=""/>
+
+        <propertyfile file="${build.dir}/classes/${property.file}">
+            <entry key="MODULE" value="${buildproperty.modulename}"/>
+            <entry key="SOURCEID" value="${buildproperty.sourceid}"/>
+            <entry key="BUILDINFO" value="${buildproperty.builder}"/>
+            <entry key="VERSION" value="${buildproperty.version}"/>
+            <entry key="DATE" value="${buildproperty.date}"/>
+            <entry key="NOTES" value="${buildproperty.notes}"/>
+            <entry key="PROPERTIES_FILE" value="jbossts-properties.xml"/>
+        </propertyfile>
+
+        <jar jarfile="${build.dir}/lib/${modulename}.jar" update="true">
+            <fileset dir="${build.dir}/classes/" includes="${property.file}"/>
+        </jar>
+    </target>
+
+    <target name="install.ext.libs">
+
+        <property name="dest.dir" value="${build.dir}"/>
+
+        <copy todir="${dest.dir}/install/lib/ext">
+            <filelist dir="${global.ext.lib.dir}" files="${global.ext.libs}"/>
+        </copy>
+
+        <copy todir="${dest.dir}/install/lib/ext" failonerror="false">
+            <fileset dir="lib/ext"/>
+        </copy>
+
+    </target>
+
+
+    <target name="dist.leafnode" depends="clean, init, compile, compile-tests, generateresourcebundle, propertyfile, run.tests">
+    </target>
+
+    <target name="dist.compositenode" depends="clean, init, install.lib, htdocs">
+        <copy file="copyright.txt" todir="${build.dir}/install"/>
+        <copy file="${sharedbuild.base.dir}/JBossORG-EULA.txt" todir="${build.dir}/install"/>
+        <copy file="${global.ext.lib.dir}/third_party_licenses.txt" todir="${build.dir}/install/lib/ext"/>
+    </target>
+
+
+    <target name="install.lib">
+        <for list="${component-module-list}" param="module">
+            <sequential>
+                <ant dir="@{module}" antfile="build.xml" inheritall="false"/>
+            </sequential>
+        </for>
+
+        <delete file="${build.dir}/lib/${modulename}.jar"/>
+        <touch file="${build.dir}/built_using_java_${java.specification.version}"/>
+
+        <jar jarfile="${build.dir}/lib/${modulename}.jar">
+            <fileset dir="${build.dir}" includes="built_using*"/>
+        </jar>
+
+        <for list="${component-module-list}" param="module">
+            <sequential>
+                <jar destfile="${build.dir}/lib/${modulename}.jar" update="true">
+                    <fileset dir="@{module}/${build.dir}/classes"/>
+                </jar>
+            </sequential>
+        </for>
+
+        <mkdir dir="${build.dir}/install"/>
+        <mkdir dir="${build.dir}/install/lib"/>
+        <mkdir dir="${build.dir}/install/lib/ext"/>
+        <copy todir="${build.dir}/install/lib" file="${build.dir}/lib/${modulename}.jar"/>
+        <copy todir="${build.dir}/install/lib">
+            <fileset dir="${build.dir}" includes="built_using*"/>
+        </copy>
+
+        <for list="${component-module-list}" param="module">
+            <sequential>
+                <ant dir="@{module}" antfile="build.xml" inheritall="false" target="install.ext.libs">
+                    <property name="dest.dir" value="${basedir}/${build.dir}"/>
+                </ant>
+
+            </sequential>
+        </for>
+
+    </target>
+
+
+    <macrodef name="htdocs.composite.macro">
+
+        <element name="packagesets"/>
+        <sequential>
+    	<javadoc sourcepath="*/classes" destdir="${build.dir}/install/htdocs" private="no">
+
+            <packagesets/>
+
+            <classpath>
+                <fileset dir="${build.dir}/install/lib"/>
+                <fileset dir="${build.dir}/install/lib/ext"/>
+                <fileset dir="${build.dir}/lib"/>
+                <fileset dir="${build.dir}/lib/ext"/>
+            </classpath>
+            <tag name="message" enabled="false"/>
+		</javadoc>
+        </sequential>
+    </macrodef>
+
+
+    <macrodef name="install.services.files.macro">
+
+        <attribute name="modulename"/>
+        <attribute name="services.dest.dir"/>
+        <attribute name="productname"/>
+
+        <sequential>
+        <copy todir="@{services.dest.dir}/config" filtering="on" overwrite="yes">
+            <fileset dir="@{modulename}/services/config">
+                <include name="*.conf"/>
+                <include name="*.properties"/>
+                <include name="*.xml"/>
+            </fileset>
+            <filterset>
+                <filter token="PRODUCT_NAME" value="@{productname}"/>
+            </filterset>
+        </copy>
+
+        <!-- Create copy of unix scripts for each *NIX platform -->
+        <mkdir dir="@{services.dest.dir}/bin/hpux"/>
+
+        <copy todir="@{services.dest.dir}/bin/hpux/">
+            <fileset dir="@{modulename}/services/scripts/unix">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+
+        <mkdir dir="@{services.dest.dir}/bin/solaris"/>
+        <copy todir="@{services.dest.dir}/bin/solaris/">
+            <fileset dir="@{modulename}/services/scripts/unix">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+
+        <mkdir dir="@{services.dest.dir}/bin/linux"/>
+        <copy todir="@{services.dest.dir}/bin/linux/">
+            <fileset dir="@{modulename}/services/scripts/unix">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+
+        <mkdir dir="@{services.dest.dir}/bin/windows"/>
+        <copy todir="@{services.dest.dir}/bin/windows/">
+            <fileset dir="@{modulename}/services/scripts/windows">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+        </sequential>
+
+    </macrodef>
+
+    <target name="run.tests"/>
+
+    <macrodef name="run.tests.macro">
+
+        <element name="tests"/>
+        <element name="additional.classpath" optional="true"/>
+
+        <sequential>
+
+        <echo file="${build.dir}/tests/jbossts-properties.xml"
+                message="&lt;properties/&gt;"/>
+
+        <mkdir dir="${build.dir}/testresults"/>
+        <junit printsummary="yes" fork="yes" dir="${build.dir}">
+            <formatter type="plain"/>
+            <classpath>
+                <pathelement location="etc"/>
+                <pathelement location="${build.dir}/classes/"/>
+                <pathelement location="${build.dir}/tests/"/>
+                <fileset dir="${build.dir}/lib/ext/" includes="*"/>
+                <fileset dir="${basedir}" includes="${lib.dir}/ext/*"/>
+                <fileset dir="${global.ext.lib.dir}" includes="${global.ext.libs}"/>
+                <fileset dir="${global.ext.lib.dir}" includes="${global.ext.test.libs}"/>
+                <fileset dir="${global.ext.lib.dir}" includes="commons-logging-1.1.jar,log4j*"/>
+                <additional.classpath/>
+            </classpath>
+
+            <batchtest haltonerror="yes" haltonfailure="yes" fork="yes" todir="${build.dir}/testresults">
+                <tests/>
+            </batchtest>
+        </junit>
+        </sequential>
+
+    </macrodef>
+
+</project>

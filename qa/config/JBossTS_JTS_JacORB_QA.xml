@@ -82,7 +82,7 @@
 				<set name="ARJUNAJTS_HOME" value="build"/>
 
 			</sets>
-			<jvm id="1.5.0"/>
+			<jvm id="1.6.0"/>
 			<default-classpath name="main"/>
 			<node-exclusions/>
 		</node-configuration>

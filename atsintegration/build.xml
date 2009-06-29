@@ -1,6 +1,6 @@
 <!--
   JBoss, Home of Professional Open Source
-  Copyright 2006, Red Hat Middleware LLC, and individual contributors
+  Copyright 2009, Red Hat Middleware LLC, and individual contributors
   as indicated by the @author tags.
   See the copyright.txt in the distribution for a
   full listing of individual contributors.
@@ -15,273 +15,80 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
 
-  (C) 2005-2006,
-  @author JBoss Inc.
+  (C) 2009,
+  @author JBoss, a division of Red Hat.
 -->
-<!--$Id: build.xml 2342 2006-03-30 13:06:17Z  $-->
+<project name="module-atsintegration" default="dist.leafnode" basedir=".">
 
-<project name="atsintegration" default="com.arjuna.mw.ts.jbossatx.build" basedir=".">
-    <!-- Set module name -->
-    <property name="com.arjuna.mwlabs.ts.modulename" value="atsintegration"/>
+    <property name="modulename" value="jbossatx"/>
 
-    <!-- Set default properties filename -->
-    <property name="com.arjuna.mw.ts.properties" value="atsintegration.properties"/>
+    <property name="global.ext.libs" value="jta-1_1-classes.zip,connector-api.jar"/>
 
-    <!-- Load Build Properties File -->
-    <property file="${com.arjuna.mw.ts.properties}"/>
+    <property name="component-module-list" value="../atsintegration"/>
 
-    <property environment="env"/>
+    <import file="../sharedbuild.xml"/>
 
-	<!-- configure dependencies -->
-	<property name="com.arjuna.buildsystem.dir" location="${buildsystem.dir}"/>
-	<property name="com.arjuna.buildsystem.build.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
+    <target name="init" depends="sharedbuild.init, init.jts">
 
-    <!-- Set internal property defaults -->
-    <!-- Path names -->
-    <property name="com.arjuna.mwlabs.ts.jbossatx.src" location="classes"/>
-    <property name="com.arjuna.mwlabs.ts.jbossatx.buildroot" location="build"/>
-    <property name="com.arjuna.mwlabs.ts.jbossatx.dest" location="${com.arjuna.mwlabs.ts.jbossatx.buildroot}/classes"/>
-    <property name="com.arjuna.mwlabs.ts.jbossatx.jar.dest" value="${com.arjuna.mwlabs.ts.jbossatx.buildroot}/lib"/>
+        <import-module.macro module="common"/>
+        <import-module.macro module="arjuna"/>
+        <import-module.macro module="jta"/>
 
-    <property name="com.arjuna.mwlabs.ts.jbossatx.docs.src" location="docbuild"/>
-    <property name="com.arjuna.mwlabs.ts.jbossatx.docs.dest" location="${com.arjuna.mwlabs.ts.jbossatx.buildroot}/docs"/>
-    <property name="com.arjuna.mwlabs.ts.jbossatx.resourcebundle" value="jbossatx_msg_en_US.properties"/>
+        <copy todir="${build.dir}/lib/ext" flatten="true"
+                file="${sharedbuild.base.dir}/ArjunaCore/tsmx/${build.dir}/lib/tsmx.jar"/>
 
-    <!-- Initialisation -->
-    <target name="com.arjuna.mwlabs.ts.jbossatx.init">
-        <!-- Define default build properties -->
-        <property name="com.arjuna.mw.sourceid" value="unknown"/>
-        <property name="com.arjuna.mw.version" value="unknown"/>
-        <property name="com.arjuna.mw.installationdirectory" value="install"/>
-
-        <tstamp>
-            <format property="com.arjuna.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
-        </tstamp>
-
-        <condition property="jboss.home" value="${env.JBOSS_HOME}">
-            <isset property="env.JBOSS_HOME"/>
-        </condition>
-
-        <fail unless="jboss.home">
-The JBoss installation directory must be specified with the JBOSS_HOME environment variable or the jboss.home property.
-        </fail>
-
-        <property name="jboss.server" value="all"/>
-
-        <available property="jboss.server.exists" type="dir"
-            file="${jboss.home}/server/${jboss.server}"/>
-
-        <fail unless="jboss.server.exists">
-The JBoss server '${jboss.server}' does not appear to exist in the installation directory.  Please set jboss.server to the name of the JBoss server instance.
-        </fail>
-
-        <property name="jboss.lib.dir" location="${jboss.home}/lib"/>
-        <property name="jboss.common.lib.dir" location="${jboss.home}/common/lib"/>
-        <property name="jboss.server.all.lib.dir" location="${jboss.home}/server/all/lib"/>
-
-        <property name="com.arjuna.mw.installationdirectory" value="install"/>
-        <property name="com.arjuna.mw.sourceid" value="unknown"/>
-        <property name="com.arjuna.mw.version" value="unknown"/>
-
-        <property name="com.arjuna.mw.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
-        <property name="com.arjuna.mw.notes" value=""/>
-
-        <echo message="Initialising module atsintegration"/>
-        <echo message="Source ID = ${com.arjuna.mw.sourceid}"/>
-        <echo message="Version   = ${com.arjuna.mw.version}"/>
-        <echo message="Builder   = ${com.arjuna.mw.builder}"/>
-        <echo message="Date      = ${com.arjuna.mw.date}"/>
-        <echo message="Notes     = ${com.arjuna.mw.notes}"/>
-
-        <path id="com.arjuna.buildsystem.classpath">
-            <fileset dir="${com.arjuna.buildsystem.build.lib}"/>
-        </path>
-        <property name="com.arjuna.buildsystem.classpath" refid="com.arjuna.buildsystem.classpath"/>
-
-        <!-- Installation directory -->
-        <property name="com.arjuna.mwlabs.installationdirectory"
-            location="${com.hp.mw.installationdirectory}"/>
-        <property name="com.arjuna.mwlabs.installation.lib.directory"
-            location="${com.hp.mw.installationdirectory}/lib"/>
-
-        <condition property="com.arjuna.mwlabs.debug" value="no">
-            <equals arg1="${com.hp.mw.debug}" arg2="no"/>
-        </condition>
-        <property name="com.arjuna.mwlabs.debug" value="yes"/>
-
-        <!-- Compile with deprecation? -->
-        <condition property="com.arjuna.mwlabs.deprecation" value="yes">
-            <equals arg1="${com.hp.mw.deprecation}" arg2="yes"/>
-        </condition>
-        <property name="com.arjuna.mwlabs.deprecation" value="no"/>
-
-        <!-- Make the destination directory -->
-        <mkdir dir="${com.arjuna.mwlabs.ts.jbossatx.dest}"/>
-
-        <!-- libs from JBoss App Server installation.
-        Note: we need AS 5.0 as it has new integration API.
-        This won't build against earlier AS releases. Not that it would run on
-        earlier AS versions anyhow, as TransactionManagerService is now MC POJO based.
-
-        As a jbossas component we would like to use just the
-        integration jar here. however it does not contain some
-        stuff we need e.g. rmi, system, logger classes etc, so we
-        need some other jars too. For a jts build we still
-        need the jacorb and iiop libs which are in server/all/lib
-        -->
-
-        <!-- jboss-common-core.jar has UnexpectedThrowable, jboss-logging-spi.jar has Logger, jboss-main.jar has ServerConfig -->
-        <property name="jboss.libs" value="jboss-common-core.jar jboss-logging-spi.jar jboss-bootstrap.jar"/>
-        <!-- jboss-integration.jar has the transactions SPI, jmx-adaptor-plugin.jar has RMIAdaptor, jbosssx has security -->
-        <property name="jboss.common.shared.jta.libs" value="jboss-integration.jar jmx-adaptor-plugin.jar jbosssx.jar"/>
-
-        <property name="jboss.common.shared.jts.libs" value="jboss-iiop.jar"/>
-        <property name="jboss.server.all.jts.libs" value="jacorb.jar"/>
-
-        <condition property="jboss.common.shared.libs" value="${jboss.common.shared.jta.libs} ${jboss.common.shared.jts.libs}">
-            <isset property="com.hp.mwlabs.ts.build.jts"/>
-        </condition>
-        <property name="jboss.common.shared.libs" value="${jboss.common.shared.jta.libs}"/>
-
-        <condition property="jboss.server.all.libs" value="${jboss.server.all.jts.libs}">
-            <isset property="com.hp.mwlabs.ts.build.jts"/>
-        </condition>
-        <property name="jboss.server.all.libs" value=""/>
-
-        <!-- Classpath -->
-        <path id="build.classpath">
-            <fileset dir="${com.arjuna.mwlabs.installation.lib.directory}">
-				<include name="**/*.jar"/>
-				<include name="**/*.zip"/>
-			</fileset>
-			<filelist dir="${jboss.lib.dir}" files="${jboss.libs}"/>
-            <filelist dir="${jboss.common.lib.dir}" files="${jboss.common.shared.libs}"/>
-            <filelist dir="${jboss.server.all.lib.dir}" files="${jboss.server.all.libs}"/>
-
-        </path>
-        <property name="build.classpath" refid="build.classpath"/>
-
-        <condition property="com.arjuna.mwlabs.ts.jbossatx.compile.excludes"
-            value="**/jts/**/*.java">
-            <not>
-                <isset property="com.hp.mwlabs.ts.build.jts"/>
-            </not>
-        </condition>
-    </target>
-
-    <!-- Default build target -->
-    <target name="com.arjuna.mw.ts.jbossatx.build" depends="com.arjuna.mwlabs.ts.jbossatx.service.compile,com.arjuna.mwlabs.ts.jbossatx.generateresourcebundle,com.arjuna.mw.ts.jbossatx.jar"/>
-
-    <target name="com.arjuna.mwlabs.ts.jbossatx.service.compile" depends="com.arjuna.mwlabs.ts.jbossatx.init">
-
-        <echo message="Compiling Transaction JBoss service"/>
-
-        <javac
-            srcdir="${com.arjuna.mwlabs.ts.jbossatx.src}"
-            destdir="${com.arjuna.mwlabs.ts.jbossatx.dest}"
-            excludes="${com.arjuna.mwlabs.ts.jbossatx.compile.excludes}"
-            debug="${com.arjuna.mwlabs.debug}"
-            deprecation="${com.arjuna.mwlabs.deprecation}"
-            classpathref="build.classpath"
-            />
-
-		<touch file="${com.arjuna.mwlabs.ts.jbossatx.dest}/built_using_java_${java.specification.version}"/>
-
-	</target>
-
-    <!-- Jar targets -->
-    <target name="com.arjuna.mw.ts.jbossatx.jar"
-        depends="com.arjuna.mwlabs.ts.jbossatx.service.compile">
-
-        <echo message="Building jar file"/>
-        <mkdir dir="${com.arjuna.mwlabs.ts.jbossatx.jar.dest}"/>
-        <jar
-            jarfile="${com.arjuna.mwlabs.ts.jbossatx.jar.dest}/${com.hp.mw.ts.product.name.lowercase}-integration.jar"
-            basedir="${com.arjuna.mwlabs.ts.jbossatx.dest}"
-            />
+        <property name="exclude-these-classes" value="**/jts/** ${excluded.classes}"/>
 
     </target>
 
-
-    <target name="com.arjuna.mwlabs.ts.jbossatx.docs.generate">
-        <mkdir dir="${com.arjuna.mwlabs.ts.jbossatx.docs.dest}"/>
-
-        <copy todir="${com.arjuna.mwlabs.ts.jbossatx.docs.dest}">
-            <fileset dir="${com.arjuna.mwlabs.ts.jbossatx.docs.src}/docs/">
-                <include name="**/*.css"/>
-                <include name="**/*.gif"/>
-                <include name="**/*.jpg"/>
-            </fileset>
-        </copy>
-        <style processor="trax"
-               style="${com.arjuna.mwlabs.ts.jbossatx.docs.src}/xsl/ATL_LookAndFeel.xsl"
-               basedir="${com.arjuna.mwlabs.ts.jbossatx.docs.src}/docs/"
-               includes="*.xml" destdir="${com.arjuna.mwlabs.ts.jbossatx.docs.dest}" extension=".html">
-           <param name="rootpath" expression="."/>
-        </style>
+    <target name="clean">
+        <delete dir="${build.dir}"/>
     </target>
 
-    <!-- Installation targets -->
-    <target name="com.arjuna.mw.ts.jbossatx.install" depends="com.arjuna.mwlabs.ts.jbossatx.install"/>
+    <target name="init.jts" unless="no_jts">
+        <import-module.macro module="jts"/>
+        <import-module.macro module="jtax"/>
+        <import-module.macro module="orbportability"/>
 
-    <target name="com.arjuna.mw.ts.jbossatx.install-all" depends="com.arjuna.mw.ts.jbossatx.install"/>
+        <property environment="env"/>
+        <copy todir="${build.dir}/lib/ext" flatten="true"
+                file="${sharedbuild.base.dir}/ArjunaJTS/jacorb/lib/jacorb.jar"/>
 
-
-    <target name="com.arjuna.mwlabs.ts.jbossatx.install" depends="com.arjuna.mw.ts.jbossatx.build, com.arjuna.mwlabs.ts.jbossatx.docs.generate">
-
-        <echo message="Installing module jbossatx"/>
-
-        <mkdir dir="${com.arjuna.mwlabs.installationdirectory}/lib/"/>
-        <copy todir="${com.arjuna.mwlabs.installationdirectory}/lib/">
-            <fileset dir="${com.arjuna.mwlabs.ts.jbossatx.jar.dest}" includes="*.jar"/>
-        </copy>
-
-        <mkdir dir="${com.arjuna.mwlabs.installationdirectory}/bin/"/>
-        <copy todir="${com.arjuna.mwlabs.installationdirectory}/bin/"
-            filtering="true" overwrite="true">
-            <fileset dir="scripts" includes="run-tools.sh run-tools.bat"/>
-            <filterset>
-                <filter token="PRODUCT_NAME" value="${com.hp.mw.ts.product.name.lowercase}"/>
-                <filter token="HOME_DIRECTORY" value="${com.hp.mw.ts.product.shortened.name.uppercase}_HOME"/>
-            </filterset>
-        </copy>
+        <property name="exclude-these-classes" value="${excluded.classes}"/>
     </target>
 
-    <!-- Clean targets -->
-    <target name="com.arjuna.mw.ts.jbossatx.clean">
+    <target name="compile">
 
-        <echo message="Cleaning module"/>
-        <delete dir="${com.arjuna.mwlabs.ts.jbossatx.buildroot}" failonerror="false"/>
+        <property environment="env"/>
+
+        <compile.macro excluded.classes="${exclude-these-classes}">
+            <additional.classpath>
+                <!-- jboss-common-core.jar has UnexpectedThrowable, jboss-logging-spi.jar has Logger, jboss-main.jar has ServerConfig -->
+                <fileset dir="${env.JBOSS_HOME}/lib" includes="jboss-common-core.jar jboss-logging-spi.jar jboss-bootstrap.jar"/>
+                <!-- jboss-integration.jar has the transactions SPI, jmx-adaptor-plugin.jar has RMIAdaptor, jbosssx has security -->
+                <fileset dir="${env.JBOSS_HOME}/common/lib" includes="jboss-integration.jar jmx-adaptor-plugin.jar jbosssx.jar"/>
+
+                <fileset dir="${env.JBOSS_HOME}/common/lib" includes="jboss-iiop.jar"/>
+            </additional.classpath>
+        </compile.macro>
+
     </target>
 
-    <!-- Short target names -->
-
-    <target name="jar" depends="com.arjuna.mw.ts.jbossatx.jar"/>
-
-    <target name="install" depends="com.arjuna.mw.ts.jbossatx.install"/>
-
-    <target name="clean" depends="com.arjuna.mw.ts.jbossatx.clean"/>
-
-    <target name="com.arjuna.mwlabs.ts.jbossatx.generateresourcebundle">
-
-        <echo message="Generating Integration Resource Bundle"/>
-
-        <javadoc    sourcepath="${com.arjuna.mwlabs.ts.jbossatx.src}"
-                    packagenames="com.arjuna.*"
-                    failonerror="yes"
-                    private="yes"
-                    defaultexcludes="yes"
-                    classpath="${build.classpath}">
-
-            <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
-                <path>
-                    <pathelement path="${com.arjuna.buildsystem.classpath}"/>
-                </path>
-                <param name="-basedir" value="${com.arjuna.mwlabs.ts.jbossatx.dest}"/>
-                <param name="-resourcebundle" value="${com.arjuna.mwlabs.ts.jbossatx.resourcebundle}"/>
+    <target name="generateresourcebundle">
+        <generateresourcebundle.macro>
+            <args>
                 <param name="-appendkey" value="[]"/>
-            </doclet>
-        </javadoc>
+            </args>
+        </generateresourcebundle.macro>
     </target>
-</project>
 
+    <target name="compile-tests"/>
+    <target name="run.tests"/>
+
+    <target name="dist" depends="install.lib"/>
+
+
+
+
+
+</project>

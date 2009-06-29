@@ -43,7 +43,7 @@
 
 	<path id="tests.classpath">
         <pathelement location="${working.dir}/qa/lib/TestingFramework.jar"/>
-        <pathelement location="${working.dir}/lib/ext/junit.jar"/>
+        <pathelement location="../ext/junit.jar"/>
         <pathelement location="ext/jdom.jar"/>
     </path>
 
@@ -322,8 +322,10 @@
     </target>
 
 
-    
+
     <target name="scratch">
+
+        <antcall target="junit-tests"><param name="tests" value="otsserver"/></antcall>
 
         <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
         <!--<condition property="mssql.driver" value="sqljdbc4.jar">-->

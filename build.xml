@@ -17,51 +17,14 @@
 
   (C) 2005-2006,
   @author JBoss Inc.
+  (C) 2009 @author Red Hat Middleware LLC.
 -->
-<project name="jbosstm" default="help">
-   <property name="com.hp.mw.installationdirectory" location="install"/>
+<project name="jbossts" default="help">
 
    <property environment="env"/>
 
-   <property name="ext.dir" location="ext"/>
-   <property name="common.dir" location="common"/>
-   <property name="buildsystem.dir" location="antbuildsystem"/>
-   <property name="core.dir" location="ArjunaCore"/>
-   <property name="jta.dir" location="ArjunaJTA"/>
-   <property name="jts.dir" location="ArjunaJTS"/>
-   <property name="integration.dir" location="atsintegration"/>
-   <property name="jboss.tools.dir" location="${core.dir}/tsmx"/>
-   <property name="com.hp.mw.installationdirectory.bin" location="${com.hp.mw.installationdirectory}/bin"/>
-
-   <property name="jboss.eula" location="JBossORG-EULA.txt"/>
-   <property name="jboss.libdir" location="jboss"/>
-   <property name="jboss.install.libdir" location="${com.hp.mw.installationdirectory}/jboss"/>
-
-   <property name="com.hp.mw.deprecation" value="yes"/>
-   <property name="com.arjuna.mw.deprecation" value="yes"/>
-
-   <available property="jts.present" file="${jts.dir}" type="dir"/>
-
+    <!-- TODO wire me up -->
    <property name="com.hp.mw.sourceid" value="unknown"/>
-
-   <property name="junit.jar" location="ext/junit.jar"/>
-   <macrodef name="runant">
-      <attribute name="target"/>
-      <sequential>
-         <java classname="org.apache.tools.ant.launch.Launcher"
-            classpath="${ant.library.dir}/ant-launcher.jar"
-            fork="true" failonerror="true">
-            <sysproperty key="ant.home" value="${ant.home}"/>
-            <sysproperty key="ant.library.dir" value="${ant.library.dir}"/>
-            <sysproperty  key="com.hp.mw.sourceid" value="${com.hp.mw.sourceid}"/>
-            <arg value="-cp"/>
-            <arg value="${junit.jar}"/>
-            <arg value="-f"/>
-            <arg value="${ant.file}"/>
-            <arg value="@{target}"/>
-         </java>
-      </sequential>
-   </macrodef>
 
    <target name="help">
       <echo>
@@ -75,174 +38,64 @@ Targets supported in this build.xml file
       </echo>
    </target>
 
-   <target name="jts">
-      <runant target="run_jts"/>
+    <macrodef name="install.macro">
+        <attribute name="src.module"/>
+        <sequential>
+            <delete dir="install"/>
+            <copy todir="install">
+                <fileset dir="@{src.module}/build/install"/>
+            </copy>
+        </sequential>
+    </macrodef>
+
+   <target name="jts" depends="clean, antbuildsystem">
+       <ant dir="ArjunaJTS"/>
+       <install.macro src.module="ArjunaJTS"/>
+       <ant dir="qa"/>
    </target>
 
-   <target name="jta">
-      <runant target="run_jta"/>
+   <target name="jta" depends="clean, antbuildsystem">
+       <ant dir="ArjunaJTA"/>
+       <install.macro src.module="ArjunaJTA"/>
+       <ant dir="qa"/>
    </target>
 
-   <target name="core">
-      <runant target="run_core"/>
+   <target name="core" depends="clean, antbuildsystem">
+       <ant dir="ArjunaCore"/>
+       <install.macro src.module="ArjunaCore"/>
    </target>
 
-   <target name="jbossjts">
-      <runant target="run_jbossjts"/>
-      <runant target="install_jboss_tools"/>
+    <macrodef name="atsinstall.macro">
+        <attribute name="build.type"/>
+        <sequential>
+            <copy file="atsintegration/build/install/lib/jbossatx.jar"
+                  tofile="install/lib/jboss@{build.type}-integration.jar"/>
+        </sequential>
+    </macrodef>
+
+   <target name="jbossjts" depends="clean, init_integration, jts">
+       <ant dir="atsintegration" target="dist"/>
+       <atsinstall.macro build.type="jts"/>
    </target>
 
-   <target name="jbossjta">
-      <runant target="run_jbossjta"/>
-      <runant target="install_jboss_tools"/>
+   <target name="jbossjta" depends="clean, init_integration, jta">
+       <ant dir="atsintegration" target="dist">
+           <property name="no_jts" value="true"/>
+       </ant>
+       <atsinstall.macro build.type="jta"/>
    </target>
+
+    <target name="antbuildsystem" depends="clean">
+        <ant dir="antbuildsystem"/>
+    </target>
 
    <target name="clean">
-      <runant target="run_clean"/>
-   </target>
-
-   <target name="run_jts" if="jts.present">
-      <antcall target="install_jts"/>
-   </target>
-
-   <target name="run_jta" depends="install_jta"/>
-
-   <target name="run_core" depends="install_core"/>
-
-   <target name="run_jbossjts" if="jts.present" depends="init_integration, install_jts">
-      <antcall target="install_integration"/>
-   </target>
-
-   <target name="run_jbossjta" depends="init_integration, install_jta, install_integration"/>
-
-   <target name="run_clean" depends="clean_jts">
-      <delete dir="${com.hp.mw.installationdirectory}"/>
-      <ant dir="${jta.dir}" target="clean"/>
-      <ant dir="${core.dir}" target="clean"/>
-      <ant dir="${common.dir}" target="clean"/>
-      <ant dir="${buildsystem.dir}" target="clean"/>
-      <ant dir="${integration.dir}" target="clean"/>
-      <delete>
-         <fileset dir="." includes="idl-compiler*"/>
-      </delete>
-   </target>
-
-   <target name="clean_jts" if="jts.present">
-      <ant dir="${jts.dir}" target="clean"/>
-   </target>
-
-   <target name="install_jts" depends="clean, init_jts, init, install_jta">
-      <ant dir="${jts.dir}" target="install-all"/>
-   </target>
-
-   <target name="install_jta" depends="clean, init_jta, init, install_core">
-      <ant dir="${jta.dir}" target="install-all"/>
-   </target>
-
-   <target name="install_core" depends="clean, init_core, init, build_common">
-      <ant dir="${core.dir}" target="install-all"/>
-      <copy file="${jboss.eula}" todir="${com.hp.mw.installationdirectory}"/>
-   </target>
-
-   <target name="install_integration">
-      <ant dir="${integration.dir}" target="install"/>
-      <copy todir="${jboss.install.libdir}">
-         <fileset dir="${jboss.libdir}"/>
-      </copy>
-   </target>
-
-   <target name="install_jboss_tools">
-      <ant dir="${jboss.tools.dir}" target="install_jboss_tools">
-          <property name="jboss.ts.tools.install.dir" value="${com.hp.mw.installationdirectory.bin}"/>
-      </ant>
-   </target>
-
-   <target name="build_jts" depends="init_jts, init, build_jta">
-      <ant dir="${jts.dir}" target="jar"/>
-   </target>
-
-   <target name="build_jta" depends="init_jta, init, build_core">
-      <ant dir="${jta.dir}" target="jar"/>
-   </target>
-
-   <target name="build_core" depends="init_core, init, build_common">
-      <ant dir="${core.dir}" target="jar"/>
-   </target>
-
-   <target name="build_common" depends="build_buildsystem">
-      <ant dir="${common.dir}" target="tests"/>
-   </target>
-
-   <target name="build_buildsystem">
-      <ant dir="${buildsystem.dir}" target="jar"/>
-   </target>
-
-   <target name="build_integration">
-      <ant dir="${integration.dir}" target="jar"/>
-   </target>
-
-   <target name="init_jts" unless="init_product">
-      <property name="com.hp.mw.ts.product.name" value="JBossJTS"/>
-      <property name="com.hp.mw.ts.product.shortened.name" value="JBossTS"/>
-      <property name="com.hp.mw.ts.product.name.lowercase" value="jbossjts"/>
-      <property name="com.hp.mw.ts.product.shortened.name.uppercase" value="JBOSSTS"/>
-      <property name="com.hp.mwlabs.ts.build.jts" value="true"/>
-      <path id="com.hp.mwlabs.ts.product.htdocs.path">
-         <dirset dir="${core.dir}" includes="*/classes"/>
-         <dirset dir="${jta.dir}" includes="*/classes"/>
-         <dirset dir="${jts.dir}" includes="*/classes"/>
-      </path>
-      <property name="com.hp.mwlabs.ts.product.htdocs.path" refid="com.hp.mwlabs.ts.product.htdocs.path"/>
-   </target>
-
-   <target name="init_jta" unless="init_product">
-      <property name="com.hp.mw.ts.product.name" value="JBossJTA"/>
-      <property name="com.hp.mw.ts.product.shortened.name" value="JBossTA"/>
-      <property name="com.hp.mw.ts.product.name.lowercase" value="jbossjta"/>
-      <property name="com.hp.mw.ts.product.shortened.name.uppercase" value="JBOSSTA"/>
-      <property name="com.hp.mwlabs.ts.build.jta" value="true"/>
-      <path id="com.hp.mwlabs.ts.product.htdocs.path">
-         <dirset dir="${core.dir}" includes="*/classes"/>
-         <dirset dir="${jta.dir}" includes="*/classes"/>
-      </path>
-      <property name="com.hp.mwlabs.ts.product.htdocs.path" refid="com.hp.mwlabs.ts.product.htdocs.path"/>
-   </target>
-
-   <target name="init_core" unless="init_product">
-      <property name="com.hp.mw.ts.product.name" value="JBossCore"/>
-      <property name="com.hp.mw.ts.product.shortened.name" value="JBossCore"/>
-      <property name="com.hp.mw.ts.product.name.lowercase" value="jbosscore"/>
-      <property name="com.hp.mw.ts.product.shortened.name.uppercase" value="JBOSSCORE"/>
-      <property name="com.hp.mwlabs.ts.build.core" value="true"/>
-      <path id="com.hp.mwlabs.ts.product.htdocs.path">
-         <dirset dir="${core.dir}" includes="*/classes"/>
-      </path>
-      <property name="com.hp.mwlabs.ts.product.htdocs.path" refid="com.hp.mwlabs.ts.product.htdocs.path"/>
-   </target>
-
-   <target name="init">
-      <property name="init_product" value="done"/>
-
-      <tstamp>
-         <format property="com.hp.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
-      </tstamp>
-
-      <!-- starting from 4.6 we change from ${com.hp.mw.ts.product.name.lowercase}-properties.xml
-        to a common name of jbossts-properties.xml to facilitate using the JTS binaries for either
-        JTA or JTS. The actual content of the config file is not affected. -->
-      <property name="com.hp.mw.ts.product.propertyfile" value="jbossts-properties.xml"/>
-
-      <property name="com.hp.mw.version" value="unknown"/>
-
-      <property name="com.hp.mw.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
-      <property name="com.hp.mw.notes" value=""/>
-
-      <echo message="Initialising product ${com.hp.mw.ts.product.name}"/>
-      <echo message="Source ID = ${com.hp.mw.sourceid}"/>
-      <echo message="Version   = ${com.hp.mw.version}"/>
-      <echo message="Builder   = ${com.hp.mw.builder}"/>
-      <echo message="Date      = ${com.hp.mw.date}"/>
-      <echo message="Notes     = ${com.hp.mw.notes}"/>
+       <ant dir="antbuildsystem" target="clean"/>
+       <ant dir="common" target="clean"/>
+       <ant dir="ArjunaCore" target="clean"/>
+       <ant dir="ArjunaJTA" target="clean"/>
+       <ant dir="ArjunaJTS" target="clean"/>
+       <ant dir="atsintegration" target="clean"/>
    </target>
 
    <target name="init_integration">

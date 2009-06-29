@@ -1,0 +1,69 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2009, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a
+  full listing of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+  (C) 2009,
+  @author JBoss, a division of Red Hat.
+-->
+<project name="sharedbuild-jts">
+
+    <import file="../sharedbuild.xml"/>
+
+    <dirname property="sharedbuild-jts.base.dir" file="${ant.file.sharedbuild-jts}" />
+    <property name="jacorb.home" value="${sharedbuild-jts.base.dir}/jacorb"/>
+
+    <path id="jacorb.classpath">
+        <fileset dir="${jacorb.home}/lib" includes="*.jar"/>
+    </path>
+    <property name="jacorb.classpath" refid="jacorb.classpath"/>
+
+    <target name="taskdefs">
+        <taskdef name="idl-compiler" classname="com.arjuna.orbportability.common.ant.IDLCompiler" classpath="${build.dir}/lib/ext/orbportability.jar;../orbportability/config"/>
+        <taskdef name="idl-build-list" classname="com.arjuna.orbportability.common.ant.IDLBuildList" classpath="${build.dir}/lib/ext/orbportability.jar"/>
+        <taskdef name="idl-build-list-element" classname="com.arjuna.orbportability.common.ant.IDLBuildListElement" classpath="${build.dir}/lib/ext/orbportability.jar"/>
+    </target>
+
+    <target name="compile" depends="init, compile-idl">
+        <compile.macro>
+            <additional.classpath>
+                <path refid="jacorb.classpath"/>
+            </additional.classpath>
+            <additional.src.dirs>
+                <src location="${build.dir}/generatedclasses"/>
+            </additional.src.dirs>
+        </compile.macro>
+    </target>
+
+    <target name="compile-idl" depends="taskdefs">
+        <mkdir dir="${build.dir}/generatedclasses"/>
+    </target>
+
+    <target name="compile-tests" depends="compile, compile-tests-idl">
+        <compile-tests.macro>
+            <additional.classpath>
+                <path refid="jacorb.classpath"/>
+            </additional.classpath>
+            <additional.src.dirs>
+                <src location="${build.dir}/tests/generatedclasses"/>
+            </additional.src.dirs>
+        </compile-tests.macro>
+    </target>
+
+    <target name="compile-tests-idl" depends="taskdefs">
+        <mkdir dir="${build.dir}/tests/generatedclasses"/>
+    </target>
+
+</project>

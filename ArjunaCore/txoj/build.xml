@@ -1,355 +1,42 @@
 <!--
   JBoss, Home of Professional Open Source
-  Copyright 2006, Red Hat Middleware LLC, and individual contributors 
-  as indicated by the @author tags. 
+  Copyright 2009, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
   See the copyright.txt in the distribution for a
-  full listing of individual contributors. 
+  full listing of individual contributors.
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions
   of the GNU Lesser General Public License, v. 2.1.
-  This program is distributed in the hope that it will be useful, but WITHOUT A 
-  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
   PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
   You should have received a copy of the GNU Lesser General Public License,
   v.2.1 along with this distribution; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
-  
-  (C) 2005-2006,
-  @author JBoss Inc.
+
+  (C) 2009,
+  @author JBoss, a division of Red Hat.
 -->
-<project name="module-txoj" default="com.hp.mw.ts.txoj.build" basedir=".">
-	<!-- class path behaviour -->
-	<property name="build.sysclasspath" value="last"/>
-	<property name="com.hp.mwlabs.classpathbuilderfilename" value="buildsystem.classpath"/>
+<project name="module-txoj" default="dist.leafnode" basedir=".">
 
-	<!-- Set module name -->
-	<property name="com.hp.mwlabs.ts.modulename" value="txoj"/>
+    <property name="modulename" value="txoj"/>
 
-	<!-- Set default properties filename -->
-	<property name="com.hp.mw.ts.properties" value="module-txoj.properties"/>
+    <property name="global.ext.test.libs" value="junit.jar,TestingFramework.jar"/>
 
-	<!-- Load Build Properties File -->
-	<property file="${com.hp.mw.ts.properties}"/>
+    <import file="../../sharedbuild.xml"/>
 
-	<!-- Set external property defaults -->
-	<property name="com.hp.mw.ts.txoj.tests.compile" value="yes"/>
-	<property name="com.hp.mw.ts.txoj.tests.install" value="no"/>
-	<property name="com.hp.mw.ts.txoj.utilities.compile" value="no"/>
-	<property name="com.hp.mw.ts.txoj.utilities.install" value="no"/>
+    <target name="init" depends="sharedbuild.init">
 
-	<!-- Set internal property defaults -->
-		<!-- Path names -->
-	<property name="com.hp.mwlabs.ts.txoj.jar.dest" location="lib"/>
-	<property name="com.hp.mwlabs.ts.txoj.src" location="classes"/>
-    <property name="com.hp.mwlabs.ts.txoj.etc" location="etc"/>
-	<property name="com.hp.mwlabs.ts.txoj.destroot" location="build"/>
-	<property name="com.hp.mwlabs.ts.txoj.dest" location="${com.hp.mwlabs.ts.txoj.destroot}/classes"/>
-	<property name="com.hp.mwlabs.ts.txoj.tests.src" location="tests"/>
-	<property name="com.hp.mwlabs.ts.txoj.tests.dest" location="${com.hp.mwlabs.ts.txoj.destroot}/tests"/>
-        <property name="com.hp.mwlabs.ts.txoj.tests.destdir" location="${com.hp.mwlabs.ts.txoj.jar.dest}/tests/"/>
-	<property name="com.hp.mwlabs.ts.txoj.utilities.src" location="bin"/>
-	<property name="com.hp.mwlabs.ts.txoj.utilities.dest" location="${com.hp.mwlabs.ts.txoj.destroot}/bin"/>
-
-    <property name="com.hp.mwlabs.ts.txoj.resourcebundle" value="txoj_msg_en_US.properties"/>
-
-    <property name="com.hp.mwlabs.ts.txoj.propertyfile.src" value="${com.hp.mwlabs.ts.modulename}-properties.xml"/>
-
-	<property name="com.hp.mwlabs.ts.txoj.mappingfile" value="${com.hp.mwlabs.ts.modulename}-properties.mappings"/>
-
-	<!-- Initialisation -->
-	<target name="com.hp.mwlabs.ts.txoj.init" depends="com.hp.mwlabs.ts.txoj.setpropertyfiles">
-		<!-- Define default build properties -->
-		<property name="com.hp.mw.sourceid" value="unknown"/>
-		<property name="com.hp.mw.version" value="unknown"/>
-		<property name="com.hp.mw.installationdirectory" value="install"/>
-		<property name="com.hp.mw.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
-		<property name="com.hp.mw.notes" value=""/>
-
-		<tstamp>
-		<format property="com.hp.mw.date" pattern="yyyy/MMM/dd HH:mm"/>
-	  	</tstamp>
-
-                <!-- Define classpath builder task -->
-                <taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpath="${com.arjuna.buildsystem.classpath}"/>
-
-		<echo message="Initialising module txoj"/>
-		<echo message="Source ID = ${com.hp.mw.sourceid}"/>
-		<echo message="Version   = ${com.hp.mw.version}"/>
-		<echo message="Builder   = ${com.hp.mw.builder}"/>
-		<echo message="Date      = ${com.hp.mw.date}"/>
-		<echo message="Notes     = ${com.hp.mw.notes}"/>
-
-		<!-- Installation directory -->
-		<property name="com.hp.mwlabs.installationdirectory"
-		    location="${com.hp.mw.installationdirectory}"/>
-
-		<!-- Compile with debugging? -->
-		<condition property="com.hp.mwlabs.debug" value="no">
-			<equals arg1="${com.hp.mw.debug}" arg2="no"/>
-		</condition>
-		<property name="com.hp.mwlabs.debug" value="yes"/>
-
-		<!-- Compile with deprecation? -->
-		<condition property="com.hp.mwlabs.deprecation" value="yes">
-			<equals arg1="${com.hp.mw.deprecation}" arg2="yes"/>
-		</condition>
-		<property name="com.hp.mwlabs.deprecation" value="no"/>
-
-		<!-- Check which bits to compile and/or install -->
-		<condition property="com.hp.mwlabs.ts.txoj.tests.compile">
-			<equals arg1="${com.hp.mw.ts.txoj.tests.compile}" arg2="yes"/>
-		</condition>
-
-		<condition property="com.hp.mwlabs.ts.txoj.tests.install">
-			<equals arg1="${com.hp.mw.ts.txoj.tests.install}" arg2="yes"/>
-		</condition>
-
-		<condition property="com.hp.mwlabs.ts.txoj.utilities.compile">
-			<equals arg1="${com.hp.mw.ts.txoj.utilities.compile}" arg2="yes"/>
-		</condition>
-
-		<condition property="com.hp.mwlabs.ts.txoj.utilities.install">
-			<equals arg1="${com.hp.mw.ts.txoj.utilities.install}" arg2="yes"/>
-		</condition>
-
-		<!-- Set the module property file details -->
-		<property name="com.hp.mwlabs.ts.txoj.propertyfile" value="${com.hp.mwlabs.ts.modulename}-properties.xml"/>
-
-		<property name="com.hp.mw.propertydirectory" location="${com.hp.mwlabs.installationdirectory}/etc"/>
-
-		<echo message="Property file name : ${com.hp.mwlabs.ts.txoj.propertyfile}"/>
-		<echo message="Property directory : ${com.hp.mw.propertydirectory}"/>
-
-		<!-- Make the destination directory -->
-		<mkdir dir="${com.hp.mwlabs.ts.txoj.dest}"/>
-
-	</target>
-
-    <!-- If this build is part of a product build set the property files to the product property file -->
-    <target name="com.hp.mwlabs.ts.txoj.setpropertyfiles" if="com.hp.mw.ts.product.name">
-
-            <echo>Overriding propertyfile settings with product propertyfile settings</echo>
-            <property name="com.hp.mwlabs.ts.txoj.propertyfile" value="${com.hp.mw.ts.product.propertyfile}"/>
+        <import-module.macro module="common"/>
+        <import-module.macro module="arjuna"/>
 
     </target>
 
-    <target name="com.hp.mw.ts.txoj.build" depends="com.hp.mw.ts.txoj.jar, com.hp.mwlabs.ts.txoj.tests.jar, com.hp.mwlabs.ts.txoj.utilities.jar"/>
-
-	<!-- Compilation targets -->
-	<target name="com.hp.mw.ts.txoj.compile" depends="com.hp.mwlabs.ts.txoj.compile,com.hp.mwlabs.ts.txoj.generateresourcebundle">
-
-	</target>
-
-	<target name="com.hp.mwlabs.ts.txoj.compile" depends="com.hp.mwlabs.ts.txoj.init">
-
-		<echo message="Compiling module"/>
-
-		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
-
-		<javac
-			srcdir="${com.hp.mwlabs.ts.txoj.src}"
-			destdir="${com.hp.mwlabs.ts.txoj.dest}"
-			debug="${com.hp.mwlabs.debug}"
-			deprecation="${com.hp.mwlabs.deprecation}"
-		>
-			<classpath>
-				<path path="${build.classpath}"/>
-				<path path="${com.hp.mwlabs.ts.txoj.src}"/>
-			</classpath>
-		</javac>
-
-        <!-- Process the properties -->
-    	<property name="property.file" value="txoj.properties"/>
-    	<propertyfile file="${com.hp.mwlabs.ts.txoj.dest}/${property.file}">
-			<entry key="MODULE" value="${com.hp.mwlabs.ts.modulename}"/>
-			<entry key="SOURCEID" value="${com.hp.mw.sourceid}"/>
-			<entry key="BUILDINFO" value="${com.hp.mw.builder}"/>
-			<entry key="VERSION" value="${com.hp.mw.version}"/>
-			<entry key="DATE" value="${com.hp.mw.date}"/>
-			<entry key="NOTES" value="${com.hp.mw.notes}"/>
-			<entry key="TXOJ_VERSION" value="${com.hp.mw.version}"/>
-			<entry key="PROPERTIES_FILE" value="${com.hp.mwlabs.ts.txoj.propertyfile}"/>
-		</propertyfile>
-	</target>
-
-	<target name="com.hp.mwlabs.ts.txoj.tests.jar" depends="com.hp.mwlabs.ts.txoj.tests.compile" if="com.hp.mwlabs.ts.txoj.tests.compile">
-
-            <mkdir dir="${com.hp.mwlabs.ts.txoj.tests.destdir}"/>
-            <jar    basedir="${com.hp.mwlabs.ts.txoj.tests.dest}"
-                    jarfile="${com.hp.mwlabs.ts.txoj.tests.destdir}/${com.hp.mwlabs.ts.modulename}_tests.jar"/>
-
-        </target>
-
-	<target name="com.hp.mwlabs.ts.txoj.tests.compile" depends="com.hp.mw.ts.txoj.jar" if="com.hp.mwlabs.ts.txoj.tests.compile">
-
-		<echo message="Compiling tests"/>
-
-		<mkdir dir="${com.hp.mwlabs.ts.txoj.tests.dest}"/>
-
-		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
-
-		<javac
-			srcdir="${com.hp.mwlabs.ts.txoj.tests.src}"
-			destdir="${com.hp.mwlabs.ts.txoj.tests.dest}"
-			debug="${com.hp.mwlabs.debug}"
-		>
-			<classpath>
-				<path path="${build.classpath}"/>
-				<path path="${com.hp.mwlabs.ts.txoj.dest}"/>
-			</classpath>
-		</javac>
-
-	</target>
-
-	<target name="com.hp.mwlabs.ts.txoj.utilities.compile" depends="com.hp.mw.ts.txoj.jar" if="com.hp.mwlabs.ts.txoj.utilities.compile">
-
-		<echo message="Compiling utilities"/>
-
-		<mkdir dir="${com.hp.mwlabs.ts.txoj.utilities.dest}"/>
-
-		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
-
-		<javac
-			srcdir="${com.hp.mwlabs.ts.txoj.utilities.src}"
-			destdir="${com.hp.mwlabs.ts.txoj.utilities.dest}"
-			debug="${com.hp.mwlabs.debug}"
-		>
-			<classpath>
-				<path path="${build.classpath}"/>
-				<path path="${com.hp.mwlabs.ts.txoj.dest}"/>
-			</classpath>
-		</javac>
-
-	</target>
-
-
-	<!-- Jar targets -->
-	<target name="com.hp.mw.ts.txoj.jar" depends="com.hp.mw.ts.txoj.compile">
-
-		<echo message="Building jar file"/>
-		<mkdir dir="${com.hp.mwlabs.ts.txoj.jar.dest}"/>
-
-        <copy
-                file="etc/${com.hp.mwlabs.ts.txoj.mappingfile}"
-                tofile="${com.hp.mwlabs.ts.txoj.dest}/${com.hp.mwlabs.ts.txoj.mappingfile}"/>
-
-		<jar
-			jarfile="${com.hp.mwlabs.ts.txoj.jar.dest}/${com.hp.mwlabs.ts.modulename}.jar"
-			basedir="${com.hp.mwlabs.ts.txoj.dest}"
-		/>
-
-		<classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}">
-			<classpath>
-				<pathelement location="${com.hp.mwlabs.ts.txoj.jar.dest}/${com.hp.mwlabs.ts.modulename}.jar"/>
-			</classpath>
-		</classpath-builder>
-
-	</target>
-
-	<target name="com.hp.mwlabs.ts.txoj.utilities.jar" depends="com.hp.mwlabs.ts.txoj.utilities.compile" if="com.hp.mwlabs.ts.txoj.utilities.compile">
-
-		<echo message="Building utliities jar file"/>
-		<mkdir dir="${com.hp.mwlabs.ts.txoj.jar.dest}"/>
-		<jar
-			jarfile="${com.hp.mwlabs.ts.txoj.jar.dest}/${com.hp.mwlabs.ts.modulename}_bin.jar"
-			basedir="${com.hp.mwlabs.ts.txoj.utilities.dest}"
-		/>
-
-	</target>
-
-
-	<!-- Installation targets -->
-    <target name="com.hp.mw.ts.txoj.install" depends="com.hp.mw.ts.txoj.build">
-
-            <echo message="Installing module txoj"/>
-            <echo message="Installation directory : ${com.hp.mwlabs.installationdirectory}"/>
-            <mkdir dir="${com.hp.mw.propertydirectory}"/>
-
-            <taskdef name="merge-property-files"
-                         classname="com.hp.mw.buildsystem.ant.MergePropertyFiles" classpath="${com.arjuna.buildsystem.classpath}"/>
-
-            <echo>Merging propertyfiles into main product property file</echo>
-
-            <merge-property-files master="${com.hp.mw.propertydirectory}/${com.hp.mwlabs.ts.txoj.propertyfile}"
-                                      merge="${com.hp.mwlabs.ts.txoj.etc}/default-${com.hp.mwlabs.ts.txoj.propertyfile.src}"/>
-
+    <target name="propertyfile" depends="sharedbuild.propertyfile">
+        <propertyfile file="${build.dir}/classes/${property.file}">
+			<entry key="TXOJ_VERSION" value="unknown"/>
+        </propertyfile>
     </target>
-
-	<target name="com.hp.mwlabs.ts.txoj.tests.install" depends="com.hp.mwlabs.ts.txoj.tests.jar" if="com.hp.mwlabs.ts.txoj.tests.install">
-
-		<echo message="Installing tests"/>
-
-	</target>
-
-	<target name="com.hp.mwlabs.ts.txoj.utilities.install" depends="com.hp.mwlabs.ts.txoj.utilities.compile" if="com.hp.mwlabs.ts.txoj.utilities.install">
-
-		<echo message="Installing utilities"/>
-
-	</target>
-
-        <target name="com.hp.mwlabs.ts.txoj.generateresourcebundle">
-
-            <echo message="Generating txoj Bundle"/>
-
-            <classpath-builder filename="${com.hp.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
-
-            <javadoc    sourcepath="${com.hp.mwlabs.ts.txoj.src}"
-                        packagenames="com.arjuna.*"
-                        failonerror="yes"
-                        private="yes"
-                        defaultexcludes="yes"
-                        classpath="${build.classpath}">
-
-                 <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
-                    <path>
-                        <pathelement path="${com.arjuna.buildsystem.classpath}"/>
-                    </path>
-                    <param name="-basedir" value="${com.hp.mwlabs.ts.txoj.dest}"/>
-                    <param name="-resourcebundle" value="${com.hp.mwlabs.ts.txoj.resourcebundle}"/>
-                 </doclet>
-            </javadoc>
-
-        </target>
-
-	<!-- Clean targets -->
-	<target name="com.hp.mw.ts.txoj.clean" depends="com.hp.mwlabs.ts.txoj.tests.clean, com.hp.mwlabs.ts.txoj.utilities.clean">
-
-		<echo message="Cleaning module"/>
-		<delete dir="${com.hp.mwlabs.ts.txoj.destroot}"/>
-		<delete dir="${com.hp.mwlabs.ts.txoj.jar.dest}"/>
-
-	</target>
-
-	<target name="com.hp.mwlabs.ts.txoj.tests.clean">
-
-		<echo message="Cleaning tests"/>
-		<delete dir="${com.hp.mwlabs.ts.txoj.tests.dest}"/>
-
-	</target>
-
-	<target name="com.hp.mwlabs.ts.txoj.utilities.clean">
-
-		<echo message="Cleaning utilities"/>
-		<delete dir="${com.hp.mwlabs.ts.txoj.utilities.dest}"/>
-
-	</target>
-
-	<!-- Short target names -->
-	<target name="compile" depends="com.hp.mw.ts.txoj.compile">
-
-	</target>
-
-	<target name="jar" depends="com.hp.mw.ts.txoj.jar">
-
-	</target>
-
-	<target name="install" depends="com.hp.mw.ts.txoj.install">
-
-	</target>
-
-	<target name="clean" depends="com.hp.mw.ts.txoj.clean">
-
-	</target>
 
 </project>

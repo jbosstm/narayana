@@ -1,6 +1,6 @@
 <!--
   JBoss, Home of Professional Open Source
-  Copyright 2006, Red Hat Middleware LLC, and individual contributors
+  Copyright 2009, Red Hat Middleware LLC, and individual contributors
   as indicated by the @author tags.
   See the copyright.txt in the distribution for a
   full listing of individual contributors.
@@ -15,77 +15,16 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
   MA  02110-1301, USA.
 
-  (C) 2005-2006,
-  @author JBoss Inc.
+  (C) 2009,
+  @author JBoss, a division of Red Hat.
 -->
-<project name="module-buildsystem" default="com.hp.mw.buildsystem.jar" basedir=".">
-	<!-- class path behaviour -->
-	<property name="build.sysclasspath" value="last"/>
+<project name="module-buildsystem" default="dist.leafnode" basedir=".">
 
-	<!-- Set module name -->
-	<property name="com.hp.mwlabs.ts.modulename" value="buildsystem"/>
+    <property name="modulename" value="buildsystem"/>
 
-	<!-- Set default properties filename -->
-	<property name="com.hp.mw.ts.properties" value="module-buildsystem.properties"/>
-        <property name="com.hp.mwlabs.ts.classpathbuilderfilename" location="./buildsystem.classpath"/>
+    <import file="../sharedbuild.xml"/>
 
-	<!-- Load Build Properties File -->
-	<property file="${com.hp.mw.ts.properties}"/>
+    <target name="compile-tests"/>
+    <target name="run.tests"/>
 
-	<!-- Set internal property defaults -->
-	<property name="com.hp.mw.debug" value="true"/>
-	<!-- Path names -->
-	<property name="com.hp.mwlabs.buildsystem.src" value="classes"/>
-	<property name="com.hp.mwlabs.buildsystem.build" location="build"/>
-	<property name="com.hp.mwlabs.buildsystem.dest" value="${com.hp.mwlabs.buildsystem.build}/classes"/>
-	<property name="com.hp.mwlabs.buildsystem.jar.dest" location="${com.hp.mwlabs.buildsystem.build}/lib"/>
-	<property name="com.hp.mwlabs.buildsystem.libs" location="lib/ext"/>
-
-	<path id="com.hp.mwlabs.buildsystem.classpath">
-		<fileset dir="${com.hp.mwlabs.buildsystem.libs}"/>
-	</path>
-	<property name="com.hp.mwlabs.buildsystem.classpath" refid="com.hp.mwlabs.buildsystem.classpath"/>
-
-	<!-- Initialisation -->
-	<target name="com.hp.mwlabs.buildsystem.init">
-		<!-- Define default build properties -->
-		<tstamp>
-			<format property="com.hp.mw.ts.date" pattern="yyyy/mm/dd hh:mm aa"/>
-		</tstamp>
-		<!-- Make the destination directory -->
-		<mkdir dir="${com.hp.mwlabs.buildsystem.build}"/>
-		<mkdir dir="${com.hp.mwlabs.buildsystem.dest}"/>
-		<mkdir dir="${com.hp.mwlabs.buildsystem.jar.dest}"/>
-	</target>
-
-	<!-- Compilation targets -->
-	<target name="com.hp.mw.buildsystem.compile" depends="com.hp.mwlabs.buildsystem.compile"/>
-
-	<target name="com.hp.mwlabs.buildsystem.compile" depends="com.hp.mwlabs.buildsystem.init">
-		<echo message="Compiling module"/>
-		<javac srcdir="${com.hp.mwlabs.buildsystem.src}"
-                       destdir="${com.hp.mwlabs.buildsystem.dest}"
-                       classpath="${com.hp.mwlabs.buildsystem.classpath}"
-                       excludes="${com.hp.mwlabs.buildsystem.compile.excludes}"
-                       debug="${com.hp.mw.debug}"
-					   deprecation="${com.hp.mw.deprecation}"/>
-	</target>
-
-	<!-- Jar targets -->
-	<target name="com.hp.mw.buildsystem.jar" depends="com.hp.mw.buildsystem.compile">
-		<echo message="Building jar file"/>
-		<jar jarfile="${com.hp.mwlabs.buildsystem.jar.dest}/${com.hp.mwlabs.ts.modulename}.jar" basedir="${com.hp.mwlabs.buildsystem.dest}"/>
-	</target>
-
-	<!-- Clean targets -->
-	<target name="com.hp.mw.buildsystem.clean">
-		<echo message="Cleaning module"/>
-		<delete dir="${com.hp.mwlabs.buildsystem.build}"/>
-		<delete file="${com.hp.mwlabs.buildsystem.info.dest}"/>
-	</target>
-
-	<!-- Short target names -->
-	<target name="compile" depends="com.hp.mw.buildsystem.compile"/>
-	<target name="jar" depends="com.hp.mw.buildsystem.jar"/>
-	<target name="clean" depends="com.hp.mw.buildsystem.clean"/>
 </project>
