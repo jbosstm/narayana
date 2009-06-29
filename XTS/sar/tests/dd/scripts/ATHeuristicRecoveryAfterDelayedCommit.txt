@@ -286,7 +286,7 @@ ENDRULE
 
 RULE drop committed message
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorEngine
-METHOD committed(Notification, AddressingProperties, ArjunaContext)
+METHOD committed(Notification, MAP, ArjunaContext)
 AT ENTRY
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),

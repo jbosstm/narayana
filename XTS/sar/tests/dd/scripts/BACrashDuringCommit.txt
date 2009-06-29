@@ -360,7 +360,7 @@ ENDRULE
 
 RULE trace participant completion completed
 CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
-METHOD completed(NotificationType, AddressingProperties, ArjunaContext)
+METHOD completed(NotificationType, MAP, ArjunaContext)
 AT ENTRY
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
@@ -377,7 +377,7 @@ ENDRULE
 
 RULE trace coordinator completion completed
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
-METHOD completed(NotificationType, AddressingProperties, ArjunaContext)
+METHOD completed(NotificationType, MAP, ArjunaContext)
 AT ENTRY
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
@@ -394,7 +394,7 @@ ENDRULE
 
 RULE trace participant completion exit
 CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
-METHOD exit(NotificationType, AddressingProperties, ArjunaContext)
+METHOD exit(NotificationType, MAP, ArjunaContext)
 AT ENTRY
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
@@ -411,7 +411,7 @@ ENDRULE
 
 RULE trace coordinator completion exit
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
-METHOD exit(NotificationType, AddressingProperties, ArjunaContext)
+METHOD exit(NotificationType, MAP, ArjunaContext)
 AT ENTRY
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
@@ -501,7 +501,7 @@ ENDRULE
 
 RULE trace participant completion closed
 CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
-METHOD closed(NotificationType, AddressingProperties, ArjunaContext)
+METHOD closed(NotificationType, MAP, ArjunaContext)
 AT ENTRY
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
@@ -518,7 +518,7 @@ ENDRULE
 
 RULE trace coordinator completion closed
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
-METHOD closed(NotificationType, AddressingProperties, ArjunaContext)
+METHOD closed(NotificationType, MAP, ArjunaContext)
 AT ENTRY
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),

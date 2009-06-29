@@ -265,7 +265,7 @@ ENDRULE
 
 RULE trace receive participant prepared
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorEngine
-METHOD prepared(Notification, AddressingProperties, ArjunaContext)
+METHOD prepared(Notification, MAP, ArjunaContext)
 AT ENTRY
 BIND engine:CoordinatorEngine = $0,
      recovered:boolean = engine.isRecovered(),
