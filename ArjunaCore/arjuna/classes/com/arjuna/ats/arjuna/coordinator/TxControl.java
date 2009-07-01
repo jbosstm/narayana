@@ -65,9 +65,15 @@ public class TxControl
     {
         public void run()
         {
-            if (transactionStatusManager != null)
+            // guard against simultaneous user-initiated shutdown
+            // synchronize on the class since the shutdown method on TxControl is static synchronized
+            synchronized (TxControl.class) {
+            // check that this hook is still active
+            if (_shutdownHook == this && transactionStatusManager != null)
             {
-                transactionStatusManager.finalize();
+                transactionStatusManager.shutdown();
+                transactionStatusManager = null;
+            }
             }
         }
     };
@@ -298,11 +304,11 @@ public class TxControl
 	    {
 	        Runtime.getRuntime().removeShutdownHook(_shutdownHook);
 	        
-	        _shutdownHook = null;
-	        
+            _shutdownHook = null;
+
 	        if (transactionStatusManager != null)
 	        {
-	            transactionStatusManager.finalize();
+	            transactionStatusManager.shutdown();
 	            transactionStatusManager = null;
 	        }
 	    }
@@ -326,6 +332,9 @@ public class TxControl
 
 	static int numberOfTransactions = 100;
 
+    /**
+     * flag which is tue if TxControl is enabled and false if it is disabled
+     */
 	static boolean enable = true;
 
 	private static TransactionStatusManager transactionStatusManager = null;
@@ -336,6 +345,12 @@ public class TxControl
 
 	static int _defaultTimeout = 60; // 60 seconds
 
+    /**
+     * flag which is true if enable and disable operations, respectively, start and stop the transaction status
+     * manager and false if they do not perform a start and stop. this flag is true by default and can only be
+     * set to false by setting property {@link#com.arjuna.ats.arjuna.common.TRANSACTION_STATUS_MANAGER_ENABLE}
+     * to value "NO"
+     */
 	static boolean _enableTSM = true;
     
     static boolean beforeCompletionWhenRollbackOnly = false;
@@ -515,7 +530,11 @@ public class TxControl
 		if ("NO".equalsIgnoreCase(enableTSM))
 		    _enableTSM = false;
 
+        // TODO -- add this check to respect the environment setting for Environment.START_DISABLED?
+        // TODO -- is this feature actually needed (it appears not to be used internally)
+        // if (enable) {
 		createTransactionStatusManager();
+        // }
 	}
 
 }

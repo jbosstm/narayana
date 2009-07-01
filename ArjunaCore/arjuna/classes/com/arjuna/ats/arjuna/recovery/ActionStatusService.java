@@ -141,9 +141,10 @@ public class ActionStatusService implements Service
 	       }
 
 	       /*
-		* TODO: why do we need to check this? No nulls should
-		* ever be sent and the connection is blocking!
-		*/
+	        * check for null - in theory we get this from readLine when EOF has been reached, although in practice
+	        * since we are reading from a socket we will probably get an IOException in which case we will still
+	        * see null
+		    */
 
 	       if ((transactionType == null) && (strUid == null))
 		   return;
@@ -445,7 +446,6 @@ public class ActionStatusService implements Service
     */
 
    private static ObjectStore _objectStore = null;
-
 }
 
 

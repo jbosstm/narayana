@@ -81,37 +81,22 @@ public class PeriodicRecovery extends Thread
 {
    /***** public API *****/
 
-/*
- * TODO uncomment for JDK 1.5.
- *
-   public static enum Status
-   {
-       INACTIVE, SCANNING
-   }
-
-   public static enum Mode
-   {
-       ENABLED, SUSPENDED, TERMINATED
-   }
-*/
     /**
      *  state values indicating whether or not some thread is currently scanning. used to define values of field
      * {@link PeriodicRecovery#_currentStatus}
      */
-    public class Status
-    {
-        /**
-         * state value indicating that no thread is scanning
-         */
-        public static final int INACTIVE = 0;
-        /**
-         * state value indicating that some thread is scanning.
-         * n.b. the scanning thread may not be the singleton PeriodicRecovery thread instance
-         */
-        public static final int SCANNING = 1;
-
-        private Status() { }
-    }
+   public static enum Status
+   {
+       /**
+        * state value indicating that no thread is scanning
+        */
+       INACTIVE,
+       /**
+        * state value indicating that some thread is scanning.
+        * n.b. the scanning thread may not be the singleton PeriodicRecovery thread instance
+        */
+       SCANNING
+   }
 
     /**
      * state values indicating operating mode of scanning process for ad hoc threads and controlling behaviour of
@@ -123,24 +108,22 @@ public class PeriodicRecovery extends Thread
      * {@link PeriodicRecovery#_currentStatus} may (temporarily) remain in state SCANNING before transitioning
      * to state INACTIVE.
      */
-    public class Mode
-    {
-        /**
-         * state value indicating that new scans may proceed
-         */
-        public static final int ENABLED = 0;
-        /**
-         * state value indicating that new scans may not proceed and the periodic recovery thread should suspend
-         */
-        public static final int SUSPENDED = 1;
-        /**
-         * state value indicating that new scans may not proceed and that the singleton
-         * PeriodicRecovery thread instance should exit if it is still running
-         */
-        public static final int TERMINATED = 2;
-
-        private Mode() { }
-    }
+   public static enum Mode
+   {
+       /**
+        * state value indicating that new scans may proceed
+        */
+       ENABLED,
+       /**
+        * state value indicating that new scans may not proceed and the periodic recovery thread should suspend
+        */
+       SUSPENDED,
+       /**
+        * state value indicating that new scans may not proceed and that the singleton
+        * PeriodicRecovery thread instance should exit if it is still running
+        */
+       TERMINATED
+   }
 
     /**
      *
@@ -150,6 +133,8 @@ public class PeriodicRecovery extends Thread
      */
     public PeriodicRecovery (boolean threaded, boolean useListener)
     {
+        super("Periodic Recovery");
+        
         initialise();
 
         // Load the recovery modules that actually do the work.
@@ -191,7 +176,7 @@ public class PeriodicRecovery extends Thread
             start();
         }
 
-        if(useListener)
+        if(useListener && _listener != null)
         {
             if (tsLogger.arjLogger.isDebugEnabled())
             {
@@ -212,6 +197,11 @@ public class PeriodicRecovery extends Thread
      */
    public void shutdown (boolean async)
    {
+       // stop the lsitener from adding threads which can exercise the worker
+       if (_listener != null) {
+           _listener.stopListener();
+       }
+
        synchronized (_stateLock) {
            if (getMode() != Mode.TERMINATED) {
                if (tsLogger.arjLogger.isDebugEnabled())
@@ -369,7 +359,7 @@ public class PeriodicRecovery extends Thread
                } else {
                    // status == INACTIVE so we can go ahead and scan if scanning is enabled
                    switch (getMode()) {
-                       case Mode.ENABLED:
+                       case ENABLED:
                            // ok grab our chance to be the scanning thread
                            if (tsLogger.arjLogger.isDebugEnabled())
                            {
@@ -381,7 +371,7 @@ public class PeriodicRecovery extends Thread
                            _stateLock.notifyAll();
                            workToDo = true;
                            break;
-                       case Mode.SUSPENDED:
+                       case SUSPENDED:
                            // we need to wait while we are suspended
                            if (tsLogger.arjLogger.isDebugEnabled())
                            {
@@ -392,7 +382,7 @@ public class PeriodicRecovery extends Thread
                            // we come out of here with the lock and either ENABLED or TERMINATED
                            finished = (getMode() == Mode.TERMINATED);
                            break;
-                       case Mode.TERMINATED:
+                       case TERMINATED:
                            finished = true;
                            break;
                    }
@@ -437,6 +427,12 @@ public class PeriodicRecovery extends Thread
                }
            }
        } while (!finished);
+
+       // make sure the worker thread is not wedged waiting for a scan to complete
+
+       synchronized(_stateLock) {
+           notifyWorker();
+       }
 
        if (tsLogger.arjLogger.isDebugEnabled())
        {
@@ -545,7 +541,7 @@ public class PeriodicRecovery extends Thread
                     tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                             FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: listener worker interrupts background thread");
                 }
-                this.interrupt();
+                _stateLock.notifyAll();
             }
         }
     }
@@ -614,7 +610,7 @@ public class PeriodicRecovery extends Thread
      * <b>Caveats:</b> must only be called while synchronized on {@link PeriodicRecovery#_stateLock}
      * @return INACTIVE if no scan is in progress or SCANNING if some thread is performing a scan
      */
-    private int getStatus ()
+    private Status getStatus ()
     {
         return _currentStatus;
     }
@@ -625,7 +621,7 @@ public class PeriodicRecovery extends Thread
      * <b>Caveats:</b> must only be called while synchronized on {@link PeriodicRecovery#_stateLock}
      * @return the current recovery operation mode
      */
-    private int getMode ()
+    private Mode getMode ()
     {
         return _currentMode;
     }
@@ -634,7 +630,7 @@ public class PeriodicRecovery extends Thread
      * set the current activity status
      * @param status the new status to be used
      */
-    private void setStatus (int status)
+    private void setStatus (Status status)
     {
         _currentStatus = status;
     }
@@ -643,7 +639,7 @@ public class PeriodicRecovery extends Thread
      * set the current recovery operation mode
      * @param mode the new mode to be used
      */
-    private void setMode (int mode)
+    private void setMode (Mode mode)
     {
         _currentMode = mode;
     }
@@ -829,7 +825,7 @@ public class PeriodicRecovery extends Thread
             }
             if(_workerService != null)
             {
-                _workerService.signalDone();
+                _workerService.notifyDone();
             }
             _workerScanRequested = false;
         }
@@ -1033,12 +1029,12 @@ public class PeriodicRecovery extends Thread
     /**
      * activity status indicating whether we IDLING or some thread is SCANNING
      */
-   private static int _currentStatus;
+   private static Status _currentStatus;
 
     /**
      * operating mode indicating whether scanning is ENABLED, SUSPENDED or TERMINATED
      */
-   private static int _currentMode;
+   private static Mode _currentMode;
 
     /**
      *  flag indicating whether the listener has prodded the recovery thread

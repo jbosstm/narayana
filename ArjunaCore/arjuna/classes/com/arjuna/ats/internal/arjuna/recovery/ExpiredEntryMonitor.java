@@ -72,51 +72,23 @@ import com.arjuna.common.util.logging.*;
 
 public class ExpiredEntryMonitor extends Thread
 {
-   /**
+    /**
     *  Start the monitor thread, if the properties make it appropriate
     */
 
-  public static boolean startUp()
+  public static synchronized boolean startUp()
   {
       // ensure singleton
-      if ( _started )
+      if ( _theInstance != null )
       {
 	  return false;
       }
-      
-      /*
-       * Read the system properties to set the configurable options
-       */
-      
-      String scanIntervalString = 
-	  arjPropertyManager.propertyManager.getProperty( RecoveryEnvironment.EXPIRY_SCAN_INTERVAL );
-      
-      if ( scanIntervalString != null )
-	  {
-	      try
-		  {
-		      Integer scanIntervalInteger = new Integer(scanIntervalString);
-		      // convert to seconds
-		      _scanIntervalSeconds = scanIntervalInteger.intValue() * 60 * 60;
-		      
-		      if (tsLogger.arjLoggerI18N.debugAllowed())
-		      {
-			  tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-							FacilityCode.FAC_CRASH_RECOVERY, 
-							"com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_1", 
-							new Object[]{Integer.toString(_scanIntervalSeconds)});
-		      }
-		  }
-	      catch ( NumberFormatException e )
-	      {
-		  if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		  {
-		      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_11", 
-						  new Object[]{RecoveryEnvironment.EXPIRY_SCAN_INTERVAL,
-							       scanIntervalString});
-		  }
-	      }
-	  }
+
+      // process system properties -- n.b. we only do this once!
+
+      if (!initialised) {
+          initialise();
+      }
       
       if ( _scanIntervalSeconds == 0 )
       {
@@ -131,16 +103,7 @@ public class ExpiredEntryMonitor extends Thread
 	  
 	  return false;
       }
-      
-      // is it being used to skip the first time
-      if ( _scanIntervalSeconds < 0 )
-      {
-	  notSkipping = false;
-	  _scanIntervalSeconds = - _scanIntervalSeconds;
-      }
-      
-      loadScanners();
-      
+
       if ( _expiryScanners.size() == 0 )
       {
 	  // nothing to do
@@ -156,23 +119,34 @@ public class ExpiredEntryMonitor extends Thread
       }
       
       // create, and thus launch the monitor
-      _theInstance = new ExpiredEntryMonitor();
+
+      _theInstance = new ExpiredEntryMonitor(_skipFirst);
+
+      _theInstance.start();
       
-      return _started;
+      return true;
   }
-    
-  public static void shutdown()
+
+    /**
+     * terminate any currently active monitor thread, cancelling any further scans but waiting for the
+     * thread to exit before returning
+     */
+  public synchronized static void shutdown()
   {
-      _started = false;
-      _expiryScanners = new Vector();
-      _scanIntervalSeconds = 12 * 60 * 60;
-      notSkipping = true;
-      
-      _theInstance.interrupt();
+      if (_theInstance != null) {
+          _theInstance.terminate();
+          // now wait for it to finish
+          try {
+              _theInstance.join();
+          } catch (InterruptedException e) {
+              // ignore
+          }
+      }
+
       _theInstance = null;
   }
 
-  private ExpiredEntryMonitor()
+  private ExpiredEntryMonitor(boolean skipFirst)
   {
     if (tsLogger.arjLoggerI18N.isDebugEnabled())
     {
@@ -180,16 +154,14 @@ public class ExpiredEntryMonitor extends Thread
 				      FacilityCode.FAC_CRASH_RECOVERY, 
 				      "com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_4");
     }
-    
-    _started = true;
+    _skipNext = skipFirst;
+    _stop = false;
 
     this.setDaemon(true);
-
-    start();
   }
     
   /**
-   * Start the background thread to perform the periodic scans
+   * performs periodic scans until a shutdwn is notified
    */
   public void run()
   {
@@ -201,13 +173,33 @@ public class ExpiredEntryMonitor extends Thread
 				      _theTimestamper.format(new Date()) + "----" );
 	}
 	
-	if ( notSkipping )
+	if (_skipNext)
+    {
+        // make sure we skip at most one scan
+
+        _skipNext = false;
+
+        if (tsLogger.arjLoggerI18N.isInfoEnabled())
+        {
+            tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_5");
+        }
+    }
+    else
 	{
 	    Enumeration scanners = _expiryScanners.elements();
 	    
 	    while ( scanners.hasMoreElements() )
 	    {
 		ExpiryScanner m = (ExpiryScanner)scanners.nextElement();
+
+            // check for a shutdown request before starting a scan
+            synchronized (this) {
+                if (_stop) {
+                    break;
+                }
+            }
+
+            // ok go ahead and scan
 
 		m.scan();
 			
@@ -217,37 +209,95 @@ public class ExpiredEntryMonitor extends Thread
 					      FacilityCode.FAC_CRASH_RECOVERY,"  "); 
 		    // bit of space if detailing
 		}
-	    }
+        }
 	}
-	else
-	{
-	    if (tsLogger.arjLoggerI18N.isInfoEnabled())
-	    {
-		tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_5");
-	    }
-	    
-	    notSkipping = true;
-	}
-	
+
 	// wait for a bit to avoid catching (too many) transactions etc. that
 	// are really progressing quite happily
 
 	try
 	{
-	    Thread.sleep( _scanIntervalSeconds * 1000 );
+        // check for shutdown request before we sleep
+        synchronized (this) {
+        if (_stop) {
+            break;
+        }
+	    wait( _scanIntervalSeconds * 1000 );
+        // check if we were woken because of a shutdown
+        if (_stop) {
+            break;
+        }
+        }
 	}
 	catch ( InterruptedException e1 )
 	{
-	    break;
+        // we should only get shut down by a shutdown request so ignore interrupts
 	}
-	
-	if ( !_started )
-            return;
     }
   }
-    
+
+  private synchronized void terminate()
+  {
+      _stop = true;
+      notify();
+  }
+
+    private static void initialise()
+    {
+        /*
+         * Read the system properties to set the configurable options
+         */
+
+        String scanIntervalString =
+        arjPropertyManager.propertyManager.getProperty( RecoveryEnvironment.EXPIRY_SCAN_INTERVAL );
+
+        if ( scanIntervalString != null )
+        {
+            try
+            {
+                Integer scanIntervalInteger = new Integer(scanIntervalString);
+                // convert to seconds
+                _scanIntervalSeconds = scanIntervalInteger.intValue() * 60 * 60;
+
+                if (tsLogger.arjLoggerI18N.debugAllowed())
+                {
+                tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                              FacilityCode.FAC_CRASH_RECOVERY,
+                              "com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_1",
+                              new Object[]{Integer.toString(_scanIntervalSeconds)});
+                }
+            }
+            catch ( NumberFormatException e )
+            {
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_11",
+                            new Object[]{RecoveryEnvironment.EXPIRY_SCAN_INTERVAL,
+                                     scanIntervalString});
+            }
+            }
+        }
+
+        if (_scanIntervalSeconds != 0)
+        {
+
+            // is it being used to skip the first time
+            if ( _scanIntervalSeconds < 0 )
+            {
+                _skipFirst = true;
+                _scanIntervalSeconds = - _scanIntervalSeconds;
+            }
+
+            loadScanners();
+        }
+
+        initialised = true;
+    }
+
   private static void loadScanners()
   {
+      _expiryScanners = new Vector();
+
     // search our properties
     Properties properties = arjPropertyManager.propertyManager.getProperties();
     
@@ -261,7 +311,7 @@ public class ExpiredEntryMonitor extends Thread
 	    
 	    if ( propertyName.startsWith(RecoveryEnvironment.SCANNER_PROPERTY_PREFIX) )
 	    {
-		loadScanner( properties.getProperty(propertyName) );
+		loadScanner( properties.getProperty(propertyName));
 	    }
 	}
     }
@@ -346,21 +396,46 @@ public class ExpiredEntryMonitor extends Thread
 	  }
       }
   }
-    
-    private static boolean _started = false;
-    
-    private static Vector _expiryScanners = new Vector();
-    
+
+    /**
+     * flag which causes the next scan to be skipped if it is true. this is set from _skipFirst when a
+     * monitor is created and rest to false each time a scan is considered.
+     */
+    private boolean _skipNext;
+
+    /**
+     * flag which causes the monitor thread to stop running when it is set to true
+     */
+    private boolean _stop;
+
+    /**
+     * list of scanners to be invoked by the monitor thread in order to check for expired log entries
+     */
+    private static Vector _expiryScanners;
+
+    /**
+     * flag which guards processing of properties ensuirng it is only performed once
+     */
+    private static boolean initialised = false;
+
+    /**
+     * the default scanning interval if the property file does not supply one
+     */
     private static int _scanIntervalSeconds = 12 * 60 * 60;
-    
+
+    /**
+     * a date format used to log the time for a scan
+     */
     private static SimpleDateFormat _theTimestamper = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-    
-    private static boolean notSkipping = true;
-    
+
+    /**
+     * a flag which if true causes the scanner to perform a scan when it is first starts or if false skip this
+     * first scan. it can be set to true by supplying a negative scan interval in the property file.
+     */
+    private static boolean _skipFirst = false;
+
+    /**
+     * the currently active monitor instance or null if no scanner is active
+     */
     private static ExpiredEntryMonitor _theInstance = null;
-    
 }
-
-
-
-

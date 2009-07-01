@@ -33,6 +33,8 @@ package com.arjuna.ats.internal.arjuna.recovery;
 
 import java.io.*;
 import java.net.*;
+import java.util.List;
+import java.util.LinkedList;
 
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -61,6 +63,8 @@ public class Listener extends Thread
 
       if (Listener.setTimeout)
 	  _listener_socket.setSoTimeout( _listener_socket_timeout_in_msecs );
+
+       connections = new LinkedList<Socket>();
    }
    
    /**
@@ -80,13 +84,17 @@ public class Listener extends Thread
 
       if (Listener.setTimeout)
 	  _listener_socket.setSoTimeout( _listener_socket_timeout_in_msecs );
+
+      connections = new LinkedList<Socket>();
    }
-   
-   /**
+
+   /*
     * Close down the socket.
     *
     * @message com.arjuna.ats.internal.arjuna.recovery.Listener_1 [com.arjuna.ats.internal.arjuna.recovery.Listener_1] - failed to close listener socket
-    */   
+
+    * this is pointless because this instance is a thread so never gets garbage collected until it has stopped running.
+    * but that means shutdown will have been called making the call to close in this method redundant.
 
    public void finalize()
    {
@@ -101,6 +109,7 @@ public class Listener extends Thread
 	  tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.Listener_1");
       }
    }      
+    */
 
    /**
     * Loops waiting for connection requests from client,
@@ -115,9 +124,16 @@ public class Listener extends Thread
       {
          try
          {
-            Socket conn = _listener_socket.accept();
+            final Socket conn = _listener_socket.accept();
+            addConnection(conn);
+            Connection.Callback callback = new Connection.Callback() {
+                private Socket _conn = conn;
+                public void run() {
+                    removeConnection(_conn);
+                }
+            };
 
-            Connection new_conn = new Connection( conn, _listener_service );
+            Connection new_conn = new Connection( conn, _listener_service, callback );
 
      	    if (tsLogger.arjLogger.debugAllowed())
 	    {
@@ -139,6 +155,7 @@ public class Listener extends Thread
          }
          catch (final SocketException ex)
          {
+             // we get this if the socket is closed under a call to shutdown
              if (tsLogger.arjLogger.debugAllowed())
              {
                  tsLogger.arjLogger.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_CRASH_RECOVERY,
@@ -156,23 +173,61 @@ public class Listener extends Thread
          }
       }
    }
-   
+
+    public synchronized void addConnection(Socket conn)
+    {
+        if (!_stop_listener) {
+            connections.add(conn);
+        }
+    }
+
+    public synchronized void removeConnection(Socket conn)
+    {
+        connections.remove(conn);
+        notifyAll();
+    }
+
    /**
     * Halts running of the listener thread.
     */
 
-   public void stopListener()
+   public synchronized void stopListener()
    {
       _stop_listener = true;
-      this.interrupt();
+
+       try
+       {
+           _listener_socket.close();  // in case we're still in accept
+       }
+       catch (final Exception ex)
+       {
+       }
+      // there is no need for this as the close will interrupt any i/o that is in progress
+      // this.interrupt();
+
+       // ok, closing a connection socket will cause the connection thread to remove it from the list as it
+       // exits so we keep on closing them and waiting until the list is empty
+
+       while(connections.size() > 0) {
+           Socket conn = connections.get(0);
+           try {
+               conn.close();
+           } catch (Exception e) {
+               // ignore
+           }
+           try {
+               wait();
+           } catch (InterruptedException e) {
+               // ignore
+           }
+       }
       
-      try
-      {
-          _listener_socket.close();  // in case we're still in accept
-      }
-      catch (final Exception ex)
-      {
-      }
+       // make sure this listener thread has exited before we return
+
+       try {
+           this.join();
+       } catch (InterruptedException ie) {
+       }
    }
 
    // Socket & port which client(RecoveryManager) connects to.
@@ -187,6 +242,8 @@ public class Listener extends Thread
    
    // The work item to execute.
    private Service _listener_service;
+
+    private List<Socket> connections;
 
     private static boolean setTimeout = false;
     

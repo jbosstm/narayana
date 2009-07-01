@@ -262,6 +262,9 @@ public class RecoveryManager
     // does nothing when running embedded.
 
     /**
+     * wait for the recovery thread to be shutdown. n.b. this will not return unless and until shutdown
+     * is called.
+     *
      * @throws IllegalStateException if the recovery manager has been shutdown.
      */
 
@@ -515,6 +518,10 @@ public class RecoveryManager
             {
                 System.out.println("Ready");
             }
+
+            // this is never going to return because it only returns when shutdon is called and
+            // there is nothing which is going to call shutdown. we probably oght  to provide a
+            // clean way of terminating this process.
 
             manager.waitForTermination();
 

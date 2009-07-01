@@ -88,8 +88,10 @@ public class TransactionStatusManager
 
    /**
     * The work item to be executed.
+    *
+    * this must be private as it should only be called once. otherwise we leak listener threads
     */
-   public void addService( Service service, ServerSocket serverSocket )
+   private void addService( Service service, ServerSocket serverSocket )
    {
       try
       {
@@ -111,11 +113,14 @@ public class TransactionStatusManager
       }
    }
 
-   /**
+   /*
     * Removes the TransactionStatusManager from the object store
     * and closes down the listener thread.
-    */
 
+    * this will never work as a finalizer because the listener thread is always running and keeping this
+    * instance from being garbage collected. we need a proper shutdonw method which closes the
+    * listener socket causing the thread to shut down
+    *
    // TODO consider adding a shutdown operation (signature change)
    public void finalize()
    {
@@ -127,6 +132,7 @@ public class TransactionStatusManager
 	   TransactionStatusManagerItem.removeThis( Utility.getProcessUid() ) ;
       }
    }
+    */
 
    /**
     * Create service and Transaction status manager item.
@@ -187,6 +193,14 @@ public class TransactionStatusManager
       }
    }
 
+    public void shutdown()
+    {
+        if (_listener != null) {
+            _listener.stopListener() ;
+            TransactionStatusManagerItem.removeThis( Utility.getProcessUid() ) ;
+            _listener = null;
+        }
+    }
     /**
      * Lookup the listener port for the transaction manager
      * @param defValue the value to use if no valid port number can be found

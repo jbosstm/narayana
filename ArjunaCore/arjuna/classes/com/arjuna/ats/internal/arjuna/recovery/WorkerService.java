@@ -50,7 +50,7 @@ public class WorkerService implements Service
 	_periodicRecovery = pr;
     }
     
-    public synchronized void doWork (InputStream is, OutputStream os) throws IOException
+    public void doWork (InputStream is, OutputStream os) throws IOException
     {
 	BufferedReader in  = new BufferedReader(new InputStreamReader(is));
 	PrintWriter out = new PrintWriter(new OutputStreamWriter(os));
@@ -66,12 +66,29 @@ public class WorkerService implements Service
         else
 	    if (request.equals("SCAN") || (request.equals("ASYNC_SCAN")))
 	    {
+            // hmm, we need to synchronize on the periodic recovery object in order to wake it up via notify.
+            // but the periodic recovery object has to synchronize on this object and then call notify
+            // in order to tell it that the last requested scan has completed. i.e. we have a two way
+            // wakeup here. so we have to be careful to avoid a deadlock.
+
+            if (request.equals("SCAN")) {
+                // do this before kicking the periodic recovery thread
+                synchronized (this) {
+                    doWait = true;
+                }
+            }
+            // now we only need to hold one lock
 		_periodicRecovery.wakeUp();
 
 		tsLogger.arjLogger.info("com.arjuna.ats.internal.arjuna.recovery.WorkerService_3");
 
 		if (request.equals("SCAN"))
 		{
+            synchronized (this) {
+                if (doWait) {
+                    // ok, the periodic recovery thread cannot have finished responding to the last scan request
+                    // so it is safe to wait. if we delivered the request while the last scan was still going
+                    // then it will have been ignored but that is ok.
 		    try
 		    {
 			wait();
@@ -80,8 +97,9 @@ public class WorkerService implements Service
 		    {
 			tsLogger.arjLogger.info("com.arjuna.ats.internal.arjuna.recovery.WorkerService_4");
 		    }
+                }
+            }
 		}
-
 		out.println("DONE");
 	    }
 	    else
@@ -103,18 +121,20 @@ public class WorkerService implements Service
 	}
     }
 
-    public synchronized void signalDone ()
+    public synchronized void notifyDone()
     {
 	try
 	{
 	    notifyAll();
+        doWait = false;
 	}
 	catch (Exception ex)
 	{
 	}
     }
-    
+
     private PeriodicRecovery _periodicRecovery = null;
+    private boolean doWait = false;
 
 }
 

@@ -33,6 +33,17 @@ package com.arjuna.ats.arjuna.recovery ;
 
 import java.io.* ;
 
+/**
+ * a service is used to serve one or more requests from an input stream and post results on an output stream.
+ * when the input sream is closed it is expected to close its output stream.</p>
+ * 
+ * note that a single service instance may be requested to process incoming requests from multiple input
+ * streams in parallel.</p>
+ *
+ * note also that the service should be resilient to closure of the input and output streams during request
+ * processing which can happen in resposne to asynchronous dispatch of a shutdown request to the object which
+ * invoked the service.
+ */
 public interface Service
 {
    public void doWork ( InputStream in, OutputStream out )

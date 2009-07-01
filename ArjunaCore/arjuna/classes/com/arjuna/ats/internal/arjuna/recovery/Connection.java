@@ -43,11 +43,20 @@ public class Connection extends Thread
 {
    /**
     * Takes socket and service to execute.
-    *
-    * @message com.arjuna.ats.internal.arjuna.recovery.Connection_2 [com.arjuna.ats.internal.arjuna.recovery.Connection_2] - Setting timeout exception.
     */
 
-   public Connection( Socket server_socket, Service service )
+   public Connection( Socket server_socket, Service service)
+   {
+       this(server_socket, service, null);
+   }
+
+    /**
+     * Takes socket and service to execute and a callback to run when processing of the connection has completed
+     *
+     * @message com.arjuna.ats.internal.arjuna.recovery.Connection_2 [com.arjuna.ats.internal.arjuna.recovery.Connection_2] - Setting timeout exception.
+     */
+
+    public Connection( Socket server_socket, Service service, Callback callback )
    {
       super( "Server.Connection:" + server_socket.getInetAddress().getHostAddress() + ":" + server_socket.getPort() );
               
@@ -64,6 +73,8 @@ public class Connection extends Thread
       }
 
       _service = service;
+
+       _callback = callback;
    }
    
    /**
@@ -87,11 +98,29 @@ public class Connection extends Thread
 	  if (tsLogger.arjLoggerI18N.isWarnEnabled())
 	      tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.Connection_1");
       }
+      finally
+      {
+
+      // run the callback to notify completion of processing for this connection
+
+      if (_callback != null) {
+          _callback.run();
+      }
+      }
    }
 
    // What client (RecoveryManager) talks to.
    private Socket  _server_socket;
    
    // What Service is provided to the client(RecoveryManager).
-   private Service _service;        
+   private Service _service;
+
+   private Callback _callback;
+
+    // abstract class instantiated by clients to allow notification that a connection has been closed
+    
+   public static abstract class Callback
+   {
+       abstract void run();
+   }
 }

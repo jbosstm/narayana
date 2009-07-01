@@ -243,11 +243,11 @@ public class RecoveryManagerImple
      */
         public void stop (boolean async)
         {
+            // must ensure we clean up dependent threads
+
+                ExpiredEntryMonitor.shutdown();
+
                 _periodicRecovery.shutdown(async);
-
-                // TODO why?
-
-                // ExpiredEntryMonitor.shutdown();
         }
 
         /**
@@ -272,7 +272,10 @@ public class RecoveryManagerImple
         {
                 stop(true);
         }
-        
+
+       /**
+        * wait for the recovery implementation to be shut down.
+        */
         public void waitForTermination ()
         {
             try
