@@ -23,8 +23,8 @@ package com.arjuna.common.internal.util.logging;
 /**
  * This class is used to control properties values for CLF.
  *
- * The properties can originate either from a configuration file (by default CommonLogging.properties or
- * CommonLogging.xml) or it can be primed by using the class directly from an embedding product (such as
+ * The properties can originate either from a configuration file (by default common.properties)
+ * or it can be primed by using the class directly from an embedding product (such as
  * the JBoss Transaction Service).
  *
  * The default file location can be overridden by setting the property
@@ -35,34 +35,11 @@ package com.arjuna.common.internal.util.logging;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
-import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
 
 public class commonPropertyManager
 {
-   public static PropertyManager propertyManager;
-
-   static
-   {
-      /*
-      * Retrieve the property manager from the factory and add the CLF properties file to it.
-      */
-      propertyManager = PropertyManagerFactory.getPropertyManager("com.hp.mw.ts.propertymanager", "common");
-
-      //TR-2003-08-07: removed loading of a properties file for logging, since all log configuration
-      // is now delegated to the underlying logging framework.
-      // reinserted to support fine-grained logging configuration
-      String defaultPropertyFile = System.getProperty("com.arjuna.common.util.logging.propertiesFile");
-
-      if (defaultPropertyFile == null)
-         defaultPropertyFile = Configuration.propertiesFile();
-
-      try
-      {
-		  propertyManager.load(XMLFilePlugin.class.getName(),defaultPropertyFile);
-      }
-      catch (Exception e)
-      {
-          throw new ExceptionInInitializerError(e);
-      }
-   }
+    public static PropertyManager getPropertyManager()
+    {
+        return PropertyManagerFactory.getPropertyManagerForModule("common", "com.arjuna.common.util.logging.propertiesFile");
+    }
 }

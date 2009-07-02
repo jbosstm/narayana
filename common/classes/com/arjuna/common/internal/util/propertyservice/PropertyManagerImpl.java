@@ -20,16 +20,16 @@
  */
 package com.arjuna.common.internal.util.propertyservice;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
+import com.arjuna.common.util.propertyservice.propertycontainer.PropertyManagerPluginInterface;
 import com.arjuna.common.util.propertyservice.Environment;
-import com.arjuna.common.util.exceptions.LoadPropertiesException;
-import com.arjuna.common.util.exceptions.ManagementPluginException;
 import com.arjuna.common.util.propertyservice.plugins.PropertyManagerIOPlugin;
 import com.arjuna.common.util.propertyservice.plugins.PropertyManagementPlugin;
-import com.arjuna.common.util.propertyservice.propertycontainer.PropertyManagerPluginInterface;
+import com.arjuna.common.util.exceptions.LoadPropertiesException;
 import com.arjuna.common.util.exceptions.SavePropertiesException;
+import com.arjuna.common.util.exceptions.ManagementPluginException;
 
-import java.util.*;
+import java.util.Properties;
+import java.util.Enumeration;
 import java.io.IOException;
 
 /*
@@ -51,45 +51,19 @@ import java.io.IOException;
 public class PropertyManagerImpl implements PropertyManagerPluginInterface
 {
     /** Specifies whether the property manager is in verbose mode **/
-	private static boolean		_verbose = false;
-
-    /** This is the top level property manager **/
-	private PropertyManagerImpl _topLevelPropertyManager = this;
-
-    /** The parent and children of this property manager **/
-	private HashSet		_parentPropertyManagers;
-    private HashSet		_childPropertyManagers;
-
+	protected static boolean _verbose = false;
     /** Properties stored within this property manager **/
-	private Properties	_properties;
-
+    protected Properties _properties;
     /** The name of this property manager **/
-	private String		_name;
-
+    protected String _name;
     /** The uri associated with this property manager **/
-    private String      _associatedUri;
-	private String		_associatedPluginClassname;
+    protected String _associatedUri;
+    private String _associatedPluginClassname;
 
-	public PropertyManagerImpl(String name)
-	{
-		_name = name;
-		_parentPropertyManagers = new HashSet();
-    	_childPropertyManagers = new HashSet();
-
-		_properties = new Properties();
+    public PropertyManagerImpl(String name) {
         _associatedUri = null;
-	}
-
-	public PropertyManagerImpl(String name, PropertyManagerImpl parent)
-	{
-		this(name);
-
-		_topLevelPropertyManager = parent;
-	}
-
-    public PropertyManagerPluginInterface getTopLevelPropertyManager()
-    {
-        return _topLevelPropertyManager;
+        _name = name;
+        _properties = new Properties();
     }
 
     /**
@@ -119,17 +93,17 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
         _associatedUri = uri;
     }
 
-	public String getIOPluginClassname()
+    public String getIOPluginClassname()
 	{
 		return _associatedPluginClassname;
 	}
 
-	public void setIOPluginClassname(String classname)
+    public void setIOPluginClassname(String classname)
 	{
 		_associatedPluginClassname = classname;
 	}
 
-	/**
+    /**
 	 * Get the value of the property with the name <code>name</code>
 	 *
 	 * @param name The name of the property to retrieve the value of.
@@ -140,38 +114,13 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 		/** Get the system property **/
 		String value = System.getProperty(name);
 
-		/** If the system property is null look in this property managers sub-tree **/
-		value = value != null ? value : getPropertyFromSubTree(name);
+		/** If the system property is null look in the local properties **/
+		value = value != null ? value : _properties.getProperty(name);
 
 		return value;
 	}
 
     /**
-     * Get the property from the sub-tree without checking the system
-     * properties.
-     * @param name the property name
-     * @return the property value
-     */
-    private String getPropertyFromSubTree(String name)
-    {
-        /** look in this property managers properties **/
-        String value = _properties.getProperty(name);
-
-        if ( value == null )
-        {
-            /** Else search upwards **/
-            Iterator itr = _parentPropertyManagers.iterator();
-            while (itr.hasNext() && value == null)
-            {
-                PropertyManagerImpl pm = (PropertyManagerImpl)itr.next();
-                value = pm.getPropertyFromSubTree(name);
-            }
-        }
-
-        return value;
-    }
-
-	/**
 	 * Get the value of the property with the name <code>name</code>.
 	 * If the property cannot be found return the value <code>defaultValue</code>.
 	 *
@@ -186,7 +135,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 		return value == null ? defaultValue : value;
 	}
 
-	/**
+    /**
 	 * Set the value of the property <code>name</code> to <code>value</code>.
 	 *
 	 * @param name The name of the property to set.
@@ -198,7 +147,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 		return setProperty(name, value, true);
 	}
 
-	/**
+    /**
 	 * Set the value of the property <code>name</code> to <code>value</code>.
 	 *
 	 * @param name The name of the property to set.
@@ -214,17 +163,14 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 			System.setProperty(name, value);
 		}
 
-		String oldValue = setLocalProperty(name, value);
+		String oldValue = _properties.getProperty(name);
 
-		if ( oldValue == null )
-		{
-			_properties.setProperty(name, value);
-		}
+		_properties.setProperty(name, value);
 
 		return oldValue;
 	}
 
-	/**
+    /**
 	 * Removes the property from the property manager.
 	 * @param name The name of the property to remove.
 	 * @return previous value of the property
@@ -237,52 +183,17 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 			System.getProperties().remove(name);
 		}
 
-		String oldValue = removeLocalProperty(name);
+        String oldValue = _properties.getProperty(name);
+
+        if ( oldValue != null )
+        {
+            _properties.remove(name);
+        }
 
 		return oldValue;
 	}
 
-	private String removeLocalProperty(String name)
-	{
-		PropertyManagerImpl pm = this;
-		String oldValue = _properties.getProperty(name);
-
-		if ( oldValue != null )
-		{
-			_properties.remove(name);
-		}
-
-		Iterator itr = _parentPropertyManagers.iterator();
-		while ( oldValue == null && itr.hasNext() )
-		{
-			pm = (PropertyManagerImpl)itr.next();
-			oldValue = pm.removeLocalProperty(name);
-		}
-
-		return oldValue;
-	}
-
-	private String setLocalProperty(String name, String value)
-	{
-		PropertyManagerImpl pm = this;
-		String oldValue = _properties.getProperty(name);
-
-		if ( oldValue != null )
-		{
-			_properties.setProperty(name, value);
-		}
-
-		Iterator itr = _parentPropertyManagers.iterator();
-		while ( oldValue == null && itr.hasNext() )
-		{
-			pm = (PropertyManagerImpl)itr.next();
-			oldValue = pm.setLocalProperty(name, value);
-		}
-
-		return oldValue;
-	}
-
-	/**
+    /**
 	 * Get the properties stored in this property manager only.
 	 * @return the Properties
 	 */
@@ -291,7 +202,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 		return _properties;
 	}
 
-	/**
+    /**
 	 * Get all the properties stored in this property manager and it's parents.
      * It also includes the system properties.
 	 *
@@ -299,7 +210,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 	 */
 	public Properties getProperties()
 	{
-		Properties returnProps = getAllProperties();
+		Properties returnProps = (Properties)_properties.clone();
 
         returnProps.putAll(System.getProperties());
 
@@ -307,29 +218,6 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
     }
 
     /**
-     * This is an internal method which retrieves all the properties stored
-     * in this property manager and it's parents.  But it does not include
-     * the properties stored in system.
-     *
-     * @return the Properties
-     */
-    public Properties getAllProperties()
-    {
-        Properties returnProps = new Properties();
-		Iterator itr = _parentPropertyManagers.iterator();
-		while (itr.hasNext())
-		{
-			PropertyManagerImpl pm = (PropertyManagerImpl)itr.next();
-
-			returnProps.putAll(pm.getAllProperties());
-		}
-
-		returnProps.putAll(_properties);
-
-		return returnProps;
-	}
-
-	/**
 	 * Returns an enumeration of the property names
 	 * @return the enumeration
 	 */
@@ -338,7 +226,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 		return getProperties().keys();
 	}
 
-	/**
+    /**
 	 * Loads properties from a given URI using the given property manager plugin.
 	 * This plugin can be overridden by setting the system property 'propertyservice.plugin'.
 	 *
@@ -350,15 +238,22 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 	{
 		try
 		{
+            String existingUri = getUri();
+            if(existingUri != null && !existingUri.equals(uri)) {
+                throw new LoadPropertiesException("Not allowed to reload from a different uri! [existing: "+existingUri+", requested: "+uri+"]");
+            }
+
 			/** Check to see if the system property has been set **/
 			String classname = System.getProperty(Environment.OVERRIDING_PLUGIN_CLASSNAME);
 			classname = classname == null ? pluginClassname : classname;
 
 			PropertyManagerIOPlugin plugin = (PropertyManagerIOPlugin)Thread.currentThread().getContextClassLoader().loadClass(classname).newInstance();
 
-			plugin.load(uri, _topLevelPropertyManager, _verbose);
+			plugin.load(uri, this, _verbose);
+
+            this.setUri(uri);
 		}
-		catch (java.io.IOException e)
+		catch (IOException e)
 		{
 			throw e;
 		}
@@ -368,7 +263,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 		}
 	}
 
-	/**
+    /**
 	 * Saves the properties stored in this property manager using the given
 	 * property manager plugin.  This plugin can be overridden by setting the
 	 * system property 'propertyservice.plugin'
@@ -378,9 +273,9 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 	 * load the properties is also used to save them.
 	 * @param uri The URI to save to.  If null is provided the uri used to load the properties
 	 * is also used to save them.
-	 * @throws IOException
+	 * @throws java.io.IOException
 	 * @throws ClassNotFoundException
-	 * @throws SavePropertiesException
+	 * @throws com.arjuna.common.util.exceptions.SavePropertiesException
 	 */
 	public synchronized void save(String pluginClassname, String uri) throws IOException, ClassNotFoundException, SavePropertiesException
 	{
@@ -399,7 +294,7 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 
 			plugin.save(uri, this);
 		}
-		catch (java.io.IOException e)
+		catch (IOException e)
 		{
 			throw e;
 		}
@@ -410,123 +305,31 @@ public class PropertyManagerImpl implements PropertyManagerPluginInterface
 		}
 	}
 
-	public boolean verbose()
+    public boolean verbose()
 	{
 		return _verbose;
 	}
 
-	/**
-	 * Adds the given property manager as a child of this property manager
-	 *
-	 * @param pm The property manager to add as a child
-	 */
-	public void addChild(PropertyManager pm)
-	{
-		if ( !_childPropertyManagers.contains(pm) )
-		{
-			_childPropertyManagers.add(pm);
-			((PropertyManagerImpl)pm).addParent(this);
-		}
-	}
-
-	/**
-	 * This method adds a parent property manager.
-	 * @param pm The property manager to add as a parent.
-	 */
-	public void addParent(PropertyManager pm)
-	{
-		if ( !_parentPropertyManagers.contains(pm) )
-		{
-			_parentPropertyManagers.add(pm);
-			((PropertyManagerImpl)pm).addChild(this);
-		}
-	}
-
-	/**
-	 * This method creates a property manager with the name <code>moduleName</code>.
-	 * @param modulename the name of the module
-	 * @return the PropertyManagerPluginInterface
-	 */
-	public PropertyManagerPluginInterface createPropertyManager(String modulename)
-	{
-		return new PropertyManagerImpl(modulename, _topLevelPropertyManager);
-	}
-
-	/**
-	 * This method returns an array of parents to the property manager.
-	 * @return a PropertyManagerPluginInterface[]
-	 */
-	public PropertyManagerPluginInterface[] getParents()
-	{
-		PropertyManagerPluginInterface[] pms = new PropertyManagerPluginInterface[_parentPropertyManagers.size()];
-		_parentPropertyManagers.toArray(pms);
-		return pms;
-	}
-
-	/**
-	 * This method returns an array of the children of the current property manager.
-	 * @return a PropertyManagerPluginInterface[]
-	 */
-	public PropertyManagerPluginInterface[] getChildren()
-	{
-		PropertyManagerPluginInterface[] pms = new PropertyManagerPluginInterface[_childPropertyManagers.size()];
-		_childPropertyManagers.toArray(pms);
-		return pms;
-	}
-
-	/**
+    /**
 	 * This adds a management plugin to this property manager.
-	 *
-	 * @param plugin The proeprty management plugin to plugin.
-	 * @throws IOException
-	 * @throws ManagementPluginException
-	 */
-	public void addManagementPlugin(PropertyManagementPlugin plugin) throws IOException, ManagementPluginException
-	{
-		try
-		{
-			plugin.initialise(this);
-		}
-		catch (java.io.IOException e)
-		{
-			throw e;
-		}
-		catch (Exception e)
-		{
-			throw new ManagementPluginException(e.toString(), e);
-		}
-	}
-
-	public PropertyManagerPluginInterface getChild(String moduleName)
-	{
-		PropertyManagerPluginInterface returnPm = null;
-    	Iterator itr = _childPropertyManagers.iterator();
-
-		while ( returnPm == null && itr.hasNext() )
-		{
-			PropertyManagerImpl pm = (PropertyManagerImpl)itr.next();
-
-			if ( pm.getName().equals(moduleName) )
-			{
-				returnPm = pm;
-			}
-		}
-
-		if ( returnPm == null )
-		{
-			addChild(returnPm = createPropertyManager(moduleName));
-		}
-
-		return returnPm;
-	}
-
-	static
-	{
-		String verboseSetting = System.getProperty(Environment.VERBOSE_PROPERTY_MANAGER);
-
-		if ( verboseSetting != null && verboseSetting.equalsIgnoreCase("ON") )
-		{
-			_verbose = true;
-		}
-	}
+     *
+     * @param plugin The proeprty management plugin to plugin.
+     * @throws java.io.IOException
+     * @throws com.arjuna.common.util.exceptions.ManagementPluginException
+     */
+    public void addManagementPlugin(PropertyManagementPlugin plugin) throws IOException, ManagementPluginException
+    {
+        try
+        {
+            plugin.initialise(this);
+        }
+        catch (IOException e)
+        {
+            throw e;
+        }
+        catch (Exception e)
+        {
+            throw new ManagementPluginException(e.toString(), e);
+        }
+    }
 }

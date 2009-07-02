@@ -269,7 +269,7 @@ private synchronized final void initialise ()
     {
 	Implementations.initialise();
 
-	Enumeration e = arjPropertyManager.propertyManager.propertyNames();
+	Enumeration e = arjPropertyManager.getPropertyManager().propertyNames();
 	
 	if (e != null)
 	{
@@ -279,7 +279,7 @@ private synchronized final void initialise ()
 		
 		if (name.startsWith(com.arjuna.ats.arjuna.common.Environment.STATIC_INVENTORY_IMPLE))
 		{
-		    String className = arjPropertyManager.propertyManager.getProperty(name);
+		    String className = arjPropertyManager.getPropertyManager().getProperty(name);
 
 		    try
 		    {

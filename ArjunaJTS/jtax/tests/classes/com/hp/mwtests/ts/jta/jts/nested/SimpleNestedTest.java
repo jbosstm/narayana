@@ -48,7 +48,7 @@ public class SimpleNestedTest
     {
         try
         {
-            com.arjuna.ats.jta.common.jtaPropertyManager.propertyManager.setProperty(com.arjuna.ats.jta.common.Environment.SUPPORT_SUBTRANSACTIONS,"YES");
+            jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.SUPPORT_SUBTRANSACTIONS,"YES");
 
             javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
@@ -98,8 +98,8 @@ public class SimpleNestedTest
 	    System.exit(0);
 	}
 
-	jtaPropertyManager.propertyManager.setProperty(com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
-	jtaPropertyManager.propertyManager.setProperty(com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
+	jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
+	jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
 
         new SimpleNestedTest();
 

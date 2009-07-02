@@ -874,7 +874,7 @@ public class PeriodicRecovery extends Thread
    private static void loadModules ()
    {
       // scan the relevant properties so as to get them into sort order
-       Properties properties = arjPropertyManager.propertyManager.getProperties();
+       Properties properties = arjPropertyManager.getPropertyManager().getProperties();
 
       if (properties != null)
       {
@@ -1074,7 +1074,7 @@ public class PeriodicRecovery extends Thread
       _recoveryPeriod = _defaultRecoveryPeriod;
 
       String recoveryPeriodString =
-         arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.PERIODIC_RECOVERY_PERIOD );
+         arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.PERIODIC_RECOVERY_PERIOD );
 
       if ( recoveryPeriodString != null )
       {
@@ -1106,7 +1106,7 @@ public class PeriodicRecovery extends Thread
       _backoffPeriod = _defaultBackoffPeriod;
 
       String backoffPeriodString=
-         arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_BACKOFF_PERIOD);
+         arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_BACKOFF_PERIOD);
 
 
       if (backoffPeriodString != null)

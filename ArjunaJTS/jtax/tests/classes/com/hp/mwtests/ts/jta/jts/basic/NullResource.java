@@ -31,23 +31,13 @@
 
 package com.hp.mwtests.ts.jta.jts.basic;
 
-import com.hp.mwtests.ts.jta.jts.common.*;
-
 import com.arjuna.ats.internal.jts.ORBManager;
 
-import com.arjuna.ats.jta.*;
-import com.arjuna.ats.jta.utils.*;
 import com.arjuna.ats.jta.common.*;
 
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.arjuna.common.*;
 import org.jboss.dtf.testframework.unittest.Test;
-
-import javax.transaction.*;
-import javax.transaction.xa.*;
-
-import java.lang.IllegalAccessException;
 
 public class NullResource extends Test
 {
@@ -75,8 +65,8 @@ public class NullResource extends Test
             assertFailure();
 	}
 
-	jtaPropertyManager.propertyManager.setProperty(com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
-	jtaPropertyManager.propertyManager.setProperty(com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
+	jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
+	jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
 
 	boolean passed = false;
 

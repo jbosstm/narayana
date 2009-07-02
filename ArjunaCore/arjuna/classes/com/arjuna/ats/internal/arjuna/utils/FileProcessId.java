@@ -91,7 +91,7 @@ public int getpid ()
 		     * Use the "var" directory location from the property file.
 		     * If it is not set, create "./var/tmp".
 		     */
-		    String dir = arjPropertyManager.propertyManager.getProperty(Environment.VAR_DIR);
+		    String dir = arjPropertyManager.getPropertyManager().getProperty(Environment.VAR_DIR);
 		    
 		    if (dir == null || dir.length() == 0)
 			dir = System.getProperty("user.dir") + File.separator + "var" + File.separator + "tmp";

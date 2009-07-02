@@ -62,8 +62,7 @@ public class PropertyServiceJMXPlugin implements PropertyManagementPlugin
 	}
 
 	/**
-	 * Register the given property manager dynamic mbean wrapper.  Then also register
-	 * each of it's children.
+	 * Register the given property manager dynamic mbean wrapper.
 	 * @param pm
 	 * @throws Exception
 	 */
@@ -94,13 +93,6 @@ public class PropertyServiceJMXPlugin implements PropertyManagementPlugin
                     System.err.println("Mappings not found: "+e.toString());
                 }
             }
-
-			/** For each of this property managers children call this method again to register their mbeans */
-			PropertyManagerPluginInterface[] children = pm.getChildren();
-			for (int count=0;count<children.length;count++)
-			{
-				registerPropertyManagers(children[count]);
-			}
 		}
 	}
 }

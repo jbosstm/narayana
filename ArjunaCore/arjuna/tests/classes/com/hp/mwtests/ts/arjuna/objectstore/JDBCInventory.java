@@ -43,8 +43,8 @@ public class JDBCInventory extends Test
 
 public void run(String[] args)
     {
-	arjPropertyManager.propertyManager.setProperty(Environment.STATIC_INVENTORY_IMPLE+"1", "com.arjuna.ats.internal.arjuna.objectstore.JDBCStoreSetup");
-	arjPropertyManager.propertyManager.setProperty(Environment.JDBC_USER_DB_ACCESS, "com.hp.mwtests.ts.arjuna.objectstore.MyAccess");
+	arjPropertyManager.getPropertyManager().setProperty(Environment.STATIC_INVENTORY_IMPLE+"1", "com.arjuna.ats.internal.arjuna.objectstore.JDBCStoreSetup");
+	arjPropertyManager.getPropertyManager().setProperty(Environment.JDBC_USER_DB_ACCESS, "com.hp.mwtests.ts.arjuna.objectstore.MyAccess");
 
 	ObjectStoreImple os = (ObjectStoreImple) Inventory.inventory().createVoid(ArjunaNames.Implementation_ObjectStore_JDBCStore());
 

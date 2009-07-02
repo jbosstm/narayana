@@ -31,7 +31,6 @@
 
 package com.arjuna.orbportability.oa.core;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.logging.VisibilityLevel;
 import com.arjuna.common.util.logging.DebugLevel;
 
@@ -39,9 +38,6 @@ import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.*;
 
 import org.omg.CORBA.Policy;
-import java.util.*;
-import java.applet.Applet;
-import java.io.*;
 
 import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CORBA.SystemException;
@@ -131,7 +127,7 @@ public void run () throws SystemException
      */
 private final void initialise ()
 {
-    String className = opPropertyManager.propertyManager.getProperty(com.arjuna.orbportability.common.Environment.OA_IMPLEMENTATION);
+    String className = opPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.OA_IMPLEMENTATION);
 
     if (className == null)
     {

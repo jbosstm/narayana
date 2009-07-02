@@ -32,16 +32,12 @@
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
 import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.utils.ThreadUtil;
 import com.arjuna.ats.jta.common.*;
 import com.arjuna.ats.jta.logging.*;
 
 import com.arjuna.common.util.logging.*;
 
-import java.util.Hashtable;
-
 import javax.transaction.NotSupportedException;
-import javax.transaction.SystemException;
 
 import java.lang.IllegalStateException;
 
@@ -329,7 +325,7 @@ public class BaseTransaction
 
 	static
 	{
-		String subtran = jtaPropertyManager.propertyManager
+		String subtran = jtaPropertyManager.getPropertyManager()
 				.getProperty(com.arjuna.ats.jta.common.Environment.SUPPORT_SUBTRANSACTIONS);
 
 		if ((subtran != null) && (subtran.equals("YES")))

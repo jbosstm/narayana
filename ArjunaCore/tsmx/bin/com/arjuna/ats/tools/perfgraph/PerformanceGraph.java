@@ -61,7 +61,7 @@ public class PerformanceGraph extends ToolPlugin implements ActionListener
 	{
 		createMenu(getMenuBar());
 
-		com.arjuna.ats.arjuna.common.arjPropertyManager.propertyManager.setProperty( Environment.ENABLE_STATISTICS, "YES" );
+		com.arjuna.ats.arjuna.common.arjPropertyManager.getPropertyManager().setProperty( Environment.ENABLE_STATISTICS, "YES" );
 		TransactionServiceMX.getTransactionServiceMX();
 	}
 

@@ -67,6 +67,11 @@ public class FileLocator
       if (findFile == null)
          throw new FileNotFoundException("locateFile: null file name");
 
+      String testAbsolutePath = new File(findFile).getAbsolutePath();
+       if(testAbsolutePath.equals(findFile)) {
+           return testAbsolutePath;
+       }
+
       if (findFile.startsWith(absolutePath))
          return findFile.substring(absolutePath.length());
 

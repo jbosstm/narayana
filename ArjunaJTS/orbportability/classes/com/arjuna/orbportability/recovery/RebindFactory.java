@@ -35,11 +35,8 @@ import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.logging.opLogger;
 import com.arjuna.orbportability.common.opPropertyManager;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.BAD_OPERATION;
-import org.omg.CORBA.UNKNOWN;
 import org.omg.CORBA.SystemException;
 
 /**
@@ -72,7 +69,7 @@ public static IORRecovery getRecovery (ORB orb, String name, org.omg.CORBA.Objec
 	
 	if (name != null)
 	{
-	    recoveryClassName = opPropertyManager.propertyManager.getProperty(name);
+	    recoveryClassName = opPropertyManager.getPropertyManager().getProperty(name);
 	    
 	    if (recoveryClassName != null)
 		return createRecoveryClass(recoveryClassName);
@@ -84,7 +81,7 @@ public static IORRecovery getRecovery (ORB orb, String name, org.omg.CORBA.Objec
 	    {
 		String ior = orb.orb().object_to_string(obj);
 
-		recoveryClassName = opPropertyManager.propertyManager.getProperty(ior);
+		recoveryClassName = opPropertyManager.getPropertyManager().getProperty(ior);
 		
 		if (recoveryClassName != null)
 		    return createRecoveryClass(recoveryClassName);

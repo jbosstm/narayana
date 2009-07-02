@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -15,34 +15,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  *
- * (C) 2005-2006,
- * @author JBoss Inc.
+ * (C) 2009,
+ * @author JBoss, a division of Red Hat.
  */
-/*
- * Copyright (C) 2002
- *
- * Arjuna Solutions Limited,
- * Newcastle upon Tyne,
- * Tyne and Wear,
- * UK.
- *
- * $Id: txojPropertyManager.java 2342 2006-03-30 13:06:17Z  $
- */
-
-package com.arjuna.ats.txoj.common;
+package com.arjuna.ats.arjuna.common;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 
 /**
- * Property manager wrapper for the TXOJ module.
+ * Property manager wrapper for the recovery system.
  *
- * @author Richard Begg (richard_begg@hp.com)
  */
-public class txojPropertyManager
+public class recoveryPropertyManager
 {
     public static PropertyManager getPropertyManager()
     {
-        return PropertyManagerFactory.getPropertyManagerForModule("txoj", Environment.PROPERTIES_FILE);
+        return PropertyManagerFactory.getPropertyManagerForModule("arjuna", Environment.PROPERTIES_FILE);
     }
 }

@@ -1023,9 +1023,9 @@ public abstract class JDBCImple
 	public boolean initialise(Connection conn, JDBCAccess jdbcAccess,
 			String tableName) throws SQLException
 	{
-		String poolSizeInitStr = arjPropertyManager.propertyManager
+		String poolSizeInitStr = arjPropertyManager.getPropertyManager()
 				.getProperty(Environment.JDBC_POOL_SIZE_INIT);
-		String poolSizeMaxStr = arjPropertyManager.propertyManager
+		String poolSizeMaxStr = arjPropertyManager.getPropertyManager()
 				.getProperty(Environment.JDBC_POOL_SIZE_MAX);
 
 		if (poolSizeInitStr != null)
@@ -1091,7 +1091,7 @@ public abstract class JDBCImple
 			}
 		}
 		_poolPutConn = "yes"
-				.equalsIgnoreCase(arjPropertyManager.propertyManager
+				.equalsIgnoreCase(arjPropertyManager.getPropertyManager()
 						.getProperty(Environment.JDBC_POOL_PUT));
 		_jdbcAccess = jdbcAccess;
 		_theConnection = new Connection[_poolSizeMax];

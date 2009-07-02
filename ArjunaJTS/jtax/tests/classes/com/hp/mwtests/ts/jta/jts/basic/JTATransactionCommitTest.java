@@ -61,7 +61,7 @@ public class JTATransactionCommitTest extends Test
         }
 
         /** Ensure underlying JTA implementation is JTS **/
-        jtaPropertyManager.propertyManager.setProperty(Environment.JTA_TM_IMPLEMENTATION, TransactionManagerImple.class.getName());
+        jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_TM_IMPLEMENTATION, TransactionManagerImple.class.getName());
 
         try
         {

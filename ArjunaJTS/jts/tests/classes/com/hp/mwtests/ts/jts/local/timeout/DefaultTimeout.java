@@ -31,13 +31,10 @@
 
 package com.hp.mwtests.ts.jts.local.timeout;
 
-import com.hp.mwtests.ts.jts.resources.*;
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
 import com.hp.mwtests.ts.jts.TestModule.*;
 
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.jts.extensions.*;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.common.Environment;
 
@@ -49,11 +46,6 @@ import org.omg.CosTransactions.*;
 
 import org.omg.CosTransactions.Unavailable;
 import org.omg.CosTransactions.WrongTransaction;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-import org.omg.CORBA.TRANSACTION_REQUIRED;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 
 public class DefaultTimeout
 {
@@ -74,7 +66,7 @@ public static void main (String[] args)
 	    ORBManager.setORB(myORB);
 	    ORBManager.setPOA(myOA);
 
-	    String timeout = jtsPropertyManager.propertyManager.getProperty(Environment.DEFAULT_TIMEOUT);
+	    String timeout = jtsPropertyManager.getPropertyManager().getProperty(Environment.DEFAULT_TIMEOUT);
 	    int sleepTime = 0;
 	    
 	    if (timeout != null)

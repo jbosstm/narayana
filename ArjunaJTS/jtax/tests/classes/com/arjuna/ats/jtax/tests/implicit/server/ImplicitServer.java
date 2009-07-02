@@ -31,13 +31,14 @@ package com.arjuna.ats.jtax.tests.implicit.server;
  * $Id: ImplicitServer.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import org.jboss.dtf.testframework.unittest.*;
-
 import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.jtax.tests.implicit.impl.*;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.common.Environment;
+
+import org.jboss.dtf.testframework.unittest.Test;
+import org.jboss.dtf.testframework.unittest.LocalHarness;
 
 public class ImplicitServer extends Test
 {
@@ -50,8 +51,8 @@ public class ImplicitServer extends Test
         }
         else
         {
-            jtaPropertyManager.propertyManager.setProperty(Environment.JTA_TM_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
-            jtaPropertyManager.propertyManager.setProperty(Environment.JTA_UT_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
+            jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_TM_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
+            jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_UT_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
 
             try
             {

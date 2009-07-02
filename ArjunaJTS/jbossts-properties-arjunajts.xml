@@ -20,25 +20,7 @@
   (C) 2009,
   @author JBoss, a division of Red Hat.
 -->
-
-<!-- This is the jbossts-qa version of the properties file. It should get copied over
-	the top of the default one from the product build by the jbossts-qa build process.
-	It differs from the standard one in the following respects:
-
-	 - com.arjuna.ats.arjuna.coordinator.maintainHeuristics = NO
-	 - periodicRecoveryPeriod = 10 (was 120)
-	 - recoveryBackoffPeriod = 5 (was 10)
--->
-
 <properties>
-
-    <entry key="com.arjuna.ats.arjuna.coordinator.maintainHeuristics">NO</entry>
-
-    <entry key="com.arjuna.ats.arjuna.recovery.periodicRecoveryPeriod">10</entry>
-
-    <entry key="com.arjuna.ats.arjuna.recovery.recoveryBackoffPeriod">5</entry>
-
-
     <!--
     This is the JBossTS configuration file for running ArjunaCore.
     It should be called jbossts-properties.xml.
@@ -109,7 +91,12 @@
 
     <entry key="com.arjuna.ats.arjuna.recovery.recoveryExtension2">com.arjuna.ats.internal.txoj.recovery.TORecoveryModule</entry>
 
-    <entry key="com.arjuna.ats.arjuna.recovery.recoveryExtension3">com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule</entry>
+    <entry key="com.arjuna.ats.arjuna.recovery.recoveryExtension3">com.arjuna.ats.internal.jts.recovery.transactions.TopLevelTransactionRecoveryModule</entry>
+
+    <entry key="com.arjuna.ats.arjuna.recovery.recoveryExtension4">com.arjuna.ats.internal.jts.recovery.transactions.ServerTransactionRecoveryModule</entry>
+
+    <entry key="com.arjuna.ats.arjuna.recovery.recoveryExtension5">com.arjuna.ats.internal.jta.recovery.jts.XARecoveryModule</entry>
+
 
     <!--
       Expiry scanners to use (order of invocation is random).
@@ -117,6 +104,12 @@
     -->
     <entry key="com.arjuna.ats.arjuna.recovery.expiryScannerTransactionStatusManager">com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner</entry>
 
+    <entry key="com.arjuna.ats.arjuna.recovery.expiryScannerContact">com.arjuna.ats.internal.jts.recovery.contact.ExpiredContactScanner</entry>
+
+    <entry key="com.arjuna.ats.arjuna.recovery.expiryScannerTopLevelTran">com.arjuna.ats.internal.jts.recovery.transactions.ExpiredToplevelScanner</entry>
+
+    <entry key="com.arjuna.ats.arjuna.recovery.expiryScannerServerTran">com.arjuna.ats.internal.jts.recovery.transactions.ExpiredServerScanner</entry>
+    
     <!-- Enable the following to move logs that cannot be completed by failure recovery. But
 be sure you know what you are doing and why! -->
     <!-- entry key="com.arjuna.ats.arjuna.recovery.expiryScannerAtomicActionLog">com.arjuna.ats.internal.arjuna.recovery.AtomicActionExpiryScanner</entry> -->
@@ -150,12 +143,59 @@ be sure you know what you are doing and why! -->
     -->
     <entry key="com.arjuna.ats.arjuna.recovery.recoveryListener">YES</entry>
 
+    <!-- Recovery Activator to use. -->
+    <entry key="com.arjuna.ats.arjuna.recovery.recoveryActivator_1">com.arjuna.ats.internal.jts.orbspecific.recovery.RecoveryEnablement</entry>
 
     
-    <entry name="com.arjuna.ats.jta.supportSubtransactions">NO</entry>
+    <entry key="com.arjuna.ats.jta.supportSubtransactions">NO</entry>
 
-	<entry name="com.arjuna.ats.jta.jtaTMImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple</entry>
+	<entry key="com.arjuna.ats.jta.jtaTMImplementation">com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple</entry>
 
-	<entry name="com.arjuna.ats.jta.jtaUTImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple</entry>
+	<entry key="com.arjuna.ats.jta.jtaUTImplementation">com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple</entry>
+
+
+
+    <entry key="com.arjuna.orbportability.bindMechanism">CONFIGURATION_FILE</entry>
+
+    <!--
+      This class handles context propagation issues, and should never
+      be commented out or removed.
+    -->
+    <entry key="com.arjuna.orbportability.orb.PreInit1">com.arjuna.ats.internal.jts.context.ContextPropagationManager</entry>
+
+    <!--
+      This property ensures the JTS knows which ORB to use and should never
+      be commented out or removed
+    -->
+    <entry key="com.arjuna.orbportability.orb.PostInit1">com.arjuna.ats.jts.utils.ORBSetup</entry>
+    <!--
+      This property ensures the crash recovery is initialised correctly and
+      should never be commented out or removed
+    -->
+    <entry key="com.arjuna.orbportability.orb.PostInit2">com.arjuna.ats.internal.jts.recovery.RecoveryInit</entry>
+
+    <!--
+      This property ensures the JTS knows which ORB to use and should never
+      be commented out or removed
+    -->
+    <entry key="com.arjuna.orbportability.orb.PostSet1">com.arjuna.ats.jts.utils.ORBSetup</entry>
+
+    <!--
+      This property ensures the JTS knows which ORB to use and should never
+      be commented out or removed
+    -->
+    <entry key="com.arjuna.orbportability.orb.PostSet2">com.arjuna.ats.internal.jts.recovery.RecoveryInit</entry>
+
+    <!--
+      This property controls the port on which the Recovery ORB listens
+    -->
+    <entry key="com.arjuna.ats.jts.recoveryManagerPort">4711</entry>
+
+    <!--
+      This property controls the address on which the Recovery ORB binds - defaults to the loopback connection
+          If running within an AS then the address the AS is bound to (jboss.bind.address) takes precedence
+    -->
+    <entry key="com.arjuna.ats.jts.recoveryManagerAddress"></entry>
+
 
 </properties>

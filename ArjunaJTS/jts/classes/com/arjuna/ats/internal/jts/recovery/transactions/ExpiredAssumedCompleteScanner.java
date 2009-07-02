@@ -34,13 +34,11 @@ package com.arjuna.ats.internal.jts.recovery.transactions;
 import org.omg.CosTransactions.*;
 
 import java.util.*;
-import java.io.PrintWriter;
 import java.text.*;
 
 import com.arjuna.ats.arjuna.common.Uid ;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore ;
-import com.arjuna.common.util.propertyservice.PropertyManager ;
 import com.arjuna.ats.arjuna.recovery.ExpiryScanner ;
 import com.arjuna.ats.arjuna.recovery.RecoveryEnvironment ;
 import com.arjuna.ats.arjuna.state.InputObjectState ;
@@ -168,7 +166,7 @@ public class ExpiredAssumedCompleteScanner implements ExpiryScanner
     static
     {
 
-	String expiryTimeString = jtsPropertyManager.propertyManager.getProperty
+	String expiryTimeString = jtsPropertyManager.getPropertyManager().getProperty
 	    ( RecoveryEnvironment.TRANSACTION_STATUS_MANAGER_EXPIRY_TIME ) ;
 
 	if (expiryTimeString != null)

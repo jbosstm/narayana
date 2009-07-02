@@ -134,24 +134,10 @@
 
         <ant dir="../ArjunaJTA" target="install.etc" inheritall="false">
             <property name="etc.dest.dir" value="${etc.dest.dir}"/>
-            <property name="jta_depends" value="jts"/>
-            <property name="module1" value="jts"/>
-            <property name="module2" value="arjunacore"/>
         </ant>
 
-        <taskdef name="merge-property-files"
-            classname="com.hp.mw.buildsystem.ant.MergePropertyFiles"
-            classpath="../antbuildsystem/build/lib/buildsystem.jar"/>
-
-        <merge-property-files master="${etc.dest.dir}/jbossts-properties.xml"
-            merge="${basedir}/orbportability/etc/default-orbportability-properties.xml"/>
-
-        <merge-property-files master="${etc.dest.dir}/jbossts-properties.xml"
-            merge="${basedir}/jts/etc/default-jts-properties.xml"/>
-
-        <merge-property-files master="${etc.dest.dir}/jbossts-properties.xml"
-            merge="${basedir}/jts/etc/default-RecoveryManager-properties.xml" override="true"/>
-
+        <copy file="jbossts-properties-arjunajts.xml" tofile="${etc.dest.dir}/jbossts-properties.xml" overwrite="true"/>
+        
     </target>
 
     <target name="install.jacorb">

@@ -55,7 +55,6 @@ import org.omg.CosTransactions.*;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.utils.Utility;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -117,8 +116,8 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 	    {
 		_orb = com.arjuna.orbportability.internal.InternalORB.getInstance("RecoveryServer");
 		String[] params = null;
-		String recoveryManagerPort = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.RECOVERY_MANAGER_ORB_PORT, "4711");
-        String recoveryManagerAddr = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.RECOVERY_MANAGER_ADDRESS);
+		String recoveryManagerPort = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.RECOVERY_MANAGER_ORB_PORT, "4711");
+        String recoveryManagerAddr = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.RECOVERY_MANAGER_ADDRESS);
 
         if (recoveryManagerAddr == null)
             recoveryManagerAddr = "";

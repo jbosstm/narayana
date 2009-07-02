@@ -1379,7 +1379,7 @@ private static boolean   nestedLocking = true;
 
     static
     {
-	String nl = txojPropertyManager.propertyManager.getProperty(Environment.ALLOW_NESTED_LOCKING);
+	String nl = txojPropertyManager.getPropertyManager().getProperty(Environment.ALLOW_NESTED_LOCKING);
 
 	if (nl != null)
 	{

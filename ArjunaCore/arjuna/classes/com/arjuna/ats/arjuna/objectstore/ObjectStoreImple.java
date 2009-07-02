@@ -240,11 +240,11 @@ public abstract class ObjectStoreImple
     public String locateStore (String localOSRoot) throws ObjectStoreException
     {
 	if (_objectStoreRoot == null)
-	    _objectStoreRoot = arjPropertyManager.propertyManager.getProperty(Environment.LOCALOSROOT);
+	    _objectStoreRoot = arjPropertyManager.getPropertyManager().getProperty(Environment.LOCALOSROOT);
 
 	if (_objectStoreDir == null)
 	{
-	    _objectStoreDir = arjPropertyManager.propertyManager.getProperty(Environment.OBJECTSTORE_DIR);
+	    _objectStoreDir = arjPropertyManager.getPropertyManager().getProperty(Environment.OBJECTSTORE_DIR);
 	    if (_objectStoreDir == null || _objectStoreDir.length() == 0)
 	    	_objectStoreDir = com.arjuna.ats.arjuna.common.Configuration.objectStoreRoot();
 

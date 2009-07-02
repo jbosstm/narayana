@@ -93,7 +93,7 @@ public class RecActivatorLoader
   private static void loadRecoveryActivators ()
   {
       // scan the relevant properties so as to get them into sort order
-      Properties properties = arjPropertyManager.propertyManager.getProperties();
+      Properties properties = arjPropertyManager.getPropertyManager().getProperties();
 
       if (properties != null)
 	  {

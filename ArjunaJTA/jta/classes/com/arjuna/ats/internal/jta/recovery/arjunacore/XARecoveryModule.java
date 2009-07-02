@@ -295,7 +295,7 @@ public class XARecoveryModule implements RecoveryModule
 			_recoveryManagerClass = null;
 		}
 
-		Properties props = jtaPropertyManager.propertyManager.getProperties();
+		Properties props = jtaPropertyManager.getPropertyManager().getProperties();
 
 		if (props != null)
 		{
@@ -313,7 +313,7 @@ public class XARecoveryModule implements RecoveryModule
 					 * and store it.
 					 */
 
-					String theClassAndParameter = jtaPropertyManager.propertyManager
+					String theClassAndParameter = jtaPropertyManager.getPropertyManager()
 							.getProperty(propName);
 
 					// see if there is a string parameter
@@ -399,7 +399,7 @@ public class XARecoveryModule implements RecoveryModule
 						 * Find the node(s) we can recover on behalf of.
 						 */
 
-						String name = jtaPropertyManager.propertyManager
+						String name = jtaPropertyManager.getPropertyManager()
 								.getProperty(propName);
 
 						if (_xaRecoveryNodes == null)
@@ -1350,7 +1350,7 @@ public class XARecoveryModule implements RecoveryModule
 
 	static
 	{
-		String env = jtaPropertyManager.propertyManager
+		String env = jtaPropertyManager.getPropertyManager()
 				.getProperty(com.arjuna.ats.jta.common.Environment.XA_BACKOFF_PERIOD);
 
 		XARecoveryModule._backoffPeriod = XA_BACKOFF_PERIOD;

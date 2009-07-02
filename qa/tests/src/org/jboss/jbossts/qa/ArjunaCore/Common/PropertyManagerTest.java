@@ -21,6 +21,7 @@
 package org.jboss.jbossts.qa.ArjunaCore.Common;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
+import com.arjuna.common.internal.util.propertyservice.PropertyManagerImpl;
 import org.jboss.jbossts.qa.ArjunaCore.Utils.ChangeClasspath;
 import org.jboss.jbossts.qa.ArjunaCore.Utils.qautil;
 
@@ -200,5 +201,5 @@ public class PropertyManagerTest
 		}
 	}
 
-	private static PropertyManager pm = com.arjuna.common.util.propertyservice.PropertyManagerFactory.getPropertyManager("qa");
+	private static PropertyManager pm = new PropertyManagerImpl("qa");
 }

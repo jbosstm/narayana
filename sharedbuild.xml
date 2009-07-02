@@ -87,12 +87,14 @@
     <macrodef name="compile.macro">
 
         <attribute name="excluded.classes" default="${excluded.classes}"/>
+        <attribute name="includeant" default="false"/>
+
         <element name="additional.classpath" optional="true"/>
         <element name="additional.src.dirs" optional="true"/>
         <sequential>
         <mkdir dir="${build.dir}/classes"/>
         <property name="excludes.list" value="${excluded.classes}"/>
-        <javac srcdir="${src.dir}" destdir="${build.dir}/classes" debug="${debug}"
+        <javac srcdir="${src.dir}" destdir="${build.dir}/classes" debug="${debug}" includeantruntime="@{includeant}"
                deprecation="${deprecation}" excludes="@{excluded.classes}" fork="true">
             <classpath>
                 <fileset dir="${build.dir}/lib/ext/" includes="*"/>
@@ -126,7 +128,7 @@
         <sequential>
         <mkdir dir="${build.dir}/tests"/>
 
-        <javac srcdir="${tests.dir}" destdir="${build.dir}/tests" debug="${debug}"
+        <javac srcdir="${tests.dir}" destdir="${build.dir}/tests" debug="${debug}" includeantruntime="false"
                deprecation="${deprecation}" excludes="${excluded.test.classes}">
             <classpath>
                 <pathelement location="${build.dir}/classes"/>
@@ -372,7 +374,7 @@
         <sequential>
 
         <echo file="${build.dir}/tests/jbossts-properties.xml"
-                message="&lt;properties/&gt;"/>
+                message="&lt;!DOCTYPE properties SYSTEM &quot;http://java.sun.com/dtd/properties.dtd&quot;&gt;&lt;properties/&gt;"/>
 
         <mkdir dir="${build.dir}/testresults"/>
         <junit printsummary="yes" fork="yes" dir="${build.dir}">
@@ -392,6 +394,9 @@
             <batchtest haltonerror="yes" haltonfailure="yes" fork="yes" todir="${build.dir}/testresults">
                 <tests/>
             </batchtest>
+
+            <!--<jvmarg value="-Xdebug"/>-->
+            <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006"/>-->
         </junit>
         </sequential>
 

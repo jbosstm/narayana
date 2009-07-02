@@ -39,6 +39,7 @@ import com.arjuna.ats.internal.arjuna.recovery.Listener ;
 import com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem ;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 
@@ -212,8 +213,7 @@ public class TransactionStatusManager
         if (_port > 0)
             return _port;
 
-        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
-        //pm = arjPropertyManager.propertyManager;
+        PropertyManager pm = recoveryPropertyManager.getPropertyManager();
 
         String portStr = pm.getProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_PORT);
 
@@ -237,8 +237,7 @@ public class TransactionStatusManager
 
     private String getListenerHostName()
     {
-        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
-        //pm = arjPropertyManager.propertyManager;
+        PropertyManager pm = recoveryPropertyManager.getPropertyManager();
 
         return pm.getProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_ADDRESS);
     }

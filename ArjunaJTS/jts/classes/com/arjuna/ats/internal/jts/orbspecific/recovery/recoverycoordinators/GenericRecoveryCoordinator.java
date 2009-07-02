@@ -32,25 +32,17 @@
 package com.arjuna.ats.internal.jts.orbspecific.recovery.recoverycoordinators;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.*;
 
 import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.orbportability.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 
-import com.arjuna.ats.internal.jts.recovery.*;
 import com.arjuna.ats.internal.jts.recovery.contact.StatusChecker;
 import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.*;
-import com.arjuna.ats.internal.jts.recovery.transactions.*;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
 
 import org.omg.CosTransactions.*;
 
 import org.omg.CORBA.SystemException;
-import org.omg.CORBA.BAD_PARAM;
-import org.omg.CORBA.UNKNOWN;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -424,7 +416,7 @@ private static Status get_status (Uid actionUid, Uid processUid) throws Inactive
     {
 	_issueRecoveryRollback = true;
 	
-	String issueRecoveryRollback = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.recovery.RecoveryEnvironment.OTS_ISSUE_RECOVERY_ROLLBACK);
+	String issueRecoveryRollback = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.recovery.RecoveryEnvironment.OTS_ISSUE_RECOVERY_ROLLBACK);
 	
 	if (issueRecoveryRollback != null)
 	{

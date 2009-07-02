@@ -33,7 +33,6 @@ package com.arjuna.ats.arjuna.common;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
-import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
 
 /**
  * Property manager wrapper for the Arjuna module.
@@ -42,32 +41,9 @@ import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
  */
 public class arjPropertyManager
 {
-    public static PropertyManager  propertyManager;
-
     public static PropertyManager getPropertyManager()
     {
-        return propertyManager;
-    }
-
-    static
-    {
-        /**
-         * Retrieve the property manager from the factory and add the Arjuna properties file to it.
-         */
-        propertyManager = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "arjuna");
-
-        String propertiesFilename = System.getProperty(Environment.PROPERTIES_FILE);
-
-        if (propertiesFilename == null)
-            propertiesFilename = Configuration.propertiesFile();
-
-        try
-        {
-            propertyManager.load(XMLFilePlugin.class.getName(), propertiesFilename);
-        }
-        catch (Exception e)
-        {
-            throw new ExceptionInInitializerError(e);
-        }
+        // this is not actually a separate module, it shares the arjuna config.
+        return PropertyManagerFactory.getPropertyManagerForModule("arjuna", Environment.PROPERTIES_FILE);
     }
 }

@@ -1940,7 +1940,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	static
 	{
-		final String xaTransactionTimeoutEnabled = jtsPropertyManager.propertyManager.getProperty(Environment.XA_TRANSACTION_TIMEOUT_ENABLED) ;
+		final String xaTransactionTimeoutEnabled = jtsPropertyManager.getPropertyManager().getProperty(Environment.XA_TRANSACTION_TIMEOUT_ENABLED) ;
 		if (xaTransactionTimeoutEnabled != null)
 		{
 			XA_TRANSACTION_TIMEOUT_ENABLED = Boolean.valueOf(xaTransactionTimeoutEnabled).booleanValue() ;
@@ -1949,7 +1949,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 			XA_TRANSACTION_TIMEOUT_ENABLED = true ;
 		}
-		final String lastResourceOptimisationInterfaceName = jtsPropertyManager.propertyManager.getProperty(Environment.LAST_RESOURCE_OPTIMISATION_INTERFACE) ;
+		final String lastResourceOptimisationInterfaceName = jtsPropertyManager.getPropertyManager().getProperty(Environment.LAST_RESOURCE_OPTIMISATION_INTERFACE) ;
 		Class lastResourceOptimisationInterface = null ;
 		if (lastResourceOptimisationInterfaceName != null)
 		{

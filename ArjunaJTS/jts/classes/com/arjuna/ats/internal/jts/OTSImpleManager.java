@@ -31,30 +31,19 @@
 
 package com.arjuna.ats.internal.jts;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
-
 import com.arjuna.ats.jts.common.Environment;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.orbportability.*;
 
-import com.arjuna.common.util.logging.*;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
-
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.utils.Helper;
 
 import org.omg.CosTransactions.*;
 
 import com.arjuna.ArjunaOTS.*;
-
-import java.io.PrintStream;
 
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.BAD_PARAM;
@@ -206,7 +195,7 @@ public class OTSImpleManager
 				 * Only check once, when the factory is first created.
 				 */
 
-				String transactionManager = jtsPropertyManager.propertyManager.getProperty(Environment.TRANSACTION_MANAGER, "NO");
+				String transactionManager = jtsPropertyManager.getPropertyManager().getProperty(Environment.TRANSACTION_MANAGER, "NO");
 				int resolver = Services.CONFIGURATION_FILE;
 
 				boolean requireTransactionManager = false;
@@ -215,7 +204,7 @@ public class OTSImpleManager
 				{
 					requireTransactionManager = true;
 
-					String resolveMechanism = jtsPropertyManager.propertyManager.getProperty(com.arjuna.orbportability.common.Environment.RESOLVE_SERVICE, "CONFIGURATION_FILE");
+					String resolveMechanism = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.RESOLVE_SERVICE, "CONFIGURATION_FILE");
 
 					if (resolveMechanism.compareTo("NAME_SERVICE") == 0)
 						resolver = Services.NAME_SERVICE;

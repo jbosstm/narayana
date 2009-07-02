@@ -20,25 +20,7 @@
   (C) 2009,
   @author JBoss, a division of Red Hat.
 -->
-
-<!-- This is the jbossts-qa version of the properties file. It should get copied over
-	the top of the default one from the product build by the jbossts-qa build process.
-	It differs from the standard one in the following respects:
-
-	 - com.arjuna.ats.arjuna.coordinator.maintainHeuristics = NO
-	 - periodicRecoveryPeriod = 10 (was 120)
-	 - recoveryBackoffPeriod = 5 (was 10)
--->
-
 <properties>
-
-    <entry key="com.arjuna.ats.arjuna.coordinator.maintainHeuristics">NO</entry>
-
-    <entry key="com.arjuna.ats.arjuna.recovery.periodicRecoveryPeriod">10</entry>
-
-    <entry key="com.arjuna.ats.arjuna.recovery.recoveryBackoffPeriod">5</entry>
-
-
     <!--
     This is the JBossTS configuration file for running ArjunaCore.
     It should be called jbossts-properties.xml.
@@ -68,7 +50,7 @@
     -->
 
 
-
+    
     <!-- (default is YES) -->
     <entry key="com.arjuna.ats.arjuna.coordinator.commitOnePhase">YES</entry>
 
@@ -109,8 +91,6 @@
 
     <entry key="com.arjuna.ats.arjuna.recovery.recoveryExtension2">com.arjuna.ats.internal.txoj.recovery.TORecoveryModule</entry>
 
-    <entry key="com.arjuna.ats.arjuna.recovery.recoveryExtension3">com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule</entry>
-
     <!--
       Expiry scanners to use (order of invocation is random).
       Names must begin with "com.arjuna.ats.arjuna.recovery.expiryScanner"
@@ -149,13 +129,5 @@ be sure you know what you are doing and why! -->
       if you are not careful. That in turn can lead to incorrect transaction processing. Use with care.
     -->
     <entry key="com.arjuna.ats.arjuna.recovery.recoveryListener">YES</entry>
-
-
-    
-    <entry name="com.arjuna.ats.jta.supportSubtransactions">NO</entry>
-
-	<entry name="com.arjuna.ats.jta.jtaTMImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple</entry>
-
-	<entry name="com.arjuna.ats.jta.jtaUTImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple</entry>
 
 </properties>

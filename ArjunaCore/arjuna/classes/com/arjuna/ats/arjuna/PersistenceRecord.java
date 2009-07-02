@@ -628,7 +628,7 @@ public class PersistenceRecord extends RecoveryRecord
 
 	static
 	{
-		String cp = arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.CLASSIC_PREPARE);
+		String cp = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.CLASSIC_PREPARE);
 
 		if (cp != null)
 		{
@@ -636,7 +636,7 @@ public class PersistenceRecord extends RecoveryRecord
 				classicPrepare = true;
 		}
 
-		String wo = arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_LOG_WRITE_OPTIMISATION);
+		String wo = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_LOG_WRITE_OPTIMISATION);
 
 		if (wo != null)
 		{

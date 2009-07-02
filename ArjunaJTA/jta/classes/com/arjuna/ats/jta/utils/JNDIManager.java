@@ -69,17 +69,17 @@ public class JNDIManager
 
 	public static String getTransactionManagerImplementationClassname()
 	{
-		return jtaPropertyManager.propertyManager.getProperty(Environment.JTA_TM_IMPLEMENTATION, DEFAULT_TM_IMPLEMENTATION);
+		return jtaPropertyManager.getPropertyManager().getProperty(Environment.JTA_TM_IMPLEMENTATION, DEFAULT_TM_IMPLEMENTATION);
 	}
 
 	public static String getUserTransactionImplementationClassname()
 	{
-		return jtaPropertyManager.propertyManager.getProperty(Environment.JTA_UT_IMPLEMENTATION, DEFAULT_UT_IMPLEMENTATION);
+		return jtaPropertyManager.getPropertyManager().getProperty(Environment.JTA_UT_IMPLEMENTATION, DEFAULT_UT_IMPLEMENTATION);
 	}
 
 	public static String getTransactionSynchronizationRegistryImplementationClassname()
 	{
-		return jtaPropertyManager.propertyManager.getProperty(Environment.JTA_TSR_IMPLEMENTATION, DEFAULT_TSR_IMPLEMENTATION);
+		return jtaPropertyManager.getPropertyManager().getProperty(Environment.JTA_TSR_IMPLEMENTATION, DEFAULT_TSR_IMPLEMENTATION);
 	}
 
 	/**
@@ -209,17 +209,17 @@ public class JNDIManager
 
 	public final static String getTransactionManagerJNDIName()
 	{
-		return jtaPropertyManager.propertyManager.getProperty(Environment.TM_JNDI_CONTEXT, DEFAULT_TM_JNDI_CONTEXT);
+		return jtaPropertyManager.getPropertyManager().getProperty(Environment.TM_JNDI_CONTEXT, DEFAULT_TM_JNDI_CONTEXT);
 	}
 
 	public final static String getUserTransactionJNDIName()
 	{
-		return jtaPropertyManager.propertyManager.getProperty(Environment.UT_JNDI_CONTEXT, DEFAULT_UT_JNDI_CONTEXT);
+		return jtaPropertyManager.getPropertyManager().getProperty(Environment.UT_JNDI_CONTEXT, DEFAULT_UT_JNDI_CONTEXT);
 	}
 
 	private final static String getTransactionSynchronizationRegistryJNDIName()
 	{
-		return jtaPropertyManager.propertyManager.getProperty(Environment.TSR_JNDI_CONTEXT, DEFAULT_TSR_JNDI_CONTEXT);
+		return jtaPropertyManager.getPropertyManager().getProperty(Environment.TSR_JNDI_CONTEXT, DEFAULT_TSR_JNDI_CONTEXT);
 	}
 
 	private static final String DEFAULT_TM_JNDI_CONTEXT = "java:/TransactionManager";

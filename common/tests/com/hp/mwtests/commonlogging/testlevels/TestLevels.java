@@ -26,13 +26,10 @@ import com.arjuna.common.internal.util.logging.commonPropertyManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.io.File;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
-import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 
 /**
  * JUnit test that verifies log statments made through the CLF appear at the expexted log level.
@@ -42,7 +39,7 @@ import junit.framework.TestSuite;
  * Note: due to the way logging is initialized, this is somewhat fragile.
  * In general you can run only one such test in a given JVM without risking interference.
  */
-public class TestLevels extends TestCase
+public class TestLevels
 {
    /**
     * for logging purposes.
@@ -60,14 +57,15 @@ public class TestLevels extends TestCase
 	   // CommonLogging-properties.xml: <common><properties><property name= value=>
 	   // cd common/install/lib
 	   // java -cp jbossts-common.jar:tests/common_tests.jar:../../../ext/commons-logging.jar:../../../ext/log4j-1.2.8.jar:../../etc/ com.hp.mwtests.commonlogging.testlevels.TestLevels
-	   junit.textui.TestRunner.run(suite());
+//	   junit.textui.TestRunner.run(suite());
 	}
 
-	public static Test suite() {
-		return new TestSuite(TestLevels.class);
-	}
+//	public static Test suite() {
+//		return new TestSuite(TestLevels.class);
+//	}
 
 
+    @Test
 	public void testLog4j() {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		PrintStream bufferedStream = new PrintStream(buffer);
@@ -75,7 +73,7 @@ public class TestLevels extends TestCase
 
 		// test the releveling for AS integration:
 		// TODO: how to configure this on a per-test (not per-JVM) basis?
-		commonPropertyManager.propertyManager.setProperty(LogFactory.LOGGER_PROPERTY, "log4j_releveler");
+		commonPropertyManager.getPropertyManager().setProperty(LogFactory.LOGGER_PROPERTY, "log4j_releveler");
 
 		System.setOut(bufferedStream);
 		writeLogMessages();

@@ -67,7 +67,7 @@ public LockStore (String param)
 
 	if (!singleCheck)
 	{
-	    singleLockStoreType = new ClassName(txojPropertyManager.propertyManager.getProperty(Environment.SINGLE_LOCKSTORE,
+	    singleLockStoreType = new ClassName(txojPropertyManager.getPropertyManager().getProperty(Environment.SINGLE_LOCKSTORE,
 									    TxOJNames.Implementation_LockStore_defaultStore().stringForm()));
 	    singleCheck = true;
 	}
@@ -86,7 +86,7 @@ public LockStore (ClassName typeName, String param)
 	{
 	    if (!singleCheck)
 	    {
-		singleLockStoreType = new ClassName(txojPropertyManager.propertyManager.getProperty(Environment.SINGLE_LOCKSTORE,
+		singleLockStoreType = new ClassName(txojPropertyManager.getPropertyManager().getProperty(Environment.SINGLE_LOCKSTORE,
 										TxOJNames.Implementation_LockStore_defaultStore().stringForm()));
 		singleCheck = true;
 	    }
@@ -126,7 +126,7 @@ public LockStore (Object[] param)
 	    {
 		if (!singleCheck)
 		{
-		    type = txojPropertyManager.propertyManager.getProperty(Environment.SINGLE_LOCKSTORE);
+		    type = txojPropertyManager.getPropertyManager().getProperty(Environment.SINGLE_LOCKSTORE);
 		    singleCheck = true;
 
 		    if (type != null)
@@ -140,7 +140,7 @@ public LockStore (Object[] param)
 	    {
 		if (!multipleCheck)
 		{
-		    type = txojPropertyManager.propertyManager.getProperty(Environment.MULTIPLE_LOCKSTORE, null);
+		    type = txojPropertyManager.getPropertyManager().getProperty(Environment.MULTIPLE_LOCKSTORE, null);
 		    multipleCheck = true;
 
 		    if (type != null)

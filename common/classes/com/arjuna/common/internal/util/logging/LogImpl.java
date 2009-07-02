@@ -92,7 +92,7 @@ public class LogImpl extends AbstractLogImpl implements Logi18n
         String defaultLog = "false";
 
         try {
-            defaultLog = commonPropertyManager.propertyManager.getProperty(DefaultLog.LOG_ENABLED_PROPERTY, null);
+            defaultLog = commonPropertyManager.getPropertyManager().getProperty(DefaultLog.LOG_ENABLED_PROPERTY, null);
             // if the property manager has no info set, use the system property
             // and if this isn't set either, default to false.
             if (defaultLog == null) {

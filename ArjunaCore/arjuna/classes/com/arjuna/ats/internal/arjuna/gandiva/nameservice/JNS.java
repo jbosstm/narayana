@@ -67,7 +67,7 @@ public JNS ()
 
 public int attributeType (String objName, String attrName) throws IOException
     {
-	String attr = arjPropertyManager.propertyManager.getProperty(objName+"."+attrName, null);
+	String attr = arjPropertyManager.getPropertyManager().getProperty(objName+"."+attrName, null);
 
 	if (attr == null)
 	    throw new IOException("No such attribute.");
@@ -92,7 +92,7 @@ public int attributeType (String objName, String attrName) throws IOException
 
 public String firstAttributeName (String objName) throws IOException
     {
-	Enumeration e = arjPropertyManager.propertyManager.propertyNames();
+	Enumeration e = arjPropertyManager.getPropertyManager().propertyNames();
 
 	if (e.hasMoreElements())
 	    return (String) e.nextElement();
@@ -102,7 +102,7 @@ public String firstAttributeName (String objName) throws IOException
 
 public String nextAttributeName (String objName, String attrName) throws IOException
     {
-	Enumeration e = arjPropertyManager.propertyManager.propertyNames();
+	Enumeration e = arjPropertyManager.getPropertyManager().propertyNames();
 
 	while (e.hasMoreElements())
 	{
@@ -120,7 +120,7 @@ public String nextAttributeName (String objName, String attrName) throws IOExcep
 
 public long getLongAttribute (String objName, String attrName) throws IOException
     {
-	String attr = arjPropertyManager.propertyManager.getProperty(objName+"."+attrName, null);
+	String attr = arjPropertyManager.getPropertyManager().getProperty(objName+"."+attrName, null);
 
 	if (attr != null)
 	{
@@ -148,7 +148,7 @@ public long getLongAttribute (String objName, String attrName) throws IOExceptio
 
 public String getStringAttribute (String objName, String attrName) throws IOException
     {
-	String attr = arjPropertyManager.propertyManager.getProperty(objName+"."+attrName, null);
+	String attr = arjPropertyManager.getPropertyManager().getProperty(objName+"."+attrName, null);
 
 	if (attr != null)
 	{
@@ -172,7 +172,7 @@ public String getStringAttribute (String objName, String attrName) throws IOExce
 
 public ObjectName getObjectNameAttribute (String objName, String attrName) throws IOException
     {
-	String attr = arjPropertyManager.propertyManager.getProperty(objName+"."+attrName, null);
+	String attr = arjPropertyManager.getPropertyManager().getProperty(objName+"."+attrName, null);
 
 	if (attr != null)
 	{
@@ -196,7 +196,7 @@ public ObjectName getObjectNameAttribute (String objName, String attrName) throw
 
 public ClassName getClassNameAttribute (String objName, String attrName) throws IOException
     {
-	String attr = arjPropertyManager.propertyManager.getProperty(objName+"."+attrName, null);
+	String attr = arjPropertyManager.getPropertyManager().getProperty(objName+"."+attrName, null);
 
 	if (attr != null)
 	{
@@ -220,7 +220,7 @@ public ClassName getClassNameAttribute (String objName, String attrName) throws 
 
 public Uid getUidAttribute (String objName, String attrName) throws IOException
     {
-	String attr = arjPropertyManager.propertyManager.getProperty(objName+"."+attrName, null);
+	String attr = arjPropertyManager.getPropertyManager().getProperty(objName+"."+attrName, null);
 
 	if (attr != null)
 	{
@@ -244,42 +244,42 @@ public Uid getUidAttribute (String objName, String attrName) throws IOException
 
 public String setLongAttribute (String objName, String attrName, long value) throws IOException
     {
-	arjPropertyManager.propertyManager.setProperty(objName+"."+attrName, new String(SIGNED_NUMBER+""+value));
+	arjPropertyManager.getPropertyManager().setProperty(objName+"."+attrName, new String(SIGNED_NUMBER+""+value));
 
 	return null;
     }
 
 public String setStringAttribute (String objName, String attrName, String value) throws IOException
     {
-	arjPropertyManager.propertyManager.setProperty(objName+"."+attrName, new String(STRING+""+value));
+	arjPropertyManager.getPropertyManager().setProperty(objName+"."+attrName, new String(STRING+""+value));
 
 	return null;
     }
 
 public String setObjectNameAttribute (String objName, String attrName, ObjectName value) throws IOException
     {
-	arjPropertyManager.propertyManager.setProperty(objName+"."+attrName, new String(OBJECTNAME+""+value.stringForm()));
+	arjPropertyManager.getPropertyManager().setProperty(objName+"."+attrName, new String(OBJECTNAME+""+value.stringForm()));
 
 	return null;
     }
 
 public String setClassNameAttribute (String objName, String attrName, ClassName value) throws IOException
     {
-	arjPropertyManager.propertyManager.setProperty(objName+"."+attrName, new String(CLASSNAME+""+value.stringForm()));
+	arjPropertyManager.getPropertyManager().setProperty(objName+"."+attrName, new String(CLASSNAME+""+value.stringForm()));
 
 	return null;
     }
 
 public String setUidAttribute (String objName, String attrName, Uid value) throws IOException
     {
-	arjPropertyManager.propertyManager.setProperty(objName+"."+attrName, new String(CLASSNAME+""+value.stringForm()));
+	arjPropertyManager.getPropertyManager().setProperty(objName+"."+attrName, new String(CLASSNAME+""+value.stringForm()));
 
 	return null;
     }
 
 public String removeAttribute (String objName, String attrName) throws IOException
     {
-	return arjPropertyManager.propertyManager.removeProperty(objName+"."+attrName);
+	return arjPropertyManager.getPropertyManager().removeProperty(objName+"."+attrName);
     }
 
 public String uniqueAttributeName (String objName) throws IOException

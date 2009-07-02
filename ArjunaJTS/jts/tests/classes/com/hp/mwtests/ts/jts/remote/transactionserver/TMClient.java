@@ -31,7 +31,6 @@
 
 package com.hp.mwtests.ts.jts.remote.transactionserver;
 
-import com.hp.mwtests.ts.jts.resources.*;
 import com.hp.mwtests.ts.jts.orbspecific.resources.*;
 import com.hp.mwtests.ts.jts.TestModule.*;
 
@@ -39,12 +38,7 @@ import com.arjuna.ats.jts.common.jtsPropertyManager;
 
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.jts.extensions.*;
-
-import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 import org.jboss.dtf.testframework.unittest.Test;
 
 import org.omg.CosTransactions.*;
@@ -52,9 +46,6 @@ import org.omg.CosTransactions.*;
 import org.omg.CORBA.IntHolder;
 
 import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
 
 public class TMClient extends Test
 {
@@ -109,7 +100,7 @@ public class TMClient extends Test
 	Services serv = new Services(myORB);
 
 	int resolver = com.arjuna.orbportability.common.Configuration.bindDefault();
-	String resolveService = jtsPropertyManager.propertyManager.getProperty(com.arjuna.orbportability.common.Environment.RESOLVE_SERVICE);
+	String resolveService = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.RESOLVE_SERVICE);
 
 	if (resolveService != null)
 	{

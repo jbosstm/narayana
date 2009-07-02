@@ -21,33 +21,54 @@
 package com.hp.mwtests.commonlogging.debugextension;
 
 import com.arjuna.common.util.logging.*;
+import com.arjuna.common.internal.util.logging.commonPropertyManager;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-//import com.hp.mw.common.util.logging.CommonLevel;
-//import com.hp.mw.common.util.logging.commonLogger;
-//import com.hp.mw.common.util.logging.LoggerFactory;
-//import com.hp.mw.common.util.logging.LogManager;
-//import com.hp.mw.common.util.logging.Level;
-//import com.hp.mw.common.util.logging.DebugLevel;
-
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 public class DebugExt
 {
-   static LogNoi18n myNoi18nLog = LogFactory.getLogNoi18n("com.hp.mwtests.commonlogging.debugextension.DebugExt");
-
-   public static void main(String[] args)
+    @Test
+   public void testDebugExt()
    {
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		PrintStream bufferedStream = new PrintStream(buffer);
+		PrintStream originalStream = System.out;
 
-      myNoi18nLog.setLevels(DebugLevel.FULL_DEBUGGING, VisibilityLevel.VIS_ALL,
-                      FacilityCode.FAC_ALL);
+		// TODO: how to configure this on a per-test (not per-JVM) basis?
+		commonPropertyManager.getPropertyManager().setProperty(LogFactory.LOGGER_PROPERTY, "log4j");
 
-      myNoi18nLog.debug(DebugLevel.FUNCS_AND_OPS, VisibilityLevel.VIS_PACKAGE, FacilityCode.FAC_ALL,
-                        "This debug message is enabled since it matches default Finer Values");
+		System.setOut(bufferedStream);
+		writeLogMessages();
+		System.setOut(originalStream);
+		verifyResult(buffer.toString());
+	}
 
-      myNoi18nLog.debug(DebugLevel.CONSTRUCT_AND_DESTRUCT, VisibilityLevel.VIS_PACKAGE, FacilityCode.FAC_ALL,
-                        "This debug message is discarded since it does'nt match default Finer Values");
+    public static void writeLogMessages()
+    {
+        LogNoi18n myNoi18nLog = LogFactory.getLogNoi18n("DebugExt");
 
-      myNoi18nLog.mergeDebugLevel(DebugLevel.FULL_DEBUGGING);
-      myNoi18nLog.debug(DebugLevel.FULL_DEBUGGING, VisibilityLevel.VIS_PACKAGE, FacilityCode.FAC_ALL,
-                        "This debug message is enabled since it the Logger allows full debugging");
-   }
+        myNoi18nLog.setLevels(DebugLevel.FUNCS_AND_OPS, VisibilityLevel.VIS_PACKAGE, FacilityCode.FAC_ALL);
+
+        myNoi18nLog.debug(DebugLevel.FUNCS_AND_OPS, VisibilityLevel.VIS_PACKAGE, FacilityCode.FAC_ALL,
+                "This debug message is enabled since it matches default Finer Values");
+
+        myNoi18nLog.debug(DebugLevel.CONSTRUCT_AND_DESTRUCT, VisibilityLevel.VIS_PACKAGE, FacilityCode.FAC_ALL,
+                "This debug message is discarded since it does'nt match default Finer Values");
+
+        myNoi18nLog.debug(DebugLevel.FULL_DEBUGGING, VisibilityLevel.VIS_PACKAGE, FacilityCode.FAC_ALL,
+                "This debug message is enabled since it the Logger allows full debugging");
+    }
+
+        public static void verifyResult(String result) {
+        String[] lines = result.split("\r?\n");
+
+        assertNotNull(lines);
+        assertEquals(2, lines.length);
+
+        assertTrue("Got actual value: "+lines[0], lines[0].matches("\\s*DEBUG \\[main\\] .*enabled.*"));
+        assertTrue("Got actual value: "+lines[1], lines[1].matches("\\s*DEBUG \\[main\\] .*enabled.*"));
+    }
 }

@@ -23,6 +23,9 @@ package com.arjuna.common.tests.simple;
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003
@@ -37,50 +40,30 @@ import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
 
 public class SystemPropertyTest
 {
-	public static void main(String[] args)
+    @Test
+	public void main()
 	{
-		System.setProperty("com.arjuna.ats.arjuna.Test","SysOverride");
+        System.setProperty("property.file.name", "test-product.xml");
+        PropertyManager arjunaPropertyManager = PropertyManagerFactory.getPropertyManagerForModule("arjuna", "property.file.name");
+        PropertyManager txojPropertyManager = PropertyManagerFactory.getPropertyManagerForModule("arjuna", "property.file.name");
 
-		PropertyManager arjunaPM = PropertyManagerFactory.getPropertyManager( "test-property-manager", "Arjuna" );
-		PropertyManager txojPM = PropertyManagerFactory.getPropertyManager( "test-property-manager", "TXOJ" );
-		PropertyManager orbPM = PropertyManagerFactory.getPropertyManager( "test-property-manager", "ORB Portability" );
+        System.setProperty("com.arjuna.ats.arjuna.Test", "SysOverride");
 
-		try
-		{
-			arjunaPM.load(XMLFilePlugin.class.getName(), "test-product.xml");
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-		}
-
-		boolean passed = true;
 		int count = 0;
 
-		String value = arjunaPM.getProperty("com.arjuna.ats.arjuna.Test");
+		String value = arjunaPropertyManager.getProperty("com.arjuna.ats.arjuna.Test");
 		System.out.println("Value["+(++count)+"] :"+value);
-		passed &= value.equals("SysOverride");
 
-		value = txojPM.getProperty("com.arjuna.ats.arjuna.Test");
+        assertEquals("SysOverride", value);
+
+		value = txojPropertyManager.getProperty("com.arjuna.ats.arjuna.Test");
 		System.out.println("Value["+(++count)+"] :"+value);
-		passed &= value.equals("SysOverride");
 
-		value = arjunaPM.getProperty("com.arjuna.ats.txoj.Test");
+        assertEquals("SysOverride", value);
+
+		value = txojPropertyManager.getProperty("com.arjuna.ats.txoj.Test");
 		System.out.println("Value["+(++count)+"] :"+value);
-		passed &= ( value == null );
 
-		value = txojPM.getProperty("com.arjuna.ats.txoj.Test");
-		System.out.println("Value["+(++count)+"] :"+value);
-		passed &= value.equals("Test2");
-
-		value = orbPM.getProperty("com.arjuna.ats.txoj.Test");
-		System.out.println("Value["+(++count)+"] :"+value);
-		passed &= ( value == null );
-
-		value = orbPM.getProperty("com.arjuna.orbportability.Test");
-		System.out.println("Value["+(++count)+"] :"+value);
-		passed &= value.equals("Test3");
-
-		System.out.println( passed ? "Passed" : "Failed" );
+        assertEquals("Test2", value);
 	}
 }

@@ -88,7 +88,7 @@ public class AssertCleanEnvironment
 			ORBInterface.initORB(args, null);
 			OAInterface.initOA();
 
-			objectStoreDirName = arjPropertyManager.propertyManager.getProperty(
+			objectStoreDirName = arjPropertyManager.getPropertyManager().getProperty(
 					Environment.OBJECTSTORE_DIR,
 					com.arjuna.ats.arjuna.common.Configuration.objectStoreRoot());
 		}

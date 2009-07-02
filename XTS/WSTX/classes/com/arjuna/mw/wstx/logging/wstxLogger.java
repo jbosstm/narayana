@@ -57,8 +57,8 @@ public class wstxLogger
         
 	arjLogger = LogFactory.getLogNoi18n("com.arjuna.mw.wstx.logging.wstxLogger");
 
-	language = commonPropertyManager.propertyManager.getProperty("language","en");
-	country  = commonPropertyManager.propertyManager.getProperty("country","US");
+	language = commonPropertyManager.getPropertyManager().getProperty("language","en");
+	country  = commonPropertyManager.getPropertyManager().getProperty("country","US");
 
 	currentLocale = new Locale(language,country);
 	log_mesg = ResourceBundle.getBundle("wstx_msg",currentLocale);

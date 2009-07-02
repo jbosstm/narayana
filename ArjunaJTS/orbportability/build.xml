@@ -38,7 +38,9 @@
         <taskdef name="idl-build-list-element" classname="com.arjuna.orbportability.common.ant.IDLBuildListElement" classpath="${build.dir}/lib/orbportability.jar"/>
     </target>
 
-    <target name="compile" depends="sharedbuild.compile"/>
+    <target name="compile" depends="init">
+        <compile.macro includeant="true"/>
+    </target>
 
     <target name="compile-tests" depends="compile-tests-idl">
         <compile-tests.macro>

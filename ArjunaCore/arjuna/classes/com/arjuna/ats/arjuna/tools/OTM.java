@@ -215,7 +215,7 @@ public synchronized void updateTransactions ()
 
 	    try
 	    {
-		ClassName actionStoreType = new ClassName(arjPropertyManager.propertyManager.getProperty(Environment.ACTION_STORE,
+		ClassName actionStoreType = new ClassName(arjPropertyManager.getPropertyManager().getProperty(Environment.ACTION_STORE,
 									     ArjunaNames.Implementation_ObjectStore_defaultActionStore().stringForm()));
 		
 		ObjectStore imple = new ObjectStore(actionStoreType, root);
@@ -443,7 +443,7 @@ private synchronized void getTransactions (DefaultMutableTreeNode machineName)
 
 	try
 	{
-	    ClassName actionStoreType = new ClassName(arjPropertyManager.propertyManager.getProperty(Environment.ACTION_STORE,
+	    ClassName actionStoreType = new ClassName(arjPropertyManager.getPropertyManager().getProperty(Environment.ACTION_STORE,
 										  ArjunaNames.Implementation_ObjectStore_defaultActionStore().stringForm()));
 
 	    ObjectStore imple = new ObjectStore(actionStoreType, root);
@@ -790,7 +790,7 @@ private static String statusToString (int status)
 public static void main (String[] args)
     {
 	Uid u = new Uid();
-	String timeout = arjPropertyManager.propertyManager.getProperty(pollingTimeout);
+	String timeout = arjPropertyManager.getPropertyManager().getProperty(pollingTimeout);
 	
 	if (timeout != null)
 	{

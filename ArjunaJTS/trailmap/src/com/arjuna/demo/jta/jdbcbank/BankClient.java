@@ -576,8 +576,8 @@ public class BankClient
             System.exit(0);
         }
         // Initialize the property manager with the correct JNDI credentials to use to log in to JNDI
-        jdbcPropertyManager.propertyManager.setProperty("Context.INITIAL_CONTEXT_FACTORY", "com.sun.jndi.fscontext.RefFSContextFactory");
-        jdbcPropertyManager.propertyManager.setProperty("Context.PROVIDER_URL", "file:/tmp/JNDI");
+        jdbcPropertyManager.getPropertyManager().setProperty("Context.INITIAL_CONTEXT_FACTORY", "com.sun.jndi.fscontext.RefFSContextFactory");
+        jdbcPropertyManager.getPropertyManager().setProperty("Context.PROVIDER_URL", "file:/tmp/JNDI");
 
         // Create a local representation of a bank and then create a bank client to interact with it
         Bank bank = new Bank();

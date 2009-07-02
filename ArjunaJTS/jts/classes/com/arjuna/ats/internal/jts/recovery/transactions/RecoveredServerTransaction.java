@@ -32,7 +32,6 @@
 
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
-import com.arjuna.ats.internal.jts.interposition.resources.arjuna.*;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.*;
 import org.omg.CosTransactions.*;
 import java.io.IOException;
@@ -40,10 +39,8 @@ import java.util.Date;
 
 import com.arjuna.ats.jts.utils.Utility;
 
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.*;
-import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.*;
 import com.arjuna.ats.internal.jts.recovery.contact.StatusChecker;
 import com.arjuna.ats.arjuna.exceptions.*;
 import com.arjuna.ats.arjuna.common.*;
@@ -51,10 +48,7 @@ import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.orbportability.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.utils.*;
-import com.arjuna.ats.arjuna.exceptions.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -62,8 +56,6 @@ import com.arjuna.common.util.logging.*;
 
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.OBJECT_NOT_EXIST;
-
-import com.arjuna.ats.jts.recovery.RecoveryEnvironment;
 
 import org.omg.CORBA.TRANSIENT;
 import java.util.Hashtable;
@@ -107,7 +99,7 @@ public class RecoveredServerTransaction extends ServerTransaction
     public RecoveredServerTransaction ( Uid actionUid )
     {
 	this(actionUid, "");
-	String assumedExistString = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.recovery.RecoveryEnvironment.ASSUMED_OBJECT_NOT_EXIST);
+	String assumedExistString = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.recovery.RecoveryEnvironment.ASSUMED_OBJECT_NOT_EXIST);
 	if (assumedExistString != null) {
 	  Integer assumedExistInteger = new Integer(assumedExistString);
           _assumed_not_exist = 	assumedExistInteger.intValue();
@@ -125,7 +117,7 @@ public class RecoveredServerTransaction extends ServerTransaction
     {
 	super(actionUid);
 
-	String assumedExistString = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.recovery.RecoveryEnvironment.ASSUMED_OBJECT_NOT_EXIST);
+	String assumedExistString = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.recovery.RecoveryEnvironment.ASSUMED_OBJECT_NOT_EXIST);
 
 	if (assumedExistString != null) {
 	    Integer assumedExistInteger = new Integer(assumedExistString);

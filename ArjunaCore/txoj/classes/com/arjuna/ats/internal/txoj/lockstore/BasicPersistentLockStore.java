@@ -78,7 +78,7 @@ public class BasicPersistentLockStore extends LockStoreImple
 	}
 
 	if (lockStoreLocation == null) {
-	    lockStoreLocation = txojPropertyManager.propertyManager.getProperty(Environment.LOCKSTORE_DIR);
+	    lockStoreLocation = txojPropertyManager.getPropertyManager().getProperty(Environment.LOCKSTORE_DIR);
 	    if (lockStoreLocation == null || lockStoreLocation.length() == 0)
 		lockStoreLocation = com.arjuna.ats.txoj.common.Configuration.lockStoreRoot();
 	    com.arjuna.ats.txoj.common.Configuration.setLockStoreRoot(lockStoreLocation);

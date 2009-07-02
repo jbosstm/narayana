@@ -78,7 +78,7 @@ public void initialise (String[] params)
 					  FacilityCode.FAC_ORB_PORTABILITY, "Setting property: "+propertyName+" with value: "+params[i+1]);
 		}
 
-		opPropertyManager.propertyManager.setProperty(propertyName, params[i+1]);
+		opPropertyManager.getPropertyManager().setProperty(propertyName, params[i+1]);
 		i++;
 
 		if (propertyName.compareTo(Environment.CORBA_DIAGNOSTICS) == 0)

@@ -43,8 +43,8 @@ public class EmptyObjectStore
 	{
 		try
 		{
-			if (arjPropertyManager.propertyManager.getProperty(Environment.OBJECTSTORE_TYPE) != null &&
-					arjPropertyManager.propertyManager.getProperty(Environment.OBJECTSTORE_TYPE).startsWith("JDBCStore"))
+			if (arjPropertyManager.getPropertyManager().getProperty(Environment.OBJECTSTORE_TYPE) != null &&
+					arjPropertyManager.getPropertyManager().getProperty(Environment.OBJECTSTORE_TYPE).startsWith("JDBCStore"))
 			{
 				JDBCAccess mJDBC = (JDBCAccess) Class.forName(System.getProperty("JDBC2_USER_DB_ACCESS")).newInstance();
 				Connection mConnection = mJDBC.getConnection();
@@ -53,7 +53,7 @@ public class EmptyObjectStore
 			}
 			else
 			{
-				String objectStoreDirName = arjPropertyManager.propertyManager.getProperty(Environment.OBJECTSTORE_DIR, com.arjuna.ats.arjuna.common.Configuration.objectStoreRoot());
+				String objectStoreDirName = arjPropertyManager.getPropertyManager().getProperty(Environment.OBJECTSTORE_DIR, com.arjuna.ats.arjuna.common.Configuration.objectStoreRoot());
 
 				System.out.println("Emptying " + objectStoreDirName);
 

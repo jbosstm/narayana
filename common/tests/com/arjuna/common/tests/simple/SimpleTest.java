@@ -24,6 +24,9 @@ import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003
  *
@@ -34,51 +37,31 @@ import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
  *
  * $Id: SimpleTest.java 2342 2006-03-30 13:06:17Z  $
  */
-
 public class SimpleTest
 {
-	public static void main(String[] args)
+    @Test
+	public void main()
 	{
-		PropertyManager arjunaPM = PropertyManagerFactory.getPropertyManager( "test-property-manager", "Arjuna" );
-		PropertyManager txojPM = PropertyManagerFactory.getPropertyManager( "test-property-manager", "TXOJ" );
-		PropertyManager orbPM = PropertyManagerFactory.getPropertyManager( "test-property-manager", "ORB Portability" );
+        System.setProperty("property.file.name", "test-product.xml");
+        PropertyManager arjunaPropertyManager = PropertyManagerFactory.getPropertyManagerForModule("arjuna", "property.file.name");
+        PropertyManager txojPropertyManager = PropertyManagerFactory.getPropertyManagerForModule("arjuna", "property.file.name");
 
-		try
-		{
-			arjunaPM.load(XMLFilePlugin.class.getName(), "test-product.xml");
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-		}
 
-		boolean passed = true;
 		int count = 0;
 
-		String value = arjunaPM.getProperty("com.arjuna.ats.arjuna.Test");
+		String value = arjunaPropertyManager.getProperty("com.arjuna.ats.arjuna.Test");
 		System.out.println("Value["+(++count)+"] :"+value);
-		passed &= value.equals("Test");
 
-		value = txojPM.getProperty("com.arjuna.ats.arjuna.Test");
+        assertEquals("Test", value);
+
+		value = txojPropertyManager.getProperty("com.arjuna.ats.arjuna.Test");
 		System.out.println("Value["+(++count)+"] :"+value);
-		passed &= value.equals("Overridden");
 
-		value = arjunaPM.getProperty("com.arjuna.ats.txoj.Test");
+        assertEquals("Test", value);
+
+		value = txojPropertyManager.getProperty("com.arjuna.ats.txoj.Test");
 		System.out.println("Value["+(++count)+"] :"+value);
-		passed &= ( value == null );
 
-		value = txojPM.getProperty("com.arjuna.ats.txoj.Test");
-		System.out.println("Value["+(++count)+"] :"+value);
-		passed &= value.equals("Test2");
-
-		value = orbPM.getProperty("com.arjuna.ats.txoj.Test");
-		System.out.println("Value["+(++count)+"] :"+value);
-		passed &= ( value == null );
-
-		value = orbPM.getProperty("com.arjuna.orbportability.Test");
-		System.out.println("Value["+(++count)+"] :"+value);
-		passed &= value.equals("Test3");
-
-		System.out.println( passed ? "Passed" : "Failed" );
+        assertEquals("Test2", value);
 	}
 }

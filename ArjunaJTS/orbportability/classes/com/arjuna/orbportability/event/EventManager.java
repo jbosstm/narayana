@@ -35,7 +35,6 @@ import com.arjuna.orbportability.common.Environment;
 import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.opLogger;
 
-import org.omg.CORBA.Object;
 import java.util.*;
 
 /**
@@ -176,7 +175,7 @@ protected EventManager ()
 	 * are any classes for us.
 	 */
 
-	Enumeration e = opPropertyManager.propertyManager.propertyNames();
+	Enumeration e = opPropertyManager.getPropertyManager().propertyNames();
 	
 	while (e.hasMoreElements())
 	{
@@ -184,7 +183,7 @@ protected EventManager ()
 	    
 	    if (name.startsWith(Environment.EVENT_HANDLER))
 	    {
-		String val = (String) opPropertyManager.propertyManager.getProperty(name);
+		String val = (String) opPropertyManager.getPropertyManager().getProperty(name);
 		
 		if (val != null)
 		{

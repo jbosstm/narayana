@@ -38,7 +38,6 @@ import com.arjuna.ats.jts.OTSManager;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.logging.*;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.internal.jts.recovery.RecoveryCreator;
@@ -47,18 +46,13 @@ import com.arjuna.ats.internal.jts.utils.Helper;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.resources.SynchronizationRecord;
 import com.arjuna.ats.internal.jts.resources.ResourceRecord;
 import com.arjuna.ats.internal.jts.resources.ExtendedResourceRecord;
 import com.arjuna.ats.internal.jts.coordinator.CheckedActions;
 
-import com.arjuna.orbportability.*;
-
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.*;
 
 import org.omg.CosTransactions.*;
@@ -69,7 +63,6 @@ import org.omg.CORBA.CompletionStatus;
 
 import java.util.*;
 
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.UNKNOWN;
@@ -2369,7 +2362,7 @@ public class ArjunaTransactionImple extends
 
 	static
 	{
-		String interpositionType = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.INTERPOSITION);
+		String interpositionType = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.INTERPOSITION);
 
 		if (interpositionType != null)
 		{
@@ -2387,7 +2380,7 @@ public class ArjunaTransactionImple extends
 			}
 		}
 
-		String supportSubtran = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.SUPPORT_SUBTRANSACTIONS);
+		String supportSubtran = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.SUPPORT_SUBTRANSACTIONS);
 
 		if (supportSubtran != null)
 		{
@@ -2395,7 +2388,7 @@ public class ArjunaTransactionImple extends
 				_subtran = false;
 		}
 
-		String syncOn = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.SUPPORT_ROLLBACK_SYNC);
+		String syncOn = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.SUPPORT_ROLLBACK_SYNC);
 
 		if (syncOn != null)
 		{
@@ -2403,7 +2396,7 @@ public class ArjunaTransactionImple extends
 				_syncOn = false;
 		}
 
-		String checked = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.CHECKED_TRANSACTIONS);
+		String checked = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.CHECKED_TRANSACTIONS);
 
 		if (checked != null)
 		{
@@ -2411,7 +2404,7 @@ public class ArjunaTransactionImple extends
 				_checkedTransactions = true;
 		}
 
-		String propTerm = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.PROPAGATE_TERMINATOR);
+		String propTerm = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.PROPAGATE_TERMINATOR);
 
 		if (propTerm != null)
 		{
@@ -2419,7 +2412,7 @@ public class ArjunaTransactionImple extends
 				_propagateTerminator = true;
 		}
 
-		String propRemainingTimeout = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.OTS_1_0_TIMEOUT_PROPAGATION);
+		String propRemainingTimeout = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.OTS_1_0_TIMEOUT_PROPAGATION);
 
 		if (propRemainingTimeout != null)
 		{

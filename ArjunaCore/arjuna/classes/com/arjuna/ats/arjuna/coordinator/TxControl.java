@@ -171,7 +171,7 @@ public class TxControl
         {
             if (TxControl.actionStoreType == null)
             {
-                    String useLog = arjPropertyManager.propertyManager.getProperty(
+                    String useLog = arjPropertyManager.getPropertyManager().getProperty(
                                     Environment.TRANSACTION_LOG, "OFF");
 
                     if (useLog.equals("ON"))
@@ -179,14 +179,14 @@ public class TxControl
                                             .Implementation_ObjectStore_ActionLogStore());
                     else
                             TxControl.actionStoreType = new ClassName(
-                                            arjPropertyManager.propertyManager
+                                            arjPropertyManager.getPropertyManager()
                                                             .getProperty(
                                                                             Environment.ACTION_STORE,
                                                                             ArjunaNames
                                                                                             .Implementation_ObjectStore_defaultActionStore()
                                                                                             .stringForm()));
 
-                    String sharedLog = arjPropertyManager.propertyManager.getProperty(
+                    String sharedLog = arjPropertyManager.getPropertyManager().getProperty(
                                     Environment.SHARED_TRANSACTION_LOG, "NO");
 
                     if (sharedLog.equals("YES"))
@@ -223,7 +223,7 @@ public class TxControl
 
 		if (TxControl.actionStoreType == null)
 		{
-			String useLog = arjPropertyManager.propertyManager.getProperty(
+			String useLog = arjPropertyManager.getPropertyManager().getProperty(
 					Environment.TRANSACTION_LOG, "OFF");
 
 			if (useLog.equals("ON"))
@@ -231,14 +231,14 @@ public class TxControl
 						.Implementation_ObjectStore_ActionLogStore());
 			else
 				TxControl.actionStoreType = new ClassName(
-						arjPropertyManager.propertyManager
+						arjPropertyManager.getPropertyManager()
 								.getProperty(
 										Environment.ACTION_STORE,
 										ArjunaNames
 												.Implementation_ObjectStore_defaultActionStore()
 												.stringForm()));
 
-			String sharedLog = arjPropertyManager.propertyManager.getProperty(
+			String sharedLog = arjPropertyManager.getPropertyManager().getProperty(
 					Environment.SHARED_TRANSACTION_LOG, "NO");
 
 			if (sharedLog.equals("YES"))
@@ -361,7 +361,7 @@ public class TxControl
 	
 	static
 	{
-		String env = arjPropertyManager.propertyManager
+		String env = arjPropertyManager.getPropertyManager()
 				.getProperty(Environment.DEFAULT_TIMEOUT);
 
 		if (env != null)
@@ -378,7 +378,7 @@ public class TxControl
 			}
 		}
 
-		env = arjPropertyManager.propertyManager
+		env = arjPropertyManager.getPropertyManager()
 				.getProperty(Environment.MAINTAIN_HEURISTICS);
 
 		if (env != null)
@@ -387,7 +387,7 @@ public class TxControl
 				TxControl.maintainHeuristics = false;
 		}
 
-		env = arjPropertyManager.propertyManager
+		env = arjPropertyManager.getPropertyManager()
 				.getProperty(Environment.ASYNC_COMMIT);
 
 		if (env != null)
@@ -396,7 +396,7 @@ public class TxControl
 				TxControl.asyncCommit = true;
 		}
 
-		env = arjPropertyManager.propertyManager
+		env = arjPropertyManager.getPropertyManager()
 				.getProperty(Environment.ASYNC_PREPARE);
 
 		if (env != null)
@@ -405,7 +405,7 @@ public class TxControl
 				TxControl.asyncPrepare = true;
 		}
 
-		env = arjPropertyManager.propertyManager
+		env = arjPropertyManager.getPropertyManager()
 				.getProperty(Environment.COMMIT_ONE_PHASE);
 
 		if (env != null)
@@ -414,7 +414,7 @@ public class TxControl
 				TxControl.onePhase = false;
 		}
 
-		env = arjPropertyManager.propertyManager
+		env = arjPropertyManager.getPropertyManager()
 				.getProperty(Environment.ASYNC_ROLLBACK);
 
 		if (env != null)
@@ -423,7 +423,7 @@ public class TxControl
 				TxControl.asyncRollback = true;
 		}
 
-		env = arjPropertyManager.propertyManager
+		env = arjPropertyManager.getPropertyManager()
 				.getProperty(Environment.READONLY_OPTIMISATION);
 
 		if (env != null)
@@ -432,7 +432,7 @@ public class TxControl
 				TxControl.readonlyOptimisation = false;
 		}
 
-		env = arjPropertyManager.propertyManager
+		env = arjPropertyManager.getPropertyManager()
 				.getProperty(Environment.ENABLE_STATISTICS);
 
 		if (env != null)
@@ -441,7 +441,7 @@ public class TxControl
 				TxControl.enableStatistics = true;
 		}
 
-		env = arjPropertyManager.propertyManager
+		env = arjPropertyManager.getPropertyManager()
 				.getProperty(Environment.START_DISABLED);
 
 		if (env != null)
@@ -450,7 +450,7 @@ public class TxControl
 				TxControl.enable = false;
 		}
 
-        env = arjPropertyManager.propertyManager
+        env = arjPropertyManager.getPropertyManager()
                 .getProperty(Environment.BEFORECOMPLETION_WHEN_ROLLBACKONLY);
         
         if(env != null)
@@ -459,7 +459,7 @@ public class TxControl
                 TxControl.beforeCompletionWhenRollbackOnly = true;
         }
         
-		env = arjPropertyManager.propertyManager
+		env = arjPropertyManager.getPropertyManager()
 				.getProperty(Environment.XA_NODE_IDENTIFIER);
 		boolean writeNodeName = false;
 
@@ -520,11 +520,11 @@ public class TxControl
 
 		if (writeNodeName)
 		{
-		    arjPropertyManager.propertyManager.setProperty(
+		    arjPropertyManager.getPropertyManager().setProperty(
 		            Environment.XA_NODE_IDENTIFIER, new String(xaNodeName));
 		}
 
-		String enableTSM = arjPropertyManager.propertyManager.getProperty(Environment.TRANSACTION_STATUS_MANAGER_ENABLE);
+		String enableTSM = arjPropertyManager.getPropertyManager().getProperty(Environment.TRANSACTION_STATUS_MANAGER_ENABLE);
 		// run the TSM by default, unless it's turned off explicitly.
 
 		if ("NO".equalsIgnoreCase(enableTSM))

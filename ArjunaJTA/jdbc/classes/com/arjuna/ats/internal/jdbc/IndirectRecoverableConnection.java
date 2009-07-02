@@ -378,7 +378,7 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 	    if (_theDataSource == null)
 	    {
 		Hashtable env = new Hashtable();
-		Enumeration e = jdbcPropertyManager.propertyManager.propertyNames();
+		Enumeration e = jdbcPropertyManager.getPropertyManager().propertyNames();
 
 		/*
 		 * Look through the properties for any Context related
@@ -390,7 +390,7 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 		    String name = (String) e.nextElement();
 
 		    if (name.startsWith("Context."))
-			env.put(translate(name), jdbcPropertyManager.propertyManager.getProperty(name));
+			env.put(translate(name), jdbcPropertyManager.getPropertyManager().getProperty(name));
 		}
 
 		if (env.size() > 0)

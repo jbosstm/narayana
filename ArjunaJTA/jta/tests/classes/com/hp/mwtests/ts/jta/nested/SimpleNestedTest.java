@@ -43,7 +43,7 @@ public class SimpleNestedTest
 	{
 		try
 		{
-			com.arjuna.ats.jta.common.jtaPropertyManager.propertyManager.setProperty(com.arjuna.ats.jta.common.Environment.SUPPORT_SUBTRANSACTIONS, "YES");
+			com.arjuna.ats.jta.common.jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.SUPPORT_SUBTRANSACTIONS, "YES");
 
 			javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 

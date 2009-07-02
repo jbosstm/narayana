@@ -22,7 +22,14 @@ package com.arjuna.common.tests.iotest;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
+import com.arjuna.common.util.FileLocator;
 import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
+
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
+import java.util.Properties;
+import java.io.FileInputStream;
 
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003
@@ -37,28 +44,19 @@ import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
 
 public class IOTest
 {
-	public static void main(String[] args)
+    @Test
+	public void ioTest() throws Exception
 	{
-		PropertyManager arjunaPM = PropertyManagerFactory.getPropertyManager( "test-property-manager", "Arjuna" );
+        System.setProperty("property.file.name", "test-product.xml");
+        PropertyManager testPropertyManager = PropertyManagerFactory.getPropertyManagerForModule("test", "property.file.name");
 
-		try
-		{
-			arjunaPM.load(XMLFilePlugin.class.getName(), "test-product.xml");
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-		}
+		testPropertyManager.setProperty("com.arjuna.ats.arjuna.IOTest", "SavedProperty");
 
-		arjunaPM.setProperty("com.arjuna.ats.arjuna.Test","SavedProperty");
+		testPropertyManager.save(XMLFilePlugin.class.getName(), null);
 
-		try
-		{
-			arjunaPM.save(XMLFilePlugin.class.getName(), null);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+        Properties properties = new Properties();
+        properties.loadFromXML(new FileInputStream(FileLocator.locateFile("test-product.xml")));
+
+        assertEquals("SavedProperty", properties.getProperty("com.arjuna.ats.arjuna.IOTest"));
 	}
 }

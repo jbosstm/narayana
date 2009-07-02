@@ -63,11 +63,11 @@ public class SuspendResume
             System.exit(0);
         }
 
-        jtaPropertyManager.propertyManager
+        jtaPropertyManager.getPropertyManager()
                 .setProperty(
                         com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION,
                         "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
-        jtaPropertyManager.propertyManager
+        jtaPropertyManager.getPropertyManager()
                 .setProperty(
                         com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION,
                         "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");

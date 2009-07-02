@@ -1014,7 +1014,7 @@ public abstract class ConnectionImple
 
 	static
 	{
-		String isolationLevel = jdbcPropertyManager.propertyManager
+		String isolationLevel = jdbcPropertyManager.getPropertyManager()
 				.getProperty(com.arjuna.ats.jdbc.common.Environment.ISOLATION_LEVEL);
 
 		if (isolationLevel != null)

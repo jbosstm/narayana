@@ -36,6 +36,8 @@ import java.sql.*;
 import javax.sql.*;
 import javax.transaction.xa.*;
 import com.arjuna.common.util.logging.*;
+import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
+import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.jdbc.common.*;
@@ -94,9 +96,9 @@ public class OracleXARecovery implements XAResourceRecovery
 
         try
         {
-            jdbcPropertyManager.propertyManager.load(XMLFilePlugin.class.getName(), parameter);
+            PropertyManager propertyManager = PropertyManagerFactory.getPropertyManagerForFile(parameter, false);
 
-            _props = jdbcPropertyManager.propertyManager.getProperties();
+            _props = propertyManager.getProperties();
 
             _dbURL    = _props.getProperty(DATABASE_URL);
             _user     = _props.getProperty(USER_NAME);

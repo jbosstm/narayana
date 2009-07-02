@@ -78,36 +78,12 @@
     <target name="install.etc">
 
         <property name="etc.dest.dir" value="${basedir}/${build.dir}/install/etc"/>
-        <property name="jta_depends" value="arjuna"/>
-        <property name="module1" value="arjunacore"/>
-        <property name="module2" value="jts"/>
 
         <ant dir="../ArjunaCore" target="install.etc" inheritall="false">
             <property name="etc.dest.dir" value="${etc.dest.dir}"/>
         </ant>
 
-        <taskdef name="merge-property-files"
-            classname="com.hp.mw.buildsystem.ant.MergePropertyFiles"
-            classpath="../antbuildsystem/build/lib/buildsystem.jar"/>
-
-        <copy tofile="${basedir}/${build.dir}/processed-jta-properties.xml"
-              file="${basedir}/jta/etc/default-jta-properties.xmltmpl"
-              filtering="true" overwrite="true">
-            <filterset>
-                <filter token="JTA_DEPENDS" value="${jta_depends}"/>
-				<filter token="MODULE1" value="${module1}"/>
-				<filter token="MODULE2" value="${module2}"/>
-            </filterset>
-        </copy>
-
-        <merge-property-files master="${etc.dest.dir}/jbossts-properties.xml"
-            merge="${basedir}/${build.dir}/processed-jta-properties.xml"/>
-
-        <merge-property-files master="${etc.dest.dir}/jbossts-properties.xml"
-            merge="${basedir}/jta/etc/default-RecoveryManager-properties.xml" override="true"/>
-
-        <merge-property-files master="${etc.dest.dir}/jbossts-properties.xml"
-            merge="${basedir}/jdbc/etc/default-jdbc-properties.xml"/>
+        <copy file="jbossts-properties-arjunajta.xml" tofile="${etc.dest.dir}/jbossts-properties.xml" overwrite="true"/>
 
     </target>
 

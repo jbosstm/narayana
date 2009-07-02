@@ -65,8 +65,8 @@ public class WSCLogger
             
     	arjLogger = LogFactory.getLogNoi18n("com.arjuna.wsc.logging.WSCLogger");
     
-        final String language = commonPropertyManager.propertyManager.getProperty("language","en");
-        final String country  = commonPropertyManager.propertyManager.getProperty("country","US");
+        final String language = commonPropertyManager.getPropertyManager().getProperty("language","en");
+        final String country  = commonPropertyManager.getPropertyManager().getProperty("country","US");
     
     	final Locale currentLocale = new Locale(language, country);
     	log_mesg = ResourceBundle.getBundle("wsc_msg",currentLocale);

@@ -123,23 +123,8 @@
         <delete dir="${etc.dest.dir}"/>
         <mkdir dir="${etc.dest.dir}"/>
 
-        <taskdef name="merge-property-files"
-            classname="com.hp.mw.buildsystem.ant.MergePropertyFiles"
-            classpath="../antbuildsystem/build/lib/buildsystem.jar"/>
-
-        <merge-property-files master="${etc.dest.dir}/jbossts-properties.xml"
-            merge="${basedir}/arjuna/etc/default-arjuna-properties.xml"/>
-
-        <merge-property-files master="${etc.dest.dir}/jbossts-properties.xml"
-            merge="${basedir}/arjuna/etc/default-RecoveryManager-properties.xml"/>
-
-        <merge-property-files master="${etc.dest.dir}/jbossts-properties.xml"
-            merge="${basedir}/arjuna/etc/default-CommonLogging-properties.xml"/>
-
-        <merge-property-files master="${etc.dest.dir}/jbossts-properties.xml"
-            merge="${basedir}/txoj/etc/default-txoj-properties.xml"/>
-
         <copy file="arjuna/etc/log4j.properties" todir="${etc.dest.dir}"/>
+        <copy file="jbossts-properties-arjunacore.xml" tofile="${etc.dest.dir}/jbossts-properties.xml"/>
 
     </target>
 

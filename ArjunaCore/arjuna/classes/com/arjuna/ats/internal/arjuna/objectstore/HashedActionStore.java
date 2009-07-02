@@ -216,7 +216,7 @@ protected HashedActionStore (ObjectName objName)
     {
 	if (!checkSync)
 	{
-	    String syncOpt = arjPropertyManager.propertyManager.getProperty(Environment.TRANSACTION_SYNC);
+	    String syncOpt = arjPropertyManager.getPropertyManager().getProperty(Environment.TRANSACTION_SYNC);
 
 	    if (syncOpt != null)
 	    {

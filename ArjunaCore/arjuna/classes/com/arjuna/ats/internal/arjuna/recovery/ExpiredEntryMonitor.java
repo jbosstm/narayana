@@ -249,7 +249,7 @@ public class ExpiredEntryMonitor extends Thread
          */
 
         String scanIntervalString =
-        arjPropertyManager.propertyManager.getProperty( RecoveryEnvironment.EXPIRY_SCAN_INTERVAL );
+        arjPropertyManager.getPropertyManager().getProperty( RecoveryEnvironment.EXPIRY_SCAN_INTERVAL );
 
         if ( scanIntervalString != null )
         {
@@ -299,7 +299,7 @@ public class ExpiredEntryMonitor extends Thread
       _expiryScanners = new Vector();
 
     // search our properties
-    Properties properties = arjPropertyManager.propertyManager.getProperties();
+    Properties properties = arjPropertyManager.getPropertyManager().getProperties();
     
     if (properties != null)
     {

@@ -451,7 +451,7 @@ public class JDBCStore extends ObjectStoreImple
 	protected String getAccessClassName()
 	{
 		if (_jdbcAccessClassName == null)
-			_jdbcAccessClassName = arjPropertyManager.propertyManager
+			_jdbcAccessClassName = arjPropertyManager.getPropertyManager()
 					.getProperty(Environment.JDBC_USER_DB_ACCESS);
 		return _jdbcAccessClassName;
 	}

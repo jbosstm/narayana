@@ -38,6 +38,8 @@ import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 
 import com.arjuna.common.util.logging.*;
+import com.arjuna.common.util.propertyservice.PropertyManager;
+import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 
 import java.sql.*;
 import javax.transaction.xa.*;
@@ -65,14 +67,12 @@ import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
  * The db parameters specified in the property file are assumed to be in the
  * format:
  *
- * <transaction-service>
- *   <properties name="jdbc">
- *     <property name="DB_X_DatabaseUser" value="username"/>
- *     <property name="DB_X_DatabasePassword" value="password"/>
- *     <property name="DB_X_DatabaseDynamicClassA" value="DynamicClass"/>
- *     <property name="DB_X_DatabaseURL" value="theURL"/>
+ *   <properties>
+ *     <entry key="DB_X_DatabaseUser">username</entry>
+ *     <entry key="DB_X_DatabasePassword">password"</entry>
+ *     <entry key="DB_X_DatabaseDynamicClass">DynamicClass</entry>
+ *     <entry key="DB_X_DatabaseURL">theURL</entry>
  *   </properties>
- * </transaction-service>
  *
  * where X is the number of the connection information, starting from 1.
  * The DynamicClass is optional. If not present, JNDI will be used for resolving
@@ -161,10 +161,9 @@ public class BasicXARecovery implements XAResourceRecovery
 
 		try
 		{
-			jdbcPropertyManager.propertyManager.load(XMLFilePlugin.class
-					.getName(), fileName);
+            PropertyManager propertyManager = PropertyManagerFactory.getPropertyManagerForFile(fileName, false);
 
-			props = jdbcPropertyManager.propertyManager.getProperties();
+            props = propertyManager.getProperties();            
 		}
 		catch (Exception e)
 		{

@@ -23,6 +23,8 @@ package com.arjuna.common.tests.simple;
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003
@@ -37,37 +39,30 @@ import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
 
 public class SetPropertyTest
 {
-	public static void main(String[] args)
+    @Test
+	public void setPropertyTest()
 	{
-		PropertyManager arjunaPM = PropertyManagerFactory.getPropertyManager( "test-property-manager", "Arjuna" );
-		PropertyManager txojPM = PropertyManagerFactory.getPropertyManager( "test-property-manager", "TXOJ" );
+        System.setProperty("property.file.name", "test-product.xml");
+        PropertyManager arjunaPropertyManager = PropertyManagerFactory.getPropertyManagerForModule("arjuna", "property.file.name");
+        PropertyManager txojPropertyManager = PropertyManagerFactory.getPropertyManagerForModule("arjuna", "property.file.name");
 
-		try
-		{
-			arjunaPM.load(XMLFilePlugin.class.getName(), "test-product.xml");
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-		}
-
-		boolean passed = true;
 		int count = 0;
 
-		String value = arjunaPM.getProperty("com.arjuna.ats.arjuna.Test");
+		String value = arjunaPropertyManager.getProperty("com.arjuna.ats.arjuna.Test");
 		System.out.println("Value["+(++count)+"] :"+value);
-		passed &= value.equals("Test");
 
-		arjunaPM.setProperty("com.arjuna.ats.arjuna.Test", "OverriddenInCode");
+        assertEquals("Test", value);
 
-		value = txojPM.getProperty("com.arjuna.ats.arjuna.Test");
+		arjunaPropertyManager.setProperty("com.arjuna.ats.arjuna.Test", "OverriddenInCode");
+
+		value = txojPropertyManager.getProperty("com.arjuna.ats.arjuna.Test");
 		System.out.println("Value["+(++count)+"] :"+value);
-		passed &= value.equals("Overridden");
 
-		value = arjunaPM.getProperty("com.arjuna.ats.arjuna.Test");
+        assertEquals("OverriddenInCode", value);
+
+		value = arjunaPropertyManager.getProperty("com.arjuna.ats.arjuna.Test");
 		System.out.println("Value["+(++count)+"] :"+value);
-		passed &= value.equals("OverriddenInCode");
 
-		System.out.println( passed ? "Passed" : "Failed" );
+        assertEquals("OverriddenInCode", value);
 	}
 }

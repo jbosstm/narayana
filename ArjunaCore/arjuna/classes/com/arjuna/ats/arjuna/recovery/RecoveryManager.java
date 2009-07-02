@@ -41,6 +41,7 @@ import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 
@@ -397,7 +398,7 @@ public class RecoveryManager
 
     public static InetAddress getRecoveryManagerHost() throws UnknownHostException
     {
-        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+        PropertyManager pm = recoveryPropertyManager.getPropertyManager();
 
         if ( pm == null )
             return InetAddress.getLocalHost();
@@ -410,7 +411,7 @@ public class RecoveryManager
 
     public static int getRecoveryManagerPort()
     {
-        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+        PropertyManager pm = recoveryPropertyManager.getPropertyManager();
 
         if (pm == null)
             return 0;

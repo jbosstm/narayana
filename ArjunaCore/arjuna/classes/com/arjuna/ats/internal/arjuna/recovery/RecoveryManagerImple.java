@@ -85,26 +85,6 @@ public class RecoveryManagerImple
 
         public RecoveryManagerImple (boolean threaded)
         {
-                String rmPropertyFile = RecoveryConfiguration
-                                .recoveryManagerPropertiesFile();
-
-                try
-                {
-                        arjPropertyManager.propertyManager = PropertyManagerFactory
-                                        .getPropertyManager("com.arjuna.ats.propertymanager",
-                                                        "recoverymanager");
-                }
-                catch (Exception ex)
-                {
-                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                        {
-                                tsLogger.arjLoggerI18N
-                                                .warn(
-                                                                "com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple_1",
-                                                                new Object[] { ex });
-                        }
-                }
-
                 // force normal recovery trace on
                 tsLogger.arjLogger.mergeFacilityCode(FacilityCode.FAC_RECOVERY_NORMAL);
                 tsLogger.arjLoggerI18N
@@ -120,7 +100,7 @@ public class RecoveryManagerImple
 
         // by default we use a socket based listener, but it can be turned off if not required.
         boolean useListener = true;
-        if("NO".equalsIgnoreCase(arjPropertyManager.propertyManager.getProperty(Environment.RECOVERY_MANAGER_LISTENER))) {
+        if("NO".equalsIgnoreCase(arjPropertyManager.getPropertyManager().getProperty(Environment.RECOVERY_MANAGER_LISTENER))) {
             useListener = false;
         }
         

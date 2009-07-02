@@ -31,7 +31,6 @@
 package com.arjuna.ats.jbossatx.jta;
 
 import org.jboss.bootstrap.spi.ServerConfig;
-import org.jboss.tm.*;
 
 import org.jboss.logging.Logger;
 
@@ -52,6 +51,7 @@ import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.common.Configuration;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 
 import com.arjuna.ats.internal.tsmx.mbeans.PropertyServiceJMXPlugin;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
@@ -107,7 +107,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
 		 * Hence the static initializer block.
 		 * see also http://jira.jboss.com/jira/browse/JBTM-20
 		 */
-		com.arjuna.ats.arjuna.common.arjPropertyManager.propertyManager.setProperty(LogFactory.LOGGER_PROPERTY, "log4j_releveler");
+		com.arjuna.ats.arjuna.common.arjPropertyManager.getPropertyManager().setProperty(LogFactory.LOGGER_PROPERTY, "log4j_releveler");
 		//System.setProperty(LogFactory.LOGGER_PROPERTY, "log4j_releveler") ;
 	}
 
@@ -186,7 +186,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
         }
 
         /** Register management plugin **/
-        com.arjuna.ats.arjuna.common.arjPropertyManager.propertyManager.addManagementPlugin(new PropertyServiceJMXPlugin());
+        com.arjuna.ats.arjuna.common.arjPropertyManager.getPropertyManager().addManagementPlugin(new PropertyServiceJMXPlugin());
 
         // Associate transaction reaper with our context classloader.
         TransactionReaper.create() ;
@@ -240,13 +240,13 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
         /** Bind the transaction manager and tsr JNDI references **/
         log.info("Binding TransactionManager JNDI Reference");
 
-        jtaPropertyManager.propertyManager.setProperty(Environment.JTA_TM_IMPLEMENTATION, TransactionManagerDelegate.class.getName());
-        jtaPropertyManager.propertyManager.setProperty(Environment.JTA_UT_IMPLEMENTATION, UserTransactionImple.class.getName());
+        jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_TM_IMPLEMENTATION, TransactionManagerDelegate.class.getName());
+        jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_UT_IMPLEMENTATION, UserTransactionImple.class.getName());
 
-		jtaPropertyManager.propertyManager.setProperty(Environment.JTA_TSR_IMPLEMENTATION, TransactionSynchronizationRegistryImple.class.getName());
+		jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_TSR_IMPLEMENTATION, TransactionSynchronizationRegistryImple.class.getName());
 		// When running inside the app server, we bind TSR in the JNDI java:/ space, not its required location.
 		// It's the job of individual components (EJB3, web, etc) to copy the ref to the java:/comp space)
-        jtaPropertyManager.propertyManager.setProperty(Environment.TSR_JNDI_CONTEXT, "java:/TransactionSynchronizationRegistry");
+        jtaPropertyManager.getPropertyManager().setProperty(Environment.TSR_JNDI_CONTEXT, "java:/TransactionSynchronizationRegistry");
 
 		JNDIManager.bindJTATransactionManagerImplementation();
 		JNDIManager.bindJTATransactionSynchronizationRegistryImplementation();
@@ -287,7 +287,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
     private boolean isRecoveryManagerRunning() throws Exception
     {
         boolean active = false;
-        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+        PropertyManager pm = recoveryPropertyManager.getPropertyManager();
 
         if ( pm != null )
         {
@@ -739,7 +739,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
 
     public InetAddress getTransactionStatusManagerInetAddress()
     {
-        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+        PropertyManager pm = recoveryPropertyManager.getPropertyManager();
         try {
             return Utility.hostNameToInetAddress(pm.getProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_ADDRESS), "");
         } catch(UnknownHostException e) {
@@ -760,7 +760,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
             }
             else
             {
-                PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+                PropertyManager pm = recoveryPropertyManager.getPropertyManager();
                 pm.setProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_ADDRESS, tsmInetAddress.getHostAddress());
                 isTransactionStatusManagerBindAddressSet = true;
             }
@@ -769,7 +769,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
 
     public int getTransactionStatusManagerPort()
     {
-        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+        PropertyManager pm = recoveryPropertyManager.getPropertyManager();
         return Integer.parseInt(pm.getProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_PORT));
     }
 
@@ -783,7 +783,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
         }
         else
         {
-            PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+            PropertyManager pm = recoveryPropertyManager.getPropertyManager();
             pm.setProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_PORT, ""+port);
         }
     }
@@ -792,7 +792,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
 
     public InetAddress getRecoveryInetAddress()
     {
-        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+        PropertyManager pm = recoveryPropertyManager.getPropertyManager();
         try {
             return Utility.hostNameToInetAddress(pm.getProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_ADDRESS), "");
         } catch(UnknownHostException e) {
@@ -811,7 +811,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
         }
         else
         {
-            PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+            PropertyManager pm = recoveryPropertyManager.getPropertyManager();
             pm.setProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_ADDRESS, recoveryInetAddress.getHostAddress());
             isRecoveryManagerBindAddressSet = true;
         }
@@ -819,7 +819,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
 
     public int getRecoveryPort()
     {
-        PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+        PropertyManager pm = recoveryPropertyManager.getPropertyManager();
         return Integer.parseInt(pm.getProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_PORT));
     }
 
@@ -833,7 +833,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
         }
         else
         {
-            PropertyManager pm = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "recoverymanager");
+            PropertyManager pm = recoveryPropertyManager.getPropertyManager();
             pm.setProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_PORT, ""+port);
         }
     }

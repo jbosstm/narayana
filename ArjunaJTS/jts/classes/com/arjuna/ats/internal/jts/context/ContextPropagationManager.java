@@ -31,17 +31,11 @@
 
 package com.arjuna.ats.internal.jts.context;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
-
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.orbportability.ORBType;
 import com.arjuna.orbportability.ORBInfo;
-
-import com.arjuna.common.util.logging.*;
-
-import com.arjuna.ats.arjuna.exceptions.FatalError;
 
 /**
  * Registers the appropriate filter with the ORB.
@@ -60,7 +54,7 @@ public class ContextPropagationManager
 
     public ContextPropagationManager ()
     {
-	String contextMode = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.CONTEXT_PROP_MODE);
+	String contextMode = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.CONTEXT_PROP_MODE);
 	boolean interposition = true;
 
 	if (contextMode != null)

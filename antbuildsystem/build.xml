@@ -24,6 +24,10 @@
 
     <import file="../sharedbuild.xml"/>
 
+    <target name="compile" depends="init">
+        <compile.macro includeant="true"/>
+    </target>
+
     <target name="compile-tests"/>
     <target name="run.tests"/>
 

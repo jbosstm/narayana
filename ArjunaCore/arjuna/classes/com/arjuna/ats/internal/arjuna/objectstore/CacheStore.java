@@ -283,7 +283,7 @@ public class CacheStore extends HashedStore
 
     static
     {
-	String cacheSync = arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_SYNC);
+	String cacheSync = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_SYNC);
 
 	if (cacheSync != null)
 	{
@@ -911,7 +911,7 @@ class AsyncStore extends Thread  // keep priority same as app. threads
     
     static
     {
-	String hashSize = arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_HASH);
+	String hashSize = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_HASH);
 
 	if (hashSize != null)
 	{
@@ -928,7 +928,7 @@ class AsyncStore extends Thread  // keep priority same as app. threads
 	if (HASH_SIZE <= 0)
 	    HASH_SIZE = 128;
 	
-	String cacheSize = arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_SIZE);
+	String cacheSize = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_SIZE);
 
 	if (cacheSize != null)
 	{
@@ -945,7 +945,7 @@ class AsyncStore extends Thread  // keep priority same as app. threads
 	if (_defaultCacheSize < 0)
 	    _defaultCacheSize = 0;
 
-	String removedItems = arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_REMOVED_ITEMS);
+	String removedItems = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_REMOVED_ITEMS);
 
 	if (removedItems != null)
 	{
@@ -962,7 +962,7 @@ class AsyncStore extends Thread  // keep priority same as app. threads
 	if (_defaultRemovedItems < 0)
 	    _defaultRemovedItems = 0;
 
-	String workItems = arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_WORK_ITEMS);
+	String workItems = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_WORK_ITEMS);
 
 	if (workItems != null)
 	{
@@ -979,7 +979,7 @@ class AsyncStore extends Thread  // keep priority same as app. threads
 	if (_defaultWorkItems < 0)
 	    _defaultWorkItems = 0;
 
-	String scanPeriod = arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_SCAN_PERIOD);
+	String scanPeriod = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_SCAN_PERIOD);
 
 	if (scanPeriod != null)
 	{

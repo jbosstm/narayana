@@ -31,29 +31,21 @@
 
 package com.arjuna.orbportability;
 
-import com.arjuna.orbportability.orb.core.*;
 import com.arjuna.orbportability.orb.*;
 import com.arjuna.orbportability.common.opPropertyManager;
-import com.arjuna.orbportability.common.Configuration;
-import com.arjuna.orbportability.common.Environment;
 import com.arjuna.orbportability.logging.opLogger;
 
 import com.arjuna.orbportability.internal.utils.*;
 import com.arjuna.orbportability.internal.common.LocalSetup;
 
 import com.arjuna.orbportability.logging.*;
-import com.arjuna.orbportability.exceptions.FatalError;
 import com.arjuna.common.util.logging.VisibilityLevel;
 import com.arjuna.common.util.logging.DebugLevel;
 
 import java.util.*;
 import java.applet.Applet;
-import java.io.*;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import org.omg.CORBA.SystemException;
-import org.omg.CORBA.BAD_OPERATION;
 
 /**
  * An attempt at some ORB portable ways of interacting with the ORB.
@@ -397,7 +389,7 @@ private void loadProperties (Properties p)
                                               "Adding property '"+o+"' to the ORB portability properties" );
                     }
 
-                    opPropertyManager.propertyManager.setProperty( o, p.getProperty(o) );
+                    opPropertyManager.getPropertyManager().setProperty( o, p.getProperty(o) );
                 }
             }
         }

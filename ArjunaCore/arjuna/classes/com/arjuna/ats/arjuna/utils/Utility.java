@@ -314,7 +314,7 @@ public class Utility
 
     public static final boolean isWindows ()
     {
-        String os = arjPropertyManager.propertyManager.getProperty("os.name");
+        String os = arjPropertyManager.getPropertyManager().getProperty("os.name");
 
         if (("WIN32".equals(os)) || (os.indexOf("Windows") != -1))
             return true;

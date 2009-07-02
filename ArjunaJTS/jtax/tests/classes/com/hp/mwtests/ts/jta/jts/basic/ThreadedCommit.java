@@ -36,7 +36,6 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import com.arjuna.ats.jta.common.*;
-import com.arjuna.ats.jta.utils.JTAHelper;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 
@@ -119,11 +118,11 @@ public class ThreadedCommit
             System.exit(0);
         }
 
-        jtaPropertyManager.propertyManager
+        jtaPropertyManager.getPropertyManager()
                 .setProperty(
                         com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION,
                         "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
-        jtaPropertyManager.propertyManager
+        jtaPropertyManager.getPropertyManager()
                 .setProperty(
                         com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION,
                         "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");

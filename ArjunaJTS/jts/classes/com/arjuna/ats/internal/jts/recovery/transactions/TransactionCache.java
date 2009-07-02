@@ -34,10 +34,7 @@ package com.arjuna.ats.internal.jts.recovery.transactions;
 import java.util.Hashtable;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.orbportability.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 
 import org.omg.CosTransactions.*;
 import com.arjuna.ats.jts.recovery.RecoveryEnvironment;
@@ -358,7 +355,7 @@ public class TransactionCache
 
  static
      {
-	String retryLimitString = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.recovery.RecoveryEnvironment.COMMITTED_TRANSACTION_RETRY_LIMIT);
+	String retryLimitString = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.recovery.RecoveryEnvironment.COMMITTED_TRANSACTION_RETRY_LIMIT);
 
 	if (retryLimitString != null)
 	{

@@ -707,7 +707,7 @@ public class ServerTransaction extends ArjunaTransactionImple
 
 	static
 	{
-		String inter = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.SUPPORT_INTERPOSED_SYNCHRONIZATION);
+		String inter = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.SUPPORT_INTERPOSED_SYNCHRONIZATION);
 
 		if (inter != null)
 		{

@@ -119,7 +119,7 @@ public class RecoveryInit
 
 		    // register the ContactWriter to watch for the first ArjunaFactory construction
 
-		    opPropertyManager.propertyManager.setProperty(eventHandlerPropertyName,eventHandlerPropertyValue);
+		    opPropertyManager.getPropertyManager().setProperty(eventHandlerPropertyName,eventHandlerPropertyValue);
 
 		    // Change here above the way to call this startRCService -
 		    // otherwise call it in JacOrbRecoveryInit above.

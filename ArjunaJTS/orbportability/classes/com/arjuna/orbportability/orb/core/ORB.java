@@ -31,17 +31,13 @@
 
 package com.arjuna.orbportability.orb.core;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.logging.VisibilityLevel;
 import com.arjuna.common.util.logging.DebugLevel;
-import com.arjuna.orbportability.common.Configuration;
-import com.arjuna.orbportability.common.Environment;
 import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.*;
 
 import java.util.*;
 import java.applet.Applet;
-import java.io.*;
 
 import org.omg.CORBA.SystemException;
 
@@ -112,7 +108,7 @@ private final void initialise ()
 	 * Let the application provide its own ORB implementation.
 	 */
 
-	String className = opPropertyManager.propertyManager.getProperty(com.arjuna.orbportability.common.Environment.ORB_IMPLEMENTATION);
+	String className = opPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.ORB_IMPLEMENTATION);
 
         if (className == null)
         {

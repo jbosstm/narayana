@@ -199,7 +199,7 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
     static
     {
 	
-	String expiryTimeString = arjPropertyManager.propertyManager.getProperty(RecoveryEnvironment.TRANSACTION_STATUS_MANAGER_EXPIRY_TIME);
+	String expiryTimeString = arjPropertyManager.getPropertyManager().getProperty(RecoveryEnvironment.TRANSACTION_STATUS_MANAGER_EXPIRY_TIME);
 	
 	if ( expiryTimeString != null )
 	 {

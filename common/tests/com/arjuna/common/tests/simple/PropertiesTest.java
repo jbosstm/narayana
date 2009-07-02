@@ -27,6 +27,9 @@ import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
 import java.util.Properties;
 import java.util.Enumeration;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003
  *
@@ -40,24 +43,14 @@ import java.util.Enumeration;
 
 public class PropertiesTest
 {
-	public static void main(String[] args)
+    @Test
+	public void propertiesTest()
 	{
-		PropertyManager arjunaPM = PropertyManagerFactory.getPropertyManager( "test-property-manager", "Arjuna" );
-		PropertyManager txojPM = PropertyManagerFactory.getPropertyManager( "test-property-manager", "TXOJ" );
-		PropertyManager orbPM = PropertyManagerFactory.getPropertyManager( "test-property-manager", "ORB Portability" );
+        System.setProperty("property.file.name", "test-product.xml");
+        PropertyManager txojPropertyManager = PropertyManagerFactory.getPropertyManagerForModule("txoj", "property.file.name");
 
-		try
-		{
-			arjunaPM.load(XMLFilePlugin.class.getName(), "test-properties.xml");
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-		}
-
-		boolean passed = true;
         int count = 0;
-		Properties p = txojPM.getProperties();
+		Properties p = txojPropertyManager.getProperties();
 
 		System.out.println("TXOJ Properties size = "+p.size());
 
@@ -65,6 +58,10 @@ public class PropertiesTest
 		{
 			String propertyName = (String)e.nextElement();
 			String propertyValue = p.getProperty(propertyName);
+
+            if(!propertyName.startsWith("com.arjuna.")) {
+                continue;
+            }
 
 			if ( ( propertyName.equals("com.arjuna.ats.arjuna.Test") ) ||
 			     ( propertyName.equals("com.arjuna.ats.txoj.Test") ) )
@@ -74,38 +71,10 @@ public class PropertiesTest
 			}
 			else
 			{
-				System.out.println("Found unexpected property '"+propertyName+"' failed");
-				passed = false;
+                fail("Found unexpected property '"+propertyName+"' failed");
 			}
 		}
 
-		passed &= (count == 2);
-
-		count = 0;
-
-		p = orbPM.getProperties();
-
-		System.out.println("ORB Portability Properties size = "+p.size());
-
-		for (Enumeration e = p.keys();e.hasMoreElements();)
-		{
-			String propertyName = (String)e.nextElement();
-			String propertyValue = p.getProperty(propertyName);
-
-			if ( propertyName.equals("com.arjuna.orbportability.Test") )
-			{
-				System.out.println("Found property '"+propertyName+"', value: "+propertyValue);
-				count++;
-			}
-			else
-			{
-				System.out.println("Found unexpected property '"+propertyName+"'");
-				passed = false;
-			}
-		}
-
-		passed &= (count == 1);
-
-		System.out.println( passed ? "Passed" : "Failed" );
+        assertEquals(2, count);
 	}
 }

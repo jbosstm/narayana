@@ -439,7 +439,7 @@ public class HashedStore extends ShadowNoFileLockStore
 
     static
     {
-	String numberOfDirs = arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.HASHED_DIRECTORIES);
+	String numberOfDirs = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.HASHED_DIRECTORIES);
 
 	if (numberOfDirs != null)
 	{

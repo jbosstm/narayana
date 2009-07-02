@@ -1068,7 +1068,7 @@ public class TransactionReaper
             // default to dynamic mode
             TransactionReaper._dynamic = true;
 
-            String mode = arjPropertyManager.propertyManager
+            String mode = arjPropertyManager.getPropertyManager()
 					.getProperty(Environment.TX_REAPER_MODE);
 
 			if (mode != null)
@@ -1089,7 +1089,7 @@ public class TransactionReaper
 
             if (!TransactionReaper._dynamic)
 			{
-				String timeoutEnv = arjPropertyManager.propertyManager
+				String timeoutEnv = arjPropertyManager.getPropertyManager()
 						.getProperty(Environment.TX_REAPER_TIMEOUT);
 
 				if (timeoutEnv != null)
@@ -1121,7 +1121,7 @@ public class TransactionReaper
 
 			TransactionReaper._theReaper = new TransactionReaper(checkPeriod);
 
-			String cancelWait = arjPropertyManager.propertyManager
+			String cancelWait = arjPropertyManager.getPropertyManager()
 					.getProperty(Environment.TX_REAPER_CANCEL_WAIT_PERIOD);
 			if (cancelWait != null)
 			{
@@ -1146,7 +1146,7 @@ public class TransactionReaper
                              TransactionReaper._theReaper._cancelWaitPeriod = defaultCancelWaitPeriod;
                         }
 
-			String cancelFailWait = arjPropertyManager.propertyManager
+			String cancelFailWait = arjPropertyManager.getPropertyManager()
 					.getProperty(Environment.TX_REAPER_CANCEL_FAIL_WAIT_PERIOD);
 			if (cancelFailWait != null)
 			{
@@ -1171,7 +1171,7 @@ public class TransactionReaper
                              TransactionReaper._theReaper._cancelFailWaitPeriod = defaultCancelFailWaitPeriod;
                         }
 
-			String zombieMax = arjPropertyManager.propertyManager
+			String zombieMax = arjPropertyManager.getPropertyManager()
 					.getProperty(Environment.TX_REAPER_ZOMBIE_MAX);
 			if (zombieMax != null)
 			{

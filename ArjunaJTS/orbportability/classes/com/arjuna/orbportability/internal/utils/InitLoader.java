@@ -37,7 +37,6 @@ import com.arjuna.orbportability.utils.InitClassInterface;
 
 import java.util.Properties;
 import java.util.Enumeration;
-import java.lang.ClassLoader;
 
 import java.lang.ClassNotFoundException;
 import java.lang.IllegalAccessException;
@@ -60,7 +59,7 @@ protected InitLoader (String name, String attrName, Object obj)
 
 protected void initialise ()
     {
-	Properties properties = opPropertyManager.propertyManager.getProperties();
+	Properties properties = opPropertyManager.getPropertyManager().getProperties();
 
 	if (properties != null)
 	{

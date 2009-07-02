@@ -33,7 +33,6 @@ package com.arjuna.orbportability.common;
 
 import com.arjuna.orbportability.Services;
 
-import com.arjuna.common.util.logging.*;
 import com.arjuna.common.util.FileLocator;
 
 import com.arjuna.orbportability.logging.*;
@@ -215,7 +214,7 @@ public static synchronized final int bindDefault ()
 
         if (!_bindDefaultSet)
         {
-            String configuredMechanism = opPropertyManager.propertyManager.getProperty(Environment.BIND_MECHANISM);
+            String configuredMechanism = opPropertyManager.getPropertyManager().getProperty(Environment.BIND_MECHANISM);
 
             if (configuredMechanism != null)
             {

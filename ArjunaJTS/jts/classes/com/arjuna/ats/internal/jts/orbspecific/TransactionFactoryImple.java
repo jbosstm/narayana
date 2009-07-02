@@ -912,7 +912,7 @@ public class TransactionFactoryImple extends
 
 	static
 	{
-		String timeout = jtsPropertyManager.propertyManager.getProperty(com.arjuna.ats.jts.common.Environment.DEFAULT_TIMEOUT);
+		String timeout = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.DEFAULT_TIMEOUT);
 
 		if (timeout != null)
 		{

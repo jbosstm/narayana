@@ -31,11 +31,13 @@ package com.arjuna.ats.jtax.tests.implicit.client;
  * $Id: ImplicitClient.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import org.jboss.dtf.testframework.unittest.*;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
 import com.arjuna.ats.jta.common.*;
 import com.arjuna.ats.jta.*;
+
+import org.jboss.dtf.testframework.unittest.Test;
+import org.jboss.dtf.testframework.unittest.LocalHarness;
 
 public class ImplicitClient extends Test
 {
@@ -50,8 +52,8 @@ public class ImplicitClient extends Test
         {
             try
             {
-                jtaPropertyManager.propertyManager.setProperty(Environment.JTA_TM_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
-                jtaPropertyManager.propertyManager.setProperty(Environment.JTA_UT_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
+                jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_TM_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
+                jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_UT_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
 
                 ORB orb = ORB.getInstance("implicitserver-orb");
                 OA oa = OA.getRootOA(orb);

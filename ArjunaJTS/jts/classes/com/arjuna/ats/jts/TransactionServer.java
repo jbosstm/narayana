@@ -35,11 +35,7 @@ import com.arjuna.ats.jts.common.jtsPropertyManager;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 
-import com.arjuna.ats.arjuna.common.*;
-
 import com.arjuna.orbportability.*;
-
-import com.arjuna.common.util.propertyservice.PropertyManager;
 
 import org.omg.CosTransactions.*;
 
@@ -50,7 +46,7 @@ public class TransactionServer
     public static final int getResolver ()
     {
         int resolver = com.arjuna.orbportability.common.Configuration.bindDefault();
-        final String resolveService = jtsPropertyManager.propertyManager.getProperty(com.arjuna.orbportability.common.Environment.RESOLVE_SERVICE);
+        final String resolveService = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.RESOLVE_SERVICE);
 
         if (resolveService != null)
         {

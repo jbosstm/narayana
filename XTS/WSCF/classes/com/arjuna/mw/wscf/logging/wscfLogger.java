@@ -57,8 +57,8 @@ public class wscfLogger
         
 	arjLogger = LogFactory.getLogNoi18n("com.arjuna.mw.wscf.logging.wscfLogger");
 
-	language = commonPropertyManager.propertyManager.getProperty("language","en");
-	country  = commonPropertyManager.propertyManager.getProperty("country","US");
+	language = commonPropertyManager.getPropertyManager().getProperty("language","en");
+	country  = commonPropertyManager.getPropertyManager().getProperty("country","US");
 
 	currentLocale = new Locale(language,country);
 	log_mesg = ResourceBundle.getBundle("wscf_msg",currentLocale);

@@ -1376,7 +1376,7 @@ public class XAResourceRecord extends AbstractRecord
 
 	static
 	{
-		String optimization = jtaPropertyManager.propertyManager.getProperty(
+		String optimization = jtaPropertyManager.getPropertyManager().getProperty(
 				Environment.JTA_TM_IMPLEMENTATION, "OFF");
 
 		if (optimization.equals("ON"))
@@ -1395,7 +1395,7 @@ public class XAResourceRecord extends AbstractRecord
 		 * with. Hence USE WITH EXTREME CARE!!
 		 */
 
-		String assumedComplete = jtaPropertyManager.propertyManager.getProperty(
+		String assumedComplete = jtaPropertyManager.getPropertyManager().getProperty(
 				Environment.XA_ASSUME_RECOVERY_COMPLETE, "FALSE");
 
 		if (assumedComplete.equalsIgnoreCase("true"))

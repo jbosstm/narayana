@@ -65,7 +65,7 @@ public class XAResourceErrorHandler
 	{
 		// explicitly add tibco
 
-		Properties props = jtaPropertyManager.propertyManager.getProperties();
+		Properties props = jtaPropertyManager.getPropertyManager().getProperties();
 
 		if (props != null)
 		{
@@ -82,7 +82,7 @@ public class XAResourceErrorHandler
 					 * and store it.
 					 */
 
-					String theClass = jtaPropertyManager.propertyManager.getProperty(propName);
+					String theClass = jtaPropertyManager.getPropertyManager().getProperty(propName);
 
 					try
 					{

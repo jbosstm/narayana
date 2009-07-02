@@ -22,41 +22,64 @@ package com.hp.mwtests.commonlogging.i18n;
 
 import com.arjuna.common.util.logging.Logi18n;
 import com.arjuna.common.util.logging.LogFactory;
-//import com.arjuna.common.util.logging.CommonLevel;
+import com.arjuna.common.internal.util.logging.commonPropertyManager;
 
 import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class logi18n
 {
+    public static final String CLASS = logi18n.class.getName();
 
-   //static LoggerFactory log_fac = LogManager.getLogFactory();
-   static String language = System.getProperty("language", "en");
-   static String country = System.getProperty("country", "US");
+    @Test
+	public void testLogi18n() {
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		PrintStream bufferedStream = new PrintStream(buffer);
+		PrintStream originalStream = System.out;
 
-   private static Locale currentLocale = new Locale(language, country);
-   //private static ResourceBundle log_mesg = ResourceBundle.getBundle("logging_msg", currentLocale);
+		// TODO: how to configure this on a per-test (not per-JVM) basis?
+		commonPropertyManager.getPropertyManager().setProperty(LogFactory.LOGGER_PROPERTY, "log4j");
 
-   //static commonLogger mylog = (commonLogger)log_fac.getLogger(logi18n.class.getName(),"logging_msg_"+language+"_"+country);
-   //static Logi18n log = LogFactory.getLogi18n("logi18n", "com.hp.mwtests.commonlogging.i18n.logging_msg_fr_FR");
-   static Logi18n log = LogFactory.getLogi18n("logi18n", "com.hp.mwtests.commonlogging.i18n.logging_msg");
+		System.setOut(bufferedStream);
+		writeLogMessages();
+		System.setOut(originalStream);
+		verifyResult(buffer.toString());
+	}
 
-   public static void main(String[] args)
+   public static void writeLogMessages()
    {
+       Logi18n log = LogFactory.getLogi18n(CLASS, "logging_msg");
 
-      Object[] myParams = new Object[2];
+       Locale.setDefault(new Locale("en", "US"));
+       log.info("IDENTIFICATION", new String[] { "Foo", "Bar"});
+       log.fatal("FATAL_Message");
+       log.info("INFO_Message");
 
-      String lastname = "Foo";
-      String firstname = "Bar";
-      myParams[0] = firstname;
-      myParams[1] = lastname;
-
-      log.info("IDENTIFICATION", myParams);
-      //log.log(CommonLevel.FATAL, "FATAL_Message");
-      log.fatal("FATAL_Message");
-
-      //log.log(CommonLevel.INFO, "INFO_Message");
-      log.info("INFO_Message");
+       Locale.setDefault(new Locale("fr", "FR"));
+       log = LogFactory.getLogi18n(CLASS, "logging_msg");
+       log.info("IDENTIFICATION", new String[] { "Foo", "Bar"});
+       log.fatal("FATAL_Message");
+       log.info("INFO_Message");
    }
+
+    public static void verifyResult(String result) {
+        String[] lines = result.split("\r?\n");
+
+        assertNotNull(lines);
+        assertEquals(6, lines.length);
+        
+        assertTrue("Got actual value: "+lines[0], lines[0].matches("\\s*INFO \\[main\\] \\(logi18n.java.*The FirstName is Foo and the LastName is Bar$"));
+        assertTrue("Got actual value: "+lines[1], lines[1].matches("\\s*FATAL \\[main\\] \\(logi18n.java.*This is a Fatal message$"));
+        assertTrue("Got actual value: "+lines[2], lines[2].matches("\\s*INFO \\[main\\] \\(logi18n.java.*This is an Info message$"));
+
+        assertTrue("Got actual value: "+lines[3], lines[3].matches("\\s*INFO \\[main\\] \\(logi18n.java.*le prenom est Foo et le nom est Bar$"));
+        assertTrue("Got actual value: "+lines[4], lines[4].matches("\\s*FATAL \\[main\\] \\(logi18n.java.*Ceci est un message Fatal$"));
+        assertTrue("Got actual value: "+lines[5], lines[5].matches("\\s*INFO \\[main\\] \\(logi18n.java.*Ceci est un message pour information$"));
+    }
 }
     
     

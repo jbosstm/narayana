@@ -977,7 +977,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     static
     {
-	String syncOpt = arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.OBJECTSTORE_SYNC);
+	String syncOpt = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.OBJECTSTORE_SYNC);
 
 	if (syncOpt != null)
 	{
@@ -990,7 +990,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	if (File.separatorChar != FileSystemStore.unixSeparator)
 	    rewriteSeparator = true;
 
-	String retry = arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.OBJECTSTORE_HIERARCHY_RETRY);
+	String retry = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.OBJECTSTORE_HIERARCHY_RETRY);
 
 	if (retry != null)
 	{
@@ -1013,7 +1013,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	    }
 	}
 
-	String timeout = arjPropertyManager.propertyManager.getProperty(com.arjuna.ats.arjuna.common.Environment.OBJECTSTORE_HIERARCHY_TIMEOUT);
+	String timeout = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.OBJECTSTORE_HIERARCHY_TIMEOUT);
 
 	if (timeout != null)
 	{

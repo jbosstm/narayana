@@ -1648,7 +1648,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 	static
 	{
-		String optimization = jtaPropertyManager.propertyManager.getProperty(
+		String optimization = jtaPropertyManager.getPropertyManager().getProperty(
 				Environment.JTA_TM_IMPLEMENTATION, "OFF");
 
 		if (optimization.equals("ON"))

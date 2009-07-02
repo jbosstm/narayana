@@ -33,42 +33,15 @@ package com.arjuna.ats.jts.common;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
-import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
 
 /**
- * Property manager wrapper for the Arjuna module.
+ * Property manager wrapper for the JTS module.
  */
 
 public class jtsPropertyManager
 {
-    public static PropertyManager propertyManager;
-
     public static PropertyManager getPropertyManager()
     {
-        return propertyManager;
-    }
-
-    static
-    {
-        /**
-         * Retrieve the property manager from the factory and add the JTS
-	     * properties file to it.
-         */
-
-        propertyManager = PropertyManagerFactory.getPropertyManager("com.arjuna.ats.propertymanager", "jts");
-
-	    String propertiesFilename = System.getProperty(Environment.PROPERTIES_FILE);
-
-        if (propertiesFilename == null)
-            propertiesFilename = Configuration.propertiesFile();
-
-        try
-        {
-            propertyManager.load(XMLFilePlugin.class.getName(), propertiesFilename);
-        }
-        catch (Exception e)
-        {
-            throw new ExceptionInInitializerError(e);
-        }
+        return PropertyManagerFactory.getPropertyManagerForModule("jts", Environment.PROPERTIES_FILE);
     }
 }

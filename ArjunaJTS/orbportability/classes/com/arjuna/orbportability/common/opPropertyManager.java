@@ -33,7 +33,6 @@ package com.arjuna.orbportability.common;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
-import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
 
 /**
  * Property manager wrapper for the ORB Portability module.
@@ -42,32 +41,8 @@ import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
  */
 public class opPropertyManager
 {
-    public static PropertyManager  propertyManager;
-
     public static PropertyManager getPropertyManager()
     {
-        return propertyManager;
-    }
-
-    static
-    {
-        /**
-         * Retrieve the property manager from the factory and add the ORB portability properties file to it.
-         */
-        propertyManager = PropertyManagerFactory.getPropertyManager("com.hp.mw.ts.propertymanager", "orbportability");
-
-        String propertiesFilename = System.getProperty(Environment.PROPERTIES_FILE);
-
-        if (propertiesFilename == null)
-            propertiesFilename = Configuration.propertiesFile();
-
-        try
-        {
-            propertyManager.load(XMLFilePlugin.class.getName(), propertiesFilename);
-        }
-        catch (Exception e)
-        {
-            throw new ExceptionInInitializerError(e);
-        }
+        return PropertyManagerFactory.getPropertyManagerForModule("orbportability", Environment.PROPERTIES_FILE);
     }
 }

@@ -152,7 +152,7 @@ public class DefaultLog implements Log, Serializable {
     // ------------------------------------------------------------ Initializer
 
     private static String getStringProperty(String name) {
-        String prop = commonPropertyManager.propertyManager.getProperty(name);
+        String prop = commonPropertyManager.getPropertyManager().getProperty(name);
         // if the property manager has no info set, use the system property
         // and if this isn't set either, default to JAKARTA simple logging.
         if (prop == null) {
@@ -227,7 +227,7 @@ public class DefaultLog implements Log, Serializable {
         setLevel(DefaultLog.LOG_LEVEL_INFO);
 
         // Set log level from properties
-        String lvl = commonPropertyManager.propertyManager.getProperty(LOG_LEVEL, null);
+        String lvl = commonPropertyManager.getPropertyManager().getProperty(LOG_LEVEL, null);
         if(null == lvl) {
             lvl =  System.getProperty(LOG_LEVEL + "info");
         }

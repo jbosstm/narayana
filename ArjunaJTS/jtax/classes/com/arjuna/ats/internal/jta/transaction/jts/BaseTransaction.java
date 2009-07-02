@@ -34,29 +34,15 @@ package com.arjuna.ats.internal.jta.transaction.jts;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.*;
 
-import com.arjuna.ats.internal.jta.utils.jts.StatusConverter;
-
 import org.omg.CosTransactions.*;
 
-import com.arjuna.ats.jts.*;
 import com.arjuna.ats.jts.OTSManager;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 
-import javax.transaction.*;
-
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.common.*;
-
 import com.arjuna.common.util.logging.*;
 
 import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.SystemException;
-import java.lang.SecurityException;
 import java.lang.IllegalStateException;
 import java.lang.NullPointerException;
 import org.omg.CosTransactions.SubtransactionsUnavailable;
@@ -65,11 +51,6 @@ import org.omg.CosTransactions.HeuristicMixed;
 import org.omg.CosTransactions.HeuristicHazard;
 import org.omg.CosTransactions.InvalidControl;
 import org.omg.CosTransactions.WrongTransaction;
-import org.omg.CORBA.NO_PERMISSION;
-import org.omg.CORBA.BAD_OPERATION;
-import org.omg.CORBA.INVALID_TRANSACTION;
-import org.omg.CORBA.TRANSACTION_REQUIRED;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 
 /**
  * Some common methods for UserTransaction and TransactionManager.
@@ -345,7 +326,7 @@ public class BaseTransaction
 
 	static
 	{
-		String subtran = jtaPropertyManager.propertyManager.getProperty(com.arjuna.ats.jta.common.Environment.SUPPORT_SUBTRANSACTIONS);
+		String subtran = jtaPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jta.common.Environment.SUPPORT_SUBTRANSACTIONS);
 
 		if ((subtran != null) && (subtran.equals("YES")))
 			_supportSubtransactions = true;

@@ -41,8 +41,8 @@ public class Delays
 		//
 		// get from the propertyManager
 		//
-		String backoffPeriodString = arjPropertyManager.propertyManager.getProperty(Environment.RECOVERY_BACKOFF_PERIOD);
-		String recoveryPeriodString = arjPropertyManager.propertyManager.getProperty(Environment.PERIODIC_RECOVERY_PERIOD);
+		String backoffPeriodString = arjPropertyManager.getPropertyManager().getProperty(Environment.RECOVERY_BACKOFF_PERIOD);
+		String recoveryPeriodString = arjPropertyManager.getPropertyManager().getProperty(Environment.PERIODIC_RECOVERY_PERIOD);
 
 		try
 		{

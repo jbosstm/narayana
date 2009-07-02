@@ -802,7 +802,7 @@ public class LogStore extends FileSystemStore
 	{
 		if (!checkSync)
 		{
-			String syncOpt = arjPropertyManager.propertyManager
+			String syncOpt = arjPropertyManager.getPropertyManager()
 					.getProperty(Environment.TRANSACTION_SYNC);
 
 			if (syncOpt != null)
@@ -1683,14 +1683,14 @@ public class LogStore extends FileSystemStore
 	{
 		try
 		{
-			String removeMarkers = arjPropertyManager.propertyManager
+			String removeMarkers = arjPropertyManager.getPropertyManager()
 					.getProperty(Environment.TRANSACTION_LOG_SYNC_REMOVAL,
 							"TRUE");
 
 			if (removeMarkers.equalsIgnoreCase("true"))
 				_synchronousRemoval = true;
 
-			String purgeTime = arjPropertyManager.propertyManager.getProperty(Environment.TRANSACTION_LOG_PURGE_TIME);
+			String purgeTime = arjPropertyManager.getPropertyManager().getProperty(Environment.TRANSACTION_LOG_PURGE_TIME);
 
 			if (purgeTime != null)
 			{
@@ -1704,7 +1704,7 @@ public class LogStore extends FileSystemStore
 				}
 			}
 
-			String logSize = arjPropertyManager.propertyManager.getProperty(Environment.TRANSACTION_LOG_SIZE);
+			String logSize = arjPropertyManager.getPropertyManager().getProperty(Environment.TRANSACTION_LOG_SIZE);
 
 			if (logSize != null)
 			{

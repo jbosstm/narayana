@@ -39,50 +39,6 @@ public interface PropertyManagerPluginInterface extends PropertyManager
 {
 	public String getName();
 
-    /**
-     * Get the top-level property manager for this property manager
-     * @return the PropertyManagerPluginInterface
-     */
-    public PropertyManagerPluginInterface getTopLevelPropertyManager();
-
-	/**
-	 * This method creates a property manager with the name <code>moduleName</code>.
-	 * @param modulename
-	 * @return the PropertyManagerPluginInterface
-	 */
-	public PropertyManagerPluginInterface createPropertyManager(String modulename);
-
-	/**
-	 * This method adds the property manager as a child.
-	 */
-	public void addChild(PropertyManager pm);
-
-	/**
-	 * This method adds a parent property manager.
- 	 * @param pm The property manager to add as a parent.
-	 */
-	public void addParent(PropertyManager pm);
-
-	/**
-	 * This method returns an array of parents to the property manager.
-	 * @return a PropertyManagerPluginInterface[]
-	 */
-	public PropertyManagerPluginInterface[] getParents();
-
-	/**
-	 * This method returns an array of the children of the current property manager.
-	 * @return a PropertyManagerPluginInterface[]
-	 */
-	public PropertyManagerPluginInterface[] getChildren();
-
-	/**
-	 * Get the child module.
-	 *
-	 * @param moduleName the name of the module
-	 * @return the PropertyManagerPluginInterface
-	 */
-	public PropertyManagerPluginInterface getChild(String moduleName);
-
 	/**
 	 * Get the properties stored in this property manager only.
 	 * @return the properties

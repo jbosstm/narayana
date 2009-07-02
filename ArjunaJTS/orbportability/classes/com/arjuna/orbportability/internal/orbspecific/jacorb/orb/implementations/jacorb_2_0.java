@@ -40,6 +40,6 @@ public class jacorb_2_0 extends ORBBase
 	{
 		System.setProperty("org.omg.CORBA.ORBClass", "org.jacorb.orb.ORB");
 		System.setProperty("org.omg.CORBA.ORBSingletonClass", "org.jacorb.orb.ORBSingleton");
-		opPropertyManager.propertyManager.setProperty("com.arjuna.orbportability.internal.defaultBindMechanism", Services.bindString(Services.CONFIGURATION_FILE));
+		opPropertyManager.getPropertyManager().setProperty("com.arjuna.orbportability.internal.defaultBindMechanism", Services.bindString(Services.CONFIGURATION_FILE));
 	}
 }

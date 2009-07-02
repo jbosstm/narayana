@@ -47,9 +47,9 @@ public class opLogger
 
 		logger = LogFactory.getLogNoi18n("com.arjuna.orbportability.logging.logger");
 
-		_language = commonPropertyManager.propertyManager.getProperty("language", "en");
+		_language = commonPropertyManager.getPropertyManager().getProperty("language", "en");
 
-		_country = commonPropertyManager.propertyManager.getProperty("country", "US");
+		_country = commonPropertyManager.getPropertyManager().getProperty("country", "US");
 
 		_currentLocale = new Locale(_language, _country);
 		
