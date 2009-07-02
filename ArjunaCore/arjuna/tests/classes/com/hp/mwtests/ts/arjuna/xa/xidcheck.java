@@ -35,26 +35,21 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.xa.*;
 import com.arjuna.ats.internal.arjuna.utils.*;
 
-class xidcheck
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class xidcheck
 {
-    
-    public static void main (String[] args)
+    @Test
+    public void test()
     {
-	Uid test = new Uid();
-	XID xidimple = XATxConverter.getXid(test, true);
+        Uid test = new Uid();
+        XID xidimple = XATxConverter.getXid(test, true);
 
-	System.err.println(xidimple);
+        System.err.println(xidimple);
 
-	Uid convertedUid = XATxConverter.getUid(xidimple);
-	
-	if (test.notEquals(convertedUid))
-	{
-	    System.err.println(test+" "+convertedUid);
+        Uid convertedUid = XATxConverter.getUid(xidimple);
 
-	    System.err.println("Failed.");
-	}
-	else
-	    System.err.println("Passed.");
+        assertEquals(test, convertedUid);
     }
-    
 }

@@ -39,29 +39,32 @@ import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.recovery.RecoverAtomicAction;
 import com.hp.mwtests.ts.arjuna.resources.BasicRecord;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class LogStoreReactivationTest
 {
+    @Test
+    public void test()
+    {
+        System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
+        System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        System.setProperty(Environment.TRANSACTION_LOG_SYNC_REMOVAL, "false");
+        System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "1000000");  // essentially infinite
 
-	public static void main (String[] args)
-	{
-		System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
-		System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
-		System.setProperty(Environment.TRANSACTION_LOG_SYNC_REMOVAL, "false");
-		System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "1000000");  // essentially infinite
-		
-		AtomicAction A = new AtomicAction();
-		Uid txId = A.get_uid();
-		
-		System.err.println("IMPORTANT: ignore warnings about USER_DEF_FIRST0 as they are expected due to BasicRecord usage!");
-		
-		A.begin();
+        AtomicAction A = new AtomicAction();
+        Uid txId = A.get_uid();
 
-		A.add(new BasicRecord());
+        System.err.println("IMPORTANT: ignore warnings about USER_DEF_FIRST0 as they are expected due to BasicRecord usage!");
 
-		A.commit();
-		
-		RecoverAtomicAction rAA = new RecoverAtomicAction(txId, ActionStatus.COMMITTED);
-		
-		rAA.replayPhase2();
-	}
+        A.begin();
+
+        A.add(new BasicRecord());
+
+        A.commit();
+
+        RecoverAtomicAction rAA = new RecoverAtomicAction(txId, ActionStatus.COMMITTED);
+
+        rAA.replayPhase2();
+    }
 }

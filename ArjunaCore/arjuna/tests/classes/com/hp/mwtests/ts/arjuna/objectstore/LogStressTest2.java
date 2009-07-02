@@ -36,6 +36,9 @@ import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.*;
 import com.hp.mwtests.ts.arjuna.resources.BasicRecord;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 /*
  * Run with the log store for N hours and make sure there are
  * no logs left at the end.
@@ -43,62 +46,36 @@ import com.hp.mwtests.ts.arjuna.resources.BasicRecord;
 
 public class LogStressTest2
 {
+    @Test
+    public void test()
+    {
+        System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
+        System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        System.setProperty(Environment.TRANSACTION_LOG_SIZE, "10000");
 
-	public static void main (String[] args)
-	{
-		System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
-		System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
-		System.setProperty(Environment.TRANSACTION_LOG_SIZE, "10000");
-		
-		int timeLimit = 4; // hours
-		
-		for (int i = 0; i < args.length; i++)
-		{
-			if (args[i].compareTo("-time") == 0)
-			{
-				try
-				{
-					Integer v = new Integer(args[i + 1]);
+        int timeLimit = 4; // hours
 
-					timeLimit = v.intValue();
-				}
-				catch (Exception e)
-				{
-					System.err.println(e);
-				}
-			}
-			if (args[i].compareTo("-help") == 0)
-			{
-				System.out
-						.println("Usage: LogStressTest2 [-help] [-time <hours>]");
-				System.exit(0);
-			}
-		}
+        System.err.println("WARNING: this test will run for " + timeLimit + " hours.");
 
-		System.err.println("WARNING: this test will run for "+timeLimit+" hours.");
-		
-		final long stime = System.currentTimeMillis();
-		final long endTime = timeLimit * 60 * 60 * 1000;
-		long ftime;
-		
-		do
-		{
-			try
-			{
-				AtomicAction A = new AtomicAction();
-				
-				A.begin();
-				
-				A.add(new BasicRecord());
-				
-				A.commit();
-			}
-			catch (final Exception ex)
-			{
-			}
-			
-			ftime = System.currentTimeMillis();
-			
-		} while ((ftime - stime) < endTime);
-	}
+        final long stime = System.currentTimeMillis();
+        final long endTime = timeLimit * 60 * 60 * 1000;
+        long ftime;
+
+        do {
+            try {
+                AtomicAction A = new AtomicAction();
+
+                A.begin();
+
+                A.add(new BasicRecord());
+
+                A.commit();
+            }
+            catch (final Exception ex) {
+            }
+
+            ftime = System.currentTimeMillis();
+
+        } while ((ftime - stime) < endTime);
+    }
 }

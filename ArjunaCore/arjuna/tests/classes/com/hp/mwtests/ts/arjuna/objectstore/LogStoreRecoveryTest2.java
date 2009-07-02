@@ -38,81 +38,76 @@ import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 class TestWorker extends Thread
 {
+    public TestWorker(int iters)
+    {
+        _iters = iters;
+    }
 
-	public TestWorker (int iters)
-	{
-		_iters = iters;
-	}
+    public void run()
+    {
+        for (int i = 0; i < _iters; i++) {
+            try {
+                AtomicAction A = new AtomicAction();
 
-	public void run ()
-	{
-		for (int i = 0; i < _iters; i++)
-		{
-			try
-			{
-				AtomicAction A = new AtomicAction();
+                A.begin();
 
-				A.begin();
+                A.add(new BasicRecord());
 
-				A.add(new BasicRecord());
+                A.commit();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
 
-				A.commit();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-			
-			Thread.yield();
-		}
-	}
+            Thread.yield();
+        }
+    }
 
-	private int _iters;
+    private int _iters;
 }
 
 public class LogStoreRecoveryTest2
 {
+    @Test
+    public void test()
+    {
+        int threads = 10;
+        int work = 100;
 
-	public static void main (String[] args)
-	{
-		int threads = 10;
-		int work = 100;
-		
-		System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
-		System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
-		System.setProperty(Environment.TRANSACTION_LOG_SYNC_REMOVAL, "false");
-		System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "1000000");  // essentially infinite
+        System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
+        System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        System.setProperty(Environment.TRANSACTION_LOG_SYNC_REMOVAL, "false");
+        System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "1000000");  // essentially infinite
 
-		TestWorker[] workers = new TestWorker[threads];
+        TestWorker[] workers = new TestWorker[threads];
 
-		for (int i = 0; i < threads; i++)
-		{
-			workers[i] = new TestWorker(work);
+        for (int i = 0; i < threads; i++) {
+            workers[i] = new TestWorker(work);
 
-			workers[i].start();
-		}
-		
-		for (int j = 0; j < threads; j++)
-		{
-			try
-			{
-				workers[j].join();
-				System.err.println("**terminated "+j);
-			}
-			catch (final Exception ex)
-			{
-			}
-		}
+            workers[i].start();
+        }
 
-		/*
-		 * Now have a log that hasn't been deleted. Run recovery and see
-		 * what happens!
-		 */
-		
-		RecoveryManager manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
-		
-		manager.scan();
-	}
+        for (int j = 0; j < threads; j++) {
+            try {
+                workers[j].join();
+                System.err.println("**terminated " + j);
+            }
+            catch (final Exception ex) {
+            }
+        }
+
+        /*
+           * Now have a log that hasn't been deleted. Run recovery and see
+           * what happens!
+           */
+
+        RecoveryManager manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
+
+        manager.scan();
+    }
 }

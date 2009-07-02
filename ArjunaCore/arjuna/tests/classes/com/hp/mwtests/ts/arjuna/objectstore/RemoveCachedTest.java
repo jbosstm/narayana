@@ -32,64 +32,46 @@
 package com.hp.mwtests.ts.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.ArjunaNames;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.*;
 
-import java.io.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import java.util.*;
-
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
+import java.io.IOException;
 
 public class RemoveCachedTest
 {
-    public static void main (String[] args)
+    @Test
+    public void test() throws IOException, ObjectStoreException
     {
-	boolean passed = true;
-	ObjectStore store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_CacheStore());
-	String type = "ArjunaMS/Destinations/a3d6227_dc656_3b77ce7e_2/Messages";
-	InputObjectState buff = new InputObjectState();
+        boolean passed = true;
+        ObjectStore store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_CacheStore());
+        String type = "ArjunaMS/Destinations/a3d6227_dc656_3b77ce7e_2/Messages";
+        InputObjectState buff = new InputObjectState();
 
-	try
-	{
-	    if (store.allObjUids(type, buff, ObjectStore.OS_COMMITTED))
-	    {
-		Uid toRemove = new Uid(Uid.nullUid());
+        if (store.allObjUids(type, buff, ObjectStore.OS_COMMITTED)) {
+            Uid toRemove = new Uid(Uid.nullUid());
 
-		do
-		{
-		    toRemove.unpack(buff);
+            do {
+                toRemove.unpack(buff);
 
-		    if (toRemove.notEquals(Uid.nullUid()))
-		    {
-			System.err.println("Removing "+toRemove+"\n");
+                if (toRemove.notEquals(Uid.nullUid())) {
+                    System.err.println("Removing " + toRemove + "\n");
 
-			if (store.remove_committed(toRemove, type))
-			    passed = true;
-			else
-			{
-			    System.err.println("Failed for "+toRemove);
+                    if (store.remove_committed(toRemove, type))
+                        passed = true;
+                    else {
+                        System.err.println("Failed for " + toRemove);
 
-			    passed = false;
-			}
-		    }
-		} while (toRemove.notEquals(Uid.nullUid()));
-	    }
-	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
-	}
+                        passed = false;
+                    }
+                }
+            } while (toRemove.notEquals(Uid.nullUid()));
+        }
 
-	if (passed)
-	    System.out.println("Passed.");
-	else
-	    System.out.println("Failed.");
+        assertTrue(passed);
     }
-
 }

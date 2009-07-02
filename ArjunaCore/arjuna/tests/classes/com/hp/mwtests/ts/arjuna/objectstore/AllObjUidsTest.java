@@ -32,133 +32,40 @@
 package com.hp.mwtests.ts.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-
 import com.arjuna.ats.arjuna.state.*;
-
 import com.arjuna.ats.arjuna.common.Uid;
-
 import com.arjuna.ats.arjuna.coordinator.TxControl;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
-import org.jboss.dtf.testframework.unittest.Test;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class AllObjUidsTest extends Test
+import java.io.IOException;
+
+public class AllObjUidsTest
 {
-
-    public void run (String[] args)
+    @Test
+    public void test() throws IOException, ObjectStoreException
     {
-	ObjectStore objStore = TxControl.getStore();
-	boolean passed = false;
-	InputObjectState ios = new InputObjectState();
-	String type = "/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/ArjunaMSXAAtomicAction";
+        ObjectStore objStore = TxControl.getStore();
+        String type = "/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/DummyAtomicAction";
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].equals("-help"))
-	    {
-		System.err.println("Usage: [-help] [-type <type name>]");
+        InputObjectState ios = new InputObjectState();
+        objStore.allObjUids(type, ios, ObjectStore.OS_UNKNOWN);
+        Uid uid = new Uid();
+        uid.unpack(ios);
+        assertEquals(Uid.nullUid(), uid);
 
-		System.exit(0);
-	    }
+        ios = new InputObjectState();
+        objStore.allObjUids(type, ios, ObjectStore.OS_COMMITTED);
+        uid = new Uid();
+        uid.unpack(ios);
+        assertEquals(Uid.nullUid(), uid);
 
-	    if (args[i].equals("-type"))
-	    {
-		type = args[i+1];
-
-		objStore = new ObjectStore();
-	    }
-	}
-
-	try
-	{
-	    if (objStore.allObjUids(type, ios, ObjectStore.OS_UNKNOWN))
-	    {
-		Uid id = new Uid(Uid.nullUid());
-
-		do
-		{
-		    try
-		    {
-			id.unpack(ios);
-		    }
-		    catch (Exception ex)
-		    {
-			id = Uid.nullUid();
-		    }
-
-		    if (id.notEquals(Uid.nullUid()))
-			System.err.println("Got UNKNOWN "+id);
-
-		    passed = true;
-
-		} while (id.notEquals(Uid.nullUid()));
-	    }
-
-	    System.err.println("\n");
-
-	    if (objStore.allObjUids(type, ios, ObjectStore.OS_COMMITTED))
-	    {
-		Uid id = new Uid(Uid.nullUid());
-
-		do
-		{
-		    try
-		    {
-			id.unpack(ios);
-		    }
-		    catch (Exception ex)
-		    {
-			id = Uid.nullUid();
-		    }
-
-		    if (id.notEquals(Uid.nullUid()))
-			System.err.println("Got COMMITTED "+id);
-
-		    passed = true;
-
-		} while (id.notEquals(Uid.nullUid()));
-	    }
-
-	    System.err.println("\n");
-
-	    if (objStore.allObjUids(type, ios, ObjectStore.OS_UNCOMMITTED))
-	    {
-		Uid id = new Uid(Uid.nullUid());
-
-		do
-		{
-		    try
-		    {
-			id.unpack(ios);
-		    }
-		    catch (Exception ex)
-		    {
-			id = Uid.nullUid();
-		    }
-
-		    if (id.notEquals(Uid.nullUid()))
-			System.err.println("Got UNCOMMITTED "+id);
-
-		    passed = true;
-
-		} while (id.notEquals(Uid.nullUid()));
-	    }
-	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
-	}
-
-	if (passed)
-	    assertSuccess();
-	else
-	    assertFailure();
+        ios = new InputObjectState();
+        objStore.allObjUids(type, ios, ObjectStore.OS_UNCOMMITTED);
+        uid = new Uid();
+        uid.unpack(ios);
+        assertEquals(Uid.nullUid(), uid);
     }
-
-    public static void main(String[] args)
-    {
-        AllObjUidsTest test = new AllObjUidsTest();
-        test.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-        test.run(args);
-    }
-
 }

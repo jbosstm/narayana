@@ -33,58 +33,24 @@ package com.hp.mwtests.ts.arjuna.atomicaction;
 
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
-import org.jboss.dtf.testframework.unittest.Test;
 
-public class BadAction extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class BadAction
 {
-
-public void run(String[] args)
+    @Test
+    public void test()
     {
-        try
-        {
-            AtomicAction A = new AtomicAction();
-            AtomicAction B = new AtomicAction();
+        AtomicAction A = new AtomicAction();
+        AtomicAction B = new AtomicAction();
 
-            logInformation("Starting top-level action.");
+        A.begin();
+        B.begin();
 
-            A.begin();
+        A.commit();
+        B.commit();
 
-            logInformation(A.toString());
-
-            logInformation("Starting nested action.");
-
-            B.begin();
-
-            logInformation(B.toString());
-
-            logInformation("Committing top-level action. This should fail.");
-
-            A.commit();
-
-            logInformation("Committing nested action. This should fail.");
-
-            B.commit();
-
-            BasicAction current = BasicAction.Current();
-
-            logInformation("Current action is " + current);
-
-            assertSuccess();
-        }
-        catch (Exception e)
-        {
-            logInformation("Unexpected Exception - "+e);
-            e.printStackTrace(System.err);
-            assertFailure();
-        }
+        BasicAction current = BasicAction.Current();
     }
-
-public static void main(String[] args)
-    {
-        BadAction test = new BadAction();
-        test.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-        test.run(args);
-    }
-
-};
+}

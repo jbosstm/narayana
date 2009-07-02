@@ -43,98 +43,67 @@ import java.util.*;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class PersistenceTest extends Test
+public class PersistenceTest
 {
-
-    public void run(String[] args)
+    @Test
+    public void test()
     {
-	boolean passed = false;
-	boolean threaded = false;
-	long stime = Calendar.getInstance().getTime().getTime();
+        boolean passed = false;
+        boolean threaded = false;
+        long stime = Calendar.getInstance().getTime().getTime();
 
-	for (int j = 0; j < args.length; j++)
-	{
-	    if (args[j].equals("-cached"))
-		threaded = true;
-	}
+        for (int i = 0; i < 1000; i++) {
+            try {
+                ObjectStore store = null;
 
-	for (int i = 0; i < 1000; i++)
-	{
-	    try
-	    {
-		ObjectStore store = null;
+                if (!threaded)
+                    store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_ShadowingStore());
+                else
+                    store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_CacheStore());
 
-		if (!threaded)
-		    store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_ShadowingStore());
-		else
-		    store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_CacheStore());
+                byte[] data = new byte[10240];
+                OutputObjectState state = new OutputObjectState();
+                Uid u = new Uid();
 
-		byte[] data = new byte[10240];
-		OutputObjectState state = new OutputObjectState();
-		Uid u = new Uid();
+                state.packBytes(data);
 
-		state.packBytes(data);
+                if (store.write_committed(u, "/StateManager/LockManager/foo", state)) {
+                    passed = true;
+                } else
+                    passed = false;
+            }
+            catch (ObjectStoreException e) {
+                System.out.println(e.getMessage());
 
-		if (store.write_committed(u, "/StateManager/LockManager/foo", state))
-		{
-		    passed = true;
-		}
-		else
-		    passed = false;
-	    }
-	    catch (ObjectStoreException e)
-	    {
-		System.out.println(e.getMessage());
+                passed = false;
+            }
+            catch (IOException ex) {
+                ex.printStackTrace();
 
-		passed = false;
-	    }
-	    catch (IOException ex)
-	    {
-		ex.printStackTrace();
-
-		passed = false;
-	    }
-	}
-
-	try
-	{
-	    Thread.currentThread().sleep(1000);
-	}
-	catch (Exception ex)
-	{
-	}
-
-	long ftime = Calendar.getInstance().getTime().getTime();
-	long timeTaken = ftime - stime;
-
-	System.out.println("time for 1000 write transactions is "+timeTaken);
-
-	try
-	{
-	    Thread.currentThread().sleep(1000);
-	}
-	catch (Exception ex)
-	{
-	}
-
-	if (passed)
-        {
-	    System.out.println("Test passed");
-	    assertSuccess();
+                passed = false;
+            }
         }
-	else
-        {
-	    System.out.println("Test failed");
-	    assertFailure();
-        }
-    }
 
-    public static void main(String[] args)
-    {
-        PersistenceTest test = new PersistenceTest();
-        test.run(args);
+        try {
+            Thread.currentThread().sleep(1000);
+        }
+        catch (Exception ex) {
+        }
+
+        long ftime = Calendar.getInstance().getTime().getTime();
+        long timeTaken = ftime - stime;
+
+        System.out.println("time for 1000 write transactions is " + timeTaken);
+
+        try {
+            Thread.currentThread().sleep(1000);
+        }
+        catch (Exception ex) {
+        }
+
+        assertTrue(passed);
     }
 }

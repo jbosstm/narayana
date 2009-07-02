@@ -20,37 +20,26 @@
  */
 package com.hp.mwtests.ts.arjuna.common;
 
-import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
-import com.arjuna.ats.arjuna.coordinator.Reapable;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.internal.arjuna.coordinator.ReaperElement;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class TxControlUnitTest extends TestCase
+public class TxControlUnitTest
 {
-    public static Test suite ()
+    @Test
+    public void testStartStop() throws Exception
     {
-        return new TestSuite(TxControlUnitTest.class);
-    }
+        TxControl.enable();
 
-    public void testStartStop () throws Exception
-    {
-        TxControl.enable();
-        
         assertTrue(TxControl.isEnabled());
-        
+
         TxControl.disable(true);
-        
+
         assertFalse(TxControl.isEnabled());
-        
+
         TxControl.enable();
-        
+
         assertTrue(TxControl.isEnabled());
     }
 }

@@ -31,20 +31,16 @@
 
 package com.hp.mwtests.ts.arjuna.recovery;
 
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.recovery.*;
 
-import com.hp.mwtests.ts.arjuna.resources.*;
-
-import org.jboss.dtf.testframework.unittest.Test;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 class RecoveryScanImple implements RecoveryScan
 {
-    public void completed ()
+    public void completed()
     {
-	passed = true;
+        passed = true;
     }
 
     public boolean passed = false;
@@ -53,29 +49,24 @@ class RecoveryScanImple implements RecoveryScan
 
 public class CallbackRecoveryTest
 {
-
-    public static void main (String[] args)
+    @Test
+    public void test()
     {
-	RecoveryManager manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
-	DummyRecoveryModule module = new DummyRecoveryModule();
-	RecoveryScanImple rs = new RecoveryScanImple();
+        RecoveryManager manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
+        DummyRecoveryModule module = new DummyRecoveryModule();
+        RecoveryScanImple rs = new RecoveryScanImple();
 
-	manager.addModule(module);
+        manager.addModule(module);
 
-	manager.scan(rs);
+        manager.scan(rs);
 
-	try
-	{
-	    Thread.currentThread().sleep(120000);
-	}
-	catch (Exception ex)
-	{
-	}
-
-	if (module.finished() && rs.passed)
-	    System.err.println("Passed.");
-	else
-	    System.err.println("Failed.");
+        try {
+            Thread.currentThread().sleep(120000);
+        }
+        catch (Exception ex) {
+        }
+        
+        assertTrue(module.finished());
+        assertTrue(rs.passed);
     }
-
 }

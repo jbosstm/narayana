@@ -32,73 +32,43 @@
 package com.hp.mwtests.ts.arjuna.destroy;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
 
 import com.hp.mwtests.ts.arjuna.resources.*;
 
-import org.jboss.dtf.testframework.unittest.Test;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class DestroyTest extends Test
+public class DestroyTest
 {
-
-public void run(String[] args)
+    @Test
+    public void test()
     {
-        try
-        {
-            test();
+        for (int i = 0; i < 100; i++) {
+            AtomicAction A = new AtomicAction();
 
-            assertSuccess();
+            A.begin();
+
+            BasicObject bo = new BasicObject();
+
+            bo.set(2);
+
+            A.commit();
+
+            AtomicAction B = new AtomicAction();
+
+            B.begin();
+
+            bo.destroy();
+
+            B.abort();
+
+            AtomicAction C = new AtomicAction();
+
+            C.begin();
+
+            bo.destroy();
+
+            C.commit();
         }
-        catch (Exception e)
-        {
-            logInformation("Unexpected exception thrown - "+e);
-            e.printStackTrace(System.err);
-            assertFailure();
-        }
-
-	System.gc();
-
-	System.runFinalization();
     }
-
-private void test () throws Exception
-    {
-	for (int i = 0; i < 100; i++)
-	{
-	    AtomicAction A = new AtomicAction();
-
-	    A.begin();
-
-	    BasicObject bo = new BasicObject();
-
-	    bo.set(2);
-
-	    A.commit();
-
-	    AtomicAction B = new AtomicAction();
-
-	    B.begin();
-
-	    bo.destroy();
-
-	    B.abort();
-
-	    AtomicAction C = new AtomicAction();
-
-	    C.begin();
-
-	    bo.destroy();
-
-	    C.commit();
-	}
-    }
-
-public static void main(String[] args)
-    {
-        DestroyTest test = new DestroyTest();
-    	test.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-    	test.run(args);
-    }
-
 }

@@ -40,132 +40,88 @@ import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 class StressWorker extends Thread
 {
+    public StressWorker(int iters, int thread)
+    {
+        _iters = iters;
+        _thread = thread;
+    }
 
-	public StressWorker (int iters, int thread)
-	{
-		_iters = iters;
-		_thread = thread;
-	}
+    public void run()
+    {
+        for (int i = 0; i < _iters; i++) {
+            try {
+                AtomicAction A = new AtomicAction();
 
-	public void run ()
-	{
-		for (int i = 0; i < _iters; i++)
-		{
-			try
-			{
-				AtomicAction A = new AtomicAction();
+                A.begin();
 
-				A.begin();
+                A.add(new BasicRecord());
 
-				A.add(new BasicRecord());
+                A.commit();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
 
-				A.commit();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-			
-			Thread.yield();
-		}
-	}
+            Thread.yield();
+        }
+    }
 
-	private int _iters;
-	private int _thread;
+    private int _iters;
+    private int _thread;
 }
 
 public class LogStressTest
 {
+    @Test
+    public void test()
+    {
+        int threads = 10;
+        int work = 100;
 
-	public static void main (String[] args)
-	{
-		int threads = 10;
-		int work = 100;
+        System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
+        System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");
 
-		System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
-		System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
-		System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");
-		
-		for (int i = 0; i < args.length; i++)
-		{
-			if (args[i].compareTo("-threads") == 0)
-			{
-				try
-				{
-					Integer v = new Integer(args[i + 1]);
+        StressWorker[] workers = new StressWorker[threads];
 
-					threads = v.intValue();
-				}
-				catch (Exception e)
-				{
-					System.err.println(e);
-				}
-			}
-			if (args[i].compareTo("-work") == 0)
-			{
-				try
-				{
-					Integer v = new Integer(args[i + 1]);
+        for (int i = 0; i < threads; i++) {
+            workers[i] = new StressWorker(work, i);
 
-					work = v.intValue();
-				}
-				catch (Exception e)
-				{
-					System.err.println(e);
-				}
-			}
-			if (args[i].compareTo("-help") == 0)
-			{
-				System.out
-						.println("Usage: LogStressTest [-help] [-threads <number>] [-work <number>]");
-				System.exit(0);
-			}
-		}
+            workers[i].start();
+        }
 
-		StressWorker[] workers = new StressWorker[threads];
+        for (int j = 0; j < threads; j++) {
+            try {
+                workers[j].join();
+            }
+            catch (final Exception ex) {
+            }
+        }
 
-		for (int i = 0; i < threads; i++)
-		{
-			workers[i] = new StressWorker(work, i);
+        InputObjectState ios = new InputObjectState();
+        boolean passed = false;
 
-			workers[i].start();
-		}
-		
-		for (int j = 0; j < threads; j++)
-		{
-			try
-			{
-				workers[j].join();
-			}
-			catch (final Exception ex)
-			{
-			}
-		}
+        try {
+            TxControl.getStore().allObjUids(new AtomicAction().type(), ios, ObjectStore.OS_UNKNOWN);
 
-		InputObjectState ios = new InputObjectState();
-		boolean passed = false;
-		
-		try
-		{
-			TxControl.getStore().allObjUids(new AtomicAction().type(), ios, ObjectStore.OS_UNKNOWN);
-			
-			Uid tempUid = new Uid(Uid.nullUid());
+            Uid tempUid = new Uid(Uid.nullUid());
 
-			tempUid.unpack(ios);
-			
-			// there should be no entries left
-				
-			if (tempUid.equals(Uid.nullUid()))
-			{
-				passed = true;
-			}
-		}
-		catch (final Exception ex)
-		{
-		}
-		
-		System.err.println("Test "+((passed) ? "passed" : "failed"));
-	}
+            tempUid.unpack(ios);
+
+            // there should be no entries left
+
+            if (tempUid.equals(Uid.nullUid())) {
+                passed = true;
+            }
+        }
+        catch (final Exception ex) {
+        }
+
+        assertTrue(passed);
+    }
 }

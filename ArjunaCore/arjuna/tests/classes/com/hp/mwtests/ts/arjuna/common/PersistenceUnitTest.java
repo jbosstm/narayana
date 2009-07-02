@@ -20,38 +20,26 @@
  */
 package com.hp.mwtests.ts.arjuna.common;
 
-import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
-import com.arjuna.ats.arjuna.coordinator.Reapable;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.internal.arjuna.coordinator.ReaperElement;
 import com.hp.mwtests.ts.arjuna.resources.BasicObject;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class PersistenceUnitTest extends TestCase
+public class PersistenceUnitTest
 {
-    public static Test suite ()
-    {
-        return new TestSuite(PersistenceUnitTest.class);
-    }
-
-    public void testSaveRestore () throws Exception
+    @Test
+    public void testSaveRestore()
     {
         final BasicObject obj = new BasicObject();
         final Uid objUid = obj.get_uid();
 
         obj.set(1234);
         obj.deactivate();
-        
+
         final BasicObject rec = new BasicObject(objUid);
         int res = rec.get();
 
-        assertEquals(res, 1234);
+        assertEquals(1234, res);
     }
 }

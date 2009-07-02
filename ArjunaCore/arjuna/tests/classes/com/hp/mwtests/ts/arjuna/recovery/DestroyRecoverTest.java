@@ -32,101 +32,89 @@
 package com.hp.mwtests.ts.arjuna.recovery;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 
 import com.hp.mwtests.ts.arjuna.resources.*;
 
-import org.jboss.dtf.testframework.unittest.Test;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class DestroyRecoverTest
 {
-
-    public static void main (String[] args)
+    @Test
+    public void test()
     {
-	AtomicAction A = new AtomicAction();
-	BasicObject bo = null;
-	Uid txId = null;
-	Uid objId = null;
-	boolean passed = true;
+        AtomicAction A = new AtomicAction();
+        BasicObject bo = null;
+        Uid txId = null;
+        Uid objId = null;
+        boolean passed = true;
 
-	com.arjuna.ats.arjuna.common.Configuration.setAlternativeOrdering(true);
+        com.arjuna.ats.arjuna.common.Configuration.setAlternativeOrdering(true);
 
-	try
-	{
-	    A.begin();
+        try {
+            A.begin();
 
-	    bo = new BasicObject();
-	    objId = bo.get_uid();
+            bo = new BasicObject();
+            objId = bo.get_uid();
 
-	    A.removeThread();
+            A.removeThread();
 
-	    A.commit();
-	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
+            A.commit();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
 
-	    passed = false;
-	}
+            passed = false;
+        }
 
-	if (passed)
-	{
-	    try
-	    {
-		A = new AtomicAction();
+        if (passed) {
+            try {
+                A = new AtomicAction();
 
-		txId = A.get_uid();
+                txId = A.get_uid();
 
-		A.begin();
+                A.begin();
 
-		bo.activate();
+                bo.activate();
 
-		bo.destroy();
+                bo.destroy();
 
-		A.add(new BasicCrashRecord());
+                A.add(new BasicCrashRecord());
 
-		A.removeThread();
+                A.removeThread();
 
-		A.commit();
-	    }
-	    catch (com.arjuna.ats.arjuna.exceptions.FatalError ex)
-	    {
-		// ignore
-	    }
-	    catch (Exception ex)
-	    {
-		ex.printStackTrace();
+                A.commit();
+            }
+            catch (com.arjuna.ats.arjuna.exceptions.FatalError ex) {
+                // ignore
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
 
-		passed = false;
-	    }
-	}
+                passed = false;
+            }
+        }
 
-	if (passed)
-	{
-	    try
-	    {
-		passed = false;
+        if (passed) {
+            try {
+                passed = false;
 
-		RecoveryTransaction tx = new RecoveryTransaction(txId);
+                RecoveryTransaction tx = new RecoveryTransaction(txId);
 
-		tx.doCommit();
+                tx.doCommit();
 
-		BasicObject recoveredObject = new BasicObject(objId);
+                BasicObject recoveredObject = new BasicObject(objId);
 
-		if (recoveredObject.get() == -1)
-		    passed = true;
-	    }
-	    catch (Exception ex)
-	    {
-		ex.printStackTrace();
-	    }
-	}
+                if (recoveredObject.get() == -1)
+                    passed = true;
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
 
-	if (passed)
-	    System.out.println("Passed.");
-	else
-	    System.out.println("Failed.");
+        assertTrue(passed);
     }
 
 }

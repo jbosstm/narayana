@@ -36,95 +36,41 @@ import com.hp.mwtests.ts.arjuna.resources.*;
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.LastResourceRecord;
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
-import org.jboss.dtf.testframework.unittest.Test;
 
-public class LastResource extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class LastResource
 {
-
-    public void run (String[] args)
+    @Test
+    public void run()
     {
-        try
-        {
-	    boolean success = false;
-            AtomicAction A = new AtomicAction();
-	    OnePhase opRes = new OnePhase();
+        AtomicAction A = new AtomicAction();
+        OnePhase opRes = new OnePhase();
 
-	    System.err.println("Starting top-level action.");
+        A.begin();
+        A.add(new LastResourceRecord(opRes));
+        A.add(new ShutdownRecord(ShutdownRecord.FAIL_IN_PREPARE));
+        A.commit();
 
-            A.begin();
+        assertEquals(OnePhase.ROLLEDBACK, opRes.status());
 
-	    A.add(new LastResourceRecord(opRes));
-	    A.add(new ShutdownRecord(ShutdownRecord.FAIL_IN_PREPARE));
+        A = new AtomicAction();
+        opRes = new OnePhase();
 
-	    A.commit();
+        A.begin();
+        A.add(new LastResourceRecord(opRes));
+        A.add(new ShutdownRecord(ShutdownRecord.FAIL_IN_COMMIT));
+        A.commit();
 
-	    if (opRes.status() != OnePhase.COMMITTED)
-	    {
-		System.err.println("Confirmed that one-phase record is last in prepare.");
+        assertEquals(OnePhase.COMMITTED, opRes.status());
 
-		A = new AtomicAction();
-		opRes = new OnePhase();
+        A = new AtomicAction();
+        A.begin();
+        A.add(new LastResourceRecord(new OnePhase()));
+        
+        assertEquals(AddOutcome.AR_DUPLICATE, A.add(new LastResourceRecord(new OnePhase())) );
 
-		A.begin();
-
-		System.err.println("\nStarting new top-level action.");
-
-		A.add(new LastResourceRecord(opRes));
-		A.add(new ShutdownRecord(ShutdownRecord.FAIL_IN_COMMIT));
-
-		A.commit();
-
-		if (opRes.status() == OnePhase.COMMITTED)
-		{
-		    System.err.println("Confirmed that one-phase record is first in commit.");
-
-		    A = new AtomicAction();
-
-		    A.begin();
-
-		    A.add(new LastResourceRecord(new OnePhase()));
-
-		    if (A.add(new LastResourceRecord(new OnePhase())) == AddOutcome.AR_DUPLICATE)
-		    {
-			System.err.println("\nConfirmed that only one such resource can be added.");
-
-			assertSuccess();
-		    }
-		    else
-		    {
-			System.err.println("\nMultiple such resources can be added!");
-
-			assertFailure();
-		    }
-		}
-		else
-		{
-		    System.err.println("One-phase record is last in commit!");
-
-		    assertFailure();
-		}
-	    }
-	    else
-	    {
-		System.err.println("One-phase record is first in prepare!");
-
-		assertFailure();
-	    }
-        }
-        catch (Exception e)
-        {
-            logInformation("Unexpected Exception - "+e);
-            e.printStackTrace(System.err);
-            assertFailure();
-        }
+        A.abort();
     }
-
-    public static void main(String[] args)
-    {
-        LastResource test = new LastResource();
-        test.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-        test.run(args);
-    }
-
-};
+}

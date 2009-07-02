@@ -38,27 +38,27 @@ import java.sql.*;
 public class MyAccess implements com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess
 {
 
-    public Connection getConnection () throws SQLException
+    public Connection getConnection() throws SQLException
     {
-	return null;
+        return null;
     }
-    
-    public void putConnection (Connection conn)
+
+    public void putConnection(Connection conn)
     {
     }
 
-    public String tableName ()
+    public String tableName()
     {
-	return null;
+        return null;
     }
 
-    public boolean dropTable ()
+    public boolean dropTable()
     {
-	return false;
+        return false;
     }
 
-    public void initialise (ObjectName objName)
+    public void initialise(ObjectName objName)
     {
     }
-    
+
 }

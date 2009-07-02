@@ -33,37 +33,33 @@ package com.hp.mwtests.ts.arjuna.performance;
 
 import com.hp.mwtests.ts.arjuna.resources.*;
 
-import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
 
-import org.jboss.dtf.testframework.unittest.Test;
-
-import java.util.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class Performance3
 {
-
-    public static void main (String[] args)
+    @Test
+    public void test()
     {
-	long stime = System.currentTimeMillis();
+        long stime = System.currentTimeMillis();
 
-	for (int i = 0; i < 1000; i++)
-	{
-	    TwoPhaseCoordinator tx = new TwoPhaseCoordinator();
+        for (int i = 0; i < 1000; i++) {
+            TwoPhaseCoordinator tx = new TwoPhaseCoordinator();
 
-	    tx.start();
+            tx.start();
 
-	    tx.addSynchronization(new SyncRecord());
+            tx.addSynchronization(new SyncRecord());
 
-	    tx.end(true);
-	}
+            tx.end(true);
+        }
 
-	long ftime = System.currentTimeMillis();
-	double elapsedTime = (ftime - stime)/1000.0;
-	double tps = 1000.0/elapsedTime;
+        long ftime = System.currentTimeMillis();
+        double elapsedTime = (ftime - stime) / 1000.0;
+        double tps = 1000.0 / elapsedTime;
 
-	System.err.println("TPS: "+tps);
+        System.err.println("TPS: " + tps);
     }
 
 }

@@ -26,8 +26,8 @@ import com.arjuna.ats.arjuna.coordinator.CheckedActionFactory;
 
 public class DummyCheckedActionFactory implements CheckedActionFactory
 {
-    public CheckedAction getCheckedAction (final Uid txId,
-            final String actionType)
+    public CheckedAction getCheckedAction(final Uid txId,
+                                          final String actionType)
     {
         CheckedActionTest.success = true;
 

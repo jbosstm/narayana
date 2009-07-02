@@ -24,27 +24,24 @@ import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class CheckedActionTest
 {
-    public static void main (String[] args)
+    @Test
+    public void test()
     {
-        try
-        {
-            arjPropertyManager.getPropertyManager().setProperty(Environment.CHECKEDACTION_FACTORY, DummyCheckedActionFactory.class.getCanonicalName());
-            
-            AtomicAction A = new AtomicAction();
-         
-            A.begin();
-            
-            A.commit();
-            
-            System.out.println("Test completed "+((success) ? "successfully" : "unsuccessfully"));
-        }
-        catch (final Exception e)
-        {
-            
-        }
+        arjPropertyManager.getPropertyManager().setProperty(Environment.CHECKEDACTION_FACTORY, DummyCheckedActionFactory.class.getCanonicalName());
+
+        AtomicAction A = new AtomicAction();
+
+        A.begin();
+
+        A.commit();
+
+        assertTrue(success);
     }
-    
+
     public static boolean success = false;
 }

@@ -40,63 +40,60 @@ import com.arjuna.ats.arjuna.recovery.RecoveryEnvironment;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class LogMoveTest
 {
-    public static void main (String[] args)
+    @Test
+    public void test()
     {
         ObjectStore os = TxControl.getStore();
         OutputObjectState fluff = new OutputObjectState();
         Uid kungfuTx = new Uid();
-        boolean outcome = false;
+        boolean passed = false;
         final String tn = new AtomicAction().type();
 
-        try
-        {
+        try {
             kungfuTx.pack(fluff);
 
             System.err.println("Creating dummy log");
-            
+
             os.write_committed(kungfuTx, tn, fluff);
 
-            if (os.currentState(kungfuTx, tn) == ObjectStore.OS_COMMITTED)
-            {
-                System.err.println("Wrote dummy transaction "+kungfuTx);
+            if (os.currentState(kungfuTx, tn) == ObjectStore.OS_COMMITTED) {
+                System.err.println("Wrote dummy transaction " + kungfuTx);
 
                 System.setProperty(RecoveryEnvironment.EXPIRY_SCAN_INTERVAL, "1");
                 System.setProperty(Environment.PERIODIC_RECOVERY_PERIOD, "8000000");
-                
+
                 RecoveryManager manager = RecoveryManager
                         .manager(RecoveryManager.DIRECT_MANAGEMENT);
 
                 manager.scan();
-                
-                try
-                {
-                   Thread.sleep(3600000);
+
+                try {
+                    Thread.sleep(3600000);
                 }
-                catch (final Exception ex)
-                {                  
+                catch (final Exception ex) {
                 }
-                
+
                 manager.scan();
-                
+
                 if (os.currentState(kungfuTx, tn) == ObjectStore.OS_COMMITTED)
                     System.err.println("Transaction log not moved!");
-                else
-                {
+                else {
                     System.err.println("Transaction log moved!");
-                    
-                    outcome = true;
+
+                    passed = true;
                 }
-            }
-            else
+            } else
                 System.err.println("State is not committed!");
         }
-        catch (final Exception ex)
-        {
+        catch (final Exception ex) {
             ex.printStackTrace();
         }
 
-        System.err.println("Test outcome: " + (outcome ? "passed" : "failed"));
+        assertTrue(passed);
     }
 }

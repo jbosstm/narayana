@@ -32,49 +32,21 @@ package com.hp.mwtests.ts.arjuna.atomicaction;
  */
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
-import org.jboss.dtf.testframework.unittest.Test;
+import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 
-public class ActionScope extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class ActionScope
 {
-
-public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-        try
-        {
-            test();
+        AtomicAction atomicAction = new AtomicAction();
 
-            assertSuccess();
-        }
-        catch (Exception e)
-        {
-            logInformation("Unexpected exception thrown - "+e);
-            e.printStackTrace(System.err);
-            assertFailure();
-        }
+        atomicAction.begin();
+        atomicAction.commit();
 
-
-	System.gc();
-
-	System.runFinalization();
+        assertEquals(ActionStatus.COMMITTED, atomicAction.status());
     }
-
-private void test () throws Exception
-    {
-	AtomicAction A = new AtomicAction();
-
-	A.begin();
-
-	A = null;
-
-	System.gc();
-    }
-
-public static void main(String[] args)
-    {
-        ActionScope test = new ActionScope();
-    	test.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-    	test.run(args);
-    }
-};
+}

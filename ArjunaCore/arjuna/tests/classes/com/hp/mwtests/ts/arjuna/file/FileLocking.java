@@ -31,9 +31,10 @@ package com.hp.mwtests.ts.arjuna.file;
  * $Id: FileLocking.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.utils.*;
-import org.jboss.dtf.testframework.unittest.Test;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.io.*;
 
@@ -48,117 +49,78 @@ import java.lang.InterruptedException;
 class FileContender extends Thread
 {
 
-public FileContender (File file, int id, int lmode)
+    public FileContender(File file, int id, int lmode)
     {
-	_theFile = file;
-	_id = id;
-	_mode = lmode;
+        _theFile = file;
+        _id = id;
+        _mode = lmode;
     }
 
-public void run ()
+    public void run()
     {
-	FileLock fileLock = new FileLock(_theFile);
+        FileLock fileLock = new FileLock(_theFile);
 
-	for (int i = 0; i < 100; i++)
-	{
-	    if (fileLock.lock(_mode, false))
-	    {
-		System.out.println("thread "+_id+" locked file.");
+        for (int i = 0; i < 100; i++) {
+            if (fileLock.lock(_mode, false)) {
+                System.out.println("thread " + _id + " locked file.");
 
-		Thread.yield();
+                Thread.yield();
 
-		fileLock.unlock();
+                fileLock.unlock();
 
-		System.out.println("thread "+_id+" unlocked file.");
+                System.out.println("thread " + _id + " unlocked file.");
 
-		Thread.yield();
-	    }
-	    else
-	    {
-		System.out.println("thread "+_id+" could not lock file.");
+                Thread.yield();
+            } else {
+                System.out.println("thread " + _id + " could not lock file.");
 
-		Thread.yield();
-	    }
-	}
+                Thread.yield();
+            }
+        }
     }
 
-private File _theFile;
-private int _id;
-private int _mode;
+    private File _theFile;
+    private int _id;
+    private int _mode;
 
-};
+}
 
-public class FileLocking extends Test
+public class FileLocking
 {
-
-public void run(String[] args)
+    @Test
+    public void test() throws IOException
     {
-	int lmode = FileLock.F_WRLCK;
+        int lmode = FileLock.F_WRLCK;
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-read") == 0)
-		lmode = FileLock.F_RDLCK;
-	}
+        /*
+       * Create the file to contend over.
+       */
 
-	/*
-	 * Create the file to contend over.
-	 */
+        File theFile = new File("foobar");
+        theFile.deleteOnExit();
 
-	File theFile = new File("foobar");
+        DataOutputStream ofile = new DataOutputStream(new FileOutputStream(theFile));
 
-	try
-	{
-	    DataOutputStream ofile = new DataOutputStream(new FileOutputStream(theFile));
+        ofile.writeInt(0);
 
-	    ofile.writeInt(0);
-	}
-	catch (IOException e)
-	{
-	    logInformation("An error occurred while creating file.");
-            e.printStackTrace(System.err);
-	    assertFailure();
-	}
+        /*
+       * Now create the threads.
+       */
 
-	/*
-	 * Now create the threads.
-	 */
+        FileContender thread1 = new FileContender(theFile, 1, lmode);
+        FileContender thread2 = new FileContender(theFile, 2, lmode);
 
-	FileContender thread1 = new FileContender(theFile, 1, lmode);
-	FileContender thread2 = new FileContender(theFile, 2, lmode);
+        thread1.start();
+        thread2.start();
 
-	thread1.start();
-	thread2.start();
-
-	try
-	{
-	    thread1.join();
-	    thread2.join();
-
-	    logInformation("Test completed successfully.");
-
-            assertSuccess();
-	}
-	catch (InterruptedException e)
-	{
-	    logInformation("Test did not complete successfully.");
-            e.printStackTrace(System.err);
-            assertFailure();
-	}
-
-	/*
-	 * Now tidy up.
-	 */
-
-	theFile.delete();
+        try {
+            thread1.join();
+            thread2.join();
+        }
+        catch (InterruptedException e) {
+            fail("Test did not complete successfully.");
+        }
     }
 
-    public static void main(String[] args)
-    {
-        FileLocking fileTest = new FileLocking();
 
-    	fileTest.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-
-    	fileTest.run(args);
-    }
 }

@@ -38,134 +38,118 @@ import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class LogStoreRecoveryTest
 {
-	public static void main (String[] args)
-	{
-		System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
-		System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");
-		
-		ObjectStore objStore = TxControl.getStore();
-		final int numberOfTransactions = 1000;
-		final Uid[] ids = new Uid[numberOfTransactions];
-		final int fakeData = 0xdeedbaaf;
-		final String type = "/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/LogStoreRecoveryTest";
-		
-		for (int i = 0; i < numberOfTransactions; i++)
-		{
-			OutputObjectState dummyState = new OutputObjectState();
-			
-			try
-			{
-				dummyState.packInt(fakeData);			
-				ids[i] = new Uid();
-				objStore.write_committed(ids[i], type, dummyState);
-			}
-			catch (final Exception ex)
-			{
-				ex.printStackTrace();
-			}
-		}
-		
-		/*
-		 * Remove 50% of the entries, simulating a crash during
-		 * normal execution.
-		 * 
-		 * Q: why not just write 50% in the first place?
-		 * A: because we will extend this test to allow the recovery
-		 *    system to run in between writing and removing.
-		 */
-		
-		for (int i = 0; i < numberOfTransactions / 2; i++)
-		{
-			try
-			{
-				objStore.remove_committed(ids[i], type);
-			}
-			catch (final Exception ex)
-			{
-				ex.printStackTrace();
-			}
-		}
-		
-		try
-		{
-			/*
-			 * Give the purger thread a chance to run and delete
-			 * the entries we've "removed" (really only marked as
-			 * being removable.)
-			 */
-			
-			Thread.sleep(12000);
-		}
-		catch (final Exception ex)
-		{
-		}
-		
-		/*
-		 * Now get a list of entries to work on.
-		 */
-		
-		InputObjectState ios = new InputObjectState();
-		boolean passed = true;
-		
-		try
-		{
-			if (objStore.allObjUids(type, ios, ObjectStore.OS_UNKNOWN))
-			{
-				Uid id = new Uid(Uid.nullUid());
-				int numberOfEntries = 0;
-				
-				do
-				{
-					try
-					{
-						id.unpack(ios);
-					}
-					catch (Exception ex)
-					{
-						id = Uid.nullUid();
-					}
+    @Test
+    public void test()
+    {
+        System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");
 
-					if (id.notEquals(Uid.nullUid()))
-					{
-						numberOfEntries++;
-						
-						boolean found = false;
-						
-						for (int i = 0; i < ids.length; i++)
-						{
-							if (id.equals(ids[i]))
-								found = true;
-						}
-						
-						if (passed && !found)
-						{
-							passed = false;
+        ObjectStore objStore = TxControl.getStore();
+        final int numberOfTransactions = 1000;
+        final Uid[] ids = new Uid[numberOfTransactions];
+        final int fakeData = 0xdeedbaaf;
+        final String type = "/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/LogStoreRecoveryTest";
 
-							System.err.println("Found unexpected transaction!");
-						}
-					}
-				}
-				while (id.notEquals(Uid.nullUid()));
-				
-				if ((numberOfEntries == numberOfTransactions / 2) && passed)
-				{
-					System.err.println("Would attempt recovery on "+numberOfEntries+" dead transactions.");
-				}
-				else
-				{
-					passed = false;
+        for (int i = 0; i < numberOfTransactions; i++) {
+            OutputObjectState dummyState = new OutputObjectState();
 
-					System.err.println("Expected "+(numberOfTransactions / 2)+" and got "+numberOfEntries);
-				}
-			}
-		}
-		catch (final Exception ex)
-		{
-			ex.printStackTrace();
-		}
-		
-		System.err.println("Test "+((passed) ? "passed" : "failed"));
-	}
+            try {
+                dummyState.packInt(fakeData);
+                ids[i] = new Uid();
+                objStore.write_committed(ids[i], type, dummyState);
+            }
+            catch (final Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        /*
+           * Remove 50% of the entries, simulating a crash during
+           * normal execution.
+           *
+           * Q: why not just write 50% in the first place?
+           * A: because we will extend this test to allow the recovery
+           *    system to run in between writing and removing.
+           */
+
+        for (int i = 0; i < numberOfTransactions / 2; i++) {
+            try {
+                objStore.remove_committed(ids[i], type);
+            }
+            catch (final Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        try {
+            /*
+                * Give the purger thread a chance to run and delete
+                * the entries we've "removed" (really only marked as
+                * being removable.)
+                */
+
+            Thread.sleep(12000);
+        }
+        catch (final Exception ex) {
+        }
+
+        /*
+           * Now get a list of entries to work on.
+           */
+
+        InputObjectState ios = new InputObjectState();
+        boolean passed = true;
+
+        try {
+            if (objStore.allObjUids(type, ios, ObjectStore.OS_UNKNOWN)) {
+                Uid id = new Uid(Uid.nullUid());
+                int numberOfEntries = 0;
+
+                do {
+                    try {
+                        id.unpack(ios);
+                    }
+                    catch (Exception ex) {
+                        id = Uid.nullUid();
+                    }
+
+                    if (id.notEquals(Uid.nullUid())) {
+                        numberOfEntries++;
+
+                        boolean found = false;
+
+                        for (int i = 0; i < ids.length; i++) {
+                            if (id.equals(ids[i]))
+                                found = true;
+                        }
+
+                        if (passed && !found) {
+                            passed = false;
+
+                            System.err.println("Found unexpected transaction!");
+                        }
+                    }
+                }
+                while (id.notEquals(Uid.nullUid()));
+
+                if ((numberOfEntries == numberOfTransactions / 2) && passed) {
+                    System.err.println("Would attempt recovery on " + numberOfEntries + " dead transactions.");
+                } else {
+                    passed = false;
+
+                    System.err.println("Expected " + (numberOfTransactions / 2) + " and got " + numberOfEntries);
+                }
+            }
+        }
+        catch (final Exception ex) {
+            ex.printStackTrace();
+        }
+
+        assertTrue(passed);
+    }
 }

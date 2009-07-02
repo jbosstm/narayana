@@ -38,125 +38,109 @@ import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class LogStoreTest2
 {
-	public static void main (String[] args)
-	{
-		System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
-		System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");
-		
-		ObjectStore objStore = TxControl.getStore();
-		final int numberOfTransactions = 1000;
-		final Uid[] ids = new Uid[numberOfTransactions];
-		final int fakeData = 0xdeedbaaf;
-		final String type = "/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/Test";
-		
-		for (int i = 0; i < numberOfTransactions; i++)
-		{
-			OutputObjectState dummyState = new OutputObjectState();
-			
-			try
-			{
-				dummyState.packInt(fakeData);			
-				ids[i] = new Uid();
-				objStore.write_committed(ids[i], type, dummyState);
-			}
-			catch (final Exception ex)
-			{
-				ex.printStackTrace();
-			}
-		}
-		
-		try
-		{
-			objStore.remove_committed(ids[0], type);
-		}
-		catch (final Exception ex)
-		{
-			ex.printStackTrace();
-		}
-		
-		try
-		{
-			/*
-			 * Give the purger thread a chance to run and delete
-			 * the entry.
-			 */
-			
-			Thread.sleep(12000);
-		}
-		catch (final Exception ex)
-		{
-		}
-		
-		InputObjectState ios = new InputObjectState();
-		boolean passed = false;
-		
-		try
-		{
-			if (objStore.allObjUids(type, ios, ObjectStore.OS_UNKNOWN))
-			{
-				Uid id = new Uid(Uid.nullUid());
-				int numberOfEntries = 0;
-				
-				do
-				{
-					try
-					{
-						id.unpack(ios);
-					}
-					catch (Exception ex)
-					{
-						id = Uid.nullUid();
-					}
+    @Test
+    public void test()
+    {
+        System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");
 
-					if (id.notEquals(Uid.nullUid()))
-					{
-						passed = true;
-						
-						numberOfEntries++;
-						
-						boolean found = false;
-						
-						for (int i = 0; i < ids.length; i++)
-						{
-							if (id.equals(ids[i]))
-								found = true;
-						}
-						
-						if (passed && !found)
-						{
-							passed = false;
+        ObjectStore objStore = TxControl.getStore();
+        final int numberOfTransactions = 1000;
+        final Uid[] ids = new Uid[numberOfTransactions];
+        final int fakeData = 0xdeedbaaf;
+        final String type = "/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/Test";
 
-							System.err.println("Found unexpected transaction!");
-						}
-					}
-				}
-				while (id.notEquals(Uid.nullUid()));
-				
-				if ((numberOfEntries == ids.length -1) && passed)
-				{
-					if (objStore.currentState(ids[0], type) != ObjectStore.OS_UNKNOWN)
-						passed = false;
-					else
-					{
-						if (objStore.currentState(ids[1], type) != ObjectStore.OS_COMMITTED)
-							passed = false;
-					}
-				}
-				else
-				{
-					passed = false;
+        for (int i = 0; i < numberOfTransactions; i++) {
+            OutputObjectState dummyState = new OutputObjectState();
 
-					System.err.println("Expected "+ids.length+" and got "+numberOfEntries);
-				}
-			}
-		}
-		catch (final Exception ex)
-		{
-			ex.printStackTrace();
-		}
-		
-		System.err.println("Test "+((passed) ? "passed" : "failed"));
-	}
+            try {
+                dummyState.packInt(fakeData);
+                ids[i] = new Uid();
+                objStore.write_committed(ids[i], type, dummyState);
+            }
+            catch (final Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        try {
+            objStore.remove_committed(ids[0], type);
+        }
+        catch (final Exception ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            /*
+                * Give the purger thread a chance to run and delete
+                * the entry.
+                */
+
+            Thread.sleep(12000);
+        }
+        catch (final Exception ex) {
+        }
+
+        InputObjectState ios = new InputObjectState();
+        boolean passed = false;
+
+        try {
+            if (objStore.allObjUids(type, ios, ObjectStore.OS_UNKNOWN)) {
+                Uid id = new Uid(Uid.nullUid());
+                int numberOfEntries = 0;
+
+                do {
+                    try {
+                        id.unpack(ios);
+                    }
+                    catch (Exception ex) {
+                        id = Uid.nullUid();
+                    }
+
+                    if (id.notEquals(Uid.nullUid())) {
+                        passed = true;
+
+                        numberOfEntries++;
+
+                        boolean found = false;
+
+                        for (int i = 0; i < ids.length; i++) {
+                            if (id.equals(ids[i]))
+                                found = true;
+                        }
+
+                        if (passed && !found) {
+                            passed = false;
+
+                            System.err.println("Found unexpected transaction!");
+                        }
+                    }
+                }
+                while (id.notEquals(Uid.nullUid()));
+
+                if ((numberOfEntries == ids.length - 1) && passed) {
+                    if (objStore.currentState(ids[0], type) != ObjectStore.OS_UNKNOWN)
+                        passed = false;
+                    else {
+                        if (objStore.currentState(ids[1], type) != ObjectStore.OS_COMMITTED)
+                            passed = false;
+                    }
+                } else {
+                    passed = false;
+
+                    System.err.println("Expected " + ids.length + " and got " + numberOfEntries);
+                }
+            }
+        }
+        catch (final Exception ex) {
+            ex.printStackTrace();
+        }
+
+        assertTrue(passed);
+    }
 }

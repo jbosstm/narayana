@@ -36,94 +36,63 @@ import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.gandiva.ObjectName;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
-import org.jboss.dtf.testframework.unittest.Test;
 
-public class ObjectStoreTest extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+
+public class ObjectStoreTest
 {
-
-public void run(String[] args)
+    @Test
+    public void test() throws IOException
     {
-	ClassName imple = ArjunaNames.Implementation_ObjectStore_defaultStore();
-	String localOSRoot = "foo";
-	String objectStoreDir = "/bar";
-	String shareStatus = "OS_SHARED";
+        ClassName imple = ArjunaNames.Implementation_ObjectStore_defaultStore();
+        String localOSRoot = "foo";
+        String objectStoreDir = "/bar";
+        String shareStatus = "OS_SHARED";
 
-	ObjectName objName = new ObjectName("JNS:myname");
+        ObjectName objName = new ObjectName("JNS:myname");
 
-	try
-	{
-	    objName.setClassNameAttribute(Environment.OBJECTSTORE_TYPE, imple);
-	    objName.setStringAttribute(Environment.LOCALOSROOT, localOSRoot);
-	    objName.setStringAttribute(Environment.OBJECTSTORE_DIR, objectStoreDir);
-	    objName.setStringAttribute(Environment.OBJECTSTORE_SHARE, shareStatus);
-	}
-	catch (Exception e)
-	{
-	    e.printStackTrace(System.err);
-	    assertFailure();
-	}
+        objName.setClassNameAttribute(Environment.OBJECTSTORE_TYPE, imple);
+        objName.setStringAttribute(Environment.LOCALOSROOT, localOSRoot);
+        objName.setStringAttribute(Environment.OBJECTSTORE_DIR, objectStoreDir);
+        objName.setStringAttribute(Environment.OBJECTSTORE_SHARE, shareStatus);
 
-	ObjectStore objStore = new ObjectStore(objName);
+        ObjectStore objStore = new ObjectStore(objName);
 
-	System.out.println("\nchecking assumed valid store.");
+        assertTrue(validate(objStore));
 
-	boolean passed = validate(objStore);
 
-	if (passed)
-	{
-	    // check with a known invalid implementation
-
-	    objStore = new ObjectStore();
-
-	    System.out.println("\nchecking known invalid store.");
-
-	    if (validate(objStore))
-		passed = false;
-	}
-
-	if (passed)
-	    assertSuccess();
-	else
-	    assertFailure();
+        // check with a known invalid implementation
+        objStore = new ObjectStore();
+        assertFalse(validate(objStore));
     }
 
-private static final boolean validate (ObjectStore objStore)
+    private static final boolean validate(ObjectStore objStore)
     {
-	boolean passed = false;
+        boolean passed = false;
 
-	if (objStore.className().equals(imple))
-	{
-	    if (objStore.shareState() == ObjectStore.OS_SHARED)
-	    {
-		if (objStore.storeDir().equals(objectStoreDir))
-		{
-		    if (objStore.storeRoot().equals(localOSRoot))
-			passed = true;
-		    else
-			System.err.println("ObjectStore root wrong: "+objStore.storeRoot());
-		}
-		else
-		    System.err.println("ObjectStore dir wrong: "+objStore.storeDir());
-	    }
-	    else
-		System.err.println("Share state wrong: "+objStore.shareState());
-	}
-	else
-	    System.err.println("Implementation wrong: "+objStore.className());
+        if (objStore.className().equals(imple)) {
+            if (objStore.shareState() == ObjectStore.OS_SHARED) {
+                if (objStore.storeDir().equals(objectStoreDir)) {
+                    if (objStore.storeRoot().equals(localOSRoot))
+                        passed = true;
+                    else
+                        System.err.println("ObjectStore root wrong: " + objStore.storeRoot());
+                } else
+                    System.err.println("ObjectStore dir wrong: " + objStore.storeDir());
+            } else
+                System.err.println("Share state wrong: " + objStore.shareState());
+        } else
+            System.err.println("Implementation wrong: " + objStore.className());
 
-	return passed;
+        return passed;
     }
 
-public static void main(String[] args)
-    {
-        ObjectStoreTest test = new ObjectStoreTest();
-        test.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-        test.run(args);
-    }
-
-private static ClassName imple = ArjunaNames.Implementation_ObjectStore_defaultStore();
-private static String localOSRoot = "foo";
-private static String objectStoreDir = "/bar";
-private static String shareStatus = "OS_SHARED";
+    private static ClassName imple = ArjunaNames.Implementation_ObjectStore_defaultStore();
+    private static String localOSRoot = "foo";
+    private static String objectStoreDir = "/bar";
+    private static String shareStatus = "OS_SHARED";
 
 }

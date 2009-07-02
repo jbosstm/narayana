@@ -35,107 +35,108 @@ import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
+
 import java.io.PrintWriter;
 
 public class BasicRecord extends AbstractRecord
 {
 
-    public BasicRecord ()
+    public BasicRecord()
     {
-	super(new Uid());
+        super(new Uid());
     }
 
-    public int typeIs ()
+    public int typeIs()
     {
-	return RecordType.USER_DEF_FIRST0;
+        return RecordType.USER_DEF_FIRST0;
     }
 
-    public ClassName className ()
+    public ClassName className()
     {
-	return new ClassName("BasicRecord");
-    }
-    
-    public int nestedAbort ()
-    {
-	return TwoPhaseOutcome.FINISH_OK;
-    }
-    
-    public int nestedCommit ()
-    {
-	return TwoPhaseOutcome.FINISH_ERROR;
-    }
-    
-    public int nestedPrepare ()
-    {
-	return TwoPhaseOutcome.PREPARE_NOTOK;
-    }
-    
-    public int topLevelAbort ()
-    {
-	return TwoPhaseOutcome.FINISH_OK;
-    }
-    
-    public int topLevelCommit ()
-    {
-	return TwoPhaseOutcome.FINISH_OK;
-    }
-    
-    public int topLevelPrepare ()
-    {
-	return TwoPhaseOutcome.PREPARE_OK;
-    }
-    
-    public void print (PrintWriter strm)
-    {
-	strm.println("Shutdown for:");
-	super.print(strm);
+        return new ClassName("BasicRecord");
     }
 
-    public boolean doSave ()
+    public int nestedAbort()
     {
-	return true;
-    }
-    
-    public boolean save_state (OutputObjectState os, int ot)
-    {
-	return true;
+        return TwoPhaseOutcome.FINISH_OK;
     }
 
-    public boolean restore_state (InputObjectState os, int ot)
+    public int nestedCommit()
     {
-	return true;
-    }
-    
-    public String type ()
-    {
-	return "/StateManager/AbstractRecord/BasicRecord";
-    }
-    
-    public boolean shouldAdd (AbstractRecord a)
-    {
-	return false;
-    }
-    
-    public boolean shouldMerge (AbstractRecord a)
-    {
-	return false;
-    }
-    
-    public boolean shouldReplace (AbstractRecord a)
-    {
-	return false;
-    }
-    
-    public boolean shouldAlter (AbstractRecord a)
-    {
-	return false;
+        return TwoPhaseOutcome.FINISH_ERROR;
     }
 
-    public void merge (AbstractRecord a)
+    public int nestedPrepare()
+    {
+        return TwoPhaseOutcome.PREPARE_NOTOK;
+    }
+
+    public int topLevelAbort()
+    {
+        return TwoPhaseOutcome.FINISH_OK;
+    }
+
+    public int topLevelCommit()
+    {
+        return TwoPhaseOutcome.FINISH_OK;
+    }
+
+    public int topLevelPrepare()
+    {
+        return TwoPhaseOutcome.PREPARE_OK;
+    }
+
+    public void print(PrintWriter strm)
+    {
+        strm.println("Shutdown for:");
+        super.print(strm);
+    }
+
+    public boolean doSave()
+    {
+        return true;
+    }
+
+    public boolean save_state(OutputObjectState os, int ot)
+    {
+        return true;
+    }
+
+    public boolean restore_state(InputObjectState os, int ot)
+    {
+        return true;
+    }
+
+    public String type()
+    {
+        return "/StateManager/AbstractRecord/BasicRecord";
+    }
+
+    public boolean shouldAdd(AbstractRecord a)
+    {
+        return false;
+    }
+
+    public boolean shouldMerge(AbstractRecord a)
+    {
+        return false;
+    }
+
+    public boolean shouldReplace(AbstractRecord a)
+    {
+        return false;
+    }
+
+    public boolean shouldAlter(AbstractRecord a)
+    {
+        return false;
+    }
+
+    public void merge(AbstractRecord a)
     {
     }
-    
-    public void alter (AbstractRecord a)
+
+    public void alter(AbstractRecord a)
     {
     }
 
@@ -143,14 +144,14 @@ public class BasicRecord extends AbstractRecord
      * @return <code>Object</code> to be used to order.
      */
 
-    public Object value ()
+    public Object value()
     {
-	return null;
+        return null;
     }
-    
-    public void setValue (Object o)
+
+    public void setValue(Object o)
     {
     }
-    
+
 }
 

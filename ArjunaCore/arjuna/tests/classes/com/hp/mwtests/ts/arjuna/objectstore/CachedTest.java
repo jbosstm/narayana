@@ -33,63 +33,50 @@ package com.hp.mwtests.ts.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.*;
 
-import java.io.*;
-
 import java.util.*;
 
-import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 class ThreadWriter extends Thread
 {
     private static final String TYPE = "test";
 
-    public ThreadWriter (ObjectStore theStore)
+    public ThreadWriter(ObjectStore theStore)
     {
-	store = theStore;
+        store = theStore;
     }
 
-    public void run ()
+    public void run()
     {
-	byte[] data = new byte[1024];
-	OutputObjectState state = new OutputObjectState(new Uid(), "type");
-	Uid u = new Uid();
+        byte[] data = new byte[1024];
+        OutputObjectState state = new OutputObjectState(new Uid(), "type");
+        Uid u = new Uid();
 
-	try
-	{
-	    state.packBytes(data);
+        try {
+            state.packBytes(data);
 
-	    if (store.write_committed(u, TYPE, state))
-	    {
-		Thread.yield();
+            if (store.write_committed(u, TYPE, state)) {
+                Thread.yield();
 
-		InputObjectState s = store.read_committed(u, TYPE);
+                InputObjectState s = store.read_committed(u, TYPE);
 
-		Thread.yield();
+                Thread.yield();
 
-		if (s != null)
-		{
-		    if (store.remove_committed(u, TYPE))
-			passed = true;
-		    else
-			System.err.println("Could not remove state.");
-		}
-		else
-		    System.err.println("Could not read state.");
-	    }
-	    else
-		System.err.println("Could not write state.");
-	}
-	catch (Exception ex)
-	{
-	    ex.printStackTrace();
-	}
+                if (s != null) {
+                    if (store.remove_committed(u, TYPE))
+                        passed = true;
+                }
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        System.out.println(passed);
     }
 
     public boolean passed = false;
@@ -101,88 +88,37 @@ class ThreadWriter extends Thread
 
 public class CachedTest
 {
-    public static void main (String[] args)
+    @Test
+    public void test() throws Exception
     {
-	boolean passed = true;
-	String cacheSize = "2048";
-	int threads = 100;
+        String cacheSize = "2048";
+        int threads = 100;
+        Thread[] t = new Thread[threads];
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].equals("-size"))
-		cacheSize = args[i+1];
-	    if (args[i].equals("-threads"))
-	    {
-		try
-		{
-		    threads = Integer.parseInt(args[i+1]);
-		}
-		catch (NumberFormatException e)
-		{
-		}
-	    }
-	    if (args[i].equals("-help"))
-	    {
-		System.err.println("Usage: [-size <cache size>] [-threads <number>]");
+        System.setProperty("com.arjuna.ats.internal.arjuna.objectstore.cacheStore.size", cacheSize);
 
-		System.exit(0);
-	    }
-	}
+        ObjectStore store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_CacheStore());
 
-	Thread[] t = new Thread[threads];
+        long stime = Calendar.getInstance().getTime().getTime();
 
-	System.setProperty("com.arjuna.ats.internal.arjuna.objectstore.cacheStore.size", cacheSize);
+        for (int i = 0; i < threads; i++) {
+            System.out.println("i: "+i);
+            t[i] = new ThreadWriter(store);
+            t[i].start();
+        }
 
-	ObjectStore store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_CacheStore());
+        for (int j = 0; j < threads; j++) {
+            System.out.println("j: "+j);
+            t[j].join();
+            assertTrue(((ThreadWriter) t[j]).passed);
+        }
 
-	long stime = Calendar.getInstance().getTime().getTime();
+        long ftime = Calendar.getInstance().getTime().getTime();
+        long timeTaken = ftime - stime;
 
-	for (int i = 0; (i < threads) && passed; i++)
-	{
-	    try
-	    {
-		t[i] = new ThreadWriter(store);
+        store.sync();
 
-		t[i].start();
-	    }
-	    catch (Exception ex)
-	    {
-		ex.printStackTrace();
-
-		passed = false;
-	    }
-	}
-
-	for (int j = 0; j < threads; j++)
-	{
-	    try
-	    {
-		t[j].join();
-
-		passed = passed && ((ThreadWriter) t[j]).passed;
-	    }
-	    catch (Exception ex)
-	    {
-	    }
-	}
-
-	long ftime = Calendar.getInstance().getTime().getTime();
-	long timeTaken = ftime - stime;
-
-	try
-	{
-	    store.sync();
-	}
-	catch (Exception ex)
-	{
-	}
-
-	System.out.println("time for "+threads+" users is "+timeTaken);
-
-	if (passed)
-	    System.out.println("Passed.");
-	else
-	    System.out.println("Failed.");
+        System.out.println("time for " + threads + " users is " + timeTaken);
     }
 
 }

@@ -31,19 +31,18 @@ package com.hp.mwtests.ts.arjuna.recovery;
  * $Id: CrashAbstractRecordSetup.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.gandiva.inventory.Inventory ;
+import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
 
 public class CrashAbstractRecordSetup
 {
-   public CrashAbstractRecordSetup()
-   {
-      if ( !_added )
-      {
-         Inventory.inventory().addToList( new UserDefFirst0Setup() ) ;
-         _added = true ;
-      }
-   }
-   
-   private static boolean _added = false ;
+    public CrashAbstractRecordSetup()
+    {
+        if (!_added) {
+            Inventory.inventory().addToList(new UserDefFirst0Setup());
+            _added = true;
+        }
+    }
+
+    private static boolean _added = false;
 }
 

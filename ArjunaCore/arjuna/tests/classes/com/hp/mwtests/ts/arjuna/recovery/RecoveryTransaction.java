@@ -31,33 +31,32 @@
 
 package com.hp.mwtests.ts.arjuna.recovery;
 
-import java.io.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.coordinator.*;
 
 public class RecoveryTransaction extends BasicAction
-{   
+{
 
-    public RecoveryTransaction (Uid txId)
+    public RecoveryTransaction(Uid txId)
     {
-	super(txId);
-	
-	activate();
-    }
+        super(txId);
 
-    public void doAbort ()
-    {
-	super.phase2Abort(true);
-    }
-    
-    public void doCommit ()
-    {
-	super.phase2Commit(true);
+        activate();
     }
 
-    public String type ()
+    public void doAbort()
     {
-	return "/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction";
+        super.phase2Abort(true);
     }
-   
+
+    public void doCommit()
+    {
+        super.phase2Commit(true);
+    }
+
+    public String type()
+    {
+        return "/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction";
+    }
+
 }

@@ -31,40 +31,23 @@
 
 package com.hp.mwtests.ts.arjuna.recovery;
 
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 
-import com.hp.mwtests.ts.arjuna.resources.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import org.jboss.dtf.testframework.unittest.Test;
-
-public class EmbeddedRecoveryTest extends Test
+public class EmbeddedRecoveryTest
 {
-
-    public void run (String[] args)
+    @Test
+    public void test()
     {
-	RecoveryManager manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
-	DummyRecoveryModule module = new DummyRecoveryModule();
+        RecoveryManager manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
+        DummyRecoveryModule module = new DummyRecoveryModule();
 
-	manager.addModule(module);
+        manager.addModule(module);
 
-	manager.scan();
+        manager.scan();
 
-	if (module.finished())
-	    assertSuccess();
-	else
-	    assertFailure();
+        assertTrue(module.finished());
     }
-
-    public static void main (String[] args)
-    {
-        EmbeddedRecoveryTest test = new EmbeddedRecoveryTest();
-
-    	test.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-
-    	test.run(args);
-    }
-
 }

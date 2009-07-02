@@ -33,39 +33,30 @@ package com.hp.mwtests.ts.arjuna.resources;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
-import java.io.PrintWriter;
-
-import java.io.IOException;
-
-import com.arjuna.common.util.logging.*;
 
 public class SyncRecord implements SynchronizationRecord
 {
-
-    public boolean beforeCompletion ()
+    public boolean beforeCompletion()
     {
-	return true;
+        return true;
     }
 
-    public boolean afterCompletion (int status)
+    public boolean afterCompletion(int status)
     {
-	return true;
+        return true;
     }
 
-    public Uid get_uid ()
+    public Uid get_uid()
     {
-	return _theUid;
+        return _theUid;
     }
 
     private Uid _theUid = new Uid();
 
-
-    public int compareTo(Object o) {
-        SynchronizationRecord sr = (SynchronizationRecord)o;
-        if(_theUid.equals(sr.get_uid())) {
+    public int compareTo(Object o)
+    {
+        SynchronizationRecord sr = (SynchronizationRecord) o;
+        if (_theUid.equals(sr.get_uid())) {
             return 0;
         } else {
             return _theUid.lessThan(sr.get_uid()) ? -1 : 1;

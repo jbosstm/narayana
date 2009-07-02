@@ -32,17 +32,17 @@ package com.hp.mwtests.ts.arjuna.uid;
  */
 
 import com.arjuna.ats.arjuna.common.*;
+import org.junit.Test;
 
 public class UidUniqueness
 {
-    
-public static void main (String[] args)
+    @Test
+    public void test()
     {
-	for (int i = 0; i < 100; i++)
-	{
-	    Uid u = new Uid();
-	    System.out.println(u + " " + u.hashCode());
-	}
+        for (int i = 0; i < 100; i++) {
+            Uid u = new Uid();
+            System.out.println(u + " " + u.hashCode());
+        }
     }
-    
+
 }

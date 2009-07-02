@@ -34,42 +34,39 @@ package com.hp.mwtests.ts.arjuna.performance;
 import com.hp.mwtests.ts.arjuna.resources.*;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 
-import org.jboss.dtf.testframework.unittest.Test;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.util.*;
 
 class Worker extends Thread
 {
 
-    public Worker (int iters)
+    public Worker(int iters)
     {
-	_iters = iters;
+        _iters = iters;
     }
 
-    public void run ()
+    public void run()
     {
-	for (int i = 0; i < _iters; i++)
-	{
-	    try
-	    {
-		AtomicAction A = new AtomicAction();
+        for (int i = 0; i < _iters; i++) {
+            try {
+                AtomicAction A = new AtomicAction();
 
-		A.begin();
+                A.begin();
 
-		A.add(new BasicRecord());
+                A.add(new BasicRecord());
 
-		A.commit();
-	    }
-	    catch (Exception e)
-	    {
-		e.printStackTrace();
-	    }
-	}
+                A.commit();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-	Performance2.doSignal();
+        Performance2.doSignal();
     }
 
     private int _iters;
@@ -79,94 +76,54 @@ class Worker extends Thread
 
 public class Performance2
 {
-
-    public static void main (String[] args)
+    @Test
+    public void test()
     {
-	int threads = 10;
-	int work = 100;
+        int threads = 10;
+        int work = 100;
 
-	System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
+        System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-threads") == 0)
-	    {
-		try
-		{
-		    Integer v = new Integer(args[i+1]);
+        number = threads;
 
-		    threads = v.intValue();
-		}
-		catch (Exception e)
-		{
-		    System.err.println(e);
-		}
-	    }
-	    if (args[i].compareTo("-work") == 0)
-	    {
-		try
-		{
-		    Integer v = new Integer(args[i+1]);
+        int numberOfTransactions = threads * work;
+        long stime = Calendar.getInstance().getTime().getTime();
+        Worker[] workers = new Worker[threads];
 
-		    work = v.intValue();
-		}
-		catch (Exception e)
-		{
-		    System.err.println(e);
-		}
-	    }
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: Performance2 [-help] [-threads <number>] [-work <number>]");
-		System.exit(0);
-	    }
-	}
+        for (int i = 0; i < threads; i++) {
+            workers[i] = new Worker(work);
 
-	number = threads;
+            workers[i].start();
+        }
 
-	int numberOfTransactions = threads * work;
-	long stime = Calendar.getInstance().getTime().getTime();
-	Worker[] workers = new Worker[threads];
+        Performance2.doWait();
 
-	for (int i = 0; i < threads; i++)
-	{
-	    workers[i] = new Worker(work);
+        long ftime = Calendar.getInstance().getTime().getTime();
+        long timeTaken = ftime - stime;
 
-	    workers[i].start();
-	}
-
-	Performance2.doWait();
-
-	long ftime = Calendar.getInstance().getTime().getTime();
-	long timeTaken = ftime - stime;
-
-	System.out.println("time for "+numberOfTransactions+" write transactions is "+timeTaken);
-	System.out.println("number of transactions: "+numberOfTransactions);
-	System.out.println("throughput: "+(float) (numberOfTransactions/(timeTaken / 1000.0)));
+        System.out.println("time for " + numberOfTransactions + " write transactions is " + timeTaken);
+        System.out.println("number of transactions: " + numberOfTransactions);
+        System.out.println("throughput: " + (float) (numberOfTransactions / (timeTaken / 1000.0)));
     }
 
-    public static void doWait ()
+    public static void doWait()
     {
-	try
-	{
-	    synchronized (sync)
-	    {
-		if (number > 0)
-		    sync.wait();
-	    }
-	}
-	catch (Exception e)
-	{
-	}
+        try {
+            synchronized (sync) {
+                if (number > 0)
+                    sync.wait();
+            }
+        }
+        catch (Exception e) {
+        }
     }
 
-    public static void doSignal ()
+    public static void doSignal()
     {
-	synchronized (sync)
-	{
-	    if (--number == 0)
-		sync.notify();
-	}
+        synchronized (sync) {
+            if (--number == 0)
+                sync.notify();
+        }
     }
 
     private static Object sync = new Object();

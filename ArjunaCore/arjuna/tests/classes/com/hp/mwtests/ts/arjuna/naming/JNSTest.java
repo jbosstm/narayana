@@ -32,42 +32,32 @@ package com.hp.mwtests.ts.arjuna.naming;
  */
 
 import com.arjuna.ats.arjuna.ArjunaNames;
-import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.gandiva.nameservice.NameService;
+import com.arjuna.common.util.propertyservice.PropertyManager;
 
 import java.io.IOException;
 
-/*
- * To test:
- *
- * java -DLONG=#5 -DSTRING=^"foobar" com.hp.mwtests.ts.arjuna.naming.JNSTest
- */
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class JNSTest
 {
-    
-public static void main (String[] args)
+    @Test
+    public void test() throws IOException
     {
-	NameService nameService = new NameService(ArjunaNames.Implementation_NameService_JNS());
+        NameService nameService = new NameService(ArjunaNames.Implementation_NameService_JNS());
+        PropertyManager propertyManager = arjPropertyManager.getPropertyManager();
 
-	try
-	{
-	    String longAttr = new String("LONG");
-	    long lvalue = nameService.getLongAttribute(null, longAttr);
+        propertyManager.setProperty("TESTOBJ" + "." + "TESTATTR", "#1");
+        long lvalue = nameService.getLongAttribute("TESTOBJ", "TESTATTR");
+        assertEquals(1, lvalue);
 
-	    System.out.println("Long value: "+lvalue);
+        propertyManager.setProperty("TESTOBJ" + "." + "TESTATTR", "^StringVal");
+        String svalue = nameService.getStringAttribute("TESTOBJ", "TESTATTR");
 
-	    String stringAttr = new String("STRING");
-	    String svalue = nameService.getStringAttribute(null, stringAttr);
-
-	    System.out.println("String value: "+svalue);
-	}
-	catch (IOException e)
-	{
-	    System.out.println(e);
-	}
+        assertEquals("StringVal", svalue);
     }
-    
 }
 
 		

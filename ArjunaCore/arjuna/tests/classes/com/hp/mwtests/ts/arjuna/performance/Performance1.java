@@ -32,35 +32,33 @@
 package com.hp.mwtests.ts.arjuna.performance;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
-import org.jboss.dtf.testframework.unittest.Test;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.util.*;
 
-public class Performance1 extends Test
+public class Performance1
 {
-    public void run(String[] args)
+    @Test
+    public void test()
     {
-	int numberOfTransactions = 1000;
-	long stime = Calendar.getInstance().getTime().getTime();
+        int numberOfTransactions = 1000;
+        long stime = Calendar.getInstance().getTime().getTime();
 
-	for (int i = 0; i < numberOfTransactions; i++)
-	{
-	    AtomicAction A = new AtomicAction();
+        for (int i = 0; i < numberOfTransactions; i++) {
+            AtomicAction A = new AtomicAction();
 
-	    A.begin();
-	    A.abort();
-	}
+            A.begin();
+            A.abort();
+        }
 
-	long ftime = Calendar.getInstance().getTime().getTime();
-	long timeTaken = ftime - stime;
+        long ftime = Calendar.getInstance().getTime().getTime();
+        long timeTaken = ftime - stime;
 
-	logInformation("time for "+numberOfTransactions+" write transactions is "+timeTaken);
-	logInformation("number of transactions: "+numberOfTransactions);
-	logInformation("throughput: "+(float) (numberOfTransactions/(timeTaken / 1000.0)));
-
-        assertSuccess();
+        System.out.println("time for " + numberOfTransactions + " write transactions is " + timeTaken);
+        System.out.println("number of transactions: " + numberOfTransactions);
+        System.out.println("throughput: " + (float) (numberOfTransactions / (timeTaken / 1000.0)));
     }
 
 }

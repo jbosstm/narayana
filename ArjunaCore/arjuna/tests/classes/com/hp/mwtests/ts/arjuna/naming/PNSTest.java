@@ -31,72 +31,42 @@ package com.hp.mwtests.ts.arjuna.naming;
  * $Id: PNSTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.gandiva.*;
-import com.arjuna.ats.arjuna.gandiva.nameservice.NameService;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 
 public class PNSTest
 {
-    
-public static void main (String[] args)
+    @Test
+    public void test() throws IOException
     {
-	try
-	{
-	    String longAttr = new String("LONG");
-	    String stringAttr = new String("STRING");
-	    String objAttr = new String("OBJECTNAME");
-	    String uidAttr = new String("UID");
-	    
-	    long l = 12345;
-	    Uid u = new Uid();
-	    String s = new String("test");
+        String longAttr = new String("LONG");
+        String stringAttr = new String("STRING");
+        String objAttr = new String("OBJECTNAME");
+        String uidAttr = new String("UID");
 
-	    ObjectName o1 = new ObjectName("PNS:o1");
-	    ObjectName o2 = new ObjectName("PNS:o2");
-	    
-	    System.out.println("Adding <string, "+s+"> to o1");
-	    o1.setStringAttribute(stringAttr, s);
+        long l = 12345;
+        Uid u = new Uid();
+        String s = new String("test");
 
-	    System.out.println("\nAdding <long, "+l+"> to o2");
-	    o2.setLongAttribute(longAttr, l);
-	    
-	    System.out.println("Adding <uid, "+u+"> to o2");
-	    o2.setUidAttribute(uidAttr, u);
+        ObjectName o1 = new ObjectName("PNS:o1");
+        ObjectName o2 = new ObjectName("PNS:o2");
 
-	    System.out.println("\nAdding <object name, o2> to o1");
-	    o1.setObjectNameAttribute(objAttr, o2);
+        o1.setStringAttribute(stringAttr, s);
+        o2.setLongAttribute(longAttr, l);
+        o2.setUidAttribute(uidAttr, u);
+        o1.setObjectNameAttribute(objAttr, o2);
 
-	    System.out.println("\nNow extracting string from o1");
-	    System.out.println("Extracted: "+o1.getStringAttribute(stringAttr));
+        assertEquals(s, o1.getStringAttribute(stringAttr));
+        assertEquals(o2, o1.getObjectNameAttribute(objAttr));
 
-	    System.out.println("\nNow extracting object name from o1");
-	    ObjectName o3 = o1.getObjectNameAttribute(objAttr);
-	    System.out.println("Extracted: "+o3);
-
-	    System.out.println("\nNow extracting long from o2");
-	    System.out.println("Extracted: "+o3.getLongAttribute(longAttr));
-
-	    System.out.println("\nNow extracting uid from o2");
-	    Uid id = o3.getUidAttribute(uidAttr);
-	    System.out.println("Extracted: "+id);
-
-	    if (id.notEquals(u))
-		System.out.println("Uid error.");
-
-	    ObjectName o4 = ObjectName.uniqueObjectName("PNS");
-	    
-	    System.out.println("\nUnique object name: "+o4);
-	}
-	catch (IOException e)
-	{
-	    System.out.println(e);
-	}
+        assertEquals(l, o2.getLongAttribute(longAttr));
+        assertEquals(u, o2.getUidAttribute(uidAttr));
     }
-    
 }
-
 		
 		

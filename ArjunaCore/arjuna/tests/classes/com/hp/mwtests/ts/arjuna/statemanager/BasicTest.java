@@ -32,52 +32,24 @@
 package com.hp.mwtests.ts.arjuna.statemanager;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
 
 import com.hp.mwtests.ts.arjuna.resources.*;
 
-import org.jboss.dtf.testframework.unittest.Test;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class BasicTest extends Test
+public class BasicTest
 {
-
-public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-        try
-        {
-            test();
+        AtomicAction A = new AtomicAction();
+        BasicObject bo = new BasicObject();
 
-            assertSuccess();
-        }
-        catch (Exception e)
-        {
-            logInformation("Unexpected exception thrown - "+e);
-            e.printStackTrace(System.err);
-            assertFailure();
-        }
+        A.begin();
 
-	System.gc();
+        bo.set(2);
 
-	System.runFinalization();
+        A.commit();
     }
-
-private void test () throws Exception
-    {
-	AtomicAction A = new AtomicAction();
-	BasicObject bo = new BasicObject();
-
-	A.begin();
-
-	bo.set(2);
-
-	A.commit();
-    }
-
-public static void main(String[] args)
-    {
-        BasicTest test = new BasicTest();
-    	test.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-    	test.run(args);
-    }
-};
+}

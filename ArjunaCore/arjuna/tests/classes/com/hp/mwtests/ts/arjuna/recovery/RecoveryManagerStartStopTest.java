@@ -1,11 +1,7 @@
 package com.hp.mwtests.ts.arjuna.recovery;
 
-import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery;
-import com.arjuna.ats.internal.arjuna.recovery.Listener;
 
 import java.net.Socket;
 import java.net.InetAddress;
@@ -14,16 +10,15 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 /**
  * test to ensure that the recovery manager cleans up all its threads when terminated
  */
-public class RecoveryManagerStartStopTest extends TestCase
+public class RecoveryManagerStartStopTest
 {
-    public static Test suite()
-    {
-        return new TestSuite(RecoveryManagerStartStopTest.class);
-    }
-
+    @Test
     public void testStartStop() throws Exception
     {
         // check how many threads there are running
@@ -33,7 +28,7 @@ public class RecoveryManagerStartStopTest extends TestCase
 
         dumpThreadGroup(thg, "Before recovery manager create");
 
-        RecoveryManager.delayRecoveryManagerThread() ;
+        RecoveryManager.delayRecoveryManagerThread();
         RecoveryManager manager = RecoveryManager.manager(RecoveryManager.INDIRECT_MANAGEMENT);
 
         dumpThreadGroup(thg, "Before recovery manager initialize");
@@ -47,7 +42,7 @@ public class RecoveryManagerStartStopTest extends TestCase
         dumpThreadGroup(thg, "Before recovery manager start periodic recovery thread");
 
         manager.startRecoveryManagerThread();
-        
+
         dumpThreadGroup(thg, "Before recovery manager client create");
 
         // we need to open several connections to the recovery manager listener service and then
@@ -63,7 +58,7 @@ public class RecoveryManagerStartStopTest extends TestCase
         manager.terminate();
 
         // ensure the client threads get killed
-        
+
         ensureRecoveryClientsTerminated();
 
         // ensure there are no extra threads running
@@ -77,7 +72,8 @@ public class RecoveryManagerStartStopTest extends TestCase
         assertEquals(activeCount, newActiveCount);
     }
 
-    private void ensureRecoveryClientsTerminated() {
+    private void ensureRecoveryClientsTerminated()
+    {
         // check that any threads added to talk to the reocvery listener get their sockets closed
 
         for (RecoveryManagerStartStopTestThread client : clients) {
@@ -90,7 +86,8 @@ public class RecoveryManagerStartStopTest extends TestCase
         }
     }
 
-    private void addRecoveryClient() {
+    private void addRecoveryClient()
+    {
         // open a connection to the recovery listener service in a new thread and ensure that the
         // thread is terminated by habing its socket closed.
 
@@ -107,7 +104,7 @@ public class RecoveryManagerStartStopTest extends TestCase
 
         System.out.println(header);
         System.out.println("Thread count == " + activeCount);
-        for (int i = 0; i < reported ; i++) {
+        for (int i = 0; i < reported; i++) {
             System.out.println("Thread[" + i + "] == " + threads[i].getName());
         }
 
@@ -130,7 +127,8 @@ public class RecoveryManagerStartStopTest extends TestCase
             return failed;
         }
 
-        public void run() {
+        public void run()
+        {
             BufferedReader fromServer = null;
             Socket connectorSocket = null;
             // get a socket connected to the listener
@@ -155,7 +153,7 @@ public class RecoveryManagerStartStopTest extends TestCase
                 System.out.println("connected!!!");
                 System.out.flush();
 
-                fromServer = new BufferedReader(new InputStreamReader(connectorSocket.getInputStream())) ;
+                fromServer = new BufferedReader(new InputStreamReader(connectorSocket.getInputStream()));
             } catch (Exception e) {
                 System.out.println("Failed to set up listener input stream!!!");
                 e.printStackTrace();

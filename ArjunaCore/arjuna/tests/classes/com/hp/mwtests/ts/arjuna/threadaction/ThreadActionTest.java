@@ -32,37 +32,38 @@ package com.hp.mwtests.ts.arjuna.threadaction;
  */
 
 import com.hp.mwtests.ts.arjuna.resources.BasicThreadedObject;
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.coordinator.*;
+
 import java.lang.Thread;
 
 import java.lang.InterruptedException;
-    
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class ThreadActionTest
 {
-    
-public static void main (String[] args)
+    @Test
+    public void test()
     {
-	BasicThreadedObject object1 = new BasicThreadedObject(true);
-	BasicThreadedObject object2 = new BasicThreadedObject(false);
+        BasicThreadedObject object1 = new BasicThreadedObject(true);
+        BasicThreadedObject object2 = new BasicThreadedObject(false);
 
-	System.out.println("Main thread has action "+BasicAction.Current());
+        System.out.println("Main thread has action " + BasicAction.Current());
 
-	object1.start();
-	object2.start();
+        object1.start();
+        object2.start();
 
-	Thread.yield();
-	
-	try
-	{
-	    object1.join();
-	    object2.join();
-	}
-	catch (InterruptedException e)
-	{
-	}
+        Thread.yield();
 
-	System.out.println("Main thread has action "+BasicAction.Current());
+        try {
+            object1.join();
+            object2.join();
+        }
+        catch (InterruptedException e) {
+        }
+
+        System.out.println("Main thread has action " + BasicAction.Current());
     }
-    
-};
+
+}
