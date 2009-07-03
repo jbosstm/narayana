@@ -188,7 +188,12 @@ public class LastResourceRecord extends AbstractRecord
 
 	public boolean shouldAdd (AbstractRecord a)
 	{
-            return (a.typeIs() == typeIs()) ;
+	    /*
+	     * OK to add as long as we are the only instance in the list.
+	     * So if we see another record with the same type, barf!
+	     */
+	    
+            return ! (a.typeIs() == typeIs()) ;
 	}
 
 	public boolean shouldMerge (AbstractRecord a)

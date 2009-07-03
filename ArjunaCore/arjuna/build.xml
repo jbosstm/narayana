@@ -61,7 +61,7 @@
 
                     <!-- these ones should work but dont.
                         Need to investigate why -->
-                    <exclude name="**/LastResource.java"/>
+
                     <exclude name="**/CachedTest.java"/>
                     <exclude name="**/JDBCInventory.java"/>
                     <exclude name="**/LogStoreTest2.java"/>
