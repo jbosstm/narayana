@@ -31,8 +31,10 @@
 package com.arjuna.ats.jbossatx.jts;
 
 import org.jboss.bootstrap.spi.ServerConfig;
+import org.jboss.tm.*;
 import org.jboss.iiop.CorbaORBService;
 import org.jboss.logging.Logger;
+
 import com.arjuna.ats.internal.jbossatx.jts.PropagationContextWrapper;
 import com.arjuna.ats.internal.jbossatx.jts.jca.XATerminator;
 import com.arjuna.ats.internal.jbossatx.agent.LocalJBossAgentImpl;

@@ -31,7 +31,7 @@
 package com.arjuna.ats.jbossatx.jta;
 
 import org.jboss.bootstrap.spi.ServerConfig;
-
+import org.jboss.tm.*;
 import org.jboss.logging.Logger;
 
 import com.arjuna.ats.internal.jbossatx.jta.jca.XATerminator;
