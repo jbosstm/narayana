@@ -34,6 +34,7 @@ package com.hp.mwtests.ts.arjuna.objectstore;
 import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreError;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreImple;
 import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
 
@@ -48,8 +49,22 @@ public class JDBCInventory
         arjPropertyManager.getPropertyManager().setProperty(Environment.STATIC_INVENTORY_IMPLE + "1", "com.arjuna.ats.internal.arjuna.objectstore.JDBCStoreSetup");
         arjPropertyManager.getPropertyManager().setProperty(Environment.JDBC_USER_DB_ACCESS, "com.hp.mwtests.ts.arjuna.objectstore.MyAccess");
 
-        ObjectStoreImple os = (ObjectStoreImple) Inventory.inventory().createVoid(ArjunaNames.Implementation_ObjectStore_JDBCStore());
-
-        assertNotNull(os);
+        boolean passed = false;
+        
+        try
+        {
+            ObjectStoreImple os = (ObjectStoreImple) Inventory.inventory().createVoid(ArjunaNames.Implementation_ObjectStore_JDBCStore());
+    
+            /*
+             * Creation should fail these days due to null Connection being returned from
+             * an invalid JDBC store, rather than in the past checking lazily upon use.
+             */
+        }
+        catch (final ObjectStoreError ex)
+        {
+            passed = true;
+        }
+        
+        assertTrue(passed);
     }
 }
