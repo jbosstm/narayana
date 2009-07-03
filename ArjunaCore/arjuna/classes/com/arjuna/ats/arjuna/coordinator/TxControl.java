@@ -57,6 +57,8 @@ import com.arjuna.ats.arjuna.recovery.TransactionStatusManager;
  * @message com.arjuna.ats.arjuna.coordinator.TxControl_3
  *          [com.arjuna.ats.arjuna.coordinator.TxControl_3] - Supplied name of
  *          node contains reserved character '-'. Using {0}
+ * @message com.arjuna.ats.arjuna.coordinator.toolong
+ *          [com.arjuna.ats.arjuna.coordinator.toolong] - Node name cannot exceed 64 bytes!
  */
 
 public class TxControl
@@ -277,6 +279,17 @@ public class TxControl
 
 	public static void setXANodeName(byte[] name)
 	{
+	    if (name.length > 64)
+	    {
+	        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                        tsLogger.arjLoggerI18N.warn(
+                                        "com.arjuna.ats.arjuna.coordinator.toolong");
+                }
+	        
+	        throw new IllegalArgumentException();
+	    }
+	    
 		xaNodeName = name;
 	}
 
