@@ -46,7 +46,8 @@ public class xidcheck
         Uid test = new Uid();
         XID xidimple = XATxConverter.getXid(test, true);
 
-        System.err.println(xidimple);
+        System.err.println("Uid is: "+test);
+        System.err.println("Xid is: "+xidimple);
 
         Uid convertedUid = XATxConverter.getUid(xidimple);
 
