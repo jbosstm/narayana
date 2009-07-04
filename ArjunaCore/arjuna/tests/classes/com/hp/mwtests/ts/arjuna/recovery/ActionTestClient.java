@@ -258,7 +258,7 @@ public class ActionTestClient
 
         listener.start();
         
-        Thread.sleep(8000);  // allow time for test to run
+        Thread.sleep(1000);  // allow time for test to run
 
         //listener.stopListener();
         
