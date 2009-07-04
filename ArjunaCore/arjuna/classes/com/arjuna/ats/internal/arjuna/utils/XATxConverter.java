@@ -45,7 +45,7 @@ public class XATxConverter
 {
 
     public static final int FORMAT_ID = 131075; // different from JTS ones.
-    public static final char NODE_SEPARATOR = '-';
+    public static final char NODE_SEPARATOR = '#';
 
     public static XID getXid (Uid uid, boolean branch) throws IllegalStateException
     {
@@ -150,7 +150,10 @@ public class XATxConverter
 	    return Uid.nullUid();
 	
 	if ((xid.formatID == -1) || (xid.gtrid_length <= 0)) // means null XID
+	{
+	    System.err.println("**problem");
 	    return Uid.nullUid();
+	}
 	else
 	{
 	    int nodeNameIndex = 0;
@@ -168,6 +171,7 @@ public class XATxConverter
 
 	    System.arraycopy(xid.data, nodeNameIndex, buff, 0, buff.length);
 
+	    System.err.println("**here with "+new String(buff));
 	    Uid tx = new Uid(new String(buff), true);
 
 	    buff = null;
@@ -178,6 +182,8 @@ public class XATxConverter
 
     public static Uid getBranch (com.arjuna.ats.arjuna.xa.XID xid)
     {
+        // TODO check why null.
+        
 	return null;
     }
     
