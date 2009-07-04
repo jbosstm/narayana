@@ -1,3 +1,24 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors 
+ * as indicated by the @author tags. 
+ * See the copyright.txt in the distribution for a
+ * full listing of individual contributors. 
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the GNU Lesser General Public License, v. 2.1.
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * v.2.1 along with this distribution; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ * MA  02110-1301, USA.
+ * 
+ * (C) 2009,
+ * @author JBoss Inc.
+ */
+
 package com.hp.mwtests.ts.arjuna.recovery;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
@@ -142,13 +163,24 @@ public class RecoveryManagerStartStopTest
                 address = socket.getInetAddress();
 
                 host = InetAddress.getLocalHost().getHostName();
-
+                
                 port = PeriodicRecovery.getServerSocket().getLocalPort();
 
                 System.out.println("client atempting to connect to host " + host + " port " + port);
                 System.out.flush();
 
-                connectorSocket = new Socket(host, port);
+                try
+                {
+                    connectorSocket = new Socket(host, port);
+                }
+                catch (final Exception ex)
+                {
+                    // in case local host name bind fails (e.g., on Mac OS)
+                    
+                    host = "127.0.0.1";
+                    
+                    connectorSocket = new Socket(host, port);
+                }
 
                 System.out.println("connected!!!");
                 System.out.flush();
