@@ -62,21 +62,13 @@
                     <!-- these ones should work but dont.
                         Need to investigate why -->
 
-                    <exclude name="**/CachedTest.java"/>
+                	<exclude name="**/ActionTestClient.java"/>
                     <exclude name="**/LogStoreTest2.java"/>
-                    <exclude name="**/ActionTestClient.java"/>
                     <exclude name="**/ActionTestServer.java"/>
-                    <exclude name="**/CallbackRecoveryTest.java"/>
-                    <exclude name="**/DestroyRecoverTest.java"/>
                     <exclude name="**/LogMoveTest.java"/>
-                    <exclude name="**/RecoveryLifecycleTest.java"/>
-                    <exclude name="**/RecoveryManagerStartStopTest.java"/>
-                    <exclude name="**/xidcheck.java"/>
                 </fileset>
             </tests>
         </run.tests.macro>
-
-
 
         <run.tests.macro>
             <tests><fileset dir="tests/classes" includes="**/ReaperTestCase.java"/></tests>
