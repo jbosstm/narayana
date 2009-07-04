@@ -576,7 +576,6 @@ public class PeriodicRecovery extends Thread
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                     FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: removing module " + module.getClass().getName());
         }
-        _recoveryModules.remove(module);
 
         if (waitOnScan) {
             // make sure any scan which might be using the module has completed
@@ -584,6 +583,34 @@ public class PeriodicRecovery extends Thread
                     doScanningWait();
             }
         }
+        
+        // now remove it.
+        
+        _recoveryModules.remove(module);
+    }
+    
+    /**
+     * Remove all modules.
+     * 
+     * @param waitOnScan true if the remove operation should wait for any in-progress scan to complete.
+     */
+    
+    public final void removeAllModules (boolean waitOnScan)
+    {
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: removing all modules.");
+        }
+        
+        if (waitOnScan) {
+            // make sure any scan which might be using the module has completed
+            synchronized (_stateLock) {
+                    doScanningWait();
+            }
+        }
+        
+        _recoveryModules.clear();
     }
 
     /**
@@ -1107,7 +1134,6 @@ public class PeriodicRecovery extends Thread
 
       String backoffPeriodString=
          arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_BACKOFF_PERIOD);
-
 
       if (backoffPeriodString != null)
       {

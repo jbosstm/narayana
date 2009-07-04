@@ -34,12 +34,9 @@ package com.arjuna.ats.internal.arjuna.recovery;
 import java.io.IOException;
 import java.util.Vector;
 
-import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
-
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
-import com.arjuna.ats.arjuna.recovery.RecoveryConfiguration;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -204,6 +201,11 @@ public class RecoveryManagerImple
         _periodicRecovery.removeModule(module, waitOnScan);
     }
 
+    public final void removeAllModules (boolean waitOnScan)
+    {
+        _periodicRecovery.removeAllModules(waitOnScan);
+    }
+    
         public final Vector getModules ()
         {
                 return _periodicRecovery.getModules();

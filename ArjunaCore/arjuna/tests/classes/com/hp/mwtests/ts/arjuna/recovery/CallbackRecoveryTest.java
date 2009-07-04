@@ -31,6 +31,8 @@
 
 package com.hp.mwtests.ts.arjuna.recovery;
 
+import com.arjuna.ats.arjuna.common.Environment;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.recovery.*;
 
 import org.junit.Test;
@@ -44,7 +46,6 @@ class RecoveryScanImple implements RecoveryScan
     }
 
     public boolean passed = false;
-
 }
 
 public class CallbackRecoveryTest
@@ -52,19 +53,31 @@ public class CallbackRecoveryTest
     @Test
     public void test()
     {
+        arjPropertyManager.getPropertyManager().setProperty(Environment.RECOVERY_BACKOFF_PERIOD, "1");
+        
         RecoveryManager manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
         DummyRecoveryModule module = new DummyRecoveryModule();
         RecoveryScanImple rs = new RecoveryScanImple();
 
+        // make sure no other modules registered for this test
+        
+        manager.removeAllModules(false);
+        
         manager.addModule(module);
 
         manager.scan(rs);
 
-        try {
-            Thread.currentThread().sleep(120000);
+        // give enough time for both passes to run
+        
+        try
+        {
+            Thread.sleep(2000);
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
         }
+        
+        System.err.println("**checking");
         
         assertTrue(module.finished());
         assertTrue(rs.passed);

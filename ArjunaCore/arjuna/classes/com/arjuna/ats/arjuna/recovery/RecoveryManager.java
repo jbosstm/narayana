@@ -43,7 +43,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManager;
-import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 
 /**
  * @message com.arjuna.ats.arjuna.recovery.RecoveryManager_1 [com.arjuna.ats.arjuna.recovery.RecoveryManager_1] - Invalid recovery manager port specified {0}
@@ -371,6 +370,19 @@ public class RecoveryManager
     }
 
     /**
+     * Remove all modules.
+     * 
+     * WARNING: Use with extreme care as this will stop recovery from doing anything!
+     */
+    
+    public final void removeAllModules (boolean waitOnScan)
+    {
+        checkState();
+        
+        _theImple.removeAllModules(waitOnScan);
+    }
+    
+    /**
      * Obtain a snapshot list of available recovery modules.
      *
      * @return a snapshot list of the currently installed recovery modules
@@ -520,8 +532,8 @@ public class RecoveryManager
                 System.out.println("Ready");
             }
 
-            // this is never going to return because it only returns when shutdon is called and
-            // there is nothing which is going to call shutdown. we probably oght  to provide a
+            // this is never going to return because it only returns when shutdown is called and
+            // there is nothing which is going to call shutdown. we probably aught  to provide a
             // clean way of terminating this process.
 
             manager.waitForTermination();
