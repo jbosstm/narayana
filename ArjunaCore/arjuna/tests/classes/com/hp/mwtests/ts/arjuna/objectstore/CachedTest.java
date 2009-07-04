@@ -65,24 +65,25 @@ class ThreadWriter extends Thread
                 InputObjectState s = store.read_committed(u, TYPE);
 
                 Thread.yield();
-
+                
                 if (s != null) {
                     if (store.remove_committed(u, TYPE))
                         passed = true;
                 }
+                else
+                    System.err.println("No state found while trying to read "+u);
             }
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        System.out.println(passed);
+        System.err.println("Thread for "+u+" "+((passed) ? "succeeded" : "failed"));
     }
 
     public boolean passed = false;
 
     private ObjectStore store = null;
-
 }
 
 
@@ -102,13 +103,13 @@ public class CachedTest
         long stime = Calendar.getInstance().getTime().getTime();
 
         for (int i = 0; i < threads; i++) {
-            System.out.println("i: "+i);
+            System.err.println("i: "+i);
             t[i] = new ThreadWriter(store);
             t[i].start();
         }
 
         for (int j = 0; j < threads; j++) {
-            System.out.println("j: "+j);
+            System.err.println("j: "+j);
             t[j].join();
             assertTrue(((ThreadWriter) t[j]).passed);
         }
@@ -118,7 +119,7 @@ public class CachedTest
 
         store.sync();
 
-        System.out.println("time for " + threads + " users is " + timeTaken);
+        System.err.println("time for " + threads + " users is " + timeTaken);
     }
 
 }

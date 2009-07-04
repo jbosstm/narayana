@@ -35,7 +35,6 @@ import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
@@ -143,8 +142,11 @@ public class CacheStore extends HashedStore
        /*
 	* Is it in the cache?
 	*/
-
+       
        int status = CacheStore._storeManager.removeState(objUid, ft);
+
+       if (status == AsyncStore.REMOVED)
+           return true;
 
        /*
 	* Check to see if there's a state on disk. If there is, then we
@@ -180,7 +182,7 @@ public class CacheStore extends HashedStore
 	*/
 
        int status = CacheStore._storeManager.removeWriteState(objUid, ft);
-       
+
        return CacheStore._storeManager.addWork(this, AsyncStore.WRITE, objUid, tName, state, ft);
    }
 
@@ -318,6 +320,11 @@ class StoreElement
 	fileType = CacheStore.NO_STATE_TYPE;
 	removed = true;
     }
+    
+    public String toString ()
+    {
+        return "< "+typeOfWork+", "+objUid+", "+tName+", "+fileType+", "+removed+" >";
+    }
 
     public CacheStore        store;
     public int               typeOfWork;
@@ -372,9 +379,9 @@ class AsyncStore extends Thread  // keep priority same as app. threads
     public static final int REMOVE = 1;
     public static final int WRITE = 2;
 
-    public static final int IN_USE = 0;
-    public static final int REMOVED = 1;
-    public static final int NOT_PRESENT = 2;
+    public static final int IN_USE = 3;
+    public static final int REMOVED = 4;
+    public static final int NOT_PRESENT = 5;
 
    public AsyncStore ()
    {
@@ -659,6 +666,13 @@ class AsyncStore extends Thread  // keep priority same as app. threads
 		       return element.state;
 	       }
 	   }
+	   
+	   /*
+	    * If not in cache then maybe we're working on it?
+	    */
+	   
+	   if ((_work != null) && (_work.objUid.equals(objUid)))
+	       return _work.state;
        }
 
        return null;
