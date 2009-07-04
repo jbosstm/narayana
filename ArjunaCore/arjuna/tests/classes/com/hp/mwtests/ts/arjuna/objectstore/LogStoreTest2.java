@@ -53,7 +53,7 @@ public class LogStoreTest2
         final int numberOfTransactions = 1000;
         final Uid[] ids = new Uid[numberOfTransactions];
         final int fakeData = 0xdeedbaaf;
-        final String type = "/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/Test";
+        final String type = "/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/TestTest";  // use unique path to prevent pollution from other tests
 
         for (int i = 0; i < numberOfTransactions; i++) {
             OutputObjectState dummyState = new OutputObjectState();
