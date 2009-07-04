@@ -61,8 +61,7 @@
 
                     <!-- these ones should work but dont.
                         Need to investigate why -->
-
-                	<exclude name="**/ActionTestClient.java"/>
+                	
                     <exclude name="**/ActionTestServer.java"/>
                 </fileset>
             </tests>
