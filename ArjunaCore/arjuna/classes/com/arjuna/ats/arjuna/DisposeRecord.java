@@ -209,8 +209,7 @@ public class DisposeRecord extends CadaverRecord
     
     public boolean doSave ()
     {
-	//	return true;
-	return false;
+	return true;
     }
     
     /**

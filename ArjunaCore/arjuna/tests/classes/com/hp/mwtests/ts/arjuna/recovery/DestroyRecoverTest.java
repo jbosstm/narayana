@@ -71,7 +71,7 @@ public class DestroyRecoverTest
         if (passed) {
             try {
                 A = new AtomicAction();
-
+                
                 txId = A.get_uid();
 
                 A.begin();
@@ -104,6 +104,12 @@ public class DestroyRecoverTest
 
                 tx.doCommit();
 
+                /*
+                 * Committing the recovered transaction should have disposed of the
+                 * user object, meaning activation will fail. Which for this test
+                 * is a successful outcome!
+                 */
+                
                 BasicObject recoveredObject = new BasicObject(objId);
 
                 if (recoveredObject.get() == -1)
@@ -113,7 +119,7 @@ public class DestroyRecoverTest
                 ex.printStackTrace();
             }
         }
-
+        
         assertTrue(passed);
     }
 
