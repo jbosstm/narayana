@@ -33,7 +33,6 @@ package com.arjuna.ats.internal.arjuna.recovery;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 

@@ -33,16 +33,12 @@ package com.arjuna.ats.internal.arjuna.recovery ;
 
 import java.io.* ;
 import java.net.* ;
-import java.util.* ;
 
 import com.arjuna.ats.arjuna.common.Uid ;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus ;
 import com.arjuna.ats.arjuna.utils.Utility ;
 
-import com.arjuna.ats.arjuna.logging.FacilityCode ;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_1 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector_1] - TransactionStatusConnector.delete called erroneously
@@ -56,7 +52,7 @@ import com.arjuna.common.util.logging.*;
 public class TransactionStatusConnector
 {
    /**
-    * Recreate TransactionStatusManagerItem and attempt to esablish
+    * Recreate TransactionStatusManagerItem and attempt to establish
     * a connection to the host/port of the TransactionStatusManager.
     */
 
@@ -142,6 +138,7 @@ public class TransactionStatusConnector
             {
                // Send transaction type and transaction Uid to the
                // TransactionStatusManager.
+
                _to_server.println ( transaction_type ) ;
                _to_server.println ( tranUid.toString() ) ;
                _to_server.flush() ;

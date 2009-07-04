@@ -34,7 +34,6 @@ package com.arjuna.ats.arjuna.recovery;
 import java.io.*;
 import java.util.*;
 
-import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
@@ -45,9 +44,6 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.utils.Utility;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.common.util.logging.*;
 
 /**
  * @message com.arjuna.ats.arjuna.recovery.ActionStatusService_1 [com.arjuna.ats.arjuna.recovery.ActionStatusService_1] - transactionType: {0} uid: {1} \n Status is {2}
