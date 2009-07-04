@@ -65,7 +65,6 @@
                 	<exclude name="**/ActionTestClient.java"/>
                     <exclude name="**/LogStoreTest2.java"/>
                     <exclude name="**/ActionTestServer.java"/>
-                	<exclude name="**/RecoveryManagerStartStopTest.java"/>
                 </fileset>
             </tests>
         </run.tests.macro>
