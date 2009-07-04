@@ -52,7 +52,7 @@ public class LastResource
         A.add(new LastResourceRecord(opRes));
         A.add(new ShutdownRecord(ShutdownRecord.FAIL_IN_PREPARE));
         A.commit();
-
+        
         assertEquals(OnePhase.ROLLEDBACK, opRes.status());
 
         A = new AtomicAction();
@@ -62,7 +62,7 @@ public class LastResource
         A.add(new LastResourceRecord(opRes));
         A.add(new ShutdownRecord(ShutdownRecord.FAIL_IN_COMMIT));
         A.commit();
-
+        
         assertEquals(OnePhase.COMMITTED, opRes.status());
 
         A = new AtomicAction();

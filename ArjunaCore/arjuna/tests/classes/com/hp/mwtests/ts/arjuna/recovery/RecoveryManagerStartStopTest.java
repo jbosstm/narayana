@@ -46,7 +46,7 @@ public class RecoveryManagerStartStopTest
         dumpThreadGroup(thg, "Before recovery manager client create");
 
         // we need to open several connections to the recovery manager listener service and then
-        // ensure they get closed dowm
+        // ensure they get closed down
 
         addRecoveryClient();
         addRecoveryClient();
@@ -74,7 +74,7 @@ public class RecoveryManagerStartStopTest
 
     private void ensureRecoveryClientsTerminated()
     {
-        // check that any threads added to talk to the reocvery listener get their sockets closed
+        // check that any threads added to talk to the recovery listener get their sockets closed
 
         for (RecoveryManagerStartStopTestThread client : clients) {
             try {
@@ -89,7 +89,7 @@ public class RecoveryManagerStartStopTest
     private void addRecoveryClient()
     {
         // open a connection to the recovery listener service in a new thread and ensure that the
-        // thread is terminated by habing its socket closed.
+        // thread is terminated by having its socket closed.
 
         RecoveryManagerStartStopTestThread client = new RecoveryManagerStartStopTestThread();
         clients.add(client);
