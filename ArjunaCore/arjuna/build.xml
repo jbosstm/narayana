@@ -65,7 +65,8 @@
                 	<exclude name="**/ActionTestClient.java"/>
                     <exclude name="**/LogStoreTest2.java"/>
                     <exclude name="**/ActionTestServer.java"/>
-                    <exclude name="**/LogMoveTest.java"/>
+                	<exclude name="**/RecoveryManagerStartStopTest.java"/>
+                	<exclude name="**/xidcheck.java"/>
                 </fileset>
             </tests>
         </run.tests.macro>
