@@ -63,7 +63,6 @@
                         Need to investigate why -->
 
                 	<exclude name="**/ActionTestClient.java"/>
-                    <exclude name="**/LogStoreTest2.java"/>
                     <exclude name="**/ActionTestServer.java"/>
                 </fileset>
             </tests>
