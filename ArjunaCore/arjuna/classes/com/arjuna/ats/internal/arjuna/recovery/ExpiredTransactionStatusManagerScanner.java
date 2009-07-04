@@ -32,13 +32,11 @@
 package com.arjuna.ats.internal.arjuna.recovery ;
 
 import java.util.* ;
-import java.io.PrintWriter ;
 import java.text.* ;
 
 import com.arjuna.ats.arjuna.common.Uid ;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore ;
-import com.arjuna.common.util.propertyservice.PropertyManager ;
 import com.arjuna.ats.arjuna.recovery.ExpiryScanner ;
 import com.arjuna.ats.arjuna.recovery.RecoveryEnvironment ;
 import com.arjuna.ats.arjuna.state.InputObjectState ;

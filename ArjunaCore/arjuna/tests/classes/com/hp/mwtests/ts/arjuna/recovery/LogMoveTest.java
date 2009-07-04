@@ -39,6 +39,7 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.recovery.RecoveryEnvironment;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -64,21 +65,13 @@ public class LogMoveTest
             if (os.currentState(kungfuTx, tn) == ObjectStore.OS_COMMITTED) {
                 System.err.println("Wrote dummy transaction " + kungfuTx);
 
-                System.setProperty(RecoveryEnvironment.EXPIRY_SCAN_INTERVAL, "1");
-                System.setProperty(Environment.PERIODIC_RECOVERY_PERIOD, "8000000");
-
-                RecoveryManager manager = RecoveryManager
-                        .manager(RecoveryManager.DIRECT_MANAGEMENT);
-
-                manager.scan();
-
-                try {
-                    Thread.sleep(3600000);
-                }
-                catch (final Exception ex) {
-                }
-
-                manager.scan();
+                // quicker to deal with scanner directly
+                
+                ExpiredTransactionScanner scanner = new ExpiredTransactionScanner(tn, "/StateManager/ExpiredEntries");
+                
+                scanner.scan();
+                
+                scanner.scan();
 
                 if (os.currentState(kungfuTx, tn) == ObjectStore.OS_COMMITTED)
                     System.err.println("Transaction log not moved!");
