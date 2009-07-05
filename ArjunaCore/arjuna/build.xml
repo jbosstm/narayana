@@ -57,12 +57,7 @@
                     <exclude name="**/DummyRecoveryModule.java"/>
                     <exclude name="**/CrashAbstractRecord*.java"/>
                     <exclude name="**/RecoveryTransaction.java"/>
-                    <exclude name="**/UserDefFirst0Setup.java"/>                   
-
-                    <!-- these ones should work but dont.
-                        Need to investigate why -->
-                	
-                    <exclude name="**/ActionTestServer.java"/>
+                    <exclude name="**/UserDefFirst0Setup.java"/>
                 </fileset>
             </tests>
         </run.tests.macro>
