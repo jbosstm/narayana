@@ -66,6 +66,9 @@
     <!-- (Must be unique across all Arjuna instances.) -->
     <entry key="com.arjuna.ats.arjuna.xa.nodeIdentifier">1</entry>
 
+	<!-- Which Xid types to recover -->
+	<entry key="com.arjuna.ats.jta.xaRecoveryNode">1</entry>
+	
     <!--
       Base port number for determining a unique number to associate with an instance of the transaction service
       (which is needed in order to support multiple instances on the same machine).
