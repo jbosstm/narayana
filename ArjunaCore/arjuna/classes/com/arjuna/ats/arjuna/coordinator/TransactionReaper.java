@@ -35,6 +35,7 @@ import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.Reapable;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.listener.ReaperMonitor;
 
 import com.arjuna.ats.internal.arjuna.coordinator.*;
 
@@ -205,6 +206,8 @@ public class TransactionReaper
 					 "TransactionReaper::check ()");
 	    }
 
+	    System.err.println("**checking");
+	    
 	    do
 	    {
 		final ReaperElement e ;
@@ -230,6 +233,7 @@ public class TransactionReaper
 		}
 
 		final long now = System.currentTimeMillis();
+
 		if (now < e._absoluteTimeout)
 		{
 		    // go back to sleep
@@ -442,6 +446,8 @@ public class TransactionReaper
 					    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_10",
 					    new Object[]{e._control.get_uid()});
 				}
+				
+				notifyListeners(e._control, false);
 			    }
 			    else
 			    {
@@ -556,21 +562,23 @@ public class TransactionReaper
 
 		try
 		{
-            if (e._control.running()) {
+		    if (e._control.running()) {
 
-                // try to cancel the transaction
+		        // try to cancel the transaction
 
-                if (e._control.cancel() == ActionStatus.ABORTED)
-                {
-                    cancelled = true;
+		        if (e._control.cancel() == ActionStatus.ABORTED)
+		        {
+		            cancelled = true;
 
-                    if (TxControl.enableStatistics) {
-                        // note that we also count timeouts as application rollbacks via
-                        // the stats unpdate in the TwoPhaseCoordinator cancel() method.
-                        TxStats.incrementTimeouts();
-                    }
-                }
-            }
+		            if (TxControl.enableStatistics) {
+		                // note that we also count timeouts as application rollbacks via
+		                // the stats unpdate in the TwoPhaseCoordinator cancel() method.
+		                TxStats.incrementTimeouts();
+		            }
+
+		            notifyListeners(e._control, true);
+		        }
+		    }
 		}
 		catch (Exception e1)
 		{
@@ -689,6 +697,8 @@ public class TransactionReaper
 					new Object[]{Thread.currentThread(),
 						     e._control.get_uid()});
 			    }
+			    
+	                    notifyListeners(e._control, false);
 			}
 			else
 			{
@@ -746,6 +756,16 @@ public class TransactionReaper
                 return _timeouts.size();
         }
 
+        public final void addListener (ReaperMonitor listener)
+        {
+            _listeners.add(listener);
+        }
+        
+        public final boolean removeListener (ReaperMonitor listener)
+        {
+            return _listeners.remove(listener);
+        }
+        
 	/**
 	 * timeout is given in seconds, but we work in milliseconds.
 	 */
@@ -1049,6 +1069,26 @@ public class TransactionReaper
         }
 	}
 
+	private final void notifyListeners (Reapable element, boolean rollback)
+	{
+	    // notify listeners. Ignore errors.
+
+	    for (int i = 0; i < _listeners.size(); i++)
+	    {
+	        try
+	        {
+	            if (rollback)
+	                _listeners.get(i).rolledBack(element.get_uid());
+	            else
+	                _listeners.get(i).markedRollbackOnly(element.get_uid());
+	        }
+	        catch (final Throwable ex)
+	        {
+	            // ignore
+	        }
+	    }
+	}
+	
 	/**
 	 * Currently we let the reaper thread run at same priority as other threads.
 	 * Could get priority from environment.
@@ -1291,6 +1331,8 @@ public class TransactionReaper
 	private Map _timeouts = Collections.synchronizedMap(new HashMap()); // key = Reapable, value = ReaperElement
 
 	private List _workQueue = new LinkedList(); // C of ReaperElement
+	
+	private Vector<ReaperMonitor> _listeners = new Vector<ReaperMonitor>();
 
 	private long _checkPeriod = 0;
 

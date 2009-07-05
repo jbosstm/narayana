@@ -68,6 +68,11 @@ public class ReaperElement implements Comparable
 
 		_absoluteTimeout = timeout * 1000 + System.currentTimeMillis();
 	}
+	
+	public String toString ()
+	{
+	    return "ReaperElement < "+_control+", "+_timeout+", "+statusName()+", "+_worker+" >";
+	}
 
 	/**
 	 * Order by absoluteTimeout first, then by Uid.
