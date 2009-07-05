@@ -260,7 +260,7 @@ public class ActionTestClient
         
         Thread.sleep(1000);  // allow time for test to run
 
-        //listener.stopListener();
+        listener.stopListener();
         
         assertEquals(3, ActionTestClientTestService._tests_passed);
         assertEquals(0, ActionTestClientTestService._tests_failed);
@@ -278,14 +278,14 @@ public class ActionTestClient
             String host = InetAddress.getLocalHost().getHostAddress();
             _test_service_socket = new ServerSocket(_port);
             _test_socket = new Socket(host, _port);
-            
+
             _from_test_service = new BufferedReader(new InputStreamReader
                     (_test_socket.getInputStream()));
             _to_test_service = new PrintWriter(new OutputStreamWriter
                     (_test_socket.getOutputStream()));
 
             _to_test_service.write(Utility.getProcessUid().stringForm()+"\n");
-            _to_test_service.write(Utility.longToHexString(Utility.getpid())+"\n");
+            _to_test_service.write(Utility.intToHexString(Utility.getpid())+"\n");
             
             for (int i = 0; i < _number; i++)
             {

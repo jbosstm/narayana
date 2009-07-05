@@ -47,102 +47,37 @@ import static org.junit.Assert.*;
 
 public class ActionTestServer
 {
-    private static boolean test_setup()
-    {
-        boolean setupOk = false;
-
-        try {
-            _tests_passed = 0;
-            _tests_failed = 0;
-
-            // needed to force TxControl static initialization
-            ObjectStore os = TxControl.getStore();
-
-            _transaction_1 = new AtomicAction();
-            _transaction_2 = new AtomicAction();
-            _transaction_3 = new AtomicAction();
-
-            _test_tran_type_1 = _transaction_1.type();
-            _test_tran_type_2 = _transaction_2.type();
-            _test_tran_type_3 = _transaction_3.type();
-
-            _test_uid_1 = _transaction_1.getSavingUid();
-            _test_uid_2 = _transaction_2.getSavingUid();
-            _test_uid_3 = _transaction_3.getSavingUid();
-
-            _test_host = InetAddress.getLocalHost().getHostAddress();
-
-            final int one_second = 1000;
-            final int connection_tries = 10;
-            Socket sok = null;
-
-            for (int i = 0; i < connection_tries; i++) {
-                try {
-                    sok = new Socket(_test_host, _test_port);
-                    Thread.sleep(one_second);
-                    if (sok != null)
-                        break;
-                }
-                catch (ConnectException ex) {
-                    if (connection_tries == i + 1) {
-                        throw ex;
-                    }
-                }
-            }
-
-            // for sending transaction data to client
-            _from_client = new BufferedReader(new InputStreamReader
-                    (sok.getInputStream()));
-
-            _to_client = new PrintWriter(new OutputStreamWriter
-                    (sok.getOutputStream()));
-
-            // Send the process id to the client, so that it can setup
-            // a TransactionStatusConnector to this process.
-            _to_client.println(Utility.getProcessUid().toString());
-            _to_client.println(Utility.intToHexString(Utility.getpid()));
-            _to_client.flush();
-
-            setupOk = true;
-        }
-        catch (Exception ex) {
-            System.err.println("test_setup: Failed " + ex);
-        }
-
-        return setupOk;
-    }
-
     @Test
-    public void test()
+    public void test() throws Exception
     {
-        if (test_setup()) {
-            try {
-                test1();
-                test2();
-                test3();
+        assertTrue(test_setup());
 
-                System.out.println(_unit_test + "tests passed: " + _tests_passed +
-                        "  tests failed: " + _tests_failed);
+        try
+        {
+            test1();
+            test2();
+            test3();
 
-                if (_tests_failed > 0) {
-                    fail();
-                }
+            System.out.println(_unit_test + "tests passed: " + _tests_passed
+                    + "  tests failed: " + _tests_failed);
 
+            if (_tests_failed > 0)
+            {
+                fail();
             }
-            catch (Exception ex) {
-                fail(_unit_test + "FATAL EXCEPTION: " +
-                        "tests passed: " + _tests_passed +
-                        "  tests failed: " + _tests_failed);
-            }
-        } else {
 
-            fail("Test setup failed");
+        }
+        catch (Exception ex)
+        {
+            fail(_unit_test + "FATAL EXCEPTION: " + "tests passed: "
+                    + _tests_passed + "  tests failed: " + _tests_failed);
         }
     }
-
+    
     private static void test1()
     {
         try {
+            System.err.println("test1");
             String test_uid = _test_uid_1.toString();
             String test_type = _test_tran_type_1;
             String reply;
@@ -151,8 +86,6 @@ public class ActionTestServer
             _to_client.println(test_type);
             _to_client.println(test_uid);
             _to_client.flush();
-
-            reply = _from_client.readLine();
 
             _transaction_1.begin();
 
@@ -169,16 +102,12 @@ public class ActionTestServer
             _to_client.println(test_uid);
             _to_client.flush();
 
-            reply = _from_client.readLine();
-
             _transaction_1.commit();
 
             // send transaction id to client
             _to_client.println(test_type);
             _to_client.println(test_uid);
             _to_client.flush();
-
-            reply = _from_client.readLine();
 
             if ((addcr1 == AddOutcome.AR_ADDED) &&
                     (addcr2 == AddOutcome.AR_ADDED)) {
@@ -198,6 +127,8 @@ public class ActionTestServer
     private static void test2()
     {
         try {
+            System.err.println("test2");
+            
             String test_uid = _test_uid_2.toString();
             String test_type = _test_tran_type_2;
             String reply;
@@ -206,8 +137,6 @@ public class ActionTestServer
             _to_client.println(test_type);
             _to_client.println(test_uid);
             _to_client.flush();
-
-            reply = _from_client.readLine();
 
             _transaction_2.begin();
 
@@ -223,7 +152,6 @@ public class ActionTestServer
             _to_client.println(test_type);
             _to_client.println(test_uid);
             _to_client.flush();
-            reply = _from_client.readLine();
 
             _transaction_2.commit();
 
@@ -231,7 +159,6 @@ public class ActionTestServer
             _to_client.println(test_type);
             _to_client.println(test_uid);
             _to_client.flush();
-            reply = _from_client.readLine();
 
             if ((addcr1 == AddOutcome.AR_ADDED) &&
                     (addcr2 == AddOutcome.AR_ADDED)) {
@@ -251,6 +178,8 @@ public class ActionTestServer
     private static void test3()
     {
         try {
+            System.err.println("test3");
+            
             String test_uid = _test_uid_3.toString();
             String test_type = _test_tran_type_3;
             String reply;
@@ -259,7 +188,6 @@ public class ActionTestServer
             _to_client.println(test_type);
             _to_client.println(test_uid);
             _to_client.flush();
-            reply = _from_client.readLine();
 
             _transaction_3.begin();
 
@@ -275,7 +203,6 @@ public class ActionTestServer
             _to_client.println(test_type);
             _to_client.println(test_uid);
             _to_client.flush();
-            reply = _from_client.readLine();
 
             _transaction_3.commit();
 
@@ -283,7 +210,6 @@ public class ActionTestServer
             _to_client.println(test_type);
             _to_client.println(test_uid);
             _to_client.flush();
-            reply = _from_client.readLine();
 
             if ((addcr1 == AddOutcome.AR_ADDED) &&
                     (addcr2 == AddOutcome.AR_ADDED)) {
@@ -299,11 +225,60 @@ public class ActionTestServer
             _tests_failed++;
         }
     }
+    
+    /**
+     * Pre-test setup.
+     */
+    
+    private static boolean test_setup()
+    {
+        boolean setupOk = false;
 
+        try {
+            String host = InetAddress.getLocalHost().getHostAddress();
+            _test_service_socket = new ServerSocket(_port);
+            _test_socket = new Socket(host, _port);
+
+            _from_client = new BufferedReader(new InputStreamReader
+                    (_test_socket.getInputStream()));
+            _to_client = new PrintWriter(new OutputStreamWriter
+                    (_test_socket.getOutputStream()));
+
+            _to_client.write(Utility.getProcessUid().stringForm()+"\n");
+            _to_client.write(Utility.intToHexString(Utility.getpid())+"\n");
+            
+            _to_client.flush();
+
+            // needed to force TxControl static initialization
+            ObjectStore os = TxControl.getStore();
+
+            _transaction_1 = new AtomicAction();
+            _transaction_2 = new AtomicAction();
+            _transaction_3 = new AtomicAction();
+
+            _test_tran_type_1 = _transaction_1.type();
+            _test_tran_type_2 = _transaction_2.type();
+            _test_tran_type_3 = _transaction_3.type();
+
+            _test_uid_1 = _transaction_1.getSavingUid();
+            _test_uid_2 = _transaction_2.getSavingUid();
+            _test_uid_3 = _transaction_3.getSavingUid();
+
+            setupOk = true;
+        }
+        catch (Exception ex) {
+            System.err.println("test_setup: Failed " + ex);
+        }
+
+        return setupOk;
+    }
+    
     private static final String _unit_test = "com.hp.mwtests.ts.arjuna.recovery.ActionTestServer: ";
-
-    private static String _test_host;
-    private static final int _test_port = 4321;
+    
+    private static int _port = 4321;
+    
+    private static Socket _test_socket;
+    private static ServerSocket _test_service_socket;
 
     private static BufferedReader _from_client;
     private static PrintWriter _to_client;
