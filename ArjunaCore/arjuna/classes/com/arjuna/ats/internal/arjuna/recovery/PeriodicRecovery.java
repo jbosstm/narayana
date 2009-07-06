@@ -312,9 +312,9 @@ public class PeriodicRecovery extends Thread
      * @return a bound server socket corresponding to the recovery manager
      * @throws IOException if the host name is unknown or the endpoint has already been bound
      */
-    public static ServerSocket getServerSocket () throws IOException
+    public ServerSocket getServerSocket () throws IOException
     {
-        synchronized (PeriodicRecovery._socketLock)
+        synchronized (_socketLock)
         {
             if (_socket == null)
                 _socket = new ServerSocket(RecoveryManager.getRecoveryManagerPort(), Utility.BACKLOG, RecoveryManager.getRecoveryManagerHost());
@@ -648,7 +648,7 @@ public class PeriodicRecovery extends Thread
      * <b>Caveats:</b> must only be called while synchronized on {@link PeriodicRecovery#_stateLock}
      * @return the current recovery operation mode
      */
-    private Mode getMode ()
+    public Mode getMode ()
     {
         return _currentMode;
     }
@@ -898,7 +898,7 @@ public class PeriodicRecovery extends Thread
      * name of each module is used to indicate relative ordering.
      */
 
-   private static void loadModules ()
+   private void loadModules ()
    {
       // scan the relevant properties so as to get them into sort order
        Properties properties = arjPropertyManager.getPropertyManager().getProperties();
@@ -942,7 +942,7 @@ public class PeriodicRecovery extends Thread
      *
      * @param className
      */
-   private static void loadModule (String className)
+   private void loadModule (String className)
    {
        if (tsLogger.arjLogger.isDebugEnabled())
        {
@@ -1013,11 +1013,75 @@ public class PeriodicRecovery extends Thread
      * initialise the periodic recovery instance to a suitable initial state
      */
    private void initialise ()
-   {
-       _recoveryModules = new Vector();
-       setStatus(Status.INACTIVE);
-       setMode(Mode.ENABLED);
-   }
+    {
+        _recoveryModules = new Vector();
+        setStatus(Status.INACTIVE);
+        setMode(Mode.ENABLED);
+
+        _recoveryPeriod = _defaultRecoveryPeriod;
+
+        String recoveryPeriodString =
+                arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.PERIODIC_RECOVERY_PERIOD );
+
+        if ( recoveryPeriodString != null )
+        {
+            try
+            {
+                Integer recoveryPeriodInteger = new Integer( recoveryPeriodString );
+                _recoveryPeriod = recoveryPeriodInteger.intValue();
+
+                if (tsLogger.arjLogger.isDebugEnabled())
+                {
+                    tsLogger.arjLogger.debug
+                            ( DebugLevel.FUNCTIONS,
+                                    VisibilityLevel.VIS_PRIVATE,
+                                    FacilityCode.FAC_CRASH_RECOVERY,
+                                    "com.arjuna.ats.arjuna.recovery.PeriodicRecovery" +
+                                            ": Recovery period set to " + _recoveryPeriod + " seconds" );
+                }
+            }
+            catch (NumberFormatException e)
+            {
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_6",
+                            new Object[]{com.arjuna.ats.arjuna.common.Environment.PERIODIC_RECOVERY_PERIOD, recoveryPeriodString});
+                }
+            }
+        }
+
+        _backoffPeriod = _defaultBackoffPeriod;
+
+        String backoffPeriodString=
+                arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_BACKOFF_PERIOD);
+
+        if (backoffPeriodString != null)
+        {
+            try
+            {
+                Integer backoffPeriodInteger = new Integer(backoffPeriodString);
+                _backoffPeriod = backoffPeriodInteger.intValue();
+
+                if (tsLogger.arjLogger.isDebugEnabled())
+                {
+                    tsLogger.arjLogger.debug
+                            ( DebugLevel.FUNCTIONS,
+                                    VisibilityLevel.VIS_PRIVATE,
+                                    FacilityCode.FAC_CRASH_RECOVERY,
+                                    "PeriodicRecovery" +
+                                            ": Backoff period set to " + _backoffPeriod + " seconds" );
+                }
+            }
+            catch (NumberFormatException e)
+            {
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_7",
+                            new Object[]{com.arjuna.ats.arjuna.common.Environment.RECOVERY_BACKOFF_PERIOD, backoffPeriodString});
+                }
+            }
+        }
+    }
 
    // this refers to the modules specified in the recovery manager
    // property file which are dynamically loaded.
@@ -1025,17 +1089,17 @@ public class PeriodicRecovery extends Thread
     * list of instances of RecoiveryModule either loaded during startup as specified in the recovery manager
     * property file or added dynamically by calls to addModule
     */
-   private static Vector _recoveryModules = null;
+   private Vector _recoveryModules = null;
 
    /**
     * time in seconds between the first and second pass in any given scan
     */
-   private static int _backoffPeriod = 0;
+   private int _backoffPeriod = 0;
 
     /**
      * time in seconds for which the periodic recovery thread waits between scan attempts
      */
-   private static int _recoveryPeriod = 0;
+   private int _recoveryPeriod = 0;
 
     /**
      *  default value for _backoffPeriod if not specified via property {@link com.arjuna.ats.arjuna.common.Environment#RECOVERY_BACKOFF_PERIOD}
@@ -1051,17 +1115,17 @@ public class PeriodicRecovery extends Thread
      * lock controlling access to {@link PeriodicRecovery#_currentStatus}, {@link PeriodicRecovery#_currentMode} and
      * {@link PeriodicRecovery#_workerScanRequested}
      */
-   private static final Object _stateLock = new Object();
+   private final Object _stateLock = new Object();
 
     /**
      * activity status indicating whether we IDLING or some thread is SCANNING
      */
-   private static Status _currentStatus;
+   private Status _currentStatus;
 
     /**
      * operating mode indicating whether scanning is ENABLED, SUSPENDED or TERMINATED
      */
-   private static Mode _currentMode;
+   private Mode _currentMode;
 
     /**
      *  flag indicating whether the listener has prodded the recovery thread
@@ -1071,23 +1135,23 @@ public class PeriodicRecovery extends Thread
     /**
      * format for printing dates in log messages
      */
-    private static SimpleDateFormat _theTimestamper = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+    private SimpleDateFormat _theTimestamper = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 
     /**
      * socket used by listener worker thread
      */
-    private static ServerSocket _socket = null;
-    private static final Object _socketLock = new Object();
+    private ServerSocket _socket = null;
+    private final Object _socketLock = new Object();
 
     /**
      * listener thread running worker service
      */
-    private static Listener _listener = null;
+    private Listener _listener = null;
 
     /**
      * the worker service which handles requests via the listener socket
      */
-    private static WorkerService _workerService = null;
+    private WorkerService _workerService = null;
 
    /*
     * Read the system properties to set the configurable options
@@ -1098,69 +1162,6 @@ public class PeriodicRecovery extends Thread
 
    static
    {
-      _recoveryPeriod = _defaultRecoveryPeriod;
-
-      String recoveryPeriodString =
-         arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.PERIODIC_RECOVERY_PERIOD );
-
-      if ( recoveryPeriodString != null )
-      {
-         try
-         {
-            Integer recoveryPeriodInteger = new Integer( recoveryPeriodString );
-            _recoveryPeriod = recoveryPeriodInteger.intValue();
-
-	    if (tsLogger.arjLogger.isDebugEnabled())
-	    {
-               tsLogger.arjLogger.debug
-                  ( DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PRIVATE,
-                    FacilityCode.FAC_CRASH_RECOVERY,
-                    "com.arjuna.ats.arjuna.recovery.PeriodicRecovery" +
-                    ": Recovery period set to " + _recoveryPeriod + " seconds" );
-	    }
-         }
-         catch (NumberFormatException e)
-         {
-	     if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	     {
-		 tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_6",
-					     new Object[]{com.arjuna.ats.arjuna.common.Environment.PERIODIC_RECOVERY_PERIOD, recoveryPeriodString});
-	     }
-         }
-      }
-
-      _backoffPeriod = _defaultBackoffPeriod;
-
-      String backoffPeriodString=
-         arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_BACKOFF_PERIOD);
-
-      if (backoffPeriodString != null)
-      {
-         try
-         {
-            Integer backoffPeriodInteger = new Integer(backoffPeriodString);
-            _backoffPeriod = backoffPeriodInteger.intValue();
-
-	    if (tsLogger.arjLogger.isDebugEnabled())
-	    {
-               tsLogger.arjLogger.debug
-                  ( DebugLevel.FUNCTIONS,
-                    VisibilityLevel.VIS_PRIVATE,
-                    FacilityCode.FAC_CRASH_RECOVERY,
-                    "PeriodicRecovery" +
-                    ": Backoff period set to " + _backoffPeriod + " seconds" );
-	    }
-         }
-         catch (NumberFormatException e)
-         {
-     	     if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	     {
-		 tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_7",
-					     new Object[]{com.arjuna.ats.arjuna.common.Environment.RECOVERY_BACKOFF_PERIOD, backoffPeriodString});
-	     }
-         }
-      }
    }
 
 }

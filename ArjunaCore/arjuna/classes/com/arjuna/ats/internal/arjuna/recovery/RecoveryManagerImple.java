@@ -164,8 +164,7 @@ public class RecoveryManagerImple
                 {
                     tsLogger.arjLoggerI18N.info(
                             "com.arjuna.ats.internal.arjuna.recovery.socketready",
-                            new Object[] { PeriodicRecovery.
-                                    getServerSocket().getLocalPort() });
+                            new Object[] { _periodicRecovery.getServerSocket().getLocalPort() });
                 }
                 else
                 {
@@ -250,11 +249,6 @@ public class RecoveryManagerImple
             _periodicRecovery.resumeScan();
         }
 
-        public void finalize ()
-        {
-                stop(true);
-        }
-
        /**
         * wait for the recovery implementation to be shut down.
         */
@@ -278,21 +272,15 @@ public class RecoveryManagerImple
      * @return true if the RM port and address are in use
      */
     private final boolean isRecoveryManagerEndPointInUse ()
-        {
-        try
-        {
-            /*
-             * attempt to create the server socket. If an exception is thrown then some other
-             * process is using the RM endpoint
-             */
-            PeriodicRecovery.getServerSocket();
-
+    {
+        /*
+        * attempt to create the server socket. If an exception is thrown then some other
+        * process is using the RM endpoint
+        */
+        if(_periodicRecovery != null) {
+            return _periodicRecovery.getMode() != PeriodicRecovery.Mode.TERMINATED;
+        } else {
             return false;
         }
-        catch (Throwable e)
-        {
-            return true;
-        }
-        }
-
+    }
 }
