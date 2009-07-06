@@ -29,6 +29,7 @@ import com.arjuna.ats.arjuna.recovery.ExpiryScanner;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
+import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
@@ -122,29 +123,7 @@ public class ExpiredTransactionScanner implements ExpiryScanner
 
 								try
 								{
-									InputObjectState state = _objectStore
-											.read_committed(newUid, _typeName);
-
-									if (state != null) // just in case recovery
-														// kicked-in
-									{
-										boolean moved = _objectStore
-												.write_committed(newUid,
-														_movedTypeName,
-														new OutputObjectState(
-																state));
-
-										if (!moved)
-										{
-											tsLogger.arjLoggerI18N
-													.warn(
-															"com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_3",
-															new Object[]
-															{ newUid });
-										}
-										else
-										    _objectStore.remove_committed(newUid, _typeName);
-									}
+								    moveEntry(newUid);
 								}
 								catch (Exception ex)
 								{
@@ -179,6 +158,30 @@ public class ExpiredTransactionScanner implements ExpiryScanner
 		return true;
 	}
 
+	public boolean moveEntry (Uid newUid) throws ObjectStoreException
+	{
+	    InputObjectState state = _objectStore.read_committed(newUid, _typeName);
+	    boolean res = false;
+	    
+	    if (state != null) // just in case recovery
+	        // kicked-in
+	    {
+	        boolean moved = _objectStore.write_committed(newUid, _movedTypeName, new OutputObjectState(state));
+
+	        if (!moved)
+	        {
+	            tsLogger.arjLoggerI18N.warn(
+	                    "com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_3",
+	                    new Object[]
+	                               { newUid });
+	        }
+	        else
+	            res = _objectStore.remove_committed(newUid, _typeName);
+	    }
+          
+	    return res;
+	}
+	
 	private String _typeName;
 
 	private String _movedTypeName;
