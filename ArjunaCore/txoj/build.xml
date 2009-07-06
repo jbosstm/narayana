@@ -45,10 +45,6 @@
             <tests>
                 <fileset dir="tests/classes" includes="**/*.java">
                     <exclude name="**/common/**"/>
-
-
-
-                    <exclude name="**/DestroyTest.java"/>
                 </fileset>
             </tests>
         </run.tests.macro>
