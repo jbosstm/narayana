@@ -88,7 +88,7 @@
         </copy>
     </target>
 
-    <target name="install.services" depends="dist.compositenode">
+    <target name="install.services">
 
         <property name="services.dest.dir" value="${build.dir}/install/services"/>
         <property name="product_name" value="${modulename}"/>
@@ -102,8 +102,7 @@
         <javac srcdir="arjuna/services/classes" destdir="${build.dir}/services" debug="${debug}"
                deprecation="${deprecation}">
             <classpath>
-                <fileset dir="${build.dir}/lib/ext/" includes="*"/>
-                <fileset dir="${build.dir}/lib/" includes="*"/>
+                <fileset dir="arjuna/build/lib" includes="arjuna.jar"/>
                 <fileset dir="." includes="${lib.dir}/ext/*"/>
                 <fileset dir="${global.ext.lib.dir}" includes="wrapper.jar"/>
             </classpath>
