@@ -137,10 +137,10 @@ be sure you know what you are doing and why! -->
 
 
     
-    <entry name="com.arjuna.ats.jta.supportSubtransactions">NO</entry>
+    <entry key="com.arjuna.ats.jta.supportSubtransactions">NO</entry>
 
-	<entry name="com.arjuna.ats.jta.jtaTMImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple</entry>
+	<entry key="com.arjuna.ats.jta.jtaTMImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple</entry>
 
-	<entry name="com.arjuna.ats.jta.jtaUTImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple</entry>
+	<entry key="com.arjuna.ats.jta.jtaUTImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple</entry>
 
 </properties>
