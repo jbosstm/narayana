@@ -156,7 +156,10 @@ public class Environment
     public static final String PROCESS_IDENTIFIER = "com.arjuna.ats.internal.arjuna.utils.pid";
     public static final String BEFORECOMPLETION_WHEN_ROLLBACKONLY = "com.arjuna.ats.coordinator.beforeCompletionWhenRollbackOnly";
     public static final String CHECKEDACTION_FACTORY = "com.arjuna.ats.coordinator.checkedActionFactory";
-    
+
+    public static final String ALLOW_MULTIPLE_LAST_RESOURCES = "com.arjuna.ats.arjuna.allowMultipleLastResources";    
+    public static final String DISABLE_MULTIPLE_LAST_RESOURCES_WARNING = "com.arjuna.ats.arjuna.disableMultipleLastResourcesWarning";
+
     /**
       * Constant that holds the name of the environment property
       * for specifying the bind address for transaction services

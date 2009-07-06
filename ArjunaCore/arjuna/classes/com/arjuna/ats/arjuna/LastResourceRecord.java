@@ -37,6 +37,7 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
+
 import java.io.PrintWriter;
 
 import com.arjuna.common.util.logging.*;
@@ -186,14 +187,58 @@ public class LastResourceRecord extends AbstractRecord
 		return "/StateManager/AbstractRecord/LastResourceRecord";
 	}
 
+    /**
+    * @message com.arjuna.ats.arjuna.lastResource.multipleWarning
+    *          [com.arjuna.ats.arjuna.lastResource.multipleWarning]
+    *          Multiple last resources have been added to the current transaction.
+    *          This is transactionally unsafe and should not be relied upon.
+    *          Current resource is {0}
+    * @message com.arjuna.ats.arjuna.lastResource.disallow
+    *          [com.arjuna.ats.arjuna.lastResource.disallow]
+    *          Adding multiple last resources is disallowed. Current resource is
+    *          {0}
+    * @message com.arjuna.ats.arjuna.lastResource.startupWarning
+    *          [com.arjuna.ats.arjuna.lastResource.startupWarning]
+    *          You have chosen to enable multiple last resources in the transaction
+    *          manager. This is transactionally unsafe and should not be relied
+    *          upon.
+    * @message com.arjuna.ats.arjuna.lastResource.disableWarning
+    *          [com.arjuna.ats.arjuna.lastResource.disableWarning]
+    *          You have chosen to disable the Multiple Last Resources warning. You will see it only once.
+    */
 	public boolean shouldAdd (AbstractRecord a)
 	{
-	    /*
-	     * OK to add as long as we are the only instance in the list.
-	     * So if we see another record with the same type, barf!
-	     */
-	    
-            return ! (a.typeIs() == typeIs()) ;
+        if( a.typeIs() == typeIs() )
+        {
+            if(ALLOW_MULTIPLE_LAST_RESOURCES)
+            {
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    if (!_disableMLRWarning || (_disableMLRWarning && !_issuedWarning))
+                    {
+                        tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.lastResource.multipleWarning",
+                                new Object[] { a });
+                        _issuedWarning = true;
+                    }
+                }
+
+                return true;
+            }
+            else
+            {
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.lastResource.disallow",
+                            new Object[] { a });
+                }
+
+                return false;
+            }
+        }
+        else
+        {
+            return true;
+        }
 	}
 
 	public boolean shouldMerge (AbstractRecord a)
@@ -247,4 +292,33 @@ public class LastResourceRecord extends AbstractRecord
 	private OnePhaseResource _lro;
 	
 	private static final Uid ONE_PHASE_RESOURCE_UID = Uid.lastResourceUid() ;
+
+
+    private static final boolean ALLOW_MULTIPLE_LAST_RESOURCES;
+
+    private static boolean _disableMLRWarning = false;
+    private static boolean _issuedWarning = false;
+
+    static
+    {
+        final String allowMultipleLastResources = arjPropertyManager
+                .getPropertyManager().getProperty(Environment.ALLOW_MULTIPLE_LAST_RESOURCES);
+        ALLOW_MULTIPLE_LAST_RESOURCES = (allowMultipleLastResources == null ? false
+                : Boolean.valueOf(allowMultipleLastResources).booleanValue());
+        
+        if (ALLOW_MULTIPLE_LAST_RESOURCES
+                && tsLogger.arjLoggerI18N.isWarnEnabled())
+        {
+            tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.lastResource.startupWarning");
+        }
+
+        String disableMLRW = arjPropertyManager.getPropertyManager().getProperty(Environment.DISABLE_MULTIPLE_LAST_RESOURCES_WARNING, "false");
+
+        if ("true".equalsIgnoreCase(disableMLRW))
+        {
+            tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.lastResource.disableWarning");
+
+            _disableMLRWarning = true;
+        }
+    }
 }

@@ -117,23 +117,6 @@ import org.omg.CORBA.UNKNOWN;
  * @message com.arjuna.ats.internal.jta.transaction.jts.lastResourceOptimisationInterface
  * 			[com.arjuna.ats.internal.jta.transaction.jts.lastResourceOptimisationInterface] - failed
  *          to load Last Resource Optimisation Interface
- *
- * @message com.arjuna.ats.internal.jta.transaction.jts.lastResource.multipleWarning
- *          [com.arjuna.ats.internal.jta.transaction.jts.lastResource.multipleWarning]
- *          Multiple last resources have been added to the current transaction.
- *          This is transactionally unsafe and should not be relied upon.
- *          Current resource is {0}
- * @message com.arjuna.ats.internal.jta.transaction.jts.lastResource.disallow
- *          [com.arjuna.ats.internal.jta.transaction.jts.lastResource.disallow]
- *          Adding multiple last resources is disallowed.
- *          Current resource is {0}
- * @message com.arjuna.ats.internal.jta.transaction.jts.lastResource.startupWarning
- *          [com.arjuna.ats.internal.jta.transaction.jts.lastResource.startupWarning]
- *          You have chosen to enable multiple last resources in the transaction manager.
- *          This is transactionally unsafe and should not be relied upon.
- * @message com.arjuna.ats.internal.jta.transaction.jts.lastResource.disableWarning
- *          [com.arjuna.ats.internal.jta.transaction.jts.lastResource.disableWarning]
- *          You have chosen to disable the Multiple Last Resources warning. You will see it only once.
  */
 
 public class TransactionImple implements javax.transaction.Transaction,
@@ -792,8 +775,8 @@ public class TransactionImple implements javax.transaction.Transaction,
                         // so we must do so directly.  start may fail due to dupl xid or other reason, and transactions
                         // may rollback async, for which reasons we can't call add before start.
                         // The xid will change on each pass of the loop, so we need to create a new record on each pass.
-                        // The creation will fail in the case of multiple last resources being disallowed, in which
-                        // case we don't call start on the resource at all. see JBTM-362 and JBTM-363
+                        // The registerResource will fail in the case of multiple last resources being disallowed.
+                        // see JBTM-362 and JBTM-363
                         XAResourceRecord xaResourceRecord = createRecord(xaRes, params, xid);
                         if(xaResourceRecord != null) {
                             xaRes.start(xid, XAResource.TMNOFLAGS);
@@ -944,42 +927,7 @@ public class TransactionImple implements javax.transaction.Transaction,
                 || ((LAST_RESOURCE_OPTIMISATION_INTERFACE != null) && LAST_RESOURCE_OPTIMISATION_INTERFACE
                 .isInstance(xaRes)))
         {
-            if (lastResourceCount == 1)
-            {
-                if (jtaLogger.loggerI18N.isWarnEnabled())
-                {
-                    if (ALLOW_MULTIPLE_LAST_RESOURCES)
-                    {
-                        if (!_disableMLRWarning || (_disableMLRWarning && !_issuedWarning))
-                        {
-                            jtaLogger.loggerI18N
-                                    .warn(
-                                            "com.arjuna.ats.internal.jta.transaction.jts.lastResource.multipleWarning",
-                                            new Object[]
-                                                    { xaRes });
-
-                            _issuedWarning = true;
-                        }
-                    }
-                    else
-                    {
-                        jtaLogger.loggerI18N
-                                .warn(
-                                        "com.arjuna.ats.internal.jta.transaction.jts.lastResource.disallow",
-                                        new Object[]
-                                                { xaRes });
-                    }
-                }
-            }
-
-            if ((lastResourceCount++ == 0) || ALLOW_MULTIPLE_LAST_RESOURCES)
-            {
                 record = new LastResourceRecord(this, xaRes, xid, params);
-            }
-            else
-            {
-                record = null;
-            }
         }
         else
         {
@@ -1922,21 +1870,8 @@ public class TransactionImple implements javax.transaction.Transaction,
 
     private Throwable _rollbackOnlyCallerStacktrace;
 
-        /**
-         * Count of last resources seen in this transaction.
-         */
-        private int lastResourceCount ;
-
-        /**
-         * Do we allow multiple last resources?
-         */
-        private static final boolean ALLOW_MULTIPLE_LAST_RESOURCES ;
-
 	private static final boolean XA_TRANSACTION_TIMEOUT_ENABLED ;
 	private static final Class LAST_RESOURCE_OPTIMISATION_INTERFACE ;
-
-	private static boolean _disableMLRWarning = false;
-        private static boolean _issuedWarning = false;
 
 	static
 	{
@@ -1967,22 +1902,6 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 		}
 		LAST_RESOURCE_OPTIMISATION_INTERFACE = lastResourceOptimisationInterface ;
-
-                final String allowMultipleLastResources = jtsPropertyManager.getPropertyManager().getProperty(Environment.ALLOW_MULTIPLE_LAST_RESOURCES) ;
-                ALLOW_MULTIPLE_LAST_RESOURCES = (allowMultipleLastResources == null ? false : Boolean.valueOf(allowMultipleLastResources).booleanValue()) ;
-                if (ALLOW_MULTIPLE_LAST_RESOURCES && jtaLogger.loggerI18N.isWarnEnabled())
-                {
-                    jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.lastResource.startupWarning");
-                }
-
-                String disableMLRW = jtaPropertyManager.getPropertyManager().getProperty(Environment.DISABLE_MULTIPLE_LAST_RESOURCES_WARNING, "false");
-
-                if ("true".equalsIgnoreCase(disableMLRW))
-                {
-                    jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.lastResource.disableWarning");
-
-                    _disableMLRWarning = true;
-                }
 	}
 
     private static ConcurrentHashMap _transactions = new ConcurrentHashMap();

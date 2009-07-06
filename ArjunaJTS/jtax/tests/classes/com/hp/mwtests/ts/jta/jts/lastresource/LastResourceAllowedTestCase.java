@@ -27,7 +27,7 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple;
-import com.arjuna.ats.jta.common.Environment;
+import com.arjuna.ats.arjuna.common.Environment;
 import com.hp.mwtests.ts.jta.jts.JTSTestCase;
 
 public class LastResourceAllowedTestCase extends JTSTestCase
@@ -41,22 +41,22 @@ public class LastResourceAllowedTestCase extends JTSTestCase
     public void testAllowed()
         throws SystemException, NotSupportedException, RollbackException
     {
-        final LastOnePhaseResource firstResource = new LastOnePhaseResource() ;
-        final LastOnePhaseResource secondResource = new LastOnePhaseResource() ;
-        final LastOnePhaseResource thirdResource = new LastOnePhaseResource() ;
+        final LastOnePhaseResource firstResource = new LastOnePhaseResource();
+        final LastOnePhaseResource secondResource = new LastOnePhaseResource();
+        final LastOnePhaseResource thirdResource = new LastOnePhaseResource();
         
-        final TransactionManager tm = new TransactionManagerImple() ;
+        final TransactionManager tm = new TransactionManagerImple();
         tm.begin() ;
         try
         {
-            final Transaction tx = tm.getTransaction() ;
-            assertTrue("First resource enlisted", tx.enlistResource(firstResource)) ;
-            assertTrue("Second resource enlisted", tx.enlistResource(secondResource)) ;
-            assertTrue("Third resource enlisted", tx.enlistResource(thirdResource)) ;
+            final Transaction tx = tm.getTransaction();
+            assertTrue("First resource enlisted", tx.enlistResource(firstResource));
+            assertTrue("Second resource enlisted", tx.enlistResource(secondResource));
+            assertTrue("Third resource enlisted", tx.enlistResource(thirdResource));
         }
         finally
         {
-            tm.rollback() ;
+            tm.rollback();
         }
     }
 }

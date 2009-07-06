@@ -29,7 +29,7 @@ import javax.transaction.TransactionManager;
 import junit.framework.TestCase;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
-import com.arjuna.ats.jta.common.Environment;
+import com.arjuna.ats.arjuna.common.Environment;
 
 public class LastResourceAllowedTestCase extends TestCase
 {

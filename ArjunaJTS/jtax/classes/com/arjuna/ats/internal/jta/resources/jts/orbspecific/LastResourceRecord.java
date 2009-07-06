@@ -43,8 +43,12 @@ import org.omg.CosTransactions.Vote;
 
 import com.arjuna.ArjunaOTS.OTSAbstractRecord;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
+import com.arjuna.ats.jta.logging.jtaLogger;
 
 /**
  * XAResourceRecord implementing the Last Resource Commit Optimisation.
@@ -128,8 +132,87 @@ public class LastResourceRecord extends XAResourceRecord
 		return false;
 	}
     
+    /**
+    * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.multipleWarning
+    *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.multipleWarning]
+    *          Multiple last resources have been added to the current transaction.
+    *          This is transactionally unsafe and should not be relied upon.
+    *          Current resource is {0}
+    * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disallow
+    *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disallow]
+    *          Adding multiple last resources is disallowed. Current resource is
+    *          {0}
+    * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.startupWarning
+    *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.startupWarning]
+    *          You have chosen to enable multiple last resources in the transaction
+    *          manager. This is transactionally unsafe and should not be relied
+    *          upon.
+    * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disableWarning
+    *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disableWarning]
+    *          You have chosen to disable the Multiple Last Resources warning. You will see it only once.
+    */
     public boolean shouldAdd(OTSAbstractRecord record) throws SystemException
     {
-        return (record.type_id() == type_id()) ;
+        if( record.type_id() == type_id() )
+        {
+            if(ALLOW_MULTIPLE_LAST_RESOURCES)
+            {
+                if (jtaLogger.loggerI18N.isWarnEnabled())
+                {
+                    if (!_disableMLRWarning || (_disableMLRWarning && !_issuedWarning))
+                    {
+                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.multipleWarning",
+                                new Object[] { record });
+                        _issuedWarning = true;
+                    }
+                }
+
+                return true;
+            }
+            else
+            {
+                if (jtaLogger.loggerI18N.isWarnEnabled())
+                {
+                    jtaLogger.loggerI18N.warn(
+                            "com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disallow",
+                            new Object[] { record });
+                }
+
+                return false;
+            }
+        }
+        else
+        {
+            return true;
+        }
     }
+
+    private static final boolean ALLOW_MULTIPLE_LAST_RESOURCES;
+
+    private static boolean _disableMLRWarning = false;
+    private static boolean _issuedWarning = false;
+
+    static
+    {
+        final String allowMultipleLastResources = arjPropertyManager
+                .getPropertyManager().getProperty(Environment.ALLOW_MULTIPLE_LAST_RESOURCES);
+        ALLOW_MULTIPLE_LAST_RESOURCES = (allowMultipleLastResources == null ? false
+                : Boolean.valueOf(allowMultipleLastResources).booleanValue());
+
+        if (ALLOW_MULTIPLE_LAST_RESOURCES
+                && jtaLogger.loggerI18N.isWarnEnabled())
+        {
+            jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.startupWarning");
+        }
+
+        String disableMLRW = arjPropertyManager.getPropertyManager().getProperty(Environment.DISABLE_MULTIPLE_LAST_RESOURCES_WARNING, "false");
+
+        if ("true".equalsIgnoreCase(disableMLRW))
+        {
+            jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disableWarning");
+
+            _disableMLRWarning = true;
+        }
+    }
+
 }
