@@ -31,19 +31,18 @@ package com.hp.mwtests.ts.txoj.threadaction;
  * $Id: ThreadActionTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.txoj.common.*;
 
-import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.hp.mwtests.ts.txoj.common.resources.BasicThreadedObject;
 
 import java.lang.InterruptedException;
-    
+
+import org.junit.Test;
+
 public class ThreadActionTest
 {
-    
-public static void main (String[] args)
+    @Test
+    public void test()
     {
 	BasicThreadedObject object1 = new BasicThreadedObject(true);
 	BasicThreadedObject object2 = new BasicThreadedObject(false);
@@ -67,4 +66,4 @@ public static void main (String[] args)
 	System.out.println("Main thread has action "+BasicAction.Current());
     }
     
-};
+}

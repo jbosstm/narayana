@@ -33,16 +33,14 @@ package com.hp.mwtests.ts.txoj.atomicobject;
 
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.*;
-import com.arjuna.ats.arjuna.common.*;
 import java.util.Random;
 import java.lang.Math;
 
 import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.lang.InterruptedException;
 
@@ -64,15 +62,16 @@ public void run ()
 
 private char chr;
 
-};
+}
 
-public class AtomicObjectTest2 extends Test
+public class AtomicObjectTest2
 {
     public static final int START_VALUE_1 = 10;
     public static final int START_VALUE_2 = 101;
     public static final int EXPECTED_RESULT = START_VALUE_1 + START_VALUE_2;
 
-public void run(String[] args)
+    @Test
+    public void test() throws TestException
     {
 	rand = new Random();
 	atomicObject1 = new AtomicObject();
@@ -81,29 +80,9 @@ public void run(String[] args)
 	System.out.println(atomicObject1.get_uid());
 	System.out.println(atomicObject2.get_uid());
 
-	try
-	{
 	    atomicObject1.set(START_VALUE_1);
-	}
-	catch (TestException e)
-	{
-	    System.out.println("m set1 : failed");
-            logInformation("ERROR - "+e);
-            e.printStackTrace(System.err);
-            assertFailure();
-	}
 
-	try
-	{
 	    atomicObject2.set(START_VALUE_2);
-	}
-	catch (TestException e)
-	{
-	    System.out.println("m set2 : failed");
-            logInformation("ERROR - "+e);
-            e.printStackTrace(System.err);
-            assertFailure();
-	}
 
 	ThreadObject1 thr1 = new ThreadObject1('1');
 	ThreadObject1 thr2 = new ThreadObject1('2');
@@ -123,21 +102,8 @@ public void run(String[] args)
 	get12('m', 0);
 	get21('m', 0);
 
-        try
-        {
-			if ( ( getValue1() + getValue2() ) != EXPECTED_RESULT )
-			{
-				assertFailure();
-			}
-        }
-        catch (TestException e)
-        {
-            assertFailure();
-            logInformation("Unexpected Failure: "+e);
-            e.printStackTrace(System.err);
-        }
+assertEquals(EXPECTED_RESULT, (getValue1()+getValue2()));
 
-        assertSuccess();
     }
 
 public static void randomOperation (char thr, int level)
@@ -480,13 +446,6 @@ private static void get21 (char thr, int level)
 	}
 
 	System.out.println(" get21  : "+res1+" : "+res2+" : "+res+" : "+value1+" : "+value2);
-    }
-
-public static void main(String[] args)
-    {
-        AtomicObjectTest2 test = new AtomicObjectTest2();
-        test.initialise( null, null, args, new LocalHarness() );
-        test.runTest();
     }
 
 private static AtomicObject atomicObject1 = null;

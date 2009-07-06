@@ -33,18 +33,11 @@ package com.hp.mwtests.ts.txoj.common.resources;
 
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.*;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.txoj.*;
-import com.arjuna.ats.txoj.common.*;
 import java.lang.Thread;
-import java.lang.Math;
-import java.util.Random;
 
 import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 
-import java.lang.InterruptedException;
 
 public class BasicThreadedObject extends Thread
 {
@@ -113,4 +106,4 @@ private boolean startAction;
 public static AtomicAction A = null;
 public static AtomicObject O = new AtomicObject();
     
-};
+}

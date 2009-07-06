@@ -37,8 +37,6 @@ import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.gandiva.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.txoj.*;
-import com.arjuna.ats.txoj.common.*;
-import java.io.*;
 
 import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import java.io.IOException;

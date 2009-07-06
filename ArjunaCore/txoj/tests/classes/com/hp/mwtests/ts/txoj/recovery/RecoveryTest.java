@@ -32,68 +32,43 @@
 package com.hp.mwtests.ts.txoj.recovery;
 
 import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.*;
 import com.arjuna.ats.arjuna.common.*;
-import java.util.Random;
-import java.lang.Math;
 
-import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 
-import org.jboss.dtf.testframework.unittest.Test;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class RecoveryTest extends Test
+public class RecoveryTest
 {
-
-    public void run (String[] args)
+    @Test
+    public void test()
     {
-	try
-	{
-	    AtomicObject obj = new AtomicObject();
-	    Uid objRef = obj.get_uid();
+        try {
+            AtomicObject obj = new AtomicObject();
+            Uid objRef = obj.get_uid();
 
-	    AtomicAction A = new AtomicAction();
+            AtomicAction A = new AtomicAction();
 
-	    A.begin();
+            A.begin();
 
-	    obj.set(1234);
+            obj.set(1234);
 
-	    A.commit();
+            A.commit();
 
-	    AtomicObject recObj = new AtomicObject(objRef);
+            AtomicObject recObj = new AtomicObject(objRef);
 
-	    AtomicAction B = new AtomicAction();
+            AtomicAction B = new AtomicAction();
 
-	    B.begin();
+            B.begin();
 
-	    if (recObj.get() == 1234)
-	    {
-		System.out.print("Passed.");
+            assertEquals(1234, recObj.get());
 
-		assertSuccess();
-	    }
-	    else
-	    {
-		assertFailure();
-	    }
-
-	    B.abort();
-	}
-	catch (Exception ex)
-	{
-	    assertFailure();
-	}
+            B.abort();
+        }
+        catch (Exception ex)
+        {
+            fail(ex.toString());
+        }
     }
-
-    public static void main (String args[])
-    {
-	RecoveryTest rt = new RecoveryTest();
-
-	rt.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-
-	rt.run(args);
-    }
-
 }

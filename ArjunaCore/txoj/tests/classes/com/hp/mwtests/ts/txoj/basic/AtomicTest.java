@@ -32,50 +32,35 @@ package com.hp.mwtests.ts.txoj.basic;
  */
 
 import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.txoj.common.*;
 import com.arjuna.ats.arjuna.common.*;
 
 import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 
-public class AtomicTest extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class AtomicTest
 {
-
-public void run(String[] args)
+    @Test
+    public void run()
     {
 	AtomicObject foo = new AtomicObject();
 	Uid u = foo.get_uid();
-	int v;
 
 	AtomicAction A = new AtomicAction();
 
-	try
-	{
+    try {
 	    A.begin();
 
-	    logInformation("current object value is "+foo.get());
-
 	    foo.set(2);
-
-	    logInformation("object value is now "+foo.get());
 
 	    A.commit();
 
 	    int finalVal = foo.get();
 
-	    logInformation("final object value is now "+finalVal);
+        assertEquals(2, finalVal);
 
-	    if (finalVal == 2)
-		logInformation("This is correct.");
-	    else
-	    {
-		logInformation("This is incorrect.");
-		assertFailure();
-	    }
-
-	    logInformation("\nStarting new action.");
 
 	    foo = new AtomicObject(u);
 
@@ -83,40 +68,22 @@ public void run(String[] args)
 
 	    A.begin();
 
-	    logInformation("current object value is "+foo.get());
-
 	    foo.set(4);
 
 	    A.commit();
 
 	    finalVal = foo.get();
 
-	    logInformation("final object value is "+finalVal);
+        assertEquals(4, finalVal);
 
-	    if (finalVal == 4)
-		logInformation("This is correct.");
-	    else
-            {
-		logInformation("This is incorrect.");
-                assertFailure();
-            }
 	}
 	catch (TestException e)
 	{
-	    logInformation("AtomicObject exception raised.");
-            e.printStackTrace(System.err);
-            assertFailure();
-
 	    A.abort();
+
+        fail("AtomicObject exception raised.");
 	}
 
-        assertSuccess();
     }
 
-public static void main(String[] args)
-    {
-        AtomicTest test = new AtomicTest();
-        test.initialise( null, null, args, new LocalHarness() );
-        test.runTest();
-    }
-};
+}

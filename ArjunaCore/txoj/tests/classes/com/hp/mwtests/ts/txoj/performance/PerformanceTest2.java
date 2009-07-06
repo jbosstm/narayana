@@ -32,7 +32,6 @@ package com.hp.mwtests.ts.txoj.performance;
  */
 
 import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.txoj.common.*;
 
 import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
@@ -40,109 +39,61 @@ import com.hp.mwtests.ts.txoj.common.resources.RecoverableObject;
 
 import java.lang.NumberFormatException;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class PerformanceTest2
 {
-    
-public static void main (String[] args)
+    @Test
+    public void recoverableTest()
     {
-	boolean persistent = true;
-	long iters = 1000;
-	
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-recoverable") == 0)
-		persistent = false;
+        long iters = 1000;
 
-	    if (args[i].compareTo("-iter") == 0)
-	    {
-		try
-		{
-		    iters = Long.parseLong(args[i+1]);
-		}
-		catch (NumberFormatException e)
-		{
-		}
-	    }
-	}
+        RecoverableObject foo = new RecoverableObject();
+        AtomicAction A = null;
+        long t1 = System.currentTimeMillis();
 
-	long totalTime = 0;
+        for (int c = 0; c < iters; c++)
+        {
+            A = new AtomicAction();
 
-	AtomicAction A = new AtomicAction();
-	A.begin();
-	A.commit();
-	A = null;
+            A.begin();
 
-	if (persistent)
-	    totalTime = persistentTest(iters);
-	else
-	    totalTime = recoverableTest(iters);
+            foo.set(2);
 
-	System.out.print("Time taken to perform "+iters+" iterations on a ");
-
-	if (persistent)
-	    System.out.print("persistent object: ");
-	else
-	    System.out.print("recoverable object: ");
-
-	System.out.println(totalTime+" milliseconds");
+            A.commit();
+        }
     }
 
-public static long recoverableTest (long iters)
+    @Test
+    public void persistentTest()
     {
-	RecoverableObject foo = new RecoverableObject();
-	AtomicAction A = null;
-	long t1 = System.currentTimeMillis();
+        long iters = 1000;
 
-	for (int c = 0; c < iters; c++)
-	{
-	    A = new AtomicAction();
-	    
-	    A.begin();
-	    
-	    foo.set(2);
+        AtomicObject foo = new AtomicObject();
+        AtomicAction A = null;
+        long t1 = System.currentTimeMillis();
 
-	    A.commit();
+        try
+        {
+            for (int c = 0; c < iters; c++)
+            {
+                A = new AtomicAction();
 
-	    A = null;
-	}
+                A.begin();
 
-	foo = null;
-	
-	return System.currentTimeMillis() - t1;
+                foo.set(2);
+
+                A.commit();
+            }
+        }
+        catch (TestException e)
+        {
+            if (A != null)
+                A.abort();
+
+            fail("AtomicObject exception raised.");
+        }
     }
 
-public static long persistentTest (long iters)
-    {
-	AtomicObject foo = new AtomicObject();
-	AtomicAction A = null;
-	long t1 = System.currentTimeMillis();
-
-	try
-	{
-	    for (int c = 0; c < iters; c++)
-	    {
-		A = new AtomicAction();
-		
-		A.begin();
-		
-		foo.set(2);
-
-		A.commit();
-
-		A = null;
-	    }
-	}
-	catch (TestException e)
-	{
-	    System.out.println("AtomicObject exception raised.");
-
-	    if (A != null)
-		A.abort();
-	}
-
-	foo = null;
-	
-	return System.currentTimeMillis() - t1;
-    }    
-    
-};
+}

@@ -48,39 +48,23 @@
                 <fileset dir="tests/classes" includes="**/*.java">
                     <exclude name="**/resources/**"/>
                     <exclude name="**/DummyCheckedActionFactory.java"/>
-                    <exclude name="**/LogStressTest2.java"/>
                     <exclude name="**/MyAccess.java"/>
                     <exclude name="**/Worker.java"/>
-                    <exclude name="**/ReaperTestCase2.java"/>
-                    <exclude name="**/ReaperTestCase3.java"/>
                     <exclude name="**/BasicCrashRecord.java"/>
                     <exclude name="**/DummyRecoveryModule.java"/>
                     <exclude name="**/CrashAbstractRecord*.java"/>
                     <exclude name="**/RecoveryTransaction.java"/>
                     <exclude name="**/UserDefFirst0Setup.java"/>
-                    <!-- this one leaves a record in the object store which breaks LogStressTest -->
-                    <exclude name="**/LastResource.java"/>
+
+                    <!-- LogStressTest2 takes too long - needs moving to /qa -->
+                    <exclude name="**/LogStressTest2.java"/>
+                    <!-- ReaperTestCase2 and 3 have timing issues - adinn to fix - JBTM-567 -->
+                    <exclude name="**/ReaperTestCase2.java"/>
+                    <exclude name="**/ReaperTestCase3.java"/>
                 </fileset>
             </tests>
         </run.tests.macro>
 
-        <run.tests.macro>
-            <tests><fileset dir="tests/classes" includes="**/ReaperTestCase.java"/></tests>
-        </run.tests.macro>
-        <!--<run.tests.macro>
-            <tests><fileset dir="tests/classes" includes="**/ReaperTestCase2.java"/></tests>
-        </run.tests.macro>-->
-        <run.tests.macro>
-            <tests><fileset dir="tests/classes" includes="**/TxControlUnitTest.java"/></tests>
-        </run.tests.macro>
-        <run.tests.macro>
-            <tests><fileset dir="tests/classes" includes="**/PersistenceUnitTest.java"/></tests>
-        </run.tests.macro>
-	<!-- this is failing when running on Hudson because of timing issues
-        <run.tests.macro>
-            <tests><fileset dir="tests/classes" includes="**/RecoveryManagerStartStopTest.java"/></tests>
-        </run.tests.macro>
-	-->
     </target>
 
 </project>

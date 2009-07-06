@@ -34,10 +34,7 @@ package com.hp.mwtests.ts.txoj.common.resources;
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.*;
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.txoj.*;
-import com.arjuna.ats.txoj.common.*;
 
 import java.io.IOException;
 
@@ -168,5 +165,5 @@ public String type ()
     
 private int state;
     
-};
+}
 

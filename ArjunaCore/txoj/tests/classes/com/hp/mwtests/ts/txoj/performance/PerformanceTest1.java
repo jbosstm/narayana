@@ -32,142 +32,57 @@ package com.hp.mwtests.ts.txoj.performance;
  */
 
 import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.txoj.common.*;
 
 import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 import com.hp.mwtests.ts.txoj.common.resources.RecoverableObject;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.utils.PerformanceLogger;
 
-import java.lang.NumberFormatException;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class PerformanceTest1 extends Test
+public class PerformanceTest1
 {
-
-    public void run(String[] args)
+    @Test
+    public void recoverableTest()
     {
-	boolean persistent = true;
-	long startIters = 1000;
-        long endIters = 2000;
-        long incrementIters = 250;
+        long iters = 4;
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-recoverable") == 0)
-		persistent = false;
+        RecoverableObject foo = new RecoverableObject();
+        AtomicAction A = new AtomicAction();
+        long t1 = System.currentTimeMillis();
 
-	    if (args[i].compareTo("-start") == 0)
-	    {
-		try
-		{
-		    startIters = Long.parseLong(args[i+1]);
-		}
-		catch (NumberFormatException e)
-		{
-		}
-	    }
+        A.begin();
 
-            if (args[i].compareTo("-end") == 0)
-	    {
-		try
-		{
-		    endIters = Long.parseLong(args[i+1]);
-		}
-		catch (NumberFormatException e)
-		{
-		}
-	    }
-
-            if (args[i].compareTo("-inc") == 0)
-	    {
-		try
-		{
-		    incrementIters = Long.parseLong(args[i+1]);
-		}
-		catch (NumberFormatException e)
-		{
-		}
-	    }
-	}
-
-        if ( ( ( ( startIters - endIters) % incrementIters ) != 0 ) || ( endIters < startIters ) )
+        for (int c = 0; c < iters; c++)
         {
-            System.out.println("Invalid iteration parameters");
+            foo.set(2);
         }
-        else
-        {
-            long thisTime = 0;
-            PerformanceLogger logger = new PerformanceLogger("PerformanceTest1");
 
-            logInformation("Performing "+startIters+" - "+endIters+" (step "+incrementIters+") iterations");
+        A.commit();
+    }
 
-            for (long iters=startIters;iters<=endIters;iters += incrementIters)
+    @Test
+    public void persistentTest()
+    {
+        long iters = 4;
+
+        AtomicObject foo = new AtomicObject();
+        AtomicAction A = new AtomicAction();
+        long t1 = System.currentTimeMillis();
+
+        A.begin();
+
+        try {
+            for (int c = 0; c < iters; c++)
             {
-                if (persistent)
-                    thisTime = persistentTest(iters);
-                else
-                    thisTime = recoverableTest(iters);
-
-                logInformation("Number of Iterations:"+ iters +", Time Taken:" +thisTime);
-
-                logger.addData( iters, (double)((double)iters/((double)thisTime/1000)) );
-            }
-
-            try
-            {
-                logger.output(System.out);
-                assertSuccess();
-            }
-            catch (Exception e)
-            {
-                System.err.println("Unexpected exception - "+e);
-                assertFailure();
+                foo.set(2);
             }
         }
+        catch (TestException e)
+        {
+            fail("AtomicObject exception raised.");
+        }
+
+        A.commit();
     }
-
-public static long recoverableTest (long iters)
-    {
-	RecoverableObject foo = new RecoverableObject();
-	AtomicAction A = new AtomicAction();
-	long t1 = System.currentTimeMillis();
-
-	A.begin();
-
-	for (int c = 0; c < iters; c++)
-	{
-	    foo.set(2);
-	}
-
-	A.commit();
-
-	return System.currentTimeMillis() - t1;
-    }
-
-public static long persistentTest (long iters)
-    {
-	AtomicObject foo = new AtomicObject();
-	AtomicAction A = new AtomicAction();
-	long t1 = System.currentTimeMillis();
-
-	A.begin();
-
-	try
-	{
-	    for (int c = 0; c < iters; c++)
-	    {
-		foo.set(2);
-	    }
-	}
-	catch (TestException e)
-	{
-	    System.out.println("AtomicObject exception raised.");
-	}
-
-	A.commit();
-
-	return System.currentTimeMillis() - t1;
-    }
-
-};
+}

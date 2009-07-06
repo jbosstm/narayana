@@ -33,22 +33,19 @@ package com.hp.mwtests.ts.txoj.atomicobject;
 
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.*;
-import com.arjuna.ats.arjuna.common.*;
 import java.util.Random;
 import java.lang.Math;
 
 import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.lang.InterruptedException;
 
 class AbortObject extends Thread
 {
-
 public AbortObject ()
     {
     }
@@ -77,7 +74,7 @@ public void run ()
 
 private static int nextThreadId = 3;
 
-};
+}
 
 
 class CommitObject extends Thread
@@ -111,7 +108,7 @@ public void run ()
 
 private static int nextThreadId = 3;
 
-};
+}
 
 
 class ThreadObject2 extends Thread
@@ -133,17 +130,17 @@ public void run ()
 
 private int _value;
 
-};
+}
 
 
-public class AtomicObjectTest3 extends Test
+public class AtomicObjectTest3
 {
     public static final int START_VALUE_1 = 10;
     public static final int START_VALUE_2 = 101;
     public static final int EXPECTED_RESULT = START_VALUE_1 + START_VALUE_2;
 
-
-public void run(String[] args)
+    @Test
+    public void test() throws TestException
     {
 	rand = new Random();
 	atomicObject1 = new AtomicObject();
@@ -188,21 +185,7 @@ public void run(String[] args)
 	get12(0, 0);
 	get21(0, 0);
 
-        try
-        {
-			if ( ( getValue1() + getValue2() ) != EXPECTED_RESULT )
-			{
-				assertFailure();
-			}
-        }
-        catch (TestException e)
-        {
-            assertFailure();
-            logInformation("Unexpected Failure: "+e);
-            e.printStackTrace(System.err);
-        }
-
-        assertSuccess();
+        assertEquals(EXPECTED_RESULT, (getValue1()+getValue2()));
     }
 
 public static void randomOperation (int thr, int level)
@@ -641,15 +624,8 @@ private static void get21 (int thr, int level)
 	System.out.println(" get21  : "+res1+" : "+res2+" : "+res+" : "+value1+" : "+value2);
     }
 
-public static void main(String[] args)
-    {
-        AtomicObjectTest3 test = new AtomicObjectTest3();
-        test.initialise( null, null, args, new LocalHarness() );
-        test.runTest();
-    }
-
 private static AtomicObject atomicObject1 = null;
 private static AtomicObject atomicObject2 = null;
 private static Random rand = null;
 
-};
+}

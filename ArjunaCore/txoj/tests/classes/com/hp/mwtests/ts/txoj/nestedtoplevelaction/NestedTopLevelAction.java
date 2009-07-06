@@ -32,99 +32,74 @@ package com.hp.mwtests.ts.txoj.nestedtoplevelaction;
  */
 
 import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.txoj.common.*;
 
 import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class NestedTopLevelAction
 {
-    
-public static void main (String[] args)
+    @Test
+    public void test()
     {
-	AtomicAction A = new AtomicAction();
-	TopLevelAction B = new TopLevelAction();
-	AtomicAction C = new AtomicAction();
-	AtomicObject foo1 = new AtomicObject();
-	AtomicObject foo2 = new AtomicObject();
-	boolean passed = false;
+        AtomicAction A = new AtomicAction();
+        TopLevelAction B = new TopLevelAction();
+        AtomicAction C = new AtomicAction();
+        AtomicObject foo1 = new AtomicObject();
+        AtomicObject foo2 = new AtomicObject();
 
-	try
-	{
-	    System.out.println("\nStarting top-level action.\n");
-	
-	    A.begin();
+        try
+        {
+            A.begin();
 
-	    System.out.println(A);
+            foo1.set(5);
 
-	    foo1.set(5);
+            System.out.println("Current atomic object 1 state: " + foo1.get());
 
-	    System.out.println("Current atomic object 1 state: " + foo1.get());
+            System.out.println("\nStarting nested top-level action.");
 
-	    System.out.println("\nStarting nested top-level action.");
+            B.begin();
 
-	    B.begin();
+            System.out.println(B);
 
-	    System.out.println(B);
+            foo2.set(7);
 
-	    foo2.set(7);
+            System.out.println("Current atomic object 2 state: " + foo2.get());
 
-	    System.out.println("Current atomic object 2 state: " + foo2.get());
+            System.out.println("\nCommitting nested top-level action.");
 
-	    System.out.println("\nCommitting nested top-level action.");
-	
-	    B.commit();
+            B.commit();
 
-	    System.out.println("\nAborting top-level action.");
+            System.out.println("\nAborting top-level action.");
 
-	    A.abort();
+            A.abort();
 
-	    C.begin();
+            C.begin();
 
-	    int val1 = foo1.get();
-	    int val2 = foo2.get();
-	    
-	    System.out.println("\nFinal atomic object 1 state: " + val1);
-	    
-	    if (val1 == 0)
-	    {
-		System.out.println("This is correct.");
+            int val1 = foo1.get();
+            int val2 = foo2.get();
 
-		passed = true;
-	    }
-	    else
-		System.out.println("This is incorrect.");
-	    
-	    System.out.println("\nFinal atomic object 2 state: " + val2);
+            System.out.println("\nFinal atomic object 1 state: " + val1);
 
-	    if (val2 == 7)
-	    {
-		System.out.println("This is correct.");
+            assertEquals(0, val1);
 
-		passed = passed && true;
-	    }
-	    else
-	    {
-		System.out.println("This is incorrect.");
+            System.out.println("\nFinal atomic object 2 state: " + val2);
 
-		passed = passed && true;
-	    }
-	    
-	    C.commit();
-	}
-	catch (TestException e)
-	{
-	    System.out.println("AtomicObject exception raised.");
+            assertEquals(7, val2);
 
-	    A.abort();
-	    B.abort();
-	    C.abort();
-	}
+            C.commit();
+        }
+        catch (TestException e)
+        {
+            A.abort();
+            B.abort();
+            C.abort();
 
-	if (passed)
-	    System.out.println("Test passed");
-	else
-	    System.out.println("Test failed");
+            fail("AtomicObject exception raised.");
+        }
+
     }
-    
-};
+
+}

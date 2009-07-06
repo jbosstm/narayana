@@ -23,6 +23,7 @@ package com.hp.mwtests.ts.arjuna.recovery;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery;
+import com.arjuna.ats.arjuna.common.Environment;
 
 import java.net.Socket;
 import java.net.InetAddress;
@@ -42,6 +43,8 @@ public class RecoveryManagerStartStopTest
     @Test
     public void testStartStop() throws Exception
     {
+        System.setProperty(Environment.RECOVERY_MANAGER_PORT, "4712");
+
         // check how many threads there are running
 
         ThreadGroup thg = Thread.currentThread().getThreadGroup();
@@ -155,16 +158,12 @@ public class RecoveryManagerStartStopTest
             // get a socket connected to the listener
             // don't write anything just sit on a read until the socket is closed
             try {
-                ServerSocket socket = PeriodicRecovery.getServerSocket();
-                InetAddress address;
                 String host;
                 int port;
 
-                address = socket.getInetAddress();
-
                 host = InetAddress.getLocalHost().getHostName();
                 
-                port = PeriodicRecovery.getServerSocket().getLocalPort();
+                port = Integer.parseInt(System.getProperty(Environment.RECOVERY_MANAGER_PORT));
 
                 System.out.println("client atempting to connect to host " + host + " port " + port);
                 System.out.flush();

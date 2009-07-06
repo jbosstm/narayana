@@ -32,77 +32,42 @@ package com.hp.mwtests.ts.txoj.basic;
  */
 
 import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.txoj.common.*;
 
-import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.hp.mwtests.ts.txoj.common.resources.RecoverableObject;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 
-public class RecoverableTest extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class RecoverableTest
 {
-
-public void run(String[] args)
+    @Test
+    public void test()
     {
-	boolean passed = false;
-	RecoverableObject foo = new RecoverableObject();
-	int value = 0;
+        RecoverableObject foo = new RecoverableObject();
 
-	AtomicAction A = new AtomicAction();
+        AtomicAction A = new AtomicAction();
 
-	A.begin();
+        A.begin();
 
-	logInformation("value is "+foo.get());
+        foo.set(2);
 
-	foo.set(2);
+        assertEquals(2, foo.get());
 
-	logInformation("value is "+foo.get());
+        A.abort();
 
-	A.abort();
+        assertEquals(0, foo.get());
 
-	value = foo.get();
+        AtomicAction B = new AtomicAction();
 
-	logInformation("value is now "+value);
+        B.begin();
 
-	if (value == 0)
-	{
-	    AtomicAction B = new AtomicAction();
+        foo.set(4);
 
-	    B.begin();
+        assertEquals(4, foo.get());
 
-	    logInformation("value is "+foo.get());
+        B.commit();
 
-	    foo.set(4);
-
-	    logInformation("value is "+foo.get());
-
-	    B.commit();
-
-	    value = foo.get();
-
-	    logInformation("value is now "+value);
-
-	    if (value == 4)
-		passed = true;
-	}
-
-	if (passed)
-        {
-	    logInformation("Test passed");
-            assertSuccess();
-        }
-	else
-        {
-	    logInformation("Test failed");
-            assertFailure();
-        }
-    }
-
-public static void main(String[] args)
-    {
-        RecoverableTest test = new RecoverableTest();
-        test.initialise(null, null, args, new LocalHarness());
-        test.runTest();
+        assertEquals(4, foo.get());
     }
 }
 

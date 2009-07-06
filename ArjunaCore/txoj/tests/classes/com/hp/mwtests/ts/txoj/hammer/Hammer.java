@@ -31,48 +31,33 @@ package com.hp.mwtests.ts.txoj.hammer;
  * $Id: Hammer.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.txoj.common.*;
-import java.lang.Thread;
-import java.util.Random;
-
-import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 import com.hp.mwtests.ts.txoj.common.resources.HammerThreadedObject;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.lang.InterruptedException;
 
-public class Hammer extends Test
+public class Hammer
 {
-
-public void run(String[] args)
+    @Test
+    public void test()
     {
-	HammerThreadedObject.object = new AtomicObject();
-	HammerThreadedObject object1 = new HammerThreadedObject(2);
-	HammerThreadedObject object2 = new HammerThreadedObject(-2);
+        HammerThreadedObject.object = new AtomicObject();
+        HammerThreadedObject object1 = new HammerThreadedObject(2);
+        HammerThreadedObject object2 = new HammerThreadedObject(-2);
 
-	object1.start();
-	object2.start();
+        object1.start();
+        object2.start();
 
-	try
-	{
-	    object1.join();
-	    object2.join();
-	}
-	catch (InterruptedException e)
-	{
-	}
-
-	/* If we didn't deadlock, we'll get to here. */
-	assertSuccess();
+        try
+        {
+            object1.join();
+            object2.join();
+        }
+        catch (InterruptedException e)
+        {
+        }
     }
-
-public static void main(String[] args)
-    {
-        Hammer test = new Hammer();
-        test.initialise(null, null, args, new LocalHarness());
-        test.runTest();
-    }
-};
+}

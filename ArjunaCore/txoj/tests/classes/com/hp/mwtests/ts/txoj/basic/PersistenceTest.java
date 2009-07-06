@@ -33,84 +33,28 @@ package com.hp.mwtests.ts.txoj.basic;
 
 import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.txoj.common.*;
-import java.io.*;
 
-import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 
-public class PersistenceTest extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+
+public class PersistenceTest
 {
-
-public void run(String[] args)
+    @Test
+    public void test() throws ObjectStoreException
     {
-	boolean passed = false;
-
-	try
-	{
 	    ObjectStore store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_ShadowingStore());
 	    OutputObjectState state = new OutputObjectState();
 	    Uid u = new Uid();
 
-	    logInformation("Uid is "+u);
-
-	    if (store.write_committed(u, "/StateManager/LockManager/foo", state))
-	    {
-		logInformation("written ok");
-
-		passed = true;
-	    }
-	    else
-		logInformation("write error");
-
-	    if (passed)
-	    {
-		passed = false;
-
-		/*
-		 * Now try to read.
-		 */
+        assertTrue( store.write_committed(u, "/StateManager/LockManager/foo", state) );
 
 		InputObjectState inputState = store.read_committed(u, "/StateManager/LockManager/foo");
 
-		if (inputState != null)
-		{
-		    logInformation("read ok");
-
-		    passed = true;
-		}
-		else
-		    logInformation("read error");
-	    }
-	}
-	catch (ObjectStoreException e)
-	{
-	    logInformation(e.getMessage());
-
-	    passed = false;
-	}
-
-	if (passed)
-        {
-	    logInformation("Test passed");
-            assertSuccess();
-        }
-	else
-        {
-	    logInformation("Test failed");
-            assertFailure();
-        }
-    }
-
-public static void main(String[] args)
-    {
-        PersistenceTest test = new PersistenceTest();
-        test.initialise(null, null, args, new LocalHarness());
-        test.runTest();
+         assertNotNull( inputState );
     }
 }

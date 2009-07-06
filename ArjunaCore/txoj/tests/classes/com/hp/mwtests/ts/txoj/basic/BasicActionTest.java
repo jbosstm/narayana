@@ -32,40 +32,21 @@ package com.hp.mwtests.ts.txoj.basic;
  */
 
 import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.txoj.common.*;
 import com.arjuna.ats.arjuna.common.*;
 
-import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
+import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
 
-public class BasicActionTest extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class BasicActionTest
 {
-
-public void run(String[] args)
+    @Test
+    public void run() throws TestException
     {
 	AtomicObject foo = null;
 	Uid u = null;
-
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-uid") == 0)
-	    {
-		u = new Uid(args[i+1]);
-
-		if (!u.valid())
-		{
-		    System.out.println("Invalid uid.");
-		    System.exit(1);
-		}
-	    }
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: [-uid <uid>] [-help]");
-		assertFailure();
-	    }
-	}
 
 	if (u == null)
 	    foo = new AtomicObject();
@@ -74,56 +55,26 @@ public void run(String[] args)
 
 	AtomicAction A = new AtomicAction();
 
+        int value  = foo.get();
 	try
 	{
 	    A.begin();
 
-	    try
-	    {
-		logInformation("current object value is "+foo.get());
-	    }
-	    catch (Exception e)
-	    {
-	    }
-
-	    try
-	    {
-		logInformation("setting value");
-
 		foo.set(foo.get()+2);
-	    }
-	    catch (Exception e)
-	    {
-	    }
-
-	    try
-	    {
-		logInformation("object value is now "+foo.get());
-	    }
-	    catch (Exception e)
-	    {
-	    }
 
 	    A.commit();
 
-	    try
-	    {
-		logInformation("final object value is now "+foo.get());
-	    }
-	    catch (Exception e)
-	    {
-	    }
+        assertEquals(value+2, foo.get());
+
 	}
 	catch (Exception e)
 	{
-	    logInformation("AtomicObject exception raised.");
 	    A.abort();
+        fail("AtomicObject exception raised.");
 	}
 
-	logInformation("\nWill now try some erroneous conditions.\n");
+	System.out.println("\nWill now try some erroneous conditions.\n");
 
-	try
-	{
 	    AtomicAction B = new AtomicAction();
 
 	    u = new Uid();
@@ -133,13 +84,13 @@ public void run(String[] args)
 
 	    try
 	    {
-		logInformation("attempting to get value from non-existent object: "+foo.get());
+		System.out.println("attempting to get value from non-existent object: "+foo.get());
 	    }
 	    catch (Exception e)
 	    {
 	    }
 
-	    logInformation("trying to set value to 5");
+	    System.out.println("trying to set value to 5");
 
 	    try
 	    {
@@ -151,7 +102,7 @@ public void run(String[] args)
 
 	    try
 	    {
-		logInformation("attempting to get value again: "+foo.get());
+		System.out.println("attempting to get value again: "+foo.get());
 	    }
 	    catch (Exception e)
 	    {
@@ -159,20 +110,5 @@ public void run(String[] args)
 
 	    B.commit();
 	}
-	catch (Exception e)
-	{
-            logInformation("Unexpected Exception - "+e);
-	    e.printStackTrace(System.err);
-            assertFailure();
-	}
 
-        assertSuccess();
-    }
-
-public static void main(String[] args)
-    {
-        BasicActionTest test = new BasicActionTest();
-        test.initialise( null, null, args, new LocalHarness() );
-        test.runTest();
-    }
 }

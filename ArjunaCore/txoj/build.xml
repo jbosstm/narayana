@@ -22,7 +22,7 @@
 
     <property name="modulename" value="txoj"/>
 
-    <property name="global.ext.test.libs" value="junit.jar,TestingFramework.jar"/>
+    <property name="global.ext.test.libs" value="junit-4.6.jar"/>
 
     <import file="../../sharedbuild.xml"/>
 
@@ -37,6 +37,22 @@
         <propertyfile file="${build.dir}/classes/${property.file}">
 			<entry key="TXOJ_VERSION" value="unknown"/>
         </propertyfile>
+    </target>
+
+    <target name="run.tests">
+
+        <run.tests.macro>
+            <tests>
+                <fileset dir="tests/classes" includes="**/*.java">
+                    <exclude name="**/common/**"/>
+
+
+
+                    <exclude name="**/DestroyTest.java"/>
+                </fileset>
+            </tests>
+        </run.tests.macro>
+
     </target>
 
 </project>
