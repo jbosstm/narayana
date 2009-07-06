@@ -43,6 +43,19 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/*
+ * Define our own transaction type to avoid conflicts
+ * with other tests.
+ */
+
+class MyAtomicAction extends AtomicAction
+{
+    public String type ()
+    {
+        return "/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/MyAtomicAction";
+    }
+}
+
 class StressWorker extends Thread
 {
     public StressWorker(int iters, int thread)
@@ -55,7 +68,7 @@ class StressWorker extends Thread
     {
         for (int i = 0; i < _iters; i++) {
             try {
-                AtomicAction A = new AtomicAction();
+                MyAtomicAction A = new MyAtomicAction();
 
                 A.begin();
 
@@ -85,6 +98,7 @@ public class LogStressTest
 
         System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
         System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        
         System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");
 
         StressWorker[] workers = new StressWorker[threads];
@@ -107,7 +121,7 @@ public class LogStressTest
         boolean passed = false;
 
         try {
-            TxControl.getStore().allObjUids(new AtomicAction().type(), ios, ObjectStore.OS_UNKNOWN);
+            TxControl.getStore().allObjUids(new MyAtomicAction().type(), ios, ObjectStore.OS_UNKNOWN);
 
             Uid tempUid = new Uid(Uid.nullUid());
 
