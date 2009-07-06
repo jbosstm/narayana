@@ -32,14 +32,13 @@
 package com.arjuna.ats.internal.jdbc;
 
 import javax.transaction.*;
-import javax.sql.*;
 import java.sql.*;
 
 import com.arjuna.ats.jta.xa.RecoverableXAConnection;
 
 /**
- * A synchronisation to close the database connection when the transaction
- * has commited or rolled back.
+ * A synchronization to close the database connection when the transaction
+ * has committed or rolled back.
  *
  * @version $Id: ConnectionSynchronization.java 2342 2006-03-30 13:06:17Z  $
  */

@@ -32,10 +32,7 @@
 package com.arjuna.ats.internal.jdbc.drivers.modifiers;
 
 import java.sql.*;
-import javax.transaction.xa.Xid;
 import javax.sql.*;
-import javax.transaction.*;
-import javax.transaction.xa.*;
 
 import com.arjuna.ats.jta.exceptions.NotImplementedException;
 
