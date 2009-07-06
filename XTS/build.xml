@@ -146,7 +146,10 @@
 	</target>
 
 	<!-- Project targets - must add all module names to each target -->
-    <target name="build-projects" depends="com.arjuna.mwlabs.xts.init, com.arjuna.mwlabs.xts.wsas.build, com.arjuna.mwlabs.xts.ws-c.build, com.arjuna.mwlabs.xts.wscf.build, com.arjuna.mwlabs.xts.ws-t.build, com.arjuna.mwlabs.xts.wstx.build, htdocs">
+    <target name="build-projects" depends="com.arjuna.mwlabs.xts.init, com.arjuna.mwlabs.xts.wsas.build,
+                                            com.arjuna.mwlabs.xts.ws-c.build, com.arjuna.mwlabs.xts.wscf.build,
+                                            com.arjuna.mwlabs.xts.ws-t.build, com.arjuna.mwlabs.xts.wstx.build,
+                                            org.jboss.jbossts.xts.recovery.build, htdocs">
 
     </target>
 
@@ -179,7 +182,8 @@
 			<fileset dir="WS-C/build/dev/lib" includes="*.jar"/>
 			<fileset dir="WSCF/build/lib" includes="*.jar"/>
 			<fileset dir="WS-T/build/dev/lib" includes="*.jar"/>
-			<fileset dir="WSTX/build/lib" includes="*.jar"/>
+            <fileset dir="WSTX/build/lib" includes="*.jar"/>
+            <fileset dir="recovery/build/lib" includes="*.jar"/>
 		</path>
 
 		<javadoc
@@ -203,7 +207,8 @@
 			<fileset dir="WS-C/build/dev/lib" includes="*.jar"/>
 			<fileset dir="WSCF/build/lib" includes="*.jar"/>
 			<fileset dir="WS-T/build/dev/lib" includes="*.jar"/>
-			<fileset dir="WSTX/build/lib" includes="*.jar"/>
+            <fileset dir="WSTX/build/lib" includes="*.jar"/>
+            <fileset dir="recovery/build/lib" includes="*.jar"/>
 		</copy>
 		<mkdir dir="${com.arjuna.mwlabs.installationdirectory}/lib/ext"/>
 		<copy todir="${com.arjuna.mwlabs.installationdirectory}/lib/ext">
@@ -314,7 +319,8 @@
 		com.arjuna.mwlabs.xts.wscf.clean,
 		com.arjuna.mwlabs.xts.ws-t.clean,
 		com.arjuna.mwlabs.xts.wstx.clean,
-		com.arjuna.mwlabs.xts.sar.clean,
+		com.arjuna.mwlabs.xts.wstx.clean,
+		org.jboss.jbossts.xts.recovery.clean,
 		com.arjuna.mwlabs.xts.interop-tests.clean">
 
 		<delete dir="${com.arjuna.mwlabs.xts.htdocs.dest}"/>
@@ -345,9 +351,13 @@
 		</ant>
 	</target>
 
-	<target name="com.arjuna.mwlabs.xts.wstx.build">
-		<ant dir="WSTX"/>
-	</target>
+    <target name="com.arjuna.mwlabs.xts.wstx.build">
+        <ant dir="WSTX"/>
+    </target>
+
+    <target name="org.jboss.jbossts.xts.recovery.build">
+        <ant dir="recovery"/>
+    </target>
 
     <target name="com.arjuna.mwlabs.xts.sar.build">
         <!-- by default we build 1.0 and 1.1 for ease of testing,
@@ -399,9 +409,13 @@
 		<ant dir="WS-T" target="clean"/>
 	</target>
 
-	<target name="com.arjuna.mwlabs.xts.wstx.clean">
-		<ant dir="WSTX" target="clean"/>
-	</target>
+    <target name="com.arjuna.mwlabs.xts.wstx.clean">
+        <ant dir="WSTX" target="clean"/>
+    </target>
+
+    <target name="org.jboss.jbossts.xts.recovery.clean">
+        <ant dir="recovery" target="clean"/>
+    </target>
 
     <target name="com.arjuna.mwlabs.xts.sar.clean">
         <ant dir="sar" target="clean"/>

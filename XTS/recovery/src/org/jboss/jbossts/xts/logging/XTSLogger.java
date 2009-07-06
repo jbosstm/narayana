@@ -26,9 +26,9 @@ public class XTSLogger
         final String country  = commonPropertyManager.getPropertyManager().getProperty("country","US");
 
     	final Locale currentLocale = new Locale(language, country);
-    	log_mesg = ResourceBundle.getBundle("xts_msg",currentLocale);
+    	log_mesg = ResourceBundle.getBundle("recovery_msg",currentLocale);
 
     	arjLoggerI18N = LogFactory.getLogi18n("com.arjuna.webservices.logging.XTSLoggerI18N",
-    					     "xts_msg_"+language+"_"+country);
+    					     "recovery_msg_"+language+"_"+country);
     }
 }

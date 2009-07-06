@@ -1,0 +1,229 @@
+<!--
+  JBoss, Home of Professional Open Source
+  Copyright 2007, Red Hat Middleware LLC, and individual contributors
+  as indicated by the @author tags.
+  See the copyright.txt in the distribution for a full listing
+  of individual contributors.
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions
+  of the GNU Lesser General Public License, v. 2.1.
+  This program is distributed in the hope that it will be useful, but WITHOUT A
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+  PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License,
+  v.2.1 along with this distribution; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+  MA  02110-1301, USA.
+
+
+  (C) 2007,
+  @author JBoss Inc.
+-->
+<project name="recovery" default="jar" basedir=".">
+	<!-- Set module name -->
+	<property name="modulename" value="recovery"/>
+
+	<!-- Set default properties filename -->
+	<property name="org.jboss.jbossts.xts.recovery.properties" value="recovery.properties"/>
+
+	<!-- Load Build Properties File -->
+	<property file="${org.jboss.jbossts.xts.recovery.properties}"/>
+
+	<!-- Set property defaults -->
+	<property environment="env"/>
+	<property name="jboss.home" value="${env.JBOSS_HOME}"/>
+	<property name="jboss.server" value="default"/>
+	<property name="jboss.lib.dir" location="${jboss.home}/lib"/>
+	<property name="jboss.client.lib.dir" location="${jboss.home}/client"/>
+	<property name="jboss.server.dir" location="${jboss.home}/server/${jboss.server}"/>
+	<property name="jboss.server.lib.dir" location="${jboss.server.dir}/lib"/>
+    <property name="jboss.common.lib.dir" location="${jboss.home}/common/lib"/>
+
+	<!-- Path names -->
+    <property name="org.jboss.jbossts.xts.recovery.src" value="src"/>
+	<property name="org.jboss.jbossts.xts.recovery.dest.root" value="build"/>
+    <property name="org.jboss.jbossts.xts.recovery.dest" value="build/classes"/>
+	<property name="org.jboss.jbossts.xts.recovery.jar.dest" value="build/lib"/>
+	<property name="org.jboss.jbossts.xts.recovery.htdocs.dest" value="build/htdocs"/>
+
+    <property name="com.arjuna.buildsystem.dir" location="../../antbuildsystem"/>
+    <property name="com.arjuna.jta.install" location="../../install"/>
+
+    <property name="com.arjuna.buildsystem.lib" location="${com.arjuna.buildsystem.dir}/build/lib"/>
+    <property name="com.arjuna.jta.install.lib" location="${com.arjuna.jta.install}/lib"/>
+    <property name="com.arjuna.jta.install.ext" location="${com.arjuna.jta.install.lib}/ext"/>
+    <property name="com.arjuna.xts.ext" location="../ext"/>
+
+    <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
+
+    <property name="jta.lib.jars" value="jbossjta.jar jbossjts.jar"/>
+    <property name="jta.ext.jars" value="jbossts-common.jar"/>
+    <property name="jta.ext.compile.jars" value="commons-logging.jar"/>
+    <condition property="cxf.client.lib.jars" value="cxf-api.jar saaj-api.jar jaxrpc-api.jar jaxws-api.jar
+            geronimo-ws-metadata_2.0_spec.jar">
+        <isset property="cxf.build"/>
+    </condition>
+    <property name="jboss.client.lib.jars" value="jaxb-api.jar jboss-javaee.jar jbossws-native-jaxrpc.jar
+            jbossws-native-jaxws.jar jbossws-client.jar stax-api.jar jbossws-native-saaj.jar
+            jbossws-native-jaxws-ext.jar jbossws-native-core.jar jbossws-common.jar jboss-logging-spi.jar ${cxf.client.lib.jars}"/>
+    <property name="jboss.common.lib.jars" value="servlet-api.jar"/>
+    <property name="jboss.lib.jars" value="dom4j.jar"/>
+
+    <property name="wsas.libs" value="wsas.jar"/>
+    <property name="wsc.libs" value="ws-c.jar"/>
+    <property name="wsc-api.libs" value="ws-c-api.jar"/>
+    <property name="wscf.libs" value="wscf.jar"/>
+    <property name="wst.libs" value="ws-t.jar"/>
+    <property name="wst-api.libs" value="ws-t-api.jar"/>
+    <property name="wstx.libs" value="wstx.jar"/>
+    <property name="wstx-api.libs" value="wstx-api.jar"/>
+    <property name="recovery.libs" value="${modulename}.jar"/>
+    <property name="recovery-api.libs" value="${modulename}-api.jar"/>
+    <property name="recovery.all.libs" value="${recovery.libs}"/>
+
+    <!-- Define classpath builder task -->
+    <path id="com.arjuna.buildsystem.classpath">
+        <fileset dir="${com.arjuna.buildsystem.lib}" includes="${com.arjuna.buildsystem.lib.jars}"/>
+    </path>
+    <property name="com.arjuna.buildsystem.classpath" refid="com.arjuna.buildsystem.classpath"/>
+	<taskdef name="classpath-builder" classname="com.hp.mw.buildsystem.ant.ClasspathBuilder" classpathref="com.arjuna.buildsystem.classpath"/>
+	<!-- class path behaviour -->
+	<property name="build.sysclasspath" value="last"/>
+	<property name="com.arjuna.mwlabs.classpathbuilderfilename" location="buildsystem.classpath"/>
+
+    <property name="org.jboss.jbossts.xts.recovery.resourcebundle"
+	      value="recovery_msg_en_US.properties"/>
+
+	<!--Set external directories -->
+
+	<property name="com.arjuna.mwlabs.wsas.jar.dest" value="../WSAS/build/lib"/>
+	<property name="com.arjuna.mwlabs.wsc.jar.dest" value="../WS-C/build/dev/lib"/>
+	<property name="com.arjuna.mwlabs.wscf.jar.dest" value="../WSCF/build/lib"/>
+    <property name="com.arjuna.mwlabs.wst.jar.dest" value="../WS-T/build/dev/lib"/>
+    <property name="com.arjuna.mwlabs.wstx.jar.dest" value="../WSTX/build/lib"/>
+
+    <path id="org.jboss.jbossts.xts.recovery.lib.classpath">
+        <fileset dir="${com.arjuna.jta.install.lib}" includes="${jta.lib.jars}"/>
+        <fileset dir="${com.arjuna.jta.install.ext}" includes="${jta.ext.jars} ${jta.ext.compile.jars}"/>
+        <fileset dir="${jboss.client.lib.dir}" includes="${jboss.client.lib.jars}"/>
+        <fileset dir="${jboss.common.lib.dir}" includes="${jboss.common.lib.jars}"/>
+        <fileset dir="${com.arjuna.mwlabs.wsas.jar.dest}" includes="${wsas.libs}"/>
+        <fileset dir="${com.arjuna.mwlabs.wsc.jar.dest}" includes="${wsc.libs} ${wsc-api.libs}"/>
+        <fileset dir="${com.arjuna.mwlabs.wscf.jar.dest}" includes="${wscf.libs}"/>
+        <fileset dir="${com.arjuna.mwlabs.wst.jar.dest}" includes="${wst.libs} ${wst-api.libs}"/>
+        <fileset dir="${com.arjuna.mwlabs.wstx.jar.dest}" includes="${wstx.libs} ${wstx-api.libs}"/>
+    </path>
+
+	<!-- Initialisation -->
+	<target name="org.jboss.jbossts.xts.recovery.init">
+		<!-- Define default build properties -->
+		<tstamp>
+			<format property="org.jboss.jbossts.xts.recovery.date" pattern="yyyy/mm/dd hh:mm aa"/>
+		</tstamp>
+		<!-- Make the destination directory -->
+        <mkdir dir="${org.jboss.jbossts.xts.recovery.dest}"/>
+	</target>
+
+	<!-- Compilation targets -->
+
+	<target name="org.jboss.jbossts.xts.recovery.compile"
+	depends="org.jboss.jbossts.xts.recovery.compile-generic,
+		org.jboss.jbossts.xts.recovery.htdocs, org.jboss.jbossts.xts.recovery.generateresourcebundle"/>
+
+    <target name="org.jboss.jbossts.xts.recovery.compile-generic" depends="org.jboss.jbossts.xts.recovery.init">
+        <echo message="Compiling module generic code"/>
+        <javac srcdir="${org.jboss.jbossts.xts.recovery.src}"
+                       destdir="${org.jboss.jbossts.xts.recovery.dest}"
+                       debug="on">
+            <classpath>
+                <path refid="org.jboss.jbossts.xts.recovery.lib.classpath"/>
+            </classpath>
+        </javac>
+    </target>
+
+	<!-- Build htdocs for just mw, or mw and mwlabs -->
+	<property name="org.jboss.jbossts.xts.recovery.htdocs.list" value="org.jboss.jbosts.xts.*"/>
+
+	<!-- Jar targets -->
+	<target name="org.jboss.jbossts.xts.recovery.jar" depends="org.jboss.jbossts.xts.recovery.compile">
+		<echo message="Building jar file"/>
+		<mkdir dir="${org.jboss.jbossts.xts.recovery.jar.dest}"/>
+
+        <jar jarfile="${org.jboss.jbossts.xts.recovery.jar.dest}/${modulename}.jar">
+            <fileset dir="${org.jboss.jbossts.xts.recovery.dest}"/>
+        </jar>
+	</target>
+
+	<target name="org.jboss.jbossts.xts.recovery.htdocs"
+				depends="org.jboss.jbossts.xts.recovery.init">
+		<echo message="Building htdocs "/>
+		<mkdir dir="${org.jboss.jbossts.xts.recovery.htdocs.dest}"/>
+		<path id="org.jboss.jbossts.xts.recovery.htdocs.path">
+            <pathelement path="src"/>
+		</path>
+
+        <!--
+		<javadoc
+			sourcepathref="org.jboss.jbossts.xts.recovery.htdocs.path"
+			destdir="${org.jboss.jbossts.xts.recovery.htdocs.dest}"
+			packagenames="${org.jboss.jbossts.xts.recovery.htdocs.list}"
+	        >
+			<classpath>
+                <path refid="org.jboss.jbossts.xts.recovery.lib.classpath"/>
+				<path path="${org.jboss.jbossts.xts.recovery.src}"/>
+			</classpath>
+		</javadoc>
+		-->
+        <javadoc
+            destdir="${org.jboss.jbossts.xts.recovery.htdocs.dest}"
+            packagenames="${org.jboss.jbossts.xts.recovery.htdocs.list}"
+            >
+            <fileset dir="src" includes="**"/>
+            <classpath>
+                <path refid="org.jboss.jbossts.xts.recovery.lib.classpath"/>
+                <path path="${org.jboss.jbossts.xts.recovery.src}"/>
+            </classpath>
+        </javadoc>
+	</target>
+
+    <target name="org.jboss.jbossts.xts.recovery.generateresourcebundle">
+
+        <echo message="Generating recovery Bundle"/>
+
+        <classpath-builder filename="${com.arjuna.mwlabs.classpathbuilderfilename}" inproperty="build.classpath"/>
+
+        <javadoc    packagenames="com.arjuna.*"
+                    failonerror="yes"
+                    private="yes"
+                    defaultexcludes="yes"
+                    classpath="${build.classpath}">
+
+            <packageset dir="${org.jboss.jbossts.xts.recovery.src}" defaultexcludes="yes">
+              <include name="org/jboss/jbossts/**"/>
+            </packageset>
+
+             <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">
+                <path>
+                    <pathelement path="${com.arjuna.buildsystem.classpath}"/>
+                </path>
+                <param name="-basedir" value="${basedir}/${org.jboss.jbossts.xts.recovery.dest}"/>
+                <param name="-resourcebundle" value="${org.jboss.jbossts.xts.recovery.resourcebundle}"/>
+             </doclet>
+        </javadoc>
+
+    </target>
+
+	<!-- Clean targets -->
+	<target name="org.jboss.jbossts.xts.recovery.clean">
+		<echo message="Cleaning module"/>
+		<delete dir="${org.jboss.jbossts.xts.recovery.dest}"/>
+		<delete dir="${org.jboss.jbossts.xts.recovery.dest.root}"/>
+		<delete dir="${org.jboss.jbossts.xts.recovery.htdocs.dest}"/>
+        <delete file="${org.jboss.jbossts.xts.recovery.jar.dest}/${modulename}.jar"/>
+	</target>
+
+	<!-- Short target names -->
+	<target name="compile" depends="org.jboss.jbossts.xts.recovery.compile"/>
+	<target name="jar" depends="org.jboss.jbossts.xts.recovery.jar"/>
+	<target name="clean" depends="org.jboss.jbossts.xts.recovery.clean"/>
+</project>
