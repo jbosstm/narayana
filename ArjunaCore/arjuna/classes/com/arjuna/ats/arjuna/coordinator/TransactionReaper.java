@@ -206,8 +206,6 @@ public class TransactionReaper
 					 "TransactionReaper::check ()");
 	    }
 
-	    System.err.println("**checking");
-	    
 	    do
 	    {
 		final ReaperElement e ;
