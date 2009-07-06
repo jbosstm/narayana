@@ -58,6 +58,8 @@
                     <exclude name="**/CrashAbstractRecord*.java"/>
                     <exclude name="**/RecoveryTransaction.java"/>
                     <exclude name="**/UserDefFirst0Setup.java"/>
+                    <!-- this one leaves a record in the object store which breaks LogStressTest -->
+                    <exclude name="**/LastResource.java"/>
                 </fileset>
             </tests>
         </run.tests.macro>
