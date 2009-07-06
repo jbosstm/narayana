@@ -58,7 +58,20 @@ public class DestroyTest
         a.commit();
 
         atomicObject = new AtomicObject(u);
-
-        assertEquals(-1, atomicObject.get());
+        
+        int val;
+        
+        try
+        {
+            val = atomicObject.get();
+        }
+        catch (final TestException ex)
+        {
+            // activate should fail so setlock should fail
+            
+            val = -2;  // differentiate between -1
+        }
+        
+        assertEquals(-2, val);
     }
 }
