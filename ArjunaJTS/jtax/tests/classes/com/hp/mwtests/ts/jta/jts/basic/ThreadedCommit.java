@@ -41,6 +41,9 @@ import com.arjuna.ats.internal.jts.ORBManager;
 
 import com.arjuna.orbportability.*;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 class TWorker extends Thread
 {
     public TWorker (javax.transaction.Transaction tx, boolean first)
@@ -49,11 +52,11 @@ class TWorker extends Thread
         _success = true;
         _first = first;
     }
-    
+
     public void run ()
-    {   
+    {
         TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-        
+
         try
         {
             tm.resume(_tx);
@@ -67,26 +70,26 @@ class TWorker extends Thread
                         Thread.sleep(1000);
                     }
                     catch (final Exception ex)
-                    {             
+                    {
                     }
                 }
             }
- 
+
             tm.commit();
         }
         catch (final Exception ex)
         {
             ex.printStackTrace();
-            
+
             _success = false;
         }
     }
-    
+
     public final boolean success ()
     {
         return _success;
     }
-    
+
     private Transaction _tx;
     private boolean _success;
     private boolean _first;
@@ -94,29 +97,20 @@ class TWorker extends Thread
 
 public class ThreadedCommit
 {
-
-    public static void main (String[] args)
+    @Test
+    public void test() throws Exception
     {
         ORB myORB = null;
         RootOA myOA = null;
 
-        try
-        {
-            myORB = ORB.getInstance("test");
-            myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-            myORB.initORB(args, null);
-            myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-            ORBManager.setORB(myORB);
-            ORBManager.setPOA(myOA);
-        }
-        catch (final Exception e)
-        {
-            System.err.println("Initialisation failed: " + e);
-
-            System.exit(0);
-        }
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
         jtaPropertyManager.getPropertyManager()
                 .setProperty(
@@ -127,48 +121,33 @@ public class ThreadedCommit
                         com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION,
                         "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
 
-        try
+        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
+                .transactionManager();
+
+        if (tm != null)
         {
-            javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
-                    .transactionManager();
+            System.out.println("Starting top-level transaction.");
 
-            if (tm != null)
-            {
-                System.out.println("Starting top-level transaction.");
+            tm.begin();
 
-                tm.begin();
+            javax.transaction.Transaction theTransaction = tm
+                    .getTransaction();
 
-                javax.transaction.Transaction theTransaction = tm
-                        .getTransaction();
+            TWorker worker1 = new TWorker(theTransaction, true);
+            TWorker worker2 = new TWorker(theTransaction, false);
 
-                TWorker worker1 = new TWorker(theTransaction, true);               
-                TWorker worker2 = new TWorker(theTransaction, false);
-                
-                worker1.start();
-                worker2.start();
-                
-                worker1.join();
-                worker2.join();
-                
-                if (worker1.success() && worker2.success())
-                {
-                    System.out.println("\nTest completed successfully.");
-                }
-                else
-                    System.out.println("\nTest unsuccessful.");
-                
-                System.exit(0);
-            }
-            else
-            {
-                System.err
-                        .println("Error - could not get transaction manager!");
-                System.exit(0);
-            }
+            worker1.start();
+            worker2.start();
+
+            worker1.join();
+            worker2.join();
+
+            assertTrue( worker1.success() );
+            assertTrue( worker2.success() );
         }
-        catch (Exception e)
+        else
         {
-            e.printStackTrace();
+            fail("Error - could not get transaction manager!");
         }
 
         myOA.destroy();

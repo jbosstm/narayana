@@ -24,8 +24,6 @@
 
     <property name="global.ext.test.libs" value="junit-4.6.jar"/>
 
-    <!--<property name="global.ext.test.libs" value="junit.jar,TestingFramework.jar"/>-->
-
     <import file="../../sharedbuild.xml"/>
 
     <target name="init" depends="sharedbuild.init">

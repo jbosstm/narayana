@@ -31,28 +31,22 @@
 
 package com.hp.mwtests.ts.jta.recovery;
 
-import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 
-import com.arjuna.ats.jta.xa.*;
-
-import com.arjuna.ats.internal.jta.utils.*;
-
-import java.util.Vector;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class RecoveryManagerTest
 {
-    public static void main (String[] args)
+    @Test
+    public void test()
     {
-	System.setProperty("com.arjuna.ats.jta.xaRecoveryNode", "1");
-	System.setProperty("XAResourceRecovery1", "com.hp.mwtests.ts.jta.recovery.DummyXARecoveryResource");
+        System.setProperty("com.arjuna.ats.jta.xaRecoveryNode", "1");
+        System.setProperty("XAResourceRecovery1", "com.hp.mwtests.ts.jta.recovery.DummyXARecoveryResource");
 
-	RecoveryManager manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
+        RecoveryManager manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
 
-	manager.scan();
-	manager.scan();
+        manager.scan();
+        manager.scan();
     }
-
 }

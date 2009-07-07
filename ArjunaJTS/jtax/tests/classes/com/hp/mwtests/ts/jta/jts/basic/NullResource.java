@@ -37,73 +37,56 @@ import com.arjuna.ats.jta.common.*;
 
 import com.arjuna.orbportability.*;
 
-import org.jboss.dtf.testframework.unittest.Test;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class NullResource extends Test
+public class NullResource
 {
-
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.out.println("Initialisation failed: "+e);
-            e.printStackTrace(System.err);
-            assertFailure();
-	}
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
-	jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
+        jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
+        jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
 
-	boolean passed = false;
+        boolean passed = false;
 
-	try
-	{
-	    for (int i = 0; i < 1000; i++)
-	    {
-		javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-
-		tm.begin();
-
-		tm.getTransaction().rollback();
-
-		tm.suspend();
-	    }
-
-	    passed = true;
-	}
-	catch (Exception e)
-	{
-	    e.printStackTrace();
-            assertFailure();
-	}
-
-	if (passed)
+        try
         {
-	    System.out.println("\nTest completed successfully.");
-            assertSuccess();
+            for (int i = 0; i < 1000; i++)
+            {
+                javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+
+                tm.begin();
+
+                tm.getTransaction().rollback();
+
+                tm.suspend();
+            }
+
+            passed = true;
         }
-	else
+        catch (Exception e)
         {
-	    System.out.println("\nTest did not complete successfully.");
-            assertFailure();
+            e.printStackTrace();
+            fail();
         }
 
-	myOA.destroy();
-	myORB.shutdown();
+        assertTrue(passed);
+
+        myOA.destroy();
+        myORB.shutdown();
     }
 
 }

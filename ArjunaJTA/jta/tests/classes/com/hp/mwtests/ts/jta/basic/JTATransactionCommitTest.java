@@ -20,8 +20,8 @@
  */
 package com.hp.mwtests.ts.jta.basic;
 
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import javax.transaction.TransactionManager;
 import javax.transaction.Transaction;
@@ -37,42 +37,22 @@ import javax.transaction.Transaction;
  * $Id: JTATransactionCommitTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-public class JTATransactionCommitTest extends Test
+public class JTATransactionCommitTest
 {
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-        try
-        {
-            TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
-            System.out.println("Beginning new transaction");
-            tm.begin();
+        tm.begin();
 
-            Transaction tx = tm.suspend();
+        Transaction tx = tm.suspend();
 
-            System.out.println("Beginning second transaction");
-            tm.begin();
+        tm.begin();
 
-            System.out.println("Committing original transaction (via Transaction interface)");
-            tx.commit();
+        tx.commit();
 
-            System.out.println("Committing second transaction (via TransactionManager interface)");
-            tm.commit();
-
-            assertSuccess();
-        }
-        catch (Exception e)
-        {
-            System.out.println("Unexpected exception: "+e);
-            e.printStackTrace(System.err);
-            assertFailure();
-        }
+        tm.commit();
     }
 
-    public static void main(String[] args)
-    {
-        JTATransactionCommitTest test = new JTATransactionCommitTest();
-        test.initialise(null, null, args, new LocalHarness());
-        test.runTest();
-    }
 }

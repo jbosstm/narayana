@@ -31,95 +31,40 @@
 
 package com.hp.mwtests.ts.jta.basic;
 
-import com.hp.mwtests.ts.jta.common.*;
-
-import com.arjuna.ats.jta.*;
 import com.arjuna.ats.jta.utils.*;
 
-import com.arjuna.ats.arjuna.common.*;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
-
 import javax.transaction.*;
-import javax.transaction.xa.*;
 
-import java.lang.IllegalAccessException;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class JTAAbort extends Test
+public class JTAAbort
 {
-	public void run(String[] args)
-	{
-		boolean passed = false;
+    @Test
+    public void test() throws Exception
+    {
+        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
-		try
-		{
-			javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        tm.begin();
 
-			if (tm != null)
-			{
-				System.out.println("Starting top-level transaction.");
+        javax.transaction.Transaction theTransaction = tm.getTransaction();
 
-				tm.begin();
+        assertEquals(Status.STATUS_ACTIVE, theTransaction.getStatus());
 
-				javax.transaction.Transaction theTransaction = tm.getTransaction();
+        theTransaction.rollback();
 
-				if (theTransaction != null)
-				{
-					System.out.println("\nRolling back transaction.");
+        assertEquals(Status.STATUS_ROLLEDBACK, theTransaction.getStatus());
 
-					theTransaction.rollback();
+        assertEquals(Status.STATUS_ROLLEDBACK, tm.getStatus());
 
-					System.out.println("\nTransaction now: " + theTransaction);
+        theTransaction = tm.suspend();
 
-					System.out.println("\nThread associated: " + JTAHelper.stringForm(tm.getStatus()));
+        assertEquals(Status.STATUS_NO_TRANSACTION, tm.getStatus());
 
-					theTransaction = tm.suspend();
+        tm.resume(theTransaction);
 
-					System.out.println("\nSuspended: " + theTransaction);
+        assertEquals(Status.STATUS_ROLLEDBACK, tm.getStatus());
 
-					try
-					{
-						tm.resume(theTransaction);
-
-						System.out.println("\nResumed: " + tm.getTransaction());
-						passed = true;
-					}
-					catch (InvalidTransactionException ite)
-					{
-						System.out.println("\nCould not resume a dead transaction.");
-					}
-				}
-				else
-				{
-					System.err.println("Error - could not get transaction!");
-					tm.rollback();
-				}
-			}
-			else
-				System.err.println("Error - could not get transaction manager!");
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-
-		if (passed)
-		{
-			System.out.println("\nTest completed successfully.");
-			assertSuccess();
-		}
-		else
-		{
-			System.out.println("\nTest did not complete successfully.");
-			assertFailure();
-		}
-	}
-
-	public static void main(String[] args)
-	{
-		JTAAbort test = new JTAAbort();
-		test.initialise(null, null, args, new LocalHarness());
-		test.runTest();
-	}
-
+        tm.suspend();
+    }
 }

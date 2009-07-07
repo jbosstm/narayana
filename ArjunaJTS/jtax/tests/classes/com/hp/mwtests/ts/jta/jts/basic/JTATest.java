@@ -41,56 +41,29 @@ import com.arjuna.orbportability.*;
 
 import javax.transaction.xa.*;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class JTATest
 {
-
-    public static void main (String[] args)
+    @Test
+    public void test() throws Exception
     {
 	ORB myORB = null;
 	RootOA myOA = null;
 
-	try
-	{
 	    myORB = ORB.getInstance("test");
 	    myOA = OA.getRootOA(myORB);
 	    
-	    myORB.initORB(args, null);
+	    myORB.initORB(new String[] {}, null);
 	    myOA.initOA();
 
 	    ORBManager.setORB(myORB);
 	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-
-	    System.exit(0);
-	}
 
 	String xaResource = "com.hp.mwtests.ts.jta.common.DummyCreator";
 	String connectionString = null;
 	boolean tmCommit = true;
-	
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-connect") == 0)
-		connectionString = args[i+1];
-	    if (args[i].compareTo("-creator") == 0)
-		xaResource = args[i+1];
-	    if (args[i].equals("-txcommit"))
-		tmCommit = false;
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: JTATest -creator <name> [-connect <string>] [-txcommit] [-help]");
-		System.exit(0);
-	    }
-	}
-
-	if (xaResource == null)
-	{
-	    System.err.println("Error - no resource creator specified.");
-	    System.exit(0);
-	}
 
 	jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
 	jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
@@ -107,8 +80,7 @@ public class JTATest
 
 	    if (theResource == null)
 	    {
-		System.err.println("Error - creator "+xaResource+" returned null resource.");
-		System.exit(0);
+    		fail("Error - creator "+xaResource+" returned null resource.");
 	    }
 
 	    javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
@@ -127,10 +99,8 @@ public class JTATest
 		    
 		    if (!theTransaction.enlistResource(theResource))
 		    {
-			System.err.println("Error - could not enlist resource in transaction!");
 			tm.rollback();
-
-			System.exit(0);
+                fail("Error - could not enlist resource in transaction!");
 		    }
 		    else
 			System.out.println("\nResource enlisted successfully.");
@@ -148,8 +118,7 @@ public class JTATest
 		    {
 			tm.begin();
 
-			System.err.println("Error - transaction started!");
-			System.exit(0);
+			fail("Error - transaction started!");
 		    }
 		    catch (Exception e)
 		    {
@@ -179,9 +148,8 @@ public class JTATest
 		}
 		else
 		{
-		    System.err.println("Error - could not get transaction!");
 		    tm.rollback();
-		    System.exit(0);
+            fail("Error - could not get transaction!");
 		}
 
 		System.out.println("\nTest completed successfully.");

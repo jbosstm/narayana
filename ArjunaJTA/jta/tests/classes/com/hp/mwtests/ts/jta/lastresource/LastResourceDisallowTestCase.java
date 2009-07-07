@@ -26,12 +26,14 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
 
-public class LastResourceDisallowTestCase extends TestCase
+public class LastResourceDisallowTestCase
 {
+    @Test
     public void testDisallowed()
         throws SystemException, NotSupportedException, RollbackException
     {

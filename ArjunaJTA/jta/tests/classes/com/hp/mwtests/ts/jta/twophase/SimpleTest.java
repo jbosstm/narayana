@@ -36,37 +36,27 @@ import com.hp.mwtests.ts.jta.common.TestResource;
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class SimpleTest
 {
-    public SimpleTest ()
+    @Test
+    public void test() throws Exception
     {
-        try
-        {
-            javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
-            transactionManager.begin();
+        transactionManager.begin();
 
-            Transaction currentTrans = transactionManager.getTransaction();
+        Transaction currentTrans = transactionManager.getTransaction();
 
-            TestResource res1, res2;
-            currentTrans.enlistResource( res1 = new TestResource() );
-            currentTrans.enlistResource( res2 = new TestResource() );
+        TestResource res1, res2;
+        currentTrans.enlistResource( res1 = new TestResource() );
+        currentTrans.enlistResource( res2 = new TestResource() );
 
-            currentTrans.delistResource( res2, XAResource.TMSUCCESS );
-            currentTrans.delistResource( res1, XAResource.TMSUCCESS );
+        currentTrans.delistResource( res2, XAResource.TMSUCCESS );
+        currentTrans.delistResource( res1, XAResource.TMSUCCESS );
 
-            transactionManager.commit();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace(System.err);
-            System.err.println("ERROR - "+e);
-        }
+        transactionManager.commit();
     }
-
-    public static void main(String[] args)
-    {
-        new SimpleTest();
-    }
-
 }

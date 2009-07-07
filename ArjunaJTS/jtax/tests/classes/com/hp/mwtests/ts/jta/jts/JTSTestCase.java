@@ -20,21 +20,28 @@
  */
 package com.hp.mwtests.ts.jta.jts;
 
-import junit.framework.TestCase;
-
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
 
-public class JTSTestCase extends TestCase
+import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
+import static org.junit.Assert.*;
+
+
+public class JTSTestCase
 {
     private ORB orb ;
     private RootOA oa ;
     
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
+        System.out.println("Before...");
+
         orb = ORB.getInstance("test");
         oa = OA.getRootOA(orb);
         
@@ -45,9 +52,12 @@ public class JTSTestCase extends TestCase
         ORBManager.setPOA(oa);
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
+        System.out.println("After...");
+
         if (oa != null)
         {
             oa.destroy();

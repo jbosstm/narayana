@@ -26,18 +26,22 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.Before;
+import static org.junit.Assert.*;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
 import com.arjuna.ats.arjuna.common.Environment;
 
-public class LastResourceAllowedTestCase extends TestCase
+public class LastResourceAllowedTestCase
 {
-    protected void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
         System.setProperty(Environment.ALLOW_MULTIPLE_LAST_RESOURCES, "true") ;
     }
     
+    @Test
     public void testAllowed()
         throws SystemException, NotSupportedException, RollbackException
     {

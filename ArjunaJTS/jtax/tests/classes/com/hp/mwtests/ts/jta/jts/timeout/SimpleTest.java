@@ -33,85 +33,46 @@ package com.hp.mwtests.ts.jta.jts.timeout;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 
-import com.hp.mwtests.ts.jta.jts.common.*;
-
-import com.arjuna.ats.jta.common.*;
-import com.arjuna.ats.jta.*;
-import com.arjuna.ats.jta.utils.*;
-
-import com.arjuna.ats.arjuna.common.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.orbportability.*;
 
 public class SimpleTest
 {
-    public SimpleTest ()
+    @Test
+    public void test() throws Exception
     {
-        try
-        {
-            javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
-	    boolean passed = false;
-	    
-	    transactionManager.setTransactionTimeout(3);
-	    
-            transactionManager.begin();
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	    try
-	    {
-		Thread.currentThread().sleep(4000);
-	    }
-	    catch (Exception ex)
-	    {
-	    }
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    try
-	    {
-		transactionManager.commit();
-	    }
-	    catch (final javax.transaction.RollbackException ex)
-	    {
-		passed = true;
-	    }
-	    catch (Exception ex)
-	    {
-	    }
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    if (passed)
-		System.err.println("Passed.");
-	    else
-		System.err.println("Failed.");
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
+
+
+        javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        boolean passed = false;
+
+        transactionManager.setTransactionTimeout(3);
+
+        transactionManager.begin();
+
+        Thread.currentThread().sleep(4000);
+
+        try {
+            transactionManager.commit();
         }
-        catch (Exception e)
+        catch (final javax.transaction.RollbackException ex)
         {
-            e.printStackTrace(System.err);
-            System.err.println("ERROR - "+e);
+            passed = true;
         }
+
+        assertTrue(passed);
     }
-
-    public static void main(String[] args)
-    {
-	ORB myORB = null;
-	RootOA myOA = null;
-
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
-	    
-	    myORB.initORB(args, null);
-	    myOA.initOA();
-
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-
-	    System.exit(0);
-	}
-
-        new SimpleTest();
-    }
-
 }

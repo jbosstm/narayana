@@ -23,7 +23,7 @@
     <property name="modulename" value="jta"/>
 
     <property name="global.ext.libs" value="jta-1_1-classes.zip,connector-api.jar"/>
-    <property name="global.ext.test.libs" value="junit.jar,TestingFramework.jar"/>
+    <property name="global.ext.test.libs" value="junit-4.6.jar"/>
 
     <import file="../../sharedbuild.xml"/>
 
@@ -50,17 +50,16 @@
 
     <target name="run.tests">
         <run.tests.macro>
-            <tests><fileset dir="tests/classes" includes="**/SubordinateTestCase.java"/></tests>
+            <tests>
+                <fileset dir="tests/classes" includes="**/*.java">
+                    <exclude name="**/common/**"/>
+                    <exclude name="**/LastOnePhaseResource.java"/>
+                    <exclude name="**/DummyXARecoveryResource.java"/>
+                    <exclude name="**/TestSynchronization.java"/>
+                    <exclude name="**/TestXAResource.java"/>
+                </fileset>
+            </tests>
         </run.tests.macro>
-        <run.tests.macro>
-            <tests><fileset dir="tests/classes" includes="**/LastResourceDisallowTestCase.java"/></tests>
-        </run.tests.macro>
-        <!-- this fails because the two last resource objects enlsited in the transaction both pass the equals
-              test which means the second one fails to be inserted.
-        <run.tests.macro>
-            <tests><fileset dir="tests/classes" includes="**/LastResourceAllowedTestCase.java"/></tests>
-        </run.tests.macro>
-        -->
     </target>
 
 </project>

@@ -42,64 +42,46 @@ import com.arjuna.orbportability.*;
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class SimpleTest
 {
-    public SimpleTest ()
+    @Test
+    public void test() throws Exception
     {
-        try
-        {
-            javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        ORB myORB = null;
+        RootOA myOA = null;
 
-            transactionManager.begin();
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-            Transaction currentTrans = transactionManager.getTransaction();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-            TestResource res1, res2;
-            currentTrans.enlistResource( res1 = new TestResource() );
-            currentTrans.enlistResource( res2 = new TestResource() );
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-            currentTrans.delistResource( res2, XAResource.TMSUCCESS );
-            currentTrans.delistResource( res1, XAResource.TMSUCCESS );
+        jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
+        jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
 
-            transactionManager.commit();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace(System.err);
-            System.err.println("ERROR - "+e);
-        }
+
+        javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+
+        transactionManager.begin();
+
+        Transaction currentTrans = transactionManager.getTransaction();
+
+        TestResource res1, res2;
+        currentTrans.enlistResource( res1 = new TestResource() );
+        currentTrans.enlistResource( res2 = new TestResource() );
+
+        currentTrans.delistResource( res2, XAResource.TMSUCCESS );
+        currentTrans.delistResource( res1, XAResource.TMSUCCESS );
+
+        transactionManager.commit();
+
+        myOA.destroy();
+        myORB.shutdown();
     }
-
-    public static void main(String[] args)
-    {
-	ORB myORB = null;
-	RootOA myOA = null;
-
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
-	    
-	    myORB.initORB(args, null);
-	    myOA.initOA();
-
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-
-	    System.exit(0);
-	}
-
-	jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
-	jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
-
-        new SimpleTest();
-
-	myOA.destroy();
-	myORB.shutdown();
-    }
-
 }

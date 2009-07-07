@@ -31,71 +31,23 @@
 
 package com.hp.mwtests.ts.jta.basic;
 
-import com.hp.mwtests.ts.jta.common.*;
 
-import com.arjuna.ats.jta.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import com.arjuna.ats.arjuna.common.*;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
-
-import javax.transaction.*;
-import javax.transaction.xa.*;
-
-import java.lang.IllegalAccessException;
-
-public class SuspendResume extends Test
+public class SuspendResume
 {
-    public void run (String[] args)
+    @Test
+    public void test() throws Exception
     {
-        try
-        {
-            javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
-                    .transactionManager();
+        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
-            if (tm != null)
-            {
-                System.out.println("Starting top-level transaction.");
+        tm.begin();
 
-                tm.begin();
+        javax.transaction.Transaction theTransaction = tm.getTransaction();
 
-                javax.transaction.Transaction theTransaction = tm.getTransaction();
+        tm.commit();
 
-                if (theTransaction != null)
-                {
-                    tm.commit();
-
-                    tm.resume(theTransaction);
-                }
-                else
-                {
-                    System.err.println("Error - could not get transaction!");
-                    tm.rollback();
-                    assertFailure();
-                }
-
-                System.out.println("\nTest completed successfully.");
-                assertSuccess();
-            }
-            else
-            {
-                System.err
-                        .println("Error - could not get transaction manager!");
-                assertFailure();
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            assertFailure();
-        }
+        tm.resume(theTransaction);
     }
-
-    public static void main (String[] args)
-    {
-        SuspendResume test = new SuspendResume();
-        test.initialise(null, null, args, new LocalHarness());
-        test.runTest();
-    }
-
 }

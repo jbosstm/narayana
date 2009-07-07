@@ -36,9 +36,11 @@ import com.arjuna.ats.jdbc.*;
 import java.util.Properties;
 import java.sql.*;
 
-import org.jboss.dtf.testframework.unittest.*;
+import org.junit.Test;
+import org.junit.Before;
+import static org.junit.Assert.*;
 
-public class JDBC2Test extends Test
+public class JDBC2Test
 {
     public static final int CLOUDSCAPE = 0;
     public static final int ORACLE = 1;
@@ -53,7 +55,8 @@ public class JDBC2Test extends Test
 	protected Properties dbProperties = null;
 	protected String url = null;
 
-	protected void setup(String[] args)
+    @Before
+	public void setup() throws Exception
     {
         int dbType = JNDI;
         String user = null;//"test";
@@ -61,7 +64,7 @@ public class JDBC2Test extends Test
         String dynamicClass = null; //"com.arjuna.ats.internal.jdbc.drivers.jndi";
         String host = null;
         String port = null;
-
+/*
         for (int i = 0; i < args.length; i++)
         {
             if (args[i].compareTo("-oracle") == 0)
@@ -76,13 +79,7 @@ public class JDBC2Test extends Test
                 dbType = JNDI;
                 dynamicClass = "com.arjuna.ats.internal.jdbc.drivers.jndi";
             }
-            if (args[i].compareTo("-sequelink") == 0)
-            {
-                dbType = SEQUELINK;
-                user = "tester";
-                password = "tester";
-                dynamicClass = "com.arjuna.ats.internal.jdbc.drivers.sequelink_5_1";
-            }
+
             if (args[i].compareTo("-host") == 0)
                 host = args[i + 1];
             if (args[i].compareTo("-port") == 0)
@@ -107,22 +104,11 @@ public class JDBC2Test extends Test
                 System.exit(0);
             }
         }
-
+*/
         if (url == null)
         {
             switch (dbType)
             {
-                case CLOUDSCAPE:
-                    url = "jdbc:arjuna:cloudscape:mysql;create=true";
-                    break;
-                case SEQUELINK:
-                    {
-                        url = "jdbc:arjuna:sequelink://" + host;
-
-                        if (port != null)
-                            url = url + ":" + port;
-                    }
-                    break;
                 case ORACLE:
                     {
                         if (port == null)
@@ -132,8 +118,7 @@ public class JDBC2Test extends Test
                     }
                     break;
                 case JNDI:
-                    System.err.println("JNDI URL not specified");
-                    assertFailure();
+                    fail("JNDI URL not specified");
                     break;
                 default:
                     // noop
@@ -145,9 +130,6 @@ public class JDBC2Test extends Test
 
         switch (dbType)
         {
-            case CLOUDSCAPE:
-                p.put("jdbc.drivers", "COM.cloudscape.core.JDBCDriver");
-                break;
             case ORACLE:
                 p.put("jdbc.drivers", "oracle.jdbc.driver.OracleDriver");
                 break;
@@ -158,15 +140,7 @@ public class JDBC2Test extends Test
 
         System.setProperties(p);
 
-        try
-        {
             DriverManager.registerDriver(new TransactionalDriver());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            assertFailure();
-        }
 
         dbProperties = new Properties();
 
@@ -181,20 +155,13 @@ public class JDBC2Test extends Test
 	    if ( dynamicClass != null )
             	dbProperties.put(TransactionalDriver.dynamicClass, dynamicClass);
 
-		try
-		{
 			conn = DriverManager.getConnection(url, dbProperties);
             conn2 = DriverManager.getConnection(url, dbProperties);
-		} catch(SQLException e) {
-			e.printStackTrace();
-			assertFailure();
-		}
 	}
 
-	public void run(String[] args)
+    @Test
+	public void test() throws Exception
 	{
-		setup(args);
-
 		Statement stmt = null;  // non-tx statement
 		Statement stmtx = null;	// will be a tx-statement
 
@@ -202,8 +169,6 @@ public class JDBC2Test extends Test
 			return;
 		}
 
-		try
-		{
 			stmt = conn.createStatement();  // non-tx statement
 
             try
@@ -218,12 +183,6 @@ public class JDBC2Test extends Test
 
                 stmt.executeUpdate("CREATE TABLE test_table (a INTEGER,b INTEGER)");
                 stmt.executeUpdate("CREATE TABLE test_table2 (a INTEGER,b INTEGER)");
-        }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
-            assertFailure();
-        }
 
         javax.transaction.UserTransaction tx = com.arjuna.ats.jta.UserTransaction.userTransaction();
 
@@ -253,18 +212,8 @@ public class JDBC2Test extends Test
 
                 System.out.println("\nInspecting table 1.");
 
-                try
-                {
                     res1 = stmtx.executeQuery("SELECT * FROM test_table");
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace(System.err);
-                    assertFailure();
-                }
 
-                try
-                {
                     int rowCount = 0;
 
                     while (res1.next())
@@ -279,32 +228,16 @@ public class JDBC2Test extends Test
                     {
                         throw new Exception("Number of rows = "+rowCount+", test was expecting 1");
                     }
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace(System.err);
-                    assertFailure();
-                }
 
                 System.out.println("\nAdding entries to table 2.");
 
                 stmtx.executeUpdate("INSERT INTO test_table2 (a, b) VALUES (3,4)");
 
-                try
-                {
                     res1 = stmtx.executeQuery("SELECT * FROM test_table2");
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace(System.err);
-                    assertFailure();
-                }
 
                 System.out.println("\nInspecting table 2.");
 
-                try
-                {
-                    int rowCount = 0;
+                    rowCount = 0;
 
                     while (res1.next())
                     {
@@ -317,12 +250,6 @@ public class JDBC2Test extends Test
                     {
                         throw new Exception("Row count = "+rowCount+", test was expecting 1");
                     }
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace(System.err);
-                    assertFailure();
-                }
             }
             catch (SQLException e)
             {
@@ -341,7 +268,7 @@ public class JDBC2Test extends Test
                 {
                 }
 
-                assertFailure();
+                fail();
             }
             catch (Exception e)
             {
@@ -360,7 +287,7 @@ public class JDBC2Test extends Test
                 {
                 }
 
-                assertFailure();
+                fail();
             }
 
             System.out.print("\nNow attempting to ");
@@ -393,18 +320,8 @@ public class JDBC2Test extends Test
 
             ResultSet res2 = null;
 
-            try
-            {
                 res2 = stmtx.executeQuery("SELECT * FROM test_table");
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace(System.err);
-                assertFailure();
-            }
 
-            try
-            {
                 int rowCount = 0;
                 while (res2.next())
                 {
@@ -427,14 +344,6 @@ public class JDBC2Test extends Test
                         throw new Exception("Rolledback row count = "+rowCount+", test expected 0");
                     }
                 }
-
-                assertSuccess();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace(System.err);
-                assertFailure();
-            }
 
             tx.commit();
 
@@ -449,19 +358,9 @@ public class JDBC2Test extends Test
 
             stmtx = conn.createStatement();
 
-            try
-            {
                 res2 = stmtx.executeQuery("SELECT * FROM test_table2");
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace(System.err);
-                assertFailure();
-            }
 
-            try
-            {
-                int rowCount = 0;
+                rowCount = 0;
 
                 while (res2.next())
                 {
@@ -484,12 +383,6 @@ public class JDBC2Test extends Test
                         throw new Exception("Rolledback row count = "+rowCount+", test expected 0");
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace(System.err);
-                assertFailure();
-            }
 
             tx.commit();
         }
@@ -503,7 +396,7 @@ public class JDBC2Test extends Test
             {
             }
 
-            assertFailure();
+            fail();
         }
 
         try
@@ -513,14 +406,5 @@ public class JDBC2Test extends Test
         catch (Exception e)
         {
         }
-
-        System.out.println("Test completed successfully.");
-    }
-
-    public static void main(String[] args)
-    {
-        JDBC2Test test = new JDBC2Test();
-        test.initialise(null,null,args,new LocalHarness());
-        test.runTest();
     }
 }

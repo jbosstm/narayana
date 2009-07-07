@@ -37,77 +37,57 @@ import com.arjuna.ats.internal.jts.ORBManager;
 
 import com.arjuna.orbportability.*;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class SuspendResume
 {
-
-    public static void main (String[] args)
+    @Test
+    public void test() throws Exception
     {
         ORB myORB = null;
         RootOA myOA = null;
 
-        try
-        {
-            myORB = ORB.getInstance("test");
-            myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-            myORB.initORB(args, null);
-            myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-            ORBManager.setORB(myORB);
-            ORBManager.setPOA(myOA);
-        }
-        catch (Exception e)
-        {
-            System.err.println("Initialisation failed: " + e);
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-            System.exit(0);
-        }
-
-        jtaPropertyManager.getPropertyManager()
-                .setProperty(
-                        com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION,
-                        "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
-        jtaPropertyManager.getPropertyManager()
-                .setProperty(
-                        com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION,
-                        "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
+        jtaPropertyManager.getPropertyManager().setProperty(
+                com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION,
+                "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
+        jtaPropertyManager.getPropertyManager().setProperty(
+                com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION,
+                "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
 
         try
         {
             javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager
                     .transactionManager();
 
-            if (tm != null)
+            System.out.println("Starting top-level transaction.");
+
+            tm.begin();
+
+            javax.transaction.Transaction theTransaction = tm
+                    .getTransaction();
+
+            if (theTransaction != null)
             {
-                System.out.println("Starting top-level transaction.");
+                tm.commit();
 
-                tm.begin();
-
-                javax.transaction.Transaction theTransaction = tm
-                        .getTransaction();
-
-                if (theTransaction != null)
-                {
-                    tm.commit();
-
-                    tm.resume(theTransaction);
-                }
-                else
-                {
-                    System.err.println("Error - could not get transaction!");
-                    tm.rollback();
-                    System.exit(0);
-                }
-
-                System.out.println("\nTest completed successfully.");
-                System.exit(0);
+                tm.resume(theTransaction);
             }
             else
             {
-                System.err
-                        .println("Error - could not get transaction manager!");
-                System.exit(0);
+                tm.rollback();
+                fail("Error - could not get transaction!");
             }
+
         }
         catch (Exception e)
         {
@@ -117,5 +97,4 @@ public class SuspendResume
         myOA.destroy();
         myORB.shutdown();
     }
-
 }

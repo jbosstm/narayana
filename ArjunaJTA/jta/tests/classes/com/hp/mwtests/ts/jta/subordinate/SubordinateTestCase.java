@@ -20,7 +20,8 @@
  */
 package com.hp.mwtests.ts.jta.subordinate;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import com.arjuna.ats.arjuna.coordinator.ActionManager;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
@@ -33,13 +34,12 @@ import com.arjuna.ats.jta.xa.XidImple;
 
 import javax.transaction.RollbackException;
 import javax.transaction.Transaction;
-import javax.transaction.Status;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import javax.transaction.xa.XAException;
 import javax.resource.spi.XATerminator;
 
-public class SubordinateTestCase extends TestCase
+public class SubordinateTestCase
 {
     // This test class is subclassed by the JTAX version of the tests, so we isolate
     // the module specific tx creation code to this function, which then gets overridden.
@@ -47,6 +47,7 @@ public class SubordinateTestCase extends TestCase
         return new TransactionImple(0); // implicit begin
     }
 
+    @Test
 	public void testCleanupCommit () throws Exception
 	{
 		for (int i = 0; i < 1000; i++)
@@ -60,6 +61,7 @@ public class SubordinateTestCase extends TestCase
 		assertEquals(ActionManager.manager().inflightTransactions().size(), 0);
 	}
 
+    @Test
 	public void testCleanupRollback () throws Exception
 	{
 		for (int i = 0; i < 1000; i++)
@@ -72,6 +74,7 @@ public class SubordinateTestCase extends TestCase
 		assertEquals(ActionManager.manager().inflightTransactions().size(), 0);
 	}
 
+    @Test
 	public void testCleanupSecondPhaseRollback () throws Exception
 	{
 		for (int i = 0; i < 1000; i++)
@@ -85,6 +88,7 @@ public class SubordinateTestCase extends TestCase
 		assertEquals(ActionManager.manager().inflightTransactions().size(), 0);
 	}
 
+    @Test
 	public void testCleanupOnePhaseCommit () throws Exception
 	{
 		for (int i = 0; i < 1000; i++)
@@ -99,6 +103,7 @@ public class SubordinateTestCase extends TestCase
 
     /////////////
 
+    @Test
     public void testOnePhaseCommitSync() throws Exception
     {
         final SubordinateTransaction tm = createTransaction();
@@ -110,6 +115,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
     }
 
+    @Test
     public void testOnePhaseCommitSyncViaXATerminator() throws Exception
     {
         final Xid xid = new XidImple(new Uid());
@@ -123,6 +129,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
     }
 
+    @Test
     public void testOnePhaseCommitSyncWithRollbackOnly() throws Exception
     {
         final SubordinateTransaction tm = createTransaction();
@@ -140,6 +147,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
     }
 
+    @Test
     public void testOnePhaseCommitSyncWithRollbackOnlyViaXATerminator() throws Exception
     {
         final Xid xid = new XidImple(new Uid());
@@ -162,6 +170,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
     }
 
+    @Test
     public void testRollbackSync() throws Exception
     {
         final SubordinateTransaction tm = createTransaction();
@@ -173,6 +182,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
     }
 
+    @Test
     public void testRollbackSyncViaXATerminator() throws Exception
     {
         final Xid xid = new XidImple(new Uid());
@@ -186,6 +196,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
     }
 
+    @Test
     public void testTwoPhaseCommitSync() throws Exception
     {
         final SubordinateTransaction tm = createTransaction();
@@ -198,6 +209,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
     }
 
+    @Test
     public void testTwoPhaseCommitSyncViaXATerminator() throws Exception
     {
         final Xid xid = new XidImple(new Uid());
@@ -212,6 +224,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
     }
 
+    @Test
     public void testTwoPhaseCommitSyncWithXAOK() throws Exception
     {
         final SubordinateTransaction tm = createTransaction();
@@ -227,6 +240,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
     }
 
+    @Test
     public void testTwoPhaseCommitSyncWithXAOKViaXATerminator() throws Exception
     {
         final Xid xid = new XidImple(new Uid());
@@ -244,6 +258,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
     }
 
+    @Test
     public void testTwoPhaseCommitSyncWithRollbackOnly() throws Exception
     {
         final SubordinateTransaction tm = createTransaction();
@@ -257,6 +272,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
     }
 
+    @Test
     public void testTwoPhaseCommitSyncWithRollbackOnlyViaXATerminator() throws Exception
     {
         final Xid xid = new XidImple(new Uid());
@@ -280,6 +296,7 @@ public class SubordinateTestCase extends TestCase
 
     /////////////
 
+    @Test
     public void testOnePhaseCommitSyncWithSeparateSync() throws Exception
     {
         final SubordinateTransaction tm = createTransaction();
@@ -292,6 +309,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
     }
 
+    @Test
     public void testOnePhaseCommitSyncViaXATerminatorWithSeparateSync() throws Exception
     {
         final Xid xid = new XidImple(new Uid());
@@ -307,6 +325,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
     }
 
+    @Test
     public void testOnePhaseCommitSyncWithRollbackOnlyWithSeparateSync() throws Exception
     {
         final SubordinateTransaction tm = createTransaction();
@@ -325,6 +344,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
     }
 
+    @Test
     public void testOnePhaseCommitSyncWithRollbackOnlyViaXATerminatorWithSeparateSync() throws Exception
     {
         final Xid xid = new XidImple(new Uid());
@@ -349,6 +369,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
     }
 
+    @Test
     public void testRollbackSyncWithSeparateSync() throws Exception
     {
         final SubordinateTransaction tm = createTransaction();
@@ -361,6 +382,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
     }
 
+    @Test
     public void testRollbackSyncViaXATerminatorWithSeparateSync() throws Exception
     {
         final Xid xid = new XidImple(new Uid());
@@ -376,7 +398,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
     }
 
-
+    @Test
     public void testTwoPhaseCommitSyncWithSeparateSync() throws Exception
     {
         final SubordinateTransaction tm = createTransaction();
@@ -390,6 +412,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
     }
 
+    @Test
     public void testTwoPhaseCommitSyncViaXATerminatorWithSeparateSync() throws Exception
     {
         final Xid xid = new XidImple(new Uid());
@@ -406,6 +429,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
     }
 
+    @Test
     public void testTwoPhaseCommitSyncWithXAOKWithSeparateSync() throws Exception
     {
         final SubordinateTransaction tm = createTransaction();
@@ -422,6 +446,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, tm.getStatus());
     }
 
+    @Test
     public void testTwoPhaseCommitSyncWithXAOKViaXATerminatorWithSeparateSync() throws Exception
     {
         final Xid xid = new XidImple(new Uid());
@@ -441,6 +466,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_COMMITTED, t.getStatus());
     }
 
+    @Test
     public void testTwoPhaseCommitSyncWithRollbackOnlyWithSeparateSync() throws Exception
     {
         final SubordinateTransaction tm = createTransaction();
@@ -455,6 +481,7 @@ public class SubordinateTestCase extends TestCase
         assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, tm.getStatus());
     }
 
+    @Test
     public void testTwoPhaseCommitSyncWithRollbackOnlyViaXATerminatorWithSeparateSync() throws Exception
     {
         final Xid xid = new XidImple(new Uid());

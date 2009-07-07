@@ -31,21 +31,12 @@
 
 package com.hp.mwtests.ts.jta.recovery;
 
-import com.arjuna.ats.arjuna.common.Uid;
-
 import com.arjuna.ats.jta.recovery.*;
-import com.arjuna.ats.jta.xa.*;
-
-import com.arjuna.ats.internal.jta.utils.*;
 
 import com.hp.mwtests.ts.jta.common.*;
 
-import java.util.Vector;
-
 import java.sql.*;
 
-import javax.sql.*;
-import javax.transaction.*;
 import javax.transaction.xa.*;
 
 public class DummyXARecoveryResource implements XAResourceRecovery

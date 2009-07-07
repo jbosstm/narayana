@@ -34,14 +34,16 @@ import com.arjuna.ats.tsmx.*;
 
 import javax.management.ObjectName;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class TestPerformanceMBean
 {
-	public static void main(String[] args)
+    @Test
+	public void test() throws Exception
 	{
 		TransactionServiceMX tsmx = TransactionServiceMX.getTransactionServiceMX();
 
-		try
-		{
 			String objectName = TransactionServiceMX.getTransactionServiceMX().getObjectName("performancestatistics");
 
 			System.out.println("Retrieving attribute 'NumberOfTransactions' from '"+objectName+"'");
@@ -63,14 +65,8 @@ public class TestPerformanceMBean
 			System.out.println("Retrieving attribute 'NumberOfAbortedTransactions' from '"+objectName+"'");
 			Object numberOfAbortedTransactions = TransactionServiceMX.getTransactionServiceMX().getAgentInterface().getAgent().getAttribute(new ObjectName(objectName), "NumberOfAbortedTransactions");
 			System.out.println("Attribute 'NumberOfAbortedTransactions' = "+numberOfAbortedTransactions);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
 
-		boolean success = tsmx.unregisterMBeans();
+        assertTrue( tsmx.unregisterMBeans() );
 
-		System.out.println("Unregistering mbeans: "+ (success ? "successful" : "failed") );
 	}
 }

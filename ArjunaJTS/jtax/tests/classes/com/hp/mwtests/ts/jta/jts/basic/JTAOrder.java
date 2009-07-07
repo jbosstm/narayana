@@ -41,66 +41,59 @@ import com.arjuna.orbportability.*;
 
 import javax.transaction.xa.*;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class JTAOrder
 {
-
-    public static void main (String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
-	    
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    System.exit(0);
-	}
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	boolean passed = false;
+        boolean passed = false;
 
-	jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
-	jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
-	
-	try
-	{
-	    javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
+        jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
 
-	    XAResource theResource = new TestResource();
-	    FirstXAResource first = new FirstXAResource();
-	    LastXAResource last = new LastXAResource();
-		
-	    System.out.println("Starting top-level transaction.");
+        try
+        {
+            javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
-	    tm.begin();
+            XAResource theResource = new TestResource();
+            FirstXAResource first = new FirstXAResource();
+            LastXAResource last = new LastXAResource();
 
-	    javax.transaction.Transaction theTransaction = tm.getTransaction();
+            System.out.println("Starting top-level transaction.");
 
-	    theTransaction.enlistResource(theResource);
-	    theTransaction.enlistResource(last);
-	    theTransaction.enlistResource(first);
+            tm.begin();
 
-	    System.err.println("Committing transaction.");
-		
-	    tm.commit();
-	}
-	catch (Exception e)
-	{
-	    e.printStackTrace();
-	}
+            javax.transaction.Transaction theTransaction = tm.getTransaction();
 
-	myOA.destroy();
-	myORB.shutdown();
+            theTransaction.enlistResource(theResource);
+            theTransaction.enlistResource(last);
+            theTransaction.enlistResource(first);
+
+            System.err.println("Committing transaction.");
+
+            tm.commit();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        myOA.destroy();
+        myORB.shutdown();
     }
-
 }

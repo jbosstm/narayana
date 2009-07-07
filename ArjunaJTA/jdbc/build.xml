@@ -26,7 +26,7 @@
     <property name="excluded.test.classes" value="**/Oracle*.java"/>
 
     <property name="global.ext.libs" value="jta-1_1-classes.zip"/>
-    <property name="global.ext.test.libs" value="TestingFramework.jar"/>
+    <property name="global.ext.test.libs" value="junit-4.6.jar"/>
 
     <import file="../../sharedbuild.xml"/>
 
@@ -52,6 +52,22 @@
                 <param name="-appendkey" value="[]"/>
             </args>
         </generateresourcebundle.macro>
+    </target>
+
+    <target name="run.tests">
+        <run.tests.macro>
+            <tests>
+                <fileset dir="tests/classes" includes="**/*.java">
+                    <exclude name="**/utils/plugins/**"/>
+                    <exclude name="**/DBPlugin.java"/>
+
+
+                    <exclude name="**/JDBC2Test.java"/>
+                    <exclude name="**/JDBC3Test.java"/>
+                    <exclude name="**/*JNDISetup.java"/>
+                </fileset>
+            </tests>
+        </run.tests.macro>
     </target>
 
 </project>

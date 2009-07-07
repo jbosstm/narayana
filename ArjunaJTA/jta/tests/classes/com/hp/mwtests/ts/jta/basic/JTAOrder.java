@@ -34,37 +34,36 @@ package com.hp.mwtests.ts.jta.basic;
 import com.hp.mwtests.ts.jta.common.*;
 
 import javax.transaction.xa.*;
+import javax.transaction.Status;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class JTAOrder
 {
+    @Test
+    public void test() throws Exception
+    {
+        XAResource theResource = new TestResource();
+        FirstXAResource first = new FirstXAResource();
+        LastXAResource last = new LastXAResource();
 
-	public static void main (String[] args)
-	{
-		try
-		{
-			XAResource theResource = new TestResource();
-			FirstXAResource first = new FirstXAResource();
-			LastXAResource last = new LastXAResource();
+        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
-			javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        System.out.println("Starting top-level transaction.");
 
-			System.out.println("Starting top-level transaction.");
+        tm.begin();
 
-			tm.begin();
+        javax.transaction.Transaction theTransaction = tm.getTransaction();
 
-			javax.transaction.Transaction theTransaction = tm.getTransaction();
+        theTransaction.enlistResource(theResource);
+        theTransaction.enlistResource(last);
+        theTransaction.enlistResource(first);
 
-			theTransaction.enlistResource(theResource);
-			theTransaction.enlistResource(last);
-			theTransaction.enlistResource(first);
+        System.err.println("Committing transaction.");
 
-			System.err.println("Committing transaction.");
+        tm.commit();
 
-			tm.commit();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
+        assertEquals(Status.STATUS_COMMITTED, theTransaction.getStatus());
+    }
 }

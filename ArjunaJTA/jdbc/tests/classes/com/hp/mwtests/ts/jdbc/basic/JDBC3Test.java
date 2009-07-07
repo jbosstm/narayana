@@ -23,8 +23,8 @@
 
 package com.hp.mwtests.ts.jdbc.basic;
 
-import org.jboss.dtf.testframework.unittest.LocalHarness;
-import org.jboss.dtf.testframework.unittest.Test;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.sql.*;
 
@@ -36,55 +36,40 @@ import java.sql.*;
  */
 public class JDBC3Test extends JDBC2Test
 {
-	private void testHoldability()
+    @Test
+	public void testHoldability() throws Exception
 	{
 		System.out.println("testHoldability...");
 
-		try
-		{
 			conn.setHoldability(ResultSet.HOLD_CURSORS_OVER_COMMIT);
 			if(!(conn.getHoldability() == ResultSet.HOLD_CURSORS_OVER_COMMIT))
 			{
-				System.err.println("holdability incorrect, set "+ResultSet.HOLD_CURSORS_OVER_COMMIT+" but read back "+conn.getHoldability());
-				assertFailure();
+				fail("holdability incorrect, set "+ResultSet.HOLD_CURSORS_OVER_COMMIT+" but read back "+conn.getHoldability());
 			}
 			conn.setHoldability(ResultSet.CLOSE_CURSORS_AT_COMMIT);
 			if(!(conn.getHoldability() == ResultSet.CLOSE_CURSORS_AT_COMMIT))
 			{
-				System.err.println("holdability incorrect, set "+ResultSet.CLOSE_CURSORS_AT_COMMIT+" but read back "+conn.getHoldability());
-				assertFailure();
+				fail("holdability incorrect, set "+ResultSet.CLOSE_CURSORS_AT_COMMIT+" but read back "+conn.getHoldability());
 			}
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace(System.err);
-			assertFailure();
-		}
 	}
 
-	private void testSavepointNoTx()
+    @Test
+	public void testSavepointNoTx() throws Exception
 	{
 		System.out.println("testSavepointNoTx...");
 
 		// savepoint methods should work if we don't have an XA tx
 
-		try
-		{
 			conn.setAutoCommit(false);
 
 			Savepoint savepoint = conn.setSavepoint();
 			Savepoint mySavepoint = conn.setSavepoint("mySavepoint");
 			conn.rollback(mySavepoint);
 			conn.releaseSavepoint(savepoint);
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace(System.err);
-			assertFailure();
-		}
 	}
 
-	private void testSavepointTx()
+    @Test
+	public void testSavepointTx() throws Exception
 	{
 		System.out.println("testSavepointTx...");
 
@@ -92,22 +77,13 @@ public class JDBC3Test extends JDBC2Test
 
 		javax.transaction.UserTransaction tx = com.arjuna.ats.jta.UserTransaction.userTransaction();
 
-		try
-		{
 			tx.begin();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace(System.err);
-			assertFailure();
-		}
 
 		boolean gotExpectedException = false;
 		Savepoint savepoint = null;
 		Savepoint mySavepoint = null;
 
-		try
-		{
+        try {
 			savepoint = conn.setSavepoint();
 		}
 		catch(SQLException e) {
@@ -115,8 +91,7 @@ public class JDBC3Test extends JDBC2Test
 		}
 
 		if(!gotExpectedException) {
-			System.err.println("Failed to get expected exception from setSavepoint inside tx");
-			assertFailure();
+			fail("Failed to get expected exception from setSavepoint inside tx");
 		}
 
 		gotExpectedException = false;
@@ -130,8 +105,7 @@ public class JDBC3Test extends JDBC2Test
 		}
 
 		if(!gotExpectedException) {
-			System.err.println("Failed to get expected exception from setSavepoint(String) inside tx");
-			assertFailure();
+			fail("Failed to get expected exception from setSavepoint(String) inside tx");
 		}
 
 		gotExpectedException = false;
@@ -145,8 +119,7 @@ public class JDBC3Test extends JDBC2Test
 		}
 
 		if(!gotExpectedException) {
-			System.err.println("Failed to get expected exception from rollback(String) inside tx");
-			assertFailure();
+			fail("Failed to get expected exception from rollback(String) inside tx");
 		}
 
 		try
@@ -159,8 +132,7 @@ public class JDBC3Test extends JDBC2Test
 		}
 
 		if(!gotExpectedException) {
-			System.err.println("Failed to get expected exception from releaseSavepoint(String) inside tx");
-			assertFailure();
+			fail("Failed to get expected exception from releaseSavepoint(String) inside tx");
 		}
 
 		try
@@ -170,11 +142,12 @@ public class JDBC3Test extends JDBC2Test
 		catch(Exception e)
 		{
 			e.printStackTrace(System.err);
-			assertFailure();
+			fail();
 		}
 	}
 
-	private void testStatements()
+    @Test
+	public void testStatements()
 	{
 		System.out.println("testStatements...");
 
@@ -189,7 +162,7 @@ public class JDBC3Test extends JDBC2Test
 		catch(Exception e)
 		{
 			e.printStackTrace(System.err);
-			assertFailure();
+			fail();
 		}
 
 		try
@@ -219,7 +192,7 @@ public class JDBC3Test extends JDBC2Test
 		catch (SQLException e)
 		{
 			e.printStackTrace(System.err);
-			assertFailure();
+			fail();
 		}
 
 		try
@@ -229,29 +202,7 @@ public class JDBC3Test extends JDBC2Test
 		catch(Exception e)
 		{
 			e.printStackTrace(System.err);
-			assertFailure();
+			fail();
 		}
 	}
-
-
-	public void run(String[] args) {
-		setup(args);
-
-		testHoldability();
-		testSavepointNoTx();
-		testSavepointTx();
-		testStatements();
-
-		if(getTestResult() == Test.UNCERTAIN) {
-			assertSuccess();
-		}
-	}
-
-	// java com.hp.mwtests.ts.jdbc.basic.JDBC3Test -oracle -url jdbc:arjuna:oracle:thin:@localhost:1521:orcl -user test -password testpass
-	public static void main(String[] args)
-    {
-        JDBC3Test test = new JDBC3Test();
-        test.initialise(null,null,args,new LocalHarness());
-        test.runTest();
-    }
 }

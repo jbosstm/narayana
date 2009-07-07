@@ -36,58 +36,34 @@ import com.arjuna.orbportability.OA;
 import com.arjuna.ats.jta.common.*;
 import com.arjuna.ats.jta.*;
 
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class ImplicitClient extends Test
+public class ImplicitClient
 {
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-        if (args.length == 0)
-        {
-            System.err.println("No name provided for server");
-            assertFailure();
-        }
-        else
-        {
-            try
-            {
-                jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_TM_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
-                jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_UT_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
+        jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_TM_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
+        jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_UT_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
 
-                ORB orb = ORB.getInstance("implicitserver-orb");
-                OA oa = OA.getRootOA(orb);
+        ORB orb = ORB.getInstance("implicitserver-orb");
+        OA oa = OA.getRootOA(orb);
 
-                orb.initORB(args, null);
-                oa.initPOA(args);
+        orb.initORB(new String[] {}, null);
+        oa.initPOA(new String[] {});
 
-                org.omg.CORBA.Object obj = orb.orb().string_to_object(getService(args[0]));
+        org.omg.CORBA.Object obj = null; // TODO orb.orb().string_to_object(getService("TODO"));
 
-                Example.test test = Example.testHelper.narrow(obj);
+        Example.test test = Example.testHelper.narrow(obj);
 
-                TransactionManager.transactionManager().begin();
+        TransactionManager.transactionManager().begin();
 
-                test.invoke();
+        test.invoke();
 
-                TransactionManager.transactionManager().commit();
+        TransactionManager.transactionManager().commit();
 
-                assertSuccess();
-
-                oa.destroy();
-                orb.destroy();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace(System.err);
-                assertFailure();
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        ImplicitClient client = new ImplicitClient();
-        client.initialise(null, null, args, new LocalHarness());
-        client.runTest();
+        oa.destroy();
+        orb.destroy();
     }
 }

@@ -33,16 +33,12 @@ package com.hp.mwtests.ts.jta.hammer;
 
 import com.hp.mwtests.ts.jta.common.*;
 
-import com.arjuna.ats.jta.*;
-
-import com.arjuna.ats.arjuna.common.*;
-
-import javax.transaction.*;
 import javax.transaction.xa.*;
 
 import java.util.*;
 
-import java.lang.IllegalAccessException;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 class Worker extends Thread
 {
@@ -125,76 +121,20 @@ class Worker extends Thread
     
 public class JTAHammer
 {
-
-    public static void main (String[] args)
+    @Test
+    public void test() throws Exception
     {
 	String xaResource = "com.hp.mwtests.ts.jta.common.DummyCreator";
 	String connectionString = null;
 	int threads = 10;
 	int work = 100;
-	
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-connect") == 0)
-		connectionString = args[i+1];
-	    if (args[i].compareTo("-creator") == 0)
-		xaResource = args[i+1];
-	    if (args[i].compareTo("-threads") == 0)
-	    {
-		try
-		{
-		    Integer v = new Integer(args[i+1]);
-		    
-		    threads = v.intValue();
-		}
-		catch (Exception e)
-		{
-		    System.err.println(e);
-		}
-	    }
-	    if (args[i].compareTo("-work") == 0)
-	    {
-		try
-		{
-		    Integer v = new Integer(args[i+1]);
-		    
-		    work = v.intValue();
-		}
-		catch (Exception e)
-		{
-		    System.err.println(e);
-		}
-	    }
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: JTAHammer -creator <name> [-connect <string>] [-help] [-threads <number>] [-work <number>]");
-		System.exit(0);
-	    }
-	}
-
-	if (xaResource == null)
-	{
-	    System.err.println("Error - no resource creator specified.");
-	    System.exit(0);
-	}
 
 	/*
 	 * We should have a reference to a factory object (see JTA
 	 * specification). However, for simplicity we will ignore this.
 	 */
 
-	XACreator creator = null;
-
-	try
-	{
-	    creator = (XACreator) Thread.currentThread().getContextClassLoader().loadClass(xaResource).newInstance();
-	}
-	catch (Exception e)
-	{
-	    System.err.println(e);
-	    
-	    System.exit(0);
-	}
+	XACreator creator = (XACreator) Thread.currentThread().getContextClassLoader().loadClass(xaResource).newInstance();
 
 	number = threads;
 

@@ -22,6 +22,8 @@
 
     <property name="modulename" value="tsmx"/>
 
+    <property name="global.ext.test.libs" value="junit-4.6.jar"/>
+    
     <import file="../../sharedbuild.xml"/>
 
     <target name="init" depends="sharedbuild.init">
@@ -114,6 +116,18 @@
         </jar>
 
         <copy file="${etc.dir}/toolsframework.xml" todir="${install.dir}"/>
+
+    </target>
+
+    <target name="run.tests">
+
+        <run.tests.macro>
+            <tests>
+                <fileset dir="tests" includes="**/*.java">
+                    <exclude name="**/TestPerformanceMBean.java"/>
+                </fileset>
+            </tests>
+        </run.tests.macro>
 
     </target>
 

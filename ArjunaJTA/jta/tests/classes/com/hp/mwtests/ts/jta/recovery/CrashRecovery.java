@@ -33,55 +33,28 @@ package com.hp.mwtests.ts.jta.recovery;
 
 import com.hp.mwtests.ts.jta.common.*;
 
-import com.arjuna.ats.jta.*;
-
-import com.arjuna.ats.arjuna.common.*;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
-
-import javax.transaction.*;
 import javax.transaction.xa.*;
 
-import java.lang.IllegalAccessException;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class CrashRecovery
 {
-    public static void main (String[] args)
+    @Test
+    public void test() throws Exception
     {
-	try
-	{
-	    XAResource firstResource = new CrashXAResource();
-	    XAResource secondResource = new CrashXAResource();
+        XAResource firstResource = new CrashXAResource();
+        XAResource secondResource = new CrashXAResource();
 
-	    javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
-	    if (tm != null)
-	    {
-		System.out.println("Starting top-level transaction.");
+        tm.begin();
 
-		tm.begin();
+        javax.transaction.Transaction theTransaction = tm.getTransaction();
 
-		javax.transaction.Transaction theTransaction = tm.getTransaction();
+        theTransaction.enlistResource(firstResource);
+        theTransaction.enlistResource(secondResource);
 
-		if (theTransaction != null)
-		{
-		    System.out.println("\nTrying to register resource with transaction.");
-
-		    theTransaction.enlistResource(firstResource);
-		    theTransaction.enlistResource(secondResource);
-
-		    tm.commit();
-		}
-		else
-		{
-		    System.err.println("Error - could not get transaction manager!");
-		}
-	    }
-	}
-	catch (Exception e)
-	{
-	    e.printStackTrace();
-	}
+        tm.commit();
     }
-
 }

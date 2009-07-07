@@ -23,7 +23,7 @@
     <property name="modulename" value="jtax"/>
 
     <property name="global.ext.libs" value="jta-1_1-classes.zip,connector-api.jar"/>
-    <property name="global.ext.test.libs" value="junit.jar,TestingFramework.jar"/>
+    <property name="global.ext.test.libs" value="junit-4.6.jar"/>
 
     <import file="../sharedbuild.xml"/>
 
@@ -70,19 +70,19 @@
             <additional.classpath>
                 <path refid="jacorb.classpath"/>
             </additional.classpath>
-            <tests><fileset dir="tests/classes" includes="**/SubordinateTestCase.java"/></tests>
-        </run.tests.macro>
-        <run.tests.macro>
-            <additional.classpath>
-                <path refid="jacorb.classpath"/>
-            </additional.classpath>
-            <tests><fileset dir="tests/classes" includes="**/LastResourceDisallowTestCase.java"/></tests>
-        </run.tests.macro>
-        <run.tests.macro>
-            <additional.classpath>
-                <path refid="jacorb.classpath"/>
-            </additional.classpath>
-            <tests><fileset dir="tests/classes" includes="**/LastResourceAllowedTestCase.java"/></tests>
+            <tests>
+                <fileset dir="tests/classes">
+                    <exclude name="**/common/**"/>
+                    <exclude name="**/ExampleXAResource.java"/>
+                    <exclude name="**/JTSTestCase.java"/>
+                    <exclude name="**/LastOnePhaseResource.java"/>
+
+
+                    <exclude name="**/implicit**"/>
+                    <exclude name="**/SimpleNestedTest.java"/>
+
+                </fileset>
+            </tests>
         </run.tests.macro>
     </target>
 

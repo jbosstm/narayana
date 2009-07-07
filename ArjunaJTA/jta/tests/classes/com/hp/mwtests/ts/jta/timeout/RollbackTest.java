@@ -31,62 +31,22 @@
 
 package com.hp.mwtests.ts.jta.timeout;
 
-import com.hp.mwtests.ts.jta.common.TestResource;
-
-import javax.transaction.Transaction;
-import javax.transaction.xa.XAResource;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class RollbackTest
 {
-    public RollbackTest ()
+    @Test
+    public void test() throws Exception
     {
-        try
-        {
-            javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
-	    boolean passed = false;
-	    
-	    transactionManager.setTransactionTimeout(3);
-	    
-            transactionManager.begin();
+        javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
-	    try
-	    {
-		Thread.currentThread().sleep(4000);
-	    }
-	    catch (Exception ex)
-	    {
-	    }
+        transactionManager.setTransactionTimeout(3);
 
-	    try
-	    {
-		transactionManager.rollback();
-		
-		passed = true;
-	    }
-	    catch (IllegalStateException ex)
-	    {
-		passed = false;
-	    }
-	    catch (Exception ex)
-	    {
-	        passed = false;
-	    }
+        transactionManager.begin();
 
-	    if (passed)
-		System.err.println("Passed.");
-	    else
-		System.err.println("Failed.");
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace(System.err);
-            System.err.println("ERROR - "+e);
-        }
+        Thread.currentThread().sleep(4000);
+
+        transactionManager.rollback();
     }
-
-    public static void main(String[] args)
-    {
-        new RollbackTest();
-    }
-
 }

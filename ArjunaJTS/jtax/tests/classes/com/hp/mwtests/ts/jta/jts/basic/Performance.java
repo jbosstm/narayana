@@ -37,71 +37,52 @@ import com.arjuna.ats.internal.jts.ORBManager;
 
 import com.arjuna.orbportability.*;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class Performance
 {
-
-    public static void main (String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
-	    
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    System.exit(0);
-	}
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
-	jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
+        jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_TM_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
+        jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.JTA_UT_IMPLEMENTATION, "com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple");
 
-	/*
-	 * We should have a reference to a factory object (see JTA
-	 * specification). However, for simplicity we will ignore this.
-	 */
+        /*
+       * We should have a reference to a factory object (see JTA
+       * specification). However, for simplicity we will ignore this.
+       */
 
-	long stime = System.currentTimeMillis();
-	
-	try
-	{
-	    javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        long stime = System.currentTimeMillis();
 
-	    if (tm != null)
-	    {
-		for (int i = 0; i < 1000; i++)
-		{
-		    tm.begin();
-	    
-		    tm.commit();
-		}
-	    }
-	    else
-		System.err.println("Error - could not get transaction manager!");
-	}
-	catch (Exception e)
-	{
-	    e.printStackTrace();
-	}
+        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
-	long ftime = System.currentTimeMillis();
-	double elapsedTime = (ftime - stime)/1000.0;
-	double tps = 1000.0/elapsedTime;
-	
-	System.err.println("TPS: "+tps);
-	
-	myOA.destroy();
-	myORB.shutdown();
+        for (int i = 0; i < 1000; i++)
+        {
+            tm.begin();
+
+            tm.commit();
+        }
+
+        long ftime = System.currentTimeMillis();
+        double elapsedTime = (ftime - stime)/1000.0;
+        double tps = 1000.0/elapsedTime;
+
+        System.err.println("TPS: "+tps);
+
+        myOA.destroy();
+        myORB.shutdown();
     }
-
 }

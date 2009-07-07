@@ -26,6 +26,8 @@ import com.arjuna.orbportability.OA;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.SubordinateTransaction;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
+import org.junit.Before;
+import org.junit.After;
 
 /**
  * JTAX version of the Subordinate transaction tests.
@@ -37,8 +39,9 @@ public class SubordinateTestCase extends com.hp.mwtests.ts.jta.subordinate.Subor
     
     private ORB orb ;
     private RootOA oa ;
-    
-    protected void setUp()
+
+    @Before
+    public void setUp()
         throws Exception
     {
         System.setProperty("com.arjuna.ats.jta.jtaTMImplementation", "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple");
@@ -54,7 +57,8 @@ public class SubordinateTestCase extends com.hp.mwtests.ts.jta.subordinate.Subor
         ORBManager.setPOA(oa);
     }
 
-    protected void tearDown()
+    @After
+    public void tearDown()
         throws Exception
     {
         if (oa != null)

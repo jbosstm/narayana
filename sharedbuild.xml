@@ -376,6 +376,8 @@
         <echo file="${build.dir}/tests/jbossts-properties.xml"
                 message="&lt;!DOCTYPE properties SYSTEM &quot;http://java.sun.com/dtd/properties.dtd&quot;&gt;&lt;properties/&gt;"/>
 
+        <copy file="${sharedbuild.base.dir}/ArjunaCore/arjuna/etc/log4j.properties" todir="${build.dir}/classes"/>
+
         <mkdir dir="${build.dir}/testresults"/>
         <junit printsummary="yes" fork="yes" dir="${build.dir}">
             <formatter type="plain"/>

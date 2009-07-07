@@ -33,162 +33,71 @@ package com.hp.mwtests.ts.jta.basic;
 
 import com.hp.mwtests.ts.jta.common.*;
 
-import com.arjuna.ats.jta.*;
-
-import com.arjuna.ats.arjuna.common.*;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
-
-import javax.transaction.*;
 import javax.transaction.xa.*;
 
-import java.lang.IllegalAccessException;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class JTATest extends Test
+public class JTATest
 {
-	public void run(String[] args)
-	{
-		String xaResource = "com.hp.mwtests.ts.jta.common.DummyCreator";
-		String connectionString = null;
-		boolean tmCommit = true;
+    @Test
+    public void test() throws Exception
+    {
+        String xaResource = "com.hp.mwtests.ts.jta.common.DummyCreator";
+        String connectionString = null;
+        boolean tmCommit = true;
 
-		for (int i = 0; i < args.length; i++)
-		{
-			if (args[i].compareTo("-connect") == 0)
-				connectionString = args[i + 1];
-			if (args[i].compareTo("-creator") == 0)
-				xaResource = args[i + 1];
-			if (args[i].equals("-txcommit"))
-				tmCommit = false;
-			if (args[i].compareTo("-help") == 0)
-			{
-				System.out.println("Usage: JTATest -creator <name> [-connect <string>] [-txcommit] [-help]");
-				assertFailure();
-			}
-		}
+        XACreator creator = (XACreator) Thread.currentThread().getContextClassLoader().loadClass(xaResource).newInstance();
+        XAResource theResource = creator.create(connectionString, true);
 
-		if (xaResource == null)
-		{
-			System.err.println("Error - no resource creator specified.");
-			assertFailure();
-		}
+        assertNotNull(xaResource);
 
-		/*
-		 * We should have a reference to a factory object (see JTA
-		 * specification). However, for simplicity we will ignore this.
-		 */
+        javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
-		try
-		{
-			XACreator creator = (XACreator) Thread.currentThread().getContextClassLoader().loadClass(xaResource).newInstance();
-			XAResource theResource = creator.create(connectionString, true);
+        tm.begin();
 
-			if (theResource == null)
-			{
-				System.err.println("Error - creator " + xaResource + " returned null resource.");
-				assertFailure();
-			}
+        javax.transaction.Transaction theTransaction = tm.getTransaction();
 
-			javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        assertTrue( theTransaction.enlistResource(theResource) );
 
-			if (tm != null)
-			{
-				System.out.println("Starting top-level transaction.");
+        /*
+        * XA does not support subtransactions.
+        * By default we ignore any attempts to create such
+        * transactions. Appropriate settings can be made which
+        * will cause currently running transactions to also
+        * rollback, if required.
+        */
 
-				tm.begin();
+        System.out.println("\nTrying to start another transaction - should fail!");
 
-				javax.transaction.Transaction theTransaction = tm.getTransaction();
+        try
+        {
+            tm.begin();
 
-				if (theTransaction != null)
-				{
-					System.out.println("\nTrying to register resource with transaction.");
+            fail("Error - transaction started!");
+        }
+        catch (Exception e)
+        {
+            System.out.println("Transaction did not begin: " + e);
+        }
 
-					if (!theTransaction.enlistResource(theResource))
-					{
-						System.err.println("Error - could not enlist resource in transaction!");
-						tm.rollback();
+        /*
+        * Do some work and decide whether to commit or rollback.
+        * (Assume commit for example.)
+        */
 
-						assertFailure();
-					}
-					else
-						System.out.println("\nResource enlisted successfully.");
-					/*
-					 * XA does not support subtransactions.
-					 * By default we ignore any attempts to create such
-					 * transactions. Appropriate settings can be made which
-					 * will cause currently running transactions to also
-					 * rollback, if required.
-					 */
+        com.hp.mwtests.ts.jta.common.Synchronization s = new com.hp.mwtests.ts.jta.common.Synchronization();
 
-					System.out.println("\nTrying to start another transaction - should fail!");
+        tm.getTransaction().registerSynchronization(s);
 
-					try
-					{
-						tm.begin();
+        System.out.println("\nCommitting transaction.");
 
-						System.err.println("Error - transaction started!");
-						assertFailure();
-					}
-					catch (Exception e)
-					{
-						System.out.println("Transaction did not begin: " + e);
-					}
+        if (tmCommit)
+            tm.commit();
+        else
+            tm.getTransaction().commit();
 
-					/*
-					 * Do some work and decide whether to commit or rollback.
-					 * (Assume commit for example.)
-					 */
+        assertEquals(com.hp.mwtests.ts.jta.common.Synchronization.AFTER_COMPLETION_STATUS, s.getCurrentStatus());
 
-					com.hp.mwtests.ts.jta.common.Synchronization s = new com.hp.mwtests.ts.jta.common.Synchronization();
-
-					tm.getTransaction().registerSynchronization(s);
-
-					System.out.println("\nCommitting transaction.");
-
-					if (tmCommit)
-						System.out.println("Using transaction manager.\n");
-					else
-						System.out.println("Using transaction.\n");
-
-					if (tmCommit)
-						tm.commit();
-					else
-						tm.getTransaction().commit();
-
-					if ( s.getCurrentStatus() != com.hp.mwtests.ts.jta.common.Synchronization.AFTER_COMPLETION_STATUS )
-					{
-						System.err.println("Unexpected synchronization status: " + s.getCurrentStatus());
-						assertFailure();
-					}
-				}
-				else
-				{
-					System.err.println("Error - could not get transaction!");
-					tm.rollback();
-					assertFailure();
-				}
-
-				System.out.println("\nTest completed successfully.");
-				assertSuccess();
-			}
-			else
-			{
-				System.err.println("Error - could not get transaction manager!");
-				assertFailure();
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			assertFailure();
-		}
-	}
-
-	public static void main(String[] args)
-	{
-		JTATest test = new JTATest();
-		test.initialise(null, null, args, new LocalHarness());
-		test.runTest();
-	}
-
+    }
 }

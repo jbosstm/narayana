@@ -33,88 +33,59 @@ package com.hp.mwtests.ts.jta.jts.timeout;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 
-import com.hp.mwtests.ts.jta.jts.common.*;
-
-import com.arjuna.ats.jta.common.*;
-import com.arjuna.ats.jta.*;
-import com.arjuna.ats.jta.utils.*;
-
-import com.arjuna.ats.arjuna.common.*;
-
 import com.arjuna.orbportability.*;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class RollbackTest
 {
-    public RollbackTest ()
+    @Test
+    public void test() throws Exception
     {
+        ORB myORB = null;
+        RootOA myOA = null;
+
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
+
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
+
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
+
+        javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+        boolean passed = false;
+
+        transactionManager.setTransactionTimeout(3);
+
+        transactionManager.begin();
+
         try
         {
-            javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
-	    boolean passed = false;
-	    
-	    transactionManager.setTransactionTimeout(3);
-	    
-            transactionManager.begin();
-
-	    try
-	    {
-		Thread.currentThread().sleep(4000);
-	    }
-	    catch (Exception ex)
-	    {
-	    }
-
-	    try
-	    {
-		transactionManager.rollback();
-		
-		passed = true;
-	    }
-	    catch (IllegalStateException ex)
-	    {
-		passed = false;
-	    }
-	    catch (Exception ex)
-	    {
-	        passed = false;
-	    }
-
-	    if (passed)
-		System.err.println("Passed.");
-	    else
-		System.err.println("Failed.");
+            Thread.currentThread().sleep(4000);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            e.printStackTrace(System.err);
-            System.err.println("ERROR - "+e);
         }
+
+        try
+        {
+            transactionManager.rollback();
+
+            passed = true;
+        }
+        catch (IllegalStateException ex)
+        {
+            passed = false;
+        }
+        catch (Exception ex)
+        {
+            passed = false;
+        }
+
+        assertTrue(passed);
+
     }
-
-    public static void main(String[] args)
-    {
-	ORB myORB = null;
-	RootOA myOA = null;
-
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
-	    
-	    myORB.initORB(args, null);
-	    myOA.initOA();
-
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-
-	    System.exit(0);
-	}
-
-        new RollbackTest();
-    }
-
 }

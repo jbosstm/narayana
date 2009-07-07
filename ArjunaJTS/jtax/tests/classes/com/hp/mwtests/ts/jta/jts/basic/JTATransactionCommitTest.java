@@ -20,16 +20,18 @@
  */
 package com.hp.mwtests.ts.jta.jts.basic;
 
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple;
+import com.hp.mwtests.ts.jta.jts.JTSTestCase;
 
 import javax.transaction.TransactionManager;
 import javax.transaction.Transaction;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /*
  * Copyright (C) 2001, 2002, 2003
@@ -42,24 +44,11 @@ import javax.transaction.Transaction;
  * $Id: JTATransactionCommitTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-public class JTATransactionCommitTest extends Test
+public class JTATransactionCommitTest extends JTSTestCase
 {
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-        ORB orb = ORB.getInstance("test-orb");
-        OA oa = OA.getRootOA(orb);
-
-        try
-        {
-            orb.initORB(args, null);
-            oa.initPOA(args);
-        }
-        catch (Exception e)
-        {
-            System.out.println("Failed to setup and initiate ORB: "+e);
-            assertFailure();
-        }
-
         /** Ensure underlying JTA implementation is JTS **/
         jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_TM_IMPLEMENTATION, TransactionManagerImple.class.getName());
 
@@ -80,33 +69,11 @@ public class JTATransactionCommitTest extends Test
 
             System.out.println("Committing second transaction (via TransactionManager interface)");
             tm.commit();
-
-            assertSuccess();
         }
         catch (Exception e)
         {
-            System.out.println("Unexpected exception: "+e);
             e.printStackTrace(System.err);
-            assertFailure();
+            fail("Unexpected exception: "+e);
         }
-
-        try
-        {
-            oa.destroy();
-            orb.shutdown();
-        }
-        catch (Exception e)
-        {
-            System.out.println("Failed to shutdown and destroy the ORB/OA: "+e);
-            e.printStackTrace(System.err);
-            assertFailure();
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        JTATransactionCommitTest test = new JTATransactionCommitTest();
-        test.initialise(null, null, args, new LocalHarness());
-        test.runTest();
     }
 }

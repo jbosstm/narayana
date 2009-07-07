@@ -31,63 +31,23 @@
 
 package com.hp.mwtests.ts.jta.basic;
 
-import com.hp.mwtests.ts.jta.common.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import com.arjuna.ats.jta.*;
-import com.arjuna.ats.jta.utils.*;
-
-import com.arjuna.ats.arjuna.common.*;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
-
-import javax.transaction.*;
-import javax.transaction.xa.*;
-
-import java.lang.IllegalAccessException;
-
-public class NullResource extends Test
+public class NullResource
 {
-    public void run(String[] args)
-	{
-		boolean passed = false;
-
-		try
-		{
-			for (int i = 0; i < 1000; i++)
-			{
-			javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-
-			tm.begin();
-
-			tm.getTransaction().rollback();
-
-			tm.suspend();
-			}
-
-			passed = true;
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-
-		if (passed)
-		{
-			System.out.println("\nTest completed successfully.");
-			assertSuccess();
-		}
-		else
-		{
-			System.out.println("\nTest did not complete successfully.");
-			assertFailure();
-		}
-	}
-
-    public static void main (String[] args)
+    @Test
+    public void test() throws Exception
     {
-		NullResource test = new NullResource();
-		test.initialise(null, null, args, new LocalHarness());
-		test.runTest();
-    }
+        for (int i = 0; i < 1000; i++)
+        {
+            javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
 
+            tm.begin();
+
+            tm.getTransaction().rollback();
+
+            tm.suspend();
+        }
+    }
 }

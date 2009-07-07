@@ -37,56 +37,31 @@ import com.arjuna.ats.jtax.tests.implicit.impl.*;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.common.Environment;
 
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class ImplicitServer extends Test
+public class ImplicitServer
 {
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-        if (args.length == 0)
-        {
-            System.err.println("No name provided for server");
-            assertFailure();
-        }
-        else
-        {
-            jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_TM_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
-            jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_UT_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
+        jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_TM_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
+        jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_UT_IMPLEMENTATION, com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
 
-            try
-            {
-                ORB orb = ORB.getInstance("implicitserver-orb");
-                OA oa = OA.getRootOA(orb);
+        ORB orb = ORB.getInstance("implicitserver-orb");
+        OA oa = OA.getRootOA(orb);
 
-                orb.initORB(args, null);
-                oa.initPOA(args);
+        orb.initORB(new String[] {}, null);
+        oa.initPOA(new String[] {});
 
-                RemoteImpl impl = new RemoteImpl();
+        RemoteImpl impl = new RemoteImpl();
 
-                oa.objectIsReady(impl);
+        oa.objectIsReady(impl);
 
-                org.omg.CORBA.Object obj = oa.corbaReference(impl);
+        org.omg.CORBA.Object obj = oa.corbaReference(impl);
 
-                registerService(args[0], orb.orb().object_to_string(obj));
+        // TODO registerService(args[0], orb.orb().object_to_string(obj));
 
-                assertReady();
-
-                orb.orb().run();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace(System.err);
-                assertFailure();
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        ImplicitServer test = new ImplicitServer();
-        test.initialise(null, null, args, new LocalHarness());
-
-        test.runTest();
+        orb.orb().run();
     }
 }

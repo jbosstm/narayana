@@ -31,67 +31,28 @@ package com.hp.mwtests.ts.jdbc.utils;
  * $Id: JNDISetup.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import org.jboss.dtf.testframework.unittest.*;
-
 import javax.sql.*;
 import javax.naming.*;
 
-public class JNDISetup extends Test
+import org.junit.Test;
+import org.junit.Before;
+import static org.junit.Assert.*;
+
+public class JNDISetup
 {
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-        DataSource ds = null;
-        DBPlugin plugin = null;
+        DBPlugin plugin = (DBPlugin)Thread.currentThread().getContextClassLoader().loadClass("TODO").newInstance();
+
         String jndiName = "jdbc/DB";
+        DataSource ds = plugin.getDataSource(new String[] {"TODO"});
 
-        for (int count=0;count<args.length;count++)
-        {
-            if ( args[count].equalsIgnoreCase("-db") )
-            {
-                try
-                {
-                    plugin = (DBPlugin)Thread.currentThread().getContextClassLoader().loadClass(args[count + 1]).newInstance();
-                    ds = plugin.getDataSource(args);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace(System.err);
-                }
-            }
-            else
-            if ( args[count].equalsIgnoreCase("-jndiname") )
-            {
-                jndiName = args[count + 1];
-            }
-        }
+        assertNotNull(ds);
 
-        if ( ds == null )
-        {
-            System.err.println("Datasource not defined");
-            assertFailure();
-        }
-        else
-        {
-            try
-            {
-                System.out.println("Binding datasource to '"+jndiName+"'");
-                InitialContext ctx = new InitialContext();
-                ctx.rebind(jndiName, ds);
+        System.out.println("Binding datasource to '"+jndiName+"'");
+        InitialContext ctx = new InitialContext();
+        ctx.rebind(jndiName, ds);
 
-                assertSuccess();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace(System.err);
-                assertFailure();
-            }
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        JNDISetup setup = new JNDISetup();
-        setup.initialise(null, null, args, new LocalHarness());
-        setup.runTest();
     }
 }

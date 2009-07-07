@@ -30,14 +30,20 @@ import com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple;
 import com.arjuna.ats.arjuna.common.Environment;
 import com.hp.mwtests.ts.jta.jts.JTSTestCase;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.Before;
+
 public class LastResourceAllowedTestCase extends JTSTestCase
 {
-    protected void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
         System.setProperty(Environment.ALLOW_MULTIPLE_LAST_RESOURCES, "true") ;
         super.setUp() ;
     }
     
+    @Test
     public void testAllowed()
         throws SystemException, NotSupportedException, RollbackException
     {

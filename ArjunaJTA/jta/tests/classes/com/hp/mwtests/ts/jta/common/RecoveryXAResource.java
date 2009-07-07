@@ -34,12 +34,9 @@ package com.hp.mwtests.ts.jta.common;
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.Uid;
 
-import com.arjuna.ats.internal.jta.utils.*;
-
 import com.arjuna.ats.jta.xa.*;
 
 import javax.transaction.xa.*;
-import java.io.*;
 
 public class RecoveryXAResource implements XAResource
 {

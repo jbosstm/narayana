@@ -33,8 +33,6 @@ package com.hp.mwtests.ts.jta.jts.common;
 
 import com.arjuna.ats.jta.utils.JTAHelper;
 
-import javax.transaction.xa.*;
-
 public class Synchronization implements javax.transaction.Synchronization
 {
 

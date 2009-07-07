@@ -39,33 +39,30 @@ import com.arjuna.ats.internal.jta.utils.*;
 
 import java.util.Vector;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class RecoveryTest
 {
-    public static void main (String[] args)
+    @Test
+    public void test()
     {
-	Vector xaRecoveryNodes = new Vector();
-	boolean passed = false;
-	Uid bogusNodeName = new Uid();
-	
-	xaRecoveryNodes.add(bogusNodeName.stringForm());
+        Vector xaRecoveryNodes = new Vector();
+        Uid bogusNodeName = new Uid();
 
-	System.err.println("Bogus XA node name: "+bogusNodeName);
-	
-	XidImple xid = new XidImple(new Uid());
-	String nodeName = XAUtils.getXANodeName(xid);
+        xaRecoveryNodes.add(bogusNodeName.stringForm());
 
-	// should fail.
+        System.err.println("Bogus XA node name: "+bogusNodeName);
 
-	System.err.println("XA node name: "+nodeName);
-	System.err.println("Xid to recover: "+xid);
-	
-	if (!xaRecoveryNodes.contains(nodeName))
-		passed = true;
+        XidImple xid = new XidImple(new Uid());
+        String nodeName = XAUtils.getXANodeName(xid);
 
-	if (passed)
-	    System.err.println("Passed.");
-	else
-	    System.err.println("Failed.");
+        // should fail.
+
+        System.err.println("XA node name: "+nodeName);
+        System.err.println("Xid to recover: "+xid);
+
+        assertFalse( xaRecoveryNodes.contains(nodeName) );
     }
 
 }

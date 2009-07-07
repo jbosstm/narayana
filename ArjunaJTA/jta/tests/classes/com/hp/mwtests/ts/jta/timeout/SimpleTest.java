@@ -31,59 +31,29 @@
 
 package com.hp.mwtests.ts.jta.timeout;
 
-import com.hp.mwtests.ts.jta.common.TestResource;
-
-import javax.transaction.Transaction;
-import javax.transaction.xa.XAResource;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class SimpleTest
 {
-    public SimpleTest ()
+    @Test
+    public void test() throws Exception
     {
+        javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
+
+        transactionManager.setTransactionTimeout(3);
+
+        transactionManager.begin();
+
+        Thread.currentThread().sleep(4000);
+
         try
         {
-            javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
-	    boolean passed = false;
-	    
-	    transactionManager.setTransactionTimeout(3);
-	    
-            transactionManager.begin();
-
-	    try
-	    {
-		Thread.currentThread().sleep(4000);
-	    }
-	    catch (Exception ex)
-	    {
-	    }
-
-	    try
-	    {
-		transactionManager.commit();
-	    }
-	    catch (final javax.transaction.RollbackException ex)
-	    {
-		passed = true;
-	    }
-	    catch (Exception ex)
-	    {
-	    }
-
-	    if (passed)
-		System.err.println("Passed.");
-	    else
-		System.err.println("Failed.");
+            transactionManager.commit();
         }
-        catch (Exception e)
+        catch (final javax.transaction.RollbackException ex)
         {
-            e.printStackTrace(System.err);
-            System.err.println("ERROR - "+e);
+            // expected
         }
     }
-
-    public static void main(String[] args)
-    {
-        new SimpleTest();
-    }
-
 }
