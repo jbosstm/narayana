@@ -20,79 +20,37 @@
  */
 package com.hp.mwtests.orbportability.orbspecific.orbinstance;
 
-import org.jboss.dtf.testframework.unittest.Test;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
 
-public class SimpleServer extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class SimpleServer
 {
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
         ORB orb = ORB.getInstance("main_orb");
         ORB orb2 = ORB.getInstance("main_orb_2");
         RootOA oa = RootOA.getRootOA(orb);
         RootOA oa2 = RootOA.getRootOA(orb2);
 
-        try
-        {
-            orb.initORB(args,null);
-            oa.initOA(args);
+        orb.initORB(new String[] {},null);
+        oa.initOA(new String[] {});
 
-            orb2.initORB(args,null);
-            oa2.initOA(args);
-        }
-        catch (Exception e)
-        {
-            logInformation("ERROR - During ORB and OA initialisation ("+e+")");
-            e.printStackTrace(System.err);
-            assertFailure();
-        }
+        orb2.initORB(new String[] {},null);
+        oa2.initOA(new String[] {});
 
-        try
-        {
-            SimpleObjectImpl obj = new SimpleObjectImpl();
+        SimpleObjectImpl obj = new SimpleObjectImpl();
 
-            oa.objectIsReady(obj);
+        assertTrue( oa.objectIsReady(obj) );
 
-            if (oa.objectIsReady(obj))
-            {
-                logInformation("Manage to activate a servant on the same OA twice - this is incorrect");
-                assertFailure();
-            }
-            else
-            {
-                logInformation("Didn't managed to activate a servant on the same OA twice - correct");
-            }
+        assertTrue( oa2.objectIsReady(obj) );
 
-            if (oa2.objectIsReady(obj))
-            {
-                logInformation("OA2 did not contain the servant registered on OA - correct");
-                oa2.shutdownObject(obj);
-            }
-            else
-            {
-                logInformation("OA2 already contained the servant registered on OA - this is incorrect");
-                assertFailure();
-            }
-            assertSuccess();
-        }
-        catch (Exception e)
-        {
-            logInformation("ERROR - During object initialisation ("+e+")");
-            e.printStackTrace(System.err);
-            assertFailure();
-        }
         oa.destroy();
-	orb.shutdown();
+        orb.shutdown();
         oa2.destroy();
-	orb2.shutdown();
-    }
-
-    public static void main(String[] args)
-    {
-        SimpleServer server = new SimpleServer();
-
-        server.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-        server.runTest();
+        orb2.shutdown();
     }
 }

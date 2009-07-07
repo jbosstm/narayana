@@ -31,8 +31,6 @@
 
 package com.hp.mwtests.orbportability.initialisation;
 
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 import com.arjuna.orbportability.internal.utils.PostSetLoader;
 import com.arjuna.orbportability.ORB;
 import com.hp.mwtests.orbportability.initialisation.postset.AllPostSet;
@@ -40,71 +38,42 @@ import com.hp.mwtests.orbportability.initialisation.postset.SinglePostSetUsingIn
 
 import java.util.Properties;
 
-public class PostSetTest extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class PostSetTest
 {
-	private final static String ORB_INSTANCE_NAME = "PostSetTestORB";
+    private final static String ORB_INSTANCE_NAME = "PostSetTestORB";
     private final static String ORB_INSTANCE_NAME2 = "PostSetTestORB2";
 
-	public void run(String[] args)
-	{
-		Properties testProps = System.getProperties();
+    @Test
+    public void test()
+    {
+        Properties testProps = System.getProperties();
 
-		testProps.setProperty(PostSetLoader.generateORBPropertyName("com.arjuna.orbportability.orb"),
-				"com.hp.mwtests.orbportability.initialisation.postset.AllPostSet");
-		testProps.setProperty(PostSetLoader.generateORBPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME2),
-				"com.hp.mwtests.orbportability.initialisation.postset.SinglePostSetUsingInterface");
+        testProps.setProperty(PostSetLoader.generateORBPropertyName("com.arjuna.orbportability.orb"),
+                "com.hp.mwtests.orbportability.initialisation.postset.AllPostSet");
+        testProps.setProperty(PostSetLoader.generateORBPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME2),
+                "com.hp.mwtests.orbportability.initialisation.postset.SinglePostSetUsingInterface");
 
-		System.setProperties(testProps);
+        System.setProperties(testProps);
 
-		ORB orb = null;
+        ORB orb = null;
         ORB orb2 = null;
 
-		try
-		{
-			orb = ORB.getInstance(ORB_INSTANCE_NAME);
-			orb.initORB(args, null);
+        orb = ORB.getInstance(ORB_INSTANCE_NAME);
+        orb.initORB(new String[] {}, null);
 
-			orb2 = ORB.getInstance(ORB_INSTANCE_NAME2);
+        orb2 = ORB.getInstance(ORB_INSTANCE_NAME2);
 
-			orb2.setOrb(orb.orb());
-		}
-		catch (Exception e)
-		{
-			logInformation("ERROR - "+e);
-			e.printStackTrace(System.err);
-			assertFailure();
-		}
+        orb2.setOrb(orb.orb());
 
-		if ( !AllPostSet._called )
-		{
-			logInformation("Failed to call AllPostSet initialisation routine");
-			assertFailure();
-		}
-		else
-		{
-			logInformation("AllPostSet called succeesfully");
-		}
+        assertTrue( AllPostSet._called );
 
-		if ( ( !SinglePostSetUsingInterface._called ) && ( SinglePostSetUsingInterface._passedObj == orb2 ) )
-		{
-			logInformation("Failed to call SinglePostSetUsingInterface initialisation routine");
-			assertFailure();
-		}
-		else
-		{
-			logInformation("SinglePostSetUsingInterface called succeesfully");
-		}
+        assertTrue( SinglePostSetUsingInterface._called );
 
-		orb.destroy();
+        assertEquals(orb2, SinglePostSetUsingInterface._passedObj );
 
-		assertSuccess();
-	}
-
-	public static void main(String[] args)
-	{
-		PostSetTest pst = new PostSetTest();
-		pst.initialise(null, null, args, new LocalHarness());
-		pst.runTest();
-	}
-
+        orb.destroy();
+    }
 }

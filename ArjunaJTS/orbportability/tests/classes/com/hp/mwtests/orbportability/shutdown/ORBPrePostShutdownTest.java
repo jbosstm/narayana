@@ -31,17 +31,16 @@
 
 package com.hp.mwtests.orbportability.shutdown;
 
-import org.jboss.dtf.testframework.unittest.Test;
-
 import com.arjuna.orbportability.*;
-import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.orb.*;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Richard Begg
  */
-public class ORBPrePostShutdownTest extends Test implements PrePostTestCallback
+public class ORBPrePostShutdownTest implements PrePostTestCallback
 {
     public static final int NONE = 0, PRESHUTDOWN = 1, POSTSHUTDOWN = 2, INVALID = 3;
     private static final String[] STATE_STRING = {"NONE", "PRESHUTDOWN", "POSTSHUTDOWN", "INVALID" };
@@ -69,7 +68,7 @@ public class ORBPrePostShutdownTest extends Test implements PrePostTestCallback
      */
     public void preShutdownCalled(String name)
     {
-    	logInformation( "Previous State : "+ PrettyPrintState( _currentState ) );
+    	System.out.println( "Previous State : "+ PrettyPrintState( _currentState ) );
 
     	switch ( _currentState )
         {
@@ -84,7 +83,7 @@ public class ORBPrePostShutdownTest extends Test implements PrePostTestCallback
     	    	break;
     	}
 
-    	logInformation( " Current State : "+ PrettyPrintState( _currentState ) );
+    	System.out.println( " Current State : "+ PrettyPrintState( _currentState ) );
     }
 
     /**
@@ -94,7 +93,7 @@ public class ORBPrePostShutdownTest extends Test implements PrePostTestCallback
      */
     public void postShutdownCalled(String name)
     {
-    	logInformation( "Previous State : "+ PrettyPrintState( _currentState ) );
+    	System.out.println( "Previous State : "+ PrettyPrintState( _currentState ) );
 
     	switch ( _currentState )
         {
@@ -109,55 +108,32 @@ public class ORBPrePostShutdownTest extends Test implements PrePostTestCallback
     	    	break;
     	}
 
-    	logInformation( " Current State : "+ PrettyPrintState( _currentState ) );
+    	System.out.println( " Current State : "+ PrettyPrintState( _currentState ) );
     }
 
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
         ORB orb = ORB.getInstance("main_orb");
         RootOA oa = RootOA.getRootOA(orb);
 
-	try
-	{
-/*
-	     * Initialise the ORB and OA
-	     */
-	    logInformation("Initialising ORB and OA");
+        System.out.println("Initialising ORB and OA");
 
-	    orb.initORB(args, null);
-	    oa.initOA();
+        orb.initORB(new String[] {}, null);
+        oa.initOA();
 
-	    _currentState = NONE;
-	}
-	catch (Exception e)
-	{
-	    logInformation("Initialisation failed: "+e);
-	    e.printStackTrace();
-	    assertFailure();
-	}
+        _currentState = NONE;
 
-	/**
-	 * Register pre and post shutdown handlers
-	 */
-	orb.addPreShutdown( new TestPreShutdown( "PreShutdown", this ) );
-	orb.addPostShutdown( new TestPostShutdown( "PostShutdown", this ) );
+        orb.addPreShutdown( new TestPreShutdown( "PreShutdown", this ) );
+        orb.addPostShutdown( new TestPostShutdown( "PostShutdown", this ) );
 
-/*
-	 * Shutdown ORB and OA
-	 */
-	logInformation("Shutting down ORB and OA");
-	oa.destroy();
-	orb.shutdown();
+        System.out.println("Shutting down ORB and OA");
+        oa.destroy();
+        orb.shutdown();
 
-	/*
-	 * Ensure final state is correct
-	 */
-	logInformation("Final state: " + PrettyPrintState(_currentState) );
+        System.out.println("Final state: " + PrettyPrintState(_currentState) );
 
-	if ( _currentState == POSTSHUTDOWN )
-	    assertSuccess();
-	else
-	    assertFailure();
+        assertEquals(POSTSHUTDOWN, _currentState);
     }
 
     /**
@@ -204,15 +180,5 @@ public class ORBPrePostShutdownTest extends Test implements PrePostTestCallback
     	{
  	    _callback.postShutdownCalled(name());
 	}
-    }
-
-
-    public static void main(String[] args)
-    {
-	OAPrePostShutdownTest test = new OAPrePostShutdownTest();
-
-	test.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-
-	test.runTest();
     }
 }

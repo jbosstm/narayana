@@ -30,7 +30,6 @@
  */
 package com.hp.mwtests.orbportability.initialisation;
 
-import org.jboss.dtf.testframework.unittest.Test;
 import com.arjuna.orbportability.internal.utils.PreInitLoader;
 import com.arjuna.orbportability.internal.utils.PostInitLoader;
 import com.arjuna.orbportability.ORB;
@@ -43,21 +42,18 @@ import com.hp.mwtests.orbportability.initialisation.postinit.AllPostInitialisati
 
 import java.util.Properties;
 
-public class PropertyInitTest extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class PropertyInitTest
 {
     private static String   ORB_INSTANCE_NAME = "orb_instance_1";
     private static String   ORB_INSTANCE_NAME_2 = "orb_instance_2";
 
-    public void run(String[] args)
+    @Test
+    public void test()
     {
         Properties testProps = System.getProperties();
-
-        logInformation("Registering All ORB instance pre-initialisation object");
-        logInformation("Registering All ORB instance post-initialisation object");
-        logInformation("Registering First ORB instance pre-initialisation object");
-        logInformation("Registering First ORB instance post-initialisation object");
-        logInformation("Registering Second ORB instance pre-initialisation object");
-        logInformation("Registering Second ORB instance post-initialisation object");
 
         testProps.setProperty(PreInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb"),
                 "com.hp.mwtests.orbportability.initialisation.preinit.AllPreInitialisation");
@@ -74,81 +70,21 @@ public class PropertyInitTest extends Test
 
         System.setProperties(testProps);
 
-        ORB orb = null;
+        ORB orb = ORB.getInstance(ORB_INSTANCE_NAME);
+        orb.initORB(new String[] {}, null);
 
-        try
-        {
-            orb = ORB.getInstance(ORB_INSTANCE_NAME);
-            logInformation("Initialising First ORB Instance");
-            orb.initORB(args, null);
-        }
-        catch (Exception e)
-        {
-            logInformation("ERROR - "+e);
-            e.printStackTrace(System.err);
-            assertFailure();
-        }
+        assertTrue(PreInitialisation._called);
 
-        if (!PreInitialisation._called)
-        {
-            logInformation("FAILED: First ORB instance pre-initialisation not called");
-            assertFailure();
-        }
-        else
-        {
-            logInformation("First ORB instance pre-initialisation called");
-        }
+        assertTrue(PostInitialisation._called);
 
-        if (!PostInitialisation._called)
-        {
-            logInformation("FAILED: First ORB instance post-initialisation not called");
-            assertFailure();
-        }
-        else
-        {
-            logInformation("First ORB instance post-initialisation called");
-        }
+        assertTrue(PreInitialisation2._called);
 
-        if (!PreInitialisation2._called)
-        {
-            logInformation("Second ORB instance pre-initialisation not called");
-        }
-        else
-        {
-            logInformation("FAILED: Second ORB instance pre-initialisation called");
-            assertFailure();
-        }
+        assertTrue(PostInitialisation2._called);
 
-        if (!PostInitialisation2._called)
-        {
-            logInformation("Second ORB instance post-initialisation not called");
-        }
-        else
-        {
-            logInformation("FAILED: Second ORB instance post-initialisation called");
-            assertFailure();
-        }
+        assertTrue(AllPreInitialisation._called);
 
-        if (!AllPreInitialisation._called)
-        {
-            logInformation("FAILED: All ORB instances pre-initialisation not called");
-            assertFailure();
-        }
-        else
-        {
-            logInformation("All ORB instances pre-initialisation called");
-        }
-
-        if (!AllPostInitialisation._called)
-        {
-            logInformation("FAILED: All ORB instances post-initialisation not called");
-            assertFailure();
-        }
-        else
-        {
-            logInformation("All ORB instances post-initialisation called");
-        }
-
+        assertTrue(AllPostInitialisation._called);
+        
         try
         {
             /**
@@ -157,55 +93,22 @@ public class PropertyInitTest extends Test
             AllPreInitialisation._called = false;
             AllPostInitialisation._called = false;
             orb = ORB.getInstance(ORB_INSTANCE_NAME_2);
-            logInformation("Initialising Second ORB Instance");
-            orb.initORB(args, null);
+            System.out.println("Initialising Second ORB Instance");
+            orb.initORB(new String[] {}, null);
         }
         catch (Exception e)
         {
-            logInformation("ERROR - "+e);
             e.printStackTrace(System.err);
-            assertFailure();
+            fail("ERROR - "+e);
         }
 
-        if (!PreInitialisation2._called)
-        {
-            logInformation("FAILED: Second ORB instance pre-initialisation not called");
-            assertFailure();
-        }
-        else
-        {
-            logInformation("Second ORB instance pre-initialisation called");
-        }
+        assertTrue(PreInitialisation2._called);
 
-        if (!PostInitialisation2._called)
-        {
-            logInformation("FAILED: Second ORB instance post-initialisation not called");
-            assertFailure();
-        }
-        else
-        {
-            logInformation("Second ORB instance post-initialisation called");
-        }
+        assertTrue(PostInitialisation2._called);
 
-        if (!AllPreInitialisation._called)
-        {
-            logInformation("FAILED: All ORB instances pre-initialisation not called");
-            assertFailure();
-        }
-        else
-        {
-            logInformation("All ORB instances pre-initialisation called");
-        }
+        assertTrue(AllPreInitialisation._called);
 
-        if (!AllPostInitialisation._called)
-        {
-            logInformation("FAILED: All ORB instances post-initialisation not called");
-            assertFailure();
-        }
-        else
-        {
-            logInformation("All ORB instances post-initialisation called");
-        }
+        assertTrue(AllPostInitialisation._called);
 
         try
         {
@@ -213,20 +116,8 @@ public class PropertyInitTest extends Test
         }
         catch (Exception e)
         {
-            logInformation("ERROR - "+e);
+            fail("ERROR - "+e);
             e.printStackTrace(System.err);
-            assertFailure();
         }
-
-        assertSuccess();
-    }
-
-    public static void main(String[] args)
-    {
-	PropertyInitTest test = new PropertyInitTest();
-
-	test.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-
-	test.runTest();
     }
 }

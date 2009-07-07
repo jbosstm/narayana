@@ -22,7 +22,7 @@
 
     <property name="modulename" value="orbportability"/>
 
-    <property name="global.ext.test.libs" value="TestingFramework.jar"/>
+    <property name="global.ext.test.libs" value="junit-4.6.jar"/>
 
     <import file="../sharedbuild.xml"/>
 
@@ -78,6 +78,31 @@
 			<entry key="ORBPORTABILITY_VERSION" value="unknown"/>
             <entry key="ORB_CONFIGURATION" value="unknown"/>
         </propertyfile>
+    </target>
+
+    <target name="run.tests">
+        <run.tests.macro>
+            <additional.classpath>
+                <path refid="jacorb.classpath"/>
+            </additional.classpath>
+            <tests>
+                <fileset dir="tests/classes">
+                    <exclude name="**/initialisation/postinit/**"/>
+                    <exclude name="**/initialisation/postset/**"/>
+                    <exclude name="**/initialisation/preinit/**"/>
+                    <exclude name="**/initialisation/TestAttributeCallback.java"/>
+                    <exclude name="**/SimpleObjectImpl.java"/>
+                    <exclude name="**/TestAttributeCallback.java"/>
+                    <exclude name="**/PrePostTestCallback.java"/>
+
+
+                    <!-- these ones need fixing -->
+                    <exclude name="**/PropertyInitTest.java"/>
+                    <exclude name="**/PropertyInitTest3.java"/>
+
+                </fileset>
+            </tests>
+        </run.tests.macro>
     </target>
 
 </project>

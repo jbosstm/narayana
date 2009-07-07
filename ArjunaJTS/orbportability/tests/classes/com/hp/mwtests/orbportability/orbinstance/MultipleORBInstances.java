@@ -30,17 +30,16 @@
 
 package com.hp.mwtests.orbportability.orbinstance;
 
-import org.jboss.dtf.testframework.unittest.Test;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.RootOA;
 
 import java.util.HashSet;
 
-import org.omg.CORBA.Policy;
-import org.omg.PortableServer.ImplicitActivationPolicyValue;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class MultipleORBInstances extends Test
+public class MultipleORBInstances
 {
     public static final int NUMBER_OF_ORBOAS = 10;
 
@@ -58,7 +57,7 @@ public class MultipleORBInstances extends Test
             }
             else
             {
-                logInformation("Failure - unqiue ORB instance not created!");
+                System.out.println("Failure - unqiue ORB instance not created!");
                 success = false;
             }
         }
@@ -72,21 +71,21 @@ public class MultipleORBInstances extends Test
 
         if (orbInstance == null)
         {
-            logInformation("Could not create ORB instance");
+            System.out.println("Could not create ORB instance");
             returnValue = false;
         }
         else
         {
-            logInformation("Successfully created ORB instance");
+            System.out.println("Successfully created ORB instance");
 
             if (oaInstance == null)
             {
-                logInformation("Could not create OA instance");
+                System.out.println("Could not create OA instance");
                 returnValue = false;
             }
             else
             {
-                logInformation("Successfully created OA instance");
+                System.out.println("Successfully created OA instance");
 
                 try
                 {
@@ -95,7 +94,7 @@ public class MultipleORBInstances extends Test
                 }
                 catch (Exception e)
                 {
-                    logInformation("Unexpected Exception while initialising the orb instance - "+e);
+                    System.out.println("Unexpected Exception while initialising the orb instance - "+e);
                     e.printStackTrace(System.err);
                     returnValue = false;
                 }
@@ -105,68 +104,42 @@ public class MultipleORBInstances extends Test
         return(returnValue);
     }
 
-    public void run(String[] args)
+    @Test
+    public void test()
     {
         ORB orbInstance[] = new ORB[NUMBER_OF_ORBOAS];
         RootOA oaInstance[] = new RootOA[NUMBER_OF_ORBOAS];
 
         for (int count=0;count<NUMBER_OF_ORBOAS;count++)
         {
-            logInformation("Creating ORB and OA #"+count);
+            System.out.println("Creating ORB and OA #"+count);
             orbInstance[count] = ORB.getInstance("orb_"+count);
 
             oaInstance[count] = RootOA.getRootOA(orbInstance[count]);
 
-            if (!initialiseORBandOA(args,orbInstance[count],oaInstance[count]))
-            {
-                logInformation("Failed to create ORB and OA #"+count);
-                assertFailure();
-            }
+            assertTrue( initialiseORBandOA(new String[] {},orbInstance[count],oaInstance[count]) );
         }
 
-        if (!ensureAllORBReferencesAreUnique(orbInstance, oaInstance))
-        {
-            assertFailure();
-        }
+        assertTrue( ensureAllORBReferencesAreUnique(orbInstance, oaInstance) );
 
-        logInformation("Retrieving all ORBs and OAs");
+        System.out.println("Retrieving all ORBs and OAs");
 
         for (int count=0;count<NUMBER_OF_ORBOAS;count++)
         {
-            logInformation("Retrieving ORB and OA #"+count);
+            System.out.println("Retrieving ORB and OA #"+count);
             ORB orb = ORB.getInstance("orb_"+count);
 
-            if ( orb == null)
-            {
-                logInformation("Failed to retrieve ORB #"+count);
-                assertFailure();
-            }
+            assertNotNull(orb);
 
-            if ( OA.getRootOA(orb) == null )
-            {
-                logInformation("Failed to retrieve OA #"+count);
-                assertFailure();
-            }
+            assertNotNull( OA.getRootOA(orb) );            
         }
 
-        logInformation("Destroying all ORBs and OAs");
+        System.out.println("Destroying all ORBs and OAs");
 
         for (int count=0;count<NUMBER_OF_ORBOAS;count++)
         {
             orbInstance[count].destroy();
             oaInstance[count].destroy();
         }
-
-        assertSuccess();
     }
-
-    public static void main(String[] args)
-    {
-	MultipleORBInstances test = new MultipleORBInstances();
-
-	test.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-
-	test.runTest();
-    }
-
 }

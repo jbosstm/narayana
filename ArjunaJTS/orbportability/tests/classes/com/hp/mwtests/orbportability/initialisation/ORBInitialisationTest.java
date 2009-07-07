@@ -31,17 +31,17 @@
 
 package com.hp.mwtests.orbportability.initialisation;
 
-import org.jboss.dtf.testframework.unittest.Test;
-
 import com.arjuna.orbportability.orb.*;
 import com.arjuna.orbportability.*;
-import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORB;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Richard Begg
  */
-public class ORBInitialisationTest extends Test implements TestAttributeCallback
+public class ORBInitialisationTest implements TestAttributeCallback
 {
     public final static int NONE = 0, PREINIT = 1, POSTINIT = 2, INVALID = 3;
     private final static String[] STATE_TEXT = { "NONE","PREINIT","POSTINIT","INVALID" };
@@ -50,133 +50,119 @@ public class ORBInitialisationTest extends Test implements TestAttributeCallback
 
     public static String getStateText(int value)
     {
-    	return(STATE_TEXT[value]);
+        return(STATE_TEXT[value]);
     }
 
     public void preInitAttributeCalled()
     {
-    	logInformation("Previous State: " + getStateText(_currentState));
+        System.out.println("Previous State: " + getStateText(_currentState));
 
-    	switch (_currentState)
-    	{
-    	    case NONE:
-    	    case POSTINIT:
-    	    	_currentState = PREINIT;
-    	    	break;
-    	    default:
-    	    case PREINIT :
-    	    	_currentState = INVALID;
-    	    	break;
-    	}
+        switch (_currentState)
+        {
+            case NONE:
+            case POSTINIT:
+                _currentState = PREINIT;
+                break;
+            default:
+            case PREINIT :
+                _currentState = INVALID;
+                break;
+        }
 
-    	logInformation(" Current State: " + getStateText(_currentState));
+        System.out.println(" Current State: " + getStateText(_currentState));
     }
 
     public void postInitAttributeCalled()
     {
-    	logInformation("Previous State: " + getStateText(_currentState));
+        System.out.println("Previous State: " + getStateText(_currentState));
 
-    	switch (_currentState)
-    	{
-    	    case NONE:
-    	    case PREINIT:
-    	    	_currentState = POSTINIT;
-    	    	break;
-    	    default:
-    	    case POSTINIT :
-    	    	_currentState = INVALID;
-    	    	break;
-    	}
+        switch (_currentState)
+        {
+            case NONE:
+            case PREINIT:
+                _currentState = POSTINIT;
+                break;
+            default:
+            case POSTINIT :
+                _currentState = INVALID;
+                break;
+        }
 
-    	logInformation(" Current State: " + getStateText(_currentState));
+        System.out.println(" Current State: " + getStateText(_currentState));
     }
 
-    public void run(String[] args)
+    @Test
+    public void test()
     {
         ORB orb = ORB.getInstance("main_orb");
         RootOA oa = RootOA.getRootOA(orb);
 
-	try
-	{
-	    _currentState = NONE;
-
-	    /*
-	     * Registering attributes with ORB
-	     */
-	    orb.addAttribute( new PreTestAttribute( this ) );
-	    orb.addAttribute( new PostTestAttribute( this ) );
+        try {
+            _currentState = NONE;
 
             /*
-	     * Initialise the ORB and OA
-	     */
-	    logInformation("Initialising ORB and OA");
+            * Registering attributes with ORB
+            */
+            orb.addAttribute( new PreTestAttribute( this ) );
+            orb.addAttribute( new PostTestAttribute( this ) );
 
-	    orb.initORB(args, null);
-	    oa.initOA();
+            /*
+	         * Initialise the ORB and OA
+	         */
+            System.out.println("Initialising ORB and OA");
 
-	    if (_currentState == POSTINIT)
-	    	assertSuccess();
-	    else
-	    	assertFailure();
-	}
-	catch (Exception e)
-	{
-	    logInformation("Initialisation failed: "+e);
-	    e.printStackTrace();
-	    assertFailure();
-	}
+            orb.initORB(new String[] {}, null);
+            oa.initOA();
 
-	oa.destroy();
-	orb.shutdown();
+            assertEquals(POSTINIT, _currentState);
+        }
+        catch (Exception e)
+        {
+            fail("Initialisation failed: "+e);
+        }
+
+        oa.destroy();
+        orb.shutdown();
     }
 
     public class PreTestAttribute extends Attribute
     {
-    	protected TestAttributeCallback _callback = null;
+        protected TestAttributeCallback _callback = null;
 
-    	public PreTestAttribute( TestAttributeCallback callback )
-    	{
-    	    _callback = callback;
-    	}
+        public PreTestAttribute( TestAttributeCallback callback )
+        {
+            _callback = callback;
+        }
 
-    	public void initialise (String[] params)
-    	{
-    	     _callback.preInitAttributeCalled();
-    	}
+        public void initialise (String[] params)
+        {
+            _callback.preInitAttributeCalled();
+        }
 
-	public boolean postORBInit ()
-    	{
-	    return(false);
-	}
+        public boolean postORBInit ()
+        {
+            return(false);
+        }
     }
 
     public class PostTestAttribute extends Attribute
     {
-    	protected TestAttributeCallback _callback = null;
+        protected TestAttributeCallback _callback = null;
 
-    	public PostTestAttribute( TestAttributeCallback callback )
-    	{
-    	    _callback = callback;
-    	}
+        public PostTestAttribute( TestAttributeCallback callback )
+        {
+            _callback = callback;
+        }
 
-    	public void initialise (String[] params)
-    	{
-    	     _callback.postInitAttributeCalled();
-    	}
+        public void initialise (String[] params)
+        {
+            _callback.postInitAttributeCalled();
+        }
 
-	public boolean postORBInit ()
-    	{
-	    return(true);
-	}
-    }
-
-    public static void main(String[] args)
-    {
-	ORBInitialisationTest test = new ORBInitialisationTest();
-
-	test.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-
-	test.runTest();
+        public boolean postORBInit ()
+        {
+            return(true);
+        }
     }
 
 }

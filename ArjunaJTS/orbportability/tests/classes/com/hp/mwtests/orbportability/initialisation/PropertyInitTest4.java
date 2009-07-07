@@ -31,25 +31,24 @@
 
 package com.hp.mwtests.orbportability.initialisation;
 
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 import com.arjuna.orbportability.internal.utils.PreInitLoader;
 import com.arjuna.orbportability.internal.utils.PostInitLoader;
 import com.arjuna.orbportability.ORB;
 import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisationUsingInterface;
 import com.hp.mwtests.orbportability.initialisation.postinit.PostInitialisationUsingInterface;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import java.util.Properties;
 
-public class PropertyInitTest4 extends Test
+public class PropertyInitTest4
 {
     public final static String  ORB_INSTANCE_NAME = "testorb";
     public final static String  ORB_INSTANCE_NAME_2 = "testorb2";
 
-    /**
-     * The main test method which must assert either a pass or a fail.
-     */
-    public void run(String[] args)
+    @Test
+    public void test()
     {
         ORB orb = null,
             orb2 = null;
@@ -67,62 +66,26 @@ public class PropertyInitTest4 extends Test
         try
         {
             orb = ORB.getInstance(ORB_INSTANCE_NAME);
-            logInformation("Initialising ORB("+ORB_INSTANCE_NAME+")");
-            orb.initORB(args, null);
+            System.out.println("Initialising ORB("+ORB_INSTANCE_NAME+")");
+            orb.initORB(new String[] {}, null);
 
-            if ( PreInitialisationUsingInterface.getObject() == orb )
-            {
-                logInformation("PreInitialisationUsingInterface returned ORB("+ORB_INSTANCE_NAME+")");
-                assertSuccess();
-            }
-            else
-            {
-                logInformation("PreInitialisationUsingInterface failed to return ORB("+ORB_INSTANCE_NAME+")");
-                assertFailure();
-            }
+            assertEquals(orb, PreInitialisationUsingInterface.getObject());
 
-            if ( PostInitialisationUsingInterface.getObject() == orb )
-            {
-                logInformation("PostInitialisationUsingInterface returned ORB("+ORB_INSTANCE_NAME+")");
-                assertSuccess();
-            }
-            else
-            {
-                logInformation("PostInitialisationUsingInterface failed to return ORB("+ORB_INSTANCE_NAME+")");
-                assertFailure();
-            }
+            assertEquals(orb, PostInitialisationUsingInterface.getObject());
 
             orb2 = ORB.getInstance(ORB_INSTANCE_NAME_2);
-            logInformation("Initialising ORB("+ORB_INSTANCE_NAME_2+")");
-            orb2.initORB(args, null);
+            System.out.println("Initialising ORB("+ORB_INSTANCE_NAME_2+")");
+            orb2.initORB(new String[] {}, null);
 
-            if ( PreInitialisationUsingInterface.getObject() == orb2 )
-            {
-                logInformation("PreInitialisationUsingInterface returned ORB("+ORB_INSTANCE_NAME_2+")");
-                assertSuccess();
-            }
-            else
-            {
-                logInformation("PreInitialisationUsingInterface failed to return ORB("+ORB_INSTANCE_NAME_2+")");
-                assertFailure();
-            }
+            assertEquals(orb2, PreInitialisationUsingInterface.getObject());
 
-            if ( PostInitialisationUsingInterface.getObject() == orb2 )
-            {
-                logInformation("PostInitialisationUsingInterface returned ORB("+ORB_INSTANCE_NAME_2+")");
-                assertSuccess();
-            }
-            else
-            {
-                logInformation("PostInitialisationUsingInterface failed to return ORB("+ORB_INSTANCE_NAME_2+")");
-                assertFailure();
-            }
+            assertEquals(orb2, PostInitialisationUsingInterface.getObject());
+
         }
         catch (Exception e)
         {
-            logInformation("ERROR - "+e);
+            fail("ERROR - "+e);
             e.printStackTrace(System.err);
-            assertFailure();
         }
 
         try
@@ -132,17 +95,8 @@ public class PropertyInitTest4 extends Test
         }
         catch (Exception e)
         {
-            logInformation("ERROR - "+e);
+            fail("ERROR - "+e);
             e.printStackTrace(System.err);
-            assertFailure();
         }
-    }
-
-    public static void main(String[] args)
-    {
-        PropertyInitTest4 test = new PropertyInitTest4();
-
-        test.initialise( null, null, args, new LocalHarness() );
-        test.runTest();
     }
 }

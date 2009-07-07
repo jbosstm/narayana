@@ -30,32 +30,29 @@
  */
 package com.hp.mwtests.orbportability.services;
 
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 import com.arjuna.orbportability.Services;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
 import com.hp.mwtests.orbportability.orbspecific.orbinstance.SimpleObjectImpl;
 
-public class ServiceTestSetup extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class ServiceTestSetup
 {
 	private final static String ORB_INSTANCE_NAME = "servicetest-orb";
 	private final static String TEST_SERVICE_NAME = "com.mwtests.orbportability.services.ServiceTestSetup.TestService";
 
-	/**
-	 * The main test method which must assert either a pass or a fail.
-	 */
-	public void run(String[] args)
+    @Test
+	public void test() throws Exception
 	{
-		try
-		{
 			/** Create ORB and OA **/
 			ORB testORB = ORB.getInstance( ORB_INSTANCE_NAME );
 			OA testOA = OA.getRootOA( testORB );
 
 			/** Initialise ORB and OA **/
-			testORB.initORB(args, null);
-			testOA.initPOA(args);
+			testORB.initORB(new String[] {}, null);
+			testOA.initPOA(new String[] {});
 
 			/** Create services object **/
 			Services testServ = new Services(testORB);
@@ -71,22 +68,6 @@ public class ServiceTestSetup extends Test
 			 * Register using the default mechanism.
 			 */
 			testServ.registerService(com.hp.mwtests.orbportability.orbspecific.orbtests.SimpleObjectHelper.narrow(testOA.corbaReference(servant)), TEST_SERVICE_NAME, params, Services.CONFIGURATION_FILE);
-
-			assertSuccess();
-		}
-		catch (Exception e)
-		{
-			System.err.println("An unexpected exception occurred - "+e);
-			e.printStackTrace(System.err);
-
-			assertFailure();
-		}
-	}
-
-	public static void main(String[] args)
-	{
-		ServiceTestSetup test = new ServiceTestSetup();
-		test.initialise(null, null, args, new LocalHarness());
-		test.runTest();
 	}
 }
+

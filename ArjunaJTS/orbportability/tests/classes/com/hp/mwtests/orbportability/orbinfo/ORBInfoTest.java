@@ -20,52 +20,32 @@
  */
 package com.hp.mwtests.orbportability.orbinfo;
 
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.ORBInfo;
 
-public class ORBInfoTest extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class ORBInfoTest
 {
-    private final static String ORB_NAME = "test.orb";
-
-    /**
-     * The main test method which must assert either a pass or a fail.
-     */
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-        try
-        {
-            ORB orb = ORB.getInstance( ORB_NAME );
-            OA oa = OA.getRootOA( orb );
+        ORB orb = ORB.getInstance( "test.orb" );
+        OA oa = OA.getRootOA( orb );
 
-            orb.initORB(args, null);
-            oa.initOA(args);
+        orb.initORB(new String[] {}, null);
+        oa.initOA(new String[] {});
 
-            logInformation("          ORBInfo.getOrbName: "+ORBInfo.getOrbName());
-            logInformation("  ORBInfo.getOrbMajorVersion: "+ORBInfo.getOrbMajorVersion());
-            logInformation("  ORBInfo.getOrbMinorVersion: "+ORBInfo.getOrbMinorVersion());
-            logInformation("ORBInfo.getCorbaMajorVersion: "+ORBInfo.getCorbaMajorVersion());
-            logInformation("ORBInfo.getCorbaMinorVersion: "+ORBInfo.getCorbaMinorVersion());
-            logInformation("     ORBInfo.getOrbEnumValue: "+ORBInfo.getOrbEnumValue());
+        System.out.println("          ORBInfo.getOrbName: "+ORBInfo.getOrbName());
+        System.out.println("  ORBInfo.getOrbMajorVersion: "+ORBInfo.getOrbMajorVersion());
+        System.out.println("  ORBInfo.getOrbMinorVersion: "+ORBInfo.getOrbMinorVersion());
+        System.out.println("ORBInfo.getCorbaMajorVersion: "+ORBInfo.getCorbaMajorVersion());
+        System.out.println("ORBInfo.getCorbaMinorVersion: "+ORBInfo.getCorbaMinorVersion());
+        System.out.println("     ORBInfo.getOrbEnumValue: "+ORBInfo.getOrbEnumValue());
 
-            oa.destroy();
-            orb.destroy();
-
-            assertSuccess();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace(System.err);
-            assertFailure();
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        ORBInfoTest test = new ORBInfoTest();
-        test.initialise(null,null,args,new LocalHarness());
-        test.runTest();
+        oa.destroy();
+        orb.destroy();
     }
 }

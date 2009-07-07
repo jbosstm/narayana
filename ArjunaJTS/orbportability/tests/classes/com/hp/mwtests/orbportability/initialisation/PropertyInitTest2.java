@@ -30,29 +30,28 @@
  */
 package com.hp.mwtests.orbportability.initialisation;
 
-import org.jboss.dtf.testframework.unittest.Test;
 import com.arjuna.orbportability.internal.utils.PreInitLoader;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.RootOA;
 import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation;
-import com.hp.mwtests.orbportability.initialisation.preinit.AllPreInitialisation;
 import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation2;
-import com.hp.mwtests.orbportability.initialisation.postinit.PostInitialisation2;
-import com.hp.mwtests.orbportability.initialisation.postinit.PostInitialisation;
-import com.hp.mwtests.orbportability.initialisation.postinit.AllPostInitialisation;
 
 import java.util.Properties;
 
 import org.omg.PortableServer.ImplicitActivationPolicyValue;
 import org.omg.CORBA.Policy;
 
-public class PropertyInitTest2 extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class PropertyInitTest2
 {
     private static String   ORB_INSTANCE_NAME = "orb_instance_";
     private static String   OA_INSTANCE_NAME  = "oa_instance_";
 
-    public void run(String[] args)
+    @Test
+    public void test()
     {
         int numberOfORBs = 1;
         int numberOfOAsPerORB = 3;
@@ -64,14 +63,14 @@ public class PropertyInitTest2 extends Test
          */
         for (int orbCount=0;orbCount<numberOfORBs;orbCount++)
         {
-            logInformation("Registering pre-initialisation property '"+PreInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb",ORB_INSTANCE_NAME+orbCount)+"'");
+            System.out.println("Registering pre-initialisation property '"+PreInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb",ORB_INSTANCE_NAME+orbCount)+"'");
             testProps.setProperty(PreInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb",ORB_INSTANCE_NAME+orbCount, "preinitmyorb"),
                                   "com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation");
 
             for (int oaCount=0;oaCount<numberOfOAsPerORB;oaCount++)
             {
-                logInformation("Registering pre-initialisation property '"+PreInitLoader.generateOAPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME+orbCount, OA_INSTANCE_NAME+oaCount)+"'");
-                logInformation("Registering pre-initialisation property '"+PreInitLoader.generateOAPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME+orbCount, OA_INSTANCE_NAME+oaCount, "mypoainit")+"'");
+                System.out.println("Registering pre-initialisation property '"+PreInitLoader.generateOAPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME+orbCount, OA_INSTANCE_NAME+oaCount)+"'");
+                System.out.println("Registering pre-initialisation property '"+PreInitLoader.generateOAPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME+orbCount, OA_INSTANCE_NAME+oaCount, "mypoainit")+"'");
 
                 testProps.setProperty(PreInitLoader.generateOAPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME+orbCount, OA_INSTANCE_NAME+oaCount),
                                       "com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation");
@@ -91,26 +90,18 @@ public class PropertyInitTest2 extends Test
             {
                 String orbId = ORB_INSTANCE_NAME+orbCount;
                 ORB orb = ORB.getInstance(orbId);
-                logInformation("Initialising ORB Instance '"+orbId+"'");
-                orb.initORB(args, null);
+                System.out.println("Initialising ORB Instance '"+orbId+"'");
+                orb.initORB(new String[] {}, null);
                 RootOA rootOA = RootOA.getRootOA(orb);
-                rootOA.initPOA(args);
+                rootOA.initPOA(new String[] {});
                 preInitExpectedValue++;
 
-                if (PreInitialisation._count != preInitExpectedValue)
-                {
-                    logInformation("Checking: Failed, Pre-initialisation class not called as expected");
-                    assertFailure();
-                }
-                else
-                {
-                    logInformation("Checking: Correct ("+preInitExpectedValue+")");
-                }
+                assertEquals(preInitExpectedValue,  PreInitialisation._count);
 
                 for (int oaCount=0;oaCount<numberOfOAsPerORB;oaCount++)
                 {
                     String oaId = OA_INSTANCE_NAME+oaCount;
-                    logInformation("Initialising OA instance '"+oaId+"' for ORB Instance '"+orbId+"'");
+                    System.out.println("Initialising OA instance '"+oaId+"' for ORB Instance '"+orbId+"'");
 
                     Policy p[] = new Policy[1];
                     p[0] = rootOA.rootPoa().create_implicit_activation_policy(ImplicitActivationPolicyValue.IMPLICIT_ACTIVATION);
@@ -119,33 +110,15 @@ public class PropertyInitTest2 extends Test
                     myPoaExceptedValue++;
                 }
 
-                if (PreInitialisation2._count != myPoaExceptedValue)
-                {
-                    logInformation("Checking: Failed, Pre-initialisation of mypoa class not called as expected");
-                    assertFailure();
-                }
-                else
-                {
-                    logInformation("Checking: myPOA Correct ("+myPoaExceptedValue+")");
-                }
+                assertEquals(myPoaExceptedValue, PreInitialisation2._count);
 
-
-                if (PreInitialisation._count != preInitExpectedValue)
-                {
-                    logInformation("Checking: Failed, Pre-initialisation class not called as expected");
-                    assertFailure();
-                }
-                else
-                {
-                    logInformation("Checking: Correct ("+preInitExpectedValue+")");
-                }
+                assertEquals(preInitExpectedValue, PreInitialisation._count);
             }
         }
         catch (Exception e)
         {
-            logInformation("ERROR - "+e);
             e.printStackTrace(System.err);
-            assertFailure();
+            fail("ERROR - "+e);
         }
 
         for (int orbCount=0;orbCount<numberOfORBs;orbCount++)
@@ -161,21 +134,9 @@ public class PropertyInitTest2 extends Test
             }
             catch (Exception e)
             {
-                logInformation("ERROR - While destroying ORB instance '"+ORB_INSTANCE_NAME+orbCount+"' ("+e+")");
+                fail("ERROR - While destroying ORB instance '"+ORB_INSTANCE_NAME+orbCount+"' ("+e+")");
                 e.printStackTrace(System.err);
-                assertFailure();
             }
         }
-
-        assertSuccess();
-    }
-
-    public static void main(String[] args)
-    {
-	PropertyInitTest2 test = new PropertyInitTest2();
-
-	test.initialise(null, null, args, new org.jboss.dtf.testframework.unittest.LocalHarness());
-
-	test.runTest();
     }
 }
