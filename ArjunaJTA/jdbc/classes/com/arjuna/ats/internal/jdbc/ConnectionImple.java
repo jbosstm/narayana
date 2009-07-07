@@ -234,7 +234,7 @@ public abstract class ConnectionImple
 	/**
 	 * Not allowed if within a transaction.
 	 *
-	 * @message com.arjuna.ats.internal.jdbc.autocommit [com.arjuna.ats.internal.jdbc.autocommit] AutoCommit is not
+	 * @message com.arjuna.ats.internal.jdbc.autocommit AutoCommit is not
 	 *          allowed by the transaction service.
 	 */
 
@@ -258,7 +258,7 @@ public abstract class ConnectionImple
 	}
 
 	/**
-	 * @message com.arjuna.ats.internal.jdbc.commiterror [com.arjuna.ats.internal.jdbc.commiterror] Commit not allowed by
+	 * @message com.arjuna.ats.internal.jdbc.commiterror Commit not allowed by
 	 *          transaction service.
 	 */
 
@@ -279,7 +279,7 @@ public abstract class ConnectionImple
 	}
 
 	/**
-	 * @message com.arjuna.ats.internal.jdbc.aborterror [com.arjuna.ats.internal.jdbc.aborterror] Rollback not allowed by
+	 * @message com.arjuna.ats.internal.jdbc.aborterror Rollback not allowed by
 	 *          transaction service.
 	 */
 
@@ -299,14 +299,14 @@ public abstract class ConnectionImple
 	 */
 
 	/**
-	 * @message com.arjuna.ats.internal.jdbc.delisterror [com.arjuna.ats.internal.jdbc.delisterror] Delist of resource
+	 * @message com.arjuna.ats.internal.jdbc.delisterror Delist of resource
 	 *          failed.
-	 * @message com.arjuna.ats.internal.jdbc.closeerror [com.arjuna.ats.internal.jdbc.closeerror] An error occurred during
+	 * @message com.arjuna.ats.internal.jdbc.closeerror An error occurred during
 	 *          close:
-	 * @message com.arjuna.ats.internal.jdbc.closingconnection [com.arjuna.ats.internal.jdbc.closingconnection] Connection will be closed when
+	 * @message com.arjuna.ats.internal.jdbc.closingconnection Connection will be closed when
 	 *          transaction terminates. Indications are that this db does not allow multiple
 	 *          connections in the same transaction so this could be a problem! {0}
-	 * @message com.arjuna.ats.internal.jdbc.closingconnectionnull [com.arjuna.ats.internal.jdbc.closingconnectionnull] Connection will be closed when
+	 * @message com.arjuna.ats.internal.jdbc.closingconnectionnull Connection will be closed when
          *          transaction terminates. No modifier information found for db so this may
          *          cause problems for other users! {0}
 	 */
@@ -444,7 +444,7 @@ public abstract class ConnectionImple
 	 * Can only set readonly before we use the connection in a given
 	 * transaction!
 	 *
-	 * @message com.arjuna.ats.internal.jdbc.setreadonly [com.arjuna.ats.internal.jdbc.setreadonly] Cannot set readonly
+	 * @message com.arjuna.ats.internal.jdbc.setreadonly Cannot set readonly
 	 *          when within a transaction!
 	 */
 
@@ -483,7 +483,7 @@ public abstract class ConnectionImple
 	}
 
 	/**
-	 * @message com.arjuna.ats.internal.jdbc.stateerror [com.arjuna.ats.internal.jdbc.stateerror] State must be:
+	 * @message com.arjuna.ats.internal.jdbc.stateerror State must be:
 	 */
 
 	public void setTransactionIsolation(int iso) throws SQLException
@@ -548,7 +548,7 @@ public abstract class ConnectionImple
     }
 
     /**
-     * @message com.arjuna.ats.internal.jdbc.setsavepointerror [com.arjuna.ats.internal.jdbc.setsavepointerror] setSavepoint not allowed inside distributed tx.
+     * @message com.arjuna.ats.internal.jdbc.setsavepointerror setSavepoint not allowed inside distributed tx.
      */
     public Savepoint setSavepoint() throws SQLException
     {
@@ -579,7 +579,7 @@ public abstract class ConnectionImple
     // but allowing them does not make a whole lot of sense, so we don't:
 
 	/**
-	 * @message com.arjuna.ats.internal.jdbc.rollbacksavepointerror [com.arjuna.ats.internal.jdbc.rollbacksavepointerror] rollback(Savepoint) not allowed inside distributed tx.
+	 * @message com.arjuna.ats.internal.jdbc.rollbacksavepointerror rollback(Savepoint) not allowed inside distributed tx.
 	 */
 	public void rollback(Savepoint savepoint) throws SQLException
 	{
@@ -594,7 +594,7 @@ public abstract class ConnectionImple
 	}
 
 	/**
-	 * @message com.arjuna.ats.internal.jdbc.releasesavepointerror [com.arjuna.ats.internal.jdbc.releasesavepointerror] rollback(Savepoint) not allowed inside distributed tx.
+	 * @message com.arjuna.ats.internal.jdbc.releasesavepointerror rollback(Savepoint) not allowed inside distributed tx.
 	 */
 	public void releaseSavepoint(Savepoint savepoint) throws SQLException
 	{
@@ -715,11 +715,11 @@ public abstract class ConnectionImple
 	}
 
 	/**
-	 * @message com.arjuna.ats.internal.jdbc.isolationlevelfailget [com.arjuna.ats.internal.jdbc.isolationlevelfailget] {0} - failed
+	 * @message com.arjuna.ats.internal.jdbc.isolationlevelfailget {0} - failed
 	 *          to set isolation level: {1}
-	 * @message com.arjuna.ats.internal.jdbc.isolationlevelfailset [com.arjuna.ats.internal.jdbc.isolationlevelfailset] {0} - failed
+	 * @message com.arjuna.ats.internal.jdbc.isolationlevelfailset {0} - failed
 	 *          to set isolation level: {1}
-	 * @message com.arjuna.ats.internal.jdbc.conniniterror [com.arjuna.ats.internal.jdbc.conniniterror] JDBC2 connection
+	 * @message com.arjuna.ats.internal.jdbc.conniniterror JDBC2 connection
 	 *          initialisation problem
 	 */
 
@@ -811,11 +811,11 @@ public abstract class ConnectionImple
 	 * object to be informed whenever a transaction completes so that it could
 	 * flush its cache of XAResources though.
 	 *
-	 * @message com.arjuna.ats.internal.jdbc.rollbackerror [com.arjuna.ats.internal.jdbc.rollbackerror] {0} - could not mark
+	 * @message com.arjuna.ats.internal.jdbc.rollbackerror {0} - could not mark
 	 *          transaction rollback
-	 * @message com.arjuna.ats.internal.jdbc.enlistfailed [com.arjuna.ats.internal.jdbc.enlistfailed] enlist of resource
+	 * @message com.arjuna.ats.internal.jdbc.enlistfailed enlist of resource
 	 *          failed
-	 * @message com.arjuna.ats.internal.jdbc.alreadyassociated [com.arjuna.ats.internal.jdbc.alreadyassociated] Connection is
+	 * @message com.arjuna.ats.internal.jdbc.alreadyassociated Connection is
 	 *          already associated with a different transaction! Obtain a new
 	 *          connection for this transaction.
 	 */
@@ -936,13 +936,13 @@ public abstract class ConnectionImple
 	}
 
 	/**
-	 * @message com.arjuna.ats.internal.jdbc.alreadyassociatedcheck [com.arjuna.ats.internal.jdbc.alreadyassociatedcheck] Checking
+	 * @message com.arjuna.ats.internal.jdbc.alreadyassociatedcheck Checking
 	 *          transaction and found that this connection is already associated
 	 *          with a different transaction! Obtain a new connection for this
 	 *          transaction.
-	 * @message com.arjuna.ats.internal.jdbc.infoerror [com.arjuna.ats.internal.jdbc.infoerror] Could not get transaction
+	 * @message com.arjuna.ats.internal.jdbc.infoerror Could not get transaction
 	 *          information.
-	 * @message com.arjuna.ats.internal.jdbc.inactivetransaction [com.arjuna.ats.internal.jdbc.inactivetransaction] Transaction is
+	 * @message com.arjuna.ats.internal.jdbc.inactivetransaction Transaction is
 	 * not active on the thread!
 	 */
 
@@ -992,7 +992,7 @@ public abstract class ConnectionImple
 	}
 
 	/**
-	 * @message com.arjuna.ats.internal.jdbc.getmoderror [com.arjuna.ats.internal.jdbc.getmoderror] Failed to get modifier
+	 * @message com.arjuna.ats.internal.jdbc.getmoderror Failed to get modifier
 	 *          for driver:
 	 */
 
@@ -1035,7 +1035,7 @@ public abstract class ConnectionImple
 	private static int _currentIsolationLevel = defaultIsolationLevel;
 
 	/**
-	 * @message com.arjuna.ats.internal.jdbc.isolationerror [com.arjuna.ats.internal.jdbc.isolationerror] Unknown isolation
+	 * @message com.arjuna.ats.internal.jdbc.isolationerror Unknown isolation
 	 *          level {0}. Will use default of TRANSACTION_SERIALIZABLE.
 	 */
 
