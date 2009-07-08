@@ -293,6 +293,7 @@ class LogPurger extends Thread
 
 	public LogPurger(LogStore instance, long purgeTime)
 	{
+        super("Log Purger");
 		_objStore = instance;
 		_purgeTime = purgeTime;
 	}
@@ -1448,6 +1449,7 @@ public class LogStore extends FileSystemStore
 						{
 							// if not a delete record then the first entry won't
 							// be an the defined byte array.
+                            curr.reread();  // don't forget to reset the read pointer!
 						}
 					}
 
