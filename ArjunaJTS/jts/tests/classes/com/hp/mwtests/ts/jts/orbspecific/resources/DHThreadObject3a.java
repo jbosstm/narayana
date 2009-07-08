@@ -32,13 +32,9 @@
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
 import com.hp.mwtests.ts.jts.utils.Util;
-import com.hp.mwtests.ts.jts.TestModule.*;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-
-import java.util.Random;
-import java.lang.InterruptedException;
 
 public class DHThreadObject3a extends Thread
 {
@@ -91,5 +87,5 @@ private boolean _commit;
 private static int commitThreadId = 3;
 private static int abortThreadId = 3;
     
-};
+}
 

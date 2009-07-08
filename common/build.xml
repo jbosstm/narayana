@@ -22,8 +22,6 @@
 
     <property name="modulename" value="common"/>
 
-    <property name="global.ext.test.libs" value="junit-4.6.jar"/>
-
     <import file="../sharedbuild.xml"/>
 
     <target name="run.tests">

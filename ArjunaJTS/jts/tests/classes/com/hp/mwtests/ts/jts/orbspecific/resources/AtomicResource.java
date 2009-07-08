@@ -31,14 +31,10 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.ORBManager;
-
-import com.arjuna.orbportability.*;
 
 import org.omg.CosTransactions.*;
 
-import org.omg.CosTransactions.Unavailable;
 import org.omg.CORBA.SystemException;
 
 public class AtomicResource extends org.omg.CosTransactions.ResourcePOA

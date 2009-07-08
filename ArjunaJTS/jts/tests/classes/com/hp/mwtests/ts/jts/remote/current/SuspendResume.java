@@ -31,58 +31,38 @@
 
 package com.hp.mwtests.ts.jts.remote.current;
 
-import com.hp.mwtests.ts.jts.resources.*;
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
-
 import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.extensions.*;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 
 import org.omg.CosTransactions.*;
 
-import org.omg.CORBA.IntHolder;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-
-public class SuspendResume extends Test
+public class SuspendResume
 {
-
-    public void run (String[] args)
+    @Test
+    public void test() throws Exception
     {
         ORB myORB = null;
         RootOA myOA = null;
 
-        try
-        {
-            myORB = ORB.getInstance("test");
-            myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-            myORB.initORB(args, null);
-            myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-            ORBManager.setORB(myORB);
-            ORBManager.setPOA(myOA);
-        }
-        catch (Exception e)
-        {
-            System.err.println("Initialisation failed: " + e);
-            assertFailure();
-        }
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
+
 
         CurrentImple current = OTSImpleManager.current();
         Control myControl = null;
-        
+
         System.out.println("Beginning transaction.");
 
         try
@@ -91,16 +71,12 @@ public class SuspendResume extends Test
 
             myControl = current.get_control();
 
-            if (myControl == null)
-            {
-                System.err.println("Error - control is null!");
-                assertFailure();
-            }
+            assertNotNull( myControl );
         }
         catch (Exception sysEx)
         {
             sysEx.printStackTrace(System.err);
-            assertFailure();
+            fail();
         }
 
         System.out.println("Committing transaction.");
@@ -110,26 +86,16 @@ public class SuspendResume extends Test
             current.commit(true);
 
             current.resume(myControl);
-            
-            assertSuccess();
         }
         catch (Exception e)
         {
-            System.err.println("commit error: " + e);
+            fail("commit error: " + e);
             e.printStackTrace(System.err);
-            assertFailure();
         }
 
         myOA.destroy();
         myORB.shutdown();
 
         System.out.println("Test completed successfully.");
-    }
-
-    public static void main (String[] args)
-    {
-        SuspendResume ct = new SuspendResume();
-        ct.initialise(null, null, args, new LocalHarness());
-        ct.runTest();
     }
 }

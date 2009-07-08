@@ -31,15 +31,7 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
-import com.arjuna.ats.jts.OTSManager;
-
 import com.hp.mwtests.ts.jts.utils.Util;
-import com.hp.mwtests.ts.jts.TestModule.*;
-
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-
-import java.util.Random;
-import java.lang.InterruptedException;
 
 public class DHThreadObject3b extends Thread
 {

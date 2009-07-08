@@ -31,150 +31,100 @@
 
 package com.hp.mwtests.ts.jts.remote.hammer;
 
-import com.hp.mwtests.ts.jts.resources.*;
 import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
+import com.hp.mwtests.ts.jts.TestModule.HammerHelper;
+import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.jts.extensions.*;
-import com.arjuna.ats.jts.OTSManager;
-
-import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
-
-import org.omg.CosTransactions.*;
 
 import org.omg.CORBA.IntHolder;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class DistributedHammer2 extends Test
+public class DistributedHammer2
 {
-	private final static int   START_VALUE_1 = 10;
-	private final static int   START_VALUE_2 = 101;
+    private final static int   START_VALUE_1 = 10;
+    private final static int   START_VALUE_2 = 101;
 
-	private final static int   EXPECTED_RESULT = START_VALUE_1 + START_VALUE_2;
+    private final static int   EXPECTED_RESULT = START_VALUE_1 + START_VALUE_2;
 
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-		e.printStackTrace(System.err);
-		assertFailure();
-	}
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	String server1 = "/tmp/hammer1.ref";
-	String server2 = "/tmp/hammer2.ref";
 
-	if (System.getProperty("os.name").startsWith("Windows"))
-	{
-	    server1 = "C:\\temp\\hammer1.ref";
-	    server2 = "C:\\temp\\hammer2.ref";
-	}
+        String server1 = "/tmp/hammer1.ref";
+        String server2 = "/tmp/hammer2.ref";
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-reffile1") == 0)
-		server1 = args[i+1];
-	    if (args[i].compareTo("-reffile2") == 0)
-		server2 = args[i+1];
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: DistributedHammer2 [-reffile1 <file>] [-reffile2 <file>] [-help]");
-		assertFailure();
-	    }
-	}
+        if (System.getProperty("os.name").startsWith("Windows"))
+        {
+            server1 = "C:\\temp\\hammer1.ref";
+            server2 = "C:\\temp\\hammer2.ref";
+        }
 
-	try
-	{
-	    Services serv = new Services(myORB);
+        try
+        {
+            Services serv = new Services(myORB);
 
-		DistributedHammerWorker2.hammerObject_1 = HammerHelper.narrow(myORB.orb().string_to_object(getService(server1)));
-		DistributedHammerWorker2.hammerObject_2 = HammerHelper.narrow(myORB.orb().string_to_object(getService(server2)));
+            DistributedHammerWorker2.hammerObject_1 = HammerHelper.narrow(myORB.orb().string_to_object(TestUtility.getService(server1)));
+            DistributedHammerWorker2.hammerObject_2 = HammerHelper.narrow(myORB.orb().string_to_object(TestUtility.getService(server2)));
 
-	    if (! DistributedHammerWorker2.hammerObject_1.set(START_VALUE_1, null))
-		{
-			System.out.println("m set1 : failed");
-			assertFailure();
-		}
-	    if (! DistributedHammerWorker2.hammerObject_2.set(START_VALUE_2, null))
-		{
-			System.out.println("m set2 : failed");
-			assertFailure();
-		}
+            assertTrue( DistributedHammerWorker2.hammerObject_1.set(START_VALUE_1, null) );
 
-	    DistributedHammerWorker2.get12('m', 0);
-	    DistributedHammerWorker2.get21('m', 0);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("DistributedHammer2: "+e);
-		e.printStackTrace(System.err);
-		assertFailure();
-	}
+            assertTrue( DistributedHammerWorker2.hammerObject_2.set(START_VALUE_2, null) );
 
-	DHThreadObject2 thr1 = new DHThreadObject2('1');
-	DHThreadObject2 thr2 = new DHThreadObject2('2');
+            DistributedHammerWorker2.get12('m', 0);
+            DistributedHammerWorker2.get21('m', 0);
+        }
+        catch (Exception e)
+        {
+            fail("DistributedHammer2: "+e);
+            e.printStackTrace(System.err);
+        }
 
-	thr1.start();
-	thr2.start();
+        DHThreadObject2 thr1 = new DHThreadObject2('1');
+        DHThreadObject2 thr2 = new DHThreadObject2('2');
 
-	try
-	{
-	    thr1.join();
-	    thr2.join();
-	}
-	catch (InterruptedException e)
-	{
-		System.err.println("DistributedHammer2: "+e);
-		e.printStackTrace(System.err);
-		assertFailure();
-	}
+        thr1.start();
+        thr2.start();
 
-	DistributedHammerWorker2.get12('m', 0);
-	DistributedHammerWorker2.get21('m', 0);
+        try
+        {
+            thr1.join();
+            thr2.join();
+        }
+        catch (InterruptedException e)
+        {
+            fail("DistributedHammer2: "+e);
+            e.printStackTrace(System.err);
+        }
 
-	IntHolder value1 = new IntHolder(0);
-	IntHolder value2 = new IntHolder(0);
-	boolean res = DistributedHammerWorker2.get1(value1) | DistributedHammerWorker2.get2(value2);
+        DistributedHammerWorker2.get12('m', 0);
+        DistributedHammerWorker2.get21('m', 0);
 
-	if ( (res) && ( (value1.value + value2.value) == EXPECTED_RESULT ) )
-		assertSuccess();
-	else
-		assertFailure();
+        IntHolder value1 = new IntHolder(0);
+        IntHolder value2 = new IntHolder(0);
 
-	myOA.destroy();
-	myORB.shutdown();
+        assertTrue( DistributedHammerWorker2.get1(value1) | DistributedHammerWorker2.get2(value2) );
+
+        assertEquals(EXPECTED_RESULT, (value1.value + value2.value) );
+
+        myOA.destroy();
+        myORB.shutdown();
     }
-
-	public static void main(String[] args)
-	{
-		DistributedHammer2 test = new DistributedHammer2();
-		test.initialise(null, null, args, new LocalHarness());
-		test.runTest();
-	}
 }
 

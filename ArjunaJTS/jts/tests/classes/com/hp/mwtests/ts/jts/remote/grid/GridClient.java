@@ -31,211 +31,167 @@
 
 package com.hp.mwtests.ts.jts.remote.grid;
 
-import com.hp.mwtests.ts.jts.resources.*;
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
-
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.jts.extensions.*;
 import com.arjuna.ats.jts.OTSManager;
 
-import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import org.jboss.dtf.testframework.unittest.Test;
+import com.hp.mwtests.ts.jts.TestModule.grid;
+import com.hp.mwtests.ts.jts.TestModule.gridHelper;
 
 import org.omg.CosTransactions.*;
 
-import org.omg.CORBA.IntHolder;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-
-public class GridClient extends Test
+public class GridClient
 {
-
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-	    assertFailure();
-	}
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	TransactionFactory theOTS = null;
-	Control myControl = null;
-	grid gridVar = null;
-	int h = -1, w = -1, v = -1;
-	String gridReference = "/tmp/grid.ref";
-	String serverName = "Grid";
 
-	if (System.getProperty("os.name").startsWith("Windows"))
-	{
-	    gridReference = "C:\\temp\\grid.ref";
-	}
+        TransactionFactory theOTS = null;
+        Control myControl = null;
+        grid gridVar = null;
+        int h = -1, w = -1, v = -1;
+        String gridReference = "/tmp/grid.ref";
+        String serverName = "Grid";
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: GridClient [-server <name>] [-reffile <file>] [-help]");
-		System.exit(0);
-	    }
-	    if (args[i].compareTo("-server") == 0)
-	    {
-		System.out.println("Sorry, server name not supported by ORB.");
-		assertFailure();
-	    }
-	    if (args[i].compareTo("-reffile") == 0)
-		gridReference = args[i+1];
-	}
+        if (System.getProperty("os.name").startsWith("Windows"))
+        {
+            gridReference = "C:\\temp\\grid.ref";
+        }
 
-	Services serv = new Services(myORB);
+        Services serv = new Services(myORB);
 
-	try
-	{
-	    String[] params = new String[1];
+        try
+        {
+            String[] params = new String[1];
 
-	    params[0] = Services.otsKind;
+            params[0] = Services.otsKind;
 
-	    org.omg.CORBA.Object obj = serv.getService(Services.transactionService, params);
+            org.omg.CORBA.Object obj = serv.getService(Services.transactionService, params);
 
-	    params = null;
-	    theOTS =  TransactionFactoryHelper.narrow(obj);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Unexpected bind exception: "+e);
-	    System.exit(1);
-	}
+            params = null;
+            theOTS =  TransactionFactoryHelper.narrow(obj);
+        }
+        catch (Exception e)
+        {
+            fail("Unexpected bind exception: "+e);
+        }
 
-	System.out.println("Creating transaction.");
+        System.out.println("Creating transaction.");
 
-	try
-	{
-	    myControl = theOTS.create(0);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Create call failed: "+e);
-	    e.printStackTrace();
-	    System.exit(1);
-	}
+        try
+        {
+            myControl = theOTS.create(0);
+        }
+        catch (Exception e)
+        {
+            fail("Create call failed: "+e);
+            e.printStackTrace();
+        }
 
-	try
-	{
-	    gridVar = gridHelper.narrow(serv.getService(gridReference, null, Services.FILE));
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Grid bind failed: "+e);
-	    System.exit(1);
-	}
+        try
+        {
+            gridVar = gridHelper.narrow(serv.getService(gridReference, null, Services.FILE));
+        }
+        catch (Exception e)
+        {
+            fail("Grid bind failed: "+e);
+        }
 
-	try
-	{
-	    h = gridVar.height();
-	    w = gridVar.width();
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Grid invocation failed: "+e);
-	    System.exit(1);
-	}
+        try
+        {
+            h = gridVar.height();
+            w = gridVar.width();
+        }
+        catch (Exception e)
+        {
+            fail("Grid invocation failed: "+e);
+        }
 
-	System.out.println("height is "+h);
-	System.out.println("width  is "+w);
+        System.out.println("height is "+h);
+        System.out.println("width  is "+w);
 
-	try
-	{
-	    System.out.println("calling set");
+        try
+        {
+            System.out.println("calling set");
 
-	    gridVar.set(2, 4, 123, myControl);
+            gridVar.set(2, 4, 123, myControl);
 
-	    System.out.println("calling get");
+            System.out.println("calling get");
 
-	    v = gridVar.get(2, 4, myControl);
-	}
-	catch (Exception sysEx)
-	{
-	    System.err.println("Grid set/get failed: "+sysEx);
-	    System.exit(1);
-	}
+            v = gridVar.get(2, 4, myControl);
+        }
+        catch (Exception sysEx)
+        {
+            fail("Grid set/get failed: "+sysEx);
+        }
 
-	// no problem setting and getting the elememt:
-	System.out.println("grid[2,4] is "+v);
+        // no problem setting and getting the elememt:
+        System.out.println("grid[2,4] is "+v);
 
-	// sanity check: make sure we got the value 123 back:
-	if (v != 123)
-	{
-	    // oops - we didn't:
-	    System.err.println("something went seriously wrong");
+        // sanity check: make sure we got the value 123 back:
+        if (v != 123)
+        {
+            // oops - we didn't:
+            fail("something went seriously wrong");
 
-	    try
-	    {
-		myControl.get_terminator().rollback();
-	    }
-	    catch (Exception e)
-	    {
-	    }
+            try
+            {
+                myControl.get_terminator().rollback();
+            }
+            catch (Exception e)
+            {
+            }
+        }
+        else
+        {
+            System.out.println("Committing transaction.");
 
-	    System.exit(1);
-	}
-	else
-	{
-	    System.out.println("Committing transaction.");
+            try
+            {
+                Terminator handle = myControl.get_terminator();
 
-	    try
-	    {
-		Terminator handle = myControl.get_terminator();
+                handle.commit(true);
+            }
+            catch (Exception sysEx)
+            {
+                fail("Transaction commit error: "+sysEx);
+            }
+        }
 
-		handle.commit(true);
-	    }
-	    catch (Exception sysEx)
-	    {
-		System.err.println("Transaction commit error: "+sysEx);
-		System.exit(1);
-	    }
-	}
+        /*
+       * OTSArjuna specific call to tell the system
+       * that we are finished with this transaction.
+       */
 
-	/*
-	 * OTSArjuna specific call to tell the system
-	 * that we are finished with this transaction.
-	 */
+        try
+        {
+            OTSManager.destroyControl(myControl);
+        }
+        catch (Exception e)
+        {
+            fail("Caught destroy exception: "+e);
+        }
 
-	try
-	{
-	    OTSManager.destroyControl(myControl);
-	}
-	catch (Exception e)
-	{
-	    System.out.println("Caught destroy exception: "+e);
-	    System.exit(0);
-	}
+        myOA.destroy();
+        myORB.shutdown();
 
-	myOA.destroy();
-	myORB.shutdown();
-
-	System.out.println("Test completed successfully.");
+        System.out.println("Test completed successfully.");
     }
-
 }
 

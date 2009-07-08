@@ -31,23 +31,15 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
-import com.hp.mwtests.ts.jts.TestModule.*;
 import com.hp.mwtests.ts.jts.utils.Util;
-import com.hp.mwtests.ts.jts.remote.servers.HammerServer;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-
-import com.arjuna.orbportability.*;
 
 import org.omg.CosTransactions.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-
 import org.omg.CORBA.IntHolder;
+
+import com.hp.mwtests.ts.jts.TestModule.Hammer;
 
 public class DistributedHammerWorker1
 {
@@ -417,4 +409,4 @@ public static void randomOperation (char thr, int level)
 
 public static Hammer hammerObject_1 = null;
 public static Hammer hammerObject_2 = null;
-};
+}

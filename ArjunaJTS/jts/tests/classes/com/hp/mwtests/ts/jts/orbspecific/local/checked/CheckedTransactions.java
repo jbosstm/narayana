@@ -34,43 +34,28 @@ package com.hp.mwtests.ts.jts.orbspecific.local.checked;
 import com.arjuna.ats.arjuna.coordinator.CheckedAction;
 import com.arjuna.ats.arjuna.common.Uid;
 
-import com.hp.mwtests.ts.jts.resources.*;
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
-
 import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 
 import org.omg.CosTransactions.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CosTransactions.SubtransactionsUnavailable;
-import org.omg.CosTransactions.NotPrepared;
-import org.omg.CosTransactions.HeuristicRollback;
-import org.omg.CosTransactions.HeuristicCommit;
-import org.omg.CosTransactions.HeuristicMixed;
-import org.omg.CosTransactions.HeuristicHazard;
-import org.omg.CORBA.INVALID_TRANSACTION;
-
 import java.util.*;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 class MyCheckedAction extends CheckedAction
 {
-    
     public synchronized void check (boolean isCommit, Uid actUid, Hashtable list)
     {
-	// don't do anything so that no warning message is printed!
+        // don't do anything so that no warning message is printed!
     }
-    
 }
 
 class TXThread extends Thread
 {
-
     public TXThread (Control c)
     {
         cont = c;
@@ -78,91 +63,73 @@ class TXThread extends Thread
 
     public void run ()
     {
-	try
-	{
-	    System.out.println("Thread "+Thread.currentThread()+" attempting to rollback transaction.");
-	    
-	    cont.get_terminator().rollback();
+        try
+        {
+            System.out.println("Thread "+Thread.currentThread()+" attempting to rollback transaction.");
 
-	    System.out.println("Transaction rolled back. Checked transactions disabled.");
-	}
-	catch (Exception e)
-	{
-	    System.out.println("Caught exception: "+e);
-	    System.out.println("Checked transactions enabled!");
-	}
+            cont.get_terminator().rollback();
+
+            System.out.println("Transaction rolled back. Checked transactions disabled.");
+        }
+        catch (Exception e)
+        {
+            System.out.println("Caught exception: "+e);
+            System.out.println("Checked transactions enabled!");
+        }
     }
-    
+
     private Control cont;
-    
-};
+
+}
 
 public class CheckedTransactions
 {
-    
-    public static void main (String[] args)
+    @Test
+    public void test()
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
-	    
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        try
+        {
+            myORB = ORB.getInstance("test");
+            myOA = OA.getRootOA(myORB);
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
+            myORB.initORB(new String[] {}, null);
+            myOA.initOA();
 
-	    for (int i = 0; i < args.length; i++)
-	    {
-		if (args[i].compareTo("-check") == 0)
-		{
-		    Properties p = System.getProperties();
+            ORBManager.setORB(myORB);
+            ORBManager.setPOA(myOA);
 
-		    p.put(com.arjuna.ats.jts.common.Environment.CHECKED_TRANSACTIONS, "YES");
-		    
-		    System.setProperties(p);
-		}
-		if (args[i].compareTo("-help") == 0)
-		{
-		    System.out.println("Usage: CheckedTransactions [-check] [-help]");
-		    System.exit(0);
-		}
-	    }
-	    
-	    Control tx = null;
+            Control tx = null;
 
-	    System.out.println("Thread "+Thread.currentThread()+" starting transaction.");
+            System.out.println("Thread "+Thread.currentThread()+" starting transaction.");
 
-	    OTSImpleManager.current().setCheckedAction(new MyCheckedAction());
-	    
-	    OTSImpleManager.current().begin();
+            OTSImpleManager.current().setCheckedAction(new MyCheckedAction());
 
-	    tx = OTSImpleManager.current().get_control();
+            OTSImpleManager.current().begin();
 
-	    TXThread txThread = new TXThread(tx);
+            tx = OTSImpleManager.current().get_control();
 
-	    txThread.start();
-	    txThread.join();
+            TXThread txThread = new TXThread(tx);
 
-	    System.out.println("Thread "+Thread.currentThread()+" committing transaction.");
+            txThread.start();
+            txThread.join();
 
-	    OTSImpleManager.current().commit(false);
+            System.out.println("Thread "+Thread.currentThread()+" committing transaction.");
 
-	    System.out.println("Transaction committed. Checked transactions enabled.");
-	}
-	catch (Exception e)
-	{
-	    System.out.println("Caught exception: "+e);
-	    System.out.println("Checked transactions disabled!");
-	}
+            OTSImpleManager.current().commit(false);
 
-	myOA.destroy();
-	myORB.shutdown();
+            System.out.println("Transaction committed. Checked transactions enabled.");
+        }
+        catch (Exception e)
+        {
+            System.out.println("Caught exception: "+e);
+            fail("Checked transactions disabled!");
+        }
+
+        myOA.destroy();
+        myORB.shutdown();
     }
-
 }
 

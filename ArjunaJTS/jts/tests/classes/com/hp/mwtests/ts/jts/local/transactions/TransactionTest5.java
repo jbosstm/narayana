@@ -31,16 +31,7 @@
 
 package com.hp.mwtests.ts.jts.local.transactions;
 
-import com.hp.mwtests.ts.jts.resources.*;
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
-
 import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.extensions.*;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.ats.jts.common.Environment;
-import com.arjuna.ats.jts.OTSManager;
 
 import com.arjuna.ats.jts.OTSManager;
 
@@ -48,67 +39,59 @@ import com.arjuna.ats.internal.jts.ORBManager;
 
 import org.omg.CosTransactions.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CosTransactions.WrongTransaction;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-import org.omg.CORBA.TRANSACTION_REQUIRED;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class TransactionTest5
 {
-    
-    public static void main (String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
-	    
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        try
+        {
+            myORB = ORB.getInstance("test");
+            myOA = OA.getRootOA(myORB);
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-	}
+            myORB.initORB(new String[] {}, null);
+            myOA.initOA();
 
-	try
-	{
-	    OTSManager.get_current().begin();
+            ORBManager.setORB(myORB);
+            ORBManager.setPOA(myOA);
+        }
+        catch (Exception e)
+        {
+            System.err.println("Initialisation failed: "+e);
+        }
 
-	    Control cont = OTSManager.get_current().get_control();
-	    
-	    OTSManager.get_current().commit(true);
-	    
-	    OTSManager.get_current().resume(cont);
+        try
+        {
+            OTSManager.get_current().begin();
 
-	    OTSManager.get_current().rollback_only();
-	    
-	    System.out.println("\nFailed.");
-	}
-	catch (org.omg.CosTransactions.NoTransaction ex)
-	{
-	    System.out.println("\nPassed.");
-	}
-	catch (Throwable e)
-	{
-	    System.err.println("caught: "+e);
+            Control cont = OTSManager.get_current().get_control();
 
-	    e.printStackTrace();
+            OTSManager.get_current().commit(true);
 
-	    System.out.println("\nFailed.");
-	}	
+            OTSManager.get_current().resume(cont);
 
-	myOA.destroy();
-	myORB.shutdown();
+            OTSManager.get_current().rollback_only();
+
+            System.out.println("\nFailed.");
+        }
+        catch (org.omg.CosTransactions.NoTransaction ex)
+        {
+            System.out.println("\nPassed.");
+        }
+        catch (Throwable e)
+        {
+            fail("caught: "+e);
+
+            e.printStackTrace();
+        }
+
+        myOA.destroy();
+        myORB.shutdown();
     }
- 
 }

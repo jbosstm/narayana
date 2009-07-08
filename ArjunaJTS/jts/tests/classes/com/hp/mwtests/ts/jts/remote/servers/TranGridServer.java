@@ -31,107 +31,62 @@
 
 package com.hp.mwtests.ts.jts.remote.servers;
 
-import com.hp.mwtests.ts.jts.resources.*;
 import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
+import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.jts.extensions.*;
-
-import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 
-import org.omg.CosTransactions.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-
-public class TranGridServer extends Test
+public class TranGridServer
 {
-
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-	    assertFailure();
-	}
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	String serverName = "TranGrid";
-	String refFile = "/tmp/trangrid.ref";
 
-	if (System.getProperty("os.name").startsWith("Windows"))
-	{
-	    refFile = "C:\\temp\\trangrid.ref";
-	}
+        String serverName = "TranGrid";
+        String refFile = "/tmp/trangrid.ref";
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-marker") == 0)
-	    {
-		System.err.println("Error - marker name not supported.");
-		System.exit(0);
-	    }
-	    if (args[i].compareTo("-reffile") == 0)
-		refFile = args[i+1];
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: TranGridServer [-reffile <file>] [-help]");
-		assertFailure();
-	    }
-	}
+        if (System.getProperty("os.name").startsWith("Windows"))
+        {
+            refFile = "C:\\temp\\trangrid.ref";
+        }
 
-	trangrid_i gridI = new trangrid_i((short) 100, (short) 100);
-	Services serv = new Services(myORB);
+        trangrid_i gridI = new trangrid_i((short) 100, (short) 100);
+        Services serv = new Services(myORB);
 
-	try
-	{
-	    registerService(refFile, myORB.orb().object_to_string(gridI.getReference()));
+        try
+        {
+            TestUtility.registerService(refFile, myORB.orb().object_to_string(gridI.getReference()));
 
-	    System.out.println("**TranGrid server started**");
-            assertReady();
-	    assertSuccess();
+            System.out.println("**TranGrid server started**");
+            //assertReady();
 
-	    myOA.run();
-	}
-	catch (Exception e)
-	{
-	    System.err.println("TranGrid server caught exception: "+e);
-	    assertFailure();
-	}
+            myOA.run();
+        }
+        catch (Exception e)
+        {
+            fail("TranGrid server caught exception: "+e);
+        }
 
-	myOA.shutdownObject(gridI);
+        myOA.shutdownObject(gridI);
 
-	System.out.println("**TranGrid server exiting**");
+        System.out.println("**TranGrid server exiting**");
     }
-
-    public static void main(String[] args)
-    {
-	TranGridServer tgs = new TranGridServer();
-	tgs.initialise(null, null, args, new LocalHarness());
-	tgs.runTest();
-    }
-
 }
 

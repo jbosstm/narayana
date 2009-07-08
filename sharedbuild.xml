@@ -37,7 +37,7 @@
     <property name="global.ext.lib.dir" value="${sharedbuild.base.dir}/ext"/>
 
     <property name="global.ext.libs" value="none"/>
-    <property name="global.ext.test.libs" value="junit.jar"/>
+    <property name="global.ext.test.libs" value="junit-4.6.jar"/>
 
     <property name="excluded.classes" value=""/>
     <property name="excluded.test.classes" value=""/>

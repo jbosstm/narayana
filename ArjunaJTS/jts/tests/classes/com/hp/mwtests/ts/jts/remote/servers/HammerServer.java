@@ -31,133 +31,84 @@
 
 package com.hp.mwtests.ts.jts.remote.servers;
 
-import com.hp.mwtests.ts.jts.resources.*;
 import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
+import com.hp.mwtests.ts.jts.TestModule.HammerPOATie;
+import com.hp.mwtests.ts.jts.TestModule.HammerHelper;
+import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.jts.extensions.*;
-
-import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 
-import org.omg.CosTransactions.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-
-public class HammerServer extends Test
+public class HammerServer
 {
-
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
+
+
+        String refFile1 = "/tmp/hammer1.ref";
+        String refFile2 = "/tmp/hammer2.ref";
+
+        if (System.getProperty("os.name").startsWith("Windows"))
+        {
+            refFile1 = "C:\\temp\\hammer1.ref";
+            refFile2 = "C:\\temp\\hammer2.ref";
+        }
+
+        String refFile = null;
+        int number = 0;
+
+        assertFalse( (number != 1) && (number != 2) );
+
+        if ( refFile == null )
+        {
+            if (number == 1)
+                refFile = refFile1;
+            else
+                refFile = refFile2;
+        }
+
+        HammerPOATie theObject = new HammerPOATie(new HammerObject());
+
+        myOA.objectIsReady(theObject);
+
+        Services serv = new Services(myORB);
+
+        try
+        {
+            TestUtility.registerService( refFile, myORB.orb().object_to_string(HammerHelper.narrow(myOA.corbaReference(theObject))) );
+
+            System.out.println("**HammerServer started**");
+
+            System.out.println("\nIOR file: "+refFile);
+
+            //assertReady();
+            myOA.run();
+        }
+        catch (Exception e)
+        {
+            fail("HammerServer caught exception: "+e);
             e.printStackTrace(System.err);
-            assertFailure();
-	}
+        }
 
-	String refFile1 = "/tmp/hammer1.ref";
-	String refFile2 = "/tmp/hammer2.ref";
+        myOA.shutdownObject(theObject);
 
-	if (System.getProperty("os.name").startsWith("Windows"))
-	{
-	    refFile1 = "C:\\temp\\hammer1.ref";
-	    refFile2 = "C:\\temp\\hammer2.ref";
-	}
-
-	String refFile = null;
-	int number = 0;
-
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-reffile") == 0)
-		refFile = args[i+1];
-	    if (args[i].compareTo("-server") == 0)
-	    {
-		if (args[i+1].compareTo("1") == 0)
-		    number = 1;
-		else
-		    number = 2;
-	    }
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: HammerServer -server <1 | 2> [-reffile <file>] [-help]");
-		assertFailure();
-	    }
-	}
-
-	if ((number != 1) && (number != 2))
-	{
-	    System.out.println("Usage: HammerServer -server <1 | 2> [-reffile <file>] [-help]");
-	    assertFailure();
-	}
-
-	if ( refFile == null )
-	{
-		if (number == 1)
-			refFile = refFile1;
-		else
-			refFile = refFile2;
-	}
-
-	HammerPOATie theObject = new HammerPOATie(new HammerObject());
-
-	myOA.objectIsReady(theObject);
-
-	Services serv = new Services(myORB);
-
-	try
-	{
-            registerService( refFile, myORB.orb().object_to_string(HammerHelper.narrow(myOA.corbaReference(theObject))) );
-
-	    System.out.println("**HammerServer started**");
-
-	    System.out.println("\nIOR file: "+refFile);
-
-            assertSuccess();
-            assertReady();
-	    myOA.run();
-	}
-	catch (Exception e)
-	{
-	    System.err.println("HammerServer caught exception: "+e);
-            e.printStackTrace(System.err);
-	    assertFailure();
-	}
-
-	myOA.shutdownObject(theObject);
-
-	System.out.println("**HammerServer exiting**");
-    }
-
-    public static void main(String[] args)
-    {
-        HammerServer server = new HammerServer();
-        server.initialise(null, null, args, new LocalHarness());
-        server.runTest();
+        System.out.println("**HammerServer exiting**");
     }
 }
 

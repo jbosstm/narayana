@@ -32,205 +32,164 @@
 package com.hp.mwtests.ts.jts.remote.transactionserver;
 
 import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
+import com.hp.mwtests.ts.jts.TestModule.HammerHelper;
 
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 
 import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.internal.jts.ORBManager;
-import org.jboss.dtf.testframework.unittest.Test;
 
 import org.omg.CosTransactions.*;
 
 import org.omg.CORBA.IntHolder;
 
-import org.omg.CosTransactions.Unavailable;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class TMClient extends Test
+public class TMClient
 {
-
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-	    e.printStackTrace(System.err);
-	    assertFailure();
-	}
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	TransactionFactory theOTS = null;
-	Control topLevelControl = null;
-	Control nestedControl = null;
-	String server = "/tmp/hammer1.ref";
-	boolean slave = false;
 
-	if (System.getProperty("os.name").startsWith("Windows"))
-	{
-	    server = "C:\\temp\\hammer1.ref";
-	}
+        TransactionFactory theOTS = null;
+        Control topLevelControl = null;
+        Control nestedControl = null;
+        String server = "/tmp/hammer1.ref";
+        boolean slave = false;
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-reffile") == 0)
-		server = args[i+1];
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: TMClient [-reffile <file>] [-slave] [-help]");
-		assertFailure();
-	    }
-	    if (args[i].compareTo("-slave") == 0)
-		slave = true;
-	}
+        if (System.getProperty("os.name").startsWith("Windows"))
+        {
+            server = "C:\\temp\\hammer1.ref";
+        }
 
-	Services serv = new Services(myORB);
+        Services serv = new Services(myORB);
 
-	int resolver = com.arjuna.orbportability.common.Configuration.bindDefault();
-	String resolveService = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.RESOLVE_SERVICE);
+        int resolver = com.arjuna.orbportability.common.Configuration.bindDefault();
+        String resolveService = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.RESOLVE_SERVICE);
 
-	if (resolveService != null)
-	{
-	    if (resolveService.compareTo("NAME_SERVICE") == 0)
-		resolver = com.arjuna.orbportability.Services.NAME_SERVICE;
-	    else
-	    {
-		if (resolveService.compareTo("BIND_CONNECT") == 0)
-		    resolver = com.arjuna.orbportability.Services.BIND_CONNECT;
-		else
-		{
-		    if (resolveService.compareTo("FILE") == 0)
-			resolver = com.arjuna.orbportability.Services.FILE;
-		    else
-		    {
-			if (resolveService.compareTo("RESOLVE_INITIAL_REFERENCES") == 0)
-			    resolver = com.arjuna.orbportability.Services.RESOLVE_INITIAL_REFERENCES;
-		    }
-		}
-	    }
-	}
+        if (resolveService != null)
+        {
+            if (resolveService.compareTo("NAME_SERVICE") == 0)
+                resolver = com.arjuna.orbportability.Services.NAME_SERVICE;
+            else
+            {
+                if (resolveService.compareTo("BIND_CONNECT") == 0)
+                    resolver = com.arjuna.orbportability.Services.BIND_CONNECT;
+                else
+                {
+                    if (resolveService.compareTo("FILE") == 0)
+                        resolver = com.arjuna.orbportability.Services.FILE;
+                    else
+                    {
+                        if (resolveService.compareTo("RESOLVE_INITIAL_REFERENCES") == 0)
+                            resolver = com.arjuna.orbportability.Services.RESOLVE_INITIAL_REFERENCES;
+                    }
+                }
+            }
+        }
 
-	try
-	{
-	    String[] params = new String[1];
+        try
+        {
+            String[] params = new String[1];
 
-	    params[0] = Services.otsKind;
+            params[0] = Services.otsKind;
 
-	    org.omg.CORBA.Object obj = serv.getService(Services.transactionService, params, resolver);
+            org.omg.CORBA.Object obj = serv.getService(Services.transactionService, params, resolver);
 
-	    params = null;
-	    theOTS = TransactionFactoryHelper.narrow(obj);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Unexpected bind exception: "+e);
-	    e.printStackTrace(System.err);
-	    assertFailure();
-	}
+            params = null;
+            theOTS = TransactionFactoryHelper.narrow(obj);
+        }
+        catch (Exception e)
+        {
+            fail("Unexpected bind exception: "+e);
+            e.printStackTrace(System.err);
+        }
 
-	System.out.println("Creating transaction.");
+        System.out.println("Creating transaction.");
 
-	try
-	{
-	    topLevelControl = theOTS.create(0);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Create call failed: "+e);
-	    e.printStackTrace(System.err);
-	    assertFailure();
-	}
+        try
+        {
+            topLevelControl = theOTS.create(0);
+        }
+        catch (Exception e)
+        {
+            fail("Create call failed: "+e);
+            e.printStackTrace(System.err);
+        }
 
-	System.out.println("Creating subtransaction.");
+        System.out.println("Creating subtransaction.");
 
-	try
-	{
-	    nestedControl = topLevelControl.get_coordinator().create_subtransaction();
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Subtransaction create call failed: "+e);
+        try
+        {
+            nestedControl = topLevelControl.get_coordinator().create_subtransaction();
+        }
+        catch (Exception e)
+        {
+            System.err.println("Subtransaction create call failed: "+e);
 
-	    try
-	    {
-		topLevelControl.get_terminator().rollback();
-	    }
-	    catch (Exception ex)
-	    {
-	    }
+            try
+            {
+                topLevelControl.get_terminator().rollback();
+            }
+            catch (Exception ex)
+            {
+            }
 
-	    e.printStackTrace(System.err);
-	    assertFailure();
-	}
+            e.printStackTrace(System.err);
+            fail();
+        }
 
-	try
-	{
-	    DistributedHammerWorker1.hammerObject_1 = HammerHelper.narrow(serv.getService(server, null, Services.FILE));
+        try
+        {
+            DistributedHammerWorker1.hammerObject_1 = HammerHelper.narrow(serv.getService(server, null, Services.FILE));
 
-	    if (!DistributedHammerWorker1.hammerObject_1.incr(1, nestedControl))
-		System.out.println("Could not increment!");
-	    else
-		System.out.println("incremented.");
+            if (!DistributedHammerWorker1.hammerObject_1.incr(1, nestedControl))
+                System.out.println("Could not increment!");
+            else
+                System.out.println("incremented.");
 
-	    System.out.println("sleeping.");
+            System.out.println("sleeping.");
 
-	    Thread.sleep(20000);
+            Thread.sleep(20000);
 
-	    nestedControl.get_terminator().rollback();
+            nestedControl.get_terminator().rollback();
 
-	    if (!slave)
-	    {
-		System.out.println("master sleeping again.");
+            if (!slave)
+            {
+                System.out.println("master sleeping again.");
 
-		Thread.sleep(20000);
-	    }
+                Thread.sleep(20000);
+            }
 
-	    IntHolder value = new IntHolder(0);
+            IntHolder value = new IntHolder(0);
 
-	    org.omg.CosTransactions.PropagationContext ctx = topLevelControl.get_coordinator().get_txcontext();
+            org.omg.CosTransactions.PropagationContext ctx = topLevelControl.get_coordinator().get_txcontext();
 
-	    if (!DistributedHammerWorker1.hammerObject_1.get(value, topLevelControl))
-	    {
-		System.out.println("Could not get!");
-		assertFailure();
-	    }
-	    else
-	    {
-		System.out.println("got.");
-		assertSuccess();
-	    }
+            assertTrue( DistributedHammerWorker1.hammerObject_1.get(value, topLevelControl) );
 
-	    topLevelControl.get_terminator().rollback();
-	}
-	catch (Exception e)
-	{
-	    System.err.println("TMClient: "+e);
-	    e.printStackTrace(System.err);
-	    assertFailure();
-	}
+            topLevelControl.get_terminator().rollback();
+        }
+        catch (Exception e)
+        {
+            fail("TMClient: "+e);
+            e.printStackTrace(System.err);
+        }
 
-	myOA.destroy();
-	myORB.shutdown();
+        myOA.destroy();
+        myORB.shutdown();
     }
-
-    public static void main (String[] args)
-    {
-	TMClient test = new TMClient();
-
-	test.run(args);
-    }
-
 }

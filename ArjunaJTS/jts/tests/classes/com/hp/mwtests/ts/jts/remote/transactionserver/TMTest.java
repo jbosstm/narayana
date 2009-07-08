@@ -31,114 +31,92 @@
 
 package com.hp.mwtests.ts.jts.remote.transactionserver;
 
-import com.hp.mwtests.ts.jts.TestModule.*;
-
 import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 
 import com.arjuna.ats.internal.jts.ORBManager;
-import org.jboss.dtf.testframework.unittest.Test;
 
 import org.omg.CosTransactions.*;
 
-import org.omg.CosTransactions.Unavailable;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class TMTest extends Test
+public class TMTest
 {
-
-    public void run (String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-	    e.printStackTrace(System.err);
-	    assertFailure();
-	}
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	TransactionFactory theOTS = null;
-	Control topLevelControl = null;
-	Services serv = new Services(myORB);
-	int resolver = com.arjuna.orbportability.common.Configuration.bindDefault();
-	String resolveService = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.RESOLVE_SERVICE);
 
-	if (resolveService != null)
-	{
-	    if (resolveService.compareTo("NAME_SERVICE") == 0)
-		resolver = com.arjuna.orbportability.Services.NAME_SERVICE;
-	    else
-	    {
-		if (resolveService.compareTo("BIND_CONNECT") == 0)
-		    resolver = com.arjuna.orbportability.Services.BIND_CONNECT;
-		else
-		{
-		    if (resolveService.compareTo("FILE") == 0)
-			resolver = com.arjuna.orbportability.Services.FILE;
-		    else
-		    {
-			if (resolveService.compareTo("RESOLVE_INITIAL_REFERENCES") == 0)
-			    resolver = com.arjuna.orbportability.Services.RESOLVE_INITIAL_REFERENCES;
-		    }
-		}
-	    }
-	}
+        TransactionFactory theOTS = null;
+        Control topLevelControl = null;
+        Services serv = new Services(myORB);
+        int resolver = com.arjuna.orbportability.common.Configuration.bindDefault();
+        String resolveService = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.RESOLVE_SERVICE);
 
-	try
-	{
-	    String[] params = new String[1];
+        if (resolveService != null)
+        {
+            if (resolveService.compareTo("NAME_SERVICE") == 0)
+                resolver = com.arjuna.orbportability.Services.NAME_SERVICE;
+            else
+            {
+                if (resolveService.compareTo("BIND_CONNECT") == 0)
+                    resolver = com.arjuna.orbportability.Services.BIND_CONNECT;
+                else
+                {
+                    if (resolveService.compareTo("FILE") == 0)
+                        resolver = com.arjuna.orbportability.Services.FILE;
+                    else
+                    {
+                        if (resolveService.compareTo("RESOLVE_INITIAL_REFERENCES") == 0)
+                            resolver = com.arjuna.orbportability.Services.RESOLVE_INITIAL_REFERENCES;
+                    }
+                }
+            }
+        }
 
-	    params[0] = Services.otsKind;
+        try
+        {
+            String[] params = new String[1];
 
-	    org.omg.CORBA.Object obj = serv.getService(Services.transactionService, params, resolver);
+            params[0] = Services.otsKind;
 
-	    params = null;
-	    theOTS = TransactionFactoryHelper.narrow(obj);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Unexpected bind exception: "+e);
-	    e.printStackTrace(System.err);
-	    assertFailure();
-	}
+            org.omg.CORBA.Object obj = serv.getService(Services.transactionService, params, resolver);
 
-	System.out.println("Creating transaction.");
+            params = null;
+            theOTS = TransactionFactoryHelper.narrow(obj);
+        }
+        catch (Exception e)
+        {
+            fail("Unexpected bind exception: "+e);
+            e.printStackTrace(System.err);
+        }
 
-	try
-	{
-	    topLevelControl = theOTS.create(0);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Create call failed: "+e);
-	    e.printStackTrace(System.err);
-	    assertFailure();
-	}
+        System.out.println("Creating transaction.");
 
-	assertSuccess();
+        try
+        {
+            topLevelControl = theOTS.create(0);
+        }
+        catch (Exception e)
+        {
+            fail("Create call failed: "+e);
+            e.printStackTrace(System.err);
+        }
 
-	myOA.destroy();
-	myORB.shutdown();
+        myOA.destroy();
+        myORB.shutdown();
     }
-
-    public static void main (String[] args)
-    {
-	TMTest test = new TMTest();
-
-	test.run(args);
-    }
-
 }

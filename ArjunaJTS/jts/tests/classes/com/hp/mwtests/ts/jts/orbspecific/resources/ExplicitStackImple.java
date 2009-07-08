@@ -37,25 +37,16 @@ import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.txoj.*;
 
-import com.hp.mwtests.ts.jts.utils.Util;
-
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 
 import com.arjuna.ats.jts.ExplicitInterposition;
 import com.arjuna.ats.jts.extensions.*;
 
-import com.arjuna.orbportability.*;
-
 import org.omg.CosTransactions.*;
 
 import org.omg.CORBA.IntHolder;
 
-import org.omg.CosTransactions.Unavailable;
 import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
 
 import java.io.IOException;
 

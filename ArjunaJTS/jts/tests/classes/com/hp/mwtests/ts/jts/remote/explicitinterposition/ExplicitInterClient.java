@@ -31,183 +31,140 @@
 
 package com.hp.mwtests.ts.jts.remote.explicitinterposition;
 
-import com.hp.mwtests.ts.jts.resources.*;
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
-
 import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.extensions.*;
-import com.arjuna.ats.jts.ExplicitInterposition;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
+import com.hp.mwtests.ts.jts.TestModule.SetGet;
+import com.hp.mwtests.ts.jts.TestModule.SetGetHelper;
+import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 import org.omg.CosTransactions.*;
 
-import org.omg.CORBA.IntHolder;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-
-public class ExplicitInterClient extends Test
+public class ExplicitInterClient
 {
-
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-	    assertFailure();
-	}
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	CurrentImple current = OTSImpleManager.current();
-	Control theControl = null;
-	String objectReference = "/tmp/object.ref";
-	String serverName = "SetGet";
 
-	if (System.getProperty("os.name").startsWith("Windows"))
-	{
-	    objectReference = "C:\\temp\\object.ref";
-	}
+        CurrentImple current = OTSImpleManager.current();
+        Control theControl = null;
+        String objectReference = "/tmp/object.ref";
+        String serverName = "SetGet";
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-object") == 0)
-		objectReference = args[i+1];
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: ExplicitInterClient [-object <reference>] [-help]");
-		assertFailure();
-	    }
-	}
+        if (System.getProperty("os.name").startsWith("Windows"))
+        {
+            objectReference = "C:\\temp\\object.ref";
+        }
 
-	SetGet SetGetVar = null;
-	short h = 0;
 
-	try
-	{
-	    current.begin();
-	    current.begin();
-	    current.begin();
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Caught exception during begin: "+e);
-	    e.printStackTrace(System.err);
-	    assertFailure();
-	}
+        SetGet SetGetVar = null;
+        short h = 0;
 
-	try
-	{
-	    Services serv = new Services(myORB);
+        try
+        {
+            current.begin();
+            current.begin();
+            current.begin();
+        }
+        catch (Exception e)
+        {
+            fail("Caught exception during begin: "+e);
+            e.printStackTrace(System.err);
+        }
 
-	    SetGetVar = SetGetHelper.narrow(myORB.orb().string_to_object(getService(objectReference)));
-	}
-	catch (Exception ex)
-	{
-	    System.err.println("Failed to bind to setget server: "+ex);
-	    ex.printStackTrace(System.err);
-	    assertFailure();
-	}
+        try
+        {
+            Services serv = new Services(myORB);
 
-	try
-	{
-	    theControl = current.get_control();
+            SetGetVar = SetGetHelper.narrow(myORB.orb().string_to_object(TestUtility.getService(objectReference)));
+        }
+        catch (Exception ex)
+        {
+            fail("Failed to bind to setget server: "+ex);
+            ex.printStackTrace(System.err);
+        }
 
-	    SetGetVar.set((short) 2, theControl);
-	    //	    SetGetVar.set((short) 2, theControl);
+        try
+        {
+            theControl = current.get_control();
 
-	    theControl = null;
+            SetGetVar.set((short) 2, theControl);
+            //	    SetGetVar.set((short) 2, theControl);
 
-	    System.out.println("Set value.");
-	}
-	catch (Exception ex1)
-	{
-	    System.err.println("Unexpected system exception during set: "+ex1);
-	    ex1.printStackTrace(System.err);
-	    assertFailure();
-	}
+            theControl = null;
 
-	try
-	{
-	    System.out.println("committing first nested action");
+            System.out.println("Set value.");
+        }
+        catch (Exception ex1)
+        {
+            fail("Unexpected system exception during set: "+ex1);
+            ex1.printStackTrace(System.err);
+        }
 
-	    current.commit(true);
+        try
+        {
+            System.out.println("committing first nested action");
 
-	    //	    SetGetVar.set((short) 4, current.get_control());
+            current.commit(true);
 
-	    System.out.println("committing second nested action");
+            //	    SetGetVar.set((short) 4, current.get_control());
 
-	    current.commit(true);
-	}
-	catch (Exception sysEx)
-	{
-	    System.err.println("Caught unexpected exception during commit: "+sysEx);
-	    sysEx.printStackTrace(System.err);
-	    assertFailure();
-	}
+            System.out.println("committing second nested action");
 
-	try
-	{
-	    theControl = current.get_control();
+            current.commit(true);
+        }
+        catch (Exception sysEx)
+        {
+            fail("Caught unexpected exception during commit: "+sysEx);
+            sysEx.printStackTrace(System.err);
+        }
 
-	    h = SetGetVar.get(theControl);
+        try
+        {
+            theControl = current.get_control();
 
-	    theControl = null;
+            h = SetGetVar.get(theControl);
 
-	    System.out.println("Got value.");
-	}
-	catch (Exception ex2)
-	{
-	    System.err.println("Unexpected system exception during get: "+ex2);
-	    ex2.printStackTrace(System.err);
-	    assertFailure();
-	}
+            theControl = null;
 
-	try
-	{
-	    current.commit(true);
+            System.out.println("Got value.");
+        }
+        catch (Exception ex2)
+        {
+            fail("Unexpected system exception during get: "+ex2);
+            ex2.printStackTrace(System.err);
+        }
 
-	    System.out.println("committed top-level action");
+        try
+        {
+            current.commit(true);
 
-	    assertSuccess();
-	}
-	catch (Exception ep)
-	{
-	    System.err.println("Caught commit exception for top-level action: "+ep);
-	    ep.printStackTrace(System.err);
-	    assertFailure();
-	}
+            System.out.println("committed top-level action");
+        }
+        catch (Exception ep)
+        {
+            fail("Caught commit exception for top-level action: "+ep);
+            ep.printStackTrace(System.err);
+        }
 
-	myOA.destroy();
-	myORB.shutdown();
-    }
-
-    public static void main(String[] args)
-    {
-	ExplicitInterClient eic = new ExplicitInterClient();
-	eic.initialise(null, null, args, new LocalHarness());
-	eic.runTest();
+        myOA.destroy();
+        myORB.shutdown();
     }
 }

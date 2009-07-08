@@ -31,146 +31,104 @@
 
 package com.hp.mwtests.ts.jts.local.arjuna;
 
-import com.hp.mwtests.ts.jts.resources.*;
 import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
 
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.jts.extensions.*;
 import com.arjuna.ats.jts.OTSManager;
 
 import com.arjuna.ats.internal.jts.ORBManager;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 
-import org.omg.CosTransactions.*;
-
-import org.omg.CosTransactions.Unavailable;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
 
-public class ArjunaNestingTest extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class ArjunaNestingTest
 {
-
-    public void run(String[] args)
+    @Test
+    public void run() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	    assertFailure();
-	}
+        boolean doAbort = false;
+        boolean registerSubtran = false;
+        org.omg.CosTransactions.Current current = OTSManager.get_current();
+        DemoArjunaResource sr = new DemoArjunaResource();
 
-	boolean doAbort = false;
-	boolean registerSubtran = false;
-	org.omg.CosTransactions.Current current = OTSManager.get_current();
-	DemoArjunaResource sr = new DemoArjunaResource();
-
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		logInformation("Usage: ArjunaNestingTest [-abort] [-subtran] [-help]");
-		assertFailure();
-	    }
-	    if (args[i].compareTo("-abort") == 0)
-		doAbort = true;
-	    if (args[i].compareTo("-subtran") == 0)
-		registerSubtran = true;
-	}
-
-	try
-	{
-	    current.begin();
-	    current.begin();
-	    current.begin();
-	}
-	catch (SystemException sysEx)
-	{
-	    System.err.println("Unexpected system exception:" +sysEx);
+        try
+        {
+            current.begin();
+            current.begin();
+            current.begin();
+        }
+        catch (SystemException sysEx)
+        {
+            fail("Unexpected system exception:" +sysEx);
             sysEx.printStackTrace(System.err);
-	    assertFailure();
-	}
-	catch (UserException se)
-	{
-	    System.err.println("Unexpected user exception:" +se);
+        }
+        catch (UserException se)
+        {
+            fail("Unexpected user exception:" +se);
             se.printStackTrace(System.err);
-	    assertFailure();
-	}
+        }
 
-	try
-	{
-	    sr.registerResource(registerSubtran);
-	}
-	catch (SystemException ex1)
-	{
-	    System.err.println("Unexpected system exception: "+ex1);
+        try
+        {
+            sr.registerResource(registerSubtran);
+        }
+        catch (SystemException ex1)
+        {
+            fail("Unexpected system exception: "+ex1);
             ex1.printStackTrace(System.err);
-	    assertFailure();
-	}
-	catch (Exception e)
-	{
-	    System.err.println("call to registerSubtran failed: "+e);
+        }
+        catch (Exception e)
+        {
+            fail("call to registerSubtran failed: "+e);
             e.printStackTrace(System.err);
-	    assertFailure();
-	}
+        }
 
-	try
-	{
-	    logInformation("committing first nested transaction");
-	    current.commit(true);
+        try
+        {
+            System.out.println("committing first nested transaction");
+            current.commit(true);
 
-	    logInformation("committing second nested transaction");
-	    current.commit(true);
+            System.out.println("committing second nested transaction");
+            current.commit(true);
 
-	    if (!doAbort)
-	    {
-		logInformation("committing top-level transaction");
-		current.commit(true);
-	    }
-	    else
-	    {
-		logInformation("aborting top-level transaction");
-		current.rollback();
-	    }
-	}
-	catch (Exception ex)
-	{
-	    System.err.println("Caught unexpected exception: "+ex);
+            if (!doAbort)
+            {
+                System.out.println("committing top-level transaction");
+                current.commit(true);
+            }
+            else
+            {
+                System.out.println("aborting top-level transaction");
+                current.rollback();
+            }
+        }
+        catch (Exception ex)
+        {
+            fail("Caught unexpected exception: "+ex);
             ex.printStackTrace(System.err);
-	    assertFailure();
-	}
+        }
 
-	logInformation("Test completed successfully.");
-        assertSuccess();
+        myOA.shutdownObject(sr);
 
-	myOA.shutdownObject(sr);
-
-	myOA.destroy();
-	myORB.shutdown();
+        myOA.destroy();
+        myORB.shutdown();
     }
 
-	public static void main(String[] args)
-	{
-		ArjunaNestingTest test = new ArjunaNestingTest();
-		test.initialise(null, null, args, new LocalHarness());
-		test.runTest();
-	}
 }
 

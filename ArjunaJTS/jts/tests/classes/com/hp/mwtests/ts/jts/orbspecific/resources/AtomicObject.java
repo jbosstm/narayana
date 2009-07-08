@@ -36,14 +36,12 @@ import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.txoj.*;
 
 import com.hp.mwtests.ts.jts.exceptions.TestException;
 
-import org.omg.CosTransactions.SubtransactionsUnavailable;
 import java.io.IOException;
 
 public class AtomicObject extends LockManager

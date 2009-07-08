@@ -30,8 +30,6 @@
  */
 package com.hp.mwtests.ts.jts.local.orbsetup;
 
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.orbportability.internal.utils.PostInitLoader;
 import com.arjuna.orbportability.ORB;
@@ -39,30 +37,26 @@ import com.arjuna.orbportability.RootOA;
 import com.arjuna.orbportability.OA;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 
-public class ORBSetupTest extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class ORBSetupTest
 {
     private final static String ORB_NAME = "testorb";
 
-    public void run(String[] args)
+    @Test
+    public void test()
     {
         boolean staticSet = false;
         ORB myORB = null;
-	RootOA myOA = null;
-
-        for (int count=0;count<args.length;count++)
-        {
-            if ( args[count].equalsIgnoreCase("-setstatically") )
-            {
-                staticSet = true;
-            }
-        }
+        RootOA myOA = null;
 
         System.setProperty( PostInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb", ORB_NAME), "com.arjuna.ats.jts.utils.ORBSetup");
 
-	try
-	{
-	    myORB = ORB.getInstance(ORB_NAME);
-	    myOA = OA.getRootOA(myORB);
+        try
+        {
+            myORB = ORB.getInstance(ORB_NAME);
+            myOA = OA.getRootOA(myORB);
 
             if (staticSet)
             {
@@ -71,54 +65,32 @@ public class ORBSetupTest extends Test
 
             try
             {
-                myORB.initORB(args, null);
+                myORB.initORB(new String[] {}, null);
                 myOA.initOA();
 
-                if (ORBManager.getORB() != myORB)
-                {
-                    logInformation("The ORB reference returned by ORBManager was not the ORB previously initialised");
-                    assertFailure();
-                }
-                else
-                {
-                    logInformation("The ORB reference returned by ORBManager is the previously initialised ORB");
-                    assertSuccess();
-                }
+                assertEquals(myORB, ORBManager.getORB());
             }
             catch (FatalError e)
             {
                 if (staticSet)
                 {
-                    logInformation("FatalError thrown as expected");
-                    assertSuccess();
+                    System.out.println("FatalError thrown as expected");
                 }
                 else
                 {
-                    logInformation("Error: "+e);
+                    fail("Error: "+e);
                     e.printStackTrace(System.err);
-                    assertFailure();
                 }
             }
 
             myORB.destroy();
             myOA.destroy();
-	}
-	catch (Throwable e)
-	{
-	    logInformation("Error: "+e);
+        }
+        catch (Throwable e)
+        {
+            fail("Error: "+e);
             e.printStackTrace(System.err);
-
-	    assertFailure();
-	}
-
-    }
-
-    public static void main(String[] args)
-    {
-        ORBSetupTest test = new ORBSetupTest();
-
-        test.initialise( null, null, args, new LocalHarness());
-        test.runTest();
+        }
     }
 }
 

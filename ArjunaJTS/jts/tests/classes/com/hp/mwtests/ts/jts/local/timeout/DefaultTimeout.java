@@ -31,8 +31,6 @@
 
 package com.hp.mwtests.ts.jts.local.timeout;
 
-import com.hp.mwtests.ts.jts.TestModule.*;
-
 import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.jts.common.jtsPropertyManager;
@@ -42,15 +40,13 @@ import com.arjuna.ats.jts.OTSManager;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 
-import org.omg.CosTransactions.*;
-
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CosTransactions.WrongTransaction;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class DefaultTimeout
 {
-    
-public static void main (String[] args)
+    @Test
+    public void test()
     {
 	ORB myORB = null;
 	RootOA myOA = null;
@@ -60,7 +56,7 @@ public static void main (String[] args)
 	    myORB = ORB.getInstance("test");
 	    myOA = OA.getRootOA(myORB);
 	    
-	    myORB.initORB(args, null);
+	    myORB.initORB(new String[] {}, null);
 	    myOA.initOA();
 
 	    ORBManager.setORB(myORB);

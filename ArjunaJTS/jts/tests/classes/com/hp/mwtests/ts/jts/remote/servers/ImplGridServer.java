@@ -31,52 +31,33 @@
 
 package com.hp.mwtests.ts.jts.remote.servers;
 
-import com.hp.mwtests.ts.jts.resources.*;
 import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
+import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.jts.extensions.*;
-
-import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 
-import org.omg.CosTransactions.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-
-public class ImplGridServer extends Test
+public class ImplGridServer
 {
-
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
 	ORB myORB = null;
 	RootOA myOA = null;
 
-	try
-	{
 	    myORB = ORB.getInstance("test");
 	    myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
+	    myORB.initORB(new String[] {}, null);
 	    myOA.initOA();
 
 	    ORBManager.setORB(myORB);
 	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-	    assertFailure();
-	}
+
 
 	String refFile = "/tmp/trangrid.ref";
 	String serverName = "ImplGrid";
@@ -86,47 +67,26 @@ public class ImplGridServer extends Test
 	    refFile = "C:\\temp\\trangrid.ref";
 	}
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-reffile") == 0)
-		refFile = args[i+1];
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: ImplGridServer [-reffile <file>] [-help]");
-		assertFailure();
-	    }
-	}
-
 	trangrid_i gridI = new trangrid_i((short) 100, (short) 100);
 	Services serv = new Services(myORB);
 
 	try
 	{
-	    registerService(refFile, myORB.orb().object_to_string(gridI.getReference()));
+	    TestUtility.registerService(refFile, myORB.orb().object_to_string(gridI.getReference()));
 
 	    System.out.println("**ImplGrid server started**");
 
-	    assertReady();
-	    assertSuccess();
-
+	    //assertReady();
 	    myOA.run();
 	}
 	catch (Exception e)
 	{
-	    System.err.println("ImplGrid server caught exception: "+e);
-	    assertFailure();
+	    fail("ImplGrid server caught exception: "+e);
 	}
 
 	myOA.shutdownObject(gridI);
 
 	System.out.println("**ImplGrid server exiting**");
-    }
-
-    public static void main(String[] args)
-    {
-	ImplGridServer igs = new ImplGridServer();
-	igs.initialise(null, null, args, new LocalHarness());
-	igs.runTest();
     }
 }
 

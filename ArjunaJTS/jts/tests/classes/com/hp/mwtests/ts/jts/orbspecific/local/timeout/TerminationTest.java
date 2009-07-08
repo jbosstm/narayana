@@ -31,15 +31,8 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.local.timeout;
 
-import com.hp.mwtests.ts.jts.resources.*;
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
-
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.jts.extensions.*;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.ats.jts.common.Environment;
 import com.arjuna.ats.jts.OTSManager;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
@@ -49,186 +42,162 @@ import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 
 import org.omg.CosTransactions.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CosTransactions.WrongTransaction;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-import org.omg.CORBA.TRANSACTION_REQUIRED;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class TerminationTest
 {
-    
-    public static void main (String[] args)
+    @Test
+    public void test()
     {
-	boolean commit = true;
+        boolean commit = true;
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-commit") == 0)
-		commit = true;
-	    if (args[i].compareTo("-rollback") == 0)
-		commit = false;
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: TerminationTest [-commit] [-rollback] [-help]");
-		System.exit(0);
-	    }
-	}
+        Control myControl = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	Control myControl = null;
-	ORB myORB = null;
-	RootOA myOA = null;
+        try
+        {
+            myORB = ORB.getInstance("test");
+            myOA = OA.getRootOA(myORB);
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
-	    
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+            myORB.initORB(new String[] {}, null);
+            myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
+            ORBManager.setORB(myORB);
+            ORBManager.setPOA(myOA);
 
-	    TransactionFactoryImple theOTS = new TransactionFactoryImple();
+            TransactionFactoryImple theOTS = new TransactionFactoryImple();
 
-	    System.out.println("Creating transaction with 2 second timeout.");
-	    
-	    myControl = theOTS.create(2);
+            System.out.println("Creating transaction with 2 second timeout.");
 
-	    if (myControl == null)
-	    {
-		System.err.println("Could not create transaction!");
-		System.exit(-1);
-	    }
+            myControl = theOTS.create(2);
 
-	    Terminator handle = myControl.get_terminator();
-	    
-	    try
-	    {
-		System.out.println("Sleeping for 5 seconds.");
-		
-		Thread.sleep(5000);
-	    }
-	    catch (Exception e)
-	    {
-	    }
-	    
-	    if (handle != null)
-	    {
-		System.out.print("Attempting to ");
+            assertNotNull( myControl );
 
-		if (commit)
-		    System.out.println("commit transaction. Should fail!");
-		else
-		    System.out.println("rollback transaction. Should fail!.");
+            Terminator handle = myControl.get_terminator();
 
-		if (commit)
-		    handle.commit(true);
-		else
-		    handle.rollback();
+            try
+            {
+                System.out.println("Sleeping for 5 seconds.");
 
-		if (commit)
-		    System.out.println("Test did not completed successfully.");
+                Thread.sleep(5000);
+            }
+            catch (Exception e)
+            {
+            }
 
-		System.out.println("\nNow attempting to destroy transaction. Should fail!");
-		    
-		OTSManager.destroyControl(myControl);
-	    }
-	    else
-		System.err.println("No transaction terminator!");
-	}
-	catch (UserException e)
-	{
-	    System.err.println("Caught UserException: "+e);
-	}
-	catch (SystemException e)
-	{
-	    System.err.println("Caught SystemException: "+e);
+            if (handle != null)
+            {
+                System.out.print("Attempting to ");
 
-	    try
-	    {
-		Coordinator coord = myControl.get_coordinator();
-		Status s = coord.get_status();
-		
-		System.err.println("Transaction status: "+com.arjuna.ats.jts.utils.Utility.stringStatus(s));
+                if (commit)
+                    System.out.println("commit transaction. Should fail!");
+                else
+                    System.out.println("rollback transaction. Should fail!.");
 
-		coord = null;
-	    }
-	    catch (Exception ex)
-	    {
-	    }
-	}
+                if (commit)
+                    handle.commit(true);
+                else
+                    handle.rollback();
 
-	try
-	{
-	    CurrentImple current = OTSImpleManager.current();
+                assertFalse(commit);
 
-	    current.set_timeout(2);
-	
-	    System.out.println("\nNow creating current transaction with 2 second timeout.");
+                System.out.println("\nNow attempting to destroy transaction. Should fail!");
 
-	    current.begin();
+                OTSManager.destroyControl(myControl);
+            }
+            else
+                System.err.println("No transaction terminator!");
+        }
+        catch (UserException e)
+        {
+            System.err.println("Caught UserException: "+e);
+        }
+        catch (SystemException e)
+        {
+            System.err.println("Caught SystemException: "+e);
 
-	    myControl = current.get_control();
-	    
-	    try
-	    {
-		System.out.println("Sleeping for 5 seconds.");
-		
-		Thread.sleep(5000);
-	    }
-	    catch (Exception e)
-	    {
-	    }
-	    
-	    System.out.print("Attempting to ");
+            try
+            {
+                Coordinator coord = myControl.get_coordinator();
+                Status s = coord.get_status();
 
-	    if (commit)
-		System.out.println("commit transaction. Should fail!");
-	    else
-		System.out.println("rollback transaction. Should fail!.");
+                System.err.println("Transaction status: "+com.arjuna.ats.jts.utils.Utility.stringStatus(s));
 
-	    if (commit)
-		current.commit(true);
-	    else
-		current.rollback();
+                coord = null;
+            }
+            catch (Exception ex)
+            {
+            }
+        }
 
-	    if (commit)
-		System.out.println("Test did not completed successfully.");
-	}
-	catch (UserException e)
-	{
-	    System.err.println("Caught UserException: "+e);
-	    System.out.println("Test did not completed successfully.");
-	}
-	catch (SystemException e)
-	{
-	    System.err.println("Caught SystemException: "+e);
+        try
+        {
+            CurrentImple current = OTSImpleManager.current();
 
-	    try
-	    {
-		Coordinator coord = myControl.get_coordinator();
-		Status s = coord.get_status();
-		
-		System.err.println("Transaction status: "+com.arjuna.ats.jts.utils.Utility.stringStatus(s));
+            current.set_timeout(2);
 
-		myControl = null;
-		coord = null;
-	    }
-	    catch (Exception ex)
-	    {
-	    }
+            System.out.println("\nNow creating current transaction with 2 second timeout.");
 
-	    System.out.println("Test completed successfully.");
-	}
+            current.begin();
 
-	myOA.destroy();
-	myORB.shutdown();
+            myControl = current.get_control();
 
-	System.exit(0);
+            try
+            {
+                System.out.println("Sleeping for 5 seconds.");
+
+                Thread.sleep(5000);
+            }
+            catch (Exception e)
+            {
+            }
+
+            System.out.print("Attempting to ");
+
+            if (commit)
+                System.out.println("commit transaction. Should fail!");
+            else
+                System.out.println("rollback transaction. Should fail!.");
+
+            if (commit)
+                current.commit(true);
+            else
+                current.rollback();
+
+            assertFalse(commit);
+        }
+        catch (UserException e)
+        {
+            System.err.println("Caught UserException: "+e);
+            System.out.println("Test did not completed successfully.");
+        }
+        catch (SystemException e)
+        {
+            System.err.println("Caught SystemException: "+e);
+
+            try
+            {
+                Coordinator coord = myControl.get_coordinator();
+                Status s = coord.get_status();
+
+                System.err.println("Transaction status: "+com.arjuna.ats.jts.utils.Utility.stringStatus(s));
+
+                myControl = null;
+                coord = null;
+            }
+            catch (Exception ex)
+            {
+            }
+
+            System.out.println("Test completed successfully.");
+        }
+
+        myOA.destroy();
+        myORB.shutdown();
     }
-    
 }

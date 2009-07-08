@@ -31,124 +31,102 @@
 
 package com.hp.mwtests.ts.jts.local.transactions;
 
-import com.hp.mwtests.ts.jts.resources.*;
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
-
 import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.extensions.*;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.ats.jts.common.Environment;
-import com.arjuna.ats.jts.OTSManager;
 
 import com.arjuna.ats.jts.OTSManager;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 
-import org.omg.CosTransactions.*;
-
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CosTransactions.WrongTransaction;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-import org.omg.CORBA.TRANSACTION_REQUIRED;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class TransactionTest2
 {
-    
-    public static void main (String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
-	    
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-	}
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	int count = 0;
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	System.out.println("Testing memory allocation.");
-	System.out.println("Creating as many transactions as possible.\n");
-	    
-	try
-	{
-	    for (;;)
-	    {
-		OTSManager.get_current().begin();
-		count++;
-	    }
-	}
-	catch (Exception e)
-	{
-	    System.err.println("begin caught: "+e);
 
-	    System.gc();
-	}
-	catch (Error e)
-	{
-	    System.err.println("begin caught: "+e);
-	    e.printStackTrace();
+        int count = 0;
 
-	    System.gc();
-	}	
+        System.out.println("Testing memory allocation.");
+        System.out.println("Creating as many transactions as possible.\n");
 
-	System.out.println("\nbegan: "+count);
+        try
+        {
+            for (;;)
+            {
+                OTSManager.get_current().begin();
+                count++;
+            }
+        }
+        catch (Exception e)
+        {
+            System.err.println("begin caught: "+e);
 
-	try
-	{
-	    int created = count;
+            System.gc();
+        }
+        catch (Error e)
+        {
+            System.err.println("begin caught: "+e);
+            e.printStackTrace();
 
-	    System.out.println("\nNow rolling back transactions.");
-	    
-	    for (int i = 0; i < created; i++)
-	    {
-		try
-		{
-		    System.out.println(""+count);
-		    OTSManager.get_current().rollback();
-		    count--;
-		}
-		catch (OutOfMemoryError em)
-		{
-		    em.printStackTrace();
-		    
-		    System.gc();
-		}
-	    }
-	}
-	catch (Exception e)
-	{
-	    System.err.println("rollback caught: "+e);
+            System.gc();
+        }
 
-	    System.gc();
-	}
-	catch (Error e)
-	{
-	    System.err.println("rollback caught: "+e);
-	    e.printStackTrace();
+        System.out.println("\nbegan: "+count);
 
-	    System.gc();
-	}
+        try
+        {
+            int created = count;
 
-	System.out.println("\nStill to rollback: "+count);
+            System.out.println("\nNow rolling back transactions.");
 
-	myOA.destroy();
-	myORB.shutdown();
+            for (int i = 0; i < created; i++)
+            {
+                try
+                {
+                    System.out.println(""+count);
+                    OTSManager.get_current().rollback();
+                    count--;
+                }
+                catch (OutOfMemoryError em)
+                {
+                    em.printStackTrace();
+
+                    System.gc();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            System.err.println("rollback caught: "+e);
+
+            System.gc();
+        }
+        catch (Error e)
+        {
+            System.err.println("rollback caught: "+e);
+            e.printStackTrace();
+
+            System.gc();
+        }
+
+        System.out.println("\nStill to rollback: "+count);
+
+        myOA.destroy();
+        myORB.shutdown();
     }
- 
+
 }

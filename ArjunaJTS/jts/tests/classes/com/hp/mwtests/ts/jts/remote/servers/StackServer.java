@@ -31,104 +31,66 @@
 
 package com.hp.mwtests.ts.jts.remote.servers;
 
-import com.hp.mwtests.ts.jts.resources.*;
 import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
+import com.hp.mwtests.ts.jts.TestModule.stackPOATie;
+import com.hp.mwtests.ts.jts.TestModule.stackHelper;
+import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.jts.extensions.*;
-
-import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 
-import org.omg.CosTransactions.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-
-public class StackServer extends Test
+public class StackServer
 {
-
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-	    assertFailure();
-	}
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	String refFile = "/tmp/stack.ref";
-	String serverName = "Stack";
 
-	if (System.getProperty("os.name").startsWith("Windows"))
-	{
-	    refFile = "C:\\temp\\stack.ref";
-	}
+        String refFile = "/tmp/stack.ref";
+        String serverName = "Stack";
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-reffile") == 0)
-		refFile = args[i+1];
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: ExplicitStackServer [-reffile <file>] [-help]");
-		System.exit(0);
-	    }
-	}
+        if (System.getProperty("os.name").startsWith("Windows"))
+        {
+            refFile = "C:\\temp\\stack.ref";
+        }
 
-	stackPOATie theStack = new stackPOATie (new StackImple());
+        stackPOATie theStack = new stackPOATie (new StackImple());
 
-	myOA.objectIsReady(theStack);
+        myOA.objectIsReady(theStack);
 
-	Services serv = new Services(myORB);
+        Services serv = new Services(myORB);
 
-	try
-	{
-	    registerService(refFile, myORB.orb().object_to_string(stackHelper.narrow(myOA.corbaReference(theStack))));
+        try
+        {
+            TestUtility.registerService(refFile, myORB.orb().object_to_string(stackHelper.narrow(myOA.corbaReference(theStack))));
 
-	    System.out.println("**StackServer started**");
-            assertReady();
-	    assertSuccess();
+            System.out.println("**StackServer started**");
+            //assertReady();
+            myOA.run();
+        }
+        catch (Exception e)
+        {
+            fail("StackServer caught exception: "+e);
+        }
 
-	    myOA.run();
-	}
-	catch (Exception e)
-	{
-	    System.err.println("StackServer caught exception: "+e);
-	    System.exit(1);
-	}
+        myOA.shutdownObject(theStack);
 
-	myOA.shutdownObject(theStack);
-
-	System.out.println("**StackServer exiting**");
-    }
-
-    public static void main(String[] args)
-    {
-	StackServer ss = new StackServer();
-	ss.initialise(null, null, args, new LocalHarness());
-	ss.runTest();
+        System.out.println("**StackServer exiting**");
     }
 }
 

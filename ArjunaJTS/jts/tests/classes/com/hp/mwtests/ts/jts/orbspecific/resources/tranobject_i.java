@@ -31,21 +31,10 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
-import com.hp.mwtests.ts.jts.utils.Util;
-
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-
-import com.arjuna.ats.jts.OTSManager;
-import com.arjuna.ats.jts.ExplicitInterposition;
-import com.arjuna.ats.jts.extensions.*;
-
-import com.arjuna.orbportability.*;
 
 import org.omg.CosTransactions.*;
 
-import org.omg.CosTransactions.Unavailable;
 import org.omg.CORBA.SystemException;
 
 public class tranobject_i extends org.omg.CosTransactions.ResourcePOA

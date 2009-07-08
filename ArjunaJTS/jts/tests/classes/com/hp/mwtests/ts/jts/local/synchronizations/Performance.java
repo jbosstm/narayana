@@ -31,13 +31,9 @@
 
 package com.hp.mwtests.ts.jts.local.synchronizations;
 
-import com.hp.mwtests.ts.jts.resources.*;
 import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
 
 import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.extensions.*;
 
 import com.arjuna.ats.jts.OTSManager;
 
@@ -45,77 +41,68 @@ import com.arjuna.ats.internal.jts.ORBManager;
 
 import org.omg.CosTransactions.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CosTransactions.WrongTransaction;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-import org.omg.CORBA.TRANSACTION_REQUIRED;
-import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class Performance
 {
-    
-    public static void main (String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
-	long stime = System.currentTimeMillis();
-	demosync sync = null;
+        ORB myORB = null;
+        RootOA myOA = null;
+        long stime = System.currentTimeMillis();
+        demosync sync = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
+        try
+        {
+            myORB = ORB.getInstance("test");
 
-	    myOA = OA.getRootOA(myORB);
-	    
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+            myOA = OA.getRootOA(myORB);
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);	
+            myORB.initORB(new String[] {}, null);
+            myOA.initOA();
 
-	    org.omg.CosTransactions.Current current = OTSManager.get_current();
-	    sync = new demosync(false);
+            ORBManager.setORB(myORB);
+            ORBManager.setPOA(myOA);
 
-	    for (int i = 0; i < 1000; i++)
-	    {
-		current.begin();
+            org.omg.CosTransactions.Current current = OTSManager.get_current();
+            sync = new demosync(false);
 
-		Control myControl = current.get_control();
-		Coordinator coord = myControl.get_coordinator();
+            for (int i = 0; i < 1000; i++)
+            {
+                current.begin();
 
-		coord.register_synchronization(sync.getReference());
+                Control myControl = current.get_control();
+                Coordinator coord = myControl.get_coordinator();
 
-		current.commit(true);
-	    }
-	}
-	catch (UserException e1)
-	{
-	    System.out.println("Caught UserException: "+e1);
-	    e1.printStackTrace();
+                coord.register_synchronization(sync.getReference());
 
-	    System.exit(0);
-	}	
-	catch (SystemException e2)
-	{
-	    System.out.println("Caught SystemException: " +e2);
-	    e2.printStackTrace();
-	    
-	    System.exit(0);
-	}
+                current.commit(true);
+            }
+        }
+        catch (UserException e1)
+        {
+            fail("Caught UserException: "+e1);
+        }
+        catch (SystemException e2)
+        {
+            fail("Caught SystemException: " +e2);
+            e2.printStackTrace();
+        }
 
-	long ftime = System.currentTimeMillis();
-	double elapsedTime = (ftime - stime)/1000.0;
-	double tps = 1000.0/elapsedTime;
-	
-	System.err.println("TPS: "+tps);
+        long ftime = System.currentTimeMillis();
+        double elapsedTime = (ftime - stime)/1000.0;
+        double tps = 1000.0/elapsedTime;
 
-	myOA.shutdownObject(sync);
+        System.err.println("TPS: "+tps);
 
-	myOA.destroy();
-	myORB.shutdown();
+        myOA.shutdownObject(sync);
+
+        myOA.destroy();
+        myORB.shutdown();
     }
-
 }
-

@@ -36,9 +36,6 @@ import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 
 import org.omg.CosTransactions.*;
 
-import java.util.Random;
-import java.lang.InterruptedException;
-
 public class TransactionalThread extends Thread
 {
 

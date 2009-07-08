@@ -31,117 +31,87 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.local.performance;
 
-import com.hp.mwtests.ts.jts.resources.*;
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
-
 import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.extensions.*;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-
-import org.omg.CosTransactions.*;
 
 import java.util.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class Performance1
 {
-    
-    public static void main (String[] args)
+    @Test
+    public void test()
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
+        try
+        {
+            myORB = ORB.getInstance("test");
 
-	    myOA = OA.getRootOA(myORB);
-	    
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+            myOA = OA.getRootOA(myORB);
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
+            myORB.initORB(new String[] {}, null);
+            myOA.initOA();
 
-	    double iters = 1000.0;
-	    boolean doCommit = true;
+            ORBManager.setORB(myORB);
+            ORBManager.setPOA(myOA);
 
-	    for (int i = 0; i < args.length; i++)
-	    {
-		if (args[i].equals("-rollback"))
-		    doCommit = false;
-		else
-		{
-		    if (args[i].equals("-help"))
-		    {
-			System.out.println("Usage: Performance1 [-rollback] [-help]");
-			System.exit(0);
-		    }
-		    else
-		    {
-			System.err.println("Unknown option: "+args[i]);
-			System.exit(0);
-		    }
-		}
-	    }
+            double iters = 1000.0;
+            boolean doCommit = true;
 
-	    // Run ten interations first.
+            // Run ten interations first.
 
-	    CurrentImple current = OTSImpleManager.current();
-	    
-	    for (int i = 0; i < 10; i++)
-	    {
-		current.begin();
+            CurrentImple current = OTSImpleManager.current();
 
-		if (doCommit)
-		    current.commit(true);
-		else
-		    current.rollback();
-	    }
+            for (int i = 0; i < 10; i++)
+            {
+                current.begin();
 
-	    // Record the start time.
+                if (doCommit)
+                    current.commit(true);
+                else
+                    current.rollback();
+            }
 
-	    Date startTime = new Date();
+            // Record the start time.
 
-	    // Run 1000 interations.
-	    
-	    for (int i = 0; i < iters; i++)
-	    {
-		current.begin();
+            Date startTime = new Date();
 
-		if (doCommit)
-		    current.commit(true);
-		else
-		    current.rollback();
-	    }
+            // Run 1000 interations.
 
-	    // Record the end time.
+            for (int i = 0; i < iters; i++)
+            {
+                current.begin();
 
-	    Date endTime = new Date();
-	    double txnTime = (float)((endTime.getTime()-startTime.getTime())/iters);
-	    double txnPSec = 1000.0/txnTime;
+                if (doCommit)
+                    current.commit(true);
+                else
+                    current.rollback();
+            }
 
-	    System.out.println("Average time for empty transaction = "+txnTime);
-	    System.out.println("Transactions per second = "+txnPSec);
-	}
-	catch (Exception e)
-	{
-	    e.printStackTrace();
-	}
+            // Record the end time.
 
-	myOA.destroy();
-	myORB.shutdown();
+            Date endTime = new Date();
+            double txnTime = (float)((endTime.getTime()-startTime.getTime())/iters);
+            double txnPSec = 1000.0/txnTime;
+
+            System.out.println("Average time for empty transaction = "+txnTime);
+            System.out.println("Transactions per second = "+txnPSec);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail();
+        }
+
+        myOA.destroy();
+        myORB.shutdown();
     }
-
 }
 

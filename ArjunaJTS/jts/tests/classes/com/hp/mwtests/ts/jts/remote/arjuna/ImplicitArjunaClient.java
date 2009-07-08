@@ -31,159 +31,121 @@
 
 package com.hp.mwtests.ts.jts.remote.arjuna;
 
-import com.hp.mwtests.ts.jts.resources.*;
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
-
 import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.extensions.*;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import org.jboss.dtf.testframework.unittest.Test;
-
-import org.omg.CosTransactions.*;
+import com.hp.mwtests.ts.jts.resources.TestUtility;
+import com.hp.mwtests.ts.jts.TestModule.stackHelper;
+import com.hp.mwtests.ts.jts.TestModule.stack;
 
 import org.omg.CORBA.IntHolder;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class ImplicitArjunaClient extends Test
+public class ImplicitArjunaClient
 {
-
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-	    assertFailure();
-	}
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	String refFile = "/tmp/stack.ref";
-	String serverName = "Stack";
-	CurrentImple current = OTSImpleManager.current();
+        String refFile = "/tmp/stack.ref";
+        String serverName = "Stack";
+        CurrentImple current = OTSImpleManager.current();
 
-	if (System.getProperty("os.name").startsWith("Windows"))
-	{
-	    refFile = "C:\\temp\\stack.ref";	}
+        if (System.getProperty("os.name").startsWith("Windows"))
+        {
+            refFile = "C:\\temp\\stack.ref";	}
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-reffile") == 0)
-		refFile = args[i+1];
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: ImplicitArjunaClient [-reffile <file>] [-help]");
-		assertFailure();
-	    }
-	}
+        stack stackVar = null;   // pointer the grid object that will be used.
 
-	stack stackVar = null;   // pointer the grid object that will be used.
+        try
+        {
+            current.begin();
 
-	try
-	{
-	    current.begin();
+            try
+            {
+                Services serv = new Services(myORB);
 
-	    try
-	    {
-		Services serv = new Services(myORB);
+                stackVar = stackHelper.narrow(myORB.orb().string_to_object(TestUtility.getService(refFile)));
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace(System.err);
+                fail();
+            }
 
-		stackVar = stackHelper.narrow(myORB.orb().string_to_object(getService(refFile)));
-	    }
-	    catch (Exception e)
-	    {
-		e.printStackTrace(System.err);
-		assertFailure();
-	    }
+            System.out.println("pushing 1 onto stack");
 
-	    System.out.println("pushing 1 onto stack");
+            stackVar.push(1);
 
-	    stackVar.push(1);
+            System.out.println("pushing 2 onto stack");
 
-	    System.out.println("pushing 2 onto stack");
+            stackVar.push(2);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace(System.err);
+            fail();
+        }
 
-	    stackVar.push(2);
-	}
-	catch (Exception e)
-	{
-	    e.printStackTrace(System.err);
-	    assertFailure();
-	}
+        try
+        {
+            current.commit(false);
 
-	try
-	{
-	    current.commit(false);
+            current.begin();
 
-	    current.begin();
+            IntHolder val = new IntHolder(-1);
 
-	    IntHolder val = new IntHolder(-1);
+            if (stackVar.pop(val) == 0)
+            {
+                System.out.println("popped top of stack "+val.value);
 
-	    if (stackVar.pop(val) == 0)
-	    {
-		System.out.println("popped top of stack "+val.value);
+                current.begin();
 
-		current.begin();
+                stackVar.push(3);
 
-		stackVar.push(3);
+                System.out.println("pushed 3 onto stack. Aborting nested action.");
 
-		System.out.println("pushed 3 onto stack. Aborting nested action.");
+                current.rollback();
 
-		current.rollback();
+                stackVar.pop(val);
 
-		stackVar.pop(val);
+                System.out.println("popped top of stack is "+val.value);
 
-		System.out.println("popped top of stack is "+val.value);
+                current.commit(false);
 
-		current.commit(false);
+                assertEquals(1, val.value);
 
-		if (val.value == 1)
-		{
-		    System.out.println("\nThis is correct.");
-		    assertSuccess();
-		}
-		else
-		{
-		    System.out.println("\nThis is incorrect.");
-		    assertFailure();
-		}
-	    }
-	    else
-	    {
-		assertFailure();
-		System.err.println("Error getting stack value.");
+            }
+            else
+            {
+                fail("Error getting stack value.");
 
-		current.rollback();
-	    }
-	}
-	catch (Exception e)
-	{
-	    e.printStackTrace(System.err);
-	    assertFailure();
-	}
+                current.rollback();
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace(System.err);
+            fail();
+        }
 
-	myOA.destroy();
-	myORB.shutdown();
+        myOA.destroy();
+        myORB.shutdown();
     }
-
 }
 

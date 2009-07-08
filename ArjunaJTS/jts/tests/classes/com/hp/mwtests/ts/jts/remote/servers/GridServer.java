@@ -31,100 +31,61 @@
 
 package com.hp.mwtests.ts.jts.remote.servers;
 
-import com.hp.mwtests.ts.jts.resources.*;
 import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
+import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.jts.extensions.*;
-
-import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 
-import org.omg.CosTransactions.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-
-public class GridServer extends Test
+public class GridServer
 {
-
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-	    assertFailure();
-	}
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	String gridReference = "/tmp/grid.ref";
-	String serverName = "Grid";
 
-	if (System.getProperty("os.name").startsWith("Windows"))
-	{
-	    gridReference = "C:\\temp\\grid.ref";
-	}
+        String gridReference = "/tmp/grid.ref";
+        String serverName = "Grid";
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: GridServer [-reffile <file>] [-help]");
-		assertFailure();
-	    }
-	    if (args[i].compareTo("-reffile") == 0)
-		gridReference = args[i+1];
-	}
+        if (System.getProperty("os.name").startsWith("Windows"))
+        {
+            gridReference = "C:\\temp\\grid.ref";
+        }
 
-	grid_i myGrid = new grid_i(100, 100);
-	Services serv = new Services(myORB);
+        grid_i myGrid = new grid_i(100, 100);
+        Services serv = new Services(myORB);
 
-	try
-	{
-	    registerService(gridReference, myORB.orb().object_to_string(myGrid.getReference()));
+        try
+        {
+            TestUtility.registerService(gridReference, myORB.orb().object_to_string(myGrid.getReference()));
 
-	    System.out.println("**Grid server started**");
-	    assertReady();
-	    assertSuccess();
+            System.out.println("**Grid server started**");
+            //assertReady();
 
-	    myOA.run();
-	}
-	catch (Exception e)
-	{
-	    System.err.println("**GridServer caught exception: "+e);
-	    assertFailure();
-	}
+            myOA.run();
+        }
+        catch (Exception e)
+        {
+            fail("**GridServer caught exception: "+e);
+        }
 
-	myOA.shutdownObject(myGrid);
+        myOA.shutdownObject(myGrid);
 
-	System.out.println("**Grid server exiting**");
-    }
-
-    public static void main(String[] args)
-    {
-	GridServer gs = new GridServer();
-	gs.initialise(null, null, args, new LocalHarness());
-	gs.runTest();
+        System.out.println("**Grid server exiting**");
     }
 }

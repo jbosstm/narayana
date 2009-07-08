@@ -31,166 +31,115 @@
 
 package com.hp.mwtests.ts.jts.remote.implicit;
 
-import com.hp.mwtests.ts.jts.resources.*;
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
-
 import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.extensions.*;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
+import com.hp.mwtests.ts.jts.TestModule.TranGrid;
+import com.hp.mwtests.ts.jts.TestModule.TranGridHelper;
+import com.hp.mwtests.ts.jts.resources.TestUtility;
 
-import org.omg.CosTransactions.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import org.omg.CORBA.IntHolder;
-
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-
-public class ImplicitClient extends Test
+public class ImplicitClient
 {
-
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-	    assertFailure();
-	}
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	String refFile = "/tmp/trangrid.ref";
-	String serverName = "ImplGrid";
 
-	if (System.getProperty("os.name").startsWith("Windows"))
-	{
-	    refFile = "C:\\temp\\trangrid.ref";
-	}
+        String refFile = "/tmp/trangrid.ref";
+        String serverName = "ImplGrid";
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: ImplicitClient [-reffile <file>] [-help]");
-		assertFailure();
-	    }
-	    if (args[i].compareTo("-reffile") == 0)
-		refFile = args[i+1];
-	    if (args[i].compareTo("-marker") == 0)
-	    {
+        if (System.getProperty("os.name").startsWith("Windows"))
+        {
+            refFile = "C:\\temp\\trangrid.ref";
+        }
 
-		System.err.println("Error - server name not supported.");
-		assertFailure();
+        CurrentImple current = OTSImpleManager.current();
 
-	    }
-	}
+        TranGrid TranGridVar = null;   // pointer the grid object that will be used.
+        short h = 0, w = 0, v = 0;
 
-	CurrentImple current = OTSImpleManager.current();
+        try
+        {
+            current.begin();
 
-	TranGrid TranGridVar = null;   // pointer the grid object that will be used.
-	short h = 0, w = 0, v = 0;
+            Services serv = new Services(myORB);
+            TranGridVar = TranGridHelper.narrow(myORB.orb().string_to_object(TestUtility.getService(refFile)));
 
-	try
-	{
-	    current.begin();
+            try
+            {
+                h = TranGridVar.height();
+                w = TranGridVar.width();
+            }
+            catch (Exception e)
+            {
+                fail("Invocation failed: "+e);
 
-	    Services serv = new Services(myORB);
-	    TranGridVar = TranGridHelper.narrow(myORB.orb().string_to_object(getService(refFile)));
+                e.printStackTrace();
+            }
 
-	    try
-	    {
-		h = TranGridVar.height();
-		w = TranGridVar.width();
-	    }
-	    catch (Exception e)
-	    {
-		System.err.println("Invocation failed: "+e);
+            System.out.println("height is "+h);
+            System.out.println("width  is "+w);
 
-		e.printStackTrace();
+            try
+            {
+                System.out.println("calling set");
 
-		assertFailure();
-	    }
+                TranGridVar.set((short) 2, (short) 4, (short) 123);
 
-	    System.out.println("height is "+h);
-	    System.out.println("width  is "+w);
+                System.out.println("calling get");
 
-	    try
-	    {
-		System.out.println("calling set");
+                v = TranGridVar.get((short) 2, (short) 4);
+            }
+            catch (Exception sysEx)
+            {
+                fail("Grid set/get failed: "+sysEx);
+                sysEx.printStackTrace(System.err);
+            }
 
-		TranGridVar.set((short) 2, (short) 4, (short) 123);
+            // no problem setting and getting the element:
 
-		System.out.println("calling get");
+            System.out.println("trangrid[2,4] is "+v);
 
-		v = TranGridVar.get((short) 2, (short) 4);
-	    }
-	    catch (Exception sysEx)
-	    {
-		System.err.println("Grid set/get failed: "+sysEx);
-		sysEx.printStackTrace(System.err);
-		assertFailure();
-	    }
+            // sanity check: make sure we got the value 123 back:
 
-	    // no problem setting and getting the element:
+            if (v != 123)
+            {
+                // oops - we didn't:
 
-	    System.out.println("trangrid[2,4] is "+v);
+                current.rollback();
+                fail("Result not as expected");
+            }
+            else
+            {
+                current.commit(true);
+            }
+        }
+        catch (Exception e)
+        {
+            fail("Caught exception: "+e);
+            e.printStackTrace(System.err);
+        }
 
-	    // sanity check: make sure we got the value 123 back:
-
-	    if (v != 123)
-	    {
-		// oops - we didn't:
-
-		current.rollback();
-	        System.out.println("Result not as expected");
-		assertFailure();
-	    }
-	    else
-	    {
-		current.commit(true);
-		assertSuccess();
-	    }
-	}
-	catch (Exception e)
-	{
-	    System.out.println("Caught exception: "+e);
-	    e.printStackTrace(System.err);
-	    assertFailure();
-	}
-
-	myOA.destroy();
-	myORB.shutdown();
+        myOA.destroy();
+        myORB.shutdown();
 
         System.out.println("Test completed.");
     }
-
-    public static void main(String[] args)
-    {
-	ImplicitClient ic = new ImplicitClient();
-	ic.initialise(null, null, args, new LocalHarness());
-	ic.runTest();
-    }
-
 }
 

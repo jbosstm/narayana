@@ -36,17 +36,18 @@ import com.arjuna.ats.jts.utils.Utility;
 
 import org.omg.CosTransactions.*;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 public class UtilityTest
 {
-    public static void main (String[] args)
+    @Test
+    public void test()
     {
         Uid txId = new Uid();
         otid_t tid = Utility.uidToOtid(txId);
         Uid u = Utility.otidToUid(tid);
-        
-        if (txId.equals(u))
-            System.err.println("Passed.");
-        else
-            System.err.println("Failed.");
+
+        assertTrue(txId.equals(u));
     }
 }

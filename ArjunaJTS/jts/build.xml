@@ -22,8 +22,6 @@
 
     <property name="modulename" value="jts"/>
 
-    <property name="global.ext.test.libs" value="junit.jar,TestingFramework.jar"/>
-
     <import file="../sharedbuild.xml"/>
 
     <target name="init" depends="sharedbuild.init">
@@ -94,6 +92,32 @@
         <propertyfile file="${build.dir}/classes/${property.file}">
 			<entry key="JTS_VERSION" value="unknown"/>
         </propertyfile>
+    </target>
+
+
+    <target name="run.tests">
+        <run.tests.macro>
+            <additional.classpath>
+                <path refid="jacorb.classpath"/>
+            </additional.classpath>
+            <tests>
+                <fileset dir="tests/classes">
+                    <exclude name="**/exceptions/**"/>
+                    <exclude name="**/orbspecific/resources/**"/>
+                    <exclude name="**/resources/**"/>
+                    <exclude name="**/utils/ResourceTrace.java"/>
+                    <exclude name="**/utils/Util.java"/>
+
+
+                    <exclude name="**/HeuristicTest.java"/>
+                    <exclude name="**/TransactionTest1.java"/>
+                    <exclude name="**/TransactionTest2.java"/>
+                    <exclude name="**/CheckedTransactions.java"/>
+                    <exclude name="**/GridTest.java"/>
+                    <exclude name="**/remote/**"/>
+                </fileset>
+            </tests>
+        </run.tests.macro>
     </target>
 
 </project>

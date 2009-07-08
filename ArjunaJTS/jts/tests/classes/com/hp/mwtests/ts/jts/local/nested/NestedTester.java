@@ -31,166 +31,137 @@
 
 package com.hp.mwtests.ts.jts.local.nested;
 
-import com.hp.mwtests.ts.jts.resources.*;
 import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
 import com.hp.mwtests.ts.jts.utils.ResourceTrace;
 
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.jts.extensions.*;
-
 import com.arjuna.ats.jts.OTSManager;
 
 import com.arjuna.ats.internal.jts.ORBManager;
-import org.jboss.dtf.testframework.unittest.Test;
 
-import org.omg.CosTransactions.*;
-
-import org.omg.CosTransactions.Unavailable;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CosTransactions.SubtransactionsUnavailable;
-import org.omg.CosTransactions.NotPrepared;
-import org.omg.CosTransactions.HeuristicRollback;
-import org.omg.CosTransactions.HeuristicCommit;
-import org.omg.CosTransactions.HeuristicMixed;
-import org.omg.CosTransactions.HeuristicHazard;
 
-public class NestedTester extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class NestedTester
 {
-
-    public void run(String[] args)
+    @Test
+    public void test()
     {
-	boolean registerSubtran = false;
-	boolean doAbort = false;
+        boolean registerSubtran = false;
+        boolean doAbort = false;
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: NestedTester [-subtran] [-abort] [-help]");
-		assertFailure();
-	    }
-	    if (args[i].compareTo("-subtran") == 0)
-		registerSubtran = true;
-	    if (args[i].compareTo("-abort") == 0)
-		doAbort = true;
-	}
+        DemoResource r = null;
+        DemoSubTranResource sr = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	DemoResource r = null;
-	DemoSubTranResource sr = null;
-	ORB myORB = null;
-	RootOA myOA = null;
+        try
+        {
+            myORB = ORB.getInstance("test");
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
+            myOA = OA.getRootOA(myORB);
 
-	    myOA = OA.getRootOA(myORB);
+            myORB.initORB(new String[] {}, null);
+            myOA.initOA();
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+            ORBManager.setORB(myORB);
+            ORBManager.setPOA(myOA);
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
+            org.omg.CosTransactions.Current current = OTSManager.get_current();
 
-	    org.omg.CosTransactions.Current current = OTSManager.get_current();
+            r = new DemoResource();
+            sr = new DemoSubTranResource();
 
-	    r = new DemoResource();
-	    sr = new DemoSubTranResource();
+            current.begin();
+            current.begin();
+            current.begin();
 
-	    current.begin();
-	    current.begin();
-	    current.begin();
+            sr.registerResource(registerSubtran);
+            r.registerResource();
 
-	    sr.registerResource(registerSubtran);
-	    r.registerResource();
+            System.out.println("committing first nested transaction");
+            current.commit(true);
 
-	    System.out.println("committing first nested transaction");
-	    current.commit(true);
+            System.out.println("committing second nested transaction");
+            current.commit(true);
 
-	    System.out.println("committing second nested transaction");
-	    current.commit(true);
+            if (!doAbort)
+            {
+                System.out.println("committing top-level transaction");
+                current.commit(true);
+            }
+            else
+            {
+                System.out.println("aborting top-level transaction");
+                current.rollback();
+            }
 
-	    if (!doAbort)
-	    {
-		System.out.println("committing top-level transaction");
-		current.commit(true);
-	    }
-	    else
-	    {
-		System.out.println("aborting top-level transaction");
-		current.rollback();
-	    }
-
-	    System.out.println("Test completed successfully.");
+            System.out.println("Test completed successfully.");
 
             if ( (!doAbort) && (!registerSubtran) &&
-	         (sr.getNumberOfSubtransactionsRolledBack() == 0) &&
-	         (sr.getNumberOfSubtransactionsCommitted() == 1) &&
-	         (sr.getResourceTrace().getTrace() == ResourceTrace.ResourceTracePrepareCommit) &&
-	         (r.getResourceTrace().getTrace() == ResourceTrace.ResourceTracePrepareCommit) )
-	    {
-	    	assertSuccess();
-	    }
-	    else
-	    {
-	    	if ( (doAbort) && (!registerSubtran) &&
-	             (sr.getNumberOfSubtransactionsRolledBack()==0) &&
-	             (sr.getNumberOfSubtransactionsCommitted()==1) &&
-	             (sr.getResourceTrace().getTrace() == ResourceTrace.ResourceTraceRollback) &&
-	             (r.getResourceTrace().getTrace() == ResourceTrace.ResourceTraceRollback) )
-		{
-		    assertSuccess();
-		}
-		else
-		{
-	    	    if ( (!doAbort) && (registerSubtran) &&
-	                 (sr.getNumberOfSubtransactionsRolledBack()==0) &&
-	                 (sr.getNumberOfSubtransactionsCommitted()==1) &&
-	                 (sr.getResourceTrace().getTrace() == ResourceTrace.ResourceTraceNone) &&
-	                 (r.getResourceTrace().getTrace() == ResourceTrace.ResourceTraceCommitOnePhase) )
-	            {
-	            	assertSuccess();
-	            }
-	            else
-	            {
-			if ( (doAbort) && (registerSubtran) &&
-	                     (sr.getNumberOfSubtransactionsRolledBack()==0) &&
-	                     (sr.getNumberOfSubtransactionsCommitted()==1) &&
-	                     (sr.getResourceTrace().getTrace() == ResourceTrace.ResourceTraceNone) &&
-	                     (r.getResourceTrace().getTrace() == ResourceTrace.ResourceTraceRollback) )
-			{
-			    assertSuccess();
-			}
-			else
-			    assertFailure();
-		    }
-		}
+                    (sr.getNumberOfSubtransactionsRolledBack() == 0) &&
+                    (sr.getNumberOfSubtransactionsCommitted() == 1) &&
+                    (sr.getResourceTrace().getTrace() == ResourceTrace.ResourceTracePrepareCommit) &&
+                    (r.getResourceTrace().getTrace() == ResourceTrace.ResourceTracePrepareCommit) )
+            {
+                //assertSuccess();
             }
-	}
-	catch (UserException e)
-	{
-	    System.err.println("Caught UserException: "+e);
-	    e.printStackTrace(System.err);
-            assertFailure();
-	}
-	catch (SystemException e)
-	{
-	    System.err.println("Caught SystemException: "+e);
-	    e.printStackTrace(System.err);
-            assertFailure();
-	}
+            else
+            {
+                if ( (doAbort) && (!registerSubtran) &&
+                        (sr.getNumberOfSubtransactionsRolledBack()==0) &&
+                        (sr.getNumberOfSubtransactionsCommitted()==1) &&
+                        (sr.getResourceTrace().getTrace() == ResourceTrace.ResourceTraceRollback) &&
+                        (r.getResourceTrace().getTrace() == ResourceTrace.ResourceTraceRollback) )
+                {
+                    //assertSuccess();
+                }
+                else
+                {
+                    if ( (!doAbort) && (registerSubtran) &&
+                            (sr.getNumberOfSubtransactionsRolledBack()==0) &&
+                            (sr.getNumberOfSubtransactionsCommitted()==1) &&
+                            (sr.getResourceTrace().getTrace() == ResourceTrace.ResourceTraceNone) &&
+                            (r.getResourceTrace().getTrace() == ResourceTrace.ResourceTraceCommitOnePhase) )
+                    {
+                        //assertSuccess();
+                    }
+                    else
+                    {
+                        if ( (doAbort) && (registerSubtran) &&
+                                (sr.getNumberOfSubtransactionsRolledBack()==0) &&
+                                (sr.getNumberOfSubtransactionsCommitted()==1) &&
+                                (sr.getResourceTrace().getTrace() == ResourceTrace.ResourceTraceNone) &&
+                                (r.getResourceTrace().getTrace() == ResourceTrace.ResourceTraceRollback) )
+                        {
+                            //assertSuccess();
+                        }
+                        else
+                            fail();
+                    }
+                }
+            }
+        }
+        catch (UserException e)
+        {
+            fail("Caught UserException: "+e);
+            e.printStackTrace(System.err);
+        }
+        catch (SystemException e)
+        {
+            fail("Caught SystemException: "+e);
+            e.printStackTrace(System.err);
+        }
 
-	myOA.shutdownObject(r);
-	myOA.shutdownObject(sr);
+        myOA.shutdownObject(r);
+        myOA.shutdownObject(sr);
 
-	myOA.destroy();
-	myORB.shutdown();
+        myOA.destroy();
+        myORB.shutdown();
     }
-
 }
 

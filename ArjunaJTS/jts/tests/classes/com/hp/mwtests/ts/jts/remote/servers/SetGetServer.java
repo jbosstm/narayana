@@ -31,101 +31,61 @@
 
 package com.hp.mwtests.ts.jts.remote.servers;
 
-import com.hp.mwtests.ts.jts.resources.*;
 import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
+import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.jts.extensions.*;
-
-import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
 
-import org.omg.CosTransactions.*;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
-
-public class SetGetServer extends Test
+public class SetGetServer
 {
-
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Initialisation failed: "+e);
-	    assertFailure();
-	}
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	String serverName = "SetGet";
-	String refFile = "/tmp/object.ref";
 
-	if (System.getProperty("os.name").startsWith("Windows"))
-	{
-	    refFile = "C:\\temp\\object.ref";
-	}
+        String serverName = "SetGet";
+        String refFile = "/tmp/object.ref";
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-reffile") == 0)
-		refFile = args[i+1];
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		System.out.println("Usage: SetGetServer [-server <name>] [-reffile <file>] [-help]");
-		assertFailure();
-	    }
-	}
+        if (System.getProperty("os.name").startsWith("Windows"))
+        {
+            refFile = "C:\\temp\\object.ref";
+        }
 
-	setget_i impl = new setget_i();
-	Services serv = new Services(myORB);
+        setget_i impl = new setget_i();
+        Services serv = new Services(myORB);
 
-	try
-	{
-	    registerService(refFile, myORB.orb().object_to_string(impl.getReference()));
+        try
+        {
+            TestUtility.registerService(refFile, myORB.orb().object_to_string(impl.getReference()));
 
-	    System.out.println("**SetGet server started**");
+            System.out.println("**SetGet server started**");
 
-	    assertReady();
-	    assertSuccess();
+            //assertReady();
+            myOA.run();
+        }
+        catch (Exception e)
+        {
+            fail("SetGetServer caught exception: "+e);
+        }
 
-	    myOA.run();
-	}
-	catch (Exception e)
-	{
-	    System.err.println("SetGetServer caught exception: "+e);
-	    assertFailure();
-	}
+        myOA.shutdownObject(impl);
 
-	myOA.shutdownObject(impl);
-
-	System.out.println("**Object server exiting**");
-    }
-
-    public static void main(String[] args)
-    {
-	SetGetServer sgs = new SetGetServer();
-	sgs.initialise(null, null, args, new LocalHarness());
-	sgs.runTest();
+        System.out.println("**Object server exiting**");
     }
 }

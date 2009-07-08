@@ -31,116 +31,81 @@
 
 package com.hp.mwtests.ts.jts.local.async;
 
-import com.hp.mwtests.ts.jts.resources.*;
 import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
 
 import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.jts.OTSManager;
 
 import com.arjuna.ats.internal.jts.ORBManager;
-import org.jboss.dtf.testframework.unittest.Test;
 
 import org.omg.CosTransactions.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CosTransactions.SubtransactionsUnavailable;
-import org.omg.CosTransactions.NotPrepared;
-import org.omg.CosTransactions.HeuristicRollback;
-import org.omg.CosTransactions.HeuristicCommit;
-import org.omg.CosTransactions.HeuristicMixed;
-import org.omg.CosTransactions.HeuristicHazard;
-import org.omg.CORBA.INVALID_TRANSACTION;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class AsyncTest extends Test
+public class AsyncTest
 {
-
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-	boolean errorp = false;
-	boolean errorc = false;
+        boolean errorp = false;
+        boolean errorc = false;
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		logInformation("Usage: AsyncTest [-errorp] [-errorc] [-help]");
-		assertFailure();
-	    }
-	    if (args[i].compareTo("-errorp") == 0)
-		errorp = true;
-	    if (args[i].compareTo("-errorc") == 0)
-		errorc = true;
-	}
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	ORB myORB = null;
-	RootOA myOA = null;
+        myORB = ORB.getInstance("test");
+        myOA = OA.getRootOA(myORB);
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        myORB.initORB(new String[] {}, null);
+        myOA.initOA();
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+        ORBManager.setORB(myORB);
+        ORBManager.setPOA(myOA);
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
+        try {
 
-	    Current current = OTSManager.get_current();
+            Current current = OTSManager.get_current();
 
-	    DemoResource.printThread = true;
+            DemoResource.printThread = true;
 
-	    current.begin();
+            current.begin();
 
-	    for (int j = 0; j < 100; j++)
-	    {
-		if ((j == 10) && (errorp || errorc))
-		{
-		    boolean heuristicPrepare = errorp;
-		    heuristic h = new heuristic(heuristicPrepare);
+            for (int j = 0; j < 100; j++)
+            {
+                if ((j == 10) && (errorp || errorc))
+                {
+                    boolean heuristicPrepare = errorp;
+                    heuristic h = new heuristic(heuristicPrepare);
 
-		    current.get_control().get_coordinator().register_resource(h.getReference());
+                    current.get_control().get_coordinator().register_resource(h.getReference());
 
-		    h = null;
-		}
+                    h = null;
+                }
 
-		DemoResource r = new DemoResource();
+                DemoResource r = new DemoResource();
 
-		r.registerResource();
+                r.registerResource();
 
-		r = null;
-	    }
+                r = null;
+            }
 
-	    logInformation("committing top-level transaction");
-	    current.commit(false);
+            System.out.println("committing top-level transaction");
+            current.commit(false);
 
-	    logInformation("Test completed.");
-            assertSuccess();
-	}
+            System.out.println("Test completed.");
+        }
         catch (org.omg.CORBA.TRANSACTION_ROLLEDBACK e)
-	{
-	    logInformation("Caught exception: "+e);
-	    if ((!errorp)&&(!errorc))
-	    {
-	    	assertFailure();
-	    }
-	    else
-	    {
-		assertSuccess();
-	    }
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Caught exception: "+e);
-            e.printStackTrace(System.err);
-            assertFailure();
-	}
+        {
+            System.out.println("Caught exception: "+e);
 
-	myOA.destroy();
-	myORB.shutdown();
+            assertTrue(errorp || errorc);
+
+        }
+
+        myOA.destroy();
+        myORB.shutdown();
+        
     }
-
 }
-

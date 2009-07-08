@@ -31,25 +31,17 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
-import com.arjuna.ats.jts.OTSManager;
-
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-
 import com.hp.mwtests.ts.jts.utils.Util;
-import com.hp.mwtests.ts.jts.TestModule.*;
-
-import java.util.Random;
-import java.lang.InterruptedException;
 
 public class DHThreadObject2 extends Thread
 {
 
-public DHThreadObject2 (char c)
+    public DHThreadObject2 (char c)
     {
         chr = c;
     }
 
-public void run ()
+    public void run ()
     {
         for (int i = 0; i < 100; i++)
         {
@@ -57,8 +49,8 @@ public void run ()
             Util.highProbYield();
         }
     }
-    
-private char chr;
-    
-};
+
+    private char chr;
+
+}
 

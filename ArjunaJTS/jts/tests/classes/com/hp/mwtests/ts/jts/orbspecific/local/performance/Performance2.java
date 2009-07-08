@@ -31,118 +31,90 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.local.performance;
 
-import com.hp.mwtests.ts.jts.resources.*;
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
-
 import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.extensions.*;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 
 import org.omg.CosTransactions.*;
 
 import java.util.*;
 
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.INVALID_TRANSACTION;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class Performance2
 {
-    
-    public static void main (String[] args)
+    @Test
+    public void test()
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
+        try
+        {
+            myORB = ORB.getInstance("test");
 
-	    myOA = OA.getRootOA(myORB);
-	    
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+            myOA = OA.getRootOA(myORB);
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
+            myORB.initORB(new String[] {}, null);
+            myOA.initOA();
 
-	    double iters = 1000.0;
-	    boolean doCommit = true;
+            ORBManager.setORB(myORB);
+            ORBManager.setPOA(myOA);
 
-	    for (int i = 0; i < args.length; i++)
-	    {
-		if (args[i].equals("-rollback"))
-		    doCommit = false;
-		else
-		{
-		    if (args[i].equals("-help"))
-		    {
-			System.out.println("Usage: Performance1 [-rollback] [-help]");
-			System.exit(0);
-		    }
-		    else
-		    {
-			System.err.println("Unknown option: "+args[i]);
-			System.exit(0);
-		    }
-		}
-	    }
-	    
-	    TransactionFactoryImple factory = OTSImpleManager.factory();
-	    Control control = null;
-	    
-	    // Run ten interations first.
+            double iters = 1000.0;
+            boolean doCommit = true;
 
-	    for (int i = 0; i < 10; i++)
-	    {
-		control = factory.create(0);
+            TransactionFactoryImple factory = OTSImpleManager.factory();
+            Control control = null;
 
-		if (doCommit)
-		    control.get_terminator().commit(true);
-		else
-		    control.get_terminator().rollback();
-	    }
+            // Run ten interations first.
 
-	    // Record the start time.
+            for (int i = 0; i < 10; i++)
+            {
+                control = factory.create(0);
 
-	    Date startTime = new Date();
+                if (doCommit)
+                    control.get_terminator().commit(true);
+                else
+                    control.get_terminator().rollback();
+            }
 
-	    // Run 1000 interations.
-	    
-	    for (int i = 0; i < iters; i++)
-	    {
-		control = factory.create(0);
+            // Record the start time.
 
-		if (doCommit)
-		    control.get_terminator().commit(true);
-		else
-		    control.get_terminator().rollback();
-	    }
+            Date startTime = new Date();
 
-	    // Record the end time.
+            // Run 1000 interations.
 
-	    Date endTime = new Date();
-	    double txnTime = (float)((endTime.getTime()-startTime.getTime())/iters);
-	    double txnPSec = 1000.0/txnTime;
+            for (int i = 0; i < iters; i++)
+            {
+                control = factory.create(0);
 
-	    System.out.println("Average time for empty transaction = "+txnTime);
-	    System.out.println("Transactions per second = "+txnPSec);
-	}
-	catch (Exception e)
-	{
-	    e.printStackTrace();
-	}
+                if (doCommit)
+                    control.get_terminator().commit(true);
+                else
+                    control.get_terminator().rollback();
+            }
 
-	myOA.destroy();
-	myORB.shutdown();
+            // Record the end time.
+
+            Date endTime = new Date();
+            double txnTime = (float)((endTime.getTime()-startTime.getTime())/iters);
+            double txnPSec = 1000.0/txnTime;
+
+            System.out.println("Average time for empty transaction = "+txnTime);
+            System.out.println("Transactions per second = "+txnPSec);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            fail();
+        }
+
+        myOA.destroy();
+        myORB.shutdown();
     }
-
 }
 

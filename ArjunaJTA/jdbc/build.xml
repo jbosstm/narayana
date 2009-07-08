@@ -26,7 +26,6 @@
     <property name="excluded.test.classes" value="**/Oracle*.java"/>
 
     <property name="global.ext.libs" value="jta-1_1-classes.zip"/>
-    <property name="global.ext.test.libs" value="junit-4.6.jar"/>
 
     <import file="../../sharedbuild.xml"/>
 

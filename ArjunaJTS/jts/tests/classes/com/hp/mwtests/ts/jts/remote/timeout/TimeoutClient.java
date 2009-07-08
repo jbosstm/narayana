@@ -31,172 +31,141 @@
 
 package com.hp.mwtests.ts.jts.remote.timeout;
 
-import com.hp.mwtests.ts.jts.resources.*;
-import com.hp.mwtests.ts.jts.orbspecific.resources.*;
-import com.hp.mwtests.ts.jts.TestModule.*;
-
 import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.jts.extensions.*;
 
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import org.jboss.dtf.testframework.unittest.Test;
-import org.jboss.dtf.testframework.unittest.LocalHarness;
+import com.hp.mwtests.ts.jts.TestModule.SetGet;
+import com.hp.mwtests.ts.jts.TestModule.SetGetHelper;
+import com.hp.mwtests.ts.jts.resources.TestUtility;
 
 import org.omg.CosTransactions.*;
-
-import org.omg.CORBA.IntHolder;
-
-import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.UserException;
 import org.omg.CORBA.INVALID_TRANSACTION;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 
-public class TimeoutClient extends Test
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class TimeoutClient
 {
-
-    public void run(String[] args)
+    @Test
+    public void test() throws Exception
     {
-	ORB myORB = null;
-	RootOA myOA = null;
+        ORB myORB = null;
+        RootOA myOA = null;
 
-	try
-	{
-	    myORB = ORB.getInstance("test");
-	    myOA = OA.getRootOA(myORB);
+        try
+        {
+            myORB = ORB.getInstance("test");
+            myOA = OA.getRootOA(myORB);
 
-	    myORB.initORB(args, null);
-	    myOA.initOA();
+            myORB.initORB(new String[] {}, null);
+            myOA.initOA();
 
-	    ORBManager.setORB(myORB);
-	    ORBManager.setPOA(myOA);
+            ORBManager.setORB(myORB);
+            ORBManager.setPOA(myOA);
 
-	    CurrentImple current = OTSImpleManager.current();
-	    Control theControl = null;
-	    String objectReference = "/tmp/object.ref";
-	    String serverName = "SetGet";
+            CurrentImple current = OTSImpleManager.current();
+            Control theControl = null;
+            String objectReference = "/tmp/object.ref";
+            String serverName = "SetGet";
 
-	    if (System.getProperty("os.name").startsWith("Windows"))
-		objectReference = "C:\\temp\\object.ref";
+            if (System.getProperty("os.name").startsWith("Windows"))
+                objectReference = "C:\\temp\\object.ref";
 
-	    for (int i = 0; i < args.length; i++)
-	    {
-		if (args[i].compareTo("-reffile") == 0)
-		    objectReference = args[i+1];
-		if (args[i].compareTo("-help") == 0)
-		{
-		    System.out.println("Usage: TimeoutClient [-reffile <file>] [-help]");
-		    assertFailure();
-		}
-	    }
+            SetGet SetGetVar = null;
 
-	    SetGet SetGetVar = null;
+            System.out.println("Setting transaction timeout to 2 seconds.");
 
-	    System.out.println("Setting transaction timeout to 2 seconds.");
+            current.set_timeout(2);
 
-	    current.set_timeout(2);
+            current.begin();
+            current.begin();
 
-	    current.begin();
-	    current.begin();
+            try
+            {
+                Services serv = new Services(myORB);
 
-	    try
-	    {
-		Services serv = new Services(myORB);
+                SetGetVar = SetGetHelper.narrow(myORB.orb().string_to_object(TestUtility.getService(objectReference)));
+            }
+            catch (Exception e)
+            {
+                fail("Bind to object failed: "+e);
+                e.printStackTrace(System.err);
+            }
 
-		SetGetVar = SetGetHelper.narrow(myORB.orb().string_to_object(getService(objectReference)));
-	    }
-	    catch (Exception e)
-	    {
-		System.err.println("Bind to object failed: "+e);
-		e.printStackTrace(System.err);
-		assertFailure();
-	    }
+            try
+            {
+                theControl = current.get_control();
 
-	    try
-	    {
-		theControl = current.get_control();
+                SetGetVar.set((short) 2, theControl);
 
-		SetGetVar.set((short) 2, theControl);
+                theControl = null;
 
-		theControl = null;
+                System.out.println("Set value.");
+            }
+            catch (Exception e)
+            {
+                fail("Call to set or get failed: "+e);
+                e.printStackTrace(System.err);
+            }
 
-		System.out.println("Set value.");
-	    }
-	    catch (Exception e)
-	    {
-		System.err.println("Call to set or get failed: "+e);
-		e.printStackTrace(System.err);
-		assertFailure();
-	    }
+            try
+            {
+                System.out.println("Now sleeping for 5 seconds.");
 
-	    try
-	    {
-		System.out.println("Now sleeping for 5 seconds.");
+                Thread.sleep(5000);
+            }
+            catch (Exception e)
+            {
+            }
 
-		Thread.sleep(5000);
-	    }
-	    catch (Exception e)
-	    {
-	    }
+            System.out.println("\ncommitting nested action.");
 
-	    System.out.println("\ncommitting nested action.");
+            try
+            {
+                current.commit(true);
+                fail();
+            }
+            catch (TRANSACTION_ROLLEDBACK  e1)
+            {
+                System.out.println("Caught TransactionRolledBack");
+            }
+            catch (INVALID_TRANSACTION  e1)	/* For JacORB */
+            {
+                System.out.println("Caught InvalidTransaction");
+            }
 
-	    try
-	    {
-		current.commit(true);
-		assertFailure();
-	    }
-	    catch (TRANSACTION_ROLLEDBACK  e1)
-	    {
-		System.out.println("Caught TransactionRolledBack");
-	    }
-	    catch (INVALID_TRANSACTION  e1)	/* For JacORB */
-	    {
-		System.out.println("Caught InvalidTransaction");
-	    }
+            System.out.println("\ncommitting top-level action");
 
-	    System.out.println("\ncommitting top-level action");
+            try
+            {
+                current.commit(true);
+                fail();
+            }
+            catch (TRANSACTION_ROLLEDBACK  e2)
+            {
+                System.out.println("Caught TransactionRolledBack");
+            }
+            catch (INVALID_TRANSACTION  e3)
+            {
+                System.out.println("Caught InvalidTransaction");
+            }
+            catch (Exception e)
+            {
+                fail("Caught other exception: "+e);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace(System.err);
+            fail();
+        }
 
-	    try
-	    {
-		current.commit(true);
-		assertFailure();
-	    }
-	    catch (TRANSACTION_ROLLEDBACK  e2)
-	    {
-		System.out.println("Caught TransactionRolledBack");
-	    }
-	    catch (INVALID_TRANSACTION  e3)
-	    {
-		System.out.println("Caught InvalidTransaction");
-	    }
-	    catch (Exception e)
-	    {
-		System.out.println("Caught other exception: "+e);
-		assertFailure();
-	    }
-	}
-	catch (Exception e)
-	{
-	    e.printStackTrace(System.err);
-	    assertFailure();
-	}
+        System.out.println("\nTest completed successfully.");
 
-	System.out.println("\nTest completed successfully.");
-
-	myOA.destroy();
-	myORB.shutdown();
-	assertSuccess();
-    }
-
-    public static void main(String[] args)
-    {
-	TimeoutClient tc = new TimeoutClient();
-	tc.initialise(null, null, args, new LocalHarness());
-	tc.runTest();
+        myOA.destroy();
+        myORB.shutdown();
     }
 }

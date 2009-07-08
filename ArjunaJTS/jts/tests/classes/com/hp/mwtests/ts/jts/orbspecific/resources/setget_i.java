@@ -31,26 +31,21 @@
 
 package com.hp.mwtests.ts.jts.orbspecific.resources;
 
-import com.hp.mwtests.ts.jts.TestModule.*;
-import com.hp.mwtests.ts.jts.utils.Util;
-
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
 
 import com.arjuna.ats.jts.ExplicitInterposition;
-import com.arjuna.ats.jts.extensions.*;
-
-import com.arjuna.orbportability.*;
+import com.arjuna.ArjunaOTS.InterpositionFailed;
 
 import org.omg.CosTransactions.*;
 
-import com.arjuna.ArjunaOTS.*;
-
-import org.omg.CosTransactions.Unavailable;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.UNKNOWN;
+
+import com.hp.mwtests.ts.jts.TestModule.SetGetHelper;
+import com.hp.mwtests.ts.jts.TestModule.SetGet;
+
 
 public class setget_i extends com.hp.mwtests.ts.jts.TestModule.SetGetPOA
 {
