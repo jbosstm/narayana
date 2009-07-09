@@ -1666,6 +1666,8 @@ public class BasicAction extends StateManager
 					+ get_uid());
 		}
 		
+		// check to see if transaction system is enabled
+		
 		if (!TxControl.isEnabled())
 		{
 		    /*
