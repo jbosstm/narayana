@@ -286,6 +286,8 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
  * @message com.arjuna.ats.arjuna.coordinator.cafactoryerror
  *          [com.arjuna.ats.arjuna.coordinator.cafactoryerror] - Cannot continue due to
  *          CheckedActionFactory resolution problem with
+ * @message com.arjuna.ats.arjuna.coordinator.notrunning
+ *          [com.arjuna.ats.arjuna.coordinator.notrunning] - Cannot begin new transaction as TM is disabled. Marking as rollback-only.
  */
 
 public class BasicAction extends StateManager
@@ -1664,51 +1666,67 @@ public class BasicAction extends StateManager
 					+ get_uid());
 		}
 		
-		if (actionStatus != ActionStatus.CREATED)
+		if (!TxControl.isEnabled())
 		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-			{
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_29", new Object[]
-				{ get_uid(), ActionStatus.stringForm(actionStatus) });
-			}
+		    /*
+		     * Prevent transaction from making forward progress.
+		     */
+		    
+		    actionStatus = ActionStatus.ABORT_ONLY;
+		    
+		    if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                    {
+                            tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.notrunning");
+                    }
 		}
 		else
-		{
-			actionInitialise(parentAct);
-			actionStatus = ActionStatus.RUNNING;
+		{   
+		    if (actionStatus != ActionStatus.CREATED)
+		    {
+		        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+		        {
+		            tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_29", new Object[]
+		                                                                                                       { get_uid(), ActionStatus.stringForm(actionStatus) });
+		        }
+		    }
+		    else
+		    {
+		        actionInitialise(parentAct);
+		        actionStatus = ActionStatus.RUNNING;
 
-			if ((actionType != ActionType.TOP_LEVEL)
-					&& ((parentAct == null) || (parentAct.status() > ActionStatus.RUNNING)))
-			{
-				actionStatus = ActionStatus.ABORT_ONLY;
+		        if ((actionType != ActionType.TOP_LEVEL)
+		                && ((parentAct == null) || (parentAct.status() > ActionStatus.RUNNING)))
+		        {
+		            actionStatus = ActionStatus.ABORT_ONLY;
 
-				if (parentAct == null)
-				{
-					if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					{
-						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_30", new Object[]
-						{ get_uid() });
-					}
-				}
-				else
-				{
-					if (tsLogger.arjLoggerI18N.debugAllowed())
-					{
-						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_31", new Object[]
-						{ get_uid(), parentAct.get_uid(), Integer.toString(parentAct.status()) });
-					}
-				}
-			}
+		            if (parentAct == null)
+		            {
+		                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+		                {
+		                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_30", new Object[]
+		                                                                                                               { get_uid() });
+		                }
+		            }
+		            else
+		            {
+		                if (tsLogger.arjLoggerI18N.debugAllowed())
+		                {
+		                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_31", new Object[]
+		                                                                                                               { get_uid(), parentAct.get_uid(), Integer.toString(parentAct.status()) });
+		                }
+		            }
+		        }
 
-			ActionManager.manager().put(this);
+		        ActionManager.manager().put(this);
 
-			if (TxControl.enableStatistics)
-			{
-				TxStats.incrementTransactions();
+		        if (TxControl.enableStatistics)
+		        {
+		            TxStats.incrementTransactions();
 
-				if (parentAct != null)
-					TxStats.incrementNestedTransactions();
-			}
+		            if (parentAct != null)
+		                TxStats.incrementNestedTransactions();
+		        }
+		    }
 		}
 
 		return actionStatus;
@@ -3732,7 +3750,7 @@ public class BasicAction extends StateManager
 				if (tsLogger.arjLoggerI18N.isWarnEnabled())
 				{
 					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_62", new Object[]
-					{ child.get_uid() });
+					{ ((child != null ? child.get_uid() : "null"))});
 				}
 			}
 		}
