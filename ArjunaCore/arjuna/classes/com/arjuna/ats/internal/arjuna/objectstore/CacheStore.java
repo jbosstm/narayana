@@ -671,7 +671,7 @@ class AsyncStore extends Thread  // keep priority same as app. threads
 	    * If not in cache then maybe we're working on it?
 	    */
 	   
-	   if ((_work != null) && (_work.objUid.equals(objUid)))
+	   if ((_work != null) && (objUid.equals(_work.objUid)))
 	       return _work.state;
        }
 
