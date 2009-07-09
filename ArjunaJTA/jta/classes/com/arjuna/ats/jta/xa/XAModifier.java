@@ -31,13 +31,8 @@
 
 package com.arjuna.ats.jta.xa;
 
-import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
-
 import java.sql.*;
 import javax.transaction.xa.Xid;
-import javax.sql.*;
-import javax.transaction.*;
-import javax.transaction.xa.*;
 
 import com.arjuna.ats.jta.exceptions.NotImplementedException;
 
@@ -49,6 +44,8 @@ import com.arjuna.ats.jta.exceptions.NotImplementedException;
  * @version $Id: XAModifier.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.2.4.
  */
+
+// TODO may be worth revisiting now as things may have changed in 10 years!
 
 public interface XAModifier
 {

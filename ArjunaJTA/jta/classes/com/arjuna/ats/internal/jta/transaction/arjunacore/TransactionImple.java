@@ -1203,6 +1203,16 @@ public class TransactionImple implements javax.transaction.Transaction,
 		return _theTransaction.get_uid();
 	}
 
+	public final Xid getTxId ()
+	{
+	    Xid res = baseXid();
+	    
+	    if (res == null)
+	        res = new XidImple(_theTransaction, false);
+	    
+	    return res;
+	}
+	
 	public String toString()
 	{
 		if (_theTransaction == null)

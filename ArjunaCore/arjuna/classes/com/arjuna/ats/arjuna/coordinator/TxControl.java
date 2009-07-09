@@ -346,7 +346,7 @@ public class TxControl
 	static int numberOfTransactions = 100;
 
     /**
-     * flag which is tue if TxControl is enabled and false if it is disabled
+     * flag which is true if transaction service is enabled and false if it is disabled
      */
 	static boolean enable = true;
 
