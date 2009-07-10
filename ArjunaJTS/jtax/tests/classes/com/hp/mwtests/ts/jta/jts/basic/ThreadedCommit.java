@@ -46,11 +46,11 @@ import static org.junit.Assert.*;
 
 class TWorker extends Thread
 {
-    public TWorker (javax.transaction.Transaction tx, boolean first)
+    public TWorker (javax.transaction.Transaction tx, TWorker driver)
     {
         _tx = tx;
         _success = true;
-        _first = first;
+        _driver = driver;
     }
 
     public void run ()
@@ -61,17 +61,14 @@ class TWorker extends Thread
         {
             tm.resume(_tx);
 
-            if (!_first)
+            if (_driver != null)
             {
-                while (tm.getStatus() == Status.STATUS_ACTIVE)
+                try
                 {
-                    try
-                    {
-                        Thread.sleep(1000);
-                    }
-                    catch (final Exception ex)
-                    {
-                    }
+                    _driver.join();
+                }
+                catch (final Exception ex)
+                {
                 }
             }
 
@@ -92,7 +89,7 @@ class TWorker extends Thread
 
     private Transaction _tx;
     private boolean _success;
-    private boolean _first;
+    private TWorker _driver;
 }
 
 public class ThreadedCommit
@@ -130,14 +127,13 @@ public class ThreadedCommit
 
             tm.begin();
 
-            javax.transaction.Transaction theTransaction = tm
-                    .getTransaction();
+            javax.transaction.Transaction theTransaction = tm.suspend();
 
-            TWorker worker1 = new TWorker(theTransaction, true);
-            TWorker worker2 = new TWorker(theTransaction, false);
+            TWorker worker1 = new TWorker(theTransaction, null);
+            TWorker worker2 = new TWorker(theTransaction, worker1);
 
-            worker1.start();
             worker2.start();
+            worker1.start();
 
             worker1.join();
             worker2.join();
