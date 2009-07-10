@@ -30,6 +30,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URL;
 
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003
@@ -75,17 +77,32 @@ public class PropertyManagerFactory
 
     public static PropertyManager getPropertyManagerForFile(String propertyFileName, boolean withCaching)
     {
-        // Convert the possibly relative path into a canonical path, using FileLocator.
-        // This is the point where the search path is applied - user.dir (pwd), user.home, java.home, classpath
         String filepath = null;
-        try {
+        try
+        {
+            // Convert the possibly relative path into a canonical path, using FileLocator.
+            // This is the point where the search path is applied - user.dir (pwd), user.home, java.home, classpath
             filepath = FileLocator.locateFile(propertyFileName);
             File propertyFile = new File(filepath);
             if(!propertyFile.exists() || !propertyFile.isFile()) {
                 throw new RuntimeException("invalid property file "+filepath);
             }
             filepath = propertyFile.getCanonicalPath();
-        } catch (IOException e) {
+        }
+        catch(FileNotFoundException fileNotFoundException)
+        {
+            // try falling back to a default file built into the .jar
+            // Note the default- prefix on the name, to avoid finding it from the .jar at the previous stage
+            // in cases where the .jar comes before the etc dir on the classpath.
+            URL url = PropertyManagerFactory.class.getResource("/default-"+propertyFileName);
+            if(url == null) {
+                throw new RuntimeException("missing property file "+propertyFileName);
+            } else {
+                filepath = url.toString();
+            }
+        }
+        catch (IOException e)
+        {
             throw new RuntimeException("invalid property file "+filepath, e);
         }
 

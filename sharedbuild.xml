@@ -261,8 +261,13 @@
         <delete file="${build.dir}/lib/${modulename}.jar"/>
         <touch file="${build.dir}/built_using_java_${java.specification.version}"/>
 
+        <copy tofile="${build.dir}/default-jbossts-properties.xml">
+            <fileset dir="" includes="jbossts-properties-*.xml"/>
+        </copy>
+
         <jar jarfile="${build.dir}/lib/${modulename}.jar">
             <fileset dir="${build.dir}" includes="built_using*"/>
+            <fileset dir="${build.dir}" includes="default-jbossts-properties.xml"/>
         </jar>
 
         <for list="${component-module-list}" param="module">

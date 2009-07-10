@@ -22,9 +22,9 @@
 -->
 <properties>
     <!--
-    This is the JBossTS configuration file for running ArjunaCore.
+    This is the JBossTS configuration file for running ArjunaJTA.
     It should be called jbossts-properties.xml.
-    You need a different version for JTA or JTS usage.
+    You need a different version for ArjunaCore or JTS usage.
 
     ***************************
 
@@ -139,8 +139,8 @@ be sure you know what you are doing and why! -->
     
     <entry key="com.arjuna.ats.jta.supportSubtransactions">NO</entry>
 
-	<entry key="com.arjuna.ats.jta.jtaTMImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple</entry>
+    <entry key="com.arjuna.ats.jta.jtaTMImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple</entry>
 
-	<entry key="com.arjuna.ats.jta.jtaUTImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple</entry>
+    <entry key="com.arjuna.ats.jta.jtaUTImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple</entry>
 
 </properties>

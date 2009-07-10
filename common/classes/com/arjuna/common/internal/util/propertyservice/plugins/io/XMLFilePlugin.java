@@ -30,6 +30,7 @@ import com.arjuna.common.util.exceptions.SavePropertiesException;
 import java.io.*;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.net.URL;
 
 
 /*
@@ -56,37 +57,41 @@ public class XMLFilePlugin implements PropertyManagerIOPlugin
 	 */
 	public void load(String uri, PropertyManagerPluginInterface pcm, boolean verbose) throws LoadPropertiesException, IOException
 	{
-            try
-            {
-				if ( uri != null && new File(uri).exists() )
-				{
-                    Properties propertiesFromFile = new Properties();
-                    FileInputStream fileInputStream = new FileInputStream(uri);
-                    try {
-                        propertiesFromFile.loadFromXML(fileInputStream);
-                    } finally {
-                        fileInputStream.close();
-                    }
+        try
+        {
+            InputStream inputStream = null;
+            Properties propertiesFromSource = new Properties();
 
-                    Enumeration namesEnumeration = propertiesFromFile.propertyNames();
-                    while(namesEnumeration.hasMoreElements()) {
-                        String propertyName = (String)namesEnumeration.nextElement();
-                        String propertyValue = propertiesFromFile.getProperty(propertyName);
-
-                        propertyValue = propertyValue.trim();
-
-                        // perform JBossAS style property substitutions. JBTM-369
-                        propertyValue = StringPropertyReplacer.replaceProperties(propertyValue);
-
-                        pcm.setProperty(propertyName, propertyValue);
-                    }
-                }
+            if( new File(uri).exists() ) {
+                inputStream = new FileInputStream(uri);
+            } else {
+                inputStream = new URL(uri).openStream();
             }
-            catch (Exception e)
-            {
-                throw new LoadPropertiesException("Failed to load properties: "+e, e);
+
+            try {
+                propertiesFromSource.loadFromXML(inputStream);
+            } finally {
+                inputStream.close();
             }
-	}
+
+            Enumeration namesEnumeration = propertiesFromSource.propertyNames();
+            while(namesEnumeration.hasMoreElements()) {
+                String propertyName = (String)namesEnumeration.nextElement();
+                String propertyValue = propertiesFromSource.getProperty(propertyName);
+
+                propertyValue = propertyValue.trim();
+
+                // perform JBossAS style property substitutions. JBTM-369
+                propertyValue = StringPropertyReplacer.replaceProperties(propertyValue);
+
+                pcm.setProperty(propertyName, propertyValue);
+            }
+        }
+        catch (Exception e)
+        {
+            throw new LoadPropertiesException("Failed to load properties: "+e, e);
+        }
+    }
 
 	/**
 	 * This method saves the properties to the given <code>uri</code>.  The plugin

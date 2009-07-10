@@ -22,9 +22,9 @@
 -->
 <properties>
     <!--
-    This is the JBossTS configuration file for running ArjunaCore.
+    This is the JBossTS configuration file for running ArjunaJTS.
     It should be called jbossts-properties.xml.
-    You need a different version for JTA or JTS usage.
+    You need a different version for ArjunaCore or JTA usage.
 
     ***************************
 
