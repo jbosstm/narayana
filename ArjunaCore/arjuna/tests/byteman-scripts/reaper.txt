@@ -22,7 +22,7 @@ AT READ _status
 BIND reaper: TransactionReaper = $0,
      element : ReaperElement = $e
 IF isRendezvous(reaper, 2)
-DO createCounter(element, 0)
+DO createCounter(element, 0),
    rendezvous(reaper)
 ENDRULE
 
@@ -57,7 +57,7 @@ ENDRULE
 RULE ReaperMonitorTest reaper remote control
 CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperMonitorTest
 METHOD test()
-AT ENTRY
+AT CALL AtomicAction.begin
 BIND NOTHING
 IF TRUE
 DO createRendezvous($reaper, 2)
