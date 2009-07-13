@@ -628,6 +628,14 @@ public class PeriodicRecovery extends Thread
             return new Vector(_recoveryModules);
         }
     }
+    /*
+     * debugging aid
+     */
+
+    public Listener getListener()
+    {
+        return _listener;
+    }
 
     /***** private implementation *****/
 

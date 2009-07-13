@@ -59,23 +59,19 @@ public class RecoveryManagerStartStopTest
 
         manager.initialize();
 
-        // give threads a chance to start
-
-        Thread.sleep(2000);
-
         dumpThreadGroup(thg, "Before recovery manager start periodic recovery thread");
 
         manager.startRecoveryManagerThread();
 
         dumpThreadGroup(thg, "Before recovery manager client create");
 
+        // Thread.sleep(1000);
+
         // we need to open several connections to the recovery manager listener service and then
         // ensure they get closed down
 
         addRecoveryClient();
         addRecoveryClient();
-
-        Thread.sleep(5000);
 
         dumpThreadGroup(thg, "Before recovery manager terminate");
 
@@ -84,10 +80,6 @@ public class RecoveryManagerStartStopTest
         // ensure the client threads get killed
 
         ensureRecoveryClientsTerminated();
-
-        // ensure there are no extra threads running
-
-        Thread.sleep(2000);
 
         dumpThreadGroup(thg, "After recovery manager terminate");
 
@@ -118,6 +110,7 @@ public class RecoveryManagerStartStopTest
         RecoveryManagerStartStopTestThread client = new RecoveryManagerStartStopTestThread();
         clients.add(client);
         client.start();
+        client.ensureStarted();
     }
 
     private void dumpThreadGroup(ThreadGroup thg, String header)
@@ -140,6 +133,8 @@ public class RecoveryManagerStartStopTest
     private static class RecoveryManagerStartStopTestThread extends Thread
     {
         private boolean failed = true;
+        private boolean started = false;
+        private boolean stopped = false;
 
         public RecoveryManagerStartStopTestThread()
         {
@@ -186,11 +181,14 @@ public class RecoveryManagerStartStopTest
 
                 fromServer = new BufferedReader(new InputStreamReader(connectorSocket.getInputStream()));
             } catch (Exception e) {
+
                 System.out.println("Failed to set up listener input stream!!!");
                 e.printStackTrace();
                 System.out.flush();
 
                 return;
+            } finally {
+                notifyStarted();
             }
 
             try {
@@ -219,6 +217,22 @@ public class RecoveryManagerStartStopTest
                 System.out.println("Recovery Listener Client got non IO exception");
                 e.printStackTrace();
                 System.out.flush();
+            }
+        }
+
+        public synchronized void notifyStarted()
+        {
+            started = true;
+            notify();
+        }
+
+        public synchronized void ensureStarted() {
+            while (!started) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    // ignore
+                }
             }
         }
     }
