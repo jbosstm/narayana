@@ -261,9 +261,20 @@
         <delete file="${build.dir}/lib/${modulename}.jar"/>
         <touch file="${build.dir}/built_using_java_${java.specification.version}"/>
 
-        <copy tofile="${build.dir}/default-jbossts-properties.xml">
-            <fileset dir="" includes="jbossts-properties-*.xml"/>
-        </copy>
+        <if>
+            <or>
+                <available file="jbossts-properties-arjuancore.xml"/>
+                <available file="jbossts-properties-arjunajta.xml"/>
+                <available file="jbossts-properties-arjunajts.xml"/>
+            </or>
+
+            <then>
+                <copy tofile="${build.dir}/default-jbossts-properties.xml">
+                    <fileset dir="" includes="jbossts-properties-*.xml"/>
+                </copy>
+            </then>
+        </if>
+
 
         <jar jarfile="${build.dir}/lib/${modulename}.jar">
             <fileset dir="${build.dir}" includes="built_using*"/>
