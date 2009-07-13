@@ -48,7 +48,8 @@ public class LogStoreRecoveryTest extends TestBase
     public void test()
     {
         System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
-        System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");
+        System.setProperty(Environment.TRANSACTION_LOG, "ON");
+        //System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");
 
         ObjectStore objStore = TxControl.getStore();
         final int numberOfTransactions = 1000;
@@ -86,18 +87,20 @@ public class LogStoreRecoveryTest extends TestBase
                 ex.printStackTrace();
             }
         }
-
+        /*
         try {
+        */
             /*
                 * Give the purger thread a chance to run and delete
                 * the entries we've "removed" (really only marked as
                 * being removable.)
                 */
-
+       /*
             Thread.sleep(12000);
         }
         catch (final Exception ex) {
         }
+        */
 
         /*
            * Now get a list of entries to work on.

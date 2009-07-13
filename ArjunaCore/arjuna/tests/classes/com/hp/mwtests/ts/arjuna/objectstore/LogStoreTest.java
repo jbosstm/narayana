@@ -47,6 +47,7 @@ public class LogStoreTest
     public void test()
     {
         System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        System.setProperty(Environment.TRANSACTION_LOG, "ON");
 
         ObjectStore objStore = TxControl.getStore();
         final int numberOfTransactions = 1000;

@@ -49,8 +49,10 @@ public class LogStoreReactivationTest2
     {
         System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
         System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        System.setProperty(Environment.TRANSACTION_LOG, "ON");
         System.setProperty(Environment.TRANSACTION_LOG_SYNC_REMOVAL, "true");
-        System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "1000000");  // essentially infinite
+        // the byteman script will enforce this
+        //System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "1000000");  // essentially infinite
 
         AtomicAction A = new AtomicAction();
         Uid txId = A.get_uid();

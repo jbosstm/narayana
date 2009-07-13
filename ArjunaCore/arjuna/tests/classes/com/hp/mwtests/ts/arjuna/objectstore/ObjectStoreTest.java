@@ -55,6 +55,7 @@ public class ObjectStoreTest
         ObjectName objName = new ObjectName("JNS:myname");
 
         objName.setClassNameAttribute(Environment.OBJECTSTORE_TYPE, imple);
+        System.setProperty(Environment.TRANSACTION_LOG, "ON");
         objName.setStringAttribute(Environment.LOCALOSROOT, localOSRoot);
         objName.setStringAttribute(Environment.OBJECTSTORE_DIR, objectStoreDir);
         objName.setStringAttribute(Environment.OBJECTSTORE_SHARE, shareStatus);

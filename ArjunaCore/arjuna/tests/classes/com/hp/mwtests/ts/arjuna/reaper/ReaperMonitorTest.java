@@ -33,17 +33,35 @@ public class ReaperMonitorTest
 {
     class DummyMonitor implements ReaperMonitor
     {
-        public void rolledBack (Uid txId)
+        public synchronized void rolledBack (Uid txId)
         {
             success = true;
+            notify();
+            notified = true;
         }
         
-        public void markedRollbackOnly (Uid txId)
+        public synchronized void markedRollbackOnly (Uid txId)
         {
             success = false;
+            notify();
+            notified = true;
         }
         
         public boolean success = false;
+        public boolean notified = false;
+
+        public synchronized boolean checkSucceeded(int msecsTimeout)
+        {
+            if (!notified) {
+                try {
+                    wait(msecsTimeout);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+            }
+
+            return success;
+        }
     }
     
     @Test
@@ -59,29 +77,14 @@ public class ReaperMonitorTest
 
         A.begin();
 
+        /*
+         * the reaper byteman script will make sure we synchronize with the reaper after this call
+         * just before it schedules the reapable for processing. the timout in the check method is
+         * there in case something is really wrong and the reapabel does not get cancelled
+         */
         reaper.insert(A, 1);
-        
-        try
-        {
-            Thread.sleep(1100);
-        }
-        catch (final Throwable ex)
-        {  
-        }
 
-        reaper.check();
-        
-        try
-        {
-            Thread.sleep(500);
-        }
-        catch (final Throwable ex)
-        {  
-        }
-        
-        reaper.check();
-        
-        assertTrue(listener.success);
+        assertTrue(listener.checkSucceeded(30 * 1000));
     }
 
     public static boolean success = false;

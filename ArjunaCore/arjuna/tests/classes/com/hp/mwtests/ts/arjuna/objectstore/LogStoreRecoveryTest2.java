@@ -81,8 +81,10 @@ public class LogStoreRecoveryTest2
 
         System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
         System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        System.setProperty(Environment.TRANSACTION_LOG, "ON");
         System.setProperty(Environment.TRANSACTION_LOG_SYNC_REMOVAL, "false");
-        System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "1000000");  // essentially infinite
+        // the byteman script will enforce this
+        //System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "1000000");  // essentially infinite
 
         TestWorker[] workers = new TestWorker[threads];
 

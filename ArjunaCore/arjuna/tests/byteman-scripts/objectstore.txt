@@ -1,0 +1,96 @@
+########################################################################
+#
+# byteman script used to ensure that core tests can sequence various
+# operations which normally depend upon waiting around for a background
+# thread to be scheduled.
+#
+
+#########################################################################
+# 3 rules to stop the log purger from proceeding until it is signalled
+# at a suitable point during a test. the log purger also signals in
+# order to allow the test code to detect that a purge has completed
+# should it wish to do so
+
+# rule to ensure the transaction log purger uses a very small timeout
+# so that it is ready to proceed straight away when signalled
+
+RULE override TRANSACTION_LOG_PURGE_TIME
+CLASS com.arjuna.ats.internal.arjuna.objectstore.LogStore
+METHOD <clinit>
+AT ENTRY
+BIND NOTHING
+IF TRUE
+DO System.setProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_LOG_PURGE_TIME, "100")
+ENDRULE
+
+# rule to ensure that the LogStore does not proceed to purge any
+# logs until the test signals it do so
+
+RULE delay log purge
+CLASS com.arjuna.ats.internal.arjuna.objectstore.LogPurger
+METHOD run()
+AT CALL writeRemovalEntries
+BIND NOTHING
+IF TRUE
+DO debug("LogStore waiting before purge"),
+   waitFor("LogStore.purge"),
+   debug("LogStore proceeding with purge")
+ENDRULE
+
+# matching rule to ensure that the LogStore signals any thread which
+# is waiting for it to finish purging the logs
+
+RULE done log purge
+CLASS com.arjuna.ats.internal.arjuna.objectstore.LogPurger
+METHOD run()
+AFTER CALL truncateLogs
+BIND NOTHING
+IF TRUE
+DO debug("Signalling purge complete"),
+   signalWake("LogStore.purged", true),
+   debug("Signalled purge complete")
+ENDRULE
+
+#########################################################################
+#
+# rules appropriate to specific tests
+#
+# n.b. several of the test don't want the purger to run. this happens by
+# default since the purger hist the waitFor and never gets signalled
+#
+
+#########################################################################
+# LogStoreRecoveryTest wants to delay the purge until it is ready for it
+# and then delay proceeding with the test until the purge has actually
+# happened
+
+RULE log store recovery test allow purge to proceed
+CLASS com.hp.mwtests.ts.arjuna.objectstore.LogStoreRecoveryTest
+METHOD test()
+AT CALL InputObjectState.<init>
+BIND NOTHING
+IF TRUE
+DO debug("Signalling purge to proceed"),
+   signalWake("LogStore.purge", true),
+   debug("Signalled purge to proceed -- waiting for completion"),
+   waitFor("LogStore.purged"),
+   debug("Purge completed")
+ENDRULE
+
+#########################################################################
+# LogStoreTest2 wants to delay the purge until it is ready for it
+# and then delay proceeding with the test until the purge has actually
+# happened
+
+RULE log store recovery test allow purge to proceed
+CLASS com.hp.mwtests.ts.arjuna.objectstore.LogStoreTest2
+METHOD test()
+AT CALL InputObjectState.<init>
+BIND NOTHING
+IF TRUE
+DO debug("Signalling purge to proceed"),
+   signalWake("LogStore.purge", true),
+   debug("Signalled purge to proceed -- waiting for completion"),
+   waitFor("LogStore.purged"),
+   debug("Purge completed")
+ENDRULE

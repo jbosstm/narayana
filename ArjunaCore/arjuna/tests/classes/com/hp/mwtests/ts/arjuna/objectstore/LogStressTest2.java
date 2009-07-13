@@ -51,6 +51,7 @@ public class LogStressTest2
     {
         System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
         System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        System.setProperty(Environment.TRANSACTION_LOG, "ON");
         System.setProperty(Environment.TRANSACTION_LOG_SIZE, "10000");
 
         int timeLimit = 4; // hours

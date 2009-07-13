@@ -1,0 +1,76 @@
+########################################################################
+#
+# byteman script used to ensure that core transaction reaper tests can
+# sequence various operations which normally depend upon waiting around
+# for the reaper thread and reaper worker thread to be scheduled.
+#
+
+#########################################################################
+# rules to control progress of the transaction reaper thread
+#
+
+# rule to pause the reaper thread inside its check method before it processes
+# a timed out entry. this rule also counts how many times this point has been
+# reached allowing other rules to ensure that they know which reapable is being
+# processes. It also signals before waiting so that other rules can delay until
+# this point is reached.
+
+RULE pause transaction reaper
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD check
+AT READ _status
+BIND reaper: TransactionReaper = $0,
+     element : ReaperElement = $e
+IF isRendezvous(reaper, 2)
+DO createCounter(element, 0)
+   rendezvous(reaper)
+ENDRULE
+
+#########################################################################
+# rules to control progress of the transaction reaper worker threads
+#
+
+# this rule makes sure the reaper worker thread pauses before starting
+# to process a queued reapable. this rule alsoadds a counter associated
+# with the reapable which is incremented as the status of the reapable
+# changes to reflect the new state.
+
+RULE pause transaction reaper worker
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD doCancellations
+AT READ _control
+BIND element : ReaperElement = $e,
+     worker : Thread = element._worker
+IF isRendezvous(worker, 2)
+DO incrementCounter(worker),
+   rendezvous(worker, 2)
+ENDRULE
+
+#########################################################################
+#
+# rules appropriate to specific tests
+
+#########################################################################
+# ReaperMonitorTest wants remote control of the reaper thread
+#
+
+RULE ReaperMonitorTest reaper remote control
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperMonitorTest
+METHOD test()
+AT ENTRY
+BIND NOTHING
+IF TRUE
+DO createRendezvous($reaper, 2)
+ENDRULE
+
+# ReaperMonitorTest wants to delay the reaper check until it has inserted
+# a reapable
+
+RULE ReaperMonitorTest unlatch reaper thread
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperMonitorTest
+METHOD test()
+AFTER CALL TransactionReaper.insert
+BIND NOTHING
+IF TRUE
+DO rendezvous($reaper)
+ENDRULE

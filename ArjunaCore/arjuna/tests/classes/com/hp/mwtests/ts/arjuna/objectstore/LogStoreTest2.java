@@ -47,7 +47,9 @@ public class LogStoreTest2
     public void test()
     {
         System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
-        System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");
+        System.setProperty(Environment.TRANSACTION_LOG, "ON");
+        // the byteman script will manage this
+        //System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");
 
         ObjectStore objStore = TxControl.getStore();
         final int numberOfTransactions = 1000;
@@ -75,16 +77,19 @@ public class LogStoreTest2
             ex.printStackTrace();
         }
 
+        /*
         try {
+        */
             /*
                 * Give the purger thread a chance to run and delete
                 * the entry.
                 */
-
+        /*
             Thread.sleep(12000);
         }
         catch (final Exception ex) {
         }
+        */
 
         InputObjectState ios = new InputObjectState();
         boolean passed = false;
