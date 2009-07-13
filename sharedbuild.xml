@@ -372,9 +372,51 @@
     <target name="run.tests"/>
 
     <macrodef name="run.tests.macro">
-
+        <attribute name="script" default=""/>
         <element name="tests"/>
         <element name="additional.classpath" optional="true"/>
+        <element name="additional.jvmargs" optional="true"/>
+        <sequential>
+	    <if>
+            <equals  arg1="@{script}" arg2=""/>
+            <then>
+                <run.tests.macro.aux>
+                    <tests.aux>
+                        <tests/>
+                    </tests.aux>
+                    <additional.classpath.aux>
+                        <additional.classpath/>
+                    </additional.classpath.aux>
+                    <additional.jvmargs.aux>
+                        <additional.jvmargs/>
+                    </additional.jvmargs.aux>
+                </run.tests.macro.aux>
+            </then>
+            <else>
+                <run.tests.macro.aux>
+                    <tests.aux>
+                        <tests/>
+                    </tests.aux>
+                    <additional.classpath.aux>
+                        <additional.classpath/>
+                    </additional.classpath.aux>
+                    <additional.jvmargs.aux>
+                        <jvmarg value="-javaagent:${global.ext.lib.dir}/byteman.jar=script:${basedir}/tests/byteman-scripts/@{script}"/>
+                        <jvmarg value="-Dorg.jboss.byteman.debug"/>
+                        <additional.jvmargs/>
+                    </additional.jvmargs.aux>
+                </run.tests.macro.aux>
+            </else>
+        </if>
+        </sequential>
+
+    </macrodef>
+
+    <macrodef name="run.tests.macro.aux">
+
+        <element name="tests.aux"/>
+        <element name="additional.classpath.aux" optional="true"/>
+        <element name="additional.jvmargs.aux" optional="true"/>
 
         <sequential>
 
@@ -395,15 +437,14 @@
                 <fileset dir="${global.ext.lib.dir}" includes="${global.ext.libs}"/>
                 <fileset dir="${global.ext.lib.dir}" includes="${global.ext.test.libs}"/>
                 <fileset dir="${global.ext.lib.dir}" includes="commons-logging-1.1.jar,log4j*"/>
-                <additional.classpath/>
+                <additional.classpath.aux/>
             </classpath>
 
             <batchtest haltonerror="yes" haltonfailure="yes" fork="yes" todir="${build.dir}/testresults">
-                <tests/>
+                <tests.aux/>
             </batchtest>
 
-            <!--<jvmarg value="-Xdebug"/>-->
-            <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006"/>-->
+	        <additional.jvmargs.aux/>
         </junit>
         </sequential>
 
