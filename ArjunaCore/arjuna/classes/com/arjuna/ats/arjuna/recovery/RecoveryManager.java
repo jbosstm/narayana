@@ -503,14 +503,14 @@ public class RecoveryManager
             {
                 manager = manager();
             }
-            catch(FatalError e)
+            catch(java.lang.Error e)
             {
                 if(testMode)
                 {
                     // in some test cases the recovery manager is killed and restarted in quick succession.
                     // sometimes the O/S does not free up the port fast enough, so we can't reclaim it on restart.
                     // For test mode only, we therefore have a simple backoff-retry kludge:
-                    System.err.println("Warning: got Fatal error '"+e.toString()+"' on startup, will retry in 5 seconds in the hope it is transient.");
+                    System.err.println("Warning: got error '"+e.toString()+"' on startup, will retry in 5 seconds in the hope it is transient.");
                     try
                     {
                         Thread.sleep(5000);
