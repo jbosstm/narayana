@@ -235,6 +235,24 @@ class ActionTestClientTestService implements Service
         catch (Exception ex) {
             System.err.println(" FAILED " + ex);
         }
+        finally
+        {
+            synchronized (this) {
+                finished = true;
+                notify();
+            }
+        }
+    }
+
+    public synchronized void waitForFinished()
+    {
+        while (!finished) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                // ignore
+            }
+        }
     }
 
     private static TransactionStatusConnector _tsc;
@@ -244,6 +262,8 @@ class ActionTestClientTestService implements Service
 
     public static int _tests_passed = 0;
     public static int _tests_failed = 0;
+    private boolean finished = false;
+
 }
 
 public class ActionTestClient
@@ -258,7 +278,7 @@ public class ActionTestClient
 
         listener.start();
         
-        Thread.sleep(1000);  // allow time for test to run
+        test_service.waitForFinished();
 
         listener.stopListener();
         
