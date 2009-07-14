@@ -79,6 +79,8 @@ public class LogStoreRecoveryTest2
         int threads = 10;
         int work = 100;
 
+        arjPropertyManager.getPropertyManager().setProperty(Environment.RECOVERY_BACKOFF_PERIOD, "1");
+
         System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
         System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
         System.setProperty(Environment.TRANSACTION_LOG, "ON");
