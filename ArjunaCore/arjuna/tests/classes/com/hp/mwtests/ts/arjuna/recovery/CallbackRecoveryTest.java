@@ -40,12 +40,26 @@ import static org.junit.Assert.*;
 
 class RecoveryScanImple implements RecoveryScan
 {
-    public void completed()
+    public synchronized void completed()
     {
         passed = true;
+        notify();
+        notified = true;
+    }
+
+    public synchronized void waitForCompleted(int msecs_timeout)
+    {
+        if (!notified) {
+            try {
+                wait(msecs_timeout);
+            } catch (InterruptedException e) {
+                // ignore
+            }
+        }
     }
 
     public boolean passed = false;
+    private boolean notified = false;
 }
 
 public class CallbackRecoveryTest
@@ -67,18 +81,12 @@ public class CallbackRecoveryTest
 
         manager.scan(rs);
 
-        // give enough time for both passes to run
-        
-        try
-        {
-            Thread.sleep(2000);
-        }
-        catch (Exception ex)
-        {
-        }
-        
-        System.err.println("**checking");
-        
+        /*
+         * the 30 second wait timeout here is just in case something is not working. the scan should
+         * finish almost straight away
+         */
+        rs.waitForCompleted(30 * 1000);
+
         assertTrue(module.finished());
         assertTrue(rs.passed);
     }
