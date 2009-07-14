@@ -28,6 +28,7 @@ import com.arjuna.ats.arjuna.common.Environment;
 import java.net.Socket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.SocketException;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -194,25 +195,36 @@ public class RecoveryManagerStartStopTest
             try {
                 String result = fromServer.readLine();
                 if (result == null || result.equals("")) {
-                    System.out.flush();
                     System.out.println("Recovery Listener Client got empty string from readline() as expected");
+                    System.out.flush();
                     failed = false;
                 }
+            } catch (SocketException e) {
+                if (!connectorSocket.isClosed()) {
+                    try {
+                        connectorSocket.close();
+                    } catch (IOException e1) {
+                        // ignore
+                    }
+                }
+                System.out.println("Recovery Listener Client got socket exception as expected");
+                e.printStackTrace();
+                System.out.flush();
+                failed = false;
             } catch (IOException e) {
                 if (!connectorSocket.isClosed()) {
-                    System.out.println("Recovery Listener Client got IO exception without socket being closed");
-                    System.out.flush();
-                    e.printStackTrace();
+                    System.out.println("Recovery Listener Client got non socket IO exception without socket being closed");
                     try {
                         connectorSocket.close();
                     } catch (IOException e1) {
                         // ignore
                     }
                 } else {
-                    System.out.flush();
                     System.out.println("Recovery Listener Client got IO exception under readline() as expected");
                     failed = false;
                 }
+                e.printStackTrace();
+                System.out.flush();
             } catch (Exception e) {
                 System.out.println("Recovery Listener Client got non IO exception");
                 e.printStackTrace();
