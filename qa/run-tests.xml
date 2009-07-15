@@ -331,61 +331,6 @@
 
         </junit>
 
-<!--
-        <java classname="org.junit.runner.JUnitCore" fork="true">
-            <classpath>
-
-
-
-            </classpath>
-
-            <arg  value="org.jboss.jbossts.qa.junit.testgroup.TestGroup_${tests}"/>
-
-        </java>
--->    </target>
-
-    <!-- ##################################### -->
-
-    <target name="junit-tests-old">
-
-        <echo message="Running test group ${tests} from basedir=${basedir}"/>
-
-        <!-- by default we run in JTS config. Override by setting this property
-            before antcalling the test target -->
-        <property name="use_jta_mode" value="false"/>
-        <condition property="product_file" value="JBossTS_JTA_QA.xml">
-            <istrue value="${use_jta_mode}"/>
-        </condition>
-        <property name="product_file" value="JBossTS_JTS_JacORB_QA.xml"/>
-
-        <echo  message="Running with config ${product_file}"/>
-
-        <!-- this runs forked because the product config file it uses has relative paths in it, so we need to guarantee
-            the working dir is the same as the location of this script.
-		TODO: investigate why it needs such a large memory footprint. I suspect it's buffering
-		the entire stdout, which is big for longer runs as DTF tends to be rather verbose.
-		But with 10MB of stdout based on text file size, junit needs >128MB of memory???
-		Stopping the buffering would be nice anyhow, as it stands we don't see any output in the file
-		until the tests are all done, which makes following progress a bit of a problem. -->
-        <junit printsummary="yes" haltonfailure="yes" fork="true" dir="${basedir}" maxmemory="192m">
-            <classpath>
-                <path refid="tests.classpath"/>
-            </classpath>
-
-            <formatter type="plain"/>
-
-            <sysproperty key="testdefsFile" value="${basedir}/testdefs/jbossts-qa-${tests}-testdefs.xml"/>
-            <sysproperty key="productConfigFile" value="${basedir}/config/${product_file}"/>
-            <sysproperty key="testnodeConfigFile" value="${basedir}/config/nodeconfig.xml"/>
-            <sysproperty key="testnamePattern" value=".*"/>
-
-            <test name="org.jboss.dtf.testframework.local.JUnitTestSuite" outfile="jbossts-qa-${tests}-output"/>
-
-        </junit>
-
-        <echo message="Done test group ${tests}"/>
     </target>
-
-
 
 </project>
