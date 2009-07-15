@@ -32,26 +32,38 @@ import java.io.*;
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2009-05
  */
 
-public class TestGroupBase {
-
+public class TestGroupBase
+{
     @Before public void setUp()
 	{
         // no need to do this here as it gets done in tearDown
         // TaskImpl.cleanupTasks();
-        // TODO EmptyObjectStore
-	}
+
+		Task emptyObjectStore = createTask("emptyObjectStore", org.jboss.jbossts.qa.Utils.EmptyObjectStore.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		emptyObjectStore.perform();
+    }
 
 	@After public void tearDown()
 	{
         TaskImpl.cleanupTasks();
     }
 
-    public Task createTask(Class clazz, Task.TaskType taskType) {
-        return new TaskImpl(clazz, taskType);
+    public String getTestGroupName() {
+        return "TestGroupsShouldOverrideThisDefaultTestGroupName";
     }
 
-    public Task createTask(Class clazz, Task.TaskType taskType, String filename, int timeout) {
+    private String testName;
+
+    // jUnit does not appear to make it easy to ask the framework
+    // for the name of the current test method, so the tests have to
+    // inform us of it explicitly.
+    protected void setTestName(String testName) {
+        this.testName = testName;
+    }
+
+    public Task createTask(String taskName, Class clazz, Task.TaskType taskType, int timeout) {
         OutputStream out;
+        String filename = "./testoutput/"+getTestGroupName()+"/"+(testName == null ? "" : testName+"/")+taskName+"_output.txt";
         try {
             File outFile = new File(filename);
             if (outFile.isDirectory()) {
@@ -63,7 +75,7 @@ public class TestGroupBase {
             }
             out = new FileOutputStream(outFile);
 
-            return new TaskImpl(clazz, taskType, new PrintStream(out, true), timeout);
+            return new TaskImpl(taskName, clazz, taskType, new PrintStream(out, true), timeout);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail("createTask : could not open output stream for file " + filename);

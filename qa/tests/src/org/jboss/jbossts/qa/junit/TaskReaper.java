@@ -80,10 +80,15 @@ public class TaskReaper
         synchronized(reaperLock) {
             // set the absolute timeout of every task to zero then wake up the reaper and wait for
             // the list to empty
-            Iterator<TaskReapable> iterator = taskList.iterator();
+            SortedSet<TaskReapable> copyOfTaskList = new TreeSet<TaskReapable>(taskList);
+            Iterator<TaskReapable> iterator = copyOfTaskList.iterator();
             while (iterator.hasNext()) {
                 TaskReapable reapable = iterator.next();
+                // absoluteTimeout value is part of the ordering, so we screw up the sorted set if we
+                // modify the obj in situ. remove, modify and reinsert to work around this.
+                taskList.remove(reapable);
                 reapable.absoluteTimeout = 0;
+                taskList.add(reapable);
             }
             reaperLock.notify();
             // ok now wait until all the tasks have gone

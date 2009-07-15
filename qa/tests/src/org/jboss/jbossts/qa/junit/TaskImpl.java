@@ -52,6 +52,11 @@ public class TaskImpl implements Task
     }
 
     /**
+     * A string identifying this task instance for e.g. debug logging purposes.
+     */
+    private String taskName;
+
+    /**
      * a class implementing a main method which gets executed in a JVM running in a subprocess in order
      * to perform this task
      */
@@ -104,28 +109,19 @@ public class TaskImpl implements Task
     TaskErrorReaderThread taskErrorReaderThread;
 
     /**
-     * create a new task with the default timeout and with output directed to System.out
-     * @param clazz the task whose main method is to be executed in a JVM running in a subprocess
-     * @param type the type of the test either PASS_FAIL or READY
-     */
-    TaskImpl(Class clazz, TaskType type)
-    {
-        this(clazz, type, System.out, DEFAULT_TIMEOUT_SECONDS);
-    }
-
-    /**
      * create a new task
      * @param clazz the task whose main method is to be executed in a JVM running in a subprocess
      * @param type the type of the test either PASS_FAIL or READY
      * @param out the output stream to which output from the task's process shoudl be redirected.
      * @param timeout the timeout for the task in seconds
      */
-    TaskImpl(Class clazz, TaskType type, PrintStream out, int timeout)
+    TaskImpl(String taskName, Class clazz, TaskType type, PrintStream out, int timeout)
     {
         if(clazz == null || type == null) {
             throw new ExceptionInInitializerError("TaskImpl()<ctor> params may not be null");
         }
 
+        this.taskName = taskName;
         this.clazz = clazz;
         this.type = type;
         this.timeout = timeout;
@@ -190,9 +186,10 @@ public class TaskImpl implements Task
             started = true;
         }
         // this is a PASS_FAIL test and we need to wait for it to complete
+        BufferedReader bufferedReader = null;
         try {
             // create an error stream reader to merge error output into the output file
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            bufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             taskErrorReaderThread = new TaskErrorReaderThread(bufferedReader, out, "err: ");
             taskErrorReaderThread.start();
 
@@ -213,6 +210,14 @@ public class TaskImpl implements Task
         } catch (Exception e) {
             // if we fail here then the reaper task will clean up the thread
             Assert.fail(e.toString());
+        } finally {
+            try {
+                if(bufferedReader != null) {
+                    bufferedReader.close();
+                }
+            } catch (IOException ioException) {
+                    // ignore
+                }
         }
 
         // we cannot really protect properly against races here because process.waitFor takes its
@@ -235,11 +240,13 @@ public class TaskImpl implements Task
             }
             // setting this will forestall any pending attempt to timeout this task
             isDone = true;
+
+            out.close();            
         }
         // we barf if we didn't exit with status 0 or print Passed or Failed
 
         Assert.assertEquals(0, process.exitValue());
-        Assert.assertFalse(printedFailed);
+        Assert.assertFalse("Task "+taskName+" printed failed", printedFailed);
         Assert.assertTrue(printedPassed);
 
         // clean exit --  hurrah!
@@ -293,9 +300,10 @@ public class TaskImpl implements Task
 
         // set up threads to do the I/O processing
 
+        BufferedReader bufferedReader = null;
         try {
             // create an error stream reader to merge error output into the output file
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            bufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             taskErrorReaderThread = new TaskErrorReaderThread(bufferedReader, out, "err: ");
             taskErrorReaderThread.start();
 
@@ -355,6 +363,8 @@ public class TaskImpl implements Task
             }
             // setting this will forestall any pending attempt to timeout this task
             isDone = true;
+
+            out.close();
         }
 
         // throw up if we didn't exit with exit code 0
@@ -389,6 +399,8 @@ public class TaskImpl implements Task
 
             // setting this will forestall any pending attempt to timeout this task
             isDone = true;
+
+            out.close();            
         }
 
         if (taskReaderThread != null) {
@@ -436,6 +448,7 @@ public class TaskImpl implements Task
                 return false;
             } else {
                 isTimedOut = true;
+                out.close();
             }
 
             if (taskReaderThread != null) {
@@ -627,6 +640,12 @@ public class TaskImpl implements Task
                 }
                 out.println("TaskReaderThread : exception before shutdown " + e);
                 e.printStackTrace(out);
+            } finally {
+                try {
+                    bufferedReader.close();
+                } catch (IOException ioException) {
+                    // ignore
+                }
             }
         }
 
@@ -672,6 +691,12 @@ public class TaskImpl implements Task
                 }
                 out.println("TaskErrorReaderThread : exception before shutdown " + e);
                 e.printStackTrace(out);
+            } finally {
+                try {
+                    bufferedReader.close();
+                } catch (IOException ioException) {
+                    // ignore
+                }
             }
         }
         
