@@ -235,6 +235,15 @@ public class PeriodicRecovery extends Thread
                }
            }
        }
+
+       // if the shutdown is synchronous then make sure the periodic recovery thread really has stopped running
+       if (!async && this.isAlive()) {
+           try {
+               this.join();
+           } catch (InterruptedException e) {
+               // ignore
+           }
+       }
    }
 
     /**
