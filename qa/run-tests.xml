@@ -20,14 +20,12 @@
 -->
 
 <!--
-  Ant build script for running DTF tests locally using the new lightweight test runner (JIRA DTF-4).
-  Does not need tomcat, mysql or any DTF server processes running.
+  Ant build script for running QA tests using junit.
 
   For JBossTS JTS builds.
 
   1) Run the top level JBossTS ant build:  ant jts
-  2) Run the qa build:  cd qa; ant
-  2) Run the tests:  ant -f run-dtf-local.xml
+  2) Run the tests:  ant -f run-tests.xml
 
   For general tests plus JDBC (e.g. use on hudson):
     cd qa
@@ -37,15 +35,17 @@
   Paths are relative to the JVM's working dir - don't expect to be able to execute this from anywhere but 'qa'.
 
 -->
-<project name="Local DTF Test for JBossTS" default="junit" basedir=".">
+<project name="QA Tests for JBossTS" default="junit" basedir=".">
 
     <property name="working.dir" location="build"/>
 
-	<path id="tests.classpath">
-        <pathelement location="${working.dir}/qa/lib/TestingFramework.jar"/>
-        <pathelement location="../ext/junit.jar"/>
-        <pathelement location="ext/jdom.jar"/>
-    </path>
+    <!-- handy utility space where you can copy one or more test groups if you want to run something ah-hoc -->
+    <target name="scratch">
+
+        <antcall target="install-dbdriver"><param name="files" value="ojdbc14.jar"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01_oracle_thin_jndi"/></antcall>
+
+    </target>
 
     <!-- a faster subset of the tests for smoke testing. aim to keep to under one hour total. -->
     <target name="express">
@@ -155,7 +155,7 @@
     </target>
 
     <!-- copy the selected db driver out of the available set into the classpath.
-        Drivers are placed into the pool by build.xml and into the classpath by config/<product>.xml
+        See also build.xml get.drivers and TaskImpl.properties for classpath
      -->
     <target name="install-dbdriver">
         <delete dir="dbdrivers/selected_dbdriver"/>
@@ -269,15 +269,42 @@
 
     </target>
 
+    <target name="performance">
+        <!-- caution: perf tests are essentially regression tests and are only meaningful
+            if used with the same hardware (profile) and config between runs. -->
+
+        <!-- perfprofileio : 18 tests, 9 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="perfprofileio"/></antcall>
+        <!-- perfprofile01_i (JTS implicit) : 25 tests, 31 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="perfprofile01_i"/></antcall>
+        <!-- perfprofile01_e (JTS explicit) : 25 tests, 35 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="perfprofile01_e"/></antcall>
+    </target>
+
     <!-- ##################################### -->
 
+    <!-- This is where all the hard work happens - use junit to coordinate multi-process tests: -->
     <target  name="junit-tests">
+
+        <!-- TODO support JTA mode testing of JTS .jar files? -
+            would need classpath munging for props file in TaskImpl.properties -->
 
         <echo message="Running junit test group ${tests} from basedir=${basedir}"/>
 
-        <java classname="org.junit.runner.JUnitCore" fork="true">
+        <!-- this runs forked because the product config file it uses has relative paths in it, so we need to guarantee
+            the working dir is the same as the location of this script. -->
+        <junit printsummary="yes" haltonfailure="yes" fork="true" dir="${basedir}">
             <classpath>
 
+                <!--
+                This is the classpath for the test framework, not the test components e.g. clients/servers.
+                Those are configured via TaskImpl.properties instead.
+
+                The test groups (org.jboss.jbossts.qa.junit.testgroup.TestGroup_XXXX classes) contains the
+                test methods, which link against the test classes, which in turn link against JBossTS.
+                Hence we need JBossTS in the classpath for the framework, even though it does not get run there.
+                On the up side, you get better diagnostic messages and code management/navigation in IDEs.
+                -->
                 <pathelement location="../ext/junit-4.6.jar"/>
 
                 <fileset dir="tests/build">
@@ -293,15 +320,29 @@
                 </fileset>
                 <pathelement location="../install/etc"/>
 
+            </classpath>
+
+            <formatter type="plain"/>
+
+            <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_${tests}"/>
+
+            <!--<jvmarg value="-Xdebug"/>-->
+            <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006"/>-->
+
+        </junit>
+
+<!--
+        <java classname="org.junit.runner.JUnitCore" fork="true">
+            <classpath>
+
+
 
             </classpath>
 
             <arg  value="org.jboss.jbossts.qa.junit.testgroup.TestGroup_${tests}"/>
 
-            <!--<jvmarg value="-Xdebug"/>-->
-            <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006"/>-->
         </java>
-    </target>
+-->    </target>
 
     <!-- ##################################### -->
 
@@ -345,65 +386,6 @@
         <echo message="Done test group ${tests}"/>
     </target>
 
-    <target name="performance">
-        <!-- caution: perf tests are essentially regression tests and are only meaningful
-            if used with the same hardware (profile) and config between runs. -->
-
-        <!-- perfprofileio : 18 tests, 9 minutes -->
-        <antcall target="junit-tests"><param name="tests" value="perfprofileio"/></antcall>
-        <!-- perfprofile01_i (JTS implicit) : 25 tests, 31 minutes -->
-        <antcall target="junit-tests"><param name="tests" value="perfprofile01_i"/></antcall>
-        <!-- perfprofile01_e (JTS explicit) : 25 tests, 35 minutes -->
-        <antcall target="junit-tests"><param name="tests" value="perfprofile01_e"/></antcall>
-    </target>
 
 
-
-    <target name="scratch">
-
-        <antcall target="install-dbdriver"><param name="files" value="ojdbc14.jar"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="jdbcresources01_oracle_thin_jndi"/></antcall>
-
-    </target>
-
-<!--
-    unused examples of other approaches to running tests:
-
-    <target name="run2">
-        <java classname="org.jboss.dtf.testframework.local.JUnitTestSuite" fork="true">
-            <classpath>
-                <path refid="tests.classpath"/>
-            </classpath>
-
-            <arg value="./testdefs/jbossts-qa-txcore-testdefs.xml"/>
-            <arg value="config/JBossTS_JTS_JacORB_QA.xml"/>
-            <arg value="config/nodeconfig.xml-local"/>
-            <arg value=".*"/>
-
-            <jvmarg value="-Xdebug"/>
-            <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"/>
-
-        </java>
-    </target>
-
-    <target name="run">
-        <antcall target="run-tests"><param name="testdefs.filename" value="jbossts-qa-txcore-testdefs.xml"/></antcall>
-    </target>
-
-    <target name="run-tests">
-        <java classname="org.jboss.dtf.testframework.local.LocalTestManager" fork="true">
-            <classpath>
-                <path refid="tests.classpath"/>
-                <pathelement location="/usr/local/javastuff/jdom-1.1/lib/xerces.jar"/>
-            </classpath>
-            <arg value="file:///home/jhalli/IdeaProjects/jboss/jbossts_trunk/qa/testdefs/${testdefs.filename}"/>
-            <arg value="/home/jhalli/IdeaProjects/jboss/jbossts_trunk/qa/config/JBossTS_JTS_JacORB_QA.xml"/>
-            <arg value="file:///home/jhalli/IdeaProjects/jboss/jbossts_trunk/qa/config/nodeconfig.xml"/>
-
-            <jvmarg value="-Xdebug"/>
-            <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>
-
-        </java>
-    </target>
--->
 </project>

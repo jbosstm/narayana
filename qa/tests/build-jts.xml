@@ -220,7 +220,6 @@
 			<exclude name="org/jboss/jbossts/qa/ArjunaCore/Common/ClassPathParserTest.java" />
 
 			<exclude name="**/${astest.dir}/**/*.java" />
-            <exclude name="**/junit/XML2JUnit.java"/>
 
             <classpath>
 				<path refid="jts.classpath"/>
