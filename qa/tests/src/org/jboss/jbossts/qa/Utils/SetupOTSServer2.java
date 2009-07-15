@@ -40,9 +40,11 @@ import java.io.IOException;
 
 public class SetupOTSServer2
 {
+    public final static String NAME_SERVICE_BIND_NAME_PROPERTY = "ots.server.bindname";
+
 	public static void main(String[] args)
 	{
-		String bindName = System.getProperty(RegisterOTSServer.NAME_SERVICE_BIND_NAME_PROPERTY);
+		String bindName = System.getProperty(NAME_SERVICE_BIND_NAME_PROPERTY);
 
 		if (bindName != null)
 		{
@@ -71,7 +73,7 @@ public class SetupOTSServer2
 		}
 		else
 		{
-			System.out.println("Bind name '" + RegisterOTSServer.NAME_SERVICE_BIND_NAME_PROPERTY + "' not specified");
+			System.out.println("Bind name '" + NAME_SERVICE_BIND_NAME_PROPERTY + "' not specified");
             System.out.println("Failed");
 		}
 	}

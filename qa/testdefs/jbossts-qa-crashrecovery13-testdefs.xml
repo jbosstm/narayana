@@ -1,0 +1,57 @@
+<!-- $Id: atsqa-crashrecovery13-qa-testdefs.xml,v 1.2 2004/10/25 15:11:51 nmcl Exp $ -->
+<test_set>
+	<default_timeout value="240"/>
+	<description>Crash Recovery Tests 13</description>
+
+	<test_group name="CrashRecovery13">
+	<task_declaration>
+        <task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" classname="org.jboss.jbossts.qa.Utils.EmptyObjectStore" runner="JavaTaskRunner" type="expect_pass_fail"/>
+		<task id="org.jboss.jbossts.qa.CrashRecovery13Clients.Test01" classname="org.jboss.jbossts.qa.CrashRecovery13Clients.Test01" runner="JavaTaskRunner" type="expect_pass_fail"/>
+		<task id="org.jboss.jbossts.qa.CrashRecovery13Clients.Test02" classname="org.jboss.jbossts.qa.CrashRecovery13Clients.Test02" runner="JavaTaskRunner" type="expect_pass_fail"/>
+        <task id="org.jboss.jbossts.qa.CrashRecovery13Clients.Test03" classname="org.jboss.jbossts.qa.CrashRecovery13Clients.Test03" runner="JavaTaskRunner" type="expect_pass_fail"/>
+	</task_declaration>
+
+	<test_declaration id="CrashRecovery13_Test01" descriptive_name="CrashRecovery13 Test01" author="MCL">
+		<description>XAResourceRecovery interface test</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="org.jboss.jbossts.qa.CrashRecovery13Clients.Test01" runtime_id="client0" location="setup0" >
+				<param>nocrash</param>
+				<param>CR13_01.log</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="CrashRecovery13_Test02" descriptive_name="CrashRecovery13 Test02" author="MCL">
+		<description>XA node name functionality test</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="org.jboss.jbossts.qa.CrashRecovery13Clients.Test02" runtime_id="client0" location="setup0" >
+				<param>nocrash</param>
+				<param>CR13_02.log</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+		</action_list>
+	</test_declaration>
+
+	<test_declaration id="CrashRecovery13_Test03" descriptive_name="CrashRecovery13 Test03" author="MCL">
+		<description>XAConnectionRecovery test</description>
+		<configuration names_required="1"/>
+		<action_list>
+			<perform_task id="org.jboss.jbossts.qa.Utils.EmptyObjectStore" location="all">
+			</perform_task>
+			<start_task id="org.jboss.jbossts.qa.CrashRecovery13Clients.Test03" runtime_id="client0" location="setup0" >
+				<param>nocrash</param>
+				<param>CR13_03.log</param>
+			</start_task>
+			<wait_for_task runtime_id="client0"/>
+		</action_list>
+	</test_declaration>
+
+	</test_group>
+</test_set>

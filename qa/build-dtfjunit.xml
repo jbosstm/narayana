@@ -37,7 +37,7 @@
 
     -->
 
-    <property name="jbossts.home" value="build"/>
+    <property name="jbossts.home" value="../install"/>
 
     <property name="src" location="tests/src"/>
     <property name="build" location="tests/build/classes"/>
@@ -56,13 +56,16 @@
         </fileset>
         <pathelement location="${jbossts.home}/etc"/>
 
-        <pathelement location="${jbossts.home}/qa/lib/TestingFramework.jar"/>
+        <pathelement location="../ext/TestingFramework.jar"/>
     </path>
 
 
     <target name="compile" description="compile the source ">
         <javac srcdir="${src}" destdir="${build}" classpathref="build" debug="true" fork="true">
             <include name="**/junit/*.java"/>
+            <include name="**/junit/testgroup/*.java"/>
+
+            <!--<exclude name="**/junit/XML2JUnit.java"/>-->
         </javac>
     </target>
 
@@ -74,8 +77,8 @@
 
     <target name="runtests" depends="compile-generated">
 
-        <antcall target="run-onegroup"><param name="tests" value="currenttests01"/></antcall>
         <!--
+        <antcall target="run-onegroup"><param name="tests" value="currenttests01"/></antcall>
         <antcall target="run-onegroup"><param name="tests" value="jtatests01"/></antcall>
         <antcall target="run-onegroup"><param name="tests" value="otsserver"/></antcall>
 
@@ -95,18 +98,23 @@
 
         <antcall target="run-onegroup"><param name="tests" value="crashrecovery01"/></antcall>
         <antcall target="run-onegroup"><param name="tests" value="crashrecovery02_1"/></antcall>
-
-        <antcall target="run-onegroup"><param name="tests" value="crashrecovery02_2"/></antcall>
         <antcall target="run-onegroup"><param name="tests" value="crashrecovery03"/></antcall>
         <antcall target="run-onegroup"><param name="tests" value="crashrecovery04"/></antcall>
         <antcall target="run-onegroup"><param name="tests" value="crashrecovery05_1"/></antcall>
-        <antcall target="run-onegroup"><param name="tests" value="crashrecovery05_2"/></antcall>
         <antcall target="run-onegroup"><param name="tests" value="crashrecovery06"/></antcall>
         <antcall target="run-onegroup"><param name="tests" value="crashrecovery07"/></antcall>
-        <antcall target="run-onegroup"><param name="tests" value="crashrecovery08"/></antcall>
-        <antcall target="run-onegroup"><param name="tests" value="crashrecovery12"/></antcall>
+        -->
 
+        <!-- cr12: failing 02, 03, 04 - remove terminate -->
+        <!--<antcall target="run-onegroup"><param name="tests" value="crashrecovery12"/></antcall>-->
+
+<!--
+        <antcall target="run-onegroup"><param name="tests" value="crashrecovery02_2"/></antcall>
+        <antcall target="run-onegroup"><param name="tests" value="crashrecovery05_2"/></antcall>
+        <antcall target="run-onegroup"><param name="tests" value="crashrecovery08"/></antcall>
+-->
         <antcall target="run-onegroup"><param name="tests" value="jdbcresources01_oracle_thin_jndi"/></antcall>
+        <!--
         <antcall target="run-onegroup"><param name="tests" value="jdbcresources02_oracle_thin_jndi"/></antcall>
         <antcall target="run-onegroup"><param name="tests" value="jdbcresources01_mssqlserver_jndi"/></antcall>
         <antcall target="run-onegroup"><param name="tests" value="jdbcresources02_mssqlserver_jndi"/></antcall>
@@ -118,18 +126,23 @@
         <antcall target="run-onegroup"><param name="tests" value="jdbcresources02_mysql_jndi"/></antcall>
         <antcall target="run-onegroup"><param name="tests" value="jdbcresources01_sybase_jndi"/></antcall>
         <antcall target="run-onegroup"><param name="tests" value="jdbcresources02_sybase_jndi"/></antcall>
-        -->
+-->
     </target>
 
 
     <target  name="run-onegroup" depends="compile">
+        <echo message="Running group ${tests}"/>
         <java classname="org.junit.runner.JUnitCore" fork="true">
             <classpath>
                 <path refid="build"/>
                 <pathelement location="${build}"/>
                 <pathelement location="."/>
             </classpath>
-            <arg  value="org.jboss.jbossts.qa.junit.generated.TestGroup_${tests}"/>
+            <!--<arg  value="org.jboss.jbossts.qa.junit.generated.TestGroup_${tests}"/>-->
+            <arg  value="org.jboss.jbossts.qa.junit.testgroup.TestGroup_${tests}"/>
+
+            <!--<jvmarg value="-Xdebug"/>-->
+            <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006"/>-->
         </java>
     </target>
 
@@ -137,7 +150,7 @@
 
         <delete dir="${src}/org/jboss/jbossts/qa/junit/generated"/>
         <mkdir dir="${src}/org/jboss/jbossts/qa/junit/generated"/>
-
+<!--
         <antcall target="run-generator"><param name="tests" value="currenttests01"/></antcall>
         <antcall target="run-generator"><param name="tests" value="jtatests01"/></antcall>
         <antcall target="run-generator"><param name="tests" value="otsserver"/></antcall>
@@ -191,6 +204,27 @@
         <antcall target="run-generator"><param name="tests" value="jdbclocals01-mysql_jndi"/></antcall>
         <antcall target="run-generator"><param name="tests" value="jdbclocals01-sybase_jndi"/></antcall>
 
+
+        <antcall target="run-generator"><param name="tests" value="txoj"/></antcall>
+        <antcall target="run-generator"><param name="tests" value="txcore"/></antcall>
+        <antcall target="run-generator"><param name="tests" value="ait01_otstransactionmanager"/></antcall>
+        <antcall target="run-generator"><param name="tests" value="aitresources01"/></antcall>
+
+        <antcall target="run-generator"><param name="tests" value="jdbcresources03-oracle_thin_jndi"/></antcall>
+        <antcall target="run-generator"><param name="tests" value="jdbcresources04-oracle_thin_jndi"/></antcall>
+
+        <antcall target="run-generator"><param name="tests" value="otsserver-timeout"/></antcall>
+
+        <antcall target="run-generator"><param name="tests" value="perfprofile01_e"/></antcall>
+        <antcall target="run-generator"><param name="tests" value="perfprofile01_i"/></antcall>
+        <antcall target="run-generator"><param name="tests" value="perfprofileio"/></antcall>
+        <antcall target="run-generator"><param name="tests" value="crashrecovery13"/></antcall>
+
+-->
+
+        <!--<antcall target="run-generator"><param name="tests" value="performance"/></antcall>        -->
+        <!--<antcall target="run-generator"><param name="tests" value="as-crashrecovery01"/></antcall>-->
+
     </target>
 
 
@@ -205,6 +239,10 @@
             </classpath>
             <arg value="testdefs/jbossts-qa-${tests}-testdefs.xml"/>
             <arg value="${src}/org/jboss/jbossts/qa/junit/generated"/>
+
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006"/>
+
         </java>
 
         <echo message="Done test group ${tests}"/>

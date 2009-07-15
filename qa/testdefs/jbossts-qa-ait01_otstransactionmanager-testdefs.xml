@@ -97,12 +97,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -122,7 +122,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 				</perform_task>
 			</action_list>
@@ -146,12 +146,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -184,7 +184,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 				</perform_task>
@@ -209,12 +209,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -259,7 +259,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 					<param>$(3)</param>
@@ -285,12 +285,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -349,7 +349,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 					<param>$(3)</param>
@@ -376,12 +376,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -425,7 +425,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 					<param>$(3)</param>
@@ -452,12 +452,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -477,7 +477,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 				</perform_task>
 			</action_list>
@@ -501,12 +501,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -539,7 +539,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 				</perform_task>
@@ -564,12 +564,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -615,7 +615,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 					<param>$(3)</param>
@@ -641,12 +641,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -705,7 +705,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 					<param>$(3)</param>
@@ -732,12 +732,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -781,7 +781,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 					<param>$(3)</param>
@@ -808,12 +808,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -841,7 +841,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 				</perform_task>
@@ -866,12 +866,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -915,7 +915,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 					<param>$(3)</param>
@@ -942,12 +942,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -967,7 +967,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 				</perform_task>
 			</action_list>
@@ -991,12 +991,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -1029,7 +1029,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 				</perform_task>
@@ -1054,12 +1054,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -1105,7 +1105,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 					<param>$(3)</param>
@@ -1131,12 +1131,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -1195,7 +1195,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 					<param>$(3)</param>
@@ -1222,12 +1222,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -1271,7 +1271,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 					<param>$(3)</param>
@@ -1298,12 +1298,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -1323,7 +1323,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 				</perform_task>
 			</action_list>
@@ -1347,12 +1347,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -1385,7 +1385,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 				</perform_task>
@@ -1410,12 +1410,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -1461,7 +1461,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 					<param>$(3)</param>
@@ -1487,12 +1487,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -1551,7 +1551,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 					<param>$(3)</param>
@@ -1578,12 +1578,12 @@
 					<param>$(ORBFLAGS_2)</param>
 					<param>-test</param>
 				</start_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" location="server1">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RegisterOTSServer" runtime_id="setup0" location="server1">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
 				</perform_task>
-				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.SetupOTSServer" runtime_id="setup1" location="all">
 					<param>$(ORBFLAGS_1)</param>
 					<param>$(ORBFLAGS_2)</param>
 					<jvm_param>-Dots.server.bindname=$(1)</jvm_param>
@@ -1627,7 +1627,7 @@
 				<terminate_task runtime_id="server2"/>
 				<terminate_task runtime_id="server1"/>
 				<terminate_task runtime_id="server0"/>
-				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" location="all">
+				<perform_task id="org.jboss.jbossts.qa.Utils.RemoveServerIORStore" runtime_id="cleanup0" location="all">
 					<param>$(1)</param>
 					<param>$(2)</param>
 					<param>$(3)</param>

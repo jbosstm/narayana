@@ -11,28 +11,28 @@
         <task_declaration>
 
             <task   id="PerformanceTestWrapper"
-                    classname="com.hp.mwtests.performance.PerformanceTestWrapper"
+                    classname="org.jboss.jbossts.qa.performance.PerformanceTestWrapper"
                     runner="UnitTestRunner" type="expect_pass_fail"
                     parameter_setting="APPEND_PARAMETERS|OVERRIDE_JVM_PARAMETERS">
                 <param>-ORBname</param><param>arjuna.portable_interceptor.ots_interposition</param>
             </task>
 
             <task   id="DummyImplServer"
-                    classname="com.hp.mwtests.performance.servers.DummyImplServer"
+                    classname="org.jboss.jbossts.qa.performance.servers.DummyImplServer"
                     runner="UnitTestRunner" type="expect_ready"
                     parameter="APPEND_PARAMETERS|OVERRIDE_JVM_PARAMETERS">
                 <param>-ORBname</param><param>arjuna.portable_interceptor.ots_interposition</param>
             </task>
 
             <task   id="NestedOnePhaseServer"
-                    classname="com.hp.mwtests.performance.servers.NestedOnePhaseServer"
+                    classname="org.jboss.jbossts.qa.performance.servers.NestedOnePhaseServer"
                     runner="UnitTestRunner" type="expect_ready"
                     parameter="APPEND_PARAMETERS|OVERRIDE_JVM_PARAMETERS">
                 <param>-ORBname</param><param>arjuna.portable_interceptor.ots_interposition</param>
             </task>
 
             <task   id="NestedTwoPhaseServer"
-                    classname="com.hp.mwtests.performance.servers.NestedTwoPhaseServer"
+                    classname="org.jboss.jbossts.qa.performance.servers.NestedTwoPhaseServer"
                     runner="UnitTestRunner" type="expect_ready"
                     parameter="APPEND_PARAMETERS|OVERRIDE_JVM_PARAMETERS">
                 <param>-ORBname</param><param>arjuna.portable_interceptor.ots_interposition</param>
@@ -55,7 +55,7 @@
                 </start_task>
 
                 <perform_task id="PerformanceTestWrapper" name_list="1,2">
-                    <param>-classname</param><param>com.hp.mwtests.performance.implementations.remote.nested.NestedTrx</param>
+                    <param>-classname</param><param>org.jboss.jbossts.qa.performance.implementations.remote.nested.NestedTrx</param>
                     <param>-iterations</param><param>1000</param>
                     <param>-threads</param><param>10</param>
                     <param>-service</param><param>$(1)</param>
@@ -74,7 +74,7 @@
         <task_declaration>
 
             <task   id="PerformanceTestWrapper"
-                    classname="com.hp.mwtests.performance.PerformanceTestWrapper"
+                    classname="org.jboss.jbossts.qa.performance.PerformanceTestWrapper"
                     runner="UnitTestRunner" type="expect_pass_fail"
                     parameter_setting="APPEND_PARAMETERS|OVERRIDE_JVM_PARAMETERS">
                 <param>-ORBname</param><param>arjuna.portable_interceptor.ots_interposition</param>
@@ -90,7 +90,7 @@
 
             <action_list>
                 <perform_task id="PerformanceTestWrapper">
-                    <param>-classname</param><param>com.hp.mwtests.performance.implementations.local.NestedTrx</param>
+                    <param>-classname</param><param>org.jboss.jbossts.qa.performance.implementations.local.NestedTrx</param>
                     <param>-iterations</param><param>1000</param>
                     <param>-threads</param><param>10</param>
                     <param>-commit</param>
@@ -107,7 +107,7 @@
 
             <action_list>
                 <perform_task id="PerformanceTestWrapper">
-                    <param>-classname</param><param>com.hp.mwtests.performance.implementations.local.NestedOnePhaseTrx</param>
+                    <param>-classname</param><param>org.jboss.jbossts.qa.performance.implementations.local.NestedOnePhaseTrx</param>
                     <param>-iterations</param><param>1000</param>
                     <param>-threads</param><param>10</param>
                     <param>-commit</param>
@@ -124,7 +124,7 @@
 
             <action_list>
                 <perform_task id="PerformanceTestWrapper">
-                    <param>-classname</param><param>com.hp.mwtests.performance.implementations.local.NestedTwoPhaseTrx</param>
+                    <param>-classname</param><param>org.jboss.jbossts.qa.performance.implementations.local.NestedTwoPhaseTrx</param>
                     <param>-iterations</param><param>1000</param>
                     <param>-threads</param><param>10</param>
                     <param>-commit</param>
@@ -141,7 +141,7 @@
 
             <action_list>
                 <perform_task id="PerformanceTestWrapper">
-                    <param>-classname</param><param>com.hp.mwtests.performance.implementations.local.TopLevelTrx</param>
+                    <param>-classname</param><param>org.jboss.jbossts.qa.performance.implementations.local.TopLevelTrx</param>
                     <param>-iterations</param><param>1000</param>
                     <param>-threads</param><param>10</param>
                     <param>-commit</param>
@@ -158,7 +158,7 @@
 
             <action_list>
                 <perform_task id="PerformanceTestWrapper">
-                    <param>-classname</param><param>com.hp.mwtests.performance.implementations.local.OnePhaseTrx</param>
+                    <param>-classname</param><param>org.jboss.jbossts.qa.performance.implementations.local.OnePhaseTrx</param>
                     <param>-iterations</param><param>1000</param>
                     <param>-threads</param><param>10</param>
                     <param>-commit</param>
@@ -175,7 +175,7 @@
 
             <action_list>
                 <perform_task id="PerformanceTestWrapper">
-                    <param>-classname</param><param>com.hp.mwtests.performance.implementations.local.TwoPhaseTrx</param>
+                    <param>-classname</param><param>org.jboss.jbossts.qa.performance.implementations.local.TwoPhaseTrx</param>
                     <param>-iterations</param><param>1000</param>
                     <param>-threads</param><param>10</param>
                     <param>-commit</param>

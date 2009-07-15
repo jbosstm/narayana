@@ -23,9 +23,6 @@
 	<!-- set this property to the location of a JBossTS core build -->
 	<property name="org.jboss.jbossts.qa.ts.home" location="../../install/"/>
 
-	<!-- set this property to the location of a DTF TestingFramework build -->
-	<property name="org.jboss.jbossts.qa.testingframework_location" location="../../ext/TestingFramework.jar"/>
-
 	<property name="org.jboss.jbossts.qa.buildroot" location="build"/>
 	<property name="org.jboss.jbossts.qa.build.classes" value="${org.jboss.jbossts.qa.buildroot}/classes/"/>
 	<property name="org.jboss.jbossts.qa.core.src" location="src"/>
@@ -33,7 +30,7 @@
 
 	<path id="core.classpath">
 		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/">
-			<include name="jbosscore.jar"/>
+			<include name="arjunacore.jar"/>
 		</fileset>
 		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
 			<include name="jbossts-common.jar"/>
@@ -64,7 +61,6 @@
 			<classpath>
             	<path refid="core.classpath"/>
 				<pathelement location="${org.jboss.jbossts.qa.build.classes}"/>
-				<pathelement location="${org.jboss.jbossts.qa.testingframework_location}"/>
 			</classpath>
 
 		</javac>

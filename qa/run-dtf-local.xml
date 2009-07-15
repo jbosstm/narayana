@@ -158,10 +158,10 @@
         Drivers are placed into the pool by build.xml and into the classpath by config/<product>.xml
      -->
     <target name="install-dbdriver">
-        <delete dir="build/qa/lib/selected_dbdriver"/>
-        <mkdir dir="build/qa/lib/selected_dbdriver"/>
-        <copy todir="build/qa/lib/selected_dbdriver">
-            <fileset dir="build/qa/lib/all_dbdrivers/" includes="${files}"/>
+        <delete dir="dbdrivers/selected_dbdriver"/>
+        <mkdir dir="dbdrivers/selected_dbdriver"/>
+        <copy todir="dbdrivers/selected_dbdriver" flatten="true">
+            <fileset dir="dbdrivers/" includes="**/${files}"/>
         </copy>
     </target>
 
@@ -174,8 +174,8 @@
     <target  name="junit-jdbc">
 
         <antcall target="install-dbdriver"><param name="files" value="ojdbc14.jar"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="jdbcresources01-oracle_thin_jndi"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="jdbcresources02-oracle_thin_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01_oracle_thin_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources02_oracle_thin_jndi"/></antcall>
 
         <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
         <condition property="mssql.driver" value="sqljdbc4.jar">
@@ -187,20 +187,20 @@
         <antcall target="junit-tests"><param name="tests" value="jdbcresources02_mssqlserver_jndi"/></antcall>
 
         <antcall target="install-dbdriver"><param name="files" value="db2*"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="jdbcresources01-ibmdb2_jndi"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="jdbcresources02-ibmdb2_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01_ibmdb2_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources02_ibmdb2_jndi"/></antcall>
 
         <antcall target="install-dbdriver"><param name="files" value="postgresql-8.3-603.jdbc3.jar"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="jdbcresources01-pgsql_jndi"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="jdbcresources02-pgsql_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01_pgsql_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources02_pgsql_jndi"/></antcall>
 
         <antcall target="install-dbdriver"><param name="files" value="mysql-connector-java-5.1.7-bin.jar"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="jdbcresources01-mysql_jndi"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="jdbcresources02-mysql_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01_mysql_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources02_mysql_jndi"/></antcall>
 
         <antcall target="install-dbdriver"><param name="files" value="jconn3.jar"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="jdbcresources01-sybase_jndi"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="jdbcresources02-sybase_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01_sybase_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources02_sybase_jndi"/></antcall>
 
     </target>
 
@@ -269,7 +269,43 @@
 
     </target>
 
-    <target name="junit-tests">
+    <!-- ##################################### -->
+
+    <target  name="junit-tests">
+
+        <echo message="Running junit test group ${tests} from basedir=${basedir}"/>
+
+        <java classname="org.junit.runner.JUnitCore" fork="true">
+            <classpath>
+
+                <pathelement location="../ext/junit-4.6.jar"/>
+
+                <fileset dir="tests/build">
+                    <include name="jbossts-*-qa.jar"/>
+                </fileset>
+
+                <fileset dir="../install/lib">
+                    <include name="*.jar"/>
+                </fileset>
+                <fileset dir="../install/lib/ext">
+                    <include name="*.jar"/>
+                    <include name="*.zip"/>
+                </fileset>
+                <pathelement location="../install/etc"/>
+
+
+            </classpath>
+
+            <arg  value="org.jboss.jbossts.qa.junit.testgroup.TestGroup_${tests}"/>
+
+            <!--<jvmarg value="-Xdebug"/>-->
+            <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006"/>-->
+        </java>
+    </target>
+
+    <!-- ##################################### -->
+
+    <target name="junit-tests-old">
 
         <echo message="Running test group ${tests} from basedir=${basedir}"/>
 
@@ -325,15 +361,8 @@
 
     <target name="scratch">
 
-        <antcall target="junit-tests"><param name="tests" value="otsserver"/></antcall>
-
-        <!-- mssql needs different .jar for jdk 1.5 vs. 1.6 runtime -->
-        <!--<condition property="mssql.driver" value="sqljdbc4.jar">-->
-            <!--<equals arg1="${java.specification.version}" arg2="1.6"/>-->
-        <!--</condition>-->
-        <!--<property name="mssql.driver" value="sqljdbc.jar"/>-->
-        <!--<antcall target="install-dbdriver"><param name="files" value="${mssql.driver}"/></antcall>-->
-        <!--<antcall target="junit-tests"><param name="tests" value="crashrecovery11-mssqlserver_jndi"/></antcall>-->
+        <antcall target="install-dbdriver"><param name="files" value="ojdbc14.jar"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01_oracle_thin_jndi"/></antcall>
 
     </target>
 

@@ -1,12 +1,7 @@
-#ifndef NO_PRAGMA_SUPPORT
-#pragma prefix "mwtests.hp.com"
-#endif
-
-#ifdef HAVE_JAVAPACKAGE
-#pragma javaPackage "com.hp.mwtests"
-#endif
 
 #include <CosTransactions.idl>
+
+#pragma prefix "qa.jbossts.jboss.org"
 
 module performance
 {

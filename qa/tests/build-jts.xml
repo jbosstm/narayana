@@ -29,9 +29,6 @@
 	<property name="jbossall-client.location" location="${jboss.home}/client/jbossall-client.jar"/>
 	<property name="astest.dir" value="org/jboss/jbossts/qa/astests"/>
 
-    <!-- set this property to the location of a DTF TestingFramework build -->
-	<property name="org.jboss.jbossts.qa.testingframework_location" location="../../ext/TestingFramework.jar"/>
-
     <!-- TODO cd ArjunaJTS/orbportability; ant -f build-anttasks.xml -->
 	<property name="org.jboss.jbossts.qa.idlcompiler.lib"
 			  location="../../ArjunaJTS/orbportability/lib/ext"/>
@@ -76,6 +73,7 @@
 		<pathelement location="../../ArjunaJTS/orbportability/config"/>
 		<fileset file="${org.jboss.jbossts.qa.server_manager_location}" />
         <pathelement path="${org.jboss.jbossts.qa.orb.classpath}"/>
+        <pathelement location="../../ext/junit-4.6.jar"/>
 	</path>
 
 	<target name="org.jboss.jbossts.qa.init">
@@ -106,7 +104,7 @@
 
 			<element src="${org.jboss.jbossts.qa.idl}/performance.idl"
 					package="com.hp.mwtests"
-					mappings="CosTransactions=org.omg;performance=com.hp.mwtests;CORBA=org.omg"/>
+					mappings="CosTransactions=org.omg;performance=org.jboss.jbossts.qa;CORBA=org.omg"/>
 			<element src="${org.jboss.jbossts.qa.idl}/AITResources01.idl"
 					 package="org.jboss.jbossts.qa.AITResources01"
 					 mappings="AITResources01=org.jboss.jbossts.qa;CosTransactions=org.omg;CORBA=org.omg"/>
@@ -222,12 +220,11 @@
 			<exclude name="org/jboss/jbossts/qa/ArjunaCore/Common/ClassPathParserTest.java" />
 
 			<exclude name="**/${astest.dir}/**/*.java" />
-            <exclude name="**/junit/**"/>
+            <exclude name="**/junit/XML2JUnit.java"/>
 
             <classpath>
 				<path refid="jts.classpath"/>
 				<pathelement location="${org.jboss.jbossts.qa.build.classes}"/>
-				<pathelement location="${org.jboss.jbossts.qa.testingframework_location}"/>
 			</classpath>
 		</javac>
 	</target>

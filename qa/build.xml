@@ -27,9 +27,6 @@
 	<property name="org.jboss.jbossts.qa.ts.home" location="../install"/>
 	<property name="jbossts.install.lib" location="${org.jboss.jbossts.qa.ts.home}/lib"/>
 
-	<!-- set this property to the location of a DTF TestingFramework.jar build -->
-	<property name="org.jboss.jbossts.qa.testingframework_location" location="../ext/TestingFramework.jar"/>
-
 	<!-- TODO cd ArjunaJTS/orbportability; ant -f build-anttasks.xml -->
 	<property name="org.jboss.jbossts.qa.idlcompiler.lib"
 			  location="../ArjunaJTS/orbportability/lib/ext"/>
@@ -118,6 +115,8 @@
 		<available file="${jbossts.install.lib}/jbossjta.jar" property="buildtype" value="jta"/>
 		<available file="${jbossts.install.lib}/jta.jar" property="buildtype" value="jta"/>
 
+        <available file="${jbossts.install.lib}/arjunacore.jar" property="buildtype" value="core"/>
+
 		<available file="${jbossts.install.lib}/jbossjta-integration.jar" property="integration.build"/>
 		<available file="${jbossts.install.lib}/jbossjts-integration.jar" property="integration.build"/>
 
@@ -161,62 +160,7 @@
             <property name="org.jboss.jbossts.qa.server_manager_location"
 			          value="${org.jboss.jbossts.qa.server_manager_location}"/>
 		</ant>
-
-		<!-- prepare the content of the qa distribution, which is the product build
-			plus the qa stuff overlayed on it -->
-		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}">
-			<fileset dir="${org.jboss.jbossts.qa.ts.home}"/>
-		</copy>
-		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/jdbc_profiles">
-			<fileset dir="config/jdbc_profiles"/>
-		</copy>
-		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/perf_profiles">
-			<fileset dir="config/perf_profiles"/>
-		</copy>
-		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/memory_profiles">
-			<fileset dir="config/memory_profiles"/>
-		</copy>
-		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/lib">
-			<fileset file="${org.jboss.jbossts.qa.testingframework_location}"/>
-			<fileset file="tests/build/jbossts-${buildtype}-qa.jar"/>
-			<fileset file="tests/build/astest.jar"/>
-			<fileset file="tests/build/java.policy"/>
-			<fileset file="${org.jboss.jbossts.qa.server_manager_location}"/>
-        </copy>
-        <copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/lib/all_dbdrivers/" failonerror="${have.dbdrivers}">
-            <fileset refid="oracle.drivers"/>
-			<fileset refid="mssql.drivers"/>
-			<fileset refid="pgsql.drivers"/>
-			<fileset refid="mysql.drivers"/>
-			<fileset refid="ibmdb2.drivers"/>
-			<fileset refid="sybase.drivers"/>
-		</copy>
-		<copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa" failonerror="false">
-			<fileset dir="tests/build/qa">
-				<include name="resources/**/*"/>
-			</fileset>
-			<fileset dir="tests">
-				<include name="scripts/**/*"/>
-			</fileset>
-		</copy>
-		<!-- testing is done with some non-default properties: -->
-		<copy file="config/jbossts-${buildtype}-properties.xml"
-                tofile="${org.jboss.jbossts.qa.dist.buildroot}/etc/jbossts-properties.xml" overwrite="true">
-		</copy>
-
-        <!-- for 'loca'l tests, we need some libs we would otherwise have got from DTF -->
-        <mkdir dir="${org.jboss.jbossts.qa.dist.buildroot}/qa/lib/ext"/>
-        <copy todir="${org.jboss.jbossts.qa.dist.buildroot}/qa/lib/ext" failonerror="false">
-            <fileset dir="ext">
-                <include name="fscontext.jar"/>
-                <include name="providerutil.jar"/>
-            </fileset>
-        </copy>
-
-        <!-- build the qa distribution installer package -->
-		<zip destfile="${org.jboss.jbossts.qa.dist.buildroot}/jbossts-${buildtype}-qa-distribution.zip"
-			basedir="${org.jboss.jbossts.qa.dist.buildroot}" excludes="jbossts-${buildtype}-qa-distribution.zip"/>
-
+        
     </target>
 
 	<target name="help">

@@ -29,10 +29,6 @@
     <property name="jbossall-client.location" location="${env.JBOSS_HOME}/client/jbossall-client.jar"/>
     <property name="astest.dir" value="org/jboss/jbossts/qa/astests"/>
 
-    <!-- set this property to the location of a DTF TestingFramework build -->
-	<property name="org.jboss.jbossts.qa.testingframework_location" location="../../ext/TestingFramework.jar"/>
-
-
     <!-- set this to the location(s) of the database drivers -->
 	<path id="database.drivers.path">
 		<fileset dir="/oracle/product/10.2.0/db_1/jdbc/lib/">
@@ -92,12 +88,11 @@
 			<include name="**/org/jboss/jbossts/qa/astests/**/*.java"/>
 
             <exclude name="**/astests/**"/>
-            <exclude name="**/junit/**"/>
+            <exclude name="**/junit/XML2JUnit.java"/>
 
             <classpath>
 				<path refid="jta.classpath"/>
 				<pathelement location="${org.jboss.jbossts.qa.build.classes}"/>
-				<pathelement location="${org.jboss.jbossts.qa.testingframework_location}"/>
 			</classpath>
 		</javac>
     </target>
@@ -110,7 +105,6 @@
             <classpath>
                 <path refid="jta.classpath"/>
                 <pathelement location="${org.jboss.jbossts.qa.build.classes}"/>
-                <pathelement location="${org.jboss.jbossts.qa.testingframework_location}"/>
                 <!-- additional dependency, which is why we don't just do this in compile task above: -->
                 <pathelement location="${jbossall-client.location}"/>
             </classpath>
