@@ -32,6 +32,7 @@
 package com.hp.mwtests.ts.jta.recovery;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.arjuna.common.Environment;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -41,6 +42,7 @@ public class RecoveryManagerTest
     @Test
     public void test()
     {
+        System.setProperty(Environment.RECOVERY_BACKOFF_PERIOD, "1");
         System.setProperty("com.arjuna.ats.jta.xaRecoveryNode", "1");
         System.setProperty("XAResourceRecovery1", "com.hp.mwtests.ts.jta.recovery.DummyXARecoveryResource");
 

@@ -32,6 +32,9 @@
 package com.hp.mwtests.ts.jta.recovery;
 
 import com.hp.mwtests.ts.jta.common.*;
+import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.common.Environment;
 
 import javax.transaction.xa.*;
 
@@ -43,6 +46,21 @@ public class CrashRecovery
     @Test
     public void test() throws Exception
     {
+        // this test is supposed to leave a record around in the log store during a commit long enough
+        // that the periodic recovery thread runs and detects it. rather than rely on delays to make
+        // this happen (placing us at the mercy of the schduler) we use a byteman script to enforce
+        // the thread sequence we need
+
+        // set the smallest possible backoff period so we don't have to wait too long for the test to run
+        
+        arjPropertyManager.getPropertyManager().setProperty(Environment.RECOVERY_BACKOFF_PERIOD, "1");
+
+        // start the recovery manager
+
+        RecoveryManager.manager().initialize();
+
+        // ok, now drive a TX to completion. the script should ensure that the recovery 
+
         XAResource firstResource = new CrashXAResource();
         XAResource secondResource = new CrashXAResource();
 

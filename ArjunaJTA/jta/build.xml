@@ -48,9 +48,19 @@
     </target>
 
     <target name="run.tests">
+        <!-- we need to run the CrashRecovery test using a byteman script -->
+        <run.tests.macro script="recovery.txt">
+            <tests>
+                <fileset dir="tests/classes" includes="**/recovery/CrashRecovery.java">
+                </fileset>
+            </tests>
+        </run.tests.macro>
         <run.tests.macro>
             <tests>
                 <fileset dir="tests/classes" includes="**/*.java">
+                    <!-- exclude tests which were run above using byteman scripts -->
+                    <exclude name="**/recovery/CrashRecovery.java"/>
+                    <!-- exclude tests which we don't want to run -->
                     <exclude name="**/common/**"/>
                     <exclude name="**/LastOnePhaseResource.java"/>
                     <exclude name="**/DummyXARecoveryResource.java"/>
