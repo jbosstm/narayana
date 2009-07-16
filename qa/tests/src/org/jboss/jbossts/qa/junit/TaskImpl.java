@@ -23,6 +23,8 @@ package org.jboss.jbossts.qa.junit;
 import org.junit.Assert;
 
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.io.*;
 
@@ -41,11 +43,32 @@ public class TaskImpl implements Task
 
     private final static String PROPERTIES_FILE = "TaskImpl.properties";
 
-    private static Properties properties;
+    private static Properties properties = new Properties();
     static {
         try {
-            properties = new Properties();
-            properties.load(new FileInputStream(PROPERTIES_FILE));
+            Properties rawproperties = new Properties();
+            rawproperties.load(new FileInputStream(PROPERTIES_FILE));
+
+            // do property value token substitution, copy result to the actual properties:
+
+            Pattern substitutionPattern = Pattern.compile("\\$\\{(.*?)\\}");
+
+            Enumeration propertyNames = rawproperties.propertyNames();
+            while(propertyNames.hasMoreElements()) {
+                String name = (String)propertyNames.nextElement();
+                String rawvalue = rawproperties.getProperty(name);
+                StringBuffer buffer = new StringBuffer();
+                Matcher matcher = substitutionPattern.matcher(rawvalue);
+                while(matcher.find()) {
+                    String group = matcher.group(1);
+                    String replacement = Matcher.quoteReplacement(rawproperties.getProperty(group, System.getProperty(group, "")));
+                    matcher.appendReplacement(buffer, replacement);
+                }
+                matcher.appendTail(buffer);
+                String mungedvalue = buffer.toString();
+                properties.setProperty(name, mungedvalue);
+            }
+
         } catch(Exception e) {
             throw new ExceptionInInitializerError(e);
         }
