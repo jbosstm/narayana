@@ -31,9 +31,11 @@
     </target>
 
     <target name="taskdefs">
-        <taskdef name="idl-compiler" classname="com.arjuna.orbportability.common.ant.IDLCompiler" classpath="${build.dir}/lib/orbportability.jar;config"/>
-        <taskdef name="idl-build-list" classname="com.arjuna.orbportability.common.ant.IDLBuildList" classpath="${build.dir}/lib/orbportability.jar"/>
-        <taskdef name="idl-build-list-element" classname="com.arjuna.orbportability.common.ant.IDLBuildListElement" classpath="${build.dir}/lib/orbportability.jar"/>
+        <!-- Note these classpaths use the classes dir not the orbportability.jar due to a file locking issue
+            that may cause generateresourcebundle to fail on windows machines. -->
+        <taskdef name="idl-compiler" classname="com.arjuna.orbportability.common.ant.IDLCompiler" classpath="${build.dir}/classes;config"/>
+        <taskdef name="idl-build-list" classname="com.arjuna.orbportability.common.ant.IDLBuildList" classpath="${build.dir}/classes"/>
+        <taskdef name="idl-build-list-element" classname="com.arjuna.orbportability.common.ant.IDLBuildListElement" classpath="${build.dir}/classes"/>
     </target>
 
     <target name="compile" depends="init">
