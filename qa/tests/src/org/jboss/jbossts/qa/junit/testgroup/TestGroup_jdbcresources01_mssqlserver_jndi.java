@@ -27,10 +27,10 @@ public class TestGroup_jdbcresources01_mssqlserver_jndi extends TestGroup_jdbcre
 	}
 
     public String getDBName1() {
-        return "DB1_SQL_JNDI";
+        return "DB_SQL1_JNDI";
     }
 
     public String getDBName2() {
-        return "DB2_SQL_JNDI";
+        return "DB_SQL2_JNDI";
     }
 }
