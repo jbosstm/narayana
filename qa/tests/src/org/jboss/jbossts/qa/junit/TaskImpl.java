@@ -331,7 +331,7 @@ public class TaskImpl implements Task
             taskErrorReaderThread.start();
 
             bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            taskReaderThread = new TaskReaderThread( bufferedReader, out, "out: ");
+            taskReaderThread = new TaskReaderThread(taskName, bufferedReader, out, "out: ");
             taskReaderThread.start();
 
             if(type.equals(TaskType.EXPECT_READY)) {
@@ -564,6 +564,7 @@ public class TaskImpl implements Task
         BufferedReader bufferedReader;
         PrintStream out;
         private String prefix;
+        private String taskName;
 
         private final AtomicBoolean printedReady = new AtomicBoolean(false);
         private final AtomicBoolean isFinishedCleanly = new AtomicBoolean(false);
@@ -612,18 +613,16 @@ public class TaskImpl implements Task
          * output line and has not printed a Failed output line.
          */
         public void checkPassFail() {
-            Assert.assertFalse(printedFailed);
-            Assert.assertTrue(printedPassed);
+            Assert.assertFalse("task "+taskName+" printed Failed.", printedFailed);
+            Assert.assertTrue("task "+taskName+" did not print Passed.", printedPassed);
         }
 
         /**
          * create a task reader thread defaulting the prefix to "Line: " and the output stream to
          *
          */
-        public TaskReaderThread(BufferedReader bufferedReader) {
-            this(bufferedReader, System.out, "out: ");
-        }
-        public TaskReaderThread(BufferedReader bufferedReader, PrintStream out, String prefix) {
+        public TaskReaderThread(String taskName, BufferedReader bufferedReader, PrintStream out, String prefix) {
+            this.taskName = taskName;
             this.bufferedReader = bufferedReader;
             this.prefix = prefix;
             this.out = out;
