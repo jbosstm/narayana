@@ -384,6 +384,7 @@
 
     <macrodef name="run.tests.macro">
         <attribute name="script" default=""/>
+        <attribute name="showoutput" default="false"/>
         <element name="tests"/>
         <element name="additional.classpath" optional="true"/>
         <element name="additional.jvmargs" optional="true"/>
@@ -391,7 +392,7 @@
 	    <if>
             <equals  arg1="@{script}" arg2=""/>
             <then>
-                <run.tests.macro.aux>
+                <run.tests.macro.aux showoutput="@{showoutput}">
                     <tests.aux>
                         <tests/>
                     </tests.aux>
@@ -404,7 +405,7 @@
                 </run.tests.macro.aux>
             </then>
             <else>
-                <run.tests.macro.aux>
+                <run.tests.macro.aux  showoutput="@{showoutput}">
                     <tests.aux>
                         <tests/>
                     </tests.aux>
@@ -425,6 +426,7 @@
 
     <macrodef name="run.tests.macro.aux">
 
+        <attribute name="showoutput" default="false"/>
         <element name="tests.aux"/>
         <element name="additional.classpath.aux" optional="true"/>
         <element name="additional.jvmargs.aux" optional="true"/>
@@ -437,7 +439,7 @@
         <copy file="${sharedbuild.base.dir}/ArjunaCore/arjuna/etc/log4j.properties" todir="${build.dir}/classes"/>
 
         <mkdir dir="${build.dir}/testresults"/>
-        <junit printsummary="yes" fork="yes" dir="${build.dir}">
+        <junit printsummary="yes" fork="yes" dir="${build.dir}" showoutput="@{showoutput}">
             <formatter type="plain"/>
             <classpath>
                 <pathelement location="etc"/>

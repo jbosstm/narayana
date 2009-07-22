@@ -42,6 +42,9 @@ ENDRULE
 # the periodic recovery worker service has started running
 #
 
+# set up the PR listener rendezvous and add a rendezvous
+# for the Connection class to enter once it is started
+
 RULE RecoveryManagerStartStopTest create rendezvous
 CLASS com.hp.mwtests.ts.arjuna.recovery.RecoveryManagerStartStopTest
 METHOD testStartStop()
@@ -49,8 +52,12 @@ AT ENTRY
 BIND NOTHING
 IF TRUE
 DO debug("create rendezvous for PR listener run"),
-   createRendezvous("PR listener run", 2)
+   createRendezvous("PR listener run", 2),
+   createRendezvous("RecoveryManagerStartStopTest Connection run", 3)
 ENDRULE
+
+# rendezvous with the PR listener to make sure it has started before
+# any listener clients are added
 
 RULE RecoveryManagerStartStopTest rendezvous before adding clients
 CLASS com.hp.mwtests.ts.arjuna.recovery.RecoveryManagerStartStopTest
@@ -60,5 +67,31 @@ BIND NOTHING
 IF TRUE
 DO debug("RecoveryManagerStartStopTest rendezvous at PR listener run"),
    rendezvous("PR listener run")
+ENDRULE
+
+# make the connection threads rendezvous with the test thread
+
+RULE RecoveryManagerStartStopTest connection rendezvous at run
+CLASS com.arjuna.ats.internal.arjuna.recovery.Connection
+METHOD run()
+AT CALL doWork
+BIND NOTHING
+IF isRendezvous("RecoveryManagerStartStopTest Connection run", 3)
+DO debug("connection rendezvous at doWork"),
+   rendezvous("RecoveryManagerStartStopTest Connection run")
+ENDRULE
+
+# make the test threads rendezvous with the connection thread
+# this ensures the shutdown does not happen until the connection threads
+# have started running
+
+RULE RecoveryManagerStartStopTest rendezvous after client connections started
+CLASS com.hp.mwtests.ts.arjuna.recovery.RecoveryManagerStartStopTest
+METHOD testStartStop()
+AFTER CALL addRecoveryClient 2
+BIND NOTHING
+IF TRUE
+DO debug("RecoveryManagerStartStopTest rendezvous after 2nd addRecoveryClient"),
+   rendezvous("RecoveryManagerStartStopTest Connection run")
 ENDRULE
 

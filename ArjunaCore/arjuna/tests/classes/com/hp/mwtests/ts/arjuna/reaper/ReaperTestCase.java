@@ -93,20 +93,74 @@ public class ReaperTestCase
 
         // test reaping
         reaper.insert(reapable, 1); // seconds
-        reaper.insert(reapable2, 5);
+        reaper.insert(reapable2, 2);
+
+        // enable a repeatable rendezvous before checking the worker queue
+        enableRendezvous("reaper1", true);
+        // enable a repeatable rendezvous before scheduling a reapable in the worker queue for cancellation
+        enableRendezvous("reaper2", true);
+        // enable a repeatable rendezvous before checking the worker queue
+        enableRendezvous("reaperworker1", true);
+
+        // the reaper will be latched before it processes any of the reapables
+        triggerRendezvous("reaper1");
         assertEquals(2, reaper.numberOfTransactions());
         assertEquals(2, reaper.numberOfTimeouts());
-        reaper.check();
+        // ensure we have waited at lest 1 second so the first reapable is timed out
+        triggerWait(1000);
+        // let the reaper proceed with the dequeue and add the entry to the work queue
+        triggerRendezvous("reaper1");
+        triggerRendezvous("reaper2");
+        triggerRendezvous("reaper2");
+        // now latch the reaper worker at the dequeue
+        triggerRendezvous("reaperworker1");
+        // we shoudl still have two reapables in the reaper queue
         assertEquals(2, reaper.numberOfTransactions());
-        Thread.sleep(2 * 1000);
-        reaper.check();
+        assertEquals(2, reaper.numberOfTimeouts());
+        // now let the worker process the work queue element -- it should not call cancel since the
+        // mock reapable will not claim to be running
+        triggerRendezvous("reaperworker1");
+        // latch the reaper and reaper worker before they check their respective queues
+        // latch the reaper before it dequeues the next reapable
+        triggerRendezvous("reaper1");
+        triggerRendezvous("reaperworker1");
+        // we should now have only 1 element in the reaper queue
         assertEquals(1, reaper.numberOfTransactions());
         assertEquals(1, reaper.numberOfTimeouts());
-        Thread.sleep(4 * 1000);
-        reaper.check();
+        // ensure we have waited at lest 1 second so the second reapable is timed out
+        triggerWait(1000);
+        // now let the reaper proceed with the next dequeue and enqueue the reapable for the worker to process
+        triggerRendezvous("reaper1");
+        triggerRendezvous("reaper2");
+        triggerRendezvous("reaper2");
+        // relatch the reaper next time round the loop so we can be sure it is not monkeying around
+        // with the transactions queue
+        triggerRendezvous("reaper1");
+        // the worker is still latched so we should still have one entry in the work queue
+        assertEquals(1, reaper.numberOfTransactions());
+        assertEquals(1, reaper.numberOfTimeouts());
+        // now let the worker process the work queue element -- it should not call cancel since the
+        // mock reapable wil not claim to be running
+        triggerRendezvous("reaperworker1");
+        // latch reaper worker again so we know it has finished processing the element
+        triggerRendezvous("reaperworker1");
         assertEquals(0, reaper.numberOfTransactions());
         assertEquals(0, reaper.numberOfTimeouts());
+    }
 
+    private void enableRendezvous(Object o, boolean repeatable)
+    {
+        // do nothing this is just used for synchronization
+    }
+
+    private void triggerRendezvous(Object o)
+    {
+        // do nothing this is just used for synchronization
+    }
+
+    private void triggerWait(int msecs)
+    {
+        // do nothing this is just used for synchronization
     }
 
     public class MockReapable implements Reapable

@@ -34,6 +34,7 @@ BIND NOTHING
 IF TRUE
 DO debug("LogStore waiting before purge"),
    waitFor("LogStore.purge"),
+   flag("LogStore do purge"),
    debug("LogStore proceeding with purge")
 ENDRULE
 
@@ -48,6 +49,7 @@ BIND NOTHING
 IF TRUE
 DO debug("Signalling purge complete"),
    signalWake("LogStore.purged", true),
+   flag("LogStore done purge"),
    debug("Signalled purge complete")
 ENDRULE
 
@@ -75,6 +77,17 @@ DO debug("Signalling purge to proceed"),
    debug("Signalled purge to proceed -- waiting for completion"),
    waitFor("LogStore.purged"),
    debug("Purge completed")
+ENDRULE
+
+# throw an error if the purge did not start and finish correctly
+
+RULE log store recovery test throw error if not purged
+CLASS com.hp.mwtests.ts.arjuna.objectstore.LogStoreRecoveryTest
+METHOD test()
+AT EXIT
+BIND NOTHING
+IF !(flagged("LogStore do purge") && flagged("LogStore done purge"))
+DO throw RuntimeException("failed to run purge")
 ENDRULE
 
 #########################################################################

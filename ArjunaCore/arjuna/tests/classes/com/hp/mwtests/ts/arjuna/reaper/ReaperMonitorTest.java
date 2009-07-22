@@ -80,7 +80,7 @@ public class ReaperMonitorTest
         /*
          * the reaper byteman script will make sure we synchronize with the reaper after this call
          * just before it schedules the reapable for processing. the timout in the check method is
-         * there in case something is really wrong and the reapabel does not get cancelled
+         * there in case something is really wrong and the reapable does not get cancelled
          */
         reaper.insert(A, 1);
 
