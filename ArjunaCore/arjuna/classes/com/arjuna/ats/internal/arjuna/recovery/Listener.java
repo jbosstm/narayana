@@ -120,7 +120,7 @@ public class Listener extends Thread
 
    public void run()
    {
-      while ( !_stop_listener )
+      while ( !stopRequested() )
       {
          try
          {
@@ -230,6 +230,11 @@ public class Listener extends Thread
        }
    }
 
+   private synchronized boolean stopRequested()
+   {
+       return _stop_listener;
+   }
+    
    // Socket & port which client(RecoveryManager) connects to.
    private ServerSocket _listener_socket;
    private int          _listener_port;
