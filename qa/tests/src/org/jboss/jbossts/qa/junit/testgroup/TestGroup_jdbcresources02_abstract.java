@@ -58,7 +58,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		}
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test001()
+	@Test public void JDBCResources02_abstract_Test001()
 	{
 		setTestName("Test001");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup01.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -74,7 +74,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test002()
+	@Test public void JDBCResources02_abstract_Test002()
 	{
 		setTestName("Test002");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup01.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -90,7 +90,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test003()
+	@Test public void JDBCResources02_abstract_Test003()
 	{
 		setTestName("Test003");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup01.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -106,7 +106,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test004()
+	@Test public void JDBCResources02_abstract_Test004()
 	{
 		setTestName("Test004");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup01.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -122,7 +122,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test007()
+	@Test public void JDBCResources02_abstract_Test007()
 	{
 		setTestName("Test007");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup01.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -138,7 +138,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test008()
+	@Test public void JDBCResources02_abstract_Test008()
 	{
 		setTestName("Test008");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup01.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -154,7 +154,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test009()
+	@Test public void JDBCResources02_abstract_Test009()
 	{
 		setTestName("Test009");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup01.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -170,7 +170,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test010()
+	@Test public void JDBCResources02_abstract_Test010()
 	{
 		setTestName("Test010");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup01.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -186,7 +186,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test011()
+	@Test public void JDBCResources02_abstract_Test011()
 	{
 		setTestName("Test011");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup01.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -202,7 +202,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test012()
+	@Test public void JDBCResources02_abstract_Test012()
 	{
 		setTestName("Test012");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup01.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -218,7 +218,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test013()
+	@Test public void JDBCResources02_abstract_Test013()
 	{
 		setTestName("Test013");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup02.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -237,7 +237,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test014()
+	@Test public void JDBCResources02_abstract_Test014()
 	{
 		setTestName("Test014");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup02.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -256,7 +256,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test015()
+	@Test public void JDBCResources02_abstract_Test015()
 	{
 		setTestName("Test015");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup02.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -275,7 +275,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test016()
+	@Test public void JDBCResources02_abstract_Test016()
 	{
 		setTestName("Test016");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup02.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -294,7 +294,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test017()
+	@Test public void JDBCResources02_abstract_Test017()
 	{
 		setTestName("Test017");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup02.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -313,7 +313,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test018()
+	@Test public void JDBCResources02_abstract_Test018()
 	{
 		setTestName("Test018");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup02.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -332,7 +332,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test019()
+	@Test public void JDBCResources02_abstract_Test019()
 	{
 		setTestName("Test019");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup02.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -351,7 +351,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test020()
+	@Test public void JDBCResources02_abstract_Test020()
 	{
 		setTestName("Test020");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup02.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -370,7 +370,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test021()
+	@Test public void JDBCResources02_abstract_Test021()
 	{
 		setTestName("Test021");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup02.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -389,7 +389,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test022()
+	@Test public void JDBCResources02_abstract_Test022()
 	{
 		setTestName("Test022");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.JDBCResources02Setups.Setup02.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -408,7 +408,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
 		server0.terminate();
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test023()
+	@Test public void JDBCResources02_abstract_Test023()
 	{
 		setTestName("Test023");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.Utils.JNDIManager.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -433,7 +433,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
         cleanup.perform(getDBName2());
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test024()
+	@Test public void JDBCResources02_abstract_Test024()
 	{
 		setTestName("Test024");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.Utils.JNDIManager.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -458,7 +458,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
         cleanup.perform(getDBName2());
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test025()
+	@Test public void JDBCResources02_abstract_Test025()
 	{
 		setTestName("Test025");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.Utils.JNDIManager.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -483,7 +483,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
         cleanup.perform(getDBName2());
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test026()
+	@Test public void JDBCResources02_abstract_Test026()
 	{
 		setTestName("Test026");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.Utils.JNDIManager.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -508,7 +508,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
         cleanup.perform(getDBName2());
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test027()
+	@Test public void JDBCResources02_abstract_Test027()
 	{
 		setTestName("Test027");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.Utils.JNDIManager.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -533,7 +533,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
         cleanup.perform(getDBName2());
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test028()
+	@Test public void JDBCResources02_abstract_Test028()
 	{
 		setTestName("Test028");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.Utils.JNDIManager.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -558,7 +558,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
         cleanup.perform(getDBName2());
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test029()
+	@Test public void JDBCResources02_abstract_Test029()
 	{
 		setTestName("Test029");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.Utils.JNDIManager.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -583,7 +583,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
         cleanup.perform(getDBName2());
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test030()
+	@Test public void JDBCResources02_abstract_Test030()
 	{
 		setTestName("Test030");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.Utils.JNDIManager.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -608,7 +608,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
         cleanup.perform(getDBName2());
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test031()
+	@Test public void JDBCResources02_abstract_Test031()
 	{
 		setTestName("Test031");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.Utils.JNDIManager.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
@@ -633,7 +633,7 @@ public class TestGroup_jdbcresources02_abstract extends TestGroupBase
         cleanup.perform(getDBName2());
 	}
 
-	@Test public void JDBCResources02_Oracle_thin_jndi_Test032()
+	@Test public void JDBCResources02_abstract_Test032()
 	{
 		setTestName("Test032");
 		Task setup1 = createTask("setup1", org.jboss.jbossts.qa.Utils.JNDIManager.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
