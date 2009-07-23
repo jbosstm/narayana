@@ -303,12 +303,13 @@ public abstract class ConnectionImple
 	 *          failed.
 	 * @message com.arjuna.ats.internal.jdbc.closeerror An error occurred during
 	 *          close:
-	 * @message com.arjuna.ats.internal.jdbc.closingconnection Connection will be closed when
-	 *          transaction terminates. Indications are that this db does not allow multiple
-	 *          connections in the same transaction so this could be a problem! {0}
+	 * @message com.arjuna.ats.internal.jdbc.closingconnection Connection will be closed now.
+	 *          Indications are that this db does not allow multiple
+	 *          connections in the same transaction {0}
 	 * @message com.arjuna.ats.internal.jdbc.closingconnectionnull Connection will be closed when
          *          transaction terminates. No modifier information found for db so this may
          *          cause problems for other users! {0}
+         * @message com.arjuna.ats.internal.jdbc.closeerrorinvalidtx Invalid transaction during close {0}
 	 */
 
 	public void close() throws SQLException
@@ -340,6 +341,8 @@ public abstract class ConnectionImple
 	         * connection is enlisted with!
 	         */
 
+	        boolean delayClose = false;
+	        
 	        if (tx != null)
 	        {
 	            if (_recoveryConnection.validTransaction(tx))
@@ -350,11 +353,6 @@ public abstract class ConnectionImple
 	                    throw new SQLException(
 	                            jdbcLogger.logMesg
 	                            .getString("com.arjuna.ats.internal.jdbc.delisterror"));
-
-	                /*
-	                 * We can't close the connection until the transaction has
-	                 * terminated, so register a Synchronization here.
-	                 */
 	                
 	                getModifier();
 
@@ -368,11 +366,18 @@ public abstract class ConnectionImple
                                                                     new Object[]
                                                                     { _theConnection });
                             }
+	                    
+	                    // no indication about connections, so assume close immediately
 	                }
 	                else
 	                {
 	                    if (((ConnectionModifier) _theModifier).supportsMultipleConnections())
 	                    {
+	                        /*
+	                         * We can't close the connection until the transaction has
+	                         * terminated, so register a Synchronization here.
+	                         */
+	                        
 	                        if (jdbcLogger.loggerI18N.isWarnEnabled())
 	                        {
 	                            jdbcLogger.loggerI18N
@@ -381,15 +386,23 @@ public abstract class ConnectionImple
 	                                    new Object[]
 	                                               { _theConnection });
 	                        }
+	                        
+	                        delayClose = true;
 	                    }
 	                }
 
-	                // regardless register synchronization so close will be called.
-	                tx.registerSynchronization(new ConnectionSynchronization(_theConnection, _recoveryConnection));
-	                _theConnection = null;
+	                if (delayClose)
+	                {
+        	                tx.registerSynchronization(new ConnectionSynchronization(_theConnection, _recoveryConnection));
+        	                       
+                                _theConnection = null;
+	                }
 	            }
+	            else
+	                throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.closeerrorinvalidtx") + tx);
 	        }
-	        else
+	        
+	        if (!delayClose)  // close now
 	        {
 	            _recoveryConnection.closeCloseCurrentConnection();
 	            if (_theConnection != null && !_theConnection.isClosed())
@@ -410,8 +423,6 @@ public abstract class ConnectionImple
 	    }
 	    catch (Exception e1)
 	    {
-	        e1.printStackTrace();
-
 	        SQLException sqlException = new SQLException(jdbcLogger.logMesg
 	                .getString("com.arjuna.ats.internal.jdbc.closeerror")
 	                + e1);
