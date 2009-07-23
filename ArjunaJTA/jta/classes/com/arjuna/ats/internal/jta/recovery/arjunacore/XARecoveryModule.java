@@ -749,6 +749,8 @@ public class XARecoveryModule implements RecoveryModule
 	 *          caught {1}
 	 * @message com.arjuna.ats.internal.jta.recovery.info.rollingback Rolling
 	 *          back {0}
+	 * @message com.arjuna.ats.internal.jta.recovery.info.rollingbackignore Ignoring
+         *          Xid {0} and leaving for transaction recovery to drive.
 	 * @message com.arjuna.ats.internal.jta.recovery.info.notrollback Told not
 	 *          to rollback {0}
 	 */
@@ -1004,20 +1006,32 @@ public class XARecoveryModule implements RecoveryModule
 							{
 								if (doRecovery)
 								{
-									if (jtaLogger.loggerI18N.isInfoEnabled())
-									{
-										jtaLogger.loggerI18N
-												.info(
-														"com.arjuna.ats.internal.jta.recovery.info.rollingback",
-														new Object[]
-														{ XAHelper
-																.xidToString((Xid) xids[j]) });
-									}
-
 									if (!transactionLog((Xid) xids[j]))
+									{
+									    if (jtaLogger.loggerI18N.isInfoEnabled())
+	                                                                        {
+	                                                                                jtaLogger.loggerI18N
+	                                                                                                .info(
+	                                                                                                                "com.arjuna.ats.internal.jta.recovery.info.rollingback",
+	                                                                                                                new Object[]
+	                                                                                                                { XAHelper
+	                                                                                                                                .xidToString((Xid) xids[j]) });
+	                                                                        }
+									    
 										xares.rollback((Xid) xids[j]);
+									}
 									else
 									{
+									    if (jtaLogger.loggerI18N.isInfoEnabled())
+	                                                                        {
+	                                                                                jtaLogger.loggerI18N
+	                                                                                                .info(
+	                                                                                                                "com.arjuna.ats.internal.jta.recovery.info.rollingbackignore",
+	                                                                                                                new Object[]
+	                                                                                                                { XAHelper
+	                                                                                                                                .xidToString((Xid) xids[j]) });
+	                                                                        }
+									    
 										/*
 										 * Ignore it as the transaction system
 										 * will recovery it eventually.
