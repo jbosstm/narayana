@@ -869,7 +869,7 @@ class AsyncStore extends Thread  // keep priority same as app. threads
 		(_removedItems >= _maximumRemovedItems) ||
 	        (_numberOfEntries - _removedItems >= _maximumWorkItems))
 	    {
-		_workList.notify();
+		_workList.notifyAll();
 
 		return true;  // cache is full, so wait
 	    }
