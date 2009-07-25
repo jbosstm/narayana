@@ -306,9 +306,8 @@ public abstract class ConnectionImple
 	 * @message com.arjuna.ats.internal.jdbc.closingconnection Connection will be closed now.
 	 *          Indications are that this db does not allow multiple
 	 *          connections in the same transaction {0}
-	 * @message com.arjuna.ats.internal.jdbc.closingconnectionnull Connection will be closed when
-         *          transaction terminates. No modifier information found for db so this may
-         *          cause problems for other users! {0}
+	 * @message com.arjuna.ats.internal.jdbc.closingconnectionnull No modifier information found for db.
+	 *         Connection will be closed immediately {0}
          * @message com.arjuna.ats.internal.jdbc.closeerrorinvalidtx Invalid transaction during close {0}
 	 */
 
@@ -358,16 +357,23 @@ public abstract class ConnectionImple
 
 	                if (_theModifier == null)
 	                {
-	                    if (jdbcLogger.loggerI18N.isWarnEnabled())
+	                    if (jdbcLogger.loggerI18N.isInfoEnabled())
                             {
                                     jdbcLogger.loggerI18N
-                                                    .warn(
+                                                    .info(
                                                                     "com.arjuna.ats.internal.jdbc.closingconnectionnull",
                                                                     new Object[]
                                                                     { _theConnection });
                             }
-	                    
+
 	                    // no indication about connections, so assume close immediately
+	                    
+	                    if (_theConnection != null && !_theConnection.isClosed())
+	                        _theConnection.close();
+
+	                    _theConnection = null;
+	                    
+	                    return;
 	                }
 	                else
 	                {
@@ -430,7 +436,7 @@ public abstract class ConnectionImple
 	        throw sqlException;
 	    }
 	}
-
+	
 	public boolean isClosed() throws SQLException
 	{
 		/*
