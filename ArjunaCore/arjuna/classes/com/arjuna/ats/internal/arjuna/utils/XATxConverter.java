@@ -151,7 +151,6 @@ public class XATxConverter
 	
 	if ((xid.formatID == -1) || (xid.gtrid_length <= 0)) // means null XID
 	{
-	    System.err.println("**problem");
 	    return Uid.nullUid();
 	}
 	else
@@ -171,7 +170,6 @@ public class XATxConverter
 
 	    System.arraycopy(xid.data, nodeNameIndex, buff, 0, buff.length);
 
-	    System.err.println("**here with "+new String(buff));
 	    Uid tx = new Uid(new String(buff), true);
 
 	    buff = null;
