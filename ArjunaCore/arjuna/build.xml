@@ -37,6 +37,16 @@
         </propertyfile>
     </target>
 
+    <!-- one of the recovery tests implements a byteman helper class which extends the default
+         helper so we need to add the byteman library to the classpath when compiling the tests -->
+    <target name="compile-tests">
+        <compile-tests.macro>
+            <additional.classpath>
+                <fileset dir="${global.ext.lib.dir}" includes="${global.ext.libs} byteman.jar"/>
+            </additional.classpath>
+        </compile-tests.macro>
+    </target>
+    
     <target name="run.tests">
         <run.tests.macro>
             <tests>

@@ -22,19 +22,21 @@
 package com.hp.mwtests.ts.arjuna.recovery;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery;
 import com.arjuna.ats.arjuna.common.Environment;
 
 import java.net.Socket;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.SocketException;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.jboss.byteman.rule.helper.Helper;
+import org.jboss.byteman.rule.Rule;
 
 /**
  * test to ensure that the recovery manager cleans up all its threads when terminated
@@ -246,6 +248,221 @@ public class RecoveryManagerStartStopTest
                     // ignore
                 }
             }
+        }
+    }
+
+    /**
+     * helper class for use in byteman rules to ensure that the listener class
+     * actually joins the connections it closes -- it does not need to as far as the
+     * TS code is concerned but we cannot check that the test has run correctly without
+     * adding this extra join
+     */
+
+    public static class JoinHelper extends Helper
+    {
+        public JoinHelper(Rule rule)
+        {
+            super(rule);
+        }
+
+        public boolean createJoin(Object key, int max)
+        {
+            if (max <= 0) {
+                return false;
+            }
+
+            synchronized(joinerMap) {
+                if (joinerMap.get(key) != null) {
+                    return false;
+                }
+                joinerMap.put(key, new Joiner(max));
+            }
+
+            return true;
+        }
+
+        public boolean isJoin(Object key, int max)
+        {
+            synchronized(joinerMap) {
+                Joiner joiner = joinerMap.get(key);
+
+                if (joiner == null || joiner.getMax() != max) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public boolean joinEnlist(Object key)
+        {
+            Joiner joiner;
+            synchronized (joinerMap)
+            {
+                joiner = joinerMap.get(key);
+            }
+
+            if (joiner == null) {
+                return false;
+            }
+
+            Thread current = Thread.currentThread();
+
+            switch (joiner.addChild(current)) {
+                case DUPLICATE:
+                case EXCESS:
+                {
+                    // failed to add  child
+                    return false;
+                }
+                case ADDED:
+                case FILLED:
+                {
+                    // added child but parent was not waiting so leave joiner in the map for parent to find
+                    return true;
+                }
+                case DONE:
+                default:
+                {
+                    // added child and parent was waiting so remove joiner from map now
+                    synchronized (joinerMap) {
+                        joinerMap.remove(joiner);
+                    }
+                    return true;
+                }
+            }
+        }
+
+        public boolean joinWait(Object key, int count)
+        {
+            Joiner joiner;
+            synchronized (joinerMap)
+            {
+                joiner = joinerMap.get(key);
+            }
+
+            if (joiner == null || joiner.getMax() != count) {
+                return false;
+            }
+
+            Thread current = Thread.currentThread();
+
+            if (joiner.joinChildren(current)) {
+                // successfully joined all child threads so remove joiner form map
+                synchronized (joinerMap) {
+                    joinerMap.remove(joiner);
+                }
+                return true;
+            } else {
+                // hmm, another thread must have done the join so leave it do the remove
+                return true;
+            }
+        }
+
+    }
+
+    private static HashMap<Object, Joiner> joinerMap = new HashMap<Object, Joiner>();
+
+    /**
+     * status values returned from child add method
+     */
+    private enum Status {
+        /**
+         * a DUPLICATE status is returned when a child fails to add itself to the join list because it is already present
+         */
+        DUPLICATE,
+        /**
+         * an EXCESS status is returned when a child fails to add itself to a join list because it already contains the
+         * expected number of children
+         */
+        EXCESS,
+        /**
+         * an ADDED status is returned when a child successfully adds itself to the join list but without reaching
+         * the expected number of children
+         */
+        ADDED,
+        /**
+         * a FILLED status is returned when a child successfully adds itself to the join list reaching the expected
+         * number of children but there is no parent thread waiting for the children
+         */
+        FILLED,
+        /**
+         * a DONE  status is returned when a child successfully adds itself to the join list reaching the expected
+         * number of children and there is a parent thread waiting for the children
+         */
+        DONE
+    }
+
+    private static class Joiner
+    {
+
+        private List<Thread> children;
+        private int max;
+        private Thread parent;
+
+        public Joiner(int max)
+        {
+            this.max = max;
+            this.children = new LinkedList<Thread>();
+            this.parent =  null;
+        }
+
+        public int getMax()
+        {
+            return max;
+        }
+
+        public synchronized Status addChild(Thread thread)
+        {
+            if (children.contains(thread)) {
+                return Status.DUPLICATE;
+            }
+
+            int size = children.size();
+
+            if (size == max) {
+                return Status.EXCESS;
+            }
+
+            children.add(thread);
+            size++;
+
+            if (size == max) {
+                if (parent ==  null) {
+                    return Status.FILLED;
+                } else {
+                    return Status.DONE;
+                }
+            }
+            return Status.ADDED;
+        }
+
+        public boolean joinChildren(Thread thread)
+        {
+            synchronized (this) {
+                if (parent != null) {
+                    return false;
+                }
+                while (children.size() < max) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        // do nothing
+                    }
+                }
+            }
+            // since we are the parent and the waiting is over we don't need to stay synchronized
+            for (int i = 0; i < max;) {
+                Thread child = children.get(i);
+                try {
+                    child.join();
+                } catch (InterruptedException e) {
+                    // try again
+                    break;
+                }
+                i++;
+            }
+            return true;
         }
     }
 }
