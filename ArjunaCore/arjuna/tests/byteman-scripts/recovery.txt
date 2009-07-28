@@ -123,7 +123,7 @@ CLASS com.arjuna.ats.internal.arjuna.recovery.Listener
 METHOD run()
 HELPER com.hp.mwtests.ts.arjuna.recovery.RecoveryManagerStartStopTest$JoinHelper
 AT RETURN
-BIND listener : Listener = $0
+BIND NOTHING
 IF isJoin("Listener Connection", 2)
 DO debug("Listener Connection calling joinWait 2 " + Thread.currentThread()),
    joinWait("Listener Connection", 2),
@@ -135,7 +135,7 @@ CLASS com.arjuna.ats.internal.arjuna.recovery.Listener
 METHOD removeConnection
 HELPER com.hp.mwtests.ts.arjuna.recovery.RecoveryManagerStartStopTest$JoinHelper
 AT RETURN
-BIND listener : Listener = $0
+BIND NOTHING
 IF joinEnlist("Listener Connection")
 DO debug("Listener Connection joinEnlist " + Thread.currentThread())
 ENDRULE
