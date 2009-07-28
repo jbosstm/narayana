@@ -431,6 +431,7 @@ public class RecoveryManagerStartStopTest
                 if (parent ==  null) {
                     return Status.FILLED;
                 } else {
+                    notifyAll();
                     return Status.DONE;
                 }
             }
@@ -443,6 +444,7 @@ public class RecoveryManagerStartStopTest
                 if (parent != null) {
                     return false;
                 }
+                parent = thread;
                 while (children.size() < max) {
                     try {
                         wait();
