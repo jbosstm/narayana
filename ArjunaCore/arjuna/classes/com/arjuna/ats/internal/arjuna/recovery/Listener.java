@@ -125,7 +125,9 @@ public class Listener extends Thread
          try
          {
             final Socket conn = _listener_socket.accept();
-            addConnection(conn);
+             // n.b. add may not occur because a shutdown was requested
+            if (addConnection(conn)) {
+                // ok the connection is in the list -- ensure it clears itself out
             Connection.Callback callback = new Connection.Callback() {
                 private Socket _conn = conn;
                 public void run() {
@@ -148,6 +150,7 @@ public class Listener extends Thread
 	    }
 
             new_conn.start();
+            }
          }
          catch ( final InterruptedIOException ex )
          {
@@ -174,10 +177,22 @@ public class Listener extends Thread
       }
    }
 
-    public synchronized void addConnection(Socket conn)
+    public synchronized boolean addConnection(Socket conn)
     {
         if (!_stop_listener) {
             connections.add(conn);
+            return true;
+        } else {
+            // a close down request got in between the connection create and the
+            // call to this method. it will have closed all the other connections
+            // and will be waiting on this (listener) thread. so close this connection
+            // before returning false
+            try {
+                conn.close();
+            } catch (Exception e) {
+                // ignore
+            }
+            return false;
         }
     }
 
