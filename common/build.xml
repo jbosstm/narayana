@@ -72,6 +72,9 @@
         <run.tests.macro>
             <tests><fileset dir="tests" includes="**/IOTest.java"/></tests>
         </run.tests.macro>
+        <run.tests.macro>
+            <tests><fileset dir="tests" includes="**/EnvironmentBeanTest.java"/></tests>
+        </run.tests.macro>
 
     </target>
 
