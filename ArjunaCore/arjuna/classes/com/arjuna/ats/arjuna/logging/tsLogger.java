@@ -53,7 +53,7 @@ public class tsLogger
 	static
 	{
 		/** Ensure the properties are loaded before initialising the logger * */
-		arjPropertyManager.getPropertyManager();
+		arjPropertyManager.init();
 
 		arjLogger = LogFactory.getLogNoi18n("com.arjuna.ats.arjuna.logging.arjLogger");
 

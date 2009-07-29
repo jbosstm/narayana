@@ -628,22 +628,8 @@ public class PersistenceRecord extends RecoveryRecord
 
 	static
 	{
-		String cp = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.CLASSIC_PREPARE);
+        classicPrepare = arjPropertyManager.getCoordinatorEnvironmentBean().isClassicPrepare();
 
-		if (cp != null)
-		{
-			if (cp.equals("YES"))
-				classicPrepare = true;
-		}
-
-		String wo = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_LOG_WRITE_OPTIMISATION);
-
-		if (wo != null)
-		{
-			if (wo.equals("YES"))
-			{
-				writeOptimisation = true;
-			}
-		}
+        writeOptimisation = arjPropertyManager.getCoordinatorEnvironmentBean().isWriteOptimisation();
 	}
 }

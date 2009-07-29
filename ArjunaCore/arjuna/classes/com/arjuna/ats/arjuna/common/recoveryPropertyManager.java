@@ -22,6 +22,9 @@ package com.arjuna.ats.arjuna.common;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Property manager wrapper for the recovery system.
@@ -29,8 +32,27 @@ import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
  */
 public class recoveryPropertyManager
 {
+    private static final AtomicBoolean recoveryEnvironmentBeanInit = new AtomicBoolean(false);
+    private static final RecoveryEnvironmentBean recoveryEnvironmentBean = new RecoveryEnvironmentBean();
+
     public static PropertyManager getPropertyManager()
     {
         return PropertyManagerFactory.getPropertyManagerForModule("arjuna", Environment.PROPERTIES_FILE);
+    }
+
+    public static RecoveryEnvironmentBean getRecoveryEnvironmentBean()
+    {
+        synchronized (recoveryEnvironmentBeanInit) {
+            if(!recoveryEnvironmentBeanInit.get()) {
+                try {
+                    BeanPopulator.configureFromPropertyManager(recoveryEnvironmentBean, arjPropertyManager.getPropertyManager());
+                    recoveryEnvironmentBeanInit.set(true);
+                } catch(Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return recoveryEnvironmentBean;
     }
 }

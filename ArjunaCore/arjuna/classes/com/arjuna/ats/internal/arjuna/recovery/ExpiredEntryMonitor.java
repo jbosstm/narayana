@@ -40,6 +40,7 @@ import java.util.Vector;
 import com.arjuna.ats.arjuna.recovery.ExpiryScanner;
 import com.arjuna.ats.arjuna.recovery.RecoveryEnvironment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -248,34 +249,14 @@ public class ExpiredEntryMonitor extends Thread
          * Read the system properties to set the configurable options
          */
 
-        String scanIntervalString =
-        arjPropertyManager.getPropertyManager().getProperty( RecoveryEnvironment.EXPIRY_SCAN_INTERVAL );
+        _scanIntervalSeconds = recoveryPropertyManager.getRecoveryEnvironmentBean().getExpiryScanInterval() * 60 * 60;
 
-        if ( scanIntervalString != null )
+        if (tsLogger.arjLoggerI18N.debugAllowed())
         {
-            try
-            {
-                Integer scanIntervalInteger = new Integer(scanIntervalString);
-                // convert to seconds
-                _scanIntervalSeconds = scanIntervalInteger.intValue() * 60 * 60;
-
-                if (tsLogger.arjLoggerI18N.debugAllowed())
-                {
-                tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                              FacilityCode.FAC_CRASH_RECOVERY,
-                              "com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_1",
-                              new Object[]{Integer.toString(_scanIntervalSeconds)});
-                }
-            }
-            catch ( NumberFormatException e )
-            {
-            if (tsLogger.arjLoggerI18N.isWarnEnabled())
-            {
-                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_11",
-                            new Object[]{RecoveryEnvironment.EXPIRY_SCAN_INTERVAL,
-                                     scanIntervalString});
-            }
-            }
+            tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CRASH_RECOVERY,
+                    "com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_1",
+                    new Object[]{Integer.toString(_scanIntervalSeconds)});
         }
 
         if (_scanIntervalSeconds != 0)

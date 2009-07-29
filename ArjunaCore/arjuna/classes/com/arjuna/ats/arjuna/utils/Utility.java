@@ -314,7 +314,7 @@ public class Utility
 
     public static final boolean isWindows ()
     {
-        String os = arjPropertyManager.getPropertyManager().getProperty("os.name");
+        String os = System.getProperty("os.name");
 
         if (("WIN32".equals(os)) || (os.indexOf("Windows") != -1))
             return true;
@@ -336,8 +336,7 @@ public class Utility
     {
         try
         {
-            Class c = Thread.currentThread().getContextClassLoader().loadClass(
-                    arjPropertyManager.getPropertyManager().getProperty(Environment.PROCESS_IMPLEMENTATION, defaultProcessId));
+            Class c = Thread.currentThread().getContextClassLoader().loadClass( arjPropertyManager.getCoreEnvironmentBean().getProcessImplementation());
 
             return (Process) c.newInstance();
         }
@@ -359,6 +358,12 @@ public class Utility
         return processHandle;
     }
 
+    public static void validatePortRange(int port) {
+        if(port < 0 || port > MAX_PORT) {
+            throw new IllegalArgumentException("port value out of range "+port);
+        }
+    }
+
     private static int myAddr = 0;
 
     private static Uid processUid = null;
@@ -367,7 +372,7 @@ public class Utility
 
     private static final String hexStart = "0x";
 
-    private static final String defaultProcessId = "com.arjuna.ats.internal.arjuna.utils.SocketProcessId";
+    public static final String defaultProcessId = "com.arjuna.ats.internal.arjuna.utils.SocketProcessId";
 
     /**
      * The maximum queue length for incoming connection indications (a request

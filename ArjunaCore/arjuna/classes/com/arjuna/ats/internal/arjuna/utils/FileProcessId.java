@@ -31,21 +31,12 @@
 
 package com.arjuna.ats.internal.arjuna.utils;
 
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 
-import com.arjuna.ats.arjuna.utils.Process;
-import com.arjuna.ats.arjuna.utils.Utility;
 import java.io.*;
-import java.net.InetAddress;
 
 import com.arjuna.ats.arjuna.exceptions.FatalError;
-import java.net.UnknownHostException;
-import java.lang.NumberFormatException;
-import java.lang.StringIndexOutOfBoundsException;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
@@ -91,7 +82,7 @@ public int getpid ()
 		     * Use the "var" directory location from the property file.
 		     * If it is not set, create "./var/tmp".
 		     */
-		    String dir = arjPropertyManager.getPropertyManager().getProperty(Environment.VAR_DIR);
+		    String dir = arjPropertyManager.getCoreEnvironmentBean().getVarDir();
 		    
 		    if (dir == null || dir.length() == 0)
 			dir = System.getProperty("user.dir") + File.separator + "var" + File.separator + "tmp";

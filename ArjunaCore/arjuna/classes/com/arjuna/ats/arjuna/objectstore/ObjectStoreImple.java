@@ -31,9 +31,7 @@
 
 package com.arjuna.ats.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.common.Environment;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.gandiva.ObjectName;
 import com.arjuna.ats.arjuna.state.*;
@@ -240,14 +238,11 @@ public abstract class ObjectStoreImple
     public String locateStore (String localOSRoot) throws ObjectStoreException
     {
 	if (_objectStoreRoot == null)
-	    _objectStoreRoot = arjPropertyManager.getPropertyManager().getProperty(Environment.LOCALOSROOT);
+	    _objectStoreRoot = arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot();
 
 	if (_objectStoreDir == null)
 	{
-	    _objectStoreDir = arjPropertyManager.getPropertyManager().getProperty(Environment.OBJECTSTORE_DIR);
-	    if (_objectStoreDir == null || _objectStoreDir.length() == 0)
-	    	_objectStoreDir = com.arjuna.ats.arjuna.common.Configuration.objectStoreRoot();
-
+	    _objectStoreDir = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir();
 	    if (_objectStoreDir == null || _objectStoreDir.length() == 0)
 		throw new ObjectStoreException(Environment.OBJECTSTORE_DIR+" not set.");
 

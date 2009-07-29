@@ -33,6 +33,9 @@ package com.arjuna.ats.arjuna.common;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Property manager wrapper for the Arjuna module.
@@ -41,9 +44,74 @@ import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
  */
 public class arjPropertyManager
 {
+    // ensure properties are loaded
+    public static void init() {
+        getPropertyManager();
+    }
+
     public static PropertyManager getPropertyManager()
     {
-        // this is not actually a separate module, it shares the arjuna config.
         return PropertyManagerFactory.getPropertyManagerForModule("arjuna", Environment.PROPERTIES_FILE);
     }
+
+    public static CoreEnvironmentBean getCoreEnvironmentBean()
+    {
+        synchronized (coreEnvironmentBeanInit) {
+            if(!coreEnvironmentBeanInit.get()) {
+                try {
+                    BeanPopulator.configureFromPropertyManager(coreEnvironmentBean,  getPropertyManager());
+                    coreEnvironmentBeanInit.set(true);
+                } catch(Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return coreEnvironmentBean;
+    }
+
+    private static final AtomicBoolean coreEnvironmentBeanInit = new AtomicBoolean(false);
+    private static final CoreEnvironmentBean coreEnvironmentBean = new CoreEnvironmentBean();
+
+    public static CoordinatorEnvironmentBean getCoordinatorEnvironmentBean()
+    {
+        synchronized (coordinatorEnvironmentBeanInit) {
+            if(!coordinatorEnvironmentBeanInit.get()) {
+                try {
+                    BeanPopulator.configureFromPropertyManager(coordinatorEnvironmentBean,  getPropertyManager());
+                    coordinatorEnvironmentBeanInit.set(true);
+                } catch(Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return coordinatorEnvironmentBean;
+    }
+
+    private static final AtomicBoolean coordinatorEnvironmentBeanInit = new AtomicBoolean(false);
+    private static final CoordinatorEnvironmentBean coordinatorEnvironmentBean = new CoordinatorEnvironmentBean();
+
+    public static ObjectStoreEnvironmentBean getObjectStoreEnvironmentBean()
+    {
+        synchronized (objectStoreEnvironmentBeanInit) {
+            if(!objectStoreEnvironmentBeanInit.get()) {
+                try {
+                    Thread.dumpStack();
+                    System.out.println(arjPropertyManager.getPropertyManager().getProperty(Environment.OBJECTSTORE_TYPE));
+
+                    BeanPopulator.configureFromPropertyManager(objectStoreEnvironmentBean, getPropertyManager());
+                    objectStoreEnvironmentBeanInit.set(true);
+                } catch(Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return objectStoreEnvironmentBean;
+    }
+
+    private static final AtomicBoolean objectStoreEnvironmentBeanInit = new AtomicBoolean(false);
+    private static final ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
+
 }

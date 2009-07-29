@@ -31,14 +31,14 @@ import org.junit.Before;
 import static org.junit.Assert.*;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
-import com.arjuna.ats.arjuna.common.Environment;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 public class LastResourceAllowedTestCase
 {
     @Before
     public void setUp() throws Exception
     {
-        System.setProperty(Environment.ALLOW_MULTIPLE_LAST_RESOURCES, "true") ;
+        arjPropertyManager.getCoreEnvironmentBean().setAllowMultipleLastResources(true);
     }
     
     @Test

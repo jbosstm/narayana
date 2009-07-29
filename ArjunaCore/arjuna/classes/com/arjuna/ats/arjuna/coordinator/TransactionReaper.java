@@ -31,10 +31,7 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.coordinator.Reapable;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.listener.ReaperMonitor;
 
 import com.arjuna.ats.internal.arjuna.coordinator.*;
@@ -1106,11 +1103,8 @@ public class TransactionReaper
             // default to dynamic mode
             TransactionReaper._dynamic = true;
 
-            String mode = arjPropertyManager.getPropertyManager()
-					.getProperty(Environment.TX_REAPER_MODE);
+            String mode =  arjPropertyManager.getCoordinatorEnvironmentBean().getTxReaperMode();
 
-			if (mode != null)
-			{
 				if (mode.compareTo(TransactionReaper.PERIODIC) == 0) {
 					TransactionReaper._dynamic = false;
                 }
@@ -1123,122 +1117,43 @@ public class TransactionReaper
 				        tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.TransactionReaper_19");
     			    }
                 }
-            }
 
             if (!TransactionReaper._dynamic)
 			{
-				String timeoutEnv = arjPropertyManager.getPropertyManager()
-						.getProperty(Environment.TX_REAPER_TIMEOUT);
-
-				if (timeoutEnv != null)
-				{
-					Long l = null;
-
-					try
-					{
-						l = new Long(timeoutEnv);
-						checkPeriod = l.longValue();
-
-						l = null;
-					}
-					catch (NumberFormatException e)
-					{
-                        if (tsLogger.arjLogger.isWarnEnabled()) {
-                        tsLogger.arjLogger.warn("TransactionReaper::create - "
-								+ e);
-                        }
-                    }
-				}
-                else
-                {
-                    checkPeriod = defaultCheckPeriod;
-                }
+                checkPeriod = arjPropertyManager.getCoordinatorEnvironmentBean().getTxReaperTimeout();
 			}
 			else
 				checkPeriod = Long.MAX_VALUE;
 
 			TransactionReaper._theReaper = new TransactionReaper(checkPeriod);
 
-			String cancelWait = arjPropertyManager.getPropertyManager()
-					.getProperty(Environment.TX_REAPER_CANCEL_WAIT_PERIOD);
-			if (cancelWait != null)
-			{
-                             try
-                             {
-				 TransactionReaper._theReaper._cancelWaitPeriod = Long.valueOf(cancelWait).longValue();
-                             }
-                             catch (NumberFormatException e)
-                             {
-                                  TransactionReaper._theReaper._cancelWaitPeriod = defaultCancelWaitPeriod;
-                             }
+            TransactionReaper._theReaper._cancelWaitPeriod = arjPropertyManager.getCoordinatorEnvironmentBean().getTxReaperCancelWaitPeriod();
 
-			     // must give TX at least 10 millisecs to
-			     // respond to cancel
+            // must give TX at least 10 millisecs to
+            // respond to cancel
 
-                             if (TransactionReaper._theReaper._cancelWaitPeriod < 10) {
-                                  TransactionReaper._theReaper._cancelWaitPeriod = 10;
-                             }
-			}
-                        else
-                        {
-                             TransactionReaper._theReaper._cancelWaitPeriod = defaultCancelWaitPeriod;
-                        }
+            if (TransactionReaper._theReaper._cancelWaitPeriod < 10) {
+                TransactionReaper._theReaper._cancelWaitPeriod = 10;
+            }
 
-			String cancelFailWait = arjPropertyManager.getPropertyManager()
-					.getProperty(Environment.TX_REAPER_CANCEL_FAIL_WAIT_PERIOD);
-			if (cancelFailWait != null)
-			{
-                             try
-                             {
-                                  TransactionReaper._theReaper._cancelFailWaitPeriod = Long.valueOf(cancelFailWait).longValue();
-                             }
-                             catch (NumberFormatException e)
-                             {
-                                  TransactionReaper._theReaper._cancelFailWaitPeriod = defaultCancelFailWaitPeriod;
-                             }
+            TransactionReaper._theReaper._cancelFailWaitPeriod = arjPropertyManager.getCoordinatorEnvironmentBean().getTxReaperCancelFailWaitPeriod();
 
-			     // must give TX at least 10 millisecs to
-			     // respond to cancel
+            // must give TX at least 10 millisecs to
+            // respond to cancel
 
-                             if (TransactionReaper._theReaper._cancelFailWaitPeriod < 10) {
-                                  TransactionReaper._theReaper._cancelFailWaitPeriod = 10;
-                             }
-			}
-                        else
-                        {
-                             TransactionReaper._theReaper._cancelFailWaitPeriod = defaultCancelFailWaitPeriod;
-                        }
+            if (TransactionReaper._theReaper._cancelFailWaitPeriod < 10) {
+                TransactionReaper._theReaper._cancelFailWaitPeriod = 10;
+            }
 
-			String zombieMax = arjPropertyManager.getPropertyManager()
-					.getProperty(Environment.TX_REAPER_ZOMBIE_MAX);
-			if (zombieMax != null)
-			{
-                             try
-                             {
-                                  TransactionReaper._theReaper._zombieMax = Integer.valueOf(zombieMax).intValue();
-                             }
-                             catch (NumberFormatException e)
-                             {
-                                  TransactionReaper._theReaper._zombieMax = defaultZombieMax;
-                             }
-			     // we start bleating if the zombie count
-			     // reaches zombieMax so it has to be at
-			     // least 1
+            TransactionReaper._theReaper._zombieMax = arjPropertyManager.getCoordinatorEnvironmentBean().getTxReaperZombieMax();
 
-                             if (TransactionReaper._theReaper._zombieMax <= 0) {
-                                  TransactionReaper._theReaper._zombieMax = 1;
-                             }
-			}
-                        else
-                        {
-                             TransactionReaper._theReaper._zombieMax = defaultZombieMax;
-                        }
+            // we start bleating if the zombie count
+            // reaches zombieMax so it has to be at
+            // least 1
 
-                        // use defaults for now
-
-                        TransactionReaper._theReaper._cancelWaitPeriod = defaultCancelWaitPeriod;
-                        TransactionReaper._theReaper._cancelFailWaitPeriod = defaultCancelFailWaitPeriod;
-                        TransactionReaper._theReaper._zombieMax = defaultZombieMax;
+            if (TransactionReaper._theReaper._zombieMax <= 0) {
+                TransactionReaper._theReaper._zombieMax = 1;
+            }
 
 			_reaperThread = new ReaperThread(TransactionReaper._theReaper);
 			// _reaperThread.setPriority(Thread.MIN_PRIORITY);

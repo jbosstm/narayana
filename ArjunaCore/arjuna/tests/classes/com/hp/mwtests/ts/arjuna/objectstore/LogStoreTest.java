@@ -34,8 +34,8 @@ package com.hp.mwtests.ts.arjuna.objectstore;
 import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 
 import org.junit.Test;
@@ -46,8 +46,8 @@ public class LogStoreTest
     @Test
     public void test()
     {
-        System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
-        System.setProperty(Environment.TRANSACTION_LOG, "ON");
+        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
 
         ObjectStore objStore = TxControl.getStore();
         final int numberOfTransactions = 1000;

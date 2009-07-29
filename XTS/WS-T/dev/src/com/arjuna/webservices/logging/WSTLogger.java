@@ -49,7 +49,7 @@ public class WSTLogger
     static
     {
         /** Ensure the properties are loaded before initialising the logger **/
-        arjPropertyManager.getPropertyManager();
+        arjPropertyManager.init();
             
     	arjLogger = LogFactory.getLogNoi18n("com.arjuna.webservices.logging.WSTLogger");
     

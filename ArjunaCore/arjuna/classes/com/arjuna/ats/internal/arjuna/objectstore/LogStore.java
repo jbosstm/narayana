@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.Stack;
 
 import com.arjuna.ats.arjuna.ArjunaNames;
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
@@ -801,23 +800,16 @@ public class LogStore extends FileSystemStore
 	protected synchronized boolean setupStore(String location)
 			throws ObjectStoreException
 	{
-		if (!checkSync)
-		{
-			String syncOpt = arjPropertyManager.getPropertyManager()
-					.getProperty(Environment.TRANSACTION_SYNC);
+        if (!checkSync)
+        {
+            if(arjPropertyManager.getObjectStoreEnvironmentBean().isTransactionSync()) {
+                syncOn();
+            } else {
+                syncOff();
+            }
+        }
 
-			if (syncOpt != null)
-			{
-				if (syncOpt.compareTo("OFF") == 0)
-					syncOff();
-				else
-					syncOn();
-			}
-			else
-				syncOn();
-
-			checkSync = true;
-		}
+        checkSync = true;
 
 		if (_purger == null)
 		{
@@ -1683,53 +1675,10 @@ public class LogStore extends FileSystemStore
 
 	static
 	{
-		try
-		{
-			String removeMarkers = arjPropertyManager.getPropertyManager()
-					.getProperty(Environment.TRANSACTION_LOG_SYNC_REMOVAL,
-							"TRUE");
+            _synchronousRemoval = arjPropertyManager.getObjectStoreEnvironmentBean().isSynchronousRemoval();
 
-			if (removeMarkers.equalsIgnoreCase("true"))
-				_synchronousRemoval = true;
+            _purgeTime = arjPropertyManager.getObjectStoreEnvironmentBean().getPurgeTime();
 
-			String purgeTime = arjPropertyManager.getPropertyManager().getProperty(Environment.TRANSACTION_LOG_PURGE_TIME);
-
-			if (purgeTime != null)
-			{
-				try
-				{
-					_purgeTime = Long.parseLong(purgeTime);
-				}
-				catch (final Exception ex)
-				{
-					ex.printStackTrace();
-				}
-			}
-
-			String logSize = arjPropertyManager.getPropertyManager().getProperty(Environment.TRANSACTION_LOG_SIZE);
-
-			if (logSize != null)
-			{
-				try
-				{
-					_maxFileSize = Long.parseLong(logSize);
-				}
-				catch (final Exception ex)
-				{
-					if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					{
-						tsLogger.arjLoggerI18N
-								.warn(
-										"com.arjuna.ats.internal.arjuna.objectstore.LogStore_3",
-										new Object[]
-										{ logSize });
-					}
-				}
-			}
-		}
-		catch (final Exception ex)
-		{
-			throw new ExceptionInInitializerError(ex);
-		}
+			_maxFileSize = arjPropertyManager.getObjectStoreEnvironmentBean().getTxLogSize();
 	}
 }

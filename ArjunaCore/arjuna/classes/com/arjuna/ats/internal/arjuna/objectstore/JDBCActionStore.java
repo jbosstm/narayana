@@ -236,9 +236,9 @@ public class JDBCActionStore extends JDBCStore
 
     protected String getAccessClassName()
     {
-    	if (_txClassName == null)
-	    _txClassName = arjPropertyManager.getPropertyManager().getProperty(Environment.JDBC_TX_DB_ACCESS);
-	return _txClassName;
+        if (_txClassName == null)
+            _txClassName = arjPropertyManager.getObjectStoreEnvironmentBean().getJdbcTxDbAccess();
+        return _txClassName;
     }
 
     protected void setAccessClassName(String txClassName)

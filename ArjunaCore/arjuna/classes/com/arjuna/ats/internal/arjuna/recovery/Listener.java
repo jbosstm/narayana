@@ -269,12 +269,7 @@ public class Listener extends Thread
     
     static
     {
-	String timeoutSocket = arjPropertyManager.getPropertyManager().getProperty("com.arjuna.ats.internal.arjuna.recovery.listener.timeoutsocket", "NO");
-
-	if (timeoutSocket.equals("YES"))
-	{
-	    setTimeout = true;
-	}
+    	setTimeout = recoveryPropertyManager.getRecoveryEnvironmentBean().isTimeoutSocket();
     }
     
 }

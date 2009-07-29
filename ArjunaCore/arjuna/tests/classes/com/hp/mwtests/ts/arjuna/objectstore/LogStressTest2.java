@@ -49,10 +49,10 @@ public class LogStressTest2
     @Test
     public void test()
     {
-        System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
-        System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
-        System.setProperty(Environment.TRANSACTION_LOG, "ON");
-        System.setProperty(Environment.TRANSACTION_LOG_SIZE, "10000");
+        arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(false);
+        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
+        arjPropertyManager.getObjectStoreEnvironmentBean().setTxLogSize(10000);
 
         int timeLimit = 4; // hours
 

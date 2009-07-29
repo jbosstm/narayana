@@ -410,44 +410,14 @@ public class RecoveryManager
 
     public static InetAddress getRecoveryManagerHost() throws UnknownHostException
     {
-        PropertyManager pm = recoveryPropertyManager.getPropertyManager();
-
-        if ( pm == null )
-            return InetAddress.getLocalHost();
-
-        String hostPropName = com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_ADDRESS;
-        String host = pm.getProperty(hostPropName);
+        String host = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryAddress();
 
         return Utility.hostNameToInetAddress(host, "com.arjuna.ats.arjuna.recovery.RecoveryManager_2");
     }
 
     public static int getRecoveryManagerPort()
     {
-        PropertyManager pm = recoveryPropertyManager.getPropertyManager();
-
-        if (pm == null)
-            return 0;
-
-        String portPropName = com.arjuna.ats.arjuna.common.Environment.RECOVERY_MANAGER_PORT;
-        Integer port = Utility.lookupBoundedIntegerProperty(pm, portPropName, null,
-                    "com.arjuna.ats.arjuna.recovery.RecoveryManager_1",
-                    0, Utility.MAX_PORT);
-
-        if (port == null)
-        {
-            String portStr = pm.getProperty(portPropName);
-
-           /*
-            * if the property files specified a value for the port which is invalid throw a fatal error. An empty value or no value
-            * corresponds to any port
-            */
-            if (portStr == null || portStr.length() == 0)
-                port = 0;
-            else
-                throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.recovery.RecoveryManager_5"));
-        }
-
-        return port;
+        return recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryPort();
     }
 
     /**

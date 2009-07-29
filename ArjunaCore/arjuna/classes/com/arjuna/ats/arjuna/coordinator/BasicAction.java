@@ -4052,7 +4052,7 @@ public class BasicAction extends StateManager
 	     * during execution.
 	     */
 	    
-	    String checkedActionFactory = arjPropertyManager.getPropertyManager().getProperty(Environment.CHECKEDACTION_FACTORY);
+	    String checkedActionFactory = arjPropertyManager.getCoordinatorEnvironmentBean().getCheckedActionFactory();
 	    
 	    if (checkedActionFactory != null)
 	    {

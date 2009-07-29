@@ -34,7 +34,6 @@ import com.arjuna.ats.tools.toolsframework.plugin.ToolPlugin;
 import com.arjuna.ats.tools.toolsframework.plugin.ToolPluginException;
 import com.arjuna.ats.tools.toolsframework.panels.ATFSettingsPanel;
 import com.arjuna.ats.tsmx.TransactionServiceMX;
-import com.arjuna.ats.arjuna.common.Environment;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
@@ -61,7 +60,7 @@ public class PerformanceGraph extends ToolPlugin implements ActionListener
 	{
 		createMenu(getMenuBar());
 
-		com.arjuna.ats.arjuna.common.arjPropertyManager.getPropertyManager().setProperty( Environment.ENABLE_STATISTICS, "YES" );
+		com.arjuna.ats.arjuna.common.arjPropertyManager.getCoordinatorEnvironmentBean().setEnableStatistics(true);
 		TransactionServiceMX.getTransactionServiceMX();
 	}
 

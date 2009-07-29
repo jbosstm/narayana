@@ -21,7 +21,6 @@
 package com.hp.mwtests.ts.arjuna.resources;
 
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.common.Environment;
 
 import java.io.File;
 
@@ -47,7 +46,7 @@ public class TestBase
 
     private void emptyObjectStore()
     {
-        String objectStoreDirName = arjPropertyManager.getPropertyManager().getProperty(Environment.OBJECTSTORE_DIR, com.arjuna.ats.arjuna.common.Configuration.objectStoreRoot());
+        String objectStoreDirName = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir();
 
         System.out.println("Emptying " + objectStoreDirName);
 

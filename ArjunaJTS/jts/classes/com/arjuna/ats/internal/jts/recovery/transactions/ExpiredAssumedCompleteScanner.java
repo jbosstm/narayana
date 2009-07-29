@@ -37,6 +37,7 @@ import java.util.*;
 import java.text.*;
 
 import com.arjuna.ats.arjuna.common.Uid ;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore ;
 import com.arjuna.ats.arjuna.recovery.ExpiryScanner ;
@@ -165,32 +166,14 @@ public class ExpiredAssumedCompleteScanner implements ExpiryScanner
 
     static
     {
+        _expiryTime = recoveryPropertyManager.getRecoveryEnvironmentBean().getTransactionStatusManagerExpiryTime() * 60 * 60;
 
-	String expiryTimeString = jtsPropertyManager.getPropertyManager().getProperty
-	    ( RecoveryEnvironment.TRANSACTION_STATUS_MANAGER_EXPIRY_TIME ) ;
-
-	if (expiryTimeString != null)
-	{
-	    try
-	    {
-		Integer expiryTimeInteger = new Integer(expiryTimeString);
-		// convert to seconds
-		_expiryTime = expiryTimeInteger.intValue() * 60 *60;
-
-
-		if (jtsLogger.loggerI18N.isDebugEnabled())
-		    {
-			jtsLogger.loggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						      FacilityCode.FAC_CRASH_RECOVERY, 
-						      "com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_4",
-						      new Object[]{Integer.toString(_expiryTime)});
-		    }
-	    }
-	    catch (NumberFormatException e)
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_5", new Object[]{RecoveryEnvironment.TRANSACTION_STATUS_MANAGER_EXPIRY_TIME,expiryTimeString});
-	    }
-	}
+        if (jtsLogger.loggerI18N.isDebugEnabled())
+        {
+            jtsLogger.loggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CRASH_RECOVERY,
+                    "com.arjuna.ats.internal.arjuna.recovery.ExpiredAssumedCompleteScanner_4",
+                    new Object[]{Integer.toString(_expiryTime)});
+        }
     }
-
-};
+}

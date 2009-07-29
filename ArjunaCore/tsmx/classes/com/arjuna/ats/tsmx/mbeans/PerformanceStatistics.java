@@ -31,11 +31,6 @@
 package com.arjuna.ats.tsmx.mbeans;
 
 import com.arjuna.ats.arjuna.coordinator.TxStats;
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.common.Environment;
-import com.arjuna.ats.tsmx.mbeans.PerformanceStatisticsMBean;
-
-import java.util.ArrayList;
 
 public class PerformanceStatistics implements PerformanceStatisticsMBean
 {

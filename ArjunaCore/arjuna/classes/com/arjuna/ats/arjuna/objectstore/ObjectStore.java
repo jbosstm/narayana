@@ -412,7 +412,7 @@ public class ObjectStore
 	 */
 
 	if (objectStoreType == null)
-	    objectStoreType = new ClassName(arjPropertyManager.getPropertyManager().getProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_defaultStore().stringForm()));
+	    objectStoreType = new ClassName(arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType());
 
 	return objectStoreType;
     }

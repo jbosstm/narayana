@@ -32,23 +32,16 @@
 package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.ArjunaNames;
-import com.arjuna.ats.arjuna.common.Environment;
-import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.gandiva.ObjectName;
-import com.arjuna.ats.arjuna.utils.FileLock;
-import com.arjuna.ats.arjuna.utils.Utility;
-import java.io.File;
 
 import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import java.io.IOException;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -323,24 +316,18 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 
     protected synchronized boolean setupStore (String location) throws ObjectStoreException
     {
-	if (!checkSync)
-	{
-	    String syncOpt = arjPropertyManager.getPropertyManager().getProperty(Environment.TRANSACTION_SYNC);
+        if (!checkSync)
+        {
+            if(arjPropertyManager.getObjectStoreEnvironmentBean().isTransactionSync()) {
+                syncOn();
+            } else {
+                syncOff();
+            }
+        }
 
-	    if (syncOpt != null)
-	    {
-		if (syncOpt.compareTo("OFF") == 0)
-		    syncOff();
-		else
-		    syncOn();
-	    }
-	    else
-		syncOn();
+        checkSync = true;
 
-	    checkSync = true;
-	}
-
-	return super.setupStore(location);
+        return super.setupStore(location);
     }
 
     private static boolean checkSync = false;

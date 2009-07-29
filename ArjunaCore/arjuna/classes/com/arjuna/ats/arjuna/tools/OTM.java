@@ -215,8 +215,7 @@ public synchronized void updateTransactions ()
 
 	    try
 	    {
-		ClassName actionStoreType = new ClassName(arjPropertyManager.getPropertyManager().getProperty(Environment.ACTION_STORE,
-									     ArjunaNames.Implementation_ObjectStore_defaultActionStore().stringForm()));
+		ClassName actionStoreType = new ClassName(arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore());
 		
 		ObjectStore imple = new ObjectStore(actionStoreType, root);
 		InputObjectState types = new InputObjectState();
@@ -443,8 +442,7 @@ private synchronized void getTransactions (DefaultMutableTreeNode machineName)
 
 	try
 	{
-	    ClassName actionStoreType = new ClassName(arjPropertyManager.getPropertyManager().getProperty(Environment.ACTION_STORE,
-										  ArjunaNames.Implementation_ObjectStore_defaultActionStore().stringForm()));
+	    ClassName actionStoreType = new ClassName(arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore());
 
 	    ObjectStore imple = new ObjectStore(actionStoreType, root);
 	    InputObjectState types = new InputObjectState();

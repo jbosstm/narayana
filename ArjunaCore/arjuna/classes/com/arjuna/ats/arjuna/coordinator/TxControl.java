@@ -173,26 +173,13 @@ public class TxControl
         {
             if (TxControl.actionStoreType == null)
             {
-                    String useLog = arjPropertyManager.getPropertyManager().getProperty(
-                                    Environment.TRANSACTION_LOG, "OFF");
-
-                    if (useLog.equals("ON"))
+                    if (arjPropertyManager.getCoordinatorEnvironmentBean().isTransactionLog())
                             TxControl.actionStoreType = new ClassName(ArjunaNames
                                             .Implementation_ObjectStore_ActionLogStore());
                     else
-                            TxControl.actionStoreType = new ClassName(
-                                            arjPropertyManager.getPropertyManager()
-                                                            .getProperty(
-                                                                            Environment.ACTION_STORE,
-                                                                            ArjunaNames
-                                                                                            .Implementation_ObjectStore_defaultActionStore()
-                                                                                            .stringForm()));
+                            TxControl.actionStoreType = new ClassName( arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore() );
 
-                    String sharedLog = arjPropertyManager.getPropertyManager().getProperty(
-                                    Environment.SHARED_TRANSACTION_LOG, "NO");
-
-                    if (sharedLog.equals("YES"))
-                            sharedTransactionLog = true;
+                sharedTransactionLog = arjPropertyManager.getCoordinatorEnvironmentBean().isSharedTransactionLog();
             }
 
             ClassName recoveryType = TxControl.actionStoreType;
@@ -225,26 +212,13 @@ public class TxControl
 
 		if (TxControl.actionStoreType == null)
 		{
-			String useLog = arjPropertyManager.getPropertyManager().getProperty(
-					Environment.TRANSACTION_LOG, "OFF");
-
-			if (useLog.equals("ON"))
+			if (arjPropertyManager.getCoordinatorEnvironmentBean().isTransactionLog())
 				TxControl.actionStoreType = new ClassName(ArjunaNames
 						.Implementation_ObjectStore_ActionLogStore());
 			else
-				TxControl.actionStoreType = new ClassName(
-						arjPropertyManager.getPropertyManager()
-								.getProperty(
-										Environment.ACTION_STORE,
-										ArjunaNames
-												.Implementation_ObjectStore_defaultActionStore()
-												.stringForm()));
+				TxControl.actionStoreType = new ClassName( arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore() );
 
-			String sharedLog = arjPropertyManager.getPropertyManager().getProperty(
-					Environment.SHARED_TRANSACTION_LOG, "NO");
-
-			if (sharedLog.equals("YES"))
-				sharedTransactionLog = true;
+            sharedTransactionLog = arjPropertyManager.getCoordinatorEnvironmentBean().isSharedTransactionLog();
 		}
 
 		/*
@@ -374,106 +348,20 @@ public class TxControl
 	
 	static
 	{
-		String env = arjPropertyManager.getPropertyManager()
-				.getProperty(Environment.DEFAULT_TIMEOUT);
+        _defaultTimeout = arjPropertyManager.getCoordinatorEnvironmentBean().getDefaultTimeout();
+        maintainHeuristics = arjPropertyManager.getCoordinatorEnvironmentBean().isMaintainHeuristics();
+		asyncCommit = arjPropertyManager.getCoordinatorEnvironmentBean().isAsyncCommit();
+        asyncPrepare = arjPropertyManager.getCoordinatorEnvironmentBean().isAsyncPrepare();
+        onePhase = arjPropertyManager.getCoordinatorEnvironmentBean().isCommitOnePhase();
+        asyncRollback = arjPropertyManager.getCoordinatorEnvironmentBean().isAsyncRollback();
+        readonlyOptimisation = arjPropertyManager.getCoordinatorEnvironmentBean().isReadonlyOptimisation();
+        enableStatistics = arjPropertyManager.getCoordinatorEnvironmentBean().isEnableStatistics();
+        enable = !arjPropertyManager.getCoordinatorEnvironmentBean().isStartDisabled();
+        beforeCompletionWhenRollbackOnly = arjPropertyManager.getCoordinatorEnvironmentBean().isBeforeCompletionWhenRollbackOnly();
 
-		if (env != null)
-		{
-			try
-			{
-				Integer in = new Integer(env);
 
-				_defaultTimeout = in.intValue();
-			}
-			catch (Exception ex)
-			{
-				ex.printStackTrace();
-			}
-		}
 
-		env = arjPropertyManager.getPropertyManager()
-				.getProperty(Environment.MAINTAIN_HEURISTICS);
-
-		if (env != null)
-		{
-			if (env.compareTo("NO") == 0)
-				TxControl.maintainHeuristics = false;
-		}
-
-		env = arjPropertyManager.getPropertyManager()
-				.getProperty(Environment.ASYNC_COMMIT);
-
-		if (env != null)
-		{
-			if (env.compareTo("YES") == 0)
-				TxControl.asyncCommit = true;
-		}
-
-		env = arjPropertyManager.getPropertyManager()
-				.getProperty(Environment.ASYNC_PREPARE);
-
-		if (env != null)
-		{
-			if (env.compareTo("YES") == 0)
-				TxControl.asyncPrepare = true;
-		}
-
-		env = arjPropertyManager.getPropertyManager()
-				.getProperty(Environment.COMMIT_ONE_PHASE);
-
-		if (env != null)
-		{
-			if (env.compareTo("NO") == 0)
-				TxControl.onePhase = false;
-		}
-
-		env = arjPropertyManager.getPropertyManager()
-				.getProperty(Environment.ASYNC_ROLLBACK);
-
-		if (env != null)
-		{
-			if (env.compareTo("YES") == 0)
-				TxControl.asyncRollback = true;
-		}
-
-		env = arjPropertyManager.getPropertyManager()
-				.getProperty(Environment.READONLY_OPTIMISATION);
-
-		if (env != null)
-		{
-			if (env.compareTo("NO") == 0)
-				TxControl.readonlyOptimisation = false;
-		}
-
-		env = arjPropertyManager.getPropertyManager()
-				.getProperty(Environment.ENABLE_STATISTICS);
-
-		if (env != null)
-		{
-			if (env.compareTo("YES") == 0)
-				TxControl.enableStatistics = true;
-		}
-
-		env = arjPropertyManager.getPropertyManager()
-				.getProperty(Environment.START_DISABLED);
-
-		if (env != null)
-		{
-			if (env.compareTo("YES") == 0)
-				TxControl.enable = false;
-		}
-
-        env = arjPropertyManager.getPropertyManager()
-                .getProperty(Environment.BEFORECOMPLETION_WHEN_ROLLBACKONLY);
-        
-        if(env != null)
-        {
-            if(env.compareTo("YES") == 0)
-                TxControl.beforeCompletionWhenRollbackOnly = true;
-        }
-        
-		env = arjPropertyManager.getPropertyManager()
-				.getProperty(Environment.XA_NODE_IDENTIFIER);
+		String env =  arjPropertyManager.getCoreEnvironmentBean().getNodeIdentifier();
 		boolean writeNodeName = false;
 
 		if (env != null)
@@ -537,11 +425,7 @@ public class TxControl
 		            Environment.XA_NODE_IDENTIFIER, new String(xaNodeName));
 		}
 
-		String enableTSM = arjPropertyManager.getPropertyManager().getProperty(Environment.TRANSACTION_STATUS_MANAGER_ENABLE);
-		// run the TSM by default, unless it's turned off explicitly.
-
-		if ("NO".equalsIgnoreCase(enableTSM))
-		    _enableTSM = false;
+        _enableTSM = arjPropertyManager.getCoordinatorEnvironmentBean().isTransactionStatusManagerEnable();
 
         // TODO -- add this check to respect the environment setting for Environment.START_DISABLED?
         // TODO -- is this feature actually needed (it appears not to be used internally)

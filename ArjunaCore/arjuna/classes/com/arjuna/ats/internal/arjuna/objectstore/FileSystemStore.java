@@ -977,64 +977,20 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     static
     {
-	String syncOpt = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.OBJECTSTORE_SYNC);
+        FileSystemStore.doSync = arjPropertyManager.getObjectStoreEnvironmentBean().isObjectStoreSync();
 
-	if (syncOpt != null)
-	{
-	    if (syncOpt.compareTo("OFF") == 0)
-		FileSystemStore.doSync = false;
-	}
-	else
-	    FileSystemStore.doSync = true;
+        if (File.separatorChar != FileSystemStore.unixSeparator)
+            rewriteSeparator = true;
 
-	if (File.separatorChar != FileSystemStore.unixSeparator)
-	    rewriteSeparator = true;
+        createRetry = arjPropertyManager.getObjectStoreEnvironmentBean().getHierarchyRetry();
 
-	String retry = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.OBJECTSTORE_HIERARCHY_RETRY);
+        if (createRetry < 0)
+            createRetry = 100;
 
-	if (retry != null)
-	{
-	    try
-	    {
-		Integer i = new Integer(retry);
+        createTimeout = arjPropertyManager.getObjectStoreEnvironmentBean().getHierarchyTimeout();
 
-		createRetry = i.intValue();
-
-		if (createRetry < 0)
-		    createRetry = 100;
-	    }
-	    catch (NumberFormatException e)
-	    {
-		throw new com.arjuna.ats.arjuna.exceptions.FatalError("Invalid retry for hierarchy creation: "+createRetry, e);
-	    }
-	    catch (Exception e)
-	    {
-		throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
-	    }
-	}
-
-	String timeout = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.OBJECTSTORE_HIERARCHY_TIMEOUT);
-
-	if (timeout != null)
-	{
-	    try
-	    {
-		Integer i = new Integer(timeout);
-
-		createTimeout = i.intValue();
-
-		if (createTimeout < 0)
-		    createTimeout = 100;
-	    }
-	    catch (NumberFormatException e)
-	    {
-		throw new com.arjuna.ats.arjuna.exceptions.FatalError("Invalid timeout for hierarchy creation: "+createTimeout, e);
-	    }
-	    catch (Exception e)
-	    {
-		throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
-	    }
-	}
+        if (createTimeout < 0)
+            createTimeout = 100;
     }
 
     private static boolean isWindows = Utility.isWindows();

@@ -33,8 +33,6 @@ package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.ArjunaNames;
-import com.arjuna.ats.arjuna.common.Environment;
-import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.gandiva.ObjectName;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
@@ -45,13 +43,7 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.common.util.logging.*;
 
-import java.io.*;
-import java.io.File;
-
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.lang.NumberFormatException;
 
 /**
  * The basic action store implementations store the object states in
@@ -214,24 +206,18 @@ protected HashedActionStore (ObjectName objName)
 
     protected synchronized boolean setupStore (String location) throws ObjectStoreException
     {
-	if (!checkSync)
-	{
-	    String syncOpt = arjPropertyManager.getPropertyManager().getProperty(Environment.TRANSACTION_SYNC);
+        if (!checkSync)
+        {
+            if(arjPropertyManager.getObjectStoreEnvironmentBean().isTransactionSync()) {
+                syncOn();
+            } else {
+                syncOff();
+            }
+        }
 
-	    if (syncOpt != null)
-	    {
-		if (syncOpt.equals("OFF"))
-		    syncOff();
-		else
-		    syncOn();
-	    }
-	    else
-		syncOn();
+        checkSync = true;
 
-	    checkSync = true;
-	}
-
-	return super.setupStore(location);
+        return super.setupStore(location);
     }
 
     private static boolean checkSync = false;

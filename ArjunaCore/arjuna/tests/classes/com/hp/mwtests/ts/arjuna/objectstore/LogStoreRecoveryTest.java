@@ -36,21 +36,29 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.hp.mwtests.ts.arjuna.resources.TestBase;
 
 import org.junit.Test;
+import org.junit.Before;
 import static org.junit.Assert.*;
 
 public class LogStoreRecoveryTest extends TestBase
 {
+    @Before
+    public void setUp()
+	{
+        System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        System.setProperty(Environment.TRANSACTION_LOG, "ON");
+        System.setProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_LOG_PURGE_TIME, "100");
+
+        super.setUp();
+	}
+
     @Test
     public void test()
     {
-        System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
-        System.setProperty(Environment.TRANSACTION_LOG, "ON");
-        //System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");
-
         ObjectStore objStore = TxControl.getStore();
         final int numberOfTransactions = 1000;
         final Uid[] ids = new Uid[numberOfTransactions];

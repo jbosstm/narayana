@@ -33,7 +33,6 @@ package com.arjuna.ats.internal.arjuna.utils;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 
@@ -104,19 +103,7 @@ public class ManualProcessId implements com.arjuna.ats.arjuna.utils.Process
         {
             if (_pid == -1)
             {
-                String pid = arjPropertyManager.getPropertyManager().getProperty(Environment.PROCESS_IDENTIFIER);
-
-                if (pid == null)
-                    throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.utils.ManualProcessId_1"));
-
-                try
-                {
-                    _pid = Integer.parseInt(pid);
-                }
-                catch (final Exception ex)
-                {
-                    throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.utils.ManualProcessId_3")+" "+pid, ex);
-                }
+                _pid = arjPropertyManager.getCoreEnvironmentBean().getPid();
             }
         }
 

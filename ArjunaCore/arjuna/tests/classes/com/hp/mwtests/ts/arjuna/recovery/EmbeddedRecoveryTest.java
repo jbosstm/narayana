@@ -32,8 +32,7 @@
 package com.hp.mwtests.ts.arjuna.recovery;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.common.Environment;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -43,7 +42,7 @@ public class EmbeddedRecoveryTest
     @Test
     public void test()
     {
-        arjPropertyManager.getPropertyManager().setProperty(Environment.RECOVERY_BACKOFF_PERIOD, "1");
+        recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryBackoffPeriod(1);
 
         RecoveryManager manager = RecoveryManager.manager(RecoveryManager.DIRECT_MANAGEMENT);
         DummyRecoveryModule module = new DummyRecoveryModule();

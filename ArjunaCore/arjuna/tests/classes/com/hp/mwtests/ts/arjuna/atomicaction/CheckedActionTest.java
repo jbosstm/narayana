@@ -21,7 +21,6 @@
 package com.hp.mwtests.ts.arjuna.atomicaction;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 import org.junit.Test;
@@ -32,7 +31,7 @@ public class CheckedActionTest
     @Test
     public void test()
     {
-        arjPropertyManager.getPropertyManager().setProperty(Environment.CHECKEDACTION_FACTORY, DummyCheckedActionFactory.class.getCanonicalName());
+        arjPropertyManager.getCoordinatorEnvironmentBean().setCheckedActionFactory(DummyCheckedActionFactory.class.getCanonicalName());
 
         AtomicAction A = new AtomicAction();
 

@@ -79,12 +79,12 @@ public class LogStoreRecoveryTest2
         int threads = 10;
         int work = 100;
 
-        arjPropertyManager.getPropertyManager().setProperty(Environment.RECOVERY_BACKOFF_PERIOD, "1");
+        recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryBackoffPeriod(1);
 
-        System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
-        System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
-        System.setProperty(Environment.TRANSACTION_LOG, "ON");
-        System.setProperty(Environment.TRANSACTION_LOG_SYNC_REMOVAL, "false");
+        arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(false);
+        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
+        arjPropertyManager.getObjectStoreEnvironmentBean().setSynchronousRemoval(false);
         // the byteman script will enforce this
         //System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "1000000");  // essentially infinite
 

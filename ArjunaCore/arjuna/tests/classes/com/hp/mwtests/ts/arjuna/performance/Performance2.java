@@ -82,7 +82,7 @@ public class Performance2
         int threads = 10;
         int work = 100;
 
-        System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
+        arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(false);
 
         number = threads;
 

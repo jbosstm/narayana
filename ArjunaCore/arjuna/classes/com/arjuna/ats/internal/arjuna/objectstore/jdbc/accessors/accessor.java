@@ -34,7 +34,6 @@ package com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 
 import com.arjuna.ats.arjuna.ArjunaNames;
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.gandiva.ObjectName;
 
 import java.sql.*;

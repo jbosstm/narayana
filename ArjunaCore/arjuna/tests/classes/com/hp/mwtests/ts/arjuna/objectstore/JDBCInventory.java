@@ -47,7 +47,7 @@ public class JDBCInventory
     public void test()
     {
         arjPropertyManager.getPropertyManager().setProperty(Environment.STATIC_INVENTORY_IMPLE + "1", "com.arjuna.ats.internal.arjuna.objectstore.JDBCStoreSetup");
-        arjPropertyManager.getPropertyManager().setProperty(Environment.JDBC_USER_DB_ACCESS, "com.hp.mwtests.ts.arjuna.objectstore.MyAccess");
+        arjPropertyManager.getObjectStoreEnvironmentBean().setJdbcUserDbAccess("com.hp.mwtests.ts.arjuna.objectstore.MyAccess");
 
         boolean passed = false;
         

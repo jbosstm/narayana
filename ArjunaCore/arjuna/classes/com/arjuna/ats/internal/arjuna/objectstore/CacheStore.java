@@ -285,13 +285,7 @@ public class CacheStore extends HashedStore
 
     static
     {
-	String cacheSync = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_SYNC);
-
-	if (cacheSync != null)
-	{
-	    if (cacheSync.equals("ON"))
-		_cacheSync = true;
-	}
+        _cacheSync = arjPropertyManager.getObjectStoreEnvironmentBean().isCacheStoreSync();
     }
     
 }
@@ -922,90 +916,30 @@ class AsyncStore extends Thread  // keep priority same as app. threads
     private static int _defaultRemovedItems = 2 * HASH_SIZE;
     private static int _defaultWorkItems = 100;
     private static int _defaultScanPeriod = 120000;
-    
+
     static
     {
-	String hashSize = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_HASH);
+        HASH_SIZE = arjPropertyManager.getObjectStoreEnvironmentBean().getCacheStoreHash();
 
-	if (hashSize != null)
-	{
-	    try
-	    {
-		HASH_SIZE = Integer.parseInt(hashSize);
-	    }
-	    catch (Exception ex)
-	    {
-		ex.printStackTrace();
-	    }
-	}
+        if (HASH_SIZE <= 0)
+            HASH_SIZE = 128;
 
-	if (HASH_SIZE <= 0)
-	    HASH_SIZE = 128;
-	
-	String cacheSize = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_SIZE);
+        _defaultCacheSize = arjPropertyManager.getObjectStoreEnvironmentBean().getCacheStoreSize();
 
-	if (cacheSize != null)
-	{
-	    try
-	    {
-		_defaultCacheSize = Integer.parseInt(cacheSize);
-	    }
-	    catch (Exception ex)
-	    {
-		ex.printStackTrace();
-	    }
-	}
+        if (_defaultCacheSize < 0)
+            _defaultCacheSize = 0;
 
-	if (_defaultCacheSize < 0)
-	    _defaultCacheSize = 0;
+        _defaultRemovedItems = arjPropertyManager.getObjectStoreEnvironmentBean().getCacheStoreRemovedItems();
 
-	String removedItems = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_REMOVED_ITEMS);
+        if (_defaultRemovedItems < 0)
+            _defaultRemovedItems = 0;
 
-	if (removedItems != null)
-	{
-	    try
-	    {
-		_defaultRemovedItems = Integer.parseInt(removedItems);
-	    }
-	    catch (Exception ex)
-	    {
-		ex.printStackTrace();
-	    }
-	}
+        _defaultWorkItems = arjPropertyManager.getObjectStoreEnvironmentBean().getCacheStoreWorkItems();
 
-	if (_defaultRemovedItems < 0)
-	    _defaultRemovedItems = 0;
+        if (_defaultWorkItems < 0)
+            _defaultWorkItems = 0;
 
-	String workItems = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_WORK_ITEMS);
-
-	if (workItems != null)
-	{
-	    try
-	    {
-		_defaultWorkItems = Integer.parseInt(workItems);
-	    }
-	    catch (Exception ex)
-	    {
-		ex.printStackTrace();
-	    }
-	}
-
-	if (_defaultWorkItems < 0)
-	    _defaultWorkItems = 0;
-
-	String scanPeriod = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.CACHE_STORE_SCAN_PERIOD);
-
-	if (scanPeriod != null)
-	{
-	    try
-	    {
-		_defaultScanPeriod = Integer.parseInt(scanPeriod);
-	    }
-	    catch (Exception ex)
-	    {
-		ex.printStackTrace();
-	    }
-	}
+        _defaultScanPeriod = arjPropertyManager.getObjectStoreEnvironmentBean().getCacheStoreScanPeriod();
     }
 
 }

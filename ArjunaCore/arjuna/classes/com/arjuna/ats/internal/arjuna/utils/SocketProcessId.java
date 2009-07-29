@@ -71,12 +71,10 @@ public class SocketProcessId implements com.arjuna.ats.arjuna.utils.Process
 	    {
 		if (_theSocket == null)
 		{
-            Integer port = Utility.lookupBoundedIntegerProperty(arjPropertyManager.getPropertyManager(), Environment.SOCKET_PROCESS_ID_PORT, _defaultPort,
-                        "com.arjuna.ats.internal.arjuna.utils.SocketProcessId_1",
-                        0, Utility.MAX_PORT);
-            Integer maxPorts = Utility.lookupBoundedIntegerProperty(arjPropertyManager.getPropertyManager(), Environment.SOCKET_PROCESS_ID_MAX_PORTS, 1,
-                        "com.arjuna.ats.internal.arjuna.utils.SocketProcessId_3",
-                        0, Utility.MAX_PORT);
+            int port = arjPropertyManager.getCoreEnvironmentBean().getSocketProcessIdPort();
+
+            int maxPorts = arjPropertyManager.getCoreEnvironmentBean().getSocketProcessIdMaxPorts();
+
             int maxPort;
 
             if (maxPorts <= 1)

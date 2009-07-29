@@ -32,12 +32,9 @@
 package com.hp.mwtests.ts.arjuna.recovery;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.recovery.RecoveryEnvironment;
-import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner;
 

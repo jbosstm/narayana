@@ -112,7 +112,7 @@ public class Environment
     public static final String TRANSACTION_LOG_SYNC_REMOVAL = "com.arjuna.ats.arjuna.coordinator.transactionLog.synchronousRemoval";
     public static final String TRANSACTION_LOG_SIZE = "com.arjuna.ats.arjuna.coordinator.transactionLog.size";
     public static final String TRANSACTION_LOG_PURGE_TIME = "com.arjuna.ats.arjuna.coordinator.transactionLog.purgeTime";
-    public static final String TRANSACTION_LOG_REMOVAL_MARKER = "com.arjuna.ats.arjuna.coordinator.transactionLog.removalMarker";
+    @Deprecated public static final String TRANSACTION_LOG_REMOVAL_MARKER = "com.arjuna.ats.arjuna.coordinator.transactionLog.removalMarker";
     public static final String TRANSACTION_LOG_WRITE_OPTIMISATION = "com.arjuna.ats.arjuna.coordinator.transactionLog.writeOptimisation";
     public static final String TRANSACTION_SYNC = "com.arjuna.ats.arjuna.objectstore.transactionSync";
     public static final String READONLY_OPTIMISATION = "com.arjuna.ats.arjuna.coordinator.readonlyOptimisation";
@@ -125,7 +125,7 @@ public class Environment
     public static final String JDBC_POOL_SIZE_INIT = "com.arjuna.ats.arjuna.objectstore.jdbcPoolSizeInitial";
     public static final String JDBC_POOL_SIZE_MAX = "com.arjuna.ats.arjuna.objectstore.jdbcPoolSizeMaximum";
     public static final String JDBC_POOL_PUT = "com.arjuna.ats.arjuna.objectstore.jdbcPoolPutConnections";
-    public static final String LICENCE = "com.arjuna.ats.arjuna.licence";
+    @Deprecated public static final String LICENCE = "com.arjuna.ats.arjuna.licence";
     public static final String CACHE_STORE_SIZE = "com.arjuna.ats.internal.arjuna.objectstore.cacheStore.size";
     public static final String CACHE_STORE_SYNC = "com.arjuna.ats.internal.arjuna.objectstore.cacheStore.sync";
     public static final String CACHE_STORE_REMOVED_ITEMS = "com.arjuna.ats.internal.arjuna.objectstore.cacheStore.removedItems";
@@ -165,6 +165,11 @@ public class Environment
       * for specifying the bind address for transaction services
       *
       */
-    public static final String SERVER_BIND_ADDRESS = "jbossts.bind.address";
+    @Deprecated public static final String SERVER_BIND_ADDRESS = "jbossts.bind.address";
+
+
+    public static final String EXPIRY_SCAN_INTERVAL    = "com.arjuna.ats.arjuna.recovery.expiryScanInterval";
+    public static final String TRANSACTION_STATUS_MANAGER_EXPIRY_TIME = "com.arjuna.ats.arjuna.recovery.transactionStatusManagerExpiryTime";
+    public static final String TIMEOUT_RECOVERY_SOCKET = "com.arjuna.ats.internal.arjuna.recovery.listener.timeoutsocket";
 }
 

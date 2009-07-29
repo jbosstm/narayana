@@ -1023,76 +1023,36 @@ public abstract class JDBCImple
 	public boolean initialise(Connection conn, JDBCAccess jdbcAccess,
 			String tableName) throws SQLException
 	{
-		String poolSizeInitStr = arjPropertyManager.getPropertyManager()
-				.getProperty(Environment.JDBC_POOL_SIZE_INIT);
-		String poolSizeMaxStr = arjPropertyManager.getPropertyManager()
-				.getProperty(Environment.JDBC_POOL_SIZE_MAX);
+        _poolSizeInit = arjPropertyManager.getObjectStoreEnvironmentBean().getJdbcPoolSizeInitial();
+        if (_poolSizeInit < 1)
+        {
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                tsLogger.arjLoggerI18N
+                        .warn(
+                                "com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_11",
+                                new Object[]
+                                        { _poolSizeInit });
+            }
+            _poolSizeInit = 1;
+        }
 
-		if (poolSizeInitStr != null)
-		{
-			try
-			{
-				_poolSizeInit = Integer.parseInt(poolSizeInitStr);
-				if (_poolSizeInit < 1)
-				{
-					_poolSizeInit = 1;
-					if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					{
-						tsLogger.arjLoggerI18N
-								.warn(
-										"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_11",
-										new Object[]
-										{ poolSizeInitStr });
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					tsLogger.arjLoggerI18N
-							.warn(
-									"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_11",
-									new Object[]
-									{ poolSizeInitStr });
-				}
+        _poolSizeMax = arjPropertyManager.getObjectStoreEnvironmentBean().getJdbcPoolSizeMaximum();
+        if (_poolSizeMax < _poolSizeInit)
+        {
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                tsLogger.arjLoggerI18N
+                        .warn(
+                                "com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_12",
+                                new Object[]
+                                        { _poolSizeMax });
+            }
+            _poolSizeMax = _poolSizeInit;
+        }
 
-			}
-		}
-		if (poolSizeMaxStr != null)
-		{
-			try
-			{
-				_poolSizeMax = Integer.parseInt(poolSizeMaxStr);
-				if (_poolSizeMax < _poolSizeInit)
-				{
-					_poolSizeMax = _poolSizeInit;
-					if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					{
-						tsLogger.arjLoggerI18N
-								.warn(
-										"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_12",
-										new Object[]
-										{ poolSizeMaxStr });
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					tsLogger.arjLoggerI18N
-							.warn(
-									"com.arjuna.ats.internal.arjuna.objectstore.JDBCImple_12",
-									new Object[]
-									{ poolSizeMaxStr });
-				}
-
-			}
-		}
-		_poolPutConn = "yes"
-				.equalsIgnoreCase(arjPropertyManager.getPropertyManager()
-						.getProperty(Environment.JDBC_POOL_PUT));
+		_poolPutConn = arjPropertyManager.getObjectStoreEnvironmentBean().isJdbcPoolPutConnections();
+        
 		_jdbcAccess = jdbcAccess;
 		_theConnection = new Connection[_poolSizeMax];
 		_theConnection[0] = conn;

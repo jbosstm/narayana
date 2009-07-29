@@ -36,6 +36,7 @@ import java.text.* ;
 
 import com.arjuna.ats.arjuna.common.Uid ;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore ;
 import com.arjuna.ats.arjuna.recovery.ExpiryScanner ;
 import com.arjuna.ats.arjuna.recovery.RecoveryEnvironment ;
@@ -193,36 +194,18 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
     private static int _expiryTime = 12 * 60 * 60 ; // default is 12 hours
     
     private static SimpleDateFormat _timeFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-    
+
     static
     {
-	
-	String expiryTimeString = arjPropertyManager.getPropertyManager().getProperty(RecoveryEnvironment.TRANSACTION_STATUS_MANAGER_EXPIRY_TIME);
-	
-	if ( expiryTimeString != null )
-	 {
-	   try
-	    {
-		Integer expiryTimeInteger = new Integer(expiryTimeString) ;
-		// convert to seconds
-		_expiryTime = expiryTimeInteger.intValue() * 60 * 60 ;
-		
-		if (tsLogger.arjLoggerI18N.isDebugEnabled())
-		{
-		    tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
-						  FacilityCode.FAC_CRASH_RECOVERY, 
-						  "com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_4", new Object[]{Integer.toString(_expiryTime)});
-		}
-	    }
-         catch ( NumberFormatException e )
-         {
-	     if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	     {
-		 tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_5", new Object[]{RecoveryEnvironment.TRANSACTION_STATUS_MANAGER_EXPIRY_TIME, expiryTimeString});
-	     }
-         }
-      }
-   }
+        _expiryTime = recoveryPropertyManager.getRecoveryEnvironmentBean().getTransactionStatusManagerExpiryTime() * 60 * 60;
+
+        if (tsLogger.arjLoggerI18N.isDebugEnabled())
+        {
+            tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
+                    FacilityCode.FAC_CRASH_RECOVERY,
+                    "com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner_4", new Object[]{Integer.toString(_expiryTime)});
+        }
+    }
 
  
 }

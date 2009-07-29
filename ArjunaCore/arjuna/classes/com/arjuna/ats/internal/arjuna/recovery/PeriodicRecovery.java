@@ -44,6 +44,7 @@ import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.recovery.RecoveryEnvironment;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -1035,68 +1036,28 @@ public class PeriodicRecovery extends Thread
         setStatus(Status.INACTIVE);
         setMode(Mode.ENABLED);
 
-        _recoveryPeriod = _defaultRecoveryPeriod;
+        _recoveryPeriod = recoveryPropertyManager.getRecoveryEnvironmentBean().getPeriodicRecoveryPeriod();
 
-        String recoveryPeriodString =
-                arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.PERIODIC_RECOVERY_PERIOD );
-
-        if ( recoveryPeriodString != null )
+        if (_recoveryPeriod != _defaultRecoveryPeriod &&  tsLogger.arjLogger.isDebugEnabled())
         {
-            try
-            {
-                Integer recoveryPeriodInteger = new Integer( recoveryPeriodString );
-                _recoveryPeriod = recoveryPeriodInteger.intValue();
-
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                    tsLogger.arjLogger.debug
-                            ( DebugLevel.FUNCTIONS,
-                                    VisibilityLevel.VIS_PRIVATE,
-                                    FacilityCode.FAC_CRASH_RECOVERY,
-                                    "com.arjuna.ats.arjuna.recovery.PeriodicRecovery" +
-                                            ": Recovery period set to " + _recoveryPeriod + " seconds" );
-                }
-            }
-            catch (NumberFormatException e)
-            {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_6",
-                            new Object[]{com.arjuna.ats.arjuna.common.Environment.PERIODIC_RECOVERY_PERIOD, recoveryPeriodString});
-                }
-            }
+            tsLogger.arjLogger.debug
+                    ( DebugLevel.FUNCTIONS,
+                            VisibilityLevel.VIS_PRIVATE,
+                            FacilityCode.FAC_CRASH_RECOVERY,
+                            "com.arjuna.ats.arjuna.recovery.PeriodicRecovery" +
+                                    ": Recovery period set to " + _recoveryPeriod + " seconds" );
         }
 
-        _backoffPeriod = _defaultBackoffPeriod;
+        _backoffPeriod = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryBackoffPeriod();
 
-        String backoffPeriodString=
-                arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.RECOVERY_BACKOFF_PERIOD);
-
-        if (backoffPeriodString != null)
+        if (_backoffPeriod != _defaultBackoffPeriod && tsLogger.arjLogger.isDebugEnabled())
         {
-            try
-            {
-                Integer backoffPeriodInteger = new Integer(backoffPeriodString);
-                _backoffPeriod = backoffPeriodInteger.intValue();
-
-                if (tsLogger.arjLogger.isDebugEnabled())
-                {
-                    tsLogger.arjLogger.debug
-                            ( DebugLevel.FUNCTIONS,
-                                    VisibilityLevel.VIS_PRIVATE,
-                                    FacilityCode.FAC_CRASH_RECOVERY,
-                                    "PeriodicRecovery" +
-                                            ": Backoff period set to " + _backoffPeriod + " seconds" );
-                }
-            }
-            catch (NumberFormatException e)
-            {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_7",
-                            new Object[]{com.arjuna.ats.arjuna.common.Environment.RECOVERY_BACKOFF_PERIOD, backoffPeriodString});
-                }
-            }
+            tsLogger.arjLogger.debug
+                    ( DebugLevel.FUNCTIONS,
+                            VisibilityLevel.VIS_PRIVATE,
+                            FacilityCode.FAC_CRASH_RECOVERY,
+                            "PeriodicRecovery" +
+                                    ": Backoff period set to " + _backoffPeriod + " seconds" );
         }
     }
 
@@ -1121,12 +1082,12 @@ public class PeriodicRecovery extends Thread
     /**
      *  default value for _backoffPeriod if not specified via property {@link com.arjuna.ats.arjuna.common.Environment#RECOVERY_BACKOFF_PERIOD}
      */
-    private static final int _defaultBackoffPeriod = 10;
+    public static final int _defaultBackoffPeriod = 10;
 
     /**
      *  default value for _recoveryPeriod if not specified via property {@link com.arjuna.ats.arjuna.common.Environment#PERIODIC_RECOVERY_PERIOD}
      */
-   private static final int _defaultRecoveryPeriod = 120;
+    public static final int _defaultRecoveryPeriod = 120;
 
     /**
      * lock controlling access to {@link PeriodicRecovery#_currentStatus}, {@link PeriodicRecovery#_currentMode} and

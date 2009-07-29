@@ -96,9 +96,9 @@ public class LogStressTest
         int threads = 10;
         int work = 100;
 
-        System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
-        System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
-        System.setProperty(Environment.TRANSACTION_LOG, "ON");
+        arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(false);
+        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
         
         // the byteman script will manage this
         //System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");

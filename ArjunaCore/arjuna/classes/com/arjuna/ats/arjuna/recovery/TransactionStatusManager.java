@@ -213,33 +213,12 @@ public class TransactionStatusManager
         if (_port > 0)
             return _port;
 
-        PropertyManager pm = recoveryPropertyManager.getPropertyManager();
-
-        String portStr = pm.getProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_PORT);
-
-        if ( portStr == null || portStr.length() == 0)
-        {
-            return DEFAULT_TMS_PORT;
-        }
-        else
-        {
-            Integer port = Utility.lookupBoundedIntegerProperty(pm, com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_PORT, defValue,
-                    "com.arjuna.ats.arjuna.recovery.TransactionStatusManager_8",
-                    0, Utility.MAX_PORT);
-
-            if (port == null)
-                throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_11"));
-
-            return port;
-        }
-
+        return recoveryPropertyManager.getRecoveryEnvironmentBean().getTransactionStatusManagerPort();
     }
 
     private String getListenerHostName()
     {
-        PropertyManager pm = recoveryPropertyManager.getPropertyManager();
-
-        return pm.getProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_STATUS_MANAGER_ADDRESS);
+        return recoveryPropertyManager.getRecoveryEnvironmentBean().getTransactionStatusManagerAddress();
     }
 
     /**

@@ -301,10 +301,7 @@ public class LastResourceRecord extends AbstractRecord
 
     static
     {
-        final String allowMultipleLastResources = arjPropertyManager
-                .getPropertyManager().getProperty(Environment.ALLOW_MULTIPLE_LAST_RESOURCES);
-        ALLOW_MULTIPLE_LAST_RESOURCES = (allowMultipleLastResources == null ? false
-                : Boolean.valueOf(allowMultipleLastResources).booleanValue());
+        ALLOW_MULTIPLE_LAST_RESOURCES = arjPropertyManager.getCoreEnvironmentBean().isAllowMultipleLastResources();
         
         if (ALLOW_MULTIPLE_LAST_RESOURCES
                 && tsLogger.arjLoggerI18N.isWarnEnabled())
@@ -312,9 +309,9 @@ public class LastResourceRecord extends AbstractRecord
             tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.lastResource.startupWarning");
         }
 
-        String disableMLRW = arjPropertyManager.getPropertyManager().getProperty(Environment.DISABLE_MULTIPLE_LAST_RESOURCES_WARNING, "false");
+        _disableMLRWarning = arjPropertyManager.getCoreEnvironmentBean().isDisableMultipleLastResourcesWarning();
 
-        if ("true".equalsIgnoreCase(disableMLRW))
+        if(arjPropertyManager.getCoreEnvironmentBean().isDisableMultipleLastResourcesWarning())
         {
             tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.lastResource.disableWarning");
 

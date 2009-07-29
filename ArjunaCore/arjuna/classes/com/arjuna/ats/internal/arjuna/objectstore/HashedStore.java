@@ -75,8 +75,6 @@ import java.lang.NumberFormatException;
  *
  * @message com.arjuna.ats.internal.arjuna.objectstore.HashedStore_1 [com.arjuna.ats.internal.arjuna.objectstore.HashedStore_1] - HashedStore.create caught: {0}
  * @message com.arjuna.ats.internal.arjuna.objectstore.HashedStore_2 [com.arjuna.ats.internal.arjuna.objectstore.HashedStore_2] - invalid number of hash directories: {0}. Will use default.
- * @message com.arjuna.ats.internal.arjuna.objectstore.HashedStore_3 [com.arjuna.ats.internal.arjuna.objectstore.HashedStore_3] - invalid number of hash directories: {0}
- * @message com.arjuna.ats.internal.arjuna.objectstore.HashedStore_4 [com.arjuna.ats.internal.arjuna.objectstore.HashedStore_4] -  caught exception: {0}
  * @message com.arjuna.ats.internal.arjuna.objectstore.HashedStore_5 [com.arjuna.ats.internal.arjuna.objectstore.HashedStore_5] - HashedStore.allObjUids - could not pack Uid.
  * @message com.arjuna.ats.internal.arjuna.objectstore.HashedStore_6 [com.arjuna.ats.internal.arjuna.objectstore.HashedStore_6] - HashedStore.allObjUids - could not pack end of list Uid.
  */
@@ -432,56 +430,25 @@ public class HashedStore extends ShadowNoFileLockStore
 	return false;
     }
 
-    private static final int DEFAULT_NUMBER_DIRECTORIES = 255;
+    public static final int DEFAULT_NUMBER_DIRECTORIES = 255;
     private static final String HASH_SEPARATOR = "#";
 
     private static int NUMBEROFDIRECTORIES = DEFAULT_NUMBER_DIRECTORIES;
 
     static
     {
-	String numberOfDirs = arjPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.arjuna.common.Environment.HASHED_DIRECTORIES);
+        NUMBEROFDIRECTORIES = arjPropertyManager.getObjectStoreEnvironmentBean().getHashedDirectories();
 
-	if (numberOfDirs != null)
-	{
-	    try
-	    {
-		Integer i = new Integer(numberOfDirs);
+        if (NUMBEROFDIRECTORIES <= 0)
+        {
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_2",
+                        new Object[]{NUMBEROFDIRECTORIES});
+            }
 
-		NUMBEROFDIRECTORIES = i.intValue();
-
-		if (NUMBEROFDIRECTORIES <= 0)
-		{
-		    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		    {
-			tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_2",
-						    new Object[]{numberOfDirs});
-		    }
-
-		    NUMBEROFDIRECTORIES = DEFAULT_NUMBER_DIRECTORIES;
-		}
-	    }
-	    catch (NumberFormatException e)
-	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_3",
-						new Object[]{numberOfDirs});
-		}
-
-		throw new com.arjuna.ats.arjuna.exceptions.FatalError("Invalid hash directory number: "+numberOfDirs, e);
-	    }
-	    catch (Exception e)
-	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_4",
-						new Object[]{e});
-		}
-
-		throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
-	    }
-	}
+            NUMBEROFDIRECTORIES = DEFAULT_NUMBER_DIRECTORIES;
+        }
     }
-
 }
 

@@ -33,8 +33,7 @@ package com.hp.mwtests.ts.jta.recovery;
 
 import com.hp.mwtests.ts.jta.common.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.common.Environment;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 
 import javax.transaction.xa.*;
 
@@ -53,7 +52,7 @@ public class CrashRecovery
 
         // set the smallest possible backoff period so we don't have to wait too long for the test to run
         
-        arjPropertyManager.getPropertyManager().setProperty(Environment.RECOVERY_BACKOFF_PERIOD, "1");
+        recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryBackoffPeriod(1);
 
         // start the recovery manager
 

@@ -34,8 +34,7 @@ package com.arjuna.ats.internal.arjuna.recovery;
 import java.io.IOException;
 import java.util.Vector;
 
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.common.Environment;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
@@ -96,10 +95,7 @@ public class RecoveryManagerImple
 
 
         // by default we use a socket based listener, but it can be turned off if not required.
-        boolean useListener = true;
-        if("NO".equalsIgnoreCase(arjPropertyManager.getPropertyManager().getProperty(Environment.RECOVERY_MANAGER_LISTENER))) {
-            useListener = false;
-        }
+        boolean useListener = recoveryPropertyManager.getRecoveryEnvironmentBean().isRecoveryListener();
         
         /*
                  * Check whether there is a recovery daemon running - only allow one per

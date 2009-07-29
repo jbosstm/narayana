@@ -33,8 +33,8 @@ package com.hp.mwtests.ts.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.recovery.RecoverAtomicAction;
 import com.hp.mwtests.ts.arjuna.resources.BasicRecord;
@@ -47,10 +47,10 @@ public class LogStoreReactivationTest2
     @Test
     public void test()
     {
-        System.setProperty(Environment.COMMIT_ONE_PHASE, "NO");
-        System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
-        System.setProperty(Environment.TRANSACTION_LOG, "ON");
-        System.setProperty(Environment.TRANSACTION_LOG_SYNC_REMOVAL, "true");
+        arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(false);
+        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
+        arjPropertyManager.getObjectStoreEnvironmentBean().setSynchronousRemoval(true);
         // the byteman script will enforce this
         //System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "1000000");  // essentially infinite
 

@@ -22,7 +22,7 @@
 package com.hp.mwtests.ts.arjuna.recovery;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.arjuna.common.Environment;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 
 import java.net.Socket;
 import java.net.InetAddress;
@@ -46,7 +46,7 @@ public class RecoveryManagerStartStopTest
     @Test
     public void testStartStop() throws Exception
     {
-        System.setProperty(Environment.RECOVERY_MANAGER_PORT, "4712");
+        recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryPort(4712);
 
         // check how many threads there are running
 
@@ -161,7 +161,7 @@ public class RecoveryManagerStartStopTest
 
                 host = InetAddress.getLocalHost().getHostName();
                 
-                port = Integer.parseInt(System.getProperty(Environment.RECOVERY_MANAGER_PORT));
+                port = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryPort();
 
                 System.out.println("client atempting to connect to host " + host + " port " + port);
                 System.out.flush();
