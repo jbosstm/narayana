@@ -28,11 +28,13 @@
  *
  * $Id: jtaPropertyManager.java 2342 2006-03-30 13:06:17Z  $
  */
-
 package com.arjuna.ats.jta.common;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Property manager wrapper for the JTA module.
@@ -44,4 +46,24 @@ public class jtaPropertyManager
     {
         return PropertyManagerFactory.getPropertyManagerForModule("jta", Environment.PROPERTIES_FILE);
     }
+
+    public static JTAEnvironmentBean getJTAEnvironmentBean()
+    {
+        synchronized (jtaEnvironmentBeanInit) {
+            if(!jtaEnvironmentBeanInit.get()) {
+                try {
+                    BeanPopulator.configureFromPropertyManager(jtaEnvironmentBean,  getPropertyManager());
+                    jtaEnvironmentBeanInit.set(true);
+                } catch(Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return jtaEnvironmentBean;
+    }
+
+    private static final AtomicBoolean jtaEnvironmentBeanInit = new AtomicBoolean(false);
+    private static final JTAEnvironmentBean jtaEnvironmentBean = new JTAEnvironmentBean();
+
 }

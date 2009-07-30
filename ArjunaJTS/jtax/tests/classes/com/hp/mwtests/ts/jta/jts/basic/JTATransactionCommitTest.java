@@ -50,7 +50,8 @@ public class JTATransactionCommitTest extends JTSTestCase
     public void test() throws Exception
     {
         /** Ensure underlying JTA implementation is JTS **/
-        jtaPropertyManager.getPropertyManager().setProperty(Environment.JTA_TM_IMPLEMENTATION, TransactionManagerImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setJtaTMImplementation(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
+        jtaPropertyManager.getJTAEnvironmentBean().setJtaUTImplementation(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
 
         try
         {

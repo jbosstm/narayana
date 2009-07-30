@@ -18,11 +18,12 @@
  * (C) 2009,
  * @author JBoss, a division of Red Hat.
  */
-package com.hp.mwtests.ts.arjuna.common;
+package com.hp.mwtests.ts.jta.basic;
 
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import com.arjuna.common.tests.simple.DummyPropertyManager;
-import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.jta.common.JTAEnvironmentBean;
+import com.arjuna.ats.jta.common.Environment;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -38,7 +39,7 @@ import static org.junit.Assert.*;
 public class BeanPopulatorTest
 {
     @Test
-    public void testArjunaCorePropertiesPopulation() throws Exception {
+    public void testJTAPropertiesPopulation() throws Exception {
 
         // check that all the Environment properties are looked for
         // by the set of beans which wrap them and conversely that no undefined
@@ -46,13 +47,7 @@ public class BeanPopulatorTest
 
         DummyPropertyManager testManager = new DummyPropertyManager(null);
 
-        BeanPopulator.configureFromPropertyManager(new CoordinatorEnvironmentBean(), testManager);
-        BeanPopulator.configureFromPropertyManager(new RecoveryEnvironmentBean(), testManager);
-        BeanPopulator.configureFromPropertyManager(new CoreEnvironmentBean(), testManager);
-        BeanPopulator.configureFromPropertyManager(new ObjectStoreEnvironmentBean(), testManager);
-
-        // we expect this one to be missing - that's ok.
-        testManager.usedKeys.add("com.arjuna.ats.internal.arjuna.inventory.staticInventoryImple");
+        BeanPopulator.configureFromPropertyManager(new JTAEnvironmentBean(), testManager);
 
         Set<String> expectedKeys = new HashSet<String>();
         expectedKeys.addAll( DummyPropertyManager.extractKeys(Environment.class));

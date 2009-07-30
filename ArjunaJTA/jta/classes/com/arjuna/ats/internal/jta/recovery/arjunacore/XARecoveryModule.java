@@ -1364,24 +1364,7 @@ public class XARecoveryModule implements RecoveryModule
 
 	static
 	{
-		String env = jtaPropertyManager.getPropertyManager()
-				.getProperty(com.arjuna.ats.jta.common.Environment.XA_BACKOFF_PERIOD);
-
-		XARecoveryModule._backoffPeriod = XA_BACKOFF_PERIOD;
-
-		if (env != null)
-		{
-			try
-			{
-				Integer i = new Integer(env);
-
-				XARecoveryModule._backoffPeriod = i.intValue();
-			}
-			catch (Exception e)
-			{
-				throw new ExceptionInInitializerError(e);
-			}
-		}
+        _backoffPeriod = jtaPropertyManager.getJTAEnvironmentBean().getXaBackoffPeriod();        
 	}
 
 }

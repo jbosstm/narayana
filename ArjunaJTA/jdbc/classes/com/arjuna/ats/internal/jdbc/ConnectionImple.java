@@ -1058,31 +1058,6 @@ public abstract class ConnectionImple
 
 	static
 	{
-		String isolationLevel = jdbcPropertyManager.getPropertyManager()
-				.getProperty(com.arjuna.ats.jdbc.common.Environment.ISOLATION_LEVEL);
-
-		if (isolationLevel != null)
-		{
-			if (isolationLevel.equals("TRANSACTION_READ_COMMITTED"))
-				_currentIsolationLevel = Connection.TRANSACTION_READ_COMMITTED;
-			else if (isolationLevel.equals("TRANSACTION_READ_UNCOMMITTED"))
-				_currentIsolationLevel = Connection.TRANSACTION_READ_UNCOMMITTED;
-			else if (isolationLevel.equals("TRANSACTION_REPEATABLE_READ"))
-				_currentIsolationLevel = Connection.TRANSACTION_REPEATABLE_READ;
-			else if (isolationLevel.equals("TRANSACTION_SERIALIZABLE"))
-				_currentIsolationLevel = Connection.TRANSACTION_SERIALIZABLE;
-			else
-			{
-				if (jdbcLogger.loggerI18N.isWarnEnabled())
-				{
-					jdbcLogger.loggerI18N.warn(
-							"com.arjuna.ats.internal.jdbc.isolationerror",
-							new Object[]
-							{ isolationLevel });
-				}
-
-				_currentIsolationLevel = Connection.TRANSACTION_SERIALIZABLE;
-			}
-		}
+        _currentIsolationLevel = jdbcPropertyManager.getJDBCEnvironmentBean().getIsolationLevel();
 	}
 }

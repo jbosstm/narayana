@@ -33,6 +33,9 @@ package com.arjuna.ats.txoj.common;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Property manager wrapper for the TXOJ module.
@@ -44,5 +47,23 @@ public class txojPropertyManager
     public static PropertyManager getPropertyManager()
     {
         return PropertyManagerFactory.getPropertyManagerForModule("txoj", Environment.PROPERTIES_FILE);
+    }
+
+    private static final AtomicBoolean txojEnvironmentBeanInit = new AtomicBoolean(false);
+    private static final TxojEnvironmentBean txojEnvironmentBean = new TxojEnvironmentBean();
+
+    public static TxojEnvironmentBean getTxojEnvironmentBean()
+    {
+        synchronized (txojEnvironmentBeanInit) {
+            if(!txojEnvironmentBeanInit.get()) {
+                try {
+                    BeanPopulator.configureFromPropertyManager(txojEnvironmentBean, getPropertyManager());
+                } catch(Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return txojEnvironmentBean;
     }
 }

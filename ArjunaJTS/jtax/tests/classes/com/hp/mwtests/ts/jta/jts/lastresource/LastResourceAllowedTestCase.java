@@ -27,7 +27,7 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple;
-import com.arjuna.ats.arjuna.common.Environment;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.hp.mwtests.ts.jta.jts.JTSTestCase;
 
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class LastResourceAllowedTestCase extends JTSTestCase
     @Before
     public void setUp() throws Exception
     {
-        System.setProperty(Environment.ALLOW_MULTIPLE_LAST_RESOURCES, "true") ;
+        arjPropertyManager.getCoreEnvironmentBean().setAllowMultipleLastResources(true);
         super.setUp() ;
     }
     

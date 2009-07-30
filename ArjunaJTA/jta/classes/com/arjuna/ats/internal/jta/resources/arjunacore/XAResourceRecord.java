@@ -1376,11 +1376,7 @@ public class XAResourceRecord extends AbstractRecord
 
 	static
 	{
-		String optimization = jtaPropertyManager.getPropertyManager().getProperty(
-				Environment.JTA_TM_IMPLEMENTATION, "OFF");
-
-		if (optimization.equals("ON"))
-			_rollbackOptimization = true;
+        _rollbackOptimization = jtaPropertyManager.getJTAEnvironmentBean().isXaRollbackOptimization();
 
 		/*
 		 * WARNING: USE WITH EXTEREME CARE!!
@@ -1394,12 +1390,7 @@ public class XAResourceRecord extends AbstractRecord
 		 * (or present) we may end up removing participants that have not been dealt
 		 * with. Hence USE WITH EXTREME CARE!!
 		 */
-
-		String assumedComplete = jtaPropertyManager.getPropertyManager().getProperty(
-				Environment.XA_ASSUME_RECOVERY_COMPLETE, "FALSE");
-
-		if (assumedComplete.equalsIgnoreCase("true"))
-			_assumedComplete = true;
+        _assumedComplete = jtaPropertyManager.getJTAEnvironmentBean().isXaAssumeRecoveryComplete();
 	}
 
 }

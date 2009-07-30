@@ -44,9 +44,7 @@ import org.omg.CosTransactions.Vote;
 import com.arjuna.ArjunaOTS.OTSAbstractRecord;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
-import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
 import com.arjuna.ats.jta.logging.jtaLogger;
 
@@ -194,10 +192,7 @@ public class LastResourceRecord extends XAResourceRecord
 
     static
     {
-        final String allowMultipleLastResources = arjPropertyManager
-                .getPropertyManager().getProperty(Environment.ALLOW_MULTIPLE_LAST_RESOURCES);
-        ALLOW_MULTIPLE_LAST_RESOURCES = (allowMultipleLastResources == null ? false
-                : Boolean.valueOf(allowMultipleLastResources).booleanValue());
+        ALLOW_MULTIPLE_LAST_RESOURCES = arjPropertyManager.getCoreEnvironmentBean().isAllowMultipleLastResources();
 
         if (ALLOW_MULTIPLE_LAST_RESOURCES
                 && jtaLogger.loggerI18N.isWarnEnabled())
@@ -205,9 +200,7 @@ public class LastResourceRecord extends XAResourceRecord
             jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.startupWarning");
         }
 
-        String disableMLRW = arjPropertyManager.getPropertyManager().getProperty(Environment.DISABLE_MULTIPLE_LAST_RESOURCES_WARNING, "false");
-
-        if ("true".equalsIgnoreCase(disableMLRW))
+        if (arjPropertyManager.getCoreEnvironmentBean().isDisableMultipleLastResourcesWarning())
         {
             jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disableWarning");
 

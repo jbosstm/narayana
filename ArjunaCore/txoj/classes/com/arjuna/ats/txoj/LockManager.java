@@ -1379,13 +1379,7 @@ private static boolean   nestedLocking = true;
 
     static
     {
-	String nl = txojPropertyManager.getPropertyManager().getProperty(Environment.ALLOW_NESTED_LOCKING);
-
-	if (nl != null)
-	{
-	    if (nl.equals("NO"))
-		nestedLocking = false;
-	}
+        nestedLocking = txojPropertyManager.getTxojEnvironmentBean().isAllowNestedLocking();
     }
 
 }

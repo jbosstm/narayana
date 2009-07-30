@@ -1879,20 +1879,10 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	static
 	{
-		final String xaTransactionTimeoutEnabled = jtaPropertyManager.getPropertyManager()
-				.getProperty(Environment.XA_TRANSACTION_TIMEOUT_ENABLED);
-		if (xaTransactionTimeoutEnabled != null)
-		{
-			XA_TRANSACTION_TIMEOUT_ENABLED = Boolean.valueOf(
-					xaTransactionTimeoutEnabled).booleanValue();
-		}
-		else
-		{
-			XA_TRANSACTION_TIMEOUT_ENABLED = true;
-		}
-		final String lastResourceOptimisationInterfaceName = jtaPropertyManager.getPropertyManager()
-				.getProperty(Environment.LAST_RESOURCE_OPTIMISATION_INTERFACE);
-		Class lastResourceOptimisationInterface = null;
+        XA_TRANSACTION_TIMEOUT_ENABLED = jtaPropertyManager.getJTAEnvironmentBean().isXaTransactionTimeoutEnabled();
+
+		final String lastResourceOptimisationInterfaceName = jtaPropertyManager.getJTAEnvironmentBean().getLastResourceOptimisationInterface();
+  		Class lastResourceOptimisationInterface = null;
 		if (lastResourceOptimisationInterfaceName != null)
 		{
 			try

@@ -69,17 +69,17 @@ public class JNDIManager
 
 	public static String getTransactionManagerImplementationClassname()
 	{
-		return jtaPropertyManager.getPropertyManager().getProperty(Environment.JTA_TM_IMPLEMENTATION, DEFAULT_TM_IMPLEMENTATION);
+		return jtaPropertyManager.getJTAEnvironmentBean().getJtaTMImplementation();
 	}
 
 	public static String getUserTransactionImplementationClassname()
 	{
-		return jtaPropertyManager.getPropertyManager().getProperty(Environment.JTA_UT_IMPLEMENTATION, DEFAULT_UT_IMPLEMENTATION);
+        return jtaPropertyManager.getJTAEnvironmentBean().getJtaUTImplementation();
 	}
 
 	public static String getTransactionSynchronizationRegistryImplementationClassname()
 	{
-		return jtaPropertyManager.getPropertyManager().getProperty(Environment.JTA_TSR_IMPLEMENTATION, DEFAULT_TSR_IMPLEMENTATION);
+        return jtaPropertyManager.getJTAEnvironmentBean().getJtaTSRImplementation();
 	}
 
 	/**
@@ -209,24 +209,16 @@ public class JNDIManager
 
 	public final static String getTransactionManagerJNDIName()
 	{
-		return jtaPropertyManager.getPropertyManager().getProperty(Environment.TM_JNDI_CONTEXT, DEFAULT_TM_JNDI_CONTEXT);
+        return jtaPropertyManager.getJTAEnvironmentBean().getJtaTMJNDIContext();
 	}
 
 	public final static String getUserTransactionJNDIName()
 	{
-		return jtaPropertyManager.getPropertyManager().getProperty(Environment.UT_JNDI_CONTEXT, DEFAULT_UT_JNDI_CONTEXT);
+        return jtaPropertyManager.getJTAEnvironmentBean().getJtaUTJNDIContext();
 	}
 
 	private final static String getTransactionSynchronizationRegistryJNDIName()
 	{
-		return jtaPropertyManager.getPropertyManager().getProperty(Environment.TSR_JNDI_CONTEXT, DEFAULT_TSR_JNDI_CONTEXT);
+        return jtaPropertyManager.getJTAEnvironmentBean().getJtaTSRJNDIContext();
 	}
-
-	private static final String DEFAULT_TM_JNDI_CONTEXT = "java:/TransactionManager";
-	private static final String DEFAULT_UT_JNDI_CONTEXT = "java:/UserTransaction";
-	private static final String DEFAULT_TSR_JNDI_CONTEXT = "java:/TransactionSynchronizationRegistry";
-
-	private static final String DEFAULT_UT_IMPLEMENTATION = "com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple";
-	private static final String DEFAULT_TM_IMPLEMENTATION = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple";
-	private static final String DEFAULT_TSR_IMPLEMENTATION = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple";
 }

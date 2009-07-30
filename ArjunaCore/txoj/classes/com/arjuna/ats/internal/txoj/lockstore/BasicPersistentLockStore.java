@@ -77,12 +77,8 @@ public class BasicPersistentLockStore extends LockStoreImple
 				     FacilityCode.FAC_LOCK_STORE, "BasicPersistentLockStore.BasicPersistentLockStore("+key+")");
 	}
 
-	if (lockStoreLocation == null) {
-	    lockStoreLocation = txojPropertyManager.getPropertyManager().getProperty(Environment.LOCKSTORE_DIR);
-	    if (lockStoreLocation == null || lockStoreLocation.length() == 0)
-		lockStoreLocation = com.arjuna.ats.txoj.common.Configuration.lockStoreRoot();
+        lockStoreLocation = txojPropertyManager.getTxojEnvironmentBean().getLockStoreDir();
 	    com.arjuna.ats.txoj.common.Configuration.setLockStoreRoot(lockStoreLocation);
-	}
 
 	_key = lockStoreLocation;
 
