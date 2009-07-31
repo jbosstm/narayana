@@ -185,11 +185,10 @@ public org.omg.CORBA.Object getService (String serviceName,
 	break;
 	case CONFIGURATION_FILE:
 	    {
-		String cosservicesRoot = opPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.INITIAL_REFERENCES_ROOT);
+		String cosservicesRoot = opPropertyManager.getOrbPortabilityEnvironmentBean().getInitialReferencesRoot();
 		if (cosservicesRoot == null || cosservicesRoot.length() == 0)
 		     cosservicesRoot = com.arjuna.orbportability.common.Configuration.configFileRoot();
-		String configLocation = opPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.INITIAL_REFERENCES_FILE,
-								    com.arjuna.orbportability.common.Configuration.configFile());
+		String configLocation = opPropertyManager.getOrbPortabilityEnvironmentBean().getInitialReferencesFile();
 		String configFile = cosservicesRoot+File.separatorChar+configLocation;
 		LineNumberReader input;
 
@@ -274,7 +273,7 @@ public org.omg.CORBA.Object getService (String serviceName,
 	    {
 		try
 		{
-		    String fileDir = opPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.FILE_DIR, null);
+		    String fileDir = opPropertyManager.getOrbPortabilityEnvironmentBean().getFileDir();
 		    File f = null;
 
 		    if (fileDir != null && fileDir.length() != 0)
@@ -394,11 +393,10 @@ public void registerService (org.omg.CORBA.Object objRef,
 	break;
 	case CONFIGURATION_FILE:
 	    {
-		String cosservicesRoot = opPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.INITIAL_REFERENCES_ROOT);
+		String cosservicesRoot = opPropertyManager.getOrbPortabilityEnvironmentBean().getInitialReferencesRoot();
 		if (cosservicesRoot == null || cosservicesRoot.length() == 0)
 		     cosservicesRoot = com.arjuna.orbportability.common.Configuration.configFileRoot();
-		String configLocation = opPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.INITIAL_REFERENCES_FILE,
-								    com.arjuna.orbportability.common.Configuration.configFile());
+		String configLocation = opPropertyManager.getOrbPortabilityEnvironmentBean().getInitialReferencesFile();
 		String configFile = cosservicesRoot+File.separatorChar+configLocation;
 		LineNumberReader input = null;
 		String objString = _orb.orb().object_to_string(objRef);
@@ -496,7 +494,7 @@ public void registerService (org.omg.CORBA.Object objRef,
 	break;
 	case FILE:
 	    {
-		String fileDir = opPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.FILE_DIR, null);
+		String fileDir = opPropertyManager.getOrbPortabilityEnvironmentBean().getFileDir();
 		FileOutputStream ofile = null;
 
 		if (fileDir != null && fileDir.length() != 0)
@@ -556,11 +554,10 @@ public final String[] listInitialServices () throws IOException, SystemException
 	 * Now check the configuration file equivalent.
 	 */
 
-	String cosservicesRoot = opPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.INITIAL_REFERENCES_ROOT);
+	String cosservicesRoot = opPropertyManager.getOrbPortabilityEnvironmentBean().getInitialReferencesRoot();
 	if (cosservicesRoot == null || cosservicesRoot.length() == 0)
 	     cosservicesRoot = com.arjuna.orbportability.common.Configuration.configFileRoot();
-	String configLocation = opPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.INITIAL_REFERENCES_FILE,
-							    com.arjuna.orbportability.common.Configuration.configFile());
+	String configLocation = opPropertyManager.getOrbPortabilityEnvironmentBean().getInitialReferencesFile();
 	String configFile = cosservicesRoot+File.separatorChar+configLocation;
 	LineNumberReader input = null;
 

@@ -36,6 +36,7 @@ import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.orbportability.*;
+import com.arjuna.orbportability.common.opPropertyManager;
 
 import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
 import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
@@ -204,7 +205,7 @@ public class OTSImpleManager
 				{
 					requireTransactionManager = true;
 
-					String resolveMechanism = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.RESOLVE_SERVICE, "CONFIGURATION_FILE");
+					String resolveMechanism = opPropertyManager.getOrbPortabilityEnvironmentBean().getResolveService();
 
 					if (resolveMechanism.compareTo("NAME_SERVICE") == 0)
 						resolver = Services.NAME_SERVICE;

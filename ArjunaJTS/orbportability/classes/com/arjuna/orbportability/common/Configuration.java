@@ -214,7 +214,7 @@ public static synchronized final int bindDefault ()
 
         if (!_bindDefaultSet)
         {
-            String configuredMechanism = opPropertyManager.getPropertyManager().getProperty(Environment.BIND_MECHANISM);
+            String configuredMechanism = opPropertyManager.getOrbPortabilityEnvironmentBean().getBindMechanism();
 
             if (configuredMechanism != null)
             {

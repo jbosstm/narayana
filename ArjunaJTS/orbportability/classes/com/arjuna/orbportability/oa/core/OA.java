@@ -127,7 +127,7 @@ public void run () throws SystemException
      */
 private final void initialise ()
 {
-    String className = opPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.OA_IMPLEMENTATION);
+    String className = opPropertyManager.getOrbPortabilityEnvironmentBean().getOaImplementation();
 
     if (className == null)
     {

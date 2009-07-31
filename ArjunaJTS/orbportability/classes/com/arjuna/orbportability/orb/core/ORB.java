@@ -108,7 +108,7 @@ private final void initialise ()
 	 * Let the application provide its own ORB implementation.
 	 */
 
-	String className = opPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.ORB_IMPLEMENTATION);
+	String className = opPropertyManager.getOrbPortabilityEnvironmentBean().getOrbImplementation();
 
         if (className == null)
         {

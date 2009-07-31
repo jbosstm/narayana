@@ -27,6 +27,7 @@
     <target name="init" depends="sharedbuild.init">
 
         <import-module.macro module="common"/>
+        <import-module.macro module="common_tests"/>
 
     </target>
 

@@ -33,6 +33,9 @@ package com.arjuna.orbportability.common;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Property manager wrapper for the ORB Portability module.
@@ -45,4 +48,24 @@ public class opPropertyManager
     {
         return PropertyManagerFactory.getPropertyManagerForModule("orbportability", Environment.PROPERTIES_FILE);
     }
+
+    public static OrbPortabilityEnvironmentBean getOrbPortabilityEnvironmentBean()
+    {
+        synchronized (opEnvironmentBeanInit) {
+            if(!opEnvironmentBeanInit.get()) {
+                try {
+                    BeanPopulator.configureFromPropertyManager(opEnvironmentBean,  getPropertyManager());
+                    opEnvironmentBeanInit.set(true);
+                } catch(Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return opEnvironmentBean;
+    }
+
+    private static final AtomicBoolean opEnvironmentBeanInit = new AtomicBoolean(false);
+    private static final OrbPortabilityEnvironmentBean opEnvironmentBean = new OrbPortabilityEnvironmentBean();
+
 }

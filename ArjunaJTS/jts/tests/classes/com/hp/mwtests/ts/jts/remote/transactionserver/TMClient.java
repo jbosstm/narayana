@@ -37,6 +37,7 @@ import com.hp.mwtests.ts.jts.TestModule.HammerHelper;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 
 import com.arjuna.orbportability.*;
+import com.arjuna.orbportability.common.opPropertyManager;
 
 import com.arjuna.ats.internal.jts.ORBManager;
 
@@ -79,7 +80,7 @@ public class TMClient
         Services serv = new Services(myORB);
 
         int resolver = com.arjuna.orbportability.common.Configuration.bindDefault();
-        String resolveService = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.RESOLVE_SERVICE);
+        String resolveService = opPropertyManager.getOrbPortabilityEnvironmentBean().getResolveService();
 
         if (resolveService != null)
         {

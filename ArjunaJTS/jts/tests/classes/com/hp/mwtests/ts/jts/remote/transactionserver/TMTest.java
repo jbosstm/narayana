@@ -32,6 +32,7 @@
 package com.hp.mwtests.ts.jts.remote.transactionserver;
 
 import com.arjuna.orbportability.*;
+import com.arjuna.orbportability.common.opPropertyManager;
 
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 
@@ -64,7 +65,7 @@ public class TMTest
         Control topLevelControl = null;
         Services serv = new Services(myORB);
         int resolver = com.arjuna.orbportability.common.Configuration.bindDefault();
-        String resolveService = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.orbportability.common.Environment.RESOLVE_SERVICE);
+        String resolveService = opPropertyManager.getOrbPortabilityEnvironmentBean().getResolveService();
 
         if (resolveService != null)
         {
