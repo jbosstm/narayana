@@ -97,9 +97,6 @@ public class arjPropertyManager
         synchronized (objectStoreEnvironmentBeanInit) {
             if(!objectStoreEnvironmentBeanInit.get()) {
                 try {
-                    Thread.dumpStack();
-                    System.out.println(arjPropertyManager.getPropertyManager().getProperty(Environment.OBJECTSTORE_TYPE));
-
                     BeanPopulator.configureFromPropertyManager(objectStoreEnvironmentBean, getPropertyManager());
                     objectStoreEnvironmentBeanInit.set(true);
                 } catch(Exception e) {

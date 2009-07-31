@@ -20,7 +20,7 @@ METHOD <clinit>
 AT ENTRY
 BIND NOTHING
 IF TRUE
-DO System.setProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_LOG_PURGE_TIME, "100")
+DO com.arjuna.ats.arjuna.common.arjPropertyManager.getObjectStoreEnvironmentBean().setPurgeTime(100)
 ENDRULE
 
 # rule to ensure that the LogStore does not proceed to purge any

@@ -48,7 +48,6 @@ public class LogStoreTest2
     {
         System.setProperty(Environment.OBJECTSTORE_TYPE, ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
         System.setProperty(Environment.TRANSACTION_LOG, "ON");
-        System.setProperty(com.arjuna.ats.arjuna.common.Environment.TRANSACTION_LOG_PURGE_TIME, "100");
         // the byteman script will manage this
         //System.setProperty(Environment.TRANSACTION_LOG_PURGE_TIME, "10000");
 
