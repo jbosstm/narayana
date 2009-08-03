@@ -95,7 +95,7 @@ public class ReaperTestCase
         reaper.insert(reapable, 1); // seconds
         reaper.insert(reapable2, 2);
 
-        // enable a repeatable rendezvous before checking the worker queue
+        // enable a repeatable rendezvous before checking the reapable queue
         enableRendezvous("reaper1", true);
         // enable a repeatable rendezvous before scheduling a reapable in the worker queue for cancellation
         enableRendezvous("reaper2", true);

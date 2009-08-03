@@ -41,163 +41,372 @@ public class ReaperTestCase2
     @Test
     public void testReaper() throws Exception
     {
-        TransactionReaper.create(500);
+        TransactionReaper.create(100);
         TransactionReaper reaper = TransactionReaper.transactionReaper();
-
-        // give the reaper worker time to start too
-
-        Thread.sleep(1000);
 
         // create slow reapables some of which will not respond immediately
         // to cancel requests and ensure that they get cancelled
         // and that the reaper does not get wedged
 
-        SlowReapable reapable1 = new SlowReapable(new Uid(), 2000, 0, true, true, false);
-        SlowReapable reapable2 = new SlowReapable(new Uid(), 0, 0, true, true, false);
-        SlowReapable reapable3 = new SlowReapable(new Uid(), 100, 2000, false, true, false);
-        SlowReapable reapable4 = new SlowReapable(new Uid(), 1000, 1000, false, false, false);
+        // the rendezvous for the reapables are keyed by the reapable's uid
 
-        // insert reapables so they timeout at 1 second intervals then
-        // check progress of cancellations and rollbacks
+        Uid uid1 = new Uid();
+        Uid uid2 = new Uid();
+        Uid uid3 = new Uid();
+        Uid uid4 = new Uid();
+
+        // reapable1 will return CANCELLED from cancel and will rendezvous inside the cancel call
+        // so we can delay it. prevent_commit should not get called so we don't care about the arguments
+        TestReapable reapable1 = new TestReapable(uid1, true, true, false, false);
+        // reapable2 will return CANCELLED from cancel and will not rendezvous inside the cancel call
+        // prevent_commit should not get called so we don't care about the arguments
+        TestReapable reapable2 = new TestReapable(uid2, true, false, false, false);
+        // reapable3 will return RUNNING from cancel and will rendezvous inside the cancel call
+        // the call will get delayed causing the worker to exit as a zombie
+        // prevent_commit will be called from the reaper thread and will fail but will not rendezvous
+        TestReapable reapable3 = new TestReapable(uid3, false, true, false, false);
+        // reapable4 will return RUNNING from cancel and will not rendezvous inside the cancel call
+        // prevent_commit should get called and should return true without a rendezvous
+        TestReapable reapable4 = new TestReapable(uid4, false, false, true, false);
+
+        // enable a repeatable rendezvous before checking the reapable queue
+        enableRendezvous("reaper1", true);
+        // enable a repeatable rendezvous before processing a timed out reapable
+        // enableRendezvous("reaper2", true);
+        // enable a repeatable rendezvous before scheduling a reapable in the worker queue for cancellation
+        // enableRendezvous("reaper3", true);
+        // enable a repeatable rendezvous before rescheduling a reapable in the worker queue for cancellation
+        // enableRendezvous("reaper4", true);
+        // enable a repeatable rendezvous before interrupting a cancelled reapable
+        // enableRendezvous("reaper5", true);
+        // enable a repeatable rendezvous before marking a worker thread as a zombie
+        // enableRendezvous("reaper6", true);
+        // enable a repeatable rendezvous before marking a reapable as rollback only from the reaper thread
+        // enableRendezvous("reaper7", true);
+        // enable a repeatable rendezvous before checking the worker queue
+        enableRendezvous("reaperworker1", true);
+        // enable a repeatable rendezvous before marking a reapable as cancel
+        // enableRendezvous("reaperworker2", true);
+        // enable a repeatable rendezvous before calling cancel
+        // enableRendezvous("reaperworker3", true);
+        // enable a repeatable rendezvous before marking a reapable as rollback only from the worker thread
+        // enableRendezvous("reaperworker4", true);
+
+        // enable a repeatable rendezvous for each of the test reapables which we have marked to
+        // perform a rendezvous
+
+        enableRendezvous(uid1, true);
+        enableRendezvous(uid3, true);
+
+        // STAGE I
+        // insert two reapables so they timeout at 1 second intervals then stall the first one and
+        // check progress of cancellations and rollbacks for both
 
         assertTrue(reaper.insert(reapable1, 1));
 
-        assertTrue(reaper.insert(reapable2, 2));
+        assertTrue(reaper.insert(reapable2, 1));
 
-        assertTrue(reaper.insert(reapable3, 3));
+        //assertTrue(reaper.insert(reapable3, 1));
 
-        assertTrue(reaper.insert(reapable4, 4));
+        //assertTrue(reaper.insert(reapable4, 1));
+
+        // latch the reaper before it tries to process the queue
+
+        triggerRendezvous("reaper1");
 
         // make sure they were all registered
+        // the transactions queue should be
+        // UID1 RUNNING
+        // UID2 RUNNING
 
-        assertEquals(4, reaper.numberOfTransactions());
-        assertEquals(4, reaper.numberOfTimeouts());
+        assertEquals(2, reaper.numberOfTransactions());
+        assertEquals(2, reaper.numberOfTimeouts());
 
-        // n.b. the reaper will not operate in dynamic mode by default
-        // so we have to allow an extra checkPeriod millisecs for it
-        // to detect timeouts (it may go back to sleep a few
-        // milliseconds before a transaction times out). also by
-        // default the reaper waits 500 msecs for a cancel to take
-        // effect before interrupting and 500 msecs for an interrupt
-        // to take effect before making a wedged worker a zombie. so
-        // these need to be factored into this thread's delays when
-        // tetsing the state of the reapables.
+        // wait long enough to ensure both reapables have timed out
 
-        // wait at most 2 seconds for the first reapable to be cancelled
+        triggerWait(1000);
 
-        int count = 0;
+        // now let the reaper dequeue the first reapable, process it and queue it for the worker thread
+        // to deal with
 
-        while (!reapable1.getCancelTried() && count < 20) {
-            count++;
-            Thread.sleep(100);
-        }
+        triggerRendezvous("reaper1");
 
-        assertTrue(count < 20);
+        // latch the reaper before it tests the queue again
 
-        // ensure that the second one gets cancelled even if  the
-        // first one is wedged
+        triggerRendezvous("reaper1");
 
-        count = 0;
+        // latch the reaperworker before it tries to dequeue from the worker queue
 
-        while (reapable2.getRunning() && count < 15) {
-            count++;
-            Thread.sleep(100);
-        }
+        triggerRendezvous("reaperworker1");
 
-        assertTrue(count < 15);
+        // the transactions queue should be
+        // UID2 RUNNING
+        // UID1 CANCEL
 
-        // ensure also that the second one gave up at the cancel and
-        // not the mark for rollback
+        assertEquals(2, reaper.numberOfTransactions());
+        assertEquals(2, reaper.numberOfTimeouts());
+
+        // now let the worker dequeue a reapable and proceed to call cancel
+
+        triggerRendezvous("reaperworker1");
+
+        // latch the first reapable inside cancel
+
+        triggerRendezvous(uid1);
+
+        // now let the reaper check the queue for the second reapable, dequeue it and add it to the
+        // worker queue
+
+        triggerRendezvous("reaper1");
+
+        // latch the reaper before it tests the queue again
+
+        triggerRendezvous("reaper1");
+
+        // the transactions queue should be
+        // UID1 CANCEL
+        // UID2 SCHEDULE_CANCEL
+
+        assertEquals(2, reaper.numberOfTransactions());
+        assertEquals(2, reaper.numberOfTimeouts());
+
+        // ensure we wait long enough for the cancel to time out
+
+        triggerWait(500);
+
+        // now let the reaper check the queue and interrupt the cancel for UID1
+
+        triggerRendezvous("reaper1");
+
+        // latch the reaper before it tests the queue again
+
+        triggerRendezvous("reaper1");
+
+        // unlatch the first reapable inside cancel
+
+        triggerRendezvous(uid1);
+
+        // latch the worker as it is about to process the queue again
+
+        triggerRendezvous("reaperworker1");
+
+        // the transactions queue should be
+        // UID2 SCHEDULE_CANCEL
+
+        assertEquals(1, reaper.numberOfTransactions());
+        assertEquals(1, reaper.numberOfTimeouts());
+
+        // let the worker clear and cancel the 2nd reapable
+
+        triggerRendezvous("reaperworker1");
+
+        // latch the worker before it reads the worker queue
+
+        triggerRendezvous("reaperworker1");
+
+        // the transactions queue should be empty
+
+        assertEquals(0, reaper.numberOfTransactions());
+        assertEquals(0, reaper.numberOfTimeouts());
+
+        // ensure that cancel was tried on reapable2 and that set rollback only was not tried on either
+        // we know cancel was tried on reapable1 because we got through the rendezvous
 
         assertTrue(reapable2.getCancelTried());
-
-        // This assert causes timing issues on some build machines
-        // - skip for now pending a more robust fix e.g. code injection
-        //assertTrue(!reapable2.getRollbackTried());
-
-        // ensure that the first one responded to the interrupt and
-        // marks itself for rollback only
-
-        count = 0;
-
-        while (reapable1.getRunning() && count < 10) {
-            count++;
-            Thread.sleep(100);
-        }
-
-        assertTrue(count < 10);
-        // the first one should not be running because it marks itself ActionStatus.ABORTED
-        // - the reaper should not attempt to roll it back in this case
         assertTrue(!reapable1.getRollbackTried());
+        assertTrue(!reapable2.getRollbackTried());
+        assertTrue(checkAndClearFlag("interrupted"));
 
-        // check that the third one refuses the cancel and gets marked
-        // for rollback instead
+        // STAGE II
+        // now use the next pair of reapables to check that a wedged reaperworker gets tuirned into a zombie and
+        // a new worker gets created to cancel the remaining reapables.
+        // insert reapables so they timeout at 1 second intervals then
+        // check progress of cancellations and rollbacks
 
-        count = 0;
+        assertTrue(reaper.insert(reapable3, 1));
 
-        while (!reapable3.getCancelTried() && count < 25) {
-            count++;
-            Thread.sleep(100);
-        }
+        assertTrue(reaper.insert(reapable4, 1));
 
-        assertTrue(count < 25);
+        // make sure they were all registered
+        // the transactions queue should be
+        // UID3 RUNNING
+        // UID4 RUNNING
 
-        // ensure that it gets marked for rollback
+        assertEquals(2, reaper.numberOfTransactions());
+        assertEquals(2, reaper.numberOfTimeouts());
 
-        count = 0;
+        // wait long enough to ensure both reapables have timed out
 
-        while (reapable3.getRunning() && count < 10) {
-            count++;
-            Thread.sleep(100);
-        }
+        triggerWait(1000);
 
-        assertTrue(count < 10);
+        // now let the reaper dequeue the first reapable, process it and queue it for the worker thread
+        // to deal with
 
-        assertTrue(reapable3.getRollbackTried());
+        triggerRendezvous("reaper1");
 
-        // ensure the fourth one gets cancelled and marked for rolback
-        // even though it does not play ball
+        // latch the reaper before it tests the queue again
 
-        count = 0;
+        triggerRendezvous("reaper1");
 
-        while (reapable4.getRunning() && count < 25) {
-            count++;
-            Thread.sleep(100);
-        }
+        // the transactions queue should be
+        // UID4 RUNNING
+        // UID3 CANCEL
 
-        assertTrue(count < 25);
+        assertEquals(2, reaper.numberOfTransactions());
+        assertEquals(2, reaper.numberOfTimeouts());
+
+        // now let the worker dequeue a reapable and proceed to call cancel
+
+        triggerRendezvous("reaperworker1");
+
+        // latch the third reapable inside cancel
+
+        triggerRendezvous(uid3);
+
+        // now let the reaper check the queue for the fourth reapable, dequeue it and add it to the
+        // worker queue
+
+        triggerRendezvous("reaper1");
+
+        // latch the reaper before it tests the queue again
+
+        triggerRendezvous("reaper1");
+
+        // the transactions queue should be
+        // UID3 CANCEL
+        // UID4 SCHEDULE_CANCEL
+
+        assertEquals(2, reaper.numberOfTransactions());
+        assertEquals(2, reaper.numberOfTimeouts());
+
+        // ensure we wait long enough for the cancel to time out
+
+        triggerWait(500);
+
+        // now let the reaper check the queue and interrupt the cancel for UID3
+
+        triggerRendezvous("reaper1");
+
+        // latch the reaper before it tests the queue again
+
+        triggerRendezvous("reaper1");
+
+        assertTrue(checkAndClearFlag("interrupted"));
+
+        // ensure we wait long enough for the cancel to time out
+
+        triggerWait(500);
+
+        // the transactions queue should be
+        // UID4 SCHEDULE_CANCEL
+        // UID3 CANCEL_INTERRUPTED
+
+        assertEquals(2, reaper.numberOfTransactions());
+        assertEquals(2, reaper.numberOfTimeouts());
+
+        // let the reaper check the queue and reschedule the fourth reapable
+
+        triggerRendezvous("reaper1");
+
+        // latch the reaper before it tests the queue again
+
+        triggerRendezvous("reaper1");
+
+        // the transactions queue should be
+        // UID3 CANCEL_INTERRUPTED
+        // UID4 SCHEDULE_CANCEL
+
+        assertEquals(2, reaper.numberOfTransactions());
+        assertEquals(2, reaper.numberOfTimeouts());
+
+        // let the reaper check the queue and mark the reaper worker as a zombie
+
+        triggerRendezvous("reaper1");
+
+        // latch the reaper before it tests the queue again
+
+        triggerRendezvous("reaper1");
+
+        // the reaper should have marked the thread as a zombie 
+        
+        assertTrue(checkAndClearFlag("zombied"));
+
+        // the transactions queue should be
+        // UID4 SCHEDULE_CANCEL
+
+        assertEquals(1, reaper.numberOfTransactions());
+        assertEquals(1, reaper.numberOfTimeouts());
+
+        // unlatch the third reapable inside cancel
+
+        triggerRendezvous(uid3);
+
+        // latch the new worker as it is about to process the queue again
+
+        triggerRendezvous("reaperworker1");
+
+        // let the worker clear and cancel the 2nd reapable
+
+        triggerRendezvous("reaperworker1");
+
+        // latch the worker before it reads the worker queue
+
+        triggerRendezvous("reaperworker1");
+
+        // the transactions queue should be empty
+
+        assertEquals(0, reaper.numberOfTransactions());
+        assertEquals(0, reaper.numberOfTimeouts());
+
+        // ensure that cancel was tried on reapable4 and that set rollback only was tried on reapable3
+        // and reapable4 we know cancel was tried on reapable3 because we got through the rendezvous
 
         assertTrue(reapable4.getCancelTried());
+        assertTrue(reapable3.getRollbackTried());
         assertTrue(reapable4.getRollbackTried());
-
-        // we should have a zombie worker so check that the thread
-        // which tried the cancel is still runnning then sleep a bit
-        // to give it time to complete and check it has exited
-
-        Thread worker = reapable4.getCancelThread();
-
-        assertTrue(worker.isAlive());
-
-        count = 0;
-
-        while (worker.isAlive() && count < 30) {
-            count++;
-            Thread.sleep(100);
-        }
-
-        assertTrue(count < 30);
     }
 
-    public class SlowReapable implements Reapable
+    private void enableRendezvous(Object o, boolean repeatable)
     {
-        public SlowReapable(Uid uid, int callDelay, int interruptDelay, boolean doCancel, boolean doRollback, boolean doComplete)
+        // do nothing this is just used for synchronization
+    }
+
+    private void triggerRendezvous(Object o)
+    {
+        // do nothing this is just used for synchronization
+    }
+
+    private void triggerWait(int msecs)
+    {
+        // do nothing this is just used for synchronization
+    }
+
+    private boolean checkAndClearFlag(Object o)
+    {
+        // return false by default -- rule system will intercept and return the relevant flag
+        // setting
+        
+        return false;
+    }
+
+    public class TestReapable implements Reapable
+    {
+        /**
+         * create a mock reapable
+         * @param uid
+         * @param doCancel true if the reapable should return ABORTED from the cancel call and false if it should
+ * return RUNNING
+         * @param rendezvousInCancel true iff the reapable should rendezvous with the test code when cancel is called
+         * @param doRollback the value that the reapable should return true from the prevent_commit call
+         * @param rendezvousInInterrupt  true iff the reapable should rendezvous with the test code when it is
+         */
+        public TestReapable(Uid uid, boolean doCancel, boolean rendezvousInCancel, boolean doRollback, boolean rendezvousInInterrupt)
         {
             this.uid = uid;
-            this.callDelay = callDelay;
-            this.interruptDelay = interruptDelay;
+            this.rendezvousInCancel = rendezvousInCancel;
+            this.rendezvousInInterrupt = rendezvousInInterrupt;
             this.doCancel = doCancel;
             this.doRollback = doRollback;
-            this.doComplete = doComplete;
             cancelTried = false;
             rollbackTried = false;
             running = true;
@@ -211,6 +420,12 @@ public class ReaperTestCase2
         public boolean preventCommit()
         {
             setRollbackTried();
+
+            if (rendezvousInInterrupt) {
+                triggerRendezvous(uid);
+                triggerRendezvous(uid);
+            }
+
             clearRunning();
             return doRollback;
         }
@@ -226,18 +441,9 @@ public class ReaperTestCase2
 
             setCancelThread(Thread.currentThread());
 
-            if (callDelay > 0) {
-                try {
-                    Thread.sleep(callDelay);
-                } catch (InterruptedException e) {
-                    interrupted = true;
-                }
-            }
-            if (interrupted && interruptDelay > 0) {
-                try {
-                    Thread.sleep(interruptDelay);
-                } catch (InterruptedException e) {
-                }
+            if (rendezvousInCancel) {
+                triggerRendezvous(uid);
+                triggerRendezvous(uid);
             }
 
             if (doCancel) {
@@ -254,11 +460,10 @@ public class ReaperTestCase2
         }
 
         private Uid uid;
-        private int callDelay; // in milliseconds
-        private int interruptDelay; // in milliseconds
         private boolean doCancel;
         private boolean doRollback;
-        private boolean doComplete;
+        private boolean rendezvousInCancel;
+        private boolean rendezvousInInterrupt;
         private boolean cancelTried;
         private boolean rollbackTried;
         private boolean running;

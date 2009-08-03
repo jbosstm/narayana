@@ -65,13 +65,14 @@
                     <!-- LogStressTest2 takes too long - needs moving to /qa -->
                     <exclude name="**/LogStressTest2.java"/>
                     <!-- ReaperTestCase2 and 3 have timing issues - adinn to fix - JBTM-567 -->
-                    <exclude name="**/ReaperTestCase2.java"/>
                     <exclude name="**/ReaperTestCase3.java"/>
                     <!-- tests which have been modified to run using byteman scripts -->
                     <exclude name="**/reaper/ReaperMonitorTest.java"/>
+                    <exclude name="**/ReaperTestCase2.java"/>
                     <exclude name="**/reaper/ReaperTestCase.java"/>
                     <exclude name="**/objectstore/LogStoreRecoveryTest.java"/>
                     <exclude name="**/objectstore/LogStoreTest2.java"/>
+                    <exclude name="**/recovery/RecoveryManagerStartStopTest.java"/>
                 </fileset>
             </tests>
         </run.tests.macro>
@@ -81,6 +82,7 @@
                 <fileset dir="tests/classes">
                     <include name="**/reaper/ReaperMonitorTest.java"/>
                     <include name="**/reaper/ReaperTestCase.java"/>
+                    <include name="**/reaper/ReaperTestCase2.java"/>
                 </fileset>
             </tests>
             <!--
@@ -103,7 +105,7 @@
         </run.tests.macro>
         <run.tests.macro script="recovery.txt">
             <tests>
-                <fileset dir="tests/classes" includes="**/RecoveryManagerStartStopTest.java"/>
+                <fileset dir="tests/classes" includes="**/recovery/RecoveryManagerStartStopTest.java"/>
             </tests>
         </run.tests.macro>
     </target>

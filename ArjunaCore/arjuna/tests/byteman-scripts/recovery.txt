@@ -48,7 +48,6 @@ ENDRULE
 RULE RecoveryManagerStartStopTest create rendezvous
 CLASS com.hp.mwtests.ts.arjuna.recovery.RecoveryManagerStartStopTest
 METHOD testStartStop()
-HELPER com.hp.mwtests.ts.arjuna.recovery.RecoveryManagerStartStopTest$JoinHelper
 AT ENTRY
 BIND NOTHING
 IF TRUE
@@ -102,26 +101,15 @@ ENDRULE
 # threads during normal operation. it avoids doing this because it is waiting in an
 # accept and so can only be woken via an interrupt -- a pointless waste of CPU. however for
 # testing we want to be sure that the connection thread has actually exited. so we
-# use a rule and rule helper class to join the connection threads from the listener
-# thread. the connection threads register themselves when they run the listener
+# use a joiner to join the connection threads from the listener thread.
+# the connection threads register themselves when they run the listener
 # callback by calling the helper method joinEnlist(key). the listener thread joins
 # N enlisted threads by calling the helper method joinWait(key, N). The Object
 # supplied as key must match.
-#
-# the helper methods may be good candidates for inclusion in the default
-# helper API. for now they are implemented on an inner class of the test
-# class
-#
-# joinEnlist(o) adds the current thread to a set identified by o and returns,
-# allowing the enlisting thread to exit.
-#
-# joinWait(o, n) waits on the set identified by o until it has N members at
-# which point it clears the set and calls join on each of the threads in the set.
 
 RULE listener join wait
 CLASS com.arjuna.ats.internal.arjuna.recovery.Listener
 METHOD run()
-HELPER com.hp.mwtests.ts.arjuna.recovery.RecoveryManagerStartStopTest$JoinHelper
 AT RETURN
 BIND NOTHING
 IF isJoin("Listener Connection", 2)
@@ -133,7 +121,6 @@ ENDRULE
 RULE connection join enlist
 CLASS com.arjuna.ats.internal.arjuna.recovery.Listener
 METHOD removeConnection
-HELPER com.hp.mwtests.ts.arjuna.recovery.RecoveryManagerStartStopTest$JoinHelper
 AT RETURN
 BIND NOTHING
 IF joinEnlist("Listener Connection")

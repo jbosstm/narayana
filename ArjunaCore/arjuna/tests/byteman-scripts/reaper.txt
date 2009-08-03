@@ -134,7 +134,7 @@ DO debug("reaperworker1"),
    rendezvous("reaperworker1")
 ENDRULE
 
-# rendezvous before marking an element as CANCELLED
+# rendezvous before marking an element as CANCEL
 
 RULE pause transaction reaper worker 2
 CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
@@ -174,6 +174,29 @@ DO debug("reaperworker4"),
    rendezvous("reaperworker4"),
    debug("reaperworker4"),
    rendezvous("reaperworker4")
+ENDRULE
+
+#########################################################################
+#  rules to track and flag actions by the reaper and reaper worker
+
+RULE ReaperTestCase2 flag interrupt
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD check
+AFTER CALL interrupt
+BIND NOTHING
+IF TRUE
+DO debug("reaper called interrupt on " + $e),
+   flag("interrupted")
+ENDRULE
+
+RULE ReaperTestCase2 flag zombie
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD check
+AFTER WRITE _zombieCount
+BIND NOTHING
+IF TRUE
+DO debug("reaper incremented zombie count " + $e),
+   flag("zombied")
 ENDRULE
 
 #########################################################################
@@ -222,6 +245,15 @@ AT ENTRY
 BIND NOTHING
 IF TRUE
 DO createRendezvous($1, 2, $2)
+ENDRULE
+
+RULE ReaperTestCase disable trigger rendezvous
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperTestCase
+METHOD disableRendezvous(Object)
+AT ENTRY
+BIND NOTHING
+IF TRUE
+DO deleteRendezvous($1, 2)
 ENDRULE
 
 # if the supplied string matches a known rendezvous then trigger it
@@ -277,3 +309,73 @@ ENDRULE
 # IF TRUE
 # DO debug("adding reapable " + $e)
 # ENDRULE
+
+#########################################################################
+# ReaperTestCase2 wants to ensure that the reaper is single stepped
+# through processing of inserted reaper elements
+#
+
+RULE ReaperTestCase2 enable trigger rendezvous
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperTestCase2
+METHOD enableRendezvous(Object, boolean)
+AT ENTRY
+BIND NOTHING
+IF TRUE
+DO createRendezvous($1, 2, $2)
+ENDRULE
+
+RULE ReaperTestCase2 disable trigger rendezvous
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperTestCase2
+METHOD disableRendezvous(Object)
+AT ENTRY
+BIND NOTHING
+IF TRUE
+DO deleteRendezvous($1, 2)
+ENDRULE
+
+# if the supplied string matches a known rendezvous then trigger it
+
+RULE ReaperTestCase2 rendezvous
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperTestCase2
+METHOD triggerRendezvous(Object)
+AT ENTRY
+BIND thread = Thread.currentThread()
+IF isRendezvous($1, 2)
+DO debug("" + $1 + " " + thread),
+   rendezvous($1),
+   return
+ENDRULE
+
+RULE ReaperTestCase2 rendezvous 2
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperTestCase2
+METHOD triggerRendezvous(Object)
+AT ENTRY
+BIND NOTHING
+IF NOT isRendezvous($1, 2)
+DO throw RuntimeException("invalid rendezvous for trigger " + $1)
+ENDRULE
+
+# trigger a delay
+
+RULE ReaperTestCase2 wait
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperTestCase2
+METHOD triggerWait(int)
+AT ENTRY
+BIND NOTHING
+IF TRUE
+DO debug("wait " + $1),
+   delay($1),
+   return
+ENDRULE
+
+RULE ReapertestCase2 check and clear
+CLASS com.hp.mwtests.ts.arjuna.reaper.ReaperTestCase2
+METHOD checkAndClearFlag(Object)
+AT ENTRY
+BIND value = flagged($1)
+IF TRUE
+DO debug("setAndClear(" + $1 + ") => " + value),
+   clear($1),
+   return value
+ENDRULE
+
