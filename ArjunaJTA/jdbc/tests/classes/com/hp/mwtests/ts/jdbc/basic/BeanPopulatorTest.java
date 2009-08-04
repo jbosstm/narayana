@@ -21,7 +21,8 @@
 package com.hp.mwtests.ts.jdbc.basic;
 
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+
 import com.arjuna.common.tests.simple.DummyPropertyManager;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import com.arjuna.ats.jdbc.common.Environment;
@@ -51,6 +52,6 @@ public class BeanPopulatorTest
         Set<String> expectedKeys = new HashSet<String>();
         expectedKeys.addAll( DummyPropertyManager.extractKeys(Environment.class));
 
-        assertEquals(expectedKeys, testManager.usedKeys);
+        assertTrue( testManager.usedKeys.containsAll(expectedKeys) );
     }
 }

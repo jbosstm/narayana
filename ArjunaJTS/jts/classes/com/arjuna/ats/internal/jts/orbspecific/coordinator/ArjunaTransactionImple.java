@@ -2362,7 +2362,7 @@ public class ArjunaTransactionImple extends
 
 	static
 	{
-		String interpositionType = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.INTERPOSITION);
+		String interpositionType = jtsPropertyManager.getJTSEnvironmentBean().getInterposition();
 
 		if (interpositionType != null)
 		{
@@ -2380,45 +2380,11 @@ public class ArjunaTransactionImple extends
 			}
 		}
 
-		String supportSubtran = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.SUPPORT_SUBTRANSACTIONS);
-
-		if (supportSubtran != null)
-		{
-			if (supportSubtran.compareTo("NO") == 0)
-				_subtran = false;
-		}
-
-		String syncOn = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.SUPPORT_ROLLBACK_SYNC);
-
-		if (syncOn != null)
-		{
-			if (syncOn.compareTo("NO") == 0)
-				_syncOn = false;
-		}
-
-		String checked = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.CHECKED_TRANSACTIONS);
-
-		if (checked != null)
-		{
-			if (checked.compareTo("YES") == 0)
-				_checkedTransactions = true;
-		}
-
-		String propTerm = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.PROPAGATE_TERMINATOR);
-
-		if (propTerm != null)
-		{
-			if (propTerm.compareTo("YES") == 0)
-				_propagateTerminator = true;
-		}
-
-		String propRemainingTimeout = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.OTS_1_0_TIMEOUT_PROPAGATION);
-
-		if (propRemainingTimeout != null)
-		{
-			if (propTerm.compareTo("NO") == 0)
-				_propagateRemainingTimeout = false;
-		}
+		_subtran = jtsPropertyManager.getJTSEnvironmentBean().isSupportSubtransactions();
+		_syncOn = jtsPropertyManager.getJTSEnvironmentBean().isSupportRollbackSync();
+		_checkedTransactions = jtsPropertyManager.getJTSEnvironmentBean().isCheckedTransactions();
+		_propagateTerminator = jtsPropertyManager.getJTSEnvironmentBean().isPropagateTerminator();
+		_propagateRemainingTimeout = jtsPropertyManager.getJTSEnvironmentBean().isTimeoutPropagation();
 	}
 
     public java.util.Map<Uid, String> getSynchronizations()

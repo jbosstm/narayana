@@ -57,6 +57,6 @@ public class BeanPopulatorTest
         Set<String> expectedKeys = new HashSet<String>();
         expectedKeys.addAll( DummyPropertyManager.extractKeys(Environment.class));
 
-        assertEquals(expectedKeys, testManager.usedKeys);
+        assertTrue( testManager.usedKeys.containsAll(expectedKeys) );
     }
 }

@@ -62,26 +62,8 @@ public class DefaultTimeout
 	    ORBManager.setORB(myORB);
 	    ORBManager.setPOA(myOA);
 
-	    String timeout = jtsPropertyManager.getPropertyManager().getProperty(Environment.DEFAULT_TIMEOUT);
-	    int sleepTime = 0;
-	    
-	    if (timeout != null)
-	    {
-		try
-		{
-		    Integer i = new Integer(timeout);
-
-		    sleepTime = i.intValue();
-		}
-		catch (Exception e)
-		{
-		    System.err.println("Invalid default transaction timeout "+timeout);
-		    System.err.println("Caught exception: "+e);
-		
-		    System.exit(0);
-		}
-	    }
-	    
+	    int sleepTime = jtsPropertyManager.getJTSEnvironmentBean().getDefaultTimeout();
+	    	    
 	    System.out.println("Thread "+Thread.currentThread()+" starting transaction.");
 	    
 	    OTSManager.get_current().begin();

@@ -54,7 +54,7 @@ public class ContextPropagationManager
 
     public ContextPropagationManager ()
     {
-	String contextMode = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.CONTEXT_PROP_MODE);
+	String contextMode = jtsPropertyManager.getJTSEnvironmentBean().getContextPropMode();
 	boolean interposition = true;
 
 	if (contextMode != null)

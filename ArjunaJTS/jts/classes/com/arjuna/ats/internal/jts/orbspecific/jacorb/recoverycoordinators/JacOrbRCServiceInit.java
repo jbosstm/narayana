@@ -116,8 +116,8 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
 	    {
 		_orb = com.arjuna.orbportability.internal.InternalORB.getInstance("RecoveryServer");
 		String[] params = null;
-		String recoveryManagerPort = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.RECOVERY_MANAGER_ORB_PORT, "4711");
-        String recoveryManagerAddr = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.RECOVERY_MANAGER_ADDRESS);
+		String recoveryManagerPort = ""+jtsPropertyManager.getJTSEnvironmentBean().getRecoveryManagerPort();
+        String recoveryManagerAddr = jtsPropertyManager.getJTSEnvironmentBean().getRecoveryManagerAddress();
 
         if (recoveryManagerAddr == null)
             recoveryManagerAddr = "";

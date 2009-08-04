@@ -912,27 +912,7 @@ public class TransactionFactoryImple extends
 
 	static
 	{
-		String timeout = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.common.Environment.DEFAULT_TIMEOUT);
-
-		if (timeout != null)
-		{
-			try
-			{
-				Integer i = new Integer(timeout);
-
-				TxControl.setDefaultTimeout(i.intValue());
-			}
-			catch (Exception e)
-			{
-				if (jtsLogger.loggerI18N.isWarnEnabled())
-				{
-					jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.tfitimeout", new Object[]
-					{ "TransactionFactoryImple", timeout, e });
-				}
-
-				throw new ExceptionInInitializerError(e);
-			}
-		}
+        TxControl.setDefaultTimeout(jtsPropertyManager.getJTSEnvironmentBean().getDefaultTimeout());        
 	}
 
 }

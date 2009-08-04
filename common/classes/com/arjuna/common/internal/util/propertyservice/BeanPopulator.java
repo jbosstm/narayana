@@ -41,9 +41,12 @@ public class BeanPopulator
      *
      * The algorithm is as follows: for each field in the bean, which must have a getter and setter method
      * matching according to the JavaBeans naming conventions, determine the corresponding property key.
-     * The key name is constructed by taking the bean classes' PropertyPrefix annotation value and adding to it the
-     * name of the field, except in cases where the field has a FullPropertyName annotation, in which case
-     * its value is used instead. This allows for the convention that all properties in a given bean will share
+     *
+     * Several key names are tried, with the first match being used: The FQN of the bean followed by the field name,
+     * the short name of the bean followed by the field name, and finally the bean classes' PropertyPrefix annotation
+     * value followed by the name of the field, the last being except in cases where the field has a FullPropertyName
+     * annotation, in which case its value is used instead.
+     * This allows for the convention that all properties in a given bean will share
      * the same prefix e.g. com.arjuna.ats.arjuna.foo. whilst still allowing for changing of the property
      * name in cases where this makes for more readable code.
      * Obtain the value of the property from the PropertyManager and if it's not null, type convert it to match
@@ -84,14 +87,32 @@ public class BeanPopulator
                 getter = bean.getClass().getMethod(getterMethodName, new Class[] {});
             }
 
-            String propertyFileKey = prefix+field.getName();
+            //////////////////
 
-            if(field.isAnnotationPresent(FullPropertyName.class)) {
-                FullPropertyName fullPropertyName = field.getAnnotation(FullPropertyName.class);
-                propertyFileKey = fullPropertyName.name();
+            String propertyFileKey = null;
+            String valueFromPropertyManager = null;
+
+            if(valueFromPropertyManager == null) {
+                propertyFileKey = bean.getClass().getCanonicalName()+"."+field.getName();
+                valueFromPropertyManager = propertyManager.getProperty(propertyFileKey);
             }
 
-            String valueFromPropertyManager = propertyManager.getProperty(propertyFileKey);
+            if(valueFromPropertyManager == null) {
+                propertyFileKey = bean.getClass().getSimpleName()+"."+field.getName();
+                valueFromPropertyManager = propertyManager.getProperty(propertyFileKey);
+            }
+
+            if (valueFromPropertyManager == null) {
+                propertyFileKey = prefix+field.getName();
+
+                if(field.isAnnotationPresent(FullPropertyName.class)) {
+                    FullPropertyName fullPropertyName = field.getAnnotation(FullPropertyName.class);
+                    propertyFileKey = fullPropertyName.name();
+                }
+
+                valueFromPropertyManager = propertyManager.getProperty(propertyFileKey);
+            }
+
 
             if(valueFromPropertyManager != null) {
 

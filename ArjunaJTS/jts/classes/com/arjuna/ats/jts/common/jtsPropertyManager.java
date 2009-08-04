@@ -33,6 +33,9 @@ package com.arjuna.ats.jts.common;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Property manager wrapper for the JTS module.
@@ -44,4 +47,24 @@ public class jtsPropertyManager
     {
         return PropertyManagerFactory.getPropertyManagerForModule("jts", Environment.PROPERTIES_FILE);
     }
+
+
+    public static JTSEnvironmentBean getJTSEnvironmentBean()
+    {
+        synchronized (jtsEnvironmentBeanInit) {
+            if(!jtsEnvironmentBeanInit.get()) {
+                try {
+                    BeanPopulator.configureFromPropertyManager(jtsEnvironmentBean,  getPropertyManager());
+                    jtsEnvironmentBeanInit.set(true);
+                } catch(Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return jtsEnvironmentBean;
+    }
+
+    private static final AtomicBoolean jtsEnvironmentBeanInit = new AtomicBoolean(false);
+    private static final JTSEnvironmentBean jtsEnvironmentBean = new JTSEnvironmentBean();
 }

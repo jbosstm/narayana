@@ -49,7 +49,7 @@ public class JTSEnvironmentBean
     private String recoveryManagerAddress = "";
 
     @FullPropertyName(name = "com.arjuna.ats.jts.ots_1_0.timeoutPropagation")
-    private String timeoutPropagation;
+    private boolean timeoutPropagation;
 
 
 //    public static final String PROPERTIES_FILE = "com.arjuna.ats.jts.common.propertiesFile";
@@ -207,12 +207,12 @@ public class JTSEnvironmentBean
     }
 
 //    public static final String OTS_1_0_TIMEOUT_PROPAGATION = "com.arjuna.ats.jts.ots_1_0.timeoutPropagation";
-    public String getTimeoutPropagation()
+    public boolean isTimeoutPropagation()
     {
         return timeoutPropagation;
     }
 
-    public void setTimeoutPropagation(String timeoutPropagation)
+    public void setTimeoutPropagation(boolean timeoutPropagation)
     {
         this.timeoutPropagation = timeoutPropagation;
     }

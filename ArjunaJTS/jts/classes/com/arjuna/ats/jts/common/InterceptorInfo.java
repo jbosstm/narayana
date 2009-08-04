@@ -44,25 +44,8 @@ public class InterceptorInfo
     
     static
     {
-	boolean otsNeedTranContext = Defaults.needTransactionContext ;
-	boolean otsAlwaysPropagate = Defaults.alwaysPropagateContext ;
-	
-        final String needTranContextValue = jtsPropertyManager.getPropertyManager().getProperty(Environment.NEED_TRAN_CONTEXT) ;
-        
-        if (needTranContextValue != null)
-        {
-            otsNeedTranContext = "YES".equals(needTranContextValue) ;
-        }
-        
-        final String alwaysPropagate = jtsPropertyManager.getPropertyManager().getProperty(Environment.ALWAYS_PROPAGATE_CONTEXT) ;
-        
-        if (alwaysPropagate != null)
-        {
-            otsAlwaysPropagate = "YES".equals(alwaysPropagate) ;
-        }
-        
-        OTS_NEED_TRAN_CONTEXT = otsNeedTranContext ;
-        OTS_ALWAYS_PROPAGATE = otsAlwaysPropagate ;
+        OTS_NEED_TRAN_CONTEXT = jtsPropertyManager.getJTSEnvironmentBean().isNeedTranContext();
+        OTS_ALWAYS_PROPAGATE = jtsPropertyManager.getJTSEnvironmentBean().isAlwaysPropagateContext();
     }
     
     /**

@@ -52,19 +52,16 @@
 
 
     <!-- (default is YES) -->
-    <entry key="com.arjuna.ats.arjuna.coordinator.commitOnePhase">YES</entry>
-
-    <!-- (default is defaultStore) -->
-    <entry key="com.arjuna.ats.arjuna.objectstore.localOSRoot">defaultStore</entry>
+    <entry key="CoordinatorEnvironmentBean.commitOnePhase">YES</entry>
 
     <!-- default is under user.home - must be writeable!) -->
-    <entry key="com.arjuna.ats.arjuna.objectstore.objectStoreDir">PutObjectStoreDirHere</entry>
+    <entry key="ObjectStoreEnvironmentBean.objectStoreDir">PutObjectStoreDirHere</entry>
 
     <!-- (default is ON) -->
-    <entry key="com.arjuna.ats.arjuna.objectstore.transactionSync">ON</entry>
+    <entry key="ObjectStoreEnvironmentBean.transactionSync">ON</entry>
 
     <!-- (Must be unique across all Arjuna instances.) -->
-    <entry key="com.arjuna.ats.arjuna.xa.nodeIdentifier">1</entry>
+    <entry key="CoreEnvironmentBean.nodeIdentifier">1</entry>
 
 	<!-- Which Xid types to recover -->
 	<entry key="com.arjuna.ats.jta.xaRecoveryNode">1</entry>
@@ -78,7 +75,7 @@
       com.arjuna.ats.internal.arjuna.utils.SocketProcessIdMaxPorts property) have been tried or until the port number
       reaches the maximum possible port number.
     -->
-    <entry key="com.arjuna.ats.internal.arjuna.utils.SocketProcessIdPort">0</entry>
+    <entry key="CoreEnvironmentBean.socketProcessIdPort">0</entry>
 
 
 
@@ -110,22 +107,22 @@ be sure you know what you are doing and why! -->
       The address and port number on which the recovery manager listens
       If running within an AS then the address the AS is bound to (jboss.bind.address) takes precedence
     -->
-    <entry key="com.arjuna.ats.arjuna.recovery.recoveryPort">4712</entry>
+    <entry key="RecoveryEnvironmentBean.recoveryPort">4712</entry>
 
-    <entry key="com.arjuna.ats.arjuna.recovery.recoveryAddress"></entry>
+    <entry key="RecoveryEnvironmentBean.recoveryAddress"></entry>
 
     <!--
       Use this to fix the port on which the TransactionStatusManager listens,
       The default behaviour is to use any free port.
     -->
-    <entry key="com.arjuna.ats.arjuna.recovery.transactionStatusManagerPort">0</entry>
+    <entry key="RecoveryEnvironmentBean.transactionStatusManagerPort">0</entry>
 
     <!--
       Use this to fix the address on which the TransactionStatusManager binds,
       The default behaviour is to use the loopback address (ie localhost).
       If running within an AS then the address the AS is bound to (jboss.bind.address) takes precedence
     -->
-    <entry key="com.arjuna.ats.arjuna.recovery.transactionStatusManagerAddress"></entry>
+    <entry key="RecoveryEnvironmentBean.transactionStatusManagerAddress"></entry>
 
     <!--
       For cases where the recovery manager is in process with the transaction manager and nothing else uses
@@ -133,14 +130,6 @@ be sure you know what you are doing and why! -->
       Caution: use of this property can allow multiple recovery processes to run on the same ObjectStore
       if you are not careful. That in turn can lead to incorrect transaction processing. Use with care.
     -->
-    <entry key="com.arjuna.ats.arjuna.recovery.recoveryListener">YES</entry>
-
-
-    
-    <entry key="com.arjuna.ats.jta.supportSubtransactions">NO</entry>
-
-    <entry key="com.arjuna.ats.jta.jtaTMImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple</entry>
-
-    <entry key="com.arjuna.ats.jta.jtaUTImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple</entry>
+    <entry key="RecoveryEnvironmentBean.recoveryListener">YES</entry>
 
 </properties>

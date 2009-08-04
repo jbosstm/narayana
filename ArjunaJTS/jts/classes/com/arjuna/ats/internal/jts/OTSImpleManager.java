@@ -196,12 +196,11 @@ public class OTSImpleManager
 				 * Only check once, when the factory is first created.
 				 */
 
-				String transactionManager = jtsPropertyManager.getPropertyManager().getProperty(Environment.TRANSACTION_MANAGER, "NO");
 				int resolver = Services.CONFIGURATION_FILE;
 
 				boolean requireTransactionManager = false;
 
-				if (transactionManager.compareTo("YES") == 0)
+				if (jtsPropertyManager.getJTSEnvironmentBean().isTransactionManager())
 				{
 					requireTransactionManager = true;
 

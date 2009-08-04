@@ -44,6 +44,6 @@ public class EnvironmentBeanTest
         BeanPopulator.configureFromPropertyManager(testBean, testManager);
         Set<String> expectedKeys = testBean.getProperties().stringPropertyNames();
 
-        assertEquals(expectedKeys, testManager.usedKeys);
+        assertTrue( testManager.usedKeys.containsAll(expectedKeys) );
     }
 }
