@@ -140,7 +140,7 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
                 final MAP faultAddressingContext = AddressingHelper.createFaultContext(map, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
                         WSTLogger.log_mesg.getString("com.arjuna.wst11.messaging.CompletionCoordinatorProcessorImpl_5")) ;
-                CompletionInitiatorClient.getClient().sendSoapFault(participant.getParticipant(), faultAddressingContext, soapFault, instanceIdentifier) ;
+                CompletionInitiatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
             }
         }
         catch (Throwable throwable)
@@ -210,7 +210,7 @@ public class CompletionCoordinatorProcessorImpl extends CompletionCoordinatorPro
                 final MAP faultAddressingContext = AddressingHelper.createFaultContext(map, MessageId.getMessageId()) ;
                 final SoapFault soapFault = new SoapFault11(SoapFaultType.FAULT_SENDER, ArjunaTXConstants.UNKNOWNTRANSACTION_ERROR_CODE_QNAME,
                     WSTLogger.log_mesg.getString("com.arjuna.wst11.messaging.CompletionCoordinatorProcessorImpl_10")) ;
-                CompletionInitiatorClient.getClient().sendSoapFault(participant.getParticipant(), faultAddressingContext, soapFault, instanceIdentifier) ;
+                CompletionInitiatorClient.getClient().sendSoapFault(faultAddressingContext, soapFault, instanceIdentifier) ;
             }
         }
         catch (Throwable throwable)

@@ -123,6 +123,22 @@ public class CompletionInitiatorClient
     }
 
     /**
+     * Send a fault for an unknown participant.
+     * @param map The addressing context.
+     * @param soapFault The SOAP fault.
+     * @param identifier The arjuna instance identifier.
+     * @throws com.arjuna.webservices.SoapFault For any errors.
+     * @throws java.io.IOException for any transport errors.
+     */
+    public void sendSoapFault(final MAP map, final SoapFault soapFault, final InstanceIdentifier identifier)
+        throws SoapFault, IOException
+    {
+        AddressingHelper.installNoneReplyTo(map);
+        // use the SoapFaultService to format a soap fault and send it back to the faultto or from address
+        SoapFaultClient.sendSoapFault((SoapFault11)soapFault, map, faultAction);
+    }
+
+    /**
      * return a completion coordinator endpoint appropriate to the type of completion initiator
      * @param participant
      * @return either the secure terminaton participant endpoint or the non-secure endpoint
