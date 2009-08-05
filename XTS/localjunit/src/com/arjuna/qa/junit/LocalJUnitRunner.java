@@ -20,6 +20,7 @@ public class LocalJUnitRunner extends TestCase
     private String serverUrl    = null;
     private String outfile      = null;
 
+    private final static int LOOP_RETRY_MAX = 30;
     protected void setUp() throws Exception
     {
         serverUrl   = System.getProperty("serverUrl");
@@ -57,17 +58,24 @@ public class LocalJUnitRunner extends TestCase
 
                 response = request.getResponseBodyAsString();
             }
-            while (response != null && response.indexOf("finished") == -1);
+            while (response != null && response.indexOf("finished") == -1 && index < LOOP_RETRY_MAX);
 
-            System.err.println("======================================================");
-            System.err.println("====================   RESULT    =====================");
-            System.err.println("======================================================");
-            System.err.println(response);
-
-            // writes response to the outfile
-            BufferedWriter writer = new BufferedWriter(new FileWriter(outfile));
-            writer.write(response);
-            writer.close();
+            if (response != null && response.indexOf("finished") == -1)
+            {
+                System.err.println("======================================================");
+                System.err.println("====================  TIMED OUT  =====================");
+                System.err.println("======================================================");
+                result = false;
+            } else {
+                System.err.println("======================================================");
+                System.err.println("====================   RESULT    =====================");
+                System.err.println("======================================================");
+                System.err.println(response);
+                // writes response to the outfile
+                BufferedWriter writer = new BufferedWriter(new FileWriter(outfile));
+                writer.write(response);
+                writer.close();
+            }
         }
         catch (Exception e)
         {
