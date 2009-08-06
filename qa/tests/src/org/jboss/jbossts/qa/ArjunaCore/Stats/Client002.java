@@ -59,27 +59,27 @@ public class Client002 extends BaseTestClient
 			abort();
 
 			//test what the final stat values are
-			if (mStats.numberOfAbortedTransactions() != 1)
+			if (mStats.getNumberOfAbortedTransactions() != 1)
 			{
-				Debug("error in number of aborted transactions: " + mStats.numberOfAbortedTransactions());
+				Debug("error in number of aborted transactions: " + mStats.getNumberOfAbortedTransactions());
 				mCorrect = false;
 			}
 
-			if (mStats.numberOfCommittedTransactions() != 3)
+			if (mStats.getNumberOfCommittedTransactions() != 3)
 			{
-				Debug("error in number of commited transactions: " + mStats.numberOfCommittedTransactions());
+				Debug("error in number of commited transactions: " + mStats.getNumberOfCommittedTransactions());
 				mCorrect = false;
 			}
 
-			if (mStats.numberOfNestedTransactions() != 2)
+			if (mStats.getNumberOfNestedTransactions() != 2)
 			{
-				Debug("error in number of nested transactions: " + mStats.numberOfNestedTransactions());
+				Debug("error in number of nested transactions: " + mStats.getNumberOfNestedTransactions());
 				mCorrect = false;
 			}
 
-			if (mStats.numberOfTransactions() != 4)
+			if (mStats.getNumberOfTransactions() != 4)
 			{
-				Debug("error in number of transactions: " + mStats.numberOfTransactions());
+				Debug("error in number of transactions: " + mStats.getNumberOfTransactions());
 				mCorrect = false;
 			}
 

@@ -29,7 +29,6 @@
 
 package org.jboss.jbossts.qa.Utils;
 
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 import java.io.BufferedReader;
@@ -88,9 +87,7 @@ public class AssertCleanEnvironment
 			ORBInterface.initORB(args, null);
 			OAInterface.initOA();
 
-			objectStoreDirName = arjPropertyManager.getPropertyManager().getProperty(
-					Environment.OBJECTSTORE_DIR,
-					com.arjuna.ats.arjuna.common.Configuration.objectStoreRoot());
+			objectStoreDirName = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir();
 		}
 		finally
 		{

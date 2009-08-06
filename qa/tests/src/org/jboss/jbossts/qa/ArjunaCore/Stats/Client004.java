@@ -72,27 +72,27 @@ public class Client004 extends BaseTestClient
 			System.err.println("Number of iterations = " + mMaxIteration);
 
 			//test what the final stat values are
-			if (mStats.numberOfAbortedTransactions() != expectedRolledback)
+			if (mStats.getNumberOfAbortedTransactions() != expectedRolledback)
 			{
-				Debug("error in number of aborted transactions: " + mStats.numberOfAbortedTransactions() + " expected = " + expectedRolledback);
+				Debug("error in number of aborted transactions: " + mStats.getNumberOfAbortedTransactions() + " expected = " + expectedRolledback);
 				mCorrect = false;
 			}
 
-			if (mStats.numberOfCommittedTransactions() != expectedCommitted)
+			if (mStats.getNumberOfCommittedTransactions() != expectedCommitted)
 			{
-				Debug("error in number of commited transactions: " + mStats.numberOfCommittedTransactions() + " expected = " + expectedCommitted);
+				Debug("error in number of commited transactions: " + mStats.getNumberOfCommittedTransactions() + " expected = " + expectedCommitted);
 				mCorrect = false;
 			}
 
-			if (mStats.numberOfNestedTransactions() != expectedNested)
+			if (mStats.getNumberOfNestedTransactions() != expectedNested)
 			{
-				Debug("error in number of nested transactions: " + mStats.numberOfNestedTransactions() + " expected = " + expectedNested);
+				Debug("error in number of nested transactions: " + mStats.getNumberOfNestedTransactions() + " expected = " + expectedNested);
 				mCorrect = false;
 			}
 
-			if (mStats.numberOfTransactions() != expectedTx)
+			if (mStats.getNumberOfTransactions() != expectedTx)
 			{
-				Debug("error in number of transactions: " + mStats.numberOfTransactions() + " expected = " + expectedTx);
+				Debug("error in number of transactions: " + mStats.getNumberOfTransactions() + " expected = " + expectedTx);
 				mCorrect = false;
 			}
 

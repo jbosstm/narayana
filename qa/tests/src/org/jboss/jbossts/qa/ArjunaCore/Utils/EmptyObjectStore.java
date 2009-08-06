@@ -29,7 +29,6 @@
 
 package org.jboss.jbossts.qa.ArjunaCore.Utils;
 
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 
@@ -43,8 +42,8 @@ public class EmptyObjectStore
 	{
 		try
 		{
-			if (arjPropertyManager.getPropertyManager().getProperty(Environment.OBJECTSTORE_TYPE) != null &&
-					arjPropertyManager.getPropertyManager().getProperty(Environment.OBJECTSTORE_TYPE).startsWith("JDBCStore"))
+			if (arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType() != null &&
+					arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType().startsWith("JDBCStore"))
 			{
 				JDBCAccess mJDBC = (JDBCAccess) Class.forName(System.getProperty("JDBC2_USER_DB_ACCESS")).newInstance();
 				Connection mConnection = mJDBC.getConnection();
@@ -53,7 +52,7 @@ public class EmptyObjectStore
 			}
 			else
 			{
-				String objectStoreDirName = arjPropertyManager.getPropertyManager().getProperty(Environment.OBJECTSTORE_DIR, com.arjuna.ats.arjuna.common.Configuration.objectStoreRoot());
+				String objectStoreDirName = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir();
 
 				System.out.println("Emptying " + objectStoreDirName);
 

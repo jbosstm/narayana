@@ -31,32 +31,16 @@
 
 package org.jboss.jbossts.qa.CrashRecovery11Utils;
 
-import com.arjuna.ats.arjuna.common.Environment;
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 
 public class Delays
 {
 	public static int recoveryDelay()
 	{
-		//
-		// get from the propertyManager
-		//
-		String backoffPeriodString = arjPropertyManager.getPropertyManager().getProperty(Environment.RECOVERY_BACKOFF_PERIOD);
-		String recoveryPeriodString = arjPropertyManager.getPropertyManager().getProperty(Environment.PERIODIC_RECOVERY_PERIOD);
+			int _recoveryPeriod = recoveryPropertyManager.getRecoveryEnvironmentBean().getPeriodicRecoveryPeriod();
 
-		try
-		{
-			Integer recoveryPeriodInteger = new Integer(recoveryPeriodString);
-			int _recoveryPeriod = recoveryPeriodInteger.intValue();
-
-			Integer backoffPeriodInteger = new Integer(backoffPeriodString);
-			int _backoffPeriod = backoffPeriodInteger.intValue();
+			int _backoffPeriod = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryBackoffPeriod();
 
 			return (_backoffPeriod + _recoveryPeriod + (5 * 1000) /*5 secs for processing*/);
-		}
-		catch (NumberFormatException e)
-		{
-			return 30 * 1000;
-		}
 	}
 }
