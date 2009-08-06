@@ -63,12 +63,10 @@
 
         <compile.macro excluded.classes="${exclude-these-classes}">
             <additional.classpath>
-                <!-- jboss-common-core.jar has UnexpectedThrowable, jboss-logging-spi.jar has Logger, jboss-main.jar has ServerConfig -->
-                <fileset dir="${env.JBOSS_HOME}/lib" includes="jboss-common-core.jar jboss-logging-spi.jar jboss-bootstrap.jar"/>
+                <!-- jboss-common-core.jar has UnexpectedThrowable, jboss-logging-spi.jar has Logger -->
+                <fileset dir="${env.JBOSS_HOME}/lib" includes="jboss-common-core.jar jboss-logging-spi.jar"/>
                 <!-- jboss-integration.jar has the transactions SPI, jmx-adaptor-plugin.jar has RMIAdaptor, jbosssx has security -->
                 <fileset dir="${env.JBOSS_HOME}/common/lib" includes="jboss-integration.jar jmx-adaptor-plugin.jar jbosssx.jar"/>
-
-                <fileset dir="${env.JBOSS_HOME}/common/lib" includes="jboss-iiop.jar"/>
             </additional.classpath>
         </compile.macro>
 
