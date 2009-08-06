@@ -31,7 +31,7 @@ import java.sql.Connection;
  * @author Jonathan Halliday (jonathan.halliday@redhat.com)
  */
 @PropertyPrefix(prefix = "com.arjuna.ats.jdbc.")
-public class JDBCEnvironmentBean
+public class JDBCEnvironmentBean implements JDBCEnvironmentBeanMBean
 {
     @FullPropertyName(name = "com.arjuna.ats.jdbc.common.propertiesFile")
     private String propertiesFile = "";

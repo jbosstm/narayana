@@ -313,8 +313,6 @@ public class TxControl
 
 	static boolean readonlyOptimisation = true;
 
-	static boolean enableStatistics = false;
-
 	static boolean sharedTransactionLog = false;
 
 	static int numberOfTransactions = 100;
@@ -355,7 +353,6 @@ public class TxControl
         onePhase = arjPropertyManager.getCoordinatorEnvironmentBean().isCommitOnePhase();
         asyncRollback = arjPropertyManager.getCoordinatorEnvironmentBean().isAsyncRollback();
         readonlyOptimisation = arjPropertyManager.getCoordinatorEnvironmentBean().isReadonlyOptimisation();
-        enableStatistics = arjPropertyManager.getCoordinatorEnvironmentBean().isEnableStatistics();
         enable = !arjPropertyManager.getCoordinatorEnvironmentBean().isStartDisabled();
         beforeCompletionWhenRollbackOnly = arjPropertyManager.getCoordinatorEnvironmentBean().isBeforeCompletionWhenRollbackOnly();
 

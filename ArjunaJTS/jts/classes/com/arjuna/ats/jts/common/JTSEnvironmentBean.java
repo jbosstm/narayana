@@ -23,13 +23,15 @@ package com.arjuna.ats.jts.common;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
+import java.net.InetAddress;
+
 /**
  * A JavaBean containing configuration properties for the JTS system.
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com)
  */
 @PropertyPrefix(prefix = "com.arjuna.ats.jts.")
-public class JTSEnvironmentBean
+public class JTSEnvironmentBean implements JTSEnvironmentBeanMBean
 {
     @FullPropertyName(name= "com.arjuna.ats.jts.common.propertiesFile")
     private String propertiesFile;
@@ -204,6 +206,10 @@ public class JTSEnvironmentBean
     public void setRecoveryManagerAddress(String recoveryManagerAddress)
     {
         this.recoveryManagerAddress = recoveryManagerAddress;
+    }
+
+    public void setRecoveryManagerInetAddress(InetAddress inetAddress) {
+        setRecoveryManagerAddress(inetAddress.getHostAddress());
     }
 
 //    public static final String OTS_1_0_TIMEOUT_PROPAGATION = "com.arjuna.ats.jts.ots_1_0.timeoutPropagation";

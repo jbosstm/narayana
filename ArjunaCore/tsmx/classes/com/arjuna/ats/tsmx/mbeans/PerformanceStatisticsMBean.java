@@ -30,12 +30,11 @@
  */
 package com.arjuna.ats.tsmx.mbeans;
 
-import javax.management.*;
-import java.util.ArrayList;
-
 /**
  * This class exposes the ArjunaJTS performance information via the JMX Management Bean interface.
+ * @deprecated
  */
+@Deprecated
 public interface PerformanceStatisticsMBean
 {
 	/**
@@ -43,14 +42,14 @@ public interface PerformanceStatisticsMBean
 	 *
 	 * @return The number of transactions created.
 	 */
-	public int getNumberOfTransactions();
+	public long getNumberOfTransactions();
 
 	/**
 	 * Get the number of nested (sub) transactions created so far.
 	 *
 	 * @return The number of nested transactions created so far.
 	 */
-	public int getNumberOfNestedTransactions();
+	public long getNumberOfNestedTransactions();
 
 	/**
 	 * Get the number of transactions which have terminated with
@@ -58,21 +57,21 @@ public interface PerformanceStatisticsMBean
 	 *
 	 * @return The number of transactions which have terminated with a heuristic outcome.
 	 */
-	public int getNumberOfHeuristics();
+	public long getNumberOfHeuristics();
 
 	/**
 	 * Get the number of transactions which have been committed.
 	 *
 	 * @return The number of transactions which have been committed.
 	 */
-	public int getNumberOfCommittedTransactions();
+	public long getNumberOfCommittedTransactions();
 
 	/**
 	 * Get the number of transactions which have been aborted.
 	 *
 	 * @return The number of transactions which have been aborted.
 	 */
-	public int getNumberOfAbortedTransactions();
+	public long getNumberOfAbortedTransactions();
 
 	public String getIconFilename();
 }

@@ -565,10 +565,10 @@ public class TransactionReaper
 		        {
 		            cancelled = true;
 
-		            if (TxControl.enableStatistics) {
+		            if (TxStats.enabled()) {
 		                // note that we also count timeouts as application rollbacks via
 		                // the stats unpdate in the TwoPhaseCoordinator cancel() method.
-		                TxStats.incrementTimeouts();
+		                TxStats.getInstance().incrementTimeouts();
 		            }
 
 		            notifyListeners(e._control, true);

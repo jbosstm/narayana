@@ -30,7 +30,7 @@ import com.arjuna.ats.arjuna.utils.Utility;
  * @author Jonathan Halliday (jonathan.halliday@redhat.com)
  */
 @PropertyPrefix(prefix = "com.arjuna.ats.arjuna.")
-public class CoreEnvironmentBean
+public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
 {
     @FullPropertyName(name = "com.arjuna.ats.arjuna.common.propertiesFile")
     private String propertiesFile = "";

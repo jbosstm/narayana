@@ -103,8 +103,8 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 	public int cancel ()
 	{
-		if (TxControl.enableStatistics)
-			TxStats.incrementApplicationRollbacks();
+		if (TxStats.enabled())
+			TxStats.getInstance().incrementApplicationRollbacks();
 
 		if (parent() != null)
 			parent().removeChildAction(this);

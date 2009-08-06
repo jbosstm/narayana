@@ -646,16 +646,16 @@ public class TransactionFactoryImple extends
 	{
 		GlobalTransactionInfo info = new GlobalTransactionInfo();
 
-		info.totalNumberOfTransactions = com.arjuna.ats.arjuna.coordinator.TxStats.numberOfTransactions();
-		info.numberOfCommittedTransactions = com.arjuna.ats.arjuna.coordinator.TxStats.numberOfCommittedTransactions();
-		info.numberOfAbortedTransactions = com.arjuna.ats.arjuna.coordinator.TxStats.numberOfAbortedTransactions();
+		info.totalNumberOfTransactions = (int)com.arjuna.ats.arjuna.coordinator.TxStats.getInstance().getNumberOfTransactions();
+		info.numberOfCommittedTransactions = (int)com.arjuna.ats.arjuna.coordinator.TxStats.getInstance().getNumberOfCommittedTransactions();
+		info.numberOfAbortedTransactions = (int)com.arjuna.ats.arjuna.coordinator.TxStats.getInstance().getNumberOfAbortedTransactions();
 
 		if (info.totalNumberOfTransactions > 0)
 			info.averageLifetime = (float) (TransactionReaper.transactionLifetime() / info.totalNumberOfTransactions);
 		else
 			info.averageLifetime = (float) 0.0;
 
-		info.numberOfHeuristics = com.arjuna.ats.arjuna.coordinator.TxStats.numberOfHeuristics();
+		info.numberOfHeuristics = (int)com.arjuna.ats.arjuna.coordinator.TxStats.getInstance().getNumberOfHeuristics();
 
 		TransactionReaper reaper = TransactionReaper.transactionReaper();
 

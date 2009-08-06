@@ -28,7 +28,7 @@ import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
  * @author Jonathan Halliday (jonathan.halliday@redhat.com)
  */
 @PropertyPrefix(prefix = "com.arjuna.orbportability.")
-public class OrbPortabilityEnvironmentBean
+public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentBeanMBean
 {
     private String propertiesFile;
 

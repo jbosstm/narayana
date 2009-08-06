@@ -27,11 +27,12 @@ import com.arjuna.ats.txoj.TxOJNames;
 import java.io.File;
 
 /**
- * TODO javadoc
- * TODO test case
+ * A JavaBean containing configuration properties for the transactional object system.
+ *
+ * @author Jonathan Halliday (jonathan.halliday@redhat.com)
  */
 @PropertyPrefix(prefix = "com.arjuna.ats.txoj.lockstore.")
-public class TxojEnvironmentBean
+public class TxojEnvironmentBean implements TxojEnvironmentBeanMBean
 {
     @FullPropertyName(name = "com.arjuna.ats.txoj.common.propertiesFile")
     private String propertiesFile = "";

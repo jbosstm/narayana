@@ -34,7 +34,7 @@ import java.io.File;
  * @author Jonathan Halliday (jonathan.halliday@redhat.com)
  */
 @PropertyPrefix(prefix = "com.arjuna.ats.arjuna.objectstore.")
-public class ObjectStoreEnvironmentBean
+public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBean
 {
     private String localOSRoot = "defaultStore";
     private String objectStoreDir = System.getProperty("user.dir") + File.separator + "ObjectStore";

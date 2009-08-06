@@ -25,13 +25,15 @@ import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery;
 import com.arjuna.ats.arjuna.utils.Utility;
 
+import java.net.InetAddress;
+
 /**
  * A JavaBean containing configuration properties for the recovery system.
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com)
  */
 @PropertyPrefix(prefix = "com.arjuna.ats.arjuna.recovery.")
-public class RecoveryEnvironmentBean
+public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
 {
     private int periodicRecoveryPeriod = PeriodicRecovery._defaultRecoveryPeriod;
     private int recoveryBackoffPeriod = PeriodicRecovery._defaultBackoffPeriod;
@@ -103,6 +105,10 @@ public class RecoveryEnvironmentBean
         this.recoveryAddress = recoveryAddress;
     }
 
+    public void setRecoveryInetAddress(InetAddress inetAddress) {
+        setRecoveryAddress(inetAddress.getHostAddress());
+    }
+
 //    public static final String TRANSACTION_STATUS_MANAGER_PORT = "com.arjuna.ats.arjuna.recovery.transactionStatusManagerPort";
     public int getTransactionStatusManagerPort()
     {
@@ -124,6 +130,10 @@ public class RecoveryEnvironmentBean
     public void setTransactionStatusManagerAddress(String transactionStatusManagerAddress)
     {
         this.transactionStatusManagerAddress = transactionStatusManagerAddress;
+    }
+
+    public void setTransactionStatusManagerInetAddress(InetAddress inetAddress) {
+        setTransactionStatusManagerAddress(inetAddress.getHostAddress());
     }
 
 //    public static final String EXPIRY_SCAN_INTERVAL    = "com.arjuna.ats.arjuna.recovery.expiryScanInterval";

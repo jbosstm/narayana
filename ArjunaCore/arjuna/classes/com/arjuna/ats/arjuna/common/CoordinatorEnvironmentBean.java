@@ -31,7 +31,7 @@ import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
  * @author Jonathan Halliday (jonathan.halliday@redhat.com)
  */
 @PropertyPrefix(prefix = "com.arjuna.ats.arjuna.coordinator.")
-public class CoordinatorEnvironmentBean
+public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBean
 {
     private String actionStore = ArjunaNames.Implementation_ObjectStore_defaultActionStore().stringForm();
     private boolean asyncCommit = false;

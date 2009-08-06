@@ -32,6 +32,10 @@ package com.arjuna.ats.tsmx.mbeans;
 
 import com.arjuna.ats.arjuna.coordinator.TxStats;
 
+/**
+ * @deprecated
+ */
+@Deprecated
 public class PerformanceStatistics implements PerformanceStatisticsMBean
 {
 	private final static String ICON_FILENAME="performance-icon.gif";
@@ -41,9 +45,9 @@ public class PerformanceStatistics implements PerformanceStatisticsMBean
 	 *
 	 * @return The number of transactions created.
 	 */
-	public int getNumberOfTransactions()
+	public long getNumberOfTransactions()
 	{
-		return TxStats.numberOfTransactions();
+		return TxStats.getInstance().getNumberOfTransactions();
 	}
 
 	/**
@@ -51,9 +55,9 @@ public class PerformanceStatistics implements PerformanceStatisticsMBean
 	 *
 	 * @return The number of nested transactions created so far.
 	 */
-	public int getNumberOfNestedTransactions()
+	public long getNumberOfNestedTransactions()
 	{
-		return TxStats.numberOfNestedTransactions();
+		return TxStats.getInstance().getNumberOfNestedTransactions();
 	}
 
 	/**
@@ -62,9 +66,9 @@ public class PerformanceStatistics implements PerformanceStatisticsMBean
 	 *
 	 * @return The number of transactions which have terminated with a heuristic outcome.
 	 */
-	public int getNumberOfHeuristics()
+	public long getNumberOfHeuristics()
 	{
-		return TxStats.numberOfHeuristics();
+		return TxStats.getInstance().getNumberOfHeuristics();
 	}
 
 	/**
@@ -72,9 +76,9 @@ public class PerformanceStatistics implements PerformanceStatisticsMBean
 	 *
 	 * @return The number of transactions which have been committed.
 	 */
-	public int getNumberOfCommittedTransactions()
+	public long getNumberOfCommittedTransactions()
 	{
-		return TxStats.numberOfCommittedTransactions();
+		return TxStats.getInstance().getNumberOfCommittedTransactions();
 	}
 
 	/**
@@ -82,9 +86,9 @@ public class PerformanceStatistics implements PerformanceStatisticsMBean
 	 *
 	 * @return The number of transactions which have been aborted.
 	 */
-	public int getNumberOfAbortedTransactions()
+	public long getNumberOfAbortedTransactions()
 	{
-		return TxStats.numberOfAbortedTransactions();
+		return TxStats.getInstance().getNumberOfAbortedTransactions();
 	}
 
 	public String getIconFilename()

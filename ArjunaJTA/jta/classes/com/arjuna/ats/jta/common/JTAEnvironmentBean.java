@@ -29,7 +29,7 @@ import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
  * @author Jonathan Halliday (jonathan.halliday@redhat.com)
  */
 @PropertyPrefix(prefix = "com.arjuna.ats.jta.")
-public class JTAEnvironmentBean
+public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 {
     @FullPropertyName(name = "com.arjuna.ats.jta.common.propertiesFile")
     private String propertiesFile = "";

@@ -1721,12 +1721,12 @@ public class BasicAction extends StateManager
 
 		        ActionManager.manager().put(this);
 
-		        if (TxControl.enableStatistics)
+		        if (TxStats.enabled())
 		        {
-		            TxStats.incrementTransactions();
+		            TxStats.getInstance().incrementTransactions();
 
 		            if (parentAct != null)
-		                TxStats.incrementNestedTransactions();
+		                TxStats.getInstance().incrementNestedTransactions();
 		        }
 		    }
 		}
@@ -1973,8 +1973,8 @@ public class BasicAction extends StateManager
 
 		actionStatus = ActionStatus.ABORTED;
 
-		if (TxControl.enableStatistics)
-			TxStats.incrementAbortedTransactions();
+		if (TxStats.enabled())
+			TxStats.getInstance().incrementAbortedTransactions();
 
 		return actionStatus;
 	}
@@ -2216,9 +2216,9 @@ public class BasicAction extends StateManager
             // ok count this as a commit unless we got a heuristic rollback in which case phase2Abort
             // will have been called and will already have counted it as an abort
             
-            if (TxControl.enableStatistics) {
+            if (TxStats.enabled()) {
                 if (heuristicDecision != TwoPhaseOutcome.HEURISTIC_ROLLBACK) {
-                    TxStats.incrementCommittedTransactions();
+                    TxStats.getInstance().incrementCommittedTransactions();
                 }
             }
 
@@ -2289,9 +2289,9 @@ public class BasicAction extends StateManager
 		 * rolling back because of a resource problem.
 		 */
 		
-		if (TxControl.enableStatistics) {
-            TxStats.incrementResourceRollbacks();
-            TxStats.incrementAbortedTransactions();
+		if (TxStats.enabled()) {
+            TxStats.getInstance().incrementResourceRollbacks();
+            TxStats.getInstance().incrementAbortedTransactions();
         }
     }
 
@@ -2791,11 +2791,11 @@ public class BasicAction extends StateManager
 		
 		criticalEnd();
 
-        if (TxControl.enableStatistics) {
+        if (TxStats.enabled()) {
             if (actionStatus == ActionStatus.ABORTED) {
-                TxStats.incrementAbortedTransactions();
+                TxStats.getInstance().incrementAbortedTransactions();
             } else {
-                TxStats.incrementCommittedTransactions();
+                TxStats.getInstance().incrementCommittedTransactions();
             }
         }
 
@@ -3488,8 +3488,8 @@ public class BasicAction extends StateManager
 			break;
 		}
 
-		if (TxControl.enableStatistics)
-			TxStats.incrementHeuristics();
+		if (TxStats.enabled())
+			TxStats.getInstance().incrementHeuristics();
 	}
 
 	protected void updateState ()
