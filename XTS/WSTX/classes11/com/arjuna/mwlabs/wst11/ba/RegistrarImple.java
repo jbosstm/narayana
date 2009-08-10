@@ -57,6 +57,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RegistrarImple implements com.arjuna.wsc11.Registrar
 {
@@ -273,5 +274,5 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
 
 	private CoordinatorManager _coordManager = null;
 
-	private HashMap _hierarchies = new HashMap();
+	private ConcurrentHashMap _hierarchies = new ConcurrentHashMap();
 }

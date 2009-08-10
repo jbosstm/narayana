@@ -93,22 +93,25 @@ public class ContextFactoryMapperImple extends ContextFactoryMapper
 		try
 		{
 			org.w3c.dom.Document doc = convert(coordinationTypeURI);
-			Object type = _protocols.getProtocolImplementation(convert(coordinationTypeURI));
+            // get and replace have to happen atomically
+            synchronized (_protocols) {
+                Object type = _protocols.getProtocolImplementation(convert(coordinationTypeURI));
 
-			if (type instanceof String)
-			{
-				Class c = Class.forName((String) type);
+                if (type instanceof String)
+                {
+                    Class c = Class.forName((String) type);
 
-				ContextFactory factory = (ContextFactory) c.newInstance();
+                    ContextFactory factory = (ContextFactory) c.newInstance();
 
-				_protocols.replaceProtocol(doc, factory);
+                    _protocols.replaceProtocol(doc, factory);
 
-				return factory;
-			}
-			else
-			{
-				return (ContextFactory) type;
-			}
+                    return factory;
+                }
+                else
+                {
+                    return (ContextFactory) type;
+                }
+            }
 		}
 		catch (Exception ex)
 		{

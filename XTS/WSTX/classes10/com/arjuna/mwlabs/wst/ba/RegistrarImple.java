@@ -32,6 +32,7 @@
 package com.arjuna.mwlabs.wst.ba;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wsas.activity.ActivityHierarchy;
@@ -262,5 +263,5 @@ public class RegistrarImple implements Registrar
 
 	private CoordinatorManager _coordManager = null;
 
-	private HashMap _hierarchies = new HashMap();
+	private ConcurrentHashMap _hierarchies = new ConcurrentHashMap();
 }
