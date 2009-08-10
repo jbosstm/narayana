@@ -67,7 +67,6 @@
 			<include name="jbossjts-${org.jboss.jbossts.qa.orb.name.short}.jar"/>
 		</fileset>
 		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
-			<include name="jbossts-common.jar"/>
 			<include name="jta-1_1-classes.zip"/>
 		</fileset>
 		<pathelement location="../../ArjunaJTS/orbportability/config"/>

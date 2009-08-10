@@ -56,9 +56,10 @@
 			<include name="jbossjta.jar"/>
 		</fileset>
 		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
-			<include name="jbossts-common.jar"/>
 			<include name="jta-1_1-classes.zip"/>
 		</fileset>
+        <pathelement location="../../ext/junit-4.6.jar"/>
+
 		<fileset file="${org.jboss.jbossts.qa.server_manager_location}" />
 	</path>
 
@@ -88,6 +89,12 @@
 			<include name="**/org/jboss/jbossts/qa/astests/**/*.java"/>
 
             <exclude name="**/astests/**"/>
+
+            <include name="**/TestGroup_txcore*.java"/>
+            <include name="**/TestGroup_txoj.java"/>
+            <include name="**/TestGroup_jdbclocals*.java"/>
+            <include name="**/TestGroup_jta*.java"/>
+            <include name="**/TestGroup_crashrec13.java"/>
 
             <classpath>
 				<path refid="jta.classpath"/>

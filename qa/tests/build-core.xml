@@ -32,9 +32,7 @@
 		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/">
 			<include name="arjunacore.jar"/>
 		</fileset>
-		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
-			<include name="jbossts-common.jar"/>
-		</fileset>
+        <pathelement location="../../ext/junit-4.6.jar"/>
 	</path>
 
 	<target name="org.jboss.jbossts.qa.core.init">
@@ -58,9 +56,11 @@
             <include name="**/org/jboss/jbossts/qa/Utils/JVMStats.java"/>
             <include name="**/core/**/*.java"/>
 
+            <include name="**/TestGroup_txcore*.java"/>
+            <include name="**/TestGroup_txoj.java"/>
+
 			<classpath>
             	<path refid="core.classpath"/>
-				<pathelement location="${org.jboss.jbossts.qa.build.classes}"/>
 			</classpath>
 
 		</javac>
