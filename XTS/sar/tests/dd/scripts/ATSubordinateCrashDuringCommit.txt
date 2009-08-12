@@ -557,12 +557,13 @@ ENDRULE
 
 #######################################################################
 # This rule is triggered when the recovery system finds a PREPARED
-# activity in the log and reruns the phase 2 commit operation.
+# parent activity in the log and reruns the phase 2 commit operation.
 # It prints a message which can be used to verify that the test has
-# progressed as expected.
+# progressed as expected and creates a countdown used to detect exit of
+# both transactions
 
 RULE trace prepared replay
-CLASS org.jboss.jbossts.xts.recovery.coordinator.ba.RecoverACCoordinator
+CLASS org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator
 METHOD replayPhase2
 AT INVOKE phase2Commit
 BIND coordinator = $0,
@@ -571,8 +572,29 @@ BIND coordinator = $0,
 IF (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.PREPARED)
      OR
      (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.COMMITTING)
-DO debug("replaying close for prepared transaction " + uid),
-   traceln("log", "replaying commit for prepared transaction " + uid)
+DO debug("replaying commit for prepared transaction " + uid),
+   traceln("log", "replaying commit for prepared transaction " + uid),
+   createCountDown("exit countdown", 1)
+ENDRULE
+
+#######################################################################
+# This rule is triggered when the recovery system finds a PREPARED
+# subordinate activity in the log and reruns the phase 2 commit operation.
+# It prints a message which can be used to verify that the test has
+# progressed as expected
+
+RULE trace prepared replay
+CLASS org.jboss.jbossts.xts.recovery.coordinator.at.RecoverSubordinateCoordinator
+METHOD replayPhase2
+AT INVOKE removeRecoveredCoordinator
+BIND coordinator = $0,
+     uid : Uid = coordinator.identifier(),
+     status : int = coordinator.status()
+IF (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.PREPARED)
+     OR
+     (status == com.arjuna.ats.arjuna.coordinator.ActionStatus.COMMITTING)
+DO debug("replaying commit for prepared subordinate transaction " + uid),
+   traceln("log", "replaying commit for prepared subordinate transaction " + uid)
 ENDRULE
 
 #######################################################################
@@ -589,4 +611,21 @@ BIND action : BasicAction = $0,
 IF TRUE
 DO traceln("log", "removed committed transaction " + uid),
    debug("removed committed transaction " + uid)
+ENDRULE
+
+#######################################################################
+# activity from the log for the second time. It ensures that the JVM
+# exits. n.b. it waits for the second delete because both the subordinate
+# tx and the parent tx need to be deleted.
+
+RULE trace remove committed state and exit JVM
+CLASS com.arjuna.ats.arjuna.coordinator.BasicAction
+METHOD updateState
+AFTER CALL remove_committed
+BIND action : BasicAction = $0,
+     uid  = action.get_uid()
+IF countDown("exit countdown")
+DO traceln("log", "JVM exit after removing both transactions"),
+   debug("JVM exit after removing both transactions"),
+   killJVM()
 ENDRULE
