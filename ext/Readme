@@ -34,4 +34,4 @@ wrapper.jar		Java Service Wrapper 3.2.3
 xalan.jar
 xercesImpl.jar		Xerces 2.3.0
 xmlParserAPIs.jar	Xerces 2.3.0
-byteman.jar		1.0.3.SNAPSHOT (3rd August 2009)
+byteman.jar		1.0.3.SNAPSHOT (12 August 2009)
