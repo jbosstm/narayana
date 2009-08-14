@@ -25,11 +25,9 @@ import com.arjuna.common.util.propertyservice.plugins.PropertyManagementPlugin;
 import com.arjuna.common.util.exceptions.LoadPropertiesException;
 import com.arjuna.common.util.exceptions.SavePropertiesException;
 import com.arjuna.common.util.exceptions.ManagementPluginException;
+import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
 
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Enumeration;
+import java.util.*;
 import java.lang.reflect.Field;
 import java.io.IOException;
 
@@ -57,8 +55,20 @@ public class DummyPropertyManager implements PropertyManager
         return keys;
     }
 
+    public void addConcatenationKeys(Class environmentBean) {
+
+        for(Field field : environmentBean.getDeclaredFields()) {
+            if(field.isAnnotationPresent(ConcatenationPrefix.class)) {
+                String prefix = field.getAnnotation(ConcatenationPrefix.class).prefix();
+                concatenationKeys.add(prefix);
+                System.out.println("addConcat : "+prefix);
+            }
+        }
+    }
+
     public Set<String> usedKeys = new HashSet<String>();
     Properties properties = null;
+    public Set<String> concatenationKeys = new HashSet<String>();
 
     public DummyPropertyManager(Properties properties) {
         this.properties = properties;
@@ -66,6 +76,13 @@ public class DummyPropertyManager implements PropertyManager
 
     public String getProperty(String key)
     {
+        for(String prefix : concatenationKeys) {
+            if(key.startsWith(prefix) && !usedKeys.contains(prefix)) {
+                usedKeys.add(prefix);
+                break;
+            }
+        }
+
         usedKeys.add(key);
 
         if(properties != null) {
@@ -102,7 +119,12 @@ public class DummyPropertyManager implements PropertyManager
 
     public Enumeration propertyNames()
     {
-        throw new RuntimeException("this is not expected to be called during the test");
+        Vector<String> names = new Vector<String>();
+        for(String prefix : concatenationKeys) {
+            names.add(prefix+"_one");
+            names.add(prefix+"_two");
+        }
+        return names.elements();
     }
 
     public void load(String s, String s1) throws IOException, ClassNotFoundException, LoadPropertiesException
