@@ -770,6 +770,8 @@ public class XARecoveryModule implements RecoveryModule
 				_xidScans = new Hashtable();
 			else
 			{
+                refreshXidScansForEquivalentXAResourceImpl(xares, trans);
+                
 				xidsToRecover = (RecoveryXids) _xidScans.get(xares);
 
 				if (xidsToRecover == null)
@@ -1137,6 +1139,39 @@ public class XARecoveryModule implements RecoveryModule
 
 		return true;
 	}
+
+    /**
+     * For some drivers, isSameRM is connection specific. If we have prev scan results
+     * for the same RM but using a different connection, we need to be able to identify them.
+     * Look at the data from previous scans, identify any for the same RM but different XAResource
+     * by checking for matching Xids, then replace the old XAResource with the supplied one.
+     *
+     * @param xares
+     * @param xids
+     */
+    private void refreshXidScansForEquivalentXAResourceImpl(XAResource xares, Xid[] xids)
+    {
+        if(xids == null || xids.length == 0) {
+            return;
+        }
+
+        Enumeration keys = _xidScans.keys();
+
+        while (keys.hasMoreElements())
+        {
+            XAResource theKey = (XAResource) keys.nextElement();
+            RecoveryXids recoveryXids = (RecoveryXids) _xidScans.get(theKey);
+
+            if(recoveryXids.updateIfEquivalentRM(xares, xids)) {
+                // recoveryXids is for this xares, but was originally obtained using
+                // a different XAResource. rekey the hashtable to use the new one.
+                _xidScans.remove(theKey);
+                theKey = xares;
+                _xidScans.put(theKey, recoveryXids);
+                break;
+            }
+        }
+    }
 
 	/**
 	 * Is there a log file for this transaction?

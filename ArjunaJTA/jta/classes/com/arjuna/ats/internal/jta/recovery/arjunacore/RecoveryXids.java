@@ -178,6 +178,30 @@ public class RecoveryXids
 	return false;
     }
 	
+    /**
+     * If supplied xids contains any values seen on prev scans, replace the existing
+     * XAResource with the supplied one and return true. Otherwise, return false.
+     *
+     * @param xaResource
+     * @param xids
+     * @return
+     */
+    public boolean updateIfEquivalentRM(XAResource xaResource, Xid[] xids)
+    {
+        if(xids == null || xids.length == 0) {
+            return false;
+        }
+
+        for(int i = 0; i < xids.length; i++) {
+            if(contains(xids[i])) {
+                _xares = xaResource;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private Xid[]      _scanN;
     private Xid[]      _scanM;
     private XAResource _xares;
