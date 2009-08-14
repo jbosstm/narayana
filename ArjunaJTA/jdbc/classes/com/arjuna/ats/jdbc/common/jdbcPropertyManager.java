@@ -41,6 +41,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class jdbcPropertyManager
 {
+    // ensure properties are loaded
+    public static void init() {
+        getPropertyManager();
+    }
+
+    /**
+     * @deprecated use JDBCEnvironmentBean instead
+     * @return
+     */
+    @Deprecated
     public static PropertyManager getPropertyManager()
     {
         return PropertyManagerFactory.getPropertyManagerForModule("jdbc", Environment.PROPERTIES_FILE);

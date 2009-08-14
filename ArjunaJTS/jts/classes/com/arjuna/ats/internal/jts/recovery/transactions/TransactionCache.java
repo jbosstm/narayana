@@ -37,7 +37,6 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 
 import org.omg.CosTransactions.*;
-import com.arjuna.ats.jts.recovery.RecoveryEnvironment;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -353,24 +352,8 @@ public class TransactionCache
     private static Hashtable _theCache = new Hashtable();
     private static int attemptsBeforeConversion = 3;
 
- static
-     {
-	String retryLimitString = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.recovery.RecoveryEnvironment.COMMITTED_TRANSACTION_RETRY_LIMIT);
-
-	if (retryLimitString != null)
-	{
-	    try
-	    {
-		Integer i = new Integer(retryLimitString);
-
-		attemptsBeforeConversion = i.intValue();
-	    }
-	    catch (Exception e)
-	    {
-		jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.TransactionCache_8", new Object[]{RecoveryEnvironment.COMMITTED_TRANSACTION_RETRY_LIMIT}); 
-	    }
-	}
-     }
-
-
+    static
+    {
+        attemptsBeforeConversion = jtsPropertyManager.getJTSEnvironmentBean().getCommitedTransactionRetryLimit();
+    }
 }

@@ -46,11 +46,15 @@ public class BeanPopulatorTest
         // properties are looked for. i.e. that the Environment and Beans are in sync
 
         DummyPropertyManager testManager = new DummyPropertyManager(null);
+        testManager.addConcatenationKeys(JTAEnvironmentBean.class);
 
         BeanPopulator.configureFromPropertyManager(new JTAEnvironmentBean(), testManager);
 
         Set<String> expectedKeys = new HashSet<String>();
         expectedKeys.addAll( DummyPropertyManager.extractKeys(Environment.class));
+
+        System.out.println("expectedKeys: "+expectedKeys);
+        System.out.println("usedKeys: "+testManager.usedKeys);
 
         assertTrue( testManager.usedKeys.containsAll(expectedKeys) );
     }

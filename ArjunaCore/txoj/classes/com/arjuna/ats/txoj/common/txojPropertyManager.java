@@ -44,6 +44,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class txojPropertyManager
 {
+    /**
+     * @deprecated use TxojEnvironmentBean instead
+     * @return
+     */
+    @Deprecated
     public static PropertyManager getPropertyManager()
     {
         return PropertyManagerFactory.getPropertyManagerForModule("txoj", Environment.PROPERTIES_FILE);

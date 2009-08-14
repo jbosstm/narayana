@@ -418,8 +418,7 @@ public class TxControl
 
 		if (writeNodeName)
 		{
-		    arjPropertyManager.getPropertyManager().setProperty(
-		            Environment.XA_NODE_IDENTIFIER, new String(xaNodeName));
+            arjPropertyManager.getCoreEnvironmentBean().setNodeIdentifier( new String(xaNodeName) );
 		}
 
         _enableTSM = arjPropertyManager.getCoordinatorEnvironmentBean().isTransactionStatusManagerEnable();

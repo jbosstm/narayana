@@ -51,7 +51,7 @@ public class jbossatxLogger
     static
     {
         /** Ensure the properties are loaded before initialising the logger **/
-        jtaPropertyManager.getPropertyManager();
+        jtaPropertyManager.init();
         
         logger = LogFactory.getLogNoi18n("com.arjuna.ats.jbossatx.logging.logger");
 

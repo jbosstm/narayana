@@ -39,7 +39,6 @@ import com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 
 import com.arjuna.ats.jta.common.Configuration;
-import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
 import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;

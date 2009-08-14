@@ -52,7 +52,7 @@ public class jtsLogger
     static
     {
         /** Ensure the properties are loaded before initialising the logger **/
-        jtsPropertyManager.getPropertyManager();
+        jtsPropertyManager.init();
         
         logger = LogFactory.getLogNoi18n("com.arjuna.ats.jts.logging.logger");
 

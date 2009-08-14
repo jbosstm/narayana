@@ -38,8 +38,9 @@ package com.arjuna.ats.jdbc.common;
  * @author Mark Little (mark_little@hp.com)
  * @version $Id: Environment.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 2.0.
+ * @deprecated user JDBCEnvironmentBean instead
  */
-
+@Deprecated
 public class Environment
 {
     public static final String PROPERTIES_FILE = "com.arjuna.ats.jdbc.common.propertiesFile";

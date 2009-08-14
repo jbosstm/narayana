@@ -37,8 +37,9 @@ package com.arjuna.ats.txoj.common;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: Environment.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
+ * @deprecated use TxojEnvironmentBean instead
  */
-
+@Deprecated
 public class Environment
 {
     public static final String PROPERTIES_FILE = "com.arjuna.ats.txoj.common.propertiesFile";

@@ -46,13 +46,13 @@ public class BeanPopulatorTest
 
         DummyPropertyManager testManager = new DummyPropertyManager(null);
 
+        testManager.addConcatenationKeys(RecoveryEnvironmentBean.class);
+        testManager.addConcatenationKeys(CoreEnvironmentBean.class);
+
         BeanPopulator.configureFromPropertyManager(new CoordinatorEnvironmentBean(), testManager);
         BeanPopulator.configureFromPropertyManager(new RecoveryEnvironmentBean(), testManager);
         BeanPopulator.configureFromPropertyManager(new CoreEnvironmentBean(), testManager);
         BeanPopulator.configureFromPropertyManager(new ObjectStoreEnvironmentBean(), testManager);
-
-        // we expect this one to be missing - that's ok.
-        testManager.usedKeys.add("com.arjuna.ats.internal.arjuna.inventory.staticInventoryImple");
 
         Set<String> expectedKeys = new HashSet<String>();
         expectedKeys.addAll( DummyPropertyManager.extractKeys(Environment.class));

@@ -32,7 +32,6 @@ package com.arjuna.ats.jta.utils;
 
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 
-import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.jta.logging.jtaLogger;
 
 import javax.naming.InitialContext;

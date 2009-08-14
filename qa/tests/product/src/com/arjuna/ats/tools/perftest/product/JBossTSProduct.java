@@ -2,7 +2,6 @@ package com.arjuna.ats.tools.perftest.product;
 
 import com.arjuna.ats.jdbc.TransactionalDriver;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.tools.perftest.DbWrapper;
 
 import javax.sql.DataSource;
@@ -39,10 +38,11 @@ public class JBossTSProduct extends Product
 
     protected String getStoreType()
     {
-        if ("ON".equals(arjPropertyManager.propertyManager.getProperty(Environment.TRANSACTION_LOG)))
+        if (arjPropertyManager.getCoordinatorEnvironmentBean().isTransactionLog()) {
             return "LogStore";
+        }
         
-        String st = arjPropertyManager.propertyManager.getProperty(Environment.OBJECTSTORE_TYPE, "DefaultStore");
+        String st = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType();
 
         int ind = st.lastIndexOf('.') + 1;
 

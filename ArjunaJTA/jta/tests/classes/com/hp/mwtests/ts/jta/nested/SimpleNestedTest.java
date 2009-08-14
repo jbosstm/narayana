@@ -32,6 +32,7 @@
 package com.hp.mwtests.ts.jta.nested;
 
 import com.hp.mwtests.ts.jta.common.TestResource;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
@@ -44,7 +45,7 @@ public class SimpleNestedTest
     @Test
     public void test() throws Exception
     {
-        com.arjuna.ats.jta.common.jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.SUPPORT_SUBTRANSACTIONS, "YES");
+        jtaPropertyManager.getJTAEnvironmentBean().setSupportSubtransactions(true);
 
         javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 

@@ -64,8 +64,7 @@ public class SimpleNestedTest
 
         jtaPropertyManager.getJTAEnvironmentBean().setJtaTMImplementation(com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple.class.getName());
         jtaPropertyManager.getJTAEnvironmentBean().setJtaUTImplementation(com.arjuna.ats.internal.jta.transaction.jts.UserTransactionImple.class.getName());
-
-        jtaPropertyManager.getPropertyManager().setProperty(com.arjuna.ats.jta.common.Environment.SUPPORT_SUBTRANSACTIONS,"YES");
+        jtaPropertyManager.getJTAEnvironmentBean().setSupportSubtransactions(true);
 
         javax.transaction.TransactionManager transactionManager = com.arjuna.ats.jta.TransactionManager.transactionManager();
 

@@ -43,7 +43,7 @@ public class DefaultRootProvider implements ObjectStoreRootProvider
 
     public DefaultRootProvider()
     {
-        File objectStoreRoot = new File(arjPropertyManager.getPropertyManager().getProperty(Environment.OBJECTSTORE_DIR,"."));
+        File objectStoreRoot = new File(arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir());
         File[] files = objectStoreRoot.listFiles();
 
         if ( files != null )

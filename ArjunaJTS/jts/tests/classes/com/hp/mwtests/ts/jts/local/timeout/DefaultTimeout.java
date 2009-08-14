@@ -34,7 +34,6 @@ package com.hp.mwtests.ts.jts.local.timeout;
 import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.ats.jts.common.Environment;
 
 import com.arjuna.ats.jts.OTSManager;
 

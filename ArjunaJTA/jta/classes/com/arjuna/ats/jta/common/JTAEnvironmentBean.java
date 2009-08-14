@@ -22,6 +22,11 @@ package com.arjuna.ats.jta.common;
 
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
+import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
+
+import java.util.List;
+import java.util.Collections;
+import java.util.ArrayList;
 
 /**
  * A JavaBean containing configuration properties for the JTA subsystem.
@@ -41,7 +46,13 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     private String jtaTSRImplementation = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple";
 
     private int xaBackoffPeriod = 20000;
-    private String xaRecoveryNode; // key only
+
+    @ConcatenationPrefix(prefix = "com.arjuna.ats.jta.xaRecoveryNode")
+    private List<String> xaRecoveryNodes = Collections.emptyList();
+
+    @ConcatenationPrefix(prefix = "com.arjuna.ats.jta.recovery.XAResourceRecovery")
+    private List<String> xaResourceRecoveryInstances = Collections.emptyList();
+
     private boolean xaRollbackOptimization = false;
     private boolean xaAssumeRecoveryComplete = false;
 
@@ -53,7 +64,9 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     @FullPropertyName(name = "com.arjuna.ats.jta.utils.TSRJNDIContext")
     private String jtaTSRJNDIContext = "java:/TransactionSynchronizationRegistry";
 
-    private String xaErrorHandler; // key only
+    @ConcatenationPrefix(prefix = "com.arjuna.ats.jta.xaErrorHandler")
+    private List<String> xaErrorHandlers = Collections.emptyList();
+
     private boolean xaTransactionTimeoutEnabled = true;
     private String lastResourceOptimisationInterface = null;
 
@@ -123,18 +136,35 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
         this.xaBackoffPeriod = xaBackoffPeriod;
     }
 
-//    public static final String XA_RECOVERY_NODE = "com.arjuna.ats.jta.xaRecoveryNode";
-    public String getXaRecoveryNode()
+    public List<String> getXaRecoveryNodes()
     {
-        return xaRecoveryNode;
+        if(xaRecoveryNodes == null) {
+            return Collections.emptyList();
+        } else {
+            return new ArrayList<String>(xaRecoveryNodes);
+        }
     }
 
-    public void setXaRecoveryNode(String xaRecoveryNode)
+    public void setXaRecoveryNodes(List<String> xaRecoveryNodes)
     {
-        this.xaRecoveryNode = xaRecoveryNode;
+        this.xaRecoveryNodes = new ArrayList<String>(xaRecoveryNodes);
     }
 
-//    public static final String XA_ROLLBACK_OPTIMIZATION = "com.arjuna.ats.jta.xaRollbackOptimization";
+    public List<String> getXaResourceRecoveryInstances()
+    {
+        if(xaResourceRecoveryInstances == null) {
+            return Collections.emptyList();
+        } else {
+            return new ArrayList<String>(xaResourceRecoveryInstances);
+        }
+    }
+
+    public void setXaResourceRecoveryInstances(List<String> xaResourceRecoveryInstances)
+    {
+        this.xaResourceRecoveryInstances = new ArrayList<String>(xaResourceRecoveryInstances);
+    }
+
+    //    public static final String XA_ROLLBACK_OPTIMIZATION = "com.arjuna.ats.jta.xaRollbackOptimization";
     public boolean isXaRollbackOptimization()
     {
         return xaRollbackOptimization;
@@ -189,18 +219,21 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
         this.jtaTSRJNDIContext = jtaTSRJNDIContext;
     }
 
-//    public static final String XA_ERROR_HANDLER = "com.arjuna.ats.jta.xaErrorHandler";
-    public String getXaErrorHandler()
+    public List<String> getXaErrorHandlers()
     {
-        return xaErrorHandler;
+        if(xaErrorHandlers == null) {
+            return Collections.emptyList();
+        } else {
+            return new ArrayList<String>(xaErrorHandlers);
+        }
     }
 
-    public void setXaErrorHandler(String xaErrorHandler)
+    public void setXaErrorHandlers(List<String> xaErrorHandlers)
     {
-        this.xaErrorHandler = xaErrorHandler;
+        this.xaErrorHandlers = new ArrayList(xaErrorHandlers);
     }
 
-//    public static final String XA_TRANSACTION_TIMEOUT_ENABLED = "com.arjuna.ats.jta.xaTransactionTimeoutEnabled";
+    // public static final String XA_TRANSACTION_TIMEOUT_ENABLED = "com.arjuna.ats.jta.xaTransactionTimeoutEnabled";
     public boolean isXaTransactionTimeoutEnabled()
     {
         return xaTransactionTimeoutEnabled;

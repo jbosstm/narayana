@@ -32,26 +32,6 @@
 
 package com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators;
 
-import com.arjuna.ats.arjuna.recovery.RecoveryActivator;
-import com.arjuna.ats.jts.logging.*;
-import com.arjuna.common.util.logging.*;
-import com.arjuna.orbportability.common.Environment;
-
-
-import org.omg.CORBA.NO_IMPLEMENT;
-import org.omg.CORBA.SystemException;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.orbportability.debug.OAAttribute;
-
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.orbportability.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
-
 public class ORBRunner extends Thread 
 {
     

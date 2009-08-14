@@ -34,12 +34,9 @@ package com.arjuna.ats.internal.txoj.lockstore;
 import com.arjuna.ats.txoj.TxOJNames;
 import com.arjuna.ats.txoj.lockstore.LockStoreImple;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.txoj.common.Environment;
-import com.arjuna.ats.txoj.common.Configuration;
 import com.arjuna.ats.txoj.common.txojPropertyManager;
 import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 

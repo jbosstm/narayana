@@ -49,6 +49,11 @@ public class arjPropertyManager
         getPropertyManager();
     }
 
+    /**
+     * @deprecated use environment beans instead.
+     * @return
+     */
+    @Deprecated
     public static PropertyManager getPropertyManager()
     {
         return PropertyManagerFactory.getPropertyManagerForModule("arjuna", Environment.PROPERTIES_FILE);

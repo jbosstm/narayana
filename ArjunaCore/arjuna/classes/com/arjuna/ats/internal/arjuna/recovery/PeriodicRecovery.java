@@ -33,17 +33,12 @@ package com.arjuna.ats.internal.arjuna.recovery;
 
 import java.lang.InterruptedException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.Vector;
+import java.util.*;
 import java.net.*;
 import java.io.*;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
-import com.arjuna.ats.arjuna.recovery.RecoveryEnvironment;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -912,48 +907,16 @@ public class PeriodicRecovery extends Thread
     }
 
     /**
-     * Load recovery modules prior to starting to recovery. The property
-     * name of each module is used to indicate relative ordering.
+     * Load recovery modules prior to starting to recovery. These are loaded in list iteration order.
      */
+    private void loadModules ()
+    {
+        Vector<String> moduleNames = new Vector<String>(recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryExtensions());
 
-   private void loadModules ()
-   {
-      // scan the relevant properties so as to get them into sort order
-       Properties properties = arjPropertyManager.getPropertyManager().getProperties();
-
-      if (properties != null)
-      {
-         Vector moduleNames = new Vector();
-         Enumeration names = properties.propertyNames();
-
-         while (names.hasMoreElements())
-         {
-            String attrName = (String) names.nextElement();
-
-            if (attrName.startsWith(RecoveryEnvironment.MODULE_PROPERTY_PREFIX))
-            {
-               // this is one of ours - put it in the right place
-               int position = 0;
-
-               while ( position < moduleNames.size() &&
-                       attrName.compareTo( (String)moduleNames.elementAt(position)) > 0 )
-               {
-                  position++;
-               }
-               moduleNames.add(position,attrName);
-            }
-         }
-         // now go through again and load them
-         names = moduleNames.elements();
-
-         while (names.hasMoreElements())
-         {
-            String attrName = (String) names.nextElement();
-
-            loadModule(properties.getProperty(attrName));
-         }
-      }
-   }
+        for(String moduleName : moduleNames) {
+            loadModule(moduleName);
+        }
+    }
 
     /**
      * load a specific recovery module and add it to the recovery modules list

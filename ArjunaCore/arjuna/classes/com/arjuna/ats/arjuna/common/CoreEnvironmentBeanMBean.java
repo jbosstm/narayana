@@ -20,6 +20,8 @@
  */
 package com.arjuna.ats.arjuna.common;
 
+import java.util.List;
+
 /**
  * A JMX MBean interface containing assorted configuration for the core transaction system.
  *
@@ -30,6 +32,10 @@ public interface CoreEnvironmentBeanMBean
     String getPropertiesFile();
 
     void setPropertiesFile(String propertiesFile);
+
+    List<String> getStaticInventoryElements();
+
+    void setStaticInventoryElements(List<String> staticInventoryElements);
 
     String getVarDir();
 

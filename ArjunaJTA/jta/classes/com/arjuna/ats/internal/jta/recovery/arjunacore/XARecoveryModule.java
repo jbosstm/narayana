@@ -43,7 +43,6 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 
 import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
-import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.jta.recovery.*;
 import com.arjuna.ats.jta.utils.XAHelper;
 import com.arjuna.ats.jta.xa.XidImple;
@@ -295,121 +294,83 @@ public class XARecoveryModule implements RecoveryModule
 			_recoveryManagerClass = null;
 		}
 
-		Properties props = jtaPropertyManager.getPropertyManager().getProperties();
 
-		if (props != null)
-		{
-			Enumeration names = props.propertyNames();
+        List<String> instances = jtaPropertyManager.getJTAEnvironmentBean().getXaResourceRecoveryInstances();
 
-			while (names.hasMoreElements())
-			{
-				String propName = (String) names.nextElement();
+        for(String theClassAndParameter : instances)
+        {
+            /*
+                        * Given the recovery string, create the class it refers to
+                        * and store it.
+                        */
 
-				if (propName
-						.startsWith(XARecoveryModule.XARecoveryPropertyNamePrefix))
-				{
-					/*
-					 * Given the recovery string, create the class it refers to
-					 * and store it.
-					 */
+            // see if there is a string parameter
 
-					String theClassAndParameter = jtaPropertyManager.getPropertyManager()
-							.getProperty(propName);
+            int breakPosition = theClassAndParameter.indexOf(BREAKCHARACTER);
 
-					// see if there is a string parameter
+            String theClass = null;
+            String theParameter = null;
 
-					int breakPosition = theClassAndParameter
-							.indexOf(BREAKCHARACTER);
+            if (breakPosition != -1)
+            {
+                theClass = theClassAndParameter.substring(0, breakPosition);
+                theParameter = theClassAndParameter.substring(breakPosition + 1);
+            }
+            else
+            {
+                theClass = theClassAndParameter;
+            }
 
-					String theClass = null;
-					String theParameter = null;
+            if (jtaLogger.loggerI18N.isInfoEnabled())
+            {
+                if (jtaLogger.loggerI18N.isInfoEnabled())
+                {
+                    jtaLogger.loggerI18N
+                            .info("com.arjuna.ats.internal.jta.recovery.info.loading",
+                                    new Object[] {
+                                        _logName,(theClass + ((theParameter != null) ? theParameter : "")) });
+                }
+            }
 
-					if (breakPosition != -1)
-					{
-						theClass = theClassAndParameter.substring(0,
-								breakPosition);
-						theParameter = theClassAndParameter
-								.substring(breakPosition + 1);
-					}
-					else
-					{
-						theClass = theClassAndParameter;
-					}
+            if (theClass == null)
+            {
+                if (jtaLogger.loggerI18N.isWarnEnabled())
+                {
+                    jtaLogger.loggerI18N
+                            .warn("com.arjuna.ats.internal.jta.recovery.classloadfail",
+                                new Object[] { _logName, theClassAndParameter });
+                }
+            }
+            else
+            {
+                try
+                {
+                    Class c = Thread.currentThread()
+                            .getContextClassLoader()
+                            .loadClass(theClass);
 
-					if (jtaLogger.loggerI18N.isInfoEnabled())
-					{
-						if (jtaLogger.loggerI18N.isInfoEnabled())
-						{
-							jtaLogger.loggerI18N
-									.info(
-											"com.arjuna.ats.internal.jta.recovery.info.loading",
-											new Object[]
-											{
-													_logName,
-													(theClass + ((theParameter != null) ? theParameter
-															: "")) });
-						}
-					}
+                    XAResourceRecovery ri = (XAResourceRecovery) c
+                            .newInstance();
 
-					if (theClass == null)
-					{
-						if (jtaLogger.loggerI18N.isWarnEnabled())
-						{
-							jtaLogger.loggerI18N
-									.warn(
-											"com.arjuna.ats.internal.jta.recovery.classloadfail",
-											new Object[]
-											{ _logName, propName });
-						}
-					}
-					else
-					{
-						try
-						{
-							Class c = Thread.currentThread()
-									.getContextClassLoader()
-									.loadClass(theClass);
+                    if (theParameter != null)
+                        ri.initialise(theParameter);
 
-							XAResourceRecovery ri = (XAResourceRecovery) c
-									.newInstance();
+                    _xaRecoverers.addElement(ri);
+                }
+                catch (Exception e)
+                {
+                    if (jtaLogger.loggerI18N.isWarnEnabled())
+                    {
+                        jtaLogger.loggerI18N
+                                .warn("com.arjuna.ats.internal.jta.recovery.general",
+                                        new Object[] { e, theClass }, e);
+                    }
+                }
+            }
+        }
 
-							if (theParameter != null)
-								ri.initialise(theParameter);
-
-							_xaRecoverers.addElement(ri);
-						}
-						catch (Exception e)
-						{
-							if (jtaLogger.loggerI18N.isWarnEnabled())
-							{
-								jtaLogger.loggerI18N
-										.warn(
-												"com.arjuna.ats.internal.jta.recovery.general",
-												new Object[]
-												{ e, theClass });
-							}
-						}
-					}
-				}
-				else
-				{
-					if (propName.startsWith(Environment.XA_RECOVERY_NODE))
-					{
-						/*
-						 * Find the node(s) we can recover on behalf of.
-						 */
-
-						String name = jtaPropertyManager.getPropertyManager()
-								.getProperty(propName);
-
-						if (_xaRecoveryNodes == null)
-							_xaRecoveryNodes = new Vector();
-
-						_xaRecoveryNodes.addElement(name);
-					}
-				}
-			}
-		}
+        // Find the node(s) we can recover on behalf of.
+        _xaRecoveryNodes = new Vector<String>(jtaPropertyManager.getJTAEnvironmentBean().getXaRecoveryNodes());
 
 		if ((_xaRecoveryNodes == null) || (_xaRecoveryNodes.size() == 0))
 		{

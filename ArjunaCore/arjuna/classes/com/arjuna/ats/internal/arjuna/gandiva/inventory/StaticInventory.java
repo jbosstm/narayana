@@ -264,39 +264,25 @@ protected InventoryElement find (ClassName className)
      * added dynamically. If we find them, instantiate them and
      * hope that works!
      */
-
-private synchronized final void initialise ()
+    private synchronized final void initialise ()
     {
-	Implementations.initialise();
+        Implementations.initialise();
 
-	Enumeration e = arjPropertyManager.getPropertyManager().propertyNames();
-	
-	if (e != null)
-	{
-	    while (e.hasMoreElements())
-	    {
-		String name = (String) e.nextElement();
-		
-		if (name.startsWith(com.arjuna.ats.arjuna.common.Environment.STATIC_INVENTORY_IMPLE))
-		{
-		    String className = arjPropertyManager.getPropertyManager().getProperty(name);
-
-		    try
-		    {
-			Class c = Thread.currentThread().getContextClassLoader().loadClass(className);
-			Object o = c.newInstance();
+        for(String className : arjPropertyManager.getCoreEnvironmentBean().getStaticInventoryElements()) {
+            try
+            {
+                Class c = Thread.currentThread().getContextClassLoader().loadClass(className);
+                Object o = c.newInstance();
                 if (o instanceof InventoryElement)
                     Inventory.inventory().addToList((InventoryElement) o);
             }
-		    catch (Exception ex)
-		    {
-			ex.printStackTrace();
-		    }
-		}
-	    }
-	}
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+        }
 
-	initialised = true;
+        initialised = true;
     }
     
 private static InventoryList headOfList = null;

@@ -53,6 +53,15 @@ public class JTSEnvironmentBean implements JTSEnvironmentBeanMBean
     @FullPropertyName(name = "com.arjuna.ats.jts.ots_1_0.timeoutPropagation")
     private boolean timeoutPropagation;
 
+    @FullPropertyName(name = "com.arjuna.ats.jts.recovery.issueRecoveryRollback")
+    private boolean issueRecoveryRollback = true;
+
+    @FullPropertyName(name = "com.arjuna.ats.jts.recovery.commitTransactionRetryLimit")
+    private int commitedTransactionRetryLimit = 3;
+
+    @FullPropertyName(name = "com.arjuna.ats.jts.recovery.assumedObjectNotExist")
+    private int assumedObjectNotExist = 10;
+
 
 //    public static final String PROPERTIES_FILE = "com.arjuna.ats.jts.common.propertiesFile";
     public String getPropertiesFile()
@@ -221,5 +230,35 @@ public class JTSEnvironmentBean implements JTSEnvironmentBeanMBean
     public void setTimeoutPropagation(boolean timeoutPropagation)
     {
         this.timeoutPropagation = timeoutPropagation;
+    }
+
+    public boolean isIssueRecoveryRollback()
+    {
+        return issueRecoveryRollback;
+    }
+
+    public void setIssueRecoveryRollback(boolean issueRecoveryRollback)
+    {
+        this.issueRecoveryRollback = issueRecoveryRollback;
+    }
+
+    public int getCommitedTransactionRetryLimit()
+    {
+        return commitedTransactionRetryLimit;
+    }
+
+    public void setCommitedTransactionRetryLimit(int commitedTransactionRetryLimit)
+    {
+        this.commitedTransactionRetryLimit = commitedTransactionRetryLimit;
+    }
+
+    public int getAssumedObjectNotExist()
+    {
+        return assumedObjectNotExist;
+    }
+
+    public void setAssumedObjectNotExist(int assumedObjectNotExist)
+    {
+        this.assumedObjectNotExist = assumedObjectNotExist;
     }
 }

@@ -32,7 +32,6 @@ package com.hp.mwtests.ts.arjuna.objectstore;
  */
 
 import com.arjuna.ats.arjuna.ArjunaNames;
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreError;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreImple;
@@ -41,12 +40,18 @@ import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class JDBCInventory
 {
     @Test
     public void test()
     {
-        arjPropertyManager.getPropertyManager().setProperty(Environment.STATIC_INVENTORY_IMPLE + "1", "com.arjuna.ats.internal.arjuna.objectstore.JDBCStoreSetup");
+        List<String> staticImpleList = new ArrayList<String>();
+        staticImpleList.add("com.arjuna.ats.internal.arjuna.objectstore.JDBCStoreSetup");
+        arjPropertyManager.getCoreEnvironmentBean().setStaticInventoryElements(staticImpleList);
+
         arjPropertyManager.getObjectStoreEnvironmentBean().setJdbcUserDbAccess("com.hp.mwtests.ts.arjuna.objectstore.MyAccess");
 
         boolean passed = false;

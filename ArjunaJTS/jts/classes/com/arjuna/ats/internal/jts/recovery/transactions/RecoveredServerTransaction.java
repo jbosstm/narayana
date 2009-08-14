@@ -98,12 +98,8 @@ public class RecoveredServerTransaction extends ServerTransaction
 
     public RecoveredServerTransaction ( Uid actionUid )
     {
-	this(actionUid, "");
-	String assumedExistString = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.recovery.RecoveryEnvironment.ASSUMED_OBJECT_NOT_EXIST);
-	if (assumedExistString != null) {
-	  Integer assumedExistInteger = new Integer(assumedExistString);
-          _assumed_not_exist = 	assumedExistInteger.intValue();
-	}
+        this(actionUid, "");
+        _assumed_not_exist = jtsPropertyManager.getJTSEnvironmentBean().getAssumedObjectNotExist();
     }
 
     /**
@@ -117,12 +113,7 @@ public class RecoveredServerTransaction extends ServerTransaction
     {
 	super(actionUid);
 
-	String assumedExistString = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.recovery.RecoveryEnvironment.ASSUMED_OBJECT_NOT_EXIST);
-
-	if (assumedExistString != null) {
-	    Integer assumedExistInteger = new Integer(assumedExistString);
-	    _assumed_not_exist =  assumedExistInteger.intValue();
-	}
+        _assumed_not_exist = jtsPropertyManager.getJTSEnvironmentBean().getAssumedObjectNotExist();
 	
 	if (jtsLogger.loggerI18N.isDebugEnabled())
 	    {

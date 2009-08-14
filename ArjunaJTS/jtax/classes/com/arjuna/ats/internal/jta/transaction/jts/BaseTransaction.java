@@ -326,10 +326,6 @@ public class BaseTransaction
 
 	static
 	{
-		String subtran = jtaPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jta.common.Environment.SUPPORT_SUBTRANSACTIONS);
-
-		if ((subtran != null) && (subtran.equals("YES")))
-			_supportSubtransactions = true;
-	}
-
+        _supportSubtransactions = jtaPropertyManager.getJTAEnvironmentBean().isSupportSubtransactions();
+    }
 }

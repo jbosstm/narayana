@@ -22,7 +22,12 @@ package com.arjuna.ats.arjuna.common;
 
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
+import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
 import com.arjuna.ats.arjuna.utils.Utility;
+
+import java.util.List;
+import java.util.Collections;
+import java.util.ArrayList;
 
 /**
  * A JavaBean containing assorted configuration properties for the core transaction system.
@@ -35,8 +40,8 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
     @FullPropertyName(name = "com.arjuna.ats.arjuna.common.propertiesFile")
     private String propertiesFile = "";
 
-//    @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.inventory.staticInventoryImple")
-//    private String staticInventoryImple;
+    @ConcatenationPrefix(prefix = "com.arjuna.ats.internal.arjuna.inventory.staticInventoryImple")
+    private List<String> staticInventoryElements = Collections.emptyList();
 
     @FullPropertyName(name = "com.arjuna.ats.arjuna.common.varDir")
     private String varDir = null;
@@ -68,6 +73,20 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
     public void setPropertiesFile(String propertiesFile)
     {
         this.propertiesFile = propertiesFile;
+    }
+
+    public List<String> getStaticInventoryElements()
+    {
+        if(staticInventoryElements == null) {
+            return Collections.emptyList();
+        } else {
+            return new ArrayList<String>(staticInventoryElements);
+        }
+    }
+
+    public void setStaticInventoryElements(List<String> staticInventoryElements)
+    {
+        this.staticInventoryElements = new ArrayList<String>(staticInventoryElements);
     }
 
     public String getVarDir()

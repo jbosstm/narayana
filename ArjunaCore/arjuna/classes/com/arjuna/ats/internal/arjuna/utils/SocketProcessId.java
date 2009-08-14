@@ -32,7 +32,6 @@
 package com.arjuna.ats.internal.arjuna.utils;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 import com.arjuna.ats.arjuna.utils.Utility;

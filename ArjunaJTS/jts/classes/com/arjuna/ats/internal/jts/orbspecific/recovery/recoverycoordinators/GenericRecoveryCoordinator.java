@@ -414,15 +414,7 @@ private static Status get_status (Uid actionUid, Uid processUid) throws Inactive
 
     static
     {
-	_issueRecoveryRollback = true;
-	
-	String issueRecoveryRollback = jtsPropertyManager.getPropertyManager().getProperty(com.arjuna.ats.jts.recovery.RecoveryEnvironment.OTS_ISSUE_RECOVERY_ROLLBACK);
-	
-	if (issueRecoveryRollback != null)
-	{
-	    if (issueRecoveryRollback.compareTo("NO") == 0)
-		_issueRecoveryRollback = false;
-	}
+        _issueRecoveryRollback = jtsPropertyManager.getJTSEnvironmentBean().isIssueRecoveryRollback();
     }
 
 }

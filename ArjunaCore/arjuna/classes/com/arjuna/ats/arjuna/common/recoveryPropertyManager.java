@@ -35,6 +35,11 @@ public class recoveryPropertyManager
     private static final AtomicBoolean recoveryEnvironmentBeanInit = new AtomicBoolean(false);
     private static final RecoveryEnvironmentBean recoveryEnvironmentBean = new RecoveryEnvironmentBean();
 
+    /**
+     * @deprecated use RecoveryEnvironmentBean instead
+     * @return
+     */
+    @Deprecated
     public static PropertyManager getPropertyManager()
     {
         return PropertyManagerFactory.getPropertyManagerForModule("arjuna", Environment.PROPERTIES_FILE);

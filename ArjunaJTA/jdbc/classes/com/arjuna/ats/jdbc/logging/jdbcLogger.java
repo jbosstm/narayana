@@ -51,7 +51,7 @@ public class jdbcLogger
     static
     {
         /** Ensure the properties are loaded before initialising the logger **/
-        jdbcPropertyManager.getPropertyManager();
+        jdbcPropertyManager.init();
         
         logger = LogFactory.getLogNoi18n("com.arjuna.ats.jdbc.logging.logger");
 

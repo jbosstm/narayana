@@ -31,35 +31,6 @@
 
 package com.arjuna.ats.internal.jts.lifecycle;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
-
-import com.arjuna.ats.jts.common.Environment;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-
-import com.arjuna.orbportability.*;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
-
-import com.arjuna.ats.internal.jts.orbspecific.CurrentImple;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
-import com.arjuna.ats.internal.jts.orbspecific.TransactionFactoryImple;
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.internal.jts.utils.Helper;
-
-import org.omg.CosTransactions.*;
-
-import com.arjuna.ArjunaOTS.*;
-
-import java.io.PrintStream;
-
-import org.omg.CORBA.SystemException;
-import org.omg.CORBA.BAD_PARAM;
-import org.omg.CORBA.UNKNOWN;
-import org.omg.CORBA.UserException;
-import org.omg.CORBA.ORBPackage.InvalidName;
-import java.io.IOException;
-
 public class StartupOTS
 {
 

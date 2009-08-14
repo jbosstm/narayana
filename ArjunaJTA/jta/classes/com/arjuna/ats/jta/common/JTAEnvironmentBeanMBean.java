@@ -20,6 +20,8 @@
  */
 package com.arjuna.ats.jta.common;
 
+import java.util.List;
+
 /**
  * A JMX MBean interface containing configuration for the JTA system.
  *
@@ -51,10 +53,14 @@ public interface JTAEnvironmentBeanMBean
 
     void setXaBackoffPeriod(int xaBackoffPeriod);
 
-    String getXaRecoveryNode();
+    List<String> getXaRecoveryNodes();
 
-    void setXaRecoveryNode(String xaRecoveryNode);
+    void setXaRecoveryNodes(List<String> xaRecoveryNodes);
 
+    List<String> getXaResourceRecoveryInstances();
+
+    void setXaResourceRecoveryInstances(List<String> xaResourceRecoveryInstances);
+    
     boolean isXaRollbackOptimization();
 
     void setXaRollbackOptimization(boolean xaRollbackOptimization);
@@ -75,10 +81,10 @@ public interface JTAEnvironmentBeanMBean
 
     void setJtaTSRJNDIContext(String jtaTSRJNDIContext);
 
-    String getXaErrorHandler();
+    List<String> getXaErrorHandlers();
 
-    void setXaErrorHandler(String xaErrorHandler);
-
+    void setXaErrorHandlers(List<String> xaErrorHandlers);
+    
     boolean isXaTransactionTimeoutEnabled();
 
     void setXaTransactionTimeoutEnabled(boolean xaTransactionTimeoutEnabled);

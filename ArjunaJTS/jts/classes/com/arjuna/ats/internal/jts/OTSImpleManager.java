@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.internal.jts;
 
-import com.arjuna.ats.jts.common.Environment;
 import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.logging.*;
 

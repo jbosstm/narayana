@@ -38,10 +38,8 @@ import java.text.*;
 
 import com.arjuna.ats.arjuna.common.Uid ;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore ;
 import com.arjuna.ats.arjuna.recovery.ExpiryScanner ;
-import com.arjuna.ats.arjuna.recovery.RecoveryEnvironment ;
 import com.arjuna.ats.arjuna.state.InputObjectState ;
 
 import com.arjuna.ats.jts.logging.jtsLogger;

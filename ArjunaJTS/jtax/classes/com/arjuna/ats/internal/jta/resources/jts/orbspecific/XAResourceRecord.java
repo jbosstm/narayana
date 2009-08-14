@@ -34,7 +34,6 @@ package com.arjuna.ats.internal.jta.resources.jts.orbspecific;
 import com.arjuna.ats.jta.recovery.*;
 
 import com.arjuna.ats.jta.common.jtaPropertyManager;
-import com.arjuna.ats.jta.common.Environment;
 
 import com.arjuna.ats.jta.xa.*;
 import com.arjuna.ats.jta.utils.XAHelper;

@@ -21,17 +21,10 @@
 
 package com.arjuna.ats.internal.arjuna.recovery ;
 
-import java.lang.InterruptedException ;
-import java.text.SimpleDateFormat ;
-import java.util.Date ;
-import java.util.Enumeration ;
-import java.util.Properties ;
-import java.util.Vector ;
+import java.util.*;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryActivator ;
-import com.arjuna.ats.arjuna.recovery.RecoveryEnvironment ;
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 
 import com.arjuna.ats.arjuna.logging.FacilityCode ;
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -90,43 +83,15 @@ public class RecActivatorLoader
 
   }
 
-  private static void loadRecoveryActivators ()
-  {
-      // scan the relevant properties so as to get them into sort order
-      Properties properties = arjPropertyManager.getPropertyManager().getProperties();
+    // These are loaded in list iteration order.
+    private static void loadRecoveryActivators ()
+    {
+        Vector<String> activatorNames = new Vector<String>(recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryActivators());
 
-      if (properties != null)
-	  {
-	      Vector activatorNames = new Vector();
-	      Enumeration names = properties.propertyNames();
-
-	      while (names.hasMoreElements())
-		  {
-		      String attrName = (String) names.nextElement();
-
-		      if (attrName.startsWith(RecoveryEnvironment.ACTIVATOR_PROPERTY_PREFIX) )
-			  {
-			      // this is one of ours - put it in the right place
-			      int position = 0;
-			      while ( position < activatorNames.size() &&
-				      attrName.compareTo( (String)activatorNames.elementAt(position)) > 0 )
-				  {
-				      position++;
-				  }
-			      activatorNames.add(position,attrName);
-			  }
-		  }
-         // now go through again and load them
-	      names = activatorNames.elements();
-
-	      while (names.hasMoreElements())
-		  {
-		  String attrName = (String) names.nextElement();
-		  loadActivator(properties.getProperty(attrName));
-		  }
-
-	  }
-  }
+        for(String activatorName : activatorNames) {
+            loadActivator(activatorName);
+        }
+    }
 
   private static void loadActivator (String className)
   {

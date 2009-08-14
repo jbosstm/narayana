@@ -90,4 +90,16 @@ public interface JTSEnvironmentBeanMBean
     boolean isTimeoutPropagation();
 
     void setTimeoutPropagation(boolean timeoutPropagation);
+
+    boolean isIssueRecoveryRollback();
+
+    void setIssueRecoveryRollback(boolean issueRecoveryRollback);
+
+    int getCommitedTransactionRetryLimit();
+
+    void setCommitedTransactionRetryLimit(int commitedTransactionRetryLimit);
+
+    int getAssumedObjectNotExist();
+
+    void setAssumedObjectNotExist(int assumedObjectNotExist);
 }

@@ -89,8 +89,9 @@ package com.arjuna.ats.arjuna.common;
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: Environment.java 2342 2006-03-30 13:06:17Z  $
  * @since 1.0.
+ * @deprecated use CoordinatorEnvironentBean, CoreEnvironmentBean, ObjectStoreEnvironmentBean, RecoveryEnvironmentBean instead.
  */
-
+@Deprecated
 public class Environment
 {
     public static final String PROPERTIES_FILE = "com.arjuna.ats.arjuna.common.propertiesFile";

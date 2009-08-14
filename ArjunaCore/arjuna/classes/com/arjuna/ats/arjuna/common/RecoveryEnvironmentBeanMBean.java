@@ -21,6 +21,7 @@
 package com.arjuna.ats.arjuna.common;
 
 import java.net.InetAddress;
+import java.util.List;
 
 /**
  * A JMX MBean interface containing configuration for the recovery system.
@@ -68,6 +69,18 @@ public interface RecoveryEnvironmentBeanMBean
     int getTransactionStatusManagerExpiryTime();
 
     void setTransactionStatusManagerExpiryTime(int transactionStatusManagerExpiryTime);
+
+    List<String> getExpiryScanners();
+
+    void setExpiryScanners(List<String> expiryScanners);
+
+    List<String> getRecoveryExtensions();
+
+    void setRecoveryExtensions(List<String> recoveryExtensions);
+
+    List<String> getRecoveryActivators();
+
+    void setRecoveryActivators(List<String> recoveryActivators);
 
     boolean isTimeoutSocket();
 

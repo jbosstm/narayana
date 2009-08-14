@@ -52,7 +52,7 @@ public class jtaLogger
     static
     {
         /** Ensure we load the properties before initialising the logger **/
-        jtaPropertyManager.getPropertyManager();
+        jtaPropertyManager.init();
         
         logger = LogFactory.getLogNoi18n("com.arjuna.ats.jta.logging.logger");
 

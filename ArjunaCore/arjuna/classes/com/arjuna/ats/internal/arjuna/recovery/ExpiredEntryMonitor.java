@@ -34,12 +34,9 @@ package com.arjuna.ats.internal.arjuna.recovery;
 import java.text.*;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Properties;
 import java.util.Vector;
 
 import com.arjuna.ats.arjuna.recovery.ExpiryScanner;
-import com.arjuna.ats.arjuna.recovery.RecoveryEnvironment;
-import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -279,23 +276,9 @@ public class ExpiredEntryMonitor extends Thread
   {
       _expiryScanners = new Vector();
 
-    // search our properties
-    Properties properties = arjPropertyManager.getPropertyManager().getProperties();
-    
-    if (properties != null)
-    {
-	Enumeration names = properties.propertyNames();
-	
-	while (names.hasMoreElements())
-	{
-	    String propertyName = (String) names.nextElement();
-	    
-	    if ( propertyName.startsWith(RecoveryEnvironment.SCANNER_PROPERTY_PREFIX) )
-	    {
-		loadScanner( properties.getProperty(propertyName));
-	    }
-	}
-    }
+      for(String scannerName : recoveryPropertyManager.getRecoveryEnvironmentBean().getExpiryScanners()) {
+          loadScanner(scannerName);
+      }
   }
     
   private static void loadScanner( String className )

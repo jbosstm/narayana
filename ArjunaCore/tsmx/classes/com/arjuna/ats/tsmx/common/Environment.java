@@ -30,6 +30,10 @@
  */
 package com.arjuna.ats.tsmx.common;
 
+/**
+ * @deprecated
+ */
+@Deprecated
 public class Environment
 {
 	public static final String PROPERTIES_FILE = "com.arjuna.ats.tsmx.common.propertiesFile";

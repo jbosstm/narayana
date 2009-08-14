@@ -51,7 +51,6 @@ import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 
 import com.arjuna.ats.jta.xa.*;
 import com.arjuna.ats.jta.common.Configuration;
-import com.arjuna.ats.jta.common.Environment;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
 import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;

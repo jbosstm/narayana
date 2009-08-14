@@ -20,11 +20,7 @@
  */
 package com.hp.mwtests.ts.jta.jts.basic;
 
-import com.arjuna.orbportability.ORB;
-import com.arjuna.orbportability.OA;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
-import com.arjuna.ats.jta.common.Environment;
-import com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple;
 import com.hp.mwtests.ts.jta.jts.JTSTestCase;
 
 import javax.transaction.TransactionManager;

@@ -33,7 +33,9 @@ package com.arjuna.ats.arjuna.recovery ;
 
 /**
  * Container for property names used by recovery
+ * @deprecated use RecoveryEnvironmentBean instead.
  */
+@Deprecated
 public class RecoveryEnvironment
 {
     public static final String MODULE_PROPERTY_PREFIX  = "com.arjuna.ats.arjuna.recovery.recoveryExtension" ;

@@ -34,11 +34,8 @@ import javax.transaction.xa.XAException;
 import com.arjuna.ats.jta.resources.XAResourceMap;
 
 import com.arjuna.ats.jta.common.jtaPropertyManager;
-import com.arjuna.ats.jta.common.Environment;
 
 import java.util.HashMap;
-import java.util.Enumeration;
-import java.util.Properties;
 
 public class XAResourceErrorHandler
 {
@@ -61,43 +58,24 @@ public class XAResourceErrorHandler
 
 	private static HashMap _maps = new HashMap();
 
-	static
-	{
-		// explicitly add tibco
+    static
+    {
+        for(String theClass : jtaPropertyManager.getJTAEnvironmentBean().getXaErrorHandlers())
+        {
+            // Given the recovery string, create the class it refers to and store it.
 
-		Properties props = jtaPropertyManager.getPropertyManager().getProperties();
+            try
+            {
+                Class c = Thread.currentThread().getContextClassLoader().loadClass(theClass);
 
-		if (props != null)
-		{
-			Enumeration names = props.propertyNames();
+                XAResourceMap map = (XAResourceMap) c.newInstance();
 
-			while (names.hasMoreElements())
-			{
-				String propName = (String) names.nextElement();
-
-				if (propName.startsWith(Environment.XA_ERROR_HANDLER))
-				{
-					/*
-					 * Given the recovery string, create the class it refers to
-					 * and store it.
-					 */
-
-					String theClass = jtaPropertyManager.getPropertyManager().getProperty(propName);
-
-					try
-					{
-						Class c = Thread.currentThread().getContextClassLoader().loadClass(theClass);
-
-						XAResourceMap map = (XAResourceMap) c.newInstance();
-
-						XAResourceErrorHandler.addXAResourceMap(map.getXAResourceName(), map);
-					}
-					catch (Exception ex)
-					{
-						ex.printStackTrace();
-					}
-				}
-			}
-		}
-	}
+                XAResourceErrorHandler.addXAResourceMap(map.getXAResourceName(), map);
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+        }
+    }
 }

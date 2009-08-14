@@ -34,26 +34,11 @@ package com.arjuna.ats.internal.jts.orbspecific.recovery;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryActivator;
 import com.arjuna.ats.jts.logging.*;
-import com.arjuna.common.util.logging.*;
-import com.arjuna.orbportability.common.Environment;
 
-import org.omg.CORBA.NO_IMPLEMENT;
-import org.omg.CORBA.SystemException;
-
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
-
-import com.arjuna.orbportability.orb.Attribute;
-
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.orbportability.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 
 import com.arjuna.ats.internal.jts.Implementations;
 
-import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.GenericRecoveryCreator;
 import com.arjuna.ats.internal.jts.recovery.*;
 import com.arjuna.ats.internal.jts.recovery.recoverycoordinators.RecoveryServiceInit;
 
@@ -88,9 +73,6 @@ public class RecoveryEnablement implements RecoveryActivator
 
     private static boolean _isNormalProcess = true;
     private static String  _RecoveryManagerTag = null;
-
-    // no accessible variable for this first property name prefix
-    private static final String eventHandlerPropertyPrefix = Environment.EVENT_HANDLER;
 
     /**
      * Constructor does the work as a result of being registered as an ORBPreInit

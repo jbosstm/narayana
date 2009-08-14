@@ -42,6 +42,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class jtaPropertyManager
 {
+    // ensure properties are loaded
+    public static void init() {
+        getPropertyManager();
+    }
+
+    /**
+     * @deprecated use JTAEnvironmentBean instead
+     * @return
+     */
+    @Deprecated
     public static PropertyManager getPropertyManager()
     {
         return PropertyManagerFactory.getPropertyManagerForModule("jta", Environment.PROPERTIES_FILE);

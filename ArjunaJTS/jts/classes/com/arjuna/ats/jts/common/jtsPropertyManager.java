@@ -43,6 +43,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class jtsPropertyManager
 {
+    // ensure properties are loaded
+    public static void init() {
+        getPropertyManager();
+    }
+
+    /**
+     * @deprecated use JTSEnvironmentBean instead
+     * @return
+     */
+    @Deprecated
     public static PropertyManager getPropertyManager()
     {
         return PropertyManagerFactory.getPropertyManagerForModule("jts", Environment.PROPERTIES_FILE);

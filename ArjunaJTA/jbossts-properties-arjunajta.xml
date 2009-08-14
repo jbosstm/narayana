@@ -64,7 +64,7 @@
     <entry key="CoreEnvironmentBean.nodeIdentifier">1</entry>
 
 	<!-- Which Xid types to recover -->
-	<entry key="com.arjuna.ats.jta.xaRecoveryNode">1</entry>
+	<entry key="JTAEnvironmentBean.xaRecoveryNodes">1</entry>
 	
     <!--
       Base port number for determining a unique number to associate with an instance of the transaction service
@@ -72,36 +72,35 @@
       Use the value 0 to allow the system to select the first available port number.
       If the port number is non-zero and the port is in use then the value will be incremented until either a successful binding
       to the loopback address is created or until the the maximum number of ports (specified by the
-      com.arjuna.ats.internal.arjuna.utils.SocketProcessIdMaxPorts property) have been tried or until the port number
+      CoreEnvironmentBean.socketProcessIdMaxPorts property) have been tried or until the port number
       reaches the maximum possible port number.
     -->
     <entry key="CoreEnvironmentBean.socketProcessIdPort">0</entry>
 
 
 
-
-
     <!--
-      Periodic recovery modules to use.  Invoked in sort-order of names.
+      Periodic recovery modules to use.  Invoked in the order they appear in the list.
          Check http://www.jboss.org/community/docs/DOC-10788 for more information
          on recovery modules and their configuration when running in various
          deployments.
     -->
-    <entry key="com.arjuna.ats.arjuna.recovery.recoveryExtension1">com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule</entry>
+    <entry key="RecoveryEnvironmentBean.recoveryExtensions">
+        com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule
+        com.arjuna.ats.internal.txoj.recovery.TORecoveryModule
+        com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule
+    </entry>
 
-    <entry key="com.arjuna.ats.arjuna.recovery.recoveryExtension2">com.arjuna.ats.internal.txoj.recovery.TORecoveryModule</entry>
-
-    <entry key="com.arjuna.ats.arjuna.recovery.recoveryExtension3">com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule</entry>
+    <!-- Expiry scanners to use (order of invocation is random). -->
+    <entry key="RecoveryEnvironmentBean.expiryScanners">
+        com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner
+    </entry>
 
     <!--
-      Expiry scanners to use (order of invocation is random).
-      Names must begin with "com.arjuna.ats.arjuna.recovery.expiryScanner"
+        Add the following to the set of expiryScanners above to move logs that cannot be completed by failure recovery.
+            But be sure you know what you are doing and why!
+             com.arjuna.ats.internal.arjuna.recovery.AtomicActionExpiryScanner
     -->
-    <entry key="com.arjuna.ats.arjuna.recovery.expiryScannerTransactionStatusManager">com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner</entry>
-
-    <!-- Enable the following to move logs that cannot be completed by failure recovery. But
-be sure you know what you are doing and why! -->
-    <!-- entry key="com.arjuna.ats.arjuna.recovery.expiryScannerAtomicActionLog">com.arjuna.ats.internal.arjuna.recovery.AtomicActionExpiryScanner</entry> -->
 
     <!--
       The address and port number on which the recovery manager listens

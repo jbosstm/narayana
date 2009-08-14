@@ -35,7 +35,6 @@ import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.jtax.tests.implicit.impl.*;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
-import com.arjuna.ats.jta.common.Environment;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
