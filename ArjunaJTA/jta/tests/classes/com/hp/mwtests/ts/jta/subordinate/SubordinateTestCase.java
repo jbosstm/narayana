@@ -505,4 +505,29 @@ public class SubordinateTestCase
         assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
     }
 
+/*
+    @Test
+    public void testFailOnCommit() throws Exception
+    {
+        final Xid xid = new XidImple(new Uid());
+        final Transaction t = SubordinationManager.getTransactionImporter().importTransaction(xid);
+
+        final TestXAResource xaResource = new TestXAResource();
+        // provoke commit into failing with TwoPhaseOutcome.FINISH_ERROR
+        // warning: this is sensitive to the impl exception handling in
+        // XAResourceRecord.topLevelCommit
+        xaResource.setCommitException(new XAException(XAException.XA_RETRY));
+
+        t.enlistResource(xaResource);
+
+        final XATerminator xaTerminator = SubordinationManager.getXATerminator();
+
+        xaTerminator.prepare(xid);
+        xaTerminator.commit(xid, false);
+
+        //assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
+
+        assertTrue("commit should throw an exception and not get to here", false);
+    }
+*/
 }

@@ -38,6 +38,7 @@ public class TestXAResource implements XAResource
     private Xid currentXid;
 
     private int prepareReturnValue = XAResource.XA_OK;
+    private XAException commitException = null;
 
     public int getPrepareReturnValue()
     {
@@ -49,11 +50,25 @@ public class TestXAResource implements XAResource
         this.prepareReturnValue = prepareReturnValue;
     }
 
+    public XAException getCommitException()
+    {
+        return commitException;
+    }
+
+    public void setCommitException(XAException commitException)
+    {
+        this.commitException = commitException;
+    }
+
     public void commit(Xid xid, boolean b) throws XAException
     {
         System.out.println("XAResourceImpl.commit(Xid="+xid+", b="+b+")");
         if(!xid.equals(currentXid)) {
             System.out.println("XAResourceImpl.commit - wrong Xid!");
+        }
+
+        if(commitException != null) {
+            throw commitException;
         }
 
         currentXid = null;
