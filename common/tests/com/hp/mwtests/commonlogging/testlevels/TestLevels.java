@@ -73,7 +73,7 @@ public class TestLevels
 
 		// test the releveling for AS integration:
 		// TODO: how to configure this on a per-test (not per-JVM) basis?
-		commonPropertyManager.getPropertyManager().setProperty(LogFactory.LOGGER_PROPERTY, "log4j_releveler");
+        commonPropertyManager.getLoggingEnvironmentBean().setLoggingSystem("log4j_releveler");
 
 		System.setOut(bufferedStream);
 		writeLogMessages();

@@ -35,11 +35,58 @@ package com.arjuna.common.internal.util.logging;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class commonPropertyManager
 {
+    /**
+     * @deprecated use LoggingEnvironmentBean instead
+     * @return
+     */
+    @Deprecated
     public static PropertyManager getPropertyManager()
     {
         return PropertyManagerFactory.getPropertyManagerForModule("common", "com.arjuna.common.util.logging.propertiesFile");
     }
+
+    public static LoggingEnvironmentBean getLoggingEnvironmentBean()
+    {
+        synchronized (loggingEnvironmentBeanInit) {
+            if(!loggingEnvironmentBeanInit.get()) {
+                try {
+                    BeanPopulator.configureFromPropertyManager(loggingEnvironmentBean,  getPropertyManager());
+                    loggingEnvironmentBeanInit.set(true);
+                } catch(Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return loggingEnvironmentBean;
+    }
+
+    private static final AtomicBoolean loggingEnvironmentBeanInit = new AtomicBoolean(false);
+    private static final LoggingEnvironmentBean loggingEnvironmentBean = new LoggingEnvironmentBean();
+
+
+    public static DefaultLogEnvironmentBean getDefaultLogEnvironmentBean()
+    {
+        synchronized (defaultLogEnvironmentBeanInit) {
+            if(!defaultLogEnvironmentBeanInit.get()) {
+                try {
+                    BeanPopulator.configureFromPropertyManager(defaultLogEnvironmentBean,  getPropertyManager());
+                    defaultLogEnvironmentBeanInit.set(true);
+                } catch(Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        return defaultLogEnvironmentBean;
+    }
+
+    private static final AtomicBoolean defaultLogEnvironmentBeanInit = new AtomicBoolean(false);
+    private static final DefaultLogEnvironmentBean defaultLogEnvironmentBean = new DefaultLogEnvironmentBean();
 }

@@ -286,11 +286,11 @@ public class LogFactory {
             try
             {
                 // find out which log subsystem to use; by default log4j:
-                logSystem = commonPropertyManager.getPropertyManager().getProperty(LOGGER_PROPERTY, "log4j");
+                logSystem = commonPropertyManager.getLoggingEnvironmentBean().getLoggingSystem();
 
-                debugLevel = commonPropertyManager.getPropertyManager().getProperty(DEBUG_LEVEL, "0xffffffff");
-                facLevel = commonPropertyManager.getPropertyManager().getProperty(FACILITY_LEVEL, "0xfffffff");
-                visLevel = commonPropertyManager.getPropertyManager().getProperty(VISIBILITY_LEVEL, "0xfffffff");
+                debugLevel = commonPropertyManager.getLoggingEnvironmentBean().getDebugLevel();
+                facLevel = commonPropertyManager.getLoggingEnvironmentBean().getFacilityLevel();
+                visLevel = commonPropertyManager.getLoggingEnvironmentBean().getVisibilityLevel();
             }
             catch (Throwable t)
             {

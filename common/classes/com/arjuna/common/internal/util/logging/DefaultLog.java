@@ -151,38 +151,18 @@ public class DefaultLog implements Log, Serializable {
 
     // ------------------------------------------------------------ Initializer
 
-    private static String getStringProperty(String name) {
-        String prop = commonPropertyManager.getPropertyManager().getProperty(name);
-        // if the property manager has no info set, use the system property
-        // and if this isn't set either, default to JAKARTA simple logging.
-        if (prop == null) {
-            prop = System.getProperty(name);
-        }
-        return (prop == null) ? simpleLogProps.getProperty(name) : prop;
-	}
-
-    private static String getStringProperty(String name, String dephault) {
-        String prop = getStringProperty(name);
-        return (prop == null) ? dephault : prop;
-    }
-
-    private static boolean getBooleanProperty(String name, boolean dephault) {
-        String prop = getStringProperty(name);
-        return (prop == null) ? dephault : "true".equalsIgnoreCase(prop);
-    }
-
     // Initialize class attributes.
     // Load properties file, if found.
     // Override with system properties.
     static {
 
-        showLogName = getBooleanProperty( SHOW_LOG_NAME, showLogName);
-        showShortName = getBooleanProperty( SHOW_SHORT_LOG_NAME, showShortName);
-        showDateTime = getBooleanProperty( SHOW_DATE, showDateTime);
+        showLogName = commonPropertyManager.getDefaultLogEnvironmentBean().isShowLogName();
+        showShortName = commonPropertyManager.getDefaultLogEnvironmentBean().isShowShortLogName();
+        showDateTime = commonPropertyManager.getDefaultLogEnvironmentBean().isShowDate();
         dateFormatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss:SSS zzz");
 
-        String fileName = getStringProperty(LOG_FILE, LOG_FILE_DEFAULT);
-        boolean fileAppend = getBooleanProperty(LOG_FILE_APPEND, true);
+        String fileName = commonPropertyManager.getDefaultLogEnvironmentBean().getLogFile();
+        boolean fileAppend = commonPropertyManager.getDefaultLogEnvironmentBean().isLogFileAppend();
         try {
             FileOutputStream fOut = new FileOutputStream(fileName, fileAppend);
             defaultLogFile = new PrintStream(fOut, true);
@@ -227,7 +207,7 @@ public class DefaultLog implements Log, Serializable {
         setLevel(DefaultLog.LOG_LEVEL_INFO);
 
         // Set log level from properties
-        String lvl = commonPropertyManager.getPropertyManager().getProperty(LOG_LEVEL, null);
+        String lvl = commonPropertyManager.getDefaultLogEnvironmentBean().getDefaultLevel();
         if(null == lvl) {
             lvl =  System.getProperty(LOG_LEVEL + "info");
         }

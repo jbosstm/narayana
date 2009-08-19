@@ -38,7 +38,7 @@ public class DebugExt
 		PrintStream originalStream = System.out;
 
 		// TODO: how to configure this on a per-test (not per-JVM) basis?
-		commonPropertyManager.getPropertyManager().setProperty(LogFactory.LOGGER_PROPERTY, "log4j");
+		commonPropertyManager.getLoggingEnvironmentBean().setLoggingSystem("log4j");
 
 		System.setOut(bufferedStream);
 		writeLogMessages();

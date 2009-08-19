@@ -53,8 +53,8 @@ public class WSTLogger
             
     	arjLogger = LogFactory.getLogNoi18n("com.arjuna.webservices.logging.WSTLogger");
     
-        final String language = commonPropertyManager.getPropertyManager().getProperty("language","en");
-        final String country  = commonPropertyManager.getPropertyManager().getProperty("country","US");
+        final String language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();
+        final String country  = commonPropertyManager.getLoggingEnvironmentBean().getCountry();
     
     	final Locale currentLocale = new Locale(language, country);
     	log_mesg = ResourceBundle.getBundle("wst_msg",currentLocale);

@@ -57,8 +57,8 @@ public class tsmxLogger
 
 		logger = LogFactory.getLogNoi18n("com.arjuna.ats.tsmx.logging.tsmxLogger");
 
-		language = commonPropertyManager.getPropertyManager().getProperty("language", "en");
-		country = commonPropertyManager.getPropertyManager().getProperty("country", "US");
+		language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();
+		country = commonPropertyManager.getLoggingEnvironmentBean().getCountry();
 
 		currentLocale = new Locale(language, country);
 		

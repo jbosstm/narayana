@@ -57,8 +57,8 @@ public class tsLogger
 
 		arjLogger = LogFactory.getLogNoi18n("com.arjuna.ats.arjuna.logging.arjLogger");
 
-		language = commonPropertyManager.getPropertyManager().getProperty("language", "en");
-		country = commonPropertyManager.getPropertyManager().getProperty("country", "US");
+		language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();
+		country = commonPropertyManager.getLoggingEnvironmentBean().getCountry();
 
 		currentLocale = new Locale(language, country);
 		

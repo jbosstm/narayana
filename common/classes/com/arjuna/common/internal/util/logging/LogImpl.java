@@ -89,24 +89,7 @@ public class LogImpl extends AbstractLogImpl implements Logi18n
 
     private void setupDefaultLog(String name)
     {
-        String defaultLog = "false";
-
-        try {
-            defaultLog = commonPropertyManager.getPropertyManager().getProperty(DefaultLog.LOG_ENABLED_PROPERTY, null);
-            // if the property manager has no info set, use the system property
-            // and if this isn't set either, default to false.
-            if (defaultLog == null) {
-                defaultLog = System.getProperty(DefaultLog.LOG_ENABLED_PROPERTY, "false");
-            }
-        }
-        catch (Throwable t)
-        {
-            // an exception could occur when trying to read system properties when we run in an applet
-            // sandbox. therefore, ignore the trowable and just keep with the default settings above.
-
-        }
-
-        if (defaultLog.equals("true"))
+        if (commonPropertyManager.getLoggingEnvironmentBean().isUseDefaultLog())
         {
             m_defaultLog = new DefaultLog(name);
             defaultLogSet = true;

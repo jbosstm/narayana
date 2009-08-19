@@ -46,9 +46,9 @@ public class txojLogger
 
 		aitLogger = LogFactory.getLogNoi18n("com.arjuna.ats.txoj.logging.txojLogger");
 
-		language = commonPropertyManager.getPropertyManager().getProperty("language", "en");
+		language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();
 
-		country = commonPropertyManager.getPropertyManager().getProperty("country", "US");
+		country = commonPropertyManager.getLoggingEnvironmentBean().getCountry();
 
 		currentLocale = new Locale(language, country);
 		
