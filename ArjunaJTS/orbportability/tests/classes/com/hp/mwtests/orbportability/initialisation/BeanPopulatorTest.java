@@ -47,6 +47,8 @@ public class BeanPopulatorTest
 
         DummyPropertyManager testManager = new DummyPropertyManager(null);
 
+        testManager.addConcatenationKeys(OrbPortabilityEnvironmentBean.class);
+
         BeanPopulator.configureFromPropertyManager(new OrbPortabilityEnvironmentBean(), testManager);
 
         Set<String> expectedKeys = new HashSet<String>();

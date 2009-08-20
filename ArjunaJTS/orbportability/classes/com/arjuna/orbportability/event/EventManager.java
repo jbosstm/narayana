@@ -166,53 +166,29 @@ public static synchronized EventManager getManager ()
      * @message com.arjuna.orbportability.event.EventManager.caughtexceptionfor {0} - caught exception: {1} for {2}
      * @message com.arjuna.orbportability.event.EventManager.novalue {0} - no value for: {1}
      */
-protected EventManager ()
+    protected EventManager ()
     {
-	_handlers = new Hashtable();
+        _handlers = new Hashtable();
 
-	/*
-	 * Now scan through the list of properties and see if there
-	 * are any classes for us.
-	 */
+        // load handler classes:
+        for(String handlerName : opPropertyManager.getOrbPortabilityEnvironmentBean().getEventHandlers())
+        {
+            try
+            {
+                Class c = Thread.currentThread().getContextClassLoader().loadClass(handlerName);
+                EventHandler h = (EventHandler) c.newInstance();
 
-	Enumeration e = opPropertyManager.getPropertyManager().propertyNames();
-	
-	while (e.hasMoreElements())
-	{
-	    String name = (String) e.nextElement();
-	    
-	    if (name.startsWith(Environment.EVENT_HANDLER))
-	    {
-		String val = (String) opPropertyManager.getPropertyManager().getProperty(name);
-		
-		if (val != null)
-		{
-		    try
-		    {
-			Class c = Thread.currentThread().getContextClassLoader().loadClass(val);
-			EventHandler h = (EventHandler) c.newInstance();
-
-			addHandler(h);
-		    }
-		    catch (Exception ex)
-		    {
-                        if (opLogger.loggerI18N.isWarnEnabled())
-                        {
-                            opLogger.loggerI18N.warn( "com.arjuna.orbportability.event.EventManager.caughtexceptionfor",
-                                            new java.lang.Object[] { "EventManager", ex, val } );
-                        }
-		    }
-		}
-		else
+                addHandler(h);
+            }
+            catch (Exception ex)
+            {
+                if (opLogger.loggerI18N.isWarnEnabled())
                 {
-                    if (opLogger.loggerI18N.isWarnEnabled())
-                    {
-                        opLogger.loggerI18N.warn( "com.arjuna.orbportability.event.EventManager.caughtexceptionfor",
-                                        new java.lang.Object[] { "EventManager", name } );
-                    }
+                    opLogger.loggerI18N.warn( "com.arjuna.orbportability.event.EventManager.caughtexceptionfor",
+                            new java.lang.Object[] { "EventManager", ex, handlerName } );
                 }
-	    }
-	}
+            }
+        }
     }
     
 private Hashtable _handlers;

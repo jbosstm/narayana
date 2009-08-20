@@ -40,6 +40,8 @@ import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
+import java.util.List;
+
 /**
  * Registers the appropriate classes with the ORB.
  *   An application using the Transaction Service should load an instance of this class
@@ -52,7 +54,7 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
  *
  * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_1 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_1] - added ORBAttribute for recoveryCoordinatorInitialiser
  * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_2 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_2] - Full crash recovery is not supported with this orb
- * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_3 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_3] - Set property {0}  =  {1}
+ * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_3 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_3] - added event handler  {1}
  * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_4 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_4] - RecoveryCoordinator service can only be provided in RecoveryManager
  * @message com.arjuna.ats.internal.jts.recovery.RecoveryInit_5 [com.arjuna.ats.internal.jts.recovery.RecoveryInit_5] - ORB/OA initialisation failed: {0}
  */
@@ -62,9 +64,6 @@ public class RecoveryInit
 
     private static boolean _initialised = false;
     private static boolean _isNormalProcess = true;
-
-    // no accessible variable for this first property name prefix
-    private static final String eventHandlerPropertyPrefix = Environment.EVENT_HANDLER;
 
     /**
      * Constructor does the work as a result of being registered as an ORBPreInit
@@ -84,8 +83,7 @@ public class RecoveryInit
 	    _initialised = true;
 
 	    // the eventhandler is the same for all orbs (at the moment)
-	    String eventHandlerPropertyName = eventHandlerPropertyPrefix + "_Recovery";
-	    String eventHandlerPropertyValue = "com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter";
+	    String eventHandlerClassName = "com.arjuna.ats.internal.jts.recovery.contact.RecoveryContactWriter";
 
 	    Object recoveryCoordinatorInitialiser = null;
 	    String InitClassName = null;
@@ -119,7 +117,9 @@ public class RecoveryInit
 
 		    // register the ContactWriter to watch for the first ArjunaFactory construction
 
-		    opPropertyManager.getPropertyManager().setProperty(eventHandlerPropertyName,eventHandlerPropertyValue);
+            List<String> eventHandlers = opPropertyManager.getOrbPortabilityEnvironmentBean().getEventHandlers();
+            eventHandlers.add(eventHandlerClassName);
+		    opPropertyManager.getOrbPortabilityEnvironmentBean().setEventHandlers(eventHandlers);
 
 		    // Change here above the way to call this startRCService -
 		    // otherwise call it in JacOrbRecoveryInit above.
@@ -139,8 +139,8 @@ public class RecoveryInit
 
 		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					       FacilityCode.FAC_CRASH_RECOVERY,
-					       "com.arjuna.ats.internal.jts.recovery.RecoveryInit_2",
-					       new Object[] {eventHandlerPropertyName, eventHandlerPropertyValue});
+					       "com.arjuna.ats.internal.jts.recovery.RecoveryInit_3",
+					       new Object[] {eventHandlerClassName});
 		}
 	    }
 	}

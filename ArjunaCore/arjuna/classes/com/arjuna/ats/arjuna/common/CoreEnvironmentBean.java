@@ -26,7 +26,6 @@ import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
 import com.arjuna.ats.arjuna.utils.Utility;
 
 import java.util.List;
-import java.util.Collections;
 import java.util.ArrayList;
 
 /**
@@ -41,7 +40,7 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
     private String propertiesFile = "";
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.internal.arjuna.inventory.staticInventoryImple")
-    private List<String> staticInventoryElements = Collections.emptyList();
+    private List<String> staticInventoryElements = new ArrayList<String>();
 
     @FullPropertyName(name = "com.arjuna.ats.arjuna.common.varDir")
     private String varDir = null;
@@ -77,16 +76,16 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
 
     public List<String> getStaticInventoryElements()
     {
-        if(staticInventoryElements == null) {
-            return Collections.emptyList();
-        } else {
-            return new ArrayList<String>(staticInventoryElements);
-        }
+        return new ArrayList<String>(staticInventoryElements);
     }
 
     public void setStaticInventoryElements(List<String> staticInventoryElements)
     {
-        this.staticInventoryElements = new ArrayList<String>(staticInventoryElements);
+        if(staticInventoryElements == null) {
+            this.staticInventoryElements.clear();
+        } else {
+            this.staticInventoryElements = new ArrayList<String>(staticInventoryElements);
+        }
     }
 
     public String getVarDir()

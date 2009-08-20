@@ -21,6 +21,10 @@
 package com.arjuna.orbportability.common;
 
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
+import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
+
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * A JavaBean containing assorted configuration properties for the Orb Portability layer.
@@ -37,7 +41,10 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
     private String initialReferencesFile = com.arjuna.orbportability.common.Configuration.configFile();
     private String fileDir = null;
     private String resolveService = "CONFIGURATION_FILE";
-    private String eventHandler;
+
+    @ConcatenationPrefix(prefix = "com.arjuna.orbportability.eventHandler")
+    private List<String> eventHandlers = new ArrayList<String>();
+
     private String orbImplementation = null;
     private String oaImplementation = null;
     private String bindMechanism = "CONFIGURATION_FILE";
@@ -109,18 +116,22 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
         this.resolveService = resolveService;
     }
 
-//    public static final String EVENT_HANDLER = "com.arjuna.orbportability.eventHandler";
-    public String getEventHandler()
+    // public static final String EVENT_HANDLER = "com.arjuna.orbportability.eventHandler";
+    public List<String> getEventHandlers()
     {
-        return eventHandler;
+        return new ArrayList<String>(eventHandlers);
     }
 
-    public void setEventHandler(String eventHandler)
+    public void setEventHandlers(List<String> eventHandlers)
     {
-        this.eventHandler = eventHandler;
+        if(eventHandlers == null) {
+            this.eventHandlers.clear();
+        } else {
+            this.eventHandlers = new ArrayList<String>(eventHandlers);
+        }
     }
 
-//    public static final String ORB_IMPLEMENTATION = "com.arjuna.orbportability.orbImplementation";
+    // public static final String ORB_IMPLEMENTATION = "com.arjuna.orbportability.orbImplementation";
     public String getOrbImplementation()
     {
         return orbImplementation;

@@ -20,8 +20,6 @@
  */
 package com.arjuna.ats.jts.common;
 
-import java.net.InetAddress;
-
 /**
  * A JMX MBean interface containing configuration for the JTS system.
  *
@@ -84,8 +82,6 @@ public interface JTSEnvironmentBeanMBean
     String getRecoveryManagerAddress();
 
     void setRecoveryManagerAddress(String recoveryManagerAddress);
-
-    public void setRecoveryManagerInetAddress(InetAddress inetAddress);
 
     boolean isTimeoutPropagation();
 

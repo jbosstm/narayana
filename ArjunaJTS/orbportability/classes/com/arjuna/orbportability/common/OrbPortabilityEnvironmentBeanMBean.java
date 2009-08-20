@@ -20,6 +20,8 @@
  */
 package com.arjuna.orbportability.common;
 
+import java.util.List;
+
 /**
  * A JMX MBean interface containing assorted configuration for the Orb Portability layer.
  *
@@ -51,9 +53,9 @@ public interface OrbPortabilityEnvironmentBeanMBean
 
     void setResolveService(String resolveService);
 
-    String getEventHandler();
+    List<String> getEventHandlers();
 
-    void setEventHandler(String eventHandler);
+    void setEventHandlers(List<String> eventHandler);
 
     String getOrbImplementation();
 

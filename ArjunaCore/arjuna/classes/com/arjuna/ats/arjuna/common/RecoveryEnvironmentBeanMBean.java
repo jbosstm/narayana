@@ -20,7 +20,6 @@
  */
 package com.arjuna.ats.arjuna.common;
 
-import java.net.InetAddress;
 import java.util.List;
 
 /**
@@ -50,8 +49,6 @@ public interface RecoveryEnvironmentBeanMBean
 
     void setRecoveryAddress(String recoveryAddress);
 
-    void setRecoveryInetAddress(InetAddress inetAddress);
-
     int getTransactionStatusManagerPort();
 
     void setTransactionStatusManagerPort(int transactionStatusManagerPort);
@@ -59,8 +56,6 @@ public interface RecoveryEnvironmentBeanMBean
     String getTransactionStatusManagerAddress();
 
     void setTransactionStatusManagerAddress(String transactionStatusManagerAddress);
-
-    void setTransactionStatusManagerInetAddress(InetAddress inetAddress);
 
     int getExpiryScanInterval();
 

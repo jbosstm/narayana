@@ -28,7 +28,6 @@ import com.arjuna.ats.arjuna.utils.Utility;
 
 import java.net.InetAddress;
 import java.util.List;
-import java.util.Collections;
 import java.util.ArrayList;
 
 /**
@@ -51,13 +50,13 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     private int transactionStatusManagerExpiryTime = 12; // hours
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.arjuna.recovery.expiryScanner")
-    private List<String> expiryScanners = Collections.emptyList();
+    private List<String> expiryScanners = new ArrayList<String>();
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.arjuna.recovery.recoveryExtension")
-    private List<String> recoveryExtensions = Collections.emptyList();
+    private List<String> recoveryExtensions = new ArrayList<String>();
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.arjuna.recovery.recoveryActivator")
-    private List<String> recoveryActivators = Collections.emptyList();
+    private List<String> recoveryActivators = new ArrayList<String>();
 
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.recovery.listener.timeoutsocket")
     private boolean timeoutSocket = false;
@@ -173,44 +172,44 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
 
     public List<String> getExpiryScanners()
     {
-        if(expiryScanners == null) {
-            return Collections.emptyList();
-        } else {
-            return new ArrayList<String>(expiryScanners);
-        }
+        return new ArrayList<String>(expiryScanners);
     }
 
     public void setExpiryScanners(List<String> expiryScanners)
     {
-        this.expiryScanners = new ArrayList<String>(expiryScanners);
+        if(expiryScanners == null) {
+            this.expiryScanners.clear();
+        } else {
+            this.expiryScanners = new ArrayList<String>(expiryScanners);
+        }
     }
 
     public List<String> getRecoveryExtensions()
     {
-        if(recoveryExtensions == null) {
-            return Collections.emptyList();
-        } else {
-            return new ArrayList<String>(recoveryExtensions);
-        }
+        return new ArrayList<String>(recoveryExtensions);
     }
 
     public void setRecoveryExtensions(List<String> recoveryExtensions)
     {
-        this.recoveryExtensions = new ArrayList<String>(recoveryExtensions);
+        if(recoveryExtensions == null) {
+            this.recoveryExtensions.clear();
+        } else {
+            this.recoveryExtensions = new ArrayList<String>(recoveryExtensions);
+        }
     }
 
     public List<String> getRecoveryActivators()
     {
-        if(recoveryActivators == null) {
-            return Collections.emptyList();
-        } else {
-            return new ArrayList<String>(recoveryActivators);
-        }
+        return new ArrayList<String>(recoveryActivators);
     }
 
     public void setRecoveryActivators(List<String> recoveryActivators)
     {
-        this.recoveryActivators = new ArrayList<String>(recoveryActivators);
+        if(recoveryActivators == null) {
+            this.recoveryActivators.clear();
+        } else {
+           this.recoveryActivators = new ArrayList<String>(recoveryActivators);
+        }
     }
 
     public boolean isTimeoutSocket()

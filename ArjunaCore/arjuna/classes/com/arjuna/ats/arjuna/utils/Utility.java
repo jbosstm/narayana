@@ -244,7 +244,10 @@ public class Utility
      *            maximum value for the integer propertry
      * @return the integer value of property or the default value if the
      *         property does not represent an integer
+     *
+     * @deprecated properties should come from environment beans now
      */
+    @Deprecated
     public static Integer lookupBoundedIntegerProperty (PropertyManager pm,
             String intProperty, Integer defValue, String warnMsgKey,
             int minValue, int maxValue)
