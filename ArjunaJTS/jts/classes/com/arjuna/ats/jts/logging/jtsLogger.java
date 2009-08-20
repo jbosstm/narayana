@@ -51,9 +51,6 @@ public class jtsLogger
 
     static
     {
-        /** Ensure the properties are loaded before initialising the logger **/
-        jtsPropertyManager.init();
-        
         logger = LogFactory.getLogNoi18n("com.arjuna.ats.jts.logging.logger");
 
         _language = System.getProperty("language","en");

@@ -44,11 +44,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class arjPropertyManager
 {
-    // ensure properties are loaded
-    public static void init() {
-        getPropertyManager();
-    }
-
     /**
      * @deprecated use environment beans instead.
      * @return

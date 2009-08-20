@@ -41,9 +41,6 @@ public class txojLogger
 
 	static
 	{
-		/** Ensure the properties are loaded before initialising the logger * */
-		txojPropertyManager.getPropertyManager();
-
 		aitLogger = LogFactory.getLogNoi18n("com.arjuna.ats.txoj.logging.txojLogger");
 
 		language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();

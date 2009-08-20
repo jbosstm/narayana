@@ -51,9 +51,6 @@ public class jtaLogger
 
     static
     {
-        /** Ensure we load the properties before initialising the logger **/
-        jtaPropertyManager.init();
-        
         logger = LogFactory.getLogNoi18n("com.arjuna.ats.jta.logging.logger");
 
         _language = System.getProperty("language","en");

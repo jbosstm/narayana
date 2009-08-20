@@ -50,9 +50,6 @@ public class jdbcLogger
 
     static
     {
-        /** Ensure the properties are loaded before initialising the logger **/
-        jdbcPropertyManager.init();
-        
         logger = LogFactory.getLogNoi18n("com.arjuna.ats.jdbc.logging.logger");
 
         _language = System.getProperty("language","en");

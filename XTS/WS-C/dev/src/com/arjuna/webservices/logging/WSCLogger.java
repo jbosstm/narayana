@@ -60,9 +60,6 @@ public class WSCLogger
 
     static
     {
-        /** Ensure the properties are loaded before initialising the logger **/
-        arjPropertyManager.init();
-            
     	arjLogger = LogFactory.getLogNoi18n("com.arjuna.wsc.logging.WSCLogger");
     
         final String language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();

@@ -52,9 +52,6 @@ public class tsmxLogger
 
 	static
 	{
-		/** Ensure the properties are loaded before initialising the logger * */
-		arjPropertyManager.init();
-
 		logger = LogFactory.getLogNoi18n("com.arjuna.ats.tsmx.logging.tsmxLogger");
 
 		language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();

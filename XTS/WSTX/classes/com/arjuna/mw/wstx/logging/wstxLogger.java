@@ -52,9 +52,6 @@ public class wstxLogger
 
     static
     {
-    /** Ensure the properties are loaded before initialising the logger **/
-    arjPropertyManager.init();
-        
 	arjLogger = LogFactory.getLogNoi18n("com.arjuna.mw.wstx.logging.wstxLogger");
 
 	language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();

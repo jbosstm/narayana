@@ -42,9 +42,6 @@ public class opLogger
 
 	static
 	{
-		/** Ensure the properties are loaded before initialising the logger * */
-		opPropertyManager.getPropertyManager();
-
 		logger = LogFactory.getLogNoi18n("com.arjuna.orbportability.logging.logger");
 
 		_language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();
