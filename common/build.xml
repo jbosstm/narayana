@@ -22,6 +22,8 @@
 
     <property name="modulename" value="common"/>
 
+    <property name="global.ext.libs" value="commons-logging-1.1.jar log4j-1.2.14.jar"/>
+
     <import file="../sharedbuild.xml"/>
 
     <target name="run.tests">
@@ -74,6 +76,9 @@
         </run.tests.macro>
         <run.tests.macro>
             <tests><fileset dir="tests" includes="**/EnvironmentBeanTest.java"/></tests>
+        </run.tests.macro>
+        <run.tests.macro>
+            <tests><fileset dir="tests" includes="**/BeanPopulatorTest.java"/></tests>
         </run.tests.macro>
 
     </target>

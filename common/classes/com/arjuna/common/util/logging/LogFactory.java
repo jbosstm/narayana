@@ -29,7 +29,6 @@
 package com.arjuna.common.util.logging;
 
 import com.arjuna.common.internal.util.logging.*;
-import com.arjuna.common.internal.util.logging.simpleLog.SimpleLogFactory;
 import com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory;
 import com.arjuna.common.internal.util.logging.jakarta.JakartaRelevelingLogFactory;
 import com.arjuna.common.util.exceptions.LogConfigurationException;
@@ -49,7 +48,6 @@ import com.arjuna.common.util.exceptions.LogConfigurationException;
  *       <li>console</li>
  *    </ul>
  *    </li>
- *    <li><code><b>dotnet</b></code> .net logging. (must be JDK 1.1 compliant for compilation by the Microsoft compiler)</li>
  * </ul>
  * Note: Log subsystems are not configured through CLF but instead rely on their own configuration files for
  * the setup of eg. debug level, appenders, etc...
@@ -109,6 +107,7 @@ public class LogFactory {
      *
      * See the class description for supported values.
      */
+    @Deprecated
     public static final String LOGGER_PROPERTY = "com.arjuna.common.util.logger";
 
 
@@ -120,20 +119,15 @@ public class LogFactory {
      * we might also want to explore dynamic proxies to automaticlaly obtain debug
      * output for all methods & constructors, etc ...
      */
+    @Deprecated
     public static final String DEBUG_LEVEL = "com.arjuna.common.util.logging.DebugLevel";
+    @Deprecated
     public static final String FACILITY_LEVEL = "com.arjuna.common.util.logging.FacilityLevel";
+    @Deprecated
     public static final String VISIBILITY_LEVEL = "com.arjuna.common.util.logging.VisibilityLevel";
-
-    /**
-     * this property is used by the Jakarta Commons Logging implementation to select the underlying
-     * logging framework to use. This can be set as a system property. if this property is not set,
-     * JCL will select the implementation to use by
-     */
-    private static final String JCL_LOG_CONFIGURATION = "org.apache.commons.logging.Log";
 
     //private static final String CSF_LOGGER = "csf";
     private static final String JAKARTA_LOGGER = "jakarta";
-    private static final String DOTNET_LOGGER = "dotnet";
     private static final String LOG4J = "log4j";
     private static final String JDK14 = "jdk14";
     private static final String SIMPLE = "simple";
@@ -321,48 +315,31 @@ public class LogFactory {
                 m_debugLevel = 0xfffffff;
             }
 
-            // .net simple logging is not currenlty supported, instead use
-            // jakarta commons simple logging (it is pure Java 1.1) in the
-            // current release:
-            if (logSystem.equals(DOTNET_LOGGER)) logSystem = SIMPLE;
-
-
             // ALL THESE ARE SUPPORTED BY JAKARTA COMMONS LOGGING
             if (logSystem.equals(LOG4J)) {
-                System.setProperty(JCL_LOG_CONFIGURATION, "org.apache.commons.logging.impl.Log4JLogger");
-                m_logFactory = new JakartaLogFactory();
+                m_logFactory = new JakartaLogFactory("com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
             } else if (logSystem.equals(JDK14)) {
-                System.setProperty(JCL_LOG_CONFIGURATION, "org.apache.commons.logging.impl.Jdk14Logger");
-                m_logFactory = new JakartaLogFactory();
+                m_logFactory = new JakartaLogFactory("org.apache.commons.logging.impl.Jdk14Logger");
             } else if (logSystem.equals(SIMPLE)) {
-                System.setProperty(JCL_LOG_CONFIGURATION, "org.apache.commons.logging.impl.SimpleLog");
-                m_logFactory = new JakartaLogFactory();
+                m_logFactory = new JakartaLogFactory("org.apache.commons.logging.impl.SimpleLog");
             } else if (logSystem.equals(NOOP)) {
-                System.setProperty(JCL_LOG_CONFIGURATION, "org.apache.commons.logging.impl.NoOpLog");
-                m_logFactory = new JakartaLogFactory();
-
+                m_logFactory = new JakartaLogFactory("org.apache.commons.logging.impl.NoOpLog");
             }
 
 			// we use a slightly modified wrapper to do log statement level modification
 			// for support of JBossAS log level semantics, see JakartaRelevelingLogger javadoc
 			else if (logSystem.equals(RELEVELER)) {
-				System.setProperty(JCL_LOG_CONFIGURATION, "org.apache.commons.logging.impl.Log4JLogger");
-				m_logFactory = new JakartaRelevelingLogFactory();
+				m_logFactory = new JakartaRelevelingLogFactory("com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
 			}
 
 			// USE JAKARTA COMMONS LOGGINGS OWN DISCOVERY MECHANISM
             else if (logSystem.equals(JAKARTA_LOGGER)) {
-                m_logFactory = new JakartaLogFactory();
-            }
-
-            // OUR IMPLEMNETATION OF .net LOGGING BYPASSES JAKARTA COMMONS LOGGING
-            else if (logSystem.equals(DOTNET_LOGGER)) {
-                m_logFactory = new SimpleLogFactory();
+                m_logFactory = new JakartaLogFactory(null);
             }
 
             // by default, use jakarta logging ...
             else {
-                m_logFactory = new JakartaLogFactory();
+                m_logFactory = new JakartaLogFactory(null);
             }
 
         } catch (LogConfigurationException e) {

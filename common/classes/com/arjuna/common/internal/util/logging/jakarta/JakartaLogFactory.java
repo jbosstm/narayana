@@ -30,6 +30,7 @@ package com.arjuna.common.internal.util.logging.jakarta;
 
 import com.arjuna.common.internal.util.logging.LogFactoryInterface;
 import com.arjuna.common.internal.util.logging.AbstractLogInterface;
+import com.arjuna.common.internal.util.logging.LogInterface;
 import com.arjuna.common.util.exceptions.LogConfigurationException;
 
 /**
@@ -41,6 +42,14 @@ import com.arjuna.common.util.exceptions.LogConfigurationException;
  */
 public class JakartaLogFactory implements LogFactoryInterface
 {
+    // the value for org.apache.commons.logging.Log, usually a classname starting org.apache.commons.logging.impl.
+    // use null for default search order per http://commons.apache.org/logging/apidocs/index.html
+    private String logImpl = null;
+
+    public JakartaLogFactory(String logImpl) {
+        this.logImpl = logImpl;
+    }
+
    /**
     * Convenience method to return a named logger, without the application
     * having to care about factories.
@@ -58,7 +67,7 @@ public class JakartaLogFactory implements LogFactoryInterface
          // configure the underlying apache factory
          oldConfig = configureFactory();
          // get a new logger from the log subsystem's factory and wrap it into a LogInterface
-         return new JakartaLogger(org.apache.commons.logging.LogFactory.getLog(clazz));
+         return createLogWrapper(org.apache.commons.logging.LogFactory.getLog(clazz));
       }
       catch (org.apache.commons.logging.LogConfigurationException lce)
       {
@@ -89,7 +98,7 @@ public class JakartaLogFactory implements LogFactoryInterface
          // configure the underlying apache factory
          oldConfig = configureFactory();
          // get a new logger from the log subsystem's factory and wrap it into a LogInterface
-         return new JakartaLogger(org.apache.commons.logging.LogFactory.getLog(name));
+         return createLogWrapper(org.apache.commons.logging.LogFactory.getLog(name));
       }
       catch (org.apache.commons.logging.LogConfigurationException lce)
       {
@@ -100,6 +109,10 @@ public class JakartaLogFactory implements LogFactoryInterface
           resetFactory(oldConfig);
       }
    }
+
+    protected LogInterface createLogWrapper(org.apache.commons.logging.Log log) {
+        return new JakartaLogger(log);
+    }
 
    /*
         Note: the apache LogFactory configuration is basically global to the JVM (actually the classloader)
@@ -117,7 +130,7 @@ public class JakartaLogFactory implements LogFactoryInterface
    private Object configureFactory()
    {
        Object oldValue = org.apache.commons.logging.LogFactory.getFactory().getAttribute("org.apache.commons.logging.Log");
-       org.apache.commons.logging.LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", Log4JLogger.class.getName());
+       org.apache.commons.logging.LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", logImpl);
        return oldValue;
    }
 
