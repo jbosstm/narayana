@@ -178,7 +178,7 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     public void setExpiryScanners(List<String> expiryScanners)
     {
         if(expiryScanners == null) {
-            this.expiryScanners.clear();
+            this.expiryScanners = new ArrayList<String>();
         } else {
             this.expiryScanners = new ArrayList<String>(expiryScanners);
         }
@@ -192,7 +192,7 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     public void setRecoveryExtensions(List<String> recoveryExtensions)
     {
         if(recoveryExtensions == null) {
-            this.recoveryExtensions.clear();
+            this.recoveryExtensions = new ArrayList<String>();
         } else {
             this.recoveryExtensions = new ArrayList<String>(recoveryExtensions);
         }
@@ -206,7 +206,7 @@ public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
     public void setRecoveryActivators(List<String> recoveryActivators)
     {
         if(recoveryActivators == null) {
-            this.recoveryActivators.clear();
+            this.recoveryActivators = new ArrayList<String>();
         } else {
            this.recoveryActivators = new ArrayList<String>(recoveryActivators);
         }

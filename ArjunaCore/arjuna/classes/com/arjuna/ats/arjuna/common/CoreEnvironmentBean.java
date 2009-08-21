@@ -82,7 +82,7 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
     public void setStaticInventoryElements(List<String> staticInventoryElements)
     {
         if(staticInventoryElements == null) {
-            this.staticInventoryElements.clear();
+            this.staticInventoryElements = new ArrayList<String>();
         } else {
             this.staticInventoryElements = new ArrayList<String>(staticInventoryElements);
         }

@@ -125,7 +125,7 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
     public void setEventHandlers(List<String> eventHandlers)
     {
         if(eventHandlers == null) {
-            this.eventHandlers.clear();
+            this.eventHandlers = new ArrayList<String>();
         } else {
             this.eventHandlers = new ArrayList<String>(eventHandlers);
         }

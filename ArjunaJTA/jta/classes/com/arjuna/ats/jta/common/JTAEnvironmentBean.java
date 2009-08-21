@@ -143,7 +143,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     public void setXaRecoveryNodes(List<String> xaRecoveryNodes)
     {
         if(xaRecoveryNodes == null) {
-            this.xaRecoveryNodes.clear();    
+            this.xaRecoveryNodes = new ArrayList<String>(); 
         } else {
             this.xaRecoveryNodes = new ArrayList<String>(xaRecoveryNodes);
         }
@@ -157,7 +157,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     public void setXaResourceRecoveryInstances(List<String> xaResourceRecoveryInstances)
     {
         if(xaResourceRecoveryInstances == null) {
-            this.xaResourceRecoveryInstances.clear();
+            this.xaResourceRecoveryInstances = new ArrayList<String>();
         } else {
             this.xaResourceRecoveryInstances = new ArrayList<String>(xaResourceRecoveryInstances);
         }
@@ -226,7 +226,7 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     public void setXaErrorHandlers(List<String> xaErrorHandlers)
     {
         if(xaErrorHandlers == null) {
-            this.xaErrorHandlers.clear();
+            this.xaErrorHandlers = new ArrayList<String>();
         } else {
             this.xaErrorHandlers = new ArrayList(xaErrorHandlers);
         }
