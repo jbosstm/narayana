@@ -153,7 +153,7 @@ public class TransactionReaper
 			try
 			{
 				final ReaperElement head = (ReaperElement) _transactions.first();  //_list.peak();
-				return head._absoluteTimeout - System.currentTimeMillis();
+				return head.getAbsoluteTimeout() - System.currentTimeMillis();
 			}
 			catch (final NoSuchElementException nsee)
 			{
@@ -171,10 +171,10 @@ public class TransactionReaper
                      {
                           final ReaperElement head = (ReaperElement) _transactions.first();  //_list.peak();
                           if (head._status != ReaperElement.RUN) {
-                               long waitTime = head._absoluteTimeout - System.currentTimeMillis();
+                               long waitTime = head.getAbsoluteTimeout() - System.currentTimeMillis();
                                if (waitTime < _checkPeriod)
                                {
-                                    return head._absoluteTimeout - System.currentTimeMillis();
+                                    return head.getAbsoluteTimeout() - System.currentTimeMillis();
                                }
                           }
                      }
@@ -224,12 +224,12 @@ public class TransactionReaper
 			    FacilityCode.FAC_ATOMIC_ACTION,
 			    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_2",
 			    new Object[]
-			    { Long.toString(e._absoluteTimeout) });
+			    { Long.toString(e.getAbsoluteTimeout()) });
 		}
 
 		final long now = System.currentTimeMillis();
 
-		if (now < e._absoluteTimeout)
+		if (now < e.getAbsoluteTimeout())
 		{
 		    // go back to sleep
 
@@ -268,8 +268,7 @@ public class TransactionReaper
 			{
 			    _transactions.remove(e);
 
-			    e._absoluteTimeout =
-				(System.currentTimeMillis() + _cancelWaitPeriod);
+			    e.setAbsoluteTimeout((System.currentTimeMillis() + _cancelWaitPeriod));
 			    _transactions.add(e);
 			}
 
@@ -311,8 +310,7 @@ public class TransactionReaper
 			{
 			    _transactions.remove(e);
 
-			    e._absoluteTimeout =
-				(System.currentTimeMillis() + _cancelWaitPeriod);
+			    e.setAbsoluteTimeout((System.currentTimeMillis() + _cancelWaitPeriod));
 
 			    _transactions.add(e);
 			}
@@ -343,8 +341,7 @@ public class TransactionReaper
 			{
 			    _transactions.remove(e);
 
-			    e._absoluteTimeout =
-				(System.currentTimeMillis() + _cancelFailWaitPeriod);
+			    e.setAbsoluteTimeout((System.currentTimeMillis() + _cancelFailWaitPeriod));
 
 			    _transactions.add(e);
 			}
@@ -788,7 +785,7 @@ public class TransactionReaper
 		 * (This should never happen)
 		 */
 		if (_timeouts.containsKey(control)) {
-			return false;
+			return false; // remove this, rewrite put instead.
 		}
 
 		ReaperElement e = new ReaperElement(control, timeout);
@@ -800,7 +797,7 @@ public class TransactionReaper
 			_timeouts.put(control, e);
 			boolean rtn = _transactions.add(e);
 
-			if(_dynamic)
+			if(_dynamic && _transactions.first() == e)
 			{
 				notifyAll(); // force recalc of next wakeup time, taking into account the newly inserted element
 			}
@@ -893,7 +890,7 @@ public class TransactionReaper
         else
         {
             // units are in milliseconds at this stage.
-            timeout = reaperElement._absoluteTimeout - System.currentTimeMillis();
+            timeout = reaperElement.getAbsoluteTimeout() - System.currentTimeMillis();
         }
 
         if (tsLogger.arjLoggerI18N.isDebugEnabled()) {
@@ -991,7 +988,7 @@ public class TransactionReaper
 	            {
 	                e = (ReaperElement) iter.next();
 
-	                e._absoluteTimeout = 0;
+	                e.setAbsoluteTimeout(0);
 	            }
 	        }
 

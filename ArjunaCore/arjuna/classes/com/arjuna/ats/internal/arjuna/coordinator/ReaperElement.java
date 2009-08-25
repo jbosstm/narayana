@@ -40,11 +40,11 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 public class ReaperElement implements Comparable
 {
 
-	/*
-	 * Currently, once created the reaper object and thread stay around forever.
-	 * We could destroy both once the list of transactions is null. Depends upon
-	 * the relative cost of recreating them over keeping them around.
-	 */
+    /*
+      * Currently, once created the reaper object and thread stay around forever.
+      * We could destroy both once the list of transactions is null. Depends upon
+      * the relative cost of recreating them over keeping them around.
+      */
 
 	public ReaperElement(Reapable control, int timeout)
 	{
@@ -59,14 +59,18 @@ public class ReaperElement implements Comparable
 		_control = control;
 		_timeout = timeout;
 		_status = RUN;
-                _worker = null;
+        _worker = null;
 
 		/*
 		 * Given a timeout period in seconds, calculate its absolute value from
 		 * the current time of day in milliseconds.
 		 */
 
-		_absoluteTimeout = timeout * 1000 + System.currentTimeMillis();
+		_absoluteTimeoutMills = (timeout * 1000) + System.currentTimeMillis();
+
+        // add additional variation to distinguish instances created in the same millisecond.
+        _bias = getBiasCounter();
+
 	}
 	
 	public String toString ()
@@ -86,24 +90,44 @@ public class ReaperElement implements Comparable
 	{
 		ReaperElement other = (ReaperElement)o;
 
-                if(_absoluteTimeout == other._absoluteTimeout) {
-                    if(_control.get_uid().equals(other._control.get_uid())) {
-                        return 0;
-			} else if (_control.get_uid().greaterThan(other._control.get_uid())) {
-				return 1;
-                    } else {
-				return -1;
-                    }
-		} else {
-			return (_absoluteTimeout > other._absoluteTimeout) ? 1 : -1;
-		}
+        if(_absoluteTimeoutMills == other._absoluteTimeoutMills) {
+            if (_bias == other._bias) {
+                if(_control.get_uid().equals(other._control.get_uid())) {
+                    return 0;
+                } else if (_control.get_uid().greaterThan(other._control.get_uid())) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            } else {
+                return (_bias > other._bias) ? 1 : -1;
+            }
+        } else {
+            return (_absoluteTimeoutMills > other._absoluteTimeoutMills) ? 1 : -1;
+        }
 	}
 
 	public Reapable _control;
 
-	public long _absoluteTimeout;
+	private long _absoluteTimeoutMills;
+    private int _bias;
 
-	public int _timeout;
+    // bias is used to distinguish/sort instances with the same _absoluteTimeoutMills
+    // as using Uid for this purpose is expensive. JBTM-611
+
+    private static int biasCounter = 0;
+
+    public static synchronized int getBiasCounter()
+    {
+        if(biasCounter >= 1000000-1) {
+            biasCounter = 0;
+        } else {
+            biasCounter++;
+        }
+        return biasCounter;
+    }
+
+    public int _timeout;
 
         /*
          * status field to track the progress of the reaper worker which is
@@ -248,4 +272,23 @@ public class ReaperElement implements Comparable
                    return "UNKNOWN";
               }
          }
+
+    /**
+     * Returns absolute timeout in milliseconds
+     * @return
+     */
+    public long getAbsoluteTimeout()
+    {
+        return _absoluteTimeoutMills;
+    }
+
+    /**
+     * Sets the absolute timeout.
+     *
+     * @param absoluteTimeout value in milliseconds
+     */
+    public void setAbsoluteTimeout(long absoluteTimeout)
+    {
+        this._absoluteTimeoutMills = absoluteTimeout;
+    }
 }
