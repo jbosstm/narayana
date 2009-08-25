@@ -35,6 +35,8 @@ import com.arjuna.common.util.logging.VisibilityLevel;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * An in-memory ObjectStore that never writes to stable storage.
@@ -93,7 +95,7 @@ public class VolatileStore extends ObjectStoreImple
      *         committed ...)
      */
 
-    public synchronized int currentState(Uid u, String tn) throws ObjectStoreException
+    public int currentState(Uid u, String tn) throws ObjectStoreException
     {
         if (tsLogger.arjLogger.debugAllowed())
         {
@@ -123,7 +125,7 @@ public class VolatileStore extends ObjectStoreImple
      *         otherwise.
      */
 
-    public synchronized boolean commit_state(Uid u, String tn) throws ObjectStoreException
+    public boolean commit_state(Uid u, String tn) throws ObjectStoreException
     {
         throw new ObjectStoreException("Operation not supported by this implementation");
     }
@@ -165,7 +167,7 @@ public class VolatileStore extends ObjectStoreImple
      * @return the state of the object.
      */
 
-    public synchronized InputObjectState read_committed(Uid u, String tn) throws ObjectStoreException
+    public InputObjectState read_committed(Uid u, String tn) throws ObjectStoreException
     {
         if (tsLogger.arjLogger.debugAllowed())
         {
@@ -185,7 +187,7 @@ public class VolatileStore extends ObjectStoreImple
      * @return the state of the object.
      */
 
-    public synchronized InputObjectState read_uncommitted(Uid u, String tn) throws ObjectStoreException
+    public InputObjectState read_uncommitted(Uid u, String tn) throws ObjectStoreException
     {
         throw new ObjectStoreException("Operation not supported by this implementation");
     }
@@ -199,7 +201,7 @@ public class VolatileStore extends ObjectStoreImple
      *         otherwise.
      */
 
-    public synchronized boolean remove_committed(Uid u, String tn) throws ObjectStoreException
+    public boolean remove_committed(Uid u, String tn) throws ObjectStoreException
     {
         if (tsLogger.arjLogger.debugAllowed())
         {
@@ -220,7 +222,7 @@ public class VolatileStore extends ObjectStoreImple
      *         otherwise.
      */
 
-    public synchronized boolean remove_uncommitted(Uid u, String tn) throws ObjectStoreException
+    public boolean remove_uncommitted(Uid u, String tn) throws ObjectStoreException
     {
         throw new ObjectStoreException("Operation not supported by this implementation");
     }
@@ -235,7 +237,7 @@ public class VolatileStore extends ObjectStoreImple
      *         otherwise.
      */
 
-    public synchronized boolean write_committed(Uid u, String tn, OutputObjectState buff) throws ObjectStoreException
+    public boolean write_committed(Uid u, String tn, OutputObjectState buff) throws ObjectStoreException
     {
         if (tsLogger.arjLogger.debugAllowed())
         {
@@ -257,7 +259,7 @@ public class VolatileStore extends ObjectStoreImple
      *         otherwise.
      */
 
-    public synchronized boolean write_uncommitted(Uid u, String tn, OutputObjectState buff) throws ObjectStoreException
+    public boolean write_uncommitted(Uid u, String tn, OutputObjectState buff) throws ObjectStoreException
     {
         throw new ObjectStoreException("Operation not supported by this implementation");
     }
@@ -284,29 +286,25 @@ public class VolatileStore extends ObjectStoreImple
           Hence we map Uid to a byte array rather than e.g. some more complex value class containing the byte[] state plus
             fields for ObjectStore state (committed/hidden etc) and typeName.
 
-          The public methods that access the internal state are synchronized, the private ones they delegate to are not.
-          For even greater performance in multi-threaded apps on large machines, perhaps use ConcurrentHashMap and rework
-          the synchronization. Not done initially because the small footprint apps we sometimes want to run on don't
-          have ConcurrentHashMap, so we'd have to fork the impl.
+          In recent times we have been using this more for performance testing than small footprint installs.
+          We therefore prefer ConcurrentHashMap, even though it's not available in J2ME. Fork from previous version
+          that used synchronized Map if you want a build for small footprint environments.
 
           The byte[] array is simply the contents of the Object's state buffer.
     */
-    private Map<Uid, byte[]> stateMap = new HashMap<Uid, byte[]>();
+    private ConcurrentMap<Uid, byte[]> stateMap = new ConcurrentHashMap<Uid, byte[]>();
 
     private boolean remove(Uid u, String tn, int state) throws ObjectStoreException
     {
-        if(stateMap.containsKey(u))  {
-            stateMap.remove(u);
-            return true;
-        } else {
-            return false;
-        }
+        Object oldValue = stateMap.remove(u);
+        return (oldValue != null);
     }
 
     private InputObjectState read(Uid u, String tn, int state) throws ObjectStoreException
     {
-        if(stateMap.containsKey(u)) {
-            byte[] data = stateMap.get(u);
+        byte[] data = stateMap.get(u);
+
+        if(data != null) {
             InputObjectState new_image = new InputObjectState(u, tn, data);
             return new_image;
         } else {
