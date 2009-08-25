@@ -205,6 +205,10 @@ public class TxControl
 
 	public static final ObjectStore getStore()
 	{
+        if(_objectStore != null) {
+            return _objectStore;
+        }
+
 		/*
 		 * Check for action store once per application. The second parameter is
 		 * the default value, which is returned if no other value is specified.
@@ -223,12 +227,17 @@ public class TxControl
 
 		/*
 		 * Defaults to ObjectStore.OS_UNSHARED
+		 *
+		 * yes, it's unsynchronized. It does not matter much if we create more than once, we just want best
+		 * effort to avoid doing so on every call as it's a little bit expensive.
 		 */
 
 		if (sharedTransactionLog)
-			return new ObjectStore(actionStoreType, ObjectStore.OS_SHARED);
+			_objectStore = new ObjectStore(actionStoreType, ObjectStore.OS_SHARED);
 		else
-			return new ObjectStore(actionStoreType);
+			_objectStore = new ObjectStore(actionStoreType);
+
+        return _objectStore;
 	}
 
 	public static final boolean getAsyncPrepare()
@@ -325,6 +334,7 @@ public class TxControl
 	private static TransactionStatusManager transactionStatusManager = null;
 
 	static ClassName actionStoreType = null;
+    private static ObjectStore _objectStore = null;
 
 	static byte[] xaNodeName = null;
 
