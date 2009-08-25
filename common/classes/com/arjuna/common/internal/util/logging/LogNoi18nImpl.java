@@ -338,9 +338,10 @@ public class LogNoi18nImpl implements LogNoi18n
     */
    public boolean debugAllowed(long dLevel, long vLevel, long fLevel)
    {
-      return (((dLevel & m_debugLevel) != 0) &&
-            ((vLevel & m_visLevel) != 0) &&
-            ((fLevel & m_facLevel) != 0));
+       // check the underlying logger threshold as well as (but after, due to cost)
+       // our own filters, as many use points call debugAllowed rather than isDebugEnabled.
+       return (((dLevel & m_debugLevel) != 0) && ((vLevel & m_visLevel) != 0) &&
+              ((fLevel & m_facLevel) != 0) && isDebugEnabled());
    }
 
    /**********************************************************************************************************
