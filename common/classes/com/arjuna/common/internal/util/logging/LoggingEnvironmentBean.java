@@ -43,7 +43,7 @@ public class LoggingEnvironmentBean implements LoggingEnvironmentBeanMBean
     private String loggingSystem = "log4j";
 
     @FullPropertyName(name = "com.arjuna.common.util.logging.DebugLevel")
-    private String debugLevel = "0xffffffff";
+    private String debugLevel = "0x00000000";
 
     @FullPropertyName(name = "com.arjuna.common.util.logging.FacilityLevel")
     private String facilityLevel = "0xffffffff";
@@ -53,7 +53,7 @@ public class LoggingEnvironmentBean implements LoggingEnvironmentBeanMBean
 
 
     /**
-     * Returns the language code. ISO language code as used with Locale objects.
+     * Returns the language code. ISO language code format as used with Locale objects.
      * 
      * Default: "en"
      * Equivalent deprecated property: com.arjuna.common.util.logging.language
@@ -66,7 +66,7 @@ public class LoggingEnvironmentBean implements LoggingEnvironmentBeanMBean
     }
 
     /**
-     * Sets the language code. Use ISO language code as with Locale objects.
+     * Sets the language code. Use ISO language code format as with Locale objects.
      *
      * @param language the ISO language code.
      */
@@ -76,7 +76,7 @@ public class LoggingEnvironmentBean implements LoggingEnvironmentBeanMBean
     }
 
     /**
-     * Returns the country code. ISO country code as used with Locale objects.
+     * Returns the country code. ISO country code format as used with Locale objects.
      *
      * Default: "US"
      * Equivalent deprecated property: com.arjuna.common.util.logging.country
@@ -89,7 +89,7 @@ public class LoggingEnvironmentBean implements LoggingEnvironmentBeanMBean
     }
 
     /**
-     * Sets the country code. Use ISO country code as with Locale objects.
+     * Sets the country code. Use ISO country code format as with Locale objects.
      *
      * @param country the ISO country code.
      */
@@ -147,7 +147,7 @@ public class LoggingEnvironmentBean implements LoggingEnvironmentBeanMBean
     /**
      * Returns the debug log level in hex form.
      *
-     * Default: "0xffffffff"
+     * Default: "0x00000000"
      * Equivalent deprecated property: com.arjuna.common.util.logging.DebugLevel
      *
      * @return the debug log level.

@@ -42,7 +42,8 @@ public class EnvironmentBeanTest
         DummyEnvironmentBean testBean = new DummyEnvironmentBean();
         DummyPropertyManager testManager = new DummyPropertyManager(testBean.getProperties());
         BeanPopulator.configureFromPropertyManager(testBean, testManager);
-        Set<String> expectedKeys = testBean.getProperties().stringPropertyNames();
+
+        Set<Object> expectedKeys = testBean.getProperties().keySet();
 
         assertTrue( testManager.usedKeys.containsAll(expectedKeys) );
     }
