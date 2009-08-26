@@ -18,7 +18,7 @@
 RULE pause transaction reaper 1
 CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
 METHOD check
-AT CALL first()
+AT SYNCHRONIZE
 BIND NOTHING
 IF isRendezvous("reaper1", 2)
 DO debug("reaper1"),

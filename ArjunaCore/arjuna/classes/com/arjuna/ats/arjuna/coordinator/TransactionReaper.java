@@ -203,6 +203,9 @@ public class TransactionReaper
                     FacilityCode.FAC_ATOMIC_ACTION,  "TransactionReaper::check ()");
 	    }
 
+	    do
+	    {
+		final ReaperElement e ;
 
         synchronized (this)
         {
@@ -221,41 +224,37 @@ public class TransactionReaper
                     }
                 }
             }
+
+            try
+            {
+                e = (ReaperElement)_transactions.first();
+            }
+            catch (final NoSuchElementException nsee)
+            {
+                return true ;
+            }
+            if (tsLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                tsLogger.arjLoggerI18N
+                .debug(
+                    DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_ATOMIC_ACTION,
+                    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_2",
+                    new Object[]
+                    { Long.toString(e.getAbsoluteTimeout()) });
+            }
+
+            final long now = System.currentTimeMillis();
+
+            if (now < e.getAbsoluteTimeout())
+            {
+                // go back to sleep
+
+                break;
+            }
+
         }
-
-
-	    do
-	    {
-		final ReaperElement e ;
-		try
-		{
-		    e = (ReaperElement)_transactions.first();
-		}
-		catch (final NoSuchElementException nsee)
-		{
-		    return true ;
-		}
-
-		if (tsLogger.arjLoggerI18N.isDebugEnabled())
-		{
-		    tsLogger.arjLoggerI18N
-			.debug(
-			    DebugLevel.FUNCTIONS,
-			    VisibilityLevel.VIS_PUBLIC,
-			    FacilityCode.FAC_ATOMIC_ACTION,
-			    "com.arjuna.ats.arjuna.coordinator.TransactionReaper_2",
-			    new Object[]
-			    { Long.toString(e.getAbsoluteTimeout()) });
-		}
-
-		final long now = System.currentTimeMillis();
-
-		if (now < e.getAbsoluteTimeout())
-		{
-		    // go back to sleep
-
-		    break;
-		}
 
 		if (tsLogger.arjLoggerI18N.isWarnEnabled())
 		{
@@ -757,7 +756,7 @@ public class TransactionReaper
 
 	public final long numberOfTransactions()
 	{
-		return _transactions.size();
+		return _transactions.size() + _pendingInsertions.size();
 	}
 
         /**
@@ -766,7 +765,7 @@ public class TransactionReaper
          */
         public final long numberOfTimeouts()
         {
-                return _timeouts.size();
+                return _timeouts.size() + _pendingInsertions.size();
         }
 
         public final void addListener (ReaperMonitor listener)
@@ -814,8 +813,23 @@ public class TransactionReaper
                 // if the new element would timeout after the earliest one we already have,
                 // we can delay its insertion until that earlier timeout. Hopefully the new tx will
                 // complete before then and we'll never have to insert it at all.
-                if(first != null && e.compareTo(first) > 0) {
-                    _pendingInsertions.put(control, e);
+                if (first != null && e.compareTo(first) > 0) {
+                    // first make sure we have not seen this control already
+                    if (_timeouts.containsKey(control)) {
+                        // hmm, this probably means that the hash or equals implementation on the element has been
+                        // coded wrong
+                        return false;
+                    }
+                    // put it in in the pending list for later insertion but also
+                    // check the return value in case this entry already exists
+                    ReaperElement old = _pendingInsertions.put(control, e);
+                    if (old != null) {
+                        // hmm, this probably means that the hash or equals implementation on the element has been
+                        // coded wrong -- restore the old entry and return false. n.b. checking for a duplicate
+                        //  this way avoids having to do a containsKey test in the normal case.
+                        _pendingInsertions.put(control, old);
+                        return false;
+                    }
                     asyncInsert = true;
                 }
             }
@@ -831,20 +845,21 @@ public class TransactionReaper
 
 	private final boolean synchronousInsert(ReaperElement elementToInsert)
 	{
-
-		/**
-		 * Ignore if it's already in the list with a different timeout.
-		 * (This should never happen)
-		 */
-		if (_timeouts.containsKey(elementToInsert._control)) {
-			return false; // TODO remove this, rewrite put instead.
-		}
-
 		synchronized (this)
 		{
 			TransactionReaper._lifetime += elementToInsert._timeout;
 
-			_timeouts.put(elementToInsert._control, elementToInsert);
+			ReaperElement old = (ReaperElement)_timeouts.put(elementToInsert._control, elementToInsert);
+            if (old != null) {
+                // hmm, this probably means that the hash or equals implementation on the element has been
+                // coded wrong -- restore the old entry and return false. n.b. checking for a duplicate
+                //  this way avoids having to do a containsKey test in the normal case.
+                _timeouts.put(elementToInsert._control, old);
+                return false;
+            }
+
+            // we should not get an error here unless the user has coded the compareTo test wrong
+
 			boolean rtn = _transactions.add(elementToInsert);
 
 			if(_dynamic && _transactions.first() == elementToInsert)
