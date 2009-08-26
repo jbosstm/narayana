@@ -90,6 +90,10 @@ public class ReaperElement implements Comparable
 	{
 		ReaperElement other = (ReaperElement)o;
 
+        if(this == other) {
+            return 0;
+        }
+
         if(_absoluteTimeoutMills == other._absoluteTimeoutMills) {
             if (_bias == other._bias) {
                 if(_control.get_uid().equals(other._control.get_uid())) {
