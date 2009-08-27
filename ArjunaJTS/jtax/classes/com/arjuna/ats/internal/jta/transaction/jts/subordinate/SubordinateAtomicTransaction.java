@@ -31,6 +31,7 @@ package com.arjuna.ats.internal.jta.transaction.jts.subordinate;
 import javax.transaction.Status;
 
 import org.omg.CORBA.SystemException;
+import org.omg.CORBA.UNKNOWN;
 import org.omg.CosTransactions.HeuristicHazard;
 import org.omg.CosTransactions.HeuristicMixed;
 import org.omg.CosTransactions.NoTransaction;
@@ -174,6 +175,10 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 	    catch (final TRANSACTION_ROLLEDBACK ex)
 	    {
 	        return ActionStatus.ABORTED;
+	    }
+	    catch (final UNKNOWN ex)
+	    {
+	        return ActionStatus.COMMITTING;  // recovery to kick in.
 	    }
 	    catch (final Exception ex)
 	    {

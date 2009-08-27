@@ -51,6 +51,7 @@ import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+import com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
@@ -447,9 +448,9 @@ public class XAResourceRecord extends AbstractRecord
 					{
 						if (jtaLogger.loggerI18N.isWarnEnabled())
 						{
-                            jtaLogger.loggerI18N.warn(
-                                    "com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror",
-                                    new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
+						    jtaLogger.loggerI18N.warn(
+						            "com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror",
+						            new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
 						}
 
 						switch (e1.errorCode)
@@ -483,12 +484,12 @@ public class XAResourceRecord extends AbstractRecord
 				}
 				catch (Exception e2)
 				{
-                    if (jtaLogger.loggerI18N.isWarnEnabled())
-                    {
-                        jtaLogger.loggerI18N.warn(
-                                "com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror",
-                                new Object[] { _tranID, _theXAResource, e2.toString() }, e2);
-                    }
+				    if (jtaLogger.loggerI18N.isWarnEnabled())
+				    {
+				        jtaLogger.loggerI18N.warn(
+				                "com.arjuna.ats.internal.jta.resources.arjunacore.rollbackerror",
+				                new Object[] { _tranID, _theXAResource, e2.toString() }, e2);
+				    }
 
 					return TwoPhaseOutcome.FINISH_ERROR;
 				}
@@ -591,9 +592,9 @@ public class XAResourceRecord extends AbstractRecord
 					{
 						if (jtaLogger.loggerI18N.isWarnEnabled())
 						{
-                            jtaLogger.loggerI18N.warn(
-                                    "com.arjuna.ats.internal.jta.resources.arjunacore.commitxaerror",
-                                    new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
+						    jtaLogger.loggerI18N.warn(
+						            "com.arjuna.ats.internal.jta.resources.arjunacore.commitxaerror",
+						            new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
 						}
 
 						/*
@@ -611,7 +612,7 @@ public class XAResourceRecord extends AbstractRecord
 														// this code here.
 							break;
 						case XAException.XA_HEURRB:
-						case XAException.XA_RBROLLBACK:
+						case XAException.XA_RBROLLBACK:  // could really do with an ABORTED status in TwoPhaseOutcome to differentiate
 						case XAException.XA_RBCOMMFAIL:
 						case XAException.XA_RBDEADLOCK:
 						case XAException.XA_RBINTEGRITY:
@@ -630,6 +631,8 @@ public class XAResourceRecord extends AbstractRecord
 						        return TwoPhaseOutcome.HEURISTIC_HAZARD;  // something terminated the transaction!
 						case XAException.XAER_PROTO:
 						case XAException.XA_RETRY:
+						    _committed = true;  // will cause log to be rewritten
+						    
 	                                            /*
                                                      * Could do timeout retry here, but that could cause other resources in the list to go down the
                                                      * heuristic path (some are far too keen to do this). Fail and let recovery retry. Meanwhile
@@ -648,14 +651,14 @@ public class XAResourceRecord extends AbstractRecord
 				}
 				catch (Exception e2)
 				{
-					if (jtaLogger.loggerI18N.isWarnEnabled())
-					{
-                        jtaLogger.loggerI18N.warn(
-                                "com.arjuna.ats.internal.jta.resources.arjunacore.commitxaerror",
-                                new Object[] { _tranID, _theXAResource, e2.toString() }, e2);
-					}
+				    if (jtaLogger.loggerI18N.isWarnEnabled())
+				    {
+				        jtaLogger.loggerI18N.warn(
+				                "com.arjuna.ats.internal.jta.resources.arjunacore.commitxaerror",
+				                new Object[] { _tranID, _theXAResource, e2.toString() }, e2);
+				    }
 
-                    return TwoPhaseOutcome.FINISH_ERROR;
+				    return TwoPhaseOutcome.FINISH_ERROR;
 				}
 				finally
 				{
@@ -880,16 +883,19 @@ public class XAResourceRecord extends AbstractRecord
 					case XAException.XA_RBTRANSIENT:
 					case XAException.XAER_RMERR:
 						forget();
-						return TwoPhaseOutcome.FINISH_ERROR;
+						return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
 					case XAException.XAER_NOTA:
 						return TwoPhaseOutcome.HEURISTIC_HAZARD; // something committed or rolled back without asking us!
-					case XAException.XAER_PROTO:
-					case XAException.XAER_INVAL:
-					case XAException.XAER_RMFAIL: // resource manager failed,
-						// did it rollback?
-						return TwoPhaseOutcome.FINISH_ERROR;
+                                        case XAException.XAER_INVAL:
+                                        case XAException.XAER_RMFAIL: // resource manager
+                                                // failed, did it
+                                                // rollback?
+                                                return TwoPhaseOutcome.HEURISTIC_HAZARD;
+	                                case XAException.XA_RETRY:
+	                                case XAException.XAER_PROTO:
 					default:
-						return TwoPhaseOutcome.FINISH_ERROR;
+					    _committed = true;  // will cause log to be rewritten
+						return TwoPhaseOutcome.FINISH_ERROR;  // recovery should retry
 					}
 				}
 				catch (Exception e2)
@@ -961,7 +967,20 @@ public class XAResourceRecord extends AbstractRecord
 					"XAResourceRecord.recover");
 		}
 
-		return XARecoveryResource.FAILED_TO_RECOVER;
+		if (_committed)
+		{
+		    /*
+		     * A previous commit attempt failed, but we know the intention
+		     * was to commit. So let's try again.
+		     */
+		    
+		    if (topLevelCommit() == TwoPhaseOutcome.FINISH_OK)
+		        return XARecoveryResource.RECOVERED_OK;
+		    else
+		        return XARecoveryResource.FAILED_TO_RECOVER;
+		}
+		else
+		    return XARecoveryResource.WAITING_FOR_RECOVERY;
 	}
 
 	public static AbstractRecord create()
@@ -987,7 +1006,8 @@ public class XAResourceRecord extends AbstractRecord
 		try
 		{
 			os.packInt(_heuristic);
-
+			os.packBoolean(_committed);
+			
 			/*
 			 * Since we don't know what type of Xid we are using, leave it up to
 			 * XID to pack.
@@ -1082,6 +1102,8 @@ public class XAResourceRecord extends AbstractRecord
 		try
 		{
 			_heuristic = os.unpackInt();
+			_committed = os.unpackBoolean();
+			
 			_tranID = XidImple.unpack(os);
 
 			_theXAResource = null;
@@ -1367,6 +1389,8 @@ public class XAResourceRecord extends AbstractRecord
 
 	private int _heuristic;
 
+	private boolean _committed = false; // try to optimize recovery
+	
 	private TransactionImple _theTransaction;
     private boolean _recovered = false;
 

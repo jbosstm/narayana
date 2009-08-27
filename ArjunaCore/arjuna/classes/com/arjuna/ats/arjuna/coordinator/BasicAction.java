@@ -2669,8 +2669,11 @@ public class BasicAction extends StateManager
 		criticalStart();
 
 		if ((heuristicList == null) && reportHeuristics)
-			heuristicList = new RecordList(); // the only list we'll need.
-
+			heuristicList = new RecordList();
+		
+		if (failedList == null)
+		    failedList = new RecordList();
+		
 		/*
 		 * Since it is one-phase, the outcome from the record is the outcome of
 		 * the transaction. Therefore, we don't need to save much intermediary
@@ -2680,10 +2683,10 @@ public class BasicAction extends StateManager
 		boolean stateToSave = false;
 
 		recordBeingHandled = pendingList.getFront();
-	
+
 		int p = ((actionType == ActionType.TOP_LEVEL) ? recordBeingHandled.topLevelOnePhaseCommit()
 				: recordBeingHandled.nestedOnePhaseCommit());
-	
+	  
 		if ((p == TwoPhaseOutcome.FINISH_OK)
 				|| (p == TwoPhaseOutcome.PREPARE_READONLY))
 		{
@@ -2701,73 +2704,70 @@ public class BasicAction extends StateManager
 		}
 		else
 		{
-			// aborted or heuristic which we aren't interested in
-
 			if (p == TwoPhaseOutcome.FINISH_ERROR)
 			{
-				/*
-				 * Don't bother about the failedList - we are aborting, and
-				 * there is only one record!
-				 */
-
-				recordBeingHandled = null;
-
-				actionStatus = ActionStatus.ABORTED;
+			    if (!failedList.insert(recordBeingHandled))
+                                recordBeingHandled = null;
+                            else
+                            {
+                                if (!stateToSave)
+                                    stateToSave = recordBeingHandled.doSave();
+                            }
 			}
 			else
 			{
-				/*
-				 * Heuristic decision!!
-				 */
-
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_47", new Object[]
-					{ get_uid(), TwoPhaseOutcome.stringForm(p) });
-				}
-
-				if (reportHeuristics)
-				{
-					updateHeuristic(p, true);
-
-					if (!heuristicList.insert(recordBeingHandled))
-						recordBeingHandled = null;
-					else
-					{
-						if (!stateToSave)
-							stateToSave = recordBeingHandled.doSave();
-					}
-				}
-
-				if (heuristicDecision == TwoPhaseOutcome.HEURISTIC_ROLLBACK)
-				{
-					/*
-					 * Signal that the action outcome is the same as the
-					 * heuristic decision.
-					 */
-
-					heuristicDecision = TwoPhaseOutcome.PREPARE_OK; // means no
-																	// heuristic
-																	// was
-																	// raised.
-
-					actionStatus = ActionStatus.ABORTED;
-				}
-				else if (heuristicDecision == TwoPhaseOutcome.HEURISTIC_COMMIT)
-				{
-					heuristicDecision = TwoPhaseOutcome.PREPARE_OK;
-					actionStatus = ActionStatus.COMMITTED;
-				}
-				else
-					actionStatus = ActionStatus.COMMITTED; // can't really say
-														   // (could have
-														   // aborted)
-			}
+        			/*
+        			 * Heuristic decision!!
+        			 */
+        
+        			if (tsLogger.arjLoggerI18N.isWarnEnabled())
+        			{
+        			    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_47", new Object[]
+        			                                                                                               { get_uid(), TwoPhaseOutcome.stringForm(p) });
+        			}
+        
+        			if (reportHeuristics)
+        			{
+        			    updateHeuristic(p, true);
+        
+        			    if (!heuristicList.insert(recordBeingHandled))
+        			        recordBeingHandled = null;
+        			    else
+        			    {
+        			        if (!stateToSave)
+        			            stateToSave = recordBeingHandled.doSave();
+        			    }
+        			}
+        
+        			if (heuristicDecision == TwoPhaseOutcome.HEURISTIC_ROLLBACK)
+        			{
+        			    /*
+        			     * Signal that the action outcome is the same as the
+        			     * heuristic decision.
+        			     */
+        
+        			    heuristicDecision = TwoPhaseOutcome.PREPARE_OK; // means no
+        			    // heuristic
+        			    // was
+        			    // raised.
+        
+        			    actionStatus = ActionStatus.ABORTED;
+        			}
+        			else if (heuristicDecision == TwoPhaseOutcome.HEURISTIC_COMMIT)
+        			{
+        			    heuristicDecision = TwoPhaseOutcome.PREPARE_OK;
+        			    actionStatus = ActionStatus.COMMITTED;
+        			}
+        			else
+        			    actionStatus = ActionStatus.H_HAZARD; // can't really say
+        			// (could have
+        			// aborted)
+        		}
 		}
 
 		if (actionType == ActionType.TOP_LEVEL)
 		{			
-			if (stateToSave && (heuristicList.size() > 0))
+			if (stateToSave && ((heuristicList.size() > 0) || (failedList.size() > 0)))
 			{
 				if (store() == null)
 				{
@@ -3227,7 +3227,7 @@ public class BasicAction extends StateManager
 						{
 							/*
 							 * The commit failed. Add this record to the failed
-							 * list to indicate this.
+							 * list to indicate this. Covers statuses like FAILED_ERROR.
 							 */
 
 							failedList.insert(recordBeingHandled);
@@ -3259,7 +3259,7 @@ public class BasicAction extends StateManager
 			}
 		}
 
-		return TwoPhaseOutcome.FINISH_OK;
+		return ok;
 	}
 
 	/*

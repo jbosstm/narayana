@@ -640,11 +640,24 @@ public class ExtendedResourceRecord extends
 		}
 		catch (TRANSACTION_ROLLEDBACK e4)
 		{			
-			return TwoPhaseOutcome.FINISH_ERROR;
+		    /*
+		     * It rolled back. That's ok, but we need to be able
+		     * to communicate that back to the caller.
+		     */
+		    
+			return TwoPhaseOutcome.HEURISTIC_ROLLBACK;  // TODO TPO extension required.
 		}
 		catch (INVALID_TRANSACTION e5)
 		{
 			return TwoPhaseOutcome.FINISH_ERROR;
+		}
+		catch (final UNKNOWN ex)
+		{
+		    /*
+		     * Means we can retry.
+		     */
+		    
+		    return TwoPhaseOutcome.FINISH_ERROR;
 		}
 		catch (Exception e5)
 		{

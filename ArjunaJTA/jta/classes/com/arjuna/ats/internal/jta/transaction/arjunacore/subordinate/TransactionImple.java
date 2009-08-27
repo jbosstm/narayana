@@ -281,6 +281,7 @@ public class TransactionImple extends
 			switch (status)
 			{
 			case ActionStatus.COMMITTED:
+			case ActionStatus.COMMITTING:
 			case ActionStatus.H_COMMIT:
 				TransactionImple.removeTransaction(this);
 				break;

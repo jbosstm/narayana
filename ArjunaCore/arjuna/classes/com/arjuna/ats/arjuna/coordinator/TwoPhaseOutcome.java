@@ -48,6 +48,8 @@ import java.io.PrintWriter;
  * @since JTS 1.0.
  */
 
+// TODO this needs extending.
+
 public class TwoPhaseOutcome
 {
 

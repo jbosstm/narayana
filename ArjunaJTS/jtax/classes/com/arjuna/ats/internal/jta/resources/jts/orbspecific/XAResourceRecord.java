@@ -603,7 +603,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
                             throw new TRANSACTION_ROLLEDBACK();
 
 						case XAException.XA_RETRY:
-							throw new UNKNOWN();
+						    _committed = true;  // remember for recovery later.
+							throw new UNKNOWN();  // will cause log to be rewritten.
 						case XAException.XAER_INVAL:
 						case XAException.XAER_RMFAIL: // resource manager
 													  // failed, did it
@@ -878,8 +879,11 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					case XAException.XAER_INVAL:
 					case XAException.XAER_RMFAIL: // resource manager failed,
 												  // did it rollback?
-						throw new UNKNOWN();
+						throw new org.omg.CosTransactions.HeuristicHazard();
+					case XAException.XA_RETRY:
 					default:
+					    _committed = true;  // will cause log to be rewritten
+					
 						throw new UNKNOWN();
 					}
 				}
@@ -957,7 +961,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		try
 		{
 			os.packInt(_heuristic);
-
+			os.packBoolean(_committed);
+			
 			/*
 			 * Since we don't know what type of Xid we are using, leave it up to
 			 * XID to pack.
@@ -1058,6 +1063,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		try
 		{
 			_heuristic = os.unpackInt();
+			_committed = os.unpackBoolean();
+			
 			_tranID = XidImple.unpack(os);
 
 			_theXAResource = null;
@@ -1253,8 +1260,11 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			}
 			catch (OBJECT_NOT_EXIST ex)
 			{
-				// no coordinator, so presumed abort.
+				// no coordinator, so presumed abort unless we have better information.
 
+			    if (_committed)
+			        s = org.omg.CosTransactions.Status.StatusCommitted;
+			    else
 				s = org.omg.CosTransactions.Status.StatusRolledBack;
 			}
 			catch (NotPrepared ex1)

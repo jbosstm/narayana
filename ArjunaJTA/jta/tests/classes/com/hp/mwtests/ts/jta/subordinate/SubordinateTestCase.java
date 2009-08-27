@@ -505,7 +505,86 @@ public class SubordinateTestCase
         assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
     }
 
-/*
+    @Test
+    public void testFailOnCommitOnePhaseRetry () throws Exception
+    {
+        final Xid xid = new XidImple(new Uid());
+        final Transaction t = SubordinationManager.getTransactionImporter().importTransaction(xid);
+
+        final TestXAResource xaResource = new TestXAResource();
+
+        xaResource.setCommitException(new XAException(XAException.XA_RETRY));
+
+        t.enlistResource(xaResource);
+
+        final XATerminator xaTerminator = SubordinationManager.getXATerminator();
+
+        /*
+         * This should not cause problems. The transaction really has committed, or will once
+         * recovery kicks off. So nothing for the parent to do. The subordinate log will
+         * maintain enough information to drive recovery locally if we get to the point of
+         * issuing a commit call from parent to child.
+         */
+        
+        xaTerminator.commit(xid, true);  // transaction is completed (or will be eventually by recovery).
+    }
+
+    @Test
+    public void testFailOnCommitOnePhase () throws Exception
+    {
+        final Xid xid = new XidImple(new Uid());
+        final Transaction t = SubordinationManager.getTransactionImporter().importTransaction(xid);
+
+        final TestXAResource xaResource = new TestXAResource();
+        // provoke commit into failing with TwoPhaseOutcome.FINISH_ERROR
+        // warning: this is sensitive to the impl exception handling in
+        // XAResourceRecord.topLevelCommit
+        xaResource.setCommitException(new XAException(XAException.XA_HEURRB));  // should cause an exception!
+
+        t.enlistResource(xaResource);
+
+        final XATerminator xaTerminator = SubordinationManager.getXATerminator();
+
+        try
+        {
+            xaTerminator.commit(xid, true);
+        }
+        catch (final XAException ex)
+        {
+            // success!
+            
+            return;
+        }
+
+        assertTrue("commit should throw an exception and not get to here", false);
+    }
+    
+    @Test
+    public void testFailOnCommitRetry () throws Exception
+    {
+        final Xid xid = new XidImple(new Uid());
+        final Transaction t = SubordinationManager.getTransactionImporter().importTransaction(xid);
+
+        final TestXAResource xaResource = new TestXAResource();
+
+        xaResource.setCommitException(new XAException(XAException.XA_RETRY));
+
+        t.enlistResource(xaResource);
+
+        final XATerminator xaTerminator = SubordinationManager.getXATerminator();
+
+        xaTerminator.prepare(xid);
+        
+        /*
+         * This should not cause problems. The transaction really has committed, or will once
+         * recovery kicks off. So nothing for the parent to do. The subordinate log will
+         * maintain enough information to drive recovery locally if we get to the point of
+         * issuing a commit call from parent to child.
+         */
+        
+        xaTerminator.commit(xid, false);
+    }
+    
     @Test
     public void testFailOnCommit() throws Exception
     {
@@ -516,18 +595,24 @@ public class SubordinateTestCase
         // provoke commit into failing with TwoPhaseOutcome.FINISH_ERROR
         // warning: this is sensitive to the impl exception handling in
         // XAResourceRecord.topLevelCommit
-        xaResource.setCommitException(new XAException(XAException.XA_RETRY));
+        xaResource.setCommitException(new XAException(XAException.XA_HEURHAZ));  // throw a little spice into things!
 
         t.enlistResource(xaResource);
 
         final XATerminator xaTerminator = SubordinationManager.getXATerminator();
 
-        xaTerminator.prepare(xid);
-        xaTerminator.commit(xid, false);
-
-        //assertEquals(javax.transaction.Status.STATUS_ROLLEDBACK, t.getStatus());
-
+        try
+        {
+            xaTerminator.prepare(xid);
+            xaTerminator.commit(xid, false);
+        }
+        catch (final XAException ex)
+        {
+            // success!!
+            
+            return;
+        }
+        
         assertTrue("commit should throw an exception and not get to here", false);
     }
-*/
 }

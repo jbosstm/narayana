@@ -332,6 +332,7 @@ public class TransactionImple extends
                         {
                         case ActionStatus.COMMITTED:
                         case ActionStatus.H_COMMIT:
+                        case ActionStatus.COMMITTING:
                                 break;
                         case ActionStatus.ABORTED:
                         case ActionStatus.ABORTING:

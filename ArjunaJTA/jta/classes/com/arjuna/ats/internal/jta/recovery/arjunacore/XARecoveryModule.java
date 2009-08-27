@@ -447,6 +447,8 @@ public class XARecoveryModule implements RecoveryModule
 								{
 									if (recoveryStatus == XARecoveryResource.WAITING_FOR_RECOVERY)
 									{
+									    // resource initiated recovery not possible (no distribution).
+									    
 										problem = false;
 
 										if (jtaLogger.loggerI18N
@@ -479,9 +481,7 @@ public class XARecoveryModule implements RecoveryModule
 									}
 								}
 								else
-									problem = false; // resource initiated
-								// recovery not possible
-								// (no distribution).
+									problem = false;
 							}
 								break;
 							case XARecoveryResource.INFLIGHT_TRANSACTION:
