@@ -53,40 +53,11 @@ public class commonPropertyManager
 
     public static LoggingEnvironmentBean getLoggingEnvironmentBean()
     {
-        synchronized (loggingEnvironmentBeanInit) {
-            if(!loggingEnvironmentBeanInit.get()) {
-                try {
-                    BeanPopulator.configureFromPropertyManager(loggingEnvironmentBean,  getPropertyManager());
-                    loggingEnvironmentBeanInit.set(true);
-                } catch(Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        return loggingEnvironmentBean;
+        return BeanPopulator.getSingletonInstance(LoggingEnvironmentBean.class, getPropertyManager());
     }
-
-    private static final AtomicBoolean loggingEnvironmentBeanInit = new AtomicBoolean(false);
-    private static final LoggingEnvironmentBean loggingEnvironmentBean = new LoggingEnvironmentBean();
-
 
     public static DefaultLogEnvironmentBean getDefaultLogEnvironmentBean()
     {
-        synchronized (defaultLogEnvironmentBeanInit) {
-            if(!defaultLogEnvironmentBeanInit.get()) {
-                try {
-                    BeanPopulator.configureFromPropertyManager(defaultLogEnvironmentBean,  getPropertyManager());
-                    defaultLogEnvironmentBeanInit.set(true);
-                } catch(Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        return defaultLogEnvironmentBean;
+        return BeanPopulator.getSingletonInstance(DefaultLogEnvironmentBean.class, getPropertyManager());
     }
-
-    private static final AtomicBoolean defaultLogEnvironmentBeanInit = new AtomicBoolean(false);
-    private static final DefaultLogEnvironmentBean defaultLogEnvironmentBean = new DefaultLogEnvironmentBean();
 }

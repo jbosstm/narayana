@@ -53,23 +53,8 @@ public class jtsPropertyManager
         return PropertyManagerFactory.getPropertyManagerForModule("jts", Environment.PROPERTIES_FILE);
     }
 
-
     public static JTSEnvironmentBean getJTSEnvironmentBean()
     {
-        synchronized (jtsEnvironmentBeanInit) {
-            if(!jtsEnvironmentBeanInit.get()) {
-                try {
-                    BeanPopulator.configureFromPropertyManager(jtsEnvironmentBean,  getPropertyManager());
-                    jtsEnvironmentBeanInit.set(true);
-                } catch(Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        return jtsEnvironmentBean;
+        return BeanPopulator.getSingletonInstance(JTSEnvironmentBean.class, getPropertyManager());
     }
-
-    private static final AtomicBoolean jtsEnvironmentBeanInit = new AtomicBoolean(false);
-    private static final JTSEnvironmentBean jtsEnvironmentBean = new JTSEnvironmentBean();
 }

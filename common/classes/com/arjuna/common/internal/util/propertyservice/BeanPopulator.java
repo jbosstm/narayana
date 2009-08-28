@@ -22,10 +22,9 @@ package com.arjuna.common.internal.util.propertyservice;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Enumeration;
-import java.util.Collections;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 
@@ -37,6 +36,26 @@ import com.arjuna.common.util.propertyservice.PropertyManager;
  */
 public class BeanPopulator
 {
+    private static final ConcurrentMap<Class, Object> singletonBeanInstances = new ConcurrentHashMap<Class, Object>();
+
+    public static <T> T getSingletonInstance(Class<T> beanClass, PropertyManager propertyManager) throws RuntimeException {
+
+        // we don't mind sometimes instantiating the bean multiple times,
+        // as long as the duplicates never escape into the outside world.
+        if(!singletonBeanInstances.containsKey(beanClass)) {
+            T bean = null;
+            try {
+                bean = beanClass.newInstance();
+                configureFromPropertyManager(bean, propertyManager);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            singletonBeanInstances.put(beanClass, bean);
+        }
+
+        return (T)singletonBeanInstances.get(beanClass);
+    }
+
     /**
      * Examine the properties of the provided bean and update them to match the values of the corresponding
      * properties in the PropertyManager.

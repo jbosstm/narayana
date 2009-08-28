@@ -32,9 +32,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class recoveryPropertyManager
 {
-    private static final AtomicBoolean recoveryEnvironmentBeanInit = new AtomicBoolean(false);
-    private static final RecoveryEnvironmentBean recoveryEnvironmentBean = new RecoveryEnvironmentBean();
-
     /**
      * @deprecated use RecoveryEnvironmentBean instead
      * @return
@@ -47,17 +44,6 @@ public class recoveryPropertyManager
 
     public static RecoveryEnvironmentBean getRecoveryEnvironmentBean()
     {
-        synchronized (recoveryEnvironmentBeanInit) {
-            if(!recoveryEnvironmentBeanInit.get()) {
-                try {
-                    BeanPopulator.configureFromPropertyManager(recoveryEnvironmentBean, arjPropertyManager.getPropertyManager());
-                    recoveryEnvironmentBeanInit.set(true);
-                } catch(Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        return recoveryEnvironmentBean;
+        return BeanPopulator.getSingletonInstance(RecoveryEnvironmentBean.class, getPropertyManager());
     }
 }

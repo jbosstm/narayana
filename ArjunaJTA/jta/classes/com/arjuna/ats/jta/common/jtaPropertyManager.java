@@ -54,21 +54,6 @@ public class jtaPropertyManager
 
     public static JTAEnvironmentBean getJTAEnvironmentBean()
     {
-        synchronized (jtaEnvironmentBeanInit) {
-            if(!jtaEnvironmentBeanInit.get()) {
-                try {
-                    BeanPopulator.configureFromPropertyManager(jtaEnvironmentBean,  getPropertyManager());
-                    jtaEnvironmentBeanInit.set(true);
-                } catch(Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        return jtaEnvironmentBean;
+        return BeanPopulator.getSingletonInstance(JTAEnvironmentBean.class, getPropertyManager());
     }
-
-    private static final AtomicBoolean jtaEnvironmentBeanInit = new AtomicBoolean(false);
-    private static final JTAEnvironmentBean jtaEnvironmentBean = new JTAEnvironmentBean();
-
 }

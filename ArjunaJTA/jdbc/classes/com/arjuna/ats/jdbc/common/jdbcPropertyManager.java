@@ -53,21 +53,6 @@ public class jdbcPropertyManager
 
     public static JDBCEnvironmentBean getJDBCEnvironmentBean()
     {
-        synchronized (jdbcEnvironmentBeanInit) {
-            if(!jdbcEnvironmentBeanInit.get()) {
-                try {
-                    BeanPopulator.configureFromPropertyManager(jdbcEnvironmentBean,  getPropertyManager());
-                    jdbcEnvironmentBeanInit.set(true);
-                } catch(Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        return jdbcEnvironmentBean;
+        return BeanPopulator.getSingletonInstance(JDBCEnvironmentBean.class, getPropertyManager());
     }
-
-    private static final AtomicBoolean jdbcEnvironmentBeanInit = new AtomicBoolean(false);
-    private static final JDBCEnvironmentBean jdbcEnvironmentBean = new JDBCEnvironmentBean();
-
 }

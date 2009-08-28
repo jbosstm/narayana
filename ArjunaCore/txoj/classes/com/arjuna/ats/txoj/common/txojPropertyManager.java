@@ -54,21 +54,8 @@ public class txojPropertyManager
         return PropertyManagerFactory.getPropertyManagerForModule("txoj", Environment.PROPERTIES_FILE);
     }
 
-    private static final AtomicBoolean txojEnvironmentBeanInit = new AtomicBoolean(false);
-    private static final TxojEnvironmentBean txojEnvironmentBean = new TxojEnvironmentBean();
-
     public static TxojEnvironmentBean getTxojEnvironmentBean()
     {
-        synchronized (txojEnvironmentBeanInit) {
-            if(!txojEnvironmentBeanInit.get()) {
-                try {
-                    BeanPopulator.configureFromPropertyManager(txojEnvironmentBean, getPropertyManager());
-                } catch(Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        return txojEnvironmentBean;
+        return BeanPopulator.getSingletonInstance(TxojEnvironmentBean.class, getPropertyManager());
     }
 }

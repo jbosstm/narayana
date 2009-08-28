@@ -56,59 +56,16 @@ public class arjPropertyManager
 
     public static CoreEnvironmentBean getCoreEnvironmentBean()
     {
-        synchronized (coreEnvironmentBeanInit) {
-            if(!coreEnvironmentBeanInit.get()) {
-                try {
-                    BeanPopulator.configureFromPropertyManager(coreEnvironmentBean,  getPropertyManager());
-                    coreEnvironmentBeanInit.set(true);
-                } catch(Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        return coreEnvironmentBean;
+        return BeanPopulator.getSingletonInstance(CoreEnvironmentBean.class, getPropertyManager());
     }
-
-    private static final AtomicBoolean coreEnvironmentBeanInit = new AtomicBoolean(false);
-    private static final CoreEnvironmentBean coreEnvironmentBean = new CoreEnvironmentBean();
 
     public static CoordinatorEnvironmentBean getCoordinatorEnvironmentBean()
     {
-        synchronized (coordinatorEnvironmentBeanInit) {
-            if(!coordinatorEnvironmentBeanInit.get()) {
-                try {
-                    BeanPopulator.configureFromPropertyManager(coordinatorEnvironmentBean,  getPropertyManager());
-                    coordinatorEnvironmentBeanInit.set(true);
-                } catch(Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        return coordinatorEnvironmentBean;
+        return BeanPopulator.getSingletonInstance(CoordinatorEnvironmentBean.class, getPropertyManager());
     }
-
-    private static final AtomicBoolean coordinatorEnvironmentBeanInit = new AtomicBoolean(false);
-    private static final CoordinatorEnvironmentBean coordinatorEnvironmentBean = new CoordinatorEnvironmentBean();
 
     public static ObjectStoreEnvironmentBean getObjectStoreEnvironmentBean()
     {
-        synchronized (objectStoreEnvironmentBeanInit) {
-            if(!objectStoreEnvironmentBeanInit.get()) {
-                try {
-                    BeanPopulator.configureFromPropertyManager(objectStoreEnvironmentBean, getPropertyManager());
-                    objectStoreEnvironmentBeanInit.set(true);
-                } catch(Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        return objectStoreEnvironmentBean;
+        return BeanPopulator.getSingletonInstance(ObjectStoreEnvironmentBean.class, getPropertyManager());
     }
-
-    private static final AtomicBoolean objectStoreEnvironmentBeanInit = new AtomicBoolean(false);
-    private static final ObjectStoreEnvironmentBean objectStoreEnvironmentBean = new ObjectStoreEnvironmentBean();
-
 }

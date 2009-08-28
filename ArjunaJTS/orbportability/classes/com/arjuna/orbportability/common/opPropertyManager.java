@@ -51,21 +51,6 @@ public class opPropertyManager
 
     public static OrbPortabilityEnvironmentBean getOrbPortabilityEnvironmentBean()
     {
-        synchronized (opEnvironmentBeanInit) {
-            if(!opEnvironmentBeanInit.get()) {
-                try {
-                    BeanPopulator.configureFromPropertyManager(opEnvironmentBean,  getPropertyManager());
-                    opEnvironmentBeanInit.set(true);
-                } catch(Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        return opEnvironmentBean;
+        return BeanPopulator.getSingletonInstance(OrbPortabilityEnvironmentBean.class, getPropertyManager());
     }
-
-    private static final AtomicBoolean opEnvironmentBeanInit = new AtomicBoolean(false);
-    private static final OrbPortabilityEnvironmentBean opEnvironmentBean = new OrbPortabilityEnvironmentBean();
-
 }
