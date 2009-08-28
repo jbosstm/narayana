@@ -382,8 +382,6 @@ class LogPurger extends Thread
 			 * Write any asynchronous delete records.
 			 */
 
-			System.err.println("**THREAD RUNNING");
-
 			writeRemovalEntries();
 
 			/*
