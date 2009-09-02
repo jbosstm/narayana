@@ -38,77 +38,147 @@ public class TxojEnvironmentBean implements TxojEnvironmentBeanMBean
     private String propertiesFile = "";
 
     private String lockStoreDir = System.getProperty("user.dir") + File.separator + "LockStore";
-    private String lockStoreType;
+    private String lockStoreType = null;
     private String multipleLockStore = null;
     private String singleLockStore = TxOJNames.Implementation_LockStore_defaultStore().stringForm();
     private boolean allowNestedLocking = true;
 
-//    public static final String PROPERTIES_FILE = "com.arjuna.ats.txoj.common.propertiesFile";
+    /**
+     * Returns the name of the properties file.
+     *
+     * Default: ""
+     * Equivalent deprecated property: com.arjuna.ats.txoj.common.propertiesFile
+     *
+     * @return the name of the properties file
+     */
     public String getPropertiesFile()
     {
         return propertiesFile;
     }
 
+    /**
+     * Sets the name of the properties file.
+     *
+     * @param propertiesFile the name of the properties file.
+     */
     public void setPropertiesFile(String propertiesFile)
     {
         this.propertiesFile = propertiesFile;
     }
 
-//    public static final String LOCKSTORE_DIR = "com.arjuna.ats.txoj.lockstore.lockStoreDir";
+    /**
+     * Returns the directory path used for storing persistent locks.
+     *
+     * Default: {user.dir}/LockStore
+     * Equivalent deprecated property: com.arjuna.ats.txoj.lockstore.lockStoreDir
+     *
+     * @return the path to the lock directory.
+     */
     public String getLockStoreDir()
     {
         return lockStoreDir;
     }
 
+    /**
+     * Sets the directory path to be used for storing persistent locks.
+     *
+     * @param lockStoreDir the path to the lock directory.
+     */
     public void setLockStoreDir(String lockStoreDir)
     {
         this.lockStoreDir = lockStoreDir;
     }
 
-//    public static final String LOCKSTORE_TYPE = "com.arjuna.ats.txoj.lockstore.lockStoreType";
+    /**
+     * Returns the name of the lock store implementation.
+     *
+     * Default: null
+     * Equivalent deprecated property: com.arjuna.ats.txoj.lockstore.lockStoreType
+     *
+     * @deprecated I'm unused, remove me
+     * @return the name of the lock store implementation.
+     */
     public String getLockStoreType()
     {
         return lockStoreType;
     }
 
+    /**
+     * Sets the name of the lock store implementation.
+     *
+     * @param lockStoreType the name of the lock store implementation.
+     */
     public void setLockStoreType(String lockStoreType)
     {
         this.lockStoreType = lockStoreType;
     }
 
-//    public static final String MULTIPLE_LOCKSTORE = "com.arjuna.ats.txoj.lockstore.multipleLockStore";
+    /**
+     * Returns the name of the multiple lock store implementation.
+     *
+     * Default: null
+     * Equivalent deprecated property: com.arjuna.ats.txoj.lockstore.multipleLockStore
+     *
+     * @return the name of the multiple lock store implementation. 
+     */
     public String getMultipleLockStore()
     {
         return multipleLockStore;
     }
 
+    /**
+     * Sets the name of the multiple lock store implementation.
+     *
+     * @param multipleLockStore the name of the multiple lock store implementation.
+     */
     public void setMultipleLockStore(String multipleLockStore)
     {
         this.multipleLockStore = multipleLockStore;
     }
 
-//    public static final String SINGLE_LOCKSTORE = "com.arjuna.ats.txoj.lockstore.singleLockStore";
+    /**
+     * Sets the name of the single lock store implementation.
+     *
+     * Default: "BasicLockStore" TODO test
+     * Equivalent deprecated property: com.arjuna.ats.txoj.lockstore.singleLockStore
+     *
+     * @return the name of the single lock store implementation.
+     */
     public String getSingleLockStore()
     {
         return singleLockStore;
     }
 
+    /**
+     * Sets the name of the single lock store implementation.
+     *
+     * @param singleLockStore  the name of the single lock store implementation.
+     */
     public void setSingleLockStore(String singleLockStore)
     {
         this.singleLockStore = singleLockStore;
     }
 
-//    public static final String ALLOW_NESTED_LOCKING = "com.arjuna.ats.txoj.lockstore.allowNestedLocking";
+    /**
+     * Returns if nested locking is allowed or not.
+     *
+     * Default: true
+     * Equivalent deprecated property: com.arjuna.ats.txoj.lockstore.allowNestedLocking
+     *
+     * @return true if nested locking is enabled, false otherwise.
+     */
     public boolean isAllowNestedLocking()
     {
         return allowNestedLocking;
     }
 
+    /**
+     * Sets if nested locking is allowed or not.
+     *
+     * @param allowNestedLocking true to enable, false to disable.
+     */
     public void setAllowNestedLocking(boolean allowNestedLocking)
     {
         this.allowNestedLocking = allowNestedLocking;
     }
-
-
-
 }

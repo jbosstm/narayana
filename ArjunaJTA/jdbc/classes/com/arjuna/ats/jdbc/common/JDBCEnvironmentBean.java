@@ -38,23 +38,47 @@ public class JDBCEnvironmentBean implements JDBCEnvironmentBeanMBean
 
     private int isolationLevel = Connection.TRANSACTION_SERIALIZABLE;
 
-//    public static final String PROPERTIES_FILE = "com.arjuna.ats.jdbc.common.propertiesFile";
+    /**
+     * Returns the name of the properties file.
+     *
+     * Default: ""
+     * Equivalent deprecated property: com.arjuna.ats.jdbc.common.propertiesFile
+     *
+     * @return the name of the properties file
+     */
     public String getPropertiesFile()
     {
         return propertiesFile;
     }
 
+    /**
+     * Sets the name of the properties file.
+     *
+     * @param propertiesFile the name of the properties file.
+     */
     public void setPropertiesFile(String propertiesFile)
     {
         this.propertiesFile = propertiesFile;
     }
 
-//    public static final String ISOLATION_LEVEL = "com.arjuna.ats.jdbc.isolationLevel";
+    /**
+     * Returns the default isolation level for tansactional database operations.
+     *
+     * Default: Connection.TRANSACTION_SERIALIZABLE
+     * Equivalent deprecated property: com.arjuna.ats.jdbc.isolationLevel"
+     *
+     * @return the default connection isolation level.
+     */
     public int getIsolationLevel()
     {
         return isolationLevel;
     }
 
+    /**
+     * Sets the default transaction isolation level for database operations.
+     *
+     * @param isolationLevel the default connection isolation level.
+     */
     public void setIsolationLevel(int isolationLevel)
     {
         if(! (isolationLevel == Connection.TRANSACTION_READ_COMMITTED ||
