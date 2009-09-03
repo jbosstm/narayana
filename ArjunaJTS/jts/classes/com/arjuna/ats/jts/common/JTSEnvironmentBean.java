@@ -34,7 +34,7 @@ import java.net.InetAddress;
 public class JTSEnvironmentBean implements JTSEnvironmentBeanMBean
 {
     @FullPropertyName(name= "com.arjuna.ats.jts.common.propertiesFile")
-    private String propertiesFile;
+    private String propertiesFile = "";
 
     private boolean transactionManager = false;
     private boolean needTranContext = false;
@@ -51,7 +51,7 @@ public class JTSEnvironmentBean implements JTSEnvironmentBeanMBean
     private String recoveryManagerAddress = "";
 
     @FullPropertyName(name = "com.arjuna.ats.jts.ots_1_0.timeoutPropagation")
-    private boolean timeoutPropagation;
+    private boolean timeoutPropagation = true;
 
     @FullPropertyName(name = "com.arjuna.ats.jts.recovery.issueRecoveryRollback")
     private boolean issueRecoveryRollback = true;
@@ -63,200 +63,433 @@ public class JTSEnvironmentBean implements JTSEnvironmentBeanMBean
     private int assumedObjectNotExist = 10;
 
 
-//    public static final String PROPERTIES_FILE = "com.arjuna.ats.jts.common.propertiesFile";
+    /**
+     * Returns the name of the properties file.
+     *
+     * Default: ""
+     * Equivalent deprecated property: com.arjuna.ats.jts.common.propertiesFile
+     *
+     * @return the name of the properties file
+     */
     public String getPropertiesFile()
     {
         return propertiesFile;
     }
 
+    /**
+     * Sets the name of the properties file.
+     *
+     * @param propertiesFile the name of the properties file.
+     */
     public void setPropertiesFile(String propertiesFile)
     {
         this.propertiesFile = propertiesFile;
     }
 
-//    public static final String TRANSACTION_MANAGER = "com.arjuna.ats.jts.transactionManager";
+    /**
+     * Returns if an extenal transaction manager process should be used.
+     *
+     * Default: false
+     * Equivalent deprecated property: com.arjuna.ats.jts.transactionManager
+     *
+     * @return true for separate transaction manaager process, false for in-process.
+     */
     public boolean isTransactionManager()
     {
         return transactionManager;
     }
 
+    /**
+     * Sets if an external transaction manager process should be used.
+     *
+     * @param transactionManager true to enable use of a separate transaction manager, false to disable.
+     */
     public void setTransactionManager(boolean transactionManager)
     {
         this.transactionManager = transactionManager;
     }
 
-//    public static final String NEED_TRAN_CONTEXT = "com.arjuna.ats.jts.needTranContext";
+    /**
+     * Returns if transaction context interceptors will require a context to be present.
+     *
+     * Default: false
+     * Equivalent deprecated property: com.arjuna.ats.jts.needTranContext
+     *
+     * @return true if context is required, false for optional context.
+     */
     public boolean isNeedTranContext()
     {
         return needTranContext;
     }
 
+    /**
+     * Sets if transaction context interceptors will require a context to be present.
+     *
+     * @param needTranContext true to require a transaction context, false if it is optional.
+     */
     public void setNeedTranContext(boolean needTranContext)
     {
         this.needTranContext = needTranContext;
     }
 
-//    public static final String ALWAYS_PROPAGATE_CONTEXT = "com.arjuna.ats.jts.alwaysPropagateContext";
+    /**
+     * Returns if a transaction context should always be propagated on remote calls.
+     *
+     * Default: false
+     * Equivalent deprecated property: com.arjuna.ats.jts.alwaysPropagateContext
+     *
+     * @return true to always propagate, false to propagate selectively.
+     */
     public boolean isAlwaysPropagateContext()
     {
         return alwaysPropagateContext;
     }
 
+    /**
+     * Sets if a transaction context should always be propagated on remote calls.
+     *
+     * @param alwaysPropagateContext true to always propagate, false to propagate selectively.
+     */
     public void setAlwaysPropagateContext(boolean alwaysPropagateContext)
     {
         this.alwaysPropagateContext = alwaysPropagateContext;
     }
 
-//    public static final String INTERPOSITION = "com.arjuna.ats.jts.interposition";
+    /**
+     * Returns the Xid format interposition strategy.
+     *
+     * Default: null
+     * Equivalent deprecated property: com.arjuna.ats.jts.interposition
+     *
+     * @return the name of the interposition implementation.
+     */
     public String getInterposition()
     {
         return interposition;
     }
 
+    /**
+     * Sets the Xid format interposition strategy.
+     *
+     * @param interposition the name of the interposition implementation.
+     */
     public void setInterposition(String interposition)
     {
         this.interposition = interposition;
     }
 
-//    public static final String CHECKED_TRANSACTIONS = "com.arjuna.ats.jts.checkedTransactions";
+    /**
+     * Returns if checked transactions should be used.
+     *
+     * Default: false
+     * Equivalent deprecated property: com.arjuna.ats.jts.checkedTransactions
+     *
+     * @return true if checked transactions are enabled, false otherwise.
+     */
     public boolean isCheckedTransactions()
     {
         return checkedTransactions;
     }
 
+    /**
+     * Sets if checked transactions should be used.
+     *
+     * @param checkedTransactions true to enable checked transactions, false to disable.
+     */
     public void setCheckedTransactions(boolean checkedTransactions)
     {
         this.checkedTransactions = checkedTransactions;
     }
 
-//    public static final String SUPPORT_SUBTRANSACTIONS = "com.arjuna.ats.jts.supportSubtransactions";
+    /**
+     * Returns if subtransactions should be used in the JTS.
+     * Note that this is distinct from the JTA module subtransaction option.
+     *
+     * Default: true
+     * Equivalent deprecated property: com.arjuna.ats.jts.supportSubtransactions
+     *
+     * @return true if subtransactions are allowed, false otherwise.
+     */
     public boolean isSupportSubtransactions()
     {
         return supportSubtransactions;
     }
 
+    /**
+     * Sets if subtransactions are allowed in the JTS.
+     *
+     * @param supportSubtransactions true to enable subtransactions, false to disable.
+     */
     public void setSupportSubtransactions(boolean supportSubtransactions)
     {
         this.supportSubtransactions = supportSubtransactions;
     }
 
-//    public static final String SUPPORT_ROLLBACK_SYNC = "com.arjuna.ats.jts.supportRollbackSync";
+    /**
+     * Returns if Synchronizations should be fired on transaction rollback.
+     * Note: this is distinct from the coordinator's beforeCompletionWhenRollbackOnly option.
+     *
+     * Default: true
+     * Equivalent deprecated property: com.arjuna.ats.jts.supportRollbackSync
+     *
+     * @return true if Synchronizations will run on transaction rollback, false if they will be skipped. 
+     */
     public boolean isSupportRollbackSync()
     {
         return supportRollbackSync;
     }
 
+    /**
+     * Sets if Synchronizations will be fired on transaction rollback.
+     *
+     * @param supportRollbackSync true to enable Synchronizations on rollback transactions, false to disable.
+     */
     public void setSupportRollbackSync(boolean supportRollbackSync)
     {
         this.supportRollbackSync = supportRollbackSync;
     }
 
-//    public static final String SUPPORT_INTERPOSED_SYNCHRONIZATION = "com.arjuna.ats.jts.supportInterposedSynchronization";
+    /**
+     * Returns if Synchronizations can be interposed i.e. registered direct with the parent coordinator.
+     *
+     * Default: false
+     * Equivalent deprecated property: com.arjuna.ats.jts.supportInterposedSynchronization
+     *
+     * @return true for interposed (remote) Synchronization handling, false for local handling.
+     */
     public boolean isSupportInterposedSynchronization()
     {
         return supportInterposedSynchronization;
     }
 
+    /**
+     * Sets if Synchronizations can be interposed.
+     *
+     * @param supportInterposedSynchronization true to enable interposition of synchronizations, false to disable.
+     */
     public void setSupportInterposedSynchronization(boolean supportInterposedSynchronization)
     {
         this.supportInterposedSynchronization = supportInterposedSynchronization;
     }
 
-//    public static final String DEFAULT_TIMEOUT = "com.arjuna.ats.jts.defaultTimeout"; // deprecated
+    /**
+     * Returns the default interval after which a transaction may be considered for timeout, in seconds.
+     * Note: depending on the reaper mode and workload, transactions may not be timed out immediately.
+     *
+     * Default: 60
+     * Equivalent deprecated property: com.arjuna.ats.jts.defaultTimeout
+     *
+     * @deprecated use the Coordinator one instead.
+     * @return the default transaction lifetime, in seconds.
+     */
     public int getDefaultTimeout()
     {
         return defaultTimeout;
     }
 
+    /**
+     * Sets the default lifetime after which a transaction may be considered for timeout, in seconds.
+     *
+     * @param defaultTimeout the default transaction lifetime, in seconds.
+     */
     public void setDefaultTimeout(int defaultTimeout)
     {
         this.defaultTimeout = defaultTimeout;
     }
 
-//    public static final String PROPAGATE_TERMINATOR = "com.arjuna.ats.jts.propagateTerminator";
+    /**
+     * Returns if a reference to the terminator should be included in the propagation context.
+     *
+     * Default: false
+     * Equivalent deprecated property: com.arjuna.ats.jts.propagateTerminator
+     *
+     * @return true if the terminator should be propagated, false otherwise.
+     */
     public boolean isPropagateTerminator()
     {
         return propagateTerminator;
     }
 
+    /**
+     * Sets if a reference to the terminator should be included in the propagation context.
+     *
+     * @param propagateTerminator true to enable propagation of the terminator, false to disable.
+     */
     public void setPropagateTerminator(boolean propagateTerminator)
     {
         this.propagateTerminator = propagateTerminator;
     }
 
-//    public static final String CONTEXT_PROP_MODE = "com.arjuna.ats.jts.contextPropMode";
+    /**
+     * Returns the name of the context propagation mode.
+     *  "CONTEXT" or "NONE"
+     *
+     * Default: null
+     * Equivalent deprecated property: com.arjuna.ats.jts.contextPropMode
+     *
+     * @return the name of the context propagation mode.
+     */
     public String getContextPropMode()
     {
         return contextPropMode;
     }
 
+    /**
+     * Sets the name of the context propagation mode.
+     *
+     * @param contextPropMode the name of the context propagation mode.
+     */
     public void setContextPropMode(String contextPropMode)
     {
         this.contextPropMode = contextPropMode;
     }
 
-//    public static final String RECOVERY_MANAGER_ORB_PORT = "com.arjuna.ats.jts.recoveryManagerPort";
+    /**
+     * Returns the port number on which the recovery manager will listen.
+     *
+     * Default: 4711
+     * Equivalent deprecated property: com.arjuna.ats.jts.recoveryManagerPort
+     *
+     * @return the port number used by the recovery manager.
+     */
     public int getRecoveryManagerPort()
     {
         return recoveryManagerPort;
     }
 
+    /**
+     * Sets the port number on which the recovery manager will listen.
+     *
+     * @param recoveryManagerPort the port number to use for the recovery manager.
+     */
     public void setRecoveryManagerPort(int recoveryManagerPort)
     {
         this.recoveryManagerPort = recoveryManagerPort;
     }
 
-//    public static final String RECOVERY_MANAGER_ADDRESS = "com.arjuna.ats.jts.recoveryManagerAddress";
+    /**
+     * Returns the hostname on which the recovery manager will bind.
+     *
+     * Default: ""
+     * Equivalent deprecated property: com.arjuna.ats.jts.recoveryManagerAddress
+     *
+     * @return the hostname used by the recovery manager.
+     */
     public String getRecoveryManagerAddress()
     {
         return recoveryManagerAddress;
     }
 
+    /**
+     * Sets the hostname on which the recovery manager will bind.
+     *
+     * @param recoveryManagerAddress the hostname to use for the recovery manager.
+     */
     public void setRecoveryManagerAddress(String recoveryManagerAddress)
     {
         this.recoveryManagerAddress = recoveryManagerAddress;
     }
 
+    /**
+     * Sets the InetAddress on which the recovery manager should bind.
+     * Mainly intended for use by strongly typed bean injection systems,
+     * this is a wrapper around the String form of the method.
+     *
+     * @param inetAddress
+     */
     public void setRecoveryManagerInetAddress(InetAddress inetAddress) {
         setRecoveryManagerAddress(inetAddress.getHostAddress());
     }
 
-//    public static final String OTS_1_0_TIMEOUT_PROPAGATION = "com.arjuna.ats.jts.ots_1_0.timeoutPropagation";
+    /**
+     * Returns if the timeout value sent should be the time remaining or not.
+     * true for OTS 1.2 (time remaining), false for backwards compatible (total time)
+     *
+     * Default: true
+     * Equivalent deprecated property: com.arjuna.ats.jts.ots_1_0.timeoutPropagation
+     *
+     * @return true for remaining time propagation, false for total time propagation. 
+     */
     public boolean isTimeoutPropagation()
     {
         return timeoutPropagation;
     }
 
+    /**
+     * Sets if the timeout value propagated should be time remaining or not.
+     *
+     * @param timeoutPropagation true for OTS 1.2 behaviour, false for backwards compatible.
+     */
     public void setTimeoutPropagation(boolean timeoutPropagation)
     {
         this.timeoutPropagation = timeoutPropagation;
     }
 
+    /**
+     * Returns if resources will have rollback invoked explicitly on them by recovery.
+     *
+     * Default: true
+     * Equivalent deprecated property: com.arjuna.ats.jts.recovery.issueRecoveryRollback
+     *
+     * @return true for explicit rollback by recovery, false to skip this.
+     */
     public boolean isIssueRecoveryRollback()
     {
         return issueRecoveryRollback;
     }
 
+    /**
+     * Sets if resources will have rollback invoked explicitly on them by recovery.
+     *
+     * @param issueRecoveryRollback true to enable explicit rollback, false to disable.
+     */
     public void setIssueRecoveryRollback(boolean issueRecoveryRollback)
     {
         this.issueRecoveryRollback = issueRecoveryRollback;
     }
 
+    /**
+     * Returns the number of attempts to make to notify resources of a transaction commit during recovery.
+     *
+     * Default: 3
+     * Equivalent deprecated property: com.arjuna.ats.jts.recovery.commitTransactionRetryLimit
+     *
+     * @return the number of communication attempts to make.
+     */
     public int getCommitedTransactionRetryLimit()
     {
         return commitedTransactionRetryLimit;
     }
 
+    /**
+     * Sets the number of attempts to make to notify resource of a transaction commit during recovery.
+     *
+     * @param commitedTransactionRetryLimit the number of communication attempts to make.
+     */
     public void setCommitedTransactionRetryLimit(int commitedTransactionRetryLimit)
     {
         this.commitedTransactionRetryLimit = commitedTransactionRetryLimit;
     }
 
+    /**
+     * Returns the number of transient errors to allow before assuming an unreachable object is permanently gone.
+     *
+     * Default: 10
+     * Equivalent deprecated property: com.arjuna.ats.jts.recovery.assumedObjectNotExist
+     *
+     * @deprecated I apply to Orbix only - remove me.
+     * @return the nubmer of transient errors to allow.
+     */
     public int getAssumedObjectNotExist()
     {
         return assumedObjectNotExist;
     }
 
+    /**
+     * Sets the number of transient errors to allow before assuming an object is permanently unreachable.
+     *
+     * @param assumedObjectNotExist the number of attempts to allow.
+     */
     public void setAssumedObjectNotExist(int assumedObjectNotExist)
     {
         this.assumedObjectNotExist = assumedObjectNotExist;
