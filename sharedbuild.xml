@@ -244,7 +244,7 @@
     <target name="dist.leafnode" depends="clean, init, compile, compile-tests, generateresourcebundle, propertyfile, run.tests">
     </target>
 
-    <target name="dist.compositenode" depends="clean, init, install.lib, htdocs">
+    <target name="dist.compositenode" depends="clean, init, install.lib, install.src, htdocs">
         <copy file="copyright.txt" todir="${build.dir}/install"/>
         <copy file="${sharedbuild.base.dir}/JBossORG-EULA.txt" todir="${build.dir}/install"/>
         <copy file="${global.ext.lib.dir}/third_party_licenses.txt" todir="${build.dir}/install/lib/ext"/>
@@ -308,6 +308,29 @@
 
     </target>
 
+    <target name="install.src">
+        <property name="component-module-list" value=""/>
+
+        <delete file="${build.dir}/lib/${modulename}-src.jar"/>
+
+        <for list="${component-module-list}" param="module">
+            <sequential>
+                <jar destfile="${build.dir}/lib/${modulename}-src.jar" update="true">
+                    <fileset dir="@{module}/classes"/>
+                </jar>
+                
+                <if>
+                    <available file="@{module}/${build.dir}/generatedclasses"/>
+                    <then>
+                        <jar destfile="${build.dir}/lib/${modulename}-src.jar" update="true">
+                            <fileset dir="@{module}/${build.dir}/generatedclasses"/>
+                        </jar>
+                    </then>
+                </if>
+
+            </sequential>
+        </for>
+    </target>
 
     <macrodef name="htdocs.composite.macro">
 

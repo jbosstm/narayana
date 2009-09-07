@@ -63,6 +63,7 @@ Targets supported in this build.xml file
    <target name="core" depends="clean, antbuildsystem">
        <ant dir="ArjunaCore"/>
        <install.macro src.module="ArjunaCore"/>
+       <ant dir="qa"/>
    </target>
 
     <macrodef name="atsinstall.macro">
