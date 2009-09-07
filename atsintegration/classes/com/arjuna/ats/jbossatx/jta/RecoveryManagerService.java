@@ -25,7 +25,6 @@ import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jbossatx.jta.XAResourceRecoveryHelperWrapper;
 import com.arjuna.ats.arjuna.common.Configuration;
-import com.arjuna.common.util.logging.LogFactory;
 
 import org.jboss.logging.Logger;
 import org.jboss.tm.XAResourceRecovery;
@@ -41,18 +40,7 @@ import java.util.Vector;
  */
 public class RecoveryManagerService implements XAResourceRecoveryRegistry
 {
-    static {
-		/*
-		 * Override the default logging config, force use of the plugin that rewrites log levels to reflect app server level semantics.
-		 * This must be done before the loading of anything that uses the logging, otherwise it's too late to take effect.
-		 * Hence the static initializer block.
-		 * see also http://jira.jboss.com/jira/browse/JBTM-20
-		 */
-		com.arjuna.ats.arjuna.common.arjPropertyManager.getPropertyManager().setProperty(LogFactory.LOGGER_PROPERTY, "log4j_releveler");
-		//System.setProperty(LogFactory.LOGGER_PROPERTY, "log4j_releveler") ;
-	}
-
-    private final Logger log = org.jboss.logging.Logger.getLogger(RecoveryManagerService.class);
+    protected Logger log = org.jboss.logging.Logger.getLogger(RecoveryManagerService.class);
 
     private RecoveryManager _recoveryManager;
 
@@ -60,7 +48,7 @@ public class RecoveryManagerService implements XAResourceRecoveryRegistry
     {
         String tag = Configuration.getBuildTimeProperty("SOURCEID");
 
-        log.info("JBossTS Recovery Service (JTA version - tag:"+tag+") - JBoss Inc.");
+        log.info("JBossTS Recovery Service (tag:"+tag+") - JBoss Inc.");
 
         RecoveryManager.delayRecoveryManagerThread();
         // listener (if any) is created here:

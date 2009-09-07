@@ -23,7 +23,6 @@ package com.arjuna.ats.jbossatx.jts;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
 import com.arjuna.ats.internal.jts.recovery.RecoveryORBManager;
-import org.jboss.logging.Logger;
 
 /**
  * JBoss Transaction Recovery Service.
@@ -33,10 +32,10 @@ import org.jboss.logging.Logger;
  */
 public class RecoveryManagerService extends com.arjuna.ats.jbossatx.jta.RecoveryManagerService
 {
-    private final Logger log = org.jboss.logging.Logger.getLogger(RecoveryManagerService.class);
-
     public RecoveryManagerService(org.omg.CORBA.ORB theCorbaORB) throws Exception
     {
+        log = org.jboss.logging.Logger.getLogger(RecoveryManagerService.class);
+
         log.info("<init> JTS transaction recovery manager");
 
         /** Create an ORB portability wrapper around the CORBA ORB services orb **/
