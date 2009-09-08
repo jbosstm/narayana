@@ -30,7 +30,7 @@
   For general tests plus JDBC (e.g. use on hudson):
     cd qa
     ant get.drivers dist
-    ant -f run-dtf-local.xml junit junit-jdbc
+    ant -f run-tests.xml junit junit-jdbc
 
   Paths are relative to the JVM's working dir - don't expect to be able to execute this from anywhere but 'qa'.
 
@@ -39,11 +39,8 @@
 
     <property name="working.dir" location="build"/>
 
-    <!-- handy utility space where you can copy one or more test groups if you want to run something ah-hoc -->
+    <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
     <target name="scratch">
-
-        <antcall target="install-dbdriver"><param name="files" value="ojdbc14.jar"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="jdbcresources01_oracle_thin_jndi"/></antcall>
 
     </target>
 
@@ -201,6 +198,23 @@
         <antcall target="install-dbdriver"><param name="files" value="jconn3.jar"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources01_sybase_jndi"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources02_sybase_jndi"/></antcall>
+
+    </target>
+
+    <!-- the ncl office build server is not on vpn and only a subset of the dbs are available locally -->
+    <target name="junit-jdbc-ncl">
+
+        <antcall target="install-dbdriver"><param name="files" value="ojdbc14.jar"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01_oracle_thin_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources02_oracle_thin_jndi"/></antcall>
+
+        <antcall target="install-dbdriver"><param name="files" value="mysql-connector-java-5.1.7-bin.jar"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01_mysql_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources02_mysql_jndi"/></antcall>
+
+        <antcall target="install-dbdriver"><param name="files" value="postgresql-8.3-603.jdbc3.jar"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01_pgsql_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources02_pgsql_jndi"/></antcall>
 
     </target>
 
