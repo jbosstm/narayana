@@ -12,4 +12,45 @@ will build the JTA version with AS integration
 
 ant jbossjts	
 
-will build the JTS version with AS integration 
+will build the JTS version with AS integration
+
+------------------------------------------
+
+Now The Gory Details. Well, a few of them anyhow. You can't handle them all.
+
+JBossTS consists of a number of modules, various combinations of which are bundled to form releases. Bundles are:
+
+ core = the transaction engine.
+ jta = core + a JTA API layer.
+ jts = jta + a JTS implementation
+ jbossjta = jta + JBossAS integration code.
+ jbossjts = jts + JBossAS integration code.
+
+In addition the XTS (web services transactions) and txbridge (XTS/JTA integration) modules may be built separately.
+
+See http://jbossts.blogspot.com/2007/07/trying-to-put-jbossts-into-perspective_6770.html or the docs for more
+ on the module architecture.
+
+Each module contains an ant build script, which chiefly just inherits and selectively overrides the top level
+ sharedbuild.xml  Understanding this approach requires some knowledge of ant's include and macro functions,
+ its 'set once' approach to property values, and the way these features interact in recursive ant calls.
+
+Top level build targets always start from scratch. Individual module builds on the other hand are incremental,
+such that you may rebuild a single module by traversing into its directory and running 'ant', but only if you
+have first built any pre-req modules e.g. via a top level build.
+
+In addition to driving the build of individual modules, the build files in the bundles directories (ArjunaCore,
+ArjunaJTA, ArjunaJTS) contain steps to assemble the release directory structure, including docs, scripts,
+config files and other ancillaries. These call each other in some cases, as JTS is largely a superset of
+JTA and JTA in turn a superset of Core.
+
+The build system does not currently employ a dependency management framework such as maven or ivy. Instead the
+necessary 3rd part pre-req .jars are either present in svn (ext/ and ArjunaJTS/jacorb/ for example) or pulled
+in from a JBossAS installation found at build time via the JBOSS_HOME environment variable.
+
+The build currently requires Java 6 and ant 1.7.1.  Although it's no longer tried and tested, it may remain possible
+for a time to build on Java 5 by editing ArjunaJTA/jdbc/build.xml and changing the excluded **/*JDBC3.java pattern
+to **/*JDBC4.java instead. This is required as the JDBC3 and 4 APIs are not compatible.
+
+A handful of unit tests build and run as part of the normal build. Most test coverage is in the form of integration
+tests which reside in the qa/ directory. These are built but not run automatically. See qa/README.txt for usage.

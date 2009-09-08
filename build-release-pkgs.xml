@@ -39,13 +39,13 @@
       Build or install a tagged release of JBossAS to build against. Set JBOSS_HOME.
         Use the oldest JBossAS release the JBossTS release is intended to support.
       Update the properties section below to suit your machine.
-      Set JAVA_HOME to a jdk 1.5, since that's the version we currently support.
+      Set JAVA_HOME to a jdk 1.6, since that's the version we currently support.
       ant -f build-release-pkgs.xml dist mvn-repository cms-repository
       check in the repository.jboss.org and the cms updates to publish the files.
       Update the project.xml in the cms to link the release bundles from the web pages.
       Update appropriate wiki pages, such as the 'which version to use' page.
 
-      This version is for JBossTS 4.6 onwards. Don't use it for earlier releases, they are structured differently.
+      This version is for JBossTS 4.8 onwards. Don't use it for earlier releases, they are structured differently.
 -->
 <project name="JBossTS Release Packaging" default="dist" basedir=".">
     <description>
@@ -58,21 +58,21 @@
             you need permissions to webdav upload to the server for this to work
             http://www.jboss.org/community/docs/DOC-11381  -->
 
-<!--
+
     <property name="svnbase" value="https://svn.jboss.org/repos/labs/labs/jbosstm"/>
     <property name="tag" value="trunk"/>
-    <property name="filename" value="4.7.0.SNAPSHOT"/>
+    <property name="filename" value="4.8.0.SNAPSHOT"/>
     <property name="mvn.repositoryId" value="snapshots.jboss.org"/>
     <property name="mvn.url" value="dav:https://snapshots.jboss.org/maven2"/>
--->
-    <!-- a working direrctory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
+
+    <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
     <property name="workdir" location="/tmp/packaged_builds"/>
     <!-- where to get the source -->
     <property name="svnbase" value="https://svn.jboss.org/repos/labs/labs/jbosstm/tags"/>
     <!-- The tag as it appears under svnbase -->
-    <property name="tag" value="JBOSSTS_4_7_0_GA"/>
+    <property name="tag" value="JBOSSTS_4_8_0_GA"/>
     <!-- The file name base for the user downloadable files. Derive it from the tag -->
-    <property name="filename" value="4.7.0.GA"/>
+    <property name="filename" value="4.8.0.GA"/>
     <!-- the location the JBossTS web site content svn is checked out to -->
     <property name="cmsdir" value="/home/jhalli/IdeaProjects/jboss/jbosstm-cms/"/>
     <!-- the location the maven repository svn is checked out to.
@@ -106,7 +106,7 @@
         <delete file="${workdir}/jbossts-jta-${filename}-src.zip"/>
         <zip basedir="${workdir}" destfile="${workdir}/jbossts-jta-${filename}-src.zip"
              includes="${tag}/**"
-             excludes="${tag}/ArjunaJTS/**, ${tag}/XTS/**"/>
+             excludes="${tag}/ArjunaJTS/**, ${tag}/XTS/** ${tag}/txbridge/**"/>
 
         <!-- build the JTA only binary release -->
         <delete dir="${workdir}/build"/>
@@ -170,19 +170,10 @@
         <mkdir dir="${workdir}/build"/>
 
         <!-- As we don't actually use maven as a build tool this requires a fair bit of black magic.
-         We no longer release the jta jars to maven, just the jts ones plus the jta version of the properties file
-         so that they can function as a jta. The jta and jts version of the config file have the same name
-         so they need to be renamed going into maven and then again coming out. yuck.
-         -->
+         We no longer release the jta jars to maven, just the jts ones. The AS uses these with a -beans.xml
+         config that causes it to function in jta mode and no longer uses a ts properties file at all. -->
 
-        <!-- extract and save the JTA version of the config file -->
-        <unzip src="${workdir}/jbossts-jta-${filename}.zip" dest="${workdir}/build"/>
-        <mkdir dir="${workdir}/build/resources"/>
-        <delete file="${workdir}/build/resources.jar"/>
-        <copy file="${workdir}/build/${tag}/etc/jbossts-properties.xml"
-                tofile="${workdir}/build/resources/jbossts-properties.xml-forJTA" />
-
-        <!-- now package the JTS -->
+        <!-- package the JTS -->
 
         <delete dir="${workdir}/build/${tag}"/>
         <unzip src="${workdir}/jbossts-full-${filename}.zip" dest="${workdir}/build"/>
@@ -211,18 +202,6 @@
             <arg value="-DgeneratePom=true"/>
         </exec>
 
-        <exec executable="mvn" dir="${workdir}">
-            <arg value="deploy:deploy-file"/>
-            <arg value="-Dfile=${workdir}/build/${tag}/lib/jbossjts-jacorb.jar"/>
-            <arg value="-Dpackaging=jar"/>
-            <arg value="-Durl=${mvn.url}"/>
-            <arg value="-DrepositoryId=${mvn.repositoryId}"/>
-            <arg value="-DgroupId=jboss.jbossts"/>
-            <arg value="-DartifactId=jbossjts-jacorb"/>
-            <arg value="-Dversion=${filename}"/>
-            <arg value="-DgeneratePom=true"/>
-        </exec>
-
         <!-- take the object store browser from jts, it will work with jta too -->
         <exec executable="mvn" dir="${workdir}">
             <arg value="deploy:deploy-file"/>
@@ -236,24 +215,8 @@
             <arg value="-DgeneratePom=true"/>
         </exec>
 
-        <!-- the resources part appears to require a bit of a kludge: -->
-        <!-- add to the same dir as the previously cached jta properties file, then jar up -->
-        <copy file="${workdir}/build/${tag}/etc/jbossts-properties.xml"
-                tofile="${workdir}/build/resources/jbossts-properties.xml-forJTS" />
-
-        <jar basedir="${workdir}/build" includes="resources/*" destfile="${workdir}/build/resources.jar"/>
-
-        <exec executable="mvn" dir="${workdir}">
-            <arg value="deploy:deploy-file"/>
-            <arg value="-Dfile=${workdir}/build/resources.jar"/>
-            <arg value="-Dpackaging=jar"/>
-            <arg value="-Durl=${mvn.url}"/>
-            <arg value="-DrepositoryId=${mvn.repositoryId}"/>
-            <arg value="-DgroupId=jboss.jbossts"/>
-            <arg value="-DartifactId=resources"/>
-            <arg value="-Dversion=${filename}"/>
-            <arg value="-DgeneratePom=true"/>
-        </exec>
+        <!-- resources.jar removed - the AS integration now uses -beans.xml instead of a properties file,
+            so there is no need to mvn the properties files any longer. -->
 
         <!-- now we do XTS -->
 
