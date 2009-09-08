@@ -29,21 +29,14 @@
 //package org.apache.commons.logging.impl;  // apache version
 package com.arjuna.common.internal.util.logging; // Red Hat modification
 
-import java.io.InputStream;
 import java.io.Serializable;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogConfigurationException;
 
 /**
  * <p>Simple implementation of Log that sends all enabled log messages,
@@ -86,7 +79,7 @@ import org.apache.commons.logging.LogConfigurationException;
  *
  * @version (apache version) Id: SimpleLog.java 399221 2006-05-03 09:20:24Z dennisl
  */
-public class DefaultLog implements Log, Serializable {
+public class DefaultLog implements Serializable, LogInterface {
 
 
     // ------------------------------------------------------- Class Attributes
@@ -617,89 +610,6 @@ public class DefaultLog implements Log, Serializable {
     public final boolean isWarnEnabled() {
 
         return isLevelEnabled(DefaultLog.LOG_LEVEL_WARN);
-    }
-
-
-    /**
-     * Return the thread context class loader if available.
-     * Otherwise return null.
-     *
-     * The thread context class loader is available for JDK 1.2
-     * or later, if certain security conditions are met.
-     *
-     * @exception LogConfigurationException if a suitable class loader
-     * cannot be identified.
-     */
-    private static ClassLoader getContextClassLoader()
-    {
-        ClassLoader classLoader = null;
-
-        if (classLoader == null) {
-            try {
-                // Are we running on a JDK 1.2 or later system?
-                Method method = Thread.class.getMethod("getContextClassLoader",
-                        (Class[]) null);
-
-                // Get the thread context class loader (if there is one)
-                try {
-                    classLoader = (ClassLoader)method.invoke(Thread.currentThread(),
-                            (Object[]) null);
-                } catch (IllegalAccessException e) {
-                    ;  // ignore
-                } catch (InvocationTargetException e) {
-                    /**
-                     * InvocationTargetException is thrown by 'invoke' when
-                     * the method being invoked (getContextClassLoader) throws
-                     * an exception.
-                     *
-                     * getContextClassLoader() throws SecurityException when
-                     * the context class loader isn't an ancestor of the
-                     * calling class's class loader, or if security
-                     * permissions are restricted.
-                     *
-                     * In the first case (not related), we want to ignore and
-                     * keep going.  We cannot help but also ignore the second
-                     * with the logic below, but other calls elsewhere (to
-                     * obtain a class loader) will trigger this exception where
-                     * we can make a distinction.
-                     */
-                    if (e.getTargetException() instanceof SecurityException) {
-                        ;  // ignore
-                    } else {
-                        // Capture 'e.getTargetException()' exception for details
-                        // alternate: log 'e.getTargetException()', and pass back 'e'.
-                        throw new LogConfigurationException
-                            ("Unexpected InvocationTargetException", e.getTargetException());
-                    }
-                }
-            } catch (NoSuchMethodException e) {
-                // Assume we are running on JDK 1.1
-                ;  // ignore
-            }
-        }
-
-        if (classLoader == null) {
-            classLoader = DefaultLog.class.getClassLoader();
-        }
-
-        // Return the selected class loader
-        return classLoader;
-    }
-
-    private static InputStream getResourceAsStream(final String name)
-    {
-        return (InputStream)AccessController.doPrivileged(
-            new PrivilegedAction() {
-                public Object run() {
-                    ClassLoader threadCL = getContextClassLoader();
-
-                    if (threadCL != null) {
-                        return threadCL.getResourceAsStream(name);
-                    } else {
-                        return ClassLoader.getSystemResourceAsStream(name);
-                    }
-                }
-            });
     }
 }
 

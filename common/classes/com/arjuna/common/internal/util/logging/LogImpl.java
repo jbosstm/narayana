@@ -54,7 +54,7 @@ public class LogImpl extends AbstractLogImpl implements Logi18n
      * log framwork configured. this is controlled through teh property
      * com.arjuna.common.logging.default=true/false (default)
      */
-    private DefaultLog m_defaultLog = null;
+    private LogInterface m_defaultLog = null;
 
     /**
      * indicates whehter the default log is set or not.

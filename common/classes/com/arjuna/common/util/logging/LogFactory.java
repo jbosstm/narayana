@@ -29,9 +29,9 @@
 package com.arjuna.common.util.logging;
 
 import com.arjuna.common.internal.util.logging.*;
-import com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory;
-import com.arjuna.common.internal.util.logging.jakarta.JakartaRelevelingLogFactory;
 import com.arjuna.common.util.exceptions.LogConfigurationException;
+
+import java.lang.reflect.Constructor;
 
 /**
  * Factory for {@link Logi18n Log} objects.
@@ -317,34 +317,54 @@ public class LogFactory {
 
             // ALL THESE ARE SUPPORTED BY JAKARTA COMMONS LOGGING
             if (logSystem.equals(LOG4J)) {
-                m_logFactory = new JakartaLogFactory("com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
+                m_logFactory = loadFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory", "com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
             } else if (logSystem.equals(JDK14)) {
-                m_logFactory = new JakartaLogFactory("org.apache.commons.logging.impl.Jdk14Logger");
+                m_logFactory = loadFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory", "org.apache.commons.logging.impl.Jdk14Logger");
             } else if (logSystem.equals(SIMPLE)) {
-                m_logFactory = new JakartaLogFactory("org.apache.commons.logging.impl.SimpleLog");
+                m_logFactory = loadFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory", "org.apache.commons.logging.impl.SimpleLog");
             } else if (logSystem.equals(NOOP)) {
-                m_logFactory = new JakartaLogFactory("org.apache.commons.logging.impl.NoOpLog");
+                m_logFactory = loadFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory", "org.apache.commons.logging.impl.NoOpLog");
             }
 
 			// we use a slightly modified wrapper to do log statement level modification
 			// for support of JBossAS log level semantics, see JakartaRelevelingLogger javadoc
 			else if (logSystem.equals(RELEVELER)) {
-				m_logFactory = new JakartaRelevelingLogFactory("com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
+				m_logFactory = loadFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaRelevelingLogFactory", "com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
 			}
 
 			// USE JAKARTA COMMONS LOGGINGS OWN DISCOVERY MECHANISM
             else if (logSystem.equals(JAKARTA_LOGGER)) {
-                m_logFactory = new JakartaLogFactory(null);
+                m_logFactory = loadFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory", null);
             }
 
             // by default, use jakarta logging ...
             else {
-                m_logFactory = new JakartaLogFactory(null);
+                m_logFactory = loadFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory", null);
             }
 
         } catch (LogConfigurationException e) {
             throw new RuntimeException("An unexpected exception occurred while creating the logger factory: " + e.getMessage(), e);
         }
         m_isInitialized = true;
+    }
+
+    /*
+     * Use reflection to avoid linking against factories that may need specific libs to be present at runtime.
+     */
+    private static LogFactoryInterface loadFactory(String classname, String arg) throws LogConfigurationException
+    {
+        try {
+            Class factoryClass = Thread.currentThread().getContextClassLoader().loadClass(classname);
+            LogFactoryInterface logFactoryInterface = null;
+            if(arg == null) {
+                logFactoryInterface = (LogFactoryInterface)factoryClass.newInstance();
+            } else {
+                Constructor ctor = factoryClass.getConstructor(new Class[] { String.class});
+                logFactoryInterface = (LogFactoryInterface)ctor.newInstance(arg);
+            }
+            return logFactoryInterface;
+        } catch (Exception e) {
+            throw new LogConfigurationException(e);
+        }
     }
 }
