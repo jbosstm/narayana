@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @author jonathan.halliday@redhat.com, 2007-04-30
  */
-public class ReaperTestCase
+public class ReaperTestCase extends ReaperTestCaseControl
 {
     @Test
     public void testReaper() throws Exception
@@ -146,21 +146,6 @@ public class ReaperTestCase
         triggerRendezvous("reaperworker1");
         assertEquals(0, reaper.numberOfTransactions());
         assertEquals(0, reaper.numberOfTimeouts());
-    }
-
-    private void enableRendezvous(Object o, boolean repeatable)
-    {
-        // do nothing this is just used for synchronization
-    }
-
-    private void triggerRendezvous(Object o)
-    {
-        // do nothing this is just used for synchronization
-    }
-
-    private void triggerWait(int msecs)
-    {
-        // do nothing this is just used for synchronization
     }
 
     public class MockReapable implements Reapable
