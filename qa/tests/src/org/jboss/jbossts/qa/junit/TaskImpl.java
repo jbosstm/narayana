@@ -123,13 +123,16 @@ public class TaskImpl implements Task
      * a thread which reads the task's merged stdout/stderr stream and identifies whether or not a Passed/Failed
      * or a Ready message has been printed. the reader thread alos needs to write the output to a log file.
      */
-    TaskReaderThread taskReaderThread;
+    private TaskReaderThread taskReaderThread;
 
     /**
      * a thread which reads the task's merged stdout/stderr stream and identifies whether or not a Passed/Failed
      * or a Ready message has been printed. the reader thread alos needs to write the output to a log file.
      */
-    TaskErrorReaderThread taskErrorReaderThread;
+    private TaskErrorReaderThread taskErrorReaderThread;
+
+    // allow appending to the command line on a per-instance basis for e.g. extra "-Dcom.arjuna.foo=bar" statements.
+    private List<String> additionalCommandLineElements = new LinkedList<String>();
 
     /**
      * create a new task
@@ -517,6 +520,8 @@ public class TaskImpl implements Task
             }
         }
 
+        list.addAll(additionalCommandLineElements);
+
         list.add(classname);
 
         if(params != null) {
@@ -526,6 +531,11 @@ public class TaskImpl implements Task
         }
 
         return list.toArray(new String[list.size()]);
+    }
+
+    public void addCommandLineElement(String additionalCommandLineElement)
+    {
+        additionalCommandLineElements.add(additionalCommandLineElement);
     }
 
     /**
