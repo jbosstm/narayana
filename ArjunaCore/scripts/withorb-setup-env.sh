@@ -49,7 +49,7 @@ then
 # Caution: JBossTS needs a specially patched version of JacORB.
 # Use $JBOSSTS_HOME/jacorb here unless you have a good reason not to.
 #
-JACORB_HOME="PUT_JACORB_HOME_HERE"
+JACORB_HOME=$@HOME_DIRECTORY@/jacorb
 
 # Find classpath separator
 
@@ -69,19 +69,15 @@ esac
 echo Setting up environment
 
 PRODUCT_CLASSPATH="$@HOME_DIRECTORY@/lib/@PRODUCT_NAME@.jar"
-PRODUCT_CLASSPATH="$PRODUCT_CLASSPATH$CPS$@HOME_DIRECTORY@/lib/@PRODUCT_NAME@-jacorb.jar"
 PRODUCT_CLASSPATH="$PRODUCT_CLASSPATH$CPS$@HOME_DIRECTORY@/bin/tsmx-tools.jar"
 PRODUCT_CLASSPATH="$PRODUCT_CLASSPATH$CPS$@HOME_DIRECTORY@/etc/"
 
-EXT_CLASSPATH="$@HOME_DIRECTORY@/lib/ext/jbossts-common.jar"
 EXT_CLASSPATH="$EXT_CLASSPATH$CPS$@HOME_DIRECTORY@/lib/ext/commons-logging-1.1.jar"
 EXT_CLASSPATH="$EXT_CLASSPATH$CPS$@HOME_DIRECTORY@/lib/ext/connector-api.jar"
 EXT_CLASSPATH="$EXT_CLASSPATH$CPS$@HOME_DIRECTORY@/lib/ext/jmxri.jar"
 EXT_CLASSPATH="$EXT_CLASSPATH$CPS$@HOME_DIRECTORY@/lib/ext/jndi.jar"
 EXT_CLASSPATH="$EXT_CLASSPATH$CPS$@HOME_DIRECTORY@/lib/ext/jta-1_1-classes.zip"
 EXT_CLASSPATH="$EXT_CLASSPATH$CPS$@HOME_DIRECTORY@/lib/ext/log4j-1.2.14.jar"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$@HOME_DIRECTORY@/lib/ext/xercesImpl.jar"
-EXT_CLASSPATH="$EXT_CLASSPATH$CPS$@HOME_DIRECTORY@/lib/ext/xmlParserAPIs.jar"
 
 JACORB_CLASSPATH="$JACORB_HOME/lib/jacorb.jar"
 JACORB_CLASSPATH="$JACORB_CLASSPATH$CPS$JACORB_HOME/lib/idl.jar"

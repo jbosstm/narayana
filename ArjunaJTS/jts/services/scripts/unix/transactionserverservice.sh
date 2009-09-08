@@ -23,7 +23,7 @@
 
 #
 # Skeleton sh script suitable for starting and stopping 
-# wrapped Java apps on the Solaris platform. 
+# wrapped Java apps on *nix platforms. 
 #
 # Make sure that PIDFILE points to the correct location,
 # if you have changed the default location set in the 
@@ -34,7 +34,7 @@
 # These settings can be modified to fit the needs of your application
 
 # Path to java executable
-JAVA_HOME=/usr/local/java/java1.3.1_03
+JAVA_HOME=/usr/local/jdk1.6.0.16
 export JAVA_HOME
 if [ "a$JAVA_HOME" != a ]; then
     PATH=$PATH:$JAVA_HOME/bin
