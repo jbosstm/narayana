@@ -60,7 +60,7 @@ public class ReaperTestCase3  extends ReaperTestCaseControl
         // prevent_commit should not get called so we don't care about the arguments
         TestReapable reapable3 = new TestReapable(uid3, true, false, false, false);
         // enable a repeatable rendezvous before checking the reapable queue
-        // enableRendezvous("reaper1", true);
+        enableRendezvous("reaper1", true);
         // enable a repeatable rendezvous before processing a timed out reapable
         // enableRendezvous("reaper2", true);
         // enable a repeatable rendezvous before scheduling a reapable in the worker queue for cancellation
@@ -74,7 +74,7 @@ public class ReaperTestCase3  extends ReaperTestCaseControl
         // enable a repeatable rendezvous before marking a reapable as rollback only from the reaper thread
         // enableRendezvous("reaper7", true);
         // enable a repeatable rendezvous before checking the worker queue
-        // enableRendezvous("reaperworker1", true);
+        enableRendezvous("reaperworker1", true);
         // enable a repeatable rendezvous before marking a reapable as cancel
         // enableRendezvous("reaperworker2", true);
         // enable a repeatable rendezvous before calling cancel
@@ -98,10 +98,38 @@ public class ReaperTestCase3  extends ReaperTestCaseControl
 
         assertTrue(reaper.insert(reapable3, 4));
 
+        // latch the reaper before it checks the queue
+
+        triggerRendezvous("reaper1");
+
         // make sure they were all registered
 
         assertEquals(4, reaper.numberOfTransactions());
         assertEquals(4, reaper.numberOfTimeouts());
+
+        // ensure the first reapable is ready
+
+        triggerWait(1000);
+
+        // let the reaper process the first reapable then latch it again before it checks the queue
+
+        triggerRendezvous("reaper1");
+
+        triggerRendezvous("reaper1");
+
+        // latch the worker before it checks the worker queue
+
+        triggerRendezvous("reaperworker1");
+
+        // let the worker process the first reapable then latch it again before it checks the queue
+
+        triggerRendezvous("reaperworker1");
+
+        triggerRendezvous("reaperworker1");
+
+        // force a termination waiting for the normal timeout periods
+        // byteman rules will ensure that the reaper and reaperworker rendezvous get deleted
+        // under this call
 
         TransactionReaper.terminate(true);
 

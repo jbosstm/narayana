@@ -92,11 +92,11 @@ public class CachedTest
     @Test
     public void test() throws Exception
     {
-        String cacheSize = "2048";
+        int cacheSize = 2048;
         int threads = 100;
         Thread[] t = new Thread[threads];
 
-        System.setProperty("com.arjuna.ats.internal.arjuna.objectstore.cacheStore.size", cacheSize);
+        arjPropertyManager.getObjectStoreEnvironmentBean().setCacheStoreSize(cacheSize);
 
         ObjectStore store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_CacheStore());
 
