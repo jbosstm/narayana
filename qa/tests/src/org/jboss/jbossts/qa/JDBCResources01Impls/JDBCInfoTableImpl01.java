@@ -48,7 +48,7 @@ public class JDBCInfoTableImpl01 implements InfoTableOperations
 		_dbUser = databaseUser;
 		_databaseTimeout = timeout;
 
-		if (System.getProperty("qa.debug") == "true")
+		if ("true".equals(System.getProperty("qa.debug")))
 		{
 			System.err.println("Setting up connection");
 		}
@@ -69,7 +69,7 @@ public class JDBCInfoTableImpl01 implements InfoTableOperations
 				_connection = DriverManager.getConnection(databaseURL, databaseUser, databasePassword);
 			}
 
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("connection = " + _connection);
 				System.err.println("Database URL = " + databaseURL);

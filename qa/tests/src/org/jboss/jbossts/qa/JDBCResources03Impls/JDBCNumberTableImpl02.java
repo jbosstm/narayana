@@ -135,7 +135,7 @@ public class JDBCNumberTableImpl02 implements NumberTableOperations
 		}
 		finally
 		{
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("Performing explicit commit for non-transaction operation");
 			}
@@ -151,7 +151,7 @@ public class JDBCNumberTableImpl02 implements NumberTableOperations
 					e.printStackTrace(System.err);
 				}
 			}
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("Closing connection");
 			}
@@ -234,7 +234,7 @@ public class JDBCNumberTableImpl02 implements NumberTableOperations
 		}
 		finally
 		{
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("Performing explicit commit for non-transaction operation");
 			}
@@ -250,7 +250,7 @@ public class JDBCNumberTableImpl02 implements NumberTableOperations
 					e.printStackTrace(System.err);
 				}
 			}
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("Closing connection");
 			}
@@ -357,7 +357,7 @@ public class JDBCNumberTableImpl02 implements NumberTableOperations
 	{
 		Connection connection = null;
 
-		if (System.getProperty("qa.debug") == "true")
+		if ("true".equals(System.getProperty("qa.debug")))
 		{
 			System.err.println("Setting up connection");
 		}
@@ -378,7 +378,7 @@ public class JDBCNumberTableImpl02 implements NumberTableOperations
 				connection = DriverManager.getConnection(_databaseURL, _dbUser, _databasePassword);
 			}
 
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("connection = " + connection);
 				System.err.println("Database URL = " + _databaseURL);

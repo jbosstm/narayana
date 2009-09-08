@@ -309,7 +309,7 @@ public class JDBCNumberTableImpl01 implements NumberTableOperations
 	{
 		Connection connection = null;
 
-		if (System.getProperty("qa.debug") == "true")
+		if ("true".equals(System.getProperty("qa.debug")))
 		{
 			System.err.println("Setting up connection");
 		}
@@ -331,7 +331,7 @@ public class JDBCNumberTableImpl01 implements NumberTableOperations
 				connection = DriverManager.getConnection(_databaseURL, _dbUser, _databasePassword);
 			}
 
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("connection = " + connection);
 				System.err.println("Database URL = " + _databaseURL);

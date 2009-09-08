@@ -48,7 +48,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 		_databaseUser = databaseUser;
 		Connection connection = null;
 
-		if (System.getProperty("qa.debug") == "true")
+		if ("true".equals(System.getProperty("qa.debug")))
 		{
 			System.err.println("Setting up connection");
 		}
@@ -82,7 +82,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 				connection = DriverManager.getConnection(_databaseURL, _databaseUser, _databasePassword);
 			}
 
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("connection = " + connection);
 				System.err.println("Database URL = " + _databaseURL);
@@ -103,7 +103,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 		}
 		finally
 		{
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("Closing connection");
 			}
@@ -128,7 +128,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 		Connection connection = null;
 		Statement statement = null;
 
-		if (System.getProperty("qa.debug") == "true")
+		if ("true".equals(System.getProperty("qa.debug")))
 		{
 			System.err.println("Setting up connection");
 		}
@@ -145,22 +145,53 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 				connection = DriverManager.getConnection(_databaseURL, _databaseUser, _databasePassword);
 			}
 
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("connection = " + connection);
 				System.err.println("Database URL = " + _databaseURL);
 			}
 
-			statement = connection.createStatement();
+            String tableName = JDBCProfileStore.getTableName(_databaseUser, "Infotable");
+
+            ///////////////////////
+
+            statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT count(*) FROM "+tableName);
+            resultSet.next();
+            System.out.println("jjh: "+resultSet.getString(1));
+            resultSet.close();
+            resultSet = statement.executeQuery("SELECT * FROM "+tableName);
+            while(resultSet.next()) {
+                System.out.println("jjh: "+resultSet.getString(1)+" "+resultSet.getString(2));
+            }
+            resultSet.close();
+            ///////////////////////
+
+
+//			statement = connection.createStatement();
 			if (_useTimeout)
 			{
 				statement.setQueryTimeout(_databaseTimeout);
 			}
             
-            String tableName = JDBCProfileStore.getTableName(_databaseUser, "Infotable");
+//            String tableName = JDBCProfileStore.getTableName(_databaseUser, "Infotable");
 
 			System.err.println("INSERT INTO " + tableName + " VALUES(\'" + name + "\', \'" + value + "\')");
 			statement.executeUpdate("INSERT INTO " + tableName + " VALUES(\'" + name + "\', \'" + value + "\')");
+
+            ///////////////////////
+
+            resultSet = statement.executeQuery("SELECT count(*) FROM "+tableName);
+            resultSet.next();
+            System.out.println("jjh: "+resultSet.getString(1));
+            resultSet.close();
+            resultSet = statement.executeQuery("SELECT * FROM "+tableName);
+            while(resultSet.next()) {
+                System.out.println("jjh: "+resultSet.getString(1)+" "+resultSet.getString(2));
+            }
+            resultSet.close();
+            ///////////////////////
+
 
 		}
 		catch (Exception exception)
@@ -171,12 +202,13 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 		}
 		finally
 		{
-			if (System.getProperty("qa.debug") == "true")
-			{
-				System.err.println("Performing explicit commit for non-transaction operation");
-			}
 			if (OTS.current().get_status().value() == Status._StatusNoTransaction)
 			{
+                if ("true".equals(System.getProperty("qa.debug")))
+                {
+                    System.err.println("Performing explicit commit for non-transaction operation");
+                }
+
 				try
 				{
 					connection.commit();
@@ -187,7 +219,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 					e.printStackTrace(System.err);
 				}
 			}
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("Closing connection");
 			}
@@ -224,7 +256,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 		Connection connection = null;
 		Statement statement = null;
 
-		if (System.getProperty("qa.debug") == "true")
+		if ("true".equals(System.getProperty("qa.debug")))
 		{
 			System.err.println("Setting up connection");
 		}
@@ -241,7 +273,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 				connection = DriverManager.getConnection(_databaseURL, _databaseUser, _databasePassword);
 			}
 
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("connection = " + connection);
 				System.err.println("Database URL = " + _databaseURL);
@@ -267,7 +299,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 		}
 		finally
 		{
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("Performing explicit commit for non-transaction operation");
 			}
@@ -283,7 +315,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 					e.printStackTrace(System.err);
 				}
 			}
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("Closing connection");
 			}
@@ -321,7 +353,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 		Statement statement = null;
 		ResultSet resultSet = null;
 
-		if (System.getProperty("qa.debug") == "true")
+		if ("true".equals(System.getProperty("qa.debug")))
 		{
 			System.err.println("Setting up connection");
 		}
@@ -338,7 +370,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 				connection = DriverManager.getConnection(_databaseURL, _databaseUser, _databasePassword);
 			}
 
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("connection = " + connection);
 				System.err.println("Database URL = " + _databaseURL);
@@ -351,6 +383,27 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 			}
 
             String tableName = JDBCProfileStore.getTableName(_databaseUser, "Infotable");
+
+            ///////////////////////
+
+            resultSet = statement.executeQuery("SELECT count(*) FROM "+tableName);
+            resultSet.next();
+            System.out.println("jjh: "+resultSet.getString(1));
+            resultSet.close();
+            resultSet = statement.executeQuery("SELECT * FROM "+tableName);
+            while(resultSet.next()) {
+                System.out.println("jjh: "+resultSet.getString(1)+" "+resultSet.getString(2));
+            }
+           
+            ///////////////////////
+
+
+
+
+
+
+
+
             
 			System.err.println("SELECT Value FROM " + tableName + " WHERE Name = \'" + name + "\'");
 			resultSet = statement.executeQuery("SELECT Value FROM " + tableName + " WHERE Name = \'" + name + "\'");
@@ -373,7 +426,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 		}
 		finally
 		{
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("Performing explicit commit for non-transaction operation");
 			}
@@ -389,7 +442,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 					e.printStackTrace(System.err);
 				}
 			}
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("Closing connection");
 			}
@@ -438,7 +491,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 		Connection connection = null;
 		Statement statement = null;
 
-		if (System.getProperty("qa.debug") == "true")
+		if ("true".equals(System.getProperty("qa.debug")))
 		{
 			System.err.println("Setting up connection");
 		}
@@ -455,7 +508,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 				connection = DriverManager.getConnection(_databaseURL, _databaseUser, _databasePassword);
 			}
 
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("connection = " + connection);
 				System.err.println("Database URL = " + _databaseURL);
@@ -481,7 +534,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 		}
 		finally
 		{
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("Performing explicit commit for non-transaction operation");
 			}
@@ -497,7 +550,7 @@ public class JDBCInfoTableImpl02 implements InfoTableOperations
 					e.printStackTrace(System.err);
 				}
 			}
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("Closing connection");
 			}

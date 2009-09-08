@@ -353,7 +353,7 @@ public class JDBCNumberTableImpl01 implements NumberTableOperations
 	private Connection getConnection()
 			throws Exception
 	{
-		if (System.getProperty("qa.debug") == "true")
+		if ("true".equals(System.getProperty("qa.debug")))
 		{
 			System.err.println("Setting up connection");
 		}
@@ -378,7 +378,7 @@ public class JDBCNumberTableImpl01 implements NumberTableOperations
 				}
 			}
 
-			if (System.getProperty("qa.debug") == "true")
+			if ("true".equals(System.getProperty("qa.debug")))
 			{
 				System.err.println("conn = " + conn);
 				System.err.println("Database URL = " + _databaseURL);
