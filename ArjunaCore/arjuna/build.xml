@@ -72,6 +72,8 @@
                     <exclude name="**/objectstore/LogStoreRecoveryTest.java"/>
                     <exclude name="**/objectstore/LogStoreTest2.java"/>
                     <exclude name="**/recovery/RecoveryManagerStartStopTest.java"/>
+                    <!-- auxilairy code used by reaper test classes -->
+                    <exclude name="**/reaper/ReaperTestCaseControl.java"/>
                 </fileset>
             </tests>
         </run.tests.macro>
