@@ -1,23 +1,25 @@
 
-JBossTS 4.7.GA is designed for use standalone or with JBossAS 5.1.0.GA
+JBossTS 4.8.GA is designed for use standalone or with JBossAS 6 alpha
 It is not suitable for use with earlier versions of JBossAS.
 
 The installation procedure has changed from earlier releases due to the move from
-a JMX configuration style to the POJO microcontainer used by AS 5.x, packaging and config files changes.
+a JMX configuration style to the POJO microcontainer used by AS 6.x, packaging and config files changes.
 Upgrading users should take care to read the steps below carefully.
 
-Installing JBossTS 4.7.GA JTA into JBossAS 5.1.0.GA
+Installing JBossTS 4.8.GA JTA into JBossAS 6 alpha
 ------------------------------------------------------------
 
 The application server ships with an earlier release of JBossTS JTS, configured to run in JTA local mode,
 as its default transaction manager. It is not recommended to install the JTA only, but should you wish to
 do so the steps are as follows:
 
-- Delete JBossAS common/lib/jbossjts* and jbossts-common.jar
+- Delete JBossAS common/lib/jbossjts* common/lib/jbossts-common.jar and client/jbossjts*
 
-- Copy JBossTS lib/*.jar to JBossAS common/lib/
+- Copy JBossTS lib/*.jar to JBossAS common/lib/ and client/
 
-- Replace JBossAS server/xxx/conf/jbossts-properties.xml with JBossTS  etc/jbossts-properties.xml
+- Delete JBossAS server/<name>/conf/jbossts-properties.xml
+
+- Replace JBossAS server/<name>/deploy/transaction-jboss-beans.xml with the newer JBossTS version.
 
 
                          Web Services Transactions
@@ -30,7 +32,7 @@ bundled version by copying $JBOSS_HOME/docs/examples/transactions/jbossxts.sar t
 Build and deploy from source
 ----------
 
-In JBossAS 5.x XTS is deployed as a service archive (sar) which can be
+In JBossAS 6.x XTS is deployed as a service archive (sar) which can be
 deployed with either the JTA or JTS Transaction Service
 implementation. This sar implements both the participant and the
 coordinator services required to support web service transactions. By

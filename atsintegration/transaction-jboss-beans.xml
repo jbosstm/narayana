@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+    <!--
+        This is an example transaction-jboss-beans.xml file suitable for installing JBossTS 4.8 JTA
+        into AS 6.0 alpha. The canonical version of this file normally resides in the JBossAS svn
+        but right now JBossAS is running an earlier TS release, so we provide this file via the
+        JBossTS svn as an example to facilitate upgrading. Take care - some non-arjuna beans many have
+        changed in the AS svn since we forked this file, so you may need to merge rather than overwrite.
+        Full upgrade steps in the INSTALL file of the JBossTS release.
+        You need a different version of this file for JTS mode.
+        You don't need a jbossts-properties.xml in the AS anymore, it's all done by the beans below.
+
+         jonathan.halliday@redhat.com, 2009-09
+    -->
+
+    <bean name="LoggingEnvironmentBean" class="com.arjuna.common.internal.util.logging.LoggingEnvironmentBean">
+
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=LoggingEnvironmentBean", exposedInterface=com.arjuna.common.internal.util.logging.LoggingEnvironmentBeanMBean.class, registerDirectly=true)</annotation>
+
+        <constructor factoryClass="com.arjuna.common.internal.util.logging.commonPropertyManager" factoryMethod="getLoggingEnvironmentBean"/>
+
+        <property name="loggingSystem">log4j_releveler</property>
+
+    </bean>
+
+    <bean name="RecoveryEnvironmentBean" class="com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean">
+
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=RecoveryEnvironmentBean", exposedInterface=com.arjuna.ats.arjuna.common.RecoveryEnvironmentBeanMBean.class, registerDirectly=true)</annotation>
+
+        <constructor factoryClass="com.arjuna.ats.arjuna.common.recoveryPropertyManager" factoryMethod="getRecoveryEnvironmentBean"/>
+
+        <property name="recoveryInetAddress">
+            <value-factory bean="ServiceBindingManager"
+                           method="getInetAddressBinding">
+                <parameter>TransactionManager</parameter>
+                <parameter>recoveryManager</parameter>
+            </value-factory>
+        </property>
+        <property name="recoveryPort">
+            <value-factory bean="ServiceBindingManager"
+                           method="getIntBinding" >
+                <parameter>TransactionManager</parameter>
+                <parameter>recoveryManager</parameter>
+            </value-factory>
+        </property>
+
+        <property name="transactionStatusManagerInetAddress">
+            <value-factory bean="ServiceBindingManager"
+                           method="getInetAddressBinding">
+                <parameter>TransactionManager</parameter>
+                <parameter>transactionStatusManager</parameter>
+            </value-factory>
+        </property>
+        <property name="transactionStatusManagerPort">
+            <value-factory bean="ServiceBindingManager"
+                           method="getIntBinding" >
+                <parameter>TransactionManager</parameter>
+                <parameter>transactionStatusManager</parameter>
+            </value-factory>
+        </property>
+
+        <property name="recoveryExtensions">
+            <list elementClass="java.lang.String">
+                <value>com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule</value>
+                <value>com.arjuna.ats.internal.txoj.recovery.TORecoveryModule</value>
+                <value>com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule</value>
+            </list>
+        </property>
+
+        <property name="expiryScanners">
+            <list elementClass="java.lang.String">
+                <value>com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner</value>
+            </list>
+        </property>
+
+        <property name="recoveryActivators">
+            <null/>
+        </property>
+
+    </bean>
+
+    <bean name="CoreEnvironmentBean" class="com.arjuna.ats.arjuna.common.CoreEnvironmentBean">
+
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=CoreEnvironmentBean", exposedInterface=com.arjuna.ats.arjuna.common.CoreEnvironmentBeanMBean.class, registerDirectly=true)</annotation>
+
+        <constructor factoryClass="com.arjuna.ats.arjuna.common.arjPropertyManager" factoryMethod="getCoreEnvironmentBean"/>
+
+        <property name="socketProcessIdPort">
+            <value-factory bean="ServiceBindingManager"
+                           method="getIntBinding">
+                <parameter>TransactionManager</parameter>
+                <parameter>socketProcessId</parameter>
+            </value-factory>
+        </property>
+
+        <property name="nodeIdentifier">1</property>
+
+    </bean>
+
+    <bean name="CoordinatorEnvironmentBean" class="com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBean">
+
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=CoordinatorEnvironmentBean", exposedInterface=com.arjuna.ats.arjuna.common.CoordinatorEnvironmentBeanMBean.class, registerDirectly=true)</annotation>
+
+        <constructor factoryClass="com.arjuna.ats.arjuna.common.arjPropertyManager" factoryMethod="getCoordinatorEnvironmentBean"/>
+
+        <property name="enableStatistics">false</property>
+        <property name="defaultTimeout">300</property>
+    </bean>
+
+    <bean name="ObjectStoreEnvironmentBean" class="com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean">
+
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=ObjectStoreEnvironmentBean", exposedInterface=com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBeanMBean.class, registerDirectly=true)</annotation>
+
+        <constructor factoryClass="com.arjuna.ats.arjuna.common.arjPropertyManager" factoryMethod="getObjectStoreEnvironmentBean"/>
+
+        <property name="objectStoreDir">${jboss.server.data.dir}/tx-object-store</property>
+    </bean>
+
+    <bean name="JTAEnvironmentBean" class="com.arjuna.ats.jta.common.JTAEnvironmentBean">
+
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=JTAEnvironmentBean", exposedInterface=com.arjuna.ats.jta.common.JTAEnvironmentBeanMBean.class, registerDirectly=true)</annotation>
+
+        <constructor factoryClass="com.arjuna.ats.jta.common.jtaPropertyManager" factoryMethod="getJTAEnvironmentBean"/>
+
+        <property name="lastResourceOptimisationInterface">org.jboss.tm.LastResource</property>
+
+        <property name="jtaTMImplementation">com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate</property>
+        <property name="jtaUTImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple</property>
+        <property name="jtaTSRImplementation">com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple</property>
+
+        <property name="xaRecoveryNodes">
+            <list elementClass="java.lang.String">
+                <value>1</value>
+            </list>
+        </property>
+        
+    </bean>
+
+    <bean name="RecoveryManager" class="com.arjuna.ats.jbossatx.jta.RecoveryManagerService">
+
+        <demand state="Create">LoggingEnvironmentBean</demand>
+        <demand state="Create">RecoveryEnvironmentBean</demand>
+
+    </bean>
+
+    <bean name="XATerminator" class="com.arjuna.ats.internal.jbossatx.jta.jca.XATerminator"/>
+
+    <bean name="TransactionSynchronizationRegistry" class="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple"/>
+
+    <bean name="TransactionManager" class="com.arjuna.ats.jbossatx.jta.TransactionManagerService">
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss:service=TransactionManager", exposedInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class, registerDirectly=true)</annotation>
+        <annotation>@org.jboss.managed.api.annotation.ManagementObject(name="TransactionManager",componentType=@org.jboss.managed.api.annotation.ManagementComponent(type = "MCBean", subtype = "JTA"),targetInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class)</annotation>
+
+        <property name="jbossXATerminator"><inject bean="XATerminator"/></property>
+        <property name="transactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
+
+        <demand state="Create">LoggingEnvironmentBean</demand>
+        <demand state="Create">RecoveryEnvironmentBean</demand>
+        <demand state="Create">CoreEnvironmentBean</demand>
+        <demand state="Create">CoordinatorEnvironmentBean</demand>
+        <demand state="Create">ObjectStoreEnvironmentBean</demand>
+        <demand state="Create">JTAEnvironmentBean</demand>
+        <demand>RecoveryManager</demand>
+
+        <!-- the TransactionManager itself does not depend on JNDI, but some things that expect to be able to do
+          JNDI lookups express a dependency on the TM rather than the JNDI bindings, so we need to placate them -->
+        <demand>TransactionManagerJNDIBinding</demand>
+        <demand>TransactionSynchronizationRegistryJNDIBinding</demand>
+        <demand>TransactionPropagationContextImporterJNDIBinding</demand>
+        <demand>TransactionPropagationContextExporterJNDIBinding</demand>
+
+    </bean>
+
+    <bean name="TransactionStatistics" class="com.arjuna.ats.arjuna.coordinator.TxStats">
+
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=TransactionStatistics", exposedInterface=com.arjuna.ats.arjuna.coordinator.TxStatsMBean.class, registerDirectly=true)</annotation>
+
+        <constructor factoryClass="com.arjuna.ats.arjuna.coordinator.TxStats" factoryMethod="getInstance"/>
+    </bean>
+
+    <bean name="TransactionManagerJNDIBinding" class="com.arjuna.ats.jta.utils.JNDIReferenceBindingBean">
+
+        <property name="bindName">java:/TransactionManager</property>
+        <property name="className">
+            <inject bean="JTAEnvironmentBean" property="jtaTMImplementation"/>
+        </property>
+        <property name="factory">
+            <inject bean="JTAEnvironmentBean" property="jtaTMImplementation"/>
+        </property>
+
+        <install method="bind"/>
+        <uninstall method="unbind"/>
+    </bean>
+
+    <bean name="TransactionSynchronizationRegistryJNDIBinding" class="com.arjuna.ats.jta.utils.JNDIReferenceBindingBean">
+
+        <!-- It's the job of individual components (EJB3, web, etc) to copy the ref to the java:/comp space) -->
+        <property name="bindName">java:/TransactionSynchronizationRegistry</property>
+        <property name="className">
+            <inject bean="JTAEnvironmentBean" property="jtaTSRImplementation"/>
+        </property>
+        <property name="factory">
+            <inject bean="JTAEnvironmentBean" property="jtaTSRImplementation"/>
+        </property>
+
+        <install method="bind"/>
+        <uninstall method="unbind"/>
+    </bean>
+
+
+    <bean name="TransactionPropagationContextImporterJNDIBinding" class="com.arjuna.ats.jta.utils.JNDIReferenceBindingBean">
+
+        <property name="bindName">java:/TransactionPropagationContextImporter</property>
+        <property name="className">com.arjuna.ats.internal.jbossatx.jta.PropagationContextManager</property>
+        <property name="factory">com.arjuna.ats.internal.jbossatx.jta.PropagationContextManager</property>
+
+        <install method="bind"/>
+        <uninstall method="unbind"/>
+    </bean>
+
+    <bean name="TransactionPropagationContextExporterJNDIBinding" class="com.arjuna.ats.jta.utils.JNDIReferenceBindingBean">
+
+        <property name="bindName">java:/TransactionPropagationContextExporter</property>
+        <property name="className">com.arjuna.ats.internal.jbossatx.jta.PropagationContextManager</property>
+        <property name="factory">com.arjuna.ats.internal.jbossatx.jta.PropagationContextManager</property>
+
+        <install method="bind"/>
+        <uninstall method="unbind"/>
+    </bean>
+
+
+
+
+    <!-- Make javax.transaction.TransactionManager available for injection -->
+    <bean name="RealTransactionManager">
+      <constructor factoryMethod="getTransactionManager">
+        <factory bean="TransactionManager"/>
+      </constructor>
+    </bean>
+
+    <!-- Handles user transaction providers and listeners -->
+    <bean name="UserTransactionRegistry" class="org.jboss.tm.usertx.UserTransactionRegistry">
+      <!-- Register providers -->
+      <incallback method="addProvider"/>
+      <uncallback method="removeProvider"/>
+      <!-- Register listeners -->
+      <incallback method="addListener"/>
+      <uncallback method="removeListener"/>
+    </bean>
+
+    <!-- The provider for default in process UserTransactions -->
+    <bean name="DefaultUserTransactionprovider" class="org.jboss.tm.usertx.client.ServerVMClientUserTransaction">
+       <constructor factoryClass="org.jboss.tm.usertx.client.ServerVMClientUserTransaction" factoryMethod="getSingleton"/>
+       <demand>TransactionManager</demand>
+    </bean>
+
+</deployment>
