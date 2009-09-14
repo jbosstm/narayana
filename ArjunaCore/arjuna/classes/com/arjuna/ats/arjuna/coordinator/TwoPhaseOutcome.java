@@ -48,7 +48,7 @@ import java.io.PrintWriter;
  * @since JTS 1.0.
  */
 
-// TODO this needs extending.
+// TODO this needs extending so that one-phase can return rollback directly.
 
 public class TwoPhaseOutcome
 {
@@ -63,7 +63,7 @@ public class TwoPhaseOutcome
     public static final int FINISH_OK = 7;
     public static final int FINISH_ERROR = 8;
     public static final int NOT_PREPARED = 9;
-    public static final int ONE_PHASE_ERROR = 10;
+    public static final int ONE_PHASE_ERROR = 10;  // WARNING this has different meanings depending upon nested or top-level usage.
     public static final int INVALID_TRANSACTION = 11;
 
     public TwoPhaseOutcome (int outcome)

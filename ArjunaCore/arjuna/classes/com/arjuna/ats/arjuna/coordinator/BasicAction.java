@@ -2704,15 +2704,30 @@ public class BasicAction extends StateManager
 		}
 		else
 		{
-			if (p == TwoPhaseOutcome.FINISH_ERROR)
+			if ((p == TwoPhaseOutcome.FINISH_ERROR) || (p == TwoPhaseOutcome.ONE_PHASE_ERROR))
 			{
-			    if (!failedList.insert(recordBeingHandled))
-                                recordBeingHandled = null;
-                            else
-                            {
-                                if (!stateToSave)
-                                    stateToSave = recordBeingHandled.doSave();
-                            }
+			    /*
+			     * If ONE_PHASE_ERROR then the resource has rolled back. Otherwise we
+			     * don't know and will ask recovery to keep trying.
+			     */
+			    
+			    if (p == TwoPhaseOutcome.FINISH_ERROR)
+			    {
+        			    /*
+        			     * We still add to the failed list because this may not mean
+        			     * that the transaction has aborted.
+        			     */
+        			    
+        			    if (!failedList.insert(recordBeingHandled))
+                                        recordBeingHandled = null;
+                                    else
+                                    {
+                                        if (!stateToSave)
+                                            stateToSave = recordBeingHandled.doSave();
+                                    }
+			    }
+			    else			    
+			        actionStatus = ActionStatus.ABORTED;
 			}
 			else
 			{

@@ -583,11 +583,11 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 	}
 	catch (TRANSACTION_ROLLEDBACK e4)
 	{
-	    return TwoPhaseOutcome.FINISH_ERROR;
+	    return TwoPhaseOutcome.ONE_PHASE_ERROR;
 	}
 	catch (INVALID_TRANSACTION e5)
 	{
-	    return TwoPhaseOutcome.FINISH_ERROR;
+	    return TwoPhaseOutcome.ONE_PHASE_ERROR;
 	}
 	catch (Exception e5)
 	{

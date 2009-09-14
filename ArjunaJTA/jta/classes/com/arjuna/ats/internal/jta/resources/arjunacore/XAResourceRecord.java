@@ -727,198 +727,198 @@ public class XAResourceRecord extends AbstractRecord
 
 	public int topLevelOnePhaseCommit()
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"XAResourceRecord.topLevelOnePhaseCommit for " + _tranID);
-		}
+	    if (jtaLogger.logger.isDebugEnabled())
+	    {
+	        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+	                VisibilityLevel.VIS_PUBLIC,
+	                com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+	                "XAResourceRecord.topLevelOnePhaseCommit for " + _tranID);
+	    }
 
-		if (_tranID == null)
-		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.resources.arjunacore.opcnulltx",
-								new Object[]
-								{ "XAResourceRecord.1pc" });
-			}
+	    if (_tranID == null)
+	    {
+	        if (jtaLogger.loggerI18N.isWarnEnabled())
+	        {
+	            jtaLogger.loggerI18N
+	            .warn(
+	                    "com.arjuna.ats.internal.jta.resources.arjunacore.opcnulltx",
+	                    new Object[]
+	                               { "XAResourceRecord.1pc" });
+	        }
 
-			return TwoPhaseOutcome.FINISH_ERROR;
-		}
-		else
-		{
-			if (_theXAResource != null)
-			{
-				if (_heuristic != TwoPhaseOutcome.FINISH_OK)
-					return _heuristic;
+	        return TwoPhaseOutcome.ONE_PHASE_ERROR;  // rolled back!!
+	    }
+	    else
+	    {
+	        if (_theXAResource != null)
+	        {
+	            if (_heuristic != TwoPhaseOutcome.FINISH_OK)
+	                return _heuristic;
 
-				boolean commit = true;
-				XAException endHeuristic = null;
+	            boolean commit = true;
+	            XAException endHeuristic = null;
 
-				try
-				{
-					/*
-					 * TODO in Oracle the end is not needed. Is this common
-					 * across other RMs?
-					 */
+	            try
+	            {
+	                /*
+	                 * TODO in Oracle the end is not needed. Is this common
+	                 * across other RMs?
+	                 */
 
-					if (endAssociation())
-					{
-						_theXAResource.end(_tranID, XAResource.TMSUCCESS);
-					}
-				}
-				catch (XAException e1)
-				{
-				    /*
-				     * Now it's not legal to return a heuristic from end, but
-				     * apparently Oracle does (http://jira.jboss.com/jira/browse/JBTM-343)
-				     * Since this is 1PC we can call forget: the outcome of the
-				     * transaction is the outcome of the participant.
-				     */
+	                if (endAssociation())
+	                {
+	                    _theXAResource.end(_tranID, XAResource.TMSUCCESS);
+	                }
+	            }
+	            catch (XAException e1)
+	            {
+	                /*
+	                 * Now it's not legal to return a heuristic from end, but
+	                 * apparently Oracle does (http://jira.jboss.com/jira/browse/JBTM-343)
+	                 * Since this is 1PC we can call forget: the outcome of the
+	                 * transaction is the outcome of the participant.
+	                 */
 
-				    switch (e1.errorCode)
-				    {
-				    case XAException.XA_HEURHAZ:
-				    case XAException.XA_HEURMIX:
-				    case XAException.XA_HEURCOM:
-				    case XAException.XA_HEURRB:
-					endHeuristic = e1;
-					break;
-				    case XAException.XA_RBROLLBACK:
-				    case XAException.XA_RBCOMMFAIL:
-				    case XAException.XA_RBDEADLOCK:
-				    case XAException.XA_RBINTEGRITY:
-				    case XAException.XA_RBOTHER:
-				    case XAException.XA_RBPROTO:
-				    case XAException.XA_RBTIMEOUT:
-				    case XAException.XA_RBTRANSIENT:
-					/*
-					 * Has been marked as rollback-only. We still
-					 * need to call rollback.
-					 */
+	                switch (e1.errorCode)
+	                {
+	                case XAException.XA_HEURHAZ:
+	                case XAException.XA_HEURMIX:
+	                case XAException.XA_HEURCOM:
+	                case XAException.XA_HEURRB:
+	                    endHeuristic = e1;
+	                    break;
+	                case XAException.XA_RBROLLBACK:
+	                case XAException.XA_RBCOMMFAIL:
+	                case XAException.XA_RBDEADLOCK:
+	                case XAException.XA_RBINTEGRITY:
+	                case XAException.XA_RBOTHER:
+	                case XAException.XA_RBPROTO:
+	                case XAException.XA_RBTIMEOUT:
+	                case XAException.XA_RBTRANSIENT:
+	                    /*
+	                     * Has been marked as rollback-only. We still
+	                     * need to call rollback.
+	                     */
 
-					commit = false;
-					break;
-				    case XAException.XAER_RMERR:
-				    case XAException.XAER_NOTA:
-				    case XAException.XAER_PROTO:
-				    case XAException.XAER_INVAL:
-				    case XAException.XAER_RMFAIL:
-				    default:
-				    {
-                        if (jtaLogger.loggerI18N.isWarnEnabled())
-                        {
-                            jtaLogger.loggerI18N.warn(
-                                    "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
-                                    new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
-                        }
+	                    commit = false;
+	                    break;
+	                case XAException.XAER_RMERR:
+	                case XAException.XAER_NOTA:
+	                case XAException.XAER_PROTO:
+	                case XAException.XAER_INVAL:
+	                case XAException.XAER_RMFAIL:
+	                default:
+	                {
+	                    if (jtaLogger.loggerI18N.isWarnEnabled())
+	                    {
+	                        jtaLogger.loggerI18N.warn(
+	                                "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
+	                                new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
+	                    }
 
 
-                        removeConnection();
-                        return TwoPhaseOutcome.FINISH_ERROR;
-				    }
-				    }
-				}
-                catch(RuntimeException e)
-                {
-                    if (jtaLogger.loggerI18N.isWarnEnabled())
-                    {
-                        jtaLogger.loggerI18N.warn(
-                                "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
-                                new Object[] { _tranID, _theXAResource, e.toString() }, e);
-                    }
+	                    removeConnection();
+	                    return TwoPhaseOutcome.FINISH_ERROR;
+	                }
+	                }
+	            }
+	            catch(RuntimeException e)
+	            {
+	                if (jtaLogger.loggerI18N.isWarnEnabled())
+	                {
+	                    jtaLogger.loggerI18N.warn(
+	                            "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
+	                            new Object[] { _tranID, _theXAResource, e.toString() }, e);
+	                }
 
-                    throw e;
-                }
+	                throw e;
+	            }
 
-				try
-				{
-				    /*
-				     * Not strictly necessary since calling commit will
-				     * do the rollback if end failed as above.
-				     */
+	            try
+	            {
+	                /*
+	                 * Not strictly necessary since calling commit will
+	                 * do the rollback if end failed as above.
+	                 */
 
-				    if (endHeuristic != null) // catch those RMs that terminate in end rather than follow the spec
-					throw endHeuristic;
+	                if (endHeuristic != null) // catch those RMs that terminate in end rather than follow the spec
+	                    throw endHeuristic;
 
-				    if (commit)
-					_theXAResource.commit(_tranID, true);
-				    else
-					_theXAResource.rollback(_tranID);
-				}
-				catch (XAException e1)
-				{
-                    if (jtaLogger.loggerI18N.isWarnEnabled())
-                    {
-                        jtaLogger.loggerI18N.warn(
-                                "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
-                                new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
-                    }
+	                if (commit)
+	                    _theXAResource.commit(_tranID, true);
+	                else
+	                    _theXAResource.rollback(_tranID);
+	            }
+	            catch (XAException e1)
+	            {
+	                if (jtaLogger.loggerI18N.isWarnEnabled())
+	                {
+	                    jtaLogger.loggerI18N.warn(
+	                            "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
+	                            new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
+	                }
 
-					/*
-					 * XA_HEURHAZ, XA_HEURCOM, XA_HEURRB, XA_HEURMIX,
-					 * XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
-					 * XAER_PROTO. XA_RB*
-					 */
+	                /*
+	                 * XA_HEURHAZ, XA_HEURCOM, XA_HEURRB, XA_HEURMIX,
+	                 * XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
+	                 * XAER_PROTO. XA_RB*
+	                 */
 
-					switch (e1.errorCode)
-					{
-					case XAException.XA_HEURHAZ:
-					case XAException.XA_HEURMIX:
-						return TwoPhaseOutcome.HEURISTIC_HAZARD;
-					case XAException.XA_HEURCOM:
-						forget();
-						break;
-					case XAException.XA_HEURRB:
-					case XAException.XA_RBROLLBACK:
-					case XAException.XA_RBCOMMFAIL:
-					case XAException.XA_RBDEADLOCK:
-					case XAException.XA_RBINTEGRITY:
-					case XAException.XA_RBOTHER:
-					case XAException.XA_RBPROTO:
-					case XAException.XA_RBTIMEOUT:
-					case XAException.XA_RBTRANSIENT:
-					case XAException.XAER_RMERR:
-						forget();
-						return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
-					case XAException.XAER_NOTA:
-						return TwoPhaseOutcome.HEURISTIC_HAZARD; // something committed or rolled back without asking us!
-                                        case XAException.XAER_INVAL:
-                                        case XAException.XAER_RMFAIL: // resource manager
-                                                // failed, did it
-                                                // rollback?
-                                                return TwoPhaseOutcome.HEURISTIC_HAZARD;
-	                                case XAException.XA_RETRY:
-	                                case XAException.XAER_PROTO:
-					default:
-					    _committed = true;  // will cause log to be rewritten
-						return TwoPhaseOutcome.FINISH_ERROR;  // recovery should retry
-					}
-				}
-				catch (Exception e2)
-				{
-					if (jtaLogger.loggerI18N.isWarnEnabled())
-					{
-                        jtaLogger.loggerI18N.warn(
-                                "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
-                                new Object[] { _tranID, _theXAResource, e2.toString() }, e2);
-					}
+	                switch (e1.errorCode)
+	                {
+	                case XAException.XA_HEURHAZ:
+	                case XAException.XA_HEURMIX:
+	                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
+	                case XAException.XA_HEURCOM:
+	                    forget();
+	                    break;
+	                case XAException.XA_HEURRB:
+	                case XAException.XA_RBROLLBACK:
+	                case XAException.XA_RBCOMMFAIL:
+	                case XAException.XA_RBDEADLOCK:
+	                case XAException.XA_RBINTEGRITY:
+	                case XAException.XA_RBOTHER:
+	                case XAException.XA_RBPROTO:
+	                case XAException.XA_RBTIMEOUT:
+	                case XAException.XA_RBTRANSIENT:
+	                case XAException.XAER_RMERR:
+	                    forget();
+	                    return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
+	                case XAException.XAER_NOTA:
+	                    return TwoPhaseOutcome.HEURISTIC_HAZARD; // something committed or rolled back without asking us!
+	                case XAException.XAER_INVAL:
+	                case XAException.XAER_RMFAIL: // resource manager
+	                    // failed, did it
+	                    // rollback?
+	                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
+	                case XAException.XA_RETRY:
+	                case XAException.XAER_PROTO:
+	                default:
+	                    _committed = true;  // will cause log to be rewritten
+	                return TwoPhaseOutcome.FINISH_ERROR;  // recovery should retry
+	                }
+	            }
+	            catch (Exception e2)
+	            {
+	                if (jtaLogger.loggerI18N.isWarnEnabled())
+	                {
+	                    jtaLogger.loggerI18N.warn(
+	                            "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
+	                            new Object[] { _tranID, _theXAResource, e2.toString() }, e2);
+	                }
 
-					return TwoPhaseOutcome.FINISH_ERROR;
-				}
-				finally
-				{
-					removeConnection();
-				}
-			}
-			else
-				return TwoPhaseOutcome.FINISH_ERROR;
-		}
+	                return TwoPhaseOutcome.FINISH_ERROR;
+	            }
+	            finally
+	            {
+	                removeConnection();
+	            }
+	        }
+	        else
+	            return TwoPhaseOutcome.ONE_PHASE_ERROR;
+	    }
 
-		return TwoPhaseOutcome.FINISH_OK;
+	    return TwoPhaseOutcome.FINISH_OK;
 	}
 
 	public boolean forgetHeuristic()

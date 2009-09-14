@@ -739,182 +739,186 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	public void commit_one_phase() throws HeuristicHazard,
 			org.omg.CORBA.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"XAResourceRecord.commit_one_phase for " + _tranID);
-		}
+	    if (jtaLogger.logger.isDebugEnabled())
+	    {
+	        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+	                VisibilityLevel.VIS_PUBLIC,
+	                com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+	                "XAResourceRecord.commit_one_phase for " + _tranID);
+	    }
 
-		if (_tranID == null)
-		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
-			{
-				jtaLogger.loggerI18N
-						.warn(
-								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
-								new Object[]
-								{ "XAResourceRecord.commit_one_phase" });
-			}
-		}
-		else
-		{
-			if (_theXAResource != null)
-			{
-				try
-				{
-					switch (_heuristic)
-					{
-					case TwoPhaseOutcome.HEURISTIC_HAZARD:
-						throw new org.omg.CosTransactions.HeuristicHazard();
-					default:
-						break;
-					}
+	    if (_tranID == null)
+	    {
+	        if (jtaLogger.loggerI18N.isWarnEnabled())
+	        {
+	            jtaLogger.loggerI18N
+	            .warn(
+	                    "com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
+	                    new Object[]
+	                               { "XAResourceRecord.commit_one_phase" });
+	        }
 
-					/*
-					 * TODO in Oracle, the end is not required. Is this
-					 * common to other RM implementations?
-					 */
+	        throw new TRANSACTION_ROLLEDBACK();
+	    }
+	    else
+	    {
+	        if (_theXAResource != null)
+	        {
+	            try
+	            {
+	                switch (_heuristic)
+	                {
+	                case TwoPhaseOutcome.HEURISTIC_HAZARD:
+	                    throw new org.omg.CosTransactions.HeuristicHazard();
+	                default:
+	                    break;
+	                }
 
-					boolean commit = true;
+	                /*
+	                 * TODO in Oracle, the end is not required. Is this
+	                 * common to other RM implementations?
+	                 */
 
-					try
-					{
-        					if (endAssociation())
-        					{
-        						_theXAResource.end(_tranID, XAResource.TMSUCCESS);
-        					}
-					}
-					catch (XAException e1)
-					{
-					    /*
-					     * Now it's not legal to return a heuristic from end, but
-					     * apparently Oracle does (http://jira.jboss.com/jira/browse/JBTM-343)
-					     * Since this is 1PC we can call forget: the outcome of the
-					     * transaction is the outcome of the participant.
-					     */
+	                boolean commit = true;
 
-					    switch (e1.errorCode)
-					    {
-					    case XAException.XA_HEURHAZ:
-					    case XAException.XA_HEURMIX:
-					    case XAException.XA_HEURCOM:
-					    case XAException.XA_HEURRB:
-						throw e1;
-					    case XAException.XA_RBROLLBACK:
-					    case XAException.XA_RBCOMMFAIL:
-					    case XAException.XA_RBDEADLOCK:
-					    case XAException.XA_RBINTEGRITY:
-					    case XAException.XA_RBOTHER:
-					    case XAException.XA_RBPROTO:
-					    case XAException.XA_RBTIMEOUT:
-					    case XAException.XA_RBTRANSIENT:
-						/*
-						 * Has been marked as rollback-only. We still
-						 * need to call rollback.
-						 */
+	                try
+	                {
+	                    if (endAssociation())
+	                    {
+	                        _theXAResource.end(_tranID, XAResource.TMSUCCESS);
+	                    }
+	                }
+	                catch (XAException e1)
+	                {
+	                    /*
+	                     * Now it's not legal to return a heuristic from end, but
+	                     * apparently Oracle does (http://jira.jboss.com/jira/browse/JBTM-343)
+	                     * Since this is 1PC we can call forget: the outcome of the
+	                     * transaction is the outcome of the participant.
+	                     */
 
-						commit = false;
-						break;
-					    case XAException.XAER_RMERR:
-					    case XAException.XAER_NOTA:
-					    case XAException.XAER_PROTO:
-					    case XAException.XAER_INVAL:
-					    case XAException.XAER_RMFAIL:
-					    default:
-					    {
-						throw new UNKNOWN();
-					    }
-					    }
-					}
+	                    switch (e1.errorCode)
+	                    {
+	                    case XAException.XA_HEURHAZ:
+	                    case XAException.XA_HEURMIX:
+	                    case XAException.XA_HEURCOM:
+	                    case XAException.XA_HEURRB:
+	                        throw e1;
+	                    case XAException.XA_RBROLLBACK:
+	                    case XAException.XA_RBCOMMFAIL:
+	                    case XAException.XA_RBDEADLOCK:
+	                    case XAException.XA_RBINTEGRITY:
+	                    case XAException.XA_RBOTHER:
+	                    case XAException.XA_RBPROTO:
+	                    case XAException.XA_RBTIMEOUT:
+	                    case XAException.XA_RBTRANSIENT:
+	                        /*
+	                         * Has been marked as rollback-only. We still
+	                         * need to call rollback.
+	                         */
 
-					_theXAResource.commit(_tranID, true);
-				}
-				catch (XAException e1)
-				{
-					/*
-					 * XA_HEURHAZ, XA_HEURCOM, XA_HEURRB, XA_HEURMIX,
-					 * XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
-					 * XAER_PROTO. XA_RB*
-					 */
+	                        commit = false;
+	                        break;
+	                    case XAException.XAER_RMERR:
+	                    case XAException.XAER_NOTA:
+	                    case XAException.XAER_PROTO:
+	                    case XAException.XAER_INVAL:
+	                    case XAException.XAER_RMFAIL:
+	                    default:
+	                    {
+	                        throw new UNKNOWN();
+	                    }
+	                    }
+	                }
 
-					if ((e1.errorCode >= XAException.XA_RBBASE)
-							&& (e1.errorCode <= XAException.XA_RBEND))
-					{
-						throw new TRANSACTION_ROLLEDBACK();
-					}
+	                _theXAResource.commit(_tranID, true);
+	            }
+	            catch (XAException e1)
+	            {
+	                /*
+	                 * XA_HEURHAZ, XA_HEURCOM, XA_HEURRB, XA_HEURMIX,
+	                 * XAER_RMERR, XAER_RMFAIL, XAER_NOTA, XAER_INVAL, or
+	                 * XAER_PROTO. XA_RB*
+	                 */
 
-					switch (e1.errorCode)
-					{
-					case XAException.XA_HEURHAZ:
-					case XAException.XA_HEURMIX:
-						updateState(TwoPhaseOutcome.HEURISTIC_HAZARD);
+	                if ((e1.errorCode >= XAException.XA_RBBASE)
+	                        && (e1.errorCode <= XAException.XA_RBEND))
+	                {
+	                    throw new TRANSACTION_ROLLEDBACK();
+	                }
 
-						throw new org.omg.CosTransactions.HeuristicHazard();
-					case XAException.XA_HEURCOM:
-						handleForget() ;
-						break;
-					case XAException.XA_HEURRB:
-					case XAException.XA_RBROLLBACK:
-					case XAException.XA_RBCOMMFAIL:
-					case XAException.XA_RBDEADLOCK:
-					case XAException.XA_RBINTEGRITY:
-					case XAException.XA_RBOTHER:
-					case XAException.XA_RBPROTO:
-					case XAException.XA_RBTIMEOUT:
-					case XAException.XA_RBTRANSIENT:
-					case XAException.XAER_RMERR:
-						handleForget() ;
-						throw new TRANSACTION_ROLLEDBACK();
+	                switch (e1.errorCode)
+	                {
+	                case XAException.XA_HEURHAZ:
+	                case XAException.XA_HEURMIX:
+	                    updateState(TwoPhaseOutcome.HEURISTIC_HAZARD);
 
-					case XAException.XAER_NOTA:
-                        // RM unexpectedly lost track of the tx, outcome is uncertain
-                        updateState(TwoPhaseOutcome.HEURISTIC_HAZARD);
-						throw new org.omg.CosTransactions.HeuristicHazard();
-					case XAException.XAER_PROTO:
-                        // presumed abort (or we could be really paranoid and throw a heuristic)
-                        throw new TRANSACTION_ROLLEDBACK();
+	                    throw new org.omg.CosTransactions.HeuristicHazard();
+	                case XAException.XA_HEURCOM:
+	                    handleForget() ;
+	                    break;
+	                case XAException.XA_HEURRB:
+	                case XAException.XA_RBROLLBACK:
+	                case XAException.XA_RBCOMMFAIL:
+	                case XAException.XA_RBDEADLOCK:
+	                case XAException.XA_RBINTEGRITY:
+	                case XAException.XA_RBOTHER:
+	                case XAException.XA_RBPROTO:
+	                case XAException.XA_RBTIMEOUT:
+	                case XAException.XA_RBTRANSIENT:
+	                case XAException.XAER_RMERR:
+	                    handleForget() ;
+	                    throw new TRANSACTION_ROLLEDBACK();
 
-					case XAException.XAER_INVAL:
-					case XAException.XAER_RMFAIL: // resource manager failed,
-												  // did it rollback?
-						throw new org.omg.CosTransactions.HeuristicHazard();
-					case XAException.XA_RETRY:
-					default:
-					    _committed = true;  // will cause log to be rewritten
-					
-						throw new UNKNOWN();
-					}
-				}
-				catch (SystemException ex)
-				{
-					ex.printStackTrace();
+	                case XAException.XAER_NOTA:
+	                    // RM unexpectedly lost track of the tx, outcome is uncertain
+	                    updateState(TwoPhaseOutcome.HEURISTIC_HAZARD);
+	                    throw new org.omg.CosTransactions.HeuristicHazard();
+	                case XAException.XAER_PROTO:
+	                    // presumed abort (or we could be really paranoid and throw a heuristic)
+	                    throw new TRANSACTION_ROLLEDBACK();
 
-					throw ex;
-				}
-				catch (org.omg.CosTransactions.HeuristicHazard ex)
-				{
-					throw ex;
-				}
-				catch (Exception e2)
-				{
-					if (jtaLogger.loggerI18N.isWarnEnabled())
-					{
-						jtaLogger.loggerI18N
-								.warn(
-										"com.arjuna.ats.internal.jta.resources.jts.orbspecific.coperror",
-										new Object[] {e2}, e2);
-					}
+	                case XAException.XAER_INVAL:
+	                case XAException.XAER_RMFAIL: // resource manager failed,
+	                    // did it rollback?
+	                    throw new org.omg.CosTransactions.HeuristicHazard();
+	                case XAException.XA_RETRY:
+	                default:
+	                    _committed = true;  // will cause log to be rewritten
 
-					throw new UNKNOWN();
-				}
-				finally
-				{
-					removeConnection();
-				}
-			}
-		}
+	                throw new UNKNOWN();
+	                }
+	            }
+	            catch (SystemException ex)
+	            {
+	                ex.printStackTrace();
+
+	                throw ex;
+	            }
+	            catch (org.omg.CosTransactions.HeuristicHazard ex)
+	            {
+	                throw ex;
+	            }
+	            catch (Exception e2)
+	            {
+	                if (jtaLogger.loggerI18N.isWarnEnabled())
+	                {
+	                    jtaLogger.loggerI18N
+	                    .warn(
+	                            "com.arjuna.ats.internal.jta.resources.jts.orbspecific.coperror",
+	                            new Object[] {e2}, e2);
+	                }
+
+	                throw new UNKNOWN();
+	            }
+	            finally
+	            {
+	                removeConnection();
+	            }
+	        }
+	        else
+	            throw new TRANSACTION_ROLLEDBACK();
+	    }
 	}
 
 	public void forget() throws org.omg.CORBA.SystemException

@@ -645,11 +645,11 @@ public class ExtendedResourceRecord extends
 		     * to communicate that back to the caller.
 		     */
 		    
-			return TwoPhaseOutcome.HEURISTIC_ROLLBACK;  // TODO TPO extension required.
+			return TwoPhaseOutcome.ONE_PHASE_ERROR;  // TODO TPO extension required.
 		}
 		catch (INVALID_TRANSACTION e5)
 		{
-			return TwoPhaseOutcome.FINISH_ERROR;
+			return TwoPhaseOutcome.ONE_PHASE_ERROR;
 		}
 		catch (final UNKNOWN ex)
 		{
