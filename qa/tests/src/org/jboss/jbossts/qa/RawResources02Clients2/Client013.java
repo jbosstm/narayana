@@ -122,7 +122,7 @@ public class Client013
 			ResourceTrace resourceTrace2 = service2.get_resource_trace(0);
 
 			correct = correct && (resourceTrace1 == ResourceTrace.ResourceTracePrepareCommitForget);
-			correct = correct && (resourceTrace2 == ResourceTrace.ResourceTracePrepareCommitForget);
+			correct = correct && (resourceTrace2 == ResourceTrace.ResourceTracePrepareRollback);
 
 			if (correct)
 			{
