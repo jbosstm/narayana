@@ -62,6 +62,7 @@ import org.jboss.jbossts.qa.Utils.OAInterface;
 import org.jboss.jbossts.qa.Utils.ORBInterface;
 import org.jboss.jbossts.qa.Utils.OTS;
 import org.jboss.jbossts.qa.Utils.ServerIORStore;
+import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
 import org.omg.CosTransactions.HeuristicHazard;
 
 public class Client015
@@ -107,6 +108,9 @@ public class Client015
 				System.err.println("Commit succeeded when it shouldn't");
 				correct = false;
 			}
+			catch (final TRANSACTION_ROLLEDBACK ex)
+			{			    
+			}
 			catch (HeuristicHazard heuristicHazard)
 			{
 			}
@@ -121,7 +125,7 @@ public class Client015
 			ResourceTrace resourceTrace2 = service2.get_resource_trace(0);
 
 			correct = correct && (resourceTrace1 == ResourceTrace.ResourceTracePrepareCommitForget);
-			correct = correct && (resourceTrace2 == ResourceTrace.ResourceTracePrepareCommitForget);
+			correct = correct && (resourceTrace2 == ResourceTrace.ResourceTracePrepareRollback);
 
 			if (correct)
 			{
