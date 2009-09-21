@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.io.*;
+import java.text.SimpleDateFormat;
 
 /**
  * Reimplementation of the Task abstraction. This version cooperates with a task reaper which times out
@@ -182,6 +183,8 @@ public class TaskImpl implements Task
 
         String[] command = assembleCommand(clazz.getCanonicalName(), params);
 
+        logCommand(out, "performing command: ", command);
+
         // cannot restart a task
 
         synchronized(this) {
@@ -222,6 +225,7 @@ public class TaskImpl implements Task
             // now read stdout checking for passed or failed
             bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
             while((line = bufferedReader.readLine()) != null) {
                 if("Passed".equals(line)) {
                     printedPassed = true;
@@ -230,8 +234,8 @@ public class TaskImpl implements Task
                     printedFailed = true;
                 }
                 // need to redirect to file
-
-                out.println("out: " + line);
+                Date date = new Date();
+                out.println(simpleDateFormat.format(date)+" "+"out: " + line);
             }
         } catch (Exception e) {
             // if we fail here then the reaper task will clean up the thread
@@ -296,6 +300,8 @@ public class TaskImpl implements Task
     public void start(String... params)
     {
         String[] command = assembleCommand(clazz.getCanonicalName(), params);
+
+        logCommand(out, "starting command: ", command);
 
         // cannot restart a task
 
@@ -566,6 +572,18 @@ public class TaskImpl implements Task
     }
 
     /**
+     * Log the command line to an outout
+     */
+    private void logCommand(PrintStream out, String prefix, String[] command) {
+        out.print(prefix);
+        for(String commandElement : command) {
+            out.print(commandElement);
+            out.print(" ");
+        }
+        out.println();
+    }
+
+    /**
      * a thread created whenever a task is started asynchronously to forward output from the task's process
      * to an output stream and to detect printing of Ready, Passed and Failed ouptut lines.
      */
@@ -639,6 +657,9 @@ public class TaskImpl implements Task
         }
 
         public void run() {
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+            
             try {
                 String line;
                 while((line = bufferedReader.readLine()) != null) {
@@ -654,7 +675,8 @@ public class TaskImpl implements Task
                     if("Failed".equals(line)) {
                         printedFailed = true;
                     }
-                    out.println(prefix + line);
+                    Date date = new Date();
+                    out.println(simpleDateFormat.format(date)+" "+prefix + line);
                 }
 
                 isFinishedCleanly.set(true);
@@ -709,10 +731,14 @@ public class TaskImpl implements Task
         }
 
         public void run() {
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+
             try {
                 String line;
                 while((line = bufferedReader.readLine()) != null) {
-                    out.println(prefix + line);
+                    Date date = new Date();
+                    out.println(simpleDateFormat.format(date)+" "+prefix + line);
                 }
             } catch(Exception e) {
                 // if the process is explicitly destroyed we can see an IOException because the output
