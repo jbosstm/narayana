@@ -58,10 +58,10 @@ package org.jboss.jbossts.qa.CrashRecovery07Clients;
 
 
 import org.jboss.jbossts.qa.CrashRecovery07.*;
-import org.jboss.jbossts.qa.CrashRecovery07Utils.Delays;
 import org.jboss.jbossts.qa.Utils.OAInterface;
 import org.jboss.jbossts.qa.Utils.ORBInterface;
 import org.jboss.jbossts.qa.Utils.ServerIORStore;
+import org.jboss.jbossts.qa.Utils.CrashRecoveryDelays;
 
 public class Client01a
 {
@@ -73,16 +73,13 @@ public class Client01a
 			OAInterface.initOA();
 
 			int numberOfResources = Integer.parseInt(args[args.length - 2]);
-			int delay;
 
 			String serviceIOR = ServerIORStore.loadIOR(args[args.length - 1]);
 			Service service = ServiceHelper.narrow(ORBInterface.orb().string_to_object(serviceIOR));
 
 			boolean correct = true;
 
-			delay = Delays.recoveryDelay(Integer.parseInt(args[args.length - 3]));
-			System.out.println("Sleeping for " + delay + "ms.");
-			Thread.sleep(delay);
+            CrashRecoveryDelays.awaitRecoveryCR07(Integer.parseInt(args[args.length - 3]));
 
 			ResourceTrace resourceTrace = null;
 

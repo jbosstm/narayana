@@ -131,9 +131,9 @@
         <!-- <antcall target="junit-tests"><param name="tests" value="crashrecovery05_2"/></antcall> -->
         <!-- crashrecovery06 : 2 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery06"/></antcall>
-        <!-- crashrecovery07 : 16 tests, 87 minutes -->
+        <!-- crashrecovery07 : 16 tests, 12 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery07"/></antcall>
-        <!-- crashrecovery08 : 32 tests, 228 minutes -->
+        <!-- crashrecovery08 : 32 tests, 32 minutes -->
         <!-- <antcall target="junit-tests"><param name="tests" value="crashrecovery08"/></antcall> -->
         <!-- crashrecovery09 : 6 tests, 7 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery09"/></antcall>
