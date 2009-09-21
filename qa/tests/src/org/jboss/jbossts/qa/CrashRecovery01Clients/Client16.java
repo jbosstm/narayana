@@ -58,10 +58,7 @@ package org.jboss.jbossts.qa.CrashRecovery01Clients;
 
 
 import org.jboss.jbossts.qa.CrashRecovery01.*;
-import org.jboss.jbossts.qa.Utils.OAInterface;
-import org.jboss.jbossts.qa.Utils.ORBInterface;
-import org.jboss.jbossts.qa.Utils.OTS;
-import org.jboss.jbossts.qa.Utils.ServerIORStore;
+import org.jboss.jbossts.qa.Utils.*;
 
 public class Client16
 {
@@ -102,7 +99,8 @@ public class Client16
 			correct = correct && service2.check_oper();
 
 // now sleep to let reply completion do its job 1 second should be more than enough
-			Thread.sleep(10 * 1000);
+            CrashRecoveryDelays.awaitReplayCompletionCR01();
+			
 
 			correct = correct && service1.is_correct();
 			correct = correct && service2.is_correct();

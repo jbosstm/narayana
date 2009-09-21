@@ -58,10 +58,7 @@ package org.jboss.jbossts.qa.CrashRecovery04Clients;
 
 
 import org.jboss.jbossts.qa.CrashRecovery04.*;
-import org.jboss.jbossts.qa.Utils.OAInterface;
-import org.jboss.jbossts.qa.Utils.ORBInterface;
-import org.jboss.jbossts.qa.Utils.OTS;
-import org.jboss.jbossts.qa.Utils.ServerIORStore;
+import org.jboss.jbossts.qa.Utils.*;
 
 public class Client02
 {
@@ -95,7 +92,7 @@ public class Client02
 			correct = correct && service.check_oper();
 
 // now sleep to let reply completion do its job 1 second should be more than enough
-			Thread.sleep(10 * 1000);
+			CrashRecoveryDelays.awaitReplayCompletionCR04();
 
 			correct = correct && service.is_correct();
 //  after reply_completion is called the resource will have rollback called on

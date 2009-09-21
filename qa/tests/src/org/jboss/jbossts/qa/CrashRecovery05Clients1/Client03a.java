@@ -58,10 +58,10 @@ package org.jboss.jbossts.qa.CrashRecovery05Clients1;
 
 
 import org.jboss.jbossts.qa.CrashRecovery05.*;
-import org.jboss.jbossts.qa.CrashRecovery05Utils.Delays;
 import org.jboss.jbossts.qa.Utils.OAInterface;
 import org.jboss.jbossts.qa.Utils.ORBInterface;
 import org.jboss.jbossts.qa.Utils.ServerIORStore;
+import org.jboss.jbossts.qa.Utils.CrashRecoveryDelays;
 
 public class Client03a
 {
@@ -90,7 +90,7 @@ public class Client03a
 
 			correct = service.check_oper(checkBehaviors) && service.is_correct();
 
-			Thread.sleep(Delays.replyCompletionDelay());
+			CrashRecoveryDelays.awaitReplayCompletionCR05();
 
 			ResourceTrace resourceTrace = service.get_resource_trace(0);
 

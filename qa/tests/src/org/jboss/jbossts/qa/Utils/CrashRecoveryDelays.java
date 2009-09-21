@@ -39,7 +39,7 @@ public class CrashRecoveryDelays
         awaitRecovery(2, num_clients);
     }
 
-    public static void awaitRecovery(int num_cycles, int num_clients) throws InterruptedException
+    private static void awaitRecovery(int num_cycles, int num_clients) throws InterruptedException
     {
         // Note: this assumes the client is running with the same config as the rec mgr process.
         RecoveryEnvironmentBean recoveryEnvironmentBean = recoveryPropertyManager.getRecoveryEnvironmentBean();
@@ -49,5 +49,28 @@ public class CrashRecoveryDelays
         int delay = ((num_cycles*recoveryCycleTime)+(num_clients*10))*1000;
         System.out.println("Sleeping for " + delay + " ms.");
         Thread.sleep(delay);
+    }
+
+    /////////////////
+
+    public static void awaitReplayCompletionCR01() throws InterruptedException {
+        awaitReplayCompletion(5); // was 10
+    }
+
+    public static void awaitReplayCompletionCR04() throws InterruptedException {
+        awaitReplayCompletion(5); // was 10
+    }
+
+    public static void awaitReplayCompletionCR02() throws InterruptedException {
+        awaitReplayCompletion(5); // was 60
+    }
+
+    public static void awaitReplayCompletionCR05() throws InterruptedException {
+        awaitReplayCompletion(5); // was 60
+    }
+
+    private static void awaitReplayCompletion(int seconds) throws InterruptedException
+    {
+        Thread.sleep(seconds * 1000);
     }
 }
