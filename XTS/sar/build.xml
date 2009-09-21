@@ -222,9 +222,6 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <fileset dir="${build.conf.dir}"/>
         </jar>
 
-        <!-- copy 11 and 1.0 application.xml to build dir -->
-        <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application.xml"/>
-
         <!-- pack everything in the service archive -->
         <jar jarfile="${build.dir}/jbossxts.sar">
             <!-- include generic 1.0 and 1.1 jars -->
@@ -244,9 +241,6 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <!-- include service def (e.g. dependencies) -->
             <fileset dir="." includes="META-INF/jboss-beans.xml"/>
 
-            <!-- include web service config -->
-            <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
-
             <!-- include sar boot and shutdown code and 1.1 bridge code *but* exclude the bridge API class -->
 	        <fileset dir="${build.classes.dir}" includes="**/*" excludes="${bridge.api.class.files}"/>
         </jar>
@@ -264,9 +258,6 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <fileset dir="${build.conf.dir}"/>
         </jar>
 
-        <!-- copy 11 application.xml to build dir -->
-        <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application11.xml"/>
-
         <!-- pack everything in the service archive -->
         <jar jarfile="${build.dir}/jbossxts.sar">
             <!-- include generic and 1.1 jars -->
@@ -282,9 +273,6 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
 
             <!-- include service def (e.g. dependencies) -->
             <fileset dir="." includes="META-INF/jboss-beans.xml"/>
-
-            <!-- include web service config -->
-            <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
 
             <!-- include sar boot and shutdown code and 1.1 bridge code *but* exclude the bridge API class -->
 	        <fileset dir="${build.classes.dir}" includes="**/*" excludes="${bridge.api.class.files}"/>
@@ -303,9 +291,6 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
             <fileset dir="${build.conf.dir}"/>
         </jar>
 
-        <!-- copy 10 application.xml to build dir -->
-        <copy toFile="${build.metainf.dir}/application.xml" file="${metainf.dir}/application10.xml"/>
-
         <!-- pack everything in the service archive -->
         <jar jarfile="${build.dir}/jbossxts.sar">
             <!-- include generic and 1.0 jars -->
@@ -321,9 +306,6 @@ The JBoss installation directory must be specified with the JBOSS_HOME environme
 
             <!-- include service def (e.g. dependencies) -->
             <fileset dir="." includes="META-INF/jboss-beans.xml"/>
-
-            <!-- include web service config -->
-            <fileset dir="${build.dir}" includes="META-INF/application.xml"/>
 
             <!-- include sar boot and shutdown code -->
             <fileset dir="${build.classes.dir}" includes="**/*"/>
