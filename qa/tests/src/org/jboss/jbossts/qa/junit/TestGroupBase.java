@@ -23,6 +23,7 @@ package org.jboss.jbossts.qa.junit;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Assume;
 
 import java.io.*;
 
@@ -59,6 +60,19 @@ public class TestGroupBase
     // inform us of it explicitly.
     protected void setTestName(String testName) {
         this.testName = testName;
+        checkIncludes();
+    }
+
+    protected void checkIncludes() {
+        String includePattern = System.getProperty("names");
+        if(includePattern != null && testName != null) {
+            if(!testName.matches(includePattern)) {
+                System.out.println("TestGroupBase.checkIncludes: skipping test "+testName+" as it does not match 'names' pattern "+includePattern);
+                 // 'assume' causes the default junit4 runner to behave as with @Ignore
+                // except that @setUp has already run and @tearDown will still run.
+                Assume.assumeTrue(false);
+            }
+        }
     }
 
     public Task createTask(String taskName, Class clazz, Task.TaskType taskType, int timeout) {

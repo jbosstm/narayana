@@ -42,7 +42,10 @@
     <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
     <target name="scratch">
 
-        <antcall target="junit-tests"><param name="tests" value="jtatests01"/></antcall>
+        <antcall target="junit-tests">
+            <param name="tests" value="jtatests01"/>
+            <param name="names" value="Test00[2|3]"/>
+        </antcall>
         
     </target>
 
@@ -294,6 +297,9 @@
     <!-- This is where all the hard work happens - use junit to coordinate multi-process tests: -->
     <target  name="junit-tests">
 
+        <!-- pass in a param to override this. by default run everything. -->
+        <property name="names" value=".*"/>
+
         <!-- TODO support JTA mode testing of JTS .jar files? -
             would need classpath munging for props file in TaskImpl.properties -->
 
@@ -333,6 +339,8 @@
             <formatter type="plain"/>
 
             <test name="org.jboss.jbossts.qa.junit.testgroup.TestGroup_${tests}"/>
+
+            <sysproperty key="names" value="${names}"/>
 
             <!--<jvmarg value="-Xdebug"/>-->
             <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006"/>-->
