@@ -42,6 +42,8 @@
     <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
     <target name="scratch">
 
+        <antcall target="junit-tests"><param name="tests" value="jtatests01"/></antcall>
+        
     </target>
 
     <!-- a faster subset of the tests for smoke testing. aim to keep to under one hour total. -->
@@ -63,7 +65,7 @@
         <!-- rawsubtransactionawareresources02_1 : 6 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="rawsubtransactionawareresources02_1"/></antcall>
 
-        <!-- crashrecovery01 : 24 tests, 6 minutes -->
+        <!-- crashrecovery01 : 24 tests, 3 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery01"/></antcall>
         <!-- crashrecovery02_1 : 5 tests, 6 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery02_1"/></antcall>
@@ -77,8 +79,7 @@
     </target>
 
     <!-- General tests.
-        Some groups take a really long time and are disabled by default.
-        The remaining tests should take a combined time of around 4hrs or so.
+        These tests should take a combined time of around 4 hrs or so.
     -->
     <target name="junit">
 
@@ -115,26 +116,26 @@
         <!-- rawsubtransactionawareresources02_3 : 25 tests, 3 minutes -->
         <antcall target="junit-tests"><param name="tests" value="rawsubtransactionawareresources02_3"/></antcall>
 
-        <!-- crashrecovery01 : 24 tests, 6 minutes -->
+        <!-- crashrecovery01 : 24 tests, 3 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery01"/></antcall>
-        <!-- crashrecovery02_1 : 5 tests, 6 minutes -->
+        <!-- crashrecovery02_1 : 5 tests, 2 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery02_1"/></antcall>
-        <!-- crashrecovery02_2 : 50 tests, 60 minutes -->
-        <!-- <antcall target="junit-tests"><param name="tests" value="crashrecovery02_2"/></antcall> -->
+        <!-- crashrecovery02_2 : 50 tests, 12 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="crashrecovery02_2"/></antcall>
         <!-- crashrecovery03 : 1 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery03"/></antcall>
-        <!-- crashrecovery04 : 48 tests, 11 minutes -->
+        <!-- crashrecovery04 : 48 tests, 6 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery04"/></antcall>
-        <!-- crashrecovery05_1 : 10 tests, 12 minutes -->
+        <!-- crashrecovery05_1 : 10 tests, 3 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery05_1"/></antcall>
-        <!-- crashrecovery05_2 : 100 tests, 122 minutes -->
-        <!-- <antcall target="junit-tests"><param name="tests" value="crashrecovery05_2"/></antcall> -->
+        <!-- crashrecovery05_2 : 100 tests, 25 minutes -->
+         <antcall target="junit-tests"><param name="tests" value="crashrecovery05_2"/></antcall>
         <!-- crashrecovery06 : 2 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery06"/></antcall>
         <!-- crashrecovery07 : 16 tests, 12 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery07"/></antcall>
         <!-- crashrecovery08 : 32 tests, 32 minutes -->
-        <!-- <antcall target="junit-tests"><param name="tests" value="crashrecovery08"/></antcall> -->
+         <antcall target="junit-tests"><param name="tests" value="crashrecovery08"/></antcall>
         <!-- crashrecovery09 : 6 tests, 7 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery09"/></antcall>
         <!-- crashrecovery10 : 6 tests, 7 minutes -->
@@ -142,13 +143,6 @@
         <!-- crashrecovery12 : 7 tests, 5 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery12"/></antcall>
 
-    </target>
-
-    <!-- long running crash rec test groups (the ones disabled in the 'junit' target) -->
-    <target name="junit-longer">
-        <antcall target="junit-tests"><param name="tests" value="crashrecovery02_2"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="crashrecovery05_2"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="crashrecovery08"/></antcall>
     </target>
 
     <!-- copy the selected db driver out of the available set into the classpath.
