@@ -26,7 +26,7 @@
 		JBossTS Transaction Bridge
 	</description>
 
-    <property name="jbossas.home" location="/home/jhalli/IdeaProjects/jboss/jbossas_510ga/build/output/jboss-5.1.0.GA"/>
+    <property name="jbossas.home" location="/home/jhalli/IdeaProjects/jboss/jbossas_trunk/build/output/jboss-6.0.0-SNAPSHOT"/>
     <property name="jbossas.server" value="default"/>
 
     <property name="jbossts.home" location=".."/>
@@ -38,7 +38,6 @@
         <fileset dir="${jbossts.home}/install/lib">
             <include name="jbossjta.jar"/>
             <include name="jbossjts.jar"/>
-            <include name="ext/jbossts-common.jar"/>
             <include name="ext/log4j-1.2.14.jar"/>
             <include name="ext/jta-1_1-classes.zip"/>
             <include name="ext/connector-api.jar"/>

@@ -53,7 +53,7 @@ public class BridgeDurableParticipant implements Durable2PCParticipant, Serializ
      * Uniq String used to prefix ids at participant registration,
      * so that the recovery module can identify relevant instances.
      */
-    public static String TYPE_IDENTIFIER = "BridgeParticipantAT_";
+    public static String TYPE_IDENTIFIER = "BridgeDurableParticipant_";
 
 	private transient XATerminator xaTerminator;
 

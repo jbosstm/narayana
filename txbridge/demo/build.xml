@@ -26,7 +26,7 @@
 		JBossTS Transaction Bridge Demo App
 	</description>
 
-    <property name="jbossas.home" location="/home/jhalli/IdeaProjects/jboss/jbossas_510ga/build/output/jboss-5.1.0.GA"/>
+    <property name="jbossas.home" location="/home/jhalli/IdeaProjects/jboss/jbossas_trunk/build/output/jboss-6.0.0-SNAPSHOT"/>
     <property name="jbossas.server" value="default"/>
 
 	<property name="src" location="src"/>
@@ -43,8 +43,6 @@
 			<include name="log4j.jar"/>
 
             <include name="jbossjts.jar"/>
-            <include name="jbossts-common.jar"/>
-
 		</fileset>
 
         <fileset dir="${jbossas.home}/server/${jbossas.server}/deploy/jbossxts.sar">
