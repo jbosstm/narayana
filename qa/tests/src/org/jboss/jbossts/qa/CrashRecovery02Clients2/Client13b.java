@@ -63,6 +63,7 @@ import org.jboss.jbossts.qa.Utils.ORBInterface;
 import org.jboss.jbossts.qa.Utils.OTS;
 import org.jboss.jbossts.qa.Utils.ServerIORStore;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
+import org.omg.CosTransactions.*;
 
 public class Client13b
 {
@@ -100,6 +101,9 @@ public class Client13b
 			try
 			{
 				OTS.current().commit(false);
+			}
+			catch (final HeuristicHazard ex)
+			{
 			}
 			catch (TRANSACTION_ROLLEDBACK transactionRolledback)
 			{

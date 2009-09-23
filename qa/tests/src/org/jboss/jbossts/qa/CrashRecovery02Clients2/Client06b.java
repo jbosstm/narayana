@@ -62,6 +62,7 @@ import org.jboss.jbossts.qa.Utils.OAInterface;
 import org.jboss.jbossts.qa.Utils.ORBInterface;
 import org.jboss.jbossts.qa.Utils.OTS;
 import org.jboss.jbossts.qa.Utils.ServerIORStore;
+import org.omg.CosTransactions.*;
 
 public class Client06b
 {
@@ -96,7 +97,13 @@ public class Client06b
 			correct = correct && service1.is_correct();
 			correct = correct && service2.is_correct();
 
-			OTS.current().commit(false);
+			try
+			{
+			    OTS.current().commit(false);
+			}
+			catch (final HeuristicHazard ex)
+			{			    
+			}
 
 			if (correct)
 			{

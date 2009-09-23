@@ -62,6 +62,7 @@ import org.jboss.jbossts.qa.Utils.OAInterface;
 import org.jboss.jbossts.qa.Utils.ORBInterface;
 import org.jboss.jbossts.qa.Utils.OTS;
 import org.jboss.jbossts.qa.Utils.ServerIORStore;
+import org.omg.CosTransactions.*;
 
 public class Client04b
 {
@@ -96,7 +97,21 @@ public class Client04b
 			correct = correct && service1.is_correct();
 			correct = correct && service2.is_correct();
 
-			OTS.current().commit(false);
+			/*
+			 * Two resources registered through interposition appear as a single
+			 * resource (the subordinate) to the parent. So 1PC is attempted and
+			 * this throws a heuristic due to crash in commit of one resource. Previously
+			 * we had to assume committed was the outcome, but we really don't know and
+			 * can now raise that to the client.
+			 */
+			
+			try
+			{
+			    OTS.current().commit(false);
+			}
+			catch (final HeuristicHazard ex)
+			{			    
+			}
 
 			if (correct)
 			{
