@@ -91,11 +91,12 @@ public class Client02b
 			try
 			{
 			    OTS.current().commit(false);
-			    
-			    correct = false;
 			}
 			catch (final HeuristicHazard ex)
 			{
+			    // report_heuristics is false, so why are we here?!
+			    
+			    correct = false;
 			}
 			
 			if (correct)
