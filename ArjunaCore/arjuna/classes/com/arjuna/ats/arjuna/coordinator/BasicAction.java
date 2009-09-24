@@ -1888,7 +1888,22 @@ public class BasicAction extends StateManager
 				}
 			}
 
-			return actionStatus;
+			/*
+			 * If we have a heuristic decision then we only report it
+			 * if required. Otherwise we return committed as per OTS rules.
+			 */
+			
+			switch (actionStatus)
+			{
+			case ActionStatus.H_COMMIT:
+			case ActionStatus.H_ROLLBACK:
+			case ActionStatus.H_HAZARD:
+			case ActionStatus.H_MIXED:
+			    if (!reportHeuristics)
+			        return ActionStatus.COMMITTED;
+			default:
+			    return actionStatus;
+			}
 		}
 		else
 			return ActionStatus.COMMITTING; // if asynchronous then fake it.
@@ -2961,7 +2976,7 @@ public class BasicAction extends StateManager
 		{
 			p = ((actionType == ActionType.TOP_LEVEL) ? record.topLevelPrepare()
 					: record.nestedPrepare());
-
+			
 			if (p == TwoPhaseOutcome.PREPARE_OK)
 			{
 				record = insertRecord(preparedList, record);

@@ -280,13 +280,15 @@ public class CurrentImple extends LocalObject implements
 			{
 				_theManager.popAction();
 
-				throw e2;
+				if (report_heuristics)
+				    throw e2;
 			}
 			catch (HeuristicHazard e3)
 			{
 				_theManager.popAction();
 
-				throw e3;
+				if (report_heuristics)
+				    throw e3;
 			}
 			catch (SystemException e4)
 			{

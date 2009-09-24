@@ -401,10 +401,14 @@ public class ArjunaTransactionImple extends
 			throw new TRANSACTION_ROLLEDBACK(ExceptionCodes.FAILED_TO_COMMIT,
 					CompletionStatus.COMPLETED_NO);
 		case ActionStatus.H_MIXED:
-			throw new HeuristicMixed();
+		    if (report_heuristics)
+			throw new HeuristicMixed();		    
+		    break;
 		case ActionStatus.H_HAZARD:
 		default:
-			throw new HeuristicHazard();
+		    if (report_heuristics)
+		        throw new HeuristicHazard();		    
+		    break;
 		}
 	}
 

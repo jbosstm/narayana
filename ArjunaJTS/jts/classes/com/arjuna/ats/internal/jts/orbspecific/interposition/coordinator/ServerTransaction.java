@@ -414,6 +414,7 @@ public class ServerTransaction extends ArjunaTransactionImple
 		case ActionStatus.H_COMMIT:
 		case ActionStatus.COMMITTING: // in case asynchronous commit!
 			return;
+		case ActionStatus.ABORTING:
 		case ActionStatus.ABORTED:
 		case ActionStatus.H_ROLLBACK:
 			throw new TRANSACTION_ROLLEDBACK(ExceptionCodes.FAILED_TO_COMMIT,
