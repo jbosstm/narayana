@@ -25,7 +25,6 @@ import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.ServiceRegistry;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import com.arjuna.wst.CompletionCoordinatorParticipant;
-import com.arjuna.wst.SystemException;
 import com.arjuna.wst.TransactionRolledBackException;
 import com.jboss.transaction.txinterop.interop.states.ATInteropPreparedAfterTimeoutState;
 import com.jboss.transaction.txinterop.interop.states.ATInteropRetryPreparedAbortState;
@@ -33,11 +32,7 @@ import com.jboss.transaction.txinterop.interop.states.ATInteropRetryPreparedComm
 import com.jboss.transaction.txinterop.interop.states.InteropWaitState;
 import com.jboss.transaction.txinterop.proxy.ProxyConversation;
 import com.jboss.transaction.txinterop.proxy.ProxyURIRewriting;
-import com.jboss.transaction.txinterop.webservices.InteropConstants;
-import com.jboss.transaction.txinterop.webservices.atinterop.AsyncParticipantStub;
-import com.jboss.transaction.txinterop.webservices.atinterop.ATInteropUtil;
-import com.jboss.transaction.txinterop.webservices.atinterop.ParticipantStub;
-import com.jboss.transaction.txinterop.webservices.atinterop.SyncParticipantStub;
+import com.jboss.transaction.txinterop.webservices.atinterop.*;
 
 /**
  * The AT endpoint test case
@@ -534,7 +529,7 @@ public class ATTestCase extends InteropTestCase
     static
     {
         final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
-        SOURCE_PARTICIPANT_URI = serviceRegistry.getServiceURI(InteropConstants.SERVICE_PARTICIPANT) ;
+        SOURCE_PARTICIPANT_URI = serviceRegistry.getServiceURI(ATInteropConstants.SERVICE_PARTICIPANT) ;
         SOURCE_COORDINATOR_URI = serviceRegistry.getServiceURI(CoordinationConstants.ACTIVATION_SERVICE_NAME) ;
     }
 }

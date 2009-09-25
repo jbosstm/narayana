@@ -31,11 +31,7 @@ import com.jboss.transaction.txinterop.interop.states.BAInteropUnsolicitedComple
 import com.jboss.transaction.txinterop.interop.states.InteropWaitState;
 import com.jboss.transaction.txinterop.proxy.ProxyConversation;
 import com.jboss.transaction.txinterop.proxy.ProxyURIRewriting;
-import com.jboss.transaction.txinterop.webservices.InteropConstants;
-import com.jboss.transaction.txinterop.webservices.bainterop.AsyncParticipantStub;
-import com.jboss.transaction.txinterop.webservices.bainterop.BAInteropUtil;
-import com.jboss.transaction.txinterop.webservices.bainterop.ParticipantStub;
-import com.jboss.transaction.txinterop.webservices.bainterop.SyncParticipantStub;
+import com.jboss.transaction.txinterop.webservices.bainterop.*;
 
 /**
  * The BA endpoint test case
@@ -451,7 +447,7 @@ public class BATestCase extends InteropTestCase
     static
     {
         final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
-        SOURCE_PARTICIPANT_URI = serviceRegistry.getServiceURI(InteropConstants.SERVICE_PARTICIPANT) ;
+        SOURCE_PARTICIPANT_URI = serviceRegistry.getServiceURI(BAInteropConstants.SERVICE_PARTICIPANT) ;
         SOURCE_COORDINATOR_URI = serviceRegistry.getServiceURI(CoordinationConstants.ACTIVATION_SERVICE_NAME) ;
     }
 }
