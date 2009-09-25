@@ -87,16 +87,8 @@ public class Client02b
 			service.setup_oper(OTS.current().get_control(), resourceBehaviors);
 
 			correct = service.is_correct();
-
-			try
-			{
-			    OTS.current().commit(false);
-			    
-			    correct = false;
-			}
-			catch (final HeuristicHazard ex)
-			{			    
-			}
+			
+			OTS.current().commit(false);
 
 			if (correct)
 			{
