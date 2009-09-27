@@ -24,10 +24,9 @@
 <%@page import="java.util.Map"%>
 <%@page import="com.arjuna.webservices11.ServiceRegistry"%>
 <%@page import="com.jboss.transaction.txinterop.test.TestConstants"%>
-<%@page import="com.jboss.transaction.txinterop.webservices.InteropConstants"%>
 
 <%!
-private final static String SERVICE_URI = ServiceRegistry.getRegistry().getServiceURI(InteropConstants.SERVICE_PARTICIPANT) ;%>
+private final static String SERVICE_URI = "" ;%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
