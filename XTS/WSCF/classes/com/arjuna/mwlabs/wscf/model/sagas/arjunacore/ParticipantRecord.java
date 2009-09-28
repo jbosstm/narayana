@@ -466,7 +466,7 @@ public class ParticipantRecord extends
 			{
                 // we cannot proceed if the participant has neither completed not exited
 
-                if (isActive()) return TwoPhaseOutcome.FINISH_ERROR;
+                if (isActive()) return TwoPhaseOutcome.ONE_PHASE_ERROR;
 
 				try
 				{
@@ -474,7 +474,7 @@ public class ParticipantRecord extends
 				}
 				catch (InvalidParticipantException ex)
 				{
-					return TwoPhaseOutcome.FINISH_ERROR;
+					return TwoPhaseOutcome.ONE_PHASE_ERROR;
 				}
 				catch (WrongStateException ex)
 				{
@@ -499,7 +499,7 @@ public class ParticipantRecord extends
                 return TwoPhaseOutcome.FINISH_OK;
 			}
 			else
-				return TwoPhaseOutcome.FINISH_ERROR;
+				return TwoPhaseOutcome.ONE_PHASE_ERROR;
 		}
 		catch (Exception ex6)
 		{

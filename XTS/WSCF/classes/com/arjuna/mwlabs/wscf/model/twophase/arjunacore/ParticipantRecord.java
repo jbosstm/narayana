@@ -486,7 +486,7 @@ public class ParticipantRecord extends
 			if (_resourceHandle != null)
 			{
 				if (_rolledback)
-					return TwoPhaseOutcome.FINISH_ERROR;
+					return TwoPhaseOutcome.ONE_PHASE_ERROR;
 
 				if (_readonly)
 					return TwoPhaseOutcome.FINISH_OK;
@@ -497,11 +497,11 @@ public class ParticipantRecord extends
 				}
 				catch (InvalidParticipantException ex)
 				{
-					return TwoPhaseOutcome.FINISH_ERROR;
+					return TwoPhaseOutcome.ONE_PHASE_ERROR;
 				}
 				catch (WrongStateException ex)
 				{
-					return TwoPhaseOutcome.FINISH_ERROR;
+					return TwoPhaseOutcome.ONE_PHASE_ERROR;
 				}
 				catch (HeuristicHazardException ex)
 				{
@@ -518,7 +518,7 @@ public class ParticipantRecord extends
 				// TODO explicit in the signature
 				catch (ParticipantCancelledException ex)  // a type of SystemException
 				{
-					return TwoPhaseOutcome.FINISH_ERROR;
+					return TwoPhaseOutcome.ONE_PHASE_ERROR;
 				}
 				catch (SystemException ex)
 				{
@@ -528,7 +528,7 @@ public class ParticipantRecord extends
 				return TwoPhaseOutcome.FINISH_OK;
 			}
 			else
-				return TwoPhaseOutcome.FINISH_ERROR;
+				return TwoPhaseOutcome.ONE_PHASE_ERROR;
 		}
 		catch (Exception ex6)
 		{
@@ -537,7 +537,7 @@ public class ParticipantRecord extends
 
 			ex6.printStackTrace();
 
-			return TwoPhaseOutcome.FINISH_ERROR;
+			return TwoPhaseOutcome.ONE_PHASE_ERROR;
 		}
 	}
 
