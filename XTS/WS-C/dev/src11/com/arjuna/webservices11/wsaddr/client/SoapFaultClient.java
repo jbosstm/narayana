@@ -29,7 +29,7 @@ import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAP;
 import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
 import org.jboss.jbossts.xts.soapfault.Fault;
 import org.jboss.jbossts.xts.soapfault.SoapFaultService;

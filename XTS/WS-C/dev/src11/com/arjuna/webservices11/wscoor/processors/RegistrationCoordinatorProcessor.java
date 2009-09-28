@@ -21,7 +21,7 @@
 package com.arjuna.webservices11.wscoor.processors;
 
 import com.arjuna.webservices11.wsarj.ArjunaContext;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAP;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponseType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
 

@@ -23,7 +23,7 @@ package com.arjuna.wsc11.tests.junit;
 import com.arjuna.webservices.SoapFaultType;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.wsc.tests.TestUtil;
 import com.arjuna.wsc11.tests.TestUtil11;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;

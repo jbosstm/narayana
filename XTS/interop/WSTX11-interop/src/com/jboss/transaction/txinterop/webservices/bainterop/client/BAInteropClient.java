@@ -32,8 +32,9 @@ import com.jboss.transaction.txinterop.webservices.bainterop.generated.Participa
 import com.jboss.transaction.txinterop.webservices.bainterop.generated.InitiatorPortType;
 import com.jboss.transaction.txinterop.webservices.bainterop.generated.ParticipantPortType;
 import com.jboss.transaction.txinterop.webservices.handlers.CoordinationContextHandler;
-import org.jboss.jbossts.xts.wsaddr.map.MAPBuilder;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAPBuilder;
+import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.wsf.common.addressing.MAPBuilderFactory;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 
 /**
@@ -58,7 +59,7 @@ public class BAInteropClient {
     /**
      *  builder used to construct addressing info for calls
      */
-    private static MAPBuilder builder = MAPBuilder.getBuilder();
+    private static MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
 
     /**
      * fetch a coordinator activation service unique to the current thread

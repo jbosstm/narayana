@@ -25,7 +25,7 @@ import com.jboss.transaction.wstf.webservices.sc007.client.InitiatorClient;
 import com.jboss.transaction.wstf.webservices.sc007.generated.ParticipantPortType;
 import com.jboss.transaction.wstf.webservices.CoordinationContextManager;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAP;
 import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
 import org.jboss.jbossts.xts.soapfault.Fault;
 import com.arjuna.webservices11.SoapFault11;

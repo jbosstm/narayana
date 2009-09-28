@@ -25,7 +25,7 @@ import java.io.IOException;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.SoapFaultType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.SoapFault11;

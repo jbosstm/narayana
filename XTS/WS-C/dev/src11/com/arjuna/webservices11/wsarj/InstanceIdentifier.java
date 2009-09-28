@@ -29,7 +29,7 @@ import javax.xml.soap.SOAPFactory;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 
 import com.arjuna.webservices.wsarj.ArjunaConstants;
-import org.jboss.jbossts.xts.wsaddr.map.MAPEndpoint;
+import org.jboss.wsf.common.addressing.MAPEndpoint;
 
 /**
  * Representation of an InstanceIdentifier element.

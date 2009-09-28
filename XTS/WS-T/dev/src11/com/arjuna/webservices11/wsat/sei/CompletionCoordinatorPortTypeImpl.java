@@ -2,7 +2,7 @@ package com.arjuna.webservices11.wsat.sei;
 
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CompletionCoordinatorPortType;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAP;
 
 import javax.jws.*;
 import javax.jws.soap.SOAPBinding;

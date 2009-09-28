@@ -24,12 +24,13 @@ import java.io.IOException;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.ServiceRegistry;
-import org.jboss.jbossts.xts.wsaddr.map.MAPEndpoint;
+import org.jboss.wsf.common.addressing.MAPEndpoint;
 import com.jboss.transaction.wstf.webservices.CoordinationContextManager;
 import com.jboss.transaction.wstf.webservices.sc007.InteropConstants;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
-import org.jboss.jbossts.xts.wsaddr.map.MAPBuilder;
+import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.wsf.common.addressing.MAPBuilder;
+import org.jboss.wsf.common.addressing.MAPBuilderFactory;
 import com.jboss.transaction.wstf.webservices.sc007.generated.ParticipantPortType;
 
 /**
@@ -114,7 +115,7 @@ public class AsyncParticipantClient
      */
     private AsyncParticipantClient()
     {
-        MAPBuilder builder = MAPBuilder.getBuilder();
+        MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
         final String initiatorURIString = ServiceRegistry.getRegistry().getServiceURI(InteropConstants.SERVICE_INITIATOR) ;
         initiator = builder.newEndpoint(initiatorURIString);
     }

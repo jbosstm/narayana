@@ -6,8 +6,9 @@ import com.arjuna.schemas.ws._2005._10.wsarjtx.TerminationParticipantPortType;
 import com.arjuna.schemas.ws._2005._10.wsarjtx.TerminationParticipantService;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.jbossts.xts.wsaddr.map.MAPBuilder;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAPBuilder;
+import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.wsf.common.addressing.MAPBuilderFactory;
 
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
@@ -38,7 +39,7 @@ public class WSARJTXClient
     /**
      *  builder used to construct addressing info for calls
      */
-    private static MAPBuilder builder = MAPBuilder.getBuilder();
+    private static MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
 
     /**
      * fetch a termination coordinator service unique to the current thread

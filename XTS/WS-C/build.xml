@@ -64,15 +64,6 @@
     <property name="build.tests.dd.dir"      value="${build.dir}/tests/dd"/>
     <property name="build.tests.webapps.dir" value="${build.dir}/tests/webapps"/>
 
-    <!-- location of extra dir containing map code depends upon whether this is a native or cxf build -->
-    <condition property="dev.src11.map.dir"  value="dev/src11-native">
-        <not><isset  property="cxf.build"/></not>
-    </condition>
-
-    <condition property="dev.src11.map.dir"  value="dev/src11-cxf">
-        <isset  property="cxf.build"/>
-    </condition>
-
     <!-- classes provided for clients via api jar -->
     <property name="ws-c.api.classes" value="com/arjuna/wsc/AlreadyRegisteredException.class"/>
     <!-- we had to delete the JaxRPC handlers so we export the bist needed to allow clients to create them -->
@@ -190,7 +181,6 @@
                 <path refid="lib.ext.path"/>
             </classpath>
             <src path="${dev.src11.dir}"/>
-            <src path="${dev.src11.map.dir}"/>
         </javac>
     </target>
 
@@ -217,10 +207,6 @@
 
             <packageset dir="${dev.src11.dir}" defaultexcludes="yes">
               <include name="com/arjuna/**"/>
-            </packageset>
-
-            <packageset dir="${dev.src11.map.dir}" defaultexcludes="yes">
-              <include name="org.jboss/**"/>
             </packageset>
 
              <doclet name="com.hp.mw.buildsystem.doclet.resbundledoclet.ResourceBundleDoclet">

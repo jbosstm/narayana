@@ -23,7 +23,7 @@ package com.jboss.transaction.txinterop.webservices.atinterop.processors;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.base.processors.Callback;
 import com.arjuna.webservices11.wsaddr.processor.BaseWSAddrResponseProcessor;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAP;
 
 /**
  * The Initiator processor.

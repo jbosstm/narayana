@@ -24,7 +24,7 @@ import com.arjuna.schemas.ws._2005._10.wsarjtx.NotificationType;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.base.processors.Callback;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAP;
 
 /**
  * The Terminator Coordinator callback.

@@ -22,7 +22,7 @@ package com.jboss.transaction.wstf.webservices.sc007.processors;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices.base.processors.Callback;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAP;
 
 /**
  * The callback for the initiator client.

@@ -28,9 +28,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import com.arjuna.webservices11.ServiceRegistry;
-import org.jboss.jbossts.xts.wsaddr.map.MAPBuilder;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
-import org.jboss.jbossts.xts.wsaddr.map.MAPEndpoint;
+import org.jboss.wsf.common.addressing.MAPBuilder;
+import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.wsf.common.addressing.MAPEndpoint;
+import org.jboss.wsf.common.addressing.MAPBuilderFactory;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.jboss.transaction.wstf.webservices.sc007.generated.Sc007Service;
 import com.jboss.transaction.wstf.webservices.sc007.generated.InitiatorPortType;
@@ -55,7 +56,7 @@ public class InteropClient {
     /**
      *  builder used to construct addressing info for calls
      */
-    private static MAPBuilder builder = MAPBuilder.getBuilder();
+    private static MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
 
     /**
      * fetch an Sc007 service unique to the current thread

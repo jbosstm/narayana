@@ -22,7 +22,7 @@ package com.arjuna.webservices11.wsba;
 
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.wsarj.ArjunaContext;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAP;
 
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;

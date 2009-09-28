@@ -23,7 +23,7 @@ package com.arjuna.wsc11;
 import com.arjuna.webservices.SoapFault;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wscoor.client.ActivationCoordinatorClient;
 import com.arjuna.wsc.InvalidCreateParametersException;

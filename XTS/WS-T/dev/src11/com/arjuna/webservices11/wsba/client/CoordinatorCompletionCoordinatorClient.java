@@ -28,13 +28,14 @@ import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
 import com.arjuna.webservices11.wsaddr.EndpointHelper;
-import org.jboss.jbossts.xts.wsaddr.map.MAPEndpoint;
+import org.jboss.wsf.common.addressing.MAPEndpoint;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.BusinessAgreementWithCoordinatorCompletionCoordinatorPortType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.ExceptionType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 import org.oasis_open.docs.ws_tx.wsba._2006._06.StatusType;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
-import org.jboss.jbossts.xts.wsaddr.map.MAPBuilder;
+import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.wsf.common.addressing.MAPBuilder;
+import org.jboss.wsf.common.addressing.MAPBuilderFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
@@ -103,7 +104,7 @@ public class CoordinatorCompletionCoordinatorClient
      */
     private CoordinatorCompletionCoordinatorClient()
     {
-        final MAPBuilder builder = MAPBuilder.getBuilder();
+        final MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
         completedAction = BusinessActivityConstants.WSBA_ACTION_COMPLETED;
         failAction = BusinessActivityConstants.WSBA_ACTION_FAIL;
         compensatedAction = BusinessActivityConstants.WSBA_ACTION_COMPENSATED;

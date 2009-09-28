@@ -24,7 +24,7 @@ import com.jboss.transaction.txinterop.webservices.bainterop.processors.BAInitia
 import com.jboss.transaction.txinterop.webservices.bainterop.generated.InitiatorPortType;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.SoapFault11;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAP;
 import org.jboss.jbossts.xts.soapfault.SoapFaultPortType;
 import org.jboss.jbossts.xts.soapfault.Fault;
 

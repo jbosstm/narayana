@@ -29,9 +29,10 @@ import com.arjuna.webservices11.wsaddr.client.SoapFaultClient;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
 import com.arjuna.webservices11.wsaddr.EndpointHelper;
-import org.jboss.jbossts.xts.wsaddr.map.MAPEndpoint;
-import org.jboss.jbossts.xts.wsaddr.map.MAPBuilder;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAPEndpoint;
+import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.wsf.common.addressing.MAPBuilder;
+import org.jboss.wsf.common.addressing.MAPBuilderFactory;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
@@ -83,7 +84,7 @@ public class TerminationCoordinatorClient
      */
     private TerminationCoordinatorClient()
     {
-        MAPBuilder builder = MAPBuilder.getBuilder();
+        MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
         completeAction = ArjunaTXConstants.WSARJTX_ACTION_COMPLETE;
         closeAction = ArjunaTXConstants.WSARJTX_ACTION_CLOSE;
         cancelAction = ArjunaTXConstants.WSARJTX_ACTION_CANCEL;

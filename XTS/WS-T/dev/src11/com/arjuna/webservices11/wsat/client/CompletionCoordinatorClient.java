@@ -7,9 +7,10 @@ import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
 import com.arjuna.webservices11.wsaddr.NativeEndpointReference;
 import com.arjuna.webservices11.wsaddr.EndpointHelper;
-import org.jboss.jbossts.xts.wsaddr.map.MAPEndpoint;
-import org.jboss.jbossts.xts.wsaddr.map.MAPBuilder;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAPEndpoint;
+import org.jboss.wsf.common.addressing.MAPBuilder;
+import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.wsf.common.addressing.MAPBuilderFactory;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.CompletionCoordinatorPortType;
 import org.oasis_open.docs.ws_tx.wsat._2006._06.Notification;
 
@@ -51,7 +52,7 @@ public class CompletionCoordinatorClient
      */
     private CompletionCoordinatorClient()
     {
-        final MAPBuilder builder = MAPBuilder.getBuilder();
+        final MAPBuilder builder = MAPBuilderFactory.getInstance().getBuilderInstance();
             commitAction = AtomicTransactionConstants.WSAT_ACTION_COMMIT;
             rollbackAction = AtomicTransactionConstants.WSAT_ACTION_ROLLBACK;
         // final HandlerRegistry handlerRegistry = new HandlerRegistry() ;

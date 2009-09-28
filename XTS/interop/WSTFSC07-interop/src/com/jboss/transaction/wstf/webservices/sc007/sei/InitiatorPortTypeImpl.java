@@ -24,7 +24,7 @@ import com.jboss.transaction.wstf.webservices.sc007.processors.InitiatorProcesso
 import com.jboss.transaction.wstf.webservices.sc007.generated.InitiatorPortType;
 import com.arjuna.webservices11.SoapFault11;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAP;
 
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;

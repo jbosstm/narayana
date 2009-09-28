@@ -22,7 +22,7 @@ package com.jboss.transaction.wstf.webservices.sc007.processors;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.wst.CompletionCoordinatorParticipant;
 import com.arjuna.wst11.messaging.engines.ParticipantEngine;
 import com.arjuna.webservices11.SoapFault11;

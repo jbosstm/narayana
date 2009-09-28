@@ -28,7 +28,7 @@ package com.arjuna.wsc11.tests.junit;
 
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.webservices11.wsaddr.AddressingHelper;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
+import org.jboss.wsf.common.addressing.MAP;
 import com.arjuna.webservices11.wscoor.client.ActivationCoordinatorClient;
 import com.arjuna.webservices11.wscoor.processors.ActivationCoordinatorProcessor;
 import com.arjuna.wsc.tests.TestUtil;

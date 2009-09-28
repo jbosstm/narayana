@@ -21,8 +21,8 @@
 package com.arjuna.webservices11.wsaddr.processor;
 
 import com.arjuna.webservices.base.processors.BaseProcessor;
-import org.jboss.jbossts.xts.wsaddr.map.MAP;
-import org.jboss.jbossts.xts.wsaddr.map.MAPRelatesTo;
+import org.jboss.wsf.common.addressing.MAP;
+import org.jboss.wsf.common.addressing.MAPRelatesTo;
 
 /**
  * Utility class handling common response functionality.
