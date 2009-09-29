@@ -53,18 +53,18 @@ import java.io.PrintWriter;
 public class TwoPhaseOutcome
 {
 
-    public static final int PREPARE_OK = 0;
-    public static final int PREPARE_NOTOK = 1;
-    public static final int PREPARE_READONLY = 2;
-    public static final int HEURISTIC_ROLLBACK = 3;
-    public static final int HEURISTIC_COMMIT = 4;
-    public static final int HEURISTIC_MIXED = 5;
-    public static final int HEURISTIC_HAZARD = 6;
-    public static final int FINISH_OK = 7;
-    public static final int FINISH_ERROR = 8;
-    public static final int NOT_PREPARED = 9;
+    public static final int PREPARE_OK = 0;  // prepared OK
+    public static final int PREPARE_NOTOK = 1; // did not prepare so force roll back
+    public static final int PREPARE_READONLY = 2; // only used to read the state, so no need for second phase
+    public static final int HEURISTIC_ROLLBACK = 3; // after prepare decided to roll back without waiting for coordinator
+    public static final int HEURISTIC_COMMIT = 4;  // after prepare decided to commit without waiting for coordinator
+    public static final int HEURISTIC_MIXED = 5;  // after prepare some sub-participants committed and some rolled back without waiting for coordinator
+    public static final int HEURISTIC_HAZARD = 6;  // after prepare some sub-participants committed, some rolled back and some we don't know
+    public static final int FINISH_OK = 7;  // the second phase completed ok
+    public static final int FINISH_ERROR = 8;  // there was a failure during the second phase and we should retry later (not necessarily a heuristic)
+    public static final int NOT_PREPARED = 9;  // participant told to do second phase operation when it hadn't seen the first phase
     public static final int ONE_PHASE_ERROR = 10;  // WARNING this has different meanings depending upon nested or top-level usage.
-    public static final int INVALID_TRANSACTION = 11;
+    public static final int INVALID_TRANSACTION = 11;  // invalid!
 
     public TwoPhaseOutcome (int outcome)
     {

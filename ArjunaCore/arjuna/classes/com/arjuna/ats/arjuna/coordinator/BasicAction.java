@@ -2723,7 +2723,9 @@ public class BasicAction extends StateManager
 			{
 			    /*
 			     * If ONE_PHASE_ERROR then the resource has rolled back. Otherwise we
-			     * don't know and will ask recovery to keep trying.
+			     * don't know and will ask recovery to keep trying. We differentiate
+			     * this kind of failure from a heuristic failure so that we can allow
+			     * recovery to retry the commit attempt periodically.
 			     */
 			    
 			    if (p == TwoPhaseOutcome.FINISH_ERROR)
@@ -2740,6 +2742,14 @@ public class BasicAction extends StateManager
                                         if (!stateToSave)
                                             stateToSave = recordBeingHandled.doSave();
                                     }
+        			    
+        			    /*
+        			     * There's been a problem and we need to retry later. Assume
+        			     * transaction has committed until we have further information.
+        			     * This also ensures that recovery will kick in periodically.
+        			     */
+        			    
+        			    actionStatus = ActionStatus.COMMITTED;
 			    }
 			    else			    
 			        actionStatus = ActionStatus.ABORTED;

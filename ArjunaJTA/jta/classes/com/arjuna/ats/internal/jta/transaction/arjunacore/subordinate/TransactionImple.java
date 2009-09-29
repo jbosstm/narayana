@@ -287,18 +287,17 @@ public class TransactionImple extends
 				break;
 			case ActionStatus.ABORTED:
 	                 case ActionStatus.ABORTING:
+	                 case ActionStatus.H_ROLLBACK:
                 TransactionImple.removeTransaction(this);
                 // JBTM-428. Note also this may be because the tx was set rollback only,
                 // in which case IllegalState may be a better option?
                 throw new RollbackException();
-
+	                case ActionStatus.INVALID:
+	                                throw new InvalidTerminationStateException();
 			case ActionStatus.H_HAZARD:
 			case ActionStatus.H_MIXED:
-			case ActionStatus.H_ROLLBACK:
 			default:
 				throw new javax.transaction.HeuristicMixedException();
-			case ActionStatus.INVALID:
-				throw new InvalidTerminationStateException();
 			}
 		}
 		catch (ClassCastException ex)
