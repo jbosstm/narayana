@@ -21,6 +21,12 @@
 -->
 <project name="jbossts" default="help">
 
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="antbuildsystem/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
    <property environment="env"/>
 
     <!-- TODO wire me up -->
@@ -95,7 +101,14 @@ Targets supported in this build.xml file
        <ant dir="common" target="clean"/>
        <ant dir="ArjunaCore" target="clean"/>
        <ant dir="ArjunaJTA" target="clean"/>
-       <ant dir="ArjunaJTS" target="clean"/>
+
+        <if>
+            <available file="ArjunaJTS"/>
+            <then>
+                <ant dir="ArjunaJTS" target="clean"/>
+            </then>
+        </if>
+
        <ant dir="atsintegration" target="clean"/>
    </target>
 

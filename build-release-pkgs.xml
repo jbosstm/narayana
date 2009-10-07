@@ -59,12 +59,14 @@
             http://www.jboss.org/community/docs/DOC-11381  -->
 
 
+<!--
     <property name="svnbase" value="https://svn.jboss.org/repos/labs/labs/jbosstm"/>
     <property name="tag" value="trunk"/>
     <property name="filename" value="4.8.0.SNAPSHOT"/>
     <property name="mvn.repositoryId" value="snapshots.jboss.org"/>
     <property name="mvn.url" value="dav:https://snapshots.jboss.org/maven2"/>
-
+-->
+    
     <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
     <property name="workdir" location="/tmp/packaged_builds"/>
     <!-- where to get the source -->
@@ -131,6 +133,11 @@
         <ant dir="${workdir}/build/${tag}" antfile="build.xml" target="jbossjts">
             <property name="com.hp.mw.sourceid" value="${tag}"/>
         </ant>
+
+        <ant dir="${workdir}/build/${tag}/ArjunaCore/tsmx/sar" antfile="build.xml" target="build-sar"/>
+        <copy file="${workdir}/build/${tag}/ArjunaCore/tsmx/sar/build/mbean/jbossts-tools.sar"
+              todir="${workdir}/build/${tag}/install/bin"/>
+
         <ant dir="${workdir}/build/${tag}/XTS" antfile="build.xml" target="install">
             <!-- build the jbossxts.sar with 1.1 only, not 1.0 (which is unsupported) -->
             <property  name="sartype" value="sar-11"/>
@@ -246,7 +253,7 @@
 
         <exec executable="mvn" dir="${workdir}">
             <arg value="deploy:deploy-file"/>
-            <arg value="-Dfile=${workdir}/build/${tag}/xts/tests/jbossxts-interop-tests.zip"/>
+            <arg value="-Dfile=${workdir}/build/${tag}/xts/interop-tests/jbossxts-interop-tests.zip"/>
             <arg value="-Dpackaging=zip"/>
             <arg value="-Durl=${mvn.url}"/>
             <arg value="-DrepositoryId=${mvn.repositoryId}"/>
