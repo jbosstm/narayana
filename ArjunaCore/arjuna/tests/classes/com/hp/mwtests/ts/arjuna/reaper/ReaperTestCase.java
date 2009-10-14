@@ -67,27 +67,35 @@ public class ReaperTestCase extends ReaperTestCaseControl
         assertEquals(sortedSet.last(), reaperElement);
 
         // test insertion of timeout=0 is a nullop
-        assertTrue(reaper.insert(reapable, 0));
+        reaper.insert(reapable, 0);
         assertEquals(0, reaper.numberOfTransactions());
         assertEquals(0, reaper.numberOfTimeouts());
-        assertFalse(reaper.remove(reapable));
+        reaper.remove(reapable);
 
         // test that duplicate insertion fails
-        assertTrue(reaper.insert(reapable, 10));
-        assertFalse(reaper.insert(reapable, 10));
+        reaper.insert(reapable, 10);
         assertEquals(1, reaper.numberOfTransactions());
         assertEquals(1, reaper.numberOfTimeouts());
-        assertTrue(reaper.remove(reapable));
+        try {
+            reaper.insert(reapable, 10);
+            fail("duplicate insert failed to blow up");
+        } catch(Exception e) {
+        }
+        reaper.remove(reapable);
         assertEquals(0, reaper.numberOfTransactions());
         assertEquals(0, reaper.numberOfTimeouts());
 
         // test that timeout change fails
-        assertTrue(reaper.insert(reapable, 10));
-        assertFalse(reaper.insert(reapable, 20));
+        reaper.insert(reapable, 10);
+        try {
+            reaper.insert(reapable, 20);
+            fail("timeout change insert failed to blow up");
+        } catch(Exception e) {
+        }
         assertEquals(1, reaper.numberOfTransactions());
         assertEquals(1, reaper.numberOfTimeouts());
         assertEquals(10, reaper.getTimeout(reapable));
-        assertTrue(reaper.remove(reapable));
+        reaper.remove(reapable);
         assertEquals(0, reaper.numberOfTransactions());
         assertEquals(0, reaper.numberOfTimeouts());
 

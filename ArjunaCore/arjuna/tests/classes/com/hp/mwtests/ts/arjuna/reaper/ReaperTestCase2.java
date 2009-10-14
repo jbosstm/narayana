@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * that time out and, optionally, get wedged either when a cancel is
  * tried and/or when an interrupt is delivered
  *
- * @author Andrwe Dinn (adinn@redhat.com), 2007-07-09
+ * @author Andrew Dinn (adinn@redhat.com), 2007-07-09
  */
 
 public class ReaperTestCase2  extends ReaperTestCaseControl
@@ -103,9 +103,9 @@ public class ReaperTestCase2  extends ReaperTestCaseControl
         // insert two reapables so they timeout at 1 second intervals then stall the first one and
         // check progress of cancellations and rollbacks for both
 
-        assertTrue(reaper.insert(reapable0, 1));
+        reaper.insert(reapable0, 1);
 
-        assertTrue(reaper.insert(reapable1, 1));
+        reaper.insert(reapable1, 1);
 
         //assertTrue(reaper.insert(reapable2, 1));
 
@@ -224,9 +224,9 @@ public class ReaperTestCase2  extends ReaperTestCaseControl
         // insert reapables so they timeout at 1 second intervals then
         // check progress of cancellations and rollbacks
 
-        assertTrue(reaper.insert(reapable2, 1));
+        reaper.insert(reapable2, 1);
 
-        assertTrue(reaper.insert(reapable3, 1));
+        reaper.insert(reapable3, 1);
 
         // make sure they were all registered
         // the transactions queue should be

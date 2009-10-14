@@ -78,24 +78,24 @@
             </tests>
         </run.tests.macro>
         <!-- reaper tests run using script reaper.txt -->
-        <run.tests.macro script="reaper.txt">
-            <tests>
-                <fileset dir="tests/classes">
-                    <include name="**/reaper/ReaperMonitorTest.java"/>
-                    <include name="**/reaper/ReaperTestCase.java"/>
-                    <include name="**/reaper/ReaperTestCase2.java"/>
-                    <include name="**/reaper/ReaperTestCase3.java"/>
-                </fileset>
-            </tests>
-            <!--
-            <additional.jvmargs>
-                <jvmarg value="-Dorg.jboss.byteman.dump.generated.classes"/>
-                <jvmarg value="-Dorg.jboss.byteman.dump.generated.classes.directory=dump"/>
-                <jvmarg value="-Xdebug"/>
-                <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>
-            </additional.jvmargs>
-            -->
-        </run.tests.macro>
+        <!--<run.tests.macro script="reaper.txt">-->
+            <!--<tests>-->
+                <!--<fileset dir="tests/classes">-->
+                    <!--<include name="**/reaper/ReaperMonitorTest.java"/>-->
+                    <!--<include name="**/reaper/ReaperTestCase.java"/>-->
+                    <!--<include name="**/reaper/ReaperTestCase2.java"/>-->
+                    <!--<include name="**/reaper/ReaperTestCase3.java"/>-->
+                <!--</fileset>-->
+            <!--</tests>-->
+            <!--  -->
+            <!--<additional.jvmargs>-->
+                <!--<jvmarg value="-Dorg.jboss.byteman.dump.generated.classes"/>-->
+                <!--<jvmarg value="-Dorg.jboss.byteman.dump.generated.classes.directory=dump"/>-->
+                <!--<jvmarg value="-Xdebug"/>-->
+                <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>-->
+            <!--</additional.jvmargs>-->
+            <!-- -->
+        <!--</run.tests.macro>-->
         <!-- object store tests run using script objectstore.txt -->
         <run.tests.macro script="objectstore.txt">
             <tests>

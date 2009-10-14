@@ -90,13 +90,13 @@ public class ReaperTestCase3  extends ReaperTestCaseControl
         // insert reapables so they timeout at 1 second intervals then
         // check progress of cancellations and rollbacks
 
-        assertTrue(reaper.insert(reapable0, 1));
+        reaper.insert(reapable0, 1);
 
-        assertTrue(reaper.insert(reapable1, 2));
+        reaper.insert(reapable1, 2);
 
-        assertTrue(reaper.insert(reapable2, 3));
+        reaper.insert(reapable2, 3);
 
-        assertTrue(reaper.insert(reapable3, 4));
+        reaper.insert(reapable3, 4);
 
         // latch the reaper before it checks the queue
 
@@ -198,13 +198,13 @@ public class ReaperTestCase3  extends ReaperTestCaseControl
 
         // enableRendezvous(uid0, true);
 
-        assertTrue(reaper.insert(reapable0, 1));
+        reaper.insert(reapable0, 1);
 
-        assertTrue(reaper.insert(reapable1, 2));
+        reaper.insert(reapable1, 2);
 
-        assertTrue(reaper.insert(reapable2, 3));
+        reaper.insert(reapable2, 3);
 
-        assertTrue(reaper.insert(reapable3, 4));
+        reaper.insert(reapable3, 4);
 
         // latch the reaper before it checks the queue
 
