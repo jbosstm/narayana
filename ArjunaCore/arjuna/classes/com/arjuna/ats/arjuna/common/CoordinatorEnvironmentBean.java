@@ -67,6 +67,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     @FullPropertyName(name = "com.arjuna.ats.coordinator.checkedActionFactory")
     private volatile String checkedActionFactory = null;
 
+    private volatile boolean alternativeRecordOrdering = false;
 
     /**
      * Returns the symbolic name for the action store type.
@@ -580,5 +581,30 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     public void setCheckedActionFactory(String checkedActionFactory)
     {
         this.checkedActionFactory = checkedActionFactory;
+    }
+
+    /**
+     * Whether to use the alternative abstract record ordering.
+     * At present this is not fully documented, so stay away!
+     *
+     * Default: false
+     *
+     * @return <code>true</code> if order abstract records on type first, or
+     * <code>false</code> if order on Uid first.
+     */
+    public boolean isAlternativeRecordOrdering()
+    {
+        return alternativeRecordOrdering;
+    }
+
+    /**
+     * Set whether or not to use the alternative abstract record
+     * ordering. Don't try this whilst the system is running!
+     *
+     * @param alternativeRecordOrdering true for alternative (i.e. type) ordering, false for normal (i.e. Uid) ordering.
+     */
+    public void setAlternativeRecordOrdering(boolean alternativeRecordOrdering)
+    {
+        this.alternativeRecordOrdering = alternativeRecordOrdering;
     }
 }

@@ -44,13 +44,13 @@ public class DestroyRecoverTest
     @Test
     public void test()
     {
+        arjPropertyManager.getCoordinatorEnvironmentBean().setAlternativeRecordOrdering(true);
+        
         AtomicAction A = new AtomicAction();
         BasicObject bo = null;
         Uid txId = null;
         Uid objId = null;
         boolean passed = true;
-
-        com.arjuna.ats.arjuna.common.Configuration.setAlternativeOrdering(true);
 
         try {
             A.begin();

@@ -238,8 +238,7 @@ public abstract class AbstractRecord extends StateManager
 
 	public final boolean equals (AbstractRecord ar)
 	{
-		return ((com.arjuna.ats.arjuna.common.Configuration.useAlternativeOrdering()) ? typeEquals(ar)
-				: orderEquals(ar));
+		return (useAlternativeOrdering ? typeEquals(ar) : orderEquals(ar));
 	}
 
 	/**
@@ -251,8 +250,7 @@ public abstract class AbstractRecord extends StateManager
 
 	public final boolean lessThan (AbstractRecord ar)
 	{
-		return ((com.arjuna.ats.arjuna.common.Configuration.useAlternativeOrdering()) ? typeLessThan(ar)
-				: orderLessThan(ar));
+		return (useAlternativeOrdering ? typeLessThan(ar) : orderLessThan(ar));
 	}
 
 	/**
@@ -264,8 +262,7 @@ public abstract class AbstractRecord extends StateManager
 
 	public final boolean greaterThan (AbstractRecord ar)
 	{
-		return ((com.arjuna.ats.arjuna.common.Configuration.useAlternativeOrdering()) ? typeGreaterThan(ar)
-				: orderGreaterThan(ar));
+		return (useAlternativeOrdering ? typeGreaterThan(ar) : orderGreaterThan(ar));
 	}
 
 	/**
@@ -703,4 +700,5 @@ public abstract class AbstractRecord extends StateManager
 	private Uid uidOfObject;
 	private String typeOfObject;
 
+    private static final boolean useAlternativeOrdering = arjPropertyManager.getCoordinatorEnvironmentBean().isAlternativeRecordOrdering();
 }

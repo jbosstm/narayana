@@ -23,6 +23,7 @@ package org.jboss.jbossts.qa.ArjunaCore.LockManager.CrashRecovery.client;
 import org.jboss.jbossts.qa.ArjunaCore.AbstractRecord.CrashRecovery.impl.CrashAbstractRecord;
 import org.jboss.jbossts.qa.ArjunaCore.LockManager.impl.BasicLockRecord;
 import org.jboss.jbossts.qa.ArjunaCore.Utils.BaseTestClient;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 /*
  * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003
@@ -39,6 +40,12 @@ public class ActivateDestroyTest1 extends BaseTestClient
 {
 	public static void main(String[] args)
 	{
+        /*
+        * Default intentions list is to order by Uid (improves
+        * performance). But for this test we need to order by type.
+        */
+        arjPropertyManager.getCoordinatorEnvironmentBean().setAlternativeRecordOrdering(true);
+
 		ActivateDestroyTest1 test = new ActivateDestroyTest1(args);
 	}
 
@@ -55,12 +62,6 @@ public class ActivateDestroyTest1 extends BaseTestClient
 
 		try
 		{
-			/*
-					 * Default intentions list is to order by Uid (improves
-					 * performance). But for this test we need to order by type.
-					 */
-
-			com.arjuna.ats.arjuna.common.Configuration.setAlternativeOrdering(true);
 
 			BasicLockRecord basicRecord = new BasicLockRecord();
 
