@@ -62,7 +62,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ReaperElementManager
 {
     /**
-     * @return the first (i.e. earliest to time out) element of the colleciton.
+     * @return the first (i.e. earliest to time out) element of the colleciton or null if empty
      */
     public synchronized ReaperElement getFirst() {
         flushPending(); // we need to order the elements before we can tell which is first.
@@ -73,7 +73,7 @@ public class ReaperElementManager
         }
     }
 
-    // note - unsynchronized for performance.
+    // Note - unsynchronized for performance.
     public void add(ReaperElement reaperElement) throws IllegalStateException {
         if(pendingInsertions.putIfAbsent(reaperElement, reaperElement) != null) {
             // note this is best effort - we'll allow double inserts if the element is also in the ordered set.
@@ -83,7 +83,7 @@ public class ReaperElementManager
 
     /**
      * @param reaperElement the reaper element to reorder in the sorted set.
-     * @param delayMillis the ammout of time to increment the element's timeout by.
+     * @param delayMillis the amount of time to increment the element's timeout by.
      * @return the new soonest timeout in the set (not necessarily that of the reordered element)
      */
     public synchronized long reorder(ReaperElement reaperElement, long delayMillis) {

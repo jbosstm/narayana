@@ -928,13 +928,13 @@ public class TransactionReaper
         _timeouts.remove(reaperElement._control);
 
         synchronized (this) {
-            try {
-                ReaperElement first = _reaperElements.getFirst();
-                nextDynamicCheckTime.set(first.getAbsoluteTimeout());
-                // TODO set needs tobe atomic to getFirst?
-            } catch(IndexOutOfBoundsException e) {
-                nextDynamicCheckTime.set(Long.MAX_VALUE);
 
+            // TODO set needs tobe atomic to getFirst?
+            ReaperElement first = _reaperElements.getFirst();
+            if(first != null) {
+                nextDynamicCheckTime.set(first.getAbsoluteTimeout());
+            } else {
+                nextDynamicCheckTime.set(Long.MAX_VALUE);
                 if(_inShutdown) {
                     this.notifyAll(); // TODO: use different lock for shutdown?
                 }
