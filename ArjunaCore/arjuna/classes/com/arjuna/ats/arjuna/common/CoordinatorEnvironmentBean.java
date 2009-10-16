@@ -33,39 +33,39 @@ import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 @PropertyPrefix(prefix = "com.arjuna.ats.arjuna.coordinator.")
 public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBean
 {
-    private String actionStore = ArjunaNames.Implementation_ObjectStore_defaultActionStore().stringForm();
-    private boolean asyncCommit = false;
-    private boolean asyncPrepare = false;
-    private boolean asyncRollback = false;
-    private boolean commitOnePhase = true;
-    private boolean maintainHeuristics = true;
-    private boolean transactionLog = false; // rename to useTransactionLog ?
+    private volatile String actionStore = ArjunaNames.Implementation_ObjectStore_defaultActionStore().stringForm();
+    private volatile boolean asyncCommit = false;
+    private volatile boolean asyncPrepare = false;
+    private volatile boolean asyncRollback = false;
+    private volatile boolean commitOnePhase = true;
+    private volatile boolean maintainHeuristics = true;
+    private volatile boolean transactionLog = false; // rename to useTransactionLog ?
 
     // public static final String TRANSACTION_LOG_REMOVAL_MARKER = "com.arjuna.ats.arjuna.coordinator.transactionLog.removalMarker";
     //private String removalMarker;
 
     @FullPropertyName(name = "com.arjuna.ats.arjuna.coordinator.transactionLog.writeOptimisation")
-    private boolean writeOptimisation = false;
+    private volatile boolean writeOptimisation = false;
 
-    private boolean readonlyOptimisation = true;
-    private boolean classicPrepare = false;
-    private boolean enableStatistics = false;
-    private boolean sharedTransactionLog = false;
-    private boolean startDisabled = false; // rename/repurpose to 'enable'?
-    private String txReaperMode = "DYNAMIC"; // rename bool txReaperModeDynamic?
+    private volatile boolean readonlyOptimisation = true;
+    private volatile boolean classicPrepare = false;
+    private volatile boolean enableStatistics = false;
+    private volatile boolean sharedTransactionLog = false;
+    private volatile boolean startDisabled = false; // rename/repurpose to 'enable'?
+    private volatile String txReaperMode = "DYNAMIC"; // rename bool txReaperModeDynamic?
 
-    private long txReaperTimeout = TransactionReaper.defaultCheckPeriod;
-    private long txReaperCancelWaitPeriod = TransactionReaper.defaultCancelWaitPeriod;
-    private long txReaperCancelFailWaitPeriod = TransactionReaper.defaultCancelFailWaitPeriod;
-    private int txReaperZombieMax = TransactionReaper.defaultZombieMax;
+    private volatile long txReaperTimeout = TransactionReaper.defaultCheckPeriod;
+    private volatile long txReaperCancelWaitPeriod = TransactionReaper.defaultCancelWaitPeriod;
+    private volatile long txReaperCancelFailWaitPeriod = TransactionReaper.defaultCancelFailWaitPeriod;
+    private volatile int txReaperZombieMax = TransactionReaper.defaultZombieMax;
     
-    private int defaultTimeout = 60; // seconds
-    private boolean transactionStatusManagerEnable = true;
+    private volatile int defaultTimeout = 60; // seconds
+    private volatile boolean transactionStatusManagerEnable = true;
 
     @FullPropertyName(name = "com.arjuna.ats.coordinator.beforeCompletionWhenRollbackOnly")
-    private boolean beforeCompletionWhenRollbackOnly = false;
+    private volatile boolean beforeCompletionWhenRollbackOnly = false;
     @FullPropertyName(name = "com.arjuna.ats.coordinator.checkedActionFactory")
-    private String checkedActionFactory = null;
+    private volatile String checkedActionFactory = null;
 
 
     /**

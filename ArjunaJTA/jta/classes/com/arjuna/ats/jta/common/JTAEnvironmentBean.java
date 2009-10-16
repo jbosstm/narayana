@@ -36,38 +36,38 @@ import java.util.ArrayList;
 public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 {
     @FullPropertyName(name = "com.arjuna.ats.jta.common.propertiesFile")
-    private String propertiesFile = "";
+    private volatile String propertiesFile = "";
 
-    private boolean supportSubtransactions = false;
+    private volatile boolean supportSubtransactions = false;
 
-    private String jtaTMImplementation = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple";
-    private String jtaUTImplementation = "com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple";
-    private String jtaTSRImplementation = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple";
+    private volatile String jtaTMImplementation = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple";
+    private volatile String jtaUTImplementation = "com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple";
+    private volatile String jtaTSRImplementation = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple";
 
-    private int xaBackoffPeriod = 20000;
+    private volatile int xaBackoffPeriod = 20000;
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.jta.xaRecoveryNode")
-    private List<String> xaRecoveryNodes = new ArrayList<String>();
+    private volatile List<String> xaRecoveryNodes = new ArrayList<String>();
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.jta.recovery.XAResourceRecovery")
-    private List<String> xaResourceRecoveryInstances = new ArrayList<String>();
+    private volatile List<String> xaResourceRecoveryInstances = new ArrayList<String>();
 
-    private boolean xaRollbackOptimization = false;
-    private boolean xaAssumeRecoveryComplete = false;
+    private volatile boolean xaRollbackOptimization = false;
+    private volatile boolean xaAssumeRecoveryComplete = false;
 
     // com.arjuna.ats.jta.utils.
     @FullPropertyName(name = "com.arjuna.ats.jta.utils.UTJNDIContext")
-    private String jtaUTJNDIContext = "java:/UserTransaction";
+    private volatile String jtaUTJNDIContext = "java:/UserTransaction";
     @FullPropertyName(name = "com.arjuna.ats.jta.utils.TMJNDIContext")
-    private String jtaTMJNDIContext =  "java:/TransactionManager";
+    private volatile String jtaTMJNDIContext =  "java:/TransactionManager";
     @FullPropertyName(name = "com.arjuna.ats.jta.utils.TSRJNDIContext")
-    private String jtaTSRJNDIContext = "java:/TransactionSynchronizationRegistry";
+    private volatile String jtaTSRJNDIContext = "java:/TransactionSynchronizationRegistry";
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.jta.xaErrorHandler")
-    private List<String> xaErrorHandlers = new ArrayList<String>();
+    private volatile List<String> xaErrorHandlers = new ArrayList<String>();
 
-    private boolean xaTransactionTimeoutEnabled = true;
-    private String lastResourceOptimisationInterface = null;
+    private volatile boolean xaTransactionTimeoutEnabled = true;
+    private volatile String lastResourceOptimisationInterface = null;
 
     /**
      * Returns the name of the properties file.

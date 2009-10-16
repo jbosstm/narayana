@@ -38,28 +38,28 @@ import java.io.File;
 public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
 {
     @FullPropertyName(name = "com.arjuna.ats.arjuna.common.propertiesFile")
-    private String propertiesFile = "";
+    private volatile String propertiesFile = "";
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.internal.arjuna.inventory.staticInventoryImple")
-    private List<String> staticInventoryElements = new ArrayList<String>();
+    private volatile List<String> staticInventoryElements = new ArrayList<String>();
 
     @FullPropertyName(name = "com.arjuna.ats.arjuna.common.varDir")
-    private String varDir = System.getProperty("user.dir") + File.separator + "var" + File.separator + "tmp";
+    private volatile String varDir = System.getProperty("user.dir") + File.separator + "var" + File.separator + "tmp";
 
     @FullPropertyName(name = "com.arjuna.ats.arjuna.xa.nodeIdentifier")
-    private String nodeIdentifier = null;
+    private volatile String nodeIdentifier = null;
 
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.utils.SocketProcessIdPort")
-    private int socketProcessIdPort = 0;
+    private volatile int socketProcessIdPort = 0;
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.utils.SocketProcessIdMaxPorts")
-    private int socketProcessIdMaxPorts = 1;
+    private volatile int socketProcessIdMaxPorts = 1;
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.utils.processImplementation")
-    private String processImplementation = Utility.defaultProcessId;
+    private volatile String processImplementation = Utility.defaultProcessId;
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.utils.pid")
-    private int pid = -1;
+    private volatile int pid = -1;
 
-    private boolean allowMultipleLastResources = false;
-    private boolean disableMultipleLastResourcesWarning = false;
+    private volatile boolean allowMultipleLastResources = false;
+    private volatile boolean disableMultipleLastResourcesWarning = false;
 
 //    @FullPropertyName(name = "jbossts.bind.address")
 //    private String bindAddress;

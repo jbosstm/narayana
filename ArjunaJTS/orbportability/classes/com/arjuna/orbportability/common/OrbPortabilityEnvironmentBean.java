@@ -34,21 +34,21 @@ import java.util.ArrayList;
 @PropertyPrefix(prefix = "com.arjuna.orbportability.")
 public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentBeanMBean
 {
-    private String propertiesFile = "";
+    private volatile String propertiesFile = "";
 
-    private String corbaDiagnostics = null; // key only
-    private String initialReferencesRoot = com.arjuna.orbportability.common.Configuration.configFileRoot();
-    private String initialReferencesFile = com.arjuna.orbportability.common.Configuration.configFile();
-    private String fileDir = null;
-    private String resolveService = "CONFIGURATION_FILE";
+    private volatile String corbaDiagnostics = null; // key only
+    private volatile String initialReferencesRoot = com.arjuna.orbportability.common.Configuration.configFileRoot();
+    private volatile String initialReferencesFile = com.arjuna.orbportability.common.Configuration.configFile();
+    private volatile String fileDir = null;
+    private volatile String resolveService = "CONFIGURATION_FILE";
 
     @ConcatenationPrefix(prefix = "com.arjuna.orbportability.eventHandler")
-    private List<String> eventHandlers = new ArrayList<String>();
+    private volatile List<String> eventHandlers = new ArrayList<String>();
 
-    private String orbImplementation = null;
-    private String oaImplementation = null;
-    private String bindMechanism = "CONFIGURATION_FILE";
-    private String defaultConfigurationFilename = null;
+    private volatile String orbImplementation = null;
+    private volatile String oaImplementation = null;
+    private volatile String bindMechanism = "CONFIGURATION_FILE";
+    private volatile String defaultConfigurationFilename = null;
 
     /**
      * Returns the name of the properties file.

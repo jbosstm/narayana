@@ -30,14 +30,14 @@ import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 @PropertyPrefix(prefix = "com.arjuna.common.util.logging.default.")
 public class DefaultLogEnvironmentBean
 {
-    private boolean showLogName = false;
-    private boolean showShortLogName = true;
-    private boolean showDate = true;
-    private boolean logFileAppend = true;
+    private volatile boolean showLogName = false;
+    private volatile boolean showShortLogName = true;
+    private volatile boolean showDate = true;
+    private volatile boolean logFileAppend = true;
 
-    private String defaultLevel = "info";
+    private volatile String defaultLevel = "info";
 
-    private String logFile = "error.log";
+    private volatile String logFile = "error.log";
 
 
     /**

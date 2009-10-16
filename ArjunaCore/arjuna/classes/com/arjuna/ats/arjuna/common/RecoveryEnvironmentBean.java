@@ -38,28 +38,28 @@ import java.util.ArrayList;
 @PropertyPrefix(prefix = "com.arjuna.ats.arjuna.recovery.")
 public class RecoveryEnvironmentBean implements RecoveryEnvironmentBeanMBean
 {
-    private int periodicRecoveryPeriod = PeriodicRecovery._defaultRecoveryPeriod;
-    private int recoveryBackoffPeriod = PeriodicRecovery._defaultBackoffPeriod;
-    private boolean recoveryListener = true;
-    private int recoveryPort = 0;
-    private String recoveryAddress = "localhost";
-    private int transactionStatusManagerPort = 0;
-    private String transactionStatusManagerAddress = "localhost";
+    private volatile int periodicRecoveryPeriod = PeriodicRecovery._defaultRecoveryPeriod;
+    private volatile int recoveryBackoffPeriod = PeriodicRecovery._defaultBackoffPeriod;
+    private volatile boolean recoveryListener = true;
+    private volatile int recoveryPort = 0;
+    private volatile String recoveryAddress = "localhost";
+    private volatile int transactionStatusManagerPort = 0;
+    private volatile String transactionStatusManagerAddress = "localhost";
 
-    private int expiryScanInterval = 12; // hours
-    private int transactionStatusManagerExpiryTime = 12; // hours
+    private volatile int expiryScanInterval = 12; // hours
+    private volatile int transactionStatusManagerExpiryTime = 12; // hours
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.arjuna.recovery.expiryScanner")
-    private List<String> expiryScanners = new ArrayList<String>();
+    private volatile List<String> expiryScanners = new ArrayList<String>();
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.arjuna.recovery.recoveryExtension")
-    private List<String> recoveryExtensions = new ArrayList<String>();
+    private volatile List<String> recoveryExtensions = new ArrayList<String>();
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.arjuna.recovery.recoveryActivator")
-    private List<String> recoveryActivators = new ArrayList<String>();
+    private volatile List<String> recoveryActivators = new ArrayList<String>();
 
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.recovery.listener.timeoutsocket")
-    private boolean timeoutSocket = false;
+    private volatile boolean timeoutSocket = false;
 
     /**
      * Returns the interval between recovery scans, in seconds.

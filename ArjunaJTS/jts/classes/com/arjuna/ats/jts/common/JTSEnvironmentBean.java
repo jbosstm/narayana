@@ -34,33 +34,33 @@ import java.net.InetAddress;
 public class JTSEnvironmentBean implements JTSEnvironmentBeanMBean
 {
     @FullPropertyName(name= "com.arjuna.ats.jts.common.propertiesFile")
-    private String propertiesFile = "";
+    private volatile String propertiesFile = "";
 
-    private boolean transactionManager = false;
-    private boolean needTranContext = false;
-    private boolean alwaysPropagateContext = false;
-    private String interposition = null;
-    private boolean checkedTransactions = false;
-    private boolean supportSubtransactions = true;
-    private boolean supportRollbackSync = true;
-    private boolean supportInterposedSynchronization = false;
-    private int defaultTimeout = 60; // deprecated
-    private boolean propagateTerminator = false;
-    private String contextPropMode = null;
-    private int recoveryManagerPort = 4711;
-    private String recoveryManagerAddress = "";
+    private volatile boolean transactionManager = false;
+    private volatile boolean needTranContext = false;
+    private volatile boolean alwaysPropagateContext = false;
+    private volatile String interposition = null;
+    private volatile boolean checkedTransactions = false;
+    private volatile boolean supportSubtransactions = true;
+    private volatile boolean supportRollbackSync = true;
+    private volatile boolean supportInterposedSynchronization = false;
+    private volatile int defaultTimeout = 60; // deprecated
+    private volatile boolean propagateTerminator = false;
+    private volatile String contextPropMode = null;
+    private volatile int recoveryManagerPort = 4711;
+    private volatile String recoveryManagerAddress = "";
 
     @FullPropertyName(name = "com.arjuna.ats.jts.ots_1_0.timeoutPropagation")
-    private boolean timeoutPropagation = true;
+    private volatile boolean timeoutPropagation = true;
 
     @FullPropertyName(name = "com.arjuna.ats.jts.recovery.issueRecoveryRollback")
-    private boolean issueRecoveryRollback = true;
+    private volatile boolean issueRecoveryRollback = true;
 
     @FullPropertyName(name = "com.arjuna.ats.jts.recovery.commitTransactionRetryLimit")
-    private int commitedTransactionRetryLimit = 3;
+    private volatile int commitedTransactionRetryLimit = 3;
 
     @FullPropertyName(name = "com.arjuna.ats.jts.recovery.assumedObjectNotExist")
-    private int assumedObjectNotExist = 10;
+    private volatile int assumedObjectNotExist = 10;
 
 
     /**

@@ -35,13 +35,13 @@ import java.io.File;
 public class TxojEnvironmentBean implements TxojEnvironmentBeanMBean
 {
     @FullPropertyName(name = "com.arjuna.ats.txoj.common.propertiesFile")
-    private String propertiesFile = "";
+    private volatile String propertiesFile = "";
 
-    private String lockStoreDir = System.getProperty("user.dir") + File.separator + "LockStore";
-    private String lockStoreType = null;
-    private String multipleLockStore = null;
-    private String singleLockStore = TxOJNames.Implementation_LockStore_defaultStore().stringForm();
-    private boolean allowNestedLocking = true;
+    private volatile String lockStoreDir = System.getProperty("user.dir") + File.separator + "LockStore";
+    private volatile String lockStoreType = null;
+    private volatile String multipleLockStore = null;
+    private volatile String singleLockStore = TxOJNames.Implementation_LockStore_defaultStore().stringForm();
+    private volatile boolean allowNestedLocking = true;
 
     /**
      * Returns the name of the properties file.

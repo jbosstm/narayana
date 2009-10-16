@@ -33,23 +33,23 @@ public class LoggingEnvironmentBean implements LoggingEnvironmentBeanMBean
 {
     // don't mess with language and country defaults unless
     // you also change the way logging bundles are built.
-    private String language = "en";
-    private String country = "US";
+    private volatile String language = "en";
+    private volatile String country = "US";
 
     @FullPropertyName(name = "com.arjuna.common.util.logging.default")
-    private boolean useDefaultLog = false;
+    private volatile boolean useDefaultLog = false;
 
     @FullPropertyName(name = "com.arjuna.common.util.logger")
-    private String loggingSystem = "log4j";
+    private volatile String loggingSystem = "log4j";
 
     @FullPropertyName(name = "com.arjuna.common.util.logging.DebugLevel")
-    private String debugLevel = "0x00000000";
+    private volatile String debugLevel = "0x00000000";
 
     @FullPropertyName(name = "com.arjuna.common.util.logging.FacilityLevel")
-    private String facilityLevel = "0xffffffff";
+    private volatile String facilityLevel = "0xffffffff";
 
     @FullPropertyName(name = "com.arjuna.common.util.logging.VisibilityLevel")
-    private String visibilityLevel = "0xffffffff";
+    private volatile String visibilityLevel = "0xffffffff";
 
 
     /**

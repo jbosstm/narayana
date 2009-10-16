@@ -36,42 +36,42 @@ import java.io.File;
 @PropertyPrefix(prefix = "com.arjuna.ats.arjuna.objectstore.")
 public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBean
 {
-    private String localOSRoot = "defaultStore";
-    private String objectStoreDir = System.getProperty("user.dir") + File.separator + "ObjectStore";
-    private boolean objectStoreSync = true;
-    private String objectStoreType = ArjunaNames.Implementation_ObjectStore_defaultStore().stringForm();
-    private int hashedDirectories = HashedStore.DEFAULT_NUMBER_DIRECTORIES;
-    private boolean transactionSync = true;
+    private volatile String localOSRoot = "defaultStore";
+    private volatile String objectStoreDir = System.getProperty("user.dir") + File.separator + "ObjectStore";
+    private volatile boolean objectStoreSync = true;
+    private volatile String objectStoreType = ArjunaNames.Implementation_ObjectStore_defaultStore().stringForm();
+    private volatile int hashedDirectories = HashedStore.DEFAULT_NUMBER_DIRECTORIES;
+    private volatile boolean transactionSync = true;
     
-    private String jdbcUserDbAccess = null;
-    private String jdbcTxDbAccess = null;
-    private int jdbcPoolSizeInitial = 1;
-    private int jdbcPoolSizeMaximum = 1;
-    private boolean jdbcPoolPutConnections = false;
+    private volatile String jdbcUserDbAccess = null;
+    private volatile String jdbcTxDbAccess = null;
+    private volatile int jdbcPoolSizeInitial = 1;
+    private volatile int jdbcPoolSizeMaximum = 1;
+    private volatile boolean jdbcPoolPutConnections = false;
 
-    private int share = ObjectStore.OS_UNKNOWN;
-    private int hierarchyRetry = 100;
-    private int hierarchyTimeout = 100;
+    private volatile int share = ObjectStore.OS_UNKNOWN;
+    private volatile int hierarchyRetry = 100;
+    private volatile int hierarchyTimeout = 100;
 
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.objectstore.cacheStore.size")
-    private int cacheStoreSize = 10240;  // size in bytes
+    private volatile int cacheStoreSize = 10240;  // size in bytes
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.objectstore.cacheStore.sync")
-    private boolean cacheStoreSync = false;
+    private volatile boolean cacheStoreSync = false;
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.objectstore.cacheStore.removedItems")
-    private int cacheStoreRemovedItems = 256;
+    private volatile int cacheStoreRemovedItems = 256;
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.objectstore.cacheStore.scanPeriod")
-    private int cacheStoreScanPeriod = 120000;
+    private volatile int cacheStoreScanPeriod = 120000;
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.objectstore.cacheStore.workItems")
-    private int cacheStoreWorkItems = 100;
+    private volatile int cacheStoreWorkItems = 100;
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.objectstore.cacheStore.hash")
-    private int cacheStoreHash = 128;
+    private volatile int cacheStoreHash = 128;
 
     @FullPropertyName(name = "com.arjuna.ats.arjuna.coordinator.transactionLog.synchronousRemoval")
-    private boolean synchronousRemoval = true;
+    private volatile boolean synchronousRemoval = true;
     @FullPropertyName(name = "com.arjuna.ats.arjuna.coordinator.transactionLog.size")
-    private long txLogSize = 10 * 1024 * 1024;  // default maximum log txLogSize in bytes;
+    private volatile long txLogSize = 10 * 1024 * 1024;  // default maximum log txLogSize in bytes;
     @FullPropertyName(name = "com.arjuna.ats.arjuna.coordinator.transactionLog.purgeTime")
-    private long purgeTime = 100000; // in milliseconds
+    private volatile long purgeTime = 100000; // in milliseconds
 
 
     /**

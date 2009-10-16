@@ -34,9 +34,9 @@ import java.sql.Connection;
 public class JDBCEnvironmentBean implements JDBCEnvironmentBeanMBean
 {
     @FullPropertyName(name = "com.arjuna.ats.jdbc.common.propertiesFile")
-    private String propertiesFile = "";
+    private volatile String propertiesFile = "";
 
-    private int isolationLevel = Connection.TRANSACTION_SERIALIZABLE;
+    private volatile int isolationLevel = Connection.TRANSACTION_SERIALIZABLE;
 
     /**
      * Returns the name of the properties file.
