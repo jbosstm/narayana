@@ -35,7 +35,6 @@ import org.jboss.logging.Logger;
 
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 import com.arjuna.ats.arjuna.common.Configuration;
-import com.arjuna.ats.arjuna.logging.tsLogger;
 
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
@@ -68,7 +67,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
         log.info("JBossTS Transaction Service ("+mode+" version - tag:"+tag+") - JBoss Inc.");
 
         // Associate transaction reaper with our context classloader.
-        TransactionReaper.create();
+        TransactionReaper.transactionReaper();
 	}
 
     public void destroy()

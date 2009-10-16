@@ -21,10 +21,7 @@
 package com.hp.mwtests.ts.arjuna.reaper;
 
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
-import com.arjuna.ats.arjuna.coordinator.Reapable;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.logging.tsLogger;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -42,7 +39,6 @@ public class ReaperTestCase2  extends ReaperTestCaseControl
     @Test
     public void testReaper() throws Exception
     {
-        TransactionReaper.create(100);
         TransactionReaper reaper = TransactionReaper.transactionReaper();
 
         // create slow reapables some of which will not respond immediately

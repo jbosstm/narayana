@@ -61,7 +61,7 @@ public class SubordinateAtomicAction extends
 		// if it has a non-negative timeout, add it to the reaper.
 
 		if (timeout > AtomicAction.NO_TIMEOUT)
-			TransactionReaper.transactionReaper(true).insert(this, timeout);
+			TransactionReaper.transactionReaper().insert(this, timeout);
 	}
 
 	/**

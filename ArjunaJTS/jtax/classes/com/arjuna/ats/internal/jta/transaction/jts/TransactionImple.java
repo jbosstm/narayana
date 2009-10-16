@@ -55,7 +55,6 @@ import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
 import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
 import com.arjuna.ats.jta.logging.*;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
 
 import com.arjuna.ats.internal.jta.xa.TxInfo;
 

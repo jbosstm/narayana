@@ -247,9 +247,6 @@ public class ServerFactory
 		{
 			TransactionReaper reaper = TransactionReaper.transactionReaper();
 
-			if (reaper == null)
-				reaper = TransactionReaper.create();
-
 			reaper.insert(new ServerControlWrapper((ControlImple) tranControl), time_out);
 		}
 

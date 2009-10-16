@@ -67,7 +67,6 @@ public class ReaperMonitorTest
     @Test
     public void test()
     {
-        TransactionReaper.create(100);
         TransactionReaper reaper = TransactionReaper.transactionReaper();
         DummyMonitor listener = new DummyMonitor();
        

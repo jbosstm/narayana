@@ -115,11 +115,8 @@ public class OTSManager
 	 * Just in case control is a top-level transaction, and has
 	 * been registered with the reaper, we need to get it removed.
 	 *
-	 * Don't bother if the reaper has not been created.
 	 */
-    
-	if (TransactionReaper.transactionReaper() != null)
-	{
+
 	    Coordinator coord = null;
 	
 	    try
@@ -160,7 +157,6 @@ public class OTSManager
 
 		coord = null;
 	    }
-	}
 	
 	/*
 	 * Watch out for conflicts with multiple threads deleting
@@ -207,11 +203,9 @@ public class OTSManager
 	     * Just in case control is a top-level transaction, and has
 	     * been registered with the reaper, we need to get it removed.
 	     *
-	     * Don't bother if the reaper has not been created.
 	     */
     
-	    if (TransactionReaper.transactionReaper() != null)
-	    {
+
 		Coordinator coord = null;
 	
 		try
@@ -239,7 +233,7 @@ public class OTSManager
 
 		    coord = null;
 		}
-	    }
+
     
 	    /*
 	     * Watch out for conflicts with multiple threads deleting

@@ -33,7 +33,6 @@ public class ReaperTestCase3  extends ReaperTestCaseControl
     @Test
     public void testReaperWait() throws Exception
     {
-        TransactionReaper.create(500);
         TransactionReaper reaper = TransactionReaper.transactionReaper();
 
         // give the reaper worker time to start too
@@ -144,7 +143,6 @@ public class ReaperTestCase3  extends ReaperTestCaseControl
     @Test
     public void testReaperForce() throws Exception
     {
-        TransactionReaper.create(5000);
         TransactionReaper reaper = TransactionReaper.transactionReaper();
 
         // give the reaper worker time to start too

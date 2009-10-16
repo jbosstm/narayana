@@ -177,9 +177,6 @@ public class TransactionFactoryImple extends
 
 				TransactionReaper reaper = TransactionReaper.transactionReaper();
 
-				if (reaper == null)
-					reaper = TransactionReaper.create();
-
 				reaper.insert(new ControlWrapper((ControlImple) tranControl), theTimeout);
 			}
 
@@ -659,7 +656,7 @@ public class TransactionFactoryImple extends
 
 		TransactionReaper reaper = TransactionReaper.transactionReaper();
 
-		if (reaper == null)
+		if (reaper.checkingPeriod() == Long.MAX_VALUE)
 			info.reaperTimeout = 0;
 		else
 			info.reaperTimeout = (int) reaper.checkingPeriod();
@@ -716,15 +713,7 @@ public class TransactionFactoryImple extends
 
 						TransactionReaper reaper = TransactionReaper.transactionReaper();
 
-						/*
-						 * If the reaper has not been created yet, then all
-						 * transactions so far must have 0 timeout.
-						 */
-
-						if (reaper == null)
-							info.timeout = 0;
-						else
-							info.timeout = (int) reaper.getTimeout(ctx);
+						info.timeout = reaper.getTimeout(ctx);
 
 						info.numberOfThreads = ctx.getImplHandle().activeThreads();
 

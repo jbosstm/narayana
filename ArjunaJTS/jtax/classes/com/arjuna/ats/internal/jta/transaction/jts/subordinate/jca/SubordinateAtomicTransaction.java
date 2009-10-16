@@ -54,7 +54,7 @@ public class SubordinateAtomicTransaction extends com.arjuna.ats.internal.jta.tr
 		
 		if (timeout > 0)
 		{
-			TransactionReaper reaper = TransactionReaper.transactionReaper(true);
+			TransactionReaper reaper = TransactionReaper.transactionReaper();
 			
 			reaper.insert(super.getControlWrapper(), timeout);
 		}

@@ -2133,21 +2133,14 @@ public class ArjunaTransactionImple extends
 						 * versions, there's a configurable option.
 						 */
 
-						if (TransactionReaper.transactionReaper() != null)
-						{
-						    if (_propagateRemainingTimeout)
-                            {
-                                long timeInMills = TransactionReaper.transactionReaper().getRemainingTimeoutMills(control);
-                                context.timeout = (int)(timeInMills/1000L);
-                            }
-                            else
-                            {
-                                context.timeout = TransactionReaper.transactionReaper().getTimeout(control);
-                            }
-                        }
-						else
+                        if (_propagateRemainingTimeout)
                         {
-                            context.timeout = 0;
+                            long timeInMills = TransactionReaper.transactionReaper().getRemainingTimeoutMills(control);
+                            context.timeout = (int)(timeInMills/1000L);
+                        }
+                        else
+                        {
+                            context.timeout = TransactionReaper.transactionReaper().getTimeout(control);
                         }
                     }
 
