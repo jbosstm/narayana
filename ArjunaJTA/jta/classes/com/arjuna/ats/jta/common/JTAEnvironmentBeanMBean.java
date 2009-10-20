@@ -29,10 +29,6 @@ import java.util.List;
  */
 public interface JTAEnvironmentBeanMBean
 {
-    String getPropertiesFile();
-
-    void setPropertiesFile(String propertiesFile);
-
     boolean isSupportSubtransactions();
 
     void setSupportSubtransactions(boolean supportSubtransactions);
@@ -48,10 +44,6 @@ public interface JTAEnvironmentBeanMBean
     String getJtaTSRImplementation();
 
     void setJtaTSRImplementation(String jtaTSRImplementation);
-
-    int getXaBackoffPeriod();
-
-    void setXaBackoffPeriod(int xaBackoffPeriod);
 
     List<String> getXaRecoveryNodes();
 

@@ -21,9 +21,9 @@
 package com.arjuna.ats.jdbc.common;
 
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
-import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 
 import java.sql.Connection;
+import java.util.Hashtable;
 
 /**
  * A JavaBean containing configuration properties for the JDBC subsystem.
@@ -33,33 +33,9 @@ import java.sql.Connection;
 @PropertyPrefix(prefix = "com.arjuna.ats.jdbc.")
 public class JDBCEnvironmentBean implements JDBCEnvironmentBeanMBean
 {
-    @FullPropertyName(name = "com.arjuna.ats.jdbc.common.propertiesFile")
-    private volatile String propertiesFile = "";
-
     private volatile int isolationLevel = Connection.TRANSACTION_SERIALIZABLE;
 
-    /**
-     * Returns the name of the properties file.
-     *
-     * Default: ""
-     * Equivalent deprecated property: com.arjuna.ats.jdbc.common.propertiesFile
-     *
-     * @return the name of the properties file
-     */
-    public String getPropertiesFile()
-    {
-        return propertiesFile;
-    }
-
-    /**
-     * Sets the name of the properties file.
-     *
-     * @param propertiesFile the name of the properties file.
-     */
-    public void setPropertiesFile(String propertiesFile)
-    {
-        this.propertiesFile = propertiesFile;
-    }
+    private volatile Hashtable jndiProperties = new Hashtable();
 
     /**
      * Returns the default isolation level for tansactional database operations.
@@ -89,5 +65,36 @@ public class JDBCEnvironmentBean implements JDBCEnvironmentBeanMBean
         }
 
         this.isolationLevel = isolationLevel;
+    }
+
+    /**
+     * Returns the Hashtable used for the JNDI environment in transactional driver code.
+     * The returned object is a clone. May return an empty Hashtable , will not return null.
+     *
+     * Default: empty Hashtable.
+     *
+     * Note: unlike previous versions, the contents is passed to InitialContext verbatim.
+     * Hence String keys should be of the form e.g. "java.naming.factory.initial", not "Context.INITIAL_CONTEXT_FACTORY"
+     *
+     * @return a Hashtable object containing JNDI context information.
+     */
+    public Hashtable getJndiProperties()
+    {
+        return (Hashtable)jndiProperties.clone();
+    }
+
+    /**
+     * Sets the JNDI properties used by transactional driver code.
+     * The provided Hashtable will be cloned, not retained.
+     *
+     * @param jndiProperties a Hashtable object containing JNDI context information.
+     */
+    public void setJndiProperties(Hashtable jndiProperties)
+    {
+        if(jndiProperties == null) {
+            this.jndiProperties = new Hashtable();
+        } else {
+            this.jndiProperties = (Hashtable)jndiProperties.clone();
+        }
     }
 }

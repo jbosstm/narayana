@@ -38,7 +38,6 @@ import com.arjuna.ats.internal.jta.resources.arjunacore.SynchronizationImple;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAOnePhaseResource;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 
-import com.arjuna.ats.jta.common.Configuration;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.exceptions.InactiveTransactionException;
 import com.arjuna.ats.jta.exceptions.InvalidTerminationStateException;
@@ -1822,12 +1821,6 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	private static boolean getXATransactionTimeoutEnabled()
 	{
-		final Boolean xaTransactionTimeoutEnabled = Configuration
-				.getXATransactionTimeoutEnabled();
-		if (xaTransactionTimeoutEnabled != null)
-		{
-			return xaTransactionTimeoutEnabled.booleanValue();
-		}
 		return XA_TRANSACTION_TIMEOUT_ENABLED;
 	}
 

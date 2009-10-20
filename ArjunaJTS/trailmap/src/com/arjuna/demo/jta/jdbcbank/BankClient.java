@@ -35,6 +35,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
+import java.util.Properties;
 
 /**
  * The <CODE>BankClient</CODE> application is an interactive CLI that allows the user of the JBoss Transactions product
@@ -576,8 +577,10 @@ public class BankClient
             System.exit(0);
         }
         // Initialize the property manager with the correct JNDI credentials to use to log in to JNDI
-        jdbcPropertyManager.getPropertyManager().setProperty("Context.INITIAL_CONTEXT_FACTORY", "com.sun.jndi.fscontext.RefFSContextFactory");
-        jdbcPropertyManager.getPropertyManager().setProperty("Context.PROVIDER_URL", "file:/tmp/JNDI");
+        Hashtable<String, String> properties = new Hashtable<String, String>();
+        properties.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.fscontext.RefFSContextFactory");
+        properties.put(Context.PROVIDER_URL, "file:/tmp/JNDI");
+        jdbcPropertyManager.getJDBCEnvironmentBean().setJndiProperties(properties);
 
         // Create a local representation of a bank and then create a bank client to interact with it
         Bank bank = new Bank();

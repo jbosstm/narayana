@@ -41,16 +41,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class jdbcPropertyManager
 {
-    /**
-     * @deprecated use JDBCEnvironmentBean instead
-     * @return
-     */
-    @Deprecated
-    public static PropertyManager getPropertyManager()
-    {
-        return PropertyManagerFactory.getPropertyManagerForModule("jdbc", Environment.PROPERTIES_FILE);
-    }
-
     public static JDBCEnvironmentBean getJDBCEnvironmentBean()
     {
         return BeanPopulator.getSingletonInstance(JDBCEnvironmentBean.class);

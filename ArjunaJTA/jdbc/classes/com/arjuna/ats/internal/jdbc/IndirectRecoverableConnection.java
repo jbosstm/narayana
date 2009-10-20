@@ -377,31 +377,12 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 	{
 	    if (_theDataSource == null)
 	    {
-		Hashtable env = new Hashtable();
-		Enumeration e = jdbcPropertyManager.getPropertyManager().propertyNames();
-
-		/*
-		 * Look through the properties for any Context related
-		 * stuff.
-		 */
-
-		while (e.hasMoreElements())
-		{
-		    String name = (String) e.nextElement();
-
-		    if (name.startsWith("Context."))
-			env.put(translate(name), jdbcPropertyManager.getPropertyManager().getProperty(name));
+    		Hashtable env = jdbcPropertyManager.getJDBCEnvironmentBean().getJndiProperties();
+            Context ctx = new InitialContext(env);
+            _theDataSource = (XADataSource) ctx.lookup(_dbName);
 		}
 
-		if (env.size() > 0)
-		{
-		    Context ctx = new InitialContext(env);
-		    _theDataSource = (XADataSource) ctx.lookup(_dbName);
-		}
-		else
-		    _theDataSource = null;
-
-		if (_theDataSource == null)
+		if (_theDataSource == null) {
 		    throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.jndierror"));
 	    }
 	}
@@ -411,7 +392,7 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 	}
 	catch (Exception e)
 	{
-	    e.printStackTrace();
+        jdbcLogger.logger.error(e);
 
         SQLException sqlException = new SQLException(e.toString());
         sqlException.initCause(e);

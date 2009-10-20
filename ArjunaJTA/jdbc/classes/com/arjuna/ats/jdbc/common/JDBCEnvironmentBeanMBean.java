@@ -20,6 +20,8 @@
  */
 package com.arjuna.ats.jdbc.common;
 
+import java.util.Hashtable;
+
 /**
  * A JMX MBean interface containing configuration for the JDBC subsystem.
  *
@@ -27,11 +29,11 @@ package com.arjuna.ats.jdbc.common;
  */
 public interface JDBCEnvironmentBeanMBean
 {
-    String getPropertiesFile();
-
-    void setPropertiesFile(String propertiesFile);
-
     int getIsolationLevel();
 
     void setIsolationLevel(int isolationLevel);
+
+    public Hashtable getJndiProperties();
+
+    public void setJndiProperties(Hashtable jndiProperties);
 }

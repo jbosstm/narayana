@@ -35,16 +35,11 @@ import java.util.ArrayList;
 @PropertyPrefix(prefix = "com.arjuna.ats.jta.")
 public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 {
-    @FullPropertyName(name = "com.arjuna.ats.jta.common.propertiesFile")
-    private volatile String propertiesFile = "";
-
     private volatile boolean supportSubtransactions = false;
 
     private volatile String jtaTMImplementation = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple";
     private volatile String jtaUTImplementation = "com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple";
     private volatile String jtaTSRImplementation = "com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple";
-
-    private volatile int xaBackoffPeriod = 20000;
 
     @ConcatenationPrefix(prefix = "com.arjuna.ats.jta.xaRecoveryNode")
     private volatile List<String> xaRecoveryNodes = new ArrayList<String>();
@@ -68,29 +63,6 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
 
     private volatile boolean xaTransactionTimeoutEnabled = true;
     private volatile String lastResourceOptimisationInterface = null;
-
-    /**
-     * Returns the name of the properties file.
-     *
-     * Default: ""
-     * Equivalent deprecated property: com.arjuna.ats.jta.common.propertiesFile
-     *
-     * @return the name of the properties file
-     */
-    public String getPropertiesFile()
-    {
-        return propertiesFile;
-    }
-
-    /**
-     * Sets the name of the properties file.
-     *
-     * @param propertiesFile the name of the properties file.
-     */
-    public void setPropertiesFile(String propertiesFile)
-    {
-        this.propertiesFile = propertiesFile;
-    }
 
     /**
      * Returns true if subtransactions are allowed.
@@ -183,30 +155,6 @@ public class JTAEnvironmentBean implements JTAEnvironmentBeanMBean
     public void setJtaTSRImplementation(String jtaTSRImplementation)
     {
         this.jtaTSRImplementation = jtaTSRImplementation;
-    }
-
-    /**
-     * Returns the XA backoff period, in milliseconds.
-     *
-     * Default: 20000 milliseconds
-     * Equivalent deprecated property: com.arjuna.ats.jta.xaBackoffPeriod
-     *
-     * @deprecated I'm not unsed, remove me.
-     * @return the XA backoff period, in milliseconds.
-     */
-    public int getXaBackoffPeriod()
-    {
-        return xaBackoffPeriod;
-    }
-
-    /**
-     * Sets the XA backoff period, in milliseconds.
-     *
-     * @param xaBackoffPeriod the XA backoff period, in milliseconds.
-     */
-    public void setXaBackoffPeriod(int xaBackoffPeriod)
-    {
-        this.xaBackoffPeriod = xaBackoffPeriod;
     }
 
     /**

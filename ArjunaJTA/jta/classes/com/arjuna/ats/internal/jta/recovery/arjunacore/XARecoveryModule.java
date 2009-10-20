@@ -1349,18 +1349,8 @@ public class XARecoveryModule implements RecoveryModule
 	// Reference to the Object Store.
 	private static ObjectStore _transactionStore = null;
 
-	private static int _backoffPeriod = 0;
-
-	private static final int XA_BACKOFF_PERIOD = 20000; // backoff in
-
 	// milliseconds
 
 	private static final char BREAKCHARACTER = ';'; // delimiter for xaconnrecov
 	// property
-
-	static
-	{
-        _backoffPeriod = jtaPropertyManager.getJTAEnvironmentBean().getXaBackoffPeriod();        
-	}
-
 }
