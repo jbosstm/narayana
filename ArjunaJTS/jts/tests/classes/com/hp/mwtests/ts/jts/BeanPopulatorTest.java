@@ -20,7 +20,7 @@
  */
 package com.hp.mwtests.ts.jts;
 
-import com.arjuna.common.tests.simple.DummyPropertyManager;
+import com.arjuna.common.tests.simple.DummyProperties;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import com.arjuna.ats.jts.common.JTSEnvironmentBean;
 import com.arjuna.ats.jts.common.Environment;
@@ -45,13 +45,13 @@ public class BeanPopulatorTest
         // by the set of beans which wrap them and conversely that no undefined
         // properties are looked for. i.e. that the Environment and Beans are in sync
 
-        DummyPropertyManager testManager = new DummyPropertyManager(null);
+        DummyProperties testProperties = new DummyProperties();
 
-        BeanPopulator.configureFromPropertyManager(new JTSEnvironmentBean(), testManager);
+        BeanPopulator.configureFromProperties(new JTSEnvironmentBean(), testProperties);
 
         Set<String> expectedKeys = new HashSet<String>();
-        expectedKeys.addAll( DummyPropertyManager.extractKeys(Environment.class));
+        expectedKeys.addAll( DummyProperties.extractKeys(Environment.class));
 
-        assertTrue( testManager.usedKeys.containsAll(expectedKeys) );
+        assertTrue( testProperties.usedKeys.containsAll(expectedKeys) );
     }
 }

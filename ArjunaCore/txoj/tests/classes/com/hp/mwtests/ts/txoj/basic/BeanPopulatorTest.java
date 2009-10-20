@@ -23,7 +23,7 @@ package com.hp.mwtests.ts.txoj.basic;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import com.arjuna.common.tests.simple.DummyPropertyManager;
+import com.arjuna.common.tests.simple.DummyProperties;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import com.arjuna.ats.txoj.common.TxojEnvironmentBean;
 import com.arjuna.ats.txoj.common.Environment;
@@ -45,13 +45,13 @@ public class BeanPopulatorTest
         // by the set of beans which wrap them and conversely that no undefined
         // properties are looked for. i.e. that the Environment and Beans are in sync
 
-        DummyPropertyManager testManager = new DummyPropertyManager(null);
+        DummyProperties testProperties = new DummyProperties();
 
-        BeanPopulator.configureFromPropertyManager(new TxojEnvironmentBean(), testManager);
+        BeanPopulator.configureFromProperties(new TxojEnvironmentBean(), testProperties);
 
         Set<String> expectedKeys = new HashSet<String>();
-        expectedKeys.addAll( DummyPropertyManager.extractKeys(Environment.class));
+        expectedKeys.addAll( DummyProperties.extractKeys(Environment.class));
 
-        assertTrue( testManager.usedKeys.containsAll(expectedKeys) );
+        assertTrue( testProperties.usedKeys.containsAll(expectedKeys) );
     }
 }

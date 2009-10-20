@@ -21,7 +21,7 @@
 package com.hp.mwtests.ts.arjuna.common;
 
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-import com.arjuna.common.tests.simple.DummyPropertyManager;
+import com.arjuna.common.tests.simple.DummyProperties;
 import com.arjuna.ats.arjuna.common.*;
 
 import java.util.Set;
@@ -44,19 +44,24 @@ public class BeanPopulatorTest
         // by the set of beans which wrap them and conversely that no undefined
         // properties are looked for. i.e. that the Environment and Beans are in sync
 
-        DummyPropertyManager testManager = new DummyPropertyManager(null);
+        DummyProperties testProperties = new DummyProperties();
 
-        testManager.addConcatenationKeys(RecoveryEnvironmentBean.class);
-        testManager.addConcatenationKeys(CoreEnvironmentBean.class);
+        testProperties.addConcatenationKeys(RecoveryEnvironmentBean.class);
+        testProperties.addConcatenationKeys(CoreEnvironmentBean.class);
 
-        BeanPopulator.configureFromPropertyManager(new CoordinatorEnvironmentBean(), testManager);
-        BeanPopulator.configureFromPropertyManager(new RecoveryEnvironmentBean(), testManager);
-        BeanPopulator.configureFromPropertyManager(new CoreEnvironmentBean(), testManager);
-        BeanPopulator.configureFromPropertyManager(new ObjectStoreEnvironmentBean(), testManager);
+        BeanPopulator.configureFromProperties(new CoordinatorEnvironmentBean(), testProperties);
+        BeanPopulator.configureFromProperties(new RecoveryEnvironmentBean(), testProperties);
+        BeanPopulator.configureFromProperties(new CoreEnvironmentBean(), testProperties);
+        BeanPopulator.configureFromProperties(new ObjectStoreEnvironmentBean(), testProperties);
 
         Set<String> expectedKeys = new HashSet<String>();
-        expectedKeys.addAll( DummyPropertyManager.extractKeys(Environment.class));
+        expectedKeys.addAll( DummyProperties.extractKeys(Environment.class));
 
-        assertTrue( testManager.usedKeys.containsAll(expectedKeys) );
+        System.out.println(testProperties.usedKeys);
+
+        System.out.println(expectedKeys);
+
+        assertTrue( testProperties.usedKeys.containsAll(expectedKeys) );
+
     }
 }

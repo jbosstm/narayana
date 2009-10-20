@@ -18,9 +18,9 @@ public class BeanPopulatorTest
         // by the set of beans which wrap them and conversely that no undefined
         // properties are looked for. i.e. that the Environment and Beans are in sync
 
-        DummyPropertyManager testManager = new DummyPropertyManager(null);
+        DummyProperties testProperties = new DummyProperties();
 
-        BeanPopulator.configureFromPropertyManager(new LoggingEnvironmentBean(), testManager);
+        BeanPopulator.configureFromProperties(new LoggingEnvironmentBean(), testProperties);
 
         Set<String> expectedKeys = new HashSet<String>();
 
@@ -33,17 +33,17 @@ public class BeanPopulatorTest
         expectedKeys.add("com.arjuna.common.util.logging.VisibilityLevel");
 
         System.out.println("expected: "+expectedKeys);
-        System.out.println("used: "+testManager.usedKeys);
+        System.out.println("used: "+testProperties.usedKeys);
 
-        assertTrue( testManager.usedKeys.containsAll(expectedKeys) );
+        assertTrue( testProperties.usedKeys.containsAll(expectedKeys) );
     }
 
     @Test
     public void testDefaultLogPropertiesPopulation() throws Exception {
 
-        DummyPropertyManager testManager = new DummyPropertyManager(null);
+        DummyProperties testProperties = new DummyProperties();
 
-        BeanPopulator.configureFromPropertyManager(new DefaultLogEnvironmentBean(), testManager);
+        BeanPopulator.configureFromProperties(new DefaultLogEnvironmentBean(), testProperties);
 
         Set<String> expectedKeys = new HashSet<String>();
 
@@ -55,8 +55,8 @@ public class BeanPopulatorTest
         expectedKeys.add("com.arjuna.common.util.logging.default.logFile");
 
         System.out.println("expected: "+expectedKeys);
-        System.out.println("used: "+testManager.usedKeys);
+        System.out.println("used: "+testProperties.usedKeys);
 
-        assertTrue( testManager.usedKeys.containsAll(expectedKeys) );
+        assertTrue( testProperties.usedKeys.containsAll(expectedKeys) );
     }
 }

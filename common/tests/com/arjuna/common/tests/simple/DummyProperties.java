@@ -20,24 +20,26 @@
  */
 package com.arjuna.common.tests.simple;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
-import com.arjuna.common.util.propertyservice.plugins.PropertyManagementPlugin;
-import com.arjuna.common.util.exceptions.LoadPropertiesException;
-import com.arjuna.common.util.exceptions.SavePropertiesException;
-import com.arjuna.common.util.exceptions.ManagementPluginException;
 import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
 
 import java.util.*;
 import java.lang.reflect.Field;
-import java.io.IOException;
 
 /**
- * Basic PropertyManager impl for BeanPopulator for test purposes
+ * Dummy Properties handler for EnvironmentBean test purposes.
  *
- * @author Jonathan Halliday (jonathan.halliday@redhat.com)
+ * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2009-10
  */
-public class DummyPropertyManager implements PropertyManager
+public class DummyProperties extends Properties
 {
+    public DummyProperties() {
+        super();
+    }
+
+    public DummyProperties(Properties properties) {
+        super(properties);
+    }
+
     public static Set<String> extractKeys(Class environment) throws IllegalAccessException {
 
         Set<String> keys = new HashSet<String>();
@@ -66,14 +68,7 @@ public class DummyPropertyManager implements PropertyManager
         }
     }
 
-    public Set<String> usedKeys = new HashSet<String>();
-    Properties properties = null;
-    public Set<String> concatenationKeys = new HashSet<String>();
-
-    public DummyPropertyManager(Properties properties) {
-        this.properties = properties;
-    }
-
+    @Override
     public String getProperty(String key)
     {
         for(String prefix : concatenationKeys) {
@@ -85,38 +80,10 @@ public class DummyPropertyManager implements PropertyManager
 
         usedKeys.add(key);
 
-        if(properties != null) {
-            return properties.getProperty(key);
-        } else {
-            return null;
-        }
+        return super.getProperty(key);
     }
 
-    public String getProperty(String s, String s1)
-    {
-        throw new RuntimeException("this is not expected to be called during the test");
-    }
-
-    public String setProperty(String s, String s1, boolean b)
-    {
-        throw new RuntimeException("this is not expected to be called during the test");
-    }
-
-    public String setProperty(String s, String s1)
-    {
-        throw new RuntimeException("this is not expected to be called during the test");
-    }
-
-    public String removeProperty(String s)
-    {
-        throw new RuntimeException("this is not expected to be called during the test");
-    }
-
-    public Properties getProperties()
-    {
-        throw new RuntimeException("this is not expected to be called during the test");
-    }
-
+    @Override
     public Enumeration propertyNames()
     {
         Vector<String> names = new Vector<String>();
@@ -127,23 +94,6 @@ public class DummyPropertyManager implements PropertyManager
         return names.elements();
     }
 
-    public void load(String s, String s1) throws IOException, ClassNotFoundException, LoadPropertiesException
-    {
-        throw new RuntimeException("this is not expected to be called during the test");
-    }
-
-    public void save(String s, String s1) throws IOException, ClassNotFoundException, SavePropertiesException
-    {
-        throw new RuntimeException("this is not expected to be called during the test");
-    }
-
-    public void addManagementPlugin(PropertyManagementPlugin propertyManagementPlugin) throws IOException, ManagementPluginException
-    {
-        throw new RuntimeException("this is not expected to be called during the test");
-    }
-
-    public boolean verbose()
-    {
-        throw new RuntimeException("this is not expected to be called during the test");
-    }
+    public Set<String> usedKeys = new HashSet<String>();
+    public Set<String> concatenationKeys = new HashSet<String>();
 }

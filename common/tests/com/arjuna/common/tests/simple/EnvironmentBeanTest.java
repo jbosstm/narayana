@@ -40,11 +40,11 @@ public class EnvironmentBeanTest
         // check that a bean is populated correctly by the BeanPopulator
 
         DummyEnvironmentBean testBean = new DummyEnvironmentBean();
-        DummyPropertyManager testManager = new DummyPropertyManager(testBean.getProperties());
-        BeanPopulator.configureFromPropertyManager(testBean, testManager);
+        DummyProperties testProperties = new DummyProperties(testBean.getProperties());
+        BeanPopulator.configureFromProperties(testBean, testProperties);
 
         Set<Object> expectedKeys = testBean.getProperties().keySet();
 
-        assertTrue( testManager.usedKeys.containsAll(expectedKeys) );
+        assertTrue( testProperties.usedKeys.containsAll(expectedKeys) );
     }
 }

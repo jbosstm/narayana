@@ -46,11 +46,11 @@ public class BeanPopulator
             T bean = null;
             try {
                 bean = beanClass.newInstance();
-                configureFromPropertyManager(bean, propertyManager);
+                configureFromProperties(bean, propertyManager.getProperties());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            singletonBeanInstances.put(beanClass, bean);
+            singletonBeanInstances.putIfAbsent(beanClass, bean);
         }
 
         return (T)singletonBeanInstances.get(beanClass);
@@ -58,7 +58,7 @@ public class BeanPopulator
 
     /**
      * Examine the properties of the provided bean and update them to match the values of the corresponding
-     * properties in the PropertyManager.
+     * properties in the Properties.
      * This will normally be used at startup to configure a freshly created default bean to match
      * the configuration read from a properties file.
      *
@@ -81,15 +81,15 @@ public class BeanPopulator
      * the same prefix e.g. com.arjuna.ats.arjuna.foo. whilst still allowing for changing of the property
      * name in cases where this makes for more readable code.
      *
-     * Obtain the value of the property from the PropertyManager and if it's not null, type convert it to match
+     * Obtain the value of the property from the Properties and if it's not null, type convert it to match
      * the bean's property field type.  Obtain the value of the property from the bean and if it's different
-     * from the value read from the propertyManager, use the setter to update the bean.
+     * from the value read from the Properties, use the setter to update the bean.
      *
      * @param bean a JavaBean, the target of the property updates and source for defaults.
-     * @param propertyManager a PropertyManager, the source of the configuration overrides.
+     * @param properties a Properties object, the source of the configuration overrides.
      * @throws Exception if the configuration of the bean fails.
      */
-    public static void configureFromPropertyManager(Object bean, PropertyManager propertyManager) throws Exception {
+    public static void configureFromProperties(Object bean, Properties properties) throws Exception {
 
         if(!bean.getClass().isAnnotationPresent(PropertyPrefix.class)) {
             throw new Exception("no PropertyPrefix found on "+bean.getClass().getName());
@@ -116,27 +116,38 @@ public class BeanPopulator
             }
 
             if(field.isAnnotationPresent(ConcatenationPrefix.class)) {
-                handleGroupProperty(bean, propertyManager, field, setter, getter);
+                handleGroupProperty(bean, properties, field, setter, getter);
             } else {
-                handleSimpleProperty(bean, propertyManager, field, setter, getter);
+                handleSimpleProperty(bean, properties, field, setter, getter);
             }
         }
     }
 
-    private static void handleGroupProperty(Object bean, PropertyManager propertyManager, Field field, Method setter, Method getter)
+    /**
+     * Render the state of the known bean instances as text.
+     */
+    public static String printState() {
+        StringBuffer buffer = new StringBuffer();
+        for(Object bean : singletonBeanInstances.values()) {
+            printBean(bean, buffer);
+        }
+        return buffer.toString();
+    }
+
+    private static void handleGroupProperty(Object bean, Properties properties, Field field, Method setter, Method getter)
         throws Exception
     {
         List<String> values = new LinkedList<String>();
 
-        String valueFromPropertyManager = getValueFromPropertyManager(bean, propertyManager, field, bean.getClass().getSimpleName());
+        String valueFromProperties = getValueFromProperties(bean, properties, field, bean.getClass().getSimpleName());
 
-        if(valueFromPropertyManager != null)
+        if(valueFromProperties != null)
         {
             // it's a single value which needs parsing
 
-            String[] tokens = valueFromPropertyManager.split("\\s+");
+            String[] tokens = valueFromProperties.split("\\s+");
 
-            // the order we want them is is the order they appear in the string, so we can just add in sequence:
+            // the order we want them in is the order they appear in the string, so we can just add in sequence:
             for(String token : tokens) {
                 values.add(token);
             }
@@ -147,7 +158,7 @@ public class BeanPopulator
             // the order we want them in is the lex sort order of the keys, so we need to buffer and sort them:
 
             List<String> listOfMatchingPropertyNames = new LinkedList<String>();
-            Enumeration propertyNamesEnumeration = propertyManager.propertyNames();
+            Enumeration propertyNamesEnumeration = properties.propertyNames();
 
             if (propertyNamesEnumeration != null)
             {
@@ -167,7 +178,7 @@ public class BeanPopulator
             Collections.sort(listOfMatchingPropertyNames);
 
             for(String name : listOfMatchingPropertyNames) {
-                String value = propertyManager.getProperty(name);
+                String value = properties.getProperty(name);
                 values.add(value);
             }            
         }
@@ -179,44 +190,44 @@ public class BeanPopulator
         }
     }
 
-    private static void handleSimpleProperty(Object bean, PropertyManager propertyManager, Field field, Method setter, Method getter)
+    private static void handleSimpleProperty(Object bean, Properties properties, Field field, Method setter, Method getter)
             throws Exception
     {
         PropertyPrefix prefixAnnotation = bean.getClass().getAnnotation(PropertyPrefix.class);
         String prefix = prefixAnnotation.prefix();
 
-        String valueFromPropertyManager = getValueFromPropertyManager(bean, propertyManager, field, prefix);
+        String valueFromProperties = getValueFromProperties(bean, properties, field, prefix);
 
-        if(valueFromPropertyManager != null) {
+        if(valueFromProperties != null) {
 
             Object valueFromBean = getter.invoke(bean, new Object[] {});
 
             if(field.getType().equals(Boolean.TYPE)) {
 
-                if(!((Boolean)valueFromBean).booleanValue() && isPositive(valueFromPropertyManager)) {
+                if(!((Boolean)valueFromBean).booleanValue() && isPositive(valueFromProperties)) {
                     setter.invoke(bean, new Object[]{ Boolean.TRUE });
                 }
 
-                if(((Boolean)valueFromBean).booleanValue() && isNegative(valueFromPropertyManager)) {
+                if(((Boolean)valueFromBean).booleanValue() && isNegative(valueFromProperties)) {
                     setter.invoke(bean, new Object[] { Boolean.FALSE});
                 }
 
             } else if(field.getType().equals(String.class)) {
 
-                if(!valueFromPropertyManager.equals(valueFromBean)) {
-                    setter.invoke(bean, new Object[] {valueFromPropertyManager});
+                if(!valueFromProperties.equals(valueFromBean)) {
+                    setter.invoke(bean, new Object[] {valueFromProperties});
                 }
 
             } else if(field.getType().equals(Long.TYPE)) {
 
-                Long longValue = Long.valueOf(valueFromPropertyManager);
+                Long longValue = Long.valueOf(valueFromProperties);
                 if(!longValue.equals(valueFromBean)) {
                     setter.invoke(bean, new Object[] {longValue});
                 }
 
             } else if(field.getType().equals(Integer.TYPE)) {
 
-                Integer intValue = Integer.valueOf(valueFromPropertyManager);
+                Integer intValue = Integer.valueOf(valueFromProperties);
                 if(!intValue.equals(valueFromBean)) {
                     setter.invoke(bean, new Object[] {intValue});
                 }
@@ -229,22 +240,22 @@ public class BeanPopulator
         }
     }
 
-    private static String getValueFromPropertyManager(Object bean, PropertyManager propertyManager, Field field, String prefix)
+    private static String getValueFromProperties(Object bean, Properties properties, Field field, String prefix)
     {
         String propertyFileKey;
-        String valueFromPropertyManager = null;
+        String valueFromProperties = null;
 
-        if(valueFromPropertyManager == null) {
+        if(valueFromProperties == null) {
             propertyFileKey = bean.getClass().getCanonicalName()+"."+field.getName();
-            valueFromPropertyManager = propertyManager.getProperty(propertyFileKey);
+            valueFromProperties = properties.getProperty(propertyFileKey);
         }
 
-        if(valueFromPropertyManager == null) {
+        if(valueFromProperties == null) {
             propertyFileKey = bean.getClass().getSimpleName()+"."+field.getName();
-            valueFromPropertyManager = propertyManager.getProperty(propertyFileKey);
+            valueFromProperties = properties.getProperty(propertyFileKey);
         }
 
-        if (valueFromPropertyManager == null) {
+        if (valueFromProperties == null) {
             propertyFileKey = prefix+field.getName();
 
             if(field.isAnnotationPresent(FullPropertyName.class)) {
@@ -252,10 +263,49 @@ public class BeanPopulator
                 propertyFileKey = fullPropertyName.name();
             }
 
-            valueFromPropertyManager = propertyManager.getProperty(propertyFileKey);
+            valueFromProperties = properties.getProperty(propertyFileKey);
         }
 
-        return valueFromPropertyManager;
+        return valueFromProperties;
+    }
+
+    private static void printBean(Object bean, StringBuffer buffer)
+    {
+        String lineSeparator = System.getProperty("line.separator");
+        buffer.append("Bean class: ");
+        buffer.append(bean.getClass().getCanonicalName());
+        buffer.append(lineSeparator);
+
+        for(Field field : bean.getClass().getDeclaredFields()) {
+            Class type = field.getType();
+
+            String getterMethodName;
+            Method getter = null;
+            if(field.getType().equals(Boolean.TYPE)) {
+                getterMethodName = "is"+capitalizeFirstLetter(field.getName());
+                try {
+                    getter = bean.getClass().getMethod(getterMethodName, new Class[] {});
+                } catch (NoSuchMethodException e) {}
+            }
+
+            try {
+                if(getter == null) {
+                    getterMethodName = "get"+capitalizeFirstLetter(field.getName());
+                    getter = bean.getClass().getMethod(getterMethodName, new Class[] {});
+                }
+
+                Object valueFromBean = getter.invoke(bean, new Object[] {});
+
+                buffer.append("  ");
+                buffer.append(field.getName());
+                buffer.append(": ");
+                buffer.append(valueFromBean);
+            } catch(Exception e) {
+                buffer.append("failed to read property ");
+                buffer.append(field.getName());
+            }
+            buffer.append(lineSeparator);
+        }
     }
 
     private static String capitalizeFirstLetter(String string) {
