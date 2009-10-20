@@ -44,6 +44,7 @@ import java.io.IOException;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 /**
  * Abstract Record Class
@@ -348,7 +349,7 @@ public abstract class AbstractRecord extends StateManager
 	{
 		try
 		{
-			uidOfObject.pack(os);
+		    UidHelper.packInto(uidOfObject, os);
 			os.packString(typeOfObject);
 
 			return true;
@@ -377,7 +378,7 @@ public abstract class AbstractRecord extends StateManager
 
 		try
 		{
-			uidOfObject.unpack(os);
+		    uidOfObject = UidHelper.unpackFrom(os);
 			typeOfObject = os.unpackString();
 
 			return true;

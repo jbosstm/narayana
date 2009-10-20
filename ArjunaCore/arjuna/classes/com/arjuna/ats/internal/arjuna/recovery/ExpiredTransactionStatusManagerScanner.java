@@ -42,6 +42,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState ;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import com.arjuna.common.util.logging.*;
 
@@ -99,14 +100,15 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
          // find the uids of all the transaction status manager items
          if ( _objectStore.allObjUids(_itemTypeName, uids) )
          {
-            Uid theUid = new Uid(Uid.nullUid()) ;
+            Uid theUid = null;
 
             boolean endOfUids = false ;
 
             while (!endOfUids)
             {
                // extract a uid
-               theUid.unpack(uids) ;
+                
+                theUid = UidHelper.unpackFrom(uids);
 
                if (theUid.equals(Uid.nullUid()))
                   endOfUids = true ;

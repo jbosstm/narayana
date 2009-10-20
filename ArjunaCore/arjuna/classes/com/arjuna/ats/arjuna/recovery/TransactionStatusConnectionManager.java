@@ -39,6 +39,7 @@ import com.arjuna.ats.arjuna.coordinator.TxControl ;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException ;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore ;
 import com.arjuna.ats.arjuna.state.InputObjectState ;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.recovery.TransactionStatusConnector ;
 import com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem ;
 
@@ -209,7 +210,7 @@ public class TransactionStatusConnectionManager
 
 	if ( tsmis )
 	{
-	    Uid theUid = new Uid(Uid.nullUid()) ;
+	    Uid theUid = null;
 
 	    boolean moreUids = true ;
 
@@ -217,7 +218,7 @@ public class TransactionStatusConnectionManager
 	    {
 		try
 		{
-		    theUid.unpack( uids ) ;
+		    theUid = UidHelper.unpackFrom(uids);
 
 		    if ( theUid.equals( Uid.nullUid() ) )
 		    {

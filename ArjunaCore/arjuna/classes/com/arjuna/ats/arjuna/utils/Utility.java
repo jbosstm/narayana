@@ -36,6 +36,7 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.common.util.propertyservice.PropertyManager;
 
+import java.net.Inet6Address;
 import java.net.InetAddress;
 
 import java.net.UnknownHostException;
@@ -119,7 +120,7 @@ public class Utility
     }
 
     /**
-     * Convert a hex String to a long.
+     * Convert a hex String to a long
      */
 
     public static long hexStringToLong (String s) throws NumberFormatException
@@ -162,25 +163,63 @@ public class Utility
     }
 
     /**
-     * @return an integer representing the ip address of the local machine.
+     * @return Long(s) representing the ip v6 address of the local machine.
      *         Essentially the bytes of the InetAddress are shuffled into the
-     *         integer. This was once part of the Uid class but has been
+     *         long(s). This was once part of the Uid class but has been
      *         separated for general availability.
      * @since JTS 2.1.
      */
 
-    public static synchronized int hostInetAddr () throws UnknownHostException
+    public static synchronized long[] hostInetAddr () throws UnknownHostException
     {
         /*
          * Calculate only once.
          */
 
-        if (myAddr == 0)
+        if (myAddr == null)
         {
+            myAddr = new long[2];
+            
+            myAddr[0] = 0;
+            myAddr[1] = 0;
+            
+            byte[] b = null;
             InetAddress addr = InetAddress.getLocalHost();
-            byte[] b = addr.getAddress();
 
-            for (int i = 0; i < b.length; i++)
+            if (addr instanceof Inet6Address)
+            {
+                // 16 bytes to work with.
+                
+                b = addr.getAddress();
+            }
+            else
+            {
+                /*
+                 * Convert ipv4 to ipv6
+                 * 
+                 * We only have 4 bytes here.
+                 * 
+                 * ::FFFF:129.144.52.38
+                 */
+
+                byte[] v4Address = addr.getAddress();
+                
+                if (v4Address.length > 4)
+                    throw new UnknownHostException();        
+                
+                b = new byte[16];
+                
+                // high order byte in [0]
+                
+                for (int i = 0; i < 10; i++)
+                    b[i] = 0;
+                
+                b[10] = b[11] = (byte) 255;
+                
+                System.arraycopy(v4Address, 0, b, 12, v4Address.length);
+            }
+
+            for (int i = 0; i < 8; i++)
             {
                 /*
                  * Convert signed byte into unsigned.
@@ -190,10 +229,25 @@ public class Utility
 
                 l += (0x80 & b[i]);
 
-                myAddr = (myAddr << 8) | l;
+                myAddr[0] = (myAddr[0] << 8) | l;
             }
+            
+            for (int i = 8; i < 16; i++)
+            {
+                /*
+                 * Convert signed byte into unsigned.
+                 */
+
+                int l = 0x7f & b[i];
+
+                l += (0x80 & b[i]);
+
+                myAddr[1] = (myAddr[1] << 8) | l;
+            }               
         }
 
+        System.err.println("**returning < "+myAddr[0]+", "+myAddr[1]+" >");
+        
         return myAddr;
     }
 
@@ -367,7 +421,7 @@ public class Utility
         }
     }
 
-    private static int myAddr = 0;
+    private static long[] myAddr = null;
 
     private static Uid processUid = null;
 

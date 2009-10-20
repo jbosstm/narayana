@@ -31,6 +31,7 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.gandiva.inventory.InventoryElement;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.gandiva.ObjectName;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.tools.objectstorebrowser.TransactionLister;
 
 import java.util.Set;
@@ -80,7 +81,7 @@ public class InFlightTransactionPseudoStore extends ObjectStoreImple implements 
                 Set<Uid> uids = transactionLister.getTransactions().keySet();
 
                 for (Uid uid : uids)
-                    uid.pack(store);
+                    UidHelper.packInto(uid, store);
             }
             catch (IOException e)
             {
@@ -90,7 +91,7 @@ public class InFlightTransactionPseudoStore extends ObjectStoreImple implements 
 
         try
         {
-            Uid.nullUid().pack(store);
+            UidHelper.packInto(Uid.nullUid(), store);
         }
         catch (IOException e)
         {

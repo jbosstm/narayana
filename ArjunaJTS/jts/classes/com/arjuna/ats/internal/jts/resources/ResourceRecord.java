@@ -40,6 +40,7 @@ package com.arjuna.ats.internal.jts.resources;
 import com.arjuna.ats.jts.CosTransactionsNames;
 import com.arjuna.ats.jts.logging.*;
 
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.ORBManager;
@@ -693,7 +694,7 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 
 		// Unpack recovery coordinator Uid
 
-		_recCoordUid.unpack(os);
+		_recCoordUid = UidHelper.unpackFrom(os);
 
 		if (jtsLogger.logger.isDebugEnabled())
 		{
@@ -778,7 +779,7 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 		if (result)
 		{
 		    // Pack recovery coordinator Uid
-		    _recCoordUid.pack(os);
+		    UidHelper.packInto(_recCoordUid, os);
 
 		    if (jtsLogger.logger.isDebugEnabled())
 		    {

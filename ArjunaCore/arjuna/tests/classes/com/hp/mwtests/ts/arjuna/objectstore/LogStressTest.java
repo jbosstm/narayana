@@ -39,6 +39,7 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -125,9 +126,7 @@ public class LogStressTest
         try {
             TxControl.getStore().allObjUids(new MyAtomicAction().type(), ios, ObjectStore.OS_UNKNOWN);
 
-            Uid tempUid = new Uid(Uid.nullUid());
-
-            tempUid.unpack(ios);
+            Uid tempUid = UidHelper.unpackFrom(ios);
 
             // there should be no entries left
 

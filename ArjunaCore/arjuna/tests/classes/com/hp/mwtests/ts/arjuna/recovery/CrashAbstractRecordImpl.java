@@ -45,7 +45,7 @@ public class CrashAbstractRecordImpl extends AbstractRecord
 {
     public CrashAbstractRecordImpl(int crashBehaviour)
     {
-        super(new Uid("-7FFFFFF" + _count + ":0:0:0"),
+        super(new Uid("-7FFFFFF" + _count + ":0:0:0:0"),
                 "com.hp.mwtests.ts.arjuna.recovery.CrashAbstractRecordImpl",
                 ObjectType.ANDPERSISTENT);
         _count++;

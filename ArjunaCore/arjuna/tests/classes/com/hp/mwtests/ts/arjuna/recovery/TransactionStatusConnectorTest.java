@@ -107,10 +107,7 @@ public class TransactionStatusConnectorTest
 
             if (TransactionStatusManagerItem.createAndSave(_test_port)) {
                 _pidUid = Utility.getProcessUid();
-                String strUid = _pidUid.toString();
-                StringTokenizer st = new StringTokenizer(strUid, ":");
-                st.nextToken();
-                _pidStr = st.nextToken();
+                _pidStr = Utility.intToHexString(Utility.getpid());
 
                 _test_service_socket = new ServerSocket(_test_port);
                 _test_service = new TransactionStatusConnectorTestService();
@@ -199,6 +196,8 @@ public class TransactionStatusConnectorTest
             _listener.stopListener();
         }
         catch (Exception ex) {
+            ex.printStackTrace();
+            
             System.err.println(_unit_test + " test1 " + ex);
             _tests_failed++;
         }

@@ -42,6 +42,7 @@ import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.InputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.resources.spi.XATerminatorExtensions;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.coordinator.ServerTransaction;
@@ -264,11 +265,11 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
 
                 do
                 {
-                    Uid uid = new Uid(Uid.nullUid());
+                    Uid uid = null;
 
                     try
                     {
-                        uid.unpack(states);
+                        uid = UidHelper.unpackFrom(states);
                     }
                     catch (IOException ex)
                     {

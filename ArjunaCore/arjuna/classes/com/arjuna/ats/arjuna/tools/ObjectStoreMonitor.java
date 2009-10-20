@@ -37,6 +37,8 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+
 import java.io.PrintWriter;
 
 public class ObjectStoreMonitor
@@ -123,7 +125,7 @@ public static void main (String[] args)
 				    
 				    while (!endOfUids)
 				    {
-					theUid.unpack(uids);
+				        theUid = UidHelper.unpackFrom(uids);
 
 					if (theUid.equals(Uid.nullUid()))
 					    endOfUids = true;

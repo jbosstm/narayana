@@ -42,6 +42,8 @@ import java.sql.*;
 import java.util.Hashtable;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+
 import java.io.IOException;
 
 /**
@@ -526,7 +528,7 @@ public abstract class JDBCImple
 					try
 					{
 						theUid = new Uid(rs.getString(1));
-						theUid.pack(store);
+						UidHelper.packInto(theUid, store);
 					}
 					catch (IOException ex)
 					{
@@ -585,7 +587,7 @@ public abstract class JDBCImple
 
 			try
 			{
-				Uid.nullUid().pack(store);
+			    UidHelper.packInto(Uid.nullUid(), store);
 			}
 			catch (IOException e)
 			{

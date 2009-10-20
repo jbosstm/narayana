@@ -38,6 +38,7 @@ import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.recovery.RecoverAtomicAction;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -55,7 +56,7 @@ public class RecoverAtomicActionTest
 
         try
         {
-            kungfuTx.pack(fluff);
+            UidHelper.packInto(kungfuTx, fluff);
 
             System.err.println("Creating dummy log");
 

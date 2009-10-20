@@ -63,6 +63,7 @@ import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.jts.extensions.AtomicTransaction;
 import com.arjuna.ats.txoj.Lock;
 import com.arjuna.ats.txoj.LockManager;
@@ -357,7 +358,7 @@ public class AITMatrixImpl03 extends LockManager implements MatrixOperations
 			{
 				for (int y = 0; y < _height; y++)
 				{
-					_values[x][y].get_uid().pack(objectState);
+				    UidHelper.packInto(_values[x][y].get_uid(), objectState);
 				}
 			}
 
@@ -379,9 +380,8 @@ public class AITMatrixImpl03 extends LockManager implements MatrixOperations
 			{
 				for (int y = 0; y < _height; y++)
 				{
-					Uid uid = new Uid();
+					Uid uid = UidHelper.unpackFrom(objectState);
 
-					uid.unpack(objectState);
 					_values[x][y] = Element.obtain(uid);
 				}
 			}

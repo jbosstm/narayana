@@ -42,6 +42,7 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStore ;
 import com.arjuna.ats.arjuna.recovery.ExpiryScanner ;
 import com.arjuna.ats.arjuna.state.InputObjectState ;
 
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.common.util.logging.*;
@@ -105,14 +106,14 @@ public class ExpiredAssumedCompleteScanner implements ExpiryScanner
 	    // find the uids of all the contact items
 	    if (_objectStore.allObjUids(_typeName, uids))
 	    {
-		Uid theUid = new Uid(Uid.nullUid());
+		Uid theUid = null;
 
 		boolean endOfUids = false;
 
 		while (!endOfUids)
 		{
 		    // extract a uid
-		    theUid.unpack(uids);
+		    theUid = UidHelper.unpackFrom(uids);
 
 		    if (theUid.equals(Uid.nullUid()))
 			endOfUids = true;

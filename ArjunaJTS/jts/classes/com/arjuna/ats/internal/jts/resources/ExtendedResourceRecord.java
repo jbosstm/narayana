@@ -43,6 +43,7 @@ import com.arjuna.ats.jts.CosTransactionsNames;
 
 import com.arjuna.ats.jts.logging.*;
 
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jts.ORBManager;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
@@ -754,9 +755,7 @@ public class ExtendedResourceRecord extends
 
 			_parentCoordHandle = null;
 
-			_cachedUid = new Uid(Uid.nullUid());
-
-			_cachedUid.unpack(os);
+			_cachedUid = UidHelper.unpackFrom(os);
 
 			_cachedType = os.unpackInt();
 
@@ -772,7 +771,7 @@ public class ExtendedResourceRecord extends
 				 */
 
 				// Unpack recovery coordinator Uid
-				_recCoordUid.unpack(os);
+				_recCoordUid = UidHelper.unpackFrom(os);
 
 				if (jtsLogger.logger.isDebugEnabled())
 				{
@@ -831,7 +830,7 @@ public class ExtendedResourceRecord extends
 			if (_cachedUid == null)
 				_cachedUid = order();
 
-			_cachedUid.pack(os);
+			UidHelper.packInto(_cachedUid, os);
 
 			if (_cachedType == -1)
 				_cachedType = typeIs();
@@ -884,7 +883,7 @@ public class ExtendedResourceRecord extends
 				if (result)
 				{
 					// Pack recovery coordinator Uid
-					_recCoordUid.pack(os);
+				    UidHelper.packInto(_recCoordUid, os);
 
 					if (jtsLogger.logger.isDebugEnabled())
 					{

@@ -47,6 +47,8 @@ import java.util.*;
 import java.io.PrintWriter;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+
 import java.io.IOException;
 
 /**
@@ -142,7 +144,7 @@ public void periodicWorkFirstPass ()
 			 // find the uids of anything with an uncommitted entry in the object store
 			 if (_objectStore.allObjUids(theName, uids, ObjectStore.OS_UNCOMMITTED))
 			 {
-			     Uid theUid = new Uid(Uid.nullUid());
+			     Uid theUid = null;
 			     
 			     try
 			     {
@@ -150,7 +152,7 @@ public void periodicWorkFirstPass ()
 				 
 				 while (!endOfUids) {
 				     // extract a uid
-				     theUid.unpack(uids);
+				     theUid = UidHelper.unpackFrom(uids);
 				     
 				     if (theUid.equals(Uid.nullUid()))
 					 endOfUids = true;

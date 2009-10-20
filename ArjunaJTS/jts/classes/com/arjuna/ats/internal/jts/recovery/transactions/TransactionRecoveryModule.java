@@ -40,6 +40,7 @@ import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.state.*;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.jts.utils.*;
 import com.arjuna.ats.arjuna.exceptions.*;
 
@@ -125,7 +126,7 @@ public abstract class TransactionRecoveryModule
 
 	if (anyTransactions)
 	{
-	    Uid theUid = new Uid(Uid.nullUid());
+	    Uid theUid = null;
 
 	    boolean moreUids = true;
 
@@ -133,7 +134,7 @@ public abstract class TransactionRecoveryModule
 	    {
 		try
 		{
-		    theUid.unpack(uids);
+		    theUid = UidHelper.unpackFrom(uids);
 
 		    if (theUid.equals(Uid.nullUid()))
 		    {

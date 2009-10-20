@@ -68,7 +68,7 @@ public class XATxConverter
 	byte[] nodeName = TxControl.getXANodeName();
 	String s = uid.stringForm();
 	int uidLen = s.length()+nodeName.length+1;
-		
+
 	if (uidLen > com.arjuna.ats.arjuna.xa.XID.MAXGTRIDSIZE)  // Uid is too long!!!!
 	{
 	    throw new IllegalStateException();

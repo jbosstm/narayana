@@ -36,6 +36,7 @@ import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -52,20 +53,17 @@ public class AllObjUidsTest
 
         InputObjectState ios = new InputObjectState();
         objStore.allObjUids(type, ios, ObjectStore.OS_UNKNOWN);
-        Uid uid = new Uid();
-        uid.unpack(ios);
+        Uid uid = UidHelper.unpackFrom(ios);
         assertEquals(Uid.nullUid(), uid);
 
         ios = new InputObjectState();
         objStore.allObjUids(type, ios, ObjectStore.OS_COMMITTED);
-        uid = new Uid();
-        uid.unpack(ios);
+        uid = UidHelper.unpackFrom(ios);
         assertEquals(Uid.nullUid(), uid);
 
         ios = new InputObjectState();
         objStore.allObjUids(type, ios, ObjectStore.OS_UNCOMMITTED);
-        uid = new Uid();
-        uid.unpack(ios);
+        uid = UidHelper.unpackFrom(ios);
         assertEquals(Uid.nullUid(), uid);
     }
 }

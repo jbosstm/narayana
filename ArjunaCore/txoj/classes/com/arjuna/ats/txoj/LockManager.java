@@ -46,6 +46,7 @@ import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.state.*;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.txoj.common.txojPropertyManager;
 import java.io.PrintWriter;
 import java.util.*;
@@ -1141,7 +1142,7 @@ public class LockManager extends StateManager
 
                 if (S != null)
                 {
-                    Uid u = new Uid(Uid.nullUid()); /*
+                    Uid u = null; /*
                                                      * avoid system calls in Uid
                                                      * creation
                                                      */
@@ -1172,7 +1173,7 @@ public class LockManager extends StateManager
                         {
                             try
                             {
-                                u.unpack(S);
+                                u = UidHelper.unpackFrom(S);
                                 current = new Lock(u);
 
                                 if (current != null)
@@ -1341,7 +1342,7 @@ public class LockManager extends StateManager
 
                     while ((current = locksHeld.pop()) != null)
                     {
-                        current.get_uid().pack(S);
+                        UidHelper.packInto(current.get_uid(), S);
 
                         if (!current.save_state(S, ObjectType.ANDPERSISTENT))
                         {

@@ -46,6 +46,8 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+
 import java.io.PrintWriter;
 
 import java.io.IOException;
@@ -239,7 +241,7 @@ public class DisposeRecord extends CadaverRecord
 		    os.packInt(store.typeIs());
 		    store.pack(os);
 				
-		    objectUid.pack(os);
+		    UidHelper.packInto(objectUid, os);
 		    os.packString(typeName);
 		}
 		catch (IOException e)
@@ -277,7 +279,7 @@ public class DisposeRecord extends CadaverRecord
 		store = new ObjectStore(ObjectStoreType.typeToClassName(objStoreType));
 		store.unpack(os);
 			
-		objectUid.unpack(os);
+		objectUid = UidHelper.unpackFrom(os);
 		typeName = os.unpackString();
 	    }
 	    else

@@ -37,6 +37,7 @@ import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -78,7 +79,7 @@ public class LogStoreTest
 
                 do {
                     try {
-                        id.unpack(ios);
+                        id = UidHelper.unpackFrom(ios);
                     }
                     catch (Exception ex) {
                         id = Uid.nullUid();

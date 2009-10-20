@@ -38,6 +38,7 @@ import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jta.utils.XAUtils;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.AtomicAction;
 
@@ -396,17 +397,17 @@ public class XARecoveryModule implements RecoveryModule
 	 *          Unexpceted recovery error:
 	 * @message com.arjuna.ats.internal.jta.recovery.noxanodes No XA recovery
 	 *          nodes specified. Will only recover saved states.
-	 */
+	 */ 
 
 	private final boolean transactionInitiatedRecovery()
 	{
-		Uid theUid = new Uid();
+		Uid theUid = null;
 
 		while (theUid.notEquals(Uid.nullUid()))
 		{
 			try
 			{
-				theUid.unpack(_uids);
+				theUid = UidHelper.unpackFrom(_uids);
 
 				if (theUid.notEquals(Uid.nullUid()))
 				{

@@ -37,6 +37,8 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+
 import java.io.PrintWriter;
 
 public class ObjectStateQuery
@@ -89,9 +91,7 @@ public static void main (String[] args)
 	    
 	    imple.allObjUids(type, buff, ObjectStore.OS_UNCOMMITTED);
 	    
-	    Uid u = new Uid(Uid.nullUid());
-	    
-	    u.unpack(buff);
+	    Uid u = UidHelper.unpackFrom(buff);
 	    
 	    System.out.println("got "+u);
 	}

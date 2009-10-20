@@ -49,6 +49,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState ;
 
 import com.arjuna.ats.arjuna.logging.FacilityCode ;
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import com.arjuna.common.util.logging.*;
 
@@ -240,7 +241,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 				    + " transactions" ) ;
       }
 
-      Uid theUid = new Uid( Uid.nullUid() );
+      Uid theUid = null;
 
       boolean moreUids = true ;
 
@@ -248,7 +249,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
       {
          try
          {
-            theUid.unpack( uids ) ;
+             theUid = UidHelper.unpackFrom(uids);
 
             if (theUid.equals( Uid.nullUid() ))
             {

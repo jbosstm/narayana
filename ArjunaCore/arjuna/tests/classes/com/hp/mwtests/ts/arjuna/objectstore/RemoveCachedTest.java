@@ -36,6 +36,7 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -56,7 +57,7 @@ public class RemoveCachedTest
             Uid toRemove = new Uid(Uid.nullUid());
 
             do {
-                toRemove.unpack(buff);
+                toRemove = UidHelper.unpackFrom(buff);
 
                 if (toRemove.notEquals(Uid.nullUid())) {
                     System.err.println("Removing " + toRemove + "\n");

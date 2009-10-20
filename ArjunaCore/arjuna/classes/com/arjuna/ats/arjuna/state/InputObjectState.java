@@ -35,6 +35,7 @@ import com.arjuna.ats.arjuna.common.*;
 import java.io.PrintWriter;
 
 import com.arjuna.ats.arjuna.logging.*;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import com.arjuna.common.util.logging.DebugLevel;
 import com.arjuna.common.util.logging.VisibilityLevel;
@@ -206,7 +207,7 @@ public synchronized void copy (InputObjectState objstate)
 public synchronized void unpackFrom (InputBuffer buff) throws IOException
     {
 	imageType = buff.unpackString();
-	bufferUid.unpack(buff);
+	bufferUid = UidHelper.unpackFrom(buff);
 
 	super.unpackFrom(buff);
     }

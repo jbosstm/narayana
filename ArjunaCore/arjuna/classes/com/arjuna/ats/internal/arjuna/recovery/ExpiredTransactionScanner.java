@@ -32,6 +32,7 @@ import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 /**
  * This class is a plug-in module for the recovery manager. This class is
@@ -85,14 +86,14 @@ public class ExpiredTransactionScanner implements ExpiryScanner
 
 			if (_objectStore.allObjUids(_typeName, uids))
 			{
-				Uid theUid = new Uid(Uid.nullUid());
+				Uid theUid = null;
 
 				boolean endOfUids = false;
 
 				while (!endOfUids)
 				{
 					// extract a uid
-					theUid.unpack(uids);
+				        theUid = UidHelper.unpackFrom(uids);
 
 					if (theUid.equals(Uid.nullUid()))
 						endOfUids = true;

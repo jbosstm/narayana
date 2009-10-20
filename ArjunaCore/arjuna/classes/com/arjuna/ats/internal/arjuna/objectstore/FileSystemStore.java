@@ -47,6 +47,8 @@ import com.arjuna.ats.arjuna.utils.Utility;
 import java.util.Hashtable;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+
 import java.lang.NumberFormatException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -296,7 +298,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 			if ((aUid.notEquals(Uid.nullUid())) && ((match == ObjectStore.OS_UNKNOWN) ||
 								(isType(aUid, tName, match))))
 			{
-			    aUid.pack(store);
+			    UidHelper.packInto(aUid, store);
 			}
 		    }
 		}
@@ -315,7 +317,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
 	try
 	{
-	    Uid.nullUid().pack(store);
+	    UidHelper.packInto(Uid.nullUid(), store);
 	}
 	catch (IOException e)
 	{

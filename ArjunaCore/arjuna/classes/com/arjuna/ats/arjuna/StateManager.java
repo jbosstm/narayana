@@ -47,6 +47,8 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+
 import java.io.IOException;
 
 /**
@@ -702,11 +704,11 @@ protected void packHeader (OutputObjectState os, Uid txId,
 
 	    if (txId != null)
 	    {
-		txId.pack(os);
-		processUid.pack(os);
+	        UidHelper.packInto(txId, os);
+	        UidHelper.packInto(processUid, os);
 	    }
 	    else
-		Uid.nullUid().pack(os);
+	        UidHelper.packInto(Uid.nullUid(), os);
 	}
 	catch (IOException ex)
 	{
@@ -737,14 +739,14 @@ protected void unpackHeader (InputObjectState os, Uid txId,
 
 	    if (myState.equals(StateManager.marker))
 	    {
-		txId.unpack(os);
+	        txId = UidHelper.unpackFrom(os);
 
 		/*
 		 * Is there going to be a Uid to unpack?
 		 */
 
 		if (!txId.equals(Uid.nullUid()))
-		    processUid.unpack(os);
+		    processUid = UidHelper.unpackFrom(os);
 	    }
 	    else
 	    {

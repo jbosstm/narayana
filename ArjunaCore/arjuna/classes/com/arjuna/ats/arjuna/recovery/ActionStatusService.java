@@ -44,6 +44,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.utils.Utility;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 /**
  * @message com.arjuna.ats.arjuna.recovery.ActionStatusService_1 [com.arjuna.ats.arjuna.recovery.ActionStatusService_1] - transactionType: {0} uid: {1} \n Status is {2}
@@ -303,12 +304,12 @@ public class ActionStatusService implements Service
 
                         if ( _objectStore.allObjUids( theTypeName, uids ) )
                         {
-                           Uid theUid = new Uid( Uid.nullUid() );
+                           Uid theUid = null;
 
                            while ( !endOfUids )
                            {
                               // extract a uid
-                              theUid.unpack( uids );
+                               theUid = UidHelper.unpackFrom(uids);
 
                               if (theUid.equals( Uid.nullUid() ))
                               {

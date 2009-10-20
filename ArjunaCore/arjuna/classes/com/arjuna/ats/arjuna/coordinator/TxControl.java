@@ -35,10 +35,10 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusManager;
+import com.arjuna.ats.arjuna.utils.Utility;
 
 /**
  * Transaction configuration object. We have a separate object for this so that
@@ -63,6 +63,9 @@ import com.arjuna.ats.arjuna.recovery.TransactionStatusManager;
 
 public class TxControl
 {
+    public static final int NODE_NAME_SIZE = 10;
+    public static final String DEFAULT_NODE_NAME = "Arjuna:";
+    
     public static class Shutdown extends Thread
     {
         public void run()
@@ -262,7 +265,7 @@ public class TxControl
 
 	public static void setXANodeName(byte[] name)
 	{
-	    if (name.length > 64)
+	    if (name.length > NODE_NAME_SIZE)
 	    {
 	        if (tsLogger.arjLoggerI18N.isWarnEnabled())
                 {
@@ -377,51 +380,57 @@ public class TxControl
 		}
 		else
 		{
-			Uid nodeName = new Uid();
+		    /*
+		     * In the past we used a Uid as the default node name. However, this is too
+		     * big for the way in which we use it within Xids now that we also support
+		     * ipv6. Hence the need to limit the size of a node name to 10 bytes.
+		     */
+		    
+		    String nodeName = DEFAULT_NODE_NAME+Utility.getpid();
 
 			if (tsLogger.arjLoggerI18N.isWarnEnabled())
 			{
 				tsLogger.arjLoggerI18N.warn(
 						"com.arjuna.ats.arjuna.coordinator.TxControl_1",
 						new Object[]
-						{ nodeName.stringForm() });
+						{ nodeName });
 			}
 
-			xaNodeName = nodeName.stringForm().getBytes();
+			xaNodeName = nodeName.getBytes();
 
 			writeNodeName = true;
 		}
 
-		if (xaNodeName.length > 30)
+		if (xaNodeName.length > NODE_NAME_SIZE)
 		{
-			Uid nodeName = new Uid();
+		    String nodeName = DEFAULT_NODE_NAME+Utility.getpid();
 
 			if (tsLogger.arjLoggerI18N.isWarnEnabled())
 			{
 				tsLogger.arjLoggerI18N.warn(
 						"com.arjuna.ats.arjuna.coordinator.TxControl_2",
 						new Object[]
-						{ nodeName.stringForm() });
+						{ nodeName });
 			}
 
-			xaNodeName = nodeName.stringForm().getBytes();
+			xaNodeName = nodeName.getBytes();
 
 			writeNodeName = true;
 		}
 
 		if ((env != null) && (env.indexOf('-') != -1))
 		{
-			Uid nodeName = new Uid();
+		    String nodeName = DEFAULT_NODE_NAME+Utility.getpid();
 
 			if (tsLogger.arjLoggerI18N.isWarnEnabled())
 			{
 				tsLogger.arjLoggerI18N.warn(
 						"com.arjuna.ats.arjuna.coordinator.TxControl_3",
 						new Object[]
-						{ nodeName.stringForm() });
+						{ nodeName });
 			}
 
-			xaNodeName = nodeName.stringForm().getBytes();
+			xaNodeName = nodeName.getBytes();
 
 			writeNodeName = true;
 		}

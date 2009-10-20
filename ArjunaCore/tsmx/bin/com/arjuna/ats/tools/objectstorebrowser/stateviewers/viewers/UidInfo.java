@@ -23,6 +23,7 @@ package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.OutputBuffer;
 import com.arjuna.ats.arjuna.state.InputBuffer;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.tools.objectstorebrowser.UidConverter;
 
 import javax.transaction.xa.Xid;
@@ -102,7 +103,7 @@ public class UidInfo
                 OutputBuffer outBuf = new OutputBuffer();
                 InputBuffer inBuf;
 
-                uid.pack(outBuf);
+                UidHelper.packInto(uid, outBuf);
                 inBuf = new InputBuffer(outBuf.buffer());
 
                 //host = inet4AddressToString(inBuf.unpackInt());

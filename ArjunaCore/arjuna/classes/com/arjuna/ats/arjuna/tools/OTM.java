@@ -38,6 +38,8 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.state.*;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+
 import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
@@ -285,7 +287,7 @@ public synchronized void updateTransactions ()
 					
 					while (!endOfUids)
 					{
-					    theUid.unpack(uids);
+					    theUid = UidHelper.unpackFrom(uids);
 
 					    if (theUid.equals(Uid.nullUid()))
 					    {
@@ -489,7 +491,7 @@ private synchronized void getTransactions (DefaultMutableTreeNode machineName)
 				    
 				    while (!endOfUids)
 				    {
-					theUid.unpack(uids);
+				        theUid = UidHelper.unpackFrom(uids);
 
 					if (theUid.equals(Uid.nullUid()))
 					    endOfUids = true;

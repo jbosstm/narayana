@@ -35,6 +35,8 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+
 import java.io.IOException;
 
 /**
@@ -68,9 +70,7 @@ public final synchronized Uid iterate ()
 	
 	try
 	{
-	    newUid = new Uid(Uid.nullUid());
-
-	    newUid.unpack(uidList);
+	    newUid = UidHelper.unpackFrom(uidList);
 	}
 	catch (IOException e)
 	{

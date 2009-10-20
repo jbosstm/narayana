@@ -41,8 +41,6 @@ import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 
-
-import java.util.*;
 import javax.transaction.xa.*;
 
 public class XARecoveryResourceImple extends XAResourceRecord implements XARecoveryResource

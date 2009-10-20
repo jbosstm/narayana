@@ -47,6 +47,7 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -581,7 +582,7 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
 
                     if (_objectStore.allObjUids(theName, uids))
                     {
-                        Uid theUid = new Uid();
+                        Uid theUid = null;
 
                         try
                         {
@@ -589,7 +590,7 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
 
                             while (!endOfUids)
                             {
-                                theUid.unpack(uids);
+                                theUid = UidHelper.unpackFrom(uids);
 
                                 if (theUid.equals(Uid.nullUid()))
                                     endOfUids = true;

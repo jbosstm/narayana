@@ -2050,5 +2050,4 @@ public class TestGroup_crashrecovery05_2 extends TestGroupBase
 		server4.terminate();
 		server3.terminate();
 	}
-
 }

@@ -40,6 +40,7 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.objectstore.LogInstance.TransactionData;
 
 /**
@@ -193,12 +194,12 @@ class LogInstance
 		{
 			while (iter.hasNext())
 			{
-				iter.next().pack(state);
+			    UidHelper.packInto(iter.next(), state);
 			}
 
 			// don't forget to null terminate
 
-			Uid.nullUid().pack(state);
+			UidHelper.packInto(Uid.nullUid(), state);
 		}
 		catch (final IOException ex)
 		{
@@ -469,7 +470,7 @@ public class LogStore extends FileSystemStore
 			{
 				try
 				{
-					tempUid.unpack(ios);
+				    tempUid = UidHelper.unpackFrom(ios);
 				}
 				catch (final Exception ex)
 				{
@@ -643,7 +644,7 @@ public class LogStore extends FileSystemStore
 			{
 				do
 				{
-					logName.unpack(logs);
+				    logName = UidHelper.unpackFrom(logs);
 
 					if (logName.notEquals(Uid.nullUid()))
 					{
@@ -665,7 +666,7 @@ public class LogStore extends FileSystemStore
 						{
 							for (int i = 0; i < txs.size(); i++)
 							{
-								txs.get(i).stateUid().pack(objUids);
+							    UidHelper.packInto(txs.get(i).stateUid(), objUids);
 							}
 						}
 					}
@@ -673,7 +674,7 @@ public class LogStore extends FileSystemStore
 
 				// remember null terminator
 
-				Uid.nullUid().pack(objUids);
+				UidHelper.packInto(Uid.nullUid(), objUids);
 
 				state.setBuffer(objUids.buffer());
 			}

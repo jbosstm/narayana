@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jts.orbspecific;
 
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.*;
 import com.arjuna.ats.internal.jts.ORBManager;
@@ -848,7 +849,7 @@ public class TransactionFactoryImple extends
 		}
 		else
 		{
-			Uid theUid = new Uid(Uid.nullUid());
+			Uid theUid = null;
 			int count = 0;
 			boolean finished = false;
 
@@ -856,7 +857,7 @@ public class TransactionFactoryImple extends
 			{
 				try
 				{
-					theUid.unpack(uids);
+					theUid = UidHelper.unpackFrom(uids);
 
 					if (theUid == Uid.nullUid())
 						finished = true;
@@ -877,7 +878,7 @@ public class TransactionFactoryImple extends
 			{
 				try
 				{
-					theUid.unpack(uids);
+					theUid = UidHelper.unpackFrom(uids);
 
 					ids[i] = Utility.uidToOtid(theUid.stringForm());
 				}

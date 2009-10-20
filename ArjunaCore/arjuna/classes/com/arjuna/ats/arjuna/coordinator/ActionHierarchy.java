@@ -40,6 +40,7 @@ import java.lang.OutOfMemoryError;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import com.arjuna.common.util.logging.*;
 
@@ -298,7 +299,7 @@ public class ActionHierarchy
 
 	for (int i = 0; i < currentDepth; i++)
 	{
-	    hierarchy[i].actionUid.pack(state);
+	    UidHelper.packInto(hierarchy[i].actionUid, state);
 	    state.packInt(hierarchy[i].actionType);
 	}
     }
@@ -331,7 +332,7 @@ public class ActionHierarchy
 
 	for (int i = 0; i < newDepth; i++)
 	{
-	    temp.actionUid.unpack(state);
+	    temp.actionUid = UidHelper.unpackFrom(state);
 	    temp.actionType = state.unpackInt();
 
 	    newHier.add(temp.actionUid, temp.actionType);

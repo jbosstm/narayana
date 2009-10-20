@@ -47,9 +47,10 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.common.util.logging.*;
 
 import java.io.*;
-import java.io.File;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
+
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.lang.NumberFormatException;
@@ -211,7 +212,7 @@ public class HashedStore extends ShadowNoFileLockStore
 				if ((aUid.notEquals(Uid.nullUid())) && ((match == ObjectStore.OS_UNKNOWN) ||
 				    (isType(aUid, tName, match))))
 				{
-				    aUid.pack(store);
+				    UidHelper.packInto(aUid, store);
 				}
 			    }
 			    catch (NumberFormatException e)
@@ -238,7 +239,7 @@ public class HashedStore extends ShadowNoFileLockStore
 
 	try
 	{
-	    Uid.nullUid().pack(store);
+	    UidHelper.packInto(Uid.nullUid(), store);
 	}
 	catch (IOException e)
 	{

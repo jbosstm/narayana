@@ -33,16 +33,12 @@ package com.arjuna.ats.internal.jta.recovery.arjunacore;
 
 import com.arjuna.ats.jta.recovery.*;
 
-import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
-
 import com.arjuna.ats.arjuna.common.*;
 
-import java.util.*;
 import javax.transaction.xa.*;
 
 public class XARecoveryResourceManagerImple implements XARecoveryResourceManager
 {
-
     public XARecoveryResource getResource (Uid uid)
     {
 	return new XARecoveryResourceImple(uid);
@@ -57,5 +53,4 @@ public class XARecoveryResourceManagerImple implements XARecoveryResourceManager
     {
 	return XARecoveryResourceImple.typeName();
     }
-
 }

@@ -32,8 +32,7 @@
 package com.arjuna.ats.jta.recovery;
 
 import com.arjuna.ats.arjuna.common.Uid;
-
-import java.util.*;
+ 
 import javax.transaction.xa.*;
 
 public interface XARecoveryResource

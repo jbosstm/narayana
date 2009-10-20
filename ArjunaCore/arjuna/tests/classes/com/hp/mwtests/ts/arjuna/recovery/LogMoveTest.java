@@ -36,6 +36,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionScanner;
 
 import org.junit.Test;
@@ -53,7 +54,7 @@ public class LogMoveTest
         final String tn = new AtomicAction().type();
 
         try {
-            kungfuTx.pack(fluff);
+            UidHelper.packInto(kungfuTx, fluff);
 
             System.err.println("Creating dummy log");
 
