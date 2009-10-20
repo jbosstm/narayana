@@ -32,18 +32,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class recoveryPropertyManager
 {
-    /**
-     * @deprecated use RecoveryEnvironmentBean instead
-     * @return
-     */
-    @Deprecated
-    public static PropertyManager getPropertyManager()
-    {
-        return PropertyManagerFactory.getPropertyManagerForModule("arjuna", Environment.PROPERTIES_FILE);
-    }
-
     public static RecoveryEnvironmentBean getRecoveryEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(RecoveryEnvironmentBean.class, getPropertyManager());
+        return BeanPopulator.getSingletonInstance(RecoveryEnvironmentBean.class);
     }
 }

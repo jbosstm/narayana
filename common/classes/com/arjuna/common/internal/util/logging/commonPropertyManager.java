@@ -41,23 +41,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class commonPropertyManager
 {
-    /**
-     * @deprecated use LoggingEnvironmentBean instead
-     * @return
-     */
-    @Deprecated
-    public static PropertyManager getPropertyManager()
-    {
-        return PropertyManagerFactory.getPropertyManagerForModule("common", "com.arjuna.common.util.logging.propertiesFile");
-    }
-
     public static LoggingEnvironmentBean getLoggingEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(LoggingEnvironmentBean.class, getPropertyManager());
+        return BeanPopulator.getSingletonInstance(LoggingEnvironmentBean.class);
     }
 
     public static DefaultLogEnvironmentBean getDefaultLogEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(DefaultLogEnvironmentBean.class, getPropertyManager());
+        return BeanPopulator.getSingletonInstance(DefaultLogEnvironmentBean.class);
     }
 }

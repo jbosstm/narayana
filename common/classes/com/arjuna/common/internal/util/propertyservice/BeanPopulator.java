@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
+import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 
 /**
  * Utility class that configures *EnvironmentBean objects using a PropertyManager, which is usually
@@ -38,7 +39,7 @@ public class BeanPopulator
 {
     private static final ConcurrentMap<Class, Object> singletonBeanInstances = new ConcurrentHashMap<Class, Object>();
 
-    public static <T> T getSingletonInstance(Class<T> beanClass, PropertyManager propertyManager) throws RuntimeException {
+    public static <T> T getSingletonInstance(Class<T> beanClass) throws RuntimeException {
 
         // we don't mind sometimes instantiating the bean multiple times,
         // as long as the duplicates never escape into the outside world.
@@ -46,6 +47,8 @@ public class BeanPopulator
             T bean = null;
             try {
                 bean = beanClass.newInstance();
+                // TODO: pick and document new standard for global config file name property. For now use arjunacore value.
+                PropertyManager propertyManager = PropertyManagerFactory.getPropertyManagerForModule("common", "com.arjuna.ats.arjuna.common.propertiesFile");
                 configureFromProperties(bean, propertyManager.getProperties());
             } catch (Exception e) {
                 throw new RuntimeException(e);

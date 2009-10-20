@@ -53,6 +53,6 @@ public class jdbcPropertyManager
 
     public static JDBCEnvironmentBean getJDBCEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(JDBCEnvironmentBean.class, getPropertyManager());
+        return BeanPopulator.getSingletonInstance(JDBCEnvironmentBean.class);
     }
 }

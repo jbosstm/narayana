@@ -55,6 +55,6 @@ public class jtsPropertyManager
 
     public static JTSEnvironmentBean getJTSEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(JTSEnvironmentBean.class, getPropertyManager());
+        return BeanPopulator.getSingletonInstance(JTSEnvironmentBean.class);
     }
 }

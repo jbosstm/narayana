@@ -51,6 +51,6 @@ public class opPropertyManager
 
     public static OrbPortabilityEnvironmentBean getOrbPortabilityEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(OrbPortabilityEnvironmentBean.class, getPropertyManager());
+        return BeanPopulator.getSingletonInstance(OrbPortabilityEnvironmentBean.class);
     }
 }
