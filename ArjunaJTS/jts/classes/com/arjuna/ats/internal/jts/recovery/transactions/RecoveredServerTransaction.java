@@ -46,8 +46,6 @@ import com.arjuna.ats.arjuna.exceptions.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.*;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.orbportability.*;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
@@ -58,7 +56,6 @@ import org.omg.CORBA.SystemException;
 import org.omg.CORBA.OBJECT_NOT_EXIST;
 
 import org.omg.CORBA.TRANSIENT;
-import java.util.Hashtable;
 
 
 /**
@@ -99,7 +96,6 @@ public class RecoveredServerTransaction extends ServerTransaction
     public RecoveredServerTransaction ( Uid actionUid )
     {
         this(actionUid, "");
-        _assumed_not_exist = jtsPropertyManager.getJTSEnvironmentBean().getAssumedObjectNotExist();
     }
 
     /**
@@ -113,8 +109,6 @@ public class RecoveredServerTransaction extends ServerTransaction
     {
 	super(actionUid);
 
-        _assumed_not_exist = jtsPropertyManager.getJTSEnvironmentBean().getAssumedObjectNotExist();
-	
 	if (jtsLogger.loggerI18N.isDebugEnabled())
 	    {
 		jtsLogger.loggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
@@ -339,36 +333,11 @@ public Status getOriginalStatus()
 	    }
 	  }
 
-	// orbix seems to count unreachable as transient. Over infinite time, all
-	// addresses are valid
-	  catch (TRANSIENT ex_trans) 
+	  catch (TRANSIENT ex_trans)
 	  {
-	      //Check here the orb used - If Orbix execute what is below.
-	      if (ORBInfo.getOrbEnumValue() == ORBType.ORBIX2000)
-		  {
-		      // the original application has (probably) died 
-		      if (!assumed_not_exist.containsKey(get_uid()))
-			  assumed_not_exist.put(get_uid(), new Integer(_assumed_not_exist));
-		      
-		      Integer n = (Integer)assumed_not_exist.get(get_uid());
-		      not_exist_count = n.intValue();
-		      
-		      not_exist_count--;
-		      
-		      if (not_exist_count == 0) 
-			  {
-			      jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_10", new Object[] {get_uid()});
-			      theStatus = org.omg.CosTransactions.Status.StatusRolledBack;
-			      assumed_not_exist.remove(get_uid());
-			  }
-		      else
-			  {
-			      theStatus = org.omg.CosTransactions.Status.StatusUnknown;
-			      // check if the value can be changed rather remove then put in
-			      assumed_not_exist.remove(get_uid());  
-			      assumed_not_exist.put(get_uid(), new Integer(not_exist_count)); 
-			  }
-		  }
+          // orbix seems to count unreachable as transient, but we no longer support orbix
+          jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_10", new Object[] {get_uid()});
+          theStatus = org.omg.CosTransactions.Status.StatusRolledBack;
 	  }
 	  // What here what should be done for Orbix2000
 	  catch (OBJECT_NOT_EXIST ex)
@@ -523,14 +492,5 @@ public Date getLastActiveTime()
     private boolean  _reportHeuristics = false;
     private int	 _recoveryStatus = RecoveryStatus.NEW;
 
-    private int _assumed_not_exist = 10;
-
     private org.omg.CosTransactions.Status _txStatus;
-
-    static Hashtable assumed_not_exist;
-    
-    static {
-	assumed_not_exist = new Hashtable();
-    }
-
 }

@@ -898,10 +898,4 @@ public class TransactionFactoryImple extends
 	 * @message com.arjuna.ats.internal.jts.orbspecific.tfitimeout {0} - invalid
 	 *          default transaction timeout {1}. Caught exception: {2}
 	 */
-
-	static
-	{
-        TxControl.setDefaultTimeout(jtsPropertyManager.getJTSEnvironmentBean().getDefaultTimeout());        
-	}
-
 }

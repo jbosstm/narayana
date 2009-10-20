@@ -38,6 +38,7 @@ import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.OTSManager;
 
 import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -61,7 +62,7 @@ public class DefaultTimeout
 	    ORBManager.setORB(myORB);
 	    ORBManager.setPOA(myOA);
 
-	    int sleepTime = jtsPropertyManager.getJTSEnvironmentBean().getDefaultTimeout();
+	    int sleepTime = arjPropertyManager.getCoordinatorEnvironmentBean().getDefaultTimeout();
 	    	    
 	    System.out.println("Thread "+Thread.currentThread()+" starting transaction.");
 	    

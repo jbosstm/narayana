@@ -207,9 +207,11 @@ private POA _ourPOA;
 	 * to start the recovery daemon. In general we don't want people
 	 * doing that kind of thing, but it makes development testing a
 	 * lot easier.
+	 *
+	 * Note: this relies directly on system property lookup, since we don't
+	 * want to expose the setting via the public EnvironmentBean config.
 	 */
-
-	String env = jtsPropertyManager.getPropertyManager().getProperty("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.noDaemon");
+	String env = System.getProperty("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.noDaemon");
 
 	if (env != null)
 	{

@@ -33,9 +33,6 @@ import java.net.InetAddress;
 @PropertyPrefix(prefix = "com.arjuna.ats.jts.")
 public class JTSEnvironmentBean implements JTSEnvironmentBeanMBean
 {
-    @FullPropertyName(name= "com.arjuna.ats.jts.common.propertiesFile")
-    private volatile String propertiesFile = "";
-
     private volatile boolean transactionManager = false;
     private volatile boolean needTranContext = false;
     private volatile boolean alwaysPropagateContext = false;
@@ -44,7 +41,6 @@ public class JTSEnvironmentBean implements JTSEnvironmentBeanMBean
     private volatile boolean supportSubtransactions = true;
     private volatile boolean supportRollbackSync = true;
     private volatile boolean supportInterposedSynchronization = false;
-    private volatile int defaultTimeout = 60; // deprecated
     private volatile boolean propagateTerminator = false;
     private volatile String contextPropMode = null;
     private volatile int recoveryManagerPort = 4711;
@@ -59,32 +55,6 @@ public class JTSEnvironmentBean implements JTSEnvironmentBeanMBean
     @FullPropertyName(name = "com.arjuna.ats.jts.recovery.commitTransactionRetryLimit")
     private volatile int commitedTransactionRetryLimit = 3;
 
-    @FullPropertyName(name = "com.arjuna.ats.jts.recovery.assumedObjectNotExist")
-    private volatile int assumedObjectNotExist = 10;
-
-
-    /**
-     * Returns the name of the properties file.
-     *
-     * Default: ""
-     * Equivalent deprecated property: com.arjuna.ats.jts.common.propertiesFile
-     *
-     * @return the name of the properties file
-     */
-    public String getPropertiesFile()
-    {
-        return propertiesFile;
-    }
-
-    /**
-     * Sets the name of the properties file.
-     *
-     * @param propertiesFile the name of the properties file.
-     */
-    public void setPropertiesFile(String propertiesFile)
-    {
-        this.propertiesFile = propertiesFile;
-    }
 
     /**
      * Returns if an extenal transaction manager process should be used.
@@ -273,31 +243,6 @@ public class JTSEnvironmentBean implements JTSEnvironmentBeanMBean
     }
 
     /**
-     * Returns the default interval after which a transaction may be considered for timeout, in seconds.
-     * Note: depending on the reaper mode and workload, transactions may not be timed out immediately.
-     *
-     * Default: 60
-     * Equivalent deprecated property: com.arjuna.ats.jts.defaultTimeout
-     *
-     * @deprecated use the Coordinator one instead.
-     * @return the default transaction lifetime, in seconds.
-     */
-    public int getDefaultTimeout()
-    {
-        return defaultTimeout;
-    }
-
-    /**
-     * Sets the default lifetime after which a transaction may be considered for timeout, in seconds.
-     *
-     * @param defaultTimeout the default transaction lifetime, in seconds.
-     */
-    public void setDefaultTimeout(int defaultTimeout)
-    {
-        this.defaultTimeout = defaultTimeout;
-    }
-
-    /**
      * Returns if a reference to the terminator should be included in the propagation context.
      *
      * Default: false
@@ -469,29 +414,5 @@ public class JTSEnvironmentBean implements JTSEnvironmentBeanMBean
     public void setCommitedTransactionRetryLimit(int commitedTransactionRetryLimit)
     {
         this.commitedTransactionRetryLimit = commitedTransactionRetryLimit;
-    }
-
-    /**
-     * Returns the number of transient errors to allow before assuming an unreachable object is permanently gone.
-     *
-     * Default: 10
-     * Equivalent deprecated property: com.arjuna.ats.jts.recovery.assumedObjectNotExist
-     *
-     * @deprecated I apply to Orbix only - remove me.
-     * @return the nubmer of transient errors to allow.
-     */
-    public int getAssumedObjectNotExist()
-    {
-        return assumedObjectNotExist;
-    }
-
-    /**
-     * Sets the number of transient errors to allow before assuming an object is permanently unreachable.
-     *
-     * @param assumedObjectNotExist the number of attempts to allow.
-     */
-    public void setAssumedObjectNotExist(int assumedObjectNotExist)
-    {
-        this.assumedObjectNotExist = assumedObjectNotExist;
     }
 }

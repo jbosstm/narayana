@@ -59,26 +59,14 @@ public static final String version ()
      * @return the name of the module properties file to use.
      */
 
-public static synchronized final String propertiesFile ()
-    {
-	return _propFile;
-    }
 
-    /**
-     * Set the name of the properties file.
-     */
-
-public static synchronized final void setPropertiesFile (String file)
-    {
-	_propFile = file;
-    }
 
     /**
      * Get a build time property.
      * @param name The name of the build time property.
      * @return The build time property value.
      */
-    public static String getBuildTimeProperty(final String name)
+    private static String getBuildTimeProperty(final String name)
     {
         if (PROPS == null)
         {

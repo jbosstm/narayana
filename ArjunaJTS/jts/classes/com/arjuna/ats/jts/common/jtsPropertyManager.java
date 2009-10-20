@@ -43,16 +43,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class jtsPropertyManager
 {
-    /**
-     * @deprecated use JTSEnvironmentBean instead
-     * @return
-     */
-    @Deprecated
-    public static PropertyManager getPropertyManager()
-    {
-        return PropertyManagerFactory.getPropertyManagerForModule("jts", Environment.PROPERTIES_FILE);
-    }
-
     public static JTSEnvironmentBean getJTSEnvironmentBean()
     {
         return BeanPopulator.getSingletonInstance(JTSEnvironmentBean.class);

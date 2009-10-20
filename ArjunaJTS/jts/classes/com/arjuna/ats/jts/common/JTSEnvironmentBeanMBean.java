@@ -27,10 +27,6 @@ package com.arjuna.ats.jts.common;
  */
 public interface JTSEnvironmentBeanMBean
 {
-    String getPropertiesFile();
-
-    void setPropertiesFile(String propertiesFile);
-
     boolean isTransactionManager();
 
     void setTransactionManager(boolean transactionManager);
@@ -63,10 +59,6 @@ public interface JTSEnvironmentBeanMBean
 
     void setSupportInterposedSynchronization(boolean supportInterposedSynchronization);
 
-    int getDefaultTimeout();
-
-    void setDefaultTimeout(int defaultTimeout);
-
     boolean isPropagateTerminator();
 
     void setPropagateTerminator(boolean propagateTerminator);
@@ -94,8 +86,4 @@ public interface JTSEnvironmentBeanMBean
     int getCommitedTransactionRetryLimit();
 
     void setCommitedTransactionRetryLimit(int commitedTransactionRetryLimit);
-
-    int getAssumedObjectNotExist();
-
-    void setAssumedObjectNotExist(int assumedObjectNotExist);
 }
