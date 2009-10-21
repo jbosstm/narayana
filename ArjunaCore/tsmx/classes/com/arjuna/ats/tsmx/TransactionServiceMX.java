@@ -32,10 +32,10 @@ package com.arjuna.ats.tsmx;
 
 import com.arjuna.ats.tsmx.agent.AgentInterface;
 import com.arjuna.ats.tsmx.agent.exceptions.AgentNotFoundException;
-import com.arjuna.ats.tsmx.common.*;
 import com.arjuna.ats.tsmx.logging.*;
 
 import com.arjuna.common.util.logging.*;
+import com.arjuna.common.util.ConfigurationInfo;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -108,7 +108,7 @@ public class TransactionServiceMX
             _tsmxProps = System.getProperties();
 
             /** Find and load the tsmx properties file **/
-            InputStream inStr = Thread.currentThread().getContextClassLoader().getResourceAsStream( Configuration.propertiesFile() );
+            InputStream inStr = Thread.currentThread().getContextClassLoader().getResourceAsStream( ConfigurationInfo.getPropertiesFile() );
             if ( inStr != null )
             {
                 _tsmxProps.load(inStr);

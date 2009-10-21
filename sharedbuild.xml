@@ -111,8 +111,17 @@
             failonerror="false"/>
 
         <delete file="${build.dir}/lib/${modulename}.jar"/>
+            <tstamp>
+                <format property="buildproperty.date" pattern="yyyy/MMM/dd HH:mm"/>
+            </tstamp>
         <jar jarfile="${build.dir}/lib/${modulename}.jar"
-             basedir="${build.dir}/classes"/>
+             basedir="${build.dir}/classes">
+            <manifest>
+                <!-- build time metadata consumed by ConfigurationInfo.java:
+                    Note this is the minimum needed to bootstrap the unit tests. The product jars have a longer list. -->
+                <attribute name="arjuna-properties-file" value="jbossts-properties.xml"/>
+            </manifest>
+        </jar>
 
         </sequential>
    </macrodef>
@@ -198,34 +207,6 @@
         <generateresourcebundle.macro/>
     </target>
 
-    <target name="propertyfile" depends="init">
-
-        <!-- Process the properties -->
-        <property name="property.file" value="${modulename}.properties"/>
-        <property name="buildproperty.modulename" value="${modulename}"/>
-        <property name="buildproperty.sourceid" value="unknown"/>
-        <property name="buildproperty.builder" value="JBoss Inc. [${user.name}] (${os.name} ${os.version})"/>
-        <property name="buildproperty.version" value="unknown"/>
-        <tstamp>
-            <format property="buildproperty.date" pattern="yyyy/MMM/dd HH:mm"/>
-        </tstamp>
-        <property name="buildproperty.notes" value=""/>
-
-        <propertyfile file="${build.dir}/classes/${property.file}">
-            <entry key="MODULE" value="${buildproperty.modulename}"/>
-            <entry key="SOURCEID" value="${buildproperty.sourceid}"/>
-            <entry key="BUILDINFO" value="${buildproperty.builder}"/>
-            <entry key="VERSION" value="${buildproperty.version}"/>
-            <entry key="DATE" value="${buildproperty.date}"/>
-            <entry key="NOTES" value="${buildproperty.notes}"/>
-            <entry key="PROPERTIES_FILE" value="jbossts-properties.xml"/>
-        </propertyfile>
-
-        <jar jarfile="${build.dir}/lib/${modulename}.jar" update="true">
-            <fileset dir="${build.dir}/classes/" includes="${property.file}"/>
-        </jar>
-    </target>
-
     <target name="install.ext.libs">
 
         <property name="dest.dir" value="${build.dir}"/>
@@ -241,7 +222,7 @@
     </target>
 
 
-    <target name="dist.leafnode" depends="clean, init, compile, compile-tests, generateresourcebundle, propertyfile, run.tests">
+    <target name="dist.leafnode" depends="clean, init, compile, compile-tests, generateresourcebundle, run.tests">
     </target>
 
     <target name="dist.compositenode" depends="clean, init, install.lib, install.src, htdocs">
@@ -279,6 +260,14 @@
         <jar jarfile="${build.dir}/lib/${modulename}.jar">
             <fileset dir="${build.dir}" includes="built_using*"/>
             <fileset dir="${build.dir}" includes="default-jbossts-properties.xml"/>
+
+            <manifest>
+                <!-- build time metadata consumed by ConfigurationInfo.java: -->
+                <attribute name="arjuna-properties-file" value="jbossts-properties.xml"/>
+                <attribute name="arjuna-scm-revision" value="foobar"/>
+                <attribute name="arjuna-builder" value="JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}"/>
+            </manifest>
+
         </jar>
 
         <for list="${component-module-list}" param="module">
@@ -466,7 +455,8 @@
             <formatter type="plain"/>
             <classpath>
                 <pathelement location="etc"/>
-                <pathelement location="${build.dir}/classes/"/>
+                <pathelement location="${build.dir}/lib/${modulename}.jar"/>
+                <!--<pathelement location="${build.dir}/classes/"/>-->
                 <pathelement location="${build.dir}/tests/"/>
                 <fileset dir="${build.dir}/lib/ext/" includes="*"/>
                 <fileset dir="${basedir}" includes="${lib.dir}/ext/*"/>

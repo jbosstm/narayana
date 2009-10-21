@@ -27,17 +27,9 @@ package com.arjuna.ats.txoj.common;
  */
 public interface TxojEnvironmentBeanMBean
 {
-    String getPropertiesFile();
-
-    void setPropertiesFile(String propertiesFile);
-
     String getLockStoreDir();
 
     void setLockStoreDir(String lockStoreDir);
-
-    String getLockStoreType();
-
-    void setLockStoreType(String lockStoreType);
 
     String getMultipleLockStore();
 

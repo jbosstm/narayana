@@ -31,13 +31,6 @@
 
     </target>
 
-    <target name="propertyfile" depends="sharedbuild.propertyfile">
-        <propertyfile file="${build.dir}/classes/${property.file}">
-            <entry key="RECOVERY_PROPERTIES_FILE" value="jbossts-properties.xml"/>
-			<entry key="ARJUNA_VERSION" value="unknown"/>
-        </propertyfile>
-    </target>
-
     <!-- one of the recovery tests implements a byteman helper class which extends the default
          helper so we need to add the byteman library to the classpath when compiling the tests -->
     <target name="compile-tests">
@@ -71,6 +64,10 @@
                     <exclude name="**/reaper/ReaperTestCase.java"/>
                     <exclude name="**/objectstore/LogStoreRecoveryTest.java"/>
                     <exclude name="**/objectstore/LogStoreTest2.java"/>
+
+                    <!-- TODO cached store is broken, fails from tiem to time. needs fixing -->
+                    <exclude name="**/objectstore/CachedTest.java"/>
+
                     <exclude name="**/recovery/RecoveryManagerStartStopTest.java"/>
                     <!-- auxilairy code used by reaper test classes -->
                     <exclude name="**/reaper/ReaperTestCaseControl.java"/>

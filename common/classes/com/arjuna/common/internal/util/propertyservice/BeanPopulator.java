@@ -47,7 +47,7 @@ public class BeanPopulator
             T bean = null;
             try {
                 bean = beanClass.newInstance();
-                // TODO: pick and document new standard for global config file name property. For now use arjunacore value.
+                // TODO: pick and document new standard for global config file name property. For now use 'common' module value.
                 PropertyManager propertyManager = PropertyManagerFactory.getPropertyManagerForModule("common", "com.arjuna.ats.arjuna.common.propertiesFile");
                 configureFromProperties(bean, propertyManager.getProperties());
             } catch (Exception e) {

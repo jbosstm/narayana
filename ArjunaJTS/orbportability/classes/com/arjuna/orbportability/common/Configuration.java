@@ -34,6 +34,7 @@ package com.arjuna.orbportability.common;
 import com.arjuna.orbportability.Services;
 
 import com.arjuna.common.util.FileLocator;
+import com.arjuna.common.util.ConfigurationInfo;
 
 import com.arjuna.orbportability.logging.*;
 
@@ -55,39 +56,13 @@ import java.util.Properties;
 public class Configuration
 {
 
-    /**
-     * @return the name of the default orb configuration file.
-     */
-public static synchronized final String defaultORBConfiguration()
-    {
-        return _orbConfiguration;
-    }
-
-    /**
-     * @return the name of the module properties file to use.
-     */
-
-public static synchronized final String propertiesFile ()
-    {
-	return _propFile;
-    }
-
-    /**
-     * Set the name of the properties file.
-     */
-
-public static synchronized final void setPropertiesFile (String file)
-    {
-	_propFile = file;
-    }
-
 	/**
 	 * Strip the directory from the given filename.
 	 *
 	 * @param filename The filename to strip the directory for.
 	 * @return The directory the file exists in.
 	 */
-private static final String stripDirectoryFromFilename( String filename )
+    private static final String stripDirectoryFromFilename( String filename )
 	{
 		String dir = ".";
 		/** Search the string for the last file separator char and the last slash **/
@@ -116,14 +91,13 @@ private static final String stripDirectoryFromFilename( String filename )
      * @return the location of the module properties file to use.
      * @message com.arjuna.orbportability.common.Configuration.cannotfindproperties {0} - Cannot find properties file {1}
      */
-
-public static synchronized final String propertiesDir ()
+    private static synchronized final String propertiesDir ()
     {
         String propDir = ".";
 
         try
         {
-            propDir = FileLocator.locateFile( propertiesFile() );
+            propDir = FileLocator.locateFile( ConfigurationInfo.getPropertiesFile() );
 
 			if ( propDir != null )
 			{
@@ -134,36 +108,18 @@ public static synchronized final String propertiesDir ()
         {
             if (opLogger.loggerI18N.isWarnEnabled())
             {
-                opLogger.loggerI18N.warn("com.arjuna.orbportability.common.Configuration.cannotfindproperties", new Object[] { "Configuration.propertiesDir()", propertiesFile() } );
+                opLogger.loggerI18N.warn("com.arjuna.orbportability.common.Configuration.cannotfindproperties", new Object[] { "Configuration.propertiesDir()", ConfigurationInfo.getPropertiesFile() } );
             }
         }
 
 	return propDir;
     }
 
-    /**
-     * @return the name of the file where <name, object IOR> may be stored.
-     */
-
-public static synchronized final String configFile ()
-    {
-	return _configFile;
-    }
-
-    /**
-     * Set the name of the file where <name, object IOR> may be stored.
-     */
-
-public static synchronized void setConfigFile (String s)
-    {
-	_configFile = s;
-    }
 
     /**
      * @return the location of the file where <name, object IOR> may be stored.
      */
-
-public static synchronized final String configFileRoot ()
+    public static synchronized final String configFileRoot ()
     {
 	if (_configFileRoot == null)
 	{
@@ -195,119 +151,25 @@ public static synchronized final String configFileRoot ()
     }
 
     /**
-     * Set the location of the file where <name, object IOR> may be stored.
-     */
-
-public static synchronized void setConfigFileRoot (String s)
-    {
-	_configFileRoot = s;
-    }
-
-    /**
      * @return the default bind mechanism.
      * @message com.arjuna.orbportability.common.Configuration.bindDefault.invalidbind {0} - invalid bind mechanism in properties file
      */
-
-public static synchronized final int bindDefault ()
+    public static synchronized final int bindDefault ()
     {
-        int bindMethod = _bindDefault;
-
-        if (!_bindDefaultSet)
-        {
-            String configuredMechanism = opPropertyManager.getOrbPortabilityEnvironmentBean().getBindMechanism();
-
-            if (configuredMechanism != null)
-            {
-                bindMethod = Services.bindValue(configuredMechanism);
-            }
-
-	    if (bindMethod == -1)
+	    if (_bindMethod == -1)
 	    {
                 if (opLogger.loggerI18N.isWarnEnabled())
                 {
                     opLogger.loggerI18N.warn("com.arjuna.orbportability.common.Configuration.bindDefault.invalidbind", new Object[] { "com.arjuna.orbportability.common.Configuration.bindDefault()" } );
                 }
 	    }
-	}
 
-	return bindMethod;
-    }
-
-    /**
-     * Set the default bind mechanism.
-     * @message com.arjuna.orbportability.common.Configuration.setBindDefault.invaliddefaultvalue {0} - invalid value {1}
-     */
-public static synchronized final void setBindDefault (int i)
-    {
-	if ((i < Services.CONFIGURATION_FILE) || (i > Services.NAMED_CONNECT))
-        {
-            if (opLogger.loggerI18N.isWarnEnabled())
-            {
-                opLogger.loggerI18N.warn( "com.arjuna.orbportability.common.Configuration.setBindDefault.invaliddefaultvalue", new Object[] {"com.arjuna.orbportability.common.Configuration.setBindDefault", ""+i} );
-            }
-        }
-	else
-	{
-	    _bindDefaultSet = true;
-	    _bindDefault = i;
-	}
-    }
-
-    /**
-     * @return the version of the module.
-     */
-
-public static final String version ()
-    {
-	return getBuildTimeProperty("ORBPORTABILITY_VERSION") ;
-    }
-    /**
-     * Get a build time property.
-     * @param name The name of the build time property.
-     * @return The build time property value.
-     */
-    public static String getBuildTimeProperty(final String name)
-    {
-        if (PROPS == null)
-        {
-            return "" ;
-        }
-        else
-        {
-            return PROPS.getProperty(name, "") ;
-        }
-    }
-    
-    private static final Properties PROPS ;
-    
-    static
-    {
-        final InputStream is = Configuration.class.getResourceAsStream("/arjuna.properties") ;
-        if (is != null)
-        {
-            Properties props = new Properties() ;
-            try
-            {
-                props.load(is) ;
-            }
-            catch (final IOException ioe)
-            {
-                props = null ;
-            }
-            PROPS = props ;
-        }
-        else
-        {
-            PROPS = null ;
-        }
+    	return _bindMethod;
     }
     
 
 private static String 	_configFile = "CosServices.cfg";
 private static String 	_configFileRoot = null;
-private static int    	_bindDefault = Services.CONFIGURATION_FILE;
-private static boolean 	_bindDefaultSet = false;
-private static String   _propFile = getBuildTimeProperty("PROPERTIES_FILE") ;
-private static String   _orbConfiguration = getBuildTimeProperty("ORB_CONFIGURATION") ;
 
+    private static final int _bindMethod = Services.bindValue(opPropertyManager.getOrbPortabilityEnvironmentBean().getBindMechanism());
 }

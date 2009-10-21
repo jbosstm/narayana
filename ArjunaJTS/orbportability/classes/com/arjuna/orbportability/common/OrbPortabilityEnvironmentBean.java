@@ -38,7 +38,7 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
 {
     private volatile String corbaDiagnostics = null; // key only
     private volatile String initialReferencesRoot = com.arjuna.orbportability.common.Configuration.configFileRoot();
-    private volatile String initialReferencesFile = com.arjuna.orbportability.common.Configuration.configFile();
+    private volatile String initialReferencesFile = "CosServices.cfg";
     private volatile String fileDir = null;
     private volatile String resolveService = "CONFIGURATION_FILE";
 

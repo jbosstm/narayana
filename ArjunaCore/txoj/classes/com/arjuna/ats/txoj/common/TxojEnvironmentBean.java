@@ -21,7 +21,6 @@
 package com.arjuna.ats.txoj.common;
 
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
-import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.ats.txoj.TxOJNames;
 
 import java.io.File;
@@ -34,37 +33,10 @@ import java.io.File;
 @PropertyPrefix(prefix = "com.arjuna.ats.txoj.lockstore.")
 public class TxojEnvironmentBean implements TxojEnvironmentBeanMBean
 {
-    @FullPropertyName(name = "com.arjuna.ats.txoj.common.propertiesFile")
-    private volatile String propertiesFile = "";
-
     private volatile String lockStoreDir = System.getProperty("user.dir") + File.separator + "LockStore";
-    private volatile String lockStoreType = null;
     private volatile String multipleLockStore = null;
     private volatile String singleLockStore = TxOJNames.Implementation_LockStore_defaultStore().stringForm();
     private volatile boolean allowNestedLocking = true;
-
-    /**
-     * Returns the name of the properties file.
-     *
-     * Default: ""
-     * Equivalent deprecated property: com.arjuna.ats.txoj.common.propertiesFile
-     *
-     * @return the name of the properties file
-     */
-    public String getPropertiesFile()
-    {
-        return propertiesFile;
-    }
-
-    /**
-     * Sets the name of the properties file.
-     *
-     * @param propertiesFile the name of the properties file.
-     */
-    public void setPropertiesFile(String propertiesFile)
-    {
-        this.propertiesFile = propertiesFile;
-    }
 
     /**
      * Returns the directory path used for storing persistent locks.
@@ -87,30 +59,6 @@ public class TxojEnvironmentBean implements TxojEnvironmentBeanMBean
     public void setLockStoreDir(String lockStoreDir)
     {
         this.lockStoreDir = lockStoreDir;
-    }
-
-    /**
-     * Returns the name of the lock store implementation.
-     *
-     * Default: null
-     * Equivalent deprecated property: com.arjuna.ats.txoj.lockstore.lockStoreType
-     *
-     * @deprecated I'm unused, remove me
-     * @return the name of the lock store implementation.
-     */
-    public String getLockStoreType()
-    {
-        return lockStoreType;
-    }
-
-    /**
-     * Sets the name of the lock store implementation.
-     *
-     * @param lockStoreType the name of the lock store implementation.
-     */
-    public void setLockStoreType(String lockStoreType)
-    {
-        this.lockStoreType = lockStoreType;
     }
 
     /**

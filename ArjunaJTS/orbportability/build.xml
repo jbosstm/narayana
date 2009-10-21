@@ -74,13 +74,6 @@
         </generateresourcebundle.macro>
     </target>
 
-    <target name="propertyfile" depends="sharedbuild.propertyfile">
-        <propertyfile file="${build.dir}/classes/${property.file}">
-			<entry key="ORBPORTABILITY_VERSION" value="unknown"/>
-            <entry key="ORB_CONFIGURATION" value="unknown"/>
-        </propertyfile>
-    </target>
-
     <target name="run.tests">
         <run.tests.macro>
             <additional.classpath>

@@ -23,6 +23,7 @@ package com.arjuna.common.util.propertyservice;
 import com.arjuna.common.internal.util.propertyservice.PropertyManagerImpl;
 import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
 import com.arjuna.common.util.FileLocator;
+import com.arjuna.common.util.ConfigurationInfo;
 
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -145,13 +146,13 @@ public class PropertyManagerFactory
         // the location of the module's properties file. This allows file location to be overriden easily.
         String propertyFileName = System.getProperty(fileNamePropertyKey);
 
-        // If the system property is not set, try to load the build time properties for the module. Build time properties
+        // If the system property is not set, try to load the build time properties. Build time properties
         // are not the module properties! These are optional and so loading may fail. That's not considered an error.
-        // If the build time property key PROPERTIES_FILE exists, take its value as the module's property file location.
-        // (In JBossTS it does exist for most modules - the build scripts put build time properties files for the modules
-        // into the product .jar)
-        if (propertyFileName == null)
-            propertyFileName = getFileNameFromBuildTimeProperties(moduleName);
+        // If the properties file name is defined by the build time properties, use that.
+        // (In JBossTS it mostly does exist - the build scripts put build time properties into the .jars manifest file.)
+        if (propertyFileName == null) {
+            propertyFileName = ConfigurationInfo.getPropertiesFile();
+        }
 
         // Bail out if it has not been possible to get a file name by either of these method.
         if(propertyFileName == null) {
@@ -163,21 +164,5 @@ public class PropertyManagerFactory
         propertyManagersByModuleName.put(moduleName, propertyManager);
 
         return propertyManager;
-    }
-
-    private static String getFileNameFromBuildTimeProperties(String moduleName) {
-        Properties buildTimeProperties = new Properties();
-        final InputStream is = PropertyManagerFactory.class.getResourceAsStream("/"+moduleName+".properties") ;
-        if (is != null)
-        {
-            try {
-                buildTimeProperties.load(is);
-            } catch(IOException e) {
-                try {
-                    is.close();
-                } catch(IOException e2) {}
-            }
-        }
-        return buildTimeProperties.getProperty("PROPERTIES_FILE");
     }
 }

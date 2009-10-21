@@ -32,12 +32,6 @@
 
     </target>
 
-    <target name="propertyfile" depends="sharedbuild.propertyfile">
-        <propertyfile file="${build.dir}/classes/${property.file}">
-			<entry key="TXOJ_VERSION" value="unknown"/>
-        </propertyfile>
-    </target>
-
     <target name="run.tests">
 
         <run.tests.macro>
