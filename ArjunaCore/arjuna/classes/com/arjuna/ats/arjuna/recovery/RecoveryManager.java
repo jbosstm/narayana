@@ -40,9 +40,8 @@ import java.io.IOException;
 import com.arjuna.ats.internal.arjuna.recovery.RecoveryManagerImple;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
-import com.arjuna.common.util.propertyservice.PropertyManager;
+import com.arjuna.common.util.ConfigurationInfo;
 
 /**
  * @message com.arjuna.ats.arjuna.recovery.RecoveryManager_1 [com.arjuna.ats.arjuna.recovery.RecoveryManager_1] - Invalid recovery manager port specified {0}
@@ -456,7 +455,7 @@ public class RecoveryManager
 	    }
 	    if (args[i].compareTo("-version") == 0)
 	    {
-		System.out.println("Version " + com.arjuna.ats.arjuna.common.Configuration.version());
+		System.out.println("Version " + ConfigurationInfo.getVersion());
 		System.exit(0);
 	    }
 	    if (args[i].compareTo("-test") == 0)

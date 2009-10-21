@@ -21,6 +21,7 @@
 package com.arjuna.orbportability.common;
 
 import java.util.List;
+import java.util.Properties;
 
 /**
  * A JMX MBean interface containing assorted configuration for the Orb Portability layer.
@@ -29,10 +30,6 @@ import java.util.List;
  */
 public interface OrbPortabilityEnvironmentBeanMBean
 {
-    String getPropertiesFile();
-
-    void setPropertiesFile(String propertiesFile);
-
     String getCorbaDiagnostics();
 
     void setCorbaDiagnostics(String corbaDiagnostics);
@@ -69,7 +66,7 @@ public interface OrbPortabilityEnvironmentBeanMBean
 
     void setBindMechanism(String bindMechanism);
 
-    String getDefaultConfigurationFilename();
+    public Properties getOrbInitializationProperties();
 
-    void setDefaultConfigurationFilename(String defaultConfigurationFilename);
+    public void setOrbInitializationProperties(Properties orbInitializationProperties);
 }

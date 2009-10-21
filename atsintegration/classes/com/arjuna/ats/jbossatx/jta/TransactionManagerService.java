@@ -34,7 +34,7 @@ import org.jboss.tm.*;
 import org.jboss.logging.Logger;
 
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
-import com.arjuna.ats.arjuna.common.Configuration;
+import com.arjuna.common.util.ConfigurationInfo;
 
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
@@ -60,9 +60,7 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
 
     public void create() throws Exception
     {
-        // Note that we use the arjunacore version of Configuration, as the jta one does not have
-        // build properties set when we are running from the jts version of the build.
-        String tag = Configuration.getBuildTimeProperty("SOURCEID");
+        String tag = ConfigurationInfo.getSourceId();
 
         log.info("JBossTS Transaction Service ("+mode+" version - tag:"+tag+") - JBoss Inc.");
 

@@ -31,14 +31,11 @@
 
 package com.arjuna.ats.jts;
 
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-
 import com.arjuna.ats.internal.jts.ORBManager;
 
 import com.arjuna.orbportability.*;
 import com.arjuna.orbportability.common.opPropertyManager;
-
-import org.omg.CosTransactions.*;
+import com.arjuna.common.util.ConfigurationInfo;
 
 public class TransactionServer
 {
@@ -114,7 +111,7 @@ public class TransactionServer
 	    }
 	    if (args[i].compareTo("-version") == 0)
 	    {
-		System.out.println("TransactionServer version "+com.arjuna.ats.jts.common.Configuration.version());
+		System.out.println("TransactionServer version "+ ConfigurationInfo.getVersion());
 		System.exit(0);
 	    }
 	}

@@ -24,7 +24,7 @@ import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jbossatx.jta.XAResourceRecoveryHelperWrapper;
-import com.arjuna.ats.arjuna.common.Configuration;
+import com.arjuna.common.util.ConfigurationInfo;
 
 import org.jboss.logging.Logger;
 import org.jboss.tm.XAResourceRecovery;
@@ -46,7 +46,7 @@ public class RecoveryManagerService implements XAResourceRecoveryRegistry
 
     public void create() throws Exception
     {
-        String tag = Configuration.getBuildTimeProperty("SOURCEID");
+        String tag = ConfigurationInfo.getSourceId();
 
         log.info("JBossTS Recovery Service (tag:"+tag+") - JBoss Inc.");
 

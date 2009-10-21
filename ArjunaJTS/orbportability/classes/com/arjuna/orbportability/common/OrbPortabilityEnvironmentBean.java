@@ -25,6 +25,8 @@ import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * A JavaBean containing assorted configuration properties for the Orb Portability layer.
@@ -34,8 +36,6 @@ import java.util.ArrayList;
 @PropertyPrefix(prefix = "com.arjuna.orbportability.")
 public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentBeanMBean
 {
-    private volatile String propertiesFile = "";
-
     private volatile String corbaDiagnostics = null; // key only
     private volatile String initialReferencesRoot = com.arjuna.orbportability.common.Configuration.configFileRoot();
     private volatile String initialReferencesFile = com.arjuna.orbportability.common.Configuration.configFile();
@@ -48,30 +48,9 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
     private volatile String orbImplementation = null;
     private volatile String oaImplementation = null;
     private volatile String bindMechanism = "CONFIGURATION_FILE";
-    private volatile String defaultConfigurationFilename = null;
 
-    /**
-     * Returns the name of the properties file.
-     *
-     * Default: ""
-     * Equivalent deprecated property: com.arjuna.orbportability.propertiesFile
-     *
-     * @return the name of the properties file
-     */
-    public String getPropertiesFile()
-    {
-        return propertiesFile;
-    }
+    private volatile Properties orbInitializationProperties = new Properties(); 
 
-    /**
-     * Sets the name of the properties file.
-     *
-     * @param propertiesFile the name of the properties file.
-     */
-    public void setPropertiesFile(String propertiesFile)
-    {
-        this.propertiesFile = propertiesFile;
-    }
 
     /**
      * Unused.
@@ -289,26 +268,32 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
     }
 
     /**
-     * Returns the default name for the configuration file.
+     * Returns the Properties used for the orb initialization parameters. As there are potentially
+     * an arbitrary number of ORBs, each with an arbitrary set of initialization classes, it's not
+     * well suited to bean based properties :-(
+     * The returned object is a clone. May return an empty Properties, will not return null.
      *
-     * Default: null
-     * Equivalent deprecated property: com.arjuna.orbportability.defaultConfigurationFilename
+     * Default: empty Properties.
      *
-     * @deprecated I'm unused, remove me.
-     * @return the default name of the configuration file.
+     * @return a Properties object containing ORB initialization information.
      */
-    public String getDefaultConfigurationFilename()
+    public Properties getOrbInitializationProperties()
     {
-        return defaultConfigurationFilename;
+        return (Properties)orbInitializationProperties.clone();
     }
 
     /**
-     * Sets the default name for the configuration file.
+     * Sets the Properties used for ORB initialization.
+     * The provided Properties will be cloned, not retained.
      *
-     * @param defaultConfigurationFilename the default name for the configuration file.
+     * @param orbInitializationProperties a Properties object containing ORB initialization information.
      */
-    public void setDefaultConfigurationFilename(String defaultConfigurationFilename)
+    public void setOrbInitializationProperties(Properties orbInitializationProperties)
     {
-        this.defaultConfigurationFilename = defaultConfigurationFilename;
+        if(orbInitializationProperties == null) {
+            this.orbInitializationProperties = new Properties();
+        } else {
+            this.orbInitializationProperties = (Properties)orbInitializationProperties.clone();
+        }
     }
 }

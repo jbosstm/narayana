@@ -74,10 +74,7 @@ public class BasicPersistentLockStore extends LockStoreImple
 				     FacilityCode.FAC_LOCK_STORE, "BasicPersistentLockStore.BasicPersistentLockStore("+key+")");
 	}
 
-        lockStoreLocation = txojPropertyManager.getTxojEnvironmentBean().getLockStoreDir();
-	    com.arjuna.ats.txoj.common.Configuration.setLockStoreRoot(lockStoreLocation);
-
-	_key = lockStoreLocation;
+	_key = txojPropertyManager.getTxojEnvironmentBean().getLockStoreDir();
 
 	/*
 	 * Use the ShadowingStore since it has file-level locking which
