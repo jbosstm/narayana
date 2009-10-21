@@ -27,6 +27,7 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -128,7 +129,7 @@ public class TransactionLog
 
                                 while (!endOfUids)
                                 {
-                                    theUid.unpack(uids);
+                                    theUid = UidHelper.unpackFrom(uids);
 
                                     if (theUid.equals(Uid.nullUid()))
                                         endOfUids = true;
