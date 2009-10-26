@@ -31,7 +31,6 @@
 
 package com.arjuna.orbportability.event;
 
-import com.arjuna.orbportability.common.Environment;
 import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.opLogger;
 

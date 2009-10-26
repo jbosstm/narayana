@@ -151,34 +151,16 @@
 
     <entry key="OrbPortabilityEnvironmentBean.bindMechanism">CONFIGURATION_FILE</entry>
 
-    <!--
-      This class handles context propagation issues, and should never
-      be commented out or removed.
-    -->
-    <entry key="com.arjuna.orbportability.orb.PreInit1">com.arjuna.ats.internal.jts.context.ContextPropagationManager</entry>
-
-    <!--
-      This property ensures the JTS knows which ORB to use and should never
-      be commented out or removed
-    -->
-    <entry key="com.arjuna.orbportability.orb.PostInit1">com.arjuna.ats.jts.utils.ORBSetup</entry>
-    <!--
-      This property ensures the crash recovery is initialised correctly and
-      should never be commented out or removed
-    -->
-    <entry key="com.arjuna.orbportability.orb.PostInit2">com.arjuna.ats.internal.jts.recovery.RecoveryInit</entry>
-
-    <!--
-      This property ensures the JTS knows which ORB to use and should never
-      be commented out or removed
-    -->
-    <entry key="com.arjuna.orbportability.orb.PostSet1">com.arjuna.ats.jts.utils.ORBSetup</entry>
-
-    <!--
-      This property ensures the JTS knows which ORB to use and should never
-      be commented out or removed
-    -->
-    <entry key="com.arjuna.orbportability.orb.PostSet2">com.arjuna.ats.internal.jts.recovery.RecoveryInit</entry>
+    <entry key="OrbPortabilityEnvironmentBean.orbInitializationProperties">
+        <!-- This class handles context propagation issues, and should never be commented out or removed. -->
+        com.arjuna.orbportability.orb.PreInit1=com.arjuna.ats.internal.jts.context.ContextPropagationManager
+        <!-- This property ensures the JTS knows which ORB to use and should never be commented out or removed -->
+        com.arjuna.orbportability.orb.PostInit=com.arjuna.ats.jts.utils.ORBSetup
+        <!-- This property ensures the crash recovery is initialised correctly and should never be commented out or removed -->
+        com.arjuna.orbportability.orb.PostInit2=com.arjuna.ats.internal.jts.recovery.RecoveryInit
+        <!-- This property ensures the JTS knows which ORB to use and should never be commented out or removed -->
+        com.arjuna.orbportability.orb.PostSet1=com.arjuna.ats.jts.utils.ORBSetup
+    </entry>
 
     <!--
       This property controls the port on which the Recovery ORB listens

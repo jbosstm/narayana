@@ -73,9 +73,9 @@ public class BeanPopulator
      *   the short name of the bean followed by the field name, and finally the bean classes' PropertyPrefix annotation
      *   value followed by the name of the field, the last being except in cases where the field has a FullPropertyName
      *   annotation, in which case its value is used instead.
-     * For vector (in the math sense - the type is actually normally List) properties, a single property key matched
-     *   according to the prior rules will be treated as having a compund vlaue which will be tokenized into list
-     *   elements based on whitespace and inserted into the list in token order.
+     * For vector (in the math sense - the type is actually normally List/Map) properties, a single property key matched
+     *   according to the prior rules will be treated as having a compound value which will be tokenized into
+     *   elements based on whitespace and inserted into the list in token order or further tokenised on = for Map key/value.
      * If no such key is found, the value of the field's ConcatenationPrefix annotation
      * is treated as a name prefix and the list elements are assembled from the values of any properties having
      * key values starting with the prefix. These are inserted into the list in order of the key's name sort position.
@@ -118,7 +118,7 @@ public class BeanPopulator
                 getter = bean.getClass().getMethod(getterMethodName, new Class[] {});
             }
 
-            if(field.isAnnotationPresent(ConcatenationPrefix.class)) {
+            if(field.isAnnotationPresent(ConcatenationPrefix.class) || field.getType().getName().startsWith("java.util")) {
                 handleGroupProperty(bean, properties, field, setter, getter);
             } else {
                 handleSimpleProperty(bean, properties, field, setter, getter);
@@ -140,7 +140,7 @@ public class BeanPopulator
     private static void handleGroupProperty(Object bean, Properties properties, Field field, Method setter, Method getter)
         throws Exception
     {
-        List<String> values = new LinkedList<String>();
+        List<String> lines = new LinkedList<String>();
 
         String valueFromProperties = getValueFromProperties(bean, properties, field, bean.getClass().getSimpleName());
 
@@ -150,22 +150,23 @@ public class BeanPopulator
 
             String[] tokens = valueFromProperties.split("\\s+");
 
-            // the order we want them in is the order they appear in the string, so we can just add in sequence:
+            // for lists, the order we want them in is the order they appear in the string, so we can just add in sequence:
             for(String token : tokens) {
-                values.add(token);
+                lines.add(token);
             }
         }
         else
         {
             // it's set of values that need gathering together
-            // the order we want them in is the lex sort order of the keys, so we need to buffer and sort them:
+            // for lists, the order we want them in is the lex sort order of the keys, so we need to buffer and sort them:
 
             List<String> listOfMatchingPropertyNames = new LinkedList<String>();
             Enumeration propertyNamesEnumeration = properties.propertyNames();
 
-            if (propertyNamesEnumeration != null)
+            ConcatenationPrefix concatenationPrefix = field.getAnnotation(ConcatenationPrefix.class);
+            if (propertyNamesEnumeration != null && concatenationPrefix != null)
             {
-                String prefix = field.getAnnotation(ConcatenationPrefix.class).prefix();
+                String prefix = concatenationPrefix.prefix();
 
                 while (propertyNamesEnumeration.hasMoreElements())
                 {
@@ -182,14 +183,33 @@ public class BeanPopulator
 
             for(String name : listOfMatchingPropertyNames) {
                 String value = properties.getProperty(name);
-                values.add(value);
+                lines.add(value);
             }            
         }
-        
+
+        System.out.println(bean.getClass()+" "+field.getName());
+
+        Object replacementValue = null;
+
+        if(java.util.Map.class.isAssignableFrom(field.getType())) {
+            // we have a list but need a map. split eash element into key/value pair.
+            Map<String, String> map = new HashMap<String, String>();
+            for(String element : lines) {
+                String[] tokens = element.split("=");
+                map.put(tokens[0], tokens[1]);
+            }
+            replacementValue = map;
+        } else {
+             // it stays as a list.
+            replacementValue = lines;
+        }
+
+        System.out.println(replacementValue.getClass().getName()+": "+replacementValue);
+
         Object valueFromBean = getter.invoke(bean, new Object[] {});
 
-        if(!valueFromBean.equals(values)) {
-            setter.invoke(bean, new Object[] {values});
+        if(!valueFromBean.equals(replacementValue)) {
+            setter.invoke(bean, new Object[] {replacementValue});
         }
     }
 

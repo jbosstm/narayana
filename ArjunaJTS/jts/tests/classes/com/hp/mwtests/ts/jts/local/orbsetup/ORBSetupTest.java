@@ -35,10 +35,14 @@ import com.arjuna.orbportability.internal.utils.PostInitLoader;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.RootOA;
 import com.arjuna.orbportability.OA;
+import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import java.util.Properties;
+import java.util.Map;
 
 public class ORBSetupTest
 {
@@ -51,7 +55,11 @@ public class ORBSetupTest
         ORB myORB = null;
         RootOA myOA = null;
 
-        System.setProperty( PostInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb", ORB_NAME), "com.arjuna.ats.jts.utils.ORBSetup");
+        Map<String, String> properties = opPropertyManager.getOrbPortabilityEnvironmentBean().getOrbInitializationProperties();
+
+        properties.put( PostInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb", ORB_NAME), "com.arjuna.ats.jts.utils.ORBSetup");
+
+        opPropertyManager.getOrbPortabilityEnvironmentBean().setOrbInitializationProperties(properties);
 
         try
         {

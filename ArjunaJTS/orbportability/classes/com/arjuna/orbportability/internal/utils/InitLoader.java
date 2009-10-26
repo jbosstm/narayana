@@ -37,6 +37,7 @@ import com.arjuna.orbportability.utils.InitClassInterface;
 
 import java.util.Properties;
 import java.util.Enumeration;
+import java.util.Map;
 
 import java.lang.ClassNotFoundException;
 import java.lang.IllegalAccessException;
@@ -57,22 +58,17 @@ protected InitLoader (String name, String attrName, Object obj)
         initObj = obj;
     }
 
-protected void initialise ()
+    protected void initialise()
     {
-	Properties properties = opPropertyManager.getPropertyManager().getProperties();
+        Map<String, String> properties = opPropertyManager.getOrbPortabilityEnvironmentBean().getOrbInitializationProperties();
 
-	if (properties != null)
-	{
-	    Enumeration names = properties.propertyNames();
-	    
-	    while (names.hasMoreElements())
-	    {
-		String attrName = (String) names.nextElement();
-
-		if (attrName.indexOf(propertyName) != -1)
-		    createInstance(attrName, properties.getProperty(attrName));
-	    }
-	}
+        for(String attrName : properties.keySet())
+        {
+            if (attrName.indexOf(propertyName) != -1)
+            {
+                createInstance(attrName, properties.get(attrName));
+            }
+        }
     }
 
     /**

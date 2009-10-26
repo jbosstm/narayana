@@ -23,10 +23,7 @@ package com.arjuna.orbportability.common;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * A JavaBean containing assorted configuration properties for the Orb Portability layer.
@@ -36,7 +33,6 @@ import java.util.Properties;
 @PropertyPrefix(prefix = "com.arjuna.orbportability.")
 public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentBeanMBean
 {
-    private volatile String corbaDiagnostics = null; // key only
     private volatile String initialReferencesRoot = com.arjuna.orbportability.common.Configuration.configFileRoot();
     private volatile String initialReferencesFile = "CosServices.cfg";
     private volatile String fileDir = null;
@@ -49,32 +45,8 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
     private volatile String oaImplementation = null;
     private volatile String bindMechanism = "CONFIGURATION_FILE";
 
-    private volatile Properties orbInitializationProperties = new Properties(); 
+    private volatile Map<String,String> orbInitializationProperties = new HashMap<String, String>();
 
-
-    /**
-     * Unused.
-     *
-     * Default: null
-     * Equivalent deprecated property: com.arjuna.orbportability.corbaDiagnostics
-     *
-     * @deprecated I'm not used - remove me
-     * @return unused.
-     */
-    public String getCorbaDiagnostics()
-    {
-        return corbaDiagnostics;
-    }
-
-    /**
-     * Unused.
-     *
-     * @param corbaDiagnostics unused.
-     */
-    public void setCorbaDiagnostics(String corbaDiagnostics)
-    {
-        this.corbaDiagnostics = corbaDiagnostics;
-    }
 
     /**
      * Returns the name of the directory in which the initial reference file is stored.
@@ -268,32 +240,32 @@ public class OrbPortabilityEnvironmentBean implements OrbPortabilityEnvironmentB
     }
 
     /**
-     * Returns the Properties used for the orb initialization parameters. As there are potentially
+     * Returns the Map used for the orb initialization parameters. As there are potentially
      * an arbitrary number of ORBs, each with an arbitrary set of initialization classes, it's not
      * well suited to bean based properties :-(
-     * The returned object is a clone. May return an empty Properties, will not return null.
+     * The returned object is a clone. May return an empty Map, will not return null.
      *
-     * Default: empty Properties.
+     * Default: empty Map.
      *
-     * @return a Properties object containing ORB initialization information.
+     * @return a Map containing ORB initialization information.
      */
-    public Properties getOrbInitializationProperties()
+    public Map<String, String> getOrbInitializationProperties()
     {
-        return (Properties)orbInitializationProperties.clone();
+        return new HashMap<String, String>(orbInitializationProperties);
     }
 
     /**
-     * Sets the Properties used for ORB initialization.
-     * The provided Properties will be cloned, not retained.
+     * Sets the Map of properties used for ORB initialization.
+     * The provided Map will be copied, not retained.
      *
-     * @param orbInitializationProperties a Properties object containing ORB initialization information.
+     * @param orbInitializationProperties a Map containing ORB initialization information.
      */
-    public void setOrbInitializationProperties(Properties orbInitializationProperties)
+    public void setOrbInitializationProperties(Map<String, String> orbInitializationProperties)
     {
         if(orbInitializationProperties == null) {
-            this.orbInitializationProperties = new Properties();
+            this.orbInitializationProperties = new HashMap<String, String>();
         } else {
-            this.orbInitializationProperties = (Properties)orbInitializationProperties.clone();
+            this.orbInitializationProperties = new HashMap<String, String>(orbInitializationProperties);
         }
     }
 }

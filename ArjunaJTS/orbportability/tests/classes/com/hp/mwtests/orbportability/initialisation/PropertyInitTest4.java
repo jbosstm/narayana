@@ -34,13 +34,14 @@ package com.hp.mwtests.orbportability.initialisation;
 import com.arjuna.orbportability.internal.utils.PreInitLoader;
 import com.arjuna.orbportability.internal.utils.PostInitLoader;
 import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.common.opPropertyManager;
 import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisationUsingInterface;
 import com.hp.mwtests.orbportability.initialisation.postinit.PostInitialisationUsingInterface;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import java.util.Properties;
+import java.util.Map;
 
 public class PropertyInitTest4
 {
@@ -52,16 +53,18 @@ public class PropertyInitTest4
     {
         ORB orb = null,
             orb2 = null;
-        Properties testProps = System.getProperties();
+        Map<String, String> testProps = opPropertyManager.getOrbPortabilityEnvironmentBean().getOrbInitializationProperties();
 
-        testProps.setProperty(PreInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb"),
+        testProps.put(PreInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb"),
                         "com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisationUsingInterface");
-        testProps.setProperty(PostInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb"),
+        testProps.put(PostInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb"),
                         "com.hp.mwtests.orbportability.initialisation.postinit.PostInitialisationUsingInterface");
-        testProps.setProperty(PreInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME_2),
+        testProps.put(PreInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME_2),
                         "com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisationUsingInterface");
-        testProps.setProperty(PostInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME_2),
+        testProps.put(PostInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME_2),
                         "com.hp.mwtests.orbportability.initialisation.postinit.PostInitialisationUsingInterface");
+
+        opPropertyManager.getOrbPortabilityEnvironmentBean().setOrbInitializationProperties(testProps);
 
         try
         {

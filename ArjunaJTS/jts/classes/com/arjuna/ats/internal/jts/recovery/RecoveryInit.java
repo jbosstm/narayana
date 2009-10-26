@@ -35,7 +35,6 @@ import com.arjuna.ats.jts.logging.*;
 import com.arjuna.common.util.logging.*;
 
 import com.arjuna.orbportability.common.opPropertyManager;
-import com.arjuna.orbportability.common.Environment;
 import com.arjuna.orbportability.*;
 
 import com.arjuna.ats.arjuna.logging.FacilityCode;

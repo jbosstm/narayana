@@ -34,10 +34,11 @@ import com.arjuna.orbportability.internal.utils.PreInitLoader;
 import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
 import com.arjuna.orbportability.RootOA;
+import com.arjuna.orbportability.common.opPropertyManager;
 import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation;
 import com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation2;
 
-import java.util.Properties;
+import java.util.Map;
 
 import org.omg.PortableServer.ImplicitActivationPolicyValue;
 import org.omg.CORBA.Policy;
@@ -56,7 +57,7 @@ public class PropertyInitTest2
         int numberOfORBs = 1;
         int numberOfOAsPerORB = 3;
 
-        Properties testProps = System.getProperties();
+        Map<String, String> testProps = opPropertyManager.getOrbPortabilityEnvironmentBean().getOrbInitializationProperties();
 
         /**
          * Setup pre-initialisation classes for all ORBs and all OAs
@@ -64,7 +65,7 @@ public class PropertyInitTest2
         for (int orbCount=0;orbCount<numberOfORBs;orbCount++)
         {
             System.out.println("Registering pre-initialisation property '"+PreInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb",ORB_INSTANCE_NAME+orbCount)+"'");
-            testProps.setProperty(PreInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb",ORB_INSTANCE_NAME+orbCount, "preinitmyorb"),
+            testProps.put(PreInitLoader.generateORBPropertyName("com.arjuna.orbportability.orb",ORB_INSTANCE_NAME+orbCount, "preinitmyorb"),
                                   "com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation");
 
             for (int oaCount=0;oaCount<numberOfOAsPerORB;oaCount++)
@@ -72,14 +73,14 @@ public class PropertyInitTest2
                 System.out.println("Registering pre-initialisation property '"+PreInitLoader.generateOAPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME+orbCount, OA_INSTANCE_NAME+oaCount)+"'");
                 System.out.println("Registering pre-initialisation property '"+PreInitLoader.generateOAPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME+orbCount, OA_INSTANCE_NAME+oaCount, "mypoainit")+"'");
 
-                testProps.setProperty(PreInitLoader.generateOAPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME+orbCount, OA_INSTANCE_NAME+oaCount),
+                testProps.put(PreInitLoader.generateOAPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME+orbCount, OA_INSTANCE_NAME+oaCount),
                                       "com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation");
-                testProps.setProperty(PreInitLoader.generateOAPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME+orbCount, OA_INSTANCE_NAME+oaCount, "mypoainit"),
+                testProps.put(PreInitLoader.generateOAPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME+orbCount, OA_INSTANCE_NAME+oaCount, "mypoainit"),
                                       "com.hp.mwtests.orbportability.initialisation.preinit.PreInitialisation2");
             }
         }
 
-        System.setProperties(testProps);
+        opPropertyManager.getOrbPortabilityEnvironmentBean().setOrbInitializationProperties(testProps);
 
         try
         {

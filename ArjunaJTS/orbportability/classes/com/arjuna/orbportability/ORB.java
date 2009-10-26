@@ -36,7 +36,7 @@ import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.opLogger;
 
 import com.arjuna.orbportability.internal.utils.*;
-import com.arjuna.orbportability.internal.common.LocalSetup;
+//import com.arjuna.orbportability.internal.common.LocalSetup;
 
 import com.arjuna.orbportability.logging.*;
 import com.arjuna.common.util.logging.VisibilityLevel;
@@ -82,7 +82,7 @@ public synchronized void initORB () throws SystemException
 
 	if (!_orb.initialised())
 	{
-	    loadProperties(null);
+	    // null op - just skip it loadProperties(null);
 
             /**
              * Perform pre-initialisation classes for all ORBs
@@ -358,11 +358,11 @@ public synchronized void destroy() throws SystemException
 	_orb.destroy();
     }
 
-protected ORB (String orbName)
+    protected ORB (String orbName)
     {
         _orbName = orbName;
 
-	addAttribute(new LocalSetup());
+        //addAttribute(new LocalSetup());
     }
 
 private void loadProperties (Properties p)
@@ -389,7 +389,11 @@ private void loadProperties (Properties p)
                                               "Adding property '"+o+"' to the ORB portability properties" );
                     }
 
-                    opPropertyManager.getPropertyManager().setProperty( o, p.getProperty(o) );
+                    synchronized (ORB.class) {
+                        Map<String, String> globalProperties = opPropertyManager.getOrbPortabilityEnvironmentBean().getOrbInitializationProperties();
+                        globalProperties.put(o, p.getProperty(o));
+                        opPropertyManager.getOrbPortabilityEnvironmentBean().setOrbInitializationProperties(globalProperties);
+                    }
                 }
             }
         }

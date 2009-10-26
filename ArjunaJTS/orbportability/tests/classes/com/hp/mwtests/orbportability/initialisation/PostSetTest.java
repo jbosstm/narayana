@@ -33,10 +33,11 @@ package com.hp.mwtests.orbportability.initialisation;
 
 import com.arjuna.orbportability.internal.utils.PostSetLoader;
 import com.arjuna.orbportability.ORB;
+import com.arjuna.orbportability.common.opPropertyManager;
 import com.hp.mwtests.orbportability.initialisation.postset.AllPostSet;
 import com.hp.mwtests.orbportability.initialisation.postset.SinglePostSetUsingInterface;
 
-import java.util.Properties;
+import java.util.Map;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -49,14 +50,14 @@ public class PostSetTest
     @Test
     public void test()
     {
-        Properties testProps = System.getProperties();
+        Map<String, String> testProps = opPropertyManager.getOrbPortabilityEnvironmentBean().getOrbInitializationProperties();
 
-        testProps.setProperty(PostSetLoader.generateORBPropertyName("com.arjuna.orbportability.orb"),
+        testProps.put(PostSetLoader.generateORBPropertyName("com.arjuna.orbportability.orb"),
                 "com.hp.mwtests.orbportability.initialisation.postset.AllPostSet");
-        testProps.setProperty(PostSetLoader.generateORBPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME2),
+        testProps.put(PostSetLoader.generateORBPropertyName("com.arjuna.orbportability.orb", ORB_INSTANCE_NAME2),
                 "com.hp.mwtests.orbportability.initialisation.postset.SinglePostSetUsingInterface");
 
-        System.setProperties(testProps);
+        opPropertyManager.getOrbPortabilityEnvironmentBean().setOrbInitializationProperties(testProps);
 
         ORB orb = null;
         ORB orb2 = null;

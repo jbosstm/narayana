@@ -44,6 +44,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class opPropertyManager
 {
+    /**
+     * @deprecated use the bean instead.
+     * @return
+     */
     public static PropertyManager getPropertyManager()
     {
         return PropertyManagerFactory.getPropertyManagerForModule("orbportability", Environment.PROPERTIES_FILE);
