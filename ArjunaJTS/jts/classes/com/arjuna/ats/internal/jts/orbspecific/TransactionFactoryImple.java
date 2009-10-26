@@ -859,7 +859,7 @@ public class TransactionFactoryImple extends
 				{
 					theUid = UidHelper.unpackFrom(uids);
 
-					if (theUid == Uid.nullUid())
+					if (theUid.equals(Uid.nullUid()))
 						finished = true;
 					else
 						count++;

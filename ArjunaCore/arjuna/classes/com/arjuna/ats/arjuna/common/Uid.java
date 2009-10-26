@@ -210,14 +210,12 @@ public class Uid implements Cloneable, Serializable
 			}
 			catch (NumberFormatException e)
 			{
-			    e.printStackTrace();
-			    
 				if (!errsOk)
 				{
 					if (tsLogger.arjLoggerI18N.isWarnEnabled())
 					{
 						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.common.Uid_3", new Object[]
-						{ uidString });
+						{ uidString }, e);
 					}
 				}
 
@@ -225,7 +223,11 @@ public class Uid implements Cloneable, Serializable
 			}
 			catch (StringIndexOutOfBoundsException e)
 			{
-			    e.printStackTrace();
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.common.Uid_3", new Object[]
+                            { uidString }, e);
+                }
 			    
 				_valid = false;
 			}

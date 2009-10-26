@@ -219,7 +219,7 @@ class ActionTestClientTestService implements Service
             Uid pidUid = new Uid(pidUidStr);
             String pidStr = _in.readLine();
 
-            if (pidUid == Uid.nullUid()) {
+            if (pidUid.equals(Uid.nullUid())) {
                 System.err.println("Test Failed");
             } else {
                 _tsc = new TransactionStatusConnector(pidStr, pidUid);

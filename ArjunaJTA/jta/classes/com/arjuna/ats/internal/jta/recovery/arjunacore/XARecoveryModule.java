@@ -403,7 +403,7 @@ public class XARecoveryModule implements RecoveryModule
 	{
 		Uid theUid = null;
 
-		while (theUid.notEquals(Uid.nullUid()))
+		while (Uid.nullUid().notEquals(theUid))
 		{
 			try
 			{
