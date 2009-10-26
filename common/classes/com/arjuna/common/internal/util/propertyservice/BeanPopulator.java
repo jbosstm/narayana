@@ -187,8 +187,6 @@ public class BeanPopulator
             }            
         }
 
-        System.out.println(bean.getClass()+" "+field.getName());
-
         Object replacementValue = null;
 
         if(java.util.Map.class.isAssignableFrom(field.getType())) {
@@ -203,8 +201,6 @@ public class BeanPopulator
              // it stays as a list.
             replacementValue = lines;
         }
-
-        System.out.println(replacementValue.getClass().getName()+": "+replacementValue);
 
         Object valueFromBean = getter.invoke(bean, new Object[] {});
 

@@ -36,7 +36,6 @@ import com.arjuna.orbportability.common.opPropertyManager;
 import com.arjuna.orbportability.logging.opLogger;
 
 import com.arjuna.orbportability.internal.utils.*;
-//import com.arjuna.orbportability.internal.common.LocalSetup;
 
 import com.arjuna.orbportability.logging.*;
 import com.arjuna.common.util.logging.VisibilityLevel;
@@ -361,8 +360,6 @@ public synchronized void destroy() throws SystemException
     protected ORB (String orbName)
     {
         _orbName = orbName;
-
-        //addAttribute(new LocalSetup());
     }
 
 private void loadProperties (Properties p)
