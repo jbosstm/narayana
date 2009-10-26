@@ -185,7 +185,7 @@ METHOD check
 AFTER CALL interrupt
 BIND NOTHING
 IF TRUE
-DO debug("reaper called interrupt on " + $e),
+DO debug("reaper called interrupt on " + $reaperElement),
    flag("interrupted")
 ENDRULE
 
@@ -195,7 +195,7 @@ METHOD check
 AFTER WRITE _zombieCount
 BIND NOTHING
 IF TRUE
-DO debug("reaper incremented zombie count " + $e),
+DO debug("reaper incremented zombie count " + $reaperElement),
    flag("zombied")
 ENDRULE
 
