@@ -95,7 +95,7 @@ ENDRULE
 # and then delay proceeding with the test until the purge has actually
 # happened
 
-RULE log store recovery test allow purge to proceed
+RULE log store recovery test allow purge to proceed 2
 CLASS com.hp.mwtests.ts.arjuna.objectstore.LogStoreTest2
 METHOD test()
 AT CALL InputObjectState.<init>

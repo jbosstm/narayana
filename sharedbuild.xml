@@ -417,7 +417,6 @@
                 </run.tests.macro.aux>
             </then>
             <else>
-                <echo  message="running with script ${basedir}/tests/byteman-scripts/@{script}"/>
                 <run.tests.macro.aux  showoutput="@{showoutput}">
                     <tests.aux>
                         <tests/>
@@ -426,7 +425,7 @@
                         <additional.classpath/>
                     </additional.classpath.aux>
                     <additional.jvmargs.aux>
-                        <jvmarg value="-javaagent:${global.ext.lib.dir}/byteman.jar=script:${basedir}/tests/byteman-scripts/@{script},listener:true,boot:${global.ext.lib.dir}/byteman.jar"/>
+                        <jvmarg value="-javaagent:${global.ext.lib.dir}/byteman.jar=script:${basedir}/tests/byteman-scripts/@{script}"/>
                         <jvmarg value="-Dorg.jboss.byteman.debug"/>
                         <additional.jvmargs/>
                     </additional.jvmargs.aux>
