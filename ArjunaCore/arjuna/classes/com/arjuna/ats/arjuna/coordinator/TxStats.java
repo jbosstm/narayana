@@ -103,7 +103,7 @@ public class TxStats implements TxStatsMBean
 	 */
 	public long getNumberOfInflightTransactions()
 	{
-		return ActionManager.manager().inflightTransactions().size();
+		return ActionManager.manager().getNumberOfInflightTransactions();
 	}
 
 	/**

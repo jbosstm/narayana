@@ -58,7 +58,7 @@ public class SubordinateTestCase
 			tm.doCommit();
 		}
 
-		assertEquals(ActionManager.manager().inflightTransactions().size(), 0);
+		assertEquals(ActionManager.manager().getNumberOfInflightTransactions(), 0);
 	}
 
     @Test
@@ -71,7 +71,7 @@ public class SubordinateTestCase
 			tm.doRollback();
 		}
 
-		assertEquals(ActionManager.manager().inflightTransactions().size(), 0);
+		assertEquals(ActionManager.manager().getNumberOfInflightTransactions(), 0);
 	}
 
     @Test
@@ -85,7 +85,7 @@ public class SubordinateTestCase
 			tm.doRollback();
 		}
 
-		assertEquals(ActionManager.manager().inflightTransactions().size(), 0);
+		assertEquals(ActionManager.manager().getNumberOfInflightTransactions(), 0);
 	}
 
     @Test
@@ -98,7 +98,7 @@ public class SubordinateTestCase
 			tm.doOnePhaseCommit();
 		}
 
-		assertEquals(ActionManager.manager().inflightTransactions().size(), 0);
+		assertEquals(ActionManager.manager().getNumberOfInflightTransactions(), 0);
 	}
 
     /////////////

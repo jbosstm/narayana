@@ -35,6 +35,8 @@ import com.arjuna.ats.arjuna.common.Uid;
 
 import java.util.Collection;
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*
  * @author Mark Little (mark_little@hp.com)
@@ -80,7 +82,7 @@ public class ActionManager
 
 	public BasicAction get(Uid id)
 	{
-		Lifetime lt = (Lifetime) _allActions.get(id);
+		Lifetime lt = _allActions.get(id);
 		
 		if (lt != null)
 			return lt.getAction();
@@ -90,7 +92,7 @@ public class ActionManager
 
 	public long getTimeAdded (Uid id)
 	{
-		Lifetime lt = (Lifetime) _allActions.get(id);
+		Lifetime lt = _allActions.get(id);
 		
 		if (lt != null)
 			return lt.getTimeAdded();
@@ -103,10 +105,10 @@ public class ActionManager
 		_allActions.remove(id);
 	}
 
-	public Collection inflightTransactions ()
-	{
-		return _allActions.values();
-	}
+    public int getNumberOfInflightTransactions()
+    {
+        return _allActions.size();
+    }
 	
 	private ActionManager()
 	{
@@ -114,6 +116,5 @@ public class ActionManager
 
 	private static final ActionManager _theManager = new ActionManager();
 
-	private static final Hashtable _allActions = new Hashtable();
-
+	private static final Map<Uid, Lifetime> _allActions = new ConcurrentHashMap<Uid, Lifetime>();
 }
