@@ -139,7 +139,7 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
                         // then it is removed from the object store.
                         Uid currentUid = newUid ;
                   
-                        String process_id = get_process_id( currentUid ) ;
+                        String process_id = currentUid.getHexPid();
                       
                         TransactionStatusConnector tsc = 
                            new TransactionStatusConnector ( process_id, currentUid ) ;
@@ -171,21 +171,6 @@ public class ExpiredTransactionStatusManagerScanner implements ExpiryScanner
     public boolean toBeUsed()
     {
 	return _expiryTime != 0 ;
-    }
-    
-    /**
-     * Extract the process identifier from the supplied Uid.
-     */
-    private String get_process_id ( Uid uid )
-    {
-	// process id accessor on Uid needed!
-	// this is just a hack
-	String strUid = uid.toString() ;
-	StringTokenizer st = new StringTokenizer( strUid, ":" ) ;
-	st.nextToken() ;
-	String process_id_in_Hex = st.nextToken() ;
-	
-	return process_id_in_Hex ;
     }
     
     private String      _itemTypeName ;

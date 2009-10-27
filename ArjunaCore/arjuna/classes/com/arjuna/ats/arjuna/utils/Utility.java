@@ -246,8 +246,6 @@ public class Utility
             }               
         }
 
-        System.err.println("**returning < "+myAddr[0]+", "+myAddr[1]+" >");
-        
         return myAddr;
     }
 

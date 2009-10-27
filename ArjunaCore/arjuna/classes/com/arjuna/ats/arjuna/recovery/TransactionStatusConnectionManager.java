@@ -98,13 +98,13 @@ public class TransactionStatusConnectionManager
         int status = ActionStatus.INVALID ;
 
         // extract process id from uid
-        String process_id = get_process_id ( tranUid ) ;
+        String process_id = tranUid.getHexPid();
 
         // if the tx is in the same JVM we rely on ActionStatusService directly.
         // This skips the communication with TransactionStatusManager, which is just backed
         // by ActionStatusService anyhow. That allows TSM to be turned off for local only cases if desired.
         // Note: condition assumes ObjectStore is not shared between machines i.e. that processId is globally uniq.
-        if(! process_id.equals( get_process_id(_localUid) )) {
+        if(! process_id.equals( _localUid.getHexPid()) ) {
             status = getRemoteTransactionStatus(process_id, transactionType, tranUid);
         }
 
@@ -253,7 +253,7 @@ public class TransactionStatusConnectionManager
 	{
 	    Uid currentUid = (Uid) tsmiEnum.nextElement() ;
 
-	    String process_id = get_process_id( currentUid ) ;
+	    String process_id = currentUid.getHexPid();
 
 	    if ( ! _tscTable.containsKey( process_id ) )
 	    {
@@ -277,21 +277,6 @@ public class TransactionStatusConnectionManager
 		}
 	    }
 	}
-    }
-
-    /**
-     * Extract the process identifier from the supplied Uid.
-     */
-    private String get_process_id ( Uid uid )
-    {
-	// process id accessor on Uid needed!
-	// this is just a hack
-	String strUid = uid.toString() ;
-	StringTokenizer st = new StringTokenizer( strUid, ":" ) ;
-	st.nextToken() ;
-	String process_id_in_Hex = st.nextToken() ;
-
-	return process_id_in_Hex ;
     }
 
     // Type within ObjectStore.

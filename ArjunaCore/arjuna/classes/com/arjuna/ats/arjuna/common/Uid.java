@@ -357,6 +357,12 @@ public class Uid implements Cloneable, Serializable
 		return stringForm();
 	}
 
+    // return the process id value in hex form.
+    // The internal format is Uids mostly should not be exposed, but some recovery/expiry code need this.
+    public String getHexPid() {
+        return Utility.intToHexString(process);
+    }
+
 	/**
 	 * Create a copy of this instance.
 	 */
