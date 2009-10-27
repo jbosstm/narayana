@@ -77,13 +77,22 @@ public class ConfigurationInfo
 
     // initialize build time properties from data in the jar's META-INF/MANIFEST.MF
     private static void getBuildTimeProperties() {
-        
-        // our classloader's classpath may contain more than one .jar, each with a manifest.
-        // we need to ensure we get our own .jar's manifest, even if the jar is not first on the path.
+        /*
+        our classloader's classpath may contain more than one .jar, each with a manifest.
+        we need to ensure we get our own .jar's manifest, even if the jar is not first on the path.
+        we also need to deal with vfs, which does weird things to pathToThisClass e.g.
+          normal: jar:file:/foo/bar.jar!/com/arjuna/common/util/ConfigurationInfo.class
+          vfszip:/foo/bar.jar/com/arjuna/common/util/ConfigurationInfo.class
+        In short, this path finding code is magic and should be approached very cautiously.
+         */
         String classFileName = ConfigurationInfo.class.getSimpleName()+".class";
         String pathToThisClass = ConfigurationInfo.class.getResource(classFileName).toString();
-        int mark = pathToThisClass.indexOf("!") ;
-        String pathToManifest = (pathToThisClass.substring(0,mark+1))+"/META-INF/MANIFEST.MF";
+        // we need to strip off the class name bit so we can replace it with the manifest name: 
+        int suffixLength = ("/"+ConfigurationInfo.class.getCanonicalName()+".class").length();
+        // now derive the path to the .jar which contains the class and thus hopefully the right manifest:
+        String basePath = pathToThisClass.substring(0, pathToThisClass.length()-suffixLength);
+
+        String pathToManifest = basePath+"/META-INF/MANIFEST.MF";
 
         InputStream is = null;
         try {
