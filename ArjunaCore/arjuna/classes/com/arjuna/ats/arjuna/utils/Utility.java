@@ -169,8 +169,15 @@ public class Utility
      *         separated for general availability.
      * @since JTS 2.1.
      */
+    public static long[] hostInetAddr() throws UnknownHostException {
+        if(myAddr == null) {
+            calculateHostInetAddr();
+        }
 
-    public static synchronized long[] hostInetAddr () throws UnknownHostException
+        return myAddr;
+    }
+
+    private static synchronized void calculateHostInetAddr () throws UnknownHostException
     {
         /*
          * Calculate only once.
@@ -245,8 +252,6 @@ public class Utility
                 myAddr[1] = (myAddr[1] << 8) | l;
             }               
         }
-
-        return myAddr;
     }
 
     /**
@@ -358,13 +363,20 @@ public class Utility
      * @return a Uid representing this process.
      * @since JTS 2.1.
      */
-
-    public static final synchronized Uid getProcessUid ()
+    public static Uid getProcessUid ()
     {
-        if (processUid == null)
-            processUid = new Uid();
+        if (processUid == null) {
+            initProcessUid();
+        }
 
         return processUid;
+    }
+
+    private static synchronized void initProcessUid() {
+        // not done from a static initializer because Uid ctor calls back into this class.
+        if(processUid == null) {
+            processUid = new Uid();
+        }
     }
 
     public static final boolean isWindows ()
@@ -387,19 +399,20 @@ public class Utility
      *          [com.arjuna.ats.arjuna.utils.Utility_1] -
      *          Utility.getDefaultProcess - failed with
      */
-    public static final Process getDefaultProcess ()
+    private static synchronized void initDefaultProcess ()
     {
-        try
+        if(processHandle == null)
         {
-            Class c = Thread.currentThread().getContextClassLoader().loadClass( arjPropertyManager.getCoreEnvironmentBean().getProcessImplementation());
+            try
+            {
+                Class c = Thread.currentThread().getContextClassLoader().loadClass( arjPropertyManager.getCoreEnvironmentBean().getProcessImplementation());
 
-            return (Process) c.newInstance();
-        }
-        catch (Exception e)
-        {
-            tsLogger.arjLoggerI18N.warn("Utility_1", e);
-
-            return null;
+                processHandle = (Process) c.newInstance();
+            }
+            catch (Exception e)
+            {
+                tsLogger.arjLoggerI18N.warn("Utility_1", e);
+            }
         }
     }
 
@@ -407,7 +420,7 @@ public class Utility
     {
         if (processHandle == null)
         {
-            processHandle = getDefaultProcess();
+            initDefaultProcess();
         }
 
         return processHandle;
@@ -419,11 +432,11 @@ public class Utility
         }
     }
 
-    private static long[] myAddr = null;
+    private static volatile long[] myAddr = null;
 
     private static Uid processUid = null;
 
-    private static Process processHandle = null;
+    private static volatile Process processHandle = null;
 
     private static final String hexStart = "0x";
 
