@@ -322,7 +322,7 @@ ENDRULE
 # a close message. It exits the JVM, simulating a crash.
 # The trigger location is on entry
 
-RULE kill JVM at participant completion close
+RULE kill JVM at coordinator completion close
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
 METHOD close
 AT ENTRY
@@ -341,7 +341,7 @@ ENDRULE
 # participant stub (CoordinatorCompletionCoordinatorEngine) is requested
 # to send a complete message. It traces the call.
 
-RULE trace coordinator completion close
+RULE trace coordinator completion complete
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
 METHOD complete
 AFTER SYNCHRONIZE
@@ -430,6 +430,7 @@ ENDRULE
 # located in the log record. It traces the create operation
 # The trigger location is at entry but the rule should only be triggered
 # after calling the super constructor
+
 RULE trace participant completion engine create
 CLASS com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine
 METHOD <init>(String, boolean, W3CEndpointReference, State, boolean)
@@ -447,6 +448,7 @@ ENDRULE
 # located in the log record. It traces the create operation
 # The trigger location is at entry but the rule should only be triggered
 # after calling the super constructor
+
 RULE trace coordinator completion engine create
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
 METHOD <init>(String, boolean, W3CEndpointReference, State, boolean)

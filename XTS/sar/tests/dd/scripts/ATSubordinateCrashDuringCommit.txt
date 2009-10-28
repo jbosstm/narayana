@@ -329,7 +329,7 @@ ENDRULE
 # (SubordinateDurable2PCStub) is requested to send a prepared message. It
 # traces the call.
 
-RULE trace subordinate participant stub prepare
+RULE trace subordinate participant stub prepare 2
 CLASS com.arjuna.wst11.stub.SubordinateDurable2PCStub
 METHOD prepare
 AFTER INVOKE prepare
@@ -545,7 +545,7 @@ ENDRULE
 # (SubordinateCoordinator) is requested to perform a commit. It
 # traces the call.
 
-RULE trace subordinate coordinator commit
+RULE trace subordinate coordinator commit 2
 CLASS com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator
 METHOD commit
 AT EXIT
@@ -583,7 +583,7 @@ ENDRULE
 # It prints a message which can be used to verify that the test has
 # progressed as expected
 
-RULE trace prepared replay
+RULE trace subordinate prepared replay
 CLASS org.jboss.jbossts.xts.recovery.coordinator.at.RecoverSubordinateCoordinator
 METHOD replayPhase2
 AT INVOKE removeRecoveredCoordinator

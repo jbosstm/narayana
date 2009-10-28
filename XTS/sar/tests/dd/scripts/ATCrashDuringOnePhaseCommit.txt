@@ -274,7 +274,7 @@ ENDRULE
 # This rule is triggered when a non-recovered participant engine
 # (ParticipantEngine) receives a prepare message. It traces the call.
 
-RULE trace coordinator prepare
+RULE trace participant prepare
 CLASS com.arjuna.wst11.messaging.engines.ParticipantEngine
 METHOD prepare
 AT SYNCHRONIZE

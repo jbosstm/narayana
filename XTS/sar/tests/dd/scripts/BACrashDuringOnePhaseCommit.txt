@@ -359,7 +359,7 @@ ENDRULE
 # participant (CoordinatorCompletionParticipantEngine) receives
 # a close message. It exits the JVM, simulating a crash.
 
-RULE kill JVM at participant completion participant close
+RULE kill JVM at coordinatior completion participant close
 CLASS com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine
 METHOD close
 AT ENTRY
