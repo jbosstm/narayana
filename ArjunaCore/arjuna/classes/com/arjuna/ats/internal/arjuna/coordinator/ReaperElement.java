@@ -37,6 +37,8 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.coordinator.Reapable;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class ReaperElement implements Comparable<ReaperElement>
 {
 
@@ -117,16 +119,20 @@ public class ReaperElement implements Comparable<ReaperElement>
     // bias is used to distinguish/sort instances with the same _absoluteTimeoutMills
     // as using Uid for this purpose is expensive. JBTM-611
 
-    private static int biasCounter = 0;
+    private static int MAX_BIAS = 1000000;
+    private static AtomicInteger biasCounter = new AtomicInteger();
 
-    public static synchronized int getBiasCounter()
+    private static int getBiasCounter()
     {
-        if(biasCounter >= 1000000-1) {
-            biasCounter = 0;
-        } else {
-            biasCounter++;
-        }
-        return biasCounter;
+        int value = 0;
+        do {
+            value = biasCounter.getAndIncrement();
+            if(value == MAX_BIAS) {
+                biasCounter.set(0);
+            }
+        } while(value >= MAX_BIAS);
+
+        return value; // range 0 to MAX_BIAS-1 inclusive.
     }
 
     public int _timeout;
