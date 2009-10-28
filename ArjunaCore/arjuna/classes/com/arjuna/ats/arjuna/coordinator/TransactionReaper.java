@@ -191,7 +191,7 @@ public class TransactionReaper
                                     new Object[] {Long.toString(next)});
                 }
 
-                if (now <= next) {
+                if (now < next) {
                     break;
                 }
 
