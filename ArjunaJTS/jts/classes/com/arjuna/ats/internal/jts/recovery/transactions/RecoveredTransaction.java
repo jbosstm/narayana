@@ -40,11 +40,7 @@ import com.arjuna.ats.arjuna.exceptions.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.*;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.orbportability.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.utils.*;
 
 import com.arjuna.ats.jts.logging.jtsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;

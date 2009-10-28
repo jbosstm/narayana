@@ -31,16 +31,11 @@
 
 package com.arjuna.ats.jts.common;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
-import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Property manager wrapper for the JTS module.
  */
-
 public class jtsPropertyManager
 {
     public static JTSEnvironmentBean getJTSEnvironmentBean()

@@ -22,7 +22,6 @@ package com.arjuna.common.tests.simple;
 
 import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
-import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
 
 import java.util.Properties;
 import java.util.Enumeration;

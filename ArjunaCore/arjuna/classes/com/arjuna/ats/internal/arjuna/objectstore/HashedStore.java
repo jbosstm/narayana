@@ -33,8 +33,6 @@ package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.ArjunaNames;
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
@@ -52,7 +50,6 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import java.io.IOException;
-import java.io.FileNotFoundException;
 import java.lang.NumberFormatException;
 
 /*

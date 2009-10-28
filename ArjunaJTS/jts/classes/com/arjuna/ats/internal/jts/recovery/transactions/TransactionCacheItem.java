@@ -36,11 +36,6 @@ import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImpl
 import com.arjuna.ats.internal.jts.orbspecific.interposition.coordinator.ServerTransaction;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.objectstore.*;
-import com.arjuna.ats.jts.common.jtsPropertyManager;
-import com.arjuna.ats.internal.jts.ORBManager;
-import com.arjuna.orbportability.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 
 import org.omg.CosTransactions.*;
 

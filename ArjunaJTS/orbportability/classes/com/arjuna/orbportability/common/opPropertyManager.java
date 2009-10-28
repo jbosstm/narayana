@@ -31,11 +31,7 @@
 
 package com.arjuna.orbportability.common;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
-import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Property manager wrapper for the ORB Portability module.

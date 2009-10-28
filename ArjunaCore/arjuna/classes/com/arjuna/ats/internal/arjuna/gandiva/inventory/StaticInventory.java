@@ -35,12 +35,10 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 
 import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.ats.arjuna.gandiva.inventory.*;
 import com.arjuna.ats.arjuna.gandiva.*;
 import com.arjuna.ats.internal.arjuna.Implementations;
 import java.io.PrintStream;
-import java.util.*;
 
 /**
  * The StaticInventory required each implementation type to be registered

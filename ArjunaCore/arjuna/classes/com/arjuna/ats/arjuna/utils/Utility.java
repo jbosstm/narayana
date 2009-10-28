@@ -34,7 +34,6 @@ package com.arjuna.ats.arjuna.utils;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -282,68 +281,6 @@ public class Utility
 
             throw ex;
         }
-    }
-
-    /**
-     * Lookup and valid a port number.
-     *
-     * @param intProperty
-     *            property name of an integer valued property
-     * @param defValue
-     *            a value to return if intProperty is invalid. If a null value
-     *            is used and intProperty is invalid then
-     *            @see com.arjuna.ats.arjuna.exceptions.FatalError is thrown
-     * @param warnMsgKey
-     *            message key to report a warning if property values is invalid
-     * @param minValue
-     *            minimum value for the integer propertry
-     * @param maxValue
-     *            maximum value for the integer propertry
-     * @return the integer value of property or the default value if the
-     *         property does not represent an integer
-     *
-     * @deprecated properties should come from environment beans now
-     */
-    @Deprecated
-    public static Integer lookupBoundedIntegerProperty (PropertyManager pm,
-            String intProperty, Integer defValue, String warnMsgKey,
-            int minValue, int maxValue)
-    {
-        String intStr = pm.getProperty(intProperty);
-
-        // if the propery is not found or empty just return the default
-        if (intStr == null || intStr.length() == 0)
-        {
-            return defValue;
-        }
-
-        try
-        {
-            int i = Integer.parseInt(intStr);
-
-            if (i < minValue || i > maxValue)
-            {
-                // the value is an invalid number
-                if (warnMsgKey != null
-                        && tsLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    tsLogger.arjLoggerI18N.warn(warnMsgKey, new Object[]
-                    { intStr });
-                }
-            }
-            else
-            {
-                return i;
-            }
-        }
-        catch (Exception ex)
-        {
-            // the value is not a number
-            if (warnMsgKey != null && tsLogger.arjLoggerI18N.isWarnEnabled())
-                tsLogger.arjLoggerI18N.warn(warnMsgKey, ex);
-        }
-
-        return defValue;
     }
 
     /**

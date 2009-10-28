@@ -34,7 +34,6 @@ package com.arjuna.ats.internal.arjuna.gandiva.nameservice;
 import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.gandiva.ObjectName;
 import com.arjuna.ats.arjuna.gandiva.nameservice.*;

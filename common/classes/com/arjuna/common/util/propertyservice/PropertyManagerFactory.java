@@ -76,7 +76,11 @@ public class PropertyManagerFactory
         return createPropertyManagerForModule(moduleName, fileNamePropertyKey);
     }
 
-    public static PropertyManager getPropertyManagerForFile(String propertyFileName, boolean withCaching)
+    public static Properties getPropertiesFromFile(String propertiesFileName) {
+        return getPropertyManagerForFile(propertiesFileName, false).getProperties();
+    }
+
+    private static PropertyManager getPropertyManagerForFile(String propertyFileName, boolean withCaching)
     {
         String filepath = null;
         try

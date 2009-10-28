@@ -32,13 +32,11 @@
 package com.arjuna.ats.internal.jdbc.recovery;
 
 import com.arjuna.ats.jdbc.TransactionalDriver;
-import com.arjuna.ats.jdbc.common.jdbcPropertyManager;
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
 
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 
 import com.arjuna.common.util.logging.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 
 import java.sql.*;
@@ -46,7 +44,6 @@ import javax.transaction.xa.*;
 import java.util.*;
 
 import java.lang.NumberFormatException;
-import com.arjuna.common.internal.util.propertyservice.plugins.io.XMLFilePlugin;
 
 /**
  * This class implements the XAResourceRecovery interface for XAResources. The
@@ -161,9 +158,7 @@ public class BasicXARecovery implements XAResourceRecovery
 
 		try
 		{
-            PropertyManager propertyManager = PropertyManagerFactory.getPropertyManagerForFile(fileName, false);
-
-            props = propertyManager.getProperties();            
+            props = PropertyManagerFactory.getPropertiesFromFile(fileName);
 		}
 		catch (Exception e)
 		{

@@ -20,6 +20,8 @@
  */
 package com.arjuna.common.internal.util.logging;
 
+import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+
 /**
  * This class is used to control properties values for CLF.
  *
@@ -32,13 +34,6 @@ package com.arjuna.common.internal.util.logging;
  *
  * @author Malik SAHEB
  */
-
-import com.arjuna.common.util.propertyservice.PropertyManager;
-import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
-import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
 public class commonPropertyManager
 {
     public static LoggingEnvironmentBean getLoggingEnvironmentBean()

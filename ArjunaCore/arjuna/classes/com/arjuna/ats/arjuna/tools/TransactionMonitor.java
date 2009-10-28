@@ -31,13 +31,10 @@
 
 package com.arjuna.ats.arjuna.tools;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import java.io.PrintWriter;

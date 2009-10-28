@@ -40,8 +40,6 @@ import com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem ;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
-import com.arjuna.common.util.propertyservice.PropertyManager;
-import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 
 /**
  *
