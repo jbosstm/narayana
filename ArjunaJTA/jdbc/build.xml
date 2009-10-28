@@ -22,8 +22,7 @@
 
     <property name="modulename" value="jdbc"/>
 
-    <property name="excluded.classes" value="**/oracle*.java **/Oracle*.java **/*JDBC3.java"/>
-    <property name="excluded.test.classes" value="**/Oracle*.java"/>
+    <property name="excluded.classes" value="**/*JDBC3.java"/>
 
     <property name="global.ext.libs" value="jta-1_1-classes.zip"/>
 

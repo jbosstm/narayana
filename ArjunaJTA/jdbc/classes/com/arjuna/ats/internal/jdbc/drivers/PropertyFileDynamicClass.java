@@ -93,17 +93,4 @@ public class PropertyFileDynamicClass implements DynamicClass
 
         return xaDataSourceReflectionWrapper.getWrappedXADataSource();
     }
-
-    /**
-     * @deprecated
-     */
-    public XADataSource getDataSource(String dbName, boolean create) throws SQLException {
-        return null;
-    }
-
-    /**
-     * @deprecated
-     */
-    public void shutdownDataSource(XADataSource ds) throws SQLException {
-    }
 }

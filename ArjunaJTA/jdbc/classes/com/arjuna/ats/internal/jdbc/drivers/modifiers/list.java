@@ -33,18 +33,7 @@ package com.arjuna.ats.internal.jdbc.drivers.modifiers;
 
 public class list
 {
-
-public list ()
+    public list ()
     {
-	ModifierFactory.putModifier("Oracle JDBC driver", 9, -1, "com.arjuna.ats.internal.jdbc.drivers.modifiers.oracle_jndi");
-
-	ModifierFactory.putModifier("SQLServer", 2, -1, "com.arjuna.ats.internal.jdbc.drivers.modifiers.sqlserver_jndi");
-
-	ModifierFactory.putModifier(oracleName, 9, 0, "com.arjuna.ats.internal.jdbc.drivers.modifiers.oracle_9_0");
-
-	ModifierFactory.putModifier(oracleName, 8, 1, "com.arjuna.ats.internal.jdbc.drivers.modifiers.oracle_8_1");
     }
-
-private static final String oracleName = "oracle";
-
 }

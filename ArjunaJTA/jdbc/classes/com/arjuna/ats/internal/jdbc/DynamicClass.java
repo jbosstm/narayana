@@ -49,17 +49,5 @@ import java.sql.SQLException;
 
 public interface DynamicClass
 {
-
     public XADataSource getDataSource (String dbName) throws SQLException;
-
-    /**
-     * @deprecated
-     */
-    public XADataSource getDataSource (String dbName, boolean create) throws SQLException;
-
-    /**
-     * @deprecated
-     */
-    public void shutdownDataSource (XADataSource ds) throws SQLException;
-
 }
