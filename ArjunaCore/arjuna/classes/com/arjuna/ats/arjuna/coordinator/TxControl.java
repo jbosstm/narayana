@@ -150,7 +150,7 @@ public class TxControl
         }
 
 
-	public static final synchronized boolean isEnabled()
+	public static final boolean isEnabled()
 	{
 		return TxControl.enable;
 	}
@@ -332,7 +332,7 @@ public class TxControl
     /**
      * flag which is true if transaction service is enabled and false if it is disabled
      */
-	static boolean enable = true;
+	static volatile boolean enable = true;
 
 	private static TransactionStatusManager transactionStatusManager = null;
 
