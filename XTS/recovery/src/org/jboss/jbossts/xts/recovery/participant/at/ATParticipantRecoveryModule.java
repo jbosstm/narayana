@@ -29,6 +29,7 @@ import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.common.util.logging.DebugLevel;
 import com.arjuna.common.util.logging.VisibilityLevel;
 
@@ -254,41 +255,37 @@ public class ATParticipantRecoveryModule implements RecoveryModule
                             + " WS-AT participants" ) ;
         }
 
-        Uid theUid = new Uid( Uid.nullUid() );
+        Uid NULL_UID = Uid.nullUid();
+        Uid theUid = null;
 
-        boolean moreUids = true ;
-
-        while (moreUids)
+        while (true)
         {
             try
             {
-                theUid.unpack( uids ) ;
-
-                if (theUid.equals( Uid.nullUid() ))
-                {
-                    moreUids = false;
-                }
-                else
-                {
-                    Uid newUid = new Uid( theUid ) ;
-
-                    if (XTSLogger.arjLogger.isDebugEnabled())
-                    {
-                        XTSLogger.arjLogger.debug
-                                ( DebugLevel.FUNCTIONS,
-                                        VisibilityLevel.VIS_PUBLIC,
-                                        FacilityCode.FAC_CRASH_RECOVERY,
-                                        "found WS-AT participant "+ newUid ) ;
-                    }
-
-                    uidVector.addElement( newUid ) ;
-                }
+                theUid = UidHelper.unpackFrom( uids ) ;
             }
             catch ( Exception ex )
             {
-                moreUids = false;
+                break;
             }
+
+            if (theUid.equals( NULL_UID ))
+            {
+                break;
+            }
+
+            if (XTSLogger.arjLogger.isDebugEnabled())
+            {
+                XTSLogger.arjLogger.debug
+                        ( DebugLevel.FUNCTIONS,
+                                VisibilityLevel.VIS_PUBLIC,
+                                FacilityCode.FAC_CRASH_RECOVERY,
+                                "found WS-AT participant "+ theUid ) ;
+            }
+
+            uidVector.addElement( theUid ) ;
         }
+
         return uidVector ;
     }
 
