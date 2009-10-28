@@ -43,6 +43,7 @@ import java.net.UnknownHostException;
 import java.lang.StringIndexOutOfBoundsException;
 import java.lang.NumberFormatException;
 import java.lang.CloneNotSupportedException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
@@ -376,7 +377,7 @@ public class Uid implements Cloneable, Serializable
 	 * Copy the specified Uid over this instance.
 	 */
 
-	public void copy (Uid toCopy)
+	private void copy (Uid toCopy)
 	{
 		if (toCopy == this)
 			return;
@@ -601,15 +602,20 @@ public class Uid implements Cloneable, Serializable
 		}
 	}
 
-	private static final synchronized int getValue ()
-	{
-		if ((Uid.uidsCreated & 0xf0000000) > 0)
-		{
-			Uid.uidsCreated = 0;
-			Uid.initTime = (int) (System.currentTimeMillis() / 1000);
-		}
+    private static final int MAX_SEQ_VALUE = 0x40000000; // 2^30, which is a bit conservative.
 
-		return Uid.uidsCreated++;
+	private static int getValue ()
+	{
+        int value = 0;
+        do {
+            value = uidsCreated.getAndIncrement();
+            if(value == MAX_SEQ_VALUE) {
+                uidsCreated.set(0);
+                initTime = (int) (System.currentTimeMillis() / 1000);
+            }
+        } while(value >= MAX_SEQ_VALUE);
+
+        return value;
 	}
 
 	/*
@@ -675,30 +681,30 @@ public class Uid implements Cloneable, Serializable
 			return Uid.breakChar;
 	}
 
-	protected long[] hostAddr;  // representation of ipv6 address (and ipv4)
-	protected int process;
-	protected int sec;
-	protected int other;
+	protected volatile long[] hostAddr;  // representation of ipv6 address (and ipv4)
+	protected volatile int process;
+	protected volatile int sec;
+	protected volatile int other;
 
-	private int _hashValue;
+	private volatile int _hashValue;
 
-	private boolean _valid;
+	private volatile boolean _valid;
 	
-	private String _stringForm;
+	private volatile String _stringForm;
 
-	private static int uidsCreated ;
+	private static final AtomicInteger uidsCreated = new AtomicInteger();
 
-	private static int initTime ;
+	private static volatile int initTime ;
 
-	private static char breakChar = ':';
+	private static final char breakChar = ':';
 
-	private static char fileBreakChar = '_';
+	private static final char fileBreakChar = '_';
 
-	private static Uid NIL_UID = new Uid("0:0:0:0:0") ;
+	private static final Uid NIL_UID = new Uid("0:0:0:0:0") ;
 
-	private static Uid LAST_RESOURCE_UID = new Uid("0:0:0:0:1") ;
+	private static final Uid LAST_RESOURCE_UID = new Uid("0:0:0:0:1") ;
 
-	private static Uid MAX_UID = new Uid("7fffffff:7fffffff:7fffffff:7fffffff:7fffffff") ;
+	private static final Uid MAX_UID = new Uid("7fffffff:7fffffff:7fffffff:7fffffff:7fffffff") ;
 
-	private static Uid MIN_UID = new Uid("-80000000:-80000000:-80000000:-80000000:-80000000") ;
+	private static final Uid MIN_UID = new Uid("-80000000:-80000000:-80000000:-80000000:-80000000") ;
 }

@@ -111,15 +111,13 @@ public Lock (int lm)
 	    
 	    if (applicPid != currentPid)
 	    {
-		Uid temp = new Uid();
-	    
 		/*
 		 * Process id change probably due to a fork(). Get new pid 
 		 * and generate a new Applic_Uid
 		 */
 
 		applicPid = currentPid;
-		applicUid.copy(temp);
+		applicUid = new Uid();
 	    }
 
 	    ah.add(applicUid);
