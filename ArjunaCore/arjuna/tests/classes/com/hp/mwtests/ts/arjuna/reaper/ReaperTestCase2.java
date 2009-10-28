@@ -68,6 +68,9 @@ public class ReaperTestCase2  extends ReaperTestCaseControl
 
         // enable a repeatable rendezvous before checking the reapable queue
         enableRendezvous("reaper1", true);
+        // enable a repeatable rendezvous when synchronizing on a timed out reapoer element so we can check that
+        // the element is the one we expect.
+        enableRendezvous("reaper element", true);
         // enable a repeatable rendezvous before processing a timed out reapable
         // enableRendezvous("reaper2", true);
         // enable a repeatable rendezvous before scheduling a reapable in the worker queue for cancellation
@@ -128,6 +131,18 @@ public class ReaperTestCase2  extends ReaperTestCaseControl
 
         triggerRendezvous("reaper1");
 
+        // latch the reaper at the reaper element check
+
+        triggerRendezvous("reaper element");
+
+        // check that we have dequeued reapable0
+
+        assertTrue(checkAndClearFlag(reapable0));
+
+        // unlatch the reaper so it can process the element
+
+        triggerRendezvous("reaper element");
+
         // latch the reaper before it tests the queue again
 
         triggerRendezvous("reaper1");
@@ -156,6 +171,18 @@ public class ReaperTestCase2  extends ReaperTestCaseControl
 
         triggerRendezvous("reaper1");
 
+        // latch the reaper at the reaper element check
+
+        triggerRendezvous("reaper element");
+
+        // check that we have dequeued reapable1
+
+        assertTrue(checkAndClearFlag(reapable1));
+
+        // unlatch the reaper so it can process the element
+
+        triggerRendezvous("reaper element");
+
         // latch the reaper before it tests the queue again
 
         triggerRendezvous("reaper1");
@@ -174,6 +201,18 @@ public class ReaperTestCase2  extends ReaperTestCaseControl
         // now let the reaper check the queue and interrupt the cancel for UID1
 
         triggerRendezvous("reaper1");
+
+        // latch the reaper at the reaper element check
+
+        triggerRendezvous("reaper element");
+
+        // check that we have dequeued reapable0
+
+        assertTrue(checkAndClearFlag(reapable0));
+
+        // unlatch the reaper so it can process the element
+
+        triggerRendezvous("reaper element");
 
         // latch the reaper before it tests the queue again
 
@@ -241,6 +280,18 @@ public class ReaperTestCase2  extends ReaperTestCaseControl
 
         triggerRendezvous("reaper1");
 
+        // latch the reaper at the reaper element check
+
+        triggerRendezvous("reaper element");
+
+        // check that we have dequeued reapable2
+
+        assertTrue(checkAndClearFlag(reapable2));
+
+        // unlatch the reaper so it can process the element
+
+        triggerRendezvous("reaper element");
+
         // latch the reaper before it tests the queue again
 
         triggerRendezvous("reaper1");
@@ -252,7 +303,7 @@ public class ReaperTestCase2  extends ReaperTestCaseControl
         assertEquals(2, reaper.numberOfTransactions());
         assertEquals(2, reaper.numberOfTimeouts());
 
-        // now let the worker dequeue a reapable and proceed to call cancel
+        // now let the worker dequeue the fourth reapable and proceed to call cancel
 
         triggerRendezvous("reaperworker1");
 
@@ -264,6 +315,18 @@ public class ReaperTestCase2  extends ReaperTestCaseControl
         // worker queue
 
         triggerRendezvous("reaper1");
+
+        // latch the reaper at the reaper element check
+
+        triggerRendezvous("reaper element");
+
+        // check that we have dequeued reapable3
+
+        assertTrue(checkAndClearFlag(reapable3));
+
+        // unlatch the reaper so it can process the element
+
+        triggerRendezvous("reaper element");
 
         // latch the reaper before it tests the queue again
 
@@ -283,6 +346,18 @@ public class ReaperTestCase2  extends ReaperTestCaseControl
         // now let the reaper check the queue and interrupt the cancel for UID3
 
         triggerRendezvous("reaper1");
+
+        // latch the reaper at the reaper element check
+
+        triggerRendezvous("reaper element");
+
+        // check that we have dequeued reapable2
+
+        assertTrue(checkAndClearFlag(reapable2));
+
+        // unlatch the reaper so it can process the element
+
+        triggerRendezvous("reaper element");
 
         // latch the reaper before it tests the queue again
 
@@ -305,6 +380,18 @@ public class ReaperTestCase2  extends ReaperTestCaseControl
 
         triggerRendezvous("reaper1");
 
+        // latch the reaper at the reaper element check
+
+        triggerRendezvous("reaper element");
+
+        // check that we have dequeued reapable3
+
+        assertTrue(checkAndClearFlag(reapable3));
+
+        // unlatch the reaper so it can process the element
+
+        triggerRendezvous("reaper element");
+
         // latch the reaper before it tests the queue again
 
         triggerRendezvous("reaper1");
@@ -319,6 +406,18 @@ public class ReaperTestCase2  extends ReaperTestCaseControl
         // let the reaper check the queue and mark the reaper worker as a zombie
 
         triggerRendezvous("reaper1");
+
+        // latch the reaper at the reaper element check
+
+        triggerRendezvous("reaper element");
+
+        // check that we have dequeued reapable2
+
+        assertTrue(checkAndClearFlag(reapable2));
+
+        // unlatch the reaper so it can process the element
+
+        triggerRendezvous("reaper element");
 
         // latch the reaper before it tests the queue again
 

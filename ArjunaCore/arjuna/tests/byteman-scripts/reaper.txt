@@ -27,6 +27,21 @@ DO debug("reaper1"),
    rendezvous("reaper1")
 ENDRULE
 
+# rendezvous and set a flag to record which reaper element is about to be timed out
+# if a client enables this rendezvous then it must also check and clear the flag
+RULE track next element to be processed
+CLASS com.arjuna.ats.arjuna.coordinator.TransactionReaper
+METHOD check
+AT SYNCHRONIZE 2
+BIND NOTHING
+IF isRendezvous("reaper element", 2)
+DO debug("reaper element"),
+   flag($reaperElement._control),
+   rendezvous("reaper element"),
+   debug("reaper element"),
+   rendezvous("reaper element")
+ENDRULE
+
 # rendezvous before processing a timed out reaper element
 
 RULE pause transaction reaper 2
