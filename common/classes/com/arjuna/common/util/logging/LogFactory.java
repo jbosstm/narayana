@@ -34,106 +34,29 @@ import com.arjuna.common.util.exceptions.LogConfigurationException;
 import java.lang.reflect.Constructor;
 
 /**
- * Factory for {@link Logi18n Log} objects.
+ * Factory for {@link Logi18n} and {@link LogNoi18n} objects.
  *
- * LogFactory returns different subclasses of logger according to which logging subsystem is chosen. The
- * log system is selected through the property <code>com.arjuna.common.utils.logger</code>.
- * Supported values for this property are:
- * <ul>
- *    <li><code><b>jakarta</b></code> Jakarta Commons Logging (JCL). JCL can delegate to various other logging subsystems, such as:
- *    <ul>
- *       <li>log4j</li>
- *       <li>JDK 1.4 logging</li>
- *       <li>Windows NT syslog</li>
- *       <li>console</li>
- *    </ul>
- *    </li>
- * </ul>
+ * LogFactory instantiates and returns different implementations of Logi18n and LogNoi18n according to
+ * which logging subsystem is configured.
+ *
+ * The LoggingEnvironmentBean.loggingFactory property supplies factory setup information which is used to
+ * instantiate a LogFactoryInterface implementation, from which a LogInterface implementation is then obtained.
+ * See the environment bean for factory config options and also log level settings.
+ * 
+ * The LogInterface impl provides access to the underlying logging system for our logging abstraction layer.
+ * Logi18n and LogNoi18n implementations wrap the LogInterface impl and are passed back to the user code.
+ * Note the assumption that the underlying log system is not i18n aware i.e. message internationalization is done
+ * in the Logi18n impl before messages are passed to the LogInterface.
+ * TODO: this model need revision so we can support i18n aware underlying loggers.
+ *
  * Note: Log subsystems are not configured through CLF but instead rely on their own configuration files for
  * the setup of eg. debug level, appenders, etc...
- *
- * <h4>The Default <code>LogFactory</code> Implementation</h4>
- *
- * <p>The Logging Package APIs include a default <code>LogFactory</code>
- * implementation class (<a href="impl/LogFactoryImpl.html">
- * org.apache.commons.logging.impl.LogFactoryImpl</a>) that is selected if no
- * other implementation class name can be discovered.  Its primary purpose is
- * to create (as necessary) and return <a href="Log.html">Log</a> instances
- * in response to calls to the <code>getInstance()</code> method.  The default
- * implementation uses the following rules:</p>
- * <ul>
- * <li>At most one <code>Log</code> instance of the same name will be created.
- *     Subsequent <code>getInstance()</code> calls to the same
- *     <code>LogFactory</code> instance, with the same name or <code>Class</code>
- *     parameter, will return the same <code>Log</code> instance.</li>
- * <li>When a new <code>Log</code> instance must be created, the default
- *     <code>LogFactory</code> implementation uses the following discovery
- *     process is used:
- *     <ul>
- *     <li>Look for a configuration attribute of this factory named
- *         <code>org.apache.commons.logging.Log</code> (for backwards
- *         compatibility to pre-1.0 versions of this API, an attribute
- *         <code>org.apache.commons.logging.log</code> is also consulted)..</li>
- *     <li>Look for a system property named
- *         <code>org.apache.commons.logging.Log</code> (for backwards
- *         compatibility to pre-1.0 versions of this API, a system property
- *         <code>org.apache.commons.logging.log</code> is also consulted).</li>
- *     <li>If the Log4J logging system is available in the application
- *         class path, use the corresponding wrapper class
- *         (<a href="impl/Log4JLogger.html">Log4JLogger</a>).</li>
- *     <li>If the application is executing on a JDK 1.4 system, use
- *         the corresponding wrapper class
- *         (<a href="impl/Jdk14Logger.html">Jdk14Logger</a>).</li>
- *     <li>Fall back to the default simple logging wrapper
- *         (<a href="impl/SimpleLog.html">SimpleLog</a>).</li>
- *     </ul></li>
- * <li>Load the class of the specified name from the thread context class
- *     loader (if any), or from the class loader that loaded the
- *     <code>LogFactory</code> class otherwise.</li>
- * <li>Instantiate an instance of the selected <code>Log</code>
- *    implementation class, passing the specified name as the single
- *     argument to its constructor.</li>
- * </ul>
  *
  * @author Thomas Rischbeck <thomas.rischbeck@arjuna.com>
  * @version $Revision: 2342 $ $Date: 2006-03-30 14:06:17 +0100 (Thu, 30 Mar 2006) $
  * @since clf-2.0
  */
 public class LogFactory {
-
-    /**
-     * this is the name of a system property that can be used to explicitly select a particular logging
-     * subsystem.
-     *
-     * See the class description for supported values.
-     */
-    @Deprecated
-    public static final String LOGGER_PROPERTY = "com.arjuna.common.util.logger";
-
-
-    /***************************************************************************
-     * Property names to control fine-grained logging
-     *
-     * TODO: TR: this requires some more thought. currently the values can only be set
-     * for the root logger, but some hierarchical scheme would be nice
-     * we might also want to explore dynamic proxies to automaticlaly obtain debug
-     * output for all methods & constructors, etc ...
-     */
-    @Deprecated
-    public static final String DEBUG_LEVEL = "com.arjuna.common.util.logging.DebugLevel";
-    @Deprecated
-    public static final String FACILITY_LEVEL = "com.arjuna.common.util.logging.FacilityLevel";
-    @Deprecated
-    public static final String VISIBILITY_LEVEL = "com.arjuna.common.util.logging.VisibilityLevel";
-
-    //private static final String CSF_LOGGER = "csf";
-    private static final String JAKARTA_LOGGER = "jakarta";
-    private static final String LOG4J = "log4j";
-    private static final String JDK14 = "jdk14";
-    private static final String SIMPLE = "simple";
-    private static final String NOOP = "noop";
-    //private static final String AVALON = "avalon";
-	private static final String RELEVELER = "log4j_releveler";
 
 	/**
      * Interface that encapsulates the underlying, log-system-specific log factory.
@@ -177,70 +100,13 @@ public class LogFactory {
      * @param name Logical name of the <code>Log</code> instance to be
      *  returned (the meaning of this name is only known to the underlying
      *  logging implementation that is being wrapped).
+     * @return a LogNoi18n instance
      * <p>
      */
     public static LogNoi18n getLogNoi18n(String name) {
-        LogNoi18n log = null;
         setupLogSystem();
-        AbstractLogInterface logInterface = m_logFactory.getLog(name);
-        if (logInterface instanceof LogInterface) {
-            log = new LogNoi18nImpl((LogInterface) logInterface);
-        } else {
-            throw new RuntimeException("non i18n loggers are not supported for CSF!");
-        }
-        log.setLevels(m_debugLevel, m_visLevel, m_facLevel);
-        return log;
-    }
-
-    /**
-     * Convenience method to return a named logger, without the application
-     * having to care about factories.
-     *
-     * @param clazz Class for which a log name will be derived
-     */
-    public static Logi18n getLogi18n(Class clazz) {
-        Logi18n log = null;
-        setupLogSystem();
-        AbstractLogInterface logInterface = m_logFactory.getLog(clazz);
-        log = new LogImpl((LogInterface) logInterface);
-        log.setLevels(m_debugLevel, m_visLevel, m_facLevel);
-        return log;
-    }
-
-    /**
-     * Convenience method to return a named logger, without the application
-     * having to care about factories.
-     *
-     * @param name Logical name of the <code>Log</code> instance to be
-     *  returned (the meaning of this name is only known to the underlying
-     *  logging implementation that is being wrapped).
-     * <p>
-     *  Note that <code>name</code> is also used as the default resource bundle
-     *  associated with the logger (although an explicit resource bundle is not
-     *  required for the debugb, warnb, etc methods.
-     */
-    public static Logi18n getLogi18n(String name) {
-        Logi18n log = null;
-        setupLogSystem();
-        AbstractLogInterface logInterface = m_logFactory.getLog(name);
-        log = new LogImpl((LogInterface) logInterface, name);
-        log.setLevels(m_debugLevel, m_visLevel, m_facLevel);
-        return log;
-    }
-
-    /**
-     * Convenience method to return a named logger, without the application
-     * having to care about factories.
-     *
-     * @param clazz Class for which a log name will be derived
-     * @param resBundle resource bundle to use for the logger
-     */
-    public static Logi18n getLogi18n(Class clazz, String resBundle) {
-        Logi18n log = null;
-        setupLogSystem();
-        AbstractLogInterface logInterface = m_logFactory.getLog(clazz);
-        log = new LogImpl((LogInterface) logInterface, resBundle);
-        log.setLevels(m_debugLevel, m_visLevel, m_facLevel);
+        LogInterface logInterface = m_logFactory.getLog(name);
+        LogNoi18n log = new LogNoi18nImpl(logInterface, m_debugLevel, m_visLevel, m_facLevel);
         return log;
     }
 
@@ -252,13 +118,12 @@ public class LogFactory {
      *  returned (the meaning of this name is only known to the underlying
      *  logging implementation that is being wrapped)
      * @param resBundle resource bundle associated with the returned logger.
+     * @return a Logi18n instance
      */
     public static Logi18n getLogi18n(String name, String resBundle) {
-        Logi18n log = null;
         setupLogSystem();
-        AbstractLogInterface logInterface = m_logFactory.getLog(name);
-        log = new LogImpl((LogInterface) logInterface, resBundle);
-        log.setLevels(m_debugLevel, m_visLevel, m_facLevel);
+        LogInterface logInterface = m_logFactory.getLog(name);
+        Logi18n log = new Logi18nImpl(logInterface, resBundle, m_debugLevel, m_visLevel, m_facLevel);
         return log;
     }
 
@@ -270,37 +135,28 @@ public class LogFactory {
             return;
         }
 
-        String debugLevel = "0xffffffff";
-        String facLevel = "0xfffffff";
-        String visLevel = "0xfffffff";
-        String logSystem = NOOP;
+        String debugLevel;
+        String facLevel;
+        String visLevel;
+        String logFactory;
 
         try
         {
-            try
-            {
-                // find out which log subsystem to use; by default log4j:
-                logSystem = commonPropertyManager.getLoggingEnvironmentBean().getLoggingSystem();
+                // find out which log subsystem to use:
+                logFactory = commonPropertyManager.getLoggingEnvironmentBean().getLoggingFactory();
 
                 debugLevel = commonPropertyManager.getLoggingEnvironmentBean().getDebugLevel();
                 facLevel = commonPropertyManager.getLoggingEnvironmentBean().getFacilityLevel();
                 visLevel = commonPropertyManager.getLoggingEnvironmentBean().getVisibilityLevel();
-            }
-            catch (Throwable t)
-            {
-                // an exception could occur when trying to read system properties when we run in an applet
-                // sandbox. therefore, ignore the trowable and just keep with the default settings above.
-
-            }
 
             try {
-                m_debugLevel = Long.decode(debugLevel).longValue();
+                m_debugLevel = Long.decode(debugLevel);
             } catch (NumberFormatException nfe) {
                 m_debugLevel = 0x0;
             }
 
             try {
-                m_facLevel = Long.decode(facLevel).longValue();
+                m_facLevel = Long.decode(facLevel);
             }
             catch (NumberFormatException nfe )
             {
@@ -308,38 +164,18 @@ public class LogFactory {
             }
 
             try {
-                m_visLevel = Long.decode(visLevel).longValue();
+                m_visLevel = Long.decode(visLevel);
             }
             catch (NumberFormatException nfe )
             {
                 m_debugLevel = 0xfffffff;
             }
-
-            // ALL THESE ARE SUPPORTED BY JAKARTA COMMONS LOGGING
-            if (logSystem.equals(LOG4J)) {
-                m_logFactory = loadFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory", "com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
-            } else if (logSystem.equals(JDK14)) {
-                m_logFactory = loadFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory", "org.apache.commons.logging.impl.Jdk14Logger");
-            } else if (logSystem.equals(SIMPLE)) {
-                m_logFactory = loadFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory", "org.apache.commons.logging.impl.SimpleLog");
-            } else if (logSystem.equals(NOOP)) {
-                m_logFactory = loadFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory", "org.apache.commons.logging.impl.NoOpLog");
-            }
-
-			// we use a slightly modified wrapper to do log statement level modification
-			// for support of JBossAS log level semantics, see JakartaRelevelingLogger javadoc
-			else if (logSystem.equals(RELEVELER)) {
-				m_logFactory = loadFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaRelevelingLogFactory", "com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
-			}
-
-			// USE JAKARTA COMMONS LOGGINGS OWN DISCOVERY MECHANISM
-            else if (logSystem.equals(JAKARTA_LOGGER)) {
-                m_logFactory = loadFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory", null);
-            }
-
-            // by default, use jakarta logging ...
-            else {
-                m_logFactory = loadFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory", null);
+            
+            int semicolonIndex = logFactory.indexOf(";");
+            if(semicolonIndex == -1) {
+                m_logFactory = loadFactory(logFactory, null);
+            } else {
+                m_logFactory = loadFactory(logFactory.substring(0, semicolonIndex), logFactory.substring(semicolonIndex+1));
             }
 
         } catch (LogConfigurationException e) {
@@ -355,7 +191,7 @@ public class LogFactory {
     {
         try {
             Class factoryClass = Thread.currentThread().getContextClassLoader().loadClass(classname);
-            LogFactoryInterface logFactoryInterface = null;
+            LogFactoryInterface logFactoryInterface;
             if(arg == null) {
                 logFactoryInterface = (LogFactoryInterface)factoryClass.newInstance();
             } else {

@@ -42,7 +42,7 @@ public class logi18n
 		PrintStream originalStream = System.out;
 
 		// TODO: how to configure this on a per-test (not per-JVM) basis?
-        commonPropertyManager.getLoggingEnvironmentBean().setLoggingSystem("log4j");		
+        commonPropertyManager.getLoggingEnvironmentBean().setLoggingFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory;com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
 
 		System.setOut(bufferedStream);
 		writeLogMessages();

@@ -73,7 +73,7 @@ public class TestLevels
 
 		// test the releveling for AS integration:
 		// TODO: how to configure this on a per-test (not per-JVM) basis?
-        commonPropertyManager.getLoggingEnvironmentBean().setLoggingSystem("log4j_releveler");
+        commonPropertyManager.getLoggingEnvironmentBean().setLoggingFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaRelevelingLogFactory;com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
 
 		System.setOut(bufferedStream);
 		writeLogMessages();

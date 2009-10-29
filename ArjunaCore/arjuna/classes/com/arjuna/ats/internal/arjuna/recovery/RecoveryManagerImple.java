@@ -81,16 +81,6 @@ public class RecoveryManagerImple
 
         public RecoveryManagerImple (boolean threaded)
         {
-                // force normal recovery trace on
-                tsLogger.arjLogger.mergeFacilityCode(FacilityCode.FAC_RECOVERY_NORMAL);
-                tsLogger.arjLoggerI18N
-                                .mergeFacilityCode(FacilityCode.FAC_RECOVERY_NORMAL);
-
-                /*
-                 * This next would force debugging on, but separate recovery mgr file
-                 * makes this unnecessary.
-                 */
-
                 Implementations.initialise();
 
 

@@ -268,93 +268,6 @@ public interface Logi18n
    /**************************** Debug Granularity Extension ***************************/
 
    /**
-    * Set the debug level, the visibility level, and the facility code.
-    *
-    * @param dl The finer debugging value.
-    *           See {@link DebugLevel DebugLevel} for possible values.
-    * @param vl The visibility level value.
-    *           See {@link VisibilityLevel VisibilityLevel} for possible values.
-    * @param fl The facility code level value.
-    *           See {@link FacilityCode FacilityCode} for possible values.
-    */
-   void setLevels (long dl, long vl, long fl);
-
-   /**
-    * Return the finer debug level.
-    *
-    * @return The finer debugging level value associated with the logger
-    * @see DebugLevel for possible return values.
-    */
-   long getDebugLevel ();
-
-   /**
-    * Set the debug level as available in the {@link DebugLevel DebugLevel}.
-    *
-    * @param level The finer debugging value
-    * @see DebugLevel for possible values of <code>level</code>.
-    */
-   void setDebugLevel (long level);
-
-   /**
-    * Merge the debug level provided with that currently used by
-    * the controller.
-    *
-    * @param level The finer debugging value
-    * @see DebugLevel for possible values of <code>level</code>.
-    */
-   void mergeDebugLevel (long level);
-
-   /**
-    * Return the visibility level.
-    *
-    * @return The visibility level value associated with the Logger
-    * @see VisibilityLevel for possible return values.
-    */
-   long getVisibilityLevel ();
-
-   /**
-    * Set the visibility level.
-    *
-    * @param level The visibility level value
-    * @see VisibilityLevel for possible values of <code>level</code>.
-    */
-   void setVisibilityLevel (long level);
-
-   /**
-    * Merge the visibility level provided with that currently used by the Logger.
-    *
-    * @param level The visibility level value
-    * @see VisibilityLevel for possible values of <code>level</code>.
-    */
-   void mergeVisibilityLevel (long level);
-
-   /**
-    * Return the facility code.
-    *
-    * @return The facility code value associated with the Logger.
-    * @see FacilityCode for possible return values.
-    */
-   long getFacilityCode ();
-
-   /**
-    * Set the facility code.
-    *
-    * @param level The facility code value
-    * @see FacilityCode for possible values of <code>level</code>.
-    */
-   void setFacilityCode (long level);
-
-
-   /**
-    * Merge the debug level provided with that currently used by the Logger.
-    *
-    * @param level The visibility level value
-    * @see FacilityCode for possible values of <code>level</code>.
-    */
-   void mergeFacilityCode (long level);
-
-
-   /**
     * Is it allowed to print finer debugging statements?
     *
     * This method returns true when the following is set:
@@ -365,37 +278,9 @@ public interface Logi18n
     * </ul>
     *
     * @return true if the Logger allows full logging
+    * @deprecated replace with isDebugEnabled
     */
    boolean debugAllowed ();
-
-
-   /**
-    * Is it allowed to print finer debugging statements with a given debug level?
-    *
-    * This method assumes that:
-    * <ul>
-    * <li>visibility level = <code>VisibilityLevel.VIS_ALL</code>.</li>
-    * <li>facility code = <code>FacilityCode.FAC_ALL</code>.</li>
-    * </ul>
-    *
-    * @return true if the Logger allows logging for the finer debugging value <code>dLevel</code>.
-    *    i.e., dLevel is either equals or greater than the finer debug level assigned to the Logger.
-    * @param dLevel The debug finer level to check for.
-    */
-   boolean debugAllowed (long dLevel);
-
-
-   /**
-    * Is it allowed to print debugging statements?
-    *
-    * This method assumes <pre> FacilityCode.FAC_ALL)</pre>
-    * @return true if the logger allows logging for the finer debugging values - dLevel and vLevel
-    * @param dLevel The debug finer level. Used to ask if the logger object allows logging for this value.
-    * The answer is yes if dLevel is either equals or greater the debug level assigned to the logger
-    * @param vLevel The visibility level. Used to ask if the logger object allows logging for this value.
-    * The answer is yes if vLevel is either equals or greater the visibility level assigned to the logger
-    */
-   boolean debugAllowed (long dLevel, long vLevel);
 
 
    /**
@@ -410,228 +295,13 @@ public interface Logi18n
     * @param dLevel The debug finer level to check for.
     * @param vLevel The debug visibilty level to check for.
     * @param fLevel The facility code level to check for.
+    * @deprecated replace with isDebugEnabled
     */
    boolean debugAllowed (long dLevel, long vLevel, long fLevel);
-
-
-
-   /*************** logging and ResourceBundle Name *******************/
-
-   /**
-    * Set the name of the resource bundle name that the logger will use
-    * to retreive national text
-    * @param BaseName The default resource bundle name the logger uses to retreive messages
-    */
-   void setResourceBundleName(String BaseName);
-
-
-   /************************   Log Debug Messages   ****************************/
-
-   /**
-    * Log a message with the DEBUG Level
-    * @param baseName The name of resource bundle to localize message
-    * @param key The resource bundle key to retrieve a localised string
-    * @deprecated
-    */
-   void debugb(String baseName, String key);
-
-
-   /**
-    * Log a message with the DEBUG Level and with a throwable arguments
-    * @param baseName The name of resource bundle to localize message
-    * @param key The resource bundle key to retrieve a localised string
-    * @param throwable Throwable associated with the log message
-    * @deprecated
-    */
-   void debugb(String baseName, String key, Throwable throwable);
-
-   /**
-    * Log a message with the DEBUG Level and  with arguments
-    * @param baseName The name of resource bundle to localize message
-    * @param key The resource bundle key to retrieve a localised string
-    * @param params parameters passed to the message
-    * @deprecated
-    */
-   void debugb(String baseName, String key, Object[] params);
-
-   /**
-    * Log a message with the DEBUG Level, with arguments and with a throwable arguments
-    * @param baseName The name of resource bundle to localize message
-    * @param key The resource bundle key to retrieve a localised string
-    * @param params parameters passed to the message
-    * @param throwable Throwable associated with the log message
-    * @deprecated
-    */
-   void debugb(String baseName, String key, Object[] params, Throwable throwable);
-
-
-
-
-   /************************   Log Info Messages  with bundle Name ****************************/
-
-   /**
-    * Log a message with the INFO Level
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @deprecated
-    */
-   void infob(String baseName, String key);
-
-   /**
-    * Log a message with the INFO Level and with a throwable arguments
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @param throwable Throwable associated with the log message
-    * @deprecated
-    */
-   void infob(String baseName, String key, Throwable throwable);
-
-   /**
-    * Log a message with the INFO Level and  with arguments
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @param params parameters passed to the message
-    * @deprecated
-    */
-   void infob(String baseName, String key, Object[] params);
-
-   /**
-    * Log a message with the INFO Level, with arguments and with a throwable arguments
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @param params parameters passed to the message
-    * @param throwable Throwable associated with the log message
-    * @deprecated
-    */
-   void infob(String baseName, String key, Object[] params, Throwable throwable);
-
-
-   /************************   Log Warn Messages with Bundle Name ****************************/
-
-   /**
-    * Log a message with the WARN Level
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @deprecated
-    */
-   void warnb(String baseName, String key);
-
-   /**
-    * Log a message with the WARN Level and with a throwable arguments
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @param throwable Throwable associated with the log message
-    * @deprecated
-    */
-   void warnb(String baseName, String key, Throwable throwable);
-
-   /**
-    * Log a message with the WARN Level and  with arguments
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @param params parameters passed to the message
-    * @deprecated
-    */
-   void warnb(String baseName, String key, Object[] params);
-
-   /**
-    * Log a message with the WARN Level, with arguments and with a throwable arguments
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @param params parameters passed to the message
-    * @param throwable Throwable associated with the log message
-    * @deprecated
-    */
-   void warnb(String baseName, String key, Object[] params, Throwable throwable);
-
-
-   /************************   Log Error Messages with Bundle Name ****************************/
-
-   /**
-    * Log a message with the ERROR Level
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @deprecated
-    */
-   void errorb(String baseName, String key);
-
-   /**
-    * Log a message with the ERROR Level and with a throwable arguments
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @param throwable Throwable associated with the log message
-    * @deprecated
-    */
-   void errorb(String baseName, String key, Throwable throwable);
-
-   /**
-    * Log a message with the ERROR Level and  with arguments
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @param params parameters passed to the message
-    * @deprecated
-    */
-   void errorb(String baseName, String key, Object[] params);
-
-
-   /**
-    * Log a message with the ERROR Level, with arguments and with a throwable arguments
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @param params parameters passed to the message
-    * @param throwable Throwable associated with the log message
-    * @deprecated
-    */
-   void errorb(String baseName, String key, Object[] params, Throwable throwable);
-
-
-
-   /************************   Log Fatal Messages with Bundle Name **************************/
-
-   /**
-    * Log a message with the FATAL Level
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @deprecated
-    */
-   void fatalb(String baseName, String key);
-
-
-   /**
-    * Log a message with the FATAL Level and with a throwable arguments
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @param throwable Throwable associated with the log message
-    * @deprecated
-    */
-   void fatalb(String baseName, String key, Throwable throwable);
-
-
-   /**
-    * Log a message with the FATAL Level and  with arguments
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @param params parameters passed to the message
-    * @deprecated
-    */
-   void fatalb(String baseName, String key, Object[] params);
-
-
-   /**
-    * Log a message with the FATAL Level, with arguments and with a throwable arguments
-    * @param baseName The name of resource bundle to localize message
-    * @param key resource bundle key for the message to log
-    * @param params parameters passed to the message
-    * @param throwable Throwable associated with the log message
-    * @deprecated
-    */
-   void fatalb(String baseName, String key, Object[] params, Throwable throwable);
-
 
    /**********************************************************************************************************
     * Finer-Granularity Debug Methods.
     **********************************************************************************************************/
-
 
    /**
     * Log a message with the DEBUG Level and with finer granularity.
@@ -719,15 +389,11 @@ public interface Logi18n
     * The user supplied parameter <code>key</code> is replaced by its localized
     * version from the resource bundle.
     *
-    * @see #setResourceBundleName
-    *
     * @param key unique key to identify an entry in the resource bundle.
     * @return The localised string according to user's locale and available resource bundles. placeholder message
     *    if the resource bundle or key cannot be found.
-    * //@throws MissingResourceException if the key cannot be found in any of the associated resource bundles.
     */
-   public String getString(String key); //throws MissingResourceException;
-
+   public String getString(String key);
 
    /**
     * Obtain a localized and parameterized message from one of the resource
@@ -742,42 +408,6 @@ public interface Logi18n
     * @param params parameters to fill placeholders (e.g., {0}, {1}) in the resource bundle string.
     * @return The localised string according to user's locale and available resource bundles. placeholder message
     *    if the resource bundle or key cannot be found.
-    * //@throws MissingResourceException if the key cannot be found in any of the associated resource bundles.
     */
-   public String getString(String key, Object[] params); // throws MissingResourceException;
-
-   /**
-    * Obtain a localized message from one of the resource bundles associated
-    * with this logger.
-    *
-    * The user supplied parameter <code>key</code> is replaced by its localized
-    * version from the resource bundle <code>base</code>.
-    *
-    * @see #setResourceBundleName
-    *
-    * @param base resource bundle name
-    * @param key unique key to identify an entry in the resource bundle.
-    * @return The localised string according to user's locale and available resource bundles. placeholder message
-    *    if the resource bundle or key cannot be found.
-    * //@throws MissingResourceException if the key cannot be found in any of the associated resource bundles.
-    */
-   public String getString(String base, String key); // throws MissingResourceException;
-
-   /**
-    * Obtain a localized and parameterized message from the given resource bundle.
-    *
-    * First, the user supplied <code>key</code> is searched in the resource
-    * bundle. Next, the resulting pattern is formatted using
-    * {@link java.text.MessageFormat#format(String,Object[])} method with the
-    * user supplied object array <code>params</code>.
-    *
-    * @param base resource bundle name
-    * @param key unique key to identify an entry in the resource bundle.
-    * @param params parameters to fill placeholders (e.g., {0}, {1}) in the resource bundle string.
-    * @return The localised string according to user's locale and available resource bundles. placeholder message
-    *    if the resource bundle or key cannot be found.
-    * //@throws MissingResourceException if the key cannot be found in any of the associated resource bundles.
-    */
-   public String getString(String base, String key, Object[] params); // throws MissingResourceException;
-
+   public String getString(String key, Object[] params);
 }

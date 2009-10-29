@@ -38,7 +38,10 @@ public class DebugExt
 		PrintStream originalStream = System.out;
 
 		// TODO: how to configure this on a per-test (not per-JVM) basis?
-		commonPropertyManager.getLoggingEnvironmentBean().setLoggingSystem("log4j");
+		commonPropertyManager.getLoggingEnvironmentBean().setLoggingFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory;com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
+       commonPropertyManager.getLoggingEnvironmentBean().setDebugLevel("0x"+Long.toString(DebugLevel.FUNCS_AND_OPS, 16));
+       commonPropertyManager.getLoggingEnvironmentBean().setVisibilityLevel("0x"+Long.toString(VisibilityLevel.VIS_PACKAGE, 16));
+       commonPropertyManager.getLoggingEnvironmentBean().setFacilityLevel("0xffffffff"); // FacilityCode.FAC_ALL - Long.toString does the wrong thing.
 
 		System.setOut(bufferedStream);
 		writeLogMessages();
@@ -50,8 +53,6 @@ public class DebugExt
     {
         LogNoi18n myNoi18nLog = LogFactory.getLogNoi18n("DebugExt");
 
-        myNoi18nLog.setLevels(DebugLevel.FUNCS_AND_OPS, VisibilityLevel.VIS_PACKAGE, FacilityCode.FAC_ALL);
-
         myNoi18nLog.debug(DebugLevel.FUNCS_AND_OPS, VisibilityLevel.VIS_PACKAGE, FacilityCode.FAC_ALL,
                 "This debug message is enabled since it matches default Finer Values");
 
@@ -62,7 +63,7 @@ public class DebugExt
                 "This debug message is enabled since it the Logger allows full debugging");
     }
 
-        public static void verifyResult(String result) {
+    public static void verifyResult(String result) {
         String[] lines = result.split("\r?\n");
 
         assertNotNull(lines);

@@ -44,7 +44,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 import org.apache.log4j.Level;
 
-import com.arjuna.common.internal.util.logging.LogImpl;
+import com.arjuna.common.internal.util.logging.Logi18nImpl;
 
 /**
  * Implementation of {@link Log} that maps directly to a
@@ -75,7 +75,7 @@ public class Log4JLogger implements Log, Serializable {
 
     /** The fully qualified name of the Log4JLogger class. */
     //private static final String FQCN = Log4JLogger.class.getName(); // apache version
-    private static final String FQCN = LogImpl.class.getName(); // Red Hat modification
+    private static final String FQCN = Logi18nImpl.class.getName(); // Red Hat modification
 
     /** Log to this logger */
     private transient Logger logger = null;

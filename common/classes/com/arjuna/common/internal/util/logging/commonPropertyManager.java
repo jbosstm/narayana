@@ -21,16 +21,14 @@
 package com.arjuna.common.internal.util.logging;
 
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
+import com.arjuna.common.internal.util.logging.basic.BasicLogEnvironmentBean;
 
 /**
  * This class is used to control properties values for CLF.
  *
- * The properties can originate either from a configuration file (by default common.properties)
+ * The properties can originate either from a configuration file
  * or it can be primed by using the class directly from an embedding product (such as
  * the JBoss Transaction Service).
- *
- * The default file location can be overridden by setting the property
- * "com.arjuna.common.util.logging.propertiesFile"
  *
  * @author Malik SAHEB
  */
@@ -41,8 +39,8 @@ public class commonPropertyManager
         return BeanPopulator.getSingletonInstance(LoggingEnvironmentBean.class);
     }
 
-    public static DefaultLogEnvironmentBean getDefaultLogEnvironmentBean()
+    public static BasicLogEnvironmentBean getBasicLogEnvironmentBean()
     {
-        return BeanPopulator.getSingletonInstance(DefaultLogEnvironmentBean.class);
+        return BeanPopulator.getSingletonInstance(BasicLogEnvironmentBean.class);
     }
 }

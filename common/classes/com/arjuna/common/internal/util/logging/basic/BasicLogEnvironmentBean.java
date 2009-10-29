@@ -18,17 +18,17 @@
  * (C) 2009,
  * @author JBoss, a division of Red Hat.
  */
-package com.arjuna.common.internal.util.logging;
+package com.arjuna.common.internal.util.logging.basic;
 
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
 /**
- * A JavaBean containing configuration properties for the default log system.
+ * A JavaBean containing configuration properties for the built-in log system.
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com)
  */
 @PropertyPrefix(prefix = "com.arjuna.common.util.logging.default.")
-public class DefaultLogEnvironmentBean
+public class BasicLogEnvironmentBean
 {
     private volatile boolean showLogName = false;
     private volatile boolean showShortLogName = true;

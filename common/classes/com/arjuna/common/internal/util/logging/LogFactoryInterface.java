@@ -33,18 +33,8 @@ import com.arjuna.common.util.exceptions.LogConfigurationException;
 /**
  * Interface that gives a handle to the underlying log subsystem's log factory.
  *
- * The following log subsystems are supported:
- * <ul>
- *    <li>Jakarta Commons Logging (JCL). JCL can delegate to various other logging subsystems, such as:
- *    <ul>
- *       <li>log4j</li>
- *       <li>JDK 1.4 logging</li>
- *       <li>Windows NT syslog</li>
- *       <li>console</li>
- *    </ul>
- *    </li>
- *    <li>.net logging. (must be JDK 1.1 compliant for compilation by the Microsoft compiler)</li>
- * </ul>
+ * We provide an implementation for Jakarta Commons Logging (JCL) and a simple built-in one.
+ * Users may provide additional implementations, see LoggingEnvironmentBean.logFactory for config.
  *
  * @author Thomas Rischbeck <thomas.rischbeck@arjuna.com>
  * @version $Revision: 2342 $ $Date: 2006-03-30 14:06:17 +0100 (Thu, 30 Mar 2006) $
@@ -52,28 +42,15 @@ import com.arjuna.common.util.exceptions.LogConfigurationException;
  */
 public interface LogFactoryInterface
 {
-
    /**
-    * Convenience method to return a named logger, without the application
-    * having to care about factories.
-    *
-    * @param clazz Class for which a log name will be derived
-    *
-    * @exception LogConfigurationException if a suitable <code>Log</code>
-    *  instance cannot be returned
-    */
-   public AbstractLogInterface getLog(Class clazz);
-
-   /**
-    * Convenience method to return a named logger, without the application
-    * having to care about factories.
+    * Method to return a named logger.
     *
     * @param name Logical name of the <code>Log</code> instance to be
     *  returned (the meaning of this name is only known to the underlying
     *  logging implementation that is being wrapped)
     *
-    * @exception LogConfigurationException if a suitable <code>Log</code>
+    * @exception LogConfigurationException if a suitable <code>LogInterface</code>
     *  instance cannot be returned
     */
-   public AbstractLogInterface getLog(String name) throws LogConfigurationException;
+   public LogInterface getLog(String name) throws LogConfigurationException;
 }

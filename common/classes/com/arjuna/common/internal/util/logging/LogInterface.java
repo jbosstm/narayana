@@ -31,25 +31,78 @@ package com.arjuna.common.internal.util.logging;
 /**
  * This interface must be implemented by any underlying log subsystem to which CLF acts as a veneer.
  *
- * The following log subsystems are supported:
- * <ul>
- *    <li>Jakarta Commons Logging (JCL). JCL can delegate to various other logging subsystems, such as:
- *    <ul>
- *       <li>log4j</li>
- *       <li>JDK 1.4 logging</li>
- *       <li>Windows NT syslog</li>
- *       <li>console</li>
- *    </ul>
- *    </li>
- *    <li>.net logging. (must be JDK 1.1 compliant for compilation by the Microsoft compiler)</li>
- * </ul>
+ * Implementations are provided for Jakarta Commons Logging (JCL), which in turn supports log4j, jdk14 and others.
+ * We also provide a basic built in one to minimise 3rd party dependencies. See LoggingEnvironmentBean for config.
  *
  * @author Thomas Rischbeck <thomas.rischbeck@arjuna.com>
  * @version $Revision: 2342 $ $Date: 2006-03-30 14:06:17 +0100 (Thu, 30 Mar 2006) $
  * @since clf-2.0
  */
-public interface LogInterface extends AbstractLogInterface
+public interface LogInterface
 {
+   /**
+    * Is DEBUG logging currently enabled?
+    *
+    * Call this method to prevent having to perform expensive operations
+    * (for example, <code>String</code> concatination)
+    * when the log level is more than DEBUG.
+    *
+    * @return  True if the logger is enabled for DEBUG, false otherwise
+    */
+   boolean isDebugEnabled();
+
+   /**
+    * Is INFO logging currently enabled?
+    *
+    * Call this method to prevent having to perform expensive operations
+    * (for example, <code>String</code> concatination)
+    * when the log level is more than INFO.
+    *
+    * @return  True if the logger is enabled for INFO, false otherwise
+    */
+   boolean isInfoEnabled();
+
+   /**
+    * Is WARN logging currently enabled?
+    *
+    * Call this method to prevent having to perform expensive operations
+    * (for example, <code>String</code> concatination)
+    * when the log level is more than WARN.
+    *
+    * @return  True if the logger is enabled for WARN, false otherwise
+    */
+   boolean isWarnEnabled();
+
+   /**
+    * Is ERROR logging currently enabled?
+    *
+    * Call this method to prevent having to perform expensive operations
+    * (for example, <code>String</code> concatination)
+    * when the log level is more than ERROR.
+    *
+    * @return  True if the logger is enabled for ERROR, false otherwise
+    */
+   boolean isErrorEnabled();
+
+   /**
+    * Is FATAL logging currently enabled?
+    *
+    * Call this method to prevent having to perform expensive operations
+    * (for example, <code>String</code> concatination)
+    * when the log level is more than FATAL.
+    *
+    * @return  True if the logger is enabled for FATAL, false otherwise
+    */
+   boolean isFatalEnabled();
+
+   /**
+    * Is TRACE logging currently enabled?
+    *
+    * Call this method to prevent having to perform expensive operations
+    * (for example, <code>String</code> concatination)
+    * when the log level is more than TRACE.
+    */
+   public boolean isTraceEnabled();
 
    /**
     * <p> Log a message with trace log level. </p>

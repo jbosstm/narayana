@@ -29,12 +29,11 @@
 package com.arjuna.common.internal.util.logging.jakarta;
 
 import com.arjuna.common.internal.util.logging.LogFactoryInterface;
-import com.arjuna.common.internal.util.logging.AbstractLogInterface;
 import com.arjuna.common.internal.util.logging.LogInterface;
 import com.arjuna.common.util.exceptions.LogConfigurationException;
 
 /**
- * JavaDoc
+ * LogFactoryInterface impl for Jakarta Commons Logging (JCL)
  *
  * @author Thomas Rischbeck <thomas.rischbeck@arjuna.com>
  * @version $Revision: 2342 $ $Date: 2006-03-30 14:06:17 +0100 (Thu, 30 Mar 2006) $
@@ -59,7 +58,7 @@ public class JakartaLogFactory implements LogFactoryInterface
     * @exception LogConfigurationException if a suitable <code>Log</code>
     *  instance cannot be returned
     */
-   public AbstractLogInterface getLog(Class clazz) throws LogConfigurationException
+   public LogInterface getLog(Class clazz) throws LogConfigurationException
    {
       Object oldConfig = null;
       try
@@ -90,7 +89,7 @@ public class JakartaLogFactory implements LogFactoryInterface
     * @exception LogConfigurationException if a suitable <code>Log</code>
     *  instance cannot be returned
     */
-   public AbstractLogInterface getLog(String name) throws LogConfigurationException
+   public LogInterface getLog(String name) throws LogConfigurationException
    {
       Object oldConfig = null;
       try

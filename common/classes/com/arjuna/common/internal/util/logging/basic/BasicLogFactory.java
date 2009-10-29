@@ -18,36 +18,33 @@
  * (C) 2009,
  * @author JBoss, a division of Red Hat.
  */
-package com.arjuna.common.internal.util.logging;
+package com.arjuna.common.internal.util.logging.basic;
+
+import com.arjuna.common.util.exceptions.LogConfigurationException;
+import com.arjuna.common.internal.util.logging.LogFactoryInterface;
+import com.arjuna.common.internal.util.logging.LogInterface;
 
 /**
- * A JMX MBean interface configuration for the logging abstraction system.
+ * LogFactoryInterface impl for the built-in logger.
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com)
  */
-public interface LoggingEnvironmentBeanMBean
+public class BasicLogFactory implements LogFactoryInterface
 {
-    String getLanguage();
-
-    void setLanguage(String language);
-
-    String getCountry();
-
-    void setCountry(String country);
-
-    String getLoggingFactory();
-
-    void setLoggingFactory(String loggingFactory);
-
-    String getDebugLevel();
-
-    void setDebugLevel(String debugLevel);
-
-    String getFacilityLevel();
-
-    void setFacilityLevel(String facilityLevel);
-
-    String getVisibilityLevel();
-
-    void setVisibilityLevel(String visibilityLevel);
+    /**
+     * Convenience method to return a named logger, without the application
+     * having to care about factories.
+     *
+     * @param name Logical name of the <code>Log</code> instance to be
+     *             returned (the meaning of this name is only known to the underlying
+     *             logging implementation that is being wrapped)
+     * @throws com.arjuna.common.util.exceptions.LogConfigurationException
+     *          if a suitable <code>Log</code>
+     *          instance cannot be returned
+     */
+    @Override
+    public LogInterface getLog(String name) throws LogConfigurationException
+    {
+        return new BasicLog(name);
+    }
 }

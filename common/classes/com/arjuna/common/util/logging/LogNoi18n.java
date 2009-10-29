@@ -102,37 +102,21 @@ public interface LogNoi18n
    boolean isFatalEnabled();
 
 
-
-
-
    /************************   Log Debug Messages   ****************************/
 
    /**
     * Log a message with DEBUG Level
     *
     * @param message the message to log
-    */
-   void debug(Object message);
-
-   /**
-    * Log a message with DEBUG Level
-    *
-    * @param message the message to log
+    * @deprecated use debug(long dl, long vl, long fl, String message);
     */
    void debug(String message);
 
-
    /**
     * Log a message with INFO Level
     *
     * @param message the message to log
-    */
-   void info(Object message);
-
-   /**
-    * Log a message with INFO Level
-    *
-    * @param message the message to log
+    * @deprecated use i18n
     */
    void info(String message);
 
@@ -140,13 +124,7 @@ public interface LogNoi18n
     * Log a message with WARN Level
     *
     * @param message the message to log
-    */
-   void warn(Object message);
-
-   /**
-    * Log a message with WARN Level
-    *
-    * @param message the message to log
+    * @deprecated should take a Throwable
     */
    void warn(String message);
 
@@ -155,12 +133,13 @@ public interface LogNoi18n
     *
     * @param message the message to log
     */
-   void error(Object message);
+   void error(Throwable message);
 
    /**
     * Log a message with ERROR Level
     *
     * @param message the message to log
+    * @deprecated use I18n
     */
    void error(String message);
 
@@ -168,38 +147,9 @@ public interface LogNoi18n
     * Log a message with FATAL Level
     *
     * @param message the message to log
-    */
-   void fatal(Object message);
-
-   /**
-    * Log a message with FATAL Level
-    *
-    * @param message the message to log
+    * @deprecated use i18n instead
     */
    void fatal(String message);
-
-   /**
-    * Log a message with the DEBUG Level and with finer granularity. The debug message
-    * is sent to the output only if the specified debug level, visibility level, and facility code
-    * match those allowed by the logger.
-    * <p>
-    * <b>Note:</b> this method does not use i18n. ie, message is directly used for log output.
-    *
-    * @param dl The debug finer level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and dl is either equals or greater the debug level assigned to
-    * the logger Object
-    * @param vl The visibility level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and vl is either equals or greater the visibility level assigned to
-    * the logger Object
-    * @param fl The facility code level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and fl is either equals or greater the facility code level assigned to
-    * the logger Object
-    * @param message The message to log.
-    *
-    * @deprecated
-    */
-   void debug(long dl, long vl, long fl, Object message);
-
 
    /**
     * Log a message with the DEBUG Level and with finer granularity. The debug message
@@ -224,93 +174,6 @@ public interface LogNoi18n
    /**************************** Debug Granularity Extension ***************************/
 
    /**
-    * Set the debug level, the visibility level, and the facility code.
-    *
-    * @param dl The finer debugging value.
-    *           See {@link DebugLevel DebugLevel} for possible values.
-    * @param vl The visibility level value.
-    *           See {@link VisibilityLevel VisibilityLevel} for possible values.
-    * @param fl The facility code level value.
-    *           See {@link FacilityCode FacilityCode} for possible values.
-    */
-   void setLevels (long dl, long vl, long fl);
-
-   /**
-    * Return the finer debug level.
-    *
-    * @return The finer debugging level value associated with the logger
-    * @see DebugLevel for possible return values.
-    */
-   long getDebugLevel ();
-
-   /**
-    * Set the debug level as available in the {@link DebugLevel DebugLevel}.
-    *
-    * @param level The finer debugging value
-    * @see DebugLevel for possible values of <code>level</code>.
-    */
-   void setDebugLevel (long level);
-
-   /**
-    * Merge the debug level provided with that currently used by
-    * the controller.
-    *
-    * @param level The finer debugging value
-    * @see DebugLevel for possible values of <code>level</code>.
-    */
-   void mergeDebugLevel (long level);
-
-   /**
-    * Return the visibility level.
-    *
-    * @return The visibility level value associated with the Logger
-    * @see VisibilityLevel for possible return values.
-    */
-   long getVisibilityLevel ();
-
-   /**
-    * Set the visibility level.
-    *
-    * @param level The visibility level value
-    * @see VisibilityLevel for possible values of <code>level</code>.
-    */
-   void setVisibilityLevel (long level);
-
-   /**
-    * Merge the visibility level provided with that currently used by the Logger.
-    *
-    * @param level The visibility level value
-    * @see VisibilityLevel for possible values of <code>level</code>.
-    */
-   void mergeVisibilityLevel (long level);
-
-   /**
-    * Return the facility code.
-    *
-    * @return The facility code value associated with the Logger.
-    * @see FacilityCode for possible return values.
-    */
-   long getFacilityCode ();
-
-   /**
-    * Set the facility code.
-    *
-    * @param level The facility code value
-    * @see FacilityCode for possible values of <code>level</code>.
-    */
-   void setFacilityCode (long level);
-
-
-   /**
-    * Merge the debug level provided with that currently used by the Logger.
-    *
-    * @param level The visibility level value
-    * @see FacilityCode for possible values of <code>level</code>.
-    */
-   void mergeFacilityCode (long level);
-
-
-   /**
     * Is it allowed to print finer debugging statements?
     *
     * This method returns true when the following is set:
@@ -321,52 +184,7 @@ public interface LogNoi18n
     * </ul>
     *
     * @return true if the Logger allows full logging
+    * @deprecated replace with isDebugEnabled
     */
    boolean debugAllowed ();
-
-
-   /**
-    * Is it allowed to print finer debugging statements with a given debug level?
-    *
-    * This method assumes that:
-    * <ul>
-    * <li>visibility level = <code>VisibilityLevel.VIS_ALL</code>.</li>
-    * <li>facility code = <code>FacilityCode.FAC_ALL</code>.</li>
-    * </ul>
-    *
-    * @return true if the Logger allows logging for the finer debugging value <code>dLevel</code>.
-    *    i.e., dLevel is either equals or greater than the finer debug level assigned to the Logger.
-    * @param dLevel The debug finer level to check for.
-    */
-   boolean debugAllowed (long dLevel);
-
-
-   /**
-    * Is it allowed to print debugging statements?
-    *
-    * This method assumes <pre> FacilityCode.FAC_ALL)</pre>
-    * @return true if the logger allows logging for the finer debugging values - dLevel and vLevel
-    * @param dLevel The debug finer level. Used to ask if the logger object allows logging for this value.
-    * The answer is yes if dLevel is either equals or greater the debug level assigned to the logger
-    * @param vLevel The visibility level. Used to ask if the logger object allows logging for this value.
-    * The answer is yes if vLevel is either equals or greater the visibility level assigned to the logger
-    */
-   boolean debugAllowed (long dLevel, long vLevel);
-
-
-   /**
-    * Is it allowed to print finer debugging statements with a given debug level,
-    * visibility level and facility code level?
-    *
-    * @return true if the Logger allows logging for the finer debugging value <code>dLevel</code>,
-    *    visibility level <code>vLevel</code> and facility code level <code>fLevel</code>.
-    *    i.e., dLevel is equal or greater than the finer debug level assigned to the Logger
-    *    and vLevel is equal or greater than the visiblity level
-    *    and fLevel is equal or greater then the facility code level.
-    * @param dLevel The debug finer level to check for.
-    * @param vLevel The debug visibilty level to check for.
-    * @param fLevel The facility code level to check for.
-    */
-   boolean debugAllowed (long dLevel, long vLevel, long fLevel);
-
 }

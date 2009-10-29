@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
 import com.arjuna.common.internal.util.logging.LoggingEnvironmentBean;
-import com.arjuna.common.internal.util.logging.DefaultLogEnvironmentBean;
+import com.arjuna.common.internal.util.logging.basic.BasicLogEnvironmentBean;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -26,8 +26,6 @@ public class BeanPopulatorTest
 
         expectedKeys.add("com.arjuna.common.util.logging.language");
         expectedKeys.add("com.arjuna.common.util.logging.country");
-        expectedKeys.add("com.arjuna.common.util.logging.default");
-        expectedKeys.add("com.arjuna.common.util.logger");
         expectedKeys.add("com.arjuna.common.util.logging.DebugLevel");
         expectedKeys.add("com.arjuna.common.util.logging.FacilityLevel");
         expectedKeys.add("com.arjuna.common.util.logging.VisibilityLevel");
@@ -43,7 +41,7 @@ public class BeanPopulatorTest
 
         DummyProperties testProperties = new DummyProperties();
 
-        BeanPopulator.configureFromProperties(new DefaultLogEnvironmentBean(), testProperties);
+        BeanPopulator.configureFromProperties(new BasicLogEnvironmentBean(), testProperties);
 
         Set<String> expectedKeys = new HashSet<String>();
 

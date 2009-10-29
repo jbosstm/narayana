@@ -19,7 +19,7 @@
  * @author JBoss Inc.
  */
 /*
-* LogImpl.java
+* Logi18nImpl.java
 *
 * Copyright (c) 2003 Arjuna Technologies Ltd.
 * Arjuna Technologies Ltd. Confidential
@@ -30,107 +30,81 @@ package com.arjuna.common.internal.util.logging;
 
 import com.arjuna.common.util.logging.*;
 
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.PropertyResourceBundle;
 import java.util.Locale;
-import java.text.MessageFormat;
+import java.util.MissingResourceException;
 
 /**
- * Abstract implementation of the Log interface.
+ * Implementation of the Log interface without i18n support.
  *
- * Abstract superclass for {@link LogImpl LogImpl}
- * This contains the support for finer-grained logging and guards (e.g.,
- * isWarnEnabled(), etc.).
+ * Most log subsystems do not provide i18n, therefore we do resource
+ * bundle evaluation in this class.
  *
  * @author Thomas Rischbeck <thomas.rischbeck@arjuna.com>
  * @version $Revision: 2342 $ $Date: 2006-03-30 14:06:17 +0100 (Thu, 30 Mar 2006) $
  * @since clf-2.0
  */
-public abstract class AbstractLogImpl implements Logi18n
+public class Logi18nImpl implements Logi18n
 {
+    private ResourceBundle m_defaultResourceBundle = null;
 
-   /**
-    * Abstract Log interface (extended by i18n enabled or non-i18n log interfaces).
-    */
-   private AbstractLogInterface m_logInterface = null;
+    /**
+     * extra resource bundles (if more than one is in use)
+     *
+     * Note that there is a performance issue when more than one resource bundles is in use.
+     *
+     * @see #m_defaultResourceBundle
+     */
+    private ResourceBundle[] m_extraResourceBundles = null;
 
-   private ResourceBundle m_defaultResourceBundle = null;
+    /**
+     * Level for finer-debug logging.
+     *
+     * @see DebugLevel for possible values.
+     */
+    private long m_debugLevel = DebugLevel.NO_DEBUGGING;
 
-   /**
-    * extra resource bundles (if more than one is in use)
-    *
-    * Note that there is a performance issue when more than one resource bundles is in use.
-    *
-    * @see #m_defaultResourceBundle
-    */
-   private ResourceBundle[] m_extraResourceBundles = null;
+    /**
+     * log level for visibility-based logging
+     *
+     * @see VisibilityLevel for possible values.
+     */
+    private long m_visLevel = VisibilityLevel.VIS_ALL;
 
-   /**
-    * Level for finer-debug logging.
-    *
-    * @see DebugLevel for possible values.
-    */
-   private long m_debugLevel = DebugLevel.NO_DEBUGGING;
+    /**
+     * log level for facility code
+     *
+     * @see FacilityCode for possible values.
+     */
+    private long m_facLevel = FacilityCode.FAC_ALL;
 
-   /**
-    * log level for visibility-based logging
-    *
-    * @see VisibilityLevel for possible values.
-    */
-   private long m_visLevel = VisibilityLevel.VIS_ALL;
+    /**
+     * Interface to the log subsystem to use
+     */
+    private final LogInterface m_logInterface;
 
-   /**
-    * log level for facility code
-    *
-    * @see FacilityCode for possible values.
-    */
-   private long m_facLevel = FacilityCode.FAC_ALL;
+    /**
+     * constructor
+     *
+     * @param logInterface the underlying logger to wrap
+     * @param resBundle bundle used for this logger (if a resource bundle is used per logger)
+     *
+    * @param dl The finer debugging value.
+    *           See {@link DebugLevel DebugLevel} for possible values.
+    * @param vl The visibility level value.
+    *           See {@link VisibilityLevel VisibilityLevel} for possible values.
+    * @param fl The facility code level value.
+    *           See {@link FacilityCode FacilityCode} for possible values.
+     */
+    public Logi18nImpl(LogInterface logInterface, String resBundle, long dl, long vl, long fl)
+    {
+       m_logInterface = logInterface;
+       setLevels(dl, vl, fl);
+       addResourceBundle(resBundle);
+    }
 
-
-   /**
-    * constructor
-    *
-    * @param logInterface the AbstractLogInterface
-    */
-   public AbstractLogImpl(AbstractLogInterface logInterface)
-   {
-      m_logInterface = logInterface;
-   }
-
-   /**
-    * constructor
-    *
-    * @param logInterface the AbstractLogInterface
-    * @param resBundle bundle used for this logger (if a resource bundle is used per logger)
-    */
-   public AbstractLogImpl(AbstractLogInterface logInterface, String resBundle)
-   {
-      m_logInterface = logInterface;
-      //m_resourceBundleName = resBundle;
-      //m_defaultResourceBundle = PropertyResourceBundle.getBundle(resBundle);
-      addResourceBundle(resBundle);
-   }
-
-   /**
-    * Set the name of the resource bundle name that the logger will use
-    * to retreive national text
-    *
-    * @param baseName The default resource bundle name the logger uses to retreive messages
-    */
-   public synchronized void setResourceBundleName(String baseName)
-   {
-      try
-      {
-         m_defaultResourceBundle = PropertyResourceBundle.getBundle(baseName, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
-      }
-      catch (MissingResourceException mre)
-      {
-         System.err.println("resource bundle " + mre.getClassName() + " not found!");
-      }
-   }
-
-   /**
+    /**
     * Add the given resource bundle to this logger.
     *
     * @param bundleName The name of the resource bundle.
@@ -225,111 +199,11 @@ public abstract class AbstractLogImpl implements Logi18n
     * @param fl The facility code level value.
     *           See {@link FacilityCode FacilityCode} for possible values.
     */
-   public void setLevels(long dl, long vl, long fl)
+   private void setLevels(long dl, long vl, long fl)
    {
       m_debugLevel = dl;
       m_visLevel = vl;
       m_facLevel = fl;
-   }
-
-   /**
-    * Return the finer debug level.
-    *
-    * @return The finer debugging level value associated with the logger
-    * @see DebugLevel for possible return values.
-    */
-   public long getDebugLevel()
-   {
-      return m_debugLevel;
-   }
-
-   /**
-    * Set the debug level as available in the {@link DebugLevel DebugLevel}.
-    *
-    * @param level The finer debugging value
-    * @see DebugLevel for possible values of <code>level</code>.
-    */
-   public void setDebugLevel(long level)
-   {
-      m_debugLevel = level;
-   }
-
-   /**
-    * Merge the debug level provided with that currently used by
-    * the controller.
-    *
-    * @param level The finer debugging value
-    * @see DebugLevel for possible values of <code>level</code>.
-    */
-   public void mergeDebugLevel(long level)
-   {
-      m_debugLevel |= level;
-   }
-
-   /**
-    * Return the visibility level.
-    *
-    * @return The visibility level value associated with the Logger
-    * @see VisibilityLevel for possible return values.
-    */
-   public long getVisibilityLevel()
-   {
-      return m_visLevel;
-   }
-
-   /**
-    * Set the visibility level.
-    *
-    * @param level The visibility level value
-    * @see VisibilityLevel for possible values of <code>level</code>.
-    */
-   public void setVisibilityLevel(long level)
-   {
-      m_visLevel = level;
-   }
-
-   /**
-    * Merge the visibility level provided with that currently used by the Logger.
-    *
-    * @param level The visibility level value
-    * @see VisibilityLevel for possible values of <code>level</code>.
-    */
-   public void mergeVisibilityLevel(long level)
-   {
-      m_visLevel |= level;
-   }
-
-   /**
-    * Return the facility code.
-    *
-    * @return The facility code value associated with the Logger.
-    * @see FacilityCode for possible return values.
-    */
-   public long getFacilityCode()
-   {
-      return m_facLevel;
-   }
-
-   /**
-    * Set the facility code.
-    *
-    * @param level The facility code value
-    * @see FacilityCode for possible values of <code>level</code>.
-    */
-   public void setFacilityCode(long level)
-   {
-      m_facLevel = level;
-   }
-
-   /**
-    * Merge the debug level provided with that currently used by the Logger.
-    *
-    * @param level The visibility level value
-    * @see FacilityCode for possible values of <code>level</code>.
-    */
-   public void mergeFacilityCode(long level)
-   {
-      m_facLevel |= level;
    }
 
    /**
@@ -348,45 +222,6 @@ public abstract class AbstractLogImpl implements Logi18n
    {
       return debugAllowed(DebugLevel.FULL_DEBUGGING, VisibilityLevel.VIS_ALL,
                           FacilityCode.FAC_ALL);
-   }
-
-   /**
-    * Is it allowed to print finer debugging statements with a given debug level?
-    *
-    * This method assumes that:
-    * <ul>
-    * <li>visibility level = <code>VisibilityLevel.VIS_ALL</code>.</li>
-    * <li>facility code = <code>FacilityCode.FAC_ALL</code>.</li>
-    * </ul>
-    *
-    * @return true if the Logger allows logging for the finer debugging value <code>dLevel</code>.
-    *    i.e., dLevel is either equals or greater than the finer debug level assigned to the Logger.
-    * @param dLevel The debug finer level to check for.
-    */
-   public boolean debugAllowed(long dLevel)
-   {
-      return debugAllowed(dLevel, VisibilityLevel.VIS_ALL, FacilityCode.FAC_ALL);
-   }
-
-   /**
-    * Is it allowed to print finer debugging statements with a given debug level
-    * and visibility level?
-    *
-    * This method assumes that:
-    * <ul>
-    * <li>facility code = <code>FacilityCode.FAC_ALL</code>.</li>
-    * </ul>
-    *
-    * @return true if the Logger allows logging for the finer debugging value <code>dLevel</code>
-    *    and visibility level <code>vLevel</code>.
-    *    i.e., dLevel is equal or greater than the finer debug level assigned to the Logger
-    *    and vLevel is equal or greater than the visiblity level.
-    * @param dLevel The debug finer level to check for.
-    * @param vLevel The debug visibilty level to check for.
-    */
-   public boolean debugAllowed(long dLevel, long vLevel)
-   {
-      return debugAllowed(dLevel, vLevel, FacilityCode.FAC_ALL);
    }
 
    /**
@@ -412,34 +247,6 @@ public abstract class AbstractLogImpl implements Logi18n
    /**********************************************************************************************************
     * Finer-Granularity Debug Methods.
     **********************************************************************************************************/
-
-
-
-   /**
-    * Log a message with the DEBUG Level and with finer granularity. The throwable message
-    * is sent to the output only if the specified debug level, visibility level, and facility code
-    * match those allowed by the logger.
-    * <p>
-    * <b>note</b>: this method does not use i18n.
-    *
-    * @param dl The debug finer level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and dl is either equals or greater the debug level assigned to
-    * the logger Object
-    * @param vl The visibility level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and vl is either equals or greater the visibility level assigned to
-    * the logger Object
-    * @param fl The facility code level associated with the log message. That is, the logger object allows
-    * to log only if the DEBUG level is allowed and fl is either equals or greater the facility code level assigned to
-    * the logger Object
-    * @param throwable Throwable associated with the log message
-    */
-   public void debug(long dl, long vl, long fl, Throwable throwable)
-   {
-      if (debugAllowed(dl, vl, fl))
-      {
-         debug(null, null, throwable);
-      }
-   }
 
    /**
     * Log a message with the DEBUG Level and with finer granularity and with arguments. The debug message
@@ -550,25 +357,20 @@ public abstract class AbstractLogImpl implements Logi18n
     * The user supplied parameter <code>key</code> is replaced by its localized
     * version from the resource bundle.
     *
-    * @see #setResourceBundleName
-    *
     * @param key unique key to identify an entry in the resource bundle.
     * @return The localised string according to user's locale and available resource bundles. placeholder message
     *    if the resource bundle or key cannot be found.
-    * //@throws MissingResourceException if the key cannot be found in any of the associated resource bundles.
     */
-   public String getString(String key) throws MissingResourceException
+   public String getString(String key)
    {
-      String msg = null;
       try
       {
-         msg = getResourceBundleString(key);
+         return getResourceBundleString(key);
       }
       catch (MissingResourceException mre)
       {
          return mre.getLocalizedMessage() + ": [key='" + key + "']";
       }
-      return msg;
    }
 
    /**
@@ -577,107 +379,39 @@ public abstract class AbstractLogImpl implements Logi18n
     *
     * First, the user supplied <code>key</code> is searched in the resource
     * bundle. Next, the resulting pattern is formatted using
-    * {@link MessageFormat#format(String,Object[])} method with the
+    * {@link java.text.MessageFormat#format(String,Object[])} method with the
     * user supplied object array <code>params</code>.
     *
     * @param key unique key to identify an entry in the resource bundle.
     * @param params parameters to fill placeholders (e.g., {0}, {1}) in the resource bundle string.
     * @return The localised string according to user's locale and available resource bundles. placeholder message
     *    if the resource bundle or key cannot be found.
-    * //@throws MissingResourceException if the key cannot be found in any of the associated resource bundles.
     */
-   public String getString(String key, Object[] params) throws MissingResourceException
+   public String getString(String key, Object[] params)
    {
-      String pattern = null;
       try
       {
-         pattern = getResourceBundleString(key);
+          String pattern = getResourceBundleString(key);
+          return java.text.MessageFormat.format(pattern, params);
       }
       catch (MissingResourceException mre)
       {
          StringBuffer sb = new StringBuffer();
-         for (int i = 0; i < params.length; i++)
-         {
-            sb.append(params[i] + ", ");
-         }
-         return mre.getLocalizedMessage() + ": [key='" + key + "']" + sb.toString();
-      }
-      String msg;
-      msg = java.text.MessageFormat.format(pattern, params);
-      return msg;
-   }
-
-   /**
-    * Obtain a localized message from one of the resource bundles associated
-    * with this logger.
-    *
-    * The user supplied parameter <code>key</code> is replaced by its localized
-    * version from the resource bundle <code>base</code>.
-    *
-    * @see #setResourceBundleName
-    *
-    * @param base resource bundle name
-    * @param key unique key to identify an entry in the resource bundle.
-    * @return The localised string according to user's locale and available resource bundles. placeholder message
-    *    if the resource bundle or key cannot be found.
-    * //@throws MissingResourceException if the key cannot be found in any of the associated resource bundles.
-    */
-   public String getString(String base, String key) throws MissingResourceException
-   {
-      try
-      {
-         ResourceBundle rb = PropertyResourceBundle.getBundle(base, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
-         String msg = rb.getString(key);
-         return msg;
-      }
-      catch (MissingResourceException mre)
-      {
-         return mre.getLocalizedMessage() + ": [key='" + key + "']";
-      }
-   }
-
-   /**
-    * Obtain a localized and parameterized message from the given resource bundle.
-    *
-    * First, the user supplied <code>key</code> is searched in the resource
-    * bundle. Next, the resulting pattern is formatted using
-    * {@link MessageFormat#format(String,Object[])} method with the
-    * user supplied object array <code>params</code>.
-    *
-    * @param base resource bundle name
-    * @param key unique key to identify an entry in the resource bundle.
-    * @param params parameters to fill placeholders (e.g., {0}, {1}) in the resource bundle string.
-    * @return The localised string according to user's locale and available resource bundles. placeholder message
-    *    if the resource bundle or key cannot be found.
-    * //@throws MissingResourceException if the key cannot be found in any of the associated resource bundles.
-    */
-   public String getString(String base, String key, Object[] params) throws MissingResourceException
-   {
-      try
-      {
-         ResourceBundle rb = PropertyResourceBundle.getBundle(base, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
-         String pattern = rb.getString(key);
-         String msg = java.text.MessageFormat.format(pattern, params);
-         return msg;
-      }
-      catch (MissingResourceException mre)
-      {
-         StringBuffer sb = new StringBuffer();
-         for (int i = 0; i < params.length; i++)
-         {
-            sb.append(params[i] + ", ");
-         }
+          for(Object param : params) {
+              sb.append(param);
+              sb.append( ", ");
+          }
          return mre.getLocalizedMessage() + ": [key='" + key + "']" + sb.toString();
       }
    }
 
    /**
     *
-    * @param key
+    * @param key the message key
     * @return the resource bundle String
-    * @throws MissingResourceException
+    * @throws MissingResourceException if the default bundle is not set
     */
-   protected synchronized String getResourceBundleString(String key) throws MissingResourceException
+   synchronized String getResourceBundleString(String key) throws MissingResourceException
    {
       String resource = null;
       if (m_defaultResourceBundle == null)
@@ -700,11 +434,11 @@ public abstract class AbstractLogImpl implements Logi18n
             }
             else
             {
-               for (int i = 0; i < m_extraResourceBundles.length; i++)
+               for (ResourceBundle bundle : m_extraResourceBundles)
                {
                   try
                   {
-                     resource = m_extraResourceBundles[i].getString(key);
+                     resource = bundle.getString(key);
                   }
                   catch (MissingResourceException mre2)
                   {
@@ -722,4 +456,272 @@ public abstract class AbstractLogImpl implements Logi18n
       }
       return resource;
    }
+
+    /**
+     * Log a message with DEBUG Level
+     *
+     * @param key resource bundle key for the message to log
+     *
+     * @deprecated use debug (String key, null) instead
+     */
+    public void debug(String key)
+    {
+        if (!isDebugEnabled()) return;
+        String message = evalResourceBundle(key);
+        m_logInterface.debug(message);
+    }
+
+    /**
+     * Log a message with the DEBUG Level and with a throwable arguments
+     * @param key resource bundle key for the message to log
+     * @param throwable The Throwable to log
+     */
+    public void debug(String key, Throwable throwable)
+    {
+        if (!isDebugEnabled()) return;
+        String message = evalResourceBundle(key);
+        m_logInterface.debug(message, throwable);
+    }
+
+    /**
+     * Log a message with DEBUG Level and with arguments
+     *
+     * @param key resource bundle key for the message to log
+     * @param params parameters passed to the message
+     */
+    public void debug(String key, Object[] params)
+    {
+        if (!isDebugEnabled()) return;
+        String message = evalResourceBundle(key, params);
+        m_logInterface.debug(message);
+    }
+
+    /**
+     * Log a message with DEBUG Level, with arguments and with a throwable arguments
+     *
+     * @param key resource bundle key for the message to log
+     * @param params parameters passed to the message
+     * @param throwable The Throwable to log
+     */
+    public void debug(String key, Object[] params, Throwable throwable)
+    {
+        if (!isDebugEnabled()) return;
+        String message = evalResourceBundle(key, params);
+        m_logInterface.debug(message, throwable);
+    }
+
+    /**
+     * Log a message with INFO Level
+     *
+     * @param key resource bundle key for the message to log
+     *
+     * @deprecated use info (String key, null) instead
+     */
+    public void info(String key)
+    {
+        if (!isInfoEnabled()) return;
+        String message = evalResourceBundle(key);
+        m_logInterface.info(message);
+    }
+
+    /**
+     * Log a message with the INFO Level and with a throwable arguments
+     * @param key resource bundle key for the message to log
+     * @param throwable Throwable associated to the logging message
+     */
+    public void info(String key, Throwable throwable)
+    {
+        if (!isInfoEnabled()) return;
+        String message = evalResourceBundle(key);
+        m_logInterface.info(message, throwable);
+    }
+
+    /**
+     * Log a message with the INFO Level and  with arguments
+     * @param key resource bundle key for the message to log
+     * @param params parameters passed to the message
+     */
+    public void info(String key, Object[] params)
+    {
+        if (!isInfoEnabled()) return;
+        String message = evalResourceBundle(key, params);
+        m_logInterface.info(message);
+    }
+
+    /**
+     * Log a message with the INFO Level, with arguments and with a throwable arguments
+     * @param key resource bundle key for the message to log
+     * @param params parameters passed to the message
+     * @param throwable Throwable associated with the logging request
+     */
+    public void info(String key, Object[] params, Throwable throwable)
+    {
+        if (!isInfoEnabled()) return;
+        String message = evalResourceBundle(key, params);
+        m_logInterface.info(message, throwable);
+    }
+
+    /**
+     * Log a message with the WARN Level
+     * @param key resource bundle key for the message to log
+     *
+     * @deprecated use warn (String key, null) instead
+     */
+    public void warn(String key)
+    {
+        if (!isWarnEnabled()) return;
+        String message = evalResourceBundle(key);
+        m_logInterface.warn(message);
+    }
+
+    /**
+     * Log a message with the WARN Level and with a throwable arguments
+     * @param key resource bundle key for the message to log
+     * @param throwable Throwable associated with the logging request
+     */
+    public void warn(String key, Throwable throwable)
+    {
+        if (!isWarnEnabled()) return;
+        String message = evalResourceBundle(key);
+        m_logInterface.warn(message, throwable);
+    }
+
+    /**
+     * Log a message with the WARN Level and  with arguments
+     * @param key resource bundle key for the message to log
+     * @param params parameters passed to the message
+     */
+    public void warn(String key, Object[] params)
+    {
+        if (!isWarnEnabled()) return;
+        String message = evalResourceBundle(key, params);
+        m_logInterface.warn(message);
+    }
+
+    /**
+     * Log a message with the WARN Level, with arguments and with a throwable arguments
+     * @param key resource bundle key for the message to log
+     * @param params parameters passed to the message
+     * @param throwable Throwable associated with the logging request
+     */
+    public void warn(String key, Object[] params, Throwable throwable)
+    {
+        if (!isWarnEnabled()) return;
+        String message = evalResourceBundle(key, params);
+        m_logInterface.warn(message, throwable);
+    }
+
+    /**
+     * Log a message with the ERROR Level
+     * @param key resource bundle key for the message to log
+     *
+     * @deprecated use error (String key, null) instead
+     */
+    public void error(String key)
+    {
+        if (!isErrorEnabled()) return;
+        String message = evalResourceBundle(key);
+        m_logInterface.error(message);
+    }
+
+    /**
+     * Log a message with the ERROR Level and with a throwable arguments
+     * @param key resource bundle key for the message to log
+     * @param throwable Throwable associated with the logging request
+     */
+    public void error(String key, Throwable throwable)
+    {
+        if (!isErrorEnabled()) return;
+        String message = evalResourceBundle(key);
+        m_logInterface.error(message, throwable);
+    }
+
+    /**
+     * Log a message with the ERROR Level and  with arguments
+     * @param key resource bundle key for the message to log
+     * @param params parameters passed to the message
+     */
+    public void error(String key, Object[] params)
+    {
+        if (!isErrorEnabled()) return;
+        String message = evalResourceBundle(key, params);
+        m_logInterface.error(message);
+    }
+
+    /**
+     * Log a message with the ERROR Level, with arguments and with a throwable arguments
+     * @param key resource bundle key for the message to log
+     * @param params parameters passed to the message
+     * @param throwable Throwable associated with the logging request
+     */
+    public void error(String key, Object[] params, Throwable throwable)
+    {
+        if (!isErrorEnabled()) return;
+        String message = evalResourceBundle(key, params);
+        m_logInterface.error(message, throwable);
+    }
+
+    /**
+     * Log a message with the FATAL Level
+     * @param key resource bundle key for the message to log
+     *
+     * @deprecated use fatal (String key, null) instead
+     */
+    public void fatal(String key)
+    {
+        if (!isFatalEnabled()) return;
+        String message = evalResourceBundle(key);
+        m_logInterface.fatal(message);
+    }
+
+    /**
+     * Log a message with the FATAL Level and with a throwable arguments
+     * @param key resource bundle key for the message to log
+     * @param throwable Throwable associated with the logging request
+     */
+    public void fatal(String key, Throwable throwable)
+    {
+        if (!isFatalEnabled()) return;
+        String message = evalResourceBundle(key);
+        m_logInterface.fatal(message, throwable);
+    }
+
+    /**
+     * Log a message with the FATAL Level and  with arguments
+     * @param key resource bundle key for the message to log
+     * @param params parameters passed to the message
+     */
+    public void fatal(String key, Object[] params)
+    {
+        if (!isFatalEnabled()) return;
+        String message = evalResourceBundle(key, params);
+        m_logInterface.fatal(message);
+    }
+
+    /**
+     * Log a message with the FATAL Level, with arguments and with a throwable arguments
+     * @param key resource bundle key for the message to log
+     * @param params parameters passed to the message
+     * @param throwable Throwable associated with the logging request
+     */
+    public void fatal(String key, Object[] params, Throwable throwable)
+    {
+        if (!isFatalEnabled()) return;
+        String message = evalResourceBundle(key, params);
+        m_logInterface.fatal(message, throwable);
+    }
+
+    // -------------------------------------------------------------------------------------
+    // private methods
+    // -------------------------------------------------------------------------------------
+
+    private String evalResourceBundle(String key)
+    {
+        return getString(key);
+    }
+
+    private String evalResourceBundle(String key, Object[] params)
+    {
+        return getString(key, params);
+    }
 }

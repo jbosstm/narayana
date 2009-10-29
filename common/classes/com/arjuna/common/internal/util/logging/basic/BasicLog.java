@@ -27,7 +27,10 @@
 
 
 //package org.apache.commons.logging.impl;  // apache version
-package com.arjuna.common.internal.util.logging; // Red Hat modification
+package com.arjuna.common.internal.util.logging.basic;
+
+import com.arjuna.common.internal.util.logging.LogInterface;
+import com.arjuna.common.internal.util.logging.commonPropertyManager;
 
 import java.io.Serializable;
 import java.io.FileOutputStream;
@@ -79,23 +82,9 @@ import java.util.Properties;
  *
  * @version (apache version) Id: SimpleLog.java 399221 2006-05-03 09:20:24Z dennisl
  */
-public class DefaultLog implements Serializable, LogInterface {
-
-
+public class BasicLog implements Serializable, LogInterface
+{
     // ------------------------------------------------------- Class Attributes
-
-    /** All system properties used by <code>SimpleLog</code> start with this */
-    //static protected final String systemPrefix =
-    //    "org.apache.commons.logging.simplelog.";
-
-    static final String LOG_ENABLED_PROPERTY = "com.arjuna.common.util.logging.default";
-    static final String LOG_LEVEL = "com.arjuna.common.util.logging.default.level";
-    static final String SHOW_LOG_NAME = "com.arjuna.common.util.logging.default.showLogName";
-    static final String SHOW_SHORT_LOG_NAME = "com.arjuna.common.util.logging.default.showShortLogName";
-    static final String SHOW_DATE = "com.arjuna.common.util.logging.default.showDate";
-    static final String LOG_FILE = "com.arjuna.common.util.logging.default.logFile";
-    static final String LOG_FILE_APPEND = "com.arjuna.common.util.logging.default.logFileAppend";
-    static final String LOG_FILE_DEFAULT = "error.log";
 
     /** Properties loaded from simplelog.properties */
     static protected final Properties simpleLogProps = new Properties();
@@ -149,13 +138,13 @@ public class DefaultLog implements Serializable, LogInterface {
     // Override with system properties.
     static {
 
-        showLogName = commonPropertyManager.getDefaultLogEnvironmentBean().isShowLogName();
-        showShortName = commonPropertyManager.getDefaultLogEnvironmentBean().isShowShortLogName();
-        showDateTime = commonPropertyManager.getDefaultLogEnvironmentBean().isShowDate();
+        showLogName = commonPropertyManager.getBasicLogEnvironmentBean().isShowLogName();
+        showShortName = commonPropertyManager.getBasicLogEnvironmentBean().isShowShortLogName();
+        showDateTime = commonPropertyManager.getBasicLogEnvironmentBean().isShowDate();
         dateFormatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss:SSS zzz");
 
-        String fileName = commonPropertyManager.getDefaultLogEnvironmentBean().getLogFile();
-        boolean fileAppend = commonPropertyManager.getDefaultLogEnvironmentBean().isLogFileAppend();
+        String fileName = commonPropertyManager.getBasicLogEnvironmentBean().getLogFile();
+        boolean fileAppend = commonPropertyManager.getBasicLogEnvironmentBean().isLogFileAppend();
         try {
             FileOutputStream fOut = new FileOutputStream(fileName, fileAppend);
             defaultLogFile = new PrintStream(fOut, true);
@@ -190,37 +179,34 @@ public class DefaultLog implements Serializable, LogInterface {
      *
      * @param name log name
      */
-    public DefaultLog(String name) {
+    public BasicLog(String name) {
 
         logName = name;
 
         // Set initial log level
         // Used to be: set default log level to ERROR
         // IMHO it should be lower, but at least info ( costin ).
-        setLevel(DefaultLog.LOG_LEVEL_INFO);
+        setLevel(BasicLog.LOG_LEVEL_INFO);
 
         // Set log level from properties
-        String lvl = commonPropertyManager.getDefaultLogEnvironmentBean().getDefaultLevel();
-        if(null == lvl) {
-            lvl =  System.getProperty(LOG_LEVEL + "info");
-        }
+        String lvl = commonPropertyManager.getBasicLogEnvironmentBean().getDefaultLevel();
 
         if("all".equalsIgnoreCase(lvl)) {
-            setLevel(DefaultLog.LOG_LEVEL_ALL);
+            setLevel(BasicLog.LOG_LEVEL_ALL);
         } else if("trace".equalsIgnoreCase(lvl)) {
-            setLevel(DefaultLog.LOG_LEVEL_TRACE);
+            setLevel(BasicLog.LOG_LEVEL_TRACE);
         } else if("debug".equalsIgnoreCase(lvl)) {
-            setLevel(DefaultLog.LOG_LEVEL_DEBUG);
+            setLevel(BasicLog.LOG_LEVEL_DEBUG);
         } else if("info".equalsIgnoreCase(lvl)) {
-            setLevel(DefaultLog.LOG_LEVEL_INFO);
+            setLevel(BasicLog.LOG_LEVEL_INFO);
         } else if("warn".equalsIgnoreCase(lvl)) {
-            setLevel(DefaultLog.LOG_LEVEL_WARN);
+            setLevel(BasicLog.LOG_LEVEL_WARN);
         } else if("error".equalsIgnoreCase(lvl)) {
-            setLevel(DefaultLog.LOG_LEVEL_ERROR);
+            setLevel(BasicLog.LOG_LEVEL_ERROR);
         } else if("fatal".equalsIgnoreCase(lvl)) {
-            setLevel(DefaultLog.LOG_LEVEL_FATAL);
+            setLevel(BasicLog.LOG_LEVEL_FATAL);
         } else if("off".equalsIgnoreCase(lvl)) {
-            setLevel(DefaultLog.LOG_LEVEL_OFF);
+            setLevel(BasicLog.LOG_LEVEL_OFF);
         }
 
     }
@@ -274,12 +260,12 @@ public class DefaultLog implements Serializable, LogInterface {
 
         // Append a readable representation of the log level
         switch(type) {
-            case DefaultLog.LOG_LEVEL_TRACE: buf.append("[TRACE] "); break;
-            case DefaultLog.LOG_LEVEL_DEBUG: buf.append("[DEBUG] "); break;
-            case DefaultLog.LOG_LEVEL_INFO:  buf.append("[INFO] ");  break;
-            case DefaultLog.LOG_LEVEL_WARN:  buf.append("[WARN] ");  break;
-            case DefaultLog.LOG_LEVEL_ERROR: buf.append("[ERROR] "); break;
-            case DefaultLog.LOG_LEVEL_FATAL: buf.append("[FATAL] "); break;
+            case BasicLog.LOG_LEVEL_TRACE: buf.append("[TRACE] "); break;
+            case BasicLog.LOG_LEVEL_DEBUG: buf.append("[DEBUG] "); break;
+            case BasicLog.LOG_LEVEL_INFO:  buf.append("[INFO] ");  break;
+            case BasicLog.LOG_LEVEL_WARN:  buf.append("[WARN] ");  break;
+            case BasicLog.LOG_LEVEL_ERROR: buf.append("[ERROR] "); break;
+            case BasicLog.LOG_LEVEL_FATAL: buf.append("[FATAL] "); break;
         }
 
         // Append the name of the log instance if so configured
@@ -358,8 +344,8 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final void debug(Object message) {
 
-        if (isLevelEnabled(DefaultLog.LOG_LEVEL_DEBUG)) {
-            log(DefaultLog.LOG_LEVEL_DEBUG, message, null);
+        if (isLevelEnabled(BasicLog.LOG_LEVEL_DEBUG)) {
+            log(BasicLog.LOG_LEVEL_DEBUG, message, null);
         }
     }
 
@@ -374,8 +360,8 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final void debug(Object message, Throwable t) {
 
-        if (isLevelEnabled(DefaultLog.LOG_LEVEL_DEBUG)) {
-            log(DefaultLog.LOG_LEVEL_DEBUG, message, t);
+        if (isLevelEnabled(BasicLog.LOG_LEVEL_DEBUG)) {
+            log(BasicLog.LOG_LEVEL_DEBUG, message, t);
         }
     }
 
@@ -389,8 +375,8 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final void trace(Object message) {
 
-        if (isLevelEnabled(DefaultLog.LOG_LEVEL_TRACE)) {
-            log(DefaultLog.LOG_LEVEL_TRACE, message, null);
+        if (isLevelEnabled(BasicLog.LOG_LEVEL_TRACE)) {
+            log(BasicLog.LOG_LEVEL_TRACE, message, null);
         }
     }
 
@@ -405,8 +391,8 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final void trace(Object message, Throwable t) {
 
-        if (isLevelEnabled(DefaultLog.LOG_LEVEL_TRACE)) {
-            log(DefaultLog.LOG_LEVEL_TRACE, message, t);
+        if (isLevelEnabled(BasicLog.LOG_LEVEL_TRACE)) {
+            log(BasicLog.LOG_LEVEL_TRACE, message, t);
         }
     }
 
@@ -420,8 +406,8 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final void info(Object message) {
 
-        if (isLevelEnabled(DefaultLog.LOG_LEVEL_INFO)) {
-            log(DefaultLog.LOG_LEVEL_INFO,message,null);
+        if (isLevelEnabled(BasicLog.LOG_LEVEL_INFO)) {
+            log(BasicLog.LOG_LEVEL_INFO,message,null);
         }
     }
 
@@ -436,8 +422,8 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final void info(Object message, Throwable t) {
 
-        if (isLevelEnabled(DefaultLog.LOG_LEVEL_INFO)) {
-            log(DefaultLog.LOG_LEVEL_INFO, message, t);
+        if (isLevelEnabled(BasicLog.LOG_LEVEL_INFO)) {
+            log(BasicLog.LOG_LEVEL_INFO, message, t);
         }
     }
 
@@ -451,8 +437,8 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final void warn(Object message) {
 
-        if (isLevelEnabled(DefaultLog.LOG_LEVEL_WARN)) {
-            log(DefaultLog.LOG_LEVEL_WARN, message, null);
+        if (isLevelEnabled(BasicLog.LOG_LEVEL_WARN)) {
+            log(BasicLog.LOG_LEVEL_WARN, message, null);
         }
     }
 
@@ -467,8 +453,8 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final void warn(Object message, Throwable t) {
 
-        if (isLevelEnabled(DefaultLog.LOG_LEVEL_WARN)) {
-            log(DefaultLog.LOG_LEVEL_WARN, message, t);
+        if (isLevelEnabled(BasicLog.LOG_LEVEL_WARN)) {
+            log(BasicLog.LOG_LEVEL_WARN, message, t);
         }
     }
 
@@ -482,8 +468,8 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final void error(Object message) {
 
-        if (isLevelEnabled(DefaultLog.LOG_LEVEL_ERROR)) {
-            log(DefaultLog.LOG_LEVEL_ERROR, message, null);
+        if (isLevelEnabled(BasicLog.LOG_LEVEL_ERROR)) {
+            log(BasicLog.LOG_LEVEL_ERROR, message, null);
         }
     }
 
@@ -498,8 +484,8 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final void error(Object message, Throwable t) {
 
-        if (isLevelEnabled(DefaultLog.LOG_LEVEL_ERROR)) {
-            log(DefaultLog.LOG_LEVEL_ERROR, message, t);
+        if (isLevelEnabled(BasicLog.LOG_LEVEL_ERROR)) {
+            log(BasicLog.LOG_LEVEL_ERROR, message, t);
         }
     }
 
@@ -513,8 +499,8 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final void fatal(Object message) {
 
-        if (isLevelEnabled(DefaultLog.LOG_LEVEL_FATAL)) {
-            log(DefaultLog.LOG_LEVEL_FATAL, message, null);
+        if (isLevelEnabled(BasicLog.LOG_LEVEL_FATAL)) {
+            log(BasicLog.LOG_LEVEL_FATAL, message, null);
         }
     }
 
@@ -529,8 +515,8 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final void fatal(Object message, Throwable t) {
 
-        if (isLevelEnabled(DefaultLog.LOG_LEVEL_FATAL)) {
-            log(DefaultLog.LOG_LEVEL_FATAL, message, t);
+        if (isLevelEnabled(BasicLog.LOG_LEVEL_FATAL)) {
+            log(BasicLog.LOG_LEVEL_FATAL, message, t);
         }
     }
 
@@ -544,7 +530,7 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final boolean isDebugEnabled() {
 
-        return isLevelEnabled(DefaultLog.LOG_LEVEL_DEBUG);
+        return isLevelEnabled(BasicLog.LOG_LEVEL_DEBUG);
     }
 
 
@@ -557,7 +543,7 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final boolean isErrorEnabled() {
 
-        return isLevelEnabled(DefaultLog.LOG_LEVEL_ERROR);
+        return isLevelEnabled(BasicLog.LOG_LEVEL_ERROR);
     }
 
 
@@ -570,7 +556,7 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final boolean isFatalEnabled() {
 
-        return isLevelEnabled(DefaultLog.LOG_LEVEL_FATAL);
+        return isLevelEnabled(BasicLog.LOG_LEVEL_FATAL);
     }
 
 
@@ -583,7 +569,7 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final boolean isInfoEnabled() {
 
-        return isLevelEnabled(DefaultLog.LOG_LEVEL_INFO);
+        return isLevelEnabled(BasicLog.LOG_LEVEL_INFO);
     }
 
 
@@ -596,7 +582,7 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final boolean isTraceEnabled() {
 
-        return isLevelEnabled(DefaultLog.LOG_LEVEL_TRACE);
+        return isLevelEnabled(BasicLog.LOG_LEVEL_TRACE);
     }
 
 
@@ -609,7 +595,7 @@ public class DefaultLog implements Serializable, LogInterface {
      */
     public final boolean isWarnEnabled() {
 
-        return isLevelEnabled(DefaultLog.LOG_LEVEL_WARN);
+        return isLevelEnabled(BasicLog.LOG_LEVEL_WARN);
     }
 }
 

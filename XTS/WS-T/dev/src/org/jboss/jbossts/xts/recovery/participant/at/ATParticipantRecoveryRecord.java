@@ -160,7 +160,7 @@ public abstract class ATParticipantRecoveryRecord implements PersistableParticip
             // the original participant did not provide a way to save its state so
             // throw an exception to notify this
 
-            String mesg = WSTLogger.arjLoggerI18N.getString("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.restoreParticipant_1", id);
+            String mesg = WSTLogger.arjLoggerI18N.getString("org.jboss.transactions.xts.recovery.participant.at.ATParticipantRecoveryRecord.restoreParticipant_1", new Object[] {id});
 
             throw new Exception(mesg);
         }

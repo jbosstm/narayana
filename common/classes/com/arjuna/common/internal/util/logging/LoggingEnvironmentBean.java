@@ -36,11 +36,7 @@ public class LoggingEnvironmentBean implements LoggingEnvironmentBeanMBean
     private volatile String language = "en";
     private volatile String country = "US";
 
-    @FullPropertyName(name = "com.arjuna.common.util.logging.default")
-    private volatile boolean useDefaultLog = false;
-
-    @FullPropertyName(name = "com.arjuna.common.util.logger")
-    private volatile String loggingSystem = "log4j";
+    private volatile String loggingFactory = "com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory;com.arjuna.common.internal.util.logging.jakarta.Log4JLogger";
 
     @FullPropertyName(name = "com.arjuna.common.util.logging.DebugLevel")
     private volatile String debugLevel = "0x00000000";
@@ -99,49 +95,40 @@ public class LoggingEnvironmentBean implements LoggingEnvironmentBeanMBean
     }
 
     /**
-     * Should the internal default log system be used in addition to the underlying logger.
+     * Returns the factory information for the underlying logging system.
+     * The string should consist of a classname for a class which implements LogFactoryInterface,
+     * plus an optional semicolon separated suffix containing a parameter string to pass to the factory impl.
      *
-     * Default: false
-     * Equivalent deprecated property: com.arjuna.common.util.logging.default
+     * Options corresponding to the old log configuration mechanism are as follows:
      *
-     * @return true if the default log should be enabled, otherwise false.
+     * log4j: com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory;com.arjuna.common.internal.util.logging.jakarta.Log4JLogger
+     * jdk14: com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory;org.apache.commons.logging.impl.Jdk14Logger
+     * simple: com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory;org.apache.commons.logging.impl.SimpleLog
+     * noop: com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory;org.apache.commons.logging.impl.NoOpLog
+     * log4j_releveler: com.arjuna.common.internal.util.logging.jakarta.JakartaRelevelingLogFactory;com.arjuna.common.internal.util.logging.jakarta.Log4JLogger
+     * jakarta: com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory
+     *
+     * Note that the above are run through commons logging, so that jar is required on the classpath in most cases.
+     *
+     * built-in (no 3rd party deps): "com.arjuna.common.internal.util.logging.basic.BasicLogFactory"
+     *
+     * Default: log4j via. commons logging (the first option in the list above)
+     *
+     * @return the factory information for the underlying logging system.
      */
-    public boolean isUseDefaultLog()
+    public String getLoggingFactory()
     {
-        return useDefaultLog;
+        return loggingFactory;
     }
 
     /**
-     * Enables the default log system.
+     * Sets the factory information for the underlying logging system.
      *
-     * @param useDefaultLog true if default log should be enabled, false otherwise.
+     * @param loggingFactory the factory information for the underlying logging system.
      */
-    public void setUseDefaultLog(boolean useDefaultLog)
+    public void setLoggingFactory(String loggingFactory)
     {
-        this.useDefaultLog = useDefaultLog;
-    }
-
-    /**
-     * Returns the identifier for the underlying logging system.
-     *
-     * Default: "log4j"
-     * Equivalent deprecated property: com.arjuna.common.util.logger
-     *
-     * @return the identifier of the underlying logging system.
-     */
-    public String getLoggingSystem()
-    {
-        return loggingSystem;
-    }
-
-    /**
-     * Sets the identifier for the underlying logging system.
-     *
-     * @param loggingSystem the identifier for the underlying logging system.
-     */
-    public void setLoggingSystem(String loggingSystem)
-    {
-        this.loggingSystem = loggingSystem;
+        this.loggingFactory = loggingFactory;
     }
 
     /**
