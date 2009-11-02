@@ -32,7 +32,7 @@
 package com.arjuna.ats.jta;
 
 import com.arjuna.ats.jta.logging.jtaLogger;
-import com.arjuna.ats.jta.utils.JNDIManager;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 
 import javax.naming.InitialContext;
 
@@ -53,7 +53,7 @@ public class TransactionManager
 
 		try
 		{
-			transactionManager = (javax.transaction.TransactionManager)ctx.lookup(JNDIManager.getTransactionManagerJNDIName());
+			transactionManager = (javax.transaction.TransactionManager)ctx.lookup(jtaPropertyManager.getJTAEnvironmentBean().getJtaTMJNDIContext());
 		}
 		catch (Exception e)
 		{
@@ -90,7 +90,7 @@ public class TransactionManager
         {
             try
             {
-                _transactionManager = (javax.transaction.TransactionManager) Thread.currentThread().getContextClassLoader().loadClass(JNDIManager.getTransactionManagerImplementationClassname()).newInstance();
+                _transactionManager = (javax.transaction.TransactionManager) Thread.currentThread().getContextClassLoader().loadClass(jtaPropertyManager.getJTAEnvironmentBean().getJtaTMImplementation()).newInstance();
             }
             catch (Exception e)
             {

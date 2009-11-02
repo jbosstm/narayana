@@ -31,8 +31,6 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
-import com.arjuna.ats.jta.utils.JNDIManager;
-
 import java.util.Hashtable;
 import javax.naming.*;
 

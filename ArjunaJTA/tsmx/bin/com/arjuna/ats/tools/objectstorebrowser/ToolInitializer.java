@@ -7,7 +7,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
 import com.arjuna.ats.internal.arjuna.utils.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
-import com.arjuna.ats.jta.utils.JNDIManager;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 
 import javax.transaction.Transaction;
 import javax.transaction.xa.Xid;
@@ -19,7 +19,7 @@ public class ToolInitializer implements IToolInitializer
 
     public void initialize(ToolPlugin plugin)
     {
-        String tmClassName = JNDIManager.getTransactionManagerImplementationClassname();
+        String tmClassName = jtaPropertyManager.getJTAEnvironmentBean().getJtaTMImplementation();
 
         com.arjuna.ats.internal.jta.Implementations.initialise();   // needed for XAResourceRecord
 

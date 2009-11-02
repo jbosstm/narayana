@@ -66,21 +66,6 @@ public class JNDIManager
 		bindJTATransactionSynchronizationRegistryImplementation();
 	}
 
-	public static String getTransactionManagerImplementationClassname()
-	{
-		return jtaPropertyManager.getJTAEnvironmentBean().getJtaTMImplementation();
-	}
-
-	public static String getUserTransactionImplementationClassname()
-	{
-        return jtaPropertyManager.getJTAEnvironmentBean().getJtaUTImplementation();
-	}
-
-	public static String getTransactionSynchronizationRegistryImplementationClassname()
-	{
-        return jtaPropertyManager.getJTAEnvironmentBean().getJtaTSRImplementation();
-	}
-
 	/**
      * Bind the currently configured transaction manager implementation to the default
      * JNDI context.
@@ -109,7 +94,7 @@ public class JNDIManager
 	public static void bindJTATransactionManagerImplementation(InitialContext initialContext) throws javax.naming.NamingException
 	{
         /** Look up and instantiate an instance of the configured transaction manager implementation **/
-        String tmImplementation = getTransactionManagerImplementationClassname();
+        String tmImplementation = jtaPropertyManager.getJTAEnvironmentBean().getJtaTMImplementation();
 
         /** Bind the transaction manager to the appropriate JNDI context **/
         Reference ref = new Reference(tmImplementation, tmImplementation, null);
@@ -145,7 +130,7 @@ public class JNDIManager
 	public static void bindJTAUserTransactionImplementation(InitialContext initialContext) throws javax.naming.NamingException
 	{
         /** Look up and instantiate an instance of the configured user transaction implementation **/
-        String utImplementation = getUserTransactionImplementationClassname();
+        String utImplementation = jtaPropertyManager.getJTAEnvironmentBean().getJtaUTImplementation();
 
         /** Bind the user transaction to the appropriate JNDI context **/
         Reference ref = new Reference(utImplementation, utImplementation, null);
@@ -182,7 +167,7 @@ public class JNDIManager
 	public static void bindJTATransactionSynchronizationRegistryImplementation(InitialContext initialContext) throws javax.naming.NamingException
 	{
         /** Look up and instantiate an instance of the configured TransactionSynchronizationRegistry implementation **/
-        String tsrImplementation = getTransactionSynchronizationRegistryImplementationClassname();
+        String tsrImplementation = jtaPropertyManager.getJTAEnvironmentBean().getJtaTSRImplementation();
         Object tsr = null;
         try {
             tsr = Class.forName(tsrImplementation).newInstance();
@@ -206,12 +191,12 @@ public class JNDIManager
         initialContext.unbind(getTransactionSynchronizationRegistryJNDIName());
     }
 
-	public final static String getTransactionManagerJNDIName()
+	private final static String getTransactionManagerJNDIName()
 	{
         return jtaPropertyManager.getJTAEnvironmentBean().getJtaTMJNDIContext();
 	}
 
-	public final static String getUserTransactionJNDIName()
+	private final static String getUserTransactionJNDIName()
 	{
         return jtaPropertyManager.getJTAEnvironmentBean().getJtaUTJNDIContext();
 	}

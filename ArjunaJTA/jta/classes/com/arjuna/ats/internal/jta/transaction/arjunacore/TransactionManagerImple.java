@@ -29,7 +29,6 @@
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
 import com.arjuna.ats.jta.logging.*;
-import com.arjuna.ats.jta.utils.JNDIManager;
 import com.arjuna.ats.arjuna.AtomicAction;
 
 import com.arjuna.common.util.logging.*;
