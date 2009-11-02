@@ -81,7 +81,7 @@ public static final int defaultRetry = 10;
      
 public FileLock (File name)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
 				     VisibilityLevel.VIS_PUBLIC,
@@ -97,7 +97,7 @@ public FileLock (File name)
 
 public FileLock (File name, long timeout, long retry)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
 				     VisibilityLevel.VIS_PUBLIC,

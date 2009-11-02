@@ -135,7 +135,7 @@ public class PersistenceRecord extends RecoveryRecord
 	{
 		super(os, sm);
 
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "PersistenceRecord::PersistenceRecord("
 					+ os + ", " + sm.get_uid() + ")");
@@ -168,7 +168,7 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelAbort ()
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "PersistenceRecord::topLevelAbort() for "
 					+ order());
@@ -226,7 +226,7 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelCommit ()
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "PersistenceRecord::topLevelCommit() for "
 					+ order());
@@ -238,7 +238,7 @@ public class PersistenceRecord extends RecoveryRecord
 			{ order(), getTypeOfObject() });
 		}
 
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			if (store != null)
 			{
@@ -324,7 +324,7 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelPrepare ()
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "PersistenceRecord::topLevelPrepare() for "
 					+ order());
@@ -401,7 +401,7 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public int topLevelCleanup ()
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "PersistenceRecord::topLevelCleanup() for "
 					+ order());
@@ -421,7 +421,7 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public boolean restore_state (InputObjectState os, int ot)
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "PersistenceRecord::restore_state() for "
 					+ order());
@@ -475,7 +475,7 @@ public class PersistenceRecord extends RecoveryRecord
 
 	public boolean save_state (OutputObjectState os, int ot)
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "PersistenceRecord::save_state() for "
 					+ order());

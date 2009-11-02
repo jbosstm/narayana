@@ -106,7 +106,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
     public boolean commit_state (Uid objUid,
 				 String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE,
@@ -128,7 +128,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 
     public boolean hide_state (Uid u, String tn) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.hide_state("+u+", "+tn+")");
@@ -139,7 +139,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 
     public boolean reveal_state (Uid u, String tn) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.reveal_state("+u+", "+tn+")");
@@ -150,7 +150,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 
     public InputObjectState read_committed (Uid storeUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.read_committed("+storeUid+", "+tName+")");
@@ -161,7 +161,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 
     public InputObjectState read_uncommitted (Uid u, String tn) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.read_uncommitted("+u+", "+tn+")");
@@ -172,7 +172,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 
     public boolean remove_committed (Uid storeUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.remove_committed("+storeUid+", "+tName+")");
@@ -183,7 +183,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 
     public boolean remove_uncommitted (Uid u, String tn) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.remove_uncommitted("+u+", "+tn+")");
@@ -194,7 +194,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 
     public boolean write_committed (Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.write_committed("+storeUid+", "+tName+")");
@@ -205,7 +205,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 
     public boolean write_uncommitted (Uid u, String tn, OutputObjectState s) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.write_uncommitted("+u+", "+tn+", "+s+")");
@@ -291,7 +291,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	catch (ObjectStoreException e)
 	{
 	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		tsLogger.arjLogger.warn(e.getMessage());
+		tsLogger.arjLogger.warn(e);
 
 	    super.makeInvalid();
 

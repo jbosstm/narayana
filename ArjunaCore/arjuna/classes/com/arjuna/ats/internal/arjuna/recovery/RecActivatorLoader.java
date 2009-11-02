@@ -43,6 +43,7 @@ import com.arjuna.common.util.logging.*;
  * @message com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_3 [com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_3] - Loading recovery activator: {0}
  * @message com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_4 [com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_4] - Loading recovery activator: {0}
  * @message com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_5 [com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_5] - Loading recovery module: could not find class {0}
+ * @message com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_6 [com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_6] - Start RecoveryActivators
 */
 
 public class RecActivatorLoader
@@ -66,9 +67,9 @@ public class RecActivatorLoader
   public void startRecoveryActivators()
       //public void run()
   {
-      if (tsLogger.arjLogger.isInfoEnabled())
+      if (tsLogger.arjLoggerI18N.isInfoEnabled())
 	  {
-	      tsLogger.arjLogger.info("--- Start RecoveryActivators ");
+	      tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.RecActivatorLoader_6");
 	  }
 
       Enumeration activators = _recoveryActivators.elements();

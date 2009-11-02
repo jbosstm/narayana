@@ -33,8 +33,6 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.common.util.logging.DebugLevel;
 import com.arjuna.common.util.logging.VisibilityLevel;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -97,7 +95,7 @@ public class VolatileStore extends ObjectStoreImple
 
     public int currentState(Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.debugAllowed())
+        if (tsLogger.arjLogger.isDebugEnabled())
         {
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                          FacilityCode.FAC_OBJECT_STORE,
@@ -169,7 +167,7 @@ public class VolatileStore extends ObjectStoreImple
 
     public InputObjectState read_committed(Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.debugAllowed())
+        if (tsLogger.arjLogger.isDebugEnabled())
         {
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                          FacilityCode.FAC_OBJECT_STORE,
@@ -203,7 +201,7 @@ public class VolatileStore extends ObjectStoreImple
 
     public boolean remove_committed(Uid u, String tn) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.debugAllowed())
+        if (tsLogger.arjLogger.isDebugEnabled())
         {
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                          FacilityCode.FAC_OBJECT_STORE,
@@ -239,7 +237,7 @@ public class VolatileStore extends ObjectStoreImple
 
     public boolean write_committed(Uid u, String tn, OutputObjectState buff) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.debugAllowed())
+        if (tsLogger.arjLogger.isDebugEnabled())
         {
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                          FacilityCode.FAC_OBJECT_STORE,

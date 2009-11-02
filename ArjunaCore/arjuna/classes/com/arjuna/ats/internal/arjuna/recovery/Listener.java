@@ -137,7 +137,7 @@ public class Listener extends Thread
 
             Connection new_conn = new Connection( conn, _listener_service, callback );
 
-     	    if (tsLogger.arjLogger.debugAllowed())
+     	    if (tsLogger.arjLogger.isDebugEnabled())
 	    {
 		tsLogger.arjLogger.debug
 		    ( DebugLevel.FUNCTIONS,
@@ -159,7 +159,7 @@ public class Listener extends Thread
          catch (final SocketException ex)
          {
              // we get this if the socket is closed under a call to shutdown
-             if (tsLogger.arjLogger.debugAllowed())
+             if (tsLogger.arjLogger.isDebugEnabled())
              {
                  tsLogger.arjLogger.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_CRASH_RECOVERY,
                          "Recovery listener existing "+ 

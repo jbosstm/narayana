@@ -68,7 +68,7 @@ public class BasicPersistentLockStore extends LockStoreImple
 
     public BasicPersistentLockStore (String key)
     {
-	if (txojLogger.aitLogger.debugAllowed())
+	if (txojLogger.aitLogger.isDebugEnabled())
 	{
 	    txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_LOCK_STORE, "BasicPersistentLockStore.BasicPersistentLockStore("+key+")");
@@ -87,7 +87,7 @@ public class BasicPersistentLockStore extends LockStoreImple
 
 public InputObjectState read_state (Uid u, String tName) throws LockStoreException
     {
-	if (txojLogger.aitLogger.debugAllowed())
+	if (txojLogger.aitLogger.isDebugEnabled())
 	{
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_LOCK_STORE, "BasicPersistentLockStore.read_state("+u+", "+tName+")");
@@ -105,7 +105,7 @@ public InputObjectState read_state (Uid u, String tName) throws LockStoreExcepti
 
 public boolean remove_state (Uid u, String tName)
     {
-	if (txojLogger.aitLogger.debugAllowed())
+	if (txojLogger.aitLogger.isDebugEnabled())
 	{
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_LOCK_STORE, "BasicPersistentLockStore.remove_state("+u+", "+tName+")");
@@ -123,7 +123,7 @@ public boolean remove_state (Uid u, String tName)
 
 public boolean write_committed (Uid u, String tName, OutputObjectState state)
     {
-	if (txojLogger.aitLogger.debugAllowed())
+	if (txojLogger.aitLogger.isDebugEnabled())
 	{
 	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_LOCK_STORE,

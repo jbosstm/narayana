@@ -146,7 +146,7 @@ protected HashedActionStore (int shareStatus)
     {
 	super(shareStatus);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE,
@@ -163,7 +163,7 @@ protected HashedActionStore (String locationOfStore, int shareStatus)
     {
 	super(shareStatus);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE,
@@ -176,7 +176,7 @@ protected HashedActionStore (String locationOfStore, int shareStatus)
 	}
 	catch (ObjectStoreException e)
 	{
-	    tsLogger.arjLogger.warn(e.getMessage());
+	    tsLogger.arjLogger.warn(e);
 
 	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	}
@@ -186,7 +186,7 @@ protected HashedActionStore (ObjectName objName)
     {
 	super(objName);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "HashedStore.HashedActionStore( "+objName+")");
@@ -198,7 +198,7 @@ protected HashedActionStore (ObjectName objName)
 	}
 	catch (ObjectStoreException e)
 	{
-	    tsLogger.arjLogger.warn(e.getMessage());
+	    tsLogger.arjLogger.warn(e);
 
 	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	}

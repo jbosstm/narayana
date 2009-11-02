@@ -64,7 +64,7 @@ public ReaperThread (TransactionReaper arg)
 
 public void run ()
     {
-    	if (tsLogger.arjLogger.debugAllowed())
+    	if (tsLogger.arjLogger.isDebugEnabled())
     	{
     	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
     				     FacilityCode.FAC_ATOMIC_ACTION, "ReaperThread.run ()");
@@ -113,7 +113,7 @@ public void run ()
                 }
             }
     
-            if (tsLogger.arjLogger.debugAllowed())
+            if (tsLogger.arjLogger.isDebugEnabled())
             {
                  tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                                           FacilityCode.FAC_ATOMIC_ACTION, "ReaperThread.run ()");

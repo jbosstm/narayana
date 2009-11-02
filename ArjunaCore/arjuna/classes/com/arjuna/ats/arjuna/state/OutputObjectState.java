@@ -56,7 +56,7 @@ public class OutputObjectState extends OutputBuffer
 
 public OutputObjectState ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_BUFFER_MAN, "OutputObjectState::OutputObjectState()");
@@ -77,7 +77,7 @@ public OutputObjectState (OutputObjectState copyFrom)
 	
 	super(copyFrom);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_BUFFER_MAN, 
@@ -101,7 +101,7 @@ public OutputObjectState (InputObjectState copyFrom)
     {
 	super(copyFrom.buffer());
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_BUFFER_MAN, 
@@ -123,7 +123,7 @@ public OutputObjectState (InputObjectState copyFrom)
     
 public OutputObjectState (Uid newUid, String tName)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_BUFFER_MAN, 
@@ -140,7 +140,7 @@ public OutputObjectState (Uid newUid, String tName, byte[] buffer)
     {
 	super(buffer);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_BUFFER_MAN, 
@@ -205,7 +205,7 @@ public void print (PrintWriter strm)
 
 public synchronized void copy (OutputObjectState objstate)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	    tsLogger.arjLogger.debug(DebugLevel.OPERATORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_BUFFER_MAN, "OutputObjectState::copy for "+bufferUid);
 	

@@ -55,7 +55,7 @@ public class ConnectionManager
      */
 
     /**
-     * @message com.arjuna.ats.internal.jdbc.nojdbcimple Can't load ConnectionImple class.
+     * @message com.arjuna.ats.internal.jdbc.nojdbcimple Can't load ConnectionImple class {0}
      */
     public static synchronized Connection create (String dbUrl, Properties info) throws SQLException
     {
@@ -136,11 +136,12 @@ public class ConnectionManager
             }
             catch(Exception e)
             {
-                if (jdbcLogger.logger.isErrorEnabled())
+                if (jdbcLogger.loggerI18N.isErrorEnabled())
                 {
-                    jdbcLogger.logger.error(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.nojdbcimple")+" "+e.toString());
+                    jdbcLogger.loggerI18N.error("com.arjuna.ats.internal.jdbc.nojdbcimple", new Object[] {connectionImpleClassName}, e);
                 }
-                SQLException sqlException = new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.nojdbcimple")+" "+e.toString());
+                SQLException sqlException = new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.nojdbcimple",
+                        new Object[] {connectionImpleClassName})+" "+e.toString());
                 sqlException.initCause(e);
                 throw sqlException;
             }

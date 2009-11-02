@@ -79,7 +79,7 @@ public class Mutex
     
     public int lock ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_GENERAL, "Mutex::lock()");
@@ -131,7 +131,7 @@ public class Mutex
 	    
     public int unlock ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_GENERAL, "Mutex::unlock()");
@@ -187,7 +187,7 @@ public class Mutex
     
     public int tryLock ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
 				     VisibilityLevel.VIS_PUBLIC,

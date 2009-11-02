@@ -80,7 +80,7 @@ public class WorkerService implements Service
             // now we only need to hold one lock
 		_periodicRecovery.wakeUp();
 
-		tsLogger.arjLogger.info("com.arjuna.ats.internal.arjuna.recovery.WorkerService_3");
+		tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.WorkerService_3");
 
 		if (request.equals("SCAN"))
 		{
@@ -95,7 +95,7 @@ public class WorkerService implements Service
 		    }
 		    catch (Exception ex)
 		    {
-			tsLogger.arjLogger.info("com.arjuna.ats.internal.arjuna.recovery.WorkerService_4");
+    			tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.WorkerService_4");
 		    }
                 }
             }

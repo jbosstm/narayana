@@ -72,7 +72,7 @@ public class TransactionServiceMX
 
 	protected TransactionServiceMX()
 	{
-		if (tsmxLogger.logger.debugAllowed())
+		if (tsmxLogger.logger.isDebugEnabled())
 		{
 			tsmxLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 						 tsmxFacilityCode.FAC_TS_MX, "TransactionService Management Extentions initialising");
@@ -116,11 +116,6 @@ public class TransactionServiceMX
 
             /** Get the JMX agent implementation plugin, if none specified use reference implementation **/
             String agentImpl = _tsmxProps.getProperty(AGENT_IMPLEMENTATION_PROPERTY, DEFAULT_AGENT_IMPLEMENTATION);
-
-            if ( tsmxLogger.logger.isInfoEnabled() )
-            {
-                tsmxLogger.logger.info("Initialising JMX agent "+agentImpl);
-            }
 
             /** Create instance of JMX agent plugin **/
             _agent = (AgentInterface) Thread.currentThread().getContextClassLoader().loadClass(agentImpl).newInstance();
@@ -193,7 +188,7 @@ public class TransactionServiceMX
 		Enumeration propNames = props.propertyNames();
 		HashSet foundProperties = new HashSet();
 
-		if (tsmxLogger.logger.debugAllowed())
+		if (tsmxLogger.logger.isDebugEnabled())
 		{
 			tsmxLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 						 tsmxFacilityCode.FAC_TS_MX, "Registering transaction service mbeans");
@@ -213,7 +208,7 @@ public class TransactionServiceMX
 					String mbeanObjectName = props.getProperty(getObjectPropertyName(mbeanName));
 					try
 					{
-						if (tsmxLogger.logger.debugAllowed())
+						if (tsmxLogger.logger.isDebugEnabled())
 						{
 							tsmxLogger.logger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 										 tsmxFacilityCode.FAC_TS_MX, "Registering mbean '"+mbeanClassname+"' against '"+mbeanObjectName+"'");

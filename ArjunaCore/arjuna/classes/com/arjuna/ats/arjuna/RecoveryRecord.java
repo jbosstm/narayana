@@ -37,10 +37,8 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.internal.arjuna.thread.ThreadActionData;
+
 import java.io.PrintWriter;
 
 class RecoveryRecord extends AbstractRecord
@@ -55,7 +53,7 @@ class RecoveryRecord extends AbstractRecord
     {
 	super(sm.get_uid(), sm.type(), ObjectType.ANDPERSISTENT);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
 				     FacilityCode.FAC_ABSTRACT_REC,
@@ -69,7 +67,7 @@ class RecoveryRecord extends AbstractRecord
     
     public void finalize () throws Throwable
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "RecoveryRecord.finalize() for "+order() + " type " + type());
@@ -111,7 +109,7 @@ class RecoveryRecord extends AbstractRecord
 
 public int nestedAbort ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "RecoveryRecord::nestedAbort() for "+order());
@@ -154,7 +152,7 @@ public int nestedAbort ()
 
     public int nestedCommit ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "RecoveryRecord::nestedCommit() for "+order());
@@ -165,7 +163,7 @@ public int nestedAbort ()
     
     public int nestedPrepare ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "RecoveryRecord::nestedPrepare() for "+order());
@@ -184,7 +182,7 @@ public int nestedAbort ()
 
     public int topLevelAbort ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, 
@@ -202,7 +200,7 @@ public int nestedAbort ()
 
     public int topLevelCommit ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, 
@@ -221,7 +219,7 @@ public int nestedAbort ()
 
     public int topLevelPrepare ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, 
@@ -314,7 +312,7 @@ public int nestedAbort ()
     {
 	super();
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_ABSTRACT_REC, "RecoveryRecord::RecoveryRecord()"

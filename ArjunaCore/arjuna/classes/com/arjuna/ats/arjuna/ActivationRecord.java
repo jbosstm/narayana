@@ -34,10 +34,8 @@ package com.arjuna.ats.arjuna;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 import java.io.PrintWriter;
 
@@ -63,7 +61,7 @@ class ActivationRecord extends AbstractRecord
 	actionHandle = action;
 	state = st;
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
 				     FacilityCode.FAC_ABSTRACT_REC, 
@@ -98,7 +96,7 @@ class ActivationRecord extends AbstractRecord
     
     public int nestedAbort ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "ActivationRecord::nestedAbort() for "+order());
@@ -121,7 +119,7 @@ class ActivationRecord extends AbstractRecord
     
 public int nestedCommit ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "ActivationRecord::nestedCommit() for "+order());
@@ -132,7 +130,7 @@ public int nestedCommit ()
 
 public int nestedPrepare ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "ActivationRecord::nestedPrepare() for "+order());
@@ -148,7 +146,7 @@ public int nestedPrepare ()
     
     public int topLevelAbort ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "ActivationRecord::topLevelAbort() for "+order());
@@ -164,7 +162,7 @@ public int nestedPrepare ()
     
     public int topLevelCommit ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, 
@@ -181,7 +179,7 @@ public int nestedPrepare ()
     
     public int topLevelPrepare ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, 
@@ -274,7 +272,7 @@ public int nestedPrepare ()
 	actionHandle = null;
 	state = ObjectStatus.PASSIVE;
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_ABSTRACT_REC, "ActivationRecord::ActivationRecord()");

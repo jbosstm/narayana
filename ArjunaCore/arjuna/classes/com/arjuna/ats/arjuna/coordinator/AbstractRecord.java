@@ -608,7 +608,7 @@ public abstract class AbstractRecord extends StateManager
 		uidOfObject = storeUid;
 		typeOfObject = objType;
 
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_ABSTRACT_REC, "AbstractRecord::AbstractRecord ("
 					+ storeUid + ", " + otype + ")");
@@ -630,7 +630,7 @@ public abstract class AbstractRecord extends StateManager
 		uidOfObject = storeUid;
 		typeOfObject = null;
 
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_ABSTRACT_REC, "AbstractRecord::AbstractRecord ("
 					+ storeUid + ")");

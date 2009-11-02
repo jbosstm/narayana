@@ -1218,7 +1218,7 @@ public class LockManager extends StateManager
             catch (LockStoreException e)
             {
                 if (txojLogger.aitLogger.isWarnEnabled())
-                    txojLogger.aitLogger.warn(e.getMessage());
+                    txojLogger.aitLogger.warn(e);
             }
         }
 

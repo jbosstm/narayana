@@ -107,7 +107,8 @@ public class BAParticipantRecoveryModule implements RecoveryModule
         {
             if (XTSLogger.arjLogger.isDebugEnabled())
             {
-                XTSLogger.arjLogger.debug( "StatusModule: first pass " );
+                XTSLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                            FacilityCode.FAC_CRASH_RECOVERY, "BAParticipantRecoveryModule: first pass");
             }
 
             BAParticipants = _objectStore.allObjUids(_participantType, acc_uids );
@@ -132,7 +133,8 @@ public class BAParticipantRecoveryModule implements RecoveryModule
     {
         if (XTSLogger.arjLogger.isDebugEnabled())
         {
-            XTSLogger.arjLogger.debug( "BAParticipantRecoveryModule: Second pass " );
+            XTSLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                            FacilityCode.FAC_CRASH_RECOVERY, "BAParticipantRecoveryModule: Second pass");
         }
 
         processParticipantsStatus() ;

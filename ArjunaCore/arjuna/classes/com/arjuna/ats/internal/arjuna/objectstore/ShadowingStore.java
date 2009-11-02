@@ -45,7 +45,6 @@ import com.arjuna.common.util.logging.VisibilityLevel;
 
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.utils.FileLock;
-import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.arjuna.gandiva.ObjectName;
 import java.io.*;
 import java.io.File;
@@ -166,7 +165,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 
 public boolean commit_state (Uid objUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.commit_state("+objUid+", "+tName+")");
@@ -250,7 +249,7 @@ public boolean commit_state (Uid objUid, String tName) throws ObjectStoreExcepti
 
 public boolean hide_state (Uid objUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.hide_state("+objUid+", "+tName+")");
@@ -338,7 +337,7 @@ public boolean hide_state (Uid objUid, String tName) throws ObjectStoreException
 public boolean reveal_state (Uid objUid,
 			     String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.reveal_state("+objUid+", "+tName+")");
@@ -483,7 +482,7 @@ public static ShadowingStore create (ObjectName param)
 
 protected String genPathName (Uid objUid, String tName, int ft) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.genPathName("+objUid+", "+tName+", "+ObjectStore.stateTypeString(ft)+")");
@@ -513,7 +512,7 @@ protected String revealedId (String name)
 protected InputObjectState read_state (Uid objUid, String tName,
 				       int ft) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.read_state("+objUid+", "+tName+", "+ObjectStore.stateTypeString(ft)+")");
@@ -603,7 +602,7 @@ protected InputObjectState read_state (Uid objUid, String tName,
 
 protected boolean remove_state (Uid objUid, String name, int ft) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.remove_state("+objUid+", "+name+", "+ObjectStore.stateTypeString(ft)+")");
@@ -713,7 +712,7 @@ protected boolean write_state (Uid objUid, String tName,
 			       OutputObjectState state,
 			       int ft) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.write_state("+objUid+", "+tName+", "+ObjectStore.stateTypeString(ft)+")");
@@ -809,7 +808,7 @@ protected ShadowingStore (String locationOfStore, int shareStatus)
     {
 	super(shareStatus);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.ShadowingStore("+locationOfStore+")");
@@ -821,7 +820,7 @@ protected ShadowingStore (String locationOfStore, int shareStatus)
 	}
 	catch (ObjectStoreException e)
 	{
-	    tsLogger.arjLogger.fatal(e.getMessage());
+	    tsLogger.arjLogger.fatal(e);
 
 	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	}
@@ -836,7 +835,7 @@ protected ShadowingStore (int shareStatus)
     {
 	super(shareStatus);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.ShadowingStore( "+shareStatus+" )");
@@ -847,7 +846,7 @@ protected ShadowingStore (ObjectName objName)
     {
 	super(objName);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.ShadowingStore( "+objName+" )");

@@ -109,7 +109,7 @@ public class LogWriteStateManager extends StateManager
     
     protected synchronized boolean modified ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_STATE_MAN, "StateManager::modified() for object-id "+get_uid());

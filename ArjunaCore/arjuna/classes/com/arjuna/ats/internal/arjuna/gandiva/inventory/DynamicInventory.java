@@ -129,8 +129,9 @@ public static ClassName type ()
 		}
 		catch (Exception e)
 		{
-		    if (tsLogger.arjLogger.isWarnEnabled())
-			tsLogger.arjLogger.warn(e.toString());
+		    if (tsLogger.arjLogger.isWarnEnabled()) {
+    			tsLogger.arjLogger.warn(e);
+            }
 		}
 		
 		ptr = _staticInventory.find(className);

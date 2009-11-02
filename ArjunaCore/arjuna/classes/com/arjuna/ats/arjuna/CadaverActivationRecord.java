@@ -35,7 +35,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.common.util.logging.*;
 
@@ -51,7 +50,7 @@ class CadaverActivationRecord extends ActivationRecord
     {
 	super(ObjectStatus.PASSIVE, sm, null);
 	    
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
 				     FacilityCode.FAC_ABSTRACT_REC, 
@@ -70,7 +69,7 @@ class CadaverActivationRecord extends ActivationRecord
     
     public int nestedAbort ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, 
@@ -82,7 +81,7 @@ class CadaverActivationRecord extends ActivationRecord
     
     public int nestedCommit ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, 
@@ -94,7 +93,7 @@ class CadaverActivationRecord extends ActivationRecord
     
     public int nestedPrepare ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, 
@@ -106,7 +105,7 @@ class CadaverActivationRecord extends ActivationRecord
     
     public int topLevelAbort ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, 
@@ -118,7 +117,7 @@ class CadaverActivationRecord extends ActivationRecord
     
     public int topLevelCommit ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, 
 				     "CadaverActivationRecord::topLevelCommit() for "+get_uid());
@@ -129,7 +128,7 @@ class CadaverActivationRecord extends ActivationRecord
 
     public int topLevelPrepare ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, 
 				     "CadaverActivationRecord::topLevelPrepare() for "+get_uid());
@@ -164,7 +163,7 @@ class CadaverActivationRecord extends ActivationRecord
     {
 	super();
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_ABSTRACT_REC, 

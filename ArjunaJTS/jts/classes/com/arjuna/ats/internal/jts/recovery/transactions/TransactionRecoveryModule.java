@@ -68,6 +68,8 @@ import java.io.IOException;
  * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_8 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_8] - Transaction {0} is not in object store - assumed completed
  * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_9 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_9] - Activated transaction {0} status = {1}
  * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_10 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_10] - Transaction {0} still busy
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_11 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_11] - TransactionRecoveryModule.periodicWorkFirstPass()
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_12 [com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_12] - TransactionRecoveryModule.periodicWorkSecondPass()
  */
 public abstract class TransactionRecoveryModule
 {
@@ -91,9 +93,9 @@ public abstract class TransactionRecoveryModule
      */
     protected void periodicWorkFirstPass ()
     {
-	if (jtsLogger.logger.isInfoEnabled())
+	if (jtsLogger.loggerI18N.isInfoEnabled())
 	    {
-		jtsLogger.logger.info("TransactionRecoveryModule.periodicWorkFirstPass()");
+		jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_11");
 	    }
 	// Sanity check - make sure we know what type of transaction we're looking for
 	if (_transactionType == null)
@@ -171,9 +173,9 @@ public abstract class TransactionRecoveryModule
 
     protected void periodicWorkSecondPass ()
     {
-	if (jtsLogger.logger.isInfoEnabled())
+	if (jtsLogger.loggerI18N.isInfoEnabled())
 	    {
-		jtsLogger.logger.info("TransactionRecoveryModule.periodicWorkSecondPass()");
+		jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.recovery.transactions.TransactionRecoveryModule_12");
 	    }
 
 	// Process the Vector of transaction Uids

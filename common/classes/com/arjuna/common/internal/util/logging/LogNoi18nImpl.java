@@ -34,7 +34,8 @@ import com.arjuna.common.util.logging.VisibilityLevel;
 import com.arjuna.common.util.logging.FacilityCode;
 
 /**
- * JavaDoc
+ * Logger for non-i18n messages. These should generally be debug (trace) level or raw exceptions. All
+ * textual messages at higher levels should go through the i18n logger instead.
  *
  * @author Thomas Rischbeck <thomas.rischbeck@arjuna.com>
  * @version $Revision: 2342 $ $Date: 2006-03-30 14:06:17 +0100 (Thu, 30 Mar 2006) $
@@ -91,11 +92,20 @@ public class LogNoi18nImpl implements LogNoi18n
 
    /**
     * Determine if this logger is enabled for DEBUG messages.
+    *
+    * This method returns true when the following is set:
+    * <ul>
+    * <li>finer debug level = <code>DebugLevel.FULL_DEBUGGING</code>.</li>
+    * <li>visibility level = <code>VisibilityLevel.VIS_ALL</code>.</li>
+    * <li>facility code = <code>FacilityCode.FAC_ALL</code>.</li>
+    * </ul>
+    * and the debug level is enabled in the underlying logger.
+    *
     * @return  True if the logger is enabled for DEBUG, false otherwise
     */
    public boolean isDebugEnabled()
    {
-      return m_logInterface.isDebugEnabled();
+       return debugAllowed(DebugLevel.FULL_DEBUGGING, VisibilityLevel.VIS_ALL, FacilityCode.FAC_ALL);
    }
 
    /**
@@ -138,24 +148,6 @@ public class LogNoi18nImpl implements LogNoi18n
    /**************************** Debug Granularity Extension ***************************/
 
    /**
-    * Is it allowed to print finer debugging statements?
-    *
-    * This method returns true when the following is set:
-    * <ul>
-    * <li>finer debug level = <code>DebugLevel.FULL_DEBUGGING</code>.</li>
-    * <li>visibility level = <code>VisibilityLevel.VIS_ALL</code>.</li>
-    * <li>facility code = <code>FacilityCode.FAC_ALL</code>.</li>
-    * </ul>
-    *
-    * @return true if the Logger allows full logging
-    */
-   public boolean debugAllowed()
-   {
-      return debugAllowed(DebugLevel.FULL_DEBUGGING, VisibilityLevel.VIS_ALL,
-                          FacilityCode.FAC_ALL);
-   }
-
-   /**
     * Is it allowed to print finer debugging statements with a given debug level,
     * visibility level and facility code level?
     *
@@ -170,10 +162,9 @@ public class LogNoi18nImpl implements LogNoi18n
     */
    private boolean debugAllowed(long dLevel, long vLevel, long fLevel)
    {
-       // check the underlying logger threshold as well as (but after, due to cost)
-       // our own filters, as many use points call debugAllowed rather than isDebugEnabled.
+       // check the underlying logger threshold as well as (but after, due to cost) our own filters
        return (((dLevel & m_debugLevel) != 0) && ((vLevel & m_visLevel) != 0) &&
-              ((fLevel & m_facLevel) != 0) && isDebugEnabled());
+              ((fLevel & m_facLevel) != 0) && m_logInterface.isDebugEnabled());
    }
 
    /**********************************************************************************************************
@@ -213,7 +204,7 @@ public class LogNoi18nImpl implements LogNoi18n
     *
     * @param message the message to log
     */
-   public void debug(String message)
+   private void debug(String message)
    {
       m_logInterface.debug(message);
    }
@@ -223,7 +214,7 @@ public class LogNoi18nImpl implements LogNoi18n
     *
     * @param message the message to log
     */
-   public void info(String message)
+   public void info(Throwable message)
    {
       m_logInterface.info(message);
    }
@@ -233,7 +224,7 @@ public class LogNoi18nImpl implements LogNoi18n
     *
     * @param message the message to log
     */
-   public void warn(String message)
+   public void warn(Throwable message)
    {
       m_logInterface.warn(message);
    }
@@ -249,23 +240,12 @@ public class LogNoi18nImpl implements LogNoi18n
    }
 
    /**
-    * Log a message with ERROR Level
-    *
-    * @param message the message to log
-    */
-   public void error(String message)
-   {
-      m_logInterface.error(message);
-   }
-
-   /**
     * Log a message with FATAL Level
     *
     * @param message the message to log
     */
-   public void fatal(String message)
+   public void fatal(Throwable message)
    {
       m_logInterface.fatal(message);
    }
-
 }

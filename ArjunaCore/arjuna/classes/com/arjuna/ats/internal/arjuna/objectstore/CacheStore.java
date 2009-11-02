@@ -234,7 +234,7 @@ public class CacheStore extends HashedStore
    {
       super(locationOfStore, shareStatus);
 
-      if (tsLogger.arjLogger.debugAllowed())
+      if (tsLogger.arjLogger.isDebugEnabled())
       {
          tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
                FacilityCode.FAC_OBJECT_STORE, "CacheStore.CacheStore("+locationOfStore+")");
@@ -257,7 +257,7 @@ public class CacheStore extends HashedStore
    {
       super(shareStatus);
 
-      if (tsLogger.arjLogger.debugAllowed())
+      if (tsLogger.arjLogger.isDebugEnabled())
       {
          tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
                FacilityCode.FAC_OBJECT_STORE, "CacheStore.CacheStore( "+shareStatus+" )");
@@ -270,7 +270,7 @@ public class CacheStore extends HashedStore
    {
       super(objName);
 
-      if (tsLogger.arjLogger.debugAllowed())
+      if (tsLogger.arjLogger.isDebugEnabled())
       {
          tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
                FacilityCode.FAC_OBJECT_STORE, "CacheStore.CacheStore( "+objName+" )");
@@ -355,7 +355,7 @@ class ShutdownThread extends Thread  // used to flush on exit
 	   * So, just check that the thread isn't actively doing work.
 	   */
 
-	  if (tsLogger.arjLogger.debugAllowed())
+	  if (tsLogger.arjLogger.isDebugEnabled())
 	  {
 	      tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				       FacilityCode.FAC_OBJECT_STORE, "ShutdownThread.run () - terminating");

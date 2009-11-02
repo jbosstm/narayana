@@ -125,7 +125,7 @@ public class TransactionReaper
 
     private TransactionReaper(long checkPeriod)
     {
-        if (tsLogger.arjLogger.debugAllowed()) {
+        if (tsLogger.arjLogger.isDebugEnabled()) {
             tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
                     VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
                     "TransactionReaper::TransactionReaper ( " + checkPeriod
@@ -171,7 +171,7 @@ public class TransactionReaper
 
     public final void check()
     {
-        if (tsLogger.arjLogger.debugAllowed()) {
+        if (tsLogger.arjLogger.isDebugEnabled()) {
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                     FacilityCode.FAC_ATOMIC_ACTION, "TransactionReaper::check ()");
         }
@@ -228,7 +228,7 @@ public class TransactionReaper
 
                         reinsertElement(reaperElement, _cancelWaitPeriod);
 
-                        if (tsLogger.arjLogger.debugAllowed()) {
+                        if (tsLogger.arjLogger.isDebugEnabled()) {
                             tsLogger.arjLogger
                                     .debug(
                                             DebugLevel.FUNCTIONS,
@@ -261,7 +261,7 @@ public class TransactionReaper
 
                         reinsertElement(reaperElement, _cancelWaitPeriod);
 
-                        if (tsLogger.arjLogger.debugAllowed()) {
+                        if (tsLogger.arjLogger.isDebugEnabled()) {
                             tsLogger.arjLogger
                                     .debug(
                                             DebugLevel.FUNCTIONS,
@@ -445,7 +445,7 @@ public class TransactionReaper
             // ok, current status must be SCHEDULE_CANCEL.
             // progress state to CANCEL and call cancel()
 
-            if (tsLogger.arjLogger.debugAllowed()) {
+            if (tsLogger.arjLogger.isDebugEnabled()) {
                 tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                                 FacilityCode.FAC_ATOMIC_ACTION, "Reaper Worker " + Thread.currentThread() + " attempting to cancel " + e._control.get_uid());
             }
@@ -649,7 +649,7 @@ public class TransactionReaper
      */
     public final void insert(Reapable control, int timeout)
     {
-        if (tsLogger.arjLogger.debugAllowed()) {
+        if (tsLogger.arjLogger.isDebugEnabled()) {
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
                     VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
                     "TransactionReaper::insert ( " + control + ", " + timeout
@@ -704,7 +704,7 @@ public class TransactionReaper
     // takes an Object because OTSManager.destroyControl(Control|ControlImple) uses PseudoControlWrapper not Reapable
     public final void remove(Object control)
     {
-        if (tsLogger.arjLogger.debugAllowed()) {
+        if (tsLogger.arjLogger.isDebugEnabled()) {
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
                     VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
                     "TransactionReaper::remove ( " + control + " )");
@@ -750,7 +750,7 @@ public class TransactionReaper
         // arg is an Object because ArjunaTransactionImple.propagationContext does not have a Reapable
 
         if ((_timeouts.isEmpty()) || (control == null)) {
-            if (tsLogger.arjLogger.debugAllowed()) {
+            if (tsLogger.arjLogger.isDebugEnabled()) {
                 tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
                         VisibilityLevel.VIS_PUBLIC,
                         FacilityCode.FAC_ATOMIC_ACTION,
@@ -797,7 +797,7 @@ public class TransactionReaper
     public final int getTimeout(Object control)
     {
         if ((_timeouts.isEmpty()) || (control == null)) {
-            if (tsLogger.arjLogger.debugAllowed()) {
+            if (tsLogger.arjLogger.isDebugEnabled()) {
                 tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
                         VisibilityLevel.VIS_PUBLIC,
                         FacilityCode.FAC_ATOMIC_ACTION,
@@ -969,7 +969,7 @@ public class TransactionReaper
     {
         if (TransactionReaper._theReaper == null)
         {
-            if (tsLogger.arjLogger.debugAllowed()) {
+            if (tsLogger.arjLogger.isDebugEnabled()) {
                 tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
                         VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION,
                         "TransactionReaper::instantiate()");

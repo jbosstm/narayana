@@ -153,7 +153,7 @@ public boolean restore_state (InputObjectState os, int ot)
 
 public void finalize () throws Throwable
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_STATE_MAN, "StateManager.finalize() for object-id "+get_uid() + " type " + type());
@@ -219,7 +219,7 @@ public boolean activate ()
 
 public synchronized boolean activate (String rootName)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN,
 				     "StateManager::activate( "+((rootName != null) ? rootName : "null")+") for object-id "+objectUid);
@@ -430,7 +430,7 @@ public boolean deactivate (String rootName)
 
 public synchronized boolean deactivate (String rootName, boolean commit)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN,
 				     "StateManager::deactivate("+((rootName != null) ? rootName : "null")+", "+commit+") for object-id " +objectUid);
@@ -639,7 +639,7 @@ public void print (PrintWriter strm)
 
     public final String getStoreRoot ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_STATE_MAN, "StateManager::getStoreRoot ()");
@@ -655,7 +655,7 @@ public void print (PrintWriter strm)
 
     public ObjectStore getStore ()
     {
-        if (tsLogger.arjLogger.debugAllowed())
+        if (tsLogger.arjLogger.isDebugEnabled())
         {
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                          FacilityCode.FAC_STATE_MAN, "StateManager::getStore ()");
@@ -777,7 +777,7 @@ protected void unpackHeader (InputObjectState os, Uid txId,
 
     protected void terminate ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_STATE_MAN,
@@ -841,7 +841,7 @@ protected StateManager (Uid objUid, int ot, ObjectName objName)
 
 	objectUid = objUid;
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_STATE_MAN, "StateManager::StateManager( "+get_uid()+" )");
@@ -885,7 +885,7 @@ protected StateManager (int ot, ObjectName objName)
 
 	objectUid = new Uid();
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_STATE_MAN, "StateManager::StateManager( "+ot+" )");
@@ -919,7 +919,7 @@ protected StateManager (ObjectName objName)
 	if (objectUid == null)
 	    objectUid = new Uid();
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_STATE_MAN, "StateManager::StateManager( "+objName+" )");
@@ -940,7 +940,7 @@ protected StateManager (ObjectName objName)
 
     protected synchronized boolean modified ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_STATE_MAN, "StateManager::modified() for object-id "+get_uid());
@@ -1031,7 +1031,7 @@ protected StateManager (ObjectName objName)
 
 protected final synchronized void persist ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_STATE_MAN, "StateManager::persist() for object-id "+get_uid());
@@ -1056,7 +1056,7 @@ protected final synchronized void persist ()
 
 protected final synchronized void cleanup (boolean fromTerminate)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_STATE_MAN, "StateManager::cleanup() for object-id "+get_uid());
@@ -1196,7 +1196,7 @@ protected final void setupStore ()
 
 protected synchronized void setupStore (String rootName)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_STATE_MAN,
 				     "StateManager::setupStore ( "+((rootName != null) ? rootName : "null")+" )");
@@ -1354,7 +1354,7 @@ protected final synchronized boolean forgetAction (BasicAction action,
 						   boolean committed,
 						   int recordType)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_STATE_MAN, "StateManager::forgetAction("
@@ -1404,7 +1404,7 @@ protected final synchronized boolean forgetAction (BasicAction action,
 
 protected final synchronized boolean rememberAction (BasicAction action, int recordType)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_STATE_MAN, "StateManager::rememberAction("

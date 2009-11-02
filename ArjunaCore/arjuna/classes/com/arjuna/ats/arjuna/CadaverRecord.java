@@ -36,7 +36,6 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 import java.io.PrintWriter;
@@ -96,7 +95,7 @@ public class CadaverRecord extends PersistenceRecord
 	    //	    ObjectStore.reference(store);
 	}
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC,
@@ -146,7 +145,7 @@ public class CadaverRecord extends PersistenceRecord
 
     public int nestedAbort ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::nestedAbort() for "+order());
@@ -186,7 +185,7 @@ public class CadaverRecord extends PersistenceRecord
 
     public int nestedPrepare ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::nestedPrepare() for "+order());
@@ -204,7 +203,7 @@ public class CadaverRecord extends PersistenceRecord
 
     public int topLevelAbort ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::topLevelAbort() for "+order());
@@ -235,7 +234,7 @@ public class CadaverRecord extends PersistenceRecord
 
     public int topLevelCommit ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::topLevelCommit() for "+order());
@@ -272,7 +271,7 @@ public class CadaverRecord extends PersistenceRecord
 
     public int topLevelPrepare ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::topLevelPrepare() for "+order());
@@ -449,7 +448,7 @@ public class CadaverRecord extends PersistenceRecord
 	oType = RecordType.NONE_RECORD;
 	store = null;
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_ABSTRACT_REC, "CadaverRecord::CadaverRecord ()");

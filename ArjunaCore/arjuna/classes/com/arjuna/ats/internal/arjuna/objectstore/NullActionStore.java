@@ -201,7 +201,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 	catch (ObjectStoreException e)
 	{
 	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		tsLogger.arjLogger.warn(e.getMessage());
+		tsLogger.arjLogger.warn(e);
 
 	    super.makeInvalid();
 

@@ -512,6 +512,7 @@ protected synchronized ControlImple checkHierarchy (ServerTopLevelAction hier,
      * @message com.arjuna.ats.internal.jts.interposition.resources.arjuna.iptl TopLevel transactions not identical: {0} {1}
      * @message com.arjuna.ats.internal.jts.interposition.resources.arjuna.ipnt Nested transactions not identical.
      * @message com.arjuna.ats.internal.jts.interposition.resources.arjuna.ipnull Interposed hierarchy is null!
+     * @message com.arjuna.ats.internal.jts.interposition.resources.arjuna.problemhierarchy hierarchy: {0}
      */
 
 protected final void compareHierarchies (PropagationContext ctx, ServerTopLevelAction action)
@@ -595,35 +596,29 @@ protected final void compareHierarchies (PropagationContext ctx, ServerTopLevelA
 
 	if (printHierarchies)
 	{
-	    synchronized (jtsLogger.logger)
-	    {
-		if (!problem)
-		{
-		    if (jtsLogger.logger.isDebugEnabled())
-		    {
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, Utility.getHierarchy(ctx));
-		    }
-
-		    if (jtsLogger.logger.isDebugEnabled())
-		    {
-			jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					       com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, hierarchytoString(action));
-		    }
-		}
-		else
-		{
-		    if (jtsLogger.logger.isWarnEnabled())
-		    {
-			jtsLogger.logger.warn(Utility.getHierarchy(ctx));
-		    }
-
-		    if (jtsLogger.logger.isWarnEnabled())
-		    {
-			jtsLogger.logger.warn(hierarchytoString(action));
-		    }
-		}
-	    }
+        synchronized (jtsLogger.logger)
+        {
+            if (!problem)
+            {
+                if (jtsLogger.logger.isDebugEnabled())
+                {
+                    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                            com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, Utility.getHierarchy(ctx));
+                    jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                            com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, hierarchytoString(action));
+                }
+            }
+            else
+            {
+                if (jtsLogger.loggerI18N.isWarnEnabled())
+                {
+                    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.resources.arjuna.problemhierarchy",
+                            new Object[] {Utility.getHierarchy(ctx)});
+                    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.interposition.resources.arjuna.problemhierarchy",
+                            new Object[] {hierarchytoString(action)});
+                }
+            }
+        }
 	}
 
 	if (ctxHierarchy != null)

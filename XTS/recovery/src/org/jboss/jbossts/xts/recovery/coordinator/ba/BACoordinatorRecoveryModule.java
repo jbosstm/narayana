@@ -105,7 +105,8 @@ public class BACoordinatorRecoveryModule implements RecoveryModule
         {
             if (XTSLogger.arjLogger.isDebugEnabled())
             {
-                XTSLogger.arjLogger.debug( "StatusModule: first pass " );
+                XTSLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                            FacilityCode.FAC_CRASH_RECOVERY, "BACoordinatorRecoveryModule: first pass");
             }
 
             ACCoordinators = _transactionStore.allObjUids( _transactionType, acc_uids );
@@ -130,7 +131,8 @@ public class BACoordinatorRecoveryModule implements RecoveryModule
     {
         if (XTSLogger.arjLogger.isDebugEnabled())
         {
-            XTSLogger.arjLogger.debug( "BACoordinatorRecoveryModule: Second pass " );
+            XTSLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                            FacilityCode.FAC_CRASH_RECOVERY, "BACoordinatorRecoveryModule: Second pass");
         }
 
         if (_transactionUidVector != null) {

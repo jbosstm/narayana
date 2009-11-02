@@ -504,7 +504,7 @@ public class LogStore extends FileSystemStore
 
 	public boolean hide_state(Uid u, String tn) throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
 					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
@@ -516,7 +516,7 @@ public class LogStore extends FileSystemStore
 
 	public boolean reveal_state(Uid u, String tn) throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
 					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
@@ -529,7 +529,7 @@ public class LogStore extends FileSystemStore
 	public InputObjectState read_uncommitted(Uid u, String tn)
 			throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
 					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
@@ -542,7 +542,7 @@ public class LogStore extends FileSystemStore
 	public boolean remove_uncommitted(Uid u, String tn)
 			throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
 					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
@@ -555,7 +555,7 @@ public class LogStore extends FileSystemStore
 	public boolean write_committed(Uid storeUid, String tName,
 			OutputObjectState state) throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger
 					.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
@@ -579,7 +579,7 @@ public class LogStore extends FileSystemStore
 	public boolean write_uncommitted(Uid u, String tn, OutputObjectState s)
 			throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
 					VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
@@ -773,7 +773,7 @@ public class LogStore extends FileSystemStore
 		catch (ObjectStoreException e)
 		{
 			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLogger.warn(e.getMessage());
+				tsLogger.arjLogger.warn(e);
 
 			super.makeInvalid();
 
@@ -832,7 +832,7 @@ public class LogStore extends FileSystemStore
 
 	protected boolean unlockAndClose(File fd, RandomAccessFile rf)
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
 					VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_OBJECT_STORE,
@@ -866,7 +866,7 @@ public class LogStore extends FileSystemStore
 	protected boolean write_state(Uid objUid, String tName,
 			OutputObjectState state, int ft) throws ObjectStoreException
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
 					VisibilityLevel.VIS_PROTECTED,

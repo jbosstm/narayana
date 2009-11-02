@@ -105,7 +105,8 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
         {
             if (XTSLogger.arjLogger.isDebugEnabled())
             {
-                XTSLogger.arjLogger.debug( "StatusModule: first pass " );
+                XTSLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                            FacilityCode.FAC_CRASH_RECOVERY, "SubordinateCoordinatorRecoveryModule: first pass ");
             }
 
             SubordinateCoordinators = _transactionStore.allObjUids( _transactionType, acc_uids );
@@ -130,7 +131,8 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
     {
         if (XTSLogger.arjLogger.isDebugEnabled())
         {
-            XTSLogger.arjLogger.debug( "SubordinateCoordinatorRecoveryModule: Second pass " );
+            XTSLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                            FacilityCode.FAC_CRASH_RECOVERY, "SubordinateCoordinatorRecoveryModule: Second pass");
         }
 
         if (_transactionUidVector != null) {

@@ -64,7 +64,7 @@ public class ActionHierarchy
 
     public ActionHierarchy (int depth)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
 				     VisibilityLevel.VIS_PUBLIC,
@@ -212,7 +212,7 @@ public class ActionHierarchy
 
     public final boolean add (Uid actionId, int at)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ATOMIC_ACTION, "ActionHierarchy::add("+actionId+", "+at+")");
@@ -372,7 +372,7 @@ public class ActionHierarchy
 
     public final int findCommonPrefix (ActionHierarchy oldHierarchy)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ATOMIC_ACTION, "ActionHierarchy::findCommonPrefix()");
@@ -387,7 +387,7 @@ public class ActionHierarchy
 	    common++;
 	}
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ATOMIC_ACTION,

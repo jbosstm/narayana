@@ -32,6 +32,9 @@ package com.arjuna.common.util.logging;
  * Non-internationalised logging interface abstracting the various logging APIs
  * supported by Arjuna CLF.
  *
+ * Non-i18n messages should generally be debug (trace) level or raw exceptions. All
+ * textual messages at higher levels should go through the i18n logger instead.
+ *
  * See {@link Logi18n Logi18n} for an internationalised version and for more
  * information.
  *
@@ -73,6 +76,13 @@ public interface LogNoi18n
 
    /**
     * Determine if this logger is enabled for DEBUG messages.
+    *
+    * This method returns true when the following is set:
+    * <ul>
+    * <li>finer debug level = <code>DebugLevel.FULL_DEBUGGING</code>.</li>
+    * <li>visibility level = <code>VisibilityLevel.VIS_ALL</code>.</li>
+    * <li>facility code = <code>FacilityCode.FAC_ALL</code>.</li>
+    *
     * @return  True if the logger is enabled for DEBUG, false otherwise
     */
    boolean isDebugEnabled();
@@ -105,28 +115,19 @@ public interface LogNoi18n
    /************************   Log Debug Messages   ****************************/
 
    /**
-    * Log a message with DEBUG Level
-    *
-    * @param message the message to log
-    * @deprecated use debug(long dl, long vl, long fl, String message);
-    */
-   void debug(String message);
-
-   /**
     * Log a message with INFO Level
     *
     * @param message the message to log
-    * @deprecated use i18n
+    * @deprecated exceptions at info level don't make a lot sense.
     */
-   void info(String message);
+   void info(Throwable message);
 
    /**
     * Log a message with WARN Level
     *
     * @param message the message to log
-    * @deprecated should take a Throwable
     */
-   void warn(String message);
+   void warn(Throwable message);
 
    /**
     * Log a message with ERROR Level
@@ -136,20 +137,11 @@ public interface LogNoi18n
    void error(Throwable message);
 
    /**
-    * Log a message with ERROR Level
-    *
-    * @param message the message to log
-    * @deprecated use I18n
-    */
-   void error(String message);
-
-   /**
     * Log a message with FATAL Level
     *
     * @param message the message to log
-    * @deprecated use i18n instead
     */
-   void fatal(String message);
+   void fatal(Throwable message);
 
    /**
     * Log a message with the DEBUG Level and with finer granularity. The debug message
@@ -170,21 +162,4 @@ public interface LogNoi18n
     * @param message The message to log.
     */
    void debug(long dl, long vl, long fl, String message);
-
-   /**************************** Debug Granularity Extension ***************************/
-
-   /**
-    * Is it allowed to print finer debugging statements?
-    *
-    * This method returns true when the following is set:
-    * <ul>
-    * <li>finer debug level = <code>DebugLevel.FULL_DEBUGGING</code>.</li>
-    * <li>visibility level = <code>VisibilityLevel.VIS_ALL</code>.</li>
-    * <li>facility code = <code>FacilityCode.FAC_ALL</code>.</li>
-    * </ul>
-    *
-    * @return true if the Logger allows full logging
-    * @deprecated replace with isDebugEnabled
-    */
-   boolean debugAllowed ();
 }

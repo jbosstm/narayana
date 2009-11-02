@@ -71,6 +71,8 @@ import com.arjuna.common.util.logging.*;
  * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_11 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_11] - Invalid host specified {0}
  * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_12 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_12] - Could not create recovery listener
  * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_13 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_13] - Recovery manager listening on endpoint {0}:{1}
+ * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_14 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_14] - Periodic recovery first pass at {0}
+ * @message com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_15 [com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_15] - Periodic recovery second pass at {0}
  */
 
 public class PeriodicRecovery extends Thread
@@ -758,10 +760,10 @@ public class PeriodicRecovery extends Thread
     {
         // n.b. we only get here if status is SCANNING
 
-        if (tsLogger.arjLogger.isDebugEnabled())
+        if (tsLogger.arjLoggerI18N.isDebugEnabled())
         {
-            tsLogger.arjLogger.debug("Periodic recovery - first pass <" +
-                _theTimestamper.format(new Date()) + ">" );
+            tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_CRASH_RECOVERY,
+                    "com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_14", new Object[] {_theTimestamper.format(new Date())});
         }
 
         // n.b. this works on a copy of the modules list so it is not affected by
@@ -818,10 +820,10 @@ public class PeriodicRecovery extends Thread
 
         // move on to phase 2
 
-        if (tsLogger.arjLogger.isDebugEnabled())
+        if (tsLogger.arjLoggerI18N.isDebugEnabled())
         {
-            tsLogger.arjLogger.debug("Periodic recovery - second pass <"+
-                    _theTimestamper.format(new Date()) + ">" );
+            tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_CRASH_RECOVERY,
+                    "com.arjuna.ats.internal.arjuna.recovery.PeriodicRecovery_15", new Object[] {_theTimestamper.format(new Date())});
         }
 
         modules = _recoveryModules.elements();

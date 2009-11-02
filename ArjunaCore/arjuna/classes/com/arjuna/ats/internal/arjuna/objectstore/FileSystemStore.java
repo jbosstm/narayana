@@ -87,7 +87,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
     {
 	super(ss);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE,
@@ -106,7 +106,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	{
 	    isValid = false;
 
-	    tsLogger.arjLogger.warn(e.getMessage());
+	    tsLogger.arjLogger.warn(e);
 
 	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	}
@@ -122,7 +122,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
     {
 	super(objName);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.FileSystemStore("+objName+")");
@@ -140,7 +140,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 	{
 	    isValid = false;
 
-	    tsLogger.arjLogger.warn(e.getMessage());
+	    tsLogger.arjLogger.warn(e);
 
 	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	}
@@ -158,7 +158,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     public InputObjectState read_committed (Uid storeUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.read_committed("+storeUid+", "+tName+")");
@@ -169,7 +169,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     public InputObjectState read_uncommitted (Uid storeUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.read_uncommitted("+storeUid+", "+tName+")");
@@ -180,7 +180,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     public boolean remove_committed (Uid storeUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE,
@@ -192,7 +192,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     public boolean remove_uncommitted (Uid storeUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
        	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE,
@@ -204,7 +204,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     public boolean write_committed (Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE,
@@ -216,7 +216,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     public boolean write_uncommitted (Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE,
@@ -248,7 +248,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     public boolean allObjUids (String tName, InputObjectState state, int match) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
        	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE,
@@ -333,7 +333,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     public boolean allTypes (InputObjectState foundTypes) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.allTypes("+foundTypes+")");
@@ -480,7 +480,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     protected boolean closeAndUnlock (File fd, FileInputStream ifile, FileOutputStream ofile)
     {
-        if (tsLogger.arjLogger.debugAllowed())
+        if (tsLogger.arjLogger.isDebugEnabled())
         {
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
                                      FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.closeAndUnlock("+fd+", "+ifile+", "+ofile+")");
@@ -505,7 +505,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     protected File openAndLock (String fname, int lmode, boolean create) throws ObjectStoreException
     {
-        if (tsLogger.arjLogger.debugAllowed())
+        if (tsLogger.arjLogger.isDebugEnabled())
         {
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
                                      FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.openAndLock("+fname+", "+FileLock.modeString(lmode)+", "+create+")");
@@ -637,7 +637,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     protected boolean allTypes (OutputObjectState foundTypes, String root) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE,
@@ -695,7 +695,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
     protected String genPathName (Uid objUid,
 				  String tName, int ostype) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE,
@@ -748,7 +748,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     protected synchronized boolean setupStore (String localOSRoot) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.setupStore("+localOSRoot+")");
@@ -809,7 +809,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     protected synchronized final boolean createHierarchy (String path) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
        	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.createHierarchy("+path+")");

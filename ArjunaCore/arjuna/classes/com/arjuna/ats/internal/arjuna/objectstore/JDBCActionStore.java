@@ -72,7 +72,7 @@ public class JDBCActionStore extends JDBCStore
     public synchronized boolean commit_state (Uid objUid,
 					      String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, 
@@ -94,7 +94,7 @@ public class JDBCActionStore extends JDBCStore
 
     public boolean hide_state (Uid u, String tn) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.hide_state("+u+", "+tn+")");
@@ -105,7 +105,7 @@ public class JDBCActionStore extends JDBCStore
 
     public boolean reveal_state (Uid u, String tn) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.reveal_state("+u+", "+tn+")");
@@ -116,7 +116,7 @@ public class JDBCActionStore extends JDBCStore
 
     public InputObjectState read_committed (Uid storeUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.read_committed("+storeUid+", "+tName+")");
@@ -127,7 +127,7 @@ public class JDBCActionStore extends JDBCStore
 
     public InputObjectState read_uncommitted (Uid u, String tn) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.read_uncommitted("+u+", "+tn+")");
@@ -138,7 +138,7 @@ public class JDBCActionStore extends JDBCStore
 
     public boolean remove_committed (Uid storeUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.remove_committed("+storeUid+", "+tName+")");
@@ -149,7 +149,7 @@ public class JDBCActionStore extends JDBCStore
 
     public boolean remove_uncommitted (Uid u, String tn) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.remove_uncommitted("+u+", "+tn+")");
@@ -160,7 +160,7 @@ public class JDBCActionStore extends JDBCStore
 
     public boolean write_committed (Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.write_committed("+storeUid+", "+tName+")");
@@ -171,7 +171,7 @@ public class JDBCActionStore extends JDBCStore
 
     public boolean write_uncommitted (Uid u, String tn, OutputObjectState s) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.write_uncommitted("+u+", "+tn+", "+s+")");

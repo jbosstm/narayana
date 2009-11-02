@@ -297,7 +297,7 @@ public class BasicAction extends StateManager
 	{
 		super(ObjectType.NEITHER);
 
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::BasicAction()");
 		}
@@ -334,7 +334,7 @@ public class BasicAction extends StateManager
 	{
 		super(objUid, ObjectType.NEITHER);
 
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::BasicAction("
 					+ objUid + ")");
@@ -375,7 +375,7 @@ public class BasicAction extends StateManager
 
 	public void finalize ()
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::finalize()");
 		}
@@ -489,7 +489,7 @@ public class BasicAction extends StateManager
 
 	public final boolean preventCommit ()
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::preventCommit( "+this+")");
 		}
@@ -700,7 +700,7 @@ public class BasicAction extends StateManager
 
 	public boolean activate (String root)
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::activate() for action-id "
 					+ get_uid());
@@ -745,7 +745,7 @@ public class BasicAction extends StateManager
 		catch (ObjectStoreException e)
 		{
 			if (tsLogger.arjLogger.isWarnEnabled())
-				tsLogger.arjLogger.warn(e.getMessage());
+				tsLogger.arjLogger.warn(e);
 
 			return false;
 		}
@@ -764,7 +764,7 @@ public class BasicAction extends StateManager
 
 	public boolean deactivate ()
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::deactivate() for action-id "
 					+ get_uid());
@@ -814,7 +814,7 @@ public class BasicAction extends StateManager
 		catch (ObjectStoreException e)
 		{
 			if (tsLogger.arjLogger.isWarnEnabled())
-				tsLogger.arjLogger.warn(e.getMessage());
+				tsLogger.arjLogger.warn(e);
 
 			deactivated = false;
 		}
@@ -1129,7 +1129,7 @@ public class BasicAction extends StateManager
 
 	public boolean save_state (OutputObjectState os, int ot)
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::save_state ()");
 		}
@@ -1360,7 +1360,7 @@ public class BasicAction extends StateManager
 
 	public boolean restore_state (InputObjectState os, int ot)
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::restore_state ()");
 		}
@@ -1660,7 +1660,7 @@ public class BasicAction extends StateManager
 
 	protected synchronized int Begin (BasicAction parentAct)
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::Begin() for action-id "
 					+ get_uid());
@@ -1756,7 +1756,7 @@ public class BasicAction extends StateManager
 
 	protected synchronized int End (boolean reportHeuristics)
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::End() for action-id "
 					+ get_uid());
@@ -2140,7 +2140,7 @@ public class BasicAction extends StateManager
 
 	protected synchronized final void phase2Commit (boolean reportHeuristics)
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::phase2Commit() for action-id "
 					+ get_uid());
@@ -2256,7 +2256,7 @@ public class BasicAction extends StateManager
 
 	protected synchronized final void phase2Abort (boolean reportHeuristics)
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::phase2Abort() for action-id "
 					+ get_uid());
@@ -2322,7 +2322,7 @@ public class BasicAction extends StateManager
 
 	protected synchronized final int prepare (boolean reportHeuristics)
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::prepare () for action-id "
 					+ get_uid());
@@ -2433,8 +2433,7 @@ public class BasicAction extends StateManager
 					{
 						if (tsLogger.arjLogger.isWarnEnabled())
 						{
-							tsLogger.arjLogger.warn("BasicAction.prepare - "
-									+ e);
+							tsLogger.arjLogger.warn(e);
 						}
 
 						p = TwoPhaseOutcome.PREPARE_NOTOK;
@@ -3200,7 +3199,7 @@ public class BasicAction extends StateManager
 
 	protected int doCommit (boolean reportHeuristics, AbstractRecord record)
 	{
-		if (tsLogger.arjLogger.debugAllowed())
+		if (tsLogger.arjLogger.isDebugEnabled())
 		{
 			tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ATOMIC_ACTION, "BasicAction::doCommit ("
 					+ record + ")");
@@ -3592,7 +3591,7 @@ public class BasicAction extends StateManager
 					}
 					catch (ObjectStoreException e)
 					{
-						tsLogger.arjLogger.warn(e.getMessage());
+						tsLogger.arjLogger.warn(e);
 					}
 				}
 			}

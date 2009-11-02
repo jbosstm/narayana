@@ -53,6 +53,7 @@ import com.arjuna.common.util.logging.*;
  * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_2 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_2] - Problem with storing host/port {0}
  * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_3 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_3] - Problem retrieving host/port {0}
  * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_4 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_4] - Failed to obtain host {0}
+ * @message com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_5 [com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_5] - TransactionStatusManagerItem host: {0} port: {1}
  */
 
 // similar to FactoryContactItem
@@ -340,11 +341,9 @@ public class TransactionStatusManagerItem
 	{
 	    _host = InetAddress.getLocalHost().getHostAddress() ;
          
-	    if (tsLogger.arjLogger.isInfoEnabled())
+	    if (tsLogger.arjLoggerI18N.isInfoEnabled())
 	    {
-		tsLogger.arjLogger.info
-		    ( "TransactionStatusManagerItem - " + "host: " + _host +
-		      " port: " + _port ) ;
+            tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_5", new Object[] {_host, _port});
 	    }
 	}
 	catch ( UnknownHostException ex )
@@ -372,11 +371,9 @@ public class TransactionStatusManagerItem
             Utility.hostNameToInetAddress(host, "com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_4");
             _host = host;
 
-            if (tsLogger.arjLogger.isInfoEnabled())
+            if (tsLogger.arjLoggerI18N.isInfoEnabled())
             {
-                tsLogger.arjLogger.info
-                        ( "TransactionStatusManagerItem - " + "host: " + _host +
-                                " port: " + _port ) ;
+                tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.TransactionStatusManagerItem_5", new Object[] {_host, _port});
             }
         }
         catch ( UnknownHostException ex )

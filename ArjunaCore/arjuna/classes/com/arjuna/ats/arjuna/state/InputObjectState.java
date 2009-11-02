@@ -56,7 +56,7 @@ public class InputObjectState extends InputBuffer
 
 public InputObjectState ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_BUFFER_MAN, "InputObjectState::InputObjectState()");
@@ -71,7 +71,7 @@ public InputObjectState (InputObjectState copyFrom)
     {
 	super(copyFrom);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_BUFFER_MAN, "InputObjectState::InputObjectState("+copyFrom+")");
@@ -94,7 +94,7 @@ public InputObjectState (OutputObjectState copyFrom)
     {
 	super(copyFrom.buffer());
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_BUFFER_MAN, "InputObjectState::InputObjectState("+copyFrom+")");
@@ -117,7 +117,7 @@ public InputObjectState (Uid newUid, String tName, byte[] buff)
     {
 	super(buff);  // implicitly copies the array contents.
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_BUFFER_MAN, 
@@ -192,7 +192,7 @@ public void print (PrintWriter strm)
 
 public synchronized void copy (InputObjectState objstate)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	    tsLogger.arjLogger.debug(DebugLevel.OPERATORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_BUFFER_MAN, "InputObjectState::copy for "+bufferUid);
        

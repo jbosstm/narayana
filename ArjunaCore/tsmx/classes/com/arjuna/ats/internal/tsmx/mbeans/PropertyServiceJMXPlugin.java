@@ -78,11 +78,6 @@ public class PropertyServiceJMXPlugin implements PropertyManagementPlugin
                 /** Create the dynamic mbean for this property manager **/
                 mbean = new PropertyServiceMBeanWrapper(pm);
 
-                if ( tsmxLogger.logger.isInfoEnabled() )
-                {
-                    tsmxLogger.logger.info("Registering mbean for module '"+pm.getName()+"'");
-                }
-
                 /** Register it with the current TSMX agent **/
                 TransactionServiceMX.getTransactionServiceMX().getAgentInterface().getAgent().registerMBean(mbean, mbean.getObjectName());
             }

@@ -74,7 +74,7 @@ public class DisposeRecord extends CadaverRecord
 	    typeName = null;
 	}
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
 				     FacilityCode.FAC_ABSTRACT_REC,
@@ -99,7 +99,7 @@ public class DisposeRecord extends CadaverRecord
     
     public int nestedAbort ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "DisposeRecord::nestedAbort() for "+order());
@@ -110,7 +110,7 @@ public class DisposeRecord extends CadaverRecord
     
     public int nestedCommit ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "DisposeRecord::nestedCommit() for "+order());
@@ -121,7 +121,7 @@ public class DisposeRecord extends CadaverRecord
     
     public int nestedPrepare ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "DisposeRecord::nestedPrepare() for "+order());
@@ -135,7 +135,7 @@ public class DisposeRecord extends CadaverRecord
     
     public int topLevelAbort ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "DisposeRecord::topLevelAbort() for "+order());
@@ -152,7 +152,7 @@ public class DisposeRecord extends CadaverRecord
     
     public int topLevelCommit ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_ABSTRACT_REC, "DisposeRecord::topLevelCommit() for "+order());
@@ -189,7 +189,7 @@ public class DisposeRecord extends CadaverRecord
     
     public int topLevelPrepare ()
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, 
 				     "DisposeRecord::topLevelPrepare() for "+order());

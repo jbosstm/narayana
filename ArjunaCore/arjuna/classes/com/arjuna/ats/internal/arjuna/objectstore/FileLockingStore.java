@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.utils.*;
 import com.arjuna.ats.arjuna.state.*;
@@ -40,9 +39,6 @@ import com.arjuna.ats.arjuna.gandiva.ObjectName;
 import java.io.*;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import java.lang.NumberFormatException;
-import java.io.IOException;
-import java.io.FileNotFoundException;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -69,7 +65,7 @@ public FileLockingStore (String locationOfStore, int ss)
     {
 	super(locationOfStore, ss);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE, "FileLockingStore.FileLockingStore("+locationOfStore+")");
@@ -80,7 +76,7 @@ protected FileLockingStore (ObjectName objName)
     {
 	super(objName);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "FileLockingStore.FileLockingStore("+objName+")");
@@ -93,7 +89,7 @@ protected FileLockingStore (ObjectName objName)
     
 protected synchronized boolean lock (File fd, int lmode, boolean create)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, 
@@ -107,7 +103,7 @@ protected synchronized boolean lock (File fd, int lmode, boolean create)
 
 protected synchronized boolean unlock (File fd)
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "FileLockingStore.unlock("+fd+")");

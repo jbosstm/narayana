@@ -149,7 +149,7 @@ public class HashedStore extends ShadowNoFileLockStore
 
     public boolean allObjUids (String tName, InputObjectState state, int match) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				     FacilityCode.FAC_OBJECT_STORE,
@@ -263,7 +263,7 @@ public class HashedStore extends ShadowNoFileLockStore
     {
 	super(shareStatus);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "HashedStore.HashedStore( "+shareStatus+" )");
@@ -279,7 +279,7 @@ public class HashedStore extends ShadowNoFileLockStore
     {
 	super(shareStatus);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "HashedStore.HashedStore("+locationOfStore+")");
@@ -291,7 +291,7 @@ public class HashedStore extends ShadowNoFileLockStore
 	}
 	catch (ObjectStoreException e)
 	{
-	    tsLogger.arjLogger.warn(e.getMessage());
+	    tsLogger.arjLogger.warn(e);
 
 	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
 	}
@@ -301,7 +301,7 @@ public class HashedStore extends ShadowNoFileLockStore
     {
 	super(objName);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "HashedStore.HashedStore("+objName+")");
@@ -313,7 +313,7 @@ public class HashedStore extends ShadowNoFileLockStore
 	}
 	catch (ObjectStoreException e)
 	{
-	    tsLogger.arjLogger.warn(e.getMessage());
+	    tsLogger.arjLogger.warn(e);
 
 	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
 	}
@@ -358,7 +358,7 @@ public class HashedStore extends ShadowNoFileLockStore
 
     protected String genPathName (Uid objUid, String tName, int otype) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE,

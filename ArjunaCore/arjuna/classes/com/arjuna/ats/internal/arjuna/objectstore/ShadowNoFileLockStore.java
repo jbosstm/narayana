@@ -32,11 +32,8 @@
 package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.ArjunaNames;
-import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
-import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -46,8 +43,7 @@ import com.arjuna.common.util.logging.VisibilityLevel;
 
 import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.gandiva.ObjectName;
-import com.arjuna.ats.arjuna.utils.FileLock;
-import com.arjuna.ats.arjuna.utils.Utility;
+
 import java.io.File;
 
 /**
@@ -138,7 +134,7 @@ protected ShadowNoFileLockStore (String locationOfStore, int shareStatus)
     {
 	super(locationOfStore, shareStatus);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowNoFileLockStore.ShadowNoFileLockStore("+locationOfStore+")");
@@ -154,7 +150,7 @@ protected ShadowNoFileLockStore (int shareStatus)
     {
 	super(shareStatus);
 
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowNoFileLockStore.ShadowNoFileLockStore( "+shareStatus+" )");
@@ -165,7 +161,7 @@ protected ShadowNoFileLockStore (ObjectName objName)
     {
 	super(objName);
 	
-	if (tsLogger.arjLogger.debugAllowed())
+	if (tsLogger.arjLogger.isDebugEnabled())
 	{
 	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
 				     FacilityCode.FAC_OBJECT_STORE, "ShadowNoFileLockStore.ShadowNoFileLockStore( "+objName+" )");

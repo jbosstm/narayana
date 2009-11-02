@@ -66,6 +66,7 @@ import com.arjuna.common.util.logging.*;
  * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_9 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_9] - Expiry scanner {0} does not conform to ExpiryScanner interface
  * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_10 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_10] - Loading expiry scanner: could not find class {0}
  * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_11 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_11] - {0} has inappropriate value ({1})
+ * @message com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_12 [com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_12] - ExpiredEntryMonitor running at {0}
  */
 
 public class ExpiredEntryMonitor extends Thread
@@ -165,10 +166,10 @@ public class ExpiredEntryMonitor extends Thread
   {
     while( true )
     {
-	if (tsLogger.arjLogger.isInfoEnabled())
+	if (tsLogger.arjLoggerI18N.isInfoEnabled())
 	{
-	    tsLogger.arjLogger.info("--- ExpiredEntryMonitor ----" + 
-				      _theTimestamper.format(new Date()) + "----" );
+	    tsLogger.arjLoggerI18N.info("com.arjuna.ats.internal.arjuna.recovery.ExpiredEntryMonitor_12",
+                new Object[] {_theTimestamper.format(new Date())});
 	}
 	
 	if (_skipNext)
