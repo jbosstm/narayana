@@ -67,7 +67,7 @@ public class RecoverAtomicAction extends AtomicAction
     */
    public void replayPhase2()
    {
-       if (tsLogger.arjLoggerI18N.debugAllowed())
+       if (tsLogger.arjLoggerI18N.isDebugEnabled())
        {
 	   tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					FacilityCode.FAC_CRASH_RECOVERY, 
@@ -102,7 +102,7 @@ public class RecoverAtomicAction extends AtomicAction
 	       }
 	   }
 
-	   if (tsLogger.arjLoggerI18N.debugAllowed())
+	   if (tsLogger.arjLoggerI18N.isDebugEnabled())
 	   {
 	       tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					    FacilityCode.FAC_CRASH_RECOVERY, 

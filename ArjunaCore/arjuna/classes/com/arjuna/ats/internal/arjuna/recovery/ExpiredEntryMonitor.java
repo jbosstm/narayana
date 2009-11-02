@@ -93,7 +93,7 @@ public class ExpiredEntryMonitor extends Thread
       {
 	  // no scanning wanted
 	      
-	  if (tsLogger.arjLoggerI18N.debugAllowed())
+	  if (tsLogger.arjLoggerI18N.isDebugEnabled())
 	  {
 	      tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					    FacilityCode.FAC_CRASH_RECOVERY, 
@@ -249,7 +249,7 @@ public class ExpiredEntryMonitor extends Thread
 
         _scanIntervalSeconds = recoveryPropertyManager.getRecoveryEnvironmentBean().getExpiryScanInterval() * 60 * 60;
 
-        if (tsLogger.arjLoggerI18N.debugAllowed())
+        if (tsLogger.arjLoggerI18N.isDebugEnabled())
         {
             tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                     FacilityCode.FAC_CRASH_RECOVERY,

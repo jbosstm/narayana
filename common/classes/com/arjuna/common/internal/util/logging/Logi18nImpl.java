@@ -141,11 +141,15 @@ public class Logi18nImpl implements Logi18n
 
    /**
     * Determine if this logger is enabled for DEBUG messages.
+    *
+    * This method returns true when the logger's DebugLevel, VisibilityLevel and FacililityCode are all
+    * non zero and the underlying logger is configured with DEBUG level on.
+    *
     * @return  True if the logger is enabled for DEBUG, false otherwise
     */
    public boolean isDebugEnabled()
    {
-      return m_logInterface.isDebugEnabled();
+      return debugAllowed(DebugLevel.FULL_DEBUGGING, VisibilityLevel.VIS_ALL, FacilityCode.FAC_ALL);
    }
 
    /**
@@ -207,24 +211,6 @@ public class Logi18nImpl implements Logi18n
    }
 
    /**
-    * Is it allowed to print finer debugging statements?
-    *
-    * This method returns true when the following is set:
-    * <ul>
-    * <li>finer debug level = <code>DebugLevel.FULL_DEBUGGING</code>.</li>
-    * <li>visibility level = <code>VisibilityLevel.VIS_ALL</code>.</li>
-    * <li>facility code = <code>FacilityCode.FAC_ALL</code>.</li>
-    * </ul>
-    *
-    * @return true if the Logger allows full logging
-    */
-   public boolean debugAllowed()
-   {
-      return debugAllowed(DebugLevel.FULL_DEBUGGING, VisibilityLevel.VIS_ALL,
-                          FacilityCode.FAC_ALL);
-   }
-
-   /**
     * Is it allowed to print finer debugging statements with a given debug level,
     * visibility level and facility code level?
     *
@@ -237,11 +223,11 @@ public class Logi18nImpl implements Logi18n
     * @param vLevel The debug visibilty level to check for.
     * @param fLevel The facility code level to check for.
     */
-   public boolean debugAllowed(long dLevel, long vLevel, long fLevel)
+   private boolean debugAllowed(long dLevel, long vLevel, long fLevel)
    {
-      return (((dLevel & m_debugLevel) != 0) &&
-            ((vLevel & m_visLevel) != 0) &&
-            ((fLevel & m_facLevel) != 0));
+       // check the underlying logger threshold as well as (but after, due to cost) our own filters
+       return (((dLevel & m_debugLevel) != 0) && ((vLevel & m_visLevel) != 0) &&
+              ((fLevel & m_facLevel) != 0) && m_logInterface.isDebugEnabled());
    }
 
    /**********************************************************************************************************

@@ -168,7 +168,7 @@ public class Listener extends Thread
          }
          catch ( final IOException ex )
          {
-	     if (tsLogger.arjLoggerI18N.debugAllowed())
+	     if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		 tsLogger.arjLoggerI18N.debug("com.arjuna.ats.internal.arjuna.recovery.Listener_2"+" "+ex);
          }
          catch (final Exception ex)

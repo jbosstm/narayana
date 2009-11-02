@@ -146,7 +146,7 @@ public int currentState (Uid objUid, String tName) throws ObjectStoreException
 		}
 	    }
 	}
-	if (tsLogger.arjLoggerI18N.debugAllowed())
+	if (tsLogger.arjLoggerI18N.isDebugEnabled())
 	{
 	    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					 FacilityCode.FAC_OBJECT_STORE,

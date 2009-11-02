@@ -655,7 +655,7 @@ public abstract class AbstractRecord extends StateManager
 		uidOfObject = new Uid(Uid.nullUid());
 		typeOfObject = null;
 
-		if (tsLogger.arjLoggerI18N.debugAllowed())
+		if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		{
 			tsLogger.arjLoggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.coordinator.AbstractRecord_1");
 		}

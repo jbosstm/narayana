@@ -845,7 +845,7 @@ public class BasicAction extends StateManager
 
 	public final boolean addChildThread (Thread t)
 	{
-		if (tsLogger.arjLoggerI18N.debugAllowed())
+		if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		{
 			tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_6", new Object[]
 			{ get_uid(), t });
@@ -874,7 +874,7 @@ public class BasicAction extends StateManager
 
 		criticalEnd();
 
-		if (tsLogger.arjLoggerI18N.debugAllowed())
+		if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		{
 			tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_7", new Object[]
 			{ get_uid(), t, new Boolean(result) });
@@ -908,7 +908,7 @@ public class BasicAction extends StateManager
 
 	public final boolean removeChildThread (String threadId)
 	{
-		if (tsLogger.arjLoggerI18N.debugAllowed())
+		if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		{
 			tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_8", new Object[]
 			{ get_uid(), threadId });
@@ -932,7 +932,7 @@ public class BasicAction extends StateManager
 
 		criticalEnd();
 
-		if (tsLogger.arjLoggerI18N.debugAllowed())
+		if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		{
 			if (result)
 				tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_9", new Object[]
@@ -954,7 +954,7 @@ public class BasicAction extends StateManager
 
 	public final boolean addChildAction (BasicAction act)
 	{
-		if (tsLogger.arjLoggerI18N.debugAllowed())
+		if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		{
 			tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_10", new Object[]
 			{ get_uid(), ((act != null) ? act.get_uid() : Uid.nullUid()) });
@@ -986,7 +986,7 @@ public class BasicAction extends StateManager
 
 		criticalEnd();
 
-		if (tsLogger.arjLoggerI18N.debugAllowed())
+		if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		{
 			if (result)
 				tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_11", new Object[]
@@ -1012,7 +1012,7 @@ public class BasicAction extends StateManager
 
 	public final boolean removeChildAction (BasicAction act)
 	{
-		if (tsLogger.arjLoggerI18N.debugAllowed())
+		if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		{
 			tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_12", new Object[]
 			{ get_uid(), ((act != null) ? act.get_uid() : Uid.nullUid()) });
@@ -1036,7 +1036,7 @@ public class BasicAction extends StateManager
 
 		criticalEnd();
 
-		if (tsLogger.arjLoggerI18N.debugAllowed())
+		if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		{
 			if (result)
 				tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_13", new Object[]
@@ -1193,7 +1193,7 @@ public class BasicAction extends StateManager
 			 * which type of record to create when restoring.
 			 */
 
-			if (tsLogger.arjLoggerI18N.debugAllowed())
+			if (tsLogger.arjLoggerI18N.isDebugEnabled())
 			{
 				if (temp.doSave())
 					tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_14", new Object[]
@@ -1209,7 +1209,7 @@ public class BasicAction extends StateManager
 
 				try
 				{
-					if (tsLogger.arjLoggerI18N.debugAllowed())
+					if (tsLogger.arjLoggerI18N.isDebugEnabled())
 					{
 						tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_15", new Object[]
 						{ Integer.toString(temp.typeIs()) });
@@ -1242,7 +1242,7 @@ public class BasicAction extends StateManager
 		{
 			try
 			{
-				if (tsLogger.arjLoggerI18N.debugAllowed())
+				if (tsLogger.arjLoggerI18N.isDebugEnabled())
 				{
 					tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_16");
 				}
@@ -1285,7 +1285,7 @@ public class BasicAction extends StateManager
 
 						try
 						{
-							if (tsLogger.arjLoggerI18N.debugAllowed())
+							if (tsLogger.arjLoggerI18N.isDebugEnabled())
 							{
 								tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_17", new Object[]
 								{ Integer.toString(temp.typeIs()) });
@@ -1313,7 +1313,7 @@ public class BasicAction extends StateManager
 				{
 					try
 					{
-						if (tsLogger.arjLoggerI18N.debugAllowed())
+						if (tsLogger.arjLoggerI18N.isDebugEnabled())
 						{
 							tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_18");
 						}
@@ -1332,7 +1332,7 @@ public class BasicAction extends StateManager
 		{
 			try
 			{
-				if (tsLogger.arjLoggerI18N.debugAllowed())
+				if (tsLogger.arjLoggerI18N.isDebugEnabled())
 				{
 					tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_19", new Object[]
 					{ ActionStatus.stringForm(actionStatus) });
@@ -1395,7 +1395,7 @@ public class BasicAction extends StateManager
 		{
 			record_type = os.unpackInt();
 
-			if (tsLogger.arjLoggerI18N.debugAllowed())
+			if (tsLogger.arjLoggerI18N.isDebugEnabled())
 			{
 				tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_20", new Object[]
 				{ Integer.toString(record_type) });
@@ -1431,7 +1431,7 @@ public class BasicAction extends StateManager
 				{
 					record_type = os.unpackInt();
 
-					if (tsLogger.arjLoggerI18N.debugAllowed())
+					if (tsLogger.arjLoggerI18N.isDebugEnabled())
 					{
 						tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_20", new Object[]
 						{ Integer.toString(record_type) });
@@ -1454,7 +1454,7 @@ public class BasicAction extends StateManager
 			{
 				hSize = os.unpackInt();
 
-				if (tsLogger.arjLoggerI18N.debugAllowed())
+				if (tsLogger.arjLoggerI18N.isDebugEnabled())
 				{
 					tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_22", new Object[]
 					{ Integer.toString(hSize) });
@@ -1472,7 +1472,7 @@ public class BasicAction extends StateManager
 			{
 				record_type = os.unpackInt();
 
-				if (tsLogger.arjLoggerI18N.debugAllowed())
+				if (tsLogger.arjLoggerI18N.isDebugEnabled())
 				{
 					tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_23", new Object[]
 					{ Integer.toString(record_type) });
@@ -1495,7 +1495,7 @@ public class BasicAction extends StateManager
 				{
 					record_type = os.unpackInt();
 
-					if (tsLogger.arjLoggerI18N.debugAllowed())
+					if (tsLogger.arjLoggerI18N.isDebugEnabled())
 					{
 						tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_23", new Object[]
 						{ Integer.toString(record_type) });
@@ -1527,7 +1527,7 @@ public class BasicAction extends StateManager
 
 		if (res)
 		{
-			if (tsLogger.arjLoggerI18N.debugAllowed())
+			if (tsLogger.arjLoggerI18N.isDebugEnabled())
 			{
 				tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_25", new Object[]
 				{ ActionStatus.stringForm(tempActionStatus), Integer.toString(tempActionStatus) });
@@ -1711,7 +1711,7 @@ public class BasicAction extends StateManager
 		            }
 		            else
 		            {
-		                if (tsLogger.arjLoggerI18N.debugAllowed())
+		                if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		                {
 		                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_31", new Object[]
 		                                                                                                               { get_uid(), parentAct.get_uid(), Integer.toString(parentAct.status()) });
@@ -3236,7 +3236,7 @@ public class BasicAction extends StateManager
 				}
 				else
 				{				
-					if (tsLogger.arjLoggerI18N.debugAllowed(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ATOMIC_ACTION))
+					if (tsLogger.arjLoggerI18N.isDebugEnabled())
 					{
 						tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_51", new Object[]
 						{ get_uid(), TwoPhaseOutcome.stringForm(ok), RecordType.typeToClassName(recordBeingHandled.typeIs()) });
@@ -3833,7 +3833,7 @@ public class BasicAction extends StateManager
 			{
 				t = (Thread) iter.nextElement();
 
-				if (tsLogger.arjLoggerI18N.debugAllowed())
+				if (tsLogger.arjLoggerI18N.isDebugEnabled())
 				{
 					tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_63", new Object[]
 					{ get_uid(), t });
@@ -3864,7 +3864,7 @@ public class BasicAction extends StateManager
 
 		if (parent != null) /* ie not top_level */
 		{
-			if (tsLogger.arjLoggerI18N.debugAllowed())
+			if (tsLogger.arjLoggerI18N.isDebugEnabled())
 			{
 				tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_66", new Object[]
 				{ get_uid(), Integer.toString(parent.actionStatus) });
@@ -3895,7 +3895,7 @@ public class BasicAction extends StateManager
 				 * nested top-level actions are used for.
 				 */
 
-				if (tsLogger.arjLoggerI18N.debugAllowed())
+				if (tsLogger.arjLoggerI18N.isDebugEnabled())
 				{
 					tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_67", new Object[]
 					{ get_uid(), parent.get_uid() });

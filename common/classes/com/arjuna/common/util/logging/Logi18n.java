@@ -78,6 +78,10 @@ public interface Logi18n
 
    /**
     * Determine if this logger is enabled for DEBUG messages.
+    *
+    * This method returns true when the logger's DebugLevel, VisibilityLevel and FacililityCode are all
+    * non zero and the underlying logger is configured with DEBUG level on.
+    *
     * @return  True if the logger is enabled for DEBUG, false otherwise
     */
    boolean isDebugEnabled();
@@ -263,41 +267,6 @@ public interface Logi18n
     */
    void fatal(String key, Object[] params, Throwable throwable);
 
-
-
-   /**************************** Debug Granularity Extension ***************************/
-
-   /**
-    * Is it allowed to print finer debugging statements?
-    *
-    * This method returns true when the following is set:
-    * <ul>
-    * <li>finer debug level = <code>DebugLevel.FULL_DEBUGGING</code>.</li>
-    * <li>visibility level = <code>VisibilityLevel.VIS_ALL</code>.</li>
-    * <li>facility code = <code>FacilityCode.FAC_ALL</code>.</li>
-    * </ul>
-    *
-    * @return true if the Logger allows full logging
-    * @deprecated replace with isDebugEnabled
-    */
-   boolean debugAllowed ();
-
-
-   /**
-    * Is it allowed to print finer debugging statements with a given debug level,
-    * visibility level and facility code level?
-    *
-    * @return true if the Logger allows logging for the finer debugging value <code>dLevel</code>,
-    *    visibility level <code>vLevel</code> and facility code level <code>fLevel</code>.
-    *    i.e., dLevel is equal or greater than the finer debug level assigned to the Logger
-    *    and vLevel is equal or greater than the visiblity level
-    *    and fLevel is equal or greater then the facility code level.
-    * @param dLevel The debug finer level to check for.
-    * @param vLevel The debug visibilty level to check for.
-    * @param fLevel The facility code level to check for.
-    * @deprecated replace with isDebugEnabled
-    */
-   boolean debugAllowed (long dLevel, long vLevel, long fLevel);
 
    /**********************************************************************************************************
     * Finer-Granularity Debug Methods.

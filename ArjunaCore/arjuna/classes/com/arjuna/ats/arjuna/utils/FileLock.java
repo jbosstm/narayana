@@ -122,7 +122,7 @@ public boolean lock (int lmode)
     
 public boolean lock (int lmode, boolean create)
     {
-	if (tsLogger.arjLoggerI18N.debugAllowed())
+	if (tsLogger.arjLoggerI18N.isDebugEnabled())
 	{
 	    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					 FacilityCode.FAC_GENERAL, "com.arjuna.ats.arjuna.utils.FileLock_1", 
@@ -217,7 +217,7 @@ public boolean lock (int lmode, boolean create)
 
 public boolean unlock ()
     {
-	if (tsLogger.arjLoggerI18N.debugAllowed())
+	if (tsLogger.arjLoggerI18N.isDebugEnabled())
 	{
 	    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					 FacilityCode.FAC_GENERAL, "com.arjuna.ats.arjuna.utils.FileLock_2", 
@@ -301,7 +301,7 @@ public static String modeString (int mode)
 
 private final boolean createFile ()
     {
-	if (tsLogger.arjLoggerI18N.debugAllowed())
+	if (tsLogger.arjLoggerI18N.isDebugEnabled())
 	{
 	    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					 FacilityCode.FAC_GENERAL, "com.arjuna.ats.arjuna.utils.FileLock_3", 
@@ -335,7 +335,7 @@ private final boolean createFile ()
     
 private final boolean lockFile ()
     {
-	if (tsLogger.arjLoggerI18N.debugAllowed())
+	if (tsLogger.arjLoggerI18N.isDebugEnabled())
 	{
 	    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					 FacilityCode.FAC_GENERAL, "com.arjuna.ats.arjuna.utils.FileLock_5", 
@@ -370,7 +370,7 @@ private final boolean lockFile ()
 
 private final boolean unlockFile ()
     {
-	if (tsLogger.arjLoggerI18N.debugAllowed())
+	if (tsLogger.arjLoggerI18N.isDebugEnabled())
 	{
 	    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					 FacilityCode.FAC_GENERAL, "com.arjuna.ats.arjuna.utils.FileLock_6", 

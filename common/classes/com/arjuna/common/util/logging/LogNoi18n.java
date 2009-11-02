@@ -77,11 +77,8 @@ public interface LogNoi18n
    /**
     * Determine if this logger is enabled for DEBUG messages.
     *
-    * This method returns true when the following is set:
-    * <ul>
-    * <li>finer debug level = <code>DebugLevel.FULL_DEBUGGING</code>.</li>
-    * <li>visibility level = <code>VisibilityLevel.VIS_ALL</code>.</li>
-    * <li>facility code = <code>FacilityCode.FAC_ALL</code>.</li>
+    * This method returns true when the logger's DebugLevel, VisibilityLevel and FacililityCode are all
+    * non zero and the underlying logger is configured with DEBUG level on.
     *
     * @return  True if the logger is enabled for DEBUG, false otherwise
     */

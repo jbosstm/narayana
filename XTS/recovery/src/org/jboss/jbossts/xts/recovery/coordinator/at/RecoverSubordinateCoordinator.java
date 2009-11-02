@@ -68,7 +68,7 @@ public class RecoverSubordinateCoordinator extends SubordinateCoordinator {
    {
        final int status = status();
 
-       if (XTSLogger.arjLoggerI18N.debugAllowed())
+       if (XTSLogger.arjLoggerI18N.isDebugEnabled())
        {
 	   XTSLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					FacilityCode.FAC_CRASH_RECOVERY,
@@ -103,7 +103,7 @@ public class RecoverSubordinateCoordinator extends SubordinateCoordinator {
            SubordinateCoordinator.removeRecoveredCoordinator(this);
        }
 
-       if (XTSLogger.arjLoggerI18N.debugAllowed())
+       if (XTSLogger.arjLoggerI18N.isDebugEnabled())
 	   {
 	       XTSLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					    FacilityCode.FAC_CRASH_RECOVERY,

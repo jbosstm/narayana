@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.arjuna.coordinator;
 
-import com.arjuna.ats.arjuna.common.*;
 import java.io.PrintWriter;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -349,7 +348,7 @@ private final boolean insert (AbstractRecord newRecord, AbstractRecord startAt)
 	{
 	    if (newRecord.shouldMerge(current))
 	    {
-		if (tsLogger.arjLoggerI18N.debugAllowed())
+		if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		{
 		    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
 						 FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.coordinator.RecordList_1",
@@ -366,7 +365,7 @@ private final boolean insert (AbstractRecord newRecord, AbstractRecord startAt)
 	    {
 		if (newRecord.shouldReplace(current))
 		{
-		    if (tsLogger.arjLoggerI18N.debugAllowed())
+		    if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		    {
 			tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
 						     FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.coordinator.RecordList_2",
@@ -382,7 +381,7 @@ private final boolean insert (AbstractRecord newRecord, AbstractRecord startAt)
 		{
 		    if (newRecord.shouldAdd(current))
 		    {
-			if (tsLogger.arjLoggerI18N.debugAllowed())
+			if (tsLogger.arjLoggerI18N.isDebugEnabled())
 			{
 			    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
 							 FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.coordinator.RecordList_3",
@@ -405,7 +404,7 @@ private final boolean insert (AbstractRecord newRecord, AbstractRecord startAt)
 			}
 			else if (newRecord.lessThan(current))
 			{
-			    if (tsLogger.arjLoggerI18N.debugAllowed())
+			    if (tsLogger.arjLoggerI18N.isDebugEnabled())
 			    {
 				tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
 							     FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.coordinator.RecordList_4",
@@ -426,7 +425,7 @@ private final boolean insert (AbstractRecord newRecord, AbstractRecord startAt)
 
 	if (current == null)
 	{
-	    if (tsLogger.arjLoggerI18N.debugAllowed())
+	    if (tsLogger.arjLoggerI18N.isDebugEnabled())
 	    {
 		tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
 					     FacilityCode.FAC_ABSTRACT_REC,
@@ -437,7 +436,7 @@ private final boolean insert (AbstractRecord newRecord, AbstractRecord startAt)
 	}
 	else
 	{
-	    if (tsLogger.arjLoggerI18N.debugAllowed())
+	    if (tsLogger.arjLoggerI18N.isDebugEnabled())
 	    {
 		tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE,
 					     FacilityCode.FAC_ABSTRACT_REC,

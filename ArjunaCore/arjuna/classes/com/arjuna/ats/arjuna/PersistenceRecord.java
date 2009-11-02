@@ -232,7 +232,7 @@ public class PersistenceRecord extends RecoveryRecord
 					+ order());
 		}
 
-		if (tsLogger.arjLoggerI18N.debugAllowed())
+		if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		{
 			tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.PersistenceRecord_1", new Object[]
 			{ order(), getTypeOfObject() });
@@ -434,7 +434,7 @@ public class PersistenceRecord extends RecoveryRecord
 		{
 			objStoreType = os.unpackInt();
 
-			if (tsLogger.arjLoggerI18N.debugAllowed())
+			if (tsLogger.arjLoggerI18N.isDebugEnabled())
 			{
 				tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.PersistenceRecord_9", new Object[]
 				{ Integer.toString(objStoreType) });
@@ -500,7 +500,7 @@ public class PersistenceRecord extends RecoveryRecord
 				{
 					os.packInt(store.typeIs());
 
-					if (tsLogger.arjLoggerI18N.debugAllowed())
+					if (tsLogger.arjLoggerI18N.isDebugEnabled())
 					{
 						tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.PersistenceRecord_12", new Object[]
 						{ Integer.toString(store.typeIs()) });
@@ -508,7 +508,7 @@ public class PersistenceRecord extends RecoveryRecord
 
 					store.pack(os);
 
-					if (tsLogger.arjLoggerI18N.debugAllowed())
+					if (tsLogger.arjLoggerI18N.isDebugEnabled())
 					{
 						tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.PersistenceRecord_13");
 					}
@@ -586,7 +586,7 @@ public class PersistenceRecord extends RecoveryRecord
 	{
 		super();
 
-		if (tsLogger.arjLoggerI18N.debugAllowed())
+		if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		{
 			tsLogger.arjLoggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED, FacilityCode.FAC_ABSTRACT_REC, "com.arjuna.ats.arjuna.PersistenceRecord_17");
 		}

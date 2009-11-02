@@ -228,7 +228,7 @@ public class TransactionStatusConnectionManager
 		    {
 			Uid newUid = new Uid (theUid) ;
 
-			if (tsLogger.arjLoggerI18N.debugAllowed())
+			if (tsLogger.arjLoggerI18N.isDebugEnabled())
 			{
 			    tsLogger.arjLoggerI18N.debug( DebugLevel.FUNCTIONS,
 							  VisibilityLevel.VIS_PUBLIC,
@@ -269,7 +269,7 @@ public class TransactionStatusConnectionManager
 		    _tscTable.put ( process_id, tsc ) ;
 		}
 
-		if (tsLogger.arjLoggerI18N.debugAllowed())
+		if (tsLogger.arjLoggerI18N.isDebugEnabled())
 		{
 		    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 						 FacilityCode.FAC_CRASH_RECOVERY,

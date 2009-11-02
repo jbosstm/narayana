@@ -12,8 +12,6 @@ import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator;
 import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ParticipantRecord;
 import com.arjuna.common.util.logging.DebugLevel;
 import com.arjuna.common.util.logging.VisibilityLevel;
-import com.arjuna.mw.wsas.exceptions.SystemException;
-import com.arjuna.mw.wscf.logging.wscfLogger;
 
 /**
  * This class is a plug-in module for the recovery manager.
@@ -70,7 +68,7 @@ public class RecoverACCoordinator extends ACCoordinator {
    {
        final int status = status();
 
-       if (XTSLogger.arjLoggerI18N.debugAllowed())
+       if (XTSLogger.arjLoggerI18N.isDebugEnabled())
        {
 	   XTSLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					FacilityCode.FAC_CRASH_RECOVERY,
@@ -109,7 +107,7 @@ public class RecoverACCoordinator extends ACCoordinator {
            super.phase2Abort( _reportHeuristics ) ;
        }
 
-       if (XTSLogger.arjLoggerI18N.debugAllowed())
+       if (XTSLogger.arjLoggerI18N.isDebugEnabled())
 	   {
 	       XTSLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					    FacilityCode.FAC_CRASH_RECOVERY,

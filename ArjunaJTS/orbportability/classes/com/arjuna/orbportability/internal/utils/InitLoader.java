@@ -75,6 +75,7 @@ protected InitLoader (String name, String attrName, Object obj)
      * @message com.arjuna.orbportability.internal.utils.InitLoader.initfailed {0} - attempt to initialise {1} with null class name!
      * @message com.arjuna.orbportability.internal.utils.InitLoader.couldnotfindclass {0} - could not find class {1}
      * @message com.arjuna.orbportability.internal.utils.InitLoader.loading Loading {0} class - {1}
+     * @message com.arjuna.orbportability.internal.utils.InitLoader.exception Exception {0} whilst loading {1}
      */
 private void createInstance (String attrName, String className)
     {
@@ -115,14 +116,14 @@ private void createInstance (String attrName, String className)
 		{
                     if ( opLogger.loggerI18N.isWarnEnabled() )
                     {
-                        opLogger.logger.warn( initName + " " +e1 );
+                        opLogger.loggerI18N.warn("com.arjuna.orbportability.internal.utils.InitLoader.exception", new Object[] {e1.toString(), initName}, e1);
                     }
 		}
 		catch (InstantiationException e2)
 		{
                     if ( opLogger.loggerI18N.isWarnEnabled() )
                     {
-                        opLogger.logger.warn( initName + " " +e2 );
+                        opLogger.loggerI18N.warn("com.arjuna.orbportability.internal.utils.InitLoader.exception", new Object[] {e2.toString(), initName}, e2);
                     }
 		}
 
