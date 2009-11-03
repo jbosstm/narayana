@@ -21,7 +21,7 @@
 package com.arjuna.ats.txoj.common;
 
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
-import com.arjuna.ats.txoj.TxOJNames;
+import com.arjuna.ats.internal.txoj.lockstore.BasicLockStore;
 
 import java.io.File;
 
@@ -34,8 +34,9 @@ import java.io.File;
 public class TxojEnvironmentBean implements TxojEnvironmentBeanMBean
 {
     private volatile String lockStoreDir = System.getProperty("user.dir") + File.separator + "LockStore";
+    private volatile String lockStoreType = BasicLockStore.class.getName();
     private volatile String multipleLockStore = null;
-    private volatile String singleLockStore = TxOJNames.Implementation_LockStore_defaultStore().stringForm();
+    private volatile String singleLockStore = BasicLockStore.class.getName();
     private volatile boolean allowNestedLocking = true;
 
     /**
@@ -59,6 +60,30 @@ public class TxojEnvironmentBean implements TxojEnvironmentBeanMBean
     public void setLockStoreDir(String lockStoreDir)
     {
         this.lockStoreDir = lockStoreDir;
+    }
+
+    /**
+     * Returns the name of the lock store implementation.
+     *
+     * Default: null
+     * Equivalent deprecated property: com.arjuna.ats.txoj.lockstore.lockStoreType
+     *
+     * @return the name of the lock store implementation.
+     */
+    
+    public String getLockStoreType()
+    {
+        return lockStoreType;
+    }
+
+    /**
+     * Sets the name of the lock store implementation.
+     *
+     * @param lockStoreType the name of the lock store implementation.
+     */
+    public void setLockStoreType(String lockStoreType)
+    {
+        this.lockStoreType = lockStoreType;
     }
 
     /**

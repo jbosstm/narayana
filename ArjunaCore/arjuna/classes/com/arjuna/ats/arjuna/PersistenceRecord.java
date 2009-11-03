@@ -39,7 +39,6 @@ import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import java.io.PrintWriter;
 
@@ -153,11 +152,6 @@ public class PersistenceRecord extends RecoveryRecord
 	public int typeIs ()
 	{
 		return RecordType.PERSISTENCE;
-	}
-
-	public ClassName className ()
-	{
-		return ArjunaNames.Implementation_AbstractRecord_PersistenceRecord();
 	}
 
 	/**
@@ -419,7 +413,8 @@ public class PersistenceRecord extends RecoveryRecord
 		return true;
 	}
 
-	public boolean restore_state (InputObjectState os, int ot)
+	@SuppressWarnings("unchecked")
+    public boolean restore_state (InputObjectState os, int ot)
 	{
 		if (tsLogger.arjLogger.isDebugEnabled())
 		{
@@ -445,8 +440,11 @@ public class PersistenceRecord extends RecoveryRecord
 				/* discard old store before creating new */
 
 				if (store == null)
-					store = new ObjectStore(
-							ObjectStoreType.typeToClassName(objStoreType));
+				{
+				    Class oc = ObjectStoreType.typeToClass(objStoreType);
+				    
+				    store = (ObjectStore) oc.newInstance();
+				}
 
 				store.unpack(os);
 				shadowMade = os.unpackBoolean();
@@ -464,7 +462,7 @@ public class PersistenceRecord extends RecoveryRecord
 				return (res && super.restore_state(os, ot));
 			}
 		}
-		catch (IOException e)
+		catch (final Exception e)
 		{
 			if (tsLogger.arjLoggerI18N.isWarnEnabled())
 				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.PersistenceRecord_10");
@@ -572,17 +570,12 @@ public class PersistenceRecord extends RecoveryRecord
 		return "/StateManager/AbstractRecord/RecoveryRecord/PersistenceRecord";
 	}
 
-	public static AbstractRecord create ()
-	{
-		return new PersistenceRecord();
-	}
-
 	/**
 	 * Creates a 'blank' persistence record. This is used during crash recovery
 	 * when recreating the prepared list of a server atomic action.
 	 */
 
-	protected PersistenceRecord ()
+	public PersistenceRecord ()
 	{
 		super();
 

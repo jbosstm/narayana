@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 
@@ -41,146 +40,71 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.common.util.logging.DebugLevel;
 import com.arjuna.common.util.logging.VisibilityLevel;
 
-import com.arjuna.ats.arjuna.gandiva.ClassName;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
-
 import java.io.File;
 
 /**
- * Almost the same as the ShadowingStore implementation, but
- * assumes all concurrency control is provided by the object.
- * Therefore, there is no need to set/release locks on the
- * file representation in the object store. Saves time.
- *
+ * Almost the same as the ShadowingStore implementation, but assumes all
+ * concurrency control is provided by the object. Therefore, there is no need to
+ * set/release locks on the file representation in the object store. Saves time.
+ * 
  * @author Mark Little (mark@arjuna.com)
- * @version $Id: ShadowNoFileLockStore.java 2342 2006-03-30 13:06:17Z  $
+ * @version $Id: ShadowNoFileLockStore.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
  */
 
 public class ShadowNoFileLockStore extends ShadowingStore
 {
 
-public int typeIs ()
+    public int typeIs ()
     {
-	return ObjectStoreType.SHADOWNOFILELOCK;
-    }
-    
-public ClassName className ()
-    {
-	return ArjunaNames.Implementation_ObjectStore_ShadowNoFileLockStore();
+        return ObjectStoreType.SHADOWNOFILELOCK;
     }
 
-public static ClassName name ()
+    public ShadowNoFileLockStore(String locationOfStore)
     {
-	return ArjunaNames.Implementation_ObjectStore_ShadowNoFileLockStore();
-    }    
-
-    /*
-     * Have to return as a ShadowingStore because of
-     * inheritence.
-     */
-    
-public static ShadowingStore create ()
-    {
-	return new ShadowNoFileLockStore("");
+        this(locationOfStore, ObjectStore.OS_SHARED);
     }
 
-    /**
-     * message com.arjuna.ats.internal.arjuna.objectstore.ShadowNoFileLockStore_1 [com.arjuna.ats.internal.arjuna.objectstore.ShadowNoFileLockStore_1] - ShadowNoFileLockStore.create caught: {0}
-     */
-public static ShadowingStore create (Object[] param)
+    public ShadowNoFileLockStore(String locationOfStore, int shareStatus)
     {
-	if (param == null)
-	    return null;
+        super(locationOfStore, shareStatus);
 
-	String location = (String) param[0];
-	Integer shareStatus = (Integer) param[1];
-	int ss = ObjectStore.OS_UNSHARED;
-	
-	if (shareStatus != null)
-	{
-	    try
-	    {
-		if (shareStatus.intValue() == ObjectStore.OS_SHARED)
-		    ss = ObjectStore.OS_SHARED;
-	    }
-	    catch (Exception e)
-	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.ShadowNoFileLockStore_1",
-						new Object[]{e});
-		}
-	    }
-	}
-
-	return new ShadowNoFileLockStore(location, ss);
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS,
+                    VisibilityLevel.VIS_PROTECTED,
+                    FacilityCode.FAC_OBJECT_STORE,
+                    "ShadowNoFileLockStore.ShadowNoFileLockStore("
+                            + locationOfStore + ")");
+        }
     }
 
-public static ShadowingStore create (ObjectName param)
+    public ShadowNoFileLockStore()
     {
-	if (param == null)
-	    return null;
-	else
-	    return new ShadowNoFileLockStore(param);
-    }
-    
-protected ShadowNoFileLockStore (String locationOfStore)
-    {
-	this(locationOfStore, ObjectStore.OS_UNSHARED);
-    }
-    
-protected ShadowNoFileLockStore (String locationOfStore, int shareStatus)
-    {
-	super(locationOfStore, shareStatus);
-
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE, "ShadowNoFileLockStore.ShadowNoFileLockStore("+locationOfStore+")");
-	}
-    }
-    
-protected ShadowNoFileLockStore ()
-    {
-	this(ObjectStore.OS_UNSHARED);
-    }
-	
-protected ShadowNoFileLockStore (int shareStatus)
-    {
-	super(shareStatus);
-
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE, "ShadowNoFileLockStore.ShadowNoFileLockStore( "+shareStatus+" )");
-	}
+        this(ObjectStore.OS_SHARED);
     }
 
-protected ShadowNoFileLockStore (ObjectName objName)
+    public ShadowNoFileLockStore(int shareStatus)
     {
-	super(objName);
-	
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE, "ShadowNoFileLockStore.ShadowNoFileLockStore( "+objName+" )");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PROTECTED,
+                                     FacilityCode.FAC_OBJECT_STORE, "ShadowNoFileLockStore.ShadowNoFileLockStore("+shareStatus+")");
+        }
     }
 
     /**
      * Override the default lock/unlock implementations to do nothing.
      */
 
-protected boolean lock (File fd, int lmode, boolean create)
+    protected boolean lock (File fd, int lmode, boolean create)
     {
-	return true;
+        return true;
     }
 
-protected boolean unlock (File fd)
+    protected boolean unlock (File fd)
     {
-	return true;
+        return true;
     }
-    
- 
+
 }

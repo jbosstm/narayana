@@ -42,8 +42,6 @@ import com.arjuna.ats.txoj.logging.FacilityCode;
 import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.txoj.TxOJNames;
-import com.arjuna.ats.txoj.common.*;
 import java.io.*;
 
 /**
@@ -56,12 +54,7 @@ import java.io.*;
  * @message com.arjuna.ats.txoj.LockRecord_7 [com.arjuna.ats.txoj.LockRecord_7] - Invocation of LockRecord::restore_state for {0} inappropriate - ignored for {1}
  */
 
-
-/*
- * Default visibility.
- */
-
-class LockRecord extends AbstractRecord
+public class LockRecord extends AbstractRecord
 {
 
     public LockRecord (LockManager lm, BasicAction currAct)

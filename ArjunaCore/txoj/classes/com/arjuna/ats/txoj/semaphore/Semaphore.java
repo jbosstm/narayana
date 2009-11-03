@@ -31,110 +31,42 @@
 
 package com.arjuna.ats.txoj.semaphore;
 
-import com.arjuna.ats.txoj.TxOJNames;
-import com.arjuna.ats.txoj.common.*;
 import com.arjuna.ats.internal.txoj.Implementations;
-import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
-import com.arjuna.ats.arjuna.common.Uid;
-
-import java.io.IOException;
 
 /**
- * Semaphore interface. Binds to interpreter specific implementation.
+ * Implementations of semaphore classes should derive from this
+ * class and provide implementations of the relevant methods.
  *
  * @author Mark Little (mark@arjuna.com)
- * @version $Id: Semaphore.java 2342 2006-03-30 13:06:17Z  $
+ * @version $Id: SemaphoreImple.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
  */
 
-public class Semaphore
+public abstract class Semaphore
 {
 
-public static final int SM_LOCKED = 0;
-public static final int SM_UNLOCKED = 1;
-public static final int SM_WOULD_BLOCK = 2;
-public static final int SM_ERROR = 3;
+    public static final int SM_LOCKED = 0;
 
-    /**
-     * Create a semaphore with the default implementation.
+    public static final int SM_UNLOCKED = 1;
+
+    public static final int SM_WOULD_BLOCK = 2;
+
+    public static final int SM_ERROR = 3;
+
+    /*
+     * Classic semaphore operations.
      */
-    
-public Semaphore (String key)
+
+    public abstract int lock ();
+
+    public abstract int unlock ();
+
+    public abstract int tryLock ();
+
+    static
     {
-	Object[] param = new Object[1];
-
-	param[0] = key;
-	
-	Object ptr = Inventory.inventory().createResources(TxOJNames.Implementation_Semaphore_BasicSemaphore(), param);
-
-	if (ptr instanceof SemaphoreImple)
-	    _imple = (SemaphoreImple) ptr;
-	else
-	    _imple = null;
-    }
-    
-public Semaphore (ClassName type)
-    {
-	Object ptr = Inventory.inventory().createVoid(type);
-
-	if (ptr instanceof SemaphoreImple)
-	    _imple = (SemaphoreImple) ptr;
-	else
-	    _imple = null;
+        if (!Implementations.added())
+            Implementations.initialise();
     }
 
-public Semaphore (ObjectName objName)
-    {
-	_imple = null;
-	
-	if (objName != null)
-	{
-	    try
-	    {
-		ClassName semaphoreType = objName.getClassNameAttribute("SemaphoreType");
-		ObjectName semaphoreName = objName.getObjectNameAttribute("SemaphoreName");
-		
-		Object ptr = Inventory.inventory().createObjectName(semaphoreType, semaphoreName);
-
-		if (ptr instanceof SemaphoreImple)
-		    _imple = (SemaphoreImple) ptr;
-	    }
-	    catch (IOException e)
-	    {
-	    }
-	}
-    }    
-
-public int lock ()
-    {
-	return ((_imple != null) ? _imple.lock() : Semaphore.SM_ERROR);
-    }
-    
-public int unlock ()
-    {
-	return ((_imple != null) ? _imple.unlock() : Semaphore.SM_ERROR);
-    }
-    
-public int tryLock ()
-    {
-	return ((_imple != null) ? _imple.tryLock() : Semaphore.SM_ERROR);
-    }
-    
-public ClassName className ()
-    {
-	return ((_imple != null) ? _imple.className() : ClassName.invalid());
-    }
-    
-private SemaphoreImple _imple;
-
-    static 
-    {
-	if (!Implementations.added())
-	    Implementations.initialise();
-    }
-    
 }
-
-

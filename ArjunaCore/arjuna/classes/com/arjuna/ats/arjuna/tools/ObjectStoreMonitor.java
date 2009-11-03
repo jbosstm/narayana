@@ -31,141 +31,141 @@
 
 package com.arjuna.ats.arjuna.tools;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
-import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
-
-import java.io.PrintWriter;
 
 public class ObjectStoreMonitor
 {
-    
-public static void main (String[] args)
+
+    @SuppressWarnings("unchecked")
+    public static void main (String[] args)
     {
-	String storeImple = null;
-	String root = null;
+        String storeImple = arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore();
+        String root = null;
 
-	for (int i = 0; i < args.length; i++)
-	{
-	    if (args[i].compareTo("-help") == 0)
-	    {
-		usage();
-		System.exit(0);
-	    }
-	    else
-	    {
-		if (args[i].compareTo("-store") == 0)
-		{
-		    storeImple = args[i+1];
-		    i++;
-		}
-		else
-		{
-		    if (args[i].compareTo("-root") == 0)
-		    {
-			root = args[i+1];
-			i++;
-		    }
-		    else
-		    {
-			System.out.println("Unknown option "+args[i]);
-			usage();
+        for (int i = 0; i < args.length; i++)
+        {
+            if (args[i].compareTo("-help") == 0)
+            {
+                usage();
+                System.exit(0);
+            }
+            else
+            {
+                if (args[i].compareTo("-store") == 0)
+                {
+                    storeImple = args[i + 1];
+                    i++;
+                }
+                else
+                {
+                    if (args[i].compareTo("-root") == 0)
+                    {
+                        root = args[i + 1];
+                        i++;
+                        
+                        arjPropertyManager.getObjectStoreEnvironmentBean().setLocalOSRoot(root);
+                    }
+                    else
+                    {
+                        System.out.println("Unknown option " + args[i]);
+                        usage();
 
-			System.exit(0);
-		    }
-		}
-	    }
-	}
+                        System.exit(0);
+                    }
+                }
+            }
+        }
 
-	try
-	{
-	    ObjectStore imple = null;
+        try
+        {
+            Class osImple = Class.forName(storeImple);
+            ObjectStore imple = (ObjectStore) osImple.newInstance();
 
-	    if (storeImple != null)
-		imple = new ObjectStore(new ClassName(storeImple), root);
-	    else
-		imple = new ObjectStore(root);
-	    
-	    InputObjectState types = new InputObjectState();
 
-	    if (imple.allTypes(types))
-	    {
-		String theName = null;
-		int count = 0;
+            InputObjectState types = new InputObjectState();
 
-		try
-		{
-		    boolean endOfList = false;
+            if (imple.allTypes(types))
+            {
+                String theName = null;
+                int count = 0;
 
-		    while (!endOfList)
-		    {
-			theName = types.unpackString();
+                try
+                {
+                    boolean endOfList = false;
 
-			if (theName.compareTo("") == 0)
-			    endOfList = true;
-			else
-			{
-			    count++;
-	    
-			    System.out.println(count+": "+theName);
+                    while (!endOfList)
+                    {
+                        theName = types.unpackString();
 
-			    InputObjectState uids = new InputObjectState();
+                        if (theName.compareTo("") == 0)
+                            endOfList = true;
+                        else
+                        {
+                            count++;
 
-			    if (imple.allObjUids(theName, uids))
-			    {
-				Uid theUid = new Uid(Uid.nullUid());
+                            System.out.println(count + ": " + theName);
 
-				try
-				{
-				    boolean endOfUids = false;
-				    
-				    while (!endOfUids)
-				    {
-				        theUid = UidHelper.unpackFrom(uids);
+                            InputObjectState uids = new InputObjectState();
 
-					if (theUid.equals(Uid.nullUid()))
-					    endOfUids = true;
-					else
-					{
-					    System.out.print("\t"+theUid+" state is ");
-					    System.out.print(ObjectStore.stateStatusString(imple.currentState(theUid, theName)));
+                            if (imple.allObjUids(theName, uids))
+                            {
+                                Uid theUid = new Uid(Uid.nullUid());
 
-					    System.out.println();
-					}
-				    }
-				}
-				catch (Exception e)
-				{
-				    // end of uids!
-				}
-			    }
+                                try
+                                {
+                                    boolean endOfUids = false;
 
-			    System.out.println();
-			}
-		    }
-		}
-		catch (Exception e)
-		{
-		    System.err.println(e);
-		    
-		    // end of list!
-		}
-	    }
-	}
-	catch (Exception e)
-	{
-	    System.err.println("Caught unexpected exception: "+e);
-	}
+                                    while (!endOfUids)
+                                    {
+                                        theUid = UidHelper.unpackFrom(uids);
+
+                                        if (theUid.equals(Uid.nullUid()))
+                                            endOfUids = true;
+                                        else
+                                        {
+                                            System.out.print("\t" + theUid
+                                                    + " state is ");
+                                            System.out.print(ObjectStore
+                                                    .stateStatusString(imple
+                                                            .currentState(
+                                                                    theUid,
+                                                                    theName)));
+
+                                            System.out.println();
+                                        }
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    // end of uids!
+                                }
+                            }
+
+                            System.out.println();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    System.err.println(e);
+
+                    // end of list!
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            System.err.println("Caught unexpected exception: " + e);
+        }
     }
 
-private static void usage ()
+    private static void usage ()
     {
-	System.out.println("Usage: ActionMonitor [-store <object store>] [-root <store root>] [-help]");
+        System.out
+                .println("Usage: ActionMonitor [-store <object store>] [-root <store root>] [-help]");
     }
- 
-};
 
+}

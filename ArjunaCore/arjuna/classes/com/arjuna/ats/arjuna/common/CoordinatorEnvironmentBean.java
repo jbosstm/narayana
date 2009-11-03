@@ -22,8 +22,8 @@ package com.arjuna.ats.arjuna.common;
 
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
+import com.arjuna.ats.internal.arjuna.objectstore.HashedActionStore;
 
 /**
  * A JavaBean containing configuration properties for the core transaction coordinator.
@@ -33,7 +33,7 @@ import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 @PropertyPrefix(prefix = "com.arjuna.ats.arjuna.coordinator.")
 public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBean
 {
-    private volatile String actionStore = ArjunaNames.Implementation_ObjectStore_defaultActionStore().stringForm();
+    private volatile String actionStore = HashedActionStore.class.getName();
     private volatile boolean asyncCommit = false;
     private volatile boolean asyncPrepare = false;
     private volatile boolean asyncRollback = false;
@@ -68,7 +68,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     private volatile String checkedActionFactory = null;
 
     private volatile boolean alternativeRecordOrdering = false;
-
+    
     /**
      * Returns the symbolic name for the action store type.
      *
@@ -420,7 +420,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
 
     /**
      * Returns the number of millisecs delay afer a cancel is scheduled,
-	 * before the reaper tries to interrupt the worker thread executing the cancel.
+         * before the reaper tries to interrupt the worker thread executing the cancel.
      *
      * Default: 500ms
      * Equivalent deprecated property: com.arjuna.ats.arjuna.coordinator.txReaperCancelWaitPeriod
@@ -582,6 +582,7 @@ public class CoordinatorEnvironmentBean implements CoordinatorEnvironmentBeanMBe
     {
         this.checkedActionFactory = checkedActionFactory;
     }
+    
 
     /**
      * Whether to use the alternative abstract record ordering.

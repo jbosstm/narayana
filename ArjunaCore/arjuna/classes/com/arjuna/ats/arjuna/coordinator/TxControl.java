@@ -32,13 +32,13 @@
 package com.arjuna.ats.arjuna.coordinator;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusManager;
 import com.arjuna.ats.arjuna.utils.Utility;
+import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 
 /**
  * Transaction configuration object. We have a separate object for this so that
@@ -59,6 +59,8 @@ import com.arjuna.ats.arjuna.utils.Utility;
  *          node contains reserved character '-'. Using {0}
  * @message com.arjuna.ats.arjuna.coordinator.toolong
  *          [com.arjuna.ats.arjuna.coordinator.toolong] - Node name cannot exceed 64 bytes!
+ * @message com.arjuna.ats.arjuna.coordinator.invalidos
+ *          [com.arjuna.ats.arjuna.coordinator.invalidos] - Could not create ObjectStore type:
  */
 
 public class TxControl
@@ -155,7 +157,7 @@ public class TxControl
 		return TxControl.enable;
 	}
 
-	public static final ClassName getActionStoreType()
+	public static final String getActionStoreType()
 	{
 		return actionStoreType;
 	}
@@ -172,32 +174,46 @@ public class TxControl
          * @see com.arjuna.ats.arjuna.objectstore.ObjectStore
          */
         
+        @SuppressWarnings("unchecked")
         public static final ObjectStore getRecoveryStore ()
         {
+            if (_recoveryStore != null)
+                return _recoveryStore;
+            
             if (TxControl.actionStoreType == null)
             {
                     if (arjPropertyManager.getCoordinatorEnvironmentBean().isTransactionLog())
-                            TxControl.actionStoreType = new ClassName(ArjunaNames
-                                            .Implementation_ObjectStore_ActionLogStore());
+                            TxControl.actionStoreType = LogStore.class.getName();
                     else
-                            TxControl.actionStoreType = new ClassName( arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore() );
+                            TxControl.actionStoreType = arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore();
 
                 sharedTransactionLog = arjPropertyManager.getCoordinatorEnvironmentBean().isSharedTransactionLog();
             }
 
-            ClassName recoveryType = TxControl.actionStoreType;
+            String recoveryType = TxControl.actionStoreType;
             
-            if (TxControl.actionStoreType.equals(ArjunaNames.Implementation_ObjectStore_ActionLogStore()))
-                recoveryType = ArjunaNames.Implementation_ObjectStore_defaultActionStore();
+            if (TxControl.actionStoreType.equals(LogStore.class.getName()))
+                recoveryType = arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore();
             
             /*
              * Defaults to ObjectStore.OS_UNSHARED
              */
 
             if (sharedTransactionLog)
-                    return new ObjectStore(recoveryType, ObjectStore.OS_SHARED);
-            else
-                    return new ObjectStore(recoveryType);
+                arjPropertyManager.getObjectStoreEnvironmentBean().setShare(ObjectStore.OS_SHARED);
+            
+            try
+            {
+                Class osc = Class.forName(recoveryType);
+                
+                _recoveryStore = (ObjectStore) osc.newInstance();
+            }
+            catch (final Throwable ex)
+            {
+                throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.coordinator.invalidos")+" "+recoveryType);
+            }
+            
+            return _recoveryStore;
         }
         
 	/**
@@ -206,7 +222,8 @@ public class TxControl
 	 * @see com.arjuna.ats.arjuna.objectstore.ObjectStore
 	 */
 
-	public static final ObjectStore getStore()
+	@SuppressWarnings("unchecked")
+    public static final ObjectStore getStore()
 	{
         if(_objectStore != null) {
             return _objectStore;
@@ -220,10 +237,9 @@ public class TxControl
 		if (TxControl.actionStoreType == null)
 		{
 			if (arjPropertyManager.getCoordinatorEnvironmentBean().isTransactionLog())
-				TxControl.actionStoreType = new ClassName(ArjunaNames
-						.Implementation_ObjectStore_ActionLogStore());
+				TxControl.actionStoreType = LogStore.class.getName();
 			else
-				TxControl.actionStoreType = new ClassName( arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore() );
+				TxControl.actionStoreType = arjPropertyManager.getCoordinatorEnvironmentBean().getActionStore();
 
             sharedTransactionLog = arjPropertyManager.getCoordinatorEnvironmentBean().isSharedTransactionLog();
 		}
@@ -236,9 +252,20 @@ public class TxControl
 		 */
 
 		if (sharedTransactionLog)
-			_objectStore = new ObjectStore(actionStoreType, ObjectStore.OS_SHARED);
-		else
-			_objectStore = new ObjectStore(actionStoreType);
+	            arjPropertyManager.getObjectStoreEnvironmentBean().setShare(ObjectStore.OS_SHARED);
+	        
+	        try
+	        {
+	            Class osc = Class.forName(actionStoreType);
+	            
+	            _objectStore = (ObjectStore) osc.newInstance();
+	        }
+	        catch (final Throwable ex)
+	        {
+	            ex.printStackTrace();
+	            
+	            throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.coordinator.invalidos")+" "+actionStoreType);
+	        }
 
         return _objectStore;
 	}
@@ -336,8 +363,9 @@ public class TxControl
 
 	private static TransactionStatusManager transactionStatusManager = null;
 
-	static ClassName actionStoreType = null;
+	static String actionStoreType = null;
     private static ObjectStore _objectStore = null;
+    private static ObjectStore _recoveryStore = null;
 
 	static byte[] xaNodeName = null;
 

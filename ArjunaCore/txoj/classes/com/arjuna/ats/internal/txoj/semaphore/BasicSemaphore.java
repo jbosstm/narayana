@@ -31,13 +31,9 @@
 
 package com.arjuna.ats.internal.txoj.semaphore;
 
-import com.arjuna.ats.txoj.TxOJNames;
 import com.arjuna.ats.txoj.semaphore.*;
-import com.arjuna.ats.txoj.common.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 
 import com.arjuna.ats.txoj.logging.txojLogger;
-import com.arjuna.ats.txoj.logging.FacilityCode;
 
 import com.arjuna.common.util.logging.*;
 
@@ -51,180 +47,157 @@ import java.lang.InterruptedException;
  * Actually a mutex at present since we assume resource count of 1.
  */
 
-public class BasicSemaphore extends SemaphoreImple
+public class BasicSemaphore extends Semaphore
 {
 
-public BasicSemaphore (String key)
+    public BasicSemaphore(String key)
     {
-	owner = null;
-	useCount = 0;
-	waiters = new Hashtable();
-	numberOfResources = 1;
-	semKey = key;
+        owner = null;
+        useCount = 0;
+        waiters = new Hashtable();
+        numberOfResources = 1;
+        semKey = key;
 
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS,
-				     VisibilityLevel.VIS_PUBLIC,
-				       com.arjuna.ats.arjuna.logging.FacilityCode.FAC_GENERAL, "BasicSemapore::BasicSemaphore ( "+key+" )");
-	}
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    com.arjuna.ats.arjuna.logging.FacilityCode.FAC_GENERAL,
+                    "BasicSemapore::BasicSemaphore ( " + key + " )");
+        }
     }
 
     /**
-     * @message com.arjuna.ats.internal.txoj.semaphore.BasicSemaphore_1 [com.arjuna.ats.internal.txoj.semaphore.BasicSemaphore_1] - BasicSemaphore being destroyed with waiters.
+     * @message com.arjuna.ats.internal.txoj.semaphore.BasicSemaphore_1
+     *          [com.arjuna.ats.internal.txoj.semaphore.BasicSemaphore_1] -
+     *          BasicSemaphore being destroyed with waiters.
      */
-public void finalize ()
+    public void finalize ()
     {
-	if (waiters.size() != 0)
-	{
-	    if (txojLogger.aitLoggerI18N.isWarnEnabled())
-	    {
-		txojLogger.aitLoggerI18N.warn("com.arjuna.ats.internal.txoj.semaphore.BasicSemaphore_1");
-	    }
-	}
+        if (waiters.size() != 0)
+        {
+            if (txojLogger.aitLoggerI18N.isWarnEnabled())
+            {
+                txojLogger.aitLoggerI18N
+                        .warn("com.arjuna.ats.internal.txoj.semaphore.BasicSemaphore_1");
+            }
+        }
 
-	owner = null;
-	waiters = null;
+        owner = null;
+        waiters = null;
     }
 
     /**
      * Classic semaphore operations.
      */
 
-public int lock ()
+    public int lock ()
     {
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-				     VisibilityLevel.VIS_PUBLIC,
-				       com.arjuna.ats.arjuna.logging.FacilityCode.FAC_GENERAL, "BasicSemapore::lock()");
-	}
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    com.arjuna.ats.arjuna.logging.FacilityCode.FAC_GENERAL,
+                    "BasicSemapore::lock()");
+        }
 
-	synchronized (this)
-	{
-	    Thread t = Thread.currentThread();
+        synchronized (this)
+        {
+            Thread t = Thread.currentThread();
 
-	    if (owner == null)
-		owner = t;
-	    else
-	    {
-		if (owner != t)
-		{
-		    waiters.put(t, t);
+            if (owner == null)
+                owner = t;
+            else
+            {
+                if (owner != t)
+                {
+                    waiters.put(t, t);
 
-		    while (owner != null)
-		    {
-			try
-			{
-			    this.wait();
-			}
-			catch (InterruptedException e)
-			{
-			}
-		    }
+                    while (owner != null)
+                    {
+                        try
+                        {
+                            this.wait();
+                        }
+                        catch (InterruptedException e)
+                        {
+                        }
+                    }
 
-		    waiters.remove(t);
+                    waiters.remove(t);
 
-		    owner = t;
-		}
-	    }
+                    owner = t;
+                }
+            }
 
-	    useCount++;
-	}
+            useCount++;
+        }
 
-	return Semaphore.SM_LOCKED;
+        return Semaphore.SM_LOCKED;
     }
 
-public int unlock ()
+    public int unlock ()
     {
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-				     VisibilityLevel.VIS_PUBLIC,
-				       com.arjuna.ats.arjuna.logging.FacilityCode.FAC_GENERAL, "BasicSemapore::unlock()");
-	}
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    com.arjuna.ats.arjuna.logging.FacilityCode.FAC_GENERAL,
+                    "BasicSemapore::unlock()");
+        }
 
-	synchronized (this)
-	{
-	    Thread t = Thread.currentThread();
+        synchronized (this)
+        {
+            Thread t = Thread.currentThread();
 
-	    if (owner != t)
-		return Semaphore.SM_ERROR;
-	    else
-	    {
-		if (--useCount == 0)
-		{
-		    owner = null;
+            if (owner != t)
+                return Semaphore.SM_ERROR;
+            else
+            {
+                if (--useCount == 0)
+                {
+                    owner = null;
 
-		    if (waiters.size() > 0)
-		    {
-			this.notify();
-		    }
-		}
-	    }
-	}
-
-	return Semaphore.SM_UNLOCKED;
-    }
-
-public int tryLock ()
-    {
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
-				     VisibilityLevel.VIS_PUBLIC,
-				       com.arjuna.ats.arjuna.logging.FacilityCode.FAC_GENERAL, "BasicSemapore::tryLock()");
-	}
-
-	synchronized (this)
-	{
-	    if ((owner == null) || (owner == Thread.currentThread()))
-		return this.lock();
-	    else
-		return Semaphore.SM_WOULD_BLOCK;
-	}
-    }
-
-public ClassName className ()
-    {
-	return TxOJNames.Implementation_Semaphore_BasicSemaphore();
-    }
-
-public static ClassName name ()
-    {
-	return TxOJNames.Implementation_Semaphore_BasicSemaphore();
-    }
-
-    /**
-     * Create semaphore with value of 1.
-     */
-
-    public static BasicSemaphore create (Object[] param)
-    {
-        if (param == null)
-            return null;
-
-        String key = (String) param[0];
-        BasicSemaphore basicSemaphore = null;
-
-        synchronized (semaphores) {
-            basicSemaphore = semaphores.get(key);
-            if(basicSemaphore == null) {
-                basicSemaphore = new BasicSemaphore(key);
-                semaphores.put(key, basicSemaphore);
+                    if (waiters.size() > 0)
+                    {
+                        this.notify();
+                    }
+                }
             }
         }
 
-        return basicSemaphore;
+        return Semaphore.SM_UNLOCKED;
     }
 
-private Thread    owner;
-private int       useCount;
-private Hashtable waiters;
-private int       numberOfResources;
-private String    semKey;
+    public int tryLock ()
+    {
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    com.arjuna.ats.arjuna.logging.FacilityCode.FAC_GENERAL,
+                    "BasicSemapore::tryLock()");
+        }
 
-private static final Map<String, BasicSemaphore> semaphores = new HashMap<String, BasicSemaphore>();
+        synchronized (this)
+        {
+            if ((owner == null) || (owner == Thread.currentThread()))
+                return this.lock();
+            else
+                return Semaphore.SM_WOULD_BLOCK;
+        }
+    }
+
+    private Thread owner;
+
+    private int useCount;
+
+    private Hashtable waiters;
+
+    private int numberOfResources;
+
+    private String semKey;
+
+    private static final Map<String, BasicSemaphore> semaphores = new HashMap<String, BasicSemaphore>();
 
 }
-

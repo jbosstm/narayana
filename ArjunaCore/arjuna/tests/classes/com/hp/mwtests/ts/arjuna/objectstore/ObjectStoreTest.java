@@ -31,12 +31,11 @@ package com.hp.mwtests.ts.arjuna.objectstore;
  * $Id: ObjectStoreTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
+import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -45,37 +44,46 @@ import java.io.IOException;
 
 public class ObjectStoreTest
 {
+    @SuppressWarnings("unchecked")
     @Test
     public void test() throws IOException
     {
-        ClassName imple = ArjunaNames.Implementation_ObjectStore_defaultStore();
         String localOSRoot = "foo";
         String objectStoreDir = "/bar";
-        String shareStatus = "OS_SHARED";
 
-        ObjectName objName = new ObjectName("JNS:myname");
-
-        objName.setClassNameAttribute(Environment.OBJECTSTORE_TYPE, imple);
         arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
-        objName.setStringAttribute(Environment.LOCALOSROOT, localOSRoot);
-        objName.setStringAttribute(Environment.OBJECTSTORE_DIR, objectStoreDir);
-        objName.setStringAttribute(Environment.OBJECTSTORE_SHARE, shareStatus);
+        arjPropertyManager.getObjectStoreEnvironmentBean().setLocalOSRoot(localOSRoot);
+        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreDir(objectStoreDir);
+        arjPropertyManager.getObjectStoreEnvironmentBean().setShare(ObjectStore.OS_SHARED);
 
-        ObjectStore objStore = new ObjectStore(objName);
+        // check with a known valid implementation
 
+        ObjectStore objStore = null;
+        
+        try
+        {
+            Class cn = Class.forName(ObjectStoreType.getDefaultStoreType());
+            objStore = (ObjectStore) cn.newInstance();
+        }
+        catch (final Exception ex)
+        {
+            ex.printStackTrace();
+            
+            objStore = null;
+        }
+        
         assertTrue(validate(objStore));
-
-
-        // check with a known invalid implementation
-        objStore = new ObjectStore();
-        assertFalse(validate(objStore));
     }
 
     private static final boolean validate(ObjectStore objStore)
     {
-        boolean passed = false;
+        if (objStore == null)
+            return false;
+        
+        boolean passed = false;       
 
-        if (objStore.className().equals(imple)) {
+        if (objStore.getClass().getName().equals(imple))
+        {
             if (objStore.shareState() == ObjectStore.OS_SHARED) {
                 if (objStore.storeDir().equals(objectStoreDir)) {
                     if (objStore.storeRoot().equals(localOSRoot))
@@ -87,12 +95,12 @@ public class ObjectStoreTest
             } else
                 System.err.println("Share state wrong: " + objStore.shareState());
         } else
-            System.err.println("Implementation wrong: " + objStore.className());
+            System.err.println("Implementation wrong: " + objStore.getClass().getSimpleName());
 
         return passed;
     }
 
-    private static ClassName imple = ArjunaNames.Implementation_ObjectStore_defaultStore();
+    private static String imple = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType();
     private static String localOSRoot = "foo";
     private static String objectStoreDir = "/bar";
     private static String shareStatus = "OS_SHARED";

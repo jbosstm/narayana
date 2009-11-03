@@ -35,7 +35,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
@@ -1408,9 +1407,7 @@ public class BasicAction extends StateManager
 
 		while ((res) && (record_type != RecordType.NONE_RECORD))
 		{
-			RecoveryAbstractRecord recRecord = new RecoveryAbstractRecord(
-					RecordType.typeToClassName(record_type), record_type, true);
-			AbstractRecord record = recRecord.record();
+		    AbstractRecord record = AbstractRecord.create(record_type);
 
 			if (record == null)
 			{
@@ -1485,9 +1482,7 @@ public class BasicAction extends StateManager
 
 			while ((res) && (record_type != RecordType.NONE_RECORD))
 			{
-				RecoveryAbstractRecord record = new RecoveryAbstractRecord(
-						RecordType.typeToClassName(record_type), record_type,
-						true);
+			    AbstractRecord record = AbstractRecord.create(record_type);
 
 				res = (record.restore_state(os, ot) && heuristicList.insert(record));
 
@@ -2022,11 +2017,6 @@ public class BasicAction extends StateManager
 
 		_childThreads = null;
 		_childActions = null;
-	}
-
-	protected BasicAction (Uid u, int at, ObjectName objectName)
-	{
-		super(u, at, objectName);
 	}
 
 	/**
@@ -3239,7 +3229,7 @@ public class BasicAction extends StateManager
 					if (tsLogger.arjLoggerI18N.isDebugEnabled())
 					{
 						tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ATOMIC_ACTION, "com.arjuna.ats.arjuna.coordinator.BasicAction_51", new Object[]
-						{ get_uid(), TwoPhaseOutcome.stringForm(ok), RecordType.typeToClassName(recordBeingHandled.typeIs()) });
+						{ get_uid(), TwoPhaseOutcome.stringForm(ok), RecordType.typeToClass(recordBeingHandled.typeIs()) });
 					}
 
 					if ((reportHeuristics)
@@ -3381,10 +3371,10 @@ public class BasicAction extends StateManager
 							{
 								if (actionType == ActionType.TOP_LEVEL)
 									tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_54", new Object[]
-									{ get_uid(), TwoPhaseOutcome.stringForm(ok), RecordType.typeToClassName(recordBeingHandled.typeIs()) });
+									{ get_uid(), TwoPhaseOutcome.stringForm(ok), RecordType.typeToClass(recordBeingHandled.typeIs()) });
 								else
 									tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.BasicAction_55", new Object[]
-									{ get_uid(), TwoPhaseOutcome.stringForm(ok), RecordType.typeToClassName(recordBeingHandled.typeIs()) });
+									{ get_uid(), TwoPhaseOutcome.stringForm(ok), RecordType.typeToClass(recordBeingHandled.typeIs()) });
 							}
 						}
 					}

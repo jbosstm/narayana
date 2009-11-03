@@ -31,8 +31,6 @@ package com.hp.mwtests.ts.arjuna.objectstore;
  * $Id: MyAccess.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
-
 import java.sql.*;
 
 public class MyAccess implements com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess
@@ -57,7 +55,7 @@ public class MyAccess implements com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAcce
         return false;
     }
 
-    public void initialise(ObjectName objName)
+    public void initialise(Object[] objName)
     {
     }
 

@@ -32,11 +32,8 @@
 package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -82,64 +79,7 @@ public class HashedStore extends ShadowNoFileLockStore
 
     public int typeIs ()
     {
-	return ObjectStoreType.HASHED;
-    }
-
-    public ClassName className ()
-    {
-	return ArjunaNames.Implementation_ObjectStore_HashedStore();
-    }
-
-    public static ClassName name ()
-    {
-	return ArjunaNames.Implementation_ObjectStore_HashedStore();
-    }
-
-    /*
-     * Have to return as a ShadowingStore because of
-     * inheritence.
-     */
-
-    public static ShadowingStore create ()
-    {
-	return new HashedStore("");
-    }
-
-    public static ShadowingStore create (Object[] param)
-    {
-	if (param == null)
-	    return null;
-
-	String location = (String) param[0];
-	Integer shareStatus = (Integer) param[1];
-	int ss = ObjectStore.OS_UNSHARED;
-
-	if (shareStatus != null)
-	{
-	    try
-	    {
-		if (shareStatus.intValue() == ObjectStore.OS_SHARED)
-		    ss = ObjectStore.OS_SHARED;
-	    }
-	    catch (Exception e)
-	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_1",
-						new Object[]{e});
-		}
-	    }
-	}
-
-	return new HashedStore(location, ss);
-    }
-
-    public static ShadowingStore create (ObjectName param)
-    {
-	if (param == null)
-	    return null;
-	else
-	    return new HashedStore(param);
+        return ObjectStoreType.HASHED;
     }
 
     /**
@@ -149,206 +89,195 @@ public class HashedStore extends ShadowNoFileLockStore
 
     public boolean allObjUids (String tName, InputObjectState state, int match) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE,
-				     "HashedStore.allObjUids("+tName+", "+state+", "+match+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE,
+                                     "HashedStore.allObjUids("+tName+", "+state+", "+match+")");
+        }
 
-	/*
-	 * Directory ALWAYS has a trailing '/'
-	 */
+        /*
+         * Directory ALWAYS has a trailing '/'
+         */
 
-	String directory = locateStore(getStoreName());
-	OutputObjectState store = new OutputObjectState();
+        String directory = locateStore(getStoreName());
+        OutputObjectState store = new OutputObjectState();
 
-	/* Does typename start with a '/' if so skip over */
+        /* Does typename start with a '/' if so skip over */
 
-	if ((tName != null) && (tName.charAt(0) == File.separatorChar))
-	    directory = directory + tName.substring(1, tName.length());
-	else
-	    directory = directory + tName;
+        if ((tName != null) && (tName.charAt(0) == File.separatorChar))
+            directory = directory + tName.substring(1, tName.length());
+        else
+            directory = directory + tName;
 
-	if (!directory.endsWith(File.separator))
-	    directory = directory + File.separator;
+        if (!directory.endsWith(File.separator))
+            directory = directory + File.separator;
 
-	File f = new File(directory);
-	String[] entry = f.list();
+        File f = new File(directory);
+        String[] entry = f.list();
 
-	if ((entry != null) && (entry.length > 0))
-	{
-	    for (int i = 0; i < entry.length; i++)
-	    {
-		if ( Character.isDigit(entry[i].charAt(1)) || entry[i].startsWith(HASH_SEPARATOR) )
-		{
-		    File dir = new File(directory + entry[i]);
+        if ((entry != null) && (entry.length > 0))
+        {
+            for (int i = 0; i < entry.length; i++)
+            {
+                if ( Character.isDigit(entry[i].charAt(1)) || entry[i].startsWith(HASH_SEPARATOR) )
+                {
+                    File dir = new File(directory + entry[i]);
 
-		    if (dir.isDirectory())
-		    {
-			String[] dirEnt = dir.list();
+                    if (dir.isDirectory())
+                    {
+                        String[] dirEnt = dir.list();
 
-			for (int j = 0; j < dirEnt.length; j++)
-			{
-			    try
-			    {
-				Uid aUid = new Uid(dirEnt[j], true);
+                        for (int j = 0; j < dirEnt.length; j++)
+                        {
+                            try
+                            {
+                                Uid aUid = new Uid(dirEnt[j], true);
 
-				if (!aUid.valid() || (aUid.equals(Uid.nullUid())))
-				{
-				    String revealed = revealedId(dirEnt[j]);
+                                if (!aUid.valid() || (aUid.equals(Uid.nullUid())))
+                                {
+                                    String revealed = revealedId(dirEnt[j]);
 
-				    // don't want to give the same id twice.
+                                    // don't want to give the same id twice.
 
-				    if (present(revealed, dirEnt))
-					aUid = null;
-				    else
-					aUid = new Uid(revealed);
-				}
+                                    if (present(revealed, dirEnt))
+                                        aUid = null;
+                                    else
+                                        aUid = new Uid(revealed);
+                                }
 
-				if ((aUid.notEquals(Uid.nullUid())) && ((match == ObjectStore.OS_UNKNOWN) ||
-				    (isType(aUid, tName, match))))
-				{
-				    UidHelper.packInto(aUid, store);
-				}
-			    }
-			    catch (NumberFormatException e)
-			    {
-				/*
-				 * Not a number at start of file.
-				 */
-			    }
-			    catch (IOException e)
-			    {
-				throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_5"), e);
-			    }
-			}
-		    }
-		}
-		else
-		{
-		    // ignore
-		}
-	    }
-	}
+                                if ((aUid.notEquals(Uid.nullUid())) && ((match == ObjectStore.OS_UNKNOWN) ||
+                                    (isType(aUid, tName, match))))
+                                {
+                                    UidHelper.packInto(aUid, store);
+                                }
+                            }
+                            catch (NumberFormatException e)
+                            {
+                                /*
+                                 * Not a number at start of file.
+                                 */
+                            }
+                            catch (IOException e)
+                            {
+                                throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_5"), e);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // ignore
+                }
+            }
+        }
 
-	/* terminate list */
+        /* terminate list */
 
-	try
-	{
-	    UidHelper.packInto(Uid.nullUid(), store);
-	}
-	catch (IOException e)
-	{
-	    throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_6"), e);
-	}
+        try
+        {
+            UidHelper.packInto(Uid.nullUid(), store);
+        }
+        catch (IOException e)
+        {
+            throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_6"), e);
+        }
 
-	state.setBuffer(store.buffer());
+        state.setBuffer(store.buffer());
 
-	store = null;
+        store = null;
 
-	return true;
+        return true;
     }
 
     /*
      * Protected constructors and destructor
      */
 
-    protected HashedStore ()
+    public HashedStore ()
     {
-	this(ObjectStore.OS_UNSHARED);
+        this(ObjectStore.OS_SHARED);
     }
 
-    protected HashedStore (int shareStatus)
+    public HashedStore (int shareStatus)
     {
-	super(shareStatus);
+        super(shareStatus);
 
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE, "HashedStore.HashedStore( "+shareStatus+" )");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
+                                     FacilityCode.FAC_OBJECT_STORE, "HashedStore.HashedStore( "+shareStatus+" )");
+        }
+        
+        try
+        {
+            setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir());
+        }
+        catch (ObjectStoreException e)
+        {
+            tsLogger.arjLogger.warn(e);
+
+            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+        }
     }
 
-    protected HashedStore (String locationOfStore)
+    public HashedStore (String locationOfStore)
     {
-	this(locationOfStore, ObjectStore.OS_UNSHARED);
+        this(locationOfStore, ObjectStore.OS_SHARED);
     }
 
-    protected HashedStore (String locationOfStore, int shareStatus)
+    public HashedStore (String locationOfStore, int shareStatus)
     {
-	super(shareStatus);
+        super(shareStatus);
 
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE, "HashedStore.HashedStore("+locationOfStore+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
+                                     FacilityCode.FAC_OBJECT_STORE, "HashedStore.HashedStore("+locationOfStore+")");
+        }
 
-	try
-	{
-	    setupStore(locationOfStore);
-	}
-	catch (ObjectStoreException e)
-	{
-	    tsLogger.arjLogger.warn(e);
+        try
+        {
+            setupStore(locationOfStore);
+        }
+        catch (ObjectStoreException e)
+        {
+            tsLogger.arjLogger.warn(e);
 
-	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
-	}
-    }
-
-    protected HashedStore (ObjectName objName)
-    {
-	super(objName);
-
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE, "HashedStore.HashedStore("+objName+")");
-	}
-
-	try
-	{
-	    setupStore("");
-	}
-	catch (ObjectStoreException e)
-	{
-	    tsLogger.arjLogger.warn(e);
-
-	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
-	}
+            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString());
+        }
     }
 
     protected String truncate (String value)
     {
-	int lastIndex = value.lastIndexOf(HashedStore.HASH_SEPARATOR);
-	String toReturn = value;
+        int lastIndex = value.lastIndexOf(HashedStore.HASH_SEPARATOR);
+        String toReturn = value;
 
-	if (lastIndex != -1)
-	{
-	    int nextIndex = value.lastIndexOf(HashedStore.HASH_SEPARATOR, lastIndex - 1);
+        if (lastIndex != -1)
+        {
+            int nextIndex = value.lastIndexOf(HashedStore.HASH_SEPARATOR, lastIndex - 1);
 
-	    if (nextIndex != -1)
-	    {
-		char[] bitInbetween = new char[lastIndex - nextIndex - 1];
-		boolean isDigit = true;
+            if (nextIndex != -1)
+            {
+                char[] bitInbetween = new char[lastIndex - nextIndex - 1];
+                boolean isDigit = true;
 
-		value.getChars(nextIndex + 1, lastIndex, bitInbetween, 0);
+                value.getChars(nextIndex + 1, lastIndex, bitInbetween, 0);
 
-		for (int i = 0; (i < bitInbetween.length) && isDigit; i++)
-		{
-		    if (!Character.isDigit(bitInbetween[i]))
-		    {
-			isDigit = false;
-		    }
-		}
+                for (int i = 0; (i < bitInbetween.length) && isDigit; i++)
+                {
+                    if (!Character.isDigit(bitInbetween[i]))
+                    {
+                        isDigit = false;
+                    }
+                }
 
-		if (isDigit)
-		    toReturn = value.substring(lastIndex + 1);
-	    }
-	}
+                if (isDigit)
+                    toReturn = value.substring(lastIndex + 1);
+            }
+        }
 
-	return toReturn;
+        return toReturn;
     }
 
     /**
@@ -358,74 +287,74 @@ public class HashedStore extends ShadowNoFileLockStore
 
     protected String genPathName (Uid objUid, String tName, int otype) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE,
-				     "HashedStore.genPathName("+objUid+", "+tName+", "+ObjectStore.stateTypeString(otype)+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
+                                     FacilityCode.FAC_OBJECT_STORE,
+                                     "HashedStore.genPathName("+objUid+", "+tName+", "+ObjectStore.stateTypeString(otype)+")");
+        }
 
-	String storeName = locateStore(getStoreName());
-	String fname = null;
-	String cPtr = null;
-	int uidHash = objUid.hashCode();
-	String os = objUid.fileStringForm();
-	String hashDir = HashedStore.HASH_SEPARATOR + uidHash % HashedStore.NUMBEROFDIRECTORIES + HashedStore.HASH_SEPARATOR + File.separator;  // make sure hash value is unique in the string
+        String storeName = locateStore(getStoreName());
+        String fname = null;
+        String cPtr = null;
+        int uidHash = objUid.hashCode();
+        String os = objUid.fileStringForm();
+        String hashDir = HashedStore.HASH_SEPARATOR + uidHash % HashedStore.NUMBEROFDIRECTORIES + HashedStore.HASH_SEPARATOR + File.separator;  // make sure hash value is unique in the string
 
-	if ((tName == null) || (tName.length() == 0))
-	    cPtr = "";
-	else
-	{
-	    cPtr = tName;
+        if ((tName == null) || (tName.length() == 0))
+            cPtr = "";
+        else
+        {
+            cPtr = tName;
 
-	    /*
-	     * Convert Unix separators to 'other', i.e., Windows!
-	     */
+            /*
+             * Convert Unix separators to 'other', i.e., Windows!
+             */
 
-	    if (FileSystemStore.rewriteSeparator && (cPtr.indexOf(FileSystemStore.unixSeparator) != -1))
-	    {
-		cPtr = cPtr.replace(FileSystemStore.unixSeparator, File.separatorChar);
-	    }
-	}
+            if (FileSystemStore.rewriteSeparator && (cPtr.indexOf(FileSystemStore.unixSeparator) != -1))
+            {
+                cPtr = cPtr.replace(FileSystemStore.unixSeparator, File.separatorChar);
+            }
+        }
 
-	/*
-	 * storeName always ends in '/' so we can remove any
-	 * at the start of the type name.
-	 */
+        /*
+         * storeName always ends in '/' so we can remove any
+         * at the start of the type name.
+         */
 
-	if (cPtr.charAt(0) == File.separatorChar)
-	    cPtr = cPtr.substring(1, cPtr.length());
+        if (cPtr.charAt(0) == File.separatorChar)
+            cPtr = cPtr.substring(1, cPtr.length());
 
-	if (cPtr.charAt(cPtr.length() -1) != File.separatorChar)
-	    fname = storeName + cPtr + File.separator + hashDir + os;
-	else
-	    fname = storeName + cPtr + hashDir + os;
+        if (cPtr.charAt(cPtr.length() -1) != File.separatorChar)
+            fname = storeName + cPtr + File.separator + hashDir + os;
+        else
+            fname = storeName + cPtr + hashDir + os;
 
-	/*
-	 * Make sure we don't end in a '/'.
-	 */
+        /*
+         * Make sure we don't end in a '/'.
+         */
 
-	if (fname.charAt(fname.length() -1) == File.separatorChar)
-	    fname = fname.substring(0, fname.length() -2);
+        if (fname.charAt(fname.length() -1) == File.separatorChar)
+            fname = fname.substring(0, fname.length() -2);
 
-	// mark the shadow copy distinctly
-	if (otype == ObjectStore.OS_SHADOW)
-	    fname = fname + SHADOWCHAR;
+        // mark the shadow copy distinctly
+        if (otype == ObjectStore.OS_SHADOW)
+            fname = fname + SHADOWCHAR;
 
-	return fname;
+        return fname;
     }
 
     public static final char SHADOWCHAR = '!';
 
     private final boolean present (String id, String[] list)
     {
-	for (int i = 0; i < list.length; i++)
-	{
-	    if (list[i].equals(id))
-		return true;
-	}
+        for (int i = 0; i < list.length; i++)
+        {
+            if (list[i].equals(id))
+                return true;
+        }
 
-	return false;
+        return false;
     }
 
     public static final int DEFAULT_NUMBER_DIRECTORIES = 255;

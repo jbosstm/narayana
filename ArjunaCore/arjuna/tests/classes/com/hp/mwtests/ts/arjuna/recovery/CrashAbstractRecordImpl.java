@@ -53,14 +53,8 @@ public class CrashAbstractRecordImpl extends AbstractRecord
     }
 
     // for crash recovery
-    private CrashAbstractRecordImpl()
+    public CrashAbstractRecordImpl()
     {
-    }
-
-    // for crash recovery
-    public static AbstractRecord create()
-    {
-        return new CrashAbstractRecordImpl();
     }
 
     public int typeIs()

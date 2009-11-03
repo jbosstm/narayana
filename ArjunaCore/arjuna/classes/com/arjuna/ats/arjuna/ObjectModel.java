@@ -34,12 +34,11 @@ package com.arjuna.ats.arjuna;
 import java.io.PrintWriter;
 
 /**
- * An enumeration of the types of object model supported.
- * Based upon the model type, certain optimisations may be
- * used.
- *
+ * An enumeration of the types of object model supported. Based upon the model
+ * type, certain optimisations may be used.
+ * 
  * @author Mark Little (mark@arjuna.com)
- * @version $Id: ObjectModel.java 2342 2006-03-30 13:06:17Z  $
+ * @version $Id: ObjectModel.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
  */
 
@@ -47,34 +46,34 @@ public class ObjectModel
 {
 
     /**
-     * In the SINGLE model, it is assumed that only a single instance
-     * of the object will exist within a single JVM.
+     * In the SINGLE model, it is assumed that only a single instance of the
+     * object will exist within a single JVM.
      */
 
-public static final int SINGLE = 0;
+    public static final int SINGLE = 0;
 
     /**
-     * In the MULTIPLE model, it is assumed that multiple instances of
-     * the object may exist in different JVMs concurrently.
+     * In the MULTIPLE model, it is assumed that multiple instances of the
+     * object may exist in different JVMs concurrently.
      */
 
-public static final int MULTIPLE = 1;
+    public static final int MULTIPLE = 1;
 
     /**
      * Print out a human-readable form of the model type.
      */
 
-public static void print (PrintWriter strm, int os)
+    public static void print (PrintWriter strm, int os)
     {
-	switch (os)
-	{
-	case SINGLE:
-	    strm.print("SINGLE");
-	    break;
-	case MULTIPLE:
-	    strm.print("MULTIPLE");
-	    break;
-	}
+        switch (os)
+        {
+        case SINGLE:
+            strm.print("SINGLE");
+            break;
+        case MULTIPLE:
+            strm.print("MULTIPLE");
+            break;
+        }
     }
-    
+
 }

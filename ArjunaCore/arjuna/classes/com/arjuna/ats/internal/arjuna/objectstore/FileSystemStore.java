@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.common.*;
 
@@ -39,8 +38,6 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
 import com.arjuna.ats.arjuna.utils.FileLock;
 import com.arjuna.ats.arjuna.utils.Utility;
 
@@ -80,75 +77,41 @@ import com.arjuna.common.util.logging.*;
  * @message com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_20 [com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_20] - FileSystemStore.renameFromTo - from {0} not present. Possibly renamed by crash recovery.
  */
 
-public abstract class FileSystemStore extends ObjectStoreImple
+public abstract class FileSystemStore extends ObjectStore
 {
 
     public FileSystemStore (String locationOfStore, int ss)
     {
-	super(ss);
+        super(ss);
 
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE,
-				     "FileSystemStore.FileSystemStore("+locationOfStore+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE,
+                                     "FileSystemStore.FileSystemStore("+locationOfStore+")");
+        }
 
-	fullStoreName = null;
-	localStoreRoot = null;
-	isValid = true;
+        fullStoreName = null;
+        localStoreRoot = null;
+        isValid = true;
 
-	try
-	{
-	    setupStore(locationOfStore);
-	}
-	catch (ObjectStoreException e)
-	{
-	    isValid = false;
+        try
+        {
+            setupStore(locationOfStore);
+        }
+        catch (ObjectStoreException e)
+        {
+            isValid = false;
 
-	    tsLogger.arjLogger.warn(e);
+            tsLogger.arjLogger.warn(e);
 
-	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
-	}
-    }
-
-    /**
-     * This constructor assumes that everything for the objectstore
-     * is setup in the associated ObjectName. Sensible defaults are
-     * used otherwise.
-     */
-
-    public FileSystemStore (ObjectName objName)
-    {
-	super(objName);
-
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.FileSystemStore("+objName+")");
-	}
-
-	fullStoreName = null;
-	localStoreRoot = null;
-	isValid = true;
-
-	try
-	{
-	    setupStore("");
-	}
-	catch (ObjectStoreException e)
-	{
-	    isValid = false;
-
-	    tsLogger.arjLogger.warn(e);
-
-	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
-	}
+            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
+        }
     }
 
     public String getStoreName ()
     {
-	return localStoreRoot;
+        return localStoreRoot;
     }
 
     /*
@@ -158,87 +121,87 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     public InputObjectState read_committed (Uid storeUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.read_committed("+storeUid+", "+tName+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.read_committed("+storeUid+", "+tName+")");
+        }
 
-	return read_state(storeUid, tName, ObjectStore.OS_ORIGINAL);
+        return read_state(storeUid, tName, ObjectStore.OS_ORIGINAL);
     }
 
     public InputObjectState read_uncommitted (Uid storeUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.read_uncommitted("+storeUid+", "+tName+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.read_uncommitted("+storeUid+", "+tName+")");
+        }
 
-	return read_state(storeUid, tName, ObjectStore.OS_SHADOW);
+        return read_state(storeUid, tName, ObjectStore.OS_SHADOW);
     }
 
     public boolean remove_committed (Uid storeUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE,
-				     "FileSystemStore.remove_committed("+storeUid+", "+tName+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE,
+                                     "FileSystemStore.remove_committed("+storeUid+", "+tName+")");
+        }
 
-	return remove_state(storeUid, tName, ObjectStore.OS_ORIGINAL);
+        return remove_state(storeUid, tName, ObjectStore.OS_ORIGINAL);
     }
 
     public boolean remove_uncommitted (Uid storeUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-       	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE,
-				     "FileSystemStore.remove_uncommitted("+storeUid+", "+tName+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE,
+                                     "FileSystemStore.remove_uncommitted("+storeUid+", "+tName+")");
+        }
 
-	return remove_state(storeUid, tName, ObjectStore.OS_SHADOW);
+        return remove_state(storeUid, tName, ObjectStore.OS_SHADOW);
     }
 
     public boolean write_committed (Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE,
-				     "FileSystemStore.write_committed("+storeUid+", "+tName+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE,
+                                     "FileSystemStore.write_committed("+storeUid+", "+tName+")");
+        }
 
-	return write_state(storeUid, tName, state, ObjectStore.OS_ORIGINAL);
+        return write_state(storeUid, tName, state, ObjectStore.OS_ORIGINAL);
     }
 
     public boolean write_uncommitted (Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE,
-				     "FileSystemStore.write_uncommitted("+storeUid+", "+tName+", "+state+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE,
+                                     "FileSystemStore.write_uncommitted("+storeUid+", "+tName+", "+state+")");
+        }
 
-	return write_state(storeUid, tName, state, ObjectStore.OS_SHADOW);
+        return write_state(storeUid, tName, state, ObjectStore.OS_SHADOW);
     }
 
     public final synchronized boolean storeValid ()
     {
-	return isValid;
+        return isValid;
     }
 
     public final synchronized void makeInvalid ()
     {
-	isValid = false;
+        isValid = false;
     }
 
     public final synchronized void makeValid ()
     {
-	isValid = true;
+        isValid = true;
     }
 
     /**
@@ -248,179 +211,169 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     public boolean allObjUids (String tName, InputObjectState state, int match) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-       	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE,
-				     "FileSystemStore.allObjUids("+tName+", "+state+", "+match+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE,
+                                     "FileSystemStore.allObjUids("+tName+", "+state+", "+match+")");
+        }
 
-	String directory = null;
-	OutputObjectState store = new OutputObjectState();
+        String directory = null;
+        OutputObjectState store = new OutputObjectState();
 
-	/*
-	 * If typename starts with a '/' then skip over it.
-	 */
+        /*
+         * If typename starts with a '/' then skip over it.
+         */
 
-	if ((tName != null) && (tName.charAt(0) == File.separatorChar))
-	{
-	    String s = tName.substring(1, tName.length());
-	    directory = new String(fullStoreName + s);
-	}
-	else
-	    directory = new String(fullStoreName + tName);
+        if ((tName != null) && (tName.charAt(0) == File.separatorChar))
+        {
+            String s = tName.substring(1, tName.length());
+            directory = new String(fullStoreName + s);
+        }
+        else
+            directory = new String(fullStoreName + tName);
 
-	File f = new File(directory);
-	String[] entry = f.list();
+        File f = new File(directory);
+        String[] entry = f.list();
 
-	if ((entry != null) && (entry.length > 0))
-	{
-	    for (int i = 0; i < entry.length; i++)
-	    {
-		try
-		{
-		    Uid aUid = new Uid(entry[i], true);
+        if ((entry != null) && (entry.length > 0))
+        {
+            for (int i = 0; i < entry.length; i++)
+            {
+                try
+                {
+                    Uid aUid = new Uid(entry[i], true);
 
-		    if (!aUid.valid() || (aUid.equals(Uid.nullUid())))
-		    {
-			String revealed = revealedId(entry[i]);
+                    if (!aUid.valid() || (aUid.equals(Uid.nullUid())))
+                    {
+                        String revealed = revealedId(entry[i]);
 
-			// don't want to give the same id twice.
+                        // don't want to give the same id twice.
 
-			if (present(revealed, entry))
-			    aUid = null;
-			else
-			    aUid = new Uid(revealed);
-		    }
+                        if (present(revealed, entry))
+                            aUid = null;
+                        else
+                            aUid = new Uid(revealed);
+                    }
 
-		    if ((aUid != null) && (aUid.valid()))
-		    {
-			if ((aUid.notEquals(Uid.nullUid())) && ((match == ObjectStore.OS_UNKNOWN) ||
-								(isType(aUid, tName, match))))
-			{
-			    UidHelper.packInto(aUid, store);
-			}
-		    }
-		}
-		catch (NumberFormatException e)
-		{
-		    /*
-		     * Not a number at start of file.
-		     */
-		}
-		catch (IOException e)
-		{
-		    throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_2a"), e);
-		}
-	    }
-	}
+                    if ((aUid != null) && (aUid.valid()))
+                    {
+                        if ((aUid.notEquals(Uid.nullUid())) && ((match == ObjectStore.OS_UNKNOWN) ||
+                                                                (isType(aUid, tName, match))))
+                        {
+                            UidHelper.packInto(aUid, store);
+                        }
+                    }
+                }
+                catch (NumberFormatException e)
+                {
+                    /*
+                     * Not a number at start of file.
+                     */
+                }
+                catch (IOException e)
+                {
+                    throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_2a"), e);
+                }
+            }
+        }
 
-	try
-	{
-	    UidHelper.packInto(Uid.nullUid(), store);
-	}
-	catch (IOException e)
-	{
-	    throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_3"), e);
-	}
+        try
+        {
+            UidHelper.packInto(Uid.nullUid(), store);
+        }
+        catch (IOException e)
+        {
+            throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_3"), e);
+        }
 
-	state.setBuffer(store.buffer());
+        state.setBuffer(store.buffer());
 
-	store = null;
+        store = null;
 
-	return true;
+        return true;
     }
 
     public boolean allTypes (InputObjectState foundTypes) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.allTypes("+foundTypes+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.allTypes("+foundTypes+")");
+        }
 
-	boolean result = true;
-	String directory = new String(fullStoreName);
-	File f = new File(directory);
-	String[] entry = f.list();
+        boolean result = true;
+        String directory = new String(fullStoreName);
+        File f = new File(directory);
+        String[] entry = f.list();
 
-	if (entry == null)
-	    return true;
+        if (entry == null)
+            return true;
 
-	OutputObjectState store = new OutputObjectState();
+        OutputObjectState store = new OutputObjectState();
 
-	for (int i = 0; i < entry.length; i++)
-	{
-	    if (!supressEntry(entry[i]))
-	    {
-		File tmpFile = new File(directory+File.separator+entry[i]);
+        for (int i = 0; i < entry.length; i++)
+        {
+            if (!supressEntry(entry[i]))
+            {
+                File tmpFile = new File(directory+File.separator+entry[i]);
 
-		if (tmpFile.isDirectory())
-		{
-		    try
-		    {
-			store.packString(entry[i]);
+                if (tmpFile.isDirectory())
+                {
+                    try
+                    {
+                        store.packString(entry[i]);
 
-			result = allTypes(store, entry[i]);
-		    }
-		    catch (IOException e)
-		    {
-			throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_4"), e);
-		    }
-		}
+                        result = allTypes(store, entry[i]);
+                    }
+                    catch (IOException e)
+                    {
+                        throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_4"), e);
+                    }
+                }
 
-		tmpFile = null;
-	    }
-	}
+                tmpFile = null;
+            }
+        }
 
-	try
-	{
-	    store.packString("");
-	}
-	catch (IOException e)
-	{
-	    throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_5"), e);
-	}
+        try
+        {
+            store.packString("");
+        }
+        catch (IOException e)
+        {
+            throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_5"), e);
+        }
 
-	foundTypes.setBuffer(store.buffer());
+        foundTypes.setBuffer(store.buffer());
 
-	return result;
+        return result;
     }
 
     public synchronized void packInto (OutputBuffer buff) throws IOException
     {
-	if (localStoreRoot != null)
-	{
-	    if (localStoreRoot.compareTo("") == 0)
-	    {
-		buff.packString(null);
-		return;
-	    }
-	}
+        if (localStoreRoot != null)
+        {
+            if (localStoreRoot.compareTo("") == 0)
+            {
+                buff.packString(null);
+                return;
+            }
+        }
 
-	buff.packString(localStoreRoot);
+        buff.packString(localStoreRoot);
     }
 
     public synchronized void unpackFrom (InputBuffer buff) throws IOException
     {
-	try
-	{
-	    setupStore(buff.unpackString());
-	}
-	catch (ObjectStoreException e)
-	{
-	    throw new IOException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_6"));
-	}
-    }
-
-    public ClassName className ()
-    {
-	return ArjunaNames.Implementation_ObjectStore_FileSystemStore();
-    }
-
-    public static ClassName name ()
-    {
-	return ArjunaNames.Implementation_ObjectStore_FileSystemStore();
+        try
+        {
+            setupStore(buff.unpackString());
+        }
+        catch (ObjectStoreException e)
+        {
+            throw new IOException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_6"));
+        }
     }
 
     protected abstract InputObjectState read_state (Uid u, String tn, int s) throws ObjectStoreException;
@@ -433,12 +386,12 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     protected synchronized final void syncOn ()
     {
-	FileSystemStore.doSync = true;
+        FileSystemStore.doSync = true;
     }
 
     protected synchronized final void syncOff ()
     {
-	FileSystemStore.doSync = false;
+        FileSystemStore.doSync = false;
     }
 
     /**
@@ -447,7 +400,7 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     protected synchronized final boolean synchronousWrites ()
     {
-	return FileSystemStore.doSync && syncWrites;
+        return FileSystemStore.doSync && syncWrites;
     }
 
     /**
@@ -456,9 +409,9 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     protected synchronized boolean lock (File fd, int lmode, boolean create)
     {
-	FileLock fileLock = new FileLock(fd);
+        FileLock fileLock = new FileLock(fd);
 
-	return fileLock.lock(lmode, create);
+        return fileLock.lock(lmode, create);
     }
 
     /**
@@ -467,9 +420,9 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     protected synchronized boolean unlock (File fd)
     {
-	FileLock fileLock = new FileLock(fd);
+        FileLock fileLock = new FileLock(fd);
 
-	return fileLock.unlock();
+        return fileLock.unlock();
     }
 
     /**
@@ -626,62 +579,73 @@ public abstract class FileSystemStore extends ObjectStoreImple
         }
     }
 
-    protected FileSystemStore (int ss)
+    public FileSystemStore (int ss)
     {
-	super(ss);
+        super(ss);
 
-	fullStoreName = null;
-	localStoreRoot = null;
-	isValid = true;
+        fullStoreName = null;
+        localStoreRoot = null;
+        isValid = true;
+        
+        try
+        {
+            setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir());
+        }
+        catch (ObjectStoreException e)
+        {
+            isValid = false;
+
+            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
+        }
     }
 
     protected boolean allTypes (OutputObjectState foundTypes, String root) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE,
-				     "FileSystemStore.allTypes("+foundTypes+", "+root+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
+                                     FacilityCode.FAC_OBJECT_STORE,
+                                     "FileSystemStore.allTypes("+foundTypes+", "+root+")");
+        }
 
-	boolean result = true;
-	String directory = new String(fullStoreName + File.separator + root);
-	File f = new File(directory);
-	String[] entry = f.list();
+        boolean result = true;
+        String directory = new String(fullStoreName + File.separator + root);
+        File f = new File(directory);
+        String[] entry = f.list();
 
-	if ((entry != null) && (entry.length > 0))
-	{
-	    for (int i = 0; i < entry.length; i++)
-	    {
-		if (!supressEntry(entry[i]))
-		{
-		    try
-		    {
-			File tmpFile = new File(directory+File.separator+entry[i]);
+        if ((entry != null) && (entry.length > 0))
+        {
+            for (int i = 0; i < entry.length; i++)
+            {
+                if (!supressEntry(entry[i]))
+                {
+                    try
+                    {
+                        File tmpFile = new File(directory+File.separator+entry[i]);
 
-			if (tmpFile.isDirectory())
-			{
-			    String pack = truncate(entry[i]);
+                        if (tmpFile.isDirectory())
+                        {
+                            String pack = truncate(entry[i]);
 
                 if ( pack.length() > 0 )
                 {
-			        foundTypes.packString(root+File.separator+pack);
+                                foundTypes.packString(root+File.separator+pack);
 
-			        result = allTypes(foundTypes, root+File.separator+pack);
+                                result = allTypes(foundTypes, root+File.separator+pack);
                 }
-			}
+                        }
 
-			tmpFile = null;
-		    }
-		    catch (IOException e)
-		    {
-			throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_7"), e);
-		    }
-		}
-	    }
-	}
+                        tmpFile = null;
+                    }
+                    catch (IOException e)
+                    {
+                        throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_7"), e);
+                    }
+                }
+            }
+        }
 
-	return result;
+        return result;
     }
 
     /**
@@ -693,102 +657,102 @@ public abstract class FileSystemStore extends ObjectStoreImple
      */
 
     protected String genPathName (Uid objUid,
-				  String tName, int ostype) throws ObjectStoreException
+                                  String tName, int ostype) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE,
-				     "FileSystemStore.genPathName("+objUid+", "+tName+", "+ostype+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
+                                     FacilityCode.FAC_OBJECT_STORE,
+                                     "FileSystemStore.genPathName("+objUid+", "+tName+", "+ostype+")");
+        }
 
-	String storeName = locateStore(getStoreName());
-	String cPtr = null;
-	String fname = null;
-	String os = objUid.fileStringForm();  // convert all ':' to '_' to be portable across file systems.
+        String storeName = locateStore(getStoreName());
+        String cPtr = null;
+        String fname = null;
+        String os = objUid.fileStringForm();  // convert all ':' to '_' to be portable across file systems.
 
-	if ((tName == null) || (tName.length() == 0))
-	    cPtr = "";
-	else
-	{
-	    cPtr = tName;
+        if ((tName == null) || (tName.length() == 0))
+            cPtr = "";
+        else
+        {
+            cPtr = tName;
 
-	    /*
-	     * Convert Unix separators to 'other', i.e., Windows!
-	     */
+            /*
+             * Convert Unix separators to 'other', i.e., Windows!
+             */
 
-	    if (FileSystemStore.rewriteSeparator && (cPtr.indexOf(FileSystemStore.unixSeparator) != -1))
-	    {
-		cPtr = cPtr.replace(FileSystemStore.unixSeparator, File.separatorChar);
-	    }
-	}
+            if (FileSystemStore.rewriteSeparator && (cPtr.indexOf(FileSystemStore.unixSeparator) != -1))
+            {
+                cPtr = cPtr.replace(FileSystemStore.unixSeparator, File.separatorChar);
+            }
+        }
 
-	/*
-	 * storeName always ends in '/' so we can remove any
-	 * at the start of the type name.
-	 */
+        /*
+         * storeName always ends in '/' so we can remove any
+         * at the start of the type name.
+         */
 
-	if (cPtr.charAt(0) == File.separatorChar)
-	    cPtr = cPtr.substring(1, cPtr.length());
+        if (cPtr.charAt(0) == File.separatorChar)
+            cPtr = cPtr.substring(1, cPtr.length());
 
-	if (cPtr.charAt(cPtr.length() -1) != File.separatorChar)
-	    fname = storeName + cPtr + File.separator + os;
-	else
-	    fname = storeName + cPtr + os;
+        if (cPtr.charAt(cPtr.length() -1) != File.separatorChar)
+            fname = storeName + cPtr + File.separator + os;
+        else
+            fname = storeName + cPtr + os;
 
-	/*
-	 * Make sure we don't end in a '/'.
-	 */
+        /*
+         * Make sure we don't end in a '/'.
+         */
 
-	if (fname.charAt(fname.length() -1) == File.separatorChar)
-	    fname = fname.substring(0, fname.length() -2);
+        if (fname.charAt(fname.length() -1) == File.separatorChar)
+            fname = fname.substring(0, fname.length() -2);
 
-	return fname;
+        return fname;
     }
 
     protected synchronized boolean setupStore (String localOSRoot) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.setupStore("+localOSRoot+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
+                                     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.setupStore("+localOSRoot+")"); 
+        }
 
-	isValid = true;
+        isValid = true;
 
-	if (localOSRoot == null)
-	    localOSRoot = "";
+        if (localOSRoot == null)
+            localOSRoot = "";
 
-	localStoreRoot = localOSRoot;
-	fullStoreName = locateStore(localStoreRoot);
+        localStoreRoot = localOSRoot;
+        fullStoreName = locateStore(localStoreRoot);
 
-	/* The root of the objectstore must exist and be writable */
+        /* The root of the objectstore must exist and be writable */
 
-	if ((fullStoreName == null) || !createHierarchy(fullStoreName))
-	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-	    {
-		tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_1",
-					    new Object[]{fullStoreName});
-	    }
+        if ((fullStoreName == null) || !createHierarchy(fullStoreName))
+        {
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_1",
+                                            new Object[]{fullStoreName});
+            }
 
-	    isValid = false;
-	}
+            isValid = false;
+        }
 
-	return isValid;
+        return isValid;
     }
 
     protected boolean supressEntry (String name)
     {
-	if ((name.compareTo(".") == 0) || (name.compareTo("..") == 0))
-	    return true;
-	else
-	    return false;
+        if ((name.compareTo(".") == 0) || (name.compareTo("..") == 0))
+            return true;
+        else
+            return false;
     }
 
     protected String truncate (String value)
     {
-	return value;
+        return value;
     }
 
     /**
@@ -809,67 +773,67 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     protected synchronized final boolean createHierarchy (String path) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-       	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.createHierarchy("+path+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
+                                     FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.createHierarchy("+path+")");
+        }
 
-	if ((path != null) && (path.length() > 0))
-	{
-	    File f = null;
+        if ((path != null) && (path.length() > 0))
+        {
+            File f = null;
 
-	    /*
-	     * Is string a complete directory list, or is it an
-	     * absolute file name?
-	     */
+            /*
+             * Is string a complete directory list, or is it an
+             * absolute file name?
+             */
 
-	    if (path.charAt(path.length() -1) != File.separatorChar)
-	    {
-		int index = path.lastIndexOf(File.separator);
+            if (path.charAt(path.length() -1) != File.separatorChar)
+            {
+                int index = path.lastIndexOf(File.separator);
 
-		if (index <= 0)
-		    return true;
-		else
-		    f = new File(path.substring(0, index));
-	    }
-	    else
-		f = new File(path);
+                if (index <= 0)
+                    return true;
+                else
+                    f = new File(path.substring(0, index));
+            }
+            else
+                f = new File(path);
 
-	    int retryLimit = FileSystemStore.createRetry;
+            int retryLimit = FileSystemStore.createRetry;
 
-	    do
-	    {
-		if (f.exists())
-		{
-		    return true;
-		}
-		else
-		{
-		    if (!f.mkdirs())
-		    {
-			retryLimit--;
+            do
+            {
+                if (f.exists())
+                {
+                    return true;
+                }
+                else
+                {
+                    if (!f.mkdirs())
+                    {
+                        retryLimit--;
 
-			if (retryLimit == 0)
-			    return false;
+                        if (retryLimit == 0)
+                            return false;
 
-			try
-			{
-			    Thread.currentThread().sleep(FileSystemStore.createTimeout);
-			}
-			catch (Exception ex)
-			{
-			}
-		    }
-		    else
-			return true;
-		}
-	    } while (!f.exists() && (retryLimit > 0));
+                        try
+                        {
+                            Thread.currentThread().sleep(FileSystemStore.createTimeout);
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                    }
+                    else
+                        return true;
+                }
+            } while (!f.exists() && (retryLimit > 0));
 
-	    return f.exists();
-	}
-	else
-	    throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_8"));
+            return f.exists();
+        }
+        else
+            throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_8"));
     }
 
     /**
@@ -885,37 +849,37 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     protected final boolean exists (String path)
     {
-	if (super.shareStatus == ObjectStore.OS_UNSHARED)
-	{
-	    if (FileSystemStore.fileCache.get(path) != null)
-		return true;
-	}
+        if (super.shareStatus == ObjectStore.OS_UNSHARED)
+        {
+            if (FileSystemStore.fileCache.get(path) != null)
+                return true;
+        }
 
-	/*
-	 * If here then we need to check the file system. If there, we will
-	 * put it into the cache (if appropriate).
-	 */
+        /*
+         * If here then we need to check the file system. If there, we will
+         * put it into the cache (if appropriate).
+         */
 
-	File f = new File(path);
-	boolean doesExist = f.exists();
+        File f = new File(path);
+        boolean doesExist = f.exists();
 
-	if (doesExist)
-	    addToCache(path);
+        if (doesExist)
+            addToCache(path);
 
-	return doesExist;
+        return doesExist;
     }
 
     protected final void addToCache (String fname)
     {
-	if (super.shareStatus == ObjectStore.OS_UNSHARED)
-	{
-	    FileSystemStore.fileCache.put(fname, fname);
-	}
+        if (super.shareStatus == ObjectStore.OS_UNSHARED)
+        {
+            FileSystemStore.fileCache.put(fname, fname);
+        }
     }
 
     protected final void removeFromCache (String fname)
     {
-	removeFromCache(fname, true);
+        removeFromCache(fname, true);
     }
 
     /**
@@ -926,28 +890,28 @@ public abstract class FileSystemStore extends ObjectStoreImple
 
     protected final void removeFromCache (String fname, boolean warn)
     {
-	if (super.shareStatus == ObjectStore.OS_UNSHARED)
-	{
-	    if ((FileSystemStore.fileCache.remove(fname) == null) && warn)
-	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_2",
-						new Object[]{fname});
-		}
-	    }
-	}
+        if (super.shareStatus == ObjectStore.OS_UNSHARED)
+        {
+            if ((FileSystemStore.fileCache.remove(fname) == null) && warn)
+            {
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_2",
+                                                new Object[]{fname});
+                }
+            }
+        }
     }
 
     private final boolean present (String id, String[] list)
     {
-	for (int i = 0; i < list.length; i++)
-	{
-	    if (list[i].equals(id))
-		return true;
-	}
+        for (int i = 0; i < list.length; i++)
+        {
+            if (list[i].equals(id))
+                return true;
+        }
 
-	return false;
+        return false;
     }
 
     static final char unixSeparator = '/';

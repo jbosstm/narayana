@@ -31,13 +31,10 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
 
 import com.arjuna.common.util.logging.*;
 
@@ -47,280 +44,257 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 /**
- * The basic transaction log implementation. Uses the no file-level
- * locking implementation of the file system store since only a single user
- * (the coordinator) can ever be manipulating the action's state.
- *
+ * The basic transaction log implementation. Uses the no file-level locking
+ * implementation of the file system store since only a single user (the
+ * coordinator) can ever be manipulating the action's state.
+ * 
  * @author Mark Little (mark@arjuna.com)
- * @version $Id: ActionStore.java 2342 2006-03-30 13:06:17Z  $
+ * @version $Id: ActionStore.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
  */
 
 public class ActionStore extends ShadowNoFileLockStore
 {
 
-public int typeIs ()
+    public int typeIs ()
     {
-	return ObjectStoreType.ACTION;
+        return ObjectStoreType.ACTION;
     }
 
     /**
      * @return current state of object. Assumes that genPathName allocates
-     * enough extra space to allow extra chars to be added.
-     * Action stores only store committed objects
-     *
-     * @message com.arjuna.ats.internal.arjuna.objectstore.ActionStore_1 [com.arjuna.ats.internal.arjuna.objectstore.ActionStore_1] - ActionStore.currentState({0}, {1}) - returning {2}
+     *         enough extra space to allow extra chars to be added. Action
+     *         stores only store committed objects
+     * @message com.arjuna.ats.internal.arjuna.objectstore.ActionStore_1
+     *          [com.arjuna.ats.internal.arjuna.objectstore.ActionStore_1] -
+     *          ActionStore.currentState({0}, {1}) - returning {2}
      */
 
-public int currentState (Uid objUid, String tName) throws ObjectStoreException
+    public int currentState (Uid objUid, String tName)
+            throws ObjectStoreException
     {
-	int theState = ObjectStore.OS_UNKNOWN;
+        int theState = ObjectStore.OS_UNKNOWN;
 
-	if (storeValid())
-	{
-	    String path = genPathName(objUid, tName, ObjectStore.OS_ORIGINAL);
+        if (storeValid())
+        {
+            String path = genPathName(objUid, tName, ObjectStore.OS_ORIGINAL);
 
-	    if (exists(path))
-		theState = ObjectStore.OS_COMMITTED;
+            if (exists(path))
+                theState = ObjectStore.OS_COMMITTED;
 
-	    path = null;
-	}
+            path = null;
+        }
 
-	if (tsLogger.arjLoggerI18N.isDebugEnabled())
-	{
-	    tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					 FacilityCode.FAC_OBJECT_STORE,
-					 "com.arjuna.ats.internal.arjuna.objectstore.ActionStore_1",
-					 new Object[]{objUid, tName,ObjectStore.stateStatusString(theState)});
-	}
+        if (tsLogger.arjLoggerI18N.isDebugEnabled())
+        {
+            tsLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
+                    "com.arjuna.ats.internal.arjuna.objectstore.ActionStore_1",
+                    new Object[]
+                    { objUid, tName, ObjectStore.stateStatusString(theState) });
+        }
 
-	return theState;
+        return theState;
     }
 
     /**
-     * Commit a previous write_state operation which
-     * was made with the SHADOW StateType argument. This is achieved by
-     * renaming the shadow and removing the hidden version.
+     * Commit a previous write_state operation which was made with the SHADOW
+     * StateType argument. This is achieved by renaming the shadow and removing
+     * the hidden version.
      */
 
-    public boolean commit_state (Uid objUid,
-				 String tName) throws ObjectStoreException
+    public boolean commit_state (Uid objUid, String tName)
+            throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE,
-				     "ActionStore.commit_state("+objUid+", "+tName+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
+                    "ActionStore.commit_state(" + objUid + ", " + tName + ")");
+        }
 
-	boolean result = false;
+        boolean result = false;
 
-	/* Bail out if the object store is not set up */
+        /* Bail out if the object store is not set up */
 
-	if (!storeValid())
-	    return false;
+        if (!storeValid())
+            return false;
 
-	if (currentState(objUid, tName) == ObjectStore.OS_COMMITTED)
-	    result = true;
+        if (currentState(objUid, tName) == ObjectStore.OS_COMMITTED)
+            result = true;
 
-	return result;
+        return result;
     }
 
     public boolean hide_state (Uid u, String tn) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.hide_state("+u+", "+tn+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
+                    "ActionStore.hide_state(" + u + ", " + tn + ")");
+        }
 
-	return false;
+        return false;
     }
 
     public boolean reveal_state (Uid u, String tn) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.reveal_state("+u+", "+tn+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
+                    "ActionStore.reveal_state(" + u + ", " + tn + ")");
+        }
 
-	return false;
+        return false;
     }
 
-    public InputObjectState read_committed (Uid storeUid, String tName) throws ObjectStoreException
+    public InputObjectState read_committed (Uid storeUid, String tName)
+            throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.read_committed("+storeUid+", "+tName+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
+                    "ActionStore.read_committed(" + storeUid + ", " + tName
+                            + ")");
+        }
 
-	return super.read_committed(storeUid, tName);
+        return super.read_committed(storeUid, tName);
     }
 
-    public InputObjectState read_uncommitted (Uid u, String tn) throws ObjectStoreException
+    public InputObjectState read_uncommitted (Uid u, String tn)
+            throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.read_uncommitted("+u+", "+tn+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
+                    "ActionStore.read_uncommitted(" + u + ", " + tn + ")");
+        }
 
-	return null;
+        return null;
     }
 
-    public boolean remove_committed (Uid storeUid, String tName) throws ObjectStoreException
+    public boolean remove_committed (Uid storeUid, String tName)
+            throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.remove_committed("+storeUid+", "+tName+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
+                    "ActionStore.remove_committed(" + storeUid + ", " + tName
+                            + ")");
+        }
 
-	return super.remove_committed(storeUid, tName);
+        return super.remove_committed(storeUid, tName);
     }
 
-    public boolean remove_uncommitted (Uid u, String tn) throws ObjectStoreException
+    public boolean remove_uncommitted (Uid u, String tn)
+            throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.remove_uncommitted("+u+", "+tn+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
+                    "ActionStore.remove_uncommitted(" + u + ", " + tn + ")");
+        }
 
-	return false;
+        return false;
     }
 
-    public boolean write_committed (Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException
+    public boolean write_committed (Uid storeUid, String tName,
+            OutputObjectState state) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.write_committed("+storeUid+", "+tName+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
+                    "ActionStore.write_committed(" + storeUid + ", " + tName
+                            + ")");
+        }
 
-	return super.write_committed(storeUid, tName, state);
+        return super.write_committed(storeUid, tName, state);
     }
 
-    public boolean write_uncommitted (Uid u, String tn, OutputObjectState s) throws ObjectStoreException
+    public boolean write_uncommitted (Uid u, String tn, OutputObjectState s)
+            throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "ActionStore.write_uncommitted("+u+", "+tn+", "+s+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
+                    "ActionStore.write_uncommitted(" + u + ", " + tn + ", " + s
+                            + ")");
+        }
 
-	return false;
+        return false;
     }
 
-    public ClassName className ()
+    public ActionStore(String locationOfStore)
     {
-	return ArjunaNames.Implementation_ObjectStore_ActionStore();
+        this(locationOfStore, ObjectStore.OS_SHARED);
     }
 
-    public static ClassName name ()
+    public ActionStore(String locationOfStore, int shareStatus)
     {
-	return ArjunaNames.Implementation_ObjectStore_ActionStore();
+        super(shareStatus);
+
+        try
+        {
+            setupStore(locationOfStore);
+        }
+        catch (ObjectStoreException e)
+        {
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.arjLogger.warn(e);
+
+            super.makeInvalid();
+
+            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(),
+                    e);
+        }
     }
 
-    /**
-     * Have to return as a ShadowingStore because of
-     * inheritence.
-     */
-
-    public static ShadowingStore create ()
+    public ActionStore()
     {
-	return new ActionStore("");
+        this(ObjectStore.OS_SHARED);
     }
 
-    /**
-     * @message com.arjuna.ats.internal.arjuna.objectstore.ActionStore_2 [com.arjuna.ats.internal.arjuna.objectstore.ActionStore_2] - ActionStore.create caught: {0}
-     */
-
-    public static ShadowingStore create (Object[] param)
+    public ActionStore(int shareStatus)
     {
-	if (param == null)
-	    return null;
+        super(shareStatus);
 
-	String location = (String) param[0];
-	Integer shareStatus = (Integer) param[1];
-	int ss = ObjectStore.OS_UNSHARED;
+        try
+        {
+            setupStore(arjPropertyManager.getObjectStoreEnvironmentBean()
+                    .getObjectStoreDir());
+        }
+        catch (ObjectStoreException e)
+        {
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.arjLogger.warn(e);
 
-	if (shareStatus != null)
-	{
-	    try
-	    {
-		if (shareStatus.intValue() == ObjectStore.OS_SHARED)
-		    ss = ObjectStore.OS_SHARED;
-	    }
-	    catch (Exception e)
-	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.ActionStore_2",
-						new Object[]{e});
-		}
-	    }
-	}
+            super.makeInvalid();
 
-	return new ActionStore(location, ss);
+            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(),
+                    e);
+        }
     }
 
-    public static ShadowingStore create (ObjectName param)
-    {
-	if (param == null)
-	    return null;
-	else
-	    return new ActionStore(param);
-    }
-
-    protected ActionStore (String locationOfStore)
-    {
-	this(locationOfStore, ObjectStore.OS_UNSHARED);
-    }
-
-    protected ActionStore (String locationOfStore, int shareStatus)
-    {
-	super(shareStatus);
-
-	try
-	{
-	    setupStore(locationOfStore);
-	}
-	catch (ObjectStoreException e)
-	{
-	    if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		tsLogger.arjLogger.warn(e);
-
-	    super.makeInvalid();
-
-	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
-	}
-    }
-
-    protected ActionStore ()
-    {
-	this(ObjectStore.OS_UNSHARED);
-    }
-
-    protected ActionStore (int shareStatus)
-    {
-	super(shareStatus);
-    }
-
-    protected ActionStore (ObjectName objName)
-    {
-	super(objName);
-    }
-
-    protected synchronized boolean setupStore (String location) throws ObjectStoreException
+    protected synchronized boolean setupStore (String location)
+            throws ObjectStoreException
     {
         if (!checkSync)
         {
-            if(arjPropertyManager.getObjectStoreEnvironmentBean().isTransactionSync()) {
+            if (arjPropertyManager.getObjectStoreEnvironmentBean()
+                    .isTransactionSync())
+            {
                 syncOn();
-            } else {
+            }
+            else
+            {
                 syncOff();
             }
         }

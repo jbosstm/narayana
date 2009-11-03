@@ -24,15 +24,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Stack;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.utils.FileLock;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
 
 import com.arjuna.common.util.logging.*;
 
@@ -689,80 +686,12 @@ public class LogStore extends FileSystemStore
 		}
 	}
 
-	public ClassName className()
+	public LogStore(String locationOfStore)
 	{
-		return ArjunaNames.Implementation_ObjectStore_ActionLogStore();
+		this(locationOfStore, ObjectStore.OS_SHARED);
 	}
 
-	public static ClassName name()
-	{
-		return ArjunaNames.Implementation_ObjectStore_ActionLogStore();
-	}
-
-	/**
-	 * Have to return as a ShadowingStore because of inheritance.
-	 */
-
-	public static FileSystemStore create()
-	{
-		return new LogStore("");
-	}
-
-	/**
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.LogStore_2
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.LogStore_2] -
-	 *          LogStore.create caught: {0}
-	 * @message com.arjuna.ats.internal.arjuna.objectstore.LogStore_3
-	 *          [com.arjuna.ats.internal.arjuna.objectstore.LogStore_3] - Could
-	 *          not parse {0} as log size: using default value.
-	 */
-
-	public static FileSystemStore create(Object[] param)
-	{
-		if (param == null)
-			return null;
-
-		String location = (String) param[0];
-		Integer shareStatus = (Integer) param[1];
-		int ss = ObjectStore.OS_UNSHARED;
-
-		if (shareStatus != null)
-		{
-			try
-			{
-				if (shareStatus.intValue() == ObjectStore.OS_SHARED)
-					ss = ObjectStore.OS_SHARED;
-			}
-			catch (Exception e)
-			{
-				if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				{
-					tsLogger.arjLoggerI18N
-							.warn(
-									"com.arjuna.ats.internal.arjuna.objectstore.LogStore_2",
-									new Object[]
-									{ e });
-				}
-			}
-		}
-
-		return new LogStore(location, ss);
-	}
-
-	public static FileSystemStore create(ObjectName param)
-	{
-		if (param == null)
-			return null;
-		else
-			return new LogStore(param);
-	}
-
-	protected LogStore(String locationOfStore)
-	{
-		this(locationOfStore, ObjectStore.OS_UNSHARED);
-	}
-
-	protected LogStore(String locationOfStore, int shareStatus)
+	public LogStore(String locationOfStore, int shareStatus)
 	{
 		super(shareStatus);
 
@@ -781,19 +710,28 @@ public class LogStore extends FileSystemStore
 		}
 	}
 
-	protected LogStore()
+	public LogStore()
 	{
-		this(ObjectStore.OS_UNSHARED);
+		this(ObjectStore.OS_SHARED);
 	}
 
-	protected LogStore(int shareStatus)
+	public LogStore(int shareStatus)
 	{
 		super(shareStatus);
-	}
+		
+		try
+                {
+                        setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir());
+                }
+                catch (ObjectStoreException e)
+                {
+                        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                                tsLogger.arjLogger.warn(e);
 
-	protected LogStore(ObjectName objName)
-	{
-		super(objName);
+                        super.makeInvalid();
+
+                        throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
+                }
 	}
 
 	protected synchronized boolean setupStore(String location)
@@ -1113,6 +1051,12 @@ public class LogStore extends FileSystemStore
 		catch (IOException ex)
 		{
 			throw new ObjectStoreException(ex.toString(), ex);
+		}
+		catch (final Throwable ex)
+		{
+		    ex.printStackTrace();
+		    
+		    throw new ObjectStoreException(ex.toString(), ex);
 		}
 		finally
 		{

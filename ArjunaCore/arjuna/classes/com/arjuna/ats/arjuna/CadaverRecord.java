@@ -37,7 +37,6 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 import java.io.PrintWriter;
 
 import com.arjuna.common.util.logging.*;
@@ -125,15 +124,6 @@ public class CadaverRecord extends PersistenceRecord
     public int typeIs ()
     {
 	return RecordType.PERSISTENCE;
-    }
-
-    /**
-     * The ClassName representation of this class.
-     */
-
-    public ClassName className ()
-    {
-	return ArjunaNames.Implementation_AbstractRecord_CadaverRecord();
     }
 
     /**
@@ -346,19 +336,6 @@ public class CadaverRecord extends PersistenceRecord
     }
 
     /**
-     * Create a new instance of the CadaverRecord, using the default
-     * constructor. Have to return as a AbstractStore because of
-     * inheritence.
-     *
-     * @return a new CadaverRecord.
-     */
-
-    public static AbstractRecord create ()
-    {
-	return new CadaverRecord();
-    }
-
-    /**
      * merge takes the information from the incoming PersistenceRecord and
      * uses it to initialise the oldState information. This is required
      * for processing of action aborts since CadaverRecords maintain the
@@ -439,7 +416,7 @@ public class CadaverRecord extends PersistenceRecord
      * failure recovery.
      */
 
-    protected CadaverRecord ()
+    public CadaverRecord ()
     {
 	super();
 

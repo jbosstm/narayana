@@ -31,9 +31,9 @@
 
 package com.hp.mwtests.ts.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 import com.hp.mwtests.ts.arjuna.resources.BasicRecord;
 
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class LogStressTest2
     public void test()
     {
         arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(false);
-        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(LogStore.class.getName());
         arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
         arjPropertyManager.getObjectStoreEnvironmentBean().setTxLogSize(10000);
 

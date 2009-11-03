@@ -33,9 +33,8 @@ package com.arjuna.ats.arjuna.coordinator;
 
 import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.arjuna.coordinator.record.RecordTypeManager;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
-import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
 
 import com.arjuna.common.util.logging.*;
 
@@ -53,7 +52,7 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
  * atomic action system uses to notify objects that various state transitions
  * have occurred as the 2PC protocol executes. Record types derived from this
  * class manage certain properties of objects such as recovery information,
- * concurrency control information etc, and all must redifine the operations
+ * concurrency control information etc, and all must redefine the operations
  * defined here as abstract to take appropriate action.
  *
  * Many functions are declared pure virtual to force a definition to occur in
@@ -61,7 +60,7 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
  * action coordination as well as the following list management functions:
  * typeIs: returns the record type of the instance. This is one of the values of
  * the enumerated type Record_type value: Some arbitrary value associated with
- * the record instance merge: Used when two records need to merge togethor.
+ * the record instance merge: Used when two records need to merge together.
  * Currently this is only used by CadaverRecords to merge information from
  * PersistenceRecords shouldAdd: returns TRUE is the record should be added to
  * the list FALSE if it should be discarded shouldMerge: returns TRUE is the two
@@ -93,17 +92,6 @@ public abstract class AbstractRecord extends StateManager
 	public abstract Object value ();
 
 	public abstract void setValue (Object o);
-
-	/**
-	 * Only used for crash recovery, so most records don't need it.
-	 *
-	 * @return <code>ClassName</code> to identify this abstract record.
-	 */
-
-	public ClassName className ()
-	{
-		return new ClassName("" + typeIs());
-	}
 
 	/**
 	 * Atomic action interface - one operation per two-phase commit state.
@@ -448,36 +436,22 @@ public abstract class AbstractRecord extends StateManager
 		}
 	}
 
-	/*
-	 * This could be done through interface/implementation separation for
-	 * AbstractRecords. However, since we only need to dynamically create
-	 * records for crash recovery purposes we may not need such flexibility.
-	 */
-
-	/**
-	 * @return a newly created instance of the derived class specified by the
-	 *         ClassName, or null if there is nothing defined in the inventory.
-	 * @see com.arjuna.ats.arjuna.gandiva.ClassName
-	 */
-
-	public static AbstractRecord create (ClassName cName)
+	@SuppressWarnings("unchecked")
+        public static AbstractRecord create (int type)
 	{
-		Object ptr = Inventory.inventory().createVoid(cName);
-		AbstractRecord record = null;
-
-		if (ptr instanceof AbstractRecord)
-			record = (AbstractRecord) ptr;
-		else
-			record = null;
-
-		return record;
+	    try
+	    {
+        	    Class recordClass = RecordType.typeToClass(type);
+        
+        	    return (AbstractRecord) recordClass.newInstance();
+	    }
+	    catch (final Throwable ex)
+	    {
+	        ex.printStackTrace();
+	        
+	        return null;
+	    }
 	}
-
-	/*
-	 * We would like these to be protected, but the requirement for a
-	 * RecoveryAbstractRecord interface which is in a different package prevents
-	 * this.
-	 */
 
 	/**
 	 * Merge the current record with the one presented.
@@ -646,7 +620,7 @@ public abstract class AbstractRecord extends StateManager
 	 *          AbstractRecord::AbstractRecord () - crash recovery constructor
 	 */
 
-	protected AbstractRecord ()
+	public AbstractRecord ()
 	{
 		super(Uid.nullUid());
 

@@ -33,9 +33,6 @@ package com.arjuna.ats.internal.arjuna.objectstore.jdbc.accessors;
 
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
-
 import java.sql.*;
 
 import com.arjuna.ats.arjuna.exceptions.FatalError;
@@ -79,22 +76,27 @@ public class accessor implements JDBCAccess
 	return _dropTable;
     }
 
-    public void initialise (ObjectName objName)
+    public void initialise (Object[] objName)
     {
-	try
-	{
-	    _url = objName.getStringAttribute(ArjunaNames.Implementation_ObjectStore_JDBC_url());
-	    _tableName = objName.getStringAttribute(ArjunaNames.Implementation_ObjectStore_JDBC_tableName());
+        if (objName != null)
+        {
+        	try
+        	{
+        	    _url = (String) objName[JDBCAccess.URL];
+        	    _tableName = (String) objName[JDBCAccess.TABLE_NAME];
+        
+        	    // TODO make this a boolean now!
+        	    
+        	    long drop = (Long) objName[JDBCAccess.DROP_TABLE];
 
-	    long drop = objName.getLongAttribute(ArjunaNames.Implementation_ObjectStore_JDBC_dropTable());
-
-	    if (drop == 1)
-		_dropTable = true;
-	}
-	catch (Exception ex)
-	{
-	    throw new FatalError(toString()+" : "+ex, ex);
-	}
+        	    if (drop == 1)
+        		_dropTable = true;
+        	}
+        	catch (Exception ex)
+        	{
+        	    throw new FatalError(toString()+" : "+ex, ex);
+        	}
+        }
 
 	if (_url == null)
 	    throw new FatalError(toString()+" : invalid ObjectName parameter!");

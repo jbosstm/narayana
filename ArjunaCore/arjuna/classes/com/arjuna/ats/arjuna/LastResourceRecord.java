@@ -36,7 +36,6 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 
 import java.io.PrintWriter;
 
@@ -87,11 +86,6 @@ public class LastResourceRecord extends AbstractRecord
 	public int typeIs ()
 	{
 		return RecordType.LASTRESOURCE;
-	}
-
-	public ClassName className ()
-	{
-		return ArjunaNames.Implementation_AbstractRecord_LastResourceRecord();
 	}
 
 	public int nestedAbort ()
@@ -277,12 +271,7 @@ public class LastResourceRecord extends AbstractRecord
 	{
 	}
 
-	public static AbstractRecord create ()
-	{
-		return new LastResourceRecord();
-	}
-
-	protected LastResourceRecord ()
+	public LastResourceRecord ()
 	{
 		super();
 

@@ -33,10 +33,10 @@ package com.hp.mwtests.ts.arjuna.objectstore;
 
 import com.hp.mwtests.ts.arjuna.resources.*;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
+import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -82,7 +82,7 @@ public class LogStoreRecoveryTest2
         recoveryPropertyManager.getRecoveryEnvironmentBean().setRecoveryBackoffPeriod(1);
 
         arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(false);
-        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(LogStore.class.getName());
         arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
         arjPropertyManager.getObjectStoreEnvironmentBean().setSynchronousRemoval(false);
         // the byteman script will enforce this

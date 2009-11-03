@@ -20,14 +20,12 @@
  */
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreImple;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.common.util.logging.DebugLevel;
@@ -43,7 +41,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com), 2008-10
  */
-public class VolatileStore extends ObjectStoreImple
+public class VolatileStore extends ObjectStore
 {
     /**
      * The type of the object store. This is used to order the
@@ -111,7 +109,7 @@ public class VolatileStore extends ObjectStoreImple
 
     public String getStoreName()
     {
-        return ArjunaNames.Implementation_ObjectStore_VolatileStore().stringForm();
+        return "VolatileStore";
     }
 
     /**
@@ -277,7 +275,7 @@ public class VolatileStore extends ObjectStoreImple
     /*
         Implementation notes:
 
-          We assume Uid is globally uniq, so we don't store or key on type name at all
+          We assume Uid is globally unique, so we don't store or key on type name at all
           - it's only needed during recovery, which we obviously don't support.
 
           This implementation is intended to be memory efficient, as we also want to use it on small footprint devices.

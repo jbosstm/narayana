@@ -31,49 +31,59 @@
 
 package com.arjuna.ats.internal.txoj;
 
-import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
-import com.arjuna.ats.internal.txoj.lockstore.BasicLockStoreSetup;
-import com.arjuna.ats.internal.txoj.lockstore.BasicPersistentLockStoreSetup;
-import com.arjuna.ats.internal.txoj.semaphore.BasicSemaphoreSetup;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.record.RecordTypeManager;
+import com.arjuna.ats.arjuna.coordinator.record.RecordTypeMap;
+import com.arjuna.ats.txoj.LockRecord;
 
 /**
- * Module specific class that is responsible for adding any implementations
- * to the inventory.
- *
+ * Module specific class that is responsible for adding any implementations to
+ * the inventory.
+ * 
  * @author Mark Little (mark@arjuna.com)
- * @version $Id: Implementations.java 2342 2006-03-30 13:06:17Z  $
+ * @version $Id: Implementations.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
  */
 
-public class Implementations
+class LockRecordTypeMap implements RecordTypeMap
 {
-
-public static synchronized boolean added ()
+    @SuppressWarnings("unchecked")
+    public Class getRecordClass ()
     {
-	return _added;
+        return LockRecord.class;
     }
     
-public static synchronized void initialise ()
+    public int getType ()
     {
-	if (!_added)
-	{
-	    Inventory.inventory().addToList(new BasicLockStoreSetup());
-	    Inventory.inventory().addToList(new BasicPersistentLockStoreSetup());
-	    Inventory.inventory().addToList(new BasicSemaphoreSetup());	
+        return RecordType.LOCK;
+    }
+}
 
-	    _added = true;
-	}
+public class Implementations
+{
+    public static synchronized boolean added ()
+    {
+        return _added;
     }
 
-private Implementations ()
+    public static synchronized void initialise ()
+    {
+        if (!_added)
+        {
+            RecordTypeManager.manager().add(new LockRecordTypeMap());
+            _added = true;
+        }
+    }
+
+    private Implementations()
     {
     }
 
-private static boolean _added = false;
+    private static boolean _added = false;
 
     static
     {
-	initialise();
+        initialise();
     }
-    
+
 }

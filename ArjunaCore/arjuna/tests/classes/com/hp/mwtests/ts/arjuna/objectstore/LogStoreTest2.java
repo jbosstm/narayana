@@ -31,13 +31,13 @@
 
 package com.hp.mwtests.ts.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -47,7 +47,7 @@ public class LogStoreTest2
     @Test
     public void test()
     {
-        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(LogStore.class.getName());
         arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
 
         // the byteman script will manage this

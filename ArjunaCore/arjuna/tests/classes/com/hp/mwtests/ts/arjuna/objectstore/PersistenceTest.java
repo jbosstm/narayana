@@ -31,7 +31,6 @@
 
 package com.hp.mwtests.ts.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.state.*;
@@ -42,6 +41,8 @@ import java.io.*;
 import java.util.*;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.internal.arjuna.objectstore.CacheStore;
+import com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -60,9 +61,9 @@ public class PersistenceTest
                 ObjectStore store = null;
 
                 if (!threaded)
-                    store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_ShadowingStore());
+                    store = new ShadowingStore();
                 else
-                    store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_CacheStore());
+                    store = new CacheStore();
 
                 byte[] data = new byte[10240];
                 OutputObjectState state = new OutputObjectState();

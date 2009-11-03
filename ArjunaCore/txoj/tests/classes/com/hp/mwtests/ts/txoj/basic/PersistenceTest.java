@@ -31,30 +31,31 @@ package com.hp.mwtests.ts.txoj.basic;
  * $Id: PersistenceTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-
 public class PersistenceTest
 {
     @Test
-    public void test() throws ObjectStoreException
+    public void test () throws ObjectStoreException
     {
-	    ObjectStore store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_ShadowingStore());
-	    OutputObjectState state = new OutputObjectState();
-	    Uid u = new Uid();
+        ObjectStore store = new ShadowingStore();
+        OutputObjectState state = new OutputObjectState();
+        Uid u = new Uid();
 
-        assertTrue( store.write_committed(u, "/StateManager/LockManager/foo", state) );
+        assertTrue(store.write_committed(u, "/StateManager/LockManager/foo",
+                state));
 
-		InputObjectState inputState = store.read_committed(u, "/StateManager/LockManager/foo");
+        InputObjectState inputState = store.read_committed(u,
+                "/StateManager/LockManager/foo");
 
-         assertNotNull( inputState );
+        assertNotNull(inputState);
     }
 }

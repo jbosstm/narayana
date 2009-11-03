@@ -219,6 +219,8 @@ public class TransactionStatusConnector
 
             String server_pid = _from_server.readLine() ;
           
+            System.err.println("**comparing "+server_pid+" and "+_pid);
+            
             if ( Utility.hexStringToInt(server_pid) == Utility.hexStringToInt(_pid) )
             {
                if ( ! _testMode )

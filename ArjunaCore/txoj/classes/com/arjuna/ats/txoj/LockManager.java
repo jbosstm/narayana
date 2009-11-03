@@ -37,7 +37,6 @@ import com.arjuna.ats.txoj.common.Environment;
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.StateManager;
-import com.arjuna.ats.arjuna.gandiva.*;
 
 import com.arjuna.ats.txoj.logging.txojLogger;
 import com.arjuna.ats.txoj.logging.FacilityCode;
@@ -47,6 +46,9 @@ import com.arjuna.common.util.logging.*;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.internal.txoj.lockstore.BasicLockStore;
+import com.arjuna.ats.internal.txoj.lockstore.BasicPersistentLockStore;
+import com.arjuna.ats.internal.txoj.semaphore.BasicSemaphore;
 import com.arjuna.ats.txoj.common.txojPropertyManager;
 import java.io.PrintWriter;
 import java.util.*;
@@ -160,7 +162,6 @@ public class LockManager extends StateManager
                 doSignal = true;
         }
 
-        lmAttributes = null;
         locksHeld = null;
         lockStore = null;
         conflictManager = null;
@@ -491,7 +492,7 @@ public class LockManager extends StateManager
                             returnStatus = LockResult.REFUSED;
                         }
                     }
-    
+
                     /*
                      * Unload internal state into lock store only if lock list was
                      * modified if this fails claim the setlock failed. If we are
@@ -596,7 +597,7 @@ public class LockManager extends StateManager
      * Load state into object prior to doing the printing.
      */
 
-    public synchronized void printState (PrintWriter strm)
+    public void printState (PrintWriter strm)
     {
         synchronized (locksHeldLockObject)
         {
@@ -624,18 +625,6 @@ public class LockManager extends StateManager
         return "StateManager/LockManager";
     }
 
-    /**
-     * @return the <code>LockManagerAttribute</code> object for this instance.
-     *         Must be returned as an <code>Object</code> because it overrides
-     *         StateManager.attributes.
-     * @see LockManagerAttribute
-     */
-
-    public Object attributes ()
-    {
-        return lmAttributes;
-    }
-
     /*
      * Pass on some args to StateManager and initialise internal state. The lock
      * store and semaphore are set up lazily since they depend upon the result
@@ -645,23 +634,20 @@ public class LockManager extends StateManager
 
     protected LockManager(Uid storeUid)
     {
-        this(storeUid, ObjectType.ANDPERSISTENT, null);
-    }
-
-    protected LockManager(Uid storeUid, ObjectName attr)
-    {
-        this(storeUid, ObjectType.ANDPERSISTENT, attr);
+        this(storeUid, ObjectType.ANDPERSISTENT, ObjectModel.SINGLE);
     }
 
     protected LockManager(Uid storeUid, int ot)
     {
-        this(storeUid, ot, null);
+        this(storeUid, ot, ObjectModel.SINGLE);
     }
+    
+    // make default SINGLE
 
-    protected LockManager(Uid storeUid, int ot, ObjectName attr)
+    protected LockManager (Uid storeUid, int ot, int om)
     {
-        super(storeUid, ot, attr);
-
+        super(storeUid, ot, om);
+        
         if (txojLogger.aitLogger.isDebugEnabled())
         {
             txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS,
@@ -669,8 +655,6 @@ public class LockManager extends StateManager
                     FacilityCode.FAC_CONCURRENCY_CONTROL,
                     "LockManager::LockManager(" + storeUid + ")");
         }
-
-        parseObjectName();
 
         systemKey = null;
         locksHeld = new LockList();
@@ -681,7 +665,7 @@ public class LockManager extends StateManager
         objectLocked = false;
         conflictManager = new LockConflictManager();
     }
-
+    
     /*
      * Pass on some args to StateManager and initialise internal state. The lock
      * store and semaphore are set up lazily since they depend upon the result
@@ -691,18 +675,18 @@ public class LockManager extends StateManager
 
     protected LockManager()
     {
-        this(ObjectType.RECOVERABLE, null);
+        this(ObjectType.RECOVERABLE);
     }
 
     protected LockManager(int ot)
     {
-        this(ot, null);
+        this(ot, ObjectModel.SINGLE);
     }
 
-    protected LockManager(int ot, ObjectName attr)
+    protected LockManager (int ot, int om)
     {
-        super(ot, attr);
-
+        super(ot, om);
+        
         if (txojLogger.aitLogger.isDebugEnabled())
         {
             txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS,
@@ -710,8 +694,6 @@ public class LockManager extends StateManager
                     FacilityCode.FAC_CONCURRENCY_CONTROL,
                     "LockManager::LockManager(" + ot + ")");
         }
-
-        parseObjectName();
 
         systemKey = null;
         locksHeld = new LockList();
@@ -722,7 +704,7 @@ public class LockManager extends StateManager
         objectLocked = false;
         conflictManager = new LockConflictManager();
     }
-
+    
     /**
      * This method *must* be called in the finalizer of every object. It ensures
      * that any necessary cleanup work is done in the event that the object goes
@@ -743,7 +725,7 @@ public class LockManager extends StateManager
         super.terminate();
     }
 
-    private final synchronized void cleanUp ()
+    private final void cleanUp ()
     {
         if (txojLogger.aitLogger.isDebugEnabled())
         {
@@ -755,7 +737,7 @@ public class LockManager extends StateManager
 
         if (hasBeenLocked)
         {
-            if ((super.smAttributes.objectModel == ObjectModel.MULTIPLE)
+            if ((super.objectModel == ObjectModel.MULTIPLE)
                     && (systemKey == null))
             {
                 initialise();
@@ -987,7 +969,7 @@ public class LockManager extends StateManager
              * cached lock list. Otherwise, do nothing.
              */
 
-            if (super.smAttributes.objectModel != ObjectModel.SINGLE)
+            if (super.objectModel != ObjectModel.SINGLE)
             {
                 /* clear out the existing list */
 
@@ -1037,24 +1019,36 @@ public class LockManager extends StateManager
 
             if (mutex == null)
             {
-                mutex = new Semaphore(systemKey);
+                // TODO add a factory if we ever have more than one implementation
+                
+                mutex = new BasicSemaphore(systemKey);
             }
 
             if (mutex != null)
             {
                 if (mutex.lock() == Semaphore.SM_LOCKED)
                 {
+                    /*
+                     * At some point we may want to add a factory to hide this, but
+                     * since we only have two implementations at the moment it is perhaps
+                     * overkill.
+                     * 
+                     * TODO add factory.
+                     */
+                    
                     if (lockStore == null)
                     {
-                        Object[] param = new Object[3];
-
-                        param[0] = lmAttributes.lockStoreType;
-                        param[1] = new Integer(ObjectModel.MULTIPLE);
-                        param[2] = systemKey;
-
-                        lockStore = new LockStore(param);
-
-                        param = null;
+                        try
+                        {
+                            if (lockStoreType.equals(BasicLockStore.class.getName()))
+                                lockStore = new BasicLockStore(systemKey);
+                            else
+                                lockStore = new BasicPersistentLockStore(systemKey);
+                        }
+                        catch (final Exception ex)
+                        {
+                            lockStore = null;
+                        }
                     }
                 }
 
@@ -1106,7 +1100,7 @@ public class LockManager extends StateManager
                     "LockManager::loadState()");
         }
 
-        if (super.smAttributes.objectModel == ObjectModel.SINGLE)
+        if (super.objectModel == ObjectModel.SINGLE)
         {
             stateLoaded = true;
 
@@ -1121,7 +1115,7 @@ public class LockManager extends StateManager
                 return false; /* init failed */
             }
 
-            if ((mutex == null) || (mutex.lock() != Semaphore.SM_LOCKED))
+            if ((mutex == null) || (mutex.tryLock() == Semaphore.SM_WOULD_BLOCK))
             {
                 return false;
             }
@@ -1130,7 +1124,7 @@ public class LockManager extends StateManager
             objectLocked = true;
 
             /*
-             * An exception indicates some form of error andNOT that the state
+             * An exception indicates some form of error and NOT that the state
              * cannot be found, which is indicated by S being null.
              */
 
@@ -1289,7 +1283,7 @@ public class LockManager extends StateManager
          * Single object model means we don't need a lock store at all.
          */
 
-        if (super.smAttributes.objectModel == ObjectModel.SINGLE)
+        if (super.objectModel == ObjectModel.SINGLE)
         {
             stateLoaded = false;
 
@@ -1340,6 +1334,8 @@ public class LockManager extends StateManager
 
                     S.packInt(lockCount);
 
+                    unloadOk = true;
+                    
                     while ((current = locksHeld.pop()) != null)
                     {
                         UidHelper.packInto(current.get_uid(), S);
@@ -1361,6 +1357,8 @@ public class LockManager extends StateManager
 
                     if (unloadOk)
                     {
+                        unloadOk = false;
+                        
                         /* load image into store */
 
                         if (S.valid() && lockStore.write_committed(u, otype, S))
@@ -1407,33 +1405,9 @@ public class LockManager extends StateManager
         }
     }
 
-    private void parseObjectName ()
-    {
-        lmAttributes = new LockManagerAttribute();
+    private String lockStoreType = txojPropertyManager.getTxojEnvironmentBean().getLockStoreType();
 
-        if (super.objectName != null)
-        {
-            try
-            {
-                /*
-                 * Use same attribute name as environment.
-                 */
-
-                lmAttributes.lockStoreType = super.objectName
-                        .getClassNameAttribute(Environment.LOCKSTORE_TYPE);
-            }
-            catch (Exception e)
-            {
-                // assume not present.
-            }
-
-            // if present should now look for locations as with StateManager
-        }
-    }
-
-    protected LockManagerAttribute lmAttributes;
-
-    private String systemKey;/* used in accessing system resources */
+    private String systemKey; /* used in accessing system resources */
 
     private LockList locksHeld; /* the actual list of locks set */
 

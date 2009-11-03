@@ -32,10 +32,8 @@
 package com.arjuna.ats.internal.arjuna;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.PersistenceRecord;
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.common.Uid;
@@ -44,7 +42,6 @@ import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.exceptions.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 
 /**
  */
@@ -60,11 +57,6 @@ public class TxLogWritePersistenceRecord extends PersistenceRecord
     public int typeIs ()
     {
 	return RecordType.TXLOG_PERSISTENCE;
-    }
-    
-    public ClassName className ()
-    {
-	return ArjunaNames.Implementation_AbstractRecord_TxLogPersistenceRecord();
     }
 
     /**
@@ -228,12 +220,7 @@ public class TxLogWritePersistenceRecord extends PersistenceRecord
 	return "/StateManager/AbstractRecord/RecoveryRecord/PersistenceRecord/TxLogPersistenceRecord";
     }
 
-    public static AbstractRecord create ()
-    {
-	return new TxLogWritePersistenceRecord();
-    }
-
-    protected TxLogWritePersistenceRecord ()
+    public TxLogWritePersistenceRecord ()
     {
 	super();
     }

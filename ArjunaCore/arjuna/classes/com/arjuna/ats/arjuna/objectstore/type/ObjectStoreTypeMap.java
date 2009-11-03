@@ -26,33 +26,20 @@
  * Tyne and Wear,
  * UK.  
  *
- * $Id: StateManagerAttribute.java 2342 2006-03-30 13:06:17Z  $
+ * $Id: RecordType.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.arjuna;
-
-import com.arjuna.ats.arjuna.gandiva.ClassName;
+package com.arjuna.ats.arjuna.objectstore.type;
 
 /**
- * Instances of this class may be passed to a StateManager object at
- * construction time and used to configure it.
- *
- * @author Mark Little (mark@arjuna.com)
- * @version $Id: StateManagerAttribute.java 2342 2006-03-30 13:06:17Z  $
- * @since JTS 1.0.
+ * This allows users to define a mapping between record type integers
+ * and specific Class-es. This replaces Gandiva from previous releases.
  */
 
-public class StateManagerAttribute
-{
-
-    public StateManagerAttribute ()
-    {
-	objectModel = ObjectModel.SINGLE;
-	objectStoreType = null;
-    	objectStoreRoot = null;
-    }
-
-public int       objectModel;
-public ClassName objectStoreType;
-public String    objectStoreRoot;
+public interface ObjectStoreTypeMap
+{ 
+    @SuppressWarnings("unchecked")
+    public Class getObjectStoreClass ();
+    
+    public int getType ();
 }

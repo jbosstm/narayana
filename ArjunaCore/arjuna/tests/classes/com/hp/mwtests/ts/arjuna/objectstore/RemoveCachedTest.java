@@ -31,12 +31,12 @@
 
 package com.hp.mwtests.ts.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.internal.arjuna.objectstore.CacheStore;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -49,7 +49,7 @@ public class RemoveCachedTest
     public void test() throws IOException, ObjectStoreException
     {
         boolean passed = true;
-        ObjectStore store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_CacheStore());
+        ObjectStore store = new CacheStore();
         String type = "ArjunaMS/Destinations/a3d6227_dc656_3b77ce7e_2/Messages";
         InputObjectState buff = new InputObjectState();
 

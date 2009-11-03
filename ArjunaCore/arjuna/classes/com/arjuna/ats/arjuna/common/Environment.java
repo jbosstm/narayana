@@ -38,7 +38,6 @@ package com.arjuna.ats.arjuna.common;
  *
  * The various values are:
  * <ul>
- * <li> STATIC_INVENTORY_IMPLE = com.arjuna.ats.internal.arjuna.inventory.staticInventoryImple
  * <li> VAR_DIR = com.arjuna.ats.arjuna.common.varDir
  * <li> ACTION_STORE= com.arjuna.ats.arjuna.coordinator.actionStore
  * <li> ASYNC_COMMIT = com.arjuna.ats.arjuna.coordinator.asyncCommit
@@ -95,7 +94,6 @@ package com.arjuna.ats.arjuna.common;
 public class Environment
 {
     public static final String PROPERTIES_FILE = "com.arjuna.ats.arjuna.common.propertiesFile";
-    public static final String STATIC_INVENTORY_IMPLE = "com.arjuna.ats.internal.arjuna.inventory.staticInventoryImple";
     public static final String VAR_DIR = "com.arjuna.ats.arjuna.common.varDir";
     
     public static final String ACTION_STORE= "com.arjuna.ats.arjuna.coordinator.actionStore";

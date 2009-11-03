@@ -32,9 +32,6 @@
 package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.ArjunaNames;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 
@@ -46,171 +43,120 @@ import com.arjuna.common.util.logging.*;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 /**
- * The basic action store implementations store the object states in
- * a separate file within the same directory in the object store, determined
- * by the object's type. However, as the number of file entries within the
- * directory increases, so does the search time for finding a specific file.
- * The HashStore implementation hashes object states over many different
- * sub-directories to attempt to keep the number of files in a given
- * directory low, thus improving performance as the number of object states
- * grows.
- *
- * Currently the hash number is set for both user hashed stores and action
- * hashed stores.
- *
+ * The basic action store implementations store the object states in a separate
+ * file within the same directory in the object store, determined by the
+ * object's type. However, as the number of file entries within the directory
+ * increases, so does the search time for finding a specific file. The HashStore
+ * implementation hashes object states over many different sub-directories to
+ * attempt to keep the number of files in a given directory low, thus improving
+ * performance as the number of object states grows. Currently the hash number
+ * is set for both user hashed stores and action hashed stores.
+ * 
  * @author Mark Little (mark@arjuna.com)
- * @version $Id: HashedActionStore.java 2342 2006-03-30 13:06:17Z  $
+ * @version $Id: HashedActionStore.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 2.1.
- *
  */
 
 public class HashedActionStore extends HashedStore
 {
 
-public int typeIs ()
+    public int typeIs ()
     {
-	return ObjectStoreType.HASHED_ACTION;
-    }
-
-public ClassName className ()
-    {
-	return ArjunaNames.Implementation_ObjectStore_HashedActionStore();
-    }
-
-public static ClassName name ()
-    {
-	return ArjunaNames.Implementation_ObjectStore_HashedActionStore();
-    }
-
-    /*
-     * Have to return as a ShadowingStore because of
-     * inheritence.
-     */
-
-public static ShadowingStore create ()
-    {
-	return new HashedActionStore("");
-    }
-
-    /**
-     * @message com.arjuna.ats.internal.arjuna.objectstore.HashedActionStore_1 [com.arjuna.ats.internal.arjuna.objectstore.HashedActionStore_1] - HashedActionStore.create caught: {0}
-     */
-
-public static ShadowingStore create (Object[] param)
-    {
-	if (param == null)
-	    return null;
-
-	String location = (String) param[0];
-	Integer shareStatus = (Integer) param[1];
-	int ss = ObjectStore.OS_UNSHARED;
-
-	if (shareStatus != null)
-	{
-	    try
-	    {
-		if (shareStatus.intValue() == ObjectStore.OS_SHARED)
-		    ss = ObjectStore.OS_SHARED;
-	    }
-	    catch (Exception e)
-	    {
-		if (tsLogger.arjLoggerI18N.isWarnEnabled())
-		{
-		    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.internal.arjuna.objectstore.HashedActionStore_1",
-						new Object[]{e});
-		}
-	    }
-	}
-
-	return new HashedActionStore(location, ss);
-    }
-
-public static ShadowingStore create (ObjectName param)
-    {
-	if (param == null)
-	    return null;
-	else
-	    return new HashedActionStore(param);
+        return ObjectStoreType.HASHED_ACTION;
     }
 
     /*
      * Protected constructors and destructor
      */
 
-protected HashedActionStore ()
+    public HashedActionStore()
     {
-	this(ObjectStore.OS_UNSHARED);
+        this(ObjectStore.OS_SHARED);
     }
 
-protected HashedActionStore (int shareStatus)
+    public HashedActionStore(int shareStatus)
     {
-	super(shareStatus);
+        super(shareStatus);
 
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE,
-				     "HashedStore.HashedActionStore( "+shareStatus+" )");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PROTECTED,
+                    FacilityCode.FAC_OBJECT_STORE,
+                    "HashedStore.HashedActionStore( " + shareStatus + " )");
+        }
+        
+        try
+        {
+            setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir());
+        }
+        catch (ObjectStoreException e)
+        {
+            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(),
+                    e);
+        }
     }
 
-protected HashedActionStore (String locationOfStore)
+    public HashedActionStore(String locationOfStore)
     {
-	this(locationOfStore, ObjectStore.OS_UNSHARED);
+        this(locationOfStore, ObjectStore.OS_SHARED);
+
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
+                                     FacilityCode.FAC_OBJECT_STORE,
+                                     "HashedStore.HashedActionStore("+locationOfStore+")");
+        }
+
+        try
+        {
+            setupStore(locationOfStore);
+        }
+        catch (ObjectStoreException e)
+        {
+            tsLogger.arjLogger.warn(e);
+
+            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
+        }
     }
 
-protected HashedActionStore (String locationOfStore, int shareStatus)
+    public HashedActionStore(String locationOfStore, int shareStatus)
     {
-	super(shareStatus);
+        super(shareStatus);
 
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE,
-				     "HashedStore.HashedActionStore("+locationOfStore+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PROTECTED,
+                    FacilityCode.FAC_OBJECT_STORE,
+                    "HashedStore.HashedActionStore(" + locationOfStore + ")");
+        }
 
-	try
-	{
-	    setupStore(locationOfStore);
-	}
-	catch (ObjectStoreException e)
-	{
-	    tsLogger.arjLogger.warn(e);
+        try
+        {
+            setupStore(locationOfStore);
+        }
+        catch (ObjectStoreException e)
+        {
+            tsLogger.arjLogger.warn(e);
 
-	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
-	}
+            throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(),
+                    e);
+        }
     }
 
-protected HashedActionStore (ObjectName objName)
-    {
-	super(objName);
-
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-				     FacilityCode.FAC_OBJECT_STORE, "HashedStore.HashedActionStore( "+objName+")");
-	}
-
-	try
-	{
-	    setupStore("");
-	}
-	catch (ObjectStoreException e)
-	{
-	    tsLogger.arjLogger.warn(e);
-
-	    throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
-	}
-    }
-
-    protected synchronized boolean setupStore (String location) throws ObjectStoreException
+    protected synchronized boolean setupStore (String location)
+            throws ObjectStoreException
     {
         if (!checkSync)
         {
-            if(arjPropertyManager.getObjectStoreEnvironmentBean().isTransactionSync()) {
+            if (arjPropertyManager.getObjectStoreEnvironmentBean()
+                    .isTransactionSync())
+            {
                 syncOn();
-            } else {
+            }
+            else
+            {
                 syncOff();
             }
         }
@@ -223,4 +169,3 @@ protected HashedActionStore (ObjectName objName)
     private static boolean checkSync = false;
 
 }
-

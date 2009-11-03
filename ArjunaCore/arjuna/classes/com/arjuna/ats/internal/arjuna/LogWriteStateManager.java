@@ -39,7 +39,6 @@ import com.arjuna.ats.arjuna.ObjectModel;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.ats.arjuna.gandiva.*;
 
 import com.arjuna.common.util.logging.*;
 
@@ -71,40 +70,25 @@ public class LogWriteStateManager extends StateManager
     {
 	super(objUid);
     }
-
-    protected LogWriteStateManager (Uid objUid, ObjectName attr)
-    {
-	super(objUid, ObjectType.ANDPERSISTENT, attr);
-    }
     
     protected LogWriteStateManager (Uid objUid, int ot)
     {
-	super(objUid, ot, null);
+	super(objUid, ot, ObjectModel.SINGLE);
     }
 
-    protected LogWriteStateManager (Uid objUid, int ot, ObjectName objName)
+    protected LogWriteStateManager (Uid objUid, int ot, int om)
     {
-	super(objUid, ot, objName);
+	super(objUid, ot, om);
     }    
 
     protected LogWriteStateManager ()
     {
-	super(ObjectType.RECOVERABLE, null);
+	super(ObjectType.RECOVERABLE);
     }
     
     protected LogWriteStateManager (int ot)
     {
-	super(ot, null);
-    }
-
-    protected LogWriteStateManager (int ot, ObjectName objName)
-    {
-	super(ot, objName);
-    }
-
-    protected LogWriteStateManager (ObjectName objName)
-    {
-	super(objName);
+	super(ot);
     }
     
     protected synchronized boolean modified ()
@@ -115,7 +99,7 @@ public class LogWriteStateManager extends StateManager
 				     FacilityCode.FAC_STATE_MAN, "StateManager::modified() for object-id "+get_uid());
 	}
 
-	if ((super.ObjectType() == ObjectType.RECOVERABLE) && (smAttributes.objectModel == ObjectModel.SINGLE))
+	if ((super.ObjectType() == ObjectType.RECOVERABLE) && (super.objectModel == ObjectModel.SINGLE))
 	    return super.modified();
 	
 	BasicAction action = BasicAction.Current();

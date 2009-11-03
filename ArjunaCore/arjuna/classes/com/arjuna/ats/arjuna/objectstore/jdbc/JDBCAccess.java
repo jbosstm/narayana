@@ -31,8 +31,6 @@
 
 package com.arjuna.ats.arjuna.objectstore.jdbc;
 
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
-
 import java.sql.Connection;
 
 import java.sql.SQLException;
@@ -48,7 +46,14 @@ import java.sql.SQLException;
 
 public interface JDBCAccess
 {
-
+    /*
+     * Locations within initialize array for parameters.
+     */
+    
+    public static final int URL = 0;
+    public static final int TABLE_NAME = 1;
+    public static final int DROP_TABLE = 2;
+    
     /**
      * @return the connection to use for the object store.  If a pool of
      * connections is used, this method may be called up to maxpoolsize
@@ -83,6 +88,6 @@ public interface JDBCAccess
      * implementation.
      */
 
-    public void initialise (ObjectName objName);
+    public void initialise (Object[] objName);
 
 }

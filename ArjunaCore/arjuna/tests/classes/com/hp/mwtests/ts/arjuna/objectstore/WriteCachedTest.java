@@ -31,10 +31,10 @@
 
 package com.hp.mwtests.ts.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.*;
+import com.arjuna.ats.internal.arjuna.objectstore.CacheStore;
 
 import java.util.*;
 
@@ -77,7 +77,6 @@ class WriterThread extends Thread
     public boolean passed = false;
 
     private ObjectStore store = null;
-
 }
 
 
@@ -94,8 +93,7 @@ public class WriteCachedTest
 
         System.setProperty("com.arjuna.ats.internal.arjuna.objectstore.cacheStore.size", cacheSize);
 
-        ObjectStore store = new ObjectStore(ArjunaNames.Implementation_ObjectStore_CacheStore());
-
+        ObjectStore store = new CacheStore();
         long stime = Calendar.getInstance().getTime().getTime();
 
         for (int i = 0; (i < threads) && passed; i++) {

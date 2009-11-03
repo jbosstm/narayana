@@ -26,43 +26,20 @@
  * Tyne and Wear,
  * UK.  
  *
- * $Id: SemaphoreImple.java 2342 2006-03-30 13:06:17Z  $
+ * $Id: RecordType.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.txoj.semaphore;
-
-import com.arjuna.ats.arjuna.gandiva.ClassName;
+package com.arjuna.ats.arjuna.coordinator.record;
 
 /**
- * Implementations of semaphore classes should derive from this
- * class and provide implementations of the relevant methods.
- *
- * @author Mark Little (mark@arjuna.com)
- * @version $Id: SemaphoreImple.java 2342 2006-03-30 13:06:17Z  $
- * @since JTS 1.0.
+ * This allows users to define a mapping between record type integers
+ * and specific Class-es. This replaces Gandiva from previous releases.
  */
 
-public abstract class SemaphoreImple
-{
-
-    /*
-     * Classic semaphore operations.
-     */
-
-public abstract int lock ();
-public abstract int unlock ();
-public abstract int tryLock ();
-
-public ClassName className ()
-    {
-	return SemaphoreImple._className;
-    }
-
-public static ClassName name ()
-    {
-	return SemaphoreImple._className;
-    }
-
-private static final ClassName _className = new ClassName("SemaphoreImple");
+public interface RecordTypeMap
+{ 
+    @SuppressWarnings("unchecked")
+    public Class getRecordClass ();
     
+    public int getType ();
 }

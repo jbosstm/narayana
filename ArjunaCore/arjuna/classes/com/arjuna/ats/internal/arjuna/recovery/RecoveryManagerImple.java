@@ -41,8 +41,6 @@ import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
-import com.arjuna.ats.internal.arjuna.Implementations;
-
 /**
  * The RecoveryManagerImple - does the real work. Currently we can have only one
  * of these per node, so each instance checks it's the only one running. If it
@@ -81,9 +79,6 @@ public class RecoveryManagerImple
 
         public RecoveryManagerImple (boolean threaded)
         {
-                Implementations.initialise();
-
-
         // by default we use a socket based listener, but it can be turned off if not required.
         boolean useListener = recoveryPropertyManager.getRecoveryEnvironmentBean().isRecoveryListener();
         

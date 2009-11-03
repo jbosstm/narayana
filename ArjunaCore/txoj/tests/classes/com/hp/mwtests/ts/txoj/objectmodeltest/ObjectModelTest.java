@@ -32,7 +32,6 @@ package com.hp.mwtests.ts.txoj.objectmodeltest;
  */
 
 import com.arjuna.ats.arjuna.*;
-import com.arjuna.ats.arjuna.gandiva.*;
 
 import com.hp.mwtests.ts.txoj.common.resources.AtomicObject;
 import com.hp.mwtests.ts.txoj.common.exceptions.TestException;
@@ -47,11 +46,7 @@ public class ObjectModelTest
     @Test
     public void test() throws IOException, TestException
     {
-        long objectModel = ObjectModel.SINGLE;
-        ObjectName objName = ObjectName.uniqueObjectName("PNS");
-        objName.setLongAttribute(ArjunaNames.StateManager_objectModel(), objectModel);
-
-        AtomicObject obj = new AtomicObject(objName);
+        AtomicObject obj = new AtomicObject(ObjectModel.SINGLE);
         AtomicAction A = new AtomicAction();
 
         A.begin();

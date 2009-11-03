@@ -31,8 +31,6 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreImple;
-
 /*
  * Default visibility.
  */
@@ -48,7 +46,7 @@ class StoreList
     }
 
     public long             useCount;
-    public ObjectStoreImple instance;
+    public Object instance;
     public StoreList        next;
     
 }

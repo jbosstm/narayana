@@ -41,11 +41,8 @@ import java.io.PrintWriter;
 
 import com.arjuna.common.util.logging.*;
 
-/*
- * Default visibility.
- */
 
-class ActivationRecord extends AbstractRecord
+public class ActivationRecord extends AbstractRecord
 {
 
     /*
@@ -264,7 +261,7 @@ public int nestedPrepare ()
 	return false;
     }
     
-    protected ActivationRecord ()
+    public ActivationRecord ()
     {
 	super();
 	

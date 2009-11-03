@@ -31,8 +31,6 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -42,15 +40,11 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 
 import com.arjuna.common.util.logging.DebugLevel;
 import com.arjuna.common.util.logging.VisibilityLevel;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-
-import java.io.IOException;
 
 /**
  * The transaction log implementation.
@@ -60,7 +54,7 @@ public class JDBCActionStore extends JDBCStore
 {
     public int typeIs ()
     {
-	return ObjectStoreType.JDBC_ACTION;
+        return ObjectStoreType.JDBC_ACTION;
     }
     
     /**
@@ -70,160 +64,124 @@ public class JDBCActionStore extends JDBCStore
      */
 
     public synchronized boolean commit_state (Uid objUid,
-					      String tName) throws ObjectStoreException
+                                              String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, 
-				     "JDBCActionStore.commit_state("+objUid+", "+tName+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE, 
+                                     "JDBCActionStore.commit_state("+objUid+", "+tName+")");
+        }
 
-	boolean result = false;
+        boolean result = false;
 
-	/* Bail out if the object store is not set up */
+        /* Bail out if the object store is not set up */
 
-	if (!storeValid())
-	    return false;
+        if (!storeValid())
+            return false;
 
-	if (currentState(objUid, tName) == ObjectStore.OS_COMMITTED)
-	    result = true;
+        if (currentState(objUid, tName) == ObjectStore.OS_COMMITTED)
+            result = true;
     
-	return result;
+        return result;
     }
 
     public boolean hide_state (Uid u, String tn) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.hide_state("+u+", "+tn+")");
-	}
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.hide_state("+u+", "+tn+")");
+        }
 
-	return false;
+        return false;
     }
 
     public boolean reveal_state (Uid u, String tn) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.reveal_state("+u+", "+tn+")");
-	}
-	
-	return false;
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.reveal_state("+u+", "+tn+")");
+        }
+        
+        return false;
     }
 
     public InputObjectState read_committed (Uid storeUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.read_committed("+storeUid+", "+tName+")");
-	}
-	
-	return super.read_committed(storeUid, tName);
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.read_committed("+storeUid+", "+tName+")");
+        }
+        
+        return super.read_committed(storeUid, tName);
     }
 
     public InputObjectState read_uncommitted (Uid u, String tn) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.read_uncommitted("+u+", "+tn+")");
-	}
-	
-	return null;
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.read_uncommitted("+u+", "+tn+")");
+        }
+        
+        return null;
     }
 
     public boolean remove_committed (Uid storeUid, String tName) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.remove_committed("+storeUid+", "+tName+")");
-	}
-	
-	return super.remove_committed(storeUid, tName);
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.remove_committed("+storeUid+", "+tName+")");
+        }
+        
+        return super.remove_committed(storeUid, tName);
     }
 
     public boolean remove_uncommitted (Uid u, String tn) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.remove_uncommitted("+u+", "+tn+")");
-	}
-	
-	return false;
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.remove_uncommitted("+u+", "+tn+")");
+        }
+        
+        return false;
     }
 
     public boolean write_committed (Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.write_committed("+storeUid+", "+tName+")");
-	}
-	
-	return super.write_committed(storeUid, tName, state);
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.write_committed("+storeUid+", "+tName+")");
+        }
+        
+        return super.write_committed(storeUid, tName, state);
     }
 
     public boolean write_uncommitted (Uid u, String tn, OutputObjectState s) throws ObjectStoreException
     {
-	if (tsLogger.arjLogger.isDebugEnabled())
-	{
-	    tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.write_uncommitted("+u+", "+tn+", "+s+")");
-	}
-	
-	return false;
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                                     FacilityCode.FAC_OBJECT_STORE, "JDBCActionStore.write_uncommitted("+u+", "+tn+", "+s+")");
+        }
+        
+        return false;
     }
 
-    public ClassName className ()
+    public JDBCActionStore()
     {
-	return ArjunaNames.Implementation_ObjectStore_JDBCActionStore();
+        super() ;
     }
 
-    public static ClassName name ()
+    public JDBCActionStore(final String tableName)
     {
-	return ArjunaNames.Implementation_ObjectStore_JDBCActionStore();
-    }    
-
-    public static JDBCStore create ()
-    {
-	return new JDBCActionStore();
-    }
-
-    public static JDBCStore create (Object[] param)
-    {
-	if (param == null)
-	    return null;
-
-	return new JDBCActionStore((String) param[0]);	/* param[0] should be the table name */
-    }
-
-    public static JDBCStore create (ObjectName param)
-    {
-	if (param == null)
-	    return null;
-
-	return new JDBCActionStore(param);
-    }
-
-    private JDBCActionStore()
-    {
-	super() ;
-    }
-
-    private JDBCActionStore(final String tableName)
-    {
-	super(tableName) ;
-    }
-
-    private JDBCActionStore(final ObjectName objName)
-    {
-	super(objName) ;
+        super(tableName) ;
     }
 
     protected String getAccessClassName()
@@ -235,27 +193,17 @@ public class JDBCActionStore extends JDBCStore
 
     protected void setAccessClassName(String txClassName)
     {
-	_txClassName = txClassName;
+        _txClassName = txClassName;
     }
 
     protected String getDefaultTableName()
     {
-	return _defaultTxTableName;
-    }
-
-    protected String getAccessClassNameFromObject(ObjectName objName) throws IOException
-    {
-	return objName.getStringAttribute(com.arjuna.ats.arjuna.common.Environment.JDBC_TX_DB_ACCESS);
-    }
-
-    protected String getTableNameFromObject(ObjectName objName) throws IOException
-    {
-	return objName.getStringAttribute(ArjunaNames.Implementation_ObjectStore_JDBC_tableName());
+        return _defaultTxTableName;
     }
 
     protected JDBCAccess getJDBCAccess()
     {
-	return _txJDBCAccess;
+        return _txJDBCAccess;
     }
 
     protected void setJDBCAccess(JDBCAccess jdbcAccess)

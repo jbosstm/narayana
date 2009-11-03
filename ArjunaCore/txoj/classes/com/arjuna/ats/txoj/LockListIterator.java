@@ -34,32 +34,33 @@ package com.arjuna.ats.txoj;
 public class LockListIterator
 {
 
-public LockListIterator (LockList L)
+    public LockListIterator(LockList L)
     {
-	currentList = L;
-	next = L.head;
-    }
-    
-public final synchronized Lock iterate ()
-    {
-	Lock current = next;
-	
-	if (current == null)
-	{
-	    return null;
-	}
-	else
-	    next = current.getLink();
-
-	return current;
+        currentList = L;
+        next = currentList.head;
     }
 
-public final synchronized void reset ()
+    public final synchronized Lock iterate ()
     {
-	next = null;
+        Lock current = next;
+
+        if (current == null)
+        {
+            return null;
+        }
+        else
+            next = current.getLink();
+
+        return current;
     }
-    
-private LockList currentList;
-private Lock next;
+
+    public final synchronized void reset ()
+    {
+        next = null;
+    }
+
+    private LockList currentList;
+
+    private Lock next;
 
 }

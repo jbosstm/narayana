@@ -21,8 +21,8 @@
 package com.arjuna.ats.arjuna.common;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.internal.arjuna.objectstore.HashedStore;
+import com.arjuna.ats.internal.arjuna.objectstore.ShadowNoFileLockStore;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 
@@ -39,7 +39,7 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     private volatile String localOSRoot = "defaultStore";
     private volatile String objectStoreDir = System.getProperty("user.dir") + File.separator + "ObjectStore";
     private volatile boolean objectStoreSync = true;
-    private volatile String objectStoreType = ArjunaNames.Implementation_ObjectStore_defaultStore().stringForm();
+    private volatile String objectStoreType = ShadowNoFileLockStore.class.getName();
     private volatile int hashedDirectories = HashedStore.DEFAULT_NUMBER_DIRECTORIES;
     private volatile boolean transactionSync = true;
     
@@ -49,7 +49,7 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     private volatile int jdbcPoolSizeMaximum = 1;
     private volatile boolean jdbcPoolPutConnections = false;
 
-    private volatile int share = ObjectStore.OS_UNKNOWN;
+    private volatile int share = ObjectStore.OS_UNSHARED;
     private volatile int hierarchyRetry = 100;
     private volatile int hierarchyTimeout = 100;
 
@@ -236,7 +236,7 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     {
         this.localOSRoot = localOSRoot;
     }
-
+    
     /**
      * Returns the ObjectStore directory path.
      *
@@ -475,12 +475,12 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     }
 
     /**
-     * Returns the share mode for the ObjectStore.
+     * Returns the share mode for the ObjectStore, i.e., is this being shared
+     * between VMs?
      *
      * Default: ObjectStore.OS_UNKNOWN
      * Equivalent deprecated property: com.arjuna.ats.arjuna.objectstore.share
      *
-     * @deprecated I'm unused and should be removed.
      * @return the default share mode.
      */
     public int getShare()

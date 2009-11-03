@@ -34,7 +34,6 @@ package com.hp.mwtests.ts.arjuna.resources;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 
 import java.io.PrintWriter;
 
@@ -54,11 +53,6 @@ public class ShutdownRecord extends AbstractRecord
     public int typeIs()
     {
         return RecordType.USER_DEF_FIRST0;
-    }
-
-    public ClassName className()
-    {
-        return new ClassName("ShutdownRecord");
     }
 
     public int nestedAbort()

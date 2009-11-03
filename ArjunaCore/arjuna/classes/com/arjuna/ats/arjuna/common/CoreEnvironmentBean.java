@@ -22,11 +22,8 @@ package com.arjuna.ats.arjuna.common;
 
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
-import com.arjuna.common.internal.util.propertyservice.ConcatenationPrefix;
 import com.arjuna.ats.arjuna.utils.Utility;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.io.File;
 
 /**
@@ -39,9 +36,6 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
 {
     @FullPropertyName(name = "com.arjuna.ats.arjuna.common.propertiesFile")
     private volatile String propertiesFile = "";
-
-    @ConcatenationPrefix(prefix = "com.arjuna.ats.internal.arjuna.inventory.staticInventoryImple")
-    private volatile List<String> staticInventoryElements = new ArrayList<String>();
 
     @FullPropertyName(name = "com.arjuna.ats.arjuna.common.varDir")
     private volatile String varDir = System.getProperty("user.dir") + File.separator + "var" + File.separator + "tmp";
@@ -86,36 +80,6 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
     public void setPropertiesFile(String propertiesFile)
     {
         this.propertiesFile = propertiesFile;
-    }
-
-    /**
-     * Returns a list of names of classes that implement InventoryElement.
-     * The returned list is a copy. May return an empty list, will not return null.
-     *
-     * Default: empty list.
-     * Equivalent deprecated property prefix: com.arjuna.ats.internal.arjuna.inventory.staticInventoryImple
-     *
-     * @return a list of InventoryElement implementation class names.
-     */
-    public List<String> getStaticInventoryElements()
-    {
-        return new ArrayList<String>(staticInventoryElements);
-    }
-
-    /**
-     * Sets the inventory extensions.
-     * List elements should be names of classes that implement InventoryElement.
-     * The provided list will be copied, not retained.
-     *
-     * @param staticInventoryElements a list of InventoryElement implementation class names.
-     */
-    public void setStaticInventoryElements(List<String> staticInventoryElements)
-    {
-        if(staticInventoryElements == null) {
-            this.staticInventoryElements = new ArrayList<String>();
-        } else {
-            this.staticInventoryElements = new ArrayList<String>(staticInventoryElements);
-        }
     }
 
     /**

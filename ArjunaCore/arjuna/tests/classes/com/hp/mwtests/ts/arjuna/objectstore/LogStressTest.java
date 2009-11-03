@@ -33,13 +33,13 @@ package com.hp.mwtests.ts.arjuna.objectstore;
 
 import com.hp.mwtests.ts.arjuna.resources.*;
 
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -98,7 +98,7 @@ public class LogStressTest
         int work = 100;
 
         arjPropertyManager.getCoordinatorEnvironmentBean().setCommitOnePhase(false);
-        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(ArjunaNames.Implementation_ObjectStore_ActionLogStore().stringForm());
+        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreType(LogStore.class.getName());
         arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
         
         // the byteman script will manage this

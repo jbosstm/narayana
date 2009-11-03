@@ -44,7 +44,6 @@ import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
@@ -90,11 +89,6 @@ public class DisposeRecord extends CadaverRecord
     public int typeIs ()
     {
 	return RecordType.DISPOSE;
-    }
-
-    public ClassName className ()
-    {
-	return ArjunaNames.Implementation_AbstractRecord_CadaverRecord_DisposeRecord();
     }
     
     public int nestedAbort ()
@@ -263,6 +257,7 @@ public class DisposeRecord extends CadaverRecord
 	return res;
     }
     
+    @SuppressWarnings("unchecked")
     public boolean restore_state (InputObjectState os, int ot)
     {
 	boolean res = true;
@@ -274,9 +269,9 @@ public class DisposeRecord extends CadaverRecord
 		
 	    if (ObjectStoreType.valid(objStoreType))
 	    {
-		store = null;
+		Class osc = ObjectStoreType.typeToClass(objStoreType);
 			
-		store = new ObjectStore(ObjectStoreType.typeToClassName(objStoreType));
+		store = (ObjectStore) osc.newInstance();
 		store.unpack(os);
 			
 		objectUid = UidHelper.unpackFrom(os);
@@ -293,7 +288,7 @@ public class DisposeRecord extends CadaverRecord
 		res = false;
 	    }
 	}
-	catch (IOException e)
+	catch (final Exception e)
 	{
 	    res = false;
 	}
@@ -326,12 +321,7 @@ public class DisposeRecord extends CadaverRecord
 	return false;
     }
 
-    public static AbstractRecord create ()
-    {
-	return new DisposeRecord();
-    }
-
-    protected DisposeRecord ()
+    public DisposeRecord ()
     {
 	super();
 
@@ -343,6 +333,5 @@ public class DisposeRecord extends CadaverRecord
     private Uid         objectUid;
     private String      typeName;
     private ObjectStore store;
- 
 }
 
