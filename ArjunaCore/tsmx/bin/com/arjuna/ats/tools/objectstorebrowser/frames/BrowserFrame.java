@@ -46,7 +46,9 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
+import com.arjuna.ats.arjuna.common.arjPropertyManager;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import javax.swing.*;
@@ -117,7 +119,9 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
         {
             String rootStr = (String)provider.getRoots().firstElement();
 
-            _objectStore = new ObjectStore(new ClassName(rootStr));
+            arjPropertyManager.getObjectStoreEnvironmentBean().setLocalOSRoot(rootStr);
+            
+            _objectStore = TxControl.getStore();
 
             _treeModel = new DefaultTreeModel(createTree());
             _tree = new JTree(_treeModel);
@@ -341,7 +345,8 @@ public class BrowserFrame extends JInternalFrame implements TreeSelectionListene
 
             _stateViewer.clear();
             _stateViewer.setVisible(false);
-            _objectStore = new ObjectStore(new com.arjuna.ats.arjuna.gandiva.ClassName(objectStoreRoot));
+            arjPropertyManager.getObjectStoreEnvironmentBean().setLocalOSRoot(objectStoreRoot);
+            _objectStore = TxControl.getStore();
             _treeModel.setRoot(createTree());
 
             Thread.currentThread().setContextClassLoader(loader);

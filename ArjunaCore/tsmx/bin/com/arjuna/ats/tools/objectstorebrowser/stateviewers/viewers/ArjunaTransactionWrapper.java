@@ -25,7 +25,6 @@ import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -34,9 +33,9 @@ public class ArjunaTransactionWrapper extends BasicAction implements BasicAction
 {
     private String type;
 
-    public ArjunaTransactionWrapper(Uid objUid, ObjectName objectName, String type)
+    public ArjunaTransactionWrapper(Uid objUid, String type)
     {
-        super(objUid, ObjectType.ANDPERSISTENT, objectName);
+        super(objUid, ObjectType.ANDPERSISTENT);
         this.type = type;
     }
 

@@ -16,12 +16,11 @@
  * MA  02110-1301, USA.
  * 
  * (C) 2005-2006,
- * @author JBoss Inc.
+ * @author JBoss Inc.s
  */
 package com.arjuna.ats.tools.objectstorebrowser.entityviewer.viewers.resource;
 
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.RecoveryAbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 
 public class ResourceActionHandle extends AbstractResourceActionHandle
@@ -31,9 +30,9 @@ public class ResourceActionHandle extends AbstractResourceActionHandle
         super(action, res);
     }
 
-    public RecoveryAbstractRecord getAbstractRecord()
+    public AbstractRecord getAbstractRecord()
     {
-        return (RecoveryAbstractRecord) super.getAbstractRecord();
+        return super.getAbstractRecord();
     }
 
 }
