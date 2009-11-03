@@ -37,7 +37,6 @@ import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 
 import com.arjuna.mw.wscf.model.sagas.participants.Participant;
 import com.arjuna.mw.wscf.model.sagas.participants.ParticipantWithComplete;
@@ -106,15 +105,6 @@ public class ParticipantRecord extends
 		// TODO add to record list
 		
 		return RecordType.XTS_WSBA_RECORD;
-	}
-
-	/**
-	 * The class name for this record.
-	 */
-
-	public ClassName className ()
-	{
-		return new ClassName("WSBAParticipantRecord");
 	}
 
 	/**

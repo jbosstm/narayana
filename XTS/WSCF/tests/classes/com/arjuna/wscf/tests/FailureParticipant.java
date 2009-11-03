@@ -31,11 +31,9 @@
 
 package com.arjuna.wscf.tests;
 
-import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 
 import com.arjuna.mw.wsas.activity.Outcome;
 
@@ -45,14 +43,11 @@ import com.arjuna.mw.wscf.model.as.coordinator.Message;
 import com.arjuna.mw.wscf.model.as.coordinator.twophase.outcomes.*;
 import com.arjuna.mw.wscf.model.as.coordinator.twophase.messages.*;
 
-import com.arjuna.mw.wscf.model.twophase.common.*;
 import com.arjuna.mw.wscf.model.twophase.outcomes.*;
 
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wsas.exceptions.WrongStateException;
 import com.arjuna.mw.wsas.exceptions.ProtocolViolationException;
-
-import java.util.Hashtable;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)

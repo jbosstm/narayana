@@ -37,7 +37,6 @@ import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 
 import com.arjuna.mw.wscf.model.twophase.vote.*;
 import com.arjuna.mw.wscf.model.twophase.participants.Participant;
@@ -103,15 +102,6 @@ public class ParticipantRecord extends
 		// TODO add specific record type.
 
 		return RecordType.XTS_WSAT_RECORD;
-	}
-
-	/**
-	 * The class name for this record.
-	 */
-
-	public ClassName className ()
-	{
-		return new ClassName("WSATParticipantRecord");
 	}
 
 	/**

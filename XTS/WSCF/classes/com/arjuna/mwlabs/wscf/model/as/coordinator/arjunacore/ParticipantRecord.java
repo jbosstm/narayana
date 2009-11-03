@@ -37,7 +37,6 @@ import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 
 import com.arjuna.mw.wscf.model.as.coordinator.*;
 
@@ -148,15 +147,6 @@ public class ParticipantRecord extends
 	public int typeIs ()
 	{
 		return _priority;
-	}
-
-	/**
-	 * The class name for this record.
-	 */
-
-	public ClassName className ()
-	{
-		return new ClassName(toString());
 	}
 
 	/**

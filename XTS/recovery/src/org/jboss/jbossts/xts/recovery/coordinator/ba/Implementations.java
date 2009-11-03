@@ -21,7 +21,10 @@
 
 package org.jboss.jbossts.xts.recovery.coordinator.ba;
 
-import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.record.RecordTypeManager;
+import com.arjuna.ats.arjuna.coordinator.record.RecordTypeMap;
+import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ParticipantRecord;
 
 /**
  * Module specific class that is responsible for adding any implementations
@@ -31,24 +34,37 @@ import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
  * @version $Id: Implementations.java 2342 2006-03-30 13:06:17Z  $
  * @since JTS 1.0.
  */
+
+class ParticipantRecordMap implements RecordTypeMap
+{
+    @SuppressWarnings("unchecked")
+    public Class getRecordClass ()
+    {
+        return ParticipantRecord.class;
+    }
+    
+    public int getType ()
+    {
+        return RecordType.XTS_WSBA_RECORD;
+    }
+}
+
 public class Implementations {
 
-    static ParticipantRecordSetup _inventoryItem = null;
+    static boolean _added = false;
 
     public static synchronized void install ()
     {
-        if (_inventoryItem == null)  {
-            _inventoryItem = new ParticipantRecordSetup();
-            // WS-BA Participant records.
-            Inventory.inventory().addToList(_inventoryItem);
+        if (!_added)
+        {
+            RecordTypeManager.manager().add(new ParticipantRecordMap());
+            
+            _added = true;
         }
     }
 
     public static synchronized void uninstall()
     {
-        if (_inventoryItem != null) {
-            Inventory.inventory().removeFromList(_inventoryItem.className());
-        }
     }
 
     private Implementations()
