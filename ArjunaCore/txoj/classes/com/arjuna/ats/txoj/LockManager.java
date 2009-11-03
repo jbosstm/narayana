@@ -413,7 +413,9 @@ public class LockManager extends StateManager
         while ((conflict == ConflictType.CONFLICT)
                 && ((retry >= 0) || (retry == LockManager.waitTotalTimeout)))
         {
-            synchronized (currAct)
+            Object syncObject = ((currAct == null) ? getMutex() : currAct);
+            
+            synchronized (syncObject)
             {
                 synchronized (locksHeldLockObject)
                 {
