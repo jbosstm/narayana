@@ -22,16 +22,13 @@ package org.jboss.jbossts.qa.astests.taskdefs;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.coordinator.ActionStatus;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Collection;
 
 /**
@@ -56,9 +53,20 @@ public class TransactionLog
         System.setProperty("com.arjuna.ats.arjuna.objectstore.objectStoreDir", storeDir);
 
         if (impleType != null)
-            store = new ObjectStore(new ClassName(impleType), (String) null);
+        {
+            try
+            {
+                Class c = Class.forName(impleType);
+                
+                store = (ObjectStore) c.newInstance();
+            }
+            catch (final Throwable ex)
+            {
+                ex.printStackTrace();
+            }
+        }
         else
-            store = new ObjectStore();
+            store = TxControl.getStore();
     }
 
     /**

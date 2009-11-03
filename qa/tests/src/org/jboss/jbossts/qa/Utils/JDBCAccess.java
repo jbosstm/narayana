@@ -34,8 +34,6 @@
 
 package org.jboss.jbossts.qa.Utils;
 
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -80,7 +78,7 @@ public class JDBCAccess implements com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAc
 		return false;
 	}
 
-	public void initialise(ObjectName objName)
+	public void initialise(Object[] objName)
 	{
 	}
 }

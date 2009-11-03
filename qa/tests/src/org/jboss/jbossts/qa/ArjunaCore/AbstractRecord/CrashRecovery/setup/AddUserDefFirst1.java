@@ -20,12 +20,30 @@
  */
 package org.jboss.jbossts.qa.ArjunaCore.AbstractRecord.CrashRecovery.setup;
 
-import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
+import org.jboss.jbossts.qa.ArjunaCore.AbstractRecord.CrashRecovery.impl.CrashAbstractRecord02;
+
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.record.RecordTypeManager;
+import com.arjuna.ats.arjuna.coordinator.record.RecordTypeMap;
+
+class UserDefFirst1Map implements RecordTypeMap
+{
+    @SuppressWarnings("unchecked")
+    public Class getRecordClass ()
+    {
+        return CrashAbstractRecord02.class;
+    }
+    
+    public int getType ()
+    {
+        return RecordType.USER_DEF_FIRST1;
+    }
+}
 
 public class AddUserDefFirst1
 {
 	public AddUserDefFirst1()
 	{
-		Inventory.inventory().addToList(new UserDefFirst1Setup());
+	    RecordTypeManager.manager().add(new UserDefFirst1Map());
 	}
 }
