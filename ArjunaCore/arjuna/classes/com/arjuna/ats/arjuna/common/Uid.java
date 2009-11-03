@@ -49,11 +49,10 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * Implements a unique identity class. Since 4.9 each instance is immutable.
- *
+ * 
  * @author Mark Little (mark@arjuna.com)
- * @version $Id: Uid.java 2342 2006-03-30 13:06:17Z  $
+ * @version $Id: Uid.java 2342 2006-03-30 13:06:17Z $
  * @since 1.0.
- *
  * @message com.arjuna.ats.arjuna.common.Uid_1
  *          [com.arjuna.ats.arjuna.common.Uid_1] - cannot get local host.
  * @message com.arjuna.ats.arjuna.common.Uid_2
@@ -82,629 +81,660 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
  * @message com.arjuna.ats.arjuna.common.Uid_11
  *          [com.arjuna.ats.arjuna.common.Uid_11] - Uid.Uid recreate constructor
  *          could not recreate Uid!
+ * @message com.arjuna.ats.arjuna.common.Uid_npe
+ *          [com.arjuna.ats.arjuna.common.Uid_npe] - Uid.Uid string constructor {0} caught other throwable: {1}
  */
 
 public class Uid implements Cloneable, Serializable
 {
-	private static final long serialVersionUID = 7808395904206530189L;
+    private static final long serialVersionUID = 7808395904206530189L;
 
-	/**
-	 * Create a new instance.
-	 */
+    /**
+     * Create a new instance.
+     */
 
-	public Uid ()
-	{
-		hostAddr = null;
-		process = 0;
-		sec = 0;
-		other = 0;
-		_hashValue = -1;
-		_valid = false;
-		_stringForm = null;
+    public Uid()
+    {
+        hostAddr = null;
+        process = 0;
+        sec = 0;
+        other = 0;
+        _hashValue = -1;
+        _valid = false;
+        _stringForm = null;
 
-		try
-		{
-			hostAddr = Utility.hostInetAddr(); /* calculated only once */
-			process = Utility.getpid();
-
-			if (Uid.initTime == 0)
-				Uid.initTime = (int) (System.currentTimeMillis() / 1000);
-
-			sec = Uid.initTime;
-
-			other = Uid.getValue();
-			
-			_valid = true;
-			
-			generateHash();
-		}
-		catch (UnknownHostException e)
-		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.common.Uid_1");
-			_valid = false;
-		}
-	}
-
-	/**
-	 * Create a copy of the specified identifier.
-	 */
-
-	public Uid (Uid copyFrom)
-	{
-		copy(copyFrom);
-	}
-
-	/**
-	 * Create Uid from string representation. If the string does not represent a
-	 * valid Uid then the instance will be set to nullUid.
-	 */
-
-	public Uid (String uidString)
-	{
-		this(uidString, true);
-	}
-
-	/**
-	 * Create Uid from string representation. boolean arg says whether to give
-	 * up if an error is detected or to simply replace with nullUid.
-	 */
-
-	public Uid (String uidString, boolean errsOk)
-	{
-		char theBreakChar = Uid.getBreakChar(uidString);
-
-		hostAddr = new long[2];
-		process = 0;
-		sec = 0;
-		other = 0;
-		_hashValue = -1;
-		_valid = false;
-		_stringForm = null;
-
-		if (uidString.length() > 0)
-		{
-			int startIndex = 0;
-			int endIndex = 0;
-			String s = null;
-
-			try
-			{
-				while (uidString.charAt(endIndex) != theBreakChar)
-					endIndex++;
-
-				s = uidString.substring(startIndex, endIndex);
-				hostAddr[0] = Utility.hexStringToLong(s);
-
-				startIndex = endIndex + 1;
-				endIndex++;
-				while (uidString.charAt(endIndex) != theBreakChar)
-                                    endIndex++;
-
-				s = uidString.substring(startIndex, endIndex);
-                                hostAddr[1] = Utility.hexStringToLong(s);
-
-                                startIndex = endIndex + 1;
-                                endIndex++;
- 
-				while (uidString.charAt(endIndex) != theBreakChar)
-					endIndex++;
-
-				s = uidString.substring(startIndex, endIndex);
-				process = (int) Utility.hexStringToLong(s);
-
-				startIndex = endIndex + 1;
-				endIndex++;
-
-				while (uidString.charAt(endIndex) != theBreakChar)
-					endIndex++;
-
-				s = uidString.substring(startIndex, endIndex);
-				sec = (int) Utility.hexStringToLong(s);
-
-				s = uidString.substring(endIndex + 1, uidString.length());
-				other = (int) Utility.hexStringToLong(s);
-
-				_valid = true;
-				
-				generateHash();
-			}
-			catch (NumberFormatException e)
-			{
-				if (!errsOk)
-				{
-					if (tsLogger.arjLoggerI18N.isWarnEnabled())
-					{
-						tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.common.Uid_3", new Object[]
-						{ uidString }, e);
-					}
-				}
-
-				_valid = false;
-			}
-			catch (StringIndexOutOfBoundsException e)
-			{
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
-                {
-                    tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.common.Uid_3", new Object[]
-                            { uidString }, e);
-                }
-			    
-				_valid = false;
-			}
-		}
-		else
-		{
-			this.copy(Uid.nullUid());
-		}
-
-		if (!_valid)
-		{
-			if (errsOk)
-			{
-				try
-				{
-					this.copy(Uid.nullUid());
-				}
-				catch (Exception e)
-				{
-					if (tsLogger.arjLoggerI18N.isFatalEnabled())
-					{
-						tsLogger.arjLoggerI18N.fatal("com.arjuna.ats.arjuna.common.Uid_4", new Object[]
-						{ uidString });
-					}
-
-					throw new FatalError(
-							tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.common.Uid_2"), e);
-				}
-			}
-			else
-			{
-				if (tsLogger.arjLoggerI18N.isFatalEnabled())
-				{
-					tsLogger.arjLoggerI18N.fatal("com.arjuna.ats.arjuna.common.Uid_5", new Object[]
-					{ uidString });
-				}
-
-				throw new FatalError(
-						tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.common.Uid_3")
-								+ uidString);
-			}
-		}
-	}
-	
-	public Uid (long[] addr, int processId, int time, int incr)
+        try
         {
+            hostAddr = Utility.hostInetAddr(); /* calculated only once */
+            process = Utility.getpid();
+
+            if (Uid.initTime == 0)
+                Uid.initTime = (int) (System.currentTimeMillis() / 1000);
+
+            sec = Uid.initTime;
+
+            other = Uid.getValue();
+
+            _valid = true;
+
+            generateHash();
+        }
+        catch (UnknownHostException e)
+        {
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.arjLoggerI18N
+                        .warn("com.arjuna.ats.arjuna.common.Uid_1");
+            _valid = false;
+        }
+    }
+
+    /**
+     * Create a copy of the specified identifier.
+     */
+
+    public Uid(Uid copyFrom)
+    {
+        copy(copyFrom);
+    }
+
+    /**
+     * Create Uid from string representation. If the string does not represent a
+     * valid Uid then the instance will be set to nullUid.
+     */
+
+    public Uid(String uidString)
+    {
+        this(uidString, true);
+    }
+
+    /**
+     * Create Uid from string representation. boolean arg says whether to give
+     * up if an error is detected or to simply replace with nullUid.
+     */
+
+    public Uid(String uidString, boolean errsOk)
+    {
+        char theBreakChar = Uid.getBreakChar(uidString);
+
+        hostAddr = new long[2];
+        process = 0;
+        sec = 0;
+        other = 0;
+        _hashValue = -1;
+        _valid = false;
+        _stringForm = null;
+
+        if (uidString.length() > 0)
+        {
+            int startIndex = 0;
+            int endIndex = 0;
+            String s = null;
+
             try
             {
-                    hostAddr = new long[2];
-                    hostAddr[0] = addr[0];
-                    hostAddr[1] = addr[1];
-                    
-                    process = processId;
-                    sec = time;
-                    other = incr;
-                    
-                    _valid = true;
-                    
-                    generateHash();
+                while (uidString.charAt(endIndex) != theBreakChar)
+                    endIndex++;
+
+                s = uidString.substring(startIndex, endIndex);
+                hostAddr[0] = Utility.hexStringToLong(s);
+
+                startIndex = endIndex + 1;
+                endIndex++;
+                while (uidString.charAt(endIndex) != theBreakChar)
+                    endIndex++;
+
+                s = uidString.substring(startIndex, endIndex);
+                hostAddr[1] = Utility.hexStringToLong(s);
+
+                startIndex = endIndex + 1;
+                endIndex++;
+
+                while (uidString.charAt(endIndex) != theBreakChar)
+                    endIndex++;
+
+                s = uidString.substring(startIndex, endIndex);
+                process = (int) Utility.hexStringToLong(s);
+
+                startIndex = endIndex + 1;
+                endIndex++;
+
+                while (uidString.charAt(endIndex) != theBreakChar)
+                    endIndex++;
+
+                s = uidString.substring(startIndex, endIndex);
+                sec = (int) Utility.hexStringToLong(s);
+
+                s = uidString.substring(endIndex + 1, uidString.length());
+                other = (int) Utility.hexStringToLong(s);
+
+                _valid = true;
+
+                generateHash();
             }
-            catch (Throwable ex)
+            catch (NumberFormatException e)
             {
+                if (!errsOk)
+                {
+                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                    {
+                        tsLogger.arjLoggerI18N.warn(
+                                "com.arjuna.ats.arjuna.common.Uid_3",
+                                new Object[]
+                                { uidString }, e);
+                    }
+                }
+
                 _valid = false;
-                
-                throw new FatalError(
-                        tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.common.Uid_11")
-                                        + ex);
-            }       
+            }
+            catch (StringIndexOutOfBoundsException e)
+            {
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    tsLogger.arjLoggerI18N.warn(
+                            "com.arjuna.ats.arjuna.common.Uid_3", new Object[]
+                            { uidString }, e);
+                }
+
+                _valid = false;
+            }
+            catch (final Throwable ex)
+            {
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    tsLogger.arjLoggerI18N.warn(
+                            "com.arjuna.ats.arjuna.common.Uid_npe", new Object[]
+                            { uidString }, ex);
+                }
+            }
+        }
+        else
+        {
+            this.copy(Uid.nullUid());
         }
 
-	/**
-	 * Override Object.hashCode. We always return a positive value.
-	 */
+        if (!_valid)
+        {
+            if (errsOk)
+            {
+                try
+                {
+                    this.copy(Uid.nullUid());
+                }
+                catch (Exception e)
+                {
+                    if (tsLogger.arjLoggerI18N.isFatalEnabled())
+                    {
+                        tsLogger.arjLoggerI18N.fatal(
+                                "com.arjuna.ats.arjuna.common.Uid_4",
+                                new Object[]
+                                { uidString });
+                    }
 
-	/*
-	 * generateHash should have been called by now.
-	 */
+                    throw new FatalError(tsLogger.log_mesg
+                            .getString("com.arjuna.ats.arjuna.common.Uid_2"), e);
+                }
+            }
+            else
+            {
+                if (tsLogger.arjLoggerI18N.isFatalEnabled())
+                {
+                    tsLogger.arjLoggerI18N.fatal(
+                            "com.arjuna.ats.arjuna.common.Uid_5", new Object[]
+                            { uidString });
+                }
 
-	public int hashCode ()
-	{
-		return _hashValue;
-	}
+                throw new FatalError(tsLogger.log_mesg
+                        .getString("com.arjuna.ats.arjuna.common.Uid_3")
+                        + uidString);
+            }
+        }
+    }
 
-	/**
-	 * Print a human-readable form of the Uid.
-	 */
+    public Uid(long[] addr, int processId, int time, int incr)
+    {
+        try
+        {
+            hostAddr = new long[2];
+            hostAddr[0] = addr[0];
+            hostAddr[1] = addr[1];
 
-	public void print (PrintStream strm)
-	{
-		strm.print("<Uid:" + this.toString() + ">");
-	}
+            process = processId;
+            sec = time;
+            other = incr;
 
-	public String stringForm ()
-	{
-	    // no need to synchronize since object is immutable
-	    
-	    if (_stringForm == null)
-		_stringForm = Utility.longToHexString(hostAddr[0]) + Uid.breakChar
-		                + Utility.longToHexString(hostAddr[1]) + Uid.breakChar
-				+ Utility.intToHexString(process) + Uid.breakChar
-				+ Utility.intToHexString(sec) + Uid.breakChar
-				+ Utility.intToHexString(other);
-	    
-	    return _stringForm;
-	}
+            _valid = true;
 
-	/**
-	 * @return a string representation of the Uid with all : replaced by _ so
-	 *         that the name may be used as a file name.
-	 */
+            generateHash();
+        }
+        catch (Throwable ex)
+        {
+            _valid = false;
 
-	public String fileStringForm ()
-	{
-		return Utility.longToHexString(hostAddr[0]) + Uid.fileBreakChar
-		                + Utility.longToHexString(hostAddr[1]) + Uid.fileBreakChar
-				+ Utility.intToHexString(process) + Uid.fileBreakChar
-				+ Utility.intToHexString(sec) + Uid.fileBreakChar
-				+ Utility.intToHexString(other);
-	}
+            throw new FatalError(tsLogger.log_mesg
+                    .getString("com.arjuna.ats.arjuna.common.Uid_11")
+                    + ex);
+        }
+    }
 
-	/**
-	 * Same as stringForm()
-	 */
+    /**
+     * Override Object.hashCode. We always return a positive value.
+     */
 
-	public String toString ()
-	{
-		return stringForm();
-	}
+    /*
+     * generateHash should have been called by now.
+     */
+
+    public int hashCode ()
+    {
+        return _hashValue;
+    }
+
+    /**
+     * Print a human-readable form of the Uid.
+     */
+
+    public void print (PrintStream strm)
+    {
+        strm.print("<Uid:" + this.toString() + ">");
+    }
+
+    public String stringForm ()
+    {
+        // no need to synchronize since object is immutable
+
+        if (_stringForm == null)
+            _stringForm = Utility.longToHexString(hostAddr[0]) + Uid.breakChar
+                    + Utility.longToHexString(hostAddr[1]) + Uid.breakChar
+                    + Utility.intToHexString(process) + Uid.breakChar
+                    + Utility.intToHexString(sec) + Uid.breakChar
+                    + Utility.intToHexString(other);
+
+        return _stringForm;
+    }
+
+    /**
+     * @return a string representation of the Uid with all : replaced by _ so
+     *         that the name may be used as a file name.
+     */
+
+    public String fileStringForm ()
+    {
+        return Utility.longToHexString(hostAddr[0]) + Uid.fileBreakChar
+                + Utility.longToHexString(hostAddr[1]) + Uid.fileBreakChar
+                + Utility.intToHexString(process) + Uid.fileBreakChar
+                + Utility.intToHexString(sec) + Uid.fileBreakChar
+                + Utility.intToHexString(other);
+    }
+
+    /**
+     * Same as stringForm()
+     */
+
+    public String toString ()
+    {
+        return stringForm();
+    }
 
     // return the process id value in hex form.
-    // The internal format is Uids mostly should not be exposed, but some recovery/expiry code need this.
-    public String getHexPid() {
+    // The internal format is Uids mostly should not be exposed, but some
+    // recovery/expiry code need this.
+    public String getHexPid ()
+    {
         return Utility.intToHexString(process);
     }
 
-	/**
-	 * Create a copy of this instance.
-	 */
+    /**
+     * Create a copy of this instance.
+     */
 
-	public Object clone () throws CloneNotSupportedException
-	{
-		return new Uid(this);
-	}
+    public Object clone () throws CloneNotSupportedException
+    {
+        return new Uid(this);
+    }
 
-	/**
-	 * Copy the specified Uid over this instance.
-	 */
+    /**
+     * Copy the specified Uid over this instance.
+     */
 
-	private void copy (Uid toCopy)
-	{
-		if (toCopy == this)
-			return;
+    private void copy (Uid toCopy)
+    {
+        if (toCopy == this)
+            return;
 
-		hostAddr = toCopy.hostAddr;
-		process = toCopy.process;
-		sec = toCopy.sec;
-		other = toCopy.other;
-		_hashValue = toCopy._hashValue;
-		_valid = toCopy._valid;
-	}
+        hostAddr = toCopy.hostAddr;
+        process = toCopy.process;
+        sec = toCopy.sec;
+        other = toCopy.other;
+        _hashValue = toCopy._hashValue;
+        _valid = toCopy._valid;
+    }
 
-	/**
-	 * Uid comparisons.
-	 */
+    /**
+     * Uid comparisons.
+     */
 
-	/**
-	 * Override Object.equals
-	 */
+    /**
+     * Override Object.equals
+     */
 
-	public boolean equals (Object o)
-	{
-		if (o instanceof Uid)
-			return this.equals((Uid) o);
-		else
-			return false;
-	}
+    public boolean equals (Object o)
+    {
+        if (o instanceof Uid)
+            return this.equals((Uid) o);
+        else
+            return false;
+    }
 
-	public boolean equals (Uid u)
-	{
-		if (u == null)
-			return false;
+    public boolean equals (Uid u)
+    {
+        if (u == null)
+            return false;
 
-		if (u == this)
-			return true;
+        if (u == this)
+            return true;
 
-		return ((other == u.other) && (sec == u.sec) && (process == u.process) && (hostAddr[0] == u.hostAddr[0]) && (hostAddr[1] == u.hostAddr[1]));
-	}
+        return ((other == u.other) && (sec == u.sec) && (process == u.process)
+                && (hostAddr[0] == u.hostAddr[0]) && (hostAddr[1] == u.hostAddr[1]));
+    }
 
-	public boolean notEquals (Uid u)
-	{
-		if (u == null)
-			return true;
+    public boolean notEquals (Uid u)
+    {
+        if (u == null)
+            return true;
 
-		if (u == this)
-			return false;
+        if (u == this)
+            return false;
 
-		return ((other != u.other) || (sec != u.sec) || (process != u.process) || (hostAddr[0] != u.hostAddr[0]) || (hostAddr[1] != u.hostAddr[1]));
-	}
+        return ((other != u.other) || (sec != u.sec) || (process != u.process)
+                || (hostAddr[0] != u.hostAddr[0]) || (hostAddr[1] != u.hostAddr[1]));
+    }
 
-	public boolean lessThan (Uid u)
-	{
-		if (u == null)
-			return false;
+    public boolean lessThan (Uid u)
+    {
+        if (u == null)
+            return false;
 
-		if (u == this)
-			return false;
+        if (u == this)
+            return false;
 
-		if (this.equals(u))
-			return false ;
+        if (this.equals(u))
+            return false;
 
-		if (LAST_RESOURCE_UID.equals(this))
-			return false ;
+        if (LAST_RESOURCE_UID.equals(this))
+            return false;
 
-		if (LAST_RESOURCE_UID.equals(u))
-			return true ;
+        if (LAST_RESOURCE_UID.equals(u))
+            return true;
 
-		if ((hostAddr[0] < u.hostAddr[0]) && (hostAddr[1] < u.hostAddr[1]))
-			return true;
-		else
-		{
-		    if ((hostAddr[0] == u.hostAddr[0]) && (hostAddr[1] == u.hostAddr[1]))
-		    {
-		        if (process < u.process)
-		            return true;
-		        else
-		            if (process == u.process)
-		            {
-		                if (sec < u.sec)
-		                    return true;
-		                else
-		                    if ((sec == u.sec) && (other < u.other))
-		                        return true;
-		            }
-		    }
-		}
-		
-		return false;
-	}
+        if ((hostAddr[0] < u.hostAddr[0]) && (hostAddr[1] < u.hostAddr[1]))
+            return true;
+        else
+        {
+            if ((hostAddr[0] == u.hostAddr[0])
+                    && (hostAddr[1] == u.hostAddr[1]))
+            {
+                if (process < u.process)
+                    return true;
+                else if (process == u.process)
+                {
+                    if (sec < u.sec)
+                        return true;
+                    else if ((sec == u.sec) && (other < u.other))
+                        return true;
+                }
+            }
+        }
 
-	public boolean greaterThan (Uid u)
-	{
-		if (u == null)
-			return false;
+        return false;
+    }
 
-		if (u == this)
-			return false;
+    public boolean greaterThan (Uid u)
+    {
+        if (u == null)
+            return false;
 
-		if (this.equals(u))
-			return false ;
+        if (u == this)
+            return false;
 
-		if (LAST_RESOURCE_UID.equals(this))
-			return true ;
+        if (this.equals(u))
+            return false;
 
-		if (LAST_RESOURCE_UID.equals(u))
-			return false ;
+        if (LAST_RESOURCE_UID.equals(this))
+            return true;
 
-		if ((hostAddr[0] > u.hostAddr[0]) && (hostAddr[1] > u.hostAddr[1]))
-			return true;
-		else
-		{
-			if ((hostAddr[0] == u.hostAddr[0]) && (hostAddr[1] == u.hostAddr[0]))
-			{
-				if (process > u.process)
-					return true;
-				else
-					if (process == u.process)
-					{
-						if (sec > u.sec)
-							return true;
-						else
-							if ((sec == u.sec) && (other > u.other))
-								return true;
-					}
-			}
-		}
-		
-		return false;
-	}
+        if (LAST_RESOURCE_UID.equals(u))
+            return false;
 
-	/**
-	 * Is the Uid valid?
-	 */
+        if ((hostAddr[0] > u.hostAddr[0]) && (hostAddr[1] > u.hostAddr[1]))
+            return true;
+        else
+        {
+            if ((hostAddr[0] == u.hostAddr[0])
+                    && (hostAddr[1] == u.hostAddr[0]))
+            {
+                if (process > u.process)
+                    return true;
+                else if (process == u.process)
+                {
+                    if (sec > u.sec)
+                        return true;
+                    else if ((sec == u.sec) && (other > u.other))
+                        return true;
+                }
+            }
+        }
 
-	public final boolean valid ()
-	{
-		return _valid;
-	}
+        return false;
+    }
 
-	/**
-	 * Return a null Uid (0:0:0:0:0)
-	 */
+    /**
+     * Is the Uid valid?
+     */
 
-	public static final Uid nullUid ()
-	{
-		return NIL_UID;
-	}
+    public final boolean valid ()
+    {
+        return _valid;
+    }
 
-	/**
-	 * Return a last resource Uid (0:0:0:0:1)
-	 */
-	public static final Uid lastResourceUid ()
-	{
-		return LAST_RESOURCE_UID;
-	}
+    /**
+     * Return a null Uid (0:0:0:0:0)
+     */
 
-	/**
-	 * Return the maximum Uid (7fffffff:7fffffff:7fffffff:7fffffff:7fffffff)
-	 */
-	public static final Uid maxUid ()
-	{
-		return MAX_UID;
-	}
+    public static final Uid nullUid ()
+    {
+        return NIL_UID;
+    }
 
-	/**
-	 * Return the minimum Uid (-80000000:-80000000:-80000000:-80000000:-80000000)
-	 */
-	public static final Uid minUid ()
-	{
-		return MIN_UID;
-	}
+    /**
+     * Return a last resource Uid (0:0:0:0:1)
+     */
+    public static final Uid lastResourceUid ()
+    {
+        return LAST_RESOURCE_UID;
+    }
 
-	/*
-	 * Serialization methods. Similar to buffer packing. If the Uid is invalid
-	 * the an IOException is thrown.
-	 *
-	 * @since JTS 2.1.
-	 */
+    /**
+     * Return the maximum Uid (7fffffff:7fffffff:7fffffff:7fffffff:7fffffff)
+     */
+    public static final Uid maxUid ()
+    {
+        return MAX_UID;
+    }
 
-	private void writeObject (java.io.ObjectOutputStream out)
-			throws IOException
-	{
-		if (_valid)
-		{
-			out.writeLong(hostAddr[0]);
-			out.writeLong(hostAddr[1]);
-			out.writeInt(process);
-			out.writeInt(sec);
-			out.writeInt(other);
-		}
-		else
-			throw new IOException("Invalid Uid object.");
-	}
+    /**
+     * Return the minimum Uid
+     * (-80000000:-80000000:-80000000:-80000000:-80000000)
+     */
+    public static final Uid minUid ()
+    {
+        return MIN_UID;
+    }
 
-	/*
-	 * Serialization methods. Similar to buffer unpacking. If the
-	 * unserialization fails then an IOException is thrown.
-	 *
-	 * @since JTS 2.1.
-	 */
+    /*
+     * Serialization methods. Similar to buffer packing. If the Uid is invalid
+     * the an IOException is thrown.
+     * @since JTS 2.1.
+     */
 
-	private void readObject (java.io.ObjectInputStream in) throws IOException,
-			ClassNotFoundException
-	{
-		try
-		{
-			hostAddr[0] = in.readLong();
-			hostAddr[1] = in.readLong();
-			process = in.readInt();
-			sec = in.readInt();
-			other = in.readInt();	
-	                     
-                        _valid = true; // should not be able to pack an invalid Uid.
-                        
-			generateHash();
-		}
-		catch (IOException e)
-		{
-			_valid = false;
+    private void writeObject (java.io.ObjectOutputStream out)
+            throws IOException
+    {
+        if (_valid)
+        {
+            out.writeLong(hostAddr[0]);
+            out.writeLong(hostAddr[1]);
+            out.writeInt(process);
+            out.writeInt(sec);
+            out.writeInt(other);
+        }
+        else
+            throw new IOException("Invalid Uid object.");
+    }
 
-			throw e;
-		}
-	}
+    /*
+     * Serialization methods. Similar to buffer unpacking. If the
+     * unserialization fails then an IOException is thrown.
+     * @since JTS 2.1.
+     */
 
-    private static final int MAX_SEQ_VALUE = 0x40000000; // 2^30, which is a bit conservative.
+    private void readObject (java.io.ObjectInputStream in) throws IOException,
+            ClassNotFoundException
+    {
+        try
+        {
+            hostAddr[0] = in.readLong();
+            hostAddr[1] = in.readLong();
+            process = in.readInt();
+            sec = in.readInt();
+            other = in.readInt();
 
-	private static int getValue ()
-	{
+            _valid = true; // should not be able to pack an invalid Uid.
+
+            generateHash();
+        }
+        catch (IOException e)
+        {
+            _valid = false;
+
+            throw e;
+        }
+    }
+
+    private static final int MAX_SEQ_VALUE = 0x40000000; // 2^30, which is a bit
+                                                         // conservative.
+
+    private static int getValue ()
+    {
         int value = 0;
-        do {
+        do
+        {
             value = uidsCreated.getAndIncrement();
-            if(value == MAX_SEQ_VALUE) {
+            if (value == MAX_SEQ_VALUE)
+            {
                 uidsCreated.set(0);
                 initTime = (int) (System.currentTimeMillis() / 1000);
             }
-        } while(value >= MAX_SEQ_VALUE);
+        }
+        while (value >= MAX_SEQ_VALUE);
 
         return value;
-	}
+    }
 
-	/*
-	 * Is an idempotent operation, so can be called more than once without
-	 * adverse effect.
-	 */
+    /*
+     * Is an idempotent operation, so can be called more than once without
+     * adverse effect.
+     */
 
-	private final void generateHash ()
-	{
-		if (_valid)
-		{
-			if (true)
-				_hashValue = (int) hostAddr[0] ^ (int) hostAddr[1] ^ process ^ sec ^ other;
-			else
-			{
-				int g = 0;
-				String p = toString();
-				int len = p.length();
-				int index = 0;
+    private final void generateHash ()
+    {
+        if (_valid)
+        {
+            if (true)
+                _hashValue = (int) hostAddr[0] ^ (int) hostAddr[1] ^ process
+                        ^ sec ^ other;
+            else
+            {
+                int g = 0;
+                String p = toString();
+                int len = p.length();
+                int index = 0;
 
-				if (len > 0)
-				{
-					while (len-- > 0)
-					{
-						_hashValue = (_hashValue << 4)
-								+ (int) (p.charAt(index));
-						g = _hashValue & 0xf0000000;
+                if (len > 0)
+                {
+                    while (len-- > 0)
+                    {
+                        _hashValue = (_hashValue << 4)
+                                + (int) (p.charAt(index));
+                        g = _hashValue & 0xf0000000;
 
-						if (g > 0)
-						{
-							_hashValue = _hashValue ^ (g >> 24);
-							_hashValue = _hashValue ^ g;
-						}
+                        if (g > 0)
+                        {
+                            _hashValue = _hashValue ^ (g >> 24);
+                            _hashValue = _hashValue ^ g;
+                        }
 
-						index++;
-					}
-				}
-			}
+                        index++;
+                    }
+                }
+            }
 
-			if (_hashValue < 0)
-				_hashValue = -_hashValue;
-		}
-		else
-		{
-			if (tsLogger.arjLoggerI18N.isWarnEnabled())
-				tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.common.Uid_6");
-		}
-	}
+            if (_hashValue < 0)
+                _hashValue = -_hashValue;
+        }
+        else
+        {
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.arjLoggerI18N
+                        .warn("com.arjuna.ats.arjuna.common.Uid_6");
+        }
+    }
 
-	/*
-	 * Since we may be given a Uid from the file system (which uses '_' to
-	 * separate fields, we need to be able to convert.
-	 */
+    /*
+     * Since we may be given a Uid from the file system (which uses '_' to
+     * separate fields, we need to be able to convert.
+     */
 
-	private static final char getBreakChar (String uidString)
-	{
-		if (uidString == null)
-			return Uid.breakChar;
+    private static final char getBreakChar (String uidString)
+    {
+        if (uidString == null)
+            return Uid.breakChar;
 
-		if (uidString.indexOf(fileBreakChar) != -1)
-			return Uid.fileBreakChar;
-		else
-			return Uid.breakChar;
-	}
+        if (uidString.indexOf(fileBreakChar) != -1)
+            return Uid.fileBreakChar;
+        else
+            return Uid.breakChar;
+    }
 
-	protected volatile long[] hostAddr;  // representation of ipv6 address (and ipv4)
-	protected volatile int process;
-	protected volatile int sec;
-	protected volatile int other;
+    protected volatile long[] hostAddr; // representation of ipv6 address (and
+                                        // ipv4)
 
-	private volatile int _hashValue;
+    protected volatile int process;
 
-	private volatile boolean _valid;
-	
-	private volatile String _stringForm;
+    protected volatile int sec;
 
-	private static final AtomicInteger uidsCreated = new AtomicInteger();
+    protected volatile int other;
 
-	private static volatile int initTime ;
+    private volatile int _hashValue;
 
-	private static final char breakChar = ':';
+    private volatile boolean _valid;
 
-	private static final char fileBreakChar = '_';
+    private volatile String _stringForm;
 
-	private static final Uid NIL_UID = new Uid("0:0:0:0:0") ;
+    private static final AtomicInteger uidsCreated = new AtomicInteger();
 
-	private static final Uid LAST_RESOURCE_UID = new Uid("0:0:0:0:1") ;
+    private static volatile int initTime;
 
-	private static final Uid MAX_UID = new Uid("7fffffff:7fffffff:7fffffff:7fffffff:7fffffff") ;
+    private static final char breakChar = ':';
 
-	private static final Uid MIN_UID = new Uid("-80000000:-80000000:-80000000:-80000000:-80000000") ;
+    private static final char fileBreakChar = '_';
+
+    private static final Uid NIL_UID = new Uid("0:0:0:0:0");
+
+    private static final Uid LAST_RESOURCE_UID = new Uid("0:0:0:0:1");
+
+    private static final Uid MAX_UID = new Uid(
+            "7fffffff:7fffffff:7fffffff:7fffffff:7fffffff");
+
+    private static final Uid MIN_UID = new Uid(
+            "-80000000:-80000000:-80000000:-80000000:-80000000");
 }
