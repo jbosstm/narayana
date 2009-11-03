@@ -251,8 +251,7 @@ public class XATerminatorImple implements javax.resource.spi.XATerminator, XATer
 
         try
         {
-            ObjectStore objStore = new ObjectStore(TxControl
-                    .getActionStoreType());
+            ObjectStore objStore = TxControl.getStore();
             InputObjectState states = new InputObjectState();
 
             // only look in the JCA section of the object store

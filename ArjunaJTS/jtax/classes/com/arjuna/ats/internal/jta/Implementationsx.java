@@ -31,7 +31,24 @@
 
 package com.arjuna.ats.internal.jta;
 
-import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.record.RecordTypeManager;
+import com.arjuna.ats.arjuna.coordinator.record.RecordTypeMap;
+import com.arjuna.ats.internal.jta.resources.jts.orbspecific.XAResourceRecord;
+
+class ExtendedXAResourceRecordMap implements RecordTypeMap
+{
+    @SuppressWarnings("unchecked")
+    public Class getRecordClass ()
+    {
+        return XAResourceRecord.class;
+    }
+    
+    public int getType ()
+    {
+        return RecordType.JTAX_RECORD;
+    }
+}
 
 public class Implementationsx
 {
@@ -49,7 +66,7 @@ public class Implementationsx
 	     * Now add various abstract records which crash recovery needs.
 	     */
 
-	    Inventory.inventory().addToList(new com.arjuna.ats.internal.jta.resources.jts.orbspecific.XAResourceRecordSetup());
+	    RecordTypeManager.manager().add(new ExtendedXAResourceRecordMap());
 
 	    _added = true;
 	}

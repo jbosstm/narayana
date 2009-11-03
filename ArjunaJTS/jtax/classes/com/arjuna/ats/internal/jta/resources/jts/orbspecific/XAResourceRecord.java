@@ -47,6 +47,7 @@ import com.arjuna.ats.internal.jta.resources.XAResourceErrorHandler;
 
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
@@ -1359,7 +1360,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	private final void setObjectStore()
 	{
 		if (_objStore == null)
-			_objStore = new ObjectStore(null, ""); // interface gets default
+		    _objStore = TxControl.getStore();
 	}
 
 	/**
