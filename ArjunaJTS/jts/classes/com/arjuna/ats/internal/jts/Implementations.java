@@ -31,14 +31,44 @@
 
 package com.arjuna.ats.internal.jts;
 
-import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.record.RecordTypeManager;
+import com.arjuna.ats.arjuna.coordinator.record.RecordTypeMap;
 
 /*
  * Slightly different for historical reasons.
  */
 
-import com.arjuna.ats.internal.jts.resources.ResourceRecordSetup;
-import com.arjuna.ats.internal.jts.resources.ExtendedResourceRecordSetup;
+import com.arjuna.ats.internal.jts.resources.ExtendedResourceRecord;
+import com.arjuna.ats.internal.jts.resources.ResourceRecord;
+
+class ResourceRecordMap implements RecordTypeMap
+{
+    @SuppressWarnings("unchecked")
+    public Class getRecordClass ()
+    {
+        return ResourceRecord.class;
+    }
+    
+    public int getType ()
+    {
+        return RecordType.OTS_RECORD;
+    }
+}
+
+class ExtendedResourceRecordMap implements RecordTypeMap
+{
+    @SuppressWarnings("unchecked")
+    public Class getRecordClass ()
+    {
+        return ExtendedResourceRecord.class;
+    }
+    
+    public int getType ()
+    {
+        return RecordType.OTS_ABSTRACTRECORD;
+    }
+}
 
 public class Implementations
 {
@@ -56,8 +86,8 @@ public class Implementations
 	     * Now add various abstract records which crash recovery needs.
 	     */
 
-	    Inventory.inventory().addToList(new ResourceRecordSetup());
-	    Inventory.inventory().addToList(new ExtendedResourceRecordSetup());
+	    RecordTypeManager.manager().add(new ResourceRecordMap());
+	    RecordTypeManager.manager().add(new ExtendedResourceRecordMap());
 
 	    _added = true;
 	}

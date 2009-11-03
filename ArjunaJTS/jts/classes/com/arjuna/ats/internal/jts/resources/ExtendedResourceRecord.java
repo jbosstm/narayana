@@ -39,8 +39,6 @@ package com.arjuna.ats.internal.jts.resources;
  *
  */
 
-import com.arjuna.ats.jts.CosTransactionsNames;
-
 import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
@@ -52,7 +50,6 @@ import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 
 import com.arjuna.common.util.logging.*;
 
@@ -290,11 +287,6 @@ public class ExtendedResourceRecord extends
 		resHandle = null;
 
 		return r;
-	}
-
-	public ClassName className ()
-	{
-		return CosTransactionsNames.AbstractRecord_ExtendedResourceRecord();
 	}
 
 	public Object value ()

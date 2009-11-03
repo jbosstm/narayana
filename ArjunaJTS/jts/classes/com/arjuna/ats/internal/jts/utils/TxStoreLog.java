@@ -32,6 +32,7 @@
 package com.arjuna.ats.internal.jts.utils;
 
 import com.arjuna.ats.arjuna.state.*;
+import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.exceptions.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 
@@ -51,7 +52,7 @@ public class TxStoreLog
  
     public static boolean getTransactions (InputObjectState os, int status)
     {
-	ObjectStore store = new ObjectStore(com.arjuna.ats.arjuna.coordinator.TxControl.getActionStoreType());
+	ObjectStore store = TxControl.getStore();
 
 	try
 	{

@@ -37,7 +37,6 @@ package com.arjuna.ats.internal.jts.resources;
  *
  */
 
-import com.arjuna.ats.jts.CosTransactionsNames;
 import com.arjuna.ats.jts.logging.*;
 
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
@@ -49,7 +48,6 @@ import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 
 import com.arjuna.orbportability.*;
 
@@ -223,11 +221,6 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
     public int typeIs ()
     {
 	return RecordType.OTS_RECORD;
-    }
-    
-    public ClassName className ()
-    {
-	return CosTransactionsNames.AbstractRecord_ResourceRecord();
     }
     
     public Object value ()
