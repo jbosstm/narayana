@@ -21,7 +21,6 @@
 package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
 import com.arjuna.ats.jta.transaction.Transaction;
 import com.arjuna.ats.internal.jta.xa.TxInfo;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.UidInfo;
@@ -43,9 +42,9 @@ public class LiveAtomicActionWrapper extends ArjunaTransactionWrapper //AtomicAc
     private Collection<SynchronizationInfo> synchronizations;
     private Collection<XAResourceInfo> resources;
 
-    public LiveAtomicActionWrapper(Transaction delegate, Uid objUid, ObjectName objectName, String type)
+    public LiveAtomicActionWrapper(Transaction delegate, Uid objUid, String type)
     {
-        super(objUid, objectName, type);  //XXX
+        super(objUid, type);  //XXX
         uidInfo = new UidInfo(objUid, getClass().getName() + "@" + Integer.toHexString(hashCode()));
         this.delegate = delegate;
     }

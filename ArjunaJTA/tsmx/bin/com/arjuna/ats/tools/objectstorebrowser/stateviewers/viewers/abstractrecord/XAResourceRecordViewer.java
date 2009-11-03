@@ -23,7 +23,6 @@ package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrec
 import com.arjuna.ats.tools.objectstorebrowser.panels.StatePanel;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.XAResourceInfo;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.coordinator.RecoveryAbstractRecord;
 import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 
 import javax.transaction.xa.XAResource;
@@ -33,11 +32,6 @@ public class XAResourceRecordViewer extends AbstractRecordViewer
     protected void updateTableData(AbstractRecord record, StatePanel statePanel)
     {
         super.updateTableData(record, statePanel);
-
-        if (record instanceof RecoveryAbstractRecord)
-        {
-            record = ((RecoveryAbstractRecord) record).record();
-        }
 
         if (record instanceof XAResourceRecord)
         {

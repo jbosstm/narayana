@@ -22,7 +22,6 @@ package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrec
 
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.RecoveryAbstractRecord;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.tools.objectstorebrowser.panels.ObjectStoreViewEntry;
 import com.arjuna.ats.tools.objectstorebrowser.panels.StatePanel;
@@ -63,7 +62,7 @@ public class AbstractRecordViewer implements AbstractRecordStateViewerInterface
         statePanel.setData("Creation Time", UidInfo.formatTime(uidInfo.getCreationTime()));
         statePanel.setData("Age (seconds)", String.valueOf(uidInfo.getAge()));
 
-        statePanel.setData("Record Type", record.className().stringForm());
+        statePanel.setData("Record Type", record.getClass().getName());
         statePanel.setData("Type", record.type());
         statePanel.setData("Uid", record.order().toString());
 
@@ -118,16 +117,7 @@ public class AbstractRecordViewer implements AbstractRecordStateViewerInterface
         if (action instanceof BasicActionInfo)
             actionInfo = (BasicActionInfo) action;
 
-        if ((record instanceof RecoveryAbstractRecord))
-        {
-            RecoveryAbstractRecord rrec = (RecoveryAbstractRecord)record;
-            if (rrec.record() instanceof XAResourceRecord)
-            {
-                xaresrec = (XAResourceRecord) rrec.record();
-                xares = (XAResource) xaresrec.value();
-            }
-        }
-        else if ((record instanceof XAResourceRecord))
+        if ((record instanceof XAResourceRecord))
         {
             xaresrec = (XAResourceRecord) record;
             xares = (XAResource) xaresrec.value();

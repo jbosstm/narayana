@@ -35,9 +35,7 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.Environment;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
-import com.arjuna.ats.arjuna.ArjunaNames;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -70,7 +68,7 @@ public class ArjunaTransactionViewer extends AtomicActionViewer
                                 StatePanel infoPanel) throws ObjectStoreException
     {
         Uid theUid = uidNode.getUid();
-        ArjunaTransactionWrapper ba = new ArjunaTransactionWrapper(theUid,getObjectName(os), type);
+        ArjunaTransactionWrapper ba = new ArjunaTransactionWrapper(theUid, type);
         ListNode node;
         SubTreeViewEntry entry;
 
@@ -115,23 +113,6 @@ public class ArjunaTransactionViewer extends AtomicActionViewer
             entry.setToolTipText(getListSize(ba.getReadOnlyList())+" entries");
             node.add(new DefaultMutableTreeNode(""));
         }
-    }
-
-    private ObjectName getObjectName(ObjectStore os)
-    {
-        ObjectName name = new ObjectName("PNS:");
-
-        try
-        {
-            name.setClassNameAttribute(Environment.OBJECTSTORE_TYPE, os.className());
-            name.setStringAttribute(ArjunaNames.StateManager_objectStoreRoot(), os.storeRoot());
-        }
-        catch (java.io.IOException e)
-        {
-            // Ignore
-        }
-
-        return name;
     }
 
     /**

@@ -1326,7 +1326,7 @@ public class XARecoveryModule implements RecoveryModule
 			_failures.clear();
 	}
 
-	private ObjectStore _objStore = new ObjectStore();
+	private ObjectStore _objStore = TxControl.getStore();
 
 	private InputObjectState _uids = new InputObjectState();
 

@@ -51,13 +51,11 @@ import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.coordinator.TwoPhaseCoordinator;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 
@@ -167,11 +165,6 @@ public class XAResourceRecord extends AbstractRecord
 	public int typeIs()
 	{
 		return RecordType.JTA_RECORD;
-	}
-
-	public ClassName className()
-	{
-		return new ClassName("RecordType.JTA_RECORD");
 	}
 
 	public Object value()

@@ -20,7 +20,6 @@
  */
 package com.arjuna.ats.tools.objectstorebrowser.rootprovider;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStoreImple;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.InputObjectState;
@@ -28,9 +27,7 @@ import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.gandiva.inventory.InventoryElement;
-import com.arjuna.ats.arjuna.gandiva.ClassName;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
+import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.tools.objectstorebrowser.TransactionLister;
 
@@ -43,7 +40,7 @@ import java.io.IOException;
  * @see com.arjuna.ats.tools.objectstorebrowser.frames.BrowserFrame
  * will only display object store entries.
  */
-public class InFlightTransactionPseudoStore extends ObjectStoreImple implements InventoryElement
+public class InFlightTransactionPseudoStore extends ObjectStore
 {
     public static final String STORE_NAME = "InFlightTransactionPseudoStore";
     private static final String TX_TYPE = "Transaction";
@@ -184,42 +181,4 @@ public class InFlightTransactionPseudoStore extends ObjectStoreImple implements 
     {
         return false;
     }
-
-    // InventoryElement implementation
-    public synchronized Object createVoid ()
-    {
-        return new InFlightTransactionPseudoStore();
-    }
-
-    public synchronized Object createResources (Object[] param)
-    {
-        return createVoid();
-    }
-
-    public synchronized Object createClassName (ClassName className)
-    {
-        return null;
-    }
-
-    public synchronized Object createObjectName (ObjectName objectName)
-    {
-        return createVoid();
-    }
-
-    public synchronized Object createClassNameResources (ClassName className, Object[] resources)
-    {
-        return null;
-    }
-
-    public synchronized Object createObjectNameResources (ObjectName objectName, Object[] resources)
-    {
-        return null;
-    }
-
-    public ClassName className ()
-    {
-        return className;
-    }
-
-    private ClassName className = new ClassName(this.getClass().getSimpleName());
 }

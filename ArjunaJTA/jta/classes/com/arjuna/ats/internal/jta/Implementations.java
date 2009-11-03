@@ -31,13 +31,27 @@
 
 package com.arjuna.ats.internal.jta;
 
-import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
+import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.coordinator.record.RecordTypeManager;
+import com.arjuna.ats.arjuna.coordinator.record.RecordTypeMap;
+import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 
-import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecordSetup;
+class XAResourceRecordMap implements RecordTypeMap
+{
+    @SuppressWarnings("unchecked")
+    public Class getRecordClass ()
+    {
+        return XAResourceRecord.class;
+    }
+    
+    public int getType ()
+    {
+        return RecordType.JTA_RECORD;
+    }
+}
 
 public class Implementations
 {
-
     public static synchronized boolean added ()
     {
 	return _added;
@@ -50,8 +64,8 @@ public class Implementations
 	    /*
 	     * Now add various abstract records which crash recovery needs.
 	     */
-
-	    Inventory.inventory().addToList(new XAResourceRecordSetup());
+	    
+	    RecordTypeManager.manager().add(new XAResourceRecordMap());
 	    
 	    _added = true;
 	}

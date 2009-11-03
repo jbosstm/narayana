@@ -35,9 +35,6 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.Environment;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
-import com.arjuna.ats.arjuna.gandiva.inventory.Inventory;
-import com.arjuna.ats.arjuna.ArjunaNames;
 import com.arjuna.ats.jta.transaction.Transaction;
 
 /**
@@ -45,14 +42,11 @@ import com.arjuna.ats.jta.transaction.Transaction;
  */
 public class InFlightTransactionViewer extends AtomicActionViewer
 {
-    private static final String STORE_KEY = com.arjuna.ats.arjuna.common.Environment.STATIC_INVENTORY_IMPLE + '.' + InFlightTransactionPseudoStore.STORE_NAME;
+   // private static final String STORE_KEY = com.arjuna.ats.arjuna.common.Environment.STATIC_INVENTORY_IMPLE + '.' + InFlightTransactionPseudoStore.STORE_NAME;
     private static final String STORE_VAL = "com.arjuna.ats.tools.objectstorebrowser.rootprovider.InFlightTransactionPseudoStore";
 
     public InFlightTransactionViewer() throws ToolPluginException
     {
-        //arjPropertyManager.propertyManager.setProperty(STORE_KEY, STORE_VAL);
-        Inventory.inventory().addToList(new InFlightTransactionPseudoStore());
-
         if (ObjectStoreBrowserPlugin.getRootProvider() == null)
             throw new ToolPluginException("No object store provider has been configured");
 
@@ -75,7 +69,7 @@ public class InFlightTransactionViewer extends AtomicActionViewer
         if (ios instanceof TxInputObjectState)
             delegate = (Transaction)((TxInputObjectState)ios).getRealObject();
 
-        LiveAtomicActionWrapper aaw = new LiveAtomicActionWrapper(delegate, theUid, getObjectName(os), type);
+        LiveAtomicActionWrapper aaw = new LiveAtomicActionWrapper(delegate, theUid, type);
         manipulator.clearEntries();
 
         ListNode node;
@@ -99,22 +93,5 @@ public class InFlightTransactionViewer extends AtomicActionViewer
     public String getType()
     {
         return "/Transaction/";
-    }
-
-    private ObjectName getObjectName(ObjectStore os) //XXX
-    {
-        ObjectName name = new ObjectName("PNS:");
-
-        try
-        {
-            name.setClassNameAttribute(Environment.OBJECTSTORE_TYPE, os.className());
-            name.setStringAttribute(ArjunaNames.StateManager_objectStoreRoot(), os.storeRoot());
-        }
-        catch (java.io.IOException e)
-        {
-            // Ignore
-        }
-
-        return name;
     }
 }
