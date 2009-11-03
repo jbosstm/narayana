@@ -35,7 +35,6 @@ import com.arjuna.ats.tools.objectstorebrowser.panels.StatePanel;
 import com.arjuna.ats.tools.objectstorebrowser.panels.ObjectStoreViewEntry;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.coordinator.RecoveryAbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.internal.jts.Implementations;
@@ -217,7 +216,7 @@ public class ResourceRecordViewer extends AbstractRecordViewer
         }
     }
 
-    protected boolean doOp(RecoveryAbstractRecord record, RecoveryOp op)
+    protected boolean doOp(AbstractRecord record, RecoveryOp op)
     {
         try
         {
@@ -225,14 +224,14 @@ public class ResourceRecordViewer extends AbstractRecordViewer
 
             switch (op) {
                 case FORGET_OP:
-                    if (!record.record().forgetHeuristic())
+                    if (!record.forgetHeuristic())
                     {
                         appendError("Could not forget this record");
                         return false;
                     }
                     return true;
                 case COMMIT_OP:
-                    err = record.record().topLevelOnePhaseCommit();
+                    err = record.topLevelOnePhaseCommit();
 
                     if (err == TwoPhaseOutcome.FINISH_OK)
                         return true;
@@ -240,7 +239,7 @@ public class ResourceRecordViewer extends AbstractRecordViewer
                     appendError("Commit error: " + TwoPhaseOutcome.stringForm(err));
                     return false;
                 case ABORT_OP:
-                    err = record.record().topLevelAbort();
+                    err = record.topLevelAbort();
 
                     if (err == TwoPhaseOutcome.FINISH_OK)
                         return true;
@@ -264,8 +263,6 @@ public class ResourceRecordViewer extends AbstractRecordViewer
             return doOp((ResourceRecord) getRecord(), op);
         else if (getRecord() instanceof XAResourceRecord)
             return doOp((XAResourceRecord) getRecord(), op);
-        else if (getRecord() instanceof RecoveryAbstractRecord)
-            return doOp((RecoveryAbstractRecord) getRecord(), op);
         else if (getRecord() instanceof ExtendedResourceRecord)
             return doOp((ExtendedResourceRecord) getRecord(), op);
         else

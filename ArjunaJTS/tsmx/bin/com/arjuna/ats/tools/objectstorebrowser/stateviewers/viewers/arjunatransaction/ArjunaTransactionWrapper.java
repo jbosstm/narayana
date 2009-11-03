@@ -24,14 +24,13 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.ObjectType;
-import com.arjuna.ats.arjuna.gandiva.ObjectName;
 import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
 
 public class ArjunaTransactionWrapper extends BasicAction
 {
-    public ArjunaTransactionWrapper(Uid objUid, ObjectName objectName)
+    public ArjunaTransactionWrapper(Uid objUid)
     {
-        super(objUid, ObjectType.ANDPERSISTENT, objectName);
+        super(objUid, ObjectType.ANDPERSISTENT);
     }
 
     /**

@@ -37,7 +37,6 @@ import com.arjuna.ats.internal.jta.resources.arjunacore.XAResourceRecord;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.BasicActionInfo;
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.coordinator.RecoveryAbstractRecord;
 
 import javax.swing.*;
 import javax.transaction.xa.XAResource;
@@ -139,11 +138,6 @@ public class ResourceViewDialog extends JDialog implements ActionListener
                             XAResourceRecord rc = (XAResourceRecord) ar;
 
                             ((XAResource)rc.value()).forget(rc.getXid());
-                        }
-                        else if (ar instanceof RecoveryAbstractRecord)
-                        {
-                            ar = ((RecoveryAbstractRecord) ar).record();
-                            ar.forgetHeuristic();
                         }
                         else if (ar instanceof ExtendedResourceRecord)
                         {
