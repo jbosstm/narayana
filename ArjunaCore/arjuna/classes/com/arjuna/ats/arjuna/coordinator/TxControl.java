@@ -32,7 +32,6 @@
 package com.arjuna.ats.arjuna.coordinator;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;

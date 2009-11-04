@@ -34,7 +34,6 @@ import com.arjuna.ats.tools.toolsframework.plugin.ToolPluginException;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.jta.transaction.Transaction;
 
 /**

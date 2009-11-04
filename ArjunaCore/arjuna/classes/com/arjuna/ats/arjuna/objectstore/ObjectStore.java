@@ -276,7 +276,7 @@ public abstract class ObjectStore
         {
             _objectStoreDir = arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir();
             if (_objectStoreDir == null || _objectStoreDir.length() == 0)
-                throw new ObjectStoreException(Environment.OBJECTSTORE_DIR+" not set.");
+                throw new ObjectStoreException("object store location property not set.");
 
             if (!_objectStoreDir.endsWith(File.separator))
                 _objectStoreDir = _objectStoreDir + File.separator;

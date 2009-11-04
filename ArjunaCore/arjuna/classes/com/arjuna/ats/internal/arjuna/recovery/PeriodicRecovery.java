@@ -1045,12 +1045,12 @@ public class PeriodicRecovery extends Thread
    private int _recoveryPeriod = 0;
 
     /**
-     *  default value for _backoffPeriod if not specified via property {@link com.arjuna.ats.arjuna.common.Environment#RECOVERY_BACKOFF_PERIOD}
+     *  default value for _backoffPeriod if not specified via RecoveryEnvironmentBean
      */
     public static final int _defaultBackoffPeriod = 10;
 
     /**
-     *  default value for _recoveryPeriod if not specified via property {@link com.arjuna.ats.arjuna.common.Environment#PERIODIC_RECOVERY_PERIOD}
+     *  default value for _recoveryPeriod if not specified via RecoveryEnvironmentBean
      */
     public static final int _defaultRecoveryPeriod = 120;
 

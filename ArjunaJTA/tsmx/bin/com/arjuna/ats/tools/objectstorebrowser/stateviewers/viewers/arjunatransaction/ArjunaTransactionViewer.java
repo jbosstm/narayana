@@ -34,7 +34,6 @@ import com.arjuna.ats.tools.objectstorebrowser.treenodes.ListNode;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 
 import javax.swing.tree.DefaultMutableTreeNode;

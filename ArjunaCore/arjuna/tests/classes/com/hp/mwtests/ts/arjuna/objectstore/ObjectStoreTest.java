@@ -31,11 +31,9 @@ package com.hp.mwtests.ts.arjuna.objectstore;
  * $Id: ObjectStoreTest.java 2342 2006-03-30 13:06:17Z  $
  */
 
-import com.arjuna.ats.arjuna.common.Environment;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
-import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

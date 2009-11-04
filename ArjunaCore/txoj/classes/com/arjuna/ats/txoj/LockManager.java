@@ -33,7 +33,6 @@ package com.arjuna.ats.txoj;
 
 import com.arjuna.ats.txoj.lockstore.*;
 import com.arjuna.ats.txoj.semaphore.*;
-import com.arjuna.ats.txoj.common.Environment;
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.StateManager;
