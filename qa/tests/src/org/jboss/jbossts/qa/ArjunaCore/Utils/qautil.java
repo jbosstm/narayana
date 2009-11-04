@@ -38,7 +38,7 @@ public class qautil
 	/**
 	 * Sleep method used when gc is not required.
 	 */
-	public static void sleep(boolean gc)
+	private static void sleep(boolean gc)
 	{
 		if (gc)
 		{
@@ -51,7 +51,7 @@ public class qautil
 	 * Convenience method to send the current thread to sleep for a number of
 	 * milli seconds. (1000 milli = 1 second)
 	 */
-	public static void sleep(int milli)
+	private static void sleep(int milli)
 	{
 		sleep("milli", milli);
 	}
@@ -60,7 +60,7 @@ public class qautil
 	 * Use the string option to pass in "min" if you would like the thread to
 	 * sleep for a set number of minutes.
 	 */
-	public static void sleep(String option, int duration)
+	private static void sleep(String option, int duration)
 	{
 		int milli = duration;
 		if (option != null && option.equalsIgnoreCase("min"))
