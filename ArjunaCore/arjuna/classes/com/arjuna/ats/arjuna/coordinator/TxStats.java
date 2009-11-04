@@ -49,6 +49,9 @@ public class TxStats implements TxStatsMBean
 {
     private static TxStats _instance = new TxStats();
 
+    private TxStats() {
+    }
+
     public static boolean enabled() {
         return arjPropertyManager.getCoordinatorEnvironmentBean().isEnableStatistics();
     }

@@ -44,7 +44,7 @@ public class Client002 extends BaseTestClient
 			setNumberOfResources(1);
 
 			Service01 mService = new Service01(mNumberOfResources);
-			TxStats mStats = new TxStats();
+			TxStats mStats = TxStats.getInstance();
 
 			startTx();
 			mService.setupOper(true);

@@ -43,7 +43,7 @@ public class Client004 extends BaseTestClient
 			setNumberOfCalls(2);
 			setNumberOfResources(1);
 
-			TxStats mStats = new TxStats();
+			TxStats mStats = TxStats.getInstance();
 			int expectedCommitted = 0, expectedRolledback = 0, expectedNested = 0, expectedTx = 0;
 
 			for (int j = 0; j < mNumberOfResources; j++)

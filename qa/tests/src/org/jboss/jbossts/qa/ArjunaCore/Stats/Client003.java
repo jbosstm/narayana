@@ -43,7 +43,7 @@ public class Client003 extends BaseTestClient
 			setNumberOfCalls(2);
 			setNumberOfResources(1);
 
-			TxStats mStats = new TxStats();
+			TxStats mStats = TxStats.getInstance();
 
 			Service02 mService = new Service02(mNumberOfResources);
 			mService.dowork(mMaxIteration * 2);

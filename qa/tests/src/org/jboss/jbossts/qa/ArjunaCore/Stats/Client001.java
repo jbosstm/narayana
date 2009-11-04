@@ -43,7 +43,7 @@ public class Client001 extends BaseTestClient
 			setNumberOfCalls(2);
 			setNumberOfResources(1);
 
-			TxStats mStats = new TxStats();
+			TxStats mStats = TxStats.getInstance();
 
 			startTx();
 			//add abstract record
