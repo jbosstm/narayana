@@ -318,7 +318,7 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
     private static final String orbName = "arjuna.portable_interceptor.";
 
     private ObjectStore     currentStore;
-    static protected String uid4Recovery = "52e38d0c:c91:4140398c:0";
+    static protected String uid4Recovery = "0:52e38d0c:c91:4140398c:0";
 
 
 };
