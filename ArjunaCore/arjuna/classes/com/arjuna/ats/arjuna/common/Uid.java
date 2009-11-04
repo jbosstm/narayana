@@ -245,6 +245,8 @@ public class Uid implements Cloneable, Serializable
                             "com.arjuna.ats.arjuna.common.Uid_npe", new Object[]
                             { uidString }, ex);
                 }
+
+                _valid = false;
             }
         }
         else
