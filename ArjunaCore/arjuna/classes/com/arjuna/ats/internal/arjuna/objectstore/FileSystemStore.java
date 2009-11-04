@@ -50,6 +50,7 @@ import java.lang.NumberFormatException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 
 import com.arjuna.common.util.logging.*;
@@ -80,6 +81,19 @@ import com.arjuna.common.util.logging.*;
 public abstract class FileSystemStore extends ObjectStore
 {
 
+    class FileFilter implements FilenameFilter
+    {
+        public boolean accept (File dir, String name)
+        {
+            File f = new File(name);
+            
+            if (f.isDirectory())
+                return false;
+            else
+                return true;
+        }       
+    }
+    
     public FileSystemStore (String locationOfStore, int ss)
     {
         super(ss);
@@ -234,7 +248,7 @@ public abstract class FileSystemStore extends ObjectStore
             directory = new String(fullStoreName + tName);
 
         File f = new File(directory);
-        String[] entry = f.list();
+        String[] entry = f.list(new FileFilter()); // only return files not dirs
 
         if ((entry != null) && (entry.length > 0))
         {
