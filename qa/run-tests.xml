@@ -42,11 +42,6 @@
     <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
     <target name="scratch">
 
-        <antcall target="junit-tests">
-            <param name="tests" value="jtatests01"/>
-            <param name="names" value="Test00[2|3]"/>
-        </antcall>
-        
     </target>
 
     <!-- a faster subset of the tests for smoke testing. aim to keep to under one hour total. -->
@@ -85,6 +80,17 @@
         These tests should take a combined time of around 4 hrs or so.
     -->
     <target name="junit">
+
+        <!-- txcore : 28 tests, 2 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="txcore"/></antcall>
+        <!-- txcore_lockrecord : 128 tests, 3 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="txcore_lockrecord"/></antcall>
+        <!-- txcore_abstractrecord : 40 tests, 1 minute -->
+        <antcall target="junit-tests"><param name="tests" value="txcore_abstractrecord"/></antcall>
+        <!-- txcore_statemanager : 80 tests, 2 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="txcore_statemanager"/></antcall>
+        <!-- txcore_utility : 40 tests, 1 minute -->
+        <antcall target="junit-tests"><param name="tests" value="txcore_utility"/></antcall>
 
         <!-- currenttests01 : 36 tests, 3 minutes -->
         <antcall target="junit-tests"><param name="tests" value="currenttests01"/></antcall>
@@ -348,5 +354,26 @@
         </junit>
 
     </target>
+
+<!--
+
+unused groups, pending cleanup and wiring:
+
+ait01_ots_transactionmanager.java
+aitresources01.java
+crashrecovery13.java
+jdbclocals01_ibmdb2_jndi.java
+jdbclocals01_ms_sql_jndi.java
+jdbclocals01_mysql_jndi.java
+jdbclocals01_oracle_jndi.java
+jdbclocals01_postgresql_jndi.java
+jdbclocals01_sybase_jndi.java
+jdbcresources03_oracle_thin_jndi.java
+jdbcresources04_oracle_thin_jndi.java
+
+txcore_recovery.java - JBTM-522 and rec module
+txoj.java - thse should be unit tests.
+
+-->
 
 </project>
