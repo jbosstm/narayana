@@ -27,6 +27,16 @@ import java.io.File;
 
 public class qautil
 {
+    public static void runGarbageCollection() {
+        // no clean way to to this at present, so we'll sleep and hope the gc runs.
+        System.gc();
+        try {
+            Thread.sleep(100);
+        } catch(InterruptedException e) {
+            
+        }
+    }
+
 	/**
 	 * Default sleep behavior is to perform gc then sleep for 1 min (1000 milli seconds)
 	 */

@@ -63,7 +63,7 @@ public class MemoryClient001 extends BaseTestClient
 			commit();
 
 			//lets go to sleep to see if this helps the vm clean itself up
-			qautil.sleep();
+			qautil.runGarbageCollection();
 
 			//get first memory reading.
 			getFirstReading();
@@ -81,7 +81,7 @@ public class MemoryClient001 extends BaseTestClient
 			abort();
 
 			//lets go to sleep to see if this helps the vm clean itself up
-			qautil.sleep();
+			qautil.runGarbageCollection();
 
 			getSecondReading();
 
