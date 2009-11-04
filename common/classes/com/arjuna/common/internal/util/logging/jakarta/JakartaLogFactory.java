@@ -45,6 +45,10 @@ public class JakartaLogFactory implements LogFactoryInterface
     // use null for default search order per http://commons.apache.org/logging/apidocs/index.html
     private String logImpl = null;
 
+    // no-args ctor for JBTM-641
+    public JakartaLogFactory() {
+    }
+
     public JakartaLogFactory(String logImpl) {
         this.logImpl = logImpl;
     }
