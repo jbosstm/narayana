@@ -31,11 +31,7 @@
 
 package com.arjuna.ats.arjuna.common;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
-import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 import com.arjuna.common.internal.util.propertyservice.BeanPopulator;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Property manager wrapper for the Arjuna module.
@@ -44,16 +40,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class arjPropertyManager
 {
-    /**
-     * @deprecated use environment beans instead.
-     * @return
-     */
-    @Deprecated
-    public static PropertyManager getPropertyManager()
-    {
-        return PropertyManagerFactory.getPropertyManagerForModule("arjuna", Environment.PROPERTIES_FILE);
-    }
-
     public static CoreEnvironmentBean getCoreEnvironmentBean()
     {
         return BeanPopulator.getSingletonInstance(CoreEnvironmentBean.class);

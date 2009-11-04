@@ -31,8 +31,7 @@
 
 package com.arjuna.ats.arjuna.tools;
 
-import com.arjuna.ats.arjuna.coordinator.*;
-import com.arjuna.common.util.propertyservice.PropertyManager;
+import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.*;
@@ -40,14 +39,12 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import javax.swing.*;
 import javax.swing.tree.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.net.InetAddress;
 
-import java.io.IOException;
 import java.net.UnknownHostException;
 import java.lang.NumberFormatException;
 
@@ -824,7 +821,7 @@ public class OTM extends JSplitPane
     public static void main (String[] args)
     {
         Uid u = new Uid();
-        String timeout = arjPropertyManager.getPropertyManager().getProperty(
+        String timeout = PropertyManagerFactory.getDefaultProperties().getProperty(
                 pollingTimeout);
 
         if (timeout != null)

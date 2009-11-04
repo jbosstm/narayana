@@ -28,7 +28,6 @@ import com.arjuna.common.util.ConfigurationInfo;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.io.InputStream;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,41 +45,46 @@ import java.net.URL;
  */
 
 /**
- * This is the property manager factory used to produce property managers.
+ * This is the property manager factory used to produce properties.
  *
  * @author Richard A. Begg (richard.begg@arjuna.com)
  */
 public class PropertyManagerFactory
 {
-    private static ConcurrentMap<String, PropertyManager> propertyManagersByModuleName = new ConcurrentHashMap<String, PropertyManager>();
-    private static ConcurrentMap<String, PropertyManager> propertyManagersByCanonicalFileName = new ConcurrentHashMap<String, PropertyManager>();
+    private static ConcurrentMap<String, Properties> propertiesByModuleName = new ConcurrentHashMap<String, Properties>();
+    private static ConcurrentMap<String, Properties> propertiesByCanonicalFileName = new ConcurrentHashMap<String, Properties>();
+
+    public static Properties getDefaultProperties() {
+        // TODO: pick and document new standard for global config file name property. For now use 'common' module value.        
+       return getPropertiesForModule("common", "com.arjuna.ats.arjuna.common.propertiesFile");
+    }
 
     /**
-     * Return a PropertyManager for the given module. If no such PropertyManager exists, create one using
+     * Return a Properties object for the given module. If no such Properties exists, create one using
      * the property file whose name is found by resolving the given key property.
      *
      * @param moduleName The symbolic name of the application module e.g. 'arjuna', 'txoj'.
      * @param fileNamePropertyKey The name of the property whose value is the config file name.
-     * @return a PropertyManager.
+     * @return a Properties object.
      */
-    public static PropertyManager getPropertyManagerForModule(String moduleName, String fileNamePropertyKey)
+    private static Properties getPropertiesForModule(String moduleName, String fileNamePropertyKey)
     {
-        // once loaded, Property managers for each module are cached here.
-        // Clients (usually the xxxPropertyManager classes in each app module) should not cache the returned
-        // propertyManager object, so that we can flush config just be clearing this one cache.
-        if(propertyManagersByModuleName.containsKey(moduleName)) {
-            return propertyManagersByModuleName.get(moduleName);
+        // once loaded, Properties for each module are cached here.
+        // Clients (usually BeanPopulator classes in each app module) should not cache the returned
+        // Properties object, so that we can flush config just be clearing this one cache.
+        if(propertiesByModuleName.containsKey(moduleName)) {
+            return propertiesByModuleName.get(moduleName);
         }
 
         // first time we have been asked for this module's properties - try to load them.
-        return createPropertyManagerForModule(moduleName, fileNamePropertyKey);
+        return createPropertiesForModule(moduleName, fileNamePropertyKey);
     }
 
     public static Properties getPropertiesFromFile(String propertiesFileName) {
-        return getPropertyManagerForFile(propertiesFileName, false).getProperties();
+        return getPropertiesFromFile(propertiesFileName, false);
     }
 
-    private static PropertyManager getPropertyManagerForFile(String propertyFileName, boolean withCaching)
+    private static Properties getPropertiesFromFile(String propertyFileName, boolean withCaching)
     {
         String filepath = null;
         try
@@ -112,21 +116,22 @@ public class PropertyManagerFactory
         }
 
         // We have a candidate file. Check if we have loaded it already. If so, associate it to the module cache and return it.
-        PropertyManager propertyManager = null;
+        Properties properties = null;
 
         if(withCaching) {
-            propertyManager = propertyManagersByCanonicalFileName.get(filepath);
+            properties = propertiesByCanonicalFileName.get(filepath);
         }
 
         // We have not loaded this file before. Do so now.
-        if(propertyManager == null) {
-            propertyManager = new PropertyManagerImpl(propertyFileName);
+        if(properties == null) {
+            PropertyManager propertyManager = new PropertyManagerImpl(propertyFileName);
             try {
                 propertyManager.load(XMLFilePlugin.class.getName(), filepath);
+                properties = propertyManager.getProperties();
                 if(withCaching) {
-                    PropertyManager existingPropertyManager = propertyManagersByCanonicalFileName.putIfAbsent(filepath, propertyManager);
-                    if(existingPropertyManager != null) {
-                        propertyManager = existingPropertyManager;
+                    Properties existingProperties = propertiesByCanonicalFileName.putIfAbsent(filepath, properties);
+                    if(existingProperties != null) {
+                        properties = existingProperties;
                     }
                 }
             } catch(Exception e) {
@@ -134,14 +139,14 @@ public class PropertyManagerFactory
             }
         }
         
-        return propertyManager;
+        return properties;
     }
 
 
-    private static synchronized PropertyManager createPropertyManagerForModule(String moduleName, String fileNamePropertyKey)
+    private static synchronized Properties createPropertiesForModule(String moduleName, String fileNamePropertyKey)
     {
-        if(propertyManagersByModuleName.containsKey(moduleName)) {
-            return propertyManagersByModuleName.get(moduleName);
+        if(propertiesByModuleName.containsKey(moduleName)) {
+            return propertiesByModuleName.get(moduleName);
         }
 
         // This is where the properties loading takes place. The algorithm is as follows:
@@ -163,10 +168,10 @@ public class PropertyManagerFactory
             throw new RuntimeException("Unable to resolve property file name for module "+moduleName);
         }
 
-        PropertyManager propertyManager = getPropertyManagerForFile(propertyFileName, true);
+        Properties properties = getPropertiesFromFile(propertyFileName, true);
 
-        propertyManagersByModuleName.put(moduleName, propertyManager);
+        propertiesByModuleName.put(moduleName, properties);
 
-        return propertyManager;
+        return properties;
     }
 }

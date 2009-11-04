@@ -26,7 +26,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import com.arjuna.common.util.propertyservice.PropertyManager;
 import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
 
 /**
@@ -47,9 +46,8 @@ public class BeanPopulator
             T bean = null;
             try {
                 bean = beanClass.newInstance();
-                // TODO: pick and document new standard for global config file name property. For now use 'common' module value.
-                PropertyManager propertyManager = PropertyManagerFactory.getPropertyManagerForModule("common", "com.arjuna.ats.arjuna.common.propertiesFile");
-                configureFromProperties(bean, propertyManager.getProperties());
+                Properties properties = PropertyManagerFactory.getDefaultProperties();
+                configureFromProperties(bean, properties);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
