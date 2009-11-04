@@ -1179,7 +1179,7 @@ public class ExtendedResourceRecord extends
 	 * Protected constructor used by crash recovery.
 	 */
 
-	protected ExtendedResourceRecord ()
+	public ExtendedResourceRecord ()
 	{
 		super();
 

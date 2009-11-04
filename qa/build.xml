@@ -79,31 +79,8 @@
 
     <target  name="get.drivers">
 
-        <mkdir dir="${driver.home}/oracle_10_2_0_4"/>
-        <get src="${driver.url}/ojdbc14.jar"
-             dest="${driver.home}/oracle_10_2_0_4/ojdbc14.jar"/>
-
-        <mkdir dir="${driver.home}/mssql2005_sqljdbc_2.0/enu"/>
-        <get src="${driver.url}/sqljdbc_2.0/enu/sqljdbc.jar"
-             dest="${driver.home}/mssql2005_sqljdbc_2.0/enu/sqljdbc.jar"/>
-        <get src="${driver.url}/sqljdbc_2.0/enu/sqljdbc4.jar"
-             dest="${driver.home}/mssql2005_sqljdbc_2.0/enu/sqljdbc4.jar"/>
-
         <get src="http://jdbc.postgresql.org/download/postgresql-8.3-604.jdbc3.jar"
              dest="${driver.home}/postgresql-8.3-603.jdbc3.jar"/>
-
-        <get src="${driver.url}/mysql-connector-java-5.1.7-bin.jar"
-             dest="${driver.home}/mysql-connector-java-5.1.7-bin.jar"/>
-
-        <mkdir dir="${driver.home}/DB2_v9"/>
-        <get src="${driver.url}/DB2_v9/db2jcc.jar"
-             dest="${driver.home}/DB2_v9/db2jcc.jar"/>
-        <get src="${driver.url}/DB2_v9/db2jcc_license_cu.jar"
-             dest="${driver.home}/DB2_v9/db2jcc_license_cu.jar"/>
-
-        <mkdir dir="${driver.home}/jConnect-6_0/classes"/>
-        <get src="${driver.url}/jConnect-6_0/classes/jconn3.jar"
-             dest="${driver.home}/jConnect-6_0/classes/jconn3.jar"/>
 
     </target>
 

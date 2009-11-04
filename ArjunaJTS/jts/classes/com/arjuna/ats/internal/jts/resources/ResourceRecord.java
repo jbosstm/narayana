@@ -870,7 +870,7 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
      * Protected constructor used by crash recovery.
      */
 
-    protected ResourceRecord (boolean propagate, Resource theResource,
+    public ResourceRecord (boolean propagate, Resource theResource,
 			      Uid recCoordUid)
     {
 	super(new Uid(), null, ObjectType.ANDPERSISTENT);
@@ -884,7 +884,7 @@ public class ResourceRecord extends com.arjuna.ats.arjuna.coordinator.AbstractRe
 	_rolledback = false;
     }
 	
-    protected ResourceRecord ()
+    public ResourceRecord ()
     {
 	super();
 

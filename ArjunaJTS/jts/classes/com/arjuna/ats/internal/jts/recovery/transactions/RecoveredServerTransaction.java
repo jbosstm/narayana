@@ -32,6 +32,7 @@
 
 package com.arjuna.ats.internal.jts.recovery.transactions;
 
+import com.arjuna.ats.internal.jts.Implementations;
 import com.arjuna.ats.internal.jts.orbspecific.interposition.resources.arjuna.*;
 import org.omg.CosTransactions.*;
 import java.io.IOException;
@@ -66,21 +67,22 @@ import org.omg.CORBA.TRANSIENT;
  * @author Dave Ingham (dave@arjuna.com)
  * @version $Id: RecoveredServerTransaction.java 2342 2006-03-30 13:06:17Z  $
  *
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_1 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_1] - RecoveredServerTransaction {0} created
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_2 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_2] - RecoveredServerTransaction - activate of {0} failed!
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_4 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_4] - RecoveredServerTransaction.replayPhase2({0}) - status = {1}
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_5 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_5] - RecoveredServerTransaction.replayPhase2({0}) - status after contacting parent = {1}
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_6 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_6] - ServerTransaction {0} unable determine status - retry later
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_7 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_7] - RecoveredServerTransaction.replayPhase2: unexpected Status: {0}
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_8 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_8] - RecoveredServerTransaction.replayPhase2: ({0}) finished
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_9 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_9] - RecoveredServerTransaction.getStatusFromParent - replay_completion status = {0}
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_10 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_10] - Got TRANSIENT from ORB for tx {0} and assuming OBJECT_NOT_EXIST
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_11 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_11] - RecoveredServerTransaction.getStatusFromParent - replay_completion got object_not_exist = {0}
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_12 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_12] - RecoveredServerTransaction: caught NotPrepared
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_13 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_13] - RecoveredServerTransaction: caught unexpected exception: 
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_14 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_14] - RecoveredServerTransaction: {0} is invalid
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_15 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_15] - RecoveredServerTransaction:getStatusFromParent - no recovcoord or status not prepared
- * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_16 [com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_16] -  "RecoveredServerTransaction.unpackHeader - txid = {0} and processUid = {1}
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_1 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_1] - RecoveredServerTransaction {0} created
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_2 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_2] - RecoveredServerTransaction - activate of {0} failed!
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_4 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_4] - RecoveredServerTransaction.replayPhase2({0}) - status = {1}
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_5 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_5] - RecoveredServerTransaction.replayPhase2({0}) - status after contacting parent = {1}
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_6 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_6] - ServerTransaction {0} unable determine status - retry later
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_7 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_7] - RecoveredServerTransaction.replayPhase2: unexpected Status: {0}
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_8 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_8] - RecoveredServerTransaction.replayPhase2: ({0}) finished
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_9 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_9] - RecoveredServerTransaction.getStatusFromParent - replay_completion status = {0}
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_10 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_10] - Got TRANSIENT from ORB for tx {0} and assuming OBJECT_NOT_EXIST
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_11 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_11] - RecoveredServerTransaction.getStatusFromParent - replay_completion got object_not_exist = {0}
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_12 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_12] - RecoveredServerTransaction: caught NotPrepared
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_13 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_13] - RecoveredServerTransaction: caught unexpected exception: 
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_14 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_14] - RecoveredServerTransaction: {0} is invalid
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_15 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_15] - RecoveredServerTransaction:getStatusFromParent - no recovcoord or status not prepared
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_16 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_16] -  "RecoveredServerTransaction.unpackHeader - txid = {0} and processUid = {1}
+ * @message com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_17 [com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_17] - RecoveredServerTransaction - activate of {0} failed with {1}
  */
 
 public class RecoveredServerTransaction extends ServerTransaction
@@ -113,7 +115,7 @@ public class RecoveredServerTransaction extends ServerTransaction
 	    {
 		jtsLogger.loggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, 
 					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_1", new Object[]{getSavingUid()});
+					   "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_1", new Object[]{getSavingUid()});
 	    }
 
 	// Don't bother trying to activate a transaction that isn't in
@@ -144,13 +146,13 @@ public class RecoveredServerTransaction extends ServerTransaction
 		if (activate())
 		    _recoveryStatus = RecoveryStatus.ACTIVATED;
 		else { 
-		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_2", new Object[]{getSavingUid()});
+		    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_2", new Object[]{getSavingUid()});
 		};
 	    }
 	}
 	catch (Exception e)
 	{
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_2", new Object[]{getSavingUid()});
+	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_2", new Object[]{getSavingUid(), e});
 	}
 
 	_txStatus = Status.StatusUnknown;
@@ -203,7 +205,7 @@ public class RecoveredServerTransaction extends ServerTransaction
 	    {
 		jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
 					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_4", new Object[]{get_uid(), Utility.stringStatus(theStatus)});
+					   "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_4", new Object[]{get_uid(), Utility.stringStatus(theStatus)});
 	    }
 
 	if (theStatus == Status.StatusPrepared)
@@ -218,7 +220,7 @@ public class RecoveredServerTransaction extends ServerTransaction
 		{
 		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
 					       FacilityCode.FAC_CRASH_RECOVERY, 
-					       "com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_5", new Object[]{get_uid(), Utility.stringStatus(theStatus)});
+					       "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_5", new Object[]{get_uid(), Utility.stringStatus(theStatus)});
 		}
 	}
 
@@ -246,13 +248,13 @@ public class RecoveredServerTransaction extends ServerTransaction
 	{
 	    if (jtsLogger.loggerI18N.isInfoEnabled())
 		{
-		    jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_6", new Object[]{get_uid()});
+		    jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_6", new Object[]{get_uid()});
 		}
 	    _recoveryStatus = RecoveryStatus.REPLAY_FAILED;
 	}
 	else
 	{
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_7", new Object[]{Utility.stringStatus(theStatus)});
+	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_7", new Object[]{Utility.stringStatus(theStatus)});
 	    _recoveryStatus = RecoveryStatus.REPLAY_FAILED;
 	}
 
@@ -261,7 +263,7 @@ public class RecoveredServerTransaction extends ServerTransaction
 		{
 		    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
 					       FacilityCode.FAC_CRASH_RECOVERY, 
-					       "com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_8", new Object[]{get_uid()});
+					       "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_8", new Object[]{get_uid()});
 		}
     }
 
@@ -329,14 +331,14 @@ public Status getOriginalStatus()
 	    {
 		jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
 					   FacilityCode.FAC_CRASH_RECOVERY, 
-					   "com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_9", new Object[]{Utility.stringStatus(theStatus)});
+					   "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_9", new Object[]{Utility.stringStatus(theStatus)});
 	    }
 	  }
 
 	  catch (TRANSIENT ex_trans)
 	  {
           // orbix seems to count unreachable as transient, but we no longer support orbix
-          jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_10", new Object[] {get_uid()});
+          jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_10", new Object[] {get_uid()});
           theStatus = org.omg.CosTransactions.Status.StatusRolledBack;
 	  }
 	  // What here what should be done for Orbix2000
@@ -353,22 +355,22 @@ public Status getOriginalStatus()
 		  {
 		      jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
 						 FacilityCode.FAC_CRASH_RECOVERY, 
-						 "com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_11", new Object[]{Utility.stringStatus(theStatus)});
+						 "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_11", new Object[]{Utility.stringStatus(theStatus)});
 		  }
 	  }
 	  catch (NotPrepared ex1)
 	  {
-	      jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_12");
+	      jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_12");
 	      theStatus = org.omg.CosTransactions.Status.StatusActive;
 	  }
 	  catch (Exception e)
 	  {
 	    // Unknown error, so better to do nothing at this stage.
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_13", e);
+	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_13", e);
 	  }
 	}
 	else {
-	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_14", new Object[]{get_uid()});
+	    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_14", new Object[]{get_uid()});
 	};
 
 	// Make sure we "delete" these objects when we are finished
@@ -385,7 +387,7 @@ public Status getOriginalStatus()
 	      {
 		  jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
 					     FacilityCode.FAC_CRASH_RECOVERY, 
-					     "com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_15");
+					     "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_15");
 	      }
       }
     
@@ -460,7 +462,7 @@ protected void unpackHeader (InputObjectState os, Uid txId,
 	{
 	    jtsLogger.loggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, 
 				       FacilityCode.FAC_CRASH_RECOVERY, 
-				       "com.arjuna.ats.internal.jts.recovery.transactions.RecoverdServerTransaction_16", new Object[]{get_uid(), _originalProcessUid});
+				       "com.arjuna.ats.internal.jts.recovery.transactions.RecoveredServerTransaction_16", new Object[]{get_uid(), _originalProcessUid});
 	}
     }
 
