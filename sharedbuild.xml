@@ -256,6 +256,8 @@
             </then>
         </if>
 
+        <!-- note: build-release-pkgs.xml overrides this property when approptiate: -->
+        <property name="com.hp.mw.sourceid" value="unknown"/>
 
         <jar jarfile="${build.dir}/lib/${modulename}.jar">
             <fileset dir="${build.dir}" includes="built_using*"/>
@@ -264,10 +266,9 @@
             <manifest>
                 <!-- build time metadata consumed by ConfigurationInfo.java: -->
                 <attribute name="arjuna-properties-file" value="jbossts-properties.xml"/>
-                <attribute name="arjuna-scm-revision" value="foobar"/>
+                <attribute name="arjuna-scm-revision" value="${com.hp.mw.sourceid}"/>
                 <attribute name="arjuna-builder" value="JBoss Inc. [${user.name}] ${os.name} ${os.version} ${buildproperty.date}"/>
             </manifest>
-
         </jar>
 
         <for list="${component-module-list}" param="module">
@@ -394,6 +395,12 @@
 
     <target name="run.tests"/>
 
+    <!-- note: to debug a test, try passing in:
+        <additional.jvmargs>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>
+        </additional.jvmargs>
+    -->
     <macrodef name="run.tests.macro">
         <attribute name="script" default=""/>
         <attribute name="showoutput" default="false"/>
