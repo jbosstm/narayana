@@ -742,6 +742,18 @@ public class StateManager
             }
             else
                 UidHelper.packInto(Uid.nullUid(), os);
+            
+            long birthDate = System.currentTimeMillis();
+            
+            if (tsLogger.arjLogger.isDebugEnabled())
+            {
+                tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
+                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN,
+                        "StateManager.packHeader for object-id " + get_uid()
+                                + " birth-date " + birthDate);
+            }
+            
+            os.packLong(birthDate);
         }
         catch (IOException ex)
         {
@@ -792,6 +804,16 @@ public class StateManager
 
                 throw new IOException(tsLogger.log_mesg
                         .getString("com.arjuna.ats.arjuna.StateManager_15"));
+            }
+            
+            long birthDate = os.unpackLong();
+            
+            if (tsLogger.arjLogger.isDebugEnabled())
+            {
+                tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS,
+                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_STATE_MAN,
+                        "StateManager.unpackHeader for object-id " + get_uid()
+                                + " birth-date " + birthDate);
             }
         }
         catch (IOException ex)
