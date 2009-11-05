@@ -37,10 +37,10 @@ import com.arjuna.mw.wscf11.model.twophase.CoordinatorManagerFactory;
 import com.arjuna.mw.wscf.model.twophase.api.CoordinatorManager;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wscf.coordinator.LocalFactory;
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorControl;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.CoordinatorServiceImple;
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateATCoordinator;
 import com.arjuna.mwlabs.wst11.at.context.ArjunaContextImple;
 import com.arjuna.mwlabs.wst11.at.participants.CleanupSynchronization;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
@@ -185,7 +185,7 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
                     // we need to create a subordinate transaction and register it as both a durable and volatile
                     // participant with the registration service defined in the current context
 
-                    SubordinateCoordinator subTx = (SubordinateCoordinator) createSubordinate();
+                    SubordinateATCoordinator subTx = (SubordinateATCoordinator) createSubordinate();
                     // hmm, need to create wrappers here as the subTx is in WSCF which only knows
                     // about WSAS and WS-C and the participant is in WS-T
                     String vtppid = subTx.getVolatile2PhaseId();
@@ -274,7 +274,7 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
     public class BridgeTxData
     {
         public CoordinationContext context;
-        public SubordinateCoordinator coordinator;
+        public SubordinateATCoordinator coordinator;
         public String identifier;
     }
 
@@ -291,9 +291,9 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
         // we need to create a subordinate transaction and register it as both a durable and volatile
         // participant with the registration service defined in the current context
 
-        SubordinateCoordinator subTx = null;
+        SubordinateATCoordinator subTx = null;
         try {
-            subTx = (SubordinateCoordinator) createSubordinate();
+            subTx = (SubordinateATCoordinator) createSubordinate();
         } catch (NoActivityException e) {
             // will not happen
             return null;
@@ -393,7 +393,7 @@ public class ContextFactoryImple implements ContextFactory, LocalFactory
 		{
 			CoordinatorServiceImple coordManager = (CoordinatorServiceImple) _coordManager;
 			CoordinatorControl theControl = coordManager.coordinatorControl();
-			ACCoordinator subordinateTransaction = theControl.createSubordinate();
+			ATCoordinator subordinateTransaction = theControl.createSubordinate();
 
 			/*
 			 * Now add the registrar for this specific coordinator to the

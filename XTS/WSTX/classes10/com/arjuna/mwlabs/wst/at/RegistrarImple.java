@@ -31,7 +31,6 @@
 
 package com.arjuna.mwlabs.wst.at;
 
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -41,8 +40,8 @@ import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
 import com.arjuna.mw.wscf.model.twophase.CoordinatorManagerFactory;
 import com.arjuna.mw.wscf.model.twophase.api.CoordinatorManager;
 import com.arjuna.mw.wstx.logging.wstxLogger;
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateATCoordinator;
 import com.arjuna.mwlabs.wst.at.participants.CompletionCoordinatorImple;
 import com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant;
 import com.arjuna.mwlabs.wst.at.participants.VolatileTwoPhaseCommitParticipant;
@@ -148,8 +147,8 @@ public class RegistrarImple implements Registrar
 	{
 		Object tx = _hierarchies.get(instanceIdentifier.getInstanceIdentifier());
 		
-		if (tx instanceof SubordinateCoordinator)
-			return registerWithSubordinate((SubordinateCoordinator)tx, participantProtocolService, protocolIdentifier);
+		if (tx instanceof SubordinateATCoordinator)
+			return registerWithSubordinate((SubordinateATCoordinator)tx, participantProtocolService, protocolIdentifier);
 
 		ActivityHierarchy hier = (ActivityHierarchy) tx;
 
@@ -261,7 +260,7 @@ public class RegistrarImple implements Registrar
 		_hierarchies.put(txIdentifier, hier);
 	}
 
-	public final void associate (ACCoordinator transaction) throws Exception
+	public final void associate (ATCoordinator transaction) throws Exception
 	{
 		String txIdentifier = transaction.get_uid().stringForm();
 		
@@ -273,7 +272,7 @@ public class RegistrarImple implements Registrar
 		_hierarchies.remove(txIdentifier);
 	}
 
-	private final EndpointReferenceType registerWithSubordinate(final SubordinateCoordinator theTx,
+	private final EndpointReferenceType registerWithSubordinate(final SubordinateATCoordinator theTx,
         final EndpointReferenceType participantProtocolService, final String protocolIdentifier)
 			throws AlreadyRegisteredException, InvalidProtocolException,
 			InvalidStateException, NoActivityException

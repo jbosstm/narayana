@@ -318,11 +318,30 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
      * @message com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_1 [com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_1] - Unexpected exception thrown from complete:
      * @message com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_2 [com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_2] - Complete called on unknown participant: {0}
      * @message com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_3 [com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_3] - Complete called on unknown participant
+     * @message com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_4 [com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_4] - Complete request dropped pending WS-BA participant recovery manager initialization for participant: {0}
+     * @message com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_5 [com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_5] - Complete request dropped pending WS-BA participant recovery manager scan for unknown participant: {0}
+     * @message com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_6 [com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_6] - Complete request dropped pending registration of application-specific recovery module for WS-BA participant: {0}
      */
     public void complete(final NotificationType complete, final MAP map, final ArjunaContext arjunaContext)
     {
         final InstanceIdentifier instanceIdentifier = arjunaContext.getInstanceIdentifier() ;
         final CoordinatorCompletionParticipantInboundEvents participant = getParticipant(instanceIdentifier) ;
+
+        /**
+         * ensure the BA participant recovery manager is running
+         */
+
+        XTSBARecoveryManager recoveryManager = XTSBARecoveryManager.getRecoveryManager();
+
+        if (recoveryManager == null) {
+            // log warning and drop this message -- it will be resent
+            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_4", new Object[] {instanceIdentifier}) ;
+            }
+
+            return;
+        }
 
         if (participant != null)
         {
@@ -336,6 +355,20 @@ public class CoordinatorCompletionParticipantProcessorImpl extends CoordinatorCo
                 {
                     WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_1", th) ;
                 }
+            }
+        }
+        else if (!recoveryManager.isParticipantRecoveryStarted())
+        {
+            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_5", new Object[] {instanceIdentifier}) ;
+            }
+        }
+        else if (recoveryManager.findParticipantRecoveryRecord(instanceIdentifier.getInstanceIdentifier()) != null)
+        {
+            if (WSTLogger.arjLoggerI18N.isWarnEnabled())
+            {
+                WSTLogger.arjLoggerI18N.warn("com.arjuna.wst11.messaging.CoordinatorCompletionParticipantProcessorImpl.complete_6", new Object[] {instanceIdentifier}) ;
             }
         }
         else

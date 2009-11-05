@@ -31,7 +31,7 @@
 
 package com.arjuna.mwlabs.wscf.model.twophase.arjunacore.context.soap;
 
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator;
 
 import com.arjuna.ats.arjuna.coordinator.ActionHierarchy;
 
@@ -59,7 +59,7 @@ public class ArjunaContextImple implements SOAPContext
      * Incomplete. Need things like the Coordinator URI!
      */
 
-    public ArjunaContextImple (ACCoordinator currentCoordinator)
+    public ArjunaContextImple (ATCoordinator currentCoordinator)
     {
 	DocumentBuilder builder = DomUtil.getDocumentBuilder();
 	org.w3c.dom.Document doc = builder.newDocument();

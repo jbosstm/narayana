@@ -76,6 +76,14 @@ public abstract class UserBusinessActivity
         USER_BUSINESS_ACTIVITY = userBusinessActivity ;
     }
 
+    /**
+     * get the user subordinate business activity
+     *
+     * this is a UserBusinessActivity whose begin method will create an interposed BA transaction
+     * @return The user business activity.
+     */
+    public abstract UserBusinessActivity getUserSubordinateBusinessActivity();
+
     public static final int ATOMIC_OUTCOME = 0;
     public static final int MIXED_OUTCOME = 1;
 

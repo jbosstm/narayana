@@ -46,7 +46,6 @@ import com.arjuna.mw.wscf.common.Qualifier;
 import com.arjuna.mw.wscf.common.CoordinatorId;
 
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
 
 import com.arjuna.mw.wsas.UserActivityFactory;
 
@@ -54,6 +53,7 @@ import com.arjuna.mw.wsas.activity.ActivityHierarchy;
 import com.arjuna.mw.wsas.activity.Outcome;
 
 import com.arjuna.mwlabs.wsas.activity.ActivityHandleImple;
+import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.subordinate.SubordinateBACoordinator;
 
 import com.arjuna.mw.wsas.completionstatus.CompletionStatus;
 import com.arjuna.mw.wsas.completionstatus.Success;
@@ -74,7 +74,7 @@ import java.util.Hashtable;
  * @version $Id: CoordinatorControl.java,v 1.5 2005/05/19 12:13:37 nmcl Exp $
  * @since 1.0.
  *
- * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorControl_1 [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorControl_1] - CoordinatorControl.begin: 
+ * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorControl_1 [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorControl_1] - CoordinatorControl.begin:
  */
 
 public class CoordinatorControl
@@ -92,7 +92,7 @@ public class CoordinatorControl
     {
 	try
 	{
-	    ACCoordinator coord = new ACCoordinator();
+	    BACoordinator coord = new BACoordinator();
 	    int status = coord.start(parentCoordinator());
 	
 	    if (status != ActionStatus.RUNNING)
@@ -123,7 +123,7 @@ public class CoordinatorControl
 
     public Outcome complete (CompletionStatus cs) throws SystemException
     {
-	ACCoordinator current = currentCoordinator();
+	BACoordinator current = currentCoordinator();
 	int outcome;
 	
 	if ((cs != null) && (cs instanceof Success))
@@ -351,9 +351,56 @@ public class CoordinatorControl
 	currentCoordinator().participantCannotComplete(participantId);
     }
 
-    public final ACCoordinator currentCoordinator () throws NoCoordinatorException, SystemException
+    /**
+     * Create a subordinate transaction, i.e., one which can be driven
+     * through complete, close and cancel. Such a transaction is not
+     * interposed with any parent transaction because the parent may
+     * be physically remote from the child. Such interposition is the
+     * responsibility of the invoker.
+     *
+     * @return the subordinate transaction. The transaction is not
+     * associated with the thread and is not interposed. It is running.
+     *
+     * @throws SystemException throw if any error occurs.
+     */
+
+    public final BACoordinator createSubordinate () throws SystemException
     {
-	ACCoordinator coord = (ACCoordinator) _coordinators.get(currentActivity());
+        try
+        {
+            SubordinateBACoordinator coord = new SubordinateBACoordinator();
+            int status = coord.start(null);
+
+            if (status != ActionStatus.RUNNING)
+            {
+                throw new BegunFailedException(
+                        wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorControl_1")
+                                + ActionStatus.stringForm(status));
+            }
+            else
+            {
+                /*
+                 * TODO does this need to be added to the list?
+                 */
+
+                // _coordinators.put(currentActivity(), coord);
+
+                return coord;
+            }
+        }
+        catch (SystemException ex)
+        {
+            throw ex;
+        }
+        catch (Exception ex)
+        {
+            throw new UnexpectedException(ex.toString());
+        }
+    }
+
+    public final BACoordinator currentCoordinator () throws NoCoordinatorException, SystemException
+    {
+	BACoordinator coord = (BACoordinator) _coordinators.get(currentActivity());
 
 	if (coord == null)
 	    throw new NoCoordinatorException();
@@ -380,19 +427,19 @@ public class CoordinatorControl
 	}
     }
 	
-    private final ACCoordinator parentCoordinator () throws SystemException
+    private final BACoordinator parentCoordinator () throws SystemException
     {
 	try
 	{
 	    ActivityHierarchy hier = UserActivityFactory.userActivity().currentActivity();
 	    ActivityHandleImple parentActivity = null;
-	    ACCoordinator parentCoordinator = null;
+	    BACoordinator parentCoordinator = null;
 
 	    if (hier.size() > 1)
 	    {
 		parentActivity = (ActivityHandleImple) hier.activity(hier.size() -2);
 
-		parentCoordinator = (ACCoordinator) _coordinators.get(parentActivity);
+		parentCoordinator = (BACoordinator) _coordinators.get(parentActivity);
 	    }
 
 	    return parentCoordinator;

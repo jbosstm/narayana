@@ -42,7 +42,7 @@ import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wsas.exceptions.WrongStateException;
 import com.arjuna.mw.wsas.exceptions.ProtocolViolationException;
 
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator;
 
 import java.util.HashMap;
 
@@ -54,17 +54,17 @@ import java.util.HashMap;
  * interposition.
  * 
  * @author Mark Little (mark.little@arjuna.com)
- * @version $Id: SubordinateCoordinator.java,v 1.1 2005/05/19 12:13:39 nmcl Exp $
+ * @version $Id: SubordinateATCoordinator.java,v 1.1 2005/05/19 12:13:39 nmcl Exp $
  * @since 2.0.
  */
 
-public class SubordinateCoordinator extends ACCoordinator
+public class SubordinateATCoordinator extends ATCoordinator
 {
 
     /**
      * normal constructor
      */
-	public SubordinateCoordinator ()
+	public SubordinateATCoordinator()
 	{
 		super();
         activated = true;
@@ -74,13 +74,13 @@ public class SubordinateCoordinator extends ACCoordinator
      * constructor for recovered coordinator
      * @param recovery
      */
-	public SubordinateCoordinator (Uid recovery)
+	public SubordinateATCoordinator(Uid recovery)
 	{
 		super(recovery);
         activated = false;
 	}
 
-	/**
+    /**
 	 * If the application requires and if the coordination protocol supports it,
 	 * then this method can be used to execute a coordination protocol on the
 	 * currently enlisted participants at any time prior to the termination of
@@ -186,7 +186,7 @@ public class SubordinateCoordinator extends ACCoordinator
 
         // if we have completed then remove the coordinator from the recovered coordinatros table
         if (status != ActionStatus.COMMITTING) {
-            SubordinateCoordinator.removeRecoveredCoordinator(this);
+            SubordinateATCoordinator.removeRecoveredCoordinator(this);
         }
         
         // run any callback associated with this transaction
@@ -236,7 +236,7 @@ public class SubordinateCoordinator extends ACCoordinator
 		}
 
         // iemove the coordinator from the recovered coordinatros table
-        SubordinateCoordinator.removeRecoveredCoordinator(this);
+        SubordinateATCoordinator.removeRecoveredCoordinator(this);
 
         // run any callback associated with this transaction
 
@@ -263,7 +263,7 @@ public class SubordinateCoordinator extends ACCoordinator
 
     public String type ()
     {
-        return "/StateManager/BasicAction/AtomicAction/TwoPhaseCoordinator/TwoPhase/SubordinateCoordinator";
+        return "/StateManager/BasicAction/AtomicAction/TwoPhaseCoordinator/TwoPhase/SubordinateATCoordinator";
     }
 
     /**
@@ -288,12 +288,12 @@ public class SubordinateCoordinator extends ACCoordinator
     }
 
 
-    protected static synchronized void addRecoveredCoordinator(SubordinateCoordinator coordinator)
+    protected static synchronized void addRecoveredCoordinator(SubordinateATCoordinator coordinator)
     {
         recoveredCoordinators.put(coordinator.get_uid().stringForm(), coordinator);
     }
 
-    protected static synchronized void removeRecoveredCoordinator(SubordinateCoordinator coordinator)
+    protected static synchronized void removeRecoveredCoordinator(SubordinateATCoordinator coordinator)
     {
         recoveredCoordinators.put(coordinator.get_uid().stringForm(), null);
     }
@@ -308,7 +308,7 @@ public class SubordinateCoordinator extends ACCoordinator
         return activated;
     }
 
-    public static synchronized SubordinateCoordinator getRecoveredCoordinator(String coordinatorId)
+    public static synchronized SubordinateATCoordinator getRecoveredCoordinator(String coordinatorId)
     {
         return recoveredCoordinators.get(coordinatorId);
     }
@@ -325,7 +325,7 @@ public class SubordinateCoordinator extends ACCoordinator
      */
     private boolean activated;
 
-    private static final HashMap<String, SubordinateCoordinator> recoveredCoordinators = new HashMap<String, SubordinateCoordinator>();
+    private static final HashMap<String, SubordinateATCoordinator> recoveredCoordinators = new HashMap<String, SubordinateATCoordinator>();
 
     /**
      * we need to remove the association between parent and subordinate context at completion

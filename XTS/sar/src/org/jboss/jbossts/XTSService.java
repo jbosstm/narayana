@@ -21,9 +21,10 @@
 package org.jboss.jbossts;
 
 import org.jboss.logging.Logger;
-import org.jboss.jbossts.xts.recovery.coordinator.at.ACCoordinatorRecoveryModule;
-import org.jboss.jbossts.xts.recovery.coordinator.at.SubordinateCoordinatorRecoveryModule;
+import org.jboss.jbossts.xts.recovery.coordinator.at.ATCoordinatorRecoveryModule;
+import org.jboss.jbossts.xts.recovery.coordinator.at.SubordinateATCoordinatorRecoveryModule;
 import org.jboss.jbossts.xts.recovery.coordinator.ba.BACoordinatorRecoveryModule;
+import org.jboss.jbossts.xts.recovery.coordinator.ba.SubordinateBACoordinatorRecoveryModule;
 import org.jboss.jbossts.xts.recovery.participant.at.ATParticipantRecoveryModule;
 import org.jboss.jbossts.xts.recovery.participant.ba.BAParticipantRecoveryModule;
 
@@ -109,11 +110,12 @@ public class XTSService implements XTSServiceMBean {
 
     private final Logger log = org.jboss.logging.Logger.getLogger(XTSService.class);
 
-    private ACCoordinatorRecoveryModule acCoordinatorRecoveryModule = null;
-    private SubordinateCoordinatorRecoveryModule atSubordinateCoordinatorRecoveryModule = null;
+    private ATCoordinatorRecoveryModule acCoordinatorRecoveryModule = null;
+    private SubordinateATCoordinatorRecoveryModule atSubordinateCoordinatorRecoveryModule = null;
     private ATParticipantRecoveryModule atParticipantRecoveryModule = null;
 
     private BACoordinatorRecoveryModule baCoordinatorRecoveryModule = null;
+    private SubordinateBACoordinatorRecoveryModule baSubordinateCoordinatorRecoveryModule = null;
     private BAParticipantRecoveryModule baParticipantRecoveryModule = null;
 
     // TODO: how to use a (per application) remote coordinator?
@@ -253,19 +255,24 @@ public class XTSService implements XTSServiceMBean {
 
         // install the AT recovery modules
         
-        acCoordinatorRecoveryModule = new ACCoordinatorRecoveryModule();
+        // ok, now the main module
+
+        acCoordinatorRecoveryModule = new ATCoordinatorRecoveryModule();
 
         // ensure Implementations are installed into the inventory before we register the module
 
         acCoordinatorRecoveryModule.install();
 
+        // now the recovery module for subordinate AT transactions
+
+        atSubordinateCoordinatorRecoveryModule = new SubordinateATCoordinatorRecoveryModule();
+
         // we don't need to install anything in the Inventory for this recovery module as it
         // uses the same records as those employed by ACCoordinatorRecoveryModule
 
-        atSubordinateCoordinatorRecoveryModule = new SubordinateCoordinatorRecoveryModule();
-
         atSubordinateCoordinatorRecoveryModule.install();
 
+        // now the module for AT participants
         // we don't need to install anything in the Inventory for this recovery module as it
         // manages its own ObjectStore records but we do need it to create the recovery manager
         // singleton.
@@ -282,6 +289,16 @@ public class XTSService implements XTSServiceMBean {
 
         baCoordinatorRecoveryModule.install();
 
+        // now the recovery module for subordinate BA transactions
+
+        baSubordinateCoordinatorRecoveryModule = new SubordinateBACoordinatorRecoveryModule();
+
+        // we don't need to install anything in the Inventory for this recovery module as it
+        // uses the same records as those employed by ACCoordinatorRecoveryModule
+
+        baSubordinateCoordinatorRecoveryModule.install();
+
+        // now the module for BA participants
         // we don't need to install anything in the Inventory for this recovery module as it
         // manages its own ObjectStore records but we do need it to create the recovery manager
         // singleton.
@@ -302,10 +319,15 @@ public class XTSService implements XTSServiceMBean {
         // because the latter may need the former to be present when the parent and subordinate are both in the
         // same VM.
 
+        // note also that the current implementation relies upon this registration order since the main
+        // coordinator recovery modules flag completion of the first coordinator recovery pass and this
+        // should only happen once both modules have had a crack at the log
+
         RecoveryManager.manager().addModule(atParticipantRecoveryModule);
         RecoveryManager.manager().addModule(baParticipantRecoveryModule);
 
         RecoveryManager.manager().addModule(atSubordinateCoordinatorRecoveryModule);
+        RecoveryManager.manager().addModule(baSubordinateCoordinatorRecoveryModule);
 
         RecoveryManager.manager().addModule(acCoordinatorRecoveryModule);
         RecoveryManager.manager().addModule(baCoordinatorRecoveryModule);
@@ -332,6 +354,12 @@ public class XTSService implements XTSServiceMBean {
             RecoveryManager.manager().removeModule(atSubordinateCoordinatorRecoveryModule, true);
             // ok, now it is safe to get the recovery manager to uninstall its Implementations from the inventory
             atSubordinateCoordinatorRecoveryModule.uninstall();
+        }
+        if (baSubordinateCoordinatorRecoveryModule != null) {
+            // remove the module, making sure any scan which might be using it has completed
+            RecoveryManager.manager().removeModule(baSubordinateCoordinatorRecoveryModule, true);
+            // ok, now it is safe to get the recovery manager to uninstall its Implementations from the inventory
+            baSubordinateCoordinatorRecoveryModule.uninstall();
         }
         if (baParticipantRecoveryModule != null) {
             // remove the module, making sure any scan which might be using it has completed

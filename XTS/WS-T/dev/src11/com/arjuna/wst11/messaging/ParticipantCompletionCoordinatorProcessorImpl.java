@@ -363,6 +363,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_2 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_2] - GetStatus called on unknown coordinator: {0}
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_3 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_3] - Unexpected exception while sending InvalidStateFault to participant {0}
      * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_4 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_4] - GetStatus requested for unknown participant completion participant
+     * @message com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_5 [com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_5] - GetStatus dropped for unknown coordinator completion participant {0} while waiting on recovery scan
      */
     public void getStatus(final NotificationType getStatus, final MAP map, final ArjunaContext arjunaContext)
     {
@@ -381,6 +382,15 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
                 {
                     WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_1", th) ;
                 }
+            }
+        }
+        else if (!areRecoveryLogEntriesAccountedFor())
+        {
+            // drop the request until we have ensured that there is no recovered coordinator for this id
+
+            if (WSTLogger.arjLoggerI18N.isDebugEnabled())
+            {
+                WSTLogger.arjLoggerI18N.debug("com.arjuna.wst11.messaging.ParticipantCompletionCoordinatorProcessorImpl.getStatus_5", new Object[] {instanceIdentifier}) ;
             }
         }
         else
@@ -574,6 +584,7 @@ public class ParticipantCompletionCoordinatorProcessorImpl extends ParticipantCo
 
     private static boolean areRecoveryLogEntriesAccountedFor()
     {
-        return XTSBARecoveryManager.getRecoveryManager().isCoordinatorRecoveryStarted();
+        return (XTSBARecoveryManager.getRecoveryManager().isCoordinatorRecoveryStarted() &&
+                XTSBARecoveryManager.getRecoveryManager().isSubordinateCoordinatorRecoveryStarted());
     }
 }

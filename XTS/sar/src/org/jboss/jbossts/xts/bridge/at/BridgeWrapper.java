@@ -1,6 +1,6 @@
 package org.jboss.jbossts.xts.bridge.at;
 
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateATCoordinator;
 import com.arjuna.mwlabs.wst11.at.ContextFactoryImple;
 import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
 import com.arjuna.mw.wst.TxContext;
@@ -73,7 +73,7 @@ public class BridgeWrapper
      */
     public static BridgeWrapper recover(String identifier) throws UnknownTransactionException
     {
-        SubordinateCoordinator coordinator = SubordinateCoordinator.getRecoveredCoordinator(identifier);
+        SubordinateATCoordinator coordinator = SubordinateATCoordinator.getRecoveredCoordinator(identifier);
         if (coordinator != null) {
             BridgeWrapper bridgeWrapper = new BridgeWrapper();
             bridgeWrapper.context = null;
@@ -170,7 +170,7 @@ public class BridgeWrapper
         coordinator.rollback();
 	}
 
-    private SubordinateCoordinator coordinator;
+    private SubordinateATCoordinator coordinator;
     private TxContext context;
     private String id;
 }

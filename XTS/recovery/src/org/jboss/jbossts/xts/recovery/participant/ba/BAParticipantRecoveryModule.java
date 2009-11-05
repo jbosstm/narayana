@@ -82,7 +82,18 @@ public class BAParticipantRecoveryModule implements RecoveryModule
     public void install()
     {
         XTSBARecoveryManager.setRecoveryManager(new XTSBARecoveryManagerImple(_objectStore));
+        // Subordinate Coordinators register durable participants with their parent transaction so
+        // we need to add an XTSBARecoveryModule which knows about the registered participants
+
+        subordinateRecoveryModule = new XTSBASubordinateRecoveryModule();
+         XTSBARecoveryManager.getRecoveryManager().registerRecoveryModule(subordinateRecoveryModule);
     }
+
+    /**
+     * a recovery module which knows hwo to recover the participants registered by Subordinate BA Coordinators
+     */
+
+    private XTSBASubordinateRecoveryModule subordinateRecoveryModule;
 
     /**
      * called by the service shutdown code after the recovery module is removed from the recovery managers
@@ -90,6 +101,7 @@ public class BAParticipantRecoveryModule implements RecoveryModule
      */
     public void uninstall()
     {
+        XTSBARecoveryManager.getRecoveryManager().unregisterRecoveryModule(subordinateRecoveryModule);
     }
 
     /**

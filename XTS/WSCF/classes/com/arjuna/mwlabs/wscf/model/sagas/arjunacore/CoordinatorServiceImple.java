@@ -122,6 +122,14 @@ public class CoordinatorServiceImple implements UserCoordinator, CoordinatorMana
 	UserActivityFactory.userActivity().start(timeout);
     }	
 
+
+    /**
+     * Create a subordinate coordinator via the coordination control.
+     */
+    public BACoordinator createSubordinate() throws SystemException
+    {
+        return _coordManager.createSubordinate();
+    }
     /**
      * Confirm the activity.
      *

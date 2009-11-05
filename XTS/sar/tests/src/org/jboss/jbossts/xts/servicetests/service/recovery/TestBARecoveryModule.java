@@ -82,7 +82,7 @@ public class TestBARecoveryModule implements XTSBARecoveryModule
 
     public BusinessAgreementWithCoordinatorCompletionParticipant deserializeCoordinatorCompletionParticipant(String id, ObjectInputStream stream) throws Exception {
         if (id.startsWith(Constants.PARTICIPANT_ID_PREFIX + "CoordinatorCompletionParticipant")) {
-            System.out.println("xts service test : attempting to deserialize WS-BA participant completion participant " + id);
+            System.out.println("xts service test : attempting to deserialize WS-BA coordinator completion participant " + id);
             BusinessAgreementWithCoordinatorCompletionParticipant participant
                     = (BusinessAgreementWithCoordinatorCompletionParticipant)stream.readObject();
             System.out.println("xts service test : deserialized WS-BA coordinator completion participant " + id);
@@ -93,7 +93,7 @@ public class TestBARecoveryModule implements XTSBARecoveryModule
     }
 
     public BusinessAgreementWithCoordinatorCompletionParticipant recreateCoordinatorCompletionParticipant(String id, byte[] recoveryState) throws Exception {
-        if (id.startsWith(Constants.PARTICIPANT_ID_PREFIX + "ParticipantCompletionParticipant")) {
+        if (id.startsWith(Constants.PARTICIPANT_ID_PREFIX + "CoordinatorCompletionParticipant")) {
             // this should not get called -- test WS-BA participants are saved and restored
             // using serialization
             throw new Exception("xts service test : invalid request to recreate() WS-BA coordinator completion participant " + id);

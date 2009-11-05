@@ -1,7 +1,7 @@
 package com.arjuna.wst.stub;
 
 import com.arjuna.wst.*;
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateATCoordinator;
 
 /**
  * A volatile participant registered on behalf of an interposed WS-AT coordinator in order to ensure that
@@ -9,7 +9,7 @@ import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateC
  */
 public class SubordinateVolatile2PCStub implements Volatile2PCParticipant
 {
-    public SubordinateVolatile2PCStub(SubordinateCoordinator coordinator)
+    public SubordinateVolatile2PCStub(SubordinateATCoordinator coordinator)
     {
         this.coordinator = coordinator;
     }
@@ -69,5 +69,5 @@ public class SubordinateVolatile2PCStub implements Volatile2PCParticipant
     /**
      * the interposed coordinator
      */
-    private SubordinateCoordinator coordinator;
+    private SubordinateATCoordinator coordinator;
 }

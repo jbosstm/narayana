@@ -34,23 +34,39 @@ package com.arjuna.mwlabs.wst11.ba;
 import com.arjuna.mw.wscf11.model.sagas.CoordinatorManagerFactory;
 import com.arjuna.mw.wscf.model.sagas.api.CoordinatorManager;
 import com.arjuna.mw.wstx.logging.wstxLogger;
+import com.arjuna.mw.wsas.exceptions.NoActivityException;
+import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mwlabs.wst11.ba.context.ArjunaContextImple;
 import com.arjuna.mwlabs.wst11.ba.RegistrarImple;
 import com.arjuna.mwlabs.wst11.ba.BusinessActivityTerminatorImple;
+import com.arjuna.mwlabs.wst11.ba.participants.CleanupSynchronization;
+import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.subordinate.SubordinateBACoordinator;
+import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.CoordinatorServiceImple;
+import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.webservices11.wsarjtx.processors.TerminationCoordinatorProcessor;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
+import com.arjuna.webservices11.wsba.processors.CoordinatorCompletionParticipantProcessor;
 import com.arjuna.webservices11.ServiceRegistry;
 import com.arjuna.wsc11.ContextFactory;
+import com.arjuna.wsc11.RegistrationCoordinator;
+import com.arjuna.wsc11.messaging.MessageId;
 import com.arjuna.wsc.InvalidCreateParametersException;
+import com.arjuna.wsc.InvalidProtocolException;
 import com.arjuna.wst11.BusinessActivityTerminator;
+import com.arjuna.wst11.BAParticipantManager;
+import com.arjuna.wst11.messaging.engines.CoordinatorCompletionParticipantEngine;
+import com.arjuna.wst11.stub.SubordinateCoordinatorCompletionParticipantStub;
+import com.arjuna.wst11.stub.BACoordinatorCompletionParticipantManagerStub;
+import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.Expires;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+import javax.xml.namespace.QName;
 
 public class ContextFactoryImple implements ContextFactory
 {
@@ -114,6 +130,7 @@ public class ContextFactoryImple implements ContextFactory
     	    {
     		// make sure no transaction is currently associated
 
+            if (currentContext == null) {
     		_coordManager.suspend();
 
     		final int timeout ;
@@ -155,6 +172,57 @@ public class ContextFactoryImple implements ContextFactory
     		_theRegistrar.associate();
 
     		return coordinationContext;
+            } else {
+                // we need to create a subordinate transaction -- this transaction will not be associated
+                // with an activity which identifes the parent transaction this means that we cannot use
+                // the activity service to do things like enlist participants or deliver participant
+                // initiated messages.
+
+                SubordinateBACoordinator subTx = (SubordinateBACoordinator) createSubordinate();
+
+                // now we register a coordinator completion participant on behalf of the subtransaction
+                // with the registration service defined in the current context
+                // there is no point registering a participant completion participant because we cannot
+                // know when it is ok to forward a completed message -- even when all N registered PC
+                // participants have notified completed another PC participant might enlist.
+
+                String ccpid = subTx.getCoordinatorCompletionParticipantid();
+                SubordinateCoordinatorCompletionParticipantStub ccp = new SubordinateCoordinatorCompletionParticipantStub(subTx);
+                String messageId = MessageId.getMessageId() ;
+                W3CEndpointReference participant = getParticipant(ccpid, isSecure);
+                W3CEndpointReference coordinator = RegistrationCoordinator.register(currentContext, messageId, participant, BusinessActivityConstants.WSBA_SUB_PROTOCOL_COORDINATOR_COMPLETION) ;
+                final CoordinatorCompletionParticipantEngine engine = new CoordinatorCompletionParticipantEngine(ccpid, coordinator, ccp) ;
+                CoordinatorCompletionParticipantProcessor.getProcessor().activateParticipant(engine, ccpid) ;
+                // we need to pass a manager to the stub in case it has to fail at completion
+                BAParticipantManager manager = new BACoordinatorCompletionParticipantManagerStub(engine);
+                ccp.setManager(manager);
+
+                // ok now create the context
+                final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+                final String registrationCoordinatorURI = serviceRegistry.getServiceURI(CoordinationConstants.REGISTRATION_SERVICE_NAME, isSecure) ;
+
+                final CoordinationContext coordinationContext = new CoordinationContext() ;
+                coordinationContext.setCoordinationType(coordinationTypeURI);
+                CoordinationContextType.Identifier identifier = new CoordinationContextType.Identifier();
+                String txId = subTx.get_uid().stringForm();
+                identifier.setValue("urn:" + txId);
+                coordinationContext.setIdentifier(identifier) ;
+                Expires expiresInstance = currentContext.getExpires();
+                final long transactionExpires = (expiresInstance != null ? expiresInstance.getValue() : 0);
+                if (transactionExpires > 0)
+                {
+                    expiresInstance = new Expires();
+                    expiresInstance.setValue(transactionExpires);
+                    coordinationContext.setExpires(expiresInstance);
+                }
+                W3CEndpointReference registrationCoordinator = getRegistrationCoordinator(registrationCoordinatorURI, txId);
+                coordinationContext.setRegistrationService(registrationCoordinator) ;
+
+                // now associate the tx id with the sub transaction
+
+                _theRegistrar.associate(subTx);
+                return coordinationContext;
+            }
 	    }
 	    catch (com.arjuna.mw.wsas.exceptions.NoActivityException ex)
 	    {
@@ -192,14 +260,104 @@ public class ContextFactoryImple implements ContextFactory
 	return null;
     }
 
+    /**
+     * class used to return data required to manage a bridged to subordinate transaction
+     */
+    public class BridgeTxData
+    {
+        public CoordinationContext context;
+        public SubordinateBACoordinator coordinator;
+        public String identifier;
+    }
+
+    /**
+     * create a bridged to subordinate WS-BA 1.1 transaction, associate it with the registrar and create and return
+     * a coordination context for it. n.b. this is a private, behind-the-scenes method for use by the JTA-BA
+     * transaction bridge code.
+     * @param expires the timeout for the bridged to BA transaction
+     * @param isSecure true if the registration cooridnator URL should use a secure address, otherwise false.
+     * @return a coordination context for the bridged to transaction
+     */
+    public BridgeTxData createBridgedTransaction (final Long expires, final boolean isSecure)
+    {
+        // we need to create a subordinate transaction and expose it to the bridge layer so it can
+        // be driven to completion
+        
+        SubordinateBACoordinator subTx = null;
+        try {
+            subTx = (SubordinateBACoordinator) createSubordinate();
+        } catch (NoActivityException e) {
+            // will not happen
+            return null;
+        } catch (InvalidProtocolException e) {
+            // will not happen
+            return null;
+        } catch (SystemException e) {
+            // may happen
+            return null;
+        }
+
+        // ok now create the context
+
+        final ServiceRegistry serviceRegistry = ServiceRegistry.getRegistry() ;
+        final String registrationCoordinatorURI = serviceRegistry.getServiceURI(CoordinationConstants.REGISTRATION_SERVICE_NAME, isSecure) ;
+
+        final CoordinationContext coordinationContext = new CoordinationContext() ;
+        coordinationContext.setCoordinationType(BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME);
+        CoordinationContextType.Identifier identifier = new CoordinationContextType.Identifier();
+        String txId = subTx.get_uid().stringForm();
+        identifier.setValue("urn:" + txId);
+        coordinationContext.setIdentifier(identifier) ;
+        if (expires != null && expires.longValue() > 0)
+        {
+            Expires expiresInstance = new Expires();
+            expiresInstance.setValue(expires);
+            coordinationContext.setExpires(expiresInstance);
+        }
+        W3CEndpointReference registrationCoordinator = getRegistrationCoordinator(registrationCoordinatorURI, txId);
+        coordinationContext.setRegistrationService(registrationCoordinator) ;
+
+        // now associate the tx id with the sub transaction
+
+        try {
+            _theRegistrar.associate(subTx);
+        } catch (Exception e) {
+            // will not happen
+        }
+        BridgeTxData bridgeTxData = new BridgeTxData();
+        bridgeTxData.context = coordinationContext;
+        bridgeTxData.coordinator = subTx;
+        bridgeTxData.identifier = txId;
+
+        return bridgeTxData;
+    }
+
+    private W3CEndpointReference getParticipant(final String id, final boolean isSecure)
+    {
+        final QName serviceName = BusinessActivityConstants.COORDINATOR_COMPLETION_PARTICIPANT_SERVICE_QNAME;
+        final QName endpointName = BusinessActivityConstants.COORDINATOR_COMPLETION_PARTICIPANT_PORT_QNAME;
+        final String address = ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.COORDINATOR_COMPLETION_PARTICIPANT_SERVICE_NAME, isSecure);
+        W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
+        builder.serviceName(serviceName);
+        builder.endpointName(endpointName);
+        builder.address(address);
+        InstanceIdentifier.setEndpointInstanceIdentifier(builder, id);
+        return builder.build();
+    }
+
     private static W3CEndpointReference getRegistrationCoordinator(String registrationCoordinatorURI, ArjunaContextImple arjunaContext) {
+        final String identifier = arjunaContext.getTransactionIdentifier();
+        return getRegistrationCoordinator(registrationCoordinatorURI, identifier);
+    }
+
+    private static W3CEndpointReference getRegistrationCoordinator(String registrationCoordinatorURI, String identifier) {
         final W3CEndpointReferenceBuilder builder = new W3CEndpointReferenceBuilder();
         builder.serviceName(CoordinationConstants.REGISTRATION_SERVICE_QNAME);
         builder.endpointName(CoordinationConstants.REGISTRATION_ENDPOINT_QNAME);
         // strictly we shouldn't need to set the address because we are in the same web app as the
         // coordinator but we have to as the W3CEndpointReference implementation is incomplete
         builder.address(registrationCoordinatorURI);
-        InstanceIdentifier.setEndpointInstanceIdentifier(builder, arjunaContext.getTransactionIdentifier());
+        InstanceIdentifier.setEndpointInstanceIdentifier(builder, identifier);
         W3CEndpointReference registrationCoordinator = builder.build();
         return registrationCoordinator;
     }
@@ -215,6 +373,30 @@ public class ContextFactoryImple implements ContextFactory
     public void uninstall (String coordinationTypeURI)
     {
 	// we don't use this as one implementation is registered per type
+    }
+
+    public final Object createSubordinate () throws NoActivityException, InvalidProtocolException, SystemException
+    {
+        try
+        {
+            CoordinatorServiceImple coordManager = (CoordinatorServiceImple) _coordManager;
+            BACoordinator subordinateTransaction = coordManager.createSubordinate();
+
+            /*
+             * Now add the registrar for this specific coordinator to the
+             * mapper.
+             */
+
+            subordinateTransaction.enlistSynchronization(new CleanupSynchronization(subordinateTransaction.get_uid().stringForm(), _theRegistrar));
+
+            _theRegistrar.associate(subordinateTransaction);
+
+            return subordinateTransaction;
+        }
+        catch (Exception ex)
+        {
+            throw new SystemException(ex.toString());
+        }
     }
 
     public final RegistrarImple registrar ()

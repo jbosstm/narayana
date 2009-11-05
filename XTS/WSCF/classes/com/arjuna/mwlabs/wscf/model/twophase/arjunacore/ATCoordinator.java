@@ -61,38 +61,38 @@ import com.arjuna.mw.wscf.exceptions.*;
  * @version $Id: ACCoordinator.java,v 1.7 2005/06/09 09:41:27 nmcl Exp $
  * @since 1.0.
  * 
- * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator_1
- *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator_1] -
+ * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_1
+ *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_1] -
  *          ArjunaCore does not support removal of participants
- * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator_2
- *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator_2] -
+ * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_2
+ *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_2] -
  *          Null is an invalid parameter!
- * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator_3
- *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator_3] -
+ * @message com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_3
+ *          [com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_3] -
  *          Wrong state for operation!
  */
 
-public class ACCoordinator extends TwoPhaseCoordinator
+public class ATCoordinator extends TwoPhaseCoordinator
 {
 
 	private final static int ROLLEDBACK = 0;
 	private final static int READONLY = 1;
 
-	public ACCoordinator ()
+	public ATCoordinator()
 	{
 		super();
 	
 		_theId = new CoordinatorIdImple(get_uid());
 	}
 
-	public ACCoordinator (Uid recovery)
+	public ATCoordinator(Uid recovery)
 	{
 		super(recovery);
 				
 		_theId = new CoordinatorIdImple(get_uid());
 	}
 
-	/**
+    /**
 	 * If the application requires and if the coordination protocol supports it,
 	 * then this method can be used to execute a coordination protocol on the
 	 * currently enlisted participants at any time prior to the termination of
@@ -173,7 +173,7 @@ public class ACCoordinator extends TwoPhaseCoordinator
 			throw new InvalidParticipantException();
 		else
 			throw new WrongStateException(
-					wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator_1"));
+					wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_1"));
 	}
 
 	/**
@@ -230,7 +230,7 @@ public class ACCoordinator extends TwoPhaseCoordinator
 			throw new InvalidSynchronizationException();
 		else
 			throw new WrongStateException(
-					wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator_1"));
+					wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_1"));
 	}
 
 	/**
@@ -264,7 +264,7 @@ public class ACCoordinator extends TwoPhaseCoordinator
 	{
 		if (participantId == null)
 			throw new SystemException(
-					wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator_2"));
+					wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_2"));
 
 		if (status() == ActionStatus.RUNNING)
 			changeParticipantStatus(participantId, ROLLEDBACK);
@@ -277,7 +277,7 @@ public class ACCoordinator extends TwoPhaseCoordinator
 	{
 		if (participantId == null)
 			throw new SystemException(
-					wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator_2"));
+					wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_2"));
 
 		if (status() == ActionStatus.RUNNING)
 		{
@@ -285,12 +285,12 @@ public class ACCoordinator extends TwoPhaseCoordinator
 		}
 		else
 			throw new SystemException(
-					wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator_3"));
+					wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator_3"));
 	}
 
 	public String type ()
 	{
-		return "/StateManager/BasicAction/AtomicAction/TwoPhaseCoordinator/TwoPhase/ACCoordinator";
+		return "/StateManager/BasicAction/AtomicAction/TwoPhaseCoordinator/TwoPhase/ATCoordinator";
 	}
 	
 	private final void changeParticipantStatus (String participantId, int status)

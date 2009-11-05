@@ -34,7 +34,9 @@ package com.arjuna.mwlabs.wst11.ba.participants;
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wsas.exceptions.WrongStateException;
 import com.arjuna.mw.wscf.exceptions.InvalidParticipantException;
+import com.arjuna.mw.wscf.model.sagas.participants.ParticipantWithComplete;
 import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
+import com.arjuna.wst11.BAParticipantManager;
 
 /**
  * @author Mark Little (mark.little@arjuna.com)
@@ -44,16 +46,23 @@ import com.arjuna.wst.BusinessAgreementWithCoordinatorCompletionParticipant;
  */
 
 public class BusinessAgreementWithCoordinatorCompletionImple extends
-        BusinessAgreementWithParticipantCompletionImple implements
-		com.arjuna.mw.wscf.model.sagas.participants.ParticipantWithComplete
+        BusinessAgreementWithParticipantCompletionImple implements ParticipantWithComplete
 {
 
-	public BusinessAgreementWithCoordinatorCompletionImple(
-			BusinessAgreementWithCoordinatorCompletionParticipant participant,
-			String identifier)
-	{
-		super(participant, identifier);
-	}
+    public BusinessAgreementWithCoordinatorCompletionImple(
+            BusinessAgreementWithCoordinatorCompletionParticipant participant,
+            String identifier)
+    {
+        super(participant, identifier);
+    }
+
+    public BusinessAgreementWithCoordinatorCompletionImple(
+            BAParticipantManager manager,
+            BusinessAgreementWithCoordinatorCompletionParticipant participant,
+            String identifier)
+    {
+        super(manager, participant, identifier);
+    }
 
     public BusinessAgreementWithCoordinatorCompletionImple()
     {

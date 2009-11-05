@@ -37,6 +37,8 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.*;
 
 import com.arjuna.mw.wscf.model.sagas.participants.*;
+import com.arjuna.mw.wscf.model.sagas.exceptions.DuplicateSynchronizationException;
+import com.arjuna.mw.wscf.model.sagas.exceptions.InvalidSynchronizationException;
 
 import com.arjuna.mw.wscf.common.Qualifier;
 import com.arjuna.mw.wscf.common.CoordinatorId;
@@ -68,18 +70,21 @@ import com.arjuna.mw.wscf.exceptions.*;
  * @version $Id: ACCoordinator.java,v 1.5 2005/05/19 12:13:37 nmcl Exp $
  * @since 1.0.
  * 
- * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_1
- *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_1] -
+ * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_1
+ *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_1] -
  *          Participant failed to complete in activity {1}
- * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_2
- *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_2] -
+ * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_2
+ *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_2] -
  *          Null is an invalid parameter.
- * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_3
- *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_3] -
+ * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_3
+ *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_3] -
  *          Wrong state for operation!
+ * @message com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_4
+ *          [com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_4] -
+ *          Removal of business activity synchronization is not allowed {1}
  */
 
-public class ACCoordinator extends TwoPhaseCoordinator
+public class BACoordinator extends TwoPhaseCoordinator
 {
 
     private final static int DELISTED = 0;
@@ -88,21 +93,21 @@ public class ACCoordinator extends TwoPhaseCoordinator
 
     private final static int FAILED = 2;
 
-	public ACCoordinator ()
+	public BACoordinator()
 	{
 		super();
 
 		_theId = new CoordinatorIdImple(get_uid());
 	}
 
-	public ACCoordinator (Uid recovery)
+	public BACoordinator(Uid recovery)
 	{
 		super(recovery);
 
 		_theId = new CoordinatorIdImple(get_uid());
 	}
 
-	/**
+    /**
 	 * If the application requires and if the coordination protocol supports it,
 	 * then this method can be used to execute a coordination protocol on the
 	 * currently enlisted participants at any time prior to the termination of
@@ -163,7 +168,7 @@ public class ACCoordinator extends TwoPhaseCoordinator
 
                             preventCommit();
 
-                            wscfLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_1", new Object[] { get_uid() });
+                            wscfLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_1", new Object[] { get_uid() });
 
                             throw new SystemException("Participant failed to complete");
                         }
@@ -197,6 +202,15 @@ public class ACCoordinator extends TwoPhaseCoordinator
         // completed they will throw a WrongStateException during prepare leading to rollback
 
         return end(true);
+    }
+
+    /**
+     * cancel the activity
+     * @return
+     */
+    public int cancel ()
+    {
+        return super.cancel();
     }
 
 	/**
@@ -254,7 +268,7 @@ public class ACCoordinator extends TwoPhaseCoordinator
 		if (participantId == null)
 			throw new SystemException(
 					wscfLogger.log_mesg
-							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_2"));
+							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_2"));
 
         int status = status();
         // exit is only legitimate when the TX is in these states
@@ -266,7 +280,7 @@ public class ACCoordinator extends TwoPhaseCoordinator
             default:
                 throw new WrongStateException(
 					wscfLogger.log_mesg
-							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_3"));
+							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_3"));
         }
     }
 
@@ -277,7 +291,7 @@ public class ACCoordinator extends TwoPhaseCoordinator
 		if (participantId == null)
 			throw new SystemException(
 					wscfLogger.log_mesg
-							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_2"));
+							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_2"));
 
         int status = status();
         // completed is only legitimate when the TX is in these states
@@ -289,7 +303,7 @@ public class ACCoordinator extends TwoPhaseCoordinator
             default:
                 throw new WrongStateException(
 					wscfLogger.log_mesg
-							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_3"));
+							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_3"));
         }
 	}
 
@@ -299,7 +313,7 @@ public class ACCoordinator extends TwoPhaseCoordinator
 		if (participantId == null)
 			throw new SystemException(
 					wscfLogger.log_mesg
-							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_2"));
+							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_2"));
 
         int status = status();
         // faulted is only legitimate when the TX is in these states
@@ -317,7 +331,7 @@ public class ACCoordinator extends TwoPhaseCoordinator
             default:
                 throw new SystemException(
 					wscfLogger.log_mesg
-							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_3"));
+							.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_3"));
         }
     }
 
@@ -329,7 +343,7 @@ public class ACCoordinator extends TwoPhaseCoordinator
         if (participantId == null)
             throw new SystemException(
                     wscfLogger.log_mesg
-                            .getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_2"));
+                            .getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_2"));
 
         int status = status();
         // cannot complete is only legitimate when the TX is in these states
@@ -344,8 +358,65 @@ public class ACCoordinator extends TwoPhaseCoordinator
             default:
                 throw new WrongStateException(
                     wscfLogger.log_mesg
-                            .getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator_3"));
+                            .getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_3"));
         }
+    }
+
+    /**
+     * Enrol the specified synchronization with the coordinator associated with
+     * the current thread.
+     *
+     * @param act The synchronization to add.
+     *
+     * @exception WrongStateException
+     *                Thrown if the coordinator is not in a state that allows
+     *                participants to be enrolled.
+     * @exception DuplicateSynchronizationException
+     *                Thrown if the participant has already been enrolled and
+     *                the coordination protocol does not support multiple
+     *                entries.
+     * @exception InvalidSynchronizationException
+     *                Thrown if the participant is invalid.
+     * @exception SystemException
+     *                Thrown if any other error occurs.
+     */
+
+    public void enlistSynchronization (Synchronization act)
+            throws WrongStateException, DuplicateSynchronizationException,
+            InvalidSynchronizationException, SystemException
+    {
+        if (act == null)
+            throw new InvalidSynchronizationException();
+
+        SynchronizationRecord rec = new SynchronizationRecord(act, new Uid());
+
+        if (addSynchronization(rec) != AddOutcome.AR_ADDED)
+            throw new WrongStateException();
+    }
+
+    /**
+     * Remove the specified synchronization from the coordinator's list.
+     *
+     * @exception InvalidSynchronizationException
+     *                Thrown if the participant is not known of by the
+     *                coordinator.
+     * @exception WrongStateException
+     *                Thrown if the state of the coordinator does not allow the
+     *                participant to be removed (e.g., in a two-phase protocol
+     *                the coordinator is committing.)
+     * @exception SystemException
+     *                Thrown if any other error occurs.
+     */
+
+    public void delistSynchronization (Synchronization act)
+            throws InvalidSynchronizationException, WrongStateException,
+            SystemException
+    {
+        if (act == null)
+            throw new InvalidSynchronizationException();
+        else
+            throw new WrongStateException(
+                    wscfLogger.log_mesg.getString("com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator_4"));
     }
 
 	/**
@@ -375,7 +446,7 @@ public class ACCoordinator extends TwoPhaseCoordinator
 
     public String type ()
     {
-        return "/StateManager/BasicAction/AtomicAction/Sagas/ACCoordinator";
+        return "/StateManager/BasicAction/AtomicAction/Sagas/BACoordinator";
     }
 
 	private final void changeParticipantStatus (String participantId, int status)

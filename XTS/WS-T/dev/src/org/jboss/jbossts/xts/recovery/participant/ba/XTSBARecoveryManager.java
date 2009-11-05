@@ -133,10 +133,24 @@ public abstract class XTSBARecoveryManager {
     public abstract boolean isCoordinatorRecoveryStarted();
 
     /**
-     * record the fact thatwhether the first BA coordinator recovery scan has completed.
+     * test whether the first BA subordinate coordinator recovery scan has completed. this indicates
+     * whether there may or may not still be unknown BA subtransaction records on disk. If the first
+     * scan has not yet completed then a close or cancel/compensate for an unknown subtransaction must
+     * raise an exception delaying commit of the parent transaction.
+     */
+    public abstract boolean isSubordinateCoordinatorRecoveryStarted();
+    /**
+     * record the fact that the first BA coordinator recovery scan has completed.
      */
 
     public abstract void setCoordinatorRecoveryStarted();
+
+
+    /**
+     * record the fact that the first BA subordinate coordinator recovery scan has completed.
+     */
+
+    public abstract void setSubordinateCoordinatorRecoveryStarted();
 
     /**
      * the singleton instance of the recovery manager

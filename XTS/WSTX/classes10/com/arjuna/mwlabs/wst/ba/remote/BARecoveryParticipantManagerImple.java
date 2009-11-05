@@ -35,9 +35,7 @@ import com.arjuna.wst.SystemException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst.BAParticipantManager;
-import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator;
-
-import javax.xml.namespace.QName;
+import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator;
 
 /**
  * This is the interface that the core exposes in order to allow different
@@ -52,7 +50,7 @@ import javax.xml.namespace.QName;
 public class BARecoveryParticipantManagerImple implements BAParticipantManager
 {
 
-    public BARecoveryParticipantManagerImple(ACCoordinator coordinator, String participantId)
+    public BARecoveryParticipantManagerImple(BACoordinator coordinator, String participantId)
     {
         this.coordinator = coordinator;
         this.participantId = participantId;
@@ -137,7 +135,7 @@ public class BARecoveryParticipantManagerImple implements BAParticipantManager
          */
     }
 
-    private ACCoordinator coordinator;
+    private BACoordinator coordinator;
     private String participantId;
 
 }

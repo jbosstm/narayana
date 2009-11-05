@@ -7,8 +7,8 @@ import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
 import com.arjuna.mw.wscf11.model.twophase.CoordinatorManagerFactory;
 import com.arjuna.mw.wscf.model.twophase.api.CoordinatorManager;
 import com.arjuna.mw.wstx.logging.wstxLogger;
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateATCoordinator;
 import com.arjuna.mwlabs.wst11.at.participants.CompletionCoordinatorImple;
 import com.arjuna.mwlabs.wst.at.participants.DurableTwoPhaseCommitParticipant;
 import com.arjuna.mwlabs.wst.at.participants.VolatileTwoPhaseCommitParticipant;
@@ -25,7 +25,6 @@ import com.arjuna.wsc11.Registrar;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RegistrarImple implements Registrar
@@ -98,8 +97,8 @@ public class RegistrarImple implements Registrar
 	{
 		Object tx = _hierarchies.get(instanceIdentifier.getInstanceIdentifier());
 
-		if (tx instanceof SubordinateCoordinator)
-			return registerWithSubordinate((SubordinateCoordinator)tx, participantProtocolService, protocolIdentifier, isSecure);
+		if (tx instanceof SubordinateATCoordinator)
+			return registerWithSubordinate((SubordinateATCoordinator)tx, participantProtocolService, protocolIdentifier, isSecure);
 
 		ActivityHierarchy hier = (ActivityHierarchy) tx;
 
@@ -209,7 +208,7 @@ public class RegistrarImple implements Registrar
 		_hierarchies.put(txIdentifier, hier);
 	}
 
-	public final void associate (ACCoordinator transaction) throws Exception
+	public final void associate (ATCoordinator transaction) throws Exception
 	{
 		String txIdentifier = transaction.get_uid().stringForm();
 
@@ -221,7 +220,7 @@ public class RegistrarImple implements Registrar
 		_hierarchies.remove(txIdentifier);
 	}
 
-	private final W3CEndpointReference registerWithSubordinate(final SubordinateCoordinator theTx,
+	private final W3CEndpointReference registerWithSubordinate(final SubordinateATCoordinator theTx,
         final W3CEndpointReference participantProtocolService, final String protocolIdentifier,
         final boolean isSecure)
 			throws AlreadyRegisteredException, InvalidProtocolException,

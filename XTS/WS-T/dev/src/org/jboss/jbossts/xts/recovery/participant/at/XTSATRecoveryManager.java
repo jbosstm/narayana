@@ -141,13 +141,13 @@ public abstract class XTSATRecoveryManager {
     public abstract boolean isSubordinateCoordinatorRecoveryStarted();
 
     /**
-     * record the fact thatwhether the first AT coordinator recovery scan has completed.
+     * record the fact that the first AT coordinator recovery scan has completed.
      */
 
     public abstract void setCoordinatorRecoveryStarted();
 
     /**
-     * record the fact thatwhether the first AT coordinator recovery scan has completed.
+     * record the fact that the first AT subordinate coordinator recovery scan has completed.
      */
 
     public abstract void setSubordinateCoordinatorRecoveryStarted();

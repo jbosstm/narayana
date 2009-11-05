@@ -40,8 +40,6 @@ import com.arjuna.mw.wsas.exceptions.WrongStateException;
 import com.arjuna.mw.wscf.exceptions.InvalidParticipantException;
 import com.arjuna.mw.wscf.model.sagas.exceptions.CompensateFailedException;
 import com.arjuna.mwlabs.wst.util.PersistableParticipantHelper;
-import com.arjuna.mwlabs.wst.ba.remote.BARecoveryParticipantManagerImple;
-import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator;
 import com.arjuna.wst.BusinessAgreementWithParticipantCompletionParticipant;
 
 // TODO crash recovery (for EVERYTHING!!)

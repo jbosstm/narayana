@@ -1,7 +1,7 @@
 package com.arjuna.wst.stub;
 
 import com.arjuna.wst.*;
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateATCoordinator;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
@@ -24,7 +24,7 @@ public class SubordinateDurable2PCStub implements Durable2PCParticipant, Persist
      *
      * @param coordinator
      */
-    public SubordinateDurable2PCStub(SubordinateCoordinator coordinator)
+    public SubordinateDurable2PCStub(SubordinateATCoordinator coordinator)
     {
         this.coordinator = coordinator;
         this.coordinatorId = coordinator.get_uid().stringForm();
@@ -77,7 +77,7 @@ public class SubordinateDurable2PCStub implements Durable2PCParticipant, Persist
             XTSATRecoveryManager recoveryManager = XTSATRecoveryManager.getRecoveryManager();
             boolean isRecoveryScanStarted = recoveryManager.isSubordinateCoordinatorRecoveryStarted();
             // now look for a subordinate coordinator with the right id
-            coordinator = SubordinateCoordinator.getRecoveredCoordinator(coordinatorId);
+            coordinator = SubordinateATCoordinator.getRecoveredCoordinator(coordinatorId);
             if (coordinator == null) {
                 if (!isRecoveryScanStarted) {
                     // the subtransaction may still be waiting to be resolved
@@ -122,7 +122,7 @@ public class SubordinateDurable2PCStub implements Durable2PCParticipant, Persist
             XTSATRecoveryManager recoveryManager = XTSATRecoveryManager.getRecoveryManager();
             boolean isRecoveryScanStarted = recoveryManager.isSubordinateCoordinatorRecoveryStarted();
             // now look for a subordinate coordinator with the right id
-            coordinator = SubordinateCoordinator.getRecoveredCoordinator(coordinatorId);
+            coordinator = SubordinateATCoordinator.getRecoveredCoordinator(coordinatorId);
             if (coordinator == null) {
                 if (!isRecoveryScanStarted) {
                     // the subtransaction may still be waiting to be resolved
@@ -204,7 +204,7 @@ public class SubordinateDurable2PCStub implements Durable2PCParticipant, Persist
     /**
      * the interposed coordinator
      */
-    private SubordinateCoordinator coordinator;
+    private SubordinateATCoordinator coordinator;
 
     /**
      * the interposed coordinator's id

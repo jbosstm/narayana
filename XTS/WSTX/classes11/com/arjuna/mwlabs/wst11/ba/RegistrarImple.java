@@ -35,12 +35,16 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.mw.wsas.activity.ActivityHierarchy;
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wscf.exceptions.ProtocolNotRegisteredException;
+import com.arjuna.mw.wscf.exceptions.DuplicateParticipantException;
 import com.arjuna.mw.wscf11.model.sagas.CoordinatorManagerFactory;
 import com.arjuna.mw.wscf.model.sagas.api.CoordinatorManager;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mwlabs.wst11.ba.participants.BusinessAgreementWithCoordinatorCompletionImple;
 import com.arjuna.mwlabs.wst11.ba.participants.BusinessAgreementWithParticipantCompletionImple;
 import com.arjuna.mwlabs.wst11.ba.BusinessActivityTerminatorImple;
+import com.arjuna.mwlabs.wst11.ba.remote.SubordinateBAParticipantManagerImple;
+import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator;
+import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.subordinate.SubordinateBACoordinator;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wsarjtx.ArjunaTX11Constants;
 import com.arjuna.webservices11.wsarj.InstanceIdentifier;
@@ -51,12 +55,12 @@ import com.arjuna.wst11.messaging.engines.CoordinatorCompletionCoordinatorEngine
 import com.arjuna.wst11.messaging.engines.ParticipantCompletionCoordinatorEngine;
 import com.arjuna.wst11.stub.BusinessAgreementWithCoordinatorCompletionStub;
 import com.arjuna.wst11.stub.BusinessAgreementWithParticipantCompletionStub;
+import com.arjuna.wst11.BAParticipantManager;
 import com.arjuna.wsc11.RegistrarMapper;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RegistrarImple implements com.arjuna.wsc11.Registrar
@@ -124,8 +128,12 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
 			throws AlreadyRegisteredException, InvalidProtocolException,
 			InvalidStateException, NoActivityException
 	{
-		ActivityHierarchy hier = (ActivityHierarchy) _hierarchies
-				.get(instanceIdentifier.getInstanceIdentifier());
+        Object tx = _hierarchies.get(instanceIdentifier.getInstanceIdentifier());
+
+        if (tx instanceof SubordinateBACoordinator)
+            return registerWithSubordinate((SubordinateBACoordinator)tx, participantProtocolService, protocolIdentifier, isSecure);
+
+        ActivityHierarchy hier = (ActivityHierarchy) tx;
 
 		if (hier == null) throw new NoActivityException();
 
@@ -257,10 +265,90 @@ public class RegistrarImple implements com.arjuna.wsc11.Registrar
 		_hierarchies.put(txIdentifier, hier);
 	}
 
+    public final void associate (BACoordinator transaction) throws Exception
+    {
+        String txIdentifier = transaction.get_uid().stringForm();
+
+        _hierarchies.put(txIdentifier, transaction);
+    }
+
 	public final void disassociate (String txIdentifier) throws Exception
 	{
 		_hierarchies.remove(txIdentifier);
 	}
+
+    private final W3CEndpointReference registerWithSubordinate(final SubordinateBACoordinator theTx,
+        final W3CEndpointReference participantProtocolService, final String protocolIdentifier,
+        final boolean isSecure)
+            throws AlreadyRegisteredException, InvalidProtocolException,
+            InvalidStateException, NoActivityException
+    {
+        if (BusinessActivityConstants.WSBA_SUB_PROTOCOL_PARTICIPANT_COMPLETION.equals(protocolIdentifier)) {
+            // enlist participant that wraps the requester URI.
+            final String id = "PCP" + new Uid().stringForm();
+
+            try {
+                // we use a manager which goes direct to the tx rather than via the activity service
+                BAParticipantManager manager = new SubordinateBAParticipantManagerImple(theTx, id);
+                final ParticipantCompletionCoordinatorEngine engine = new ParticipantCompletionCoordinatorEngine(id, participantProtocolService) ;
+                BusinessAgreementWithParticipantCompletionImple participant =
+                        new BusinessAgreementWithParticipantCompletionImple(
+                                manager,
+                                new BusinessAgreementWithParticipantCompletionStub(engine),
+                                id);
+                engine.setCoordinator(participant.participantManager()) ;
+
+                theTx.enlistParticipant(participant);
+
+                return getParticipantManager(
+                        BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_QNAME,
+                        BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_PORT_QNAME,
+                        ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.PARTICIPANT_COMPLETION_COORDINATOR_SERVICE_NAME, isSecure),
+                        id);
+            } catch (DuplicateParticipantException dpe ) {
+                throw new AlreadyRegisteredException();
+            } catch (Exception ex) {
+                throw new InvalidStateException();
+            }
+
+        } else if (BusinessActivityConstants.WSBA_SUB_PROTOCOL_COORDINATOR_COMPLETION.equals(protocolIdentifier)) {
+            // enlist participant that wraps the requester URI.
+            final String id = "CCP" + new Uid().stringForm();
+
+            try
+            {
+                BAParticipantManager manager = new SubordinateBAParticipantManagerImple(theTx, id);
+                final CoordinatorCompletionCoordinatorEngine engine = new CoordinatorCompletionCoordinatorEngine(id, participantProtocolService) ;
+                BusinessAgreementWithCoordinatorCompletionImple participant =
+                        new BusinessAgreementWithCoordinatorCompletionImple(
+                                manager,
+                                new BusinessAgreementWithCoordinatorCompletionStub(engine),
+                                id);
+                engine.setCoordinator(participant.participantManager()) ;
+
+                theTx.enlistParticipant(participant);
+
+                return getParticipantManager(
+                        BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_QNAME,
+                        BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_PORT_QNAME,
+                        ServiceRegistry.getRegistry().getServiceURI(BusinessActivityConstants.COORDINATOR_COMPLETION_COORDINATOR_SERVICE_NAME, isSecure),
+                        id);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidStateException();
+            }
+        } else if (com.arjuna.webservices.wsarjtx.ArjunaTXConstants.WSARJTX_PROTOCOL_TERMINATION.equals(protocolIdentifier)) {
+            // not allowed for subordinate transactions!
+
+            throw new InvalidStateException();
+        } else {
+            wstxLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wst.ba.Registrar11Imple_1", new Object[]
+            { BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, protocolIdentifier });
+
+            throw new InvalidProtocolException();
+        }
+    }
 
 	private W3CEndpointReference getParticipantManager (final QName serviceName, final QName endpointName, final String address, final String id)
 	{

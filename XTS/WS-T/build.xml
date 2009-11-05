@@ -46,6 +46,7 @@
     <property name="deploy.dir" value="${jboss.server.dir}/deploy"/>
     <property name="ws-c.home"               value="../WS-C"/>
     <property name="wscf.home"               value="../WSCF"/>
+    <property name="wsas.home"               value="../WSAS"/>
 
     <!-- ================================================================== -->
 
@@ -94,6 +95,7 @@
 
     <property name="ws-c.build.dev.lib.dir"  value="${ws-c.home}/build/dev/lib"/>
     <property name="wscf.build.lib.dir"  value="${wscf.home}/build/lib"/>
+    <property name="wsas.build.lib.dir"  value="${wsas.home}/build/lib"/>
 
     <property name="com.arjuna.buildsystem.lib.jars" value="buildsystem.jar"/>
 
@@ -118,6 +120,7 @@
     <property name="wscf.libs"               value="wscf.jar"/>
     <property name="wscf10.libs"               value="wscf10.jar"/>
     <property name="wscf11.libs"               value="wscf11.jar"/>
+    <property name="wsas.libs"               value="wsas.jar"/>
 
     <property name="javac.debug"             value="on"/>
     <property name="javac.optimize"          value="off"/>
@@ -140,6 +143,9 @@
     </path>
     <path id="wscf11.path">
         <fileset dir="${wscf.build.lib.dir}" includes="${wscf11.libs}"/>
+    </path>
+    <path id="wsas.path">
+        <fileset dir="${wsas.build.lib.dir}" includes="${wsas.libs}"/>
     </path>
 
     <path id="lib.ext.path">
@@ -206,6 +212,7 @@
                 <path refid="ws-c10.path"/>
                 <path refid="wscf.path"/>
                 <path refid="wscf10.path"/>
+                <path refid="wsas.path"/>
             </classpath>
             <src path="${dev.src10.dir}"/>
         </javac>
@@ -222,6 +229,7 @@
                 <path refid="ws-c11.path"/>
                 <path refid="wscf.path"/>
                 <path refid="wscf11.path"/>
+                <path refid="wsas.path"/>
             </classpath>
             <src path="${dev.src11.dir}"/>
         </javac>
@@ -233,6 +241,7 @@
                 <path refid="lib.ext.path"/>
                 <path refid="ws-c.path"/>
                 <path refid="wscf.path"/>
+                <path refid="wsas.path"/>
             </classpath>
             <src path="${dev.src.dir}"/>
         </javac>
@@ -375,6 +384,7 @@
                 <path refid="wscf.path"/>
                 <path refid="wscf10.path"/>
                 <path refid="wscf11.path"/>
+                <path refid="wsas.path"/>
             </classpath>
             <src path="${tests.src.dir}"/>
         </javac>
@@ -394,6 +404,7 @@
                 <path refid="ws-c11.path"/>
                 <path refid="wscf.path"/>
                 <path refid="wscf11.path"/>
+                <path refid="wsas.path"/>
             </classpath>
             <src path="${tests.src.dir}"/>
 	    <include name="com/arjuna/qa/**"/>

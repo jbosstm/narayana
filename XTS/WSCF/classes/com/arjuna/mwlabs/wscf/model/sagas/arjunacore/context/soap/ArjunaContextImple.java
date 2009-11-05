@@ -31,7 +31,7 @@
 
 package com.arjuna.mwlabs.wscf.model.sagas.arjunacore.context.soap;
 
-import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator;
+import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator;
 
 import com.arjuna.ats.arjuna.coordinator.ActionHierarchy;
 
@@ -65,7 +65,7 @@ public class ArjunaContextImple implements SOAPContext
     {
     }
     
-    public ArjunaContextImple (ACCoordinator currentCoordinator)
+    public ArjunaContextImple (BACoordinator currentCoordinator)
     {
 	initialiseContext(currentCoordinator);
     }
@@ -74,7 +74,7 @@ public class ArjunaContextImple implements SOAPContext
     {
 	try
 	{
-	    ACCoordinator currentCoordinator = (ACCoordinator) param;
+	    BACoordinator currentCoordinator = (BACoordinator) param;
 	    DocumentBuilder builder = DomUtil.getDocumentBuilder();
 	    org.w3c.dom.Document doc = builder.newDocument();
 	

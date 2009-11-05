@@ -6,7 +6,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator;
 import com.arjuna.common.util.logging.DebugLevel;
 import com.arjuna.common.util.logging.VisibilityLevel;
 
@@ -14,24 +14,24 @@ import com.arjuna.common.util.logging.VisibilityLevel;
  * This class is a plug-in module for the recovery manager.
  * It is responsible for recovering failed WSAT ACCoordinator transactions.
  *
- * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_1 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_1] - RecoverACCoordinator.replayPhase2 recovering {0} ActionStatus is {1}
- * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_2 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_2] - RecoverACCoordinator.replayPhase2: Unexpected status: {0}
- * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_3 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_3] - RecoverACCoordinator.replayPhase2( {0} )  finished
- * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_4 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_4] - RecoverACCoordinator.replayPhase2 transaction {0} not activated, unable to replay phase 2 commit
+ * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_1 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_1] - RecoveryATCoordinator.replayPhase2 recovering {0} ActionStatus is {1}
+ * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_2 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_2] - RecoveryATCoordinator.replayPhase2: Unexpected status: {0}
+ * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_3 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_3] - RecoveryATCoordinator.replayPhase2( {0} )  finished
+ * @message org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_4 [org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_4] - RecoveryATCoordinator.replayPhase2 transaction {0} not activated, unable to replay phase 2 commit
 */
-public class RecoverACCoordinator extends ACCoordinator {
+public class RecoveryATCoordinator extends ATCoordinator {
 
    /**
     * Re-creates/activates an AtomicAction for the specified
     * transaction Uid.
     */
-   public RecoverACCoordinator ( Uid rcvUid )
+   public RecoveryATCoordinator( Uid rcvUid )
    {
       super( rcvUid ) ;
       _activated = activate() ;
    }
 
-   /**
+    /**
     * Replays phase 2 of the commit protocol.
     */
    public void replayPhase2()
@@ -42,7 +42,7 @@ public class RecoverACCoordinator extends ACCoordinator {
        {
 	   XTSLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					FacilityCode.FAC_CRASH_RECOVERY,
-					"org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_1",
+					"org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_1",
 					new Object[]{get_uid(), ActionStatus.stringForm(status)});
        }
 
@@ -84,13 +84,13 @@ public class RecoverACCoordinator extends ACCoordinator {
 	   {
 	       XTSLogger.arjLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 					    FacilityCode.FAC_CRASH_RECOVERY,
-					    "org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_3",
+					    "org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_3",
 					    new Object[]{get_uid()});
 	   }
        }
        else
        {
-	   XTSLogger.arjLoggerI18N.warn("org.jboss.jbossts.xts.recovery.coordinator.at.RecoverACCoordinator_4", new Object[]{get_uid()});
+	   XTSLogger.arjLoggerI18N.warn("org.jboss.jbossts.xts.recovery.coordinator.at.RecoveryATCoordinator_4", new Object[]{get_uid()});
        }
    }
 

@@ -36,7 +36,7 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.common.util.logging.DebugLevel;
 import com.arjuna.common.util.logging.VisibilityLevel;
 
-import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator;
+import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator;
 
 import java.util.Vector;
 import java.util.Enumeration;
@@ -197,8 +197,8 @@ public class BACoordinatorRecoveryModule implements RecoveryModule
                 XTSLogger.arjLogger.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                             FacilityCode.FAC_CRASH_RECOVERY, "jjh doing revovery here for "+recoverUid);
                 // TODO jjh
-                RecoverACCoordinator rcvACCoordinator =
-                        new RecoverACCoordinator(recoverUid);
+                RecoveryBACoordinator rcvACCoordinator =
+                        new RecoveryBACoordinator(recoverUid);
 //                RecoverAtomicAction rcvAtomicAction =
 //                        new RecoverAtomicAction( recoverUid, theStatus ) ;
 
@@ -327,7 +327,7 @@ public class BACoordinatorRecoveryModule implements RecoveryModule
     }
 
     // 'type' within the Object Store for ACCoordinator.
-    private String _transactionType = new ACCoordinator().type() ;
+    private String _transactionType = new BACoordinator().type() ;
 
     // Array of transactions found in the object store of the
     // ACCoordinator type.

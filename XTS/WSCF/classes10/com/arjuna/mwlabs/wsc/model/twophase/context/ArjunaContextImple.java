@@ -34,7 +34,7 @@ package com.arjuna.mwlabs.wsc.model.twophase.context;
 import com.arjuna.mw.wscf.logging.wscfLogger;
 import com.arjuna.mw.wscf.utils.*;
 
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator;
 
 import com.arjuna.ats.arjuna.coordinator.ActionHierarchy;
 
@@ -69,7 +69,7 @@ public class ArjunaContextImple implements SOAPContext
         _context = null;
     }
     
-    public ArjunaContextImple (ACCoordinator currentCoordinator)
+    public ArjunaContextImple (ATCoordinator currentCoordinator)
     {
         _context = null;
 
@@ -92,7 +92,7 @@ public class ArjunaContextImple implements SOAPContext
     {
         try
         {
-            ACCoordinator currentCoordinator = (ACCoordinator) param;
+            ATCoordinator currentCoordinator = (ATCoordinator) param;
 
             ActivityHierarchy hier = null;
             

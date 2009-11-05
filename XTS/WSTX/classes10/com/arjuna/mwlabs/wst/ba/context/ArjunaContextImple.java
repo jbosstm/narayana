@@ -44,7 +44,7 @@ import com.arjuna.mw.wsas.context.soap.SOAPContext;
 import com.arjuna.mw.wsas.exceptions.SystemException;
 import com.arjuna.mw.wscf.utils.DomUtil;
 import com.arjuna.mw.wstx.logging.wstxLogger;
-import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator;
+import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.BACoordinator;
 import com.arjuna.webservices.wsba.BusinessActivityConstants;
 
 /**
@@ -64,7 +64,7 @@ public class ArjunaContextImple implements SOAPContext
         _context = null;
     }
     
-    public ArjunaContextImple (ACCoordinator currentCoordinator)
+    public ArjunaContextImple (BACoordinator currentCoordinator)
     {
     	_context = null;
     	
@@ -87,7 +87,7 @@ public class ArjunaContextImple implements SOAPContext
     {
     	try
     	{
-    	    ACCoordinator currentCoordinator = (ACCoordinator) param;
+    	    BACoordinator currentCoordinator = (BACoordinator) param;
     
     	    ActivityHierarchy hier = null;
     	

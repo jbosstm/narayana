@@ -1,11 +1,8 @@
 package com.arjuna.mwlabs.wst11.at;
 
 import com.arjuna.mw.wst.TxContext;
-import com.arjuna.mw.wst11.UserTransaction;
-import com.arjuna.mw.wst11.TransactionManagerFactory;
-import com.arjuna.mw.wst11.UserTransactionFactory;
 import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateATCoordinator;
 import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.wsc11.ContextFactoryMapper;
 import com.arjuna.wsc.InvalidCreateParametersException;
@@ -48,14 +45,14 @@ public class SubordinateImporter
             // when the transcation commits or rolls back
             
             String subordinateId = context.getIdentifier().getValue().substring(4); // remove "urn:" prefix
-            SubordinateCoordinator.SubordinateCallback callback = new SubordinateCoordinator.SubordinateCallback() {
+            SubordinateATCoordinator.SubordinateCallback callback = new SubordinateATCoordinator.SubordinateCallback() {
                 public String parentId = identifier;
                 public void run()
                 {
                     subordinateContextMap.remove(parentId);
                 }
             };
-            SubordinateCoordinator.addCallback(subordinateId, callback);
+            SubordinateATCoordinator.addCallback(subordinateId, callback);
         }
 
         return subordinateTxContext;

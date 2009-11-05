@@ -660,6 +660,7 @@ public class ParticipantRecord extends
 
 				if (result) {
 					_timeout = os.unpackLong();
+                    _completed = os.unpackBoolean();
                     _exited = os.unpackBoolean();
                     if (_exited) {
                         _failed = os.unpackBoolean();
@@ -698,6 +699,7 @@ public class ParticipantRecord extends
 				result = _resourceHandle.save_state(os);
                 if (result) {
 					os.packLong(_timeout);
+                    os.packBoolean(_completed);
                     os.packBoolean(_exited);
                     if (_exited) {
                         os.packBoolean(_failed);

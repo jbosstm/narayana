@@ -36,25 +36,25 @@ import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.common.util.logging.DebugLevel;
 import com.arjuna.common.util.logging.VisibilityLevel;
 
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator;
 
 import java.util.Vector;
 import java.util.Enumeration;
 
 /**
  * This class is a plug-in module for the recovery manager.
- * It is responsible for recovering failed XTS AT subordinate (SubordinateCoordinator) transactions.
- * (instances of com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator)
+ * It is responsible for recovering failed XTS AT (ACCoordinator) transactions.
+ * (instances of com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ACCoordinator)
  *
  * $Id$
  *
- * @message org.jboss.transactions.xts.recovery.coordinator.at.SubordinateCoordinatorRecoveryModule_1 [org.jboss.transactions.xts.recovery.coordinator.at.SubordinateCoordinatorRecoveryModule_1] - RecoveryManagerStatusModule: Object store exception: {0}
- * @message org.jboss.transactions.xts.recovery.coordinator.at.SubordinateCoordinatorRecoveryModule_2 [org.jboss.transactions.xts.recovery.coordinator.at.SubordinateCoordinatorRecoveryModule_2] - failed to recover Transaction {0} {1}
- * @message org.jboss.transactions.xts.recovery.coordinator.at.SubordinateCoordinatorRecoveryModule_3 [org.jboss.transactions.xts.recovery.coordinator.at.SubordinateCoordinatorRecoveryModule_3] - failed to access transaction store {0} {1}
+ * @message org.jboss.transactions.xts.recovery.coordinator.at.ATCoordinatorRecoveryModule_1 [org.jboss.transactions.xts.recovery.coordinator.at.ATCoordinatorRecoveryModule_1] - RecoveryManagerStatusModule: Object store exception: {0}
+ * @message org.jboss.transactions.xts.recovery.coordinator.at.ATCoordinatorRecoveryModule_2 [org.jboss.transactions.xts.recovery.coordinator.at.ATCoordinatorRecoveryModule_2] - failed to recover Transaction {0} {1}
+ * @message org.jboss.transactions.xts.recovery.coordinator.at.ATCoordinatorRecoveryModule_3 [org.jboss.transactions.xts.recovery.coordinator.at.ATCoordinatorRecoveryModule_3] - failed to access transaction store {0} {1}
  */
-public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
+public class ATCoordinatorRecoveryModule implements RecoveryModule
 {
-    public SubordinateCoordinatorRecoveryModule()
+    public ATCoordinatorRecoveryModule()
     {
         if (XTSLogger.arjLogger.isDebugEnabled())
         {
@@ -62,7 +62,7 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
                     ( DebugLevel.CONSTRUCTORS,
                             VisibilityLevel.VIS_PUBLIC,
                             FacilityCode.FAC_CRASH_RECOVERY,
-                            "SubordinateCoordinatorRecoveryModule created - default" );
+                            "ATCoordinatorRecoveryModule created - default" );
         }
 
         if (_transactionStore == null)
@@ -79,7 +79,7 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
      */
     public void install()
     {
-        // nothing to do here as we share the implementations used by the ACCoordinatorRecoveryModule
+        Implementations.install();
     }
 
     /**
@@ -87,7 +87,7 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
      */
     public void uninstall()
     {
-        // nothing to do here as we share the implementations used by the ACCoordinatorRecoveryModule
+        Implementations.uninstall();
     }
 
     /**
@@ -96,7 +96,7 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
     public void periodicWorkFirstPass()
     {
         // Transaction type
-        boolean SubordinateCoordinators = false ;
+        boolean ACCoordinators = false ;
 
         // uids per transaction type
         InputObjectState acc_uids = new InputObjectState() ;
@@ -106,22 +106,22 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
             if (XTSLogger.arjLogger.isDebugEnabled())
             {
                 XTSLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY, "SubordinateCoordinatorRecoveryModule: first pass ");
+                        FacilityCode.FAC_CRASH_RECOVERY, "StatusModule: first pass " );
             }
 
-            SubordinateCoordinators = _transactionStore.allObjUids( _transactionType, acc_uids );
+            ACCoordinators = _transactionStore.allObjUids( _transactionType, acc_uids );
 
         }
         catch ( ObjectStoreException ex )
         {
             if (XTSLogger.arjLoggerI18N.isWarnEnabled())
             {
-                XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.coordinator.at.SubordinateCoordinatorRecoveryModule_1",
+                XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.coordinator.at.ATCoordinatorRecoveryModule_1",
                         new Object[]{ex});
             }
         }
 
-        if ( SubordinateCoordinators )
+        if ( ACCoordinators )
         {
             _transactionUidVector = processTransactions( acc_uids ) ;
         }
@@ -132,7 +132,7 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
         if (XTSLogger.arjLogger.isDebugEnabled())
         {
             XTSLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                            FacilityCode.FAC_CRASH_RECOVERY, "SubordinateCoordinatorRecoveryModule: Second pass");
+                    FacilityCode.FAC_CRASH_RECOVERY, "ATCoordinatorRecoveryModule: Second pass " );
         }
 
         if (_transactionUidVector != null) {
@@ -143,7 +143,7 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
 
     }
 
-    protected SubordinateCoordinatorRecoveryModule(String type)
+    protected ATCoordinatorRecoveryModule(String type)
     {
         if (XTSLogger.arjLogger.isDebugEnabled())
         {
@@ -151,7 +151,7 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
                     ( DebugLevel.CONSTRUCTORS,
                             VisibilityLevel.VIS_PUBLIC,
                             FacilityCode.FAC_CRASH_RECOVERY,
-                            "SubordinateCoordinatorRecoveryModule created " + type );
+                            "ATCoordinatorRecoveryModule created " + type );
         }
 
         if (_transactionStore == null)
@@ -168,17 +168,8 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
     {
         boolean commitThisTransaction = true ;
 
-        // if the subordinate transaction has already been recovered and has not committed
-        // then we don't create a new one
-
-        if (SubordinateCoordinator.getRecoveredCoordinator(recoverUid.stringForm()) != null) {
-            return;
-        }
-
-        // if there is no entry and there is still a log entry then we need to create a new coordinator
-        
         // Retrieve the transaction status from its original process.
-        // n.b. for a non-active XTS TX this status will always be committed even
+        // n.b. for a non-active XTS TX this status wil l always be committed even
         // if it aborted or had a heuristic outcome. in that case we need to use
         // the logged action status which can only be retrieved after activation
 
@@ -205,15 +196,20 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
             {
                 XTSLogger.arjLogger.debug( DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
                             FacilityCode.FAC_CRASH_RECOVERY, "jjh doing revovery here for "+recoverUid);
-                RecoverSubordinateCoordinator rcvSubordinateCoordinator =
-                        new RecoverSubordinateCoordinator(recoverUid);
-                rcvSubordinateCoordinator.replayPhase2();
+                // TODO jjh
+                RecoveryATCoordinator rcvACCoordinator =
+                        new RecoveryATCoordinator(recoverUid);
+//                RecoverAtomicAction rcvAtomicAction =
+//                        new RecoverAtomicAction( recoverUid, theStatus ) ;
+
+//                rcvAtomicAction.replayPhase2() ;
+                rcvACCoordinator.replayPhase2();
             }
             catch ( Exception ex )
             {
                 if (XTSLogger.arjLoggerI18N.isWarnEnabled())
                 {
-                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.coordinator.at.SubordinateCoordinatorRecoveryModule_2",
+                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.coordinator.at.ATCoordinatorRecoveryModule_2",
                             new Object[]{recoverUid.toString(), ex});
                 }
             }
@@ -277,12 +273,13 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
             try
             {
                 theUid = UidHelper.unpackFrom( uids ) ;
+
             }
             catch ( Exception ex )
             {
                 break;
             }
-            if (theUid.equals(NULL_UID ))
+            if (theUid.equals(NULL_UID))
             {
                 break;
             }
@@ -321,17 +318,17 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
             {
                 if (XTSLogger.arjLogger.isWarnEnabled())
                 {
-                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.coordinator.at.SubordinateCoordinatorRecoveryModule_3",
+                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.coordinator.at.ATCoordinatorRecoveryModule_3",
                             new Object[]{currentUid.toString(), ex});
                 }
             }
         }
 
-        XTSATRecoveryManager.getRecoveryManager().setSubordinateCoordinatorRecoveryStarted();
+        XTSATRecoveryManager.getRecoveryManager().setCoordinatorRecoveryStarted();
     }
 
     // 'type' within the Object Store for ACCoordinator.
-    private String _transactionType = new SubordinateCoordinator().type() ;
+    private String _transactionType = new ATCoordinator().type() ;
 
     // Array of transactions found in the object store of the
     // ACCoordinator type.
@@ -345,3 +342,4 @@ public class SubordinateCoordinatorRecoveryModule implements RecoveryModule
     private TransactionStatusConnectionManager _transactionStatusConnectionMgr ;
 
 }
+

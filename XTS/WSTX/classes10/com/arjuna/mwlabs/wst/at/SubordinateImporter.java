@@ -3,7 +3,7 @@ package com.arjuna.mwlabs.wst.at;
 import com.arjuna.mw.wst.TxContext;
 import com.arjuna.wsc.InvalidCreateParametersException;
 import com.arjuna.wsc.ContextFactoryMapper;
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateATCoordinator;
 import com.arjuna.mwlabs.wst.at.context.TxContextImple;
 import com.arjuna.webservices.wscoor.CoordinationContextType;
 import com.arjuna.webservices.wsat.AtomicTransactionConstants;
@@ -44,14 +44,14 @@ public class SubordinateImporter
             // when the transcation commits or rolls back
 
             String subordinateId = context.getIdentifier().getValue().substring(4); // remove "urn:" prefix
-            SubordinateCoordinator.SubordinateCallback callback = new SubordinateCoordinator.SubordinateCallback() {
+            SubordinateATCoordinator.SubordinateCallback callback = new SubordinateATCoordinator.SubordinateCallback() {
                 public String parentId = identifier;
                 public void run()
                 {
                     subordinateContextMap.remove(parentId);
                 }
             };
-            SubordinateCoordinator.addCallback(subordinateId, callback);
+            SubordinateATCoordinator.addCallback(subordinateId, callback);
         }
 
         return subordinateTxContext;

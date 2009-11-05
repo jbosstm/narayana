@@ -35,6 +35,7 @@ import com.arjuna.mw.wst11.UserBusinessActivity;
 import com.arjuna.mw.wst11.common.Environment;
 import com.arjuna.mw.wstx.logging.wstxLogger;
 import com.arjuna.mw.wsc11.context.Context;
+import com.arjuna.mw.wst.TxContext;
 import com.arjuna.mwlabs.wst11.ba.ContextImple;
 import com.arjuna.mwlabs.wst11.ba.context.TxContextImple;
 import com.arjuna.mwlabs.wst.ba.remote.ContextManager;
@@ -54,6 +55,7 @@ import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.stub.BusinessActivityTerminatorStub;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
@@ -95,6 +97,11 @@ public class UserBusinessActivityImple extends UserBusinessActivity
 
             ex.printStackTrace();
         }
+        _userSubordinateBusinessActivity = new UserSubordinateBusinessActivityImple();
+    }
+
+    public UserBusinessActivity getUserSubordinateBusinessActivity() {
+        return _userSubordinateBusinessActivity;
     }
 
     public void begin () throws WrongStateException, SystemException
@@ -109,7 +116,7 @@ public class UserBusinessActivityImple extends UserBusinessActivity
     	    if (_ctxManager.currentTransaction() != null)
         		throw new WrongStateException();
 
-    	    Context ctx = startTransaction(timeout);
+    	    Context ctx = startTransaction(timeout, null);
 
     	    _ctxManager.resume(new TxContextImple(ctx));
     	}
@@ -275,14 +282,80 @@ public class UserBusinessActivityImple extends UserBusinessActivity
     	return transactionIdentifier();
     }
 
-    private final Context startTransaction (int timeout) throws InvalidCreateParametersException, SystemException
+    public void beginSubordinate(int timeout) throws WrongStateException, SystemException
+    {
+        try
+        {
+            TxContext current = _ctxManager.currentTransaction();
+            if ((current == null) || !(current instanceof TxContextImple))
+                throw new WrongStateException();
+
+            TxContextImple currentImple = (TxContextImple) current;
+            Context ctx = startTransaction(timeout, currentImple);
+
+            _ctxManager.resume(new TxContextImple(ctx));
+            // n.b. we don't enlist the subordinate transaction for completion
+            // that ensures that any attempt to commit or rollback will fail
+        }
+        catch (com.arjuna.wsc.InvalidCreateParametersException ex)
+        {
+            tidyup();
+
+            throw new SystemException(ex.toString());
+        }
+        catch (com.arjuna.wst.UnknownTransactionException ex)
+        {
+            tidyup();
+
+            throw new SystemException(ex.toString());
+        }
+        catch (SystemException ex)
+        {
+            tidyup();
+
+            throw ex;
+        }
+    }
+
+    /**
+     * fetch the coordination context type stashed in the current BA context implememtation
+     * and use it to construct an instance of the coordination context extension type we need to
+     * send down the wire to the activation coordinator
+     * @param current the current AT context implememtation
+     * @return an instance of the coordination context extension type
+     */
+    private CoordinationContext getContext(TxContextImple current)
+    {
+        CoordinationContextType contextType = getContextType(current);
+        CoordinationContext context = new CoordinationContext();
+        context.setCoordinationType(contextType.getCoordinationType());
+        context.setExpires(contextType.getExpires());
+        context.setIdentifier(contextType.getIdentifier());
+        context.setRegistrationService(contextType.getRegistrationService());
+
+        return context;
+    }
+
+    /**
+     * fetch the coordination context type stashed in the current BA context implememtation
+     * @param current the current AT context implememtation
+     * @return the coordination context type stashed in the current AT context implememtation
+     */
+    private CoordinationContextType getContextType(TxContextImple current)
+    {
+        ContextImple contextImple = (ContextImple)current.context();
+        return contextImple.getCoordinationContext();
+    }
+
+    private final Context startTransaction (int timeout, TxContextImple current) throws InvalidCreateParametersException, SystemException
     {
         try
         {
             final Long expires = (timeout > 0 ? new Long(timeout) : null) ;
             final String messageId = MessageId.getMessageId() ;
+            final CoordinationContext currentContext = (current != null ? getContext(current) : null);
             final CoordinationContextType coordinationContext = ActivationCoordinator.createCoordinationContext(
-                    _activationCoordinatorService, messageId, BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, expires, null) ;
+                    _activationCoordinatorService, messageId, BusinessActivityConstants.WSBA_PROTOCOL_ATOMIC_OUTCOME, expires, currentContext) ;
             if (coordinationContext == null)
             {
                 throw new SystemException(
@@ -349,4 +422,5 @@ public class UserBusinessActivityImple extends UserBusinessActivity
 
     private ContextManager _ctxManager = new ContextManager();
     private String _activationCoordinatorService;
+    private UserSubordinateBusinessActivityImple _userSubordinateBusinessActivity;
 }

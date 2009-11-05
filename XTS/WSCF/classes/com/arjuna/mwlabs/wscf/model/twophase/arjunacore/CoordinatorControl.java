@@ -53,7 +53,7 @@ import com.arjuna.mw.wsas.activity.ActivityHierarchy;
 import com.arjuna.mw.wsas.activity.Outcome;
 
 import com.arjuna.mwlabs.wsas.activity.ActivityHandleImple;
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateATCoordinator;
 
 import com.arjuna.mw.wsas.completionstatus.CompletionStatus;
 import com.arjuna.mw.wsas.completionstatus.Success;
@@ -96,7 +96,7 @@ public class CoordinatorControl
 	{		
 		try
 		{
-			ACCoordinator coord = new ACCoordinator();
+			ATCoordinator coord = new ATCoordinator();
 			int status = coord.start(parentCoordinator());
 
 			if (status != ActionStatus.RUNNING)
@@ -130,7 +130,7 @@ public class CoordinatorControl
 
 	public Outcome complete (CompletionStatus cs) throws SystemException
 	{
-		ACCoordinator current = currentCoordinator();
+		ATCoordinator current = currentCoordinator();
 		int outcome;
 
 		if ((cs != null) && (cs instanceof Success))
@@ -437,11 +437,11 @@ public class CoordinatorControl
 	 * @throws SystemException throw if any error occurs.
 	 */
 	
-	public final ACCoordinator createSubordinate () throws SystemException
+	public final ATCoordinator createSubordinate () throws SystemException
 	{	
 		try
 		{
-			SubordinateCoordinator coord = new SubordinateCoordinator();
+			SubordinateATCoordinator coord = new SubordinateATCoordinator();
 			int status = coord.start(null);
 
 			if (status != ActionStatus.RUNNING)
@@ -471,10 +471,10 @@ public class CoordinatorControl
 		}
 	}
 	
-	public final ACCoordinator currentCoordinator () throws NoCoordinatorException,
+	public final ATCoordinator currentCoordinator () throws NoCoordinatorException,
 			SystemException
 	{
-		ACCoordinator coord = (ACCoordinator) _coordinators.get(currentActivity());
+		ATCoordinator coord = (ATCoordinator) _coordinators.get(currentActivity());
 		
 		if (coord == null)
 			throw new NoCoordinatorException();
@@ -501,19 +501,19 @@ public class CoordinatorControl
 		}
 	}
 
-	private final ACCoordinator parentCoordinator () throws SystemException
+	private final ATCoordinator parentCoordinator () throws SystemException
 	{
 		try
 		{
 			ActivityHierarchy hier = UserActivityFactory.userActivity().currentActivity();
 			ActivityHandleImple parentActivity = null;
-			ACCoordinator parentCoordinator = null;
+			ATCoordinator parentCoordinator = null;
 
 			if (hier.size() > 1)
 			{
 				parentActivity = (ActivityHandleImple) hier.activity(hier.size() - 2);
 
-				parentCoordinator = (ACCoordinator) _coordinators.get(parentActivity);
+				parentCoordinator = (ATCoordinator) _coordinators.get(parentActivity);
 			}
 
 			return parentCoordinator;

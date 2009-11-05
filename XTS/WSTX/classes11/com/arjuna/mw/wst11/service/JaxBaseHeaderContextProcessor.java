@@ -29,16 +29,11 @@ import com.arjuna.webservices11.wsat.AtomicTransactionConstants;
 import com.arjuna.webservices11.wsba.BusinessActivityConstants;
 import com.arjuna.webservices11.wscoor.CoordinationConstants;
 import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
-import com.arjuna.mwlabs.wst11.at.ContextFactoryImple;
 import com.arjuna.mwlabs.wst11.at.SubordinateImporter;
-import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateCoordinator;
-import com.arjuna.wsc11.ContextFactoryMapper;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext;
 
 import javax.xml.soap.*;
 import java.util.Iterator;
-import java.util.HashMap;
 
 /**
  * Common base class for classes used to perform
@@ -93,11 +88,10 @@ class JaxBaseHeaderContextProcessor
                     {
                         // interposition is not yet implemented for business activities
                         clearMustUnderstand(soapHeader, soapHeaderElement) ;
+                        TxContext txContext = new com.arjuna.mwlabs.wst11.ba.context.TxContextImple(cc);
                         if (installSubordinateTx) {
-                            // throw an exception to force logging of a warning below
-                            throw new Exception("com.arjuna.mw.wst11.service.JaxBaseHeaderContextProcessor : interposition is not yet implemented for the WSBA protocol");
+                            txContext = com.arjuna.mwlabs.wst11.ba.SubordinateImporter.importContext(cc);
                         }
-                        final TxContext txContext = new com.arjuna.mwlabs.wst11.ba.context.TxContextImple(cc);
                         BusinessActivityManagerFactory.businessActivityManager().resume(txContext) ;
                     }
                     else

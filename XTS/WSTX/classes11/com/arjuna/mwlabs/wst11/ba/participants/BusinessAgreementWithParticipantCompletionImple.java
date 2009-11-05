@@ -61,16 +61,38 @@ import java.io.IOException;
 public class BusinessAgreementWithParticipantCompletionImple implements
 		com.arjuna.mw.wscf.model.sagas.participants.Participant
 {
-//
-public BusinessAgreementWithParticipantCompletionImple(
-        BusinessAgreementWithParticipantCompletionParticipant resource,
-        String id)
-{
-    _resource = resource;
-    _identifier = id;
-    _baParticipantManager = new BAParticipantManagerImple(id);
-}
+    /**
+     * this constructor installs a participant manager which routes messages via the current activity
+     * @param resource
+     * @param id
+     */
+    public BusinessAgreementWithParticipantCompletionImple(
+            BusinessAgreementWithParticipantCompletionParticipant resource,
+            String id)
+    {
+        this(new BAParticipantManagerImple(id), resource,  id);
+    }
 
+    /**
+     * this constructor installs the supplied participant manager
+     * @param participantManager
+     * @param resource
+     * @param id
+     */
+    public BusinessAgreementWithParticipantCompletionImple(
+            BAParticipantManager participantManager,
+            BusinessAgreementWithParticipantCompletionParticipant resource,
+            String id)
+    {
+        _baParticipantManager = participantManager;
+        _resource = resource;
+        _identifier = id;
+    }
+
+    /**
+     * this constructor is used during recovery and does not install a participant manager. the resource
+     * and identifier will be initialised by loading saved state
+     */
     public BusinessAgreementWithParticipantCompletionImple()
     {
         _resource = null;

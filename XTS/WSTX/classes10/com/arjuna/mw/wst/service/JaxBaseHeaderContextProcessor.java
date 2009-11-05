@@ -88,7 +88,7 @@ public class JaxBaseHeaderContextProcessor
                         clearMustUnderstand(soapHeader, soapHeaderElement) ;
                         if (installSubordinateTx) {
                             // throw an exception to force logging of a warning below
-                            throw new Exception("com.arjuna.mw.wst11.service.JaxBaseHeaderContextProcessor : interposition is not yet implemented for the WSBA protocol");
+                            throw new Exception("com.arjuna.mw.wst11.service.JaxBaseHeaderContextProcessor : interposition is not yet implemented for the WSBA 1.0 protocol");
                         }
                         final TxContext txContext = new com.arjuna.mwlabs.wst.ba.context.TxContextImple(cc);
                         BusinessActivityManagerFactory.businessActivityManager().resume(txContext) ;

@@ -31,15 +31,11 @@
 
 package com.arjuna.mwlabs.wst11.ba.remote;
 
-import com.arjuna.mw.wsas.activity.ActivityHierarchy;
-import com.arjuna.mw.wsas.exceptions.InvalidActivityException;
-import com.arjuna.mw.wscf11.model.sagas.CoordinatorManagerFactory;
-import com.arjuna.mw.wscf.model.sagas.api.CoordinatorManager;
 import com.arjuna.wst.SystemException;
 import com.arjuna.wst.UnknownTransactionException;
 import com.arjuna.wst.WrongStateException;
 import com.arjuna.wst11.BAParticipantManager;
-import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.ACCoordinator;
+import com.arjuna.mwlabs.wscf.model.sagas.arjunacore.subordinate.SubordinateBACoordinator;
 
 import javax.xml.namespace.QName;
 
@@ -53,101 +49,67 @@ import javax.xml.namespace.QName;
  * application Web Service).
  */
 
-public class BARecoveryParticipantManagerImple implements BAParticipantManager
+public class SubordinateBAParticipantManagerImple implements BAParticipantManager
 {
 
-    public BARecoveryParticipantManagerImple(ACCoordinator coordinator, String participantId)
+    public SubordinateBAParticipantManagerImple(SubordinateBACoordinator theTx, String participantId)
     {
-        this.coordinator = coordinator;
-        this.participantId = participantId;
+        _theTx = theTx;
+        _participantId = participantId;
     }
 
     public void exit () throws WrongStateException, UnknownTransactionException, SystemException
     {
-        try
-        {
-            coordinator.delistParticipant(participantId);
-        }
-        catch (com.arjuna.mw.wscf.exceptions.InvalidParticipantException ex)
-        {
+        try {
+            _theTx.delistParticipant(_participantId);
+        } catch (com.arjuna.mw.wscf.exceptions.InvalidParticipantException ex) {
             throw new SystemException("UnknownParticipantException");
-        }
-        catch (com.arjuna.mw.wsas.exceptions.WrongStateException ex)
-        {
+        } catch (com.arjuna.mw.wsas.exceptions.WrongStateException ex) {
             throw new WrongStateException();
-        }
-        catch (com.arjuna.mw.wsas.exceptions.SystemException ex)
-        {
+        } catch (com.arjuna.mw.wsas.exceptions.SystemException ex) {
             throw new SystemException(ex.toString());
         }
     }
 
     public void completed () throws WrongStateException, UnknownTransactionException, SystemException
     {
-        try
-        {
-            coordinator.participantCompleted(participantId);
-        }
-        catch (com.arjuna.mw.wscf.exceptions.InvalidParticipantException ex)
-        {
+        try {
+            _theTx.participantCompleted(_participantId);
+        } catch (com.arjuna.mw.wscf.exceptions.InvalidParticipantException ex) {
             throw new SystemException("UnknownParticipantException");
-        }
-        catch (com.arjuna.mw.wsas.exceptions.WrongStateException ex)
-        {
+        } catch (com.arjuna.mw.wsas.exceptions.WrongStateException ex) {
             throw new WrongStateException();
-        }
-        catch (com.arjuna.mw.wsas.exceptions.SystemException ex)
-        {
+        } catch (com.arjuna.mw.wsas.exceptions.SystemException ex) {
             throw new SystemException(ex.toString());
         }
     }
 
     public void fail (final QName exceptionIdentifier) throws SystemException
     {
-        try
-        {
-            // fail means faulted as far as the coordinator manager is concerned
-            coordinator.participantFaulted(participantId);
-        }
-        catch (com.arjuna.mw.wscf.exceptions.InvalidParticipantException ex)
-        {
+        try {
+            _theTx.participantFaulted(_participantId);
+        } catch (com.arjuna.mw.wscf.exceptions.InvalidParticipantException ex) {
             throw new SystemException("UnknownParticipantException");
-        }
-        catch (com.arjuna.mw.wsas.exceptions.SystemException ex)
-        {
+        } catch (com.arjuna.mw.wsas.exceptions.SystemException ex) {
             throw new SystemException(ex.toString());
         }
     }
 
+    // TODO -- continue from here
+    
     public void cannotComplete () throws WrongStateException, UnknownTransactionException, SystemException
     {
-        try
-        {
-            coordinator.participantCannotComplete(participantId);
-        }
-        catch (com.arjuna.mw.wscf.exceptions.InvalidParticipantException ex)
-        {
+        try {
+            _theTx.participantCannotComplete(_participantId);
+        } catch (com.arjuna.mw.wscf.exceptions.InvalidParticipantException ex) {
             throw new SystemException("UnknownParticipantException");
-        }
-        catch (com.arjuna.mw.wsas.exceptions.WrongStateException ex)
-        {
+        }  catch (com.arjuna.mw.wsas.exceptions.WrongStateException ex) {
             throw new WrongStateException();
-        }
-        catch (com.arjuna.mw.wsas.exceptions.SystemException ex)
-        {
+        }   catch (com.arjuna.mw.wsas.exceptions.SystemException ex) {
             throw new SystemException(ex.toString());
         }
     }
 
-    /**
-     * this API is not needed here -- quite probably it is not needed in the non recovery case either
-     * @throws SystemException
-     */
-    public void error () throws SystemException
-    {
-    }
-
-    private ACCoordinator coordinator;
-    private String participantId;
-
+    private SubordinateBACoordinator _theTx;
+    private String _participantId;
 }

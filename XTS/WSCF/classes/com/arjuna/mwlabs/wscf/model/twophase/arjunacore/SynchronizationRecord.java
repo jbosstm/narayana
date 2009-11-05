@@ -66,7 +66,7 @@ public class SynchronizationRecord implements com.arjuna.ats.arjuna.coordinator.
 	_id = new CoordinatorIdImple(id);
 
 	if (_resourceHandle == null)
-	    wscfLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord_1",
+	    wscfLogger.arjLoggerI18N.warn("com.arjuna.mwlabs.wscf.model.twophase.arjunacore.SynchronizationRecord_1",
 					  new Object[]{_id});
     }
 
