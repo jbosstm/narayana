@@ -730,7 +730,7 @@ public class ParticipantRecord extends
 	 * Protected constructor used by crash recovery.
 	 */
 
-	protected ParticipantRecord ()
+	public ParticipantRecord ()
 	{
 		super();
 
