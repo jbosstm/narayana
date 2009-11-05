@@ -42,68 +42,24 @@ public class UidHelper
 {
     public static final Uid unpackFrom (InputBuffer buff) throws IOException
     {
-        long[] hostAddr = new long[2];
-        int process;
-        int sec;
-        int other;
-
-        hostAddr[0] = buff.unpackLong();
-        hostAddr[1] = buff.unpackLong();
-        process = buff.unpackInt();
-        sec = buff.unpackInt();
-        other = buff.unpackInt();
-
-        return new Uid(hostAddr, process, sec, other);
+        byte[] byteForm = buff.unpackBytes();
+        
+        if (byteForm == null)
+            throw new IOException();
+        
+        return new Uid(byteForm);
     }
 
     public static final void packInto (Uid u, OutputBuffer buff)
             throws IOException
     {
         if (u.valid())
-        {
-            UidHelper foo = new UidHelper();
-            UidFriend friend = foo.new UidFriend(u);
-            long[] hostAddr = friend.getAddress();
-
-            buff.packLong(hostAddr[0]);
-            buff.packLong(hostAddr[1]);
-            buff.packInt(friend.getProcessId());
-            buff.packInt(friend.getSec());
-            buff.packInt(friend.getOther());
-        }
+            buff.packBytes(u.getBytes());
         else
             throw new InvalidParameterException();
     }
 
     private UidHelper()
     {
-    }
-
-    class UidFriend extends Uid
-    {
-        public UidFriend(Uid u)
-        {
-            super(u);
-        }
-
-        public long[] getAddress ()
-        {
-            return hostAddr;
-        }
-
-        public int getProcessId ()
-        {
-            return process;
-        }
-
-        public int getSec ()
-        {
-            return sec;
-        }
-
-        public int getOther ()
-        {
-            return other;
-        }
     }
 }
