@@ -29,8 +29,11 @@
  * $Id: CadaverActivationRecord.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.arjuna;
+package com.arjuna.ats.internal.arjuna.abstractrecords;
 
+import com.arjuna.ats.arjuna.ActivationRecord;
+import com.arjuna.ats.arjuna.ObjectStatus;
+import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
@@ -43,7 +46,7 @@ import com.arjuna.common.util.logging.*;
  * CadaverActivationRecord.
  */
 
-class CadaverActivationRecord extends ActivationRecord
+public class CadaverActivationRecord extends ActivationRecord
 {
 
     public CadaverActivationRecord (StateManager sm)

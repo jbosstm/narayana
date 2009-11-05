@@ -45,6 +45,7 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.internal.arjuna.abstractrecords.CadaverRecord;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import java.io.PrintWriter;

@@ -46,6 +46,8 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.internal.arjuna.abstractrecords.CadaverActivationRecord;
+import com.arjuna.ats.internal.arjuna.abstractrecords.CadaverRecord;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import java.io.IOException;
