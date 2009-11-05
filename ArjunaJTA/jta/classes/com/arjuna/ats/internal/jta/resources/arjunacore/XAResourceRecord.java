@@ -1255,7 +1255,7 @@ public class XAResourceRecord extends AbstractRecord
 		return false;
 	}
 
-	protected XAResourceRecord()
+	public XAResourceRecord()
 	{
 		super();
 
@@ -1269,7 +1269,7 @@ public class XAResourceRecord extends AbstractRecord
 		_recovered = true;
 	}
 
-	protected XAResourceRecord(Uid u)
+	public XAResourceRecord(Uid u)
 	{
 		super(u, null, ObjectType.ANDPERSISTENT);
 
