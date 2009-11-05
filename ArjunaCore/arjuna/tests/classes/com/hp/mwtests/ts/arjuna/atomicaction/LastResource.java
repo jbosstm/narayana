@@ -34,8 +34,8 @@ package com.hp.mwtests.ts.arjuna.atomicaction;
 import com.hp.mwtests.ts.arjuna.resources.*;
 
 import com.arjuna.ats.arjuna.AtomicAction;
-import com.arjuna.ats.arjuna.LastResourceRecord;
 import com.arjuna.ats.arjuna.coordinator.*;
+import com.arjuna.ats.internal.arjuna.abstractrecords.LastResourceRecord;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

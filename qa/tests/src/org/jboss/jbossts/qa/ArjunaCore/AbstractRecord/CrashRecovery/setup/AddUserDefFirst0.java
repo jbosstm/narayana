@@ -21,8 +21,9 @@
 package org.jboss.jbossts.qa.ArjunaCore.AbstractRecord.CrashRecovery.setup;
 
 import com.arjuna.ats.arjuna.coordinator.RecordType;
-import com.arjuna.ats.arjuna.coordinator.record.RecordTypeManager;
-import com.arjuna.ats.arjuna.coordinator.record.RecordTypeMap;
+import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
+import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
+
 import org.jboss.jbossts.qa.ArjunaCore.AbstractRecord.CrashRecovery.impl.BasicAbstractRecord;
 
 class UserDefFirst0Map implements RecordTypeMap

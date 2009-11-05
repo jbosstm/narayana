@@ -22,8 +22,8 @@
 package org.jboss.jbossts.xts.recovery.coordinator.at;
 
 import com.arjuna.ats.arjuna.coordinator.RecordType;
-import com.arjuna.ats.arjuna.coordinator.record.RecordTypeManager;
-import com.arjuna.ats.arjuna.coordinator.record.RecordTypeMap;
+import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
+import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ParticipantRecord;
 
 /**

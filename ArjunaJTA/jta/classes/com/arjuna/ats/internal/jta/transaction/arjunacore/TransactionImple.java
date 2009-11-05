@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jta.transaction.arjunacore;
 
+import com.arjuna.ats.internal.arjuna.abstractrecords.LastResourceRecord;
 import com.arjuna.ats.internal.jta.xa.TxInfo;
 import com.arjuna.ats.internal.jta.utils.*;
 import com.arjuna.ats.internal.jta.utils.arjunacore.StatusConverter;
@@ -47,7 +48,6 @@ import com.arjuna.ats.jta.xa.XidImple;
 import com.arjuna.ats.jta.logging.*;
 import com.arjuna.ats.jta.xa.XAModifier;
 
-import com.arjuna.ats.arjuna.LastResourceRecord;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.*;
 

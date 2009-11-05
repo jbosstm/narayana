@@ -29,68 +29,17 @@
  * $Id: RecordType.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.arjuna.coordinator.record;
-
-import java.util.ArrayList;
-
-import com.arjuna.ats.arjuna.coordinator.RecordType;
+package com.arjuna.ats.arjuna.coordinator.abstractrecord;
 
 /**
  * This allows users to define a mapping between record type integers
  * and specific Class-es. This replaces Gandiva from previous releases.
  */
 
-public class RecordTypeManager
-{
+public interface RecordTypeMap
+{ 
     @SuppressWarnings("unchecked")
-    public Class getClass (int type)
-    {
-        /*
-         * Stop at first hit.
-         */
-        
-        for (int i = 0; i < _map.size(); i++)
-        {
-            if (_map.get(i).getType() == type)
-                return _map.get(i).getRecordClass();
-        }
-        
-        return null;
-    }
+    public Class getRecordClass ();
     
-    @SuppressWarnings("unchecked")
-    public int getType (Class c)
-    {
-        for (int i = 0; i < _map.size(); i++)
-        {
-            if (_map.get(i).getRecordClass().equals(c))
-                return _map.get(i).getType();
-        }
-        
-        return RecordType.UNTYPED;
-    }
-    
-    public void add (RecordTypeMap map)
-    {
-        _map.add(map);
-    }
-    
-    public static RecordTypeManager manager ()
-    {
-        return _instance;
-    }
-    
-    private RecordTypeManager ()
-    {
-        _map = new ArrayList<RecordTypeMap>();
-    }
-    
-    private ArrayList<RecordTypeMap> _map;
-    
-    private static final RecordTypeManager _instance = new RecordTypeManager();
-    
-    static
-    {
-        // trawl through properties to find bindings
-    }
+    public int getType ();
 }

@@ -32,8 +32,8 @@
 package com.arjuna.ats.internal.txoj;
 
 import com.arjuna.ats.arjuna.coordinator.RecordType;
-import com.arjuna.ats.arjuna.coordinator.record.RecordTypeManager;
-import com.arjuna.ats.arjuna.coordinator.record.RecordTypeMap;
+import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
+import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.txoj.LockRecord;
 
 /**
