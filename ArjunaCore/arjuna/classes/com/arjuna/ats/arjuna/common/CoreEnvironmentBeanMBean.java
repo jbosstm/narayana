@@ -27,10 +27,6 @@ package com.arjuna.ats.arjuna.common;
  */
 public interface CoreEnvironmentBeanMBean
 {
-    String getPropertiesFile();
-
-    void setPropertiesFile(String propertiesFile);
-
     String getVarDir();
 
     void setVarDir(String varDir);

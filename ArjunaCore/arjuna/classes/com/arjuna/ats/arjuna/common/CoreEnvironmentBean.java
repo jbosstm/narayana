@@ -34,9 +34,6 @@ import java.io.File;
 @PropertyPrefix(prefix = "com.arjuna.ats.arjuna.")
 public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
 {
-    @FullPropertyName(name = "com.arjuna.ats.arjuna.common.propertiesFile")
-    private volatile String propertiesFile = "";
-
     @FullPropertyName(name = "com.arjuna.ats.arjuna.common.varDir")
     private volatile String varDir = System.getProperty("user.dir") + File.separator + "var" + File.separator + "tmp";
 
@@ -55,32 +52,6 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
     private volatile boolean allowMultipleLastResources = false;
     private volatile boolean disableMultipleLastResourcesWarning = false;
 
-//    @FullPropertyName(name = "jbossts.bind.address")
-//    private String bindAddress;
-
-
-    /**
-     * Returns the name of the properties file.
-     *
-     * Default: ""
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.common.propertiesFile
-     *
-     * @return the name of the properties file.
-     */
-    public String getPropertiesFile()
-    {
-        return propertiesFile;
-    }
-
-    /**
-     * Sets the name of the properties file.
-     *
-     * @param propertiesFile the name of the properties file.
-     */
-    public void setPropertiesFile(String propertiesFile)
-    {
-        this.propertiesFile = propertiesFile;
-    }
 
     /**
      * Returns the 'var' directory path.

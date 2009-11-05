@@ -38,7 +38,7 @@ import javax.naming.InitialContext;
 import javax.sql.*;
 import javax.transaction.xa.*;
 import com.arjuna.common.util.logging.*;
-import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
+import com.arjuna.common.util.propertyservice.PropertiesFactory;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
@@ -96,7 +96,7 @@ public class JDBCXARecovery implements XAResourceRecovery
 
         try
         {
-            _props = PropertyManagerFactory.getPropertiesFromFile(parameter);
+            _props = PropertiesFactory.getPropertiesFromFile(parameter);
 
             _dbName   = _props.getProperty(DATABASE_JNDI_NAME);
             _user     = _props.getProperty(USER_NAME);

@@ -37,7 +37,7 @@ import com.arjuna.ats.jdbc.logging.jdbcLogger;
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
 
 import com.arjuna.common.util.logging.*;
-import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
+import com.arjuna.common.util.propertyservice.PropertiesFactory;
 
 import java.sql.*;
 import javax.transaction.xa.*;
@@ -158,7 +158,7 @@ public class BasicXARecovery implements XAResourceRecovery
 
 		try
 		{
-            props = PropertyManagerFactory.getPropertiesFromFile(fileName);
+            props = PropertiesFactory.getPropertiesFromFile(fileName);
 		}
 		catch (Exception e)
 		{

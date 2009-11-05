@@ -26,7 +26,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import com.arjuna.common.util.propertyservice.PropertyManagerFactory;
+import com.arjuna.common.util.propertyservice.PropertiesFactory;
 
 /**
  * Utility class that configures *EnvironmentBean objects using a PropertyManager, which is usually
@@ -46,7 +46,7 @@ public class BeanPopulator
             T bean = null;
             try {
                 bean = beanClass.newInstance();
-                Properties properties = PropertyManagerFactory.getDefaultProperties();
+                Properties properties = PropertiesFactory.getDefaultProperties();
                 configureFromProperties(bean, properties);
             } catch (Exception e) {
                 throw new RuntimeException(e);
