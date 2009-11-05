@@ -33,7 +33,6 @@ package com.arjuna.ats.arjuna.coordinator;
 
 import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.common.util.logging.*;
