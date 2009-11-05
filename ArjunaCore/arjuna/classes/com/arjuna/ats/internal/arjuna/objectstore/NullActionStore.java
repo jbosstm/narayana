@@ -134,7 +134,7 @@ public class NullActionStore extends ShadowNoFileLockStore
         
         try
         {
-            setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir());
+            setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot());
         }
         catch (ObjectStoreException e)
         {

@@ -269,7 +269,7 @@ public class ActionStore extends ShadowNoFileLockStore
         try
         {
             setupStore(arjPropertyManager.getObjectStoreEnvironmentBean()
-                    .getObjectStoreDir());
+                    .getLocalOSRoot());
         }
         catch (ObjectStoreException e)
         {

@@ -721,7 +721,7 @@ public class LogStore extends FileSystemStore
 		
 		try
                 {
-                        setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir());
+                        setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot());
                 }
                 catch (ObjectStoreException e)
                 {

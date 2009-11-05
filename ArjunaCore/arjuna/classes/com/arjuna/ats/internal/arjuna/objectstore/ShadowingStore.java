@@ -921,7 +921,7 @@ public class ShadowingStore extends FileSystemStore
         try
         {
             setupStore(arjPropertyManager.getObjectStoreEnvironmentBean()
-                    .getObjectStoreDir());
+                    .getLocalOSRoot());
         }
         catch (ObjectStoreException e)
         {

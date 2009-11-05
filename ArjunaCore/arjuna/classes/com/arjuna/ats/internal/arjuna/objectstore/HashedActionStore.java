@@ -88,7 +88,7 @@ public class HashedActionStore extends HashedStore
         
         try
         {
-            setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir());
+            setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot());
         }
         catch (ObjectStoreException e)
         {

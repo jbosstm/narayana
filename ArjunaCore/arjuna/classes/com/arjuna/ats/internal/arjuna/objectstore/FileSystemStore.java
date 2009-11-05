@@ -603,7 +603,7 @@ public abstract class FileSystemStore extends ObjectStore
         
         try
         {
-            setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreDir());
+            setupStore(arjPropertyManager.getObjectStoreEnvironmentBean().getLocalOSRoot());
         }
         catch (ObjectStoreException e)
         {
