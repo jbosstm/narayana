@@ -94,10 +94,6 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
     static POA getRCPOA (String domainName)
     {
         String rcServiceName = GenericRecoveryCreator.getRecCoordServiceName();
-
-        System.err.println("**getRCPOA "+domainName);
-        
-        Thread.dumpStack();
         
         if (jtsLogger.logger.isDebugEnabled())
         {
@@ -115,8 +111,6 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
         String oldPort = System.getProperty(oaPort, "");
         String oldAddr = System.getProperty(oaAddr, "");
 
-        System.err.println("**POA name "+poaName);
-        
         /** If the ORB Manager hasn't been initialised then create our own ORB **/
 
             if ( !RecoveryORBManager.isInitialised() )
