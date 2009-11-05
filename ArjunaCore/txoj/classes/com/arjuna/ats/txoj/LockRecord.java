@@ -343,7 +343,7 @@ public class LockRecord extends AbstractRecord
 	return false;
     }
     
-    protected LockRecord ()
+    public LockRecord ()
     {
 	super();
 
