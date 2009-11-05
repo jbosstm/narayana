@@ -34,6 +34,10 @@ package com.arjuna.ats.arjuna.common;
 import com.arjuna.ats.arjuna.utils.Utility;
 
 import java.lang.Cloneable;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.Serializable;
 import java.io.PrintStream;
 
@@ -83,6 +87,10 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
  *          could not recreate Uid!
  * @message com.arjuna.ats.arjuna.common.Uid_npe
  *          [com.arjuna.ats.arjuna.common.Uid_npe] - Uid.Uid string constructor {0} caught other throwable: {1}
+ * @message com.arjuna.ats.arjuna.common.Uid_getbytes
+ *          [com.arjuna.ats.arjuna.common.Uid_getbytes] - Exception thrown getting bytes!
+ * @message com.arjuna.ats.arjuna.common.Uid_bytes
+ *          [com.arjuna.ats.arjuna.common.Uid_bytes] - Exception thrown creating Uid from bytes!
  */
 
 public class Uid implements Cloneable, Serializable
@@ -102,6 +110,7 @@ public class Uid implements Cloneable, Serializable
         _hashValue = -1;
         _valid = false;
         _stringForm = null;
+        _byteForm = null;
 
         try
         {
@@ -137,6 +146,38 @@ public class Uid implements Cloneable, Serializable
         copy(copyFrom);
     }
 
+    public Uid (byte[] byteForm)
+    {
+        hostAddr = new long[2];
+        _hashValue = -1;
+        _stringForm = null;
+        _byteForm = null;
+        
+        try
+        {
+            ByteArrayInputStream ba = new ByteArrayInputStream(byteForm);
+            DataInputStream ds = new DataInputStream(ba);
+            
+            hostAddr[0] = ds.readLong();
+            hostAddr[1] = ds.readLong();
+            process = ds.readInt();
+            sec = ds.readInt();
+            other = ds.readInt();
+            
+            _valid = true;
+        }
+        catch (final Throwable ex)
+        {
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.arjLoggerI18N
+                        .warn("com.arjuna.ats.arjuna.common.Uid_bytes", ex);
+            
+            _valid = false;
+        }
+        
+        generateHash();
+    }
+    
     /**
      * Create Uid from string representation. If the string does not represent a
      * valid Uid then the instance will be set to nullUid.
@@ -163,7 +204,8 @@ public class Uid implements Cloneable, Serializable
         _hashValue = -1;
         _valid = false;
         _stringForm = null;
-
+        _byteForm = null;
+        
         if (uidString.length() > 0)
         {
             int startIndex = 0;
@@ -366,6 +408,49 @@ public class Uid implements Cloneable, Serializable
                 + Utility.intToHexString(process) + Uid.fileBreakChar
                 + Utility.intToHexString(sec) + Uid.fileBreakChar
                 + Utility.intToHexString(other);
+    }
+    
+    /**
+     * Get the byte representation of the Uid. Useful for packing and creating other
+     * representations of transaction ids.
+     * 
+     * @return the byte array. Cached once created.
+     */
+    
+    public byte[] getBytes ()
+    {
+        /*
+         * We should only really be doing this once, so overhead should
+         * be negligible.
+         */
+        
+        if (_byteForm == null)
+        {
+            ByteArrayOutputStream ba = new ByteArrayOutputStream(UID_SIZE);
+            DataOutputStream ds = new DataOutputStream(ba);
+            
+            try
+            {
+                ds.writeLong(hostAddr[0]);
+                ds.writeLong(hostAddr[1]);
+                ds.writeInt(process);
+                ds.writeInt(sec);
+                ds.writeInt(other);
+                //_byteForm = stringForm().getBytes("UTF-8");
+                
+                _byteForm = ba.toByteArray();
+            }
+            catch (final Throwable ex)
+            {
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                    tsLogger.arjLoggerI18N
+                            .warn("com.arjuna.ats.arjuna.common.Uid_getbytes", ex);
+                
+                _byteForm = null;
+            }
+        }
+
+        return _byteForm;
     }
 
     /**
@@ -721,6 +806,8 @@ public class Uid implements Cloneable, Serializable
     private volatile boolean _valid;
 
     private volatile String _stringForm;
+    
+    private volatile byte[] _byteForm;
 
     private static final AtomicInteger uidsCreated = new AtomicInteger();
 
@@ -739,4 +826,6 @@ public class Uid implements Cloneable, Serializable
 
     private static final Uid MIN_UID = new Uid(
             "-80000000:-80000000:-80000000:-80000000:-80000000");
+    
+    private static final int UID_SIZE = 2*8 + 3*4; // in bytes
 }
