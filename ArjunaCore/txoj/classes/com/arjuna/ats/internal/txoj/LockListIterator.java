@@ -29,7 +29,9 @@
  * $Id: LockListIterator.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.txoj;
+package com.arjuna.ats.internal.txoj;
+
+import com.arjuna.ats.txoj.Lock;
 
 
 public class LockListIterator
@@ -50,7 +52,7 @@ public class LockListIterator
             return null;
         }
         else
-            next = current.getLink();
+            next = LockFriend.getLink(current);
 
         return current;
     }

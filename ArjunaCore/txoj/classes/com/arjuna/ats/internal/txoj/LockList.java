@@ -29,7 +29,9 @@
  * $Id: LockList.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.txoj;
+package com.arjuna.ats.internal.txoj;
+
+import com.arjuna.ats.txoj.Lock;
 
 
 public class LockList
@@ -43,7 +45,8 @@ public class LockList
 
     public void finalize ()
     {
-        Lock temp = null;
+        @SuppressWarnings("unused")
+        Lock temp;
 
         while ((temp = pop()) != null)
             temp = null; // temp.finalize() ?
@@ -85,8 +88,8 @@ public class LockList
 
         current = (Lock) head;
         count--;
-        head = head.getLink();
-        current.setLink(null);
+        head = LockFriend.getLink(head);
+        LockFriend.setLink(current, null);
 
         return current;
     }
@@ -98,7 +101,7 @@ public class LockList
 
     public final void push (Lock newLock)
     {
-        newLock.setLink(head);
+        LockFriend.setLink(newLock, head);
         head = newLock;
         count++;
     }
@@ -115,15 +118,15 @@ public class LockList
         if (count > 0) /* something there to forget */
         {
             if (current == null)
-                head = head.getLink();
+                head = LockFriend.getLink(head);
             else
             {
-                Lock nextOne = current.getLink();
+                Lock nextOne = LockFriend.getLink(current);
 
                 /* See if at list end */
 
                 if (nextOne != null)
-                    current.setLink(nextOne.getLink());
+                    LockFriend.setLink(current, LockFriend.getLink(nextOne));
                 else
                 {
                     /*
@@ -131,7 +134,7 @@ public class LockList
                      * end of list
                      */
                     count++;
-                    current.setLink(null); /* force end of list */
+                    LockFriend.setLink(current, null);  /* force end of list */
                 }
             }
 

@@ -45,6 +45,8 @@ import com.arjuna.common.util.logging.*;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.internal.txoj.LockList;
+import com.arjuna.ats.internal.txoj.LockListIterator;
 import com.arjuna.ats.internal.txoj.abstractrecords.CadaverLockRecord;
 import com.arjuna.ats.internal.txoj.abstractrecords.LockRecord;
 import com.arjuna.ats.internal.txoj.lockstore.BasicLockStore;

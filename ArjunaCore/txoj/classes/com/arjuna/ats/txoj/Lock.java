@@ -35,7 +35,8 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.utils.*;
+import com.arjuna.ats.arjuna.utils.Utility;
+
 import java.io.*;
 
 import com.arjuna.ats.txoj.logging.FacilityCode;
@@ -46,14 +47,13 @@ import com.arjuna.common.util.logging.*;
 import java.io.IOException;
 
 /**
- * Instances of this class (or derived user classes) are used
- * when trying to set a lock. The default implementation provides a
- * single-write/multiple-reader policy. However, by overridding
- * the appropriate methods, other, type-specific concurrency control
- * locks can be implemented.
- *
+ * Instances of this class (or derived user classes) are used when trying to set
+ * a lock. The default implementation provides a single-write/multiple-reader
+ * policy. However, by overridding the appropriate methods, other, type-specific
+ * concurrency control locks can be implemented.
+ * 
  * @author Mark Little (mark@arjuna.com)
- * @version $Id: Lock.java 2342 2006-03-30 13:06:17Z  $
+ * @version $Id: Lock.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
  */
 
@@ -64,109 +64,113 @@ public class Lock extends StateManager
      * Create a new lock.
      */
 
-public Lock ()
+    public Lock()
     {
-	super(ObjectType.NEITHER);
+        super(ObjectType.NEITHER);
 
-	currentStatus = LockStatus.LOCKFREE;
-	nextLock = null;
-	lMode = LockMode.WRITE;
-	owners = new ActionHierarchy(0);
+        currentStatus = LockStatus.LOCKFREE;
+        nextLock = null;
+        lMode = LockMode.WRITE;
+        owners = new ActionHierarchy(0);
     }
 
     /**
-     * Create a new Lock object and initialise it. Mode is
-     * based upon argument. The value of BasicAction.Current determines the 
-     * values of the remainder of the fields.
-     * If there is no action running the owner field is set to be the
-     * application uid created when the application starts.
+     * Create a new Lock object and initialise it. Mode is based upon argument.
+     * The value of BasicAction.Current determines the values of the remainder
+     * of the fields. If there is no action running the owner field is set to be
+     * the application uid created when the application starts.
      */
 
-public Lock (int lm)
+    public Lock(int lm)
     {
-	super(ObjectType.NEITHER);
+        super(ObjectType.NEITHER);
 
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				       FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::Lock("+lm+")");
-	}
-	
-	currentStatus = LockStatus.LOCKFREE;
-	nextLock = null;
-	lMode = lm;
-	owners = new ActionHierarchy(0);
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::Lock(" + lm
+                            + ")");
+        }
 
-	BasicAction curr = BasicAction.Current();
-    
-	if (curr == null)
-	{
-	    int currentPid = 0;   // ::getpid();
-	    ActionHierarchy ah = new ActionHierarchy(1); /* max depth of 1 */
+        currentStatus = LockStatus.LOCKFREE;
+        nextLock = null;
+        lMode = lm;
+        owners = new ActionHierarchy(0);
 
-	    if (applicUid == null)
-	    {
-		applicUid = new Uid();
-	    }
-	    
-	    if (applicPid != currentPid)
-	    {
-		/*
-		 * Process id change probably due to a fork(). Get new pid 
-		 * and generate a new Applic_Uid
-		 */
+        BasicAction curr = BasicAction.Current();
 
-		applicPid = currentPid;
-		applicUid = new Uid();
-	    }
+        if (curr == null)
+        {
+            int currentPid = Utility.getpid(); // ::getpid();
+            ActionHierarchy ah = new ActionHierarchy(1); /* max depth of 1 */
 
-	    ah.add(applicUid);
-	    owners.copy(ah);
-	}
-	else
-	{
-	    owners.copy(curr.getHierarchy());
-	}
+            if (applicUid == null)
+            {
+                applicUid = new Uid();
+            }
+
+            if (applicPid != currentPid)
+            {
+                /*
+                 * Process id change probably due to a fork(). Get new pid and
+                 * generate a new Applic_Uid
+                 */
+
+                applicPid = currentPid;
+                applicUid = new Uid();
+            }
+
+            ah.add(applicUid);
+            owners.copy(ah);
+        }
+        else
+        {
+            owners.copy(curr.getHierarchy());
+        }
     }
 
     /**
-     * This is used when re-initialising a Lock after
-     * retrieval from the object store.
+     * This is used when re-initialising a Lock after retrieval from the object
+     * store.
      */
 
-public Lock (Uid storeUid)
+    public Lock(Uid storeUid)
     {
-	super(storeUid, ObjectType.NEITHER);
+        super(storeUid, ObjectType.NEITHER);
 
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				       FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::Lock("+storeUid+")");
-	}
-	
-	currentStatus = LockStatus.LOCKFREE;
-	nextLock = null;
-	lMode = LockMode.WRITE;
-	owners = new ActionHierarchy(0);
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::Lock("
+                            + storeUid + ")");
+        }
+
+        currentStatus = LockStatus.LOCKFREE;
+        nextLock = null;
+        lMode = LockMode.WRITE;
+        owners = new ActionHierarchy(0);
     }
 
     /**
      * General clean up as Lock is deleted.
      */
 
-public void finalize () throws Throwable
+    public void finalize () throws Throwable
     {
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.DESTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				       FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock.finalize()");
-	}
-	
-	super.terminate();
-    
-	owners = null;
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.DESTRUCTORS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock.finalize()");
+        }
 
-	super.finalize();
+        super.terminate();
+
+        owners = null;
+
+        super.finalize();
     }
 
     /*
@@ -176,324 +180,347 @@ public void finalize () throws Throwable
 
     /**
      * @return the mode this lock is currently in, e.g.,
-     * <code>LockMode.READ</code>.
+     *         <code>LockMode.READ</code>.
      */
 
-public final int getLockMode ()
+    public final int getLockMode ()
     {
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS, VisibilityLevel.VIS_PUBLIC,
-				       FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::getLockMode()");
-	}
-	
-	return lMode;
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger
+                    .debug(DebugLevel.TRIVIAL_FUNCS,
+                            VisibilityLevel.VIS_PUBLIC,
+                            FacilityCode.FAC_CONCURRENCY_CONTROL,
+                            "Lock::getLockMode()");
+        }
+
+        return lMode;
     }
 
     /**
      * @return the identity of the lock's current owner (the transaction id).
      */
 
-public final Uid getCurrentOwner ()
+    public final Uid getCurrentOwner ()
     {
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS, VisibilityLevel.VIS_PUBLIC,
-				       FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::getCurrentOwner()");
-	}
-	
-	return owners.getDeepestActionUid();
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CONCURRENCY_CONTROL,
+                    "Lock::getCurrentOwner()");
+        }
+
+        return owners.getDeepestActionUid();
     }
 
     /**
-     * @return the transaction hierarchy associated with this
-     * lock.
+     * @return the transaction hierarchy associated with this lock.
      */
 
-public final ActionHierarchy getAllOwners ()
+    public final ActionHierarchy getAllOwners ()
     {
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS, VisibilityLevel.VIS_PUBLIC,
-				       FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::getAllOwners()");
-	}
-	
-	return owners;
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CONCURRENCY_CONTROL,
+                    "Lock::getAllOwners()");
+        }
+
+        return owners;
     }
 
     /**
      * @return the lock's current status.
      */
 
-public final int getCurrentStatus ()
+    public final int getCurrentStatus ()
     {
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS, VisibilityLevel.VIS_PUBLIC,
-				       FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::getCurrentStatus()");
-	}
-	
-	return currentStatus;
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CONCURRENCY_CONTROL,
+                    "Lock::getCurrentStatus()");
+        }
+
+        return currentStatus;
     }
 
     /**
-     * Change the transaction hierarchy associated with the lock to
-     * that provided.
+     * Change the transaction hierarchy associated with the lock to that
+     * provided.
      */
 
-public final void changeHierarchy (ActionHierarchy newOwner)
+    public final void changeHierarchy (ActionHierarchy newOwner)
     {
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS, VisibilityLevel.VIS_PUBLIC,
-				       FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::getCurrentOwner()");
-	}
-	
-	owners.copy(newOwner);
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CONCURRENCY_CONTROL,
+                    "Lock::getCurrentOwner()");
+        }
 
-	if (currentStatus == LockStatus.LOCKFREE)
-	    currentStatus = LockStatus.LOCKHELD;
+        owners.copy(newOwner);
+
+        if (currentStatus == LockStatus.LOCKFREE)
+            currentStatus = LockStatus.LOCKHELD;
     }
 
     /**
      * Propagate the lock.
      */
 
-public final void propagate ()
+    public final void propagate ()
     {
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS, VisibilityLevel.VIS_PUBLIC,
-				       FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::propagate()");
-	}
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::propagate()");
+        }
 
-	owners.forgetDeepest();
+        owners.forgetDeepest();
 
-	currentStatus = LockStatus.LOCKRETAINED;
+        currentStatus = LockStatus.LOCKRETAINED;
     }
 
     /**
-     * Does this lock imply a modification of the object it is applied
-     * to? For example, a READ lock would return false, but a WRITE
-     * lock would return true.
-     *
-     * @return <code>true</code> if this lock implies the object's state
-     * will be modified, <code>false</code> otherwise.
+     * Does this lock imply a modification of the object it is applied to? For
+     * example, a READ lock would return false, but a WRITE lock would return
+     * true.
+     * 
+     * @return <code>true</code> if this lock implies the object's state will be
+     *         modified, <code>false</code> otherwise.
      */
 
-public boolean modifiesObject ()
+    public boolean modifiesObject ()
     {
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS, VisibilityLevel.VIS_PUBLIC,
-				       FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::modifiesObject()");
-	}
-	
-	return ((lMode == LockMode.WRITE) ? true : false);
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.TRIVIAL_FUNCS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CONCURRENCY_CONTROL,
+                    "Lock::modifiesObject()");
+        }
+
+        return ((lMode == LockMode.WRITE) ? true : false);
     }
 
     /**
-     * Implementation of Lock conflict check. Returns TRUE if there is
-     * conflict FALSE otherwise. Does not take account of relationship in
-     * the atomic action hierarchy since this is a function of
-     * LockManager.
-     *
+     * Implementation of Lock conflict check. Returns TRUE if there is conflict
+     * FALSE otherwise. Does not take account of relationship in the atomic
+     * action hierarchy since this is a function of LockManager.
+     * 
      * @return <code>true</code> if this lock conflicts with the parameter,
-     * <code>false</code> otherwise.
+     *         <code>false</code> otherwise.
      */
 
-public boolean conflictsWith (Lock otherLock)
+    public boolean conflictsWith (Lock otherLock)
     {
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::conflictsWith("+otherLock+")\n"
-				     +"\tLock 1:\n"+this+"\n"
-				       +"\tLock 2:\n"+otherLock);
-	}
-	
-	if (!(getCurrentOwner().equals(otherLock.getCurrentOwner())))
-	{
-	    switch (lMode)
-	    {
-	    case LockMode.WRITE:
-		return true;		/* WRITE conflicts always */
-	    case LockMode.READ:
-		if (otherLock.getLockMode() != LockMode.READ)
-		    return true;
-		break;
-	    }
-	}
-	
-	return false;			/* no conflict between these locks */
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CONCURRENCY_CONTROL,
+                    "Lock::conflictsWith(" + otherLock + ")\n" + "\tLock 1:\n"
+                            + this + "\n" + "\tLock 2:\n" + otherLock);
+        }
+
+        if (!(getCurrentOwner().equals(otherLock.getCurrentOwner())))
+        {
+            switch (lMode)
+            {
+            case LockMode.WRITE:
+                return true; /* WRITE conflicts always */
+            case LockMode.READ:
+                if (otherLock.getLockMode() != LockMode.READ)
+                    return true;
+                break;
+            }
+        }
+
+        return false; /* no conflict between these locks */
     }
 
     /**
      * Overrides Object.equals()
      */
 
-public boolean equals (Object otherLock)
+    public boolean equals (Object otherLock)
     {
-	if (otherLock instanceof Lock)
-	    return equals((Lock) otherLock);
-	else
-	    return false;
+        if (otherLock instanceof Lock)
+            return equals((Lock) otherLock);
+        else
+            return false;
     }
 
     /**
      * Are the two locks equal?
-     *
+     * 
      * @return <code>true</code> if the locks are equal, <code>false</code>
-     * otherwise.
+     *         otherwise.
      */
 
-public boolean equals (Lock otherLock)
+    public boolean equals (Lock otherLock)
     {
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.OPERATORS, VisibilityLevel.VIS_PUBLIC,
-				     FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::equals("+otherLock+")\n"
-				     +"\tLock 1:\n"+this+"\n"
-				       +"\tLock 2:\n"+otherLock);
-	}
-	
-	if (this == otherLock)
-	    return true;
-	
-	if ((lMode == otherLock.lMode) &&
-	    (owners.equals(otherLock.owners)) &&
-	    (currentStatus == otherLock.currentStatus))
-	{
-	    return true;
-	}
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.OPERATORS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::equals("
+                            + otherLock + ")\n" + "\tLock 1:\n" + this + "\n"
+                            + "\tLock 2:\n" + otherLock);
+        }
 
-	return false;
+        if (this == otherLock)
+            return true;
+
+        if ((lMode == otherLock.lMode) && (owners.equals(otherLock.owners))
+                && (currentStatus == otherLock.currentStatus))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     /**
      * Overrides Object.toString()
      */
 
-public String toString ()
+    public String toString ()
     {
-	StringWriter strm = new StringWriter();
+        StringWriter strm = new StringWriter();
 
-	strm.write("Lock object : \n");
-	strm.write("\tunique id is : "+get_uid()+"\n");
-	
-	strm.write("\tcurrent_status : "+LockStatus.printString(currentStatus));
-	
-	strm.write("\n\tMode : "+LockMode.stringForm(lMode));
-    
-	strm.write("\n\tOwner List : \n");
-	owners.print(new PrintWriter(strm));
+        strm.write("Lock object : \n");
+        strm.write("\tunique id is : " + get_uid() + "\n");
 
-	return strm.toString();
+        strm.write("\tcurrent_status : "
+                + LockStatus.printString(currentStatus));
+
+        strm.write("\n\tMode : " + LockMode.stringForm(lMode));
+
+        strm.write("\n\tOwner List : \n");
+        owners.print(new PrintWriter(strm));
+
+        return strm.toString();
     }
 
     /**
      * functions inherited from StateManager
      */
-    
-public void print (PrintWriter strm)
+
+    public void print (PrintWriter strm)
     {
-	strm.print(toString());
+        strm.print(toString());
     }
 
     /**
      * Carefully restore the state of a Lock.
-     *
-     * @return <code>true</code> if successful, <code>false</code>
-     * otherwise.
+     * 
+     * @return <code>true</code> if successful, <code>false</code> otherwise.
      */
 
-public boolean restore_state (InputObjectState os, int ot)
+    public boolean restore_state (InputObjectState os, int ot)
     {
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				       FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::restore_state("+os+", "+ot+")");
-	}
-	
-	ActionHierarchy ah = new ActionHierarchy(0);
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CONCURRENCY_CONTROL,
+                    "Lock::restore_state(" + os + ", " + ot + ")");
+        }
 
-	try
-	{
-	    currentStatus = os.unpackInt();
-	    lMode = os.unpackInt();
-	    ah.unpack(os);
-	    owners = ah;
+        ActionHierarchy ah = new ActionHierarchy(0);
 
-	    return true;
-	}
-	catch (IOException e)
-	{
-	    return false;
-	}
+        try
+        {
+            currentStatus = os.unpackInt();
+            lMode = os.unpackInt();
+            ah.unpack(os);
+            owners = ah;
+
+            return true;
+        }
+        catch (IOException e)
+        {
+            return false;
+        }
     }
 
     /**
      * Save the state of a lock object.
-     *
-     * @return <code>true</code> if successful, <code>false</code>
-     * otherwise.
+     * 
+     * @return <code>true</code> if successful, <code>false</code> otherwise.
      */
 
-public boolean save_state (OutputObjectState os, int ot)
+    public boolean save_state (OutputObjectState os, int ot)
     {
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-				       FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::save_state("+os+", "+ot+")");
-	}
-	
-	try
-	{
-	    os.packInt(currentStatus);
-	    os.packInt(lMode);
-	    owners.pack(os);
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CONCURRENCY_CONTROL, "Lock::save_state("
+                            + os + ", " + ot + ")");
+        }
 
-	    return os.valid();
-	}
-	catch (IOException e)
-	{
-	    return false;
-	}
+        try
+        {
+            os.packInt(currentStatus);
+            os.packInt(lMode);
+            owners.pack(os);
+
+            return os.valid();
+        }
+        catch (IOException e)
+        {
+            return false;
+        }
     }
 
     /**
      * Overrides StateManager.type()
      */
 
-public String type ()
+    public String type ()
     {
-	return "/StateManager/Lock";
+        return "/StateManager/Lock";
     }
 
     /**
      * Get the next lock in the chain.
      */
 
-protected Lock getLink ()
+    protected Lock getLink ()
     {
-	return nextLock;
+        return nextLock;
     }
 
     /**
      * Set the next lock in the chain.
      */
 
-protected void setLink (Lock pointTo)
+    protected void setLink (Lock pointTo)
     {
-	nextLock = pointTo;
+        nextLock = pointTo;
     }
 
-private int             currentStatus;/* Current status of lock */
-private Lock            nextLock;
-private int             lMode;	      /* Typically READ or WRITE */
-private ActionHierarchy owners;	      /* Uid of owner action (faked if none) */
-    
-private static Uid applicUid = null;  /* In case lock set outside AA */
-private static int applicPid = com.arjuna.ats.arjuna.utils.Utility.getpid();  /* process id */
-    
+    private int currentStatus;/* Current status of lock */
+
+    private Lock nextLock;
+
+    private int lMode; /* Typically READ or WRITE */
+
+    private ActionHierarchy owners; /* Uid of owner action (faked if none) */
+
+    private static Uid applicUid = null; /* In case lock set outside AA */
+
+    private static int applicPid = com.arjuna.ats.arjuna.utils.Utility.getpid(); /*
+                                                                                  * process
+                                                                                  * id
+                                                                                  */
+
 }

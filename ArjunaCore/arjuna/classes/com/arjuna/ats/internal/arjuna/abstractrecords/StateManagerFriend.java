@@ -36,10 +36,18 @@ import java.lang.reflect.Method;
 
 import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
+import com.arjuna.ats.arjuna.logging.tsLogger;
 
 /**
  * Some StateManager methods really shouldn't be available to users to call inadvertently. In
  * C++ valid users (specific AbstractRecord instances) were friends of StateManager.
+ */
+
+/**
+ * @message com.arjuna.ats.internal.arjuna.abstractrecords.smf1
+ *          [com.arjuna.ats.internal.arjuna.abstractrecords.smf1] - StateManagerFriend.forgetAction
+ * @message com.arjuna.ats.internal.arjuna.abstractrecords.smf2
+ *          [com.arjuna.ats.internal.arjuna.abstractrecords.smf2] - StateManagerFriend.destroyed
  */
 
 public class StateManagerFriend
@@ -59,17 +67,30 @@ public class StateManagerFriend
         }
         catch (final Throwable ex)
         {
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.arjLoggerI18N
+                .warn("com.arjuna.ats.internal.arjuna.abstractrecords.smf1", ex);
+            
             return false;
         }
     }
 
-    public static final void destroyed (StateManager inst) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
+    public static final void destroyed (StateManager inst) //throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
     {
-        Method m = StateManager.class.getDeclaredMethod("destroyed", (Class[]) null);
-
-        m.setAccessible(true);
-        m.invoke(inst, (Object[]) null);
-        m.setAccessible(false);
+        try
+        {
+            Method m = StateManager.class.getDeclaredMethod("destroyed", (Class[]) null);
+    
+            m.setAccessible(true);
+            m.invoke(inst, (Object[]) null);
+            m.setAccessible(false);
+        }
+        catch (final Throwable ex)
+        {
+            if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                tsLogger.arjLoggerI18N
+                .warn("com.arjuna.ats.internal.arjuna.abstractrecords.smf2", ex);
+        }
     }
 
     private StateManagerFriend()
