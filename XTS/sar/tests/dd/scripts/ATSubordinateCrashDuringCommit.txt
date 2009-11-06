@@ -27,7 +27,7 @@
 # JBossTS XTS implementation of the WS-AT 1.1 protocol using orchestration
 # rules. The basic scenario employs a coordinator, a subordinate coordinator
 # and 2 web services running in a single JVM. The scenario is as follows
-# (** indicates intercession by a TOAST rule):
+# (** indicates intercession by a Byteman rule):
 #
 # AS boots
 # Cient starts a WS-AT transaction T1
@@ -110,7 +110,7 @@
 # should run automatically and the server should be killed after the recovered
 # transaction is successfuly replayed.
 #
-# This script needs to be passed to a TOAST agent in the JVM running
+# This script needs to be passed to a Byteman agent in the JVM running
 # the coordinator service both at first boot and at reboot. Output will be
 # written to file testlog in the working directory of the AS.
 #

@@ -45,6 +45,7 @@ import com.arjuna.mw.wsas.exceptions.ProtocolViolationException;
 import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.ATCoordinator;
 
 import java.util.HashMap;
+import java.util.Collection;
 
 /**
  * This class represents a specific coordination instance. It is essentially an
@@ -298,6 +299,16 @@ public class SubordinateATCoordinator extends ATCoordinator
         recoveredCoordinators.put(coordinator.get_uid().stringForm(), null);
     }
 
+    public static synchronized void addActiveProxy(String id)
+    {
+        activeProxies.put(id, Boolean.TRUE);
+    }
+
+    public static synchronized void removeActiveProxy(String id)
+    {
+        activeProxies.remove(id);
+    }
+
     protected void setActivated()
     {
         activated = true;
@@ -308,9 +319,44 @@ public class SubordinateATCoordinator extends ATCoordinator
         return activated;
     }
 
+    /**
+     * test whether a transaction has been restored without its proxy participant. this indicates that
+     * we crashed between preparing the suborindate TX and logging the proxy participant.
+     * @return
+     */
+    public boolean isOrphaned()
+    {
+        String id = get_uid().stringForm();
+        if (isActiveProxy(id)) {
+            return false;
+        }
+
+        // the proxy may have been removed because this tx has been resolved while we were checking
+
+        if (getRecoveredCoordinator(id) == null) {
+            return false;
+        }
+
+        // ok we have a tx but no proxy so this is really an orphan
+
+        return true;
+    }
+
+    private static synchronized boolean isActiveProxy(String proxyId)
+    {
+        return activeProxies.get(proxyId) == Boolean.TRUE;
+    }
+
     public static synchronized SubordinateATCoordinator getRecoveredCoordinator(String coordinatorId)
     {
         return recoveredCoordinators.get(coordinatorId);
+    }
+
+    public static synchronized SubordinateATCoordinator[] listRecoveredCoordinators()
+    {
+        Collection<SubordinateATCoordinator> values = recoveredCoordinators.values();
+        int length = values.size();
+        return values.toArray(new SubordinateATCoordinator[length]);
     }
 
     /**
@@ -326,6 +372,8 @@ public class SubordinateATCoordinator extends ATCoordinator
     private boolean activated;
 
     private static final HashMap<String, SubordinateATCoordinator> recoveredCoordinators = new HashMap<String, SubordinateATCoordinator>();
+
+    private static final HashMap<String, Boolean> activeProxies = new HashMap<String, Boolean>();
 
     /**
      * we need to remove the association between parent and subordinate context at completion

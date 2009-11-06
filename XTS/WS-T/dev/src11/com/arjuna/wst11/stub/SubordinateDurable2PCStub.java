@@ -102,6 +102,7 @@ public class SubordinateDurable2PCStub implements Durable2PCParticipant, Persist
                 if (status == ActionStatus.PREPARED || status == ActionStatus.COMMITTING) {
                     // ok, the commit process was not previously initiated so start it now
                     coordinator.commit();
+                    SubordinateATCoordinator.removeActiveProxy(coordinatorId);
                     status = coordinator.status();
                 }
 
@@ -150,6 +151,7 @@ public class SubordinateDurable2PCStub implements Durable2PCParticipant, Persist
                         (status == ActionStatus.ABORT_ONLY)) {
                     // ok, the rollback process was not previously initiated so start it now
                     coordinator.rollback();
+                    SubordinateATCoordinator.removeActiveProxy(coordinatorId);
                     status = coordinator.status();
                 }
             }
@@ -197,6 +199,7 @@ public class SubordinateDurable2PCStub implements Durable2PCParticipant, Persist
         // restore the subordinate coordinator id so we can check to ensure it has been committed
         try {
             coordinatorId = ios.unpackString();
+            SubordinateATCoordinator.addActiveProxy(coordinatorId);
             return true;
         } catch (IOException e) {
             return false;

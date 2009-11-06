@@ -29,7 +29,7 @@
 # and 2 web services located in one JVM/AS and a coordinator located in another
 # JVM/AS but it is possible for the lcinet and web services to be lcoated in
 # separate JVMs/ASs. The scenario is as follows (note ** AS<n> indicates
-# intercession by a TOAST rule executed in a specific AS):
+# intercession by a Byteman rule executed in a specific AS):
 #
 # AS1 boots
 # AS2 boots
@@ -87,9 +87,9 @@
 # !!! N.B. this test currently fails because JBossWS Native fails to cope
 # !!! with requests for services while they are bootstrapping
 #
-# The JVMs hosting AS1 and AS2 both need to be configured to run a TOAST
+# The JVMs hosting AS1 and AS2 both need to be configured to run a Byteman
 # agent supplied with this script. If the web service(s) is relocated
-# to AS3 then it needs to be configured to run the TOAST agent instead of
+# to AS3 then it needs to be configured to run the Byteman agent instead of
 # AS1 (rules only refer to participant and coordinator code, not to the
 # XTS service test code).
 #

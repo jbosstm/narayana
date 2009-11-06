@@ -7,6 +7,7 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.mwlabs.wscf.model.twophase.arjunacore.subordinate.SubordinateATCoordinator;
 
 import java.util.*;
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.io.IOException;
  * @message org.jboss.transactions.xts.recovery.participant.at.XTSATRecoveryModule_2 [org.jboss.transactions.xts.recovery.participant.at.XTSATRecoveryModule_2] exception removing recovery record {0} for WS-AT participant {1}
  * @message org.jboss.transactions.xts.recovery.participant.at.XTSATRecoveryModule_3 [org.jboss.transactions.xts.recovery.participant.at.XTSATRecoveryModule_3] exception reactivating recovered WS-AT participant {0}
  * @message org.jboss.transactions.xts.recovery.participant.at.XTSATRecoveryModule_4 [org.jboss.transactions.xts.recovery.participant.at.XTSATRecoveryModule_4] no XTS application recovery module found to help reactivate recovered WS-AT participant {0}
+ * @message org.jboss.transactions.xts.recovery.participant.at.XTSATRecoveryModule_5 [org.jboss.transactions.xts.recovery.participant.at.XTSATRecoveryModule_5] Compensating orphaned subordinate WS-AT transcation {0}
  */
 public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
     /**
@@ -253,6 +255,35 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
                 }
             }
         }
+
+        // ok, see if we are now in a position to cull any prepared subordinate transactions
+
+        cullOrphanedSubordinates();
+    }
+
+    /**
+     * look for recovered subordinate transactions which do not have an associated proxy participant
+     * rolling back any that are found. this only needs doing once after the first participant and
+     * subordinate transaction recovery passes have both completed
+     */
+    private void cullOrphanedSubordinates()
+    {
+        if (culledOrphanSubordinates || !(subordinateCoordinatorRecoveryStarted && participantRecoveryStarted)) {
+            return;
+        }
+        culledOrphanSubordinates = true;
+
+        SubordinateATCoordinator[] coordinators = SubordinateATCoordinator.listRecoveredCoordinators();
+        for (SubordinateATCoordinator coordinator : coordinators) {
+            if (coordinator.isOrphaned()) {
+                if (XTSLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                    XTSLogger.arjLoggerI18N.warn("org.jboss.transactions.xts.recovery.participant.at.XTSATRecoveryModule_5",
+                            new Object[] {coordinator.get_uid().stringForm()});
+                }
+                coordinator.rollback();
+            }
+        }
     }
     
     /**
@@ -322,6 +353,9 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
 
     public synchronized void setSubordinateCoordinatorRecoveryStarted() {
         subordinateCoordinatorRecoveryStarted = true;
+
+        // see if we are now in a position to cull any orphaned subordinate transactions
+        cullOrphanedSubordinates();
     }
 
     /**
@@ -341,6 +375,12 @@ public class XTSATRecoveryManagerImple extends XTSATRecoveryManager {
      * been performed.
      */
     private boolean subordinateCoordinatorRecoveryStarted = false;
+
+    /**
+     * a global flag indicating whether we have already reconciled the list of subordinate transactions
+     * against their proxy participants looking for any orphans
+     */
+    private boolean culledOrphanSubordinates = false;
 
     /**
      * a map from participant ids to participant recovery records
