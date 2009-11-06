@@ -37,109 +37,108 @@ import java.util.Date;
 import java.lang.InterruptedException;
 
 /**
- * An instance of this class is used to determine what to do in the
- * event of a lock conflict for a given object. If the timeout and
- * retry values are >=0 then we use them to sleep the thread which tried
- * to get the lock. If the retry value is -100 (LockManager.waitTotalTimeout)
- * then the thread will block for up to the total timeout and be signalled
- * either when the timeout occurs, or when the lock is actually released.
+ * An instance of this class is used to determine what to do in the event of a
+ * lock conflict for a given object. If the timeout and retry values are >=0
+ * then we use them to sleep the thread which tried to get the lock. If the
+ * retry value is -100 (LockManager.waitTotalTimeout) then the thread will block
+ * for up to the total timeout and be signalled either when the timeout occurs,
+ * or when the lock is actually released.
  */
 
 class LockConflictManager
 {
 
-LockConflictManager ()
+    LockConflictManager()
     {
-	_lock = new Object();
-	_signals = 0;
+        _lock = new Object();
+        _signals = 0;
     }
 
     /**
-     * Wait for the specified timeout and retry. We may either sleep the
-     * thread, or block it on a mutex.
-     *
-     * Returns the time taken to wait.
+     * Wait for the specified timeout and retry. We may either sleep the thread,
+     * or block it on a mutex. Returns the time taken to wait.
      */
 
-int wait (int retry, int waitTime)
+    int wait (int retry, int waitTime)
     {
-	/*
-	 * If the retry is -1 then we wait on the object as if it
-	 * were a lock. Otherwise we do the usual sleep call.
-	 */
+        /*
+         * If the retry is -1 then we wait on the object as if it were a lock.
+         * Otherwise we do the usual sleep call.
+         */
 
-	if (retry < 0)
-	{
-	    /*
-	     * Wait for the lock object to be signalled.
-	     */
+        if (retry < 0)
+        {
+            /*
+             * Wait for the lock object to be signalled.
+             */
 
-	    Date d1 = Calendar.getInstance().getTime();
-	    
-	    synchronized (_lock)
-		{
-		    try
-		    {
-			/*
-			 * Consume an old signal. May cause us to go round
-			 * the loop quicker than we should, but its better
-			 * than synchronizing signal and wait.
-			 */
+            Date d1 = Calendar.getInstance().getTime();
 
-			if (_signals == 0)
-			{
-			    _lock.wait(waitTime);
-			}
-			else
-			{
-			    _signals--;
+            synchronized (_lock)
+            {
+                try
+                {
+                    /*
+                     * Consume an old signal. May cause us to go round the loop
+                     * quicker than we should, but its better than synchronizing
+                     * signal and wait.
+                     */
 
-			    return waitTime;
-			}
-		    }
-		    catch (InterruptedException e)
-		    {
-		    }
-		}
+                    if (_signals == 0)
+                    {
+                        _lock.wait(waitTime);
+                    }
+                    else
+                    {
+                        _signals--;
 
-	    Date d2 = Calendar.getInstance().getTime();
+                        return waitTime;
+                    }
+                }
+                catch (InterruptedException e)
+                {
+                }
+            }
 
-	    return (int) (d2.getTime() - d1.getTime());
-	}
-	else
-	{
-	    try
-	    {
-		/* hope things happen in time */
-	    
-		Thread.sleep(waitTime);
-	    }
-	    catch (InterruptedException e)
-	    {
-	    }
+            Date d2 = Calendar.getInstance().getTime();
 
-	    return 0;
-	}
-    }    
+            return (int) (d2.getTime() - d1.getTime());
+        }
+        else
+        {
+            try
+            {
+                /* hope things happen in time */
+
+                Thread.sleep(waitTime);
+            }
+            catch (InterruptedException e)
+            {
+            }
+
+            return 0;
+        }
+    }
 
     /**
      * Signal that the lock has been released.
      */
-    
-void signal ()
+
+    void signal ()
     {
-	synchronized (_lock)
-	    {
-		_lock.notifyAll();
+        synchronized (_lock)
+        {
+            _lock.notifyAll();
 
-		_signals++;
+            _signals++;
 
-		if (_signals < 0)  // check for overflow
-		    _signals = 1;
-	    }
+            if (_signals < 0) // check for overflow
+                _signals = 1;
+        }
     }
-    
-private Object _lock;
-private int    _signals;
-    
+
+    private Object _lock;
+
+    private int _signals;
+
 }

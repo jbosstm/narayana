@@ -31,121 +31,121 @@
 
 package com.arjuna.ats.txoj;
 
+
 public class LockList
 {
 
-public LockList ()
+    public LockList()
     {
-	count = 0;
-	head = null;
+        count = 0;
+        head = null;
     }
 
-public void finalize ()
+    public void finalize ()
     {
-	Lock temp = null;
+        Lock temp = null;
 
-	while ((temp = pop()) != null)
-	    temp = null;  // temp.finalize() ?
+        while ((temp = pop()) != null)
+            temp = null; // temp.finalize() ?
     }
 
     /*
      * Insert a new Lock. This returns TRUE if the insertion occurred, false
-     * otherwise. Insertion fails if a matching lock already exists in the
-     * list.
+     * otherwise. Insertion fails if a matching lock already exists in the list.
      */
 
-public final boolean insert (Lock newlock)
+    public final boolean insert (Lock newlock)
     {
-	LockListIterator next = new LockListIterator(this);
-	Lock current = null;
+        LockListIterator next = new LockListIterator(this);
+        Lock current = null;
 
-	while ((current = next.iterate()) != null)
-	{
-	    if (current.equals(newlock))
-	    {
-		return false;
-	    }
-	}
+        while ((current = next.iterate()) != null)
+        {
+            if (current.equals(newlock))
+            {
+                return false;
+            }
+        }
 
-	push(newlock);
-	
-	return true;
+        push(newlock);
+
+        return true;
     }
 
     /*
      * Pop the first element off the list and return it.
      */
 
-public final Lock pop ()
+    public final Lock pop ()
     {
-	Lock current;
+        Lock current;
 
-	if (count == 0)
-	    return null;
+        if (count == 0)
+            return null;
 
-	current = (Lock) head;
-	count--;
-	head = head.getLink();
-	current.setLink(null);
-	
-	return current;
+        current = (Lock) head;
+        count--;
+        head = head.getLink();
+        current.setLink(null);
+
+        return current;
     }
 
     /*
-     *  Push a new element at the head of the list. First set the link
-     *  field to be the old head, and then set head to be the new element.
+     * Push a new element at the head of the list. First set the link field to
+     * be the old head, and then set head to be the new element.
      */
 
-public final void push (Lock newLock)
+    public final void push (Lock newLock)
     {
-	newLock.setLink(head);
-	head = newLock;
-	count++;
+        newLock.setLink(head);
+        head = newLock;
+        count++;
     }
 
     /*
-     * Discard the element following the one pointed at. If it is the
-     * first element (current = 0) then simply change the head pointer.
-     * Beware if current points at the last element or the list is empty!
-     * This probably indicates a bug in the caller.
+     * Discard the element following the one pointed at. If it is the first
+     * element (current = 0) then simply change the head pointer. Beware if
+     * current points at the last element or the list is empty! This probably
+     * indicates a bug in the caller.
      */
 
-public final void forgetNext (Lock current)
+    public final void forgetNext (Lock current)
     {
-	if (count > 0)			/* something there to forget */
-	{
-	    if (current == null)
-		head = head.getLink();
-	    else
-	    {
-		Lock nextOne = current.getLink();
-	    
-		/* See if at list end */
+        if (count > 0) /* something there to forget */
+        {
+            if (current == null)
+                head = head.getLink();
+            else
+            {
+                Lock nextOne = current.getLink();
 
-		if (nextOne != null)
-		    current.setLink(nextOne.getLink());
-		else
-		{
-		    /*
-		     * Probably an error - being asked to forget element
-		     * after end of list
-		     */
-		    count++;
-		    current.setLink(null);	/* force end of list */
-		}
-	    }
-	    
-	    count--;
-	}
+                /* See if at list end */
+
+                if (nextOne != null)
+                    current.setLink(nextOne.getLink());
+                else
+                {
+                    /*
+                     * Probably an error - being asked to forget element after
+                     * end of list
+                     */
+                    count++;
+                    current.setLink(null); /* force end of list */
+                }
+            }
+
+            count--;
+        }
     }
 
-public final int entryCount ()
+    public final int entryCount ()
     {
-	return count;
+        return count;
     }
 
-protected Lock head;
-    
-private int count;
-    
+    protected Lock head;
+
+    private int count;
+
 }
