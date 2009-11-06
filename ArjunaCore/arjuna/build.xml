@@ -102,13 +102,11 @@
                 </fileset>
             </tests>
         </run.tests.macro>
-        <!--
-        <run.tests.macro script="recovery.txt" showoutput="true">
+        <run.tests.macro script="recovery.txt">
             <tests>
                 <fileset dir="tests/classes" includes="**/recovery/RecoveryManagerStartStopTest.java"/>
             </tests>
         </run.tests.macro>
-        -->
     </target>
 
 </project>
