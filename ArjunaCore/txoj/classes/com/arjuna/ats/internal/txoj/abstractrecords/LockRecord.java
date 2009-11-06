@@ -29,13 +29,14 @@
  * $Id: LockRecord.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.txoj;
+package com.arjuna.ats.internal.txoj.abstractrecords;
 
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.Uid;
 
+import com.arjuna.ats.txoj.LockManager;
 import com.arjuna.ats.txoj.logging.txojLogger;
 import com.arjuna.ats.txoj.logging.FacilityCode;
 

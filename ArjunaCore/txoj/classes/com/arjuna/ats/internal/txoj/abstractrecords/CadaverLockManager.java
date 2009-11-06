@@ -29,14 +29,12 @@
  * $Id: CadaverLockManager.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.txoj;
+package com.arjuna.ats.internal.txoj.abstractrecords;
 
-import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
-import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.txoj.common.*;
 
+import com.arjuna.ats.txoj.LockManager;
 import com.arjuna.ats.txoj.logging.txojLogger;
 import com.arjuna.ats.txoj.logging.FacilityCode;
 
@@ -57,40 +55,41 @@ import com.arjuna.common.util.logging.*;
 
 class CadaverLockManager extends LockManager
 {
-    
-public CadaverLockManager (Uid objUid, String tName)
+
+    public CadaverLockManager(Uid objUid, String tName)
     {
-	super(objUid);
+        super(objUid);
 
-	objectTypeName = new String(tName);
+        objectTypeName = new String(tName);
 
-	if (txojLogger.aitLogger.isDebugEnabled())
-	{
-	    txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC,
-				       FacilityCode.FAC_CONCURRENCY_CONTROL, 
-				       "CadaverLockManager::CadaverLockManager("+objUid+")");
-	}
+        if (txojLogger.aitLogger.isDebugEnabled())
+        {
+            txojLogger.aitLogger.debug(DebugLevel.CONSTRUCTORS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CONCURRENCY_CONTROL,
+                    "CadaverLockManager::CadaverLockManager(" + objUid + ")");
+        }
     }
 
     /*
      * Publically inherited functions
      */
 
-public boolean restore_state (InputObjectState os, int t)
+    public boolean restore_state (InputObjectState os, int t)
     {
-	return false;
+        return false;
     }
 
-public boolean save_state (OutputObjectState os, int t)
+    public boolean save_state (OutputObjectState os, int t)
     {
-	return false;
+        return false;
     }
 
-public String type ()
+    public String type ()
     {
-	return objectTypeName;
+        return objectTypeName;
     }
 
-private String objectTypeName;
-    
+    private String objectTypeName;
+
 }

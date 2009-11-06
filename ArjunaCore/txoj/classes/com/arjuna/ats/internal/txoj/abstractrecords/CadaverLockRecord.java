@@ -29,19 +29,19 @@
  * $Id: CadaverLockRecord.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.txoj;
+package com.arjuna.ats.internal.txoj.abstractrecords;
 
 import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.*;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.common.Uid;
 
+import com.arjuna.ats.txoj.LockManager;
 import com.arjuna.ats.txoj.logging.txojLogger;
 import com.arjuna.ats.txoj.logging.FacilityCode;
 
 import com.arjuna.common.util.logging.*;
 
-import com.arjuna.ats.txoj.common.*;
 import com.arjuna.ats.txoj.lockstore.*;
 import java.io.PrintWriter;
 
@@ -67,7 +67,7 @@ import com.arjuna.ats.arjuna.exceptions.FatalError;
  *
  */ 
 
-class CadaverLockRecord extends LockRecord
+public class CadaverLockRecord extends LockRecord
 {
 
     public CadaverLockRecord (LockStore store, LockManager lm, BasicAction currAct)
