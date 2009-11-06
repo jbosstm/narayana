@@ -31,7 +31,6 @@
 
 package com.arjuna.ats.internal.arjuna.abstractrecords;
 
-import com.arjuna.ats.arjuna.PersistenceRecord;
 import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;

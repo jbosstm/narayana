@@ -29,8 +29,10 @@
  * $Id: RecoveryRecord.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.arjuna;
+package com.arjuna.ats.internal.arjuna.abstractrecords;
 
+import com.arjuna.ats.arjuna.ObjectType;
+import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
@@ -38,6 +40,7 @@ import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.state.*;
+
 import java.io.PrintWriter;
 
 public class RecoveryRecord extends AbstractRecord
@@ -344,7 +347,7 @@ public class RecoveryRecord extends AbstractRecord
     {
         if ((actionHandle != null) && (objectAddr != null))
         {
-            objectAddr.forgetAction(actionHandle, commit, RecordType.RECOVERY);
+            StateManagerFriend.forgetAction(objectAddr, actionHandle, commit, RecordType.RECOVERY);
             actionHandle = null; // only do this once!
         }
     }

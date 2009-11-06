@@ -35,8 +35,9 @@
  *
  */
 
-package com.arjuna.ats.arjuna;
+package com.arjuna.ats.internal.arjuna.abstractrecords;
 
+import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
@@ -45,7 +46,6 @@ import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
-import com.arjuna.ats.internal.arjuna.abstractrecords.CadaverRecord;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
 import java.io.PrintWriter;
@@ -163,13 +163,14 @@ public class DisposeRecord extends CadaverRecord
 
 		    if (super.objectAddr != null)
 		    {
-			super.objectAddr.destroyed();
+		        StateManagerFriend.destroyed(super.objectAddr);
+			//super.objectAddr.destroyed();
 		    }
 		    
 		    return TwoPhaseOutcome.FINISH_OK;
 		}
 	    }
-	    catch (Exception e)
+	    catch (final Throwable e)
 	    {
 		if (tsLogger.arjLoggerI18N.isWarnEnabled())
 		{

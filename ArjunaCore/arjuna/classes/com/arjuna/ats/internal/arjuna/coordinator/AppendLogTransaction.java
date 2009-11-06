@@ -53,7 +53,7 @@ public class AppendLogTransaction extends AtomicAction
 	{
 	    _previous = previous;
 
-	    super.add(new com.arjuna.ats.arjuna.DisposeRecord(previous.getStore(), previous));
+	    super.add(new com.arjuna.ats.internal.arjuna.abstractrecords.DisposeRecord(previous.getStore(), previous));
 
 	    return true;
 	}

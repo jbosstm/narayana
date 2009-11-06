@@ -29,11 +29,13 @@
  * $Id: ActivationRecord.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.arjuna;
+package com.arjuna.ats.internal.arjuna.abstractrecords;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
+import com.arjuna.ats.arjuna.ObjectStatus;
+import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.state.*;
@@ -105,8 +107,7 @@ public class ActivationRecord extends AbstractRecord
         int outcome = TwoPhaseOutcome.FINISH_ERROR;
 
         if ((objectAddr != null) && (actionHandle != null))
-            outcome = (objectAddr.forgetAction(actionHandle, false,
-                    RecordType.ACTIVATION) ? TwoPhaseOutcome.FINISH_OK
+            outcome = (StateManagerFriend.forgetAction(objectAddr, actionHandle, false, RecordType.ACTIVATION) ? TwoPhaseOutcome.FINISH_OK
                     : TwoPhaseOutcome.FINISH_ERROR);
 
         return outcome;
@@ -175,8 +176,7 @@ public class ActivationRecord extends AbstractRecord
 
         if ((objectAddr != null) && (actionHandle != null))
         {
-            return (objectAddr.forgetAction(actionHandle, true,
-                    RecordType.ACTIVATION) ? TwoPhaseOutcome.FINISH_OK
+            return (StateManagerFriend.forgetAction(objectAddr, actionHandle, true, RecordType.ACTIVATION) ? TwoPhaseOutcome.FINISH_OK
                     : TwoPhaseOutcome.FINISH_ERROR);
         }
 

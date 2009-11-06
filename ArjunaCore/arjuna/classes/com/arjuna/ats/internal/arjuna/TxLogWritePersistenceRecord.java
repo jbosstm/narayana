@@ -33,7 +33,6 @@ package com.arjuna.ats.internal.arjuna;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 
-import com.arjuna.ats.arjuna.PersistenceRecord;
 import com.arjuna.ats.arjuna.ObjectType;
 import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.common.Uid;
@@ -42,6 +41,7 @@ import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.exceptions.*;
 import com.arjuna.ats.arjuna.state.*;
+import com.arjuna.ats.internal.arjuna.abstractrecords.PersistenceRecord;
 
 /**
  */

@@ -34,13 +34,13 @@ package com.arjuna.ats.arjuna.coordinator;
 import java.io.*;
 
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
-import com.arjuna.ats.arjuna.ActivationRecord;
-import com.arjuna.ats.arjuna.DisposeRecord;
-import com.arjuna.ats.arjuna.PersistenceRecord;
-import com.arjuna.ats.arjuna.RecoveryRecord;
 import com.arjuna.ats.internal.arjuna.TxLogWritePersistenceRecord;
+import com.arjuna.ats.internal.arjuna.abstractrecords.ActivationRecord;
 import com.arjuna.ats.internal.arjuna.abstractrecords.CadaverRecord;
+import com.arjuna.ats.internal.arjuna.abstractrecords.DisposeRecord;
 import com.arjuna.ats.internal.arjuna.abstractrecords.LastResourceRecord;
+import com.arjuna.ats.internal.arjuna.abstractrecords.PersistenceRecord;
+import com.arjuna.ats.internal.arjuna.abstractrecords.RecoveryRecord;
 
 /**
  * The following enumerated type defines the types of record that are derived

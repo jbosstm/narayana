@@ -29,8 +29,10 @@
  * $Id: PersistenceRecord.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.arjuna;
+package com.arjuna.ats.internal.arjuna.abstractrecords;
 
+import com.arjuna.ats.arjuna.ObjectType;
+import com.arjuna.ats.arjuna.StateManager;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
