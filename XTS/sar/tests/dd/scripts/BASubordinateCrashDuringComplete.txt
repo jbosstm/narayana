@@ -91,71 +91,56 @@
 # ** Rule system traces create
 # Recovery system recreates participant engine for P1
 # ** Rule system traces create
-# Recovery system recreates participant engine for PP1
-# ** Rule system traces create
 # Recovery system recreates participant engine for P2
 # ** Rule system traces create
 # Recovery system recreates participant engine for P3
-# ** Rule system traces create
-# Recovery system recreates coordinator engine for P1
-# ** Rule system traces create
-# Recovery system recreates coordinator engine for PP1
 # ** Rule system traces create
 # Recovery system recreates coordinator engine for P2
 # ** Rule system traces create
 # Recovery system recreates coordinator engine for P3
 # ** Rule system traces create
-# Recovery system calls replay of COMPLETED transaction
-# ** Rule system traces COMPLETED replay invocation
 #
-# Coordinator sends close to P1
-# ** Rule system traces dispatch of close
-# P1 replies with closed
-# ** Rule system traces dispatch of closed
+# (parallel optional)
+# getStatus sent for P2/P3 and ignored during recovery
+# ** Rule system traces dispatch of getStatus
+# (parallel)
+# Recovery system detects missing proxy P2 for transaction T2
+# Recovery system calls cancel for subordinate coordinator
+# ** Rule system traces call to cancel
 #
-# Coordinator sends close to PP
-# ** Rule system traces dispatch of close
+# Coordinator sends compensate to P2
+# ** Rule system traces dispatch of compensate
+# P2 replies with compensated
+# ** Rule system traces dispatch of compensated
+# ** Rule system detects removal of P2
 #
-# (optional depending upon recovery timing)
-# PP throws System Exception because subordinate coordinator is not avaiable
-# ** Rule system traces call to close
-# Coordinator resends close to PP
-# ** Rule system traces dispatch of close
-# (end optional section -- n.b. may be repeated)
+# Coordinator sends compensate to P3
+# ** Rule system traces dispatch of compensate
+# P3 replies with compensated
+# ** Rule system traces dispatch of compensated
+# ** Rule system detects removal of P3
+# Subordinate coordinator cancel call returns
+# ** Rule system traces return from cancel
 #
-# PP calls subordinate coordinator close
-# ** Rule system traces call to close
+# Recovery system removes transaction T2
+# ** Rule system traces removal of transaction
+# (parallel)
+# getStatus sent for P1
+# ** Rule system traces dispatch of getStatus
+# soap fault sent to P1
+# ** Rule system traces dispatch of soap fault
+# ** Rule system detects removal of P1
+# (end parallel)
 #
-# Subordinate coordinator sends close to P2
-# ** Rule system traces dispatch of close
-# P2 replies with closed
-# ** Rule system traces receipt of closed
-#
-# Subordinate oordinator sends close to P3
-# ** Rule system traces dispatch of close
-# P3 replies with closed
-# ** Rule system traces receipt of closed
-#
-# Subordinate coordinator deletes T2 from log
-# ** Rule system traces delete of T2
-#
-# return from subordinate coordinator close
-# ** Rule system traces return from close
-#
-# PP1 replies with closed
-# ** Rule system traces receipt of closed
-#
-# Coordinator deletes T1 from log and completes close
-# ** Rule system traces delete of T1
-# ** Rule system detects 2nd completed close and kills JVM
+# ** Rule system detects 3 participant deletes and 1 tx delete and kills JVM
 #
 # Use of this script
 #
 # The default way of exercising this test is to deploy the xtstest war
 # to a single AS and configure it to run the relevant XTS Service Test.
 # The web services and coordinator will be located with the client.
-# The number of participants and subordinate participants can actually be
-# 2, 3 or more. The  web service(s), client (i.e. the XTS Service Test which
+# The number of participants and subordinate participants must be
+# exactly 3. The  web service(s), client (i.e. the XTS Service Test which
 # drives the test) and coordinator and subordinate coordinator service must
 # be colocated for this scritp to work (it is possible to distribute all of
 # these agents if desired but that woud lrequire more complex script rules).
@@ -267,25 +252,17 @@
 #   created recovered CC coordinator engine XXXXXX
 #   reinstated prepared subordinate transaction XXXXXX
 #
-#   (optional depending upon timing)
+#   (parallel -- optional and may be repeated depending upon timing)
 #   getstatus sent for CC participant P1/P2/P3
 #   getstatus received for CC participant P1/P2/P3
 #   status(COMPLETED) sent for CC participant P2/P3
 #   status(COMPLETED) received for CC participant P3
-#   (end optional -- n.b. may be repeated depending upon timing)
-#
-#   (order trace may be interleaved with next block)
+#   (parallel)
 #   getstatus sent for CC/PC participant P1
 #   getstatus received for CC/PC participant P1
 #   soap fault sent for CC/PC participant P1
 #   soap fault received for CC/PC participant P1
-#   (end order)
-#
-#   (order trace may be interleaved with previous block)
-#   getstatus sent for CC participant PP
-#   getstatus received for CC participant PP
-#   fail sent for CC participant PP
-#   fail received for CC participant PP
+#   (parallel)
 #   compensate called for pseudo participant XXXXXX
 #   cancel called for subordinate transaction XXX
 #   compensate sent for PC/CC participant XXXXXX
@@ -299,7 +276,7 @@
 #   cancel returned for subordinate transaction XXX
 #   compensate completed for pseudo participant XXXXXX
 #   removed transaction XXXXXX
-#   (end order)
+#   (end parallel)
 #
 #   JVM exit
 #

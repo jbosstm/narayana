@@ -33,7 +33,7 @@
 # The general scenario differentiates between events happening in the
 # coordinator JVM (AS1) and events happening in the participant JVM (AS2)
 # and rules are categorised according as to which AS they apply to.
-# The scenario is as follows (** indicates intercession by a TOAST rule):
+# The scenario is as follows (** indicates intercession by a Byteman rule):
 #
 # AS1 boots
 # AS2 boots
@@ -103,13 +103,13 @@
 # If the coordinator is in a separate AS then it will need to be killed
 # by the test driver
 #
-# This script needs to be passed to a TOAST agent in the JVM running
+# This script needs to be passed to a Byteman agent in the JVM running
 # the coordinator service both at first boot and at reboot. Output will be
 # written to file testlog in the working directory of the AS.
 # If the participant is not running in the same JVM as the coordinator then
 # this script needs and the supplementary script ATCrashDuringOnePhaseCommitExtra.txt
-# needs to be passed to a TOAST agent in the JVM running the coordinator.
-# This script on its own eneds ot bepassed to a TOAST agent runing in the
+# needs to be passed to a Byteman agent in the JVM running the coordinator.
+# This script on its own eneds ot bepassed to a Byteman agent runing in the
 # participant JVM. Ouptut from the participant will be written to file
 # testlog in the working directory of this second JVM.
 #

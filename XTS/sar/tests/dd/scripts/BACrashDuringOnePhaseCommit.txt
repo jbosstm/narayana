@@ -37,7 +37,7 @@
 # used for either of these cases, the choice of which participant is used being
 # determined by the test program.
 #
-# The scenario is as follows (** indicates intercession by a TOAST rule):
+# The scenario is as follows (** indicates intercession by a Byteman rule):
 #
 # AS1 boots
 # AS2 boots
@@ -119,7 +119,7 @@
 #
 # This script contians rules which respond to events triggered by either the
 # XTS coordinator services or the XTS participant services. It needs to be
-# passed to a TOAST agent in the JVM running these services both at first boot
+# passed to a Byteman agent in the JVM running these services both at first boot
 # and at reboot. Output will be written to file testlog in the working directory
 # of the coordinator/participant AS. If two separate ASes are employed for the
 # coordinator and participant then they need to employ different working

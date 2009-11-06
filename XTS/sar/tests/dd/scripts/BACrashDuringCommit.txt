@@ -27,7 +27,7 @@
 # JBossTS XTS implementation of the WS-BA 1.1 protocol using orchestration
 # rules. The basic scenario employs a coordinator and 3 web services
 # running in a single JVM but other variants are possible (see below). The
-# scenario is as follows (** indicates intercession by a TOAST rule):
+# scenario is as follows (** indicates intercession by a Byteman rule):
 #
 # AS boots
 # Cient starts a WS-BA activity
@@ -129,12 +129,12 @@
 # either type of participant (alternative B). In this case the completed
 # message should not be traced.
 #
-# This script needs to be passed to a TOAST agent in the JVM running
+# This script needs to be passed to a Byteman agent in the JVM running
 # the coordinator service both at first boot and at reboot. Output will be
 # written to file testlog in the working directory of the AS. n.b. the rules in
 # this script only refer to code executed by the coordinator. If the client
 # (the selected XTS Service Test) or the web services are located in another
-# AS/JVM then the other JVM does not require a TOAST agent or script.
+# AS/JVM then the other JVM does not require a Byteman agent or script.
 #
 # XTS Service tests which can operate with this scenario can be selected for
 # execution at AS boot by the XTSServiceTestRunnerBean by setting system
