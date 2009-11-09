@@ -183,7 +183,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	/**
 	 * @message com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed
 	 *          [com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed]
-	 *          XAResource prepare failed on resource {1} for transaction {2} with: {3}
+	 *          XAResource prepare failed on resource {0} for transaction {1} with: {2}
 	 */
 
 	public org.omg.CosTransactions.Vote prepare() throws HeuristicMixed,
