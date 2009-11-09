@@ -34,7 +34,6 @@ package com.arjuna.ats.jts.utils;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
-import com.arjuna.ats.arjuna.xa.XID;
 
 import com.arjuna.ats.internal.arjuna.utils.XATxConverter;
 
@@ -179,11 +178,6 @@ public class Utility
 		throw new IllegalStateException(e);
 	    }
 	}
-    }
-
-    public static Uid getUid (XID xid)
-    {
-	return XATxConverter.getUid(xid);
     }
 
     /**

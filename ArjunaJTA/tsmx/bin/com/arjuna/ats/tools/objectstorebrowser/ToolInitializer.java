@@ -5,7 +5,6 @@ import com.arjuna.ats.tools.objectstorebrowser.rootprovider.InFlightTransactionP
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.UidInfo;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple;
-import com.arjuna.ats.internal.arjuna.utils.XATxConverter;
 import com.arjuna.ats.jta.xa.XidImple;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 
@@ -51,8 +50,9 @@ public class ToolInitializer implements IToolInitializer
 
             public Uid toUid(Xid xid)
             {
-                if (xid instanceof XidImple)
-                    return XATxConverter.getUid(((XidImple) xid).getXID());
+                if (xid instanceof XidImple) {
+                    ((XidImple)xid).getTransactionUid();
+                }
 
                 return null;
             }

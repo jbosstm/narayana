@@ -31,7 +31,7 @@
 
 package com.arjuna.ats.internal.jta.utils;
 
-import com.arjuna.ats.internal.arjuna.utils.XATxConverter;
+import com.arjuna.ats.jta.xa.XidImple;
 
 import javax.transaction.xa.*;
 
@@ -76,22 +76,13 @@ public class XAUtils
 
 	public static final String getXANodeName (Xid xid)
 	{
-		byte[] gid = xid.getGlobalTransactionId();
-		int nodeIndex = -1;
-
-		for (int i = 0; i < gid.length; i++)
-		{
-			if (gid[i] == XATxConverter.NODE_SEPARATOR)
-			{
-				nodeIndex = i;
-				break;
-			}
-		}
-
-		if (nodeIndex != -1)
-			return new String(gid, 0, nodeIndex);
-		else
-			return null;
+        XidImple xidImple;
+        if(xid instanceof XidImple) {
+            xidImple = (XidImple)xid;
+        } else {
+            xidImple = new XidImple(xid);
+        }
+        return xidImple.getNodeName();
 	}
 
 	private static final String ORACLE = "oracle";

@@ -31,6 +31,8 @@
 
 package com.arjuna.ats.arjuna.xa;
 
+import com.arjuna.ats.internal.arjuna.utils.XATxConverter;
+
 import java.io.Serializable;
 
 /**
@@ -141,6 +143,13 @@ public class XID implements Serializable
 	{
         // controversial and not too robust. see JBTM-297 before messing with this.
 
+        if(formatID == XATxConverter.FORMAT_ID) {
+            // it's one of ours, we know how to inspect it:
+            return XATxConverter.getXIDString(this);
+        }
+
+        // it's a foreign id format, use a general algorithm:
+
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("< ");
         stringBuilder.append(formatID);
@@ -149,11 +158,16 @@ public class XID implements Serializable
         stringBuilder.append(", ");
         stringBuilder.append(bqual_length);
         stringBuilder.append(", ");
-        stringBuilder.append(new String(data, 0, gtrid_length)); // gtrid
-        stringBuilder.append(", ");
-        stringBuilder.append(new String(data, gtrid_length, bqual_length)); // the bqual
-        stringBuilder.append(" >");
 
+        for (int i = 0; i < gtrid_length; i++) {
+            stringBuilder.append(data[i]);
+        }
+        stringBuilder.append(", ");
+        for (int i = 0; i < bqual_length; i++) {
+            stringBuilder.append(gtrid_length+data[i]);
+        }
+
+        stringBuilder.append(" >");
         return stringBuilder.toString();
 	}
 

@@ -35,6 +35,8 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.xa.XID;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * @author Mark Little (mark.little@arjuna.com)
  * @version $Id: XATxConverter.java 2342 2006-03-30 13:06:17Z  $
@@ -43,79 +45,77 @@ import com.arjuna.ats.arjuna.coordinator.TxControl;
 
 public class XATxConverter
 {
-
-    public static final int FORMAT_ID = 131075; // different from JTS ones.
-    public static final char NODE_SEPARATOR = '#';
+    public static final int FORMAT_ID = 131076; // different from JTS ones.
 
     public static XID getXid (Uid uid, boolean branch) throws IllegalStateException
     {
-	return getXid(uid, branch, FORMAT_ID);
+        return getXid(uid, branch, FORMAT_ID);
     }
 
     public static XID getXid (Uid uid, boolean branch, int formatId) throws IllegalStateException
     {
-	if (branch)
-	    return getXid(uid, new Uid(), formatId);
-	else
-	    return getXid(uid, Uid.nullUid(), formatId);
+        if (branch)
+            return getXid(uid, new Uid(), formatId, null);
+        else
+            return getXid(uid, Uid.nullUid(), formatId, null);
     }
 
-    public static XID getXid (Uid uid, Uid branch, int formatId) throws IllegalStateException
+    private static XID getXid(Uid uid, Uid branch, int formatId, String eisNameString) throws IllegalStateException
     {
-	if (uid == null)
-	    throw new IllegalStateException();
-	
-	byte[] nodeName = TxControl.getXANodeName();
-	String s = uid.stringForm();
-	int uidLen = s.length()+nodeName.length+1;
+        if (uid == null) {
+    	    throw new IllegalStateException();
+        }
 
-	if (uidLen > com.arjuna.ats.arjuna.xa.XID.MAXGTRIDSIZE)  // Uid is too long!!!!
-	{
-	    throw new IllegalStateException();
-	}
-	else
-	{
-	    try
-	    {
-		XID xid = new XID();
-		    
-		xid.formatID = formatId;
-		xid.gtrid_length = uidLen;
+        XID xid = new XID();
+        xid.formatID = formatId;
 
-		/*
-		 * Copy in the XA node identifier first.
-		 */
+        // gtrid is uid byte form followed by as many chars of the node name as will fit.
+        byte[] gtridUid = uid.getBytes();
 
-		System.arraycopy(nodeName, 0, xid.data, 0, nodeName.length);
-		
-		xid.data[nodeName.length] = NODE_SEPARATOR;
-		
-		byte[] b = s.getBytes();
+        if (gtridUid.length > XID.MAXBQUALSIZE) {
+            throw new IllegalStateException(); // Uid is too long!!!!
+        }
 
-		/*
-		 * Which way round do we fill in the structure?
-		 */
+        int spareGtridBytes = XID.MAXGTRIDSIZE - gtridUid.length;
+        byte[] nodeName = TxControl.getXANodeName();
+        int nodeNameLengthToUse =  nodeName.length;
+        if( nodeName.length > spareGtridBytes) {
+            nodeNameLengthToUse = spareGtridBytes;
+        }
+        xid.gtrid_length = gtridUid.length+nodeNameLengthToUse;
 
-		System.arraycopy(b, 0, xid.data, nodeName.length+1, b.length);
-		    
-		if (branch.notEquals(Uid.nullUid()))
+        // src, srcPos, dest, destPos, length
+        System.arraycopy(gtridUid, 0, xid.data, 0, gtridUid.length);
+        System.arraycopy(nodeName, 0, xid.data, gtridUid.length, nodeNameLengthToUse);
+
+        
+        if (branch.notEquals(Uid.nullUid()))
 		{
-		    String bs = branch.stringForm();
-		    int bsLen = bs.length();
-		    
-		    b = bs.getBytes();
+            // bqual is uid byte form plus EIS name.
+            byte[] bqualUid = branch.getBytes();
 
-		    if (bsLen > XID.MAXBQUALSIZE) // Uid is too long!!!!
-			throw new IllegalStateException();
-		    else
-		    {
-			xid.bqual_length = bsLen;
-		    
-			System.arraycopy (b, 0, xid.data, xid.gtrid_length, bsLen);
-		    }
-		
-		    bs = null;
-		}
+            if (bqualUid.length > XID.MAXBQUALSIZE) {
+                throw new IllegalStateException(); // Uid is too long!!!!
+            }
+
+            int spareBqualBytes = XID.MAXBQUALSIZE - bqualUid.length;
+            byte[] eisName;
+            try {
+                // caution: we may truncate the byte[] to fit, so double byte encodings are best avoided.
+                eisName = (eisNameString == null ? new byte[0] : eisNameString.getBytes("US-ASCII"));
+            } catch(UnsupportedEncodingException e) {
+                eisName = new byte[0];
+            }
+            int eisNameLengthToUse = eisName.length;
+            if( eisName.length > spareBqualBytes) {
+                eisNameLengthToUse = spareBqualBytes;
+            }
+            xid.bqual_length = bqualUid.length+eisNameLengthToUse;
+
+            // src, srcPos, dest, destPos, length
+            System.arraycopy (bqualUid, 0, xid.data, xid.gtrid_length, bqualUid.length);
+            System.arraycopy (eisName, 0, xid.data, xid.gtrid_length+bqualUid.length, eisNameLengthToUse);
+        }
 		else
 		{
 		    /*
@@ -125,64 +125,88 @@ public class XATxConverter
 		     * it appears as though it must always be 64.
 		     * (At least for zero branches.)
 		     */
-
 		    xid.data[xid.gtrid_length] = (byte) 0;
 		    xid.bqual_length = 64;
 		}
-		    
-		b = null;
-		s = null;
 
-		return xid;
-	    }
-	    catch (Exception e)
-	    {
-		e.printStackTrace();
-		
-		throw new IllegalStateException(e.toString());
-	    }
-	}
+        return xid;
     }
 
-    public static Uid getUid (com.arjuna.ats.arjuna.xa.XID xid)
+    public static Uid getUid(XID xid)
     {
-	if (xid == null)
-	    return Uid.nullUid();
-	
-	if ((xid.formatID == -1) || (xid.gtrid_length <= 0)) // means null XID
-	{
-	    return Uid.nullUid();
-	}
-	else
-	{
-	    int nodeNameIndex = 0;
-	    
-	    for (int i = 0; i < xid.gtrid_length; i++)
-	    {
-		if (xid.data[i] == NODE_SEPARATOR)
-		{
-		    nodeNameIndex = i+1;
-		    break;
-		}
-	    }
-	    
-	    byte[] buff = new byte[xid.gtrid_length-nodeNameIndex];
+        if (xid == null || xid.formatID != FORMAT_ID) {
+            return Uid.nullUid();
+        }
 
-	    System.arraycopy(xid.data, nodeNameIndex, buff, 0, buff.length);
-
-	    Uid tx = new Uid(new String(buff), true);
-
-	    buff = null;
-
-	    return tx;
-	}
+        // The Uid byte are the first in the data array, so we just pass
+        // in the whole thing and the additional trailing data is ignored.
+        Uid tx = new Uid(xid.data);
+        return tx;
     }
 
-    public static Uid getBranch (com.arjuna.ats.arjuna.xa.XID xid)
+    public static String getNodeName(XID xid)
     {
-        // TODO check why null.
+        if(xid.formatID != FORMAT_ID) {
+            return null;
+        }
+
+        // the node name follows the Uid with no separator, so the only
+        // way to tell where it starts is to figure out how long the Uid is.
+        Uid uid = getUid(xid);
+        int uidLength = uid.getBytes().length;
+        int nameLength = xid.gtrid_length-uidLength;
+        byte[] nodeName = new byte[nameLength];
+        System.arraycopy(xid.data, uidLength, nodeName, 0, nodeName.length);
         
-	return null;
+        try {
+            return new String(nodeName, "US-ASCII");
+        } catch(UnsupportedEncodingException e) {
+            // should never happen, we use a required charset.
+            return "<failed to get nodename>";
+        }
     }
-    
+
+    private static Uid getBranchUid(XID xid)
+    {
+        if (xid == null || xid.formatID != FORMAT_ID) {
+            return Uid.nullUid();
+        }
+
+        byte[] bqual = new byte[xid.bqual_length];
+        System.arraycopy(xid.data, xid.gtrid_length, bqual, 0, xid.bqual_length);
+
+        // The Uid byte are the first in the data array, so we just pass
+        // in the whole thing and the additional trailing data is ignored.
+        Uid tx = new Uid(bqual);
+        return tx;
+    }
+
+    private static String getEISName(XID xid)
+    {
+        return "unknown eis name"; // TODO
+    }
+
+    public static String getXIDString(XID xid)
+    {
+        // companion method to XID.toString - try to keep them in sync.
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("< formatId=");
+        stringBuilder.append(xid.formatID);
+        stringBuilder.append(", gtrid_length=");
+        stringBuilder.append(xid.gtrid_length);
+        stringBuilder.append(", bqual_length=");
+        stringBuilder.append(xid.bqual_length);
+        stringBuilder.append(", tx_uid=");
+        stringBuilder.append(getUid(xid).stringForm());
+        stringBuilder.append(", node_name=");
+        stringBuilder.append(getNodeName(xid));
+        stringBuilder.append(", branch_uid=");
+        stringBuilder.append(getBranchUid(xid));
+        stringBuilder.append(", eis_name=");
+        stringBuilder.append(getEISName(xid));
+        stringBuilder.append(" >");
+
+        return stringBuilder.toString();
+    }
 }

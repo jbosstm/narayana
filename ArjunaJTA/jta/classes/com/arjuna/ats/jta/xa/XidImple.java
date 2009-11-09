@@ -102,21 +102,6 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 		hashCode = getHash(_theXid) ;
 	}
 
-	public XidImple (Uid id, Uid branch, int formatId)
-	{
-		try
-		{
-			_theXid = XATxConverter.getXid(id, branch, formatId);
-		}
-		catch (Exception e)
-		{
-			_theXid = null;
-
-			// abort or throw exception?
-		}
-		hashCode = getHash(_theXid) ;
-	}
-
 	public XidImple (com.arjuna.ats.arjuna.xa.XID x)
 	{
 		_theXid = x;
@@ -199,6 +184,14 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 		else
 			return null;
 	}
+
+    public final Uid getTransactionUid() {
+        return XATxConverter.getUid(_theXid);
+    }
+
+    public final String getNodeName() {
+        return XATxConverter.getNodeName(_theXid);
+    }
 
 	public final com.arjuna.ats.arjuna.xa.XID getXID ()
 	{

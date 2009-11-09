@@ -1195,8 +1195,7 @@ public class XARecoveryModule implements RecoveryModule
 		}
 
 		XidImple theXid = new XidImple(xid);
-		Uid u = com.arjuna.ats.internal.arjuna.utils.XATxConverter
-				.getUid(theXid.getXID());
+		Uid u = theXid.getTransactionUid();
 
 		if (!u.equals(Uid.nullUid()))
 		{
