@@ -32,7 +32,6 @@
 package com.arjuna.orbportability;
 
 import com.arjuna.orbportability.oa.*;
-import com.arjuna.orbportability.event.EventManager;
 import com.arjuna.orbportability.logging.opLogger;
 import com.arjuna.orbportability.exceptions.FatalError;
 
@@ -45,14 +44,9 @@ import com.arjuna.orbportability.internal.utils.PostInitLoader;
 import com.arjuna.orbportability.internal.utils.PostSetLoader;
 
 import java.util.*;
-import java.applet.Applet;
-import java.io.*;
 import org.omg.PortableServer.*;
 import org.omg.CORBA.Policy;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import org.omg.CORBA.BAD_PARAM;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.PortableServer.POAPackage.AdapterAlreadyExists;
@@ -491,7 +485,7 @@ public synchronized POA rootPoa ()
 
             _orbToOAMap.put(associatedORB, oa);
         }
-
+        
         return(oa);
     }
 

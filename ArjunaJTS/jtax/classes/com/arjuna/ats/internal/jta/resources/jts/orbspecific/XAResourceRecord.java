@@ -157,6 +157,25 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 	}
 
+	// for recovery only!
+	
+	public XAResourceRecord ()
+	{
+	    _theXAResource = null;
+            _recoveryObject = null;
+            _tranID = null;
+
+            _valid = true;
+
+            _prepared = true;
+            _committed = false;
+            _heuristic = TwoPhaseOutcome.FINISH_OK;
+            _objStore = null;
+            _theUid = new Uid();
+            _theReference = null;
+            _recoveryCoordinator = null;
+	}
+	
 	public final Uid get_uid()
 	{
 		return _theUid;

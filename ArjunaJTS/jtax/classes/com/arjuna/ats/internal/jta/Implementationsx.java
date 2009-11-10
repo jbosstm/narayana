@@ -35,13 +35,14 @@ import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeManager;
 import com.arjuna.ats.arjuna.coordinator.abstractrecord.RecordTypeMap;
 import com.arjuna.ats.internal.jta.resources.jts.orbspecific.XAResourceRecord;
+import com.arjuna.ats.internal.jts.resources.ExtendedResourceRecord;
 
 class ExtendedXAResourceRecordMap implements RecordTypeMap
 {
     @SuppressWarnings("unchecked")
     public Class getRecordClass ()
     {
-        return XAResourceRecord.class;
+        return ExtendedResourceRecord.class;//XAResourceRecord.class;
     }
     
     public int getType ()

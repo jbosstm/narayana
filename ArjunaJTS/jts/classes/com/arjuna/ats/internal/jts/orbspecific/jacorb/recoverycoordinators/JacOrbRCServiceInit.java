@@ -205,7 +205,7 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
                 }
 
                 org.omg.CORBA.ORB theORB = _orb.orb();
-                org.omg.PortableServer.POA rootPOA = _oa.rootPoa ();
+                org.omg.PortableServer.POA rootPOA = _oa.rootPoa();
 
                 // create direct persistent POA
                 // make the policy lists, with standard policies
