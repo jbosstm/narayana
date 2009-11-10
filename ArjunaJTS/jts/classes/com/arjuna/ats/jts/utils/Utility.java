@@ -32,16 +32,9 @@
 package com.arjuna.ats.jts.utils;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 
-import com.arjuna.ats.internal.arjuna.utils.XATxConverter;
-
-import com.arjuna.ats.jts.extensions.Arjuna;
-
 import com.arjuna.ats.internal.jts.utils.Helper;
-import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImple;
-import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 
 import org.omg.CosTransactions.*;
 
@@ -50,8 +43,7 @@ import com.arjuna.ArjunaOTS.*;
 import java.io.PrintWriter;
 
 import org.omg.CosTransactions.Unavailable;
-import org.omg.CORBA.SystemException;
-import java.lang.IllegalStateException;
+
 import org.omg.CORBA.BAD_PARAM;
 
 /**
@@ -144,41 +136,6 @@ public class Utility
      * Any need for the inverse operation?
      * Could easily do it for JBoss transactions only.
      */
-
-    public static com.arjuna.ats.arjuna.xa.XID getXid (Uid uid, boolean branch) throws IllegalStateException
-    {
-	return XATxConverter.getXid(uid, branch, ArjunaTransactionImple.interpositionType());
-    }
-
-    public static com.arjuna.ats.arjuna.xa.XID getXid (org.omg.CosTransactions.Control cont, boolean branch) throws IllegalStateException
-    {
-	if (cont == null)
-	    throw new IllegalStateException();
-
-	Uid u = null;
-
-	if (cont instanceof ControlImple)
-	{
-	    u = ((ControlImple) cont).get_uid();
-
-	    return Utility.getXid(u, branch);
-	}
-	else
-	{
-	    try
-	    {
-		UidCoordinator arjcoord = Helper.getUidCoordinator(cont);
-
-		u = Helper.getUid(arjcoord);
-
-		return Utility.getXid(u, branch);
-	    }
-	    catch (Exception e)
-	    {
-		throw new IllegalStateException(e);
-	    }
-	}
-    }
 
     /**
      * If this control refers to an JBoss transaction then return its native

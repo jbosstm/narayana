@@ -32,11 +32,12 @@
 package com.arjuna.ats.internal.jta.transaction.jts;
 
 import com.arjuna.ats.internal.jts.ControlWrapper;
+import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
+import com.arjuna.ats.internal.jta.utils.jts.XidUtils;
 
 import com.arjuna.ats.jta.logging.*;
 
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
-import com.arjuna.ats.arjuna.xa.XID;
 
 import com.arjuna.common.util.logging.*;
 
@@ -44,7 +45,8 @@ import org.omg.CosTransactions.*;
 
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.TRANSACTION_ROLLEDBACK;
-import org.omg.CORBA.BAD_OPERATION;
+
+import javax.transaction.xa.Xid;
 
 /**
  * An extension of the AtomicTransaction class so we can create new instances
@@ -201,20 +203,13 @@ public class AtomicTransaction extends
 		return _theAction;
 	}
 
-	public final XID get_xid (boolean branch) throws SystemException
+	public final Xid get_xid (boolean branch) throws SystemException
 	{
-		try
-		{
-			return _theAction.get_xid(branch);
-		}
-		catch (SystemException ex)
-		{
-			throw ex;
-		}
-		catch (Exception ex)
-		{
-			throw new BAD_OPERATION();
-		}
-	}
-
+        ControlImple controlImple = _theAction.getImple();
+        if (controlImple != null) {
+            return XidUtils.getXid(controlImple.get_uid(), branch);
+        } else {
+            return XidUtils.getXid(_theAction.getControl(), branch);
+        }
+    }
 }

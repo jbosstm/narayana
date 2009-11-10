@@ -29,12 +29,12 @@
  * $Id: XATxConverter.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.arjuna.ats.internal.arjuna.utils;
+package com.arjuna.ats.jta.xa;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.xa.XID;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 
+import javax.transaction.xa.Xid;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -47,17 +47,23 @@ public class XATxConverter
 {
     public static final int FORMAT_ID = 131076; // different from JTS ones.
 
-    public static XID getXid (Uid uid, boolean branch) throws IllegalStateException
-    {
-        return getXid(uid, branch, FORMAT_ID);
-    }
-
-    public static XID getXid (Uid uid, boolean branch, int formatId) throws IllegalStateException
+    static XID getXid (Uid uid, boolean branch) throws IllegalStateException
     {
         if (branch)
-            return getXid(uid, new Uid(), formatId, null);
+            return getXid(uid, new Uid(), FORMAT_ID, null);
         else
-            return getXid(uid, Uid.nullUid(), formatId, null);
+            return getXid(uid, Uid.nullUid(), FORMAT_ID, null);
+    }
+
+    public static Xid getXid (Uid uid, boolean branch, int formatId) throws IllegalStateException
+    {
+        XID xid;
+        if (branch)
+            xid = getXid(uid, new Uid(), formatId, null);
+        else
+            xid = getXid(uid, Uid.nullUid(), formatId, null);
+
+        return new XidImple(xid);
     }
 
     private static XID getXid(Uid uid, Uid branch, int formatId, String eisNameString) throws IllegalStateException

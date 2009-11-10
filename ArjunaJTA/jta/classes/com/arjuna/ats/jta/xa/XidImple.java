@@ -36,9 +36,6 @@ import com.arjuna.ats.jta.logging.jtaLogger;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.state.*;
-import com.arjuna.ats.arjuna.xa.XID;
-
-import com.arjuna.ats.internal.arjuna.utils.XATxConverter;
 
 import java.io.*;
 
@@ -102,7 +99,7 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 		hashCode = getHash(_theXid) ;
 	}
 
-	public XidImple (com.arjuna.ats.arjuna.xa.XID x)
+	public XidImple (XID x)
 	{
 		_theXid = x;
 		hashCode = getHash(_theXid) ;
@@ -193,14 +190,14 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
         return XATxConverter.getNodeName(_theXid);
     }
 
-	public final com.arjuna.ats.arjuna.xa.XID getXID ()
+	public final XID getXID ()
 	{
 		return _theXid;
 	}
 
 	public final void copy (Xid xid)
 	{
-		_theXid = new com.arjuna.ats.arjuna.xa.XID();
+		_theXid = new XID();
 
 		if (xid != null)
 		{
@@ -302,7 +299,7 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 		try
 		{
 			if (_theXid == null)
-				_theXid = new com.arjuna.ats.arjuna.xa.XID();
+				_theXid = new XID();
 
 			_theXid.formatID = os.unpackInt();
 			_theXid.gtrid_length = os.unpackInt();

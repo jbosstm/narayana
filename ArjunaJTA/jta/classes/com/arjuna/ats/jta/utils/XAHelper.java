@@ -32,7 +32,7 @@
 package com.arjuna.ats.jta.utils;
 
 import com.arjuna.ats.jta.logging.jtaLogger;
-import com.arjuna.ats.arjuna.xa.XID;
+import com.arjuna.ats.jta.xa.XidImple;
 
 import javax.transaction.xa.*;
 
@@ -212,7 +212,7 @@ public class XAHelper
 
 	public static String xidToString (Xid xid)
 	{
-        if(xid instanceof XID) {
+        if(xid instanceof XidImple) {
             // ensure consistent representation of our native XIDs in the log output.
             return xid.toString();
         }

@@ -29,11 +29,10 @@
  * $Id: xidcheck.java 2342 2006-03-30 13:06:17Z  $
  */
 
-package com.hp.mwtests.ts.arjuna.xa;
+package com.hp.mwtests.ts.jta.xa;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.xa.*;
-import com.arjuna.ats.internal.arjuna.utils.*;
+import com.arjuna.ats.jta.xa.XidImple;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -44,12 +43,12 @@ public class xidcheck
     public void test()
     {
         Uid test = new Uid();
-        XID xidimple = XATxConverter.getXid(test, true);
+        XidImple xidImple = new XidImple(test, true);
 
         System.err.println("Uid is: "+test);
-        System.err.println("Xid is: "+xidimple);
+        System.err.println("Xid is: "+xidImple);
 
-        Uid convertedUid = XATxConverter.getUid(xidimple);
+        Uid convertedUid = xidImple.getTransactionUid();
 
         assertEquals(test, convertedUid);
     }

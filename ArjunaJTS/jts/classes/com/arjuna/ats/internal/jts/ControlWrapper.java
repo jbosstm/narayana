@@ -34,7 +34,6 @@ package com.arjuna.ats.internal.jts;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.coordinator.Reapable;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
-import com.arjuna.ats.arjuna.xa.XID;
 
 import com.arjuna.ats.jts.exceptions.ExceptionCodes;
 import com.arjuna.ats.jts.utils.*;
@@ -534,23 +533,6 @@ public class ControlWrapper implements Reapable
             }
         }
     }
-
-	public final XID get_xid (boolean branch) throws SystemException
-	{
-		if (_controlImpl != null)
-			return Utility.getXid(_controlImpl.get_uid(), branch);
-		else
-		{
-			try
-			{
-				return Utility.getXid(_control, branch);
-			}
-			catch (Exception e)
-			{
-				throw new BAD_OPERATION();
-			}
-		}
-	}
 
 	public final String get_transaction_name () throws SystemException
 	{

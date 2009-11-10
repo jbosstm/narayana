@@ -32,11 +32,9 @@
 package com.arjuna.ats.internal.jdbc.drivers.modifiers;
 
 import com.arjuna.ats.jta.xa.XAModifier;
-import com.arjuna.ats.jta.xa.XidImple;
 import com.arjuna.ats.jta.exceptions.NotImplementedException;
 import com.arjuna.ats.jdbc.logging.jdbcLogger;
 
-import java.util.*;
 import java.sql.*;
 import javax.sql.*;
 import javax.transaction.xa.Xid;
@@ -76,7 +74,7 @@ public class jndi implements XAModifier
 	return level;
     }
     
-    public Xid createXid (XidImple xid) throws NotImplementedException
+    public Xid createXid (Xid xid) throws NotImplementedException
     {
 	throw new NotImplementedException();
     }

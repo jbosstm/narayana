@@ -1165,7 +1165,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 	    Xid res = baseXid();
 	    
 	    if (res == null)
-	        res = new XidImple(_theTransaction.get_xid(false));
+	        return _theTransaction.get_xid(false);
 	    
 	    return res;
 	}
@@ -1755,21 +1755,13 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 		try
 		{
-			com.arjuna.ats.arjuna.xa.XID jtsXid = _theTransaction.get_xid(branch);
-			com.arjuna.ats.arjuna.xa.XID tempXid = new com.arjuna.ats.arjuna.xa.XID();
-
-			tempXid.formatID = jtsXid.formatID;
-			tempXid.gtrid_length = jtsXid.gtrid_length;
-			tempXid.bqual_length = jtsXid.bqual_length;
-			System.arraycopy(jtsXid.data, 0, tempXid.data, 0, tempXid.data.length);
-
-			jtaXid = new com.arjuna.ats.jta.xa.XidImple(tempXid);
+			jtaXid = _theTransaction.get_xid(branch);
 
 			if (theModifier != null)
 			{
 				try
 				{
-					jtaXid = theModifier.createXid((com.arjuna.ats.jta.xa.XidImple) jtaXid);
+					jtaXid = theModifier.createXid(jtaXid);
 				}
 				catch (Exception e)
 				{

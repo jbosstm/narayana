@@ -56,7 +56,7 @@ public interface XAModifier
      * fact that the JTA does not mention this!
      */
 
-    public Xid createXid (XidImple xid) throws SQLException, NotImplementedException;
+    public Xid createXid (Xid xid) throws SQLException, NotImplementedException;
 
     /**
      * Return the xa_start parameters for this level.
