@@ -351,7 +351,8 @@ public class PeriodicRecovery extends Thread
                                   FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: background thread waiting on other scan" );
                    }
                    doScanningWait();
-                   if (getMode() == Mode.ENABLED) {
+                   // we don't wait around if a worker scan request has just come in
+                   if (getMode() == Mode.ENABLED && !_workerScanRequested) {
                        // the last guy just finished scanning so we ought to wait a bit rather than just
                        // pile straight in to do some work
                        if (tsLogger.arjLogger.isDebugEnabled())
@@ -400,6 +401,18 @@ public class PeriodicRecovery extends Thread
            // or TERMINATE until we get through phase 1 and maybe phase 2 if we are lucky
 
            if (workToDo) {
+               // ok it is now this thread's turn to run a scan. before starting we check if there is a
+               // worker waiting and reset the waiting flag. we will check again after the scan has
+               // completed to see if a worker request has come in after starting this scan.
+               // if so we avoid notifying the worker ensuring a requst is only confirmed when a
+               // full scan has happened afetr the request was made
+
+               boolean notifyRequired;
+               synchronized(_stateLock) {
+                   notifyRequired = _workerScanRequested;
+                   _workerScanRequested = false;
+               }
+
                // we are in state SCANNING so actually do the scan
                if (tsLogger.arjLogger.isDebugEnabled())
                {
@@ -417,10 +430,13 @@ public class PeriodicRecovery extends Thread
                    setStatus(Status.INACTIVE);
                    // must kick any other waiting threads
                    _stateLock.notifyAll();
-                   // check if we need to notify the listener worker that we just finsihsed  a scan
-                   notifyWorker();
+                   
+                   // check if we need to notify a listener worker that we just finished  a scan
+                   if (notifyRequired && !_workerScanRequested) {
+                       notifyWorker();
+                   }
 
-                   if (getMode() == Mode.ENABLED) {
+                   if (getMode() == Mode.ENABLED && !_workerScanRequested) {
                        // we managed a full scan and scanning is still enabled
                        // so wait a bit before the next attempt
                        if (tsLogger.arjLogger.isDebugEnabled())
@@ -438,7 +454,9 @@ public class PeriodicRecovery extends Thread
        // make sure the worker thread is not wedged waiting for a scan to complete
 
        synchronized(_stateLock) {
-           notifyWorker();
+           if (_workerScanRequested) {
+               notifyWorker();
+           }
        }
 
        if (tsLogger.arjLogger.isDebugEnabled())
@@ -507,6 +525,20 @@ public class PeriodicRecovery extends Thread
         }
 
         if (workToDo) {
+            // ok it is now this thread's turn to run a scan. before starting we check if there is a
+            // worker waiting and reset the waiting flag. we will check again after the scan has
+            // completed to see if a worker request has come in after starting this scan.
+            // if so we avoid notifying the worker ensuring a request is only confirmed when a
+            // full scan has happened after the request was made
+
+            boolean notifyRequired;
+
+            synchronized(_stateLock) {
+                notifyRequired = _workerScanRequested;
+                _workerScanRequested = false;
+            }
+
+
             // ok to start work -- we cannot be stopped now by a mode change to SUSPEND or TERMINATE
             // until we get through phase 1 and maybe phase 2 if we are lucky
             if (tsLogger.arjLogger.isDebugEnabled())
@@ -526,8 +558,12 @@ public class PeriodicRecovery extends Thread
                 setStatus(Status.INACTIVE);
                 // must kick any other waiting threads
                 _stateLock.notifyAll();
-                // check if we need to notify the listener worker that we just finsihsed  a scan
-                notifyWorker();
+
+                // notify the worker if it was waiting before we started the scan otherwise just leave it to
+                // be notified when the next scan finishes.
+                if (notifyRequired && !_workerScanRequested) {
+                    notifyWorker();
+                }
             }
         }
     }
@@ -857,20 +893,16 @@ public class PeriodicRecovery extends Thread
 
     private void notifyWorker()
     {
-        // if the listener is still waiting on a wakeup then notify it
-
-        if (_workerScanRequested) {
-            if (tsLogger.arjLogger.isDebugEnabled())
-            {
-                tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                        FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: scan thread signals listener worker");
-            }
-            if(_workerService != null)
-            {
-                _workerService.notifyDone();
-            }
-            _workerScanRequested = false;
+        if (tsLogger.arjLogger.isDebugEnabled())
+        {
+            tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_CRASH_RECOVERY, "PeriodicRecovery: scan thread signals listener worker");
         }
+        if(_workerService != null)
+        {
+            _workerService.notifyDone();
+        }
+        _workerScanRequested = false;
     }
 
     /**
