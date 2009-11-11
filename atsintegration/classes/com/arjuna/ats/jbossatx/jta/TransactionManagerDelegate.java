@@ -91,7 +91,7 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
                 case Status.STATUS_ROLLEDBACK:
                 case Status.STATUS_ROLLING_BACK:
                     if(errorRollback) {
-                        throw new RollbackException(jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_1"));
+                        throw new RollbackException(jbossatxLogger.loggerI18N.getString("com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_1"));
                     }
                     break;
                 case Status.STATUS_COMMITTED:
@@ -117,7 +117,7 @@ public class TransactionManagerDelegate extends BaseTransactionManagerDelegate i
     	catch (final SystemException se)
     	{
             RollbackException rollbackException = new RollbackException(
-                    jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_2")) ;
+                    jbossatxLogger.loggerI18N.getString("com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate.getTimeLeftBeforeTransactionTimeout_2")) ;
             rollbackException.initCause(se);
             throw rollbackException;
     	}

@@ -32,8 +32,7 @@
 package com.arjuna.ats.jbossatx.logging;
 
 import com.arjuna.common.util.logging.*;
-
-import com.arjuna.ats.jta.common.jtaPropertyManager;
+import com.arjuna.common.internal.util.logging.commonPropertyManager;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -42,7 +41,7 @@ public class jbossatxLogger
 {
     public static LogNoi18n      logger;
     public static Logi18n        loggerI18N;
-    public static ResourceBundle logMesg;
+    private static ResourceBundle logMesg;
 
     private static String _language;
     private static String _country;
@@ -52,8 +51,8 @@ public class jbossatxLogger
     {
         logger = LogFactory.getLogNoi18n("com.arjuna.ats.jbossatx.logging.logger");
 
-        _language = System.getProperty("language","en");
-        _country = System.getProperty("country","US");
+		_language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();
+		_country = commonPropertyManager.getLoggingEnvironmentBean().getCountry();
 
         _currentLocale = new Locale(_language, _country);
         

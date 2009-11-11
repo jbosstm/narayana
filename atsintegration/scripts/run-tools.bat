@@ -36,7 +36,7 @@ set CLASSPATH=%CLASSPATH%;%@HOME_DIRECTORY@%\bin\tools\ext\jfreechart-1.0.2.jar
 set CLASSPATH=%CLASSPATH%;%@HOME_DIRECTORY@%\bin\tools\ext\jcommon-1.0.5.jar
 
 rem Start the tools framework
-java "-Dcom.arjuna.mw.ArjunaToolsFramework.lib=%@HOME_DIRECTORY@%\bin\tools" -Dcom.arjuna.ats.tsmx.agentimpl=com.arjuna.ats.internal.jbossatx.agent.JBossAgentImpl com.arjuna.ats.tools.toolsframework.ArjunaToolsFramework
+java "-Dcom.arjuna.mw.ArjunaToolsFramework.lib=%@HOME_DIRECTORY@%\bin\tools" com.arjuna.ats.tools.toolsframework.ArjunaToolsFramework
 goto finished
 
 :atserror

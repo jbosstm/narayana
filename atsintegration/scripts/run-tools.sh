@@ -61,4 +61,4 @@ CLASSPATH="$CLASSPATH$CPS$@HOME_DIRECTORY@/bin/tools/ext/jcommon-1.0.5.jar"
 export CLASSPATH
 
 # Start the tools framework
-"$JAVA_HOME/bin/java" "-Dcom.arjuna.mw.ArjunaToolsFramework.lib=$@HOME_DIRECTORY@/bin/tools" -Dcom.arjuna.ats.tsmx.agentimpl=com.arjuna.ats.internal.jbossatx.agent.JBossAgentImpl com.arjuna.ats.tools.toolsframework.ArjunaToolsFramework
+"$JAVA_HOME/bin/java" "-Dcom.arjuna.mw.ArjunaToolsFramework.lib=$@HOME_DIRECTORY@/bin/tools" com.arjuna.ats.tools.toolsframework.ArjunaToolsFramework

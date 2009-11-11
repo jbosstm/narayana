@@ -45,7 +45,6 @@ import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 import com.arjuna.ats.jta.TransactionManager;
 
 import org.jboss.tm.JBossXATerminator;
-import org.jboss.util.UnexpectedThrowable;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.jca.*;
 
@@ -108,13 +107,13 @@ public class XATerminator extends XATerminatorImple implements
 			case Status.STATUS_NO_TRANSACTION:
 			case Status.STATUS_UNKNOWN:
 				throw new WorkCompletedException(
-						jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.inactive"),
+						jbossatxLogger.loggerI18N.getString("com.arjuna.ats.jbossatx.jta.jca.inactive"),
 						WorkException.TX_RECREATE_FAILED);
 			case Status.STATUS_ACTIVE:
 				break;
 			default:
 				throw new WorkCompletedException(
-						jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.completing"),
+						jbossatxLogger.loggerI18N.getString("com.arjuna.ats.jbossatx.jta.jca.completing"),
 						WorkException.TX_CONCURRENT_WORK_DISALLOWED);
 			}
 
@@ -146,7 +145,7 @@ public class XATerminator extends XATerminatorImple implements
 			ex.printStackTrace();
 
 			throw new WorkCompletedException(
-					jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.unknown"),
+					jbossatxLogger.loggerI18N.getString("com.arjuna.ats.jbossatx.jta.jca.unknown"),
 					WorkException.INTERNAL);
 		}
 	}
@@ -173,7 +172,7 @@ public class XATerminator extends XATerminatorImple implements
 
 			if (!TxWorkManager.getWork(tx).equals(work))
 			{
-				throw new WorkCompletedException(jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.unknownwork"),
+				throw new WorkCompletedException(jbossatxLogger.loggerI18N.getString("com.arjuna.ats.jbossatx.jta.jca.unknownwork"),
 						WorkException.INTERNAL);
 			}
 
@@ -186,13 +185,13 @@ public class XATerminator extends XATerminatorImple implements
 		catch (InvalidTransactionException ex)
 		{
 			throw new WorkCompletedException(
-					jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.inactive"),
+					jbossatxLogger.loggerI18N.getString("com.arjuna.ats.jbossatx.jta.jca.inactive"),
 					WorkException.TX_RECREATE_FAILED);
 		}
 		catch (SystemException ex)
 		{
 			throw new WorkCompletedException(
-					jbossatxLogger.logMesg.getString("com.arjuna.ats.jbossatx.jta.jca.unknown"),
+					jbossatxLogger.loggerI18N.getString("com.arjuna.ats.jbossatx.jta.jca.unknown"),
 					WorkException.INTERNAL);
 		}
 	}
@@ -208,19 +207,23 @@ public class XATerminator extends XATerminatorImple implements
 
 	public void endWork (Work work, Xid xid)
 	{
-		try
-		{
-			Transaction tx = SubordinationManager.getTransactionImporter().importTransaction(xid);
+        try
+        {
+            Transaction tx = SubordinationManager.getTransactionImporter().importTransaction(xid);
 
-			TransactionManager.transactionManager().suspend();
+            TransactionManager.transactionManager().suspend();
 
-			TxWorkManager.removeWork(work, tx);
-		}
-		catch (Exception ex)
-		{
-			throw new UnexpectedThrowable(ex);
-		}
-	}
+            TxWorkManager.removeWork(work, tx);
+        }
+        catch (XAException xaException)
+        {
+            throw new RuntimeException(xaException);
+        }
+        catch (SystemException systemException)
+        {
+            throw new RuntimeException(systemException);
+        }
+    }
 
 	/**
 	 * Remove the associated work from the transaction. Do not do
@@ -238,9 +241,9 @@ public class XATerminator extends XATerminatorImple implements
 
 			TxWorkManager.removeWork(work, tx);
 		}
-		catch (Exception ex)
-		{
-			throw new UnexpectedThrowable(ex);
-		}
+		catch (XAException xaException)
+        {
+            throw new RuntimeException(xaException);
+        }
 	}
 }

@@ -28,6 +28,11 @@ import org.omg.CORBA.LocalObject;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
+import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
+import com.arjuna.common.util.logging.DebugLevel;
+import com.arjuna.common.util.logging.VisibilityLevel;
+import com.arjuna.common.util.logging.FacilityCode;
+
 /**
  * Implementation of the InboundTransactionCurrent interface of the app server's
  * transaction integration SPI. Provides a way for app server code to obtain the
@@ -47,9 +52,10 @@ public class InboundTransactionCurrentImple extends LocalObject implements Inbou
 
     public Transaction getCurrentTransaction()
     {
-        if (log.isTraceEnabled())
+        if (jbossatxLogger.logger.isDebugEnabled())
         {
-            log.trace("InboundTransactionCurrentImple.getCurrentTransaction() called");
+            jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ALL,
+                    "InboundTransactionCurrentImple.getCurrentTransaction() called");
         }
 
         TransactionManager transactionManager = null;
@@ -80,9 +86,10 @@ public class InboundTransactionCurrentImple extends LocalObject implements Inbou
             throw new RuntimeException("InboundTransactionCurrentImple unable to determine inbound transaction context", e);
         }
 
-        if (log.isTraceEnabled())
+        if (jbossatxLogger.logger.isDebugEnabled())
         {
-            log.trace("InboundTransactionCurrentImple.getCurrentTransaction() returning tx="+transaction);
+            jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ALL,
+                    "InboundTransactionCurrentImple.getCurrentTransaction() returning tx="+transaction);
         }
 
         return transaction;

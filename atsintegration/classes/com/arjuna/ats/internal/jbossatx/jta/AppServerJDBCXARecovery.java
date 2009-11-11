@@ -21,6 +21,10 @@
 package com.arjuna.ats.internal.jbossatx.jta;
 
 import com.arjuna.ats.jta.recovery.XAResourceRecovery;
+import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
+import com.arjuna.common.util.logging.DebugLevel;
+import com.arjuna.common.util.logging.VisibilityLevel;
+import com.arjuna.common.util.logging.FacilityCode;
 
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.BadPaddingException;
@@ -67,7 +71,7 @@ import org.jboss.logging.Logger;
  * datasource configuration information from the app server's JMX and instantiate an XADataSource from
  * which it can then create an XAConnection.
  *
- * To use this class, add an XAResourceRecovery entry in the jta section of jbossjta-properties.xml
+ * To use this class, add an entry in the JTAEnvironmentBean's xaResourceRecoveryInstances list
  * for each database for which you need recovery, ensuring the value ends with ;jndiname=<datasource-name>
  * i.e. the same value as is in the -ds.xml jndi-name element.
  *
@@ -88,13 +92,13 @@ import org.jboss.logging.Logger;
  * if you configure the recovery manager to run as a separate process. (JMX can be accessed remotely,
  * but it would need code changes to the lookup function and some classpath additions).
  *
- *
- *  <properties depends="arjuna" name="jta">
- *  ...
- *    <property name="com.arjuna.ats.jta.recovery.XAResourceRecovery1"
- *      value= "com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery;jndiname=MyExampleDbName[,username=foo,password=bar]"/>
- *    <!-- xaRecoveryNode should match value in nodeIdentifier or be * -->
- *    <property name="com.arjuna.ats.jta.xaRecoveryNode" value="1"/>
+ * <bean name="JTAEnvironmentBean" class="com.arjuna.ats.jta.common.JTAEnvironmentBean">
+ *   ...
+ *   <property name="xaResourceRecoveryInstances">
+ *     <list elementClass="java.lang.String">
+ *       <value>com.arjuna.ats.internal.jbossatx.jta.AppServerJDBCXARecovery;jndiname=MyExampleDbName[,username=foo,password=bar]</value>
+ *     </list>
+ *   </property>
  *
  */
 public class AppServerJDBCXARecovery implements XAResourceRecovery {
@@ -104,9 +108,9 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
     public AppServerJDBCXARecovery()
         throws SQLException
     {
-        if (log.isDebugEnabled())
+        if(jbossatxLogger.logger.isDebugEnabled())
 		{
-            log.debug("AppServerJDBCXARecovery<init>");
+            jbossatxLogger.logger.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ALL, "AppServerJDBCXARecovery<init>");
         }
 
         _hasMoreResources        = false;
@@ -121,9 +125,9 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
     public boolean initialise(String parameter)
         throws SQLException
     {
-        if (log.isDebugEnabled())
+        if(jbossatxLogger.logger.isDebugEnabled())
 		{
-            log.debug("AppServerJDBCXARecovery.initialise(" + parameter + ")");
+            jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ALL, "AppServerJDBCXARecovery.initialise(" + parameter + ")");
         }
 
         if (parameter == null)
@@ -197,7 +201,12 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
                 }
 
                 String className = (String)server.invoke(objectName, "getManagedConnectionFactoryAttribute", new Object[] {"XADataSourceClass"}, new String[] {"java.lang.String"});
-                log.debug("AppServerJDBCXARecovery datasource classname = "+className);
+
+                if(jbossatxLogger.logger.isDebugEnabled())
+                {
+                    jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ALL,
+                            "AppServerJDBCXARecovery datasource classname = "+className);
+                }
 
                 if(_username !=null && _password !=null)
                 {
@@ -218,7 +227,12 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
                 }                
 
                 String securityDomainName = (String) server.getAttribute(txCmObjectName, "SecurityDomainJndiName");
-                log.debug("Security domain name associated with JCA ConnectionManager jboss.jca:name=" +_dataSourceId + ",service=XATxCM"+" is:"+securityDomainName);
+
+                if(jbossatxLogger.logger.isDebugEnabled())
+                {
+                    jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ALL,
+                            "Security domain name associated with JCA ConnectionManager jboss.jca:name=" +_dataSourceId + ",service=XATxCM"+" is:"+securityDomainName);
+                }
 
                 if(securityDomainName != null && !securityDomainName.equals(""))
                 {
@@ -312,10 +326,18 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
             } catch (NoSuchMethodException nsme) {
                 isConnectionValid = Boolean.FALSE;
                 _supportsIsValidMethod = false;
-                log.debug("XA datasource does not support isValid method - connection will always be recreated");
+                if(jbossatxLogger.logger.isDebugEnabled())
+                {
+                    jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ALL,
+                            "XA datasource does not support isValid method - connection will always be recreated");
+                }
             } catch (Throwable t) {
                 isConnectionValid = Boolean.FALSE;
-                log.debug("XA connection is invalid - will recreate a new one. Cause: " + t);
+                if(jbossatxLogger.logger.isDebugEnabled())
+                {
+                    jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ALL,
+                            "XA connection is invalid - will recreate a new one. Cause: " + t);
+                }
             }
 
             if (!isConnectionValid.booleanValue()) {
@@ -338,7 +360,11 @@ public class AppServerJDBCXARecovery implements XAResourceRecovery {
                     _connection = _dataSource.getXAConnection(_dbUsername, _dbPassword);
                 }
                 _connection.addConnectionEventListener(_connectionEventListener);
-                log.debug("Created new XAConnection");
+                if(jbossatxLogger.logger.isDebugEnabled())
+                {
+                    jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PRIVATE, FacilityCode.FAC_ALL,
+                            "Created new XAConnection");
+                }
             }
         }
         catch (SQLException ex)

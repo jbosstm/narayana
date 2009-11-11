@@ -25,8 +25,11 @@ import org.omg.PortableInterceptor.ORBInitializer;
 import org.omg.PortableInterceptor.ORBInitInfo;
 import org.omg.PortableInterceptor.ORBInitInfoPackage.InvalidName;
 import org.jboss.iiop.tm.InboundTransactionCurrent;
-import org.jboss.logging.Logger;
 import com.arjuna.ats.internal.jbossatx.jts.InboundTransactionCurrentImple;
+import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
+import com.arjuna.common.util.logging.FacilityCode;
+import com.arjuna.common.util.logging.VisibilityLevel;
+import com.arjuna.common.util.logging.DebugLevel;
 
 /**
  * This Initializer is used to register our InboundTransactionCurrent implementation
@@ -42,13 +45,12 @@ import com.arjuna.ats.internal.jbossatx.jts.InboundTransactionCurrentImple;
  */
 public class InboundTransactionCurrentInitializer extends LocalObject implements ORBInitializer
 {
-    private Logger log = org.jboss.logging.Logger.getLogger(InboundTransactionCurrentInitializer.class);
-
     public void pre_init(ORBInitInfo info)
     {
-        if(log.isTraceEnabled())
+        if(jbossatxLogger.logger.isDebugEnabled())
         {
-            log.trace("InboundTransactionCurrentInitializer.pre_init()");
+            jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ALL,
+                    "InboundTransactionCurrentInitializer.pre_init()");
         }
 
         try
