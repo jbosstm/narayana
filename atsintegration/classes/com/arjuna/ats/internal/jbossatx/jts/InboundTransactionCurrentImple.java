@@ -22,7 +22,6 @@ package com.arjuna.ats.internal.jbossatx.jts;
 
 import org.jboss.iiop.tm.InboundTransactionCurrent;
 import org.jboss.tm.TransactionManagerLocator;
-import org.jboss.logging.Logger;
 import org.omg.CORBA.LocalObject;
 
 import javax.transaction.Transaction;
@@ -48,8 +47,10 @@ import com.arjuna.common.util.logging.FacilityCode;
  */
 public class InboundTransactionCurrentImple extends LocalObject implements InboundTransactionCurrent
 {
-    private Logger log = org.jboss.logging.Logger.getLogger(InboundTransactionCurrentImple.class);
-
+    /**
+     * @message com.arjuna.ats.internal.jbossatx.jts.InboundTransactionCurrentImple.exception
+     * [com.arjuna.ats.internal.jbossatx.jts.InboundTransactionCurrentImple.exception] getCurrentTransaction() failed
+     */
     public Transaction getCurrentTransaction()
     {
         if (jbossatxLogger.logger.isDebugEnabled())
@@ -79,7 +80,7 @@ public class InboundTransactionCurrentImple extends LocalObject implements Inbou
             }
         } catch(Exception e)
         {
-            log.error("InboundTransactionCurrentImple.getCurrentTransaction() failed", e);
+            jbossatxLogger.loggerI18N.error("com.arjuna.ats.internal.jbossatx.jts.InboundTransactionCurrentImple.exception", e);
             // this is a problem, because we may actually have a valid tx context on the thread
             // which could cause weird behaviour in downstream code. We need to ensure that code is not called
             // but the API does not allow for checked excpetion to be thrown, so...

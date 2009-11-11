@@ -36,6 +36,7 @@ import com.arjuna.orbportability.ORB;
 import com.arjuna.orbportability.OA;
 
 import com.arjuna.ats.internal.jts.ORBManager;
+import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 
 /**
  * JBoss Transaction Manager Service.
@@ -49,7 +50,6 @@ public class TransactionManagerService extends com.arjuna.ats.jbossatx.jta.Trans
 {
     public TransactionManagerService() {
         mode = "JTS";
-        log = org.jboss.logging.Logger.getLogger(TransactionManagerService.class);
     }
 
     public void start()
@@ -57,9 +57,15 @@ public class TransactionManagerService extends com.arjuna.ats.jbossatx.jta.Trans
         throw new IllegalArgumentException("JTS mode startup requires an ORB to be provided");
     }
 
+    /**
+     * @message com.arjuna.ats.jbossatx.jts.TransactionManagerService.start
+     * [com.arjuna.ats.jbossatx.jts.TransactionManagerService.start] registering transaction manager
+     * @message com.arjuna.ats.jbossatx.jts.TransactionManagerService.failed
+     * [com.arjuna.ats.jbossatx.jts.TransactionManagerService.failed] Problem encountered while trying to register transaction manager with ORB!
+     */
     public void start(org.omg.CORBA.ORB theCorbaORB) throws Exception
     {
-        log.info("registering transaction manager");
+        jbossatxLogger.loggerI18N.info("registering transaction manager");
 
         // Create an ORB portability wrapper around the CORBA ORB services orb
         ORB orb = ORB.getInstance("jboss-atx");
@@ -83,9 +89,9 @@ public class TransactionManagerService extends com.arjuna.ats.jbossatx.jta.Trans
         }
         catch (final Exception ex)
         {
-            log.fatal("Problem encountered while trying to register transaction manager with ORB!");
+            jbossatxLogger.loggerI18N.fatal("com.arjuna.ats.jbossatx.jts.TransactionManagerService.failed", ex);
 
-            throw new Exception("Problem encountered while trying to register transaction manager with ORB! "+ex, ex);
+            throw new Exception(jbossatxLogger.loggerI18N.getString("com.arjuna.ats.jbossatx.jts.TransactionManagerService.failed"), ex);
         }
     }
 

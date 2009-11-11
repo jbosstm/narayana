@@ -33,7 +33,6 @@ package com.arjuna.ats.internal.jbossatx.jta;
 
 import org.jboss.tm.TransactionPropagationContextFactory;
 import org.jboss.tm.TransactionPropagationContextImporter;
-import org.jboss.logging.Logger;
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
@@ -55,8 +54,6 @@ import com.arjuna.common.util.logging.FacilityCode;
 public class PropagationContextManager
 		implements TransactionPropagationContextFactory, TransactionPropagationContextImporter, ObjectFactory, Serializable
 {
-	private Logger log = org.jboss.logging.Logger.getLogger(PropagationContextManager.class);
-
 	/**
 	 *  Return a transaction propagation context for the transaction
 	 *  currently associated with the invoking thread, or <code>null</code>
@@ -122,6 +119,11 @@ public class PropagationContextManager
 	 *  context in the local VM.
 	 *  Returns <code>null</code> if the transaction propagation context is
 	 *  <code>null</code>, or if it represents a <code>null</code> transaction.
+     *
+     * @message com.arjuna.ats.internal.jbossatx.jta.PropagationContextManager.exception
+     * [com.arjuna.ats.internal.jbossatx.jta.PropagationContextManager.exception] Unexpected exception occurred
+     * @message com.arjuna.ats.internal.jbossatx.jta.PropagationContextManager.unknownctx
+     * [com.arjuna.ats.internal.jbossatx.jta.PropagationContextManager.unknownctx] jboss-atx: unknown Tx PropagationContext
 	 */
 
 	public Transaction importTransactionPropagationContext(Object tpc)
@@ -152,13 +154,13 @@ public class PropagationContextManager
             }
             catch (Exception e)
             {
-                log.error("Unexpected exception occurred", e);
+                jbossatxLogger.loggerI18N.error("com.arjuna.ats.internal.jbossatx.jta.PropagationContextManager.exception", e);
                 return null;
             }
         }
         else
         {
-            log.error("jboss-atx: unknown Tx PropagationContext");
+            jbossatxLogger.loggerI18N.error("com.arjuna.ats.internal.jbossatx.jta.PropagationContextManager.unknownctx");
             return null;
         }
 	}

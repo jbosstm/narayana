@@ -63,21 +63,11 @@
 
         <compile.macro excluded.classes="${exclude-these-classes}">
             <additional.classpath>
-                <!-- jboss-logging-spi.jar has Logger -->
-                <fileset dir="${env.JBOSS_HOME}/lib" includes="jboss-logging-spi.jar"/>
                 <!-- jboss-integration.jar has the transactions SPI  jbosssx has security -->
                 <fileset dir="${env.JBOSS_HOME}/common/lib" includes="jboss-integration.jar jbosssx.jar"/>
             </additional.classpath>
         </compile.macro>
 
-    </target>
-
-    <target name="generateresourcebundle">
-        <generateresourcebundle.macro>
-            <args>
-                <param name="-appendkey" value="[]"/>
-            </args>
-        </generateresourcebundle.macro>
     </target>
 
     <target name="compile-tests"/>

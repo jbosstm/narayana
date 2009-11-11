@@ -31,9 +31,9 @@
 package com.arjuna.ats.jbossatx.jta;
 
 import org.jboss.tm.*;
-import org.jboss.logging.Logger;
 
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
+import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 import com.arjuna.common.util.ConfigurationInfo;
 
 import javax.transaction.TransactionManager;
@@ -50,7 +50,6 @@ import javax.transaction.TransactionSynchronizationRegistry;
  */
 public class TransactionManagerService implements TransactionManagerServiceMBean
 {
-    protected Logger log = org.jboss.logging.Logger.getLogger(TransactionManagerService.class);
     protected String mode = "JTA";
 
     private JBossXATerminator jbossXATerminator = null;
@@ -58,19 +57,27 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
 
     public TransactionManagerService() {}
 
+    /**
+     * @message com.arjuna.ats.jbossatx.jta.TransactionManagerService.create
+     * [com.arjuna.ats.jbossatx.jta.TransactionManagerService.create] JBossTS Transaction Service (tag: {0}) - JBoss Inc.
+     */
     public void create() throws Exception
     {
         String tag = ConfigurationInfo.getSourceId();
 
-        log.info("JBossTS Transaction Service ("+mode+" version - tag:"+tag+") - JBoss Inc.");
+        jbossatxLogger.loggerI18N.info("com.arjuna.ats.jbossatx.jta.TransactionManagerService.create", new Object[] {tag});
 
         // Associate transaction reaper with our context classloader.
         TransactionReaper.transactionReaper();
 	}
 
+    /**
+     * @message com.arjuna.ats.jbossatx.jta.TransactionManagerService.destroy
+     * [com.arjuna.ats.jbossatx.jta.TransactionManagerService.destroy] Destroying TransactionManagerService
+     */
     public void destroy()
     {
-        log.info("Destroying TransactionManagerService");
+        jbossatxLogger.loggerI18N.info("com.arjuna.ats.jbossatx.jta.TransactionManagerService.destroy");
     }
 
     public void start()
@@ -141,10 +148,13 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
     /**
      * This method has been put in here so that it is compatible with the JBoss standard Transaction Manager.
      * As we do not support exception formatters just display a warning for the moment.
+     *
+     * @message com.arjuna.ats.jbossatx.jta.TransactionManagerService.noformatter
+     * [com.arjuna.ats.jbossatx.jta.TransactionManagerService.noformatter] XAExceptionFormatters are not supported by the JBossTS Transaction Service - this warning can safely be ignored
      */
     public void registerXAExceptionFormatter(Class c, XAExceptionFormatter f)
     {
-        log.warn("XAExceptionFormatters are not supported by the JBossTS Transaction Service - this warning can safely be ignored");
+        jbossatxLogger.loggerI18N.warn("XAExceptionFormatters are not supported by the JBossTS Transaction Service - this warning can safely be ignored");
     }
 
     /**

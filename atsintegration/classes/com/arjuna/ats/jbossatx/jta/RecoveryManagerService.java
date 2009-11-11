@@ -24,9 +24,9 @@ import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.internal.jbossatx.jta.XAResourceRecoveryHelperWrapper;
+import com.arjuna.ats.jbossatx.logging.jbossatxLogger;
 import com.arjuna.common.util.ConfigurationInfo;
 
-import org.jboss.logging.Logger;
 import org.jboss.tm.XAResourceRecovery;
 import org.jboss.tm.XAResourceRecoveryRegistry;
 
@@ -40,15 +40,17 @@ import java.util.Vector;
  */
 public class RecoveryManagerService implements XAResourceRecoveryRegistry
 {
-    protected Logger log = org.jboss.logging.Logger.getLogger(RecoveryManagerService.class);
-
     private RecoveryManager _recoveryManager;
 
+    /**
+     * @message com.arjuna.ats.jbossatx.jta.RecoveryManagerService.create
+     * [com.arjuna.ats.jbossatx.jta.RecoveryManagerService.create] JBossTS Recovery Service (tag: {0}) - JBoss Inc.
+     */
     public void create() throws Exception
     {
         String tag = ConfigurationInfo.getSourceId();
 
-        log.info("JBossTS Recovery Service (tag:"+tag+") - JBoss Inc.");
+        jbossatxLogger.loggerI18N.info("com.arjuna.ats.jbossatx.jta.RecoveryManagerService.create", new Object[] {tag});
 
         RecoveryManager.delayRecoveryManagerThread();
         // listener (if any) is created here:
@@ -59,28 +61,42 @@ public class RecoveryManagerService implements XAResourceRecoveryRegistry
     {
     }
 
+    /**
+     * @message com.arjuna.ats.jbossatx.jta.RecoveryManagerService.start
+     * [com.arjuna.ats.jbossatx.jta.RecoveryManagerService.start] Starting transaction recovery manager
+     */
     public void start()
     {
-        log.info("Starting transaction recovery manager");
+        jbossatxLogger.loggerI18N.info("com.arjuna.ats.jbossatx.jta.RecoveryManagerService.start");
 
         _recoveryManager.initialize();
         _recoveryManager.startRecoveryManagerThread() ;
     }
 
+    /**
+     * @message com.arjuna.ats.jbossatx.jta.RecoveryManagerService.stop
+     * [com.arjuna.ats.jbossatx.jta.RecoveryManagerService.stop] Stopping transaction recovery manager
+     */
     public void stop() throws Exception
     {
-        log.info("Stopping transaction recovery manager");
+        jbossatxLogger.loggerI18N.info("com.arjuna.ats.jbossatx.jta.RecoveryManagerService.stop");
 
         _recoveryManager.terminate();
     }
 
     //////////////////////////////
 
+    /**
+     * @message com.arjuna.ats.jbossatx.jta.RecoveryManagerService.norecoverysystem
+     * [com.arjuna.ats.jbossatx.jta.RecoveryManagerService.norecoverysystem] No recovery system in which to register XAResourceRecovery instance
+     * @message com.arjuna.ats.jbossatx.jta.RecoveryManagerService.norecoverymodule
+     * [com.arjuna.ats.jbossatx.jta.RecoveryManagerService.norecoverymodule] No suitable recovery module in which to register XAResourceRecovery instance
+     */
     public void addXAResourceRecovery(XAResourceRecovery xaResourceRecovery)
     {
         if(_recoveryManager == null) {
-            log.error("No recovery system in which to register XAResourceRecovery instance");
-            throw new IllegalStateException("No recovery system present in this server");
+            jbossatxLogger.loggerI18N.error("com.arjuna.ats.jbossatx.jta.RecoveryManagerService.norecoverysystem");
+            throw new IllegalStateException(jbossatxLogger.loggerI18N.getString("com.arjuna.ats.jbossatx.jta.RecoveryManagerService.norecoverysystem"));
         }
 
         XARecoveryModule xaRecoveryModule = null;
@@ -92,8 +108,8 @@ public class RecoveryManagerService implements XAResourceRecoveryRegistry
         }
 
         if(xaRecoveryModule == null) {
-            log.error("No suitable recovery module in which to register XAResourceRecovery instance");
-            throw new IllegalStateException("No xa recovery module present in this server");
+            jbossatxLogger.loggerI18N.error("com.arjuna.ats.jbossatx.jta.RecoveryManagerService.norecoverymodule");
+            throw new IllegalStateException(jbossatxLogger.loggerI18N.getString("com.arjuna.ats.jbossatx.jta.RecoveryManagerService.norecoverymodule"));
         }
 
         xaRecoveryModule.addXAResourceRecoveryHelper(new XAResourceRecoveryHelperWrapper(xaResourceRecovery));
@@ -102,7 +118,7 @@ public class RecoveryManagerService implements XAResourceRecoveryRegistry
     public void removeXAResourceRecovery(XAResourceRecovery xaResourceRecovery)
     {
         if(_recoveryManager == null) {
-            log.warn("No recovery system from which to remove XAResourceRecovery instance");
+            jbossatxLogger.loggerI18N.warn("No recovery system from which to remove XAResourceRecovery instance");
             return;
         }
 
@@ -115,7 +131,7 @@ public class RecoveryManagerService implements XAResourceRecoveryRegistry
         }
 
         if(xaRecoveryModule == null) {
-            log.warn("No suitable recovery module in which to register XAResourceRecovery instance");
+            jbossatxLogger.loggerI18N.warn("No suitable recovery module in which to register XAResourceRecovery instance");
             return;
         }
 
