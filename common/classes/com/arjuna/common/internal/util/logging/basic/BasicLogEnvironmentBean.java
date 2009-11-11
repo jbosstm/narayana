@@ -21,6 +21,7 @@
 package com.arjuna.common.internal.util.logging.basic;
 
 import com.arjuna.common.internal.util.propertyservice.PropertyPrefix;
+import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
 
 /**
  * A JavaBean containing configuration properties for the built-in log system.
@@ -35,7 +36,8 @@ public class BasicLogEnvironmentBean
     private volatile boolean showDate = true;
     private volatile boolean logFileAppend = true;
 
-    private volatile String defaultLevel = "info";
+    @FullPropertyName(name = "com.arjuna.common.util.logging.default.defaultLevel")
+    private volatile String level = "info";
 
     private volatile String logFile = "error.log";
 
@@ -140,20 +142,20 @@ public class BasicLogEnvironmentBean
      *
      * @return the default threshold logging level.
      */
-    public String getDefaultLevel()
+    public String getLevel()
     {
-        return defaultLevel;
+        return level;
     }
 
     /**
      * Sets the default log threshold.
      * Valid values (in order) are: all, trace, debug, info, warn, error, fatal, off
      *
-     * @param defaultLevel the default log threshold.
+     * @param level the default log threshold.
      */
-    public void setDefaultLevel(String defaultLevel)
+    public void setLevel(String level)
     {
-        this.defaultLevel = defaultLevel;
+        this.level = level;
     }
 
     /**

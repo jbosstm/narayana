@@ -189,7 +189,7 @@ public class BasicLog implements Serializable, LogInterface
         setLevel(BasicLog.LOG_LEVEL_INFO);
 
         // Set log level from properties
-        String lvl = commonPropertyManager.getBasicLogEnvironmentBean().getDefaultLevel();
+        String lvl = commonPropertyManager.getBasicLogEnvironmentBean().getLevel();
 
         if("all".equalsIgnoreCase(lvl)) {
             setLevel(BasicLog.LOG_LEVEL_ALL);
