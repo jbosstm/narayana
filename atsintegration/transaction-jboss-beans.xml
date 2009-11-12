@@ -21,6 +21,7 @@
         <constructor factoryClass="com.arjuna.common.internal.util.logging.commonPropertyManager" factoryMethod="getLoggingEnvironmentBean"/>
 
         <property name="loggingFactory">com.arjuna.common.internal.util.logging.jakarta.JakartaRelevelingLogFactory;com.arjuna.common.internal.util.logging.jakarta.Log4JLogger</property>
+        <!--<property name="loggingFactory">com.arjuna.ats.internal.jbossatx.logging.JBossLogFactory</property>-->
 
     </bean>
 
