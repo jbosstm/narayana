@@ -137,7 +137,7 @@ public class JakartaLogger implements LogInterface
     *
     * @param message log this message
     */
-   public void trace(Object message)
+   public void trace(String message)
    {
       m_log.trace(message);
    }
@@ -148,7 +148,7 @@ public class JakartaLogger implements LogInterface
     * @param message log this message
     * @param t log this cause
     */
-   public void trace(Object message, Throwable t)
+   public void trace(String message, Throwable t)
    {
       m_log.trace(message, t);
    }
@@ -158,7 +158,7 @@ public class JakartaLogger implements LogInterface
     *
     * @param message log this message
     */
-   public void debug(Object message)
+   public void debug(String message)
    {
       m_log.debug(message);
       //m_log.log(_fcqn, Priority.DEBUG, message, null);
@@ -170,7 +170,7 @@ public class JakartaLogger implements LogInterface
     * @param message log this message
     * @param t log this cause
     */
-   public void debug(Object message, Throwable t)
+   public void debug(String message, Throwable t)
    {
       m_log.debug(message, t);
    }
@@ -180,7 +180,7 @@ public class JakartaLogger implements LogInterface
     *
     * @param message log this message
     */
-   public void info(Object message)
+   public void info(String message)
    {
       m_log.info(message);
    }
@@ -191,7 +191,7 @@ public class JakartaLogger implements LogInterface
     * @param message log this message
     * @param t log this cause
     */
-   public void info(Object message, Throwable t)
+   public void info(String message, Throwable t)
    {
       m_log.info(message, t);
    }
@@ -201,7 +201,7 @@ public class JakartaLogger implements LogInterface
     *
     * @param message log this message
     */
-   public void warn(Object message)
+   public void warn(String message)
    {
       m_log.warn(message);
    }
@@ -212,7 +212,7 @@ public class JakartaLogger implements LogInterface
     * @param message log this message
     * @param t log this cause
     */
-   public void warn(Object message, Throwable t)
+   public void warn(String message, Throwable t)
    {
       m_log.warn(message, t);
    }
@@ -222,7 +222,7 @@ public class JakartaLogger implements LogInterface
     *
     * @param message log this message
     */
-   public void error(Object message)
+   public void error(String message)
    {
       m_log.error(message);
    }
@@ -233,7 +233,7 @@ public class JakartaLogger implements LogInterface
     * @param message log this message
     * @param t log this cause
     */
-   public void error(Object message, Throwable t)
+   public void error(String message, Throwable t)
    {
       m_log.error(message, t);
    }
@@ -243,7 +243,7 @@ public class JakartaLogger implements LogInterface
     *
     * @param message log this message
     */
-   public void fatal(Object message)
+   public void fatal(String message)
    {
       m_log.fatal(message);
    }
@@ -254,7 +254,7 @@ public class JakartaLogger implements LogInterface
     * @param message log this message
     * @param t log this cause
     */
-   public void fatal(Object message, Throwable t)
+   public void fatal(String message, Throwable t)
    {
       m_log.fatal(message, t);
    }

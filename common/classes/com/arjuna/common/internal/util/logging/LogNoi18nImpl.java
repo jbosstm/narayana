@@ -211,7 +211,7 @@ public class LogNoi18nImpl implements LogNoi18n
     */
    public void info(Throwable message)
    {
-      m_logInterface.info(message);
+      m_logInterface.info(message.toString(), message);
    }
 
    /**
@@ -221,7 +221,7 @@ public class LogNoi18nImpl implements LogNoi18n
     */
    public void warn(Throwable message)
    {
-      m_logInterface.warn(message);
+      m_logInterface.warn(message.toString(), message);
    }
 
    /**
@@ -231,7 +231,7 @@ public class LogNoi18nImpl implements LogNoi18n
     */
    public void error(Throwable message)
    {
-      m_logInterface.error(message);
+      m_logInterface.error(message.toString(), message);
    }
 
    /**
@@ -241,6 +241,6 @@ public class LogNoi18nImpl implements LogNoi18n
     */
    public void fatal(Throwable message)
    {
-      m_logInterface.fatal(message);
+      m_logInterface.fatal(message.toString(), message);
    }
 }

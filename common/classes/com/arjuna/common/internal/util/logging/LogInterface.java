@@ -109,7 +109,7 @@ public interface LogInterface
     *
     * @param message log this message
     */
-   public void trace(Object message);
+   public void trace(String message);
 
 
    /**
@@ -118,7 +118,7 @@ public interface LogInterface
     * @param message log this message
     * @param t log this cause
     */
-   public void trace(Object message, Throwable t);
+   public void trace(String message, Throwable t);
 
 
    /**
@@ -126,7 +126,7 @@ public interface LogInterface
     *
     * @param message log this message
     */
-   public void debug(Object message);
+   public void debug(String message);
 
 
    /**
@@ -135,7 +135,7 @@ public interface LogInterface
     * @param message log this message
     * @param t log this cause
     */
-   public void debug(Object message, Throwable t);
+   public void debug(String message, Throwable t);
 
 
    /**
@@ -143,7 +143,7 @@ public interface LogInterface
     *
     * @param message log this message
     */
-   public void info(Object message);
+   public void info(String message);
 
 
    /**
@@ -152,7 +152,7 @@ public interface LogInterface
     * @param message log this message
     * @param t log this cause
     */
-   public void info(Object message, Throwable t);
+   public void info(String message, Throwable t);
 
 
    /**
@@ -160,7 +160,7 @@ public interface LogInterface
     *
     * @param message log this message
     */
-   public void warn(Object message);
+   public void warn(String message);
 
 
    /**
@@ -169,7 +169,7 @@ public interface LogInterface
     * @param message log this message
     * @param t log this cause
     */
-   public void warn(Object message, Throwable t);
+   public void warn(String message, Throwable t);
 
 
    /**
@@ -177,7 +177,7 @@ public interface LogInterface
     *
     * @param message log this message
     */
-   public void error(Object message);
+   public void error(String message);
 
 
    /**
@@ -186,7 +186,7 @@ public interface LogInterface
     * @param message log this message
     * @param t log this cause
     */
-   public void error(Object message, Throwable t);
+   public void error(String message, Throwable t);
 
 
    /**
@@ -194,7 +194,7 @@ public interface LogInterface
     *
     * @param message log this message
     */
-   public void fatal(Object message);
+   public void fatal(String message);
 
 
    /**
@@ -203,6 +203,6 @@ public interface LogInterface
     * @param message log this message
     * @param t log this cause
     */
-   public void fatal(Object message, Throwable t);
+   public void fatal(String message, Throwable t);
 
 }

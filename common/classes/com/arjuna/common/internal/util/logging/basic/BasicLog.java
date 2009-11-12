@@ -342,7 +342,7 @@ public class BasicLog implements Serializable, LogInterface
      * @param message to log
      * @see org.apache.commons.logging.Log#debug(Object)
      */
-    public final void debug(Object message) {
+    public final void debug(String message) {
 
         if (isLevelEnabled(BasicLog.LOG_LEVEL_DEBUG)) {
             log(BasicLog.LOG_LEVEL_DEBUG, message, null);
@@ -358,7 +358,7 @@ public class BasicLog implements Serializable, LogInterface
      * @param t log this cause
      * @see org.apache.commons.logging.Log#debug(Object, Throwable)
      */
-    public final void debug(Object message, Throwable t) {
+    public final void debug(String message, Throwable t) {
 
         if (isLevelEnabled(BasicLog.LOG_LEVEL_DEBUG)) {
             log(BasicLog.LOG_LEVEL_DEBUG, message, t);
@@ -373,7 +373,7 @@ public class BasicLog implements Serializable, LogInterface
      * @param message to log
      * @see org.apache.commons.logging.Log#trace(Object)
      */
-    public final void trace(Object message) {
+    public final void trace(String message) {
 
         if (isLevelEnabled(BasicLog.LOG_LEVEL_TRACE)) {
             log(BasicLog.LOG_LEVEL_TRACE, message, null);
@@ -389,7 +389,7 @@ public class BasicLog implements Serializable, LogInterface
      * @param t log this cause
      * @see org.apache.commons.logging.Log#trace(Object, Throwable)
      */
-    public final void trace(Object message, Throwable t) {
+    public final void trace(String message, Throwable t) {
 
         if (isLevelEnabled(BasicLog.LOG_LEVEL_TRACE)) {
             log(BasicLog.LOG_LEVEL_TRACE, message, t);
@@ -404,7 +404,7 @@ public class BasicLog implements Serializable, LogInterface
      * @param message to log
      * @see org.apache.commons.logging.Log#info(Object)
      */
-    public final void info(Object message) {
+    public final void info(String message) {
 
         if (isLevelEnabled(BasicLog.LOG_LEVEL_INFO)) {
             log(BasicLog.LOG_LEVEL_INFO,message,null);
@@ -420,7 +420,7 @@ public class BasicLog implements Serializable, LogInterface
      * @param t log this cause
      * @see org.apache.commons.logging.Log#info(Object, Throwable)
      */
-    public final void info(Object message, Throwable t) {
+    public final void info(String message, Throwable t) {
 
         if (isLevelEnabled(BasicLog.LOG_LEVEL_INFO)) {
             log(BasicLog.LOG_LEVEL_INFO, message, t);
@@ -435,7 +435,7 @@ public class BasicLog implements Serializable, LogInterface
      * @param message to log
      * @see org.apache.commons.logging.Log#warn(Object)
      */
-    public final void warn(Object message) {
+    public final void warn(String message) {
 
         if (isLevelEnabled(BasicLog.LOG_LEVEL_WARN)) {
             log(BasicLog.LOG_LEVEL_WARN, message, null);
@@ -451,7 +451,7 @@ public class BasicLog implements Serializable, LogInterface
      * @param t log this cause
      * @see org.apache.commons.logging.Log#warn(Object, Throwable)
      */
-    public final void warn(Object message, Throwable t) {
+    public final void warn(String message, Throwable t) {
 
         if (isLevelEnabled(BasicLog.LOG_LEVEL_WARN)) {
             log(BasicLog.LOG_LEVEL_WARN, message, t);
@@ -466,7 +466,7 @@ public class BasicLog implements Serializable, LogInterface
      * @param message to log
      * @see org.apache.commons.logging.Log#error(Object)
      */
-    public final void error(Object message) {
+    public final void error(String message) {
 
         if (isLevelEnabled(BasicLog.LOG_LEVEL_ERROR)) {
             log(BasicLog.LOG_LEVEL_ERROR, message, null);
@@ -482,7 +482,7 @@ public class BasicLog implements Serializable, LogInterface
      * @param t log this cause
      * @see org.apache.commons.logging.Log#error(Object, Throwable)
      */
-    public final void error(Object message, Throwable t) {
+    public final void error(String message, Throwable t) {
 
         if (isLevelEnabled(BasicLog.LOG_LEVEL_ERROR)) {
             log(BasicLog.LOG_LEVEL_ERROR, message, t);
@@ -497,7 +497,7 @@ public class BasicLog implements Serializable, LogInterface
      * @param message to log
      * @see org.apache.commons.logging.Log#fatal(Object)
      */
-    public final void fatal(Object message) {
+    public final void fatal(String message) {
 
         if (isLevelEnabled(BasicLog.LOG_LEVEL_FATAL)) {
             log(BasicLog.LOG_LEVEL_FATAL, message, null);
@@ -513,7 +513,7 @@ public class BasicLog implements Serializable, LogInterface
      * @param t log this cause
      * @see org.apache.commons.logging.Log#fatal(Object, Throwable)
      */
-    public final void fatal(Object message, Throwable t) {
+    public final void fatal(String message, Throwable t) {
 
         if (isLevelEnabled(BasicLog.LOG_LEVEL_FATAL)) {
             log(BasicLog.LOG_LEVEL_FATAL, message, t);
