@@ -63,7 +63,9 @@
 
         <compile.macro excluded.classes="${exclude-these-classes}">
             <additional.classpath>
-                <!-- jboss-integration.jar has the transactions SPI  jbosssx has security -->
+                <!-- jboss-logmanager.jar for linking the CLF integration code. -->
+                <fileset dir="${env.JBOSS_HOME}/lib" includes="jboss-logmanager.jar"/>
+                <!-- jboss-integration.jar has the transactions SPI  jbosssx has security (needed for recovery module only) -->
                 <fileset dir="${env.JBOSS_HOME}/common/lib" includes="jboss-integration.jar jbosssx.jar"/>
             </additional.classpath>
         </compile.macro>
