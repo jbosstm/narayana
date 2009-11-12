@@ -31,8 +31,6 @@
 package com.arjuna.orbportability.internal.orbspecific.jacorb.orb.implementations;
 
 import com.arjuna.orbportability.internal.orbspecific.orb.implementations.ORBBase;
-import com.arjuna.orbportability.common.opPropertyManager;
-import com.arjuna.orbportability.Services;
 
 public class jacorb_2_0 extends ORBBase
 {

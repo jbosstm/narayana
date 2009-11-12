@@ -34,104 +34,109 @@ package com.arjuna.orbportability.internal.orbspecific.oa.implementations;
 import com.arjuna.orbportability.oa.core.POAImple;
 
 import org.omg.PortableServer.*;
-import org.omg.CORBA.Policy;
 import java.util.*;
-import java.applet.Applet;
-import java.io.*;
 
 import org.omg.CORBA.ORBPackage.InvalidName;
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.BAD_PARAM;
-import org.omg.PortableServer.POAPackage.AdapterAlreadyExists;
-import org.omg.PortableServer.POAPackage.InvalidPolicy;
 import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 
 public abstract class POABase implements POAImple
 {
 
-public boolean initialised ()
+    public boolean initialised ()
     {
-	return _init;
+        return _init;
     }
 
-public boolean supportsBOA ()
+    public boolean supportsBOA ()
     {
-	return false;
-    }
-    
-public boolean supportsPOA ()
-    {
-	return true;
+        return false;
     }
 
-public void init (com.arjuna.orbportability.orb.core.ORB orb) throws InvalidName, AdapterInactive, SystemException
+    public boolean supportsPOA ()
     {
-	if (!_init)
-	{
-	    _poa = POAHelper.narrow(orb.orb().resolve_initial_references("RootPOA"));
-		    
-	    _poa.the_POAManager().activate();
-	    _init = true;
-	}
+        return true;
     }
 
-public void destroyRootPOA () throws SystemException
+    public void init (com.arjuna.orbportability.orb.core.ORB orb)
+            throws InvalidName, AdapterInactive, SystemException
     {
-	_poa.destroy(true, true);
-	_init = false;
+        if (!_init)
+        {
+            _poa = POAHelper.narrow(orb.orb().resolve_initial_references(
+                    "RootPOA"));
+
+            _poa.the_POAManager().activate();
+            _init = true;
+        }
     }
 
-public void destroyPOA (String adapterName) throws SystemException
+    public void destroyRootPOA () throws SystemException
     {
-	if (adapterName == null)
-	    throw new BAD_PARAM();
-	
-	org.omg.PortableServer.POA childPoa = (org.omg.PortableServer.POA) _poas.remove(adapterName);
-	
-	if (childPoa != null)
-	{
-	    childPoa.destroy(true, true);
-	    childPoa = null;
-	}
-	else
-	    throw new BAD_OPERATION();
+        _poa.destroy(true, true);
+        _init = false;
     }
 
-public org.omg.PortableServer.POA rootPoa () throws SystemException
+    public void destroyPOA (String adapterName) throws SystemException
     {
-	return _poa;
-    }
-    
-public void rootPoa (org.omg.PortableServer.POA thePOA) throws SystemException
-    {
-	_poa = thePOA;
+        if (adapterName == null)
+            throw new BAD_PARAM();
 
-	_init = true;
-    }
- 
-public org.omg.PortableServer.POA poa (String adapterName) throws SystemException
-    {
-	return (org.omg.PortableServer.POA) _poas.get(adapterName);
-    }
-    
-public void poa (String adapterName, org.omg.PortableServer.POA thePOA) throws SystemException
-    {
-	_poas.put(adapterName, thePOA);
+        org.omg.PortableServer.POA childPoa = (org.omg.PortableServer.POA) _poas
+                .remove(adapterName);
+
+        if (childPoa != null)
+        {
+            childPoa.destroy(true, true);
+            childPoa = null;
+        }
+        else
+            throw new BAD_OPERATION();
     }
 
-public void run (com.arjuna.orbportability.orb.core.ORB orb, String name) throws SystemException
+    public org.omg.PortableServer.POA rootPoa () throws SystemException
     {
-	orb.orb().run();
+        return _poa;
     }
 
-public void run (com.arjuna.orbportability.orb.core.ORB orb) throws SystemException
+    public void rootPoa (org.omg.PortableServer.POA thePOA)
+            throws SystemException
     {
-	orb.orb().run();
+        _poa = thePOA;
+
+        _init = true;
     }
 
-protected org.omg.PortableServer.POA _poa = null;
-protected Hashtable                  _poas = new Hashtable();
-protected boolean                    _init = false;
+    public org.omg.PortableServer.POA poa (String adapterName)
+            throws SystemException
+    {
+        return (org.omg.PortableServer.POA) _poas.get(adapterName);
+    }
+
+    public void poa (String adapterName, org.omg.PortableServer.POA thePOA)
+            throws SystemException
+    {
+        _poas.put(adapterName, thePOA);
+    }
+
+    public void run (com.arjuna.orbportability.orb.core.ORB orb, String name)
+            throws SystemException
+    {
+        orb.orb().run();
+    }
+
+    public void run (com.arjuna.orbportability.orb.core.ORB orb)
+            throws SystemException
+    {
+        orb.orb().run();
+    }
+
+    protected org.omg.PortableServer.POA _poa = null;
+
+    protected Hashtable _poas = new Hashtable();
+
+    protected boolean _init = false;
 
 }

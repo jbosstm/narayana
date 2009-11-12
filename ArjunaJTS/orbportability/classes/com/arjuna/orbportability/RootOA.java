@@ -31,7 +31,6 @@
 
 package com.arjuna.orbportability;
 
-import org.omg.PortableServer.POA;
 import org.omg.PortableServer.Servant;
 import org.omg.CORBA.SystemException;
 

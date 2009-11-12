@@ -47,142 +47,164 @@ import org.omg.PortableServer.POAPackage.InvalidPolicy;
 import org.omg.PortableServer.POAManagerPackage.AdapterInactive;
 
 /**
- * An instance of this class provides access to the ORB specific
- * Object Adapter class.
- *
+ * An instance of this class provides access to the ORB specific Object Adapter
+ * class.
+ * 
  * @author Mark Little (mark@arjuna.com)
- * @version $Id: OA.java 2342 2006-03-30 13:06:17Z  $
+ * @version $Id: OA.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 2.1.
  */
 
 public class OA
 {
 
-public OA (com.arjuna.orbportability.orb.core.ORB theORB)
+    public OA(com.arjuna.orbportability.orb.core.ORB theORB)
     {
-	initialise();
+        initialise();
 
-	_theORB = theORB;
+        _theORB = theORB;
     }
 
-public boolean initialised ()
+    public boolean initialised ()
     {
-	return _theOA.initialised();
+        return _theOA.initialised();
     }
 
-public void init () throws InvalidName, AdapterInactive, SystemException
+    public void init () throws InvalidName, AdapterInactive, SystemException
     {
-	((POAImple) _theOA).init(_theORB);
+        ((POAImple) _theOA).init(_theORB);
     }
 
-public void createPOA (String adapterName,
-		       Policy[] policies) throws AdapterAlreadyExists, InvalidPolicy, AdapterInactive, SystemException
+    public void createPOA (String adapterName, Policy[] policies)
+            throws AdapterAlreadyExists, InvalidPolicy, AdapterInactive,
+            SystemException
     {
-	((POAImple) _theOA).createPOA(adapterName, policies);
+        ((POAImple) _theOA).createPOA(adapterName, policies);
     }
 
-public void destroyRootPOA () throws SystemException
+    public void destroyRootPOA () throws SystemException
     {
-	((POAImple) _theOA).destroyRootPOA();
+        ((POAImple) _theOA).destroyRootPOA();
     }
 
-public void destroyPOA (String adapterName) throws SystemException
+    public void destroyPOA (String adapterName) throws SystemException
     {
-	((POAImple) _theOA).destroyPOA(adapterName);
+        ((POAImple) _theOA).destroyPOA(adapterName);
     }
 
-public org.omg.PortableServer.POA rootPoa () throws SystemException
+    public org.omg.PortableServer.POA rootPoa () throws SystemException
     {
-	return ((POAImple) _theOA).rootPoa();
+        return ((POAImple) _theOA).rootPoa();
     }
 
-public void rootPoa (org.omg.PortableServer.POA thePOA) throws SystemException
+    public void rootPoa (org.omg.PortableServer.POA thePOA)
+            throws SystemException
     {
-	((POAImple) _theOA).rootPoa(thePOA);
+        ((POAImple) _theOA).rootPoa(thePOA);
     }
 
-public org.omg.PortableServer.POA poa (String adapterName) throws SystemException
+    public org.omg.PortableServer.POA poa (String adapterName)
+            throws SystemException
     {
-	return ((POAImple) _theOA).poa(adapterName);
+        return ((POAImple) _theOA).poa(adapterName);
     }
 
-public void poa (String adapterName, org.omg.PortableServer.POA thePOA) throws SystemException
+    public void poa (String adapterName, org.omg.PortableServer.POA thePOA)
+            throws SystemException
     {
-	((POAImple) _theOA).poa(adapterName, thePOA);
+        ((POAImple) _theOA).poa(adapterName, thePOA);
     }
 
-public void run (String name) throws SystemException
+    public void run (String name) throws SystemException
     {
-	_theOA.run(_theORB, name);
+        _theOA.run(_theORB, name);
     }
 
-public void run () throws SystemException
+    public void run () throws SystemException
     {
-	_theOA.run(_theORB);
+        _theOA.run(_theORB);
     }
 
     /**
-     * @message com.arjuna.orbportability.oa.core.OA.nosupportedorb OA ORB specific class creation failed - unable to find supported ORB
-     * @message com.arjuna.orbportability.oa.core.OA.caughtexception OA ORB specific class creation failed with: {0}
+     * @message com.arjuna.orbportability.oa.core.OA.nosupportedorb OA ORB
+     *          specific class creation failed - unable to find supported ORB
+     * @message com.arjuna.orbportability.oa.core.OA.caughtexception OA ORB
+     *          specific class creation failed with: {0}
      */
-private final void initialise ()
-{
-    String className = opPropertyManager.getOrbPortabilityEnvironmentBean().getOaImplementation();
-
-    if (className == null)
+    @SuppressWarnings("unchecked")
+    private final void initialise ()
     {
+        String className = opPropertyManager.getOrbPortabilityEnvironmentBean()
+                .getOaImplementation();
+
+        if (className == null)
+        {
+
+            try
+            {
+                Thread.currentThread().getContextClassLoader().loadClass(
+                        "org.jacorb.orb.ORB");
+
+                className = "com.arjuna.orbportability.internal.orbspecific.jacorb.oa.implementations.jacorb_2_0";
+            }
+            catch (ClassNotFoundException ce)
+            {
+                try
+                {
+                    Thread.currentThread().getContextClassLoader().loadClass(
+                            "com.sun.corba.se.internal.corba.ORB");
+
+                    className = "com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4";
+                }
+                catch (ClassNotFoundException je)
+                {
+                    if (opLogger.loggerI18N.isFatalEnabled())
+                    {
+                        opLogger.loggerI18N
+                                .fatal(
+                                        "com.arjuna.orbportability.oa.core.OA.nosupportedorb",
+                                        je);
+                    }
+                    throw new ExceptionInInitializerError(
+                            opLogger.logMesg
+                                    .getString("com.arjuna.orbportability.oa.core.OA.nosupportedorb"));
+                }
+            }
+        }
+
+        if (opLogger.logger.isDebugEnabled())
+        {
+            opLogger.logger.debug(DebugLevel.FUNCTIONS,
+                    VisibilityLevel.VIS_PUBLIC,
+                    FacilityCode.FAC_ORB_PORTABILITY,
+                    "OA.initialise() - using OA Implementation " + className);
+        }
 
         try
         {
-            Thread.currentThread().getContextClassLoader().loadClass("org.jacorb.orb.ORB");
+            Class c = Thread.currentThread().getContextClassLoader().loadClass(
+                    className);
 
-            className = "com.arjuna.orbportability.internal.orbspecific.jacorb.oa.implementations.jacorb_2_0";
+            _theOA = (POAImple) c.newInstance();
         }
-        catch (ClassNotFoundException ce)
+        catch (Exception e)
         {
-            try
+            if (opLogger.loggerI18N.isFatalEnabled())
             {
-                Thread.currentThread().getContextClassLoader().loadClass("com.sun.corba.se.internal.corba.ORB");
+                opLogger.loggerI18N.fatal(
+                        "com.arjuna.orbportability.oa.core.OA.caughtexception",
+                        new Object[]
+                        { e }, e);
+            }
 
-                className = "com.arjuna.orbportability.internal.orbspecific.javaidl.oa.implementations.javaidl_1_4";
-            }
-            catch (ClassNotFoundException je)
-            {
-                if (opLogger.loggerI18N.isFatalEnabled())
-                {
-                    opLogger.loggerI18N.fatal( "com.arjuna.orbportability.oa.core.OA.nosupportedorb", je );
-                }
-                throw new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.oa.core.OA.nosupportedorb") );
-            }
+            throw new ExceptionInInitializerError(
+                    opLogger.logMesg
+                            .getString("com.arjuna.orbportability.oa.core.OA.caughtexception"));
         }
     }
 
-    if (opLogger.logger.isDebugEnabled())
-    {
-        opLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-                FacilityCode.FAC_ORB_PORTABILITY, "OA.initialise() - using OA Implementation "+className);
-    }
+    private com.arjuna.orbportability.orb.core.ORB _theORB;
 
-    try
-    {
-        Class c = Thread.currentThread().getContextClassLoader().loadClass(className);
-
-        _theOA = (POAImple) c.newInstance();
-    }
-    catch (Exception e)
-    {
-        if (opLogger.loggerI18N.isFatalEnabled())
-        {
-            opLogger.loggerI18N.fatal( "com.arjuna.orbportability.oa.core.OA.caughtexception",
-                    new Object[] { e } , e);
-        }
-
-        throw new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.oa.core.OA.caughtexception") );
-    }
-}
-
-private com.arjuna.orbportability.orb.core.ORB     _theORB;
-private com.arjuna.orbportability.oa.core.POAImple _theOA;
+    private com.arjuna.orbportability.oa.core.POAImple _theOA;
 
 }
-

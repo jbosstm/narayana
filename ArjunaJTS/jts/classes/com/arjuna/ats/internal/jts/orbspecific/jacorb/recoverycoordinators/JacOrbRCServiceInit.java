@@ -75,6 +75,7 @@ import java.util.Properties;
  * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6] - Starting RecoveryServer ORB on port {0} and address {1}
  * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6a [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6a] - Sharing RecoveryServer ORB on port {0}
  * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_7 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_7] - Failed to create orb and poa for transactional objects {1}
+ * @message com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_8 [com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_8] - RootPOA is null. Initialization failed. Check no conflicting or duplicate service is running.
  */
 
 public class JacOrbRCServiceInit implements RecoveryServiceInit
@@ -118,52 +119,52 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
                 _orb = com.arjuna.orbportability.internal.InternalORB.getInstance("RecoveryServer");
                 String[] params = null;
                 String recoveryManagerPort = ""+jtsPropertyManager.getJTSEnvironmentBean().getRecoveryManagerPort();
-        String recoveryManagerAddr = jtsPropertyManager.getJTSEnvironmentBean().getRecoveryManagerAddress();
+                String recoveryManagerAddr = jtsPropertyManager.getJTSEnvironmentBean().getRecoveryManagerAddress();
 
-        if (recoveryManagerAddr == null)
-            recoveryManagerAddr = "";
+                if (recoveryManagerAddr == null)
+                    recoveryManagerAddr = "";
 
-        if (jtsLogger.loggerI18N.isInfoEnabled())
+                if (jtsLogger.loggerI18N.isInfoEnabled())
                 {
                     jtsLogger.loggerI18N.info("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_6",
-                    new java.lang.Object[]{recoveryManagerPort, recoveryManagerAddr});
+                            new java.lang.Object[]{recoveryManagerPort, recoveryManagerAddr});
                 }
 
                 final Properties p = new Properties();
-        // Try to preload jacorb.properties
-        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader() ;
-        if (contextClassLoader != null)
-        {
-            final InputStream is = contextClassLoader.getResourceAsStream("jacorb.properties") ;
-            if (is != null)
-            {
-                try
+                // Try to preload jacorb.properties
+                final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader() ;
+                if (contextClassLoader != null)
                 {
-                    p.load(is) ;
+                    final InputStream is = contextClassLoader.getResourceAsStream("jacorb.properties") ;
+                    if (is != null)
+                    {
+                        try
+                        {
+                            p.load(is) ;
+                        }
+                        catch (final IOException ioe)
+                        {
+                            p.clear() ;
+                        }
+                    }
                 }
-                catch (final IOException ioe)
-                {
-                    p.clear() ;
-                }
-            }
-        }
                 p.setProperty(oaPort, recoveryManagerPort);
 
-        if (recoveryManagerAddr.length() != 0)
-        {
-            p.setProperty(oaAddr, recoveryManagerAddr);
-            System.setProperty(oaAddr, oldAddr);
-        }
+                if (recoveryManagerAddr.length() != 0)
+                {
+                    p.setProperty(oaAddr, recoveryManagerAddr);
+                    System.setProperty(oaAddr, oldAddr);
+                }
 
-        _orb.initORB(params, p);
+                _orb.initORB(params, p);
                 _oa = OA.getRootOA(_orb);
 
                 if (oldPort == null)
                     oldPort = "";
 
-        System.setProperty(oaPort, oldPort);    // Remove property that JacORB added so future ORB's work.
+                System.setProperty(oaPort, oldPort);    // Remove property that JacORB added so future ORB's work.
 
-        RecoveryORBManager.setORB(_orb);
+                RecoveryORBManager.setORB(_orb);
                 RecoveryORBManager.setPOA(_oa);
             }
             else
@@ -171,7 +172,7 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
                 /** Otherwise use the ORB already registered with the ORB Manager **/
                 _orb = RecoveryORBManager.getORB();
                 _oa = (RootOA) RecoveryORBManager.getPOA();
-
+                
                 oaInit = false;
 
                 if (jtsLogger.loggerI18N.isInfoEnabled())
@@ -207,6 +208,13 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
                 org.omg.CORBA.ORB theORB = _orb.orb();
                 org.omg.PortableServer.POA rootPOA = _oa.rootPoa();
 
+                if (rootPOA == null)
+                {
+                    jtsLogger.loggerI18N.warn("com.arjuna.ats.internal.jts.orbspecific.jacorb.recoverycoordinators.JacOrbRCServiceInit_8");
+                    
+                    return null;
+                }
+                    
                 // create direct persistent POA
                 // make the policy lists, with standard policies
                 org.omg.CORBA.Policy[] policies = null;
@@ -254,7 +262,7 @@ public class JacOrbRCServiceInit implements RecoveryServiceInit
                 org.omg.CORBA.Object obj = ourPOA.create_reference_with_id("RecoveryManager".getBytes(),
                                                                            RecoveryCoordinatorHelper.id());
 
-                // Write the object refenece in the file
+                // Write the object reference in the file
 
                 String reference = _orb.orb().object_to_string(obj);
 

@@ -33,10 +33,7 @@ package com.arjuna.ats.internal.jts;
 
 import com.arjuna.orbportability.*;
 
-import com.arjuna.ats.jts.common.jtsPropertyManager;
 import com.arjuna.ats.jts.logging.*;
-
-import com.arjuna.ats.internal.jts.recovery.RecoveryORBManager;
 
 /**
  * Manage the default ORB and POA used by the transaction service for

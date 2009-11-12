@@ -43,28 +43,34 @@ public class jacorb_2_0 extends POABase
 {
 
     /**
-     * @message com.arjuna.orbportability.internal.orbspecific.jacorb.oa.implementations.jacorb_2_0.norootoa {0} called without root POA.
+     * @message 
+     *          com.arjuna.orbportability.internal.orbspecific.jacorb.oa.implementations
+     *          .jacorb_2_0.norootoa {0} called without root POA.
      */
-public void createPOA (String adapterName,
-		       Policy[] policies) throws AdapterAlreadyExists, InvalidPolicy, AdapterInactive, SystemException
+    public void createPOA (String adapterName, Policy[] policies)
+            throws AdapterAlreadyExists, InvalidPolicy, AdapterInactive,
+            SystemException
     {
-	if (_poa == null)
-	{
-            if ( opLogger.loggerI18N.isWarnEnabled() )
+        if (_poa == null)
+        {
+            if (opLogger.loggerI18N.isWarnEnabled())
             {
-                opLogger.loggerI18N.warn( "com.arjuna.orbportability.internal.orbspecific.jacorb.oa.implementations.jacorb_2_0.norootoa",
-                                            new Object[] { "jacorb_2_0.createPOA" } );
+                opLogger.loggerI18N
+                        .warn(
+                                "com.arjuna.orbportability.internal.orbspecific.jacorb.oa.implementations.jacorb_2_0.norootoa",
+                                new Object[]
+                                { "jacorb_2_0.createPOA" });
             }
 
-	    throw new AdapterInactive();
-	}
+            throw new AdapterInactive();
+        }
 
-	POA childPoa = _poa.create_POA(adapterName, _poa.the_POAManager(), policies);
+        POA childPoa = _poa.create_POA(adapterName, _poa.the_POAManager(),
+                policies);
 
-	childPoa.the_POAManager().activate();
+        childPoa.the_POAManager().activate();
 
-	super._poas.put(adapterName, childPoa);
+        super._poas.put(adapterName, childPoa);
     }
 
 }
-
