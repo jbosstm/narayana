@@ -58,11 +58,7 @@ package org.jboss.jbossts.qa.CrashRecovery09Clients;
 
 
 import org.jboss.jbossts.qa.CrashRecovery09.*;
-import org.jboss.jbossts.qa.CrashRecovery09Utils.Delays;
-import org.jboss.jbossts.qa.Utils.OAInterface;
-import org.jboss.jbossts.qa.Utils.ORBInterface;
-import org.jboss.jbossts.qa.Utils.OTS;
-import org.jboss.jbossts.qa.Utils.ServerIORStore;
+import org.jboss.jbossts.qa.Utils.*;
 import org.omg.CORBA.IntHolder;
 
 public class Client01a
@@ -77,7 +73,7 @@ public class Client01a
 			String serviceIOR = ServerIORStore.loadIOR(args[args.length - 1]);
 			Service service = ServiceHelper.narrow(ORBInterface.orb().string_to_object(serviceIOR));
 
-			Thread.sleep(Delays.recoveryDelay());
+            CrashRecoveryDelays.awaitRecoveryCR09();
 
 			boolean correct = true;
 

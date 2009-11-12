@@ -39,6 +39,14 @@ public class CrashRecoveryDelays
         awaitRecovery(2, num_clients);
     }
 
+    public static void awaitRecoveryCR09() throws InterruptedException {
+        awaitRecovery(1, 1);
+    }
+
+    public static void awaitRecoveryCR10() throws InterruptedException {
+        awaitRecovery(1, 1);
+    }
+
     private static void awaitRecovery(int num_cycles, int num_clients) throws InterruptedException
     {
         // Note: this assumes the client is running with the same config as the rec mgr process.
