@@ -50,16 +50,6 @@ public abstract class POABase implements POAImple
         return _init;
     }
 
-    public boolean supportsBOA ()
-    {
-        return false;
-    }
-
-    public boolean supportsPOA ()
-    {
-        return true;
-    }
-
     public void init (com.arjuna.orbportability.orb.core.ORB orb)
             throws InvalidName, AdapterInactive, SystemException
     {
