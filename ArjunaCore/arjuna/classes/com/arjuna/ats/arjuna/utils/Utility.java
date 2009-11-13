@@ -51,6 +51,12 @@ import java.lang.NumberFormatException;
  * @since JTS 1.0.
  */
 
+/**
+ * @message com.arjuna.ats.arjuna.utils.Utility_2
+ *          [com.arjuna.ats.arjuna.utils.Utility_2] -
+ *          Unable to use InetAddress.getLocalHost() to resolve address.
+ */
+
 public class Utility
 {
 
@@ -190,8 +196,20 @@ public class Utility
             myAddr[1] = 0;
             
             byte[] b = null;
-            InetAddress addr = InetAddress.getLocalHost();
+            InetAddress addr;
 
+            try
+            { 
+                addr = InetAddress.getLocalHost(); 
+            }
+            catch (final UnknownHostException uhe)
+            { 
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                    tsLogger.arjLoggerI18N.warn("Utility_2");
+
+                addr = InetAddress.getByName(null); 
+            } 
+             
             if (addr instanceof Inet6Address)
             {
                 // 16 bytes to work with.
@@ -336,6 +354,7 @@ public class Utility
      *          [com.arjuna.ats.arjuna.utils.Utility_1] -
      *          Utility.getDefaultProcess - failed with
      */
+    @SuppressWarnings("unchecked")
     private static synchronized void initDefaultProcess ()
     {
         if(processHandle == null)
@@ -346,9 +365,10 @@ public class Utility
 
                 processHandle = (Process) c.newInstance();
             }
-            catch (Exception e)
+            catch (final Exception e)
             {
-                tsLogger.arjLoggerI18N.warn("Utility_1", e);
+                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                    tsLogger.arjLoggerI18N.warn("Utility_1", e);
             }
         }
     }
