@@ -37,7 +37,7 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
     @FullPropertyName(name = "com.arjuna.ats.arjuna.common.varDir")
     private volatile String varDir = System.getProperty("user.dir") + File.separator + "var" + File.separator + "tmp";
 
-    @FullPropertyName(name = "com.arjuna.ats.arjuna.xa.nodeIdentifier")
+    @FullPropertyName(name = "com.arjuna.ats.arjuna.nodeIdentifier")
     private volatile String nodeIdentifier = null;
 
     @FullPropertyName(name = "com.arjuna.ats.internal.arjuna.utils.SocketProcessIdPort")
@@ -80,7 +80,7 @@ public class CoreEnvironmentBean implements CoreEnvironmentBeanMBean
      * Returns the Node Identifier.
      *
      * Default: null
-     * Equivalent deprecated property: com.arjuna.ats.arjuna.xa.nodeIdentifier
+     * Equivalent deprecated property: com.arjuna.ats.arjuna.nodeIdentifier
      *
      * @return the Node Identifier.
      */
