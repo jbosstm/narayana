@@ -54,173 +54,212 @@ import com.arjuna.common.util.logging.DebugLevel;
 import com.arjuna.common.util.logging.VisibilityLevel;
 import com.arjuna.common.util.logging.FacilityCode;
 
-public class PropagationContextManager
-		implements TransactionPropagationContextFactory, TransactionPropagationContextImporter, ObjectFactory, Serializable
+public class PropagationContextManager implements
+        TransactionPropagationContextFactory,
+        TransactionPropagationContextImporter, ObjectFactory, Serializable
 {
-	/**
-	 *  Return a transaction propagation context for the transaction
-	 *  currently associated with the invoking thread, or <code>null</code>
-	 *  if the invoking thread is not associated with a transaction.
-	 */
+    private static final long serialVersionUID = 1L;
 
-	public Object getTransactionPropagationContext()
-	{
-		if (jbossatxLogger.logger.isDebugEnabled())
-		{
-			jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ALL,
-                    "PropagationContextManager.getTransactionPropagationContext - called");
-		}
+    /**
+     * Return a transaction propagation context for the transaction currently
+     * associated with the invoking thread, or <code>null</code> if the invoking
+     * thread is not associated with a transaction.
+     */
 
-        final String threadId = ThreadUtil.getThreadId() ;
-		ControlWrapper theControl;
+    public Object getTransactionPropagationContext ()
+    {
+        if (jbossatxLogger.logger.isDebugEnabled())
+        {
+            jbossatxLogger.logger
+                    .debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+                            FacilityCode.FAC_ALL,
+                            "PropagationContextManager.getTransactionPropagationContext - called");
+        }
 
-		if (threadId != null)
-		{
-			theControl = OTSImpleManager.current().contextManager().current(threadId);
-		}
-		else
-		{
-			theControl = OTSImpleManager.current().contextManager().current();
-		}
+        final String threadId = ThreadUtil.getThreadId();
+        ControlWrapper theControl;
 
-		try
-		{
-			final PropagationContext cxt = theControl.get_coordinator().get_txcontext();
-			PropagationContextWrapper pcw = new PropagationContextWrapper(cxt);
+        if (threadId != null)
+        {
+            theControl = OTSImpleManager.current().contextManager().current(
+                    threadId);
+        }
+        else
+        {
+            theControl = OTSImpleManager.current().contextManager().current();
+        }
+
+        try
+        {
+            final PropagationContext cxt = theControl.get_coordinator()
+                    .get_txcontext();
+            PropagationContextWrapper pcw = new PropagationContextWrapper(cxt);
 
             if (jbossatxLogger.logger.isDebugEnabled())
             {
-                jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ALL,
-                        "PropagationContextManager.getTransactionPropagationContext() - returned tpc = " + pcw);
+                jbossatxLogger.logger
+                        .debug(
+                                DebugLevel.FUNCTIONS,
+                                VisibilityLevel.VIS_PUBLIC,
+                                FacilityCode.FAC_ALL,
+                                "PropagationContextManager.getTransactionPropagationContext() - returned tpc = "
+                                        + pcw);
             }
-			
-			return pcw;
-		}
-		catch (Exception e)
-		{
-		}
 
-		return null;
-	}
+            return pcw;
+        }
+        catch (Exception e)
+        {
+        }
 
-	/**
-	 *  Return a transaction propagation context for the transaction
-	 *  given as an argument, or <code>null</code>
-	 *  if the argument is <code>null</code> or of a type unknown to
-	 *  this factory.
-	 */
+        return null;
+    }
 
-	public Object getTransactionPropagationContext(Transaction tx)
-	{
-		if (jbossatxLogger.logger.isDebugEnabled())
-		{
-			jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ALL,
-                    "PropagationContextManager.getTransactionPropagationContext(Transaction) - called tx = " + tx);
-		}
+    /**
+     * Return a transaction propagation context for the transaction given as an
+     * argument, or <code>null</code> if the argument is <code>null</code> or of
+     * a type unknown to this factory.
+     */
 
-		Transaction oldTx = null;
-		Object tpc = null;
-		javax.transaction.TransactionManager tm = TransactionManager.transactionManager();
+    public Object getTransactionPropagationContext (Transaction tx)
+    {
+        if (jbossatxLogger.logger.isDebugEnabled())
+        {
+            jbossatxLogger.logger
+                    .debug(
+                            DebugLevel.FUNCTIONS,
+                            VisibilityLevel.VIS_PUBLIC,
+                            FacilityCode.FAC_ALL,
+                            "PropagationContextManager.getTransactionPropagationContext(Transaction) - called tx = "
+                                    + tx);
+        }
 
-		try
-		{
-			oldTx = tm.getTransaction();
+        Transaction oldTx = null;
+        Object tpc = null;
+        javax.transaction.TransactionManager tm = TransactionManager
+                .transactionManager();
 
-			if ((tx == null) || (tx.equals(oldTx)))
-			{
-				// we are being called in the context of this transaction
-				tpc = getTransactionPropagationContext();
-			}
-			else
-			{
-				tm.suspend();
-				tm.resume(tx);
+        try
+        {
+            oldTx = tm.getTransaction();
 
-				tpc = getTransactionPropagationContext();
+            if ((tx == null) || (tx.equals(oldTx)))
+            {
+                // we are being called in the context of this transaction
+                tpc = getTransactionPropagationContext();
+            }
+            else
+            {
+                tm.suspend();
+                tm.resume(tx);
 
-				tm.suspend();
-				tm.resume(oldTx);
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+                tpc = getTransactionPropagationContext();
+
+                tm.suspend();
+                tm.resume(oldTx);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
         if (jbossatxLogger.logger.isDebugEnabled())
         {
-            jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ALL,
-                    "PropagationContextManager.getTransactionPropagationContext(Transaction) - returned tpc = " + tpc);
+            jbossatxLogger.logger
+                    .debug(
+                            DebugLevel.FUNCTIONS,
+                            VisibilityLevel.VIS_PUBLIC,
+                            FacilityCode.FAC_ALL,
+                            "PropagationContextManager.getTransactionPropagationContext(Transaction) - returned tpc = "
+                                    + tpc);
         }
-		
-		return tpc;
-	}
 
-	/**
-	 *  Import the transaction propagation context into the transaction
-	 *  manager, and return the resulting transaction.
-	 *  If this transaction propagation context has already been imported
-	 *  into the transaction manager, this method simply returns the
-	 *  <code>Transaction</code> representing the transaction propagation
-	 *  context in the local VM.
-	 *  Returns <code>null</code> if the transaction propagation context is
-	 *  <code>null</code>, or if it represents a <code>null</code> transaction.
-     *
-     * @message com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.exception
-     * [com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.exception] Unexpected exception occurred
-     * @message com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.unknownctx
-     * [com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.unknownctx] jboss-atx: unknown Tx PropagationContext
-	 */
+        return tpc;
+    }
 
-	public Transaction importTransactionPropagationContext(Object tpc)
-	{
-		if (jbossatxLogger.logger.isDebugEnabled())
-		{
-			jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ALL,
-                    "PropagationContextManager.importTransactionPropagationContext(Object) - called tpc = " + tpc);
-		}
+    /**
+     * Import the transaction propagation context into the transaction manager,
+     * and return the resulting transaction. If this transaction propagation
+     * context has already been imported into the transaction manager, this
+     * method simply returns the <code>Transaction</code> representing the
+     * transaction propagation context in the local VM. Returns
+     * <code>null</code> if the transaction propagation context is
+     * <code>null</code>, or if it represents a <code>null</code> transaction.
+     * 
+     * @message 
+     *          com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.exception
+     *          [com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.
+     *          exception] Unexpected exception occurred
+     * @message com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.
+     *          unknownctx
+     *          [com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager
+     *          .unknownctx] jboss-atx: unknown Tx PropagationContext
+     */
 
-		javax.transaction.TransactionManager tm = TransactionManager.transactionManager();
+    public Transaction importTransactionPropagationContext (Object tpc)
+    {
+        if (jbossatxLogger.logger.isDebugEnabled())
+        {
+            jbossatxLogger.logger
+                    .debug(
+                            DebugLevel.FUNCTIONS,
+                            VisibilityLevel.VIS_PUBLIC,
+                            FacilityCode.FAC_ALL,
+                            "PropagationContextManager.importTransactionPropagationContext(Object) - called tpc = "
+                                    + tpc);
+        }
 
-		if (tpc instanceof PropagationContextWrapper)
-		{
-			try
-			{
-				PropagationContext omgTpc = ((PropagationContextWrapper) tpc).getPropagationContext();
-				ExplicitInterposition ei = new ExplicitInterposition(omgTpc, true);
-				Transaction newTx = tm.getTransaction();
+        javax.transaction.TransactionManager tm = TransactionManager
+                .transactionManager();
 
-				if (jbossatxLogger.logger.isDebugEnabled())
-				{
-					jbossatxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_ALL,
-                            "PropagationContextManager.importTransactionPropagationContext(Object) - transaction = " + newTx);
-				}
+        if (tpc instanceof PropagationContextWrapper)
+        {
+            try
+            {
+                PropagationContext omgTpc = ((PropagationContextWrapper) tpc)
+                        .getPropagationContext();
+                ExplicitInterposition ei = new ExplicitInterposition(omgTpc,
+                        true);
+                Transaction newTx = tm.getTransaction();
 
+                if (jbossatxLogger.logger.isDebugEnabled())
+                {
+                    jbossatxLogger.logger
+                            .debug(
+                                    DebugLevel.FUNCTIONS,
+                                    VisibilityLevel.VIS_PUBLIC,
+                                    FacilityCode.FAC_ALL,
+                                    "PropagationContextManager.importTransactionPropagationContext(Object) - transaction = "
+                                            + newTx);
+                }
 
-				ei.unregisterTransaction();
+                ei.unregisterTransaction();
 
-				return newTx;
-			}
-			catch (Exception e)
-			{
-				jbossatxLogger.loggerI18N.error("com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.exception", e);
+                return newTx;
+            }
+            catch (Exception e)
+            {
+                jbossatxLogger.loggerI18N
+                        .error(
+                                "com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.exception",
+                                e);
 
-				return null;
-			}
-		}
-		else
-		{
-			jbossatxLogger.loggerI18N.error("com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.unknownctx");
+                return null;
+            }
+        }
+        else
+        {
+            jbossatxLogger.loggerI18N
+                    .error("com.arjuna.ats.internal.jbossatx.jts.PropagationContextManager.unknownctx");
 
-			return null;
-		}
-	}
+            return null;
+        }
+    }
 
-	public Object getObjectInstance(Object obj, Name name, Context nameCtx,
-									Hashtable environment) throws Exception
-	{
-		return new PropagationContextManager();
-	}
+    public Object getObjectInstance (Object obj, Name name, Context nameCtx,
+            Hashtable environment) throws Exception
+    {
+        return new PropagationContextManager();
+    }
 }
-
-
