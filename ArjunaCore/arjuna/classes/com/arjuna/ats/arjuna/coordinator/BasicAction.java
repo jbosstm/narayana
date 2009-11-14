@@ -497,10 +497,20 @@ public class BasicAction extends StateManager
 
 		//	if (lockMutex())
 		{
+		    /*
+		     * If we are active then change status. Otherwise it may be an error so check status.
+		     */
+		    
 			if (actionStatus == ActionStatus.RUNNING)
 				actionStatus = ActionStatus.ABORT_ONLY;
 
-			res = (actionStatus == ActionStatus.ABORT_ONLY);
+			/*
+			 * Since the reason to call this method is to make sure the transaction
+			 * only aborts, check the status now and if it has aborted or will abort then
+			 * we'll consider it a success.
+			 */
+			
+			res = ((actionStatus == ActionStatus.ABORT_ONLY) || (actionStatus == ActionStatus.ABORTED) || (actionStatus == ActionStatus.ABORTING));
 
 			//	    unlockMutex();
 		}

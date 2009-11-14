@@ -58,6 +58,8 @@ import javax.transaction.xa.*;
 import java.util.*;
 
 import javax.transaction.RollbackException;
+import javax.transaction.Status;
+
 import java.lang.IllegalStateException;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -83,6 +85,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @message com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface
  *          [com.arjuna.ats.internal.jta.transaction.arjunacore.lastResourceOptimisationInterface] -
  *          failed to load Last Resource Optimisation Interface
+ * @message com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate
+ *          [com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate] The
+ *          transaction is in an invalid state!
  */
 
 public class TransactionImple implements javax.transaction.Transaction,
@@ -177,9 +182,6 @@ public class TransactionImple implements javax.transaction.Transaction,
 	 * other resources, this is then the same as having simply been forced to
 	 * rollback the transaction during phase 1.
 	 *
-	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate
-	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate]
-	 *          Invalid transaction state
 	 * @message com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted
 	 *          [com.arjuna.ats.internal.jta.transaction.arjunacore.commitwhenaborted]
 	 *          Could not commit transaction.
@@ -344,42 +346,51 @@ public class TransactionImple implements javax.transaction.Transaction,
 	public void setRollbackOnly() throws java.lang.IllegalStateException,
 			javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"TransactionImple.setRollbackOnly");
-		}
+	    if (jtaLogger.logger.isDebugEnabled())
+	    {
+	        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+	                VisibilityLevel.VIS_PUBLIC,
+	                com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+	        "TransactionImple.setRollbackOnly");
+	    }
 
-		if (_theTransaction != null)
-		{
-			if (!_theTransaction.preventCommit())
-			{
-				switch (_theTransaction.status())
-				{
-				case ActionStatus.ABORTED:
-				case ActionStatus.ABORTING:
-					break;
-				default:
-					throw new IllegalStateException(
-							jtaLogger.logMesg
-									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
-				}
-			}
-            else
-            {
-                // keep a record of why we are rolling back i.e. who called us first, it's a useful debug aid.
-                if(_rollbackOnlyCallerStacktrace == null)
-                {
-                    _rollbackOnlyCallerStacktrace = new Throwable("setRollbackOnly called from:");
-                }
-            }
-		}
-		else
-			throw new IllegalStateException(
-					jtaLogger.logMesg
-							.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+	    if (_theTransaction != null)
+	    {
+	        /*
+	         * Try to mark the transaction as rollback-only. If that fails figure out why.
+	         */
+	        
+	        if (!_theTransaction.preventCommit())
+	        {
+	            switch (getStatus())
+                    {
+                    case Status.STATUS_ROLLEDBACK:
+                    case Status.STATUS_ROLLING_BACK:
+                        break;
+                    case Status.STATUS_PREPARING:
+                    case Status.STATUS_PREPARED:
+                        throw new InvalidTerminationStateException(
+                                jtaLogger.logMesg
+                                .getString("com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate"));
+                    default:
+                        throw new InactiveTransactionException(
+                                jtaLogger.logMesg
+                                .getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
+                    }
+	        }
+	        else
+	        {
+	            // keep a record of why we are rolling back i.e. who called us first, it's a useful debug aid.
+	            if(_rollbackOnlyCallerStacktrace == null)
+	            {
+	                _rollbackOnlyCallerStacktrace = new Throwable("setRollbackOnly called from:");
+	            }
+	        }
+	    }
+	    else
+	        throw new IllegalStateException(
+	                jtaLogger.logMesg
+	                .getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
 	}
 
 	public int getStatus() throws javax.transaction.SystemException

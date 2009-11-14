@@ -34,7 +34,10 @@ package com.arjuna.ats.jta.exceptions;
 import javax.transaction.SystemException;
 
 /**
- * Exception may be thrown under certain circumstances.
+ * Exception may be thrown under certain circumstances when we are
+ * forced to throw a SystemException but want to give more information.
+ * Blame JTA because it tends to fail the user in a way that JTS
+ * didn't do!
  *
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: NotImplementedException.java 2342 2006-03-30 13:06:17Z  $
