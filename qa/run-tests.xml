@@ -141,13 +141,13 @@
          <antcall target="junit-tests"><param name="tests" value="crashrecovery05_2"/></antcall>
         <!-- crashrecovery06 : 2 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery06"/></antcall>
-        <!-- crashrecovery07 : 16 tests, 12 minutes -->
+        <!-- crashrecovery07 : 16 tests, 4 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery07"/></antcall>
-        <!-- crashrecovery08 : 32 tests, 32 minutes -->
+        <!-- crashrecovery08 : 32 tests, 11 minutes -->
          <antcall target="junit-tests"><param name="tests" value="crashrecovery08"/></antcall>
-        <!-- crashrecovery09 : 6 tests, 4 minutes -->
+        <!-- crashrecovery09 : 6 tests, 2 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery09"/></antcall>
-        <!-- crashrecovery10 : 6 tests, 4 minutes -->
+        <!-- crashrecovery10 : 6 tests, 2 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery10"/></antcall>
         <!-- crashrecovery12 : 7 tests, 5 minutes -->
         <antcall target="junit-tests"><param name="tests" value="crashrecovery12"/></antcall>
@@ -362,12 +362,14 @@ unused groups, pending cleanup and wiring:
 ait01_ots_transactionmanager.java
 aitresources01.java
 crashrecovery13.java
+
 jdbclocals01_ibmdb2_jndi.java
 jdbclocals01_ms_sql_jndi.java
 jdbclocals01_mysql_jndi.java
 jdbclocals01_oracle_jndi.java
 jdbclocals01_postgresql_jndi.java
 jdbclocals01_sybase_jndi.java
+
 jdbcresources03_oracle_thin_jndi.java
 jdbcresources04_oracle_thin_jndi.java
 

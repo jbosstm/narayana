@@ -20,8 +20,13 @@
  */
 package org.jboss.jbossts.qa.Utils;
 
-import com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean;
 import com.arjuna.ats.arjuna.common.recoveryPropertyManager;
+
+import java.io.BufferedReader;
+import java.io.PrintStream;
+import java.io.InputStreamReader;
+import java.net.Socket;
+import java.net.InetAddress;
 
 /**
  * Utility class to hold delay functions for crash recovery tests.
@@ -47,6 +52,8 @@ public class CrashRecoveryDelays
         awaitRecovery(1, 1);
     }
 
+/*
+    // old, slow method - sleep long enough to ensure periodic cr will have occurred.
     private static void awaitRecovery(int num_cycles, int num_clients) throws InterruptedException
     {
         // Note: this assumes the client is running with the same config as the rec mgr process.
@@ -57,6 +64,62 @@ public class CrashRecoveryDelays
         int delay = ((num_cycles*recoveryCycleTime)+(num_clients*10))*1000;
         System.out.println("Sleeping for " + delay + " ms.");
         Thread.sleep(delay);
+    }
+*/
+
+    private static void awaitRecovery(int num_cycles, int num_clients) throws InterruptedException
+    {
+        for(int i = 0; i < num_cycles; i++) {
+            doRecovery();
+        }
+    }
+
+    // prod the recovery manager via its socket. This avoid any sleep delay.
+    private static void doRecovery() throws InterruptedException
+    {
+        int port = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryPort();
+
+        BufferedReader in = null;
+        PrintStream out = null;
+        Socket sckt = null;
+
+        try
+        {
+            sckt = new Socket(InetAddress.getLocalHost(),port);
+
+            in = new BufferedReader(new InputStreamReader(sckt.getInputStream()));
+            out = new PrintStream(sckt.getOutputStream());
+
+            // Output ping message
+            out.println("SCAN");
+
+            // Receive pong message
+            String inMessage = in.readLine();
+
+            if(!inMessage.equals("DONE")) {
+                System.err.println("Recovery failed with message: "+inMessage);
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        finally
+        {
+            try {
+                if ( in != null )
+                {
+                    in.close();
+                }
+
+                if ( out != null )
+                {
+                    out.close();
+                }
+
+                sckt.close();
+            } catch(Exception e) {}
+        }
     }
 
     /////////////////
