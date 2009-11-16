@@ -44,6 +44,8 @@ public class TaskImpl implements Task
 
     private final static String PROPERTIES_FILE = "TaskImpl.properties";
 
+    private final static List<String> additionalCommandLineElements = new LinkedList<String>();
+
     private static Properties properties = new Properties();
     static {
         try {
@@ -68,6 +70,18 @@ public class TaskImpl implements Task
                 matcher.appendTail(buffer);
                 String mungedvalue = buffer.toString();
                 properties.setProperty(name, mungedvalue);
+            }
+
+            // in addition to the props file, we allow properties via. "additional.properties" var
+
+            String additionalElementString = System.getProperty("additional.elements");
+            if(additionalElementString != null) {
+                String[] additionalElements = additionalElementString.split("\\s+");
+                for(String element : additionalElements) {
+                    if(element.length() > 0) {
+                        addCommandLineElement(element);
+                    }
+                }
             }
 
         } catch(Exception e) {
@@ -131,9 +145,6 @@ public class TaskImpl implements Task
      * or a Ready message has been printed. the reader thread alos needs to write the output to a log file.
      */
     private TaskErrorReaderThread taskErrorReaderThread;
-
-    // allow appending to the command line on a per-instance basis for e.g. extra "-Dcom.arjuna.foo=bar" statements.
-    private List<String> additionalCommandLineElements = new LinkedList<String>();
 
     /**
      * create a new task
@@ -504,7 +515,7 @@ public class TaskImpl implements Task
     // private implementation
 
     /**
-     * construct an execable command line to execute the supplied java class with the arguments in params,
+     * construct an executable command line to execute the supplied java class with the arguments in params,
      * substituting those in the form $(...) with corresponding values derived from the properties file.
      * @param classname
      * @param params
@@ -539,7 +550,7 @@ public class TaskImpl implements Task
         return list.toArray(new String[list.size()]);
     }
 
-    public void addCommandLineElement(String additionalCommandLineElement)
+    public static void addCommandLineElement(String additionalCommandLineElement)
     {
         additionalCommandLineElements.add(additionalCommandLineElement);
     }

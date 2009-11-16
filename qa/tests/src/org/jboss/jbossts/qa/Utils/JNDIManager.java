@@ -167,17 +167,9 @@ public class JNDIManager
 			//
 			try
 			{
-				Hashtable env = new Hashtable();
-				String initialCtx = System.getProperty("Context.INITIAL_CONTEXT_FACTORY");
-				String bindingsLocation = System.getProperty("Context.PROVIDER_URL");
-
-				if (bindingsLocation != null)
-				{
-					env.put(Context.PROVIDER_URL, bindingsLocation);
-				}
-
-				env.put(Context.INITIAL_CONTEXT_FACTORY, initialCtx);
-				InitialContext ctx = new InitialContext(env);
+                // expect suitable java.naming.provider.url and java.naming.factory.initial
+                // system properties have been set.
+				InitialContext ctx = new InitialContext();
 
 				ctx.rebind(binding, xaDataSourceToBind);
 
