@@ -1231,65 +1231,65 @@ public class ArjunaTransactionImple extends
 			currentStatus = determineStatus(this);
 
 			if (currentStatus == Status.StatusActive) // is transaction still
-													  // running?
+			    // running?
 			{
-				synchronized (this)
-				{
-					if (_synchs == null)
-                    {
-                        // Synchronizations should be stored (or at least iterated) in their natural order
-						_synchs = new TreeSet();
-                    }
-				}
+			    synchronized (this)
+			    {
+			        if (_synchs == null)
+			        {
+			            // Synchronizations should be stored (or at least iterated) in their natural order
+			            _synchs = new TreeSet();
+			        }
+			    }
 
-                SynchronizationRecord otsSync;
+			    SynchronizationRecord otsSync;
 
-                if(sync._is_a(JTAInterposedSynchronizationHelper.id()))
-                {
-                    otsSync = new SynchronizationRecord(sync, true);
-                }
-                else
-                {
-                    otsSync = new SynchronizationRecord(sync);
-                }
+			    if(sync._is_a(JTAInterposedSynchronizationHelper.id()))
+			    {
+			        otsSync = new SynchronizationRecord(sync, true);
+			    }
+			    else
+			    {
+			        otsSync = new SynchronizationRecord(sync);
+			    }
 
-                // disallow addition of Synchronizations that would appear
-				// earlier in sequence than any that has already been called
-				// during the pre-commmit phase. This is required for
-				// JTA 1.1 Synchronization ordering behaviour
-				if(_currentRecord != null) {
-					Comparable c = (Comparable)otsSync;
-					if(c.compareTo(_currentRecord) != 1) {
-						throw new UNKNOWN(ExceptionCodes.ADD_FAILED, CompletionStatus.COMPLETED_NO);
-					}
-				}
+			    // disallow addition of Synchronizations that would appear
+			    // earlier in sequence than any that has already been called
+			    // during the pre-commmit phase. This is required for
+			    // JTA 1.1 Synchronization ordering behaviour
+			    if(_currentRecord != null) {
+			        Comparable c = (Comparable)otsSync;
+			        if(c.compareTo(_currentRecord) != 1) {
+			            throw new UNKNOWN(ExceptionCodes.ADD_FAILED, CompletionStatus.COMPLETED_NO);
+			        }
+			    }
 
-                if (!_synchs.add(otsSync))
-				{
-					otsSync = null;
-					throw new UNKNOWN(ExceptionCodes.ADD_FAILED,
-							CompletionStatus.COMPLETED_NO); // what else to
-															// raise?
-				}
+			    if (!_synchs.add(otsSync))
+			    {
+			        otsSync = null;
+			        throw new UNKNOWN(ExceptionCodes.ADD_FAILED,
+			                CompletionStatus.COMPLETED_NO); // what else to
+			        // raise?
+			    }
 			}
 			else
 			{
-				if (jtsLogger.logger.isDebugEnabled())
-				{
-					jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_synchronization - "
-							+ get_uid()
-							+ " is not active: "
-							+ Utility.stringStatus(currentStatus));
-				}
+			    if (jtsLogger.logger.isDebugEnabled())
+			    {
+			        jtsLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "ArjunaTransactionImple::register_synchronization - "
+			                + get_uid()
+			                + " is not active: "
+			                + Utility.stringStatus(currentStatus));
+			    }
 
-				if (currentStatus == Status.StatusMarkedRollback)
-				{
-					throw new TRANSACTION_ROLLEDBACK(
-							ExceptionCodes.MARKED_ROLLEDBACK,
-							CompletionStatus.COMPLETED_NO);
-				}
-				else
-					throw new Inactive();
+			    if (currentStatus == Status.StatusMarkedRollback)
+			    {
+			        throw new TRANSACTION_ROLLEDBACK(
+			                ExceptionCodes.MARKED_ROLLEDBACK,
+			                CompletionStatus.COMPLETED_NO);
+			    }
+			    else
+			        throw new Inactive();
 			}
 		}
 	}

@@ -46,6 +46,7 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.internal.arjuna.Header;
 import com.arjuna.ats.internal.arjuna.abstractrecords.ActivationRecord;
 import com.arjuna.ats.internal.arjuna.abstractrecords.CadaverActivationRecord;
 import com.arjuna.ats.internal.arjuna.abstractrecords.CadaverRecord;
@@ -139,9 +140,9 @@ public class StateManager
                 BasicAction action = BasicAction.Current();
 
                 if (action == null)
-                    packHeader(os, null, Utility.getProcessUid());
+                    packHeader(os, new Header(null, Utility.getProcessUid()));
                 else
-                    packHeader(os, action.get_uid(), Utility.getProcessUid());
+                    packHeader(os, new Header(action.get_uid(), Utility.getProcessUid()));
             }
             catch (IOException e)
             {
@@ -168,10 +169,7 @@ public class StateManager
         {
             try
             {
-                Uid txId = new Uid(Uid.nullUid());
-                Uid processUid = new Uid(Uid.nullUid());
-
-                unpackHeader(os, txId, processUid);
+                unpackHeader(os, new Header());
             }
             catch (IOException e)
             {
@@ -721,7 +719,7 @@ public class StateManager
      * @since JTS 2.1.
      */
 
-    protected void packHeader (OutputObjectState os, Uid txId, Uid processUid)
+    protected void packHeader (OutputObjectState os, Header hdr)
             throws IOException
     {
         /*
@@ -729,6 +727,9 @@ public class StateManager
          * JVM and the tx id. Otherwise pack a null Uid.
          */
 
+        Uid txId = ((hdr == null) ? null : hdr.getTxId());
+        Uid processUid = ((hdr == null) ? null : hdr.getProcessId());
+        
         try
         {
             // pack the marker first.
@@ -782,11 +783,17 @@ public class StateManager
      *            be written to the object store.
      */
 
-    protected void unpackHeader (InputObjectState os, Uid txId, Uid processUid)
+    protected void unpackHeader (InputObjectState os, Header hdr)
             throws IOException
     {
         try
         {
+            if (hdr == null)
+                throw new NullPointerException();
+            
+            Uid txId = null;
+            Uid processUid = null;
+            
             String myState = os.unpackString();
 
             if (myState.equals(StateManager.marker))
@@ -821,12 +828,15 @@ public class StateManager
                         "StateManager.unpackHeader for object-id " + get_uid()
                                 + " birth-date " + birthDate);
             }
+            
+            hdr.setTxId(txId);
+            hdr.setProcessId(processUid);
         }
         catch (IOException ex)
         {
             throw ex;
         }
-        catch (Exception e)
+        catch (final Throwable e)
         {
             IOException ioException = new IOException(e.toString());
             ioException.initCause(e);

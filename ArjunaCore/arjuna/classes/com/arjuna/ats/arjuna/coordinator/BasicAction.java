@@ -40,6 +40,7 @@ import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.utils.ThreadUtil;
 import com.arjuna.ats.arjuna.utils.Utility;
+import com.arjuna.ats.internal.arjuna.Header;
 import com.arjuna.ats.internal.arjuna.coordinator.CheckedActionFactoryImple;
 import com.arjuna.ats.internal.arjuna.thread.*;
 import java.util.*;
@@ -1145,7 +1146,7 @@ public class BasicAction extends StateManager
 
 		try
 		{
-			packHeader(os, get_uid(), Utility.getProcessUid());
+			packHeader(os, new Header(get_uid(), Utility.getProcessUid()));
 		}
 		catch (IOException e)
 		{
@@ -1390,10 +1391,9 @@ public class BasicAction extends StateManager
 
 		try
 		{
-			Uid txId = new Uid(Uid.nullUid());
-			Uid processUid = new Uid(Uid.nullUid());
+			Header hdr = new Header();
 
-			unpackHeader(os, txId, processUid);
+			unpackHeader(os, hdr);
 		}
 		catch (IOException e)
 		{

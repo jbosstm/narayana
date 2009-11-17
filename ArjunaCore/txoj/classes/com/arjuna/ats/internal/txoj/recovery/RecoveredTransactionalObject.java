@@ -47,236 +47,324 @@ import java.util.*;
 import java.io.PrintWriter;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
+import com.arjuna.ats.internal.arjuna.Header;
+
 import java.io.IOException;
 
 /**
- * TransactionalObject shell instantiated at recovery time. 
- * <p>Instantiated only for 
- * TransactionalObjects that are found (by {@link TORecoveryModule}) to be in
- * an uncommitted (indeterminate) state. The status of the transaction that
- * created the uncommitted state is determined - if the transaction rolled
- * back, the original state of the TransactionalObject is
- * reinstated. If the transaction rolled back (or is still in progress), no
+ * TransactionalObject shell instantiated at recovery time.
+ * <p>
+ * Instantiated only for TransactionalObjects that are found (by
+ * {@link TORecoveryModule}) to be in an uncommitted (indeterminate) state. The
+ * status of the transaction that created the uncommitted state is determined -
+ * if the transaction rolled back, the original state of the TransactionalObject
+ * is reinstated. If the transaction rolled back (or is still in progress), no
  * change is made - the completion (including completion in recovery) of the
  * transaction will be applied to the transactional object (eventually).
- * <p>Instantiation from the ObjectStore ignores all of the TO except for the
- * information in the header 
- * ( see {@link com.arjuna.ats.arjuna.StateManager#packHeader StateManager.packHeader}), 
- * which is overridden by this class).
+ * <p>
+ * Instantiation from the ObjectStore ignores all of the TO except for the
+ * information in the header ( see
+ * {@link com.arjuna.ats.arjuna.StateManager#packHeader StateManager.packHeader}
+ * ), which is overridden by this class).
  * <P>
- * @author Peter Furniss (peter.furniss@arjuna.com), Mark Little (mark_little@hp.com)
- * @version $Id: RecoveredTransactionalObject.java 2342 2006-03-30 13:06:17Z  $
- *
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_1 [com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_1] - RecoveredTransactionalObject created for {0}
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_2 [com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_2] - TO held by transaction {0}
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_3 [com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_3] - transaction status {0}
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_4 [com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_4] - transaction Status from original application {0} and inactive: {1}
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_5 [com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_5] - RecoveredTransactionalObject.replayPhase2 - cannot find/no holding transaction
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_6 [com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_6] - RecoveredTransactionalObject tried to access object store {0}
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_7 [com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_7] - RecoveredTransactionalObject::findHoldingTransaction - uid is {0}
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_8 [com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_8] - RecoveredTransactionalObject::findHoldingTransaction - exception {0}
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_9 [com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_9] - Object store exception on removing uncommitted state: {0} {1}
- * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_10 [com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_10] - Object store exception on committing {0} {1}
+ * 
+ * @author Peter Furniss (peter.furniss@arjuna.com), Mark Little
+ *         (mark_little@hp.com)
+ * @version $Id: RecoveredTransactionalObject.java 2342 2006-03-30 13:06:17Z $
+ * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_1
+ *          [com.arjuna.ats.internal.txoj.recovery.
+ *          RecoveredTransactionalObject_1] - RecoveredTransactionalObject
+ *          created for {0}
+ * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_2
+ *          [com.arjuna.ats.internal.txoj.recovery.
+ *          RecoveredTransactionalObject_2] - TO held by transaction {0}
+ * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_3
+ *          [com.arjuna.ats.internal.txoj.recovery.
+ *          RecoveredTransactionalObject_3] - transaction status {0}
+ * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_4
+ *          [com.arjuna.ats.internal.txoj.recovery.
+ *          RecoveredTransactionalObject_4] - transaction Status from original
+ *          application {0} and inactive: {1}
+ * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_5
+ *          [com.arjuna.ats.internal.txoj.recovery.
+ *          RecoveredTransactionalObject_5] -
+ *          RecoveredTransactionalObject.replayPhase2 - cannot find/no holding
+ *          transaction
+ * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_6
+ *          [com.arjuna.ats.internal.txoj.recovery.
+ *          RecoveredTransactionalObject_6] - RecoveredTransactionalObject tried
+ *          to access object store {0}
+ * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_7
+ *          [com.arjuna.ats.internal.txoj.recovery.
+ *          RecoveredTransactionalObject_7] -
+ *          RecoveredTransactionalObject::findHoldingTransaction - uid is {0}
+ * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_8
+ *          [com.arjuna.ats.internal.txoj.recovery.
+ *          RecoveredTransactionalObject_8] -
+ *          RecoveredTransactionalObject::findHoldingTransaction - exception {0}
+ * @message com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_9
+ *          [com.arjuna.ats.internal.txoj.recovery.
+ *          RecoveredTransactionalObject_9] - Object store exception on removing
+ *          uncommitted state: {0} {1}
+ * @message 
+ *          com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_10
+ *          [com.arjuna.ats.internal.txoj.recovery.
+ *          RecoveredTransactionalObject_10] - Object store exception on
+ *          committing {0} {1}
  */
 
 /*
- * Does not extend LockManager or StateManager because they are concerned with 
+ * Does not extend LockManager or StateManager because they are concerned with
  * activating the committed state, and this is only concerned with the
  * uncommitted.
  */
- 
+
 public class RecoveredTransactionalObject extends StateManager
 {
 
-RecoveredTransactionalObject (Uid objectUid, String originalType,
-			      ObjectStore objectStore)
+    RecoveredTransactionalObject(Uid objectUid, String originalType,
+            ObjectStore objectStore)
     {
-	_ourUid = objectUid;
-	_type = originalType;
-	_objectStore = objectStore;
-	_transactionStatusConnectionMgr = new TransactionStatusConnectionManager() ;
-	
-	if (txojLogger.aitLoggerI18N.isDebugEnabled())
-	{
-	    txojLogger.aitLoggerI18N.debug(DebugLevel.CONSTRUCTORS, VisibilityLevel.VIS_PACKAGE,
-					 com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-					 "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_1", 
-					 new Object[]{_ourUid});
-	}
+        _ourUid = objectUid;
+        _type = originalType;
+        _objectStore = objectStore;
+        _transactionStatusConnectionMgr = new TransactionStatusConnectionManager();
+
+        if (txojLogger.aitLoggerI18N.isDebugEnabled())
+        {
+            txojLogger.aitLoggerI18N
+                    .debug(
+                            DebugLevel.CONSTRUCTORS,
+                            VisibilityLevel.VIS_PACKAGE,
+                            com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
+                            "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_1",
+                            new Object[]
+                            { _ourUid });
+        }
     }
-    
-final void replayPhase2 ()
+
+    final void replayPhase2 ()
     {
-	if (findHoldingTransaction())
-	{
-	    /*
-	     * There is a transaction holding this in uncommitted state
-	     * find out what the Status is.
-	     *
-	     * We have no idea what type of transaction it is, so leave
-	     * that to the cache.
-	     */
+        if (findHoldingTransaction())
+        {
+            /*
+             * There is a transaction holding this in uncommitted state find out
+             * what the Status is. We have no idea what type of transaction it
+             * is, so leave that to the cache.
+             */
 
-	    if (txojLogger.aitLoggerI18N.isDebugEnabled())
-	    {
-		txojLogger.aitLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					     com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-					     "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_2",
-					     new Object[]{_owningTransactionUid});
-	    }
+            if (txojLogger.aitLoggerI18N.isDebugEnabled())
+            {
+                txojLogger.aitLoggerI18N
+                        .debug(
+                                DebugLevel.FUNCTIONS,
+                                VisibilityLevel.VIS_PUBLIC,
+                                com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
+                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_2",
+                                new Object[]
+                                { _owningTransactionUid });
+            }
 
-	    int tranStatus = _transactionStatusConnectionMgr.getTransactionStatus(_owningTransactionUid);
+            int tranStatus = _transactionStatusConnectionMgr
+                    .getTransactionStatus(_owningTransactionUid);
 
-	    if (txojLogger.aitLoggerI18N.isDebugEnabled())
-	    {
-		txojLogger.aitLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					     com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-					     "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_3",
-					     new Object[]{ActionStatus.stringForm(tranStatus)});
-	    }
+            if (txojLogger.aitLoggerI18N.isDebugEnabled())
+            {
+                txojLogger.aitLoggerI18N
+                        .debug(
+                                DebugLevel.FUNCTIONS,
+                                VisibilityLevel.VIS_PUBLIC,
+                                com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
+                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_3",
+                                new Object[]
+                                { ActionStatus.stringForm(tranStatus) });
+            }
 
-	    boolean inactive = false;
-	    
-	    if (tranStatus == ActionStatus.INVALID) // should be ActionStatus.NO_ACTION
-	    {
-		if (txojLogger.aitLoggerI18N.isDebugEnabled())
-		{
-		    if (inactive)
-			txojLogger.aitLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						     com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-						     "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_4", new Object[]{Integer.toString(tranStatus), "true"});
-		    else 
-			txojLogger.aitLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-						     com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-						     "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_4", new Object[]{Integer.toString(tranStatus), "false"});
-		}
-		
-		inactive = true;
-	    }
+            boolean inactive = false;
 
-	    /*
-	     * Only do anything if we are sure the transaction rolledback
-	     * if it is still in progress in the original application, let
-	     * that run otherwise the transaction should recover and do the
-	     * committment eventually.
-	     */
+            if (tranStatus == ActionStatus.INVALID) // should be
+                                                    // ActionStatus.NO_ACTION
+            {
+                if (txojLogger.aitLoggerI18N.isDebugEnabled())
+                {
+                    if (inactive)
+                        txojLogger.aitLoggerI18N
+                                .debug(
+                                        DebugLevel.FUNCTIONS,
+                                        VisibilityLevel.VIS_PUBLIC,
+                                        com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
+                                        "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_4",
+                                        new Object[]
+                                        { Integer.toString(tranStatus), "true" });
+                    else
+                        txojLogger.aitLoggerI18N
+                                .debug(
+                                        DebugLevel.FUNCTIONS,
+                                        VisibilityLevel.VIS_PUBLIC,
+                                        com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
+                                        "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_4",
+                                        new Object[]
+                                        { Integer.toString(tranStatus), "false" });
+                }
 
-	    if ((tranStatus == ActionStatus.ABORTED) || inactive)
-	    {
-		rollback();
-	    }
-	}
-	else
-	{
-	    if (txojLogger.aitLoggerI18N.isDebugEnabled())
-	    {
-		txojLogger.aitLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					     com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-					       "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_5");
-	    }
-	}
+                inactive = true;
+            }
+
+            /*
+             * Only do anything if we are sure the transaction rolledback if it
+             * is still in progress in the original application, let that run
+             * otherwise the transaction should recover and do the committment
+             * eventually.
+             */
+
+            if ((tranStatus == ActionStatus.ABORTED) || inactive)
+            {
+                rollback();
+            }
+        }
+        else
+        {
+            if (txojLogger.aitLoggerI18N.isDebugEnabled())
+            {
+                txojLogger.aitLoggerI18N
+                        .debug(
+                                DebugLevel.FUNCTIONS,
+                                VisibilityLevel.VIS_PUBLIC,
+                                com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
+                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_5");
+            }
+        }
     }
-    
+
     /**
-     *  Determine which transaction got this into uncommitted state
-     *  return true if there is such a transaction
+     * Determine which transaction got this into uncommitted state return true
+     * if there is such a transaction
      */
 
-private final boolean findHoldingTransaction ()
+    private final boolean findHoldingTransaction ()
     {
-	InputObjectState uncommittedState = null;
-	
-	_originalProcessUid = new Uid(Uid.nullUid());
-	
-	try
-	{
-	    uncommittedState = _objectStore.read_uncommitted(_ourUid, _type);
-	}
-	catch (ObjectStoreException e)
-	{
-	    if (txojLogger.aitLoggerI18N.isDebugEnabled())
-	    {
-		txojLogger.aitLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PACKAGE,
-					 com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY, 
-					 "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_6", 
-					 new Object[]{e});
-	    }
-		    
-	    return false;   // probably
-	}
+        InputObjectState uncommittedState = null;
 
-	/*
-	 * Get the transaction and original process information from the
-	 * saved state.
-	 */
+        _originalProcessUid = new Uid(Uid.nullUid());
 
-	_originalProcessUid = new Uid(Uid.nullUid());
-	_owningTransactionUid = new Uid(Uid.nullUid());
+        try
+        {
+            uncommittedState = _objectStore.read_uncommitted(_ourUid, _type);
+        }
+        catch (ObjectStoreException e)
+        {
+            if (txojLogger.aitLoggerI18N.isDebugEnabled())
+            {
+                txojLogger.aitLoggerI18N
+                        .debug(
+                                DebugLevel.FUNCTIONS,
+                                VisibilityLevel.VIS_PACKAGE,
+                                com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
+                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_6",
+                                new Object[]
+                                { e });
+            }
 
-	try
-	{
-	    
-	    unpackHeader(uncommittedState, _owningTransactionUid, _originalProcessUid);
+            return false; // probably
+        }
 
-	    if (txojLogger.aitLoggerI18N.isDebugEnabled())
-	    {
-		txojLogger.aitLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					 com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-					 "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_7", 
-					 new Object[]{_owningTransactionUid});
-	    }
+        /*
+         * Get the transaction and original process information from the saved
+         * state.
+         */
 
-	    return _owningTransactionUid.notEquals(Uid.nullUid());
-	}
-	catch (Exception e)
-	{
-	    if (txojLogger.aitLoggerI18N.isDebugEnabled()){
-		txojLogger.aitLoggerI18N.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
-					 com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
-					 "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_8", 
-					 new Object[]{e});
-	    }
-	}
+        _originalProcessUid = null;
+        _owningTransactionUid = null;
 
-	return false;
+        try
+        {
+            Header hdr = new Header();
+            
+            unpackHeader(uncommittedState, hdr);
+
+            _originalProcessUid = hdr.getProcessId();
+            _owningTransactionUid = hdr.getTxId();
+            
+            if (txojLogger.aitLoggerI18N.isDebugEnabled())
+            {
+                txojLogger.aitLoggerI18N
+                        .debug(
+                                DebugLevel.FUNCTIONS,
+                                VisibilityLevel.VIS_PUBLIC,
+                                com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
+                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_7",
+                                new Object[]
+                                { _owningTransactionUid });
+            }
+
+            return _owningTransactionUid.notEquals(Uid.nullUid());
+        }
+        catch (Exception e)
+        {
+            if (txojLogger.aitLoggerI18N.isDebugEnabled())
+            {
+                txojLogger.aitLoggerI18N
+                        .debug(
+                                DebugLevel.FUNCTIONS,
+                                VisibilityLevel.VIS_PUBLIC,
+                                com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY,
+                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_8",
+                                new Object[]
+                                { e });
+            }
+        }
+
+        return false;
     }
-    
-private final void rollback ()
+
+    private final void rollback ()
     {
-	try
-	{
-	    _objectStore.remove_uncommitted(_ourUid, _type);
-	}
-	catch (ObjectStoreException e)
-	{
-	    if (txojLogger.aitLoggerI18N.isWarnEnabled()){
-		txojLogger.aitLoggerI18N.warn("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_9",
-					    new Object[]{_ourUid, e});
-	    }
-	}
+        try
+        {
+            _objectStore.remove_uncommitted(_ourUid, _type);
+        }
+        catch (ObjectStoreException e)
+        {
+            if (txojLogger.aitLoggerI18N.isWarnEnabled())
+            {
+                txojLogger.aitLoggerI18N
+                        .warn(
+                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_9",
+                                new Object[]
+                                { _ourUid, e });
+            }
+        }
     }
 
-private final void commit ()
+    private final void commit ()
     {
-	try
-	{
-	    _objectStore.commit_state(_ourUid, _type);
-	}
-	catch (ObjectStoreException e)
-	{
-	    if (txojLogger.aitLoggerI18N.isWarnEnabled()){
-		txojLogger.aitLoggerI18N.warn("com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_10",
-					    new Object[]{_ourUid, e});
-	    }
-	}
+        try
+        {
+            _objectStore.commit_state(_ourUid, _type);
+        }
+        catch (ObjectStoreException e)
+        {
+            if (txojLogger.aitLoggerI18N.isWarnEnabled())
+            {
+                txojLogger.aitLoggerI18N
+                        .warn(
+                                "com.arjuna.ats.internal.txoj.recovery.RecoveredTransactionalObject_10",
+                                new Object[]
+                                { _ourUid, e });
+            }
+        }
     }
-    
-private Uid	                           _ourUid;
-private Uid	                           _owningTransactionUid;
-private Uid	                           _originalProcessUid;
-private ObjectStore                        _objectStore;
-private String	                           _type;
-private TransactionStatusConnectionManager _transactionStatusConnectionMgr;
 
-    
+    private Uid _ourUid;
+
+    private Uid _owningTransactionUid;
+
+    private Uid _originalProcessUid;
+
+    private ObjectStore _objectStore;
+
+    private String _type;
+
+    private TransactionStatusConnectionManager _transactionStatusConnectionMgr;
+
 }

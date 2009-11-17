@@ -125,6 +125,8 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 		int result = AddOutcome.AR_REJECTED;
 
+		// only allow registration for top-level transactions.
+		
 		if (parent() != null)
 			return AddOutcome.AR_REJECTED;
 
