@@ -93,11 +93,11 @@
             <param name="tests" value="txcore"/>
             <param name="additional.elements" value="-DCoordinatorEnvironmentBean.enableStatistics=true"/>
         </antcall>
-        <!-- txcore_lockrecord : 128 tests, 3 minutes -->
+        <!-- txcore_lockrecord : 112 tests, 3 minutes -->
         <antcall target="junit-tests"><param name="tests" value="txcore_lockrecord"/></antcall>
-        <!-- txcore_abstractrecord : 40 tests, 1 minute -->
+        <!-- txcore_abstractrecord : 32 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="txcore_abstractrecord"/></antcall>
-        <!-- txcore_statemanager : 80 tests, 2 minutes -->
+        <!-- txcore_statemanager : 64 tests, 2 minutes -->
         <antcall target="junit-tests"><param name="tests" value="txcore_statemanager"/></antcall>
         <!-- txcore_utility : 40 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="txcore_utility"/></antcall>
@@ -265,9 +265,19 @@
         <property name="additional.elements"
                   value="-Dcom.arjuna.ats.arjuna.common.propertiesFile=../ArjunaJTA/jbossts-properties-arjunajta.xml"/>
 
-        <!-- txcore: 352 tests, 3.5 hrs
-            Some memory tests fail, see JBTM-555 -->
-        <!-- <antcall target="junit-tests"><param name="tests" value="txcore"/></antcall> -->
+        <!-- txcore : 28 tests, 2 minutes -->
+        <antcall target="junit-tests">
+            <param name="tests" value="txcore"/>
+            <param name="additional.elements" value="-DCoordinatorEnvironmentBean.enableStatistics=true"/>
+        </antcall>
+        <!-- txcore_lockrecord : 112 tests, 3 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="txcore_lockrecord"/></antcall>
+        <!-- txcore_abstractrecord : 32 tests, 1 minute -->
+        <antcall target="junit-tests"><param name="tests" value="txcore_abstractrecord"/></antcall>
+        <!-- txcore_statemanager : 64 tests, 2 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="txcore_statemanager"/></antcall>
+        <!-- txcore_utility : 40 tests, 1 minute -->
+        <antcall target="junit-tests"><param name="tests" value="txcore_utility"/></antcall>
 
         <!-- jtatest01 : 6 tests, minute-->
         <antcall target="junit-tests"><param name="tests" value="jtatests01"/></antcall>
@@ -310,6 +320,19 @@
         <!-- perfprofile01_e (JTS explicit) : 25 tests, 35 minutes -->
         <antcall target="junit-tests"><param name="tests" value="perfprofile01_e"/></antcall>
     </target>
+
+    <target name="core-memory">
+
+        <!-- txcore_memory : 40 tests -->
+        <antcall target="junit-tests">
+            <param name="tests" value="txcore_memory"/>
+            <!-- you need the right .so for the platform the test runs on. Note the the jvm
+            may print 'can't find agent lib' when it can find one but it's the wrong one.
+              ext/libjbossAgent_linux64.so : Fedora 12, x86_64 -->
+            <param name="additional.elements" value="-agentpath:ext/libjbossAgent_linux64.so"/>
+        </antcall>
+
+    </target>    
 
     <!-- ##################################### -->
 
@@ -382,6 +405,8 @@ crashrecovery13.java
 
 jdbcresources03_oracle_thin_jndi.java
 jdbcresources04_oracle_thin_jndi.java
+
+txcore_memory : 40 tests  JBTM-555
 
 txcore_recovery.java - JBTM-522 and rec module
 txoj.java - thse should be unit tests.

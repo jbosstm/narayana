@@ -73,6 +73,7 @@
 		<fileset file="${org.jboss.jbossts.qa.server_manager_location}" />
         <pathelement path="${org.jboss.jbossts.qa.orb.classpath}"/>
         <pathelement location="../../ext/junit-4.6.jar"/>
+        <pathelement location="../ext/jboss-profiler-jvmti.jar"/>
 	</path>
 
 	<target name="org.jboss.jbossts.qa.init">

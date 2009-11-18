@@ -159,8 +159,7 @@ public class BaseTestClient extends BaseTestCase
 		if (clientMemoryIncrease > clientIncreaseThreshold)
 		{
 			Debug("Memory increase too high");
-			// TODO: re-enable me! JBTM-555
-            //mCorrect = false;
+            mCorrect = false;
 		}
 
 		qaAssert(mCorrect);

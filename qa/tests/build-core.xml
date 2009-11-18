@@ -33,6 +33,7 @@
 			<include name="arjunacore.jar"/>
 		</fileset>
         <pathelement location="../../ext/junit-4.6.jar"/>
+        <pathelement location="../ext/jboss-profiler-jvmti.jar"/>
 	</path>
 
 	<target name="org.jboss.jbossts.qa.core.init">

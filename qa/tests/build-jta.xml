@@ -59,6 +59,7 @@
 			<include name="jta-1_1-classes.zip"/>
 		</fileset>
         <pathelement location="../../ext/junit-4.6.jar"/>
+        <pathelement location="../ext/jboss-profiler-jvmti.jar"/>
 
 		<fileset file="${org.jboss.jbossts.qa.server_manager_location}" />
 	</path>
