@@ -50,7 +50,7 @@ public class StartCrashAbstractRecordImpl extends AbstractRecord
 		// to get the appropriate ordering it is necessary to
 		// fabricate a suitable objectUid
 		//
-		super(new Uid("-7FFFFFFF:0:0:0"), "StartCrashAbstractRecord", ObjectType.NEITHER);
+		super(new Uid("-7FFFFFFF:-7FFFFFFF:0:0:0"), "StartCrashAbstractRecord", ObjectType.NEITHER);
 
 		_crashBehavior = crashBehavior;
 	}

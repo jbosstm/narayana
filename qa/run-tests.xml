@@ -42,6 +42,13 @@
     <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
     <target name="scratch">
 
+        <!-- txcore_recovery :  36 tests, 18 minutes, 12 fails, sleeps too long - need tuning -->
+        <antcall target="junit-tests">
+            <param name="tests" value="txcore_recovery"/>
+            <param name="names" value="Recovery_Crash_LockManager_Test005"/>
+            <param name="additional.elements" value="-DCoordinatorEnvironmentBean.writeOptimisation=true"/>
+        </antcall>
+
     </target>
 
     <!-- a faster subset of the tests for smoke testing. aim to keep to under one hour total. -->
