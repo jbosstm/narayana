@@ -89,7 +89,10 @@
     <target name="junit">
 
         <!-- txcore : 28 tests, 2 minutes -->
-        <antcall target="junit-tests"><param name="tests" value="txcore"/></antcall>
+        <antcall target="junit-tests">
+            <param name="tests" value="txcore"/>
+            <param name="additional.elements" value="-DCoordinatorEnvironmentBean.enableStatistics=true"/>
+        </antcall>
         <!-- txcore_lockrecord : 128 tests, 3 minutes -->
         <antcall target="junit-tests"><param name="tests" value="txcore_lockrecord"/></antcall>
         <!-- txcore_abstractrecord : 40 tests, 1 minute -->
