@@ -82,6 +82,7 @@ public class CrashRecoveryDelays
     private static void doRecovery() throws InterruptedException
     {
         int port = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryPort();
+        String host = recoveryPropertyManager.getRecoveryEnvironmentBean().getRecoveryAddress();
 
         BufferedReader in = null;
         PrintStream out = null;
@@ -89,7 +90,7 @@ public class CrashRecoveryDelays
 
         try
         {
-            sckt = new Socket(InetAddress.getLocalHost(),port);
+            sckt = new Socket(host,port);
 
             in = new BufferedReader(new InputStreamReader(sckt.getInputStream()));
             out = new PrintStream(sckt.getOutputStream());

@@ -238,15 +238,17 @@ public class TaskImpl implements Task
             String line;
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
             while((line = bufferedReader.readLine()) != null) {
+                // need to redirect to file
+                Date date = new Date();
+                out.println(simpleDateFormat.format(date)+" "+"out: " + line);
+                out.flush();
+
                 if("Passed".equals(line)) {
                     printedPassed = true;
                 }
                 if("Failed".equals(line)) {
                     printedFailed = true;
                 }
-                // need to redirect to file
-                Date date = new Date();
-                out.println(simpleDateFormat.format(date)+" "+"out: " + line);
             }
         } catch (Exception e) {
             // if we fail here then the reaper task will clean up the thread
@@ -504,6 +506,7 @@ public class TaskImpl implements Task
             }
 
             out.println("!!!TASK TIME OUT!!!");
+            out.flush();
             // we timed out before the process managed to complete so kill it now
             // n.b. since this closes the process stdout we can be sure that the task
             // reader thread will exit.
@@ -592,6 +595,7 @@ public class TaskImpl implements Task
             out.print(" ");
         }
         out.println();
+        out.flush();
     }
 
     /**
