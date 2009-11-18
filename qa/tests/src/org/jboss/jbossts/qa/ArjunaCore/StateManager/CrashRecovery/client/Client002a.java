@@ -23,6 +23,7 @@ package org.jboss.jbossts.qa.ArjunaCore.StateManager.CrashRecovery.client;
 import org.jboss.jbossts.qa.ArjunaCore.StateManager.impl.BasicStateRecord;
 import org.jboss.jbossts.qa.ArjunaCore.Utils.BaseTestClient;
 import org.jboss.jbossts.qa.ArjunaCore.Utils.qautil;
+import org.jboss.jbossts.qa.Utils.CrashRecoveryDelays;
 
 public class Client002a extends BaseTestClient
 {
@@ -44,8 +45,7 @@ public class Client002a extends BaseTestClient
 			setNumberOfResources(2);
 			setUniquePrefix(1);
 
-			//sleep
-			qautil.sleep();
+            CrashRecoveryDelays.awaitRecoveryArjunaCore();
 
 			//restore objects from uid's
 			BasicStateRecord[] mStateRecordList = new BasicStateRecord[mNumberOfResources];

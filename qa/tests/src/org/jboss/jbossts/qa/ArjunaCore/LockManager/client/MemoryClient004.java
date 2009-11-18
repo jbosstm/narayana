@@ -78,9 +78,6 @@ public class MemoryClient004 extends BaseTestClient
 				System.err.println("Time taken to increase resource " + mMaxIteration + " iteration(s): " + stopWatchTime + "ms");
 			}
 
-			//lets go to sleep to see if this helps the vm clean itself up
-			qautil.runGarbageCollection();
-
 			//get first memory reading.
 			getFirstReading();
 
@@ -103,9 +100,6 @@ public class MemoryClient004 extends BaseTestClient
 				stopWatchTime = stopStopWatch();
 				System.err.println("Time taken to increase resource " + mMaxIteration + " iteration(s): " + stopWatchTime + "ms");
 			}
-
-			//lets go to sleep to see if this helps the vm clean itself up
-			qautil.runGarbageCollection();
 
 			getSecondReading();
 

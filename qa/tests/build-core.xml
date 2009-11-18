@@ -50,6 +50,7 @@
 				destdir="${org.jboss.jbossts.qa.build.classes}"
 				debug="on" deprecation="on">
 
+            <include name="**/org/jboss/jbossts/qa/Utils/CrashRecoveryDelays.java"/>
             <include name="**/org/jboss/jbossts/qa/Utils/*Store*.java"/>
             <exclude name="**/org/jboss/jbossts/qa/Utils/EmptyObjectStore.java"/>
             <include name="**/org/jboss/jbossts/qa/Utils/BaseTestCase.java"/>

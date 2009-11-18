@@ -69,9 +69,6 @@ public class MemoryClient004 extends BaseTestClient
 				}
 			}
 
-			//lets go to sleep to see if this helps the vm clean itself up
-			qautil.runGarbageCollection();
-
 			//get first memory reading.
 			getFirstReading();
 
@@ -91,9 +88,6 @@ public class MemoryClient004 extends BaseTestClient
 					}
 				}
 			}
-
-			//lets go to sleep to see if this helps the vm clean itself up
-			qautil.runGarbageCollection();
 
 			getSecondReading();
 

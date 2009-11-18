@@ -41,7 +41,15 @@ public class JVMStats
 		while (presentMemory < memory)
 		{
 			memory = presentMemory;
-			System.gc();
+
+            // no clean way to to this at present, so we'll sleep and hope the gc runs.
+            System.gc();
+            try {
+                Thread.sleep(100);
+            } catch(InterruptedException e) {
+
+            }
+
 			presentMemory = (runtime.totalMemory() - runtime.freeMemory());
 		}
 

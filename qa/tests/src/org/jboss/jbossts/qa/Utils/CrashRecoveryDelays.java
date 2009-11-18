@@ -35,6 +35,10 @@ import java.net.InetAddress;
  */
 public class CrashRecoveryDelays
 {
+    public static void awaitRecoveryArjunaCore() throws InterruptedException {
+        doRecovery();
+    }
+
     public static void awaitRecoveryCR07(int num_clients) throws InterruptedException {
         awaitRecovery(1, num_clients);
     }
