@@ -270,11 +270,14 @@ public class Uid implements Cloneable, Serializable
             }
             catch (StringIndexOutOfBoundsException e)
             {
-                if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                if (!errsOk)
                 {
-                    tsLogger.arjLoggerI18N.warn(
-                            "com.arjuna.ats.arjuna.common.Uid_3", new Object[]
-                            { uidString }, e);
+                    if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                    {
+                        tsLogger.arjLoggerI18N.warn(
+                                "com.arjuna.ats.arjuna.common.Uid_3", new Object[]
+                                { uidString }, e);
+                    }
                 }
 
                 _valid = false;

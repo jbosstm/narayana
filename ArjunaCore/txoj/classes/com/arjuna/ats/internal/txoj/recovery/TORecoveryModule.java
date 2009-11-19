@@ -32,11 +32,11 @@
 package com.arjuna.ats.internal.txoj.recovery;
 
 import com.arjuna.ats.arjuna.common.*;
-import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.txoj.logging.txojLogger;
 
+import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.*;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 
@@ -44,6 +44,7 @@ import com.arjuna.common.util.logging.*;
 
 import java.util.*;
 
+import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
@@ -79,6 +80,9 @@ import java.io.IOException;
  * @message com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_8
  *          [com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_8] -
  *          TORecoveryModule.periodicWork(): Object ({0}, {1}) no longer exists.
+ * @message com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_osproblem
+ *          [com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_osproblem] -
+ *          TORecoveryModule - could not create ObjectStore instance!
  */
 
 public class TORecoveryModule implements RecoveryModule
@@ -89,6 +93,7 @@ public class TORecoveryModule implements RecoveryModule
      * modifications to locations must occur in the properties file.
      */
 
+    @SuppressWarnings("unchecked")
     public TORecoveryModule()
     {
         if (txojLogger.aitLoggerI18N.isDebugEnabled())
@@ -104,8 +109,18 @@ public class TORecoveryModule implements RecoveryModule
         /*
          * Where are TO's stored. Default.
          */
+      
+        try
+        {
+            Class osc = Class.forName(arjPropertyManager.getObjectStoreEnvironmentBean().getObjectStoreType());
 
-        _objectStore = TxControl.getStore();
+            _objectStore = (ObjectStore) osc.newInstance();
+        }
+        catch (final Throwable ex)
+        {
+            throw new FatalError(tsLogger.log_mesg
+                    .getString("com.arjuna.ats.internal.txoj.recovery.TORecoveryModule_osproblem"), ex);
+        }
     }
 
     public void periodicWorkFirstPass ()
@@ -166,8 +181,9 @@ public class TORecoveryModule implements RecoveryModule
                                             String newTypeString = new String(
                                                     theName);
                                             Uid newUid = new Uid(theUid);
-                                            _uncommittedTOTable.put(newUid,
-                                                    newTypeString);
+                                            
+                                            _uncommittedTOTable.put(newUid,newTypeString);
+                                            
                                             if (txojLogger.aitLoggerI18N
                                                     .isDebugEnabled())
                                             {

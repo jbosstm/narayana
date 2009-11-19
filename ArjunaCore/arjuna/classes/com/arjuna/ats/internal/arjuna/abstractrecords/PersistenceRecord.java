@@ -331,12 +331,23 @@ public class PersistenceRecord extends RecoveryRecord
 
 		if ((sm != null) && (store != null))
 		{
+		    /*
+		     * Get ready to create our state to be saved. At this stage we're not
+		     * sure if the state will go into its own log or be written into the
+		     * transaction log for improved performance.
+		     */
+		    
 			topLevelState = new OutputObjectState(sm.get_uid(), sm.type());
 
 			if (writeOptimisation
-					|| (!store.fullCommitNeeded()
+					&& (!store.fullCommitNeeded()
 							&& (sm.save_state(topLevelState, ObjectType.ANDPERSISTENT)) && (topLevelState.size() <= PersistenceRecord.MAX_OBJECT_SIZE)))
 			{
+			    /*
+			     * We assume that crash recovery will always run before
+			     * the object can be reactivated!
+			     */
+
 				if (PersistenceRecord.classicPrepare)
 				{
 					OutputObjectState dummy = new OutputObjectState(
@@ -362,6 +373,10 @@ public class PersistenceRecord extends RecoveryRecord
 				}
 				else
 				{
+				    /*
+				     * Don't write anything as our state will go into the log.
+				     */
+				    
 					result = TwoPhaseOutcome.PREPARE_OK;
 				}
 			}
@@ -427,6 +442,8 @@ public class PersistenceRecord extends RecoveryRecord
 		boolean res = false;
 		int objStoreType = 0;
 
+		topLevelState = null;
+		
 		try
 		{
 			objStoreType = os.unpackInt();
@@ -517,7 +534,8 @@ public class PersistenceRecord extends RecoveryRecord
 
 					/*
 					 * If we haven't written a shadow state, then pack the state
-					 * into the transaction log.
+					 * into the transaction log. There MUST be a state at this
+					 * point.
 					 */
 
 					if (!shadowMade)

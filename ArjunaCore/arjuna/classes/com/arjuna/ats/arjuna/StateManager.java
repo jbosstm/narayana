@@ -1302,10 +1302,6 @@ public class StateManager
         if ((myType == ObjectType.ANDPERSISTENT)
                 || (myType == ObjectType.NEITHER))
         {
-            /*
-             * If null, default object store type is obtained by the interface.
-             */
-
             int sharedStatus = ((objectModel == ObjectModel.SINGLE) ? ObjectStore.OS_UNSHARED
                     : ObjectStore.OS_SHARED);
 
