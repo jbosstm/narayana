@@ -56,6 +56,10 @@ public class CrashRecoveryDelays
         awaitRecovery(1, 1);
     }
 
+    public static void awaitRecoveryCR12() throws InterruptedException {
+        awaitRecovery(1, 1);
+    }
+
 /*
     // old, slow method - sleep long enough to ensure periodic cr will have occurred.
     private static void awaitRecovery(int num_cycles, int num_clients) throws InterruptedException
@@ -97,6 +101,7 @@ public class CrashRecoveryDelays
 
             // Output ping message
             out.println("SCAN");
+            out.flush();
 
             // Receive pong message
             String inMessage = in.readLine();
@@ -125,7 +130,7 @@ public class CrashRecoveryDelays
                 sckt.close();
             } catch(Exception e) {}
         }
-    }
+   }
 
     /////////////////
 

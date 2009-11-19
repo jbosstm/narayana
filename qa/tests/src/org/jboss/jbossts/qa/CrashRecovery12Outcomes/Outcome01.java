@@ -32,6 +32,7 @@
 package org.jboss.jbossts.qa.CrashRecovery12Outcomes;
 
 import org.jboss.jbossts.qa.CrashRecovery12Clients.Client01;
+import org.jboss.jbossts.qa.Utils.CrashRecoveryDelays;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -40,46 +41,18 @@ public class Outcome01
 {
 	public static void main(String[] args)
 	{
-		int waitTime = 0;
-		String resultsFile = Client01.resultsFile;
+		String resultsFile = args[0];
+        boolean recoveryPassedExpected = "yes".equalsIgnoreCase(args[1]);
+
 		boolean passed = false;
-		boolean recoveryPassedExpected = true;
+        boolean foundRecoveryPassed = false;
+        boolean foundPassed = false;
 
-		switch (args.length)
-		{
-			case 3:
-				recoveryPassedExpected = "yes".equalsIgnoreCase(args[2]);
-			case 2:
-				resultsFile = args[1];
-			case 1:
-				try
-				{
-					waitTime = Integer.parseInt(args[0]);
-				}
-				catch (final NumberFormatException nfe)
-				{
-					System.err.println("Failed to parse waitTime: " + args[0]);
-				}
-		}
-
-		if (waitTime > 0)
-		{
-			System.err.println("Sleeping for " + waitTime + "ms");
-			try
-			{
-				Thread.sleep(waitTime);
-			}
-			catch (Exception ex)
-			{
-				System.err.println("Sleep interrupted");
-				ex.printStackTrace();
-			}
-		}
-
-		boolean foundRecoveryPassed = false;
-		boolean foundPassed = false;
 		try
 		{
+            CrashRecoveryDelays.awaitRecoveryCR12();
+
+
 			FileReader fr = new FileReader(resultsFile);
 			BufferedReader br = new BufferedReader(fr);
 			String line;
