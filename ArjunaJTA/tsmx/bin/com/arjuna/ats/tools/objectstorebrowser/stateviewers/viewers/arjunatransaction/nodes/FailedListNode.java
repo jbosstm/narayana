@@ -44,6 +44,6 @@ public class FailedListNode extends ArjunaTransactionListNode implements ListNod
 
     public RecordList getList()
     {
-        return getAction().getFailedList();
+        return getAction().getFailedList() == null ? new RecordList() : getAction().getFailedList();
     }
 }

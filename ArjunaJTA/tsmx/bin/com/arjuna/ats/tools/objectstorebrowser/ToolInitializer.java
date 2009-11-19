@@ -14,16 +14,27 @@ import java.util.Map;
 
 public class ToolInitializer implements IToolInitializer
 {
-    static String JTS_TM = "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple";
+    static String JTS_TM_CLASSNAME_STANDALONE =
+            "com.arjuna.ats.internal.jta.transaction.jts.TransactionManagerImple";
+    static String JTS_TM_CLASSNAME_ATS =
+            "com.arjuna.ats.jbossatx.jts.TransactionManagerDelegate";
+
+    private boolean isJTS;
+
+    public boolean isJTS() {
+        return isJTS;
+    }
 
     public void initialize(ToolPlugin plugin)
     {
         String tmClassName = jtaPropertyManager.getJTAEnvironmentBean().getJtaTMImplementation();
+        isJTS = (JTS_TM_CLASSNAME_STANDALONE.equals(tmClassName)
+                || JTS_TM_CLASSNAME_ATS.equals(tmClassName));
 
         com.arjuna.ats.internal.jta.Implementations.initialise();   // needed for XAResourceRecord
 
         /* test whether we are using the JTS */
-        if (JTS_TM.equals(tmClassName))
+        if (isJTS)
         {
             try
             {

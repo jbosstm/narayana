@@ -48,11 +48,11 @@ public class DefaultRootProvider implements ObjectStoreRootProvider
 
         if ( files != null )
         {
-            for (int count=0;count<files.length;count++)
+            for (File file : files)
             {
-                if ( files[count].isDirectory() )
+                if (file.isDirectory())
                 {
-                    roots.add(files[count].getName());
+                    roots.add(file.getName());
                 }
             }
         }

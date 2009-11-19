@@ -24,6 +24,7 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.ObjectType;
+import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 import java.util.Collection;
@@ -32,11 +33,35 @@ import java.util.Collections;
 public class ArjunaTransactionWrapper extends BasicAction implements BasicActionInfo
 {
     private String type;
+    private UidInfo uidInfo;
+    private ObjectStore os;
 
     public ArjunaTransactionWrapper(Uid objUid, String type)
     {
+        this(null, type, objUid);
+    }
+
+    public ArjunaTransactionWrapper(ObjectStore os, String type, Uid objUid)
+    {
         super(objUid, ObjectType.ANDPERSISTENT);
         this.type = type;
+        this.os = os;
+        uidInfo = new UidInfo(get_uid(), getClass().getName() + "@" + Integer.toHexString(hashCode()));
+        
+        try
+        {
+            uidInfo.setCommitted(os.read_committed(objUid, type));
+//            uidInfo.setUncommitted(os.read_uncommitted(objUid, type));
+        }
+        catch (ObjectStoreException e)
+        {
+            System.out.println("Error reading tx log record state: " + e.getMessage());
+        }
+    }
+
+    public ObjectStore getStore()
+    {
+        return os;
     }
 
     /**
@@ -74,7 +99,7 @@ public class ArjunaTransactionWrapper extends BasicAction implements BasicAction
 
     public UidInfo getUidInfo()
     {
-        return new UidInfo(get_uid(), getClass().getName() + "@" + Integer.toHexString(hashCode()));
+        return uidInfo;
     }
 
     public int getTxTimeout()

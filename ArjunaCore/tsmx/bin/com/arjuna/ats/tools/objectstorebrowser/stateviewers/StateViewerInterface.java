@@ -31,11 +31,9 @@
 package com.arjuna.ats.tools.objectstorebrowser.stateviewers;
 
 import com.arjuna.ats.tools.objectstorebrowser.*;
-import com.arjuna.ats.tools.objectstorebrowser.panels.ObjectStoreViewEntry;
 import com.arjuna.ats.tools.objectstorebrowser.panels.StatePanel;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
-import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.*;
 
 /**

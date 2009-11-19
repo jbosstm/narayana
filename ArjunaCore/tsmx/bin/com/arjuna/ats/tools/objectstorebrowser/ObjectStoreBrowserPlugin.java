@@ -65,6 +65,7 @@ public class ObjectStoreBrowserPlugin extends ToolPlugin implements ActionListen
 
 	private BrowserFrame	        _browser = null;
 	private JMenuItem		        _menuItem = null;
+    private boolean                 _isJTS;
 
     /**
 	 * Initialise the plugin, many activities should be performed during this method:-
@@ -110,7 +111,7 @@ public class ObjectStoreBrowserPlugin extends ToolPlugin implements ActionListen
             throw new ToolPluginException("Cannot locate plugin initializer for plugin " + getClass().getName());
 
         /** Initialise the state viewers repository **/
-		StateViewersRepository.initialiseRepository(new File(getToolsFramework().getToolsDir().getFile(), PLUGINS_DIRECTORY));
+		StateViewersRepository.initialiseRepository(_isJTS, new File(getToolsFramework().getToolsDir().getFile(), PLUGINS_DIRECTORY));
         EntityViewerRepository.initialiseRepository(props);
 
         StateViewersRepository.setDefaultStateViewer(new DefaultStateViewer());
@@ -124,7 +125,9 @@ public class ObjectStoreBrowserPlugin extends ToolPlugin implements ActionListen
         {
             try
             {
-                ((IToolInitializer)Class.forName(cName).newInstance()).initialize(this);
+                IToolInitializer toolInitializer = (IToolInitializer)Class.forName(cName).newInstance();
+                toolInitializer.initialize(this);
+                _isJTS = toolInitializer.isJTS();
                 return true;
             }
             catch (Exception e)

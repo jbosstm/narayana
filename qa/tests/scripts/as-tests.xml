@@ -5,31 +5,21 @@
 
   <property environment="env"/>
   <property name="jboss.home" value="${env.JBOSS_HOME}"/>
-  <property name="jboss.server.config" value="default"/>
-  <property name="product.dir" value="${env.DTF_HOME}/JBossTS-JTA-QA/"/>
-
-  <property name="jbossts.common.jar.dir" value="${product.dir}/lib/ext"/>
-  <property name="astest.jar.dir" value="${product.dir}/qa/lib"/>
-  <property name="astest.jar.deploy.dir" value="qa/lib/"/>
-  <property name="jboss.server.manager.jar.dir" value="${product.dir}/qa/lib"/>
-  <property name="jboss.server.manager.jar.name" value="jboss-server-manager-0.1.1.GA.jar"/>
+  <property name="xxproduct.dir" value="${env.DTF_HOME}/JBossTS-JTA-QA/"/>
+  <property name="product.dir" value="../../.."/>
+  <property name="astest.jar" value="qa/tests/build/astest.jar"/>
 
   <path id="astest.taskdef.classpath">
+    <pathelement location="${jboss.home}/client/jboss-remoting.jar"/>
     <pathelement location="${jboss.home}/client/jbossall-client.jar"/>
     <pathelement location="${jboss.home}/client/log4j.jar" />
     <pathelement location="${jboss.home}/client/jboss-logging-spi.jar" />
     <pathelement location="${jboss.home}/lib/trove.jar"/>
+    <pathelement location="."/>
 
-    <pathelement location="${jbossts.common.jar.dir}/jbossts-common.jar"/>
-    <pathelement location="${astest.jar.dir}/astest.jar"/>
-    <pathelement location="${jboss.server.manager.jar.dir}/${jboss.server.manager.jar.name}"/>
-
-    <!-- FIXME Does DTF need this fileset? If not it is needless. -->
-    <fileset dir="${product.dir}">
-       <include name="lib/*.jar"/>
-       <include name="lib/ext/*.jar"/>
-       <include name="qa/lib/*.jar"/>
-    </fileset>
+    <fileset dir="${product.dir}/install/lib" includes="**/*" />
+    <fileset dir="${product.dir}/qa/tests/build" includes="**/*" />
+    <fileset dir="${product.dir}/qa/ext" includes="**/*" />
   </path>
 
   <property name="node0" value="localhost" />
@@ -41,7 +31,7 @@ These tests normally run as part of the DTF test suite. To run them in
 standalone mode you will need define a security policy and override the ant
 property product.dir (which controls where the tests will search for product
 resources) as follows:${line.separator}
-   export ANT_OPTS=&quot;-Djava.security.policy=../src/org/jboss/jbossts/qa/astests/resources/java.policy -Dproduct.dir=../../build/&quot;
+   export ANT_OPTS=&quot;-Djava.security.policy=../src/org/jboss/jbossts/qa/astests/resources/java.policy -Dproduct.dir=../build/&quot;
 ${line.separator}
 If the target product directory does not contain a directory called 'as'
 containing a JBOSS installation then the environment variable JBOSS_HOME will be used.
@@ -58,13 +48,27 @@ containing a JBOSS installation then the environment variable JBOSS_HOME will be
     -->
   <import file="imports/test-config.xml"/>
 
+  <target name="testhalt">
+    <astest:server method="deploy" serverName="jts" waitFor="10000">
+      <deploy from="${astest.jar}" to="deploy/astest.jar" />
+    </astest:server>
+    <astest:action abortOnFail="false" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
+        <param key="name" value="testhalt" />
+        <param key="specs" value="none,commit_halt" />
+        <param key="serverName" value="jts" />
+    </astest:action>
+    <astest:server method="undeploy" serverName="jts" >
+      <undeploy from="deploy/astest.jar" />
+    </astest:server>
+  </target>
+
   <target name="test4">
     <!--
         start a server identified by the name default (specified in the imported config file)
         and deploy one artifact
       -->
     <astest:server method="start" serverName="default" >
-      <deploy from="${astest.jar.deploy.dir}astest.jar" to="deploy/astest.jar" />
+      <deploy from="${astest.jar}" to="deploy/astest.jar" />
     </astest:server>
     <!--
         wait 10000 ms and then execute an action (TODO implement a method of detecting when the
@@ -85,7 +89,7 @@ containing a JBOSS installation then the environment variable JBOSS_HOME will be
 
   <target name="test5">
     <astest:server method="start" serverName="default" >
-      <deploy from="${astest.jar.deploy.dir}astest.jar" to="deploy/astest.jar" />
+      <deploy from="${astest.jar}" to="deploy/astest.jar" />
     </astest:server>
     <astest:action waitFor="10000" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
       <param key="name" value="test05" />
@@ -101,7 +105,7 @@ containing a JBOSS installation then the environment variable JBOSS_HOME will be
 
   <target name="test6">
     <astest:server method="start" serverName="default" >
-      <deploy from="${astest.jar.deploy.dir}astest.jar" to="deploy/astest.jar" />
+      <deploy from="${astest.jar}" to="deploy/astest.jar" />
     </astest:server>
     <astest:action waitFor="10000" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
       <param key="name" value="test06" />
@@ -127,7 +131,7 @@ containing a JBOSS installation then the environment variable JBOSS_HOME will be
     -->
   <target name="testjta">
     <astest:server method="deploy" serverName="jta" waitFor="10000">
-      <deploy from="${astest.jar.deploy.dir}astest.jar" to="deploy/astest.jar" />
+      <deploy from="${astest.jar}" to="deploy/astest.jar" />
     </astest:server>
     <parallel>
       <astest:action abortOnFail="false" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
@@ -149,9 +153,14 @@ containing a JBOSS installation then the environment variable JBOSS_HOME will be
 
   <target name="testjts">
     <astest:server method="deploy" serverName="jts" waitFor="10000">
-      <deploy from="${astest.jar.deploy.dir}astest.jar" to="deploy/astest.jar" />
+      <deploy from="${astest.jar}" to="deploy/astest.jar" />
     </astest:server>
     <parallel>
+      <astest:action abortOnFail="false" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
+        <param key="name" value="testjts" />
+        <param key="specs" value="none,commit_halt" />
+        <param key="serverName" value="jts" />
+      </astest:action>
       <astest:action abortOnFail="false" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
         <param key="name" value="testjts" />
         <param key="specs" value="none,none,none,commit_ex,commit_ex" />
@@ -181,7 +190,7 @@ containing a JBOSS installation then the environment variable JBOSS_HOME will be
 
   <target name="as-tests-jta">
     <astest:server method="start" serverName="crashrecovery-jta" >
-      <deploy from="${astest.jar.deploy.dir}astest.jar" to="deploy/astest.jar" />
+      <deploy from="${astest.jar}" to="deploy/astest.jar" />
     </astest:server>
     <parallel>
       <astest:action abortOnFail="false" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">
@@ -203,7 +212,7 @@ containing a JBOSS installation then the environment variable JBOSS_HOME will be
 
   <target name="as-tests-jts">
     <astest:server method="start" serverName="crashrecovery-jts" >
-      <deploy from="${astest.jar.deploy.dir}astest.jar" to="deploy/astest.jar" />
+      <deploy from="${astest.jar}" to="deploy/astest.jar" />
     </astest:server>
     <parallel>
       <astest:action abortOnFail="false" impl="org.jboss.jbossts.qa.astests.ASCrashRecovery01.Test03">

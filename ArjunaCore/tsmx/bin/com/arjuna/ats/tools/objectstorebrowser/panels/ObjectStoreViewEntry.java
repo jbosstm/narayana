@@ -30,7 +30,6 @@
  */
 package com.arjuna.ats.tools.objectstorebrowser.panels;
 
-import com.arjuna.ats.tools.toolsframework.iconpanel.IconPanelEntry;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.*;
 
 public class ObjectStoreViewEntry extends SubTreeViewEntry

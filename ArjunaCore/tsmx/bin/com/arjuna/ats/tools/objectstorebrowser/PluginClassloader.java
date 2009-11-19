@@ -33,6 +33,7 @@ package com.arjuna.ats.tools.objectstorebrowser;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.jar.JarFile;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -68,37 +69,37 @@ public class PluginClassloader implements FilenameFilter
         ArrayList urls = new ArrayList();
         ArrayList<String> plugins = new ArrayList<String> ();
 
-        for (int count=0;count<files.length;count++)
+        for (File file : files)
         {
             try
             {
-                JarFile jarFile = new JarFile(files[count]);
+                JarFile jarFile = new JarFile(file);
 
                 Manifest jarManifest = jarFile.getManifest();
 
-                if ( jarManifest != null )
+                if (jarManifest != null)
                 {
                     Attributes jarAttrs = jarManifest.getAttributes(manifestSectionName);
 
-                    if ( jarAttrs != null )
+                    if (jarAttrs != null)
                     {
                         int index = 1;
                         String classname;
 
                         /** Get property.1, property.2, property.x .... **/
-                        while ( ( classname = jarAttrs.getValue(JAR_MANIFEST_PROPERTY_NAME + (index++)) ) != null )
+                        while ((classname = jarAttrs.getValue(JAR_MANIFEST_PROPERTY_NAME + (index++))) != null)
                         {
                             /** Add the URL of the file to urls list **/
-                            urls.add(files[count].toURL());
+                            urls.add(file.toURL());
                             /** Add the classname to the list - which will later be replaced with the actual class **/
                             plugins.add(classname);
                         }
                     }
                 }
             }
-            catch (java.io.IOException e)
+            catch (IOException e)
             {
-                System.err.println("An error occurred while trying to load plugin: "+files[count]);
+                System.err.println("An error occurred while trying to load plugin: " + file);
                 e.printStackTrace(System.err);
             }
 

@@ -20,12 +20,10 @@
  */
 package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers;
 
-import com.arjuna.ats.tools.objectstorebrowser.panels.ListViewEntry;
 import com.arjuna.ats.tools.objectstorebrowser.panels.StatePanel;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.ObjectStoreBrowserNode;
 import com.arjuna.ats.tools.objectstorebrowser.frames.BrowserFrame;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.icons.AtomicTransactionViewEntry;
-import com.arjuna.ats.tools.toolsframework.iconpanel.IconSelectionListener;
 import com.arjuna.ats.tools.toolsframework.iconpanel.IconPanelEntry;
 
 import java.util.Collection;

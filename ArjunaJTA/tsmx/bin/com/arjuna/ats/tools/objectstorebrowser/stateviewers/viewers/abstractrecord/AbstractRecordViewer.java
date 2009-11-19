@@ -57,10 +57,9 @@ public class AbstractRecordViewer implements AbstractRecordStateViewerInterface
 
     protected void updateTableData(AbstractRecord record, StatePanel statePanel)
     {
-        UidInfo uidInfo = new UidInfo(record.order(), record.getClass().getName() + "@" + Integer.toHexString(record.hashCode()));
-
-        statePanel.setData("Creation Time", UidInfo.formatTime(uidInfo.getCreationTime()));
-        statePanel.setData("Age (seconds)", String.valueOf(uidInfo.getAge()));
+        // abstract records do not store their creation time so use the transaction creation date
+        statePanel.setData("Creation Time", UidInfo.formatTime(actionInfo.getUidInfo().getCreationTime()));
+        statePanel.setData("Age (seconds)", String.valueOf(actionInfo.getUidInfo().getAge()));
 
         statePanel.setData("Record Type", record.getClass().getName());
         statePanel.setData("Type", record.type());
@@ -75,9 +74,9 @@ public class AbstractRecordViewer implements AbstractRecordStateViewerInterface
                               final ObjectStoreViewEntry entry,
                               final StatePanel statePanel) throws ObjectStoreException
     {
-        updateTableData(record, statePanel);
-
         initRecord(action, record, entry);
+        
+        updateTableData(record, statePanel);
 
         statePanel.enableButton(StatePanel.FORGET_BUTTON_TEXT, new ActionListener() {
             public void actionPerformed(ActionEvent ae)

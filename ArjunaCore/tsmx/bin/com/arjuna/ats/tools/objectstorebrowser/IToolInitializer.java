@@ -28,4 +28,5 @@ import com.arjuna.ats.tools.toolsframework.plugin.ToolPlugin;
 public interface IToolInitializer
 {
     void initialize(ToolPlugin plugin);
+    boolean isJTS();
 }

@@ -44,7 +44,7 @@ public class LiveAtomicActionWrapper extends ArjunaTransactionWrapper //AtomicAc
 
     public LiveAtomicActionWrapper(Transaction delegate, Uid objUid, String type)
     {
-        super(objUid, type);  //XXX
+        super(objUid, type);
         uidInfo = new UidInfo(objUid, getClass().getName() + "@" + Integer.toHexString(hashCode()));
         this.delegate = delegate;
     }

@@ -66,8 +66,9 @@ public class ResourceRecordViewer extends AbstractRecordViewer
 
     /**
      * When this viewer is created we need to ensure that the ORB is initialised.
+     * @throws Exception e 
      */
-    public ResourceRecordViewer()
+    public ResourceRecordViewer() throws Exception
     {
         try
         {
@@ -85,7 +86,7 @@ public class ResourceRecordViewer extends AbstractRecordViewer
         catch (Exception e)
         {
             /** The ORB has failed to initialise don't allow this plugin to be used **/
-            _orb = null;
+            throw e;
         }
     }
 

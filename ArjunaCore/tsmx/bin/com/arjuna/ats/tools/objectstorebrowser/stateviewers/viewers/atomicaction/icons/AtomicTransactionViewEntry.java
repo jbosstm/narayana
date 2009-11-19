@@ -53,11 +53,11 @@ public class AtomicTransactionViewEntry extends ListViewEntry implements IconSel
 
         panel.clear();
         panel.setType(getTypeName());
-        panel.setInfo(list.size()+" entries");
+        panel.setInfo(list == null ? "0 entries" : list.size() + " entries");
 
         updatePanelData(panel, ba);
 
-        if (list.size() != 0)
+        if (list != null && list.size() != 0)
             enableDetailsButton(panel, node);
 
         panel.repaint();

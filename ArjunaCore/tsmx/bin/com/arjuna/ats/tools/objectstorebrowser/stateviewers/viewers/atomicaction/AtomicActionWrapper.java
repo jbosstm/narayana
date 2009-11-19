@@ -22,6 +22,7 @@ package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicactio
 
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.AtomicAction;
+import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.XAResourceInfo;
@@ -45,11 +46,30 @@ import java.util.Collections;
 
 public class AtomicActionWrapper extends AtomicAction implements BasicActionInfo
 {
-    public AtomicActionWrapper(Uid objUid)
+    private UidInfo uidInfo;
+    private ObjectStore os;
+
+    public AtomicActionWrapper(ObjectStore os, String type, Uid objUid)
     {
         super(objUid);
+        this.os = os;
+        uidInfo = new UidInfo(get_uid(), getClass().getName() + "@" + Integer.toHexString(hashCode()));
+        
+        try
+        {
+            uidInfo.setCommitted(os.read_committed(objUid, type));
+//            uidInfo.setUncommitted(os.read_uncommitted(objUid, type));
+        }
+        catch (ObjectStoreException e)
+        {
+        }
     }
 
+    public ObjectStore getStore()
+    {
+        return os;
+    }
+    
     public RecordList getFailedList()
     {
         return failedList;
@@ -77,7 +97,7 @@ public class AtomicActionWrapper extends AtomicAction implements BasicActionInfo
 
     public UidInfo getUidInfo()
     {
-        return new UidInfo(get_uid(), getClass().getName() + "@" + Integer.toHexString(hashCode()));
+        return uidInfo;
     }
 
     public int getTxTimeout()

@@ -56,6 +56,6 @@ public class HeuristicListNode extends ArjunaTransactionListNode implements List
 
     public RecordList getList()
     {
-        return getAction().getHeuristicList();
+        return getAction().getHeuristicList() == null ? new RecordList() : getAction().getHeuristicList();
     }
 }

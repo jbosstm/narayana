@@ -32,6 +32,7 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeNode;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -106,12 +107,13 @@ public class TxInfoNode extends ListNode implements ListNodeListener, IconSelect
                     {
                         try
                         {
+                            TreeNode parent = getParent().getParent();
                             getAction().remove();
 
                             // the node should no longer exist so collapse the tree up to its parent.
-                            if (getParent().getParent() != null)
+                            if (parent != null)
                             {
-                                TreePath path = new TreePath(BrowserFrame.getTreeModel().getPathToRoot(getParent().getParent()));
+                                TreePath path = new TreePath(BrowserFrame.getTreeModel().getPathToRoot(parent));
                                 BrowserFrame.getTree().collapsePath(path);
                                 BrowserFrame.getTree().setSelectionPath(path);
                                 BrowserFrame.getTree().scrollPathToVisible(path);

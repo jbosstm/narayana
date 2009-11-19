@@ -37,7 +37,6 @@ import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.icons.*;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.TxInfoNode;
 import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.TxInfoViewEntry;
-import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.ArjunaTransactionWrapper;
 import com.arjuna.ats.tools.objectstorebrowser.panels.*;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
@@ -45,10 +44,8 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.RecordList;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
-import com.arjuna.ats.arjuna.ObjectType;
 
 import javax.swing.tree.*;
-import javax.swing.*;
 
 public class AtomicActionViewer implements StateViewerInterface
 {
@@ -67,7 +64,7 @@ public class AtomicActionViewer implements StateViewerInterface
                                 StatePanel infoPanel) throws ObjectStoreException
     {
         Uid theUid = uidNode.getUid();
-        AtomicActionWrapper aaw = new AtomicActionWrapper(theUid);
+        AtomicActionWrapper aaw = new AtomicActionWrapper(os, type, theUid);
 
         if (!activate(aaw))
             infoPanel.reportStatus("Unable to activate " + theUid);

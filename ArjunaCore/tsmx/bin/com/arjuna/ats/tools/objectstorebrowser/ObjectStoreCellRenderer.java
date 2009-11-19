@@ -30,18 +30,12 @@
  */
 package com.arjuna.ats.tools.objectstorebrowser;
 
-import com.arjuna.ats.tools.objectstorebrowser.frames.BrowserFrame;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.ListNode;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.ObjectStoreBrowserNode;
 import com.arjuna.ats.tools.toolsframework.images.ImageCommon;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
-import com.arjuna.ats.arjuna.state.InputObjectState;
-import com.arjuna.ats.arjuna.common.Uid;
-
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.*;
 import java.awt.*;
 

@@ -32,7 +32,6 @@ package com.arjuna.ats.tools.objectstorebrowser.stateviewers;
 
 import com.arjuna.ats.tools.objectstorebrowser.PluginClassloader;
 
-import java.util.Hashtable;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.io.File;
@@ -46,7 +45,8 @@ import java.io.File;
 public class StateViewersRepository
 {
     private final static String STATE_VIEWER_JAR_PREFIX = "osbv-";
-    private final static String JAR_MANIFEST_SECTION_NAME = "arjuna-tools-objectstorebrowser";
+    private final static String JTA_JAR_MANIFEST_SECTION_NAME = "arjuna-tools-objectstorebrowser-jta";
+    private final static String JTS_JAR_MANIFEST_SECTION_NAME = "arjuna-tools-objectstorebrowser-jts";
     private final static String DEFAULT_ABSTRACT_RECORD_VIEWER = "com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrecord.AbstractRecordViewer";
 
     /** Store objectTypeName to stateViewer mappings **/
@@ -120,42 +120,47 @@ public class StateViewersRepository
         return svi;
     }
 
-    public static void initialiseRepository(File pluginDir)
+    public static void initialiseRepository(String mananifestSection, File pluginDir)
     {
-	try
-	{
-	    PluginClassloader classloader = new PluginClassloader(STATE_VIEWER_JAR_PREFIX, null, JAR_MANIFEST_SECTION_NAME, pluginDir);
+	    PluginClassloader classloader = new PluginClassloader(STATE_VIEWER_JAR_PREFIX, null, mananifestSection, pluginDir);
 	    Object[] plugins = classloader.getPlugins();
-	    
-	    for (int count=0;count<plugins.length;count++)
-	    {
-                if ( plugins[count] instanceof StateViewerInterface )
+
+        for (Object plugin : plugins)
+        {
+            try
+            {
+                if (plugin instanceof StateViewerInterface)
                 {
-                    StateViewerInterface viewer = ((StateViewerInterface)plugins[count]);
+                    StateViewerInterface viewer = ((StateViewerInterface) plugin);
 
                     /** Get the type name and ensure the delimiters and the correct ones **/
                     String type = viewer.getType();
 
-                    StateViewersRepository.registerStateViewer( type, viewer );
+                    StateViewersRepository.registerStateViewer(type, viewer);
                 }
-                else
-		    if ( plugins[count] instanceof AbstractRecordStateViewerInterface )
-		    {
-			AbstractRecordStateViewerInterface viewer = ((AbstractRecordStateViewerInterface)plugins[count]);
+                else if (plugin instanceof AbstractRecordStateViewerInterface)
+                {
+                    AbstractRecordStateViewerInterface viewer = ((AbstractRecordStateViewerInterface) plugin);
 
-			/** Get the type name and ensure the delimiters and the correct ones **/
-			String type = viewer.getType();
+                    /** Get the type name and ensure the delimiters and the correct ones **/
+                    String type = viewer.getType();
 
-			StateViewersRepository.registerAbstractRecordStateViewer( type, viewer );
-		    }
-	    }
+                    StateViewersRepository.registerAbstractRecordStateViewer(type, viewer);
+                }
+            }
+            catch (ViewerAlreadyRegisteredException e)
+            {
+                // ignore
+            }
+        }
 	}
-	catch (Exception e)
-	{
-	    e.printStackTrace();
-	    
-	    throw new ExceptionInInitializerError("Failed to initiate object state viewers: "+e);
-	}
+
+    public static void initialiseRepository(boolean isJTS, File pluginDir)
+    {
+        initialiseRepository(JTA_JAR_MANIFEST_SECTION_NAME, pluginDir);
+
+        if (isJTS)
+            initialiseRepository(JTS_JAR_MANIFEST_SECTION_NAME, pluginDir);
     }
 
     public static void disposeRepository()

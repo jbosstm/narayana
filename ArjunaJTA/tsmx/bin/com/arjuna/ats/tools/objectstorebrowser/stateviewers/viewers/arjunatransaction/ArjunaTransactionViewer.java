@@ -67,7 +67,7 @@ public class ArjunaTransactionViewer extends AtomicActionViewer
                                 StatePanel infoPanel) throws ObjectStoreException
     {
         Uid theUid = uidNode.getUid();
-        ArjunaTransactionWrapper ba = new ArjunaTransactionWrapper(theUid, type);
+        ArjunaTransactionWrapper ba = new ArjunaTransactionWrapper(os, type, theUid);
         ListNode node;
         SubTreeViewEntry entry;
 

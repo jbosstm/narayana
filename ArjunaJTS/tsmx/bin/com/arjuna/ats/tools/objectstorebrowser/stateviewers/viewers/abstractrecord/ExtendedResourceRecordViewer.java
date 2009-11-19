@@ -29,6 +29,11 @@ import com.arjuna.ats.internal.jts.resources.ExtendedResourceRecord;
 
 public class ExtendedResourceRecordViewer extends ResourceRecordViewer //AbstractRecordViewer
 {
+	public ExtendedResourceRecordViewer() throws Exception
+	{
+		super();
+	}
+
     protected void updateTableData(AbstractRecord record, StatePanel statePanel)
     {
         super.updateTableData(record, statePanel);

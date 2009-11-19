@@ -23,13 +23,11 @@ package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.ListNode;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.ListNodeListener;
 import com.arjuna.ats.tools.objectstorebrowser.treenodes.ListEntryNode;
-import com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.nodes.AtomicActionListNode;
 import com.arjuna.ats.tools.objectstorebrowser.panels.ObjectStoreViewEntry;
 import com.arjuna.ats.tools.objectstorebrowser.panels.StatePanel;
 import com.arjuna.ats.tools.objectstorebrowser.frames.BrowserFrame;
 import com.arjuna.ats.tools.toolsframework.iconpanel.IconSelectionListener;
 import com.arjuna.ats.tools.toolsframework.iconpanel.IconPanelEntry;
-import com.arjuna.ats.arjuna.coordinator.RecordList;
 
 import java.util.Collection;
 

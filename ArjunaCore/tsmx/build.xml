@@ -86,14 +86,16 @@
                 includes="com/arjuna/ats/tools/objectstorebrowser/stateviewers/viewers/**/*.class"
                 excludes="com/arjuna/ats/tools/toolsframework/**"/>
             <manifest>
-                <section name="arjuna-tools-objectstorebrowser">
+                <section name="arjuna-tools-objectstorebrowser-jta">
                     <attribute name="plugin-classname-1" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.atomicaction.AtomicActionViewer"/>
-                    <attribute name="plugin-classname-3" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.arjunatransaction.ArjunaTransactionViewer"/>
+                    <attribute name="plugin-classname-2" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrecord.XAResourceRecordViewer"/>
+                    <attribute name="plugin-classname-3" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrecord.AbstractRecordViewer"/>
+                    <attribute name="plugin-classname-4" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.InFlightTransactionViewer"/>
+                </section>
+                <section name="arjuna-tools-objectstorebrowser-jts">
+                    <attribute name="plugin-classname-1" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.arjunatransaction.ArjunaTransactionViewer"/>
                     <attribute name="plugin-classname-2" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrecord.ResourceRecordViewer"/>
-                    <attribute name="plugin-classname-4" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrecord.XAResourceRecordViewer"/>
-                    <attribute name="plugin-classname-5" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrecord.AbstractRecordViewer"/>
-                    <attribute name="plugin-classname-6" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrecord.ExtendedResourceRecordViewer"/>
-                    <attribute name="plugin-classname-7" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.InFlightTransactionViewer"/>
+                    <attribute name="plugin-classname-3" value="com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers.abstractrecord.ExtendedResourceRecordViewer"/>
                 </section>
             </manifest>
         </jar>

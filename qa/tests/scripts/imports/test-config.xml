@@ -1,5 +1,11 @@
 <project name="as-tests-server-config" default="help"
          xmlns:astest="http://jboss.org/ns/test/ant/astest">
+<!--
+  <taskdef name="astest:loader" classname="org.jboss.jbossts.qa.astests.taskdefs.ASTestClassLoader"/>
+  <astest:loader ref="astest.loader">
+    <classpath refid="astest.taskdef.classpath"/>
+  </astest:loader>
+  -->
 
   <taskdef name="config" classname="org.jboss.jbossts.qa.astests.taskdefs.ASTestConfig"
            uri="http://jboss.org/ns/test/ant/astest" loaderref="astest.loader">
@@ -11,6 +17,7 @@
     -->
   <taskdef name="server" classname="org.jboss.jbossts.qa.astests.taskdefs.ServerTask"
            uri="http://jboss.org/ns/test/ant/astest" loaderref="astest.loader">
+    <classpath refid="astest.taskdef.classpath"/>
   </taskdef>
 
   <!--
@@ -19,6 +26,7 @@
     -->
   <taskdef name="action" classname="org.jboss.jbossts.qa.astests.taskdefs.ASClientTask"
            uri="http://jboss.org/ns/test/ant/astest" loaderref="astest.loader">
+    <classpath refid="astest.taskdef.classpath"/>
   </taskdef>
 
   <!--
@@ -26,6 +34,7 @@
     -->
   <typedef name="spec" classname="org.jboss.jbossts.qa.astests.recovery.ASFailureSpec"
            uri="http://jboss.org/ns/test/ant/astest" loaderref="astest.loader">
+    <classpath refid="astest.taskdef.classpath"/>
   </typedef>
 
   <!--

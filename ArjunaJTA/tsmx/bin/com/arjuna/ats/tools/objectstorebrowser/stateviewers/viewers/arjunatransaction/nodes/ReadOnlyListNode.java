@@ -44,6 +44,6 @@ public class ReadOnlyListNode extends ArjunaTransactionListNode implements ListN
 
     public RecordList getList()
     {
-        return getAction().getReadOnlyList();
+        return getAction().getReadOnlyList() == null ? new RecordList() : getAction().getReadOnlyList();
     } 
 }

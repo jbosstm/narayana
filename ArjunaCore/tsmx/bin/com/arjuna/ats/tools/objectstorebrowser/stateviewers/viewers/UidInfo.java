@@ -21,9 +21,7 @@
 package com.arjuna.ats.tools.objectstorebrowser.stateviewers.viewers;
 
 import com.arjuna.ats.arjuna.common.Uid;
-import com.arjuna.ats.arjuna.state.OutputBuffer;
-import com.arjuna.ats.arjuna.state.InputBuffer;
-import com.arjuna.ats.internal.arjuna.common.UidHelper;
+import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.tools.objectstorebrowser.UidConverter;
 
 import javax.transaction.xa.Xid;
@@ -37,99 +35,101 @@ import java.io.IOException;
  */
 public class UidInfo
 {
-    private static DateFormat formatter = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z");
-    private static UidConverter uidConverter;
+	private static DateFormat formatter = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z");
+	private static UidConverter uidConverter;
 
-    public static void setUidConverter(UidConverter uidConverter)
-    {
-        UidInfo.uidConverter = uidConverter;
-    }
+	public static void setUidConverter(UidConverter uidConverter)
+	{
+		UidInfo.uidConverter = uidConverter;
+	}
 
-    private Uid uid;
-    private String instanceName;
-    private Long creationTime;
+	private Uid uid;
+	private String instanceName;
+	private HeaderInfo header;
 
-    public UidInfo(Uid uid, String instanceName)
-    {
-        this.uid = uid;
-        this.instanceName = instanceName;
-    }
+	public UidInfo(Uid uid, String instanceName)
+	{
+		this.uid = uid;
+		this.instanceName = instanceName;
+	}
 
-    public Uid getUid()
-    {
-        return uid;
-    }
+	public Uid getUid()
+	{
+		return uid;
+	}
 
-    public String getInstanceName()
-    {
-        return instanceName;
-    }
+	public String getInstanceName()
+	{
+		return instanceName;
+	}
 
     public long getCreationTime()
-    {
-        if (creationTime == null)
-            creationTime = getCreationTime(uid);
+	{
+		return header != null ? header.birthDate : -1;
+	}
 
-        return creationTime;
-    }
+	public long getAge()
+	{
+		return (getCreationTime() < 0 ? -1 : (System.currentTimeMillis() / 1000) - getCreationTime());
+	}
 
-    public long getAge()
-    {
-        return (getCreationTime() < 0 ? -1 : (System.currentTimeMillis() / 1000) - getCreationTime());
-    }
+	// static utility methods
+	public static String formatTime(long seconds)
+	{
+		return seconds < 0 ? "" : formatter.format(new Date(seconds * 1000L));
+	}
 
-    // static utility methods
-    public static String formatTime(long seconds)
-    {
-        return seconds < 0 ? "" : formatter.format(new Date(seconds * 1000L));
-    }
+	public static Uid toUid(Xid xid)
+	{
+		return uidConverter.toUid(xid);
+	}
 
-    public static Uid toUid(Xid xid)
-    {
-        return uidConverter.toUid(xid);
-    }
+	private static String inet4AddressToString(int ip)
+	{
+		StringBuffer sb = new StringBuffer(15);
 
-    public static long getCreationTime(Xid xid)
-    {
-        return getCreationTime(toUid(xid));
-    }
+		for (int shift=24; shift > 0; shift -= 8)
+		{
+			sb.append( Integer.toString((ip >>> shift) & 0xff)).append('.');
+		}
 
-    public static long getCreationTime(Uid uid)
-    {
-        if (uid != null)
-        {
-            try
-            {
-                OutputBuffer outBuf = new OutputBuffer();
-                InputBuffer inBuf;
+		return sb.append( Integer.toString(ip & 0xff)).toString();
+	}
 
-                UidHelper.packInto(uid, outBuf);
-                inBuf = new InputBuffer(outBuf.buffer());
+	public void setCommitted(InputObjectState os)
+	{
+		try {
+			header = new HeaderInfo(os);
+		} catch (IOException e) {
+		}
+	}
 
-                //host = inet4AddressToString(inBuf.unpackInt());
-                inBuf.unpackInt();
-                inBuf.unpackInt(); // process
+	private class HeaderInfo
+	{
+		String state;
+		Uid txId = Uid.nullUid();
+		Uid processUid = Uid.nullUid();
+		long birthDate = -1;
 
-                return inBuf.unpackInt();
-//            int other = inBuf.unpackInt();
-            }
-            catch (IOException e)
-            {
-            }
-        }
+		HeaderInfo(InputObjectState os) throws IOException {
+			unpackHeader(os);
+		}
 
-        return -1;
-    }
+		void unpackHeader(InputObjectState os) throws IOException {
+			if (os != null) {
+				state = os.unpackString();
+				byte[] txIdBytes = os.unpackBytes();
+				txId = new Uid(txIdBytes);
 
-    private static String inet4AddressToString(int ip)
-    {
-        StringBuffer sb = new StringBuffer(15);
+				if (state.equals("#ARJUNA#")) {
+					if (!txId.equals(Uid.nullUid())) {
+						byte[] pUidBytes = os.unpackBytes();
+						processUid = new Uid(pUidBytes);
+					}
 
-        for (int shift=24; shift > 0; shift -= 8)
-        {
-            sb.append( Integer.toString((ip >>> shift) & 0xff)).append('.');
-        }
-
-        return sb.append( Integer.toString(ip & 0xff)).toString();
-    }
+					birthDate = os.unpackLong() / 1000L;
+				}
+			}
+		}
+	}
 }

@@ -44,6 +44,6 @@ public class PreparedListNode extends ArjunaTransactionListNode implements ListN
 
     public RecordList getList()
     {
-        return getAction().getPreparedList();
+        return getAction().getPreparedList() == null ? new RecordList() : getAction().getPreparedList();
     } 
 }

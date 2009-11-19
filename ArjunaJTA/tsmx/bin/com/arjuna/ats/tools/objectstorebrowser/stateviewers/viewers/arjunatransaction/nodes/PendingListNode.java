@@ -44,6 +44,6 @@ public class PendingListNode extends ArjunaTransactionListNode implements ListNo
 
     public RecordList getList()
     {
-        return getAction().getPendingList();
+        return getAction().getPendingList() == null ? new RecordList() : getAction().getPendingList();
     } 
 }
