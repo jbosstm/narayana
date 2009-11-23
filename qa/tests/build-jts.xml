@@ -33,22 +33,6 @@
 	<property name="org.jboss.jbossts.qa.idlcompiler.lib"
 			  location="../../ArjunaJTS/orbportability/lib/ext"/>
 
-	<!-- set this to the location(s) of the database drivers -->
-	<path id="database.drivers.path">
-		<fileset dir="/oracle/product/10.2.0/db_1/jdbc/lib/">
-			<include name="ojdbc14.jar"/>
-		</fileset>
-		<fileset  dir="/home/jhalli/javastuff/mssql2000jdbc/lib">
-			<include name="ms*.jar"/>
-		</fileset>
-		<fileset id="pgsql.drivers" dir="/home/jhalli/installers/">
-			<include name="postgresql-8.1-408.jdbc3.jar"/>
-		</fileset>
-		<fileset id="mysql.drivers" dir="/home/jhalli/javastuff/mysql-connector-java-5.0.4">
-			<include name="mysql-connector-java-5.0.4-bin.jar"/>
-		</fileset>
-	</path>
-
 	<property name="org.jboss.jbossts.qa.buildroot" location="build"/>
 	<property name="org.jboss.jbossts.qa.build.classes" value="${org.jboss.jbossts.qa.buildroot}/classes/"/>
 	<property name="org.jboss.jbossts.qa.build.idl" value="${org.jboss.jbossts.qa.buildroot}/idl/"/>

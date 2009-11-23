@@ -42,11 +42,11 @@
     <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
     <target name="scratch">
 
-        <!-- txcore_recovery :  36 tests, 18 minutes, 12 fails, sleeps too long - need tuning -->
+        <!-- TODO txcore_recovery :  36 tests, 4 minutes, 4 fails (Recovery_Fail_AbstractRecord_Test001-4) -->
         <antcall target="junit-tests">
             <param name="tests" value="txcore_recovery"/>
-            <param name="names" value="Recovery_Crash_LockManager_Test005"/>
-            <param name="additional.elements" value="-DCoordinatorEnvironmentBean.writeOptimisation=true"/>
+            <param name="names" value="Recovery_Fail_AbstractRecord_Test00.*"/>
+            <!--<param name="additional.elements" value="-DCoordinatorEnvironmentBean.writeOptimisation=true"/>-->
         </antcall>
 
     </target>
@@ -196,15 +196,11 @@
         <antcall target="junit-tests"><param name="tests" value="jdbcresources01_mssqlserver_jndi"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources02_mssqlserver_jndi"/></antcall>
 
-        <antcall target="install-dbdriver"><param name="files" value="db2*"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="jdbcresources01_ibmdb2_jndi"/></antcall>
-        <antcall target="junit-tests"><param name="tests" value="jdbcresources02_ibmdb2_jndi"/></antcall>
-
-        <antcall target="install-dbdriver"><param name="files" value="postgresql-8.3-603.jdbc3.jar"/></antcall>
+        <antcall target="install-dbdriver"><param name="files" value="postgresql-8.3-605.jdbc3.jar"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources01_pgsql_jndi"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources02_pgsql_jndi"/></antcall>
 
-        <antcall target="install-dbdriver"><param name="files" value="mysql-connector-java-5.1.7-bin.jar"/></antcall>
+        <antcall target="install-dbdriver"><param name="files" value="mysql-connector-java-5.1.8-bin.jar"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources01_mysql_jndi"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources02_mysql_jndi"/></antcall>
 
@@ -212,6 +208,10 @@
         <antcall target="junit-tests"><param name="tests" value="jdbcresources01_sybase_jndi"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources02_sybase_jndi"/></antcall>
 
+        <antcall target="install-dbdriver"><param name="files" value="db2*"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources01_ibmdb2_jndi"/></antcall>
+        <antcall target="junit-tests"><param name="tests" value="jdbcresources02_ibmdb2_jndi"/></antcall>
+        
     </target>
 
     <!-- the ncl office build server is not on vpn and only a subset of the dbs are available locally -->

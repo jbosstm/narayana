@@ -31,36 +31,6 @@
 	<property name="org.jboss.jbossts.qa.idlcompiler.lib"
 			  location="../ArjunaJTS/orbportability/lib/ext"/>
 
-	<!-- set these to the location(s) of the database drivers -->
-
-	<fileset id="oracle.drivers" dir="${driver.home}/oracle_10_2_0_4/">
-		<include name="ojdbc14.jar"/>
-	</fileset>
-
-	<fileset id="mssql.drivers" dir="${driver.home}/mssql2005_sqljdbc_2.0/enu/">
-		<include name="sqljdbc.jar"/>
-        <include name="sqljdbc4.jar"/>
-	</fileset>
-
-	<!-- 8.1.408 is broken, use something more recent. -->
-	<fileset id="pgsql.drivers" dir="${driver.home}/">
-		<include name="postgresql-8.3-603.jdbc3.jar"/>
-	</fileset>
-
-	<!-- server version 5 is the first with XA support, do use anything less.
-	 		driver versions before 5.0.5 are broken, don't use them either. -->
-	<fileset id="mysql.drivers" dir="${driver.home}/">
-		<include name="mysql-connector-java-5.1.7-bin.jar"/>
-	</fileset>
-
-	<fileset id="ibmdb2.drivers" dir="${driver.home}/DB2_v9/">
-		<include name="db2jcc*.jar"/>
-	</fileset>
-
-	<fileset id="sybase.drivers" dir="${driver.home}/jConnect-6_0/classes/">
-		<include name="jconn3.jar"/>
-	</fileset>
-
 	<!-- you should not need to configure anything below here -->
 
     <property name="driver.url" value="http://reports.qa.atl.jboss.com/jdbc-drivers/"/>
@@ -68,19 +38,45 @@
 	<property name="org.jboss.jbossts.qa.server_manager_location" location="ext/jboss-server-manager-0.1.1.GA.jar"/>
 	<property name="org.jboss.jbossts.qa.dist.buildroot" location="build"/>
 
-    <path id="database.drivers.path">
-        <fileset refid="oracle.drivers"/>
-        <fileset refid="mssql.drivers"/>
-        <fileset refid="pgsql.drivers"/>
-        <fileset refid="mysql.drivers"/>
-        <fileset refid="ibmdb2.drivers"/>
-        <fileset refid="sybase.drivers"/>
-    </path>
-
     <target  name="get.drivers">
 
-        <get src="http://jdbc.postgresql.org/download/postgresql-8.3-604.jdbc3.jar"
-             dest="${driver.home}/postgresql-8.3-603.jdbc3.jar"/>
+        <!--
+        https://docspace.corp.redhat.com/clearspace/docs/DOC-16080
+        http://www.jboss.com/products/platforms/application/supportedconfigurations/
+        Files names below should be matched to those in run-tests.xml
+        https://wiki.corp.redhat.com/bin/view/JBossIT/SystemServiceQaLab#Databases
+        server connection params in config/jdbc_profiles/
+        TODO: update DB2, Sybase servers
+        -->
+
+        <mkdir dir="${driver.home}/oracle_10_2_0_4"/>
+        <get src="${driver.url}/ojdbc14.jar"
+             dest="${driver.home}/oracle_10_2_0_4/ojdbc14.jar"/>
+
+        <mkdir dir="${driver.home}/mssql2005_sqljdbc_2.0/enu"/>
+        <get src="${driver.url}/sqljdbc_2.0/enu/sqljdbc.jar"
+             dest="${driver.home}/mssql2005_sqljdbc_2.0/enu/sqljdbc.jar"/>
+        <get src="${driver.url}/sqljdbc_2.0/enu/sqljdbc4.jar"
+             dest="${driver.home}/mssql2005_sqljdbc_2.0/enu/sqljdbc4.jar"/>
+
+        <!-- pgsql 8.1.408 is broken, use something more recent. -->
+        <get src="${driver.url}/postgresql-8.3-605.jdbc4.jar"
+             dest="${driver.home}/postgresql-8.3-605.jdbc4.jar"/>
+
+    	<!-- mysql server version 5 is the first with XA support, do use anything less.
+	 		driver versions before 5.0.5 are broken, don't use them either. -->
+        <get src="${driver.url}/mysql-connector-java-5.1.8-bin.jar"
+             dest="${driver.home}/mysql-connector-java-5.1.8-bin.jar"/>
+
+        <mkdir dir="${driver.home}/DB2_v9.7"/>
+        <get src="${driver.url}/DB2_v9.7/db2jcc.jar"
+             dest="${driver.home}/DB2_v9.7/db2jcc.jar"/>
+        <get src="${driver.url}/DB2_v9.7/db2jcc_license_cu.jar"
+             dest="${driver.home}/DB2_v9.7/db2jcc_license_cu.jar"/>
+
+        <mkdir dir="${driver.home}/jConnect-6_0/classes"/>
+        <get src="${driver.url}/jConnect-6_0/classes/jconn3.jar"
+             dest="${driver.home}/jConnect-6_0/classes/jconn3.jar"/>
 
     </target>
 
@@ -133,7 +129,6 @@
 
         <!-- build the test suite -->
 		<ant dir="tests" antfile="build-${buildtype}.xml">
-			<reference refid="database.drivers.path"/>
             <property name="org.jboss.jbossts.qa.server_manager_location"
 			          value="${org.jboss.jbossts.qa.server_manager_location}"/>
 		</ant>
