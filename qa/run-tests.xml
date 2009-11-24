@@ -196,7 +196,7 @@
         <antcall target="junit-tests"><param name="tests" value="jdbcresources01_mssqlserver_jndi"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources02_mssqlserver_jndi"/></antcall>
 
-        <antcall target="install-dbdriver"><param name="files" value="postgresql-8.3-605.jdbc3.jar"/></antcall>
+        <antcall target="install-dbdriver"><param name="files" value="postgresql-8.3-605.jdbc4.jar"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources01_pgsql_jndi"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources02_pgsql_jndi"/></antcall>
 
@@ -221,11 +221,11 @@
         <antcall target="junit-tests"><param name="tests" value="jdbcresources01_oracle_thin_jndi"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources02_oracle_thin_jndi"/></antcall>
 
-        <antcall target="install-dbdriver"><param name="files" value="mysql-connector-java-5.1.7-bin.jar"/></antcall>
+        <antcall target="install-dbdriver"><param name="files" value="mysql-connector-java-5.1.8-bin.jar"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources01_mysql_jndi"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources02_mysql_jndi"/></antcall>
 
-        <antcall target="install-dbdriver"><param name="files" value="postgresql-8.3-603.jdbc3.jar"/></antcall>
+        <antcall target="install-dbdriver"><param name="files" value="postgresql-8.3-605.jdbc4.jar"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources01_pgsql_jndi"/></antcall>
         <antcall target="junit-tests"><param name="tests" value="jdbcresources02_pgsql_jndi"/></antcall>
 
