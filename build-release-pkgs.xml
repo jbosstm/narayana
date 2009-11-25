@@ -171,98 +171,87 @@
         <!-- TODO: notes dir, xml generation? project.xml edits -->
     </target>
 
-    <!-- http://wiki.jboss.org/wiki/MavenReleaseRepository -->
+    <!-- copy the release artifacts to the maven repository -->
     <target name="mvn-repository" description="copy the release artifacts to the maven repository">
+
+        <!-- we use ant rather than maven for the build, so we just take the built artifacts
+                and use mvn to deploy them to the repo.  The pom is shared by all artifacts,
+                 with ant pre-processing being used to substitute in appropriate values.
+                 TODO: when we add in proper dependency info we may wind up needing separate
+                 poms for each artifact with a shared parent for common info -->
+
+        <!-- http://wiki.jboss.org/wiki/MavenReleaseRepository -->
+
+        <delete dir="${workdir}/m2"/>
+        <mkdir dir="${workdir}/m2"/>
+
         <delete dir="${workdir}/build"/>
         <mkdir dir="${workdir}/build"/>
+        <unzip src="${workdir}/jbossts-jta-${filename}.zip" dest="${workdir}/build"/>
 
-        <!-- As we don't actually use maven as a build tool this requires a fair bit of black magic.
-         We no longer release the jta jars to maven, just the jts ones. The AS uses these with a -beans.xml
-         config that causes it to function in jta mode and no longer uses a ts properties file at all. -->
+        <!-- jta -->
 
-        <!-- package the JTS -->
+        <mvn-artifact.macro artifact="jbossjta"
+                            file="${workdir}/build/${tag}/lib/jbossjta.jar"/>
+        <mvn-artifact.macro artifact="jbossjta-integration"
+                            file="${workdir}/build/${tag}/lib/jbossjta-integration.jar"/>
 
-        <delete dir="${workdir}/build/${tag}"/>
+
+
+        <delete dir="${workdir}/build"/>
+        <mkdir dir="${workdir}/build"/>
         <unzip src="${workdir}/jbossts-full-${filename}.zip" dest="${workdir}/build"/>
 
-        <exec executable="mvn" dir="${workdir}">
-            <arg value="deploy:deploy-file"/>
-            <arg value="-Dfile=${workdir}/build/${tag}/lib/jbossjts.jar"/>
-            <arg value="-Dpackaging=jar"/>
-            <arg value="-Durl=${mvn.url}"/>
-            <arg value="-DrepositoryId=${mvn.repositoryId}"/>
-            <arg value="-DgroupId=jboss.jbossts"/>
-            <arg value="-DartifactId=jbossjts"/>
-            <arg value="-Dversion=${filename}"/>
-            <arg value="-DgeneratePom=true"/>
-        </exec>
+        <!-- jts -->
 
-        <exec executable="mvn" dir="${workdir}">
-            <arg value="deploy:deploy-file"/>
-            <arg value="-Dfile=${workdir}/build/${tag}/lib/jbossjts-integration.jar"/>
-            <arg value="-Dpackaging=jar"/>
-            <arg value="-Durl=${mvn.url}"/>
-            <arg value="-DrepositoryId=${mvn.repositoryId}"/>
-            <arg value="-DgroupId=jboss.jbossts"/>
-            <arg value="-DartifactId=jbossjts-integration"/>
-            <arg value="-Dversion=${filename}"/>
-            <arg value="-DgeneratePom=true"/>
-        </exec>
+        <mvn-artifact.macro artifact="jbossjts"
+                            file="${workdir}/build/${tag}/lib/jbossjts.jar"/>
+        <mvn-artifact.macro artifact="jbossjts-integration"
+                            file="${workdir}/build/${tag}/lib/jbossjts-integration.jar"/>
 
-        <!-- take the object store browser from jts, it will work with jta too -->
-        <exec executable="mvn" dir="${workdir}">
-            <arg value="deploy:deploy-file"/>
-            <arg value="-Dfile=${workdir}/build/${tag}/bin/jbossts-tools.sar"/>
-            <arg value="-Dpackaging=sar"/>
-            <arg value="-Durl=${mvn.url}"/>
-            <arg value="-DrepositoryId=${mvn.repositoryId}"/>
-            <arg value="-DgroupId=jboss.jbossts"/>
-            <arg value="-DartifactId=jbossts-tools"/>
-            <arg value="-Dversion=${filename}"/>
-            <arg value="-DgeneratePom=true"/>
-        </exec>
+        <!-- tools -->
 
-        <!-- resources.jar removed - the AS integration now uses -beans.xml instead of a properties file,
-            so there is no need to mvn the properties files any longer. -->
+        <mvn-artifact.macro artifact="jbossts-tools" packaging="sar"
+                            file="${workdir}/build/${tag}/bin/jbossts-tools.sar"/>
 
-        <!-- now we do XTS -->
+        <!-- xts -->
 
-        <exec executable="mvn" dir="${workdir}">
-            <arg value="deploy:deploy-file"/>
-            <arg value="-Dfile=${workdir}/build/${tag}/xts/sar/jbossxts.sar"/>
-            <arg value="-Dpackaging=sar"/>
-            <arg value="-Durl=${mvn.url}"/>
-            <arg value="-DrepositoryId=${mvn.repositoryId}"/>
-            <arg value="-DgroupId=jboss.jbossts"/>
-            <arg value="-DartifactId=jbossxts"/>
-            <arg value="-Dversion=${filename}"/>
-            <arg value="-DgeneratePom=true"/>
-        </exec>
-
-        <exec executable="mvn" dir="${workdir}">
-            <arg value="deploy:deploy-file"/>
-            <arg value="-Dfile=${workdir}/build/${tag}/xts/tests/jbossxts-tests.zip"/>
-            <arg value="-Dpackaging=zip"/>
-            <arg value="-Durl=${mvn.url}"/>
-            <arg value="-DrepositoryId=${mvn.repositoryId}"/>
-            <arg value="-DgroupId=jboss.jbossts"/>
-            <arg value="-DartifactId=jbossxts-tests"/>
-            <arg value="-Dversion=${filename}"/>
-            <arg value="-DgeneratePom=true"/>
-        </exec>
-
-        <exec executable="mvn" dir="${workdir}">
-            <arg value="deploy:deploy-file"/>
-            <arg value="-Dfile=${workdir}/build/${tag}/xts/interop-tests/jbossxts-interop-tests.zip"/>
-            <arg value="-Dpackaging=zip"/>
-            <arg value="-Durl=${mvn.url}"/>
-            <arg value="-DrepositoryId=${mvn.repositoryId}"/>
-            <arg value="-DgroupId=jboss.jbossts"/>
-            <arg value="-DartifactId=jbossxts-interop-tests"/>
-            <arg value="-Dversion=${filename}"/>
-            <arg value="-DgeneratePom=true"/>
-        </exec>
+        <mvn-artifact.macro artifact="jbossxts" packaging="sar"
+                            file="${workdir}/build/${tag}/xts/sar/jbossxts.sar"/>
+        <mvn-artifact.macro artifact="jbossxts-tests" packaging="zip"
+                            file="${workdir}/build/${tag}/xts/tests/jbossxts-tests.zip"/>
+        <mvn-artifact.macro artifact="jbossxts-interop-tests" packaging="zip"
+                            file="${workdir}/build/${tag}/xts/interop-tests/jbossxts-interop-tests.zip"/>
 
     </target>
+
+    <!-- macro to process a pom template into an actual pom and use it with mvn deploy-file to upload to the repo -->
+    <macrodef name="mvn-artifact.macro">
+
+        <attribute name="artifact"/>
+        <attribute name="file"/>
+        <attribute name="packaging" default="jar"/>
+
+        <sequential>
+            <copy  file="${workdir}/build/${tag}/maven/pom-template.xml"
+                   tofile="${workdir}/build/${tag}/pom-@{artifact}.xml"
+                   filtering="true">
+                <filterset>
+                    <filter token="artifact" value="@{artifact}"/>
+                    <filter token="version" value="${filename}"/>
+                    <filter token="packaging" value="@{packaging}"/>
+                </filterset>
+            </copy>
+
+            <exec executable="mvn" dir="${workdir}">
+                <arg value="deploy:deploy-file"/>
+                <arg value="-Dfile=@{file}"/>
+                <arg value="-DrepositoryId=${mvn.repositoryId}"/>
+                <arg value="-Durl=${mvn.url}"/>
+                <arg value="-DpomFile=${workdir}/build/${tag}/pom-@{artifact}.xml"/>
+            </exec>
+        </sequential>
+        
+   </macrodef>
 
 </project>

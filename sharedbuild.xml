@@ -111,9 +111,7 @@
             failonerror="false"/>
 
         <delete file="${build.dir}/lib/${modulename}.jar"/>
-            <tstamp>
-                <format property="buildproperty.date" pattern="yyyy/MMM/dd HH:mm"/>
-            </tstamp>
+
         <jar jarfile="${build.dir}/lib/${modulename}.jar"
              basedir="${build.dir}/classes">
             <manifest>
@@ -258,7 +256,9 @@
 
         <!-- note: build-release-pkgs.xml overrides this property when approptiate: -->
         <property name="com.hp.mw.sourceid" value="unknown"/>
-
+        <tstamp>
+            <format property="buildproperty.date" pattern="yyyy/MMM/dd HH:mm"/>
+        </tstamp>
         <jar jarfile="${build.dir}/lib/${modulename}.jar">
             <fileset dir="${build.dir}" includes="built_using*"/>
             <fileset dir="${build.dir}" includes="default-jbossts-properties.xml"/>
