@@ -21,16 +21,19 @@
 package org.jboss.jbossts.qa.ArjunaCore.AbstractRecord.CrashRecovery.client;
 
 import com.arjuna.ats.arjuna.common.Uid;
+
 import org.jboss.jbossts.qa.ArjunaCore.AbstractRecord.CrashRecovery.impl.BasicAbstractRecord;
 import org.jboss.jbossts.qa.ArjunaCore.AbstractRecord.CrashRecovery.impl.RecoveryTransaction;
 import org.jboss.jbossts.qa.ArjunaCore.Utils.BaseTestClient;
 import org.jboss.jbossts.qa.Utils.ServerIORStore;
 
+
 public class Client001a extends BaseTestClient
 {
 	public static void main(String[] args)
 	{
-		Client001a test = new Client001a(args);
+		@SuppressWarnings("unused")
+        Client001a test = new Client001a(args);
 	}
 
 	private Client001a(String[] args)

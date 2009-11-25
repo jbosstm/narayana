@@ -49,7 +49,7 @@ public class BasicAbstractRecord extends AbstractRecord
 
 	public int typeIs()
 	{
-		return RecordType.USER_DEF_FIRST0;
+		return RecordType.USER_DEF_FIRST1;
 	}
 
 	public Object value()
@@ -181,6 +181,9 @@ public class BasicAbstractRecord extends AbstractRecord
 		try
 		{
 			mValue = objectState.unpackInt();
+			
+		        qautil.qadebug("value is "+mValue);
+		        
 			return true;
 		}
 		catch (Exception exception)

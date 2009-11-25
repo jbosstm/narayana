@@ -225,6 +225,9 @@ public class CrashAbstractRecord02 extends AbstractRecord
 		try
 		{
 			mValue = objectState.unpackInt();
+			
+	                     qautil.qadebug("value is "+mValue);
+	                     
 			return true;
 		}
 		catch (Exception exception)
