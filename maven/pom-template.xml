@@ -23,7 +23,7 @@
 -->
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>jboss.jbossts</groupId>
+    <groupId>@groupid@</groupId>
     <artifactId>@artifact@</artifactId>
     <packaging>@packaging@</packaging>
     <version>@version@</version>

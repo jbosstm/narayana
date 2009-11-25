@@ -301,18 +301,18 @@
     <target name="install.src">
         <property name="component-module-list" value=""/>
 
-        <delete file="${build.dir}/lib/${modulename}-src.jar"/>
+        <delete file="${build.dir}/lib/${modulename}-sources.jar"/>
 
         <for list="${component-module-list}" param="module">
             <sequential>
-                <jar destfile="${build.dir}/lib/${modulename}-src.jar" update="true">
+                <jar destfile="${build.dir}/lib/${modulename}-sources.jar" update="true">
                     <fileset dir="@{module}/classes"/>
                 </jar>
                 
                 <if>
                     <available file="@{module}/${build.dir}/generatedclasses"/>
                     <then>
-                        <jar destfile="${build.dir}/lib/${modulename}-src.jar" update="true">
+                        <jar destfile="${build.dir}/lib/${modulename}-sources.jar" update="true">
                             <fileset dir="@{module}/${build.dir}/generatedclasses"/>
                         </jar>
                     </then>
@@ -320,6 +320,8 @@
 
             </sequential>
         </for>
+
+        <copy file="${build.dir}/lib/${modulename}-sources.jar" todir="${build.dir}/install/lib"/>
     </target>
 
     <macrodef name="htdocs.composite.macro">

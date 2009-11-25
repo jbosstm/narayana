@@ -66,7 +66,7 @@
     <property name="mvn.repositoryId" value="snapshots.jboss.org"/>
     <property name="mvn.url" value="dav:https://snapshots.jboss.org/maven2"/>
 -->
-    
+
     <!-- a working directory for the process. Can contain output from previous releases if you like to keep them archived locally. -->
     <property name="workdir" location="/tmp/packaged_builds"/>
     <!-- where to get the source -->
@@ -85,6 +85,12 @@
 
     <property name="mvn.repositoryId" value="repository.jboss.org"/>
     <property name="mvn.url" value="file:///${mvn.repodir}"/>
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="./antbuildsystem/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
 
     <target name="init">
         <tstamp/>
@@ -182,20 +188,14 @@
 
         <!-- http://wiki.jboss.org/wiki/MavenReleaseRepository -->
 
-        <delete dir="${workdir}/m2"/>
-        <mkdir dir="${workdir}/m2"/>
-
         <delete dir="${workdir}/build"/>
         <mkdir dir="${workdir}/build"/>
         <unzip src="${workdir}/jbossts-jta-${filename}.zip" dest="${workdir}/build"/>
 
         <!-- jta -->
 
-        <mvn-artifact.macro artifact="jbossjta"
-                            file="${workdir}/build/${tag}/lib/jbossjta.jar"/>
-        <mvn-artifact.macro artifact="jbossjta-integration"
-                            file="${workdir}/build/${tag}/lib/jbossjta-integration.jar"/>
-
+        <mvn-artifact.macro artifact="jbossjta" dir="${workdir}/build/${tag}/lib"/>
+        <mvn-artifact.macro artifact="jbossjta-integration" dir="${workdir}/build/${tag}/lib"/>
 
 
         <delete dir="${workdir}/build"/>
@@ -204,39 +204,69 @@
 
         <!-- jts -->
 
-        <mvn-artifact.macro artifact="jbossjts"
-                            file="${workdir}/build/${tag}/lib/jbossjts.jar"/>
-        <mvn-artifact.macro artifact="jbossjts-integration"
-                            file="${workdir}/build/${tag}/lib/jbossjts-integration.jar"/>
+        <mvn-artifact.macro artifact="jbossjts" dir="${workdir}/build/${tag}/lib"/>
+        <mvn-artifact.macro artifact="jbossjts-integration" dir="${workdir}/build/${tag}/lib"/>
 
         <!-- tools -->
 
         <mvn-artifact.macro artifact="jbossts-tools" packaging="sar"
-                            file="${workdir}/build/${tag}/bin/jbossts-tools.sar"/>
+                            dir="${workdir}/build/${tag}/bin"/>
 
         <!-- xts -->
 
         <mvn-artifact.macro artifact="jbossxts" packaging="sar"
-                            file="${workdir}/build/${tag}/xts/sar/jbossxts.sar"/>
+                            dir="${workdir}/build/${tag}/xts/sar"/>
         <mvn-artifact.macro artifact="jbossxts-tests" packaging="zip"
-                            file="${workdir}/build/${tag}/xts/tests/jbossxts-tests.zip"/>
+                            dir="${workdir}/build/${tag}/xts/tests"/>
         <mvn-artifact.macro artifact="jbossxts-interop-tests" packaging="zip"
-                            file="${workdir}/build/${tag}/xts/interop-tests/jbossxts-interop-tests.zip"/>
+                            dir="${workdir}/build/${tag}/xts/interop-tests"/>
 
+
+
+
+
+        
     </target>
 
     <!-- macro to process a pom template into an actual pom and use it with mvn deploy-file to upload to the repo -->
     <macrodef name="mvn-artifact.macro">
 
         <attribute name="artifact"/>
-        <attribute name="file"/>
+        <attribute name="dir"/>
         <attribute name="packaging" default="jar"/>
 
         <sequential>
-            <copy  file="${workdir}/build/${tag}/maven/pom-template.xml"
+
+            <property name="groupid" value="jboss.jbossts"/>
+
+            <!-- where a -sources.jar exists, upload it first as we need the latter binary .jar to overwrite the
+                generated pom due to the requirement for working around http://jira.codehaus.org/browse/MDEPLOY-48
+                 which is also the same reason we need to mess around with uniqueVersion=false   /sigh. -->
+            <if>
+                <available file="@{dir}/@{artifact}-sources.jar"/>
+                <then>
+                    <exec executable="mvn" dir="${workdir}">
+                        <arg value="deploy:deploy-file"/>
+                        <arg value="-Dfile=@{dir}/@{artifact}-sources.jar"/>
+                        <arg value="-DrepositoryId=${mvn.repositoryId}"/>
+                        <arg value="-Durl=${mvn.url}"/>
+
+                        <arg value="-DgroupId=${groupid}"/>
+                        <arg value="-DartifactId=@{artifact}"/>
+                        <!--<arg value="-DgeneratePom=false"/> disable this due to MDEPLOY-48-->
+                        <arg value="-Dclassifier=sources"/>
+                        <arg value="-Dpackaging=java-source"/>
+                        <arg value="-Dversion=${filename}"/>
+                        <arg value="-DuniqueVersion=false"/>
+                    </exec>
+                </then>
+            </if>
+
+            <copy  file="${workdir}/${tag}/maven/pom-template.xml"
                    tofile="${workdir}/build/${tag}/pom-@{artifact}.xml"
                    filtering="true">
                 <filterset>
+                    <filter token="groupid" value="${groupid}"/>
                     <filter token="artifact" value="@{artifact}"/>
                     <filter token="version" value="${filename}"/>
                     <filter token="packaging" value="@{packaging}"/>
@@ -245,11 +275,13 @@
 
             <exec executable="mvn" dir="${workdir}">
                 <arg value="deploy:deploy-file"/>
-                <arg value="-Dfile=@{file}"/>
+                <arg value="-Dfile=@{dir}/@{artifact}.@{packaging}"/>
                 <arg value="-DrepositoryId=${mvn.repositoryId}"/>
                 <arg value="-Durl=${mvn.url}"/>
                 <arg value="-DpomFile=${workdir}/build/${tag}/pom-@{artifact}.xml"/>
+                <arg value="-DuniqueVersion=false"/>
             </exec>
+
         </sequential>
         
    </macrodef>
