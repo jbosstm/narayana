@@ -42,12 +42,6 @@
     <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
     <target name="scratch">
 
-        <!-- TODO txcore_recovery :  36 tests, 4 minutes, 4 fails (Recovery_Fail_AbstractRecord_Test001-4) -->
-        <antcall target="junit-tests">
-            <param name="tests" value="txcore_recovery"/>
-            <param name="names" value="Recovery_Fail_AbstractRecord_Test00.*"/>
-            <!--<param name="additional.elements" value="-DCoordinatorEnvironmentBean.writeOptimisation=true"/>-->
-        </antcall>
 
     </target>
 
@@ -101,6 +95,8 @@
         <antcall target="junit-tests"><param name="tests" value="txcore_statemanager"/></antcall>
         <!-- txcore_utility : 40 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="txcore_utility"/></antcall>
+        <!-- txcore_recovery : 36 tests, 4 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="txcore_recovery"/></antcall>
 
         <!-- currenttests01 : 36 tests, 2 minutes -->
         <antcall target="junit-tests"><param name="tests" value="currenttests01"/></antcall>
@@ -406,9 +402,6 @@ crashrecovery13.java
 jdbcresources03_oracle_thin_jndi.java
 jdbcresources04_oracle_thin_jndi.java
 
-txcore_memory : 40 tests  JBTM-555
-
-txcore_recovery.java - JBTM-522 and rec module
 txoj.java - thse should be unit tests.
 
 -->
