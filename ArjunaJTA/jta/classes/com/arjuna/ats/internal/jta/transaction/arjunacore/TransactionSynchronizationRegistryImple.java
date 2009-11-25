@@ -142,7 +142,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
 		}
 		catch (RollbackException e)
 		{
-			throw new RuntimeException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.syncrollbackmexception"), e);
+			throw new RuntimeException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.syncrollbackexception"), e);
 		}
 		catch (SystemException e)
 		{
