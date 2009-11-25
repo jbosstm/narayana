@@ -75,6 +75,11 @@ public class RecordTypeManager
         _map.add(map);
     }
     
+    public void remove (RecordTypeMap map)
+    {
+        _map.remove(map);
+    }
+    
     public static RecordTypeManager manager ()
     {
         return _instance;

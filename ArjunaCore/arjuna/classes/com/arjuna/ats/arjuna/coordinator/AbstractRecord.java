@@ -434,7 +434,13 @@ public abstract class AbstractRecord extends StateManager
 			return TwoPhaseOutcome.FINISH_ERROR;
 		}
 	}
-
+	
+	/**
+	 * @message com.arjuna.ats.arjuna.coordinator.AbstractRecord_npe
+         *          [com.arjuna.ats.arjuna.coordinator.AbstractRecord_npe] -
+         *          AbstractRecord.create {0} failed to find record.
+         */
+	
 	@SuppressWarnings("unchecked")
         public static AbstractRecord create (int type)
 	{
@@ -443,6 +449,15 @@ public abstract class AbstractRecord extends StateManager
         	    Class recordClass = RecordType.typeToClass(type);
         
         	    return (AbstractRecord) recordClass.newInstance();
+	    }
+	    catch (final NullPointerException ex)
+	    {
+	        if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                {
+                        tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.AbstractRecord_npe", new Object[] {new Integer(type)});
+                }
+	        
+	        return null;
 	    }
 	    catch (final Throwable ex)
 	    {
