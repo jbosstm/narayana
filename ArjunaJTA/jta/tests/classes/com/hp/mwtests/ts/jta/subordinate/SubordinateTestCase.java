@@ -506,30 +506,6 @@ public class SubordinateTestCase
     }
 
     @Test
-    public void testFailOnCommitOnePhaseRetry () throws Exception
-    {
-        final Xid xid = new XidImple(new Uid());
-        final Transaction t = SubordinationManager.getTransactionImporter().importTransaction(xid);
-
-        final TestXAResource xaResource = new TestXAResource();
-
-        xaResource.setCommitException(new XAException(XAException.XA_RETRY));
-
-        t.enlistResource(xaResource);
-
-        final XATerminator xaTerminator = SubordinationManager.getXATerminator();
-
-        /*
-         * This should not cause problems. The transaction really has committed, or will once
-         * recovery kicks off. So nothing for the parent to do. The subordinate log will
-         * maintain enough information to drive recovery locally if we get to the point of
-         * issuing a commit call from parent to child.
-         */
-        
-        xaTerminator.commit(xid, true);  // transaction is completed (or will be eventually by recovery).
-    }
-
-    @Test
     public void testFailOnCommitOnePhase () throws Exception
     {
         final Xid xid = new XidImple(new Uid());
