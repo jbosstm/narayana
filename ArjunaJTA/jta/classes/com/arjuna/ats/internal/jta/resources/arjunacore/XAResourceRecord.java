@@ -614,6 +614,7 @@ public class XAResourceRecord extends AbstractRecord
 						case XAException.XA_RBTIMEOUT:
 						case XAException.XA_RBTRANSIENT:
 						case XAException.XAER_RMERR:
+	                                        case XAException.XAER_PROTO:  // XA spec implies rollback
 							return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
 						case XAException.XA_HEURMIX:
 							return TwoPhaseOutcome.HEURISTIC_MIXED;
@@ -622,7 +623,6 @@ public class XAResourceRecord extends AbstractRecord
 							break; // committed previously and recovery completed
 						    else
 						        return TwoPhaseOutcome.HEURISTIC_HAZARD;  // something terminated the transaction!
-						case XAException.XAER_PROTO:
 						case XAException.XA_RETRY:
 						    _committed = true;  // will cause log to be rewritten
 						    
@@ -796,22 +796,22 @@ public class XAResourceRecord extends AbstractRecord
 	                    commit = false;
 	                    break;
 	                case XAException.XAER_RMERR:
-	                case XAException.XAER_NOTA:
-	                case XAException.XAER_PROTO:
-	                case XAException.XAER_INVAL:
-	                case XAException.XAER_RMFAIL:
-	                default:
+                        case XAException.XAER_NOTA:
+                        case XAException.XAER_PROTO:
+                        case XAException.XAER_INVAL:
+                        case XAException.XAER_RMFAIL:
+                        default:
 	                {
 	                    if (jtaLogger.loggerI18N.isWarnEnabled())
-	                    {
-	                        jtaLogger.loggerI18N.warn(
-	                                "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
-	                                new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
-	                    }
-
-
+                            {
+                                jtaLogger.loggerI18N.warn(
+                                        "com.arjuna.ats.internal.jta.resources.arjunacore.opcerror",
+                                        new Object[] { _tranID, _theXAResource, XAHelper.printXAErrorCode(e1) }, e1);
+                            }
+	                    
 	                    removeConnection();
-	                    return TwoPhaseOutcome.FINISH_ERROR;
+	                    
+                            return TwoPhaseOutcome.FINISH_ERROR;
 	                }
 	                }
 	            }
@@ -876,7 +876,7 @@ public class XAResourceRecord extends AbstractRecord
 	                case XAException.XA_RBTRANSIENT:
 	                case XAException.XAER_RMERR:
 	                    forget();
-	                    return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
+	                    return TwoPhaseOutcome.ONE_PHASE_ERROR;
 	                case XAException.XAER_NOTA:
 	                    return TwoPhaseOutcome.HEURISTIC_HAZARD; // something committed or rolled back without asking us!
 	                case XAException.XAER_INVAL:
@@ -884,11 +884,12 @@ public class XAResourceRecord extends AbstractRecord
 	                    // failed, did it
 	                    // rollback?
 	                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
-	                case XAException.XA_RETRY:
+	                case XAException.XA_RETRY:  // XA does not allow this to be thrown for 1PC!
 	                case XAException.XAER_PROTO:
+	                    return TwoPhaseOutcome.ONE_PHASE_ERROR; // assume rollback
 	                default:
 	                    _committed = true;  // will cause log to be rewritten
-	                return TwoPhaseOutcome.FINISH_ERROR;  // recovery should retry
+	                    return TwoPhaseOutcome.FINISH_ERROR;  // recovery should retry
 	                }
 	            }
 	            catch (Exception e2)
