@@ -895,6 +895,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                    updateState(TwoPhaseOutcome.HEURISTIC_HAZARD);
 	                    throw new org.omg.CosTransactions.HeuristicHazard();
 	                case XAException.XAER_PROTO:
+	                case XAException.XA_RETRY:  // not allowed to be thrown here by XA specification!
 	                    // presumed abort (or we could be really paranoid and throw a heuristic)
 	                    throw new TRANSACTION_ROLLEDBACK();
 
@@ -902,7 +903,6 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                case XAException.XAER_RMFAIL: // resource manager failed,
 	                    // did it rollback?
 	                    throw new org.omg.CosTransactions.HeuristicHazard();
-	                case XAException.XA_RETRY:
 	                default:
 	                    _committed = true;  // will cause log to be rewritten
 
