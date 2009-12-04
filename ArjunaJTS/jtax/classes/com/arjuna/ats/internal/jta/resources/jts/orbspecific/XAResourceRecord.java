@@ -878,6 +878,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                    handleForget() ;
 	                    break;
 	                case XAException.XA_HEURRB:
+	                       handleForget() ;
+	                       throw new TRANSACTION_ROLLEDBACK();
 	                case XAException.XA_RBROLLBACK:
 	                case XAException.XA_RBCOMMFAIL:
 	                case XAException.XA_RBDEADLOCK:
@@ -887,9 +889,7 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                case XAException.XA_RBTIMEOUT:
 	                case XAException.XA_RBTRANSIENT:
 	                case XAException.XAER_RMERR:
-	                    handleForget() ;
 	                    throw new TRANSACTION_ROLLEDBACK();
-
 	                case XAException.XAER_NOTA:
 	                    // RM unexpectedly lost track of the tx, outcome is uncertain
 	                    updateState(TwoPhaseOutcome.HEURISTIC_HAZARD);
