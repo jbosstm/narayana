@@ -866,6 +866,8 @@ public class XAResourceRecord extends AbstractRecord
 	                    forget();
 	                    break;
 	                case XAException.XA_HEURRB:
+	                       forget();
+	                       return TwoPhaseOutcome.ONE_PHASE_ERROR;
 	                case XAException.XA_RBROLLBACK:
 	                case XAException.XA_RBCOMMFAIL:
 	                case XAException.XA_RBDEADLOCK:
@@ -875,7 +877,6 @@ public class XAResourceRecord extends AbstractRecord
 	                case XAException.XA_RBTIMEOUT:
 	                case XAException.XA_RBTRANSIENT:
 	                case XAException.XAER_RMERR:
-	                    forget();
 	                    return TwoPhaseOutcome.ONE_PHASE_ERROR;
 	                case XAException.XAER_NOTA:
 	                    return TwoPhaseOutcome.HEURISTIC_HAZARD; // something committed or rolled back without asking us!
