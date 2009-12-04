@@ -101,12 +101,16 @@ public class XAOnePhaseResource implements OnePhaseResource
 
     /**
      * Commit the one phase resource.
-     * @return TwoPhaseOutcome.FINISH_OK or TwoPhaseOutcome.FINISH_ERROR
+     * @return TwoPhaseOutcome.FINISH_OK, TwoPhaseOutcome.ONE_PHASE_ERROR or TwoPhaseOutcome.FINISH_ERROR
      */
     public int commit()
     {
+        boolean doForget = false;
+        
         try
         {
+            // TODO we don't do an end here yet we do in 2PC. Check!!
+            
             xaResource.commit(xid, true) ;
             return TwoPhaseOutcome.FINISH_OK ;
         }
@@ -115,16 +119,73 @@ public class XAOnePhaseResource implements OnePhaseResource
             if (jtaLogger.logger.isDebugEnabled())
             {
                 jtaLogger.logger.debug(DebugLevel.ERROR_MESSAGES,
-                    VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_JTA,
-                    "XAOnePhaseResource.commit(" + xid + ") " + xae.getMessage());
+                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_JTA,
+                        "XAOnePhaseResource.commit(" + xid + ") " + xae.getMessage());
             }
-			if ((xae.errorCode >= XAException.XA_RBBASE)
-					&& (xae.errorCode <= XAException.XA_RBEND))
-			{
-				return TwoPhaseOutcome.HEURISTIC_ROLLBACK;
-			}
-            return TwoPhaseOutcome.FINISH_ERROR ;
+            
+            switch (xae.errorCode)
+            {
+            case XAException.XA_HEURHAZ:
+            case XAException.XA_HEURMIX:
+                return TwoPhaseOutcome.HEURISTIC_HAZARD;
+            case XAException.XA_HEURCOM:
+                doForget = true;
+                break;
+            case XAException.XA_HEURRB:
+                doForget = true;
+                return TwoPhaseOutcome.ONE_PHASE_ERROR;
+            case XAException.XA_RBROLLBACK:
+            case XAException.XA_RBCOMMFAIL:
+            case XAException.XA_RBDEADLOCK:
+            case XAException.XA_RBINTEGRITY:
+            case XAException.XA_RBOTHER:
+            case XAException.XA_RBPROTO:
+            case XAException.XA_RBTIMEOUT:
+            case XAException.XA_RBTRANSIENT:
+            case XAException.XAER_RMERR:
+                return TwoPhaseOutcome.ONE_PHASE_ERROR;
+            case XAException.XAER_NOTA:
+                return TwoPhaseOutcome.HEURISTIC_HAZARD; // something committed or rolled back without asking us!
+            case XAException.XAER_INVAL:
+            case XAException.XAER_RMFAIL: // resource manager
+                // failed, did it
+                // rollback?
+                return TwoPhaseOutcome.HEURISTIC_HAZARD;
+            case XAException.XA_RETRY:  // XA does not allow this to be thrown for 1PC!
+            case XAException.XAER_PROTO:
+                return TwoPhaseOutcome.ONE_PHASE_ERROR; // assume rollback
+            default:
+                return TwoPhaseOutcome.FINISH_ERROR;  // recovery should retry
+            }
         }
+        catch (final Throwable ex)
+        {
+            if (jtaLogger.logger.isDebugEnabled())
+            {
+                jtaLogger.logger.debug(DebugLevel.ERROR_MESSAGES,
+                        VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_JTA,
+                        "XAOnePhaseResource.commit(" + xid + ") " + ex.getMessage());
+            }
+        }
+        finally
+        {
+            try
+            {
+                if (doForget)
+                    xaResource.forget(xid);
+            }
+            catch (final Throwable ex)
+            {
+                if (jtaLogger.logger.isDebugEnabled())
+                {
+                    jtaLogger.logger.debug(DebugLevel.ERROR_MESSAGES,
+                            VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_JTA,
+                            "XAOnePhaseResource.commit(" + xid + ") called forget and got " + ex.getMessage());
+                }
+            }
+        }
+        
+        return TwoPhaseOutcome.ONE_PHASE_ERROR; // presume abort.
     }
 
     /**
