@@ -59,13 +59,13 @@ public class TransactionManagerService implements TransactionManagerServiceMBean
 
     /**
      * @message com.arjuna.ats.jbossatx.jta.TransactionManagerService.create
-     * [com.arjuna.ats.jbossatx.jta.TransactionManagerService.create] JBossTS Transaction Service (tag: {0}) - JBoss Inc.
+     * [com.arjuna.ats.jbossatx.jta.TransactionManagerService.create] JBossTS Transaction Service ({0} version - tag: {1}) - JBoss Inc.
      */
     public void create() throws Exception
     {
         String tag = ConfigurationInfo.getSourceId();
 
-        jbossatxLogger.loggerI18N.info("com.arjuna.ats.jbossatx.jta.TransactionManagerService.create", new Object[] {tag});
+        jbossatxLogger.loggerI18N.info("com.arjuna.ats.jbossatx.jta.TransactionManagerService.create", new Object[] {mode, tag});
 
         // Associate transaction reaper with our context classloader.
         TransactionReaper.transactionReaper();
