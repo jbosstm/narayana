@@ -430,6 +430,8 @@ public abstract class AbstractRecord extends StateManager
 			return topLevelCommit();
 		case TwoPhaseOutcome.PREPARE_READONLY:
 			return TwoPhaseOutcome.FINISH_OK;
+		case TwoPhaseOutcome.ONE_PHASE_ERROR:
+		    return TwoPhaseOutcome.ONE_PHASE_ERROR;
 		default:
 			return TwoPhaseOutcome.FINISH_ERROR;
 		}
