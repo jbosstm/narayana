@@ -167,12 +167,18 @@ public class LastResourceRecord extends AbstractRecord
                     "LastResourceRecord::topLevelPrepare() for " + order());
         }
 
-        if ((_lro != null) && (_lro.commit() == TwoPhaseOutcome.FINISH_OK))
-        {
-            return TwoPhaseOutcome.PREPARE_OK;
-        }
-        else
+        if (_lro == null)
             return TwoPhaseOutcome.PREPARE_NOTOK;
+        
+        switch (_lro.commit())
+        {
+        case TwoPhaseOutcome.FINISH_OK:
+            return TwoPhaseOutcome.PREPARE_OK;
+        case TwoPhaseOutcome.ONE_PHASE_ERROR:
+            return TwoPhaseOutcome.ONE_PHASE_ERROR;
+        default:
+            return TwoPhaseOutcome.PREPARE_NOTOK;
+        }
     }
 
     public void print (PrintWriter strm)
