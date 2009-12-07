@@ -21,6 +21,7 @@
 package org.jboss.jbossts.qa.ArjunaCore.Common;
 
 import com.arjuna.ats.arjuna.common.Uid;
+import com.arjuna.ats.arjuna.utils.Utility;
 import org.jboss.jbossts.qa.ArjunaCore.Utils.qautil;
 
 /**
@@ -44,9 +45,13 @@ public class UidTestWorker
 			mNumberOfUids = 1000;
 		}
 
+        System.err.println("start ms/pid: "+System.currentTimeMillis()+"/"+ Utility.getpid());
+
 		for (int i = 0; i < mNumberOfUids; i++)
 		{
 			System.out.println(new Uid().toString());
 		}
+
+        System.err.println("end pid "+Utility.getpid());
 	}
 }
