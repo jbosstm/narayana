@@ -52,6 +52,16 @@ public class UidTestWorker
 			System.out.println(new Uid().toString());
 		}
 
+        // hold ownership of the pid socket for at least one second,
+        // as that's the uniqness scope of the process init timestamp
+        // in Uid. Anything less and another proc may grab the same port
+        // within the same second and thus get same Uids.
+        try {
+            Thread.sleep(1200);
+        } catch(InterruptedException e) {
+
+        }
+
         System.err.println("end pid "+Utility.getpid());
 	}
 }
