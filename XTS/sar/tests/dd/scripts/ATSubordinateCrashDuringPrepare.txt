@@ -396,7 +396,7 @@ ENDRULE
 
 RULE trace send Participant aborted
 CLASS com.arjuna.wst11.messaging.engines.ParticipantEngine
-METHOD sendAborted(boolean)
+METHOD sendAborted()
 AT INVOKE sendAborted
 BIND engine:ParticipantEngine = $0,
      identifier:String = engine.getId()
