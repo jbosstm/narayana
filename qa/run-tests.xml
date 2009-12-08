@@ -42,7 +42,6 @@
     <!-- handy utility space where you can copy one or more test groups if you want to run something ad-hoc -->
     <target name="scratch">
 
-
     </target>
 
     <!-- a faster subset of the tests for smoke testing. aim to keep to under one hour total. -->
@@ -107,14 +106,19 @@
 
         <!-- rawresources01_1 : 6 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="rawresources01_1"/></antcall>
-        <!-- rawresources01_2 : 294 tests, 15 minutes -->
+        <!-- rawresources01_2 : 147 tests, 7 minutes -->
         <antcall target="junit-tests"><param name="tests" value="rawresources01_2"/></antcall>
+        <!-- rawresources01_2b : 147 tests, 6 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="rawresources01_2b"/></antcall>
         <!-- rawresources01_3 : 150 tests, 8 minutes -->
         <antcall target="junit-tests"><param name="tests" value="rawresources01_3"/></antcall>
+
         <!-- rawresources02_1 : 6 tests, 1 minute -->
         <antcall target="junit-tests"><param name="tests" value="rawresources02_1"/></antcall>
-        <!-- rawresources02_2 : 294 tests, 15 minutes -->
+        <!-- rawresources02_2 : 147 tests, 7 minutes -->
         <antcall target="junit-tests"><param name="tests" value="rawresources02_2"/></antcall>
+        <!-- rawresources02_2 : 147 tests, 6 minutes -->
+        <antcall target="junit-tests"><param name="tests" value="rawresources02_2b"/></antcall>
         <!-- rawresources02_3 : 150 tests, 8 minutes -->
         <antcall target="junit-tests"><param name="tests" value="rawresources02_3"/></antcall>
 

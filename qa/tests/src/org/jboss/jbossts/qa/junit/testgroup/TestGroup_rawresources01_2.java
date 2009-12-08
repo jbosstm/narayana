@@ -44,3686 +44,903 @@ public class TestGroup_rawresources01_2 extends TestGroupBase
 	{
 		try {
 			server0.terminate();
-		Task task0 = createTask("task0", org.jboss.jbossts.qa.Utils.RemoveServerIORStore.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		task0.perform("$(1)", "$(2)");
+            removeServerIORStore("task0", "$(1)", "$(2)");
 		} finally {
 			super.tearDown();
 		}
 	}
 
-	@Test public void RawResources01_2_Test001()
-	{
-		setTestName("Test001");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
+    private void runTwoServersOneClient(Class clientClass) {
+        Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
 		server1.start("$(1)");
 		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
 		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client001.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
+		Task client0 = createTask("client0", clientClass, Task.TaskType.EXPECT_PASS_FAIL, 480);
 		client0.start("$(1)", "$(2)");
 		client0.waitFor();
 		server2.terminate();
 		server1.terminate();
+    }
+
+	@Test public void RawResources01_2_Test001()
+	{
+		setTestName("Test001");
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client001.class);
 	}
 
 	@Test public void RawResources01_2_Test002()
 	{
 		setTestName("Test002");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client002.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client002.class);
 	}
 
 	@Test public void RawResources01_2_Test003()
 	{
 		setTestName("Test003");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client003.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client003.class);
 	}
 
 	@Test public void RawResources01_2_Test004()
 	{
 		setTestName("Test004");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client004.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client004.class);
 	}
 
 	@Test public void RawResources01_2_Test005()
 	{
 		setTestName("Test005");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client005.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client005.class);
 	}
 
 	@Test public void RawResources01_2_Test006()
 	{
 		setTestName("Test006");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client006.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client006.class);
 	}
 
 	@Test public void RawResources01_2_Test007()
 	{
 		setTestName("Test007");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client007.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client007.class);
 	}
 
 	@Test public void RawResources01_2_Test008()
 	{
 		setTestName("Test008");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client008.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client008.class);
 	}
 
 	@Test public void RawResources01_2_Test009()
 	{
 		setTestName("Test009");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client009.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client009.class);
 	}
 
 	@Test public void RawResources01_2_Test010()
 	{
 		setTestName("Test010");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client010.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client010.class);
 	}
 
 	@Test public void RawResources01_2_Test011()
 	{
 		setTestName("Test011");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client011.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client011.class);
 	}
 
 	@Test public void RawResources01_2_Test012()
 	{
 		setTestName("Test012");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client012.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client012.class);
 	}
 
 	@Test public void RawResources01_2_Test013()
 	{
 		setTestName("Test013");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client013.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client013.class);
 	}
 
 	@Test public void RawResources01_2_Test014()
 	{
 		setTestName("Test014");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client014.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client014.class);
 	}
 
 	@Test public void RawResources01_2_Test015()
 	{
 		setTestName("Test015");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client015.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client015.class);
 	}
 
 	@Test public void RawResources01_2_Test016()
 	{
 		setTestName("Test016");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client016.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client016.class);
 	}
 
 	@Test public void RawResources01_2_Test017()
 	{
 		setTestName("Test017");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client017.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client017.class);
 	}
 
 	@Test public void RawResources01_2_Test018()
 	{
 		setTestName("Test018");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client018.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client018.class);
 	}
 
 	@Test public void RawResources01_2_Test019()
 	{
 		setTestName("Test019");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client019.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client019.class);
 	}
 
 	@Test public void RawResources01_2_Test020()
 	{
 		setTestName("Test020");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client020.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client020.class);
 	}
 
 	@Test public void RawResources01_2_Test021()
 	{
 		setTestName("Test021");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client021.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client021.class);
 	}
 
 	@Test public void RawResources01_2_Test022()
 	{
 		setTestName("Test022");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client022.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client022.class);
 	}
 
 	@Test public void RawResources01_2_Test023()
 	{
 		setTestName("Test023");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client023.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client023.class);
 	}
 
 	@Test public void RawResources01_2_Test024()
 	{
 		setTestName("Test024");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client024.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client024.class);
 	}
 
 	@Test public void RawResources01_2_Test025()
 	{
 		setTestName("Test025");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client025.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client025.class);
 	}
 
 	@Test public void RawResources01_2_Test026()
 	{
 		setTestName("Test026");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client026.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client026.class);
 	}
 
 	@Test public void RawResources01_2_Test027()
 	{
 		setTestName("Test027");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client027.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client027.class);
 	}
 
 	@Test public void RawResources01_2_Test028()
 	{
 		setTestName("Test028");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client028.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client028.class);
 	}
 
 	@Test public void RawResources01_2_Test029()
 	{
 		setTestName("Test029");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client029.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client029.class);
 	}
 
 	@Test public void RawResources01_2_Test030()
 	{
 		setTestName("Test030");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client030.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client030.class);
 	}
 
 	@Test public void RawResources01_2_Test031()
 	{
 		setTestName("Test031");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client031.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client031.class);
 	}
 
 	@Test public void RawResources01_2_Test032()
 	{
 		setTestName("Test032");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client032.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client032.class);
 	}
 
 	@Test public void RawResources01_2_Test033()
 	{
 		setTestName("Test033");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client033.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client033.class);
 	}
 
 	@Test public void RawResources01_2_Test034()
 	{
 		setTestName("Test034");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client034.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client034.class);
 	}
 
 	@Test public void RawResources01_2_Test035()
 	{
 		setTestName("Test035");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client035.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client035.class);
 	}
 
 	@Test public void RawResources01_2_Test036()
 	{
 		setTestName("Test036");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client036.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client036.class);
 	}
 
 	@Test public void RawResources01_2_Test037()
 	{
 		setTestName("Test037");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client037.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client037.class);
 	}
 
 	@Test public void RawResources01_2_Test038()
 	{
 		setTestName("Test038");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client038.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client038.class);
 	}
 
 	@Test public void RawResources01_2_Test039()
 	{
 		setTestName("Test039");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client039.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client039.class);
 	}
 
 	@Test public void RawResources01_2_Test040()
 	{
 		setTestName("Test040");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client040.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client040.class);
 	}
 
 	@Test public void RawResources01_2_Test041()
 	{
 		setTestName("Test041");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client041.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client041.class);
 	}
 
 	@Test public void RawResources01_2_Test042()
 	{
 		setTestName("Test042");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client042.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client042.class);
 	}
 
 	@Test public void RawResources01_2_Test043()
 	{
 		setTestName("Test043");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client043.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client043.class);
 	}
 
 	@Test public void RawResources01_2_Test044()
 	{
 		setTestName("Test044");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client044.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client044.class);
 	}
 
 	@Test public void RawResources01_2_Test045()
 	{
 		setTestName("Test045");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client045.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client045.class);
 	}
 
 	@Test public void RawResources01_2_Test046()
 	{
 		setTestName("Test046");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client046.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client046.class);
 	}
 
 	@Test public void RawResources01_2_Test047()
 	{
 		setTestName("Test047");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client047.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client047.class);
 	}
 
 	@Test public void RawResources01_2_Test048()
 	{
 		setTestName("Test048");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client048.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client048.class);
 	}
 
 	@Test public void RawResources01_2_Test049()
 	{
 		setTestName("Test049");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client049.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client049.class);
 	}
 
 	@Test public void RawResources01_2_Test050()
 	{
 		setTestName("Test050");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client050.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client050.class);
 	}
 
 	@Test public void RawResources01_2_Test051()
 	{
 		setTestName("Test051");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client051.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client051.class);
 	}
 
 	@Test public void RawResources01_2_Test052()
 	{
 		setTestName("Test052");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client052.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client052.class);
 	}
 
 	@Test public void RawResources01_2_Test053()
 	{
 		setTestName("Test053");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client053.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client053.class);
 	}
 
 	@Test public void RawResources01_2_Test054()
 	{
 		setTestName("Test054");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client054.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client054.class);
 	}
 
 	@Test public void RawResources01_2_Test055()
 	{
 		setTestName("Test055");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client055.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client055.class);
 	}
 
 	@Test public void RawResources01_2_Test056()
 	{
 		setTestName("Test056");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client056.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client056.class);
 	}
 
 	@Test public void RawResources01_2_Test057()
 	{
 		setTestName("Test057");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client057.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client057.class);
 	}
 
 	@Test public void RawResources01_2_Test058()
 	{
 		setTestName("Test058");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client058.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client058.class);
 	}
 
 	@Test public void RawResources01_2_Test059()
 	{
 		setTestName("Test059");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client059.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client059.class);
 	}
 
 	@Test public void RawResources01_2_Test060()
 	{
 		setTestName("Test060");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client060.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client060.class);
 	}
 
 	@Test public void RawResources01_2_Test061()
 	{
 		setTestName("Test061");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client061.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client061.class);
 	}
 
 	@Test public void RawResources01_2_Test062()
 	{
 		setTestName("Test062");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client062.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client062.class);
 	}
 
 	@Test public void RawResources01_2_Test063()
 	{
 		setTestName("Test063");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client063.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client063.class);
 	}
 
 	@Test public void RawResources01_2_Test064()
 	{
 		setTestName("Test064");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client064.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client064.class);
 	}
 
 	@Test public void RawResources01_2_Test065()
 	{
 		setTestName("Test065");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client065.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client065.class);
 	}
 
 	@Test public void RawResources01_2_Test066()
 	{
 		setTestName("Test066");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client066.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client066.class);
 	}
 
 	@Test public void RawResources01_2_Test067()
 	{
 		setTestName("Test067");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client067.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client067.class);
 	}
 
 	@Test public void RawResources01_2_Test068()
 	{
 		setTestName("Test068");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client068.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client068.class);
 	}
 
 	@Test public void RawResources01_2_Test069()
 	{
 		setTestName("Test069");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client069.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client069.class);
 	}
 
 	@Test public void RawResources01_2_Test070()
 	{
 		setTestName("Test070");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client070.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client070.class);
 	}
 
 	@Test public void RawResources01_2_Test071()
 	{
 		setTestName("Test071");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client071.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client071.class);
 	}
 
 	@Test public void RawResources01_2_Test072()
 	{
 		setTestName("Test072");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client072.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client072.class);
 	}
 
 	@Test public void RawResources01_2_Test073()
 	{
 		setTestName("Test073");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client073.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client073.class);
 	}
 
 	@Test public void RawResources01_2_Test074()
 	{
 		setTestName("Test074");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client074.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client074.class);
 	}
 
 	@Test public void RawResources01_2_Test075()
 	{
 		setTestName("Test075");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client075.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client075.class);
 	}
 
 	@Test public void RawResources01_2_Test076()
 	{
 		setTestName("Test076");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client076.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client076.class);
 	}
 
 	@Test public void RawResources01_2_Test077()
 	{
 		setTestName("Test077");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client077.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client077.class);
 	}
 
 	@Test public void RawResources01_2_Test078()
 	{
 		setTestName("Test078");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client078.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client078.class);
 	}
 
 	@Test public void RawResources01_2_Test079()
 	{
 		setTestName("Test079");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client079.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client079.class);
 	}
 
 	@Test public void RawResources01_2_Test080()
 	{
 		setTestName("Test080");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client080.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client080.class);
 	}
 
 	@Test public void RawResources01_2_Test081()
 	{
 		setTestName("Test081");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client081.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client081.class);
 	}
 
 	@Test public void RawResources01_2_Test082()
 	{
 		setTestName("Test082");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client082.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client082.class);
 	}
 
 	@Test public void RawResources01_2_Test083()
 	{
 		setTestName("Test083");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client083.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client083.class);
 	}
 
 	@Test public void RawResources01_2_Test084()
 	{
 		setTestName("Test084");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client084.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client084.class);
 	}
 
 	@Test public void RawResources01_2_Test085()
 	{
 		setTestName("Test085");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client085.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client085.class);
 	}
 
 	@Test public void RawResources01_2_Test086()
 	{
 		setTestName("Test086");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client086.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client086.class);
 	}
 
 	@Test public void RawResources01_2_Test087()
 	{
 		setTestName("Test087");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client087.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client087.class);
 	}
 
 	@Test public void RawResources01_2_Test088()
 	{
 		setTestName("Test088");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client088.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client088.class);
 	}
 
 	@Test public void RawResources01_2_Test089()
 	{
 		setTestName("Test089");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client089.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client089.class);
 	}
 
 	@Test public void RawResources01_2_Test090()
 	{
 		setTestName("Test090");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client090.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client090.class);
 	}
 
 	@Test public void RawResources01_2_Test091()
 	{
 		setTestName("Test091");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client091.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client091.class);
 	}
 
 	@Test public void RawResources01_2_Test092()
 	{
 		setTestName("Test092");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client092.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client092.class);
 	}
 
 	@Test public void RawResources01_2_Test093()
 	{
 		setTestName("Test093");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client093.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client093.class);
 	}
 
 	@Test public void RawResources01_2_Test094()
 	{
 		setTestName("Test094");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client094.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client094.class);
 	}
 
 	@Test public void RawResources01_2_Test095()
 	{
 		setTestName("Test095");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client095.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client095.class);
 	}
 
 	@Test public void RawResources01_2_Test096()
 	{
 		setTestName("Test096");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client096.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client096.class);
 	}
 
 	@Test public void RawResources01_2_Test097()
 	{
 		setTestName("Test097");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client097.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client097.class);
 	}
 
 	@Test public void RawResources01_2_Test098()
 	{
 		setTestName("Test098");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client098.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client098.class);
 	}
 
 	@Test public void RawResources01_2_Test099()
 	{
 		setTestName("Test099");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client099.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client099.class);
 	}
 
 	@Test public void RawResources01_2_Test100()
 	{
 		setTestName("Test100");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client100.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client100.class);
 	}
 
 	@Test public void RawResources01_2_Test101()
 	{
 		setTestName("Test101");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client101.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client101.class);
 	}
 
 	@Test public void RawResources01_2_Test102()
 	{
 		setTestName("Test102");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client102.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client102.class);
 	}
 
 	@Test public void RawResources01_2_Test103()
 	{
 		setTestName("Test103");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client103.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client103.class);
 	}
 
 	@Test public void RawResources01_2_Test104()
 	{
 		setTestName("Test104");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client104.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client104.class);
 	}
 
 	@Test public void RawResources01_2_Test105()
 	{
 		setTestName("Test105");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client105.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client105.class);
 	}
 
 	@Test public void RawResources01_2_Test106()
 	{
 		setTestName("Test106");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client106.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client106.class);
 	}
 
 	@Test public void RawResources01_2_Test107()
 	{
 		setTestName("Test107");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client107.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client107.class);
 	}
 
 	@Test public void RawResources01_2_Test108()
 	{
 		setTestName("Test108");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client108.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client108.class);
 	}
 
 	@Test public void RawResources01_2_Test109()
 	{
 		setTestName("Test109");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client109.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client109.class);
 	}
 
 	@Test public void RawResources01_2_Test110()
 	{
 		setTestName("Test110");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client110.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client110.class);
 	}
 
 	@Test public void RawResources01_2_Test111()
 	{
 		setTestName("Test111");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client111.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client111.class);
 	}
 
 	@Test public void RawResources01_2_Test112()
 	{
 		setTestName("Test112");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client112.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client112.class);
 	}
 
 	@Test public void RawResources01_2_Test113()
 	{
 		setTestName("Test113");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client113.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client113.class);
 	}
 
 	@Test public void RawResources01_2_Test114()
 	{
 		setTestName("Test114");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client114.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client114.class);
 	}
 
 	@Test public void RawResources01_2_Test115()
 	{
 		setTestName("Test115");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client115.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client115.class);
 	}
 
 	@Test public void RawResources01_2_Test116()
 	{
 		setTestName("Test116");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client116.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client116.class);
 	}
 
 	@Test public void RawResources01_2_Test117()
 	{
 		setTestName("Test117");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client117.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client117.class);
 	}
 
 	@Test public void RawResources01_2_Test118()
 	{
 		setTestName("Test118");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client118.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client118.class);
 	}
 
 	@Test public void RawResources01_2_Test119()
 	{
 		setTestName("Test119");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client119.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client119.class);
 	}
 
 	@Test public void RawResources01_2_Test120()
 	{
 		setTestName("Test120");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client120.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client120.class);
 	}
 
 	@Test public void RawResources01_2_Test121()
 	{
 		setTestName("Test121");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client121.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client121.class);
 	}
 
 	@Test public void RawResources01_2_Test122()
 	{
 		setTestName("Test122");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client122.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client122.class);
 	}
 
 	@Test public void RawResources01_2_Test123()
 	{
 		setTestName("Test123");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client123.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client123.class);
 	}
 
 	@Test public void RawResources01_2_Test124()
 	{
 		setTestName("Test124");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client124.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client124.class);
 	}
 
 	@Test public void RawResources01_2_Test125()
 	{
 		setTestName("Test125");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client125.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client125.class);
 	}
 
 	@Test public void RawResources01_2_Test126()
 	{
 		setTestName("Test126");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client126.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client126.class);
 	}
 
 	@Test public void RawResources01_2_Test127()
 	{
 		setTestName("Test127");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client127.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client127.class);
 	}
 
 	@Test public void RawResources01_2_Test128()
 	{
 		setTestName("Test128");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client128.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client128.class);
 	}
 
 	@Test public void RawResources01_2_Test129()
 	{
 		setTestName("Test129");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client129.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client129.class);
 	}
 
 	@Test public void RawResources01_2_Test130()
 	{
 		setTestName("Test130");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client130.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client130.class);
 	}
 
 	@Test public void RawResources01_2_Test131()
 	{
 		setTestName("Test131");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client131.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client131.class);
 	}
 
 	@Test public void RawResources01_2_Test132()
 	{
 		setTestName("Test132");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client132.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client132.class);
 	}
 
 	@Test public void RawResources01_2_Test133()
 	{
 		setTestName("Test133");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client133.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client133.class);
 	}
 
 	@Test public void RawResources01_2_Test134()
 	{
 		setTestName("Test134");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client134.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client134.class);
 	}
 
 	@Test public void RawResources01_2_Test135()
 	{
 		setTestName("Test135");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client135.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client135.class);
 	}
 
 	@Test public void RawResources01_2_Test136()
 	{
 		setTestName("Test136");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client136.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client136.class);
 	}
 
 	@Test public void RawResources01_2_Test137()
 	{
 		setTestName("Test137");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client137.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client137.class);
 	}
 
 	@Test public void RawResources01_2_Test138()
 	{
 		setTestName("Test138");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client138.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client138.class);
 	}
 
 	@Test public void RawResources01_2_Test139()
 	{
 		setTestName("Test139");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client139.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client139.class);
 	}
 
 	@Test public void RawResources01_2_Test140()
 	{
 		setTestName("Test140");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client140.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client140.class);
 	}
 
 	@Test public void RawResources01_2_Test141()
 	{
 		setTestName("Test141");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client141.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client141.class);
 	}
 
 	@Test public void RawResources01_2_Test142()
 	{
 		setTestName("Test142");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client142.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client142.class);
 	}
 
 	@Test public void RawResources01_2_Test143()
 	{
 		setTestName("Test143");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client143.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client143.class);
 	}
 
 	@Test public void RawResources01_2_Test144()
 	{
 		setTestName("Test144");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client144.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client144.class);
 	}
 
 	@Test public void RawResources01_2_Test145()
 	{
 		setTestName("Test145");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client001.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client145.class);
 	}
 
 	@Test public void RawResources01_2_Test146()
 	{
 		setTestName("Test146");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client002.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client146.class);
 	}
 
 	@Test public void RawResources01_2_Test147()
 	{
 		setTestName("Test147");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client003.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
+        runTwoServersOneClient(org.jboss.jbossts.qa.RawResources01Clients2.Client147.class);
 	}
-
-	@Test public void RawResources01_2_Test148()
-	{
-		setTestName("Test148");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client004.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test149()
-	{
-		setTestName("Test149");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client005.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test150()
-	{
-		setTestName("Test150");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client006.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test151()
-	{
-		setTestName("Test151");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client007.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test152()
-	{
-		setTestName("Test152");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client008.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test153()
-	{
-		setTestName("Test153");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client009.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test154()
-	{
-		setTestName("Test154");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client010.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test155()
-	{
-		setTestName("Test155");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client011.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test156()
-	{
-		setTestName("Test156");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client012.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test157()
-	{
-		setTestName("Test157");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client013.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test158()
-	{
-		setTestName("Test158");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client014.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test159()
-	{
-		setTestName("Test159");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client015.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test160()
-	{
-		setTestName("Test160");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client016.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test161()
-	{
-		setTestName("Test161");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client017.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test162()
-	{
-		setTestName("Test162");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client018.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test163()
-	{
-		setTestName("Test163");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client019.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test164()
-	{
-		setTestName("Test164");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client020.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test165()
-	{
-		setTestName("Test165");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client021.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test166()
-	{
-		setTestName("Test166");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client022.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test167()
-	{
-		setTestName("Test167");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client023.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test168()
-	{
-		setTestName("Test168");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client024.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test169()
-	{
-		setTestName("Test169");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client025.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test170()
-	{
-		setTestName("Test170");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client026.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test171()
-	{
-		setTestName("Test171");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client027.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test172()
-	{
-		setTestName("Test172");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client028.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test173()
-	{
-		setTestName("Test173");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client029.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test174()
-	{
-		setTestName("Test174");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client030.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test175()
-	{
-		setTestName("Test175");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client031.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test176()
-	{
-		setTestName("Test176");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client032.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test177()
-	{
-		setTestName("Test177");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client033.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test178()
-	{
-		setTestName("Test178");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client034.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test179()
-	{
-		setTestName("Test179");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client035.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test180()
-	{
-		setTestName("Test180");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client036.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test181()
-	{
-		setTestName("Test181");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client037.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test182()
-	{
-		setTestName("Test182");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client038.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test183()
-	{
-		setTestName("Test183");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client039.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test184()
-	{
-		setTestName("Test184");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client040.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test185()
-	{
-		setTestName("Test185");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client041.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test186()
-	{
-		setTestName("Test186");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client042.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test187()
-	{
-		setTestName("Test187");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client043.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test188()
-	{
-		setTestName("Test188");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client044.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test189()
-	{
-		setTestName("Test189");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client045.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test190()
-	{
-		setTestName("Test190");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client046.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test191()
-	{
-		setTestName("Test191");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client047.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test192()
-	{
-		setTestName("Test192");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client048.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test193()
-	{
-		setTestName("Test193");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client049.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test194()
-	{
-		setTestName("Test194");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client050.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test195()
-	{
-		setTestName("Test195");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client051.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test196()
-	{
-		setTestName("Test196");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client052.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test197()
-	{
-		setTestName("Test197");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client053.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test198()
-	{
-		setTestName("Test198");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client054.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test199()
-	{
-		setTestName("Test199");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client055.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test200()
-	{
-		setTestName("Test200");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client056.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test201()
-	{
-		setTestName("Test201");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client057.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test202()
-	{
-		setTestName("Test202");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client058.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test203()
-	{
-		setTestName("Test203");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client059.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test204()
-	{
-		setTestName("Test204");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client060.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test205()
-	{
-		setTestName("Test205");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client061.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test206()
-	{
-		setTestName("Test206");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client062.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test207()
-	{
-		setTestName("Test207");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client063.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test208()
-	{
-		setTestName("Test208");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client064.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test209()
-	{
-		setTestName("Test209");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client065.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test210()
-	{
-		setTestName("Test210");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client066.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test211()
-	{
-		setTestName("Test211");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client067.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test212()
-	{
-		setTestName("Test212");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client068.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test213()
-	{
-		setTestName("Test213");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client069.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test214()
-	{
-		setTestName("Test214");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client070.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test215()
-	{
-		setTestName("Test215");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client071.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test216()
-	{
-		setTestName("Test216");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client072.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test217()
-	{
-		setTestName("Test217");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client073.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test218()
-	{
-		setTestName("Test218");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client074.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test219()
-	{
-		setTestName("Test219");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client075.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test220()
-	{
-		setTestName("Test220");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client076.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test221()
-	{
-		setTestName("Test221");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client077.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test222()
-	{
-		setTestName("Test222");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client078.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test223()
-	{
-		setTestName("Test223");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client079.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test224()
-	{
-		setTestName("Test224");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client080.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test225()
-	{
-		setTestName("Test225");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client081.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test226()
-	{
-		setTestName("Test226");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client082.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test227()
-	{
-		setTestName("Test227");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client083.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test228()
-	{
-		setTestName("Test228");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client084.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test229()
-	{
-		setTestName("Test229");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client085.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test230()
-	{
-		setTestName("Test230");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client086.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test231()
-	{
-		setTestName("Test231");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client087.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test232()
-	{
-		setTestName("Test232");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client088.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test233()
-	{
-		setTestName("Test233");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client089.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test234()
-	{
-		setTestName("Test234");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client090.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test235()
-	{
-		setTestName("Test235");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client091.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test236()
-	{
-		setTestName("Test236");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client092.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test237()
-	{
-		setTestName("Test237");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client093.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test238()
-	{
-		setTestName("Test238");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client094.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test239()
-	{
-		setTestName("Test239");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client095.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test240()
-	{
-		setTestName("Test240");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client096.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test241()
-	{
-		setTestName("Test241");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client097.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test242()
-	{
-		setTestName("Test242");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client098.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test243()
-	{
-		setTestName("Test243");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client099.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test244()
-	{
-		setTestName("Test244");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client100.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test245()
-	{
-		setTestName("Test245");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client101.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test246()
-	{
-		setTestName("Test246");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client102.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test247()
-	{
-		setTestName("Test247");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client103.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test248()
-	{
-		setTestName("Test248");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client104.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test249()
-	{
-		setTestName("Test249");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client105.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test250()
-	{
-		setTestName("Test250");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client106.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test251()
-	{
-		setTestName("Test251");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client107.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test252()
-	{
-		setTestName("Test252");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client108.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test253()
-	{
-		setTestName("Test253");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client109.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test254()
-	{
-		setTestName("Test254");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client110.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test255()
-	{
-		setTestName("Test255");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client111.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test256()
-	{
-		setTestName("Test256");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client112.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test257()
-	{
-		setTestName("Test257");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client113.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test258()
-	{
-		setTestName("Test258");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client114.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test259()
-	{
-		setTestName("Test259");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client115.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test260()
-	{
-		setTestName("Test260");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client116.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test261()
-	{
-		setTestName("Test261");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client117.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test262()
-	{
-		setTestName("Test262");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client118.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test263()
-	{
-		setTestName("Test263");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client119.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test264()
-	{
-		setTestName("Test264");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client120.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test265()
-	{
-		setTestName("Test265");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client121.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test266()
-	{
-		setTestName("Test266");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client122.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test267()
-	{
-		setTestName("Test267");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client123.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test268()
-	{
-		setTestName("Test268");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client124.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test269()
-	{
-		setTestName("Test269");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client125.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test270()
-	{
-		setTestName("Test270");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client126.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test271()
-	{
-		setTestName("Test271");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client127.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test272()
-	{
-		setTestName("Test272");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client128.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test273()
-	{
-		setTestName("Test273");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client129.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test274()
-	{
-		setTestName("Test274");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client130.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test275()
-	{
-		setTestName("Test275");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client131.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test276()
-	{
-		setTestName("Test276");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client132.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test277()
-	{
-		setTestName("Test277");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client133.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test278()
-	{
-		setTestName("Test278");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client134.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test279()
-	{
-		setTestName("Test279");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client135.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test280()
-	{
-		setTestName("Test280");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client136.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test281()
-	{
-		setTestName("Test281");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client137.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test282()
-	{
-		setTestName("Test282");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client138.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test283()
-	{
-		setTestName("Test283");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client139.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test284()
-	{
-		setTestName("Test284");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client140.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test285()
-	{
-		setTestName("Test285");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client141.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test286()
-	{
-		setTestName("Test286");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client142.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test287()
-	{
-		setTestName("Test287");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client143.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test288()
-	{
-		setTestName("Test288");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client144.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test289()
-	{
-		setTestName("Test289");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client145.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test290()
-	{
-		setTestName("Test290");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client146.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test291()
-	{
-		setTestName("Test291");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)");
-		Task server2 = createTask("server2", org.jboss.jbossts.qa.RawResources01Servers.Server01.class, Task.TaskType.EXPECT_READY, 480);
-		server2.start("$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client147.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server2.terminate();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test292()
-	{
-		setTestName("Test292");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client145.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test293()
-	{
-		setTestName("Test293");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client146.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
-	@Test public void RawResources01_2_Test294()
-	{
-		setTestName("Test294");
-		Task server1 = createTask("server1", org.jboss.jbossts.qa.RawResources01Servers.Server02.class, Task.TaskType.EXPECT_READY, 480);
-		server1.start("$(1)", "$(2)");
-		Task client0 = createTask("client0", org.jboss.jbossts.qa.RawResources01Clients2.Client147.class, Task.TaskType.EXPECT_PASS_FAIL, 480);
-		client0.start("$(1)", "$(2)");
-		client0.waitFor();
-		server1.terminate();
-	}
-
 }

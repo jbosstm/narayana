@@ -24,6 +24,8 @@ import org.junit.Before;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
+import org.jboss.jbossts.qa.Utils.RemoveServerIORStore;
+import org.jboss.jbossts.qa.Utils.FileServerIORStore;
 
 import java.io.*;
 
@@ -95,5 +97,20 @@ public class TestGroupBase
             Assert.fail("createTask : could not open output stream for file " + filename);
             return null;
         }
+    }
+
+    /**
+     * 
+     */
+    public void removeServerIORStore(String name, String... params) {
+        // the old, slow way spawned a cleanup task:
+        //Task task = createTask(name, org.jboss.jbossts.qa.Utils.RemoveServerIORStore.class, Task.TaskType.EXPECT_PASS_FAIL, 1480);
+        //task.perform(params);
+
+        // the new, quick way does it in-process with the test harness.
+        // this may break if the tests are changed to use a different store implementation, as it
+        // does not bother with the plugin abstraction used by RemoveServerIORStore/ServerIORStore
+        FileServerIORStore store = new FileServerIORStore();
+        store.remove();
     }
 }
