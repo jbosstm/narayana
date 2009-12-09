@@ -84,16 +84,6 @@
 
 	<property name="compile.debug" value="true"/>
 	
-	<path id="classpath">
-		<fileset dir="${lib.dir}" includes="${dist.compile.libs}"/>
-		<fileset dir="${xts.lib.dir}" includes="${dist.xts.libs}"/>
-		<fileset dir="${xts.ext.lib.dir}" includes="${dist.xts.ext.libs}"/>
-		<fileset dir="${jboss.client.lib.dir}" includes="${jboss.compile.client.libs}"/>
-		<fileset dir="${jboss.lib.dir}" includes="${jboss.compile.lib.jars}"/>
-		<fileset dir="${jboss.common.lib.dir}" includes="${jboss.compile.common.lib.jars}"/>
-	</path>
-	<property name="classpath" refid="classpath"/>
-	
 	<target name="init">
 		<mkdir dir="${build.dir}"/>
 		<mkdir dir="${build.classes.dir}"/>
@@ -101,7 +91,16 @@
 	</target>
 	
 	<target name="compile" depends="init">
-		<javac classpathref="classpath" destdir="${build.classes.dir}" srcdir="${src.dir}" debug="${compile.debug}"/>
+		<javac destdir="${build.classes.dir}" srcdir="${src.dir}" debug="${compile.debug}">
+            <classpath>
+                <fileset dir="${lib.dir}" includes="${dist.compile.libs}"/>
+                <fileset dir="${xts.lib.dir}" includes="${dist.xts.libs}"/>
+                <fileset dir="${xts.ext.lib.dir}" includes="${dist.xts.ext.libs}"/>
+                <fileset dir="${jboss.client.lib.dir}" includes="${jboss.compile.client.libs}"/>
+                <fileset dir="${jboss.lib.dir}" includes="${jboss.compile.lib.jars}"/>
+                <fileset dir="${jboss.common.lib.dir}" includes="${jboss.compile.common.lib.jars}"/>
+            </classpath>
+        </javac>
 	</target>
 	
     <target name="war" depends="compile">
