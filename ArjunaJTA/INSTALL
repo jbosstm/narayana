@@ -158,9 +158,40 @@ installed tree.
 
                          Embedded Tools
                          --------------
+JMX Instrumentation
+-------------------
 
-Deployment
-----------
+With this release it is now possible to monitor the transaction Object
+Store using JMX. Monitoring the Object Store is useful for trouble
+shooting problems that occur when transactions are committed (it does
+not expose transactions prior to commit). The JMX instrumentation
+(of the ObjectStore) is a new feature and is not necessarily suitable
+for monitoring production systems.
+
+In any compliant JMX browser (such as jconsole) there should appear an
+MBean with the name
+	jboss.jta:type=ObjectStore,id=<id>
+This MBean corresponds to the object store and provides a naming context
+for other MBeans (for example in a JMX client such as jconsole the MBeans
+will be displayed in the form of a tree control). The various MBeans
+corresponding to this ObjectStore will have names prefixed by this
+'top level' MBean. Each MBean also exposes a 'refresh' operation
+that causes the instrumentation to check whether any new ObjectStore 
+records have been created or whether old ones have been removed.
+
+If JBossTS is deployed in the JBoss application server then JMX
+instrumentation of the ObjectStore is enabled by default. It can be disabled
+by setting the property jmxEnabled on the ObjectStoreEnvironmentBean in the
+transaction-jboss-beans.xml file. The property only effects ObjectStore
+MBeans (it will be renamed to something more specific in the next release).
+
+When JBossTS is deployed stand alone you need to create the 'top level'
+MBean programmatically by calling the following static Java method:
+
+com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreTypeBean::getObjectStoreBrowserBean()
+
+Tools Deployment
+----------------
 
 Embedded tools is an applet that runs in proccess with the AS which
 includes an interface for inspecting transactions. It is deployed as
