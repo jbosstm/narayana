@@ -118,6 +118,12 @@
         <property name="objectStoreDir">${jboss.server.data.dir}/tx-object-store</property>
     </bean>
 
+    <bean name="ObjectStoreBrowserBean" class="com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBean">
+       <constructor factoryClass="com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBean" factoryMethod="getObjectStoreBrowserBean"/>
+
+       <demand state="Create">ObjectStoreEnvironmentBean</demand>
+    </bean>
+
     <bean name="JTAEnvironmentBean" class="com.arjuna.ats.jta.common.JTAEnvironmentBean">
 
         <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.jta:name=JTAEnvironmentBean", exposedInterface=com.arjuna.ats.jta.common.JTAEnvironmentBeanMBean.class, registerDirectly=true)</annotation>

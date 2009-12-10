@@ -35,7 +35,7 @@ import java.io.PrintWriter;
 
 /**
  * The various types of StateManager object which can exist.
- * 
+ *
  * @author Mark Little (mark@arjuna.com)
  * @version $Id: ObjectType.java 2342 2006-03-30 13:06:17Z $
  * @since JTS 1.0.
@@ -58,21 +58,21 @@ public class ObjectType
 
     public static void print (PrintWriter strm, int ot)
     {
-        switch (ot)
-        {
-        case RECOVERABLE:
-            strm.print("RECOVERABLE");
-            break;
-        case ANDPERSISTENT:
-            strm.print("ANDPERSISTENT");
-            break;
-        case NEITHER:
-            strm.print("NEITHER");
-            break;
-        default:
-            strm.print("UNKNOWN_TYPE");
-            break;
-        }
+        strm.print(toString(ot));
     }
 
+    public static String toString(int ot)
+    {
+        switch (ot)
+        {
+            case RECOVERABLE:
+                return "RECOVERABLE";
+            case ANDPERSISTENT:
+                return"ANDPERSISTENT";
+            case NEITHER:
+                return"NEITHER";
+            default:
+                return"UNKNOWN_TYPE";
+        }
+    }
 }

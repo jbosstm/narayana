@@ -44,37 +44,34 @@ import java.io.PrintWriter;
 
 public class ObjectStatus
 {
+    public static final int PASSIVE = 0;
+    public static final int PASSIVE_NEW = 1;
+    public static final int ACTIVE = 2;
+    public static final int ACTIVE_NEW = 3;
+    public static final int DESTROYED = 4;
+    public static final int UNKNOWN_STATUS = 5;
 
-public static final int PASSIVE = 0;
-public static final int PASSIVE_NEW = 1;
-public static final int ACTIVE = 2;
-public static final int ACTIVE_NEW = 3;
-public static final int DESTROYED = 4;
-public static final int UNKNOWN_STATUS = 5;
-    
-public static void print (PrintWriter strm, int os)
+    public static void print (PrintWriter strm, int os)
     {
-	switch (os)
-	{
-	case PASSIVE:
-	    strm.print("PASSIVE");
-	    break;
-	case PASSIVE_NEW:
-	    strm.print("PASSIVE_NEW");
-	    break;
-	case ACTIVE:
-	    strm.print("ACTIVE");
-	    break;
-	case ACTIVE_NEW:
-	    strm.print("ACTIVE_NEW");
-	    break;
-	case DESTROYED:
-	    strm.print("DESTROYED");
-	    break;
-	default:
-	    strm.print("UNKNOWN_STATUS");
-	    break;
-	}
+        strm.print(toString(os));
     }
-    
+
+    public static String toString(int os)
+    {
+        switch (os)
+        {
+            case PASSIVE:
+                return "PASSIVE";
+            case PASSIVE_NEW:
+                return "PASSIVE_NEW";
+            case ACTIVE:
+                return "ACTIVE";
+            case ACTIVE_NEW:
+                return "ACTIVE_NEW";
+            case DESTROYED:
+                return "DESTROYED";
+            default:
+                return "UNKNOWN_STATUS";
+        }
+    }
 }

@@ -111,7 +111,7 @@
 
         <constructor factoryClass="com.arjuna.ats.arjuna.common.arjPropertyManager" factoryMethod="getCoordinatorEnvironmentBean"/>
 
-        <property name="enableStatistics">false</property>
+        <property name="enableStatistics">true</property>
         <property name="defaultTimeout">300</property>
     </bean>
 
@@ -122,6 +122,11 @@
         <constructor factoryClass="com.arjuna.ats.arjuna.common.arjPropertyManager" factoryMethod="getObjectStoreEnvironmentBean"/>
 
         <property name="objectStoreDir">${jboss.server.data.dir}/tx-object-store</property>
+    </bean>
+
+    <bean name="ObjectStoreBrowserBean" class="com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBean">
+        <constructor factoryClass="com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBean" factoryMethod="getObjectStoreBrowserBean"/>
+        <demand state="Create">ObjectStoreEnvironmentBean</demand>
     </bean>
 
     <bean name="JTAEnvironmentBean" class="com.arjuna.ats.jta.common.JTAEnvironmentBean">

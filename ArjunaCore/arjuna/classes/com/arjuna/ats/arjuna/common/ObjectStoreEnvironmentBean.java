@@ -72,6 +72,8 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     private volatile long txLogSize = 10 * 1024 * 1024;  // default maximum log txLogSize in bytes;
     @FullPropertyName(name = "com.arjuna.ats.arjuna.coordinator.transactionLog.purgeTime")
     private volatile long purgeTime = 100000; // in milliseconds
+    @FullPropertyName(name = "org.jboss.jbosstm.tools.jmx.osb.JMXEnabled")
+    private volatile boolean jmxEnabled = true;
 
 
     /**
@@ -613,4 +615,24 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     {
         this.purgeTime = purgeTime;
     }
+
+    /**
+     * Determines whether JMX instrumentation of the Object Store is enabled.
+     *
+     * @return true if JMX instrumentation is enabled
+     */
+    public boolean isJmxEnabled()
+	{
+		return jmxEnabled;
+	}
+
+    /**
+     * Enable or disable JMX instrumentation of the Object Store.
+     *
+     * @param enable set to true to enable.
+     */
+    public void setJmxEnabled(boolean enable)
+	{
+		jmxEnabled = enable;
+	}
 }
