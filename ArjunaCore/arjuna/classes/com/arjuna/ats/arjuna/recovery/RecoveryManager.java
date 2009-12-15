@@ -186,34 +186,6 @@ public class RecoveryManager
     }
 
     /**
-     * Stop the periodic recovery manager waiting for any recovery scan in progress to complete.
-     *
-     * @throws IllegalStateException if the recovery manager has been shutdown.
-     *
-     * @deprecated use terminate instead.
-     */
-
-    public final void stop ()
-    {
-        stop(false);
-    }
-
-    /**
-     * Stop the periodic recovery manager.
-     * @param async false means wait for any recovery scan in progress to complete.
-     * @throws IllegalStateException if the recovery manager has been shutdown.
-     *
-     * @deprecated use terminate instead.
-     */
-
-    public final void stop (boolean async)
-    {
-        checkState();
-
-        _theImple.stop(async);
-    }
-
-    /**
      * Terminate and cleanup the recovery manager. There is no going back from this. This is a
      * synchronous operation so return means that the recovery has completed.
      *
@@ -282,21 +254,6 @@ public class RecoveryManager
      *
      * @param async false means wait for the recovery manager to finish any scans before returning.
      * @throws IllegalStateException if the recovery manager has been shutdown.
-     * @deprecated use suspend
-     */
-
-    public void suspendScan (boolean async)
-    {
-        suspend(async);
-    }
-
-    /**
-     * Suspend the recovery manager. If the recovery manager is in the process of
-     * doing recovery scans then it will be suspended afterwards, in order to
-     * preserve data integrity.
-     *
-     * @param async false means wait for the recovery manager to finish any scans before returning.
-     * @throws IllegalStateException if the recovery manager has been shutdown.
      */
 
     public void suspend (boolean async)
@@ -304,16 +261,6 @@ public class RecoveryManager
         checkState();
 
         _theImple.suspendScan(async);
-    }
-
-    /**
-     * @throws IllegalStateException if the recovery manager has been shutdown.
-     * @deprecated use resume
-     */
-
-    public void resumeScan ()
-    {
-        resume();
     }
 
     /**
