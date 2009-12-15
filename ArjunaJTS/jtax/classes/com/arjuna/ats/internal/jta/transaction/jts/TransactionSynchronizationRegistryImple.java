@@ -41,214 +41,216 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
     // It's Serilizable so it can be shoved into the app server JNDI.
 
     /*
-	 * http://java.sun.com/javaee/5/docs/api/javax/transaction/TransactionSynchronizationRegistry.html
-	 * http://jcp.org/aboutJava/communityprocess/maintenance/jsr907/907ChangeLog.html
-	 */
+         * http://java.sun.com/javaee/5/docs/api/javax/transaction/TransactionSynchronizationRegistry.html
+         * http://jcp.org/aboutJava/communityprocess/maintenance/jsr907/907ChangeLog.html
+         */
 
-	// Return an opaque object to represent the transaction bound to the current thread at the time this method is called.
+        // Return an opaque object to represent the transaction bound to the current thread at the time this method is called.
+
+    private static final long serialVersionUID = 1L;
 
     /**
-	 * @message com.arjuna.ats.internal.jta.transaction.jts.systemexception
-	 * [com.arjuna.ats.internal.jta.transaction.jts.systemexception]
-	 * The transaction implementation threw a SystemException
-	 */
-	public Object getTransactionKey()
-	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"TransactionSynchronizationRegistryImple.getTransactionKey");
-		}
+         * @message com.arjuna.ats.internal.jta.transaction.jts.systemexception
+         * [com.arjuna.ats.internal.jta.transaction.jts.systemexception]
+         * The transaction implementation threw a SystemException
+         */
+        public Object getTransactionKey()
+        {
+                if (jtaLogger.logger.isDebugEnabled())
+                {
+                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+                                        VisibilityLevel.VIS_PUBLIC,
+                                        com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+                                        "TransactionSynchronizationRegistryImple.getTransactionKey");
+                }
 
         javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-		TransactionImple transactionImple = null;
-		try
-		{
-			transactionImple = (TransactionImple)tm.getTransaction();
+                TransactionImple transactionImple = null;
+                try
+                {
+                        transactionImple = (TransactionImple)tm.getTransaction();
         }
-		catch (SystemException e)
-		{
-			throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
-		}
+                catch (SystemException e)
+                {
+                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
+                }
 
-		if (transactionImple == null) {
-			return null;
-		} else {
-			return transactionImple.get_uid();
-		}
-	}
+                if (transactionImple == null) {
+                        return null;
+                } else {
+                        return transactionImple.get_uid();
+                }
+        }
 
-	// Add or replace an object in the Map of resources being managed for the transaction bound to the current thread at the time this method is called.
-	public void putResource(Object key, Object value)
-	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"TransactionSynchronizationRegistryImple.putResource");
-		}
+        // Add or replace an object in the Map of resources being managed for the transaction bound to the current thread at the time this method is called.
+        public void putResource(Object key, Object value)
+        {
+                if (jtaLogger.logger.isDebugEnabled())
+                {
+                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+                                        VisibilityLevel.VIS_PUBLIC,
+                                        com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+                                        "TransactionSynchronizationRegistryImple.putResource");
+                }
 
-		if(key ==  null)
-		{
-			throw new NullPointerException();
-		}
+                if(key ==  null)
+                {
+                        throw new NullPointerException();
+                }
 
-		TransactionImple transactionImple = getTransactionImple();
-		transactionImple.putTxLocalResource(key, value);
-	}
+                TransactionImple transactionImple = getTransactionImple();
+                transactionImple.putTxLocalResource(key, value);
+        }
 
-	// Get an object from the Map of resources being managed for the transaction bound to the current thread at the time this method is called.
-	public Object getResource(Object key)
-	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"TransactionSynchronizationRegistryImple.getResource");
-		}
+        // Get an object from the Map of resources being managed for the transaction bound to the current thread at the time this method is called.
+        public Object getResource(Object key)
+        {
+                if (jtaLogger.logger.isDebugEnabled())
+                {
+                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+                                        VisibilityLevel.VIS_PUBLIC,
+                                        com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+                                        "TransactionSynchronizationRegistryImple.getResource");
+                }
 
-		if(key ==  null)
-		{
-			throw new NullPointerException();
-		}
+                if(key ==  null)
+                {
+                        throw new NullPointerException();
+                }
 
-		TransactionImple transactionImple = getTransactionImple();
-		return transactionImple.getTxLocalResource(key);
-	}
+                TransactionImple transactionImple = getTransactionImple();
+                return transactionImple.getTxLocalResource(key);
+        }
 
-	// Register a Synchronization instance with special ordering semantics.
-	/**
-	 * @message com.arjuna.ats.internal.jta.transaction.jts.syncrollbackexception
-	 * [ccom.arjuna.ats.internal.jta.transaction.jts.syncrollbackexception]
-	 * The transaction implementation threw a RollbackException
-	 */
-	public void registerInterposedSynchronization(Synchronization synchronization)
-	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"TransactionSynchronizationRegistryImple.registerInterposedSynchronization");
-		}
+        // Register a Synchronization instance with special ordering semantics.
+        /**
+         * @message com.arjuna.ats.internal.jta.transaction.jts.syncrollbackexception
+         * [ccom.arjuna.ats.internal.jta.transaction.jts.syncrollbackexception]
+         * The transaction implementation threw a RollbackException
+         */
+        public void registerInterposedSynchronization(Synchronization synchronization)
+        {
+                if (jtaLogger.logger.isDebugEnabled())
+                {
+                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+                                        VisibilityLevel.VIS_PUBLIC,
+                                        com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+                                        "TransactionSynchronizationRegistryImple.registerInterposedSynchronization");
+                }
 
-		TransactionImple transactionImple = getTransactionImple();
+                TransactionImple transactionImple = getTransactionImple();
 
-		try
-		{
-			transactionImple.registerSynchronizationImple(new JTAInterposedSynchronizationImple(synchronization));
-		}
-		catch (RollbackException e)
-		{
-			throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.syncrollbackexception"), e);
-		}
-		catch (SystemException e)
-		{
-			throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
-		}
-	}
+                try
+                {
+                        transactionImple.registerSynchronizationImple(new JTAInterposedSynchronizationImple(synchronization));
+                }
+                catch (RollbackException e)
+                {
+                        throw new com.arjuna.ats.jta.exceptions.RollbackException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.syncrollbackexception"), e);
+                }
+                catch (SystemException e)
+                {
+                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
+                }
+        }
 
-	// Return the status of the transaction bound to the current thread at the time this method is called.
-	public int getTransactionStatus()
-	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"TransactionSynchronizationRegistryImple.getTransactionStatus");
-		}
+        // Return the status of the transaction bound to the current thread at the time this method is called.
+        public int getTransactionStatus()
+        {
+                if (jtaLogger.logger.isDebugEnabled())
+                {
+                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+                                        VisibilityLevel.VIS_PUBLIC,
+                                        com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+                                        "TransactionSynchronizationRegistryImple.getTransactionStatus");
+                }
 
-		javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-		try
-		{
-			return tm.getStatus();
-		}
-		catch(SystemException e)
-		{
-			throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
-		}
+                javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+                try
+                {
+                        return tm.getStatus();
+                }
+                catch(SystemException e)
+                {
+                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
+                }
 
-	}
+        }
 
-	// Set the rollbackOnly status of the transaction bound to the current thread at the time this method is called.
-	public void setRollbackOnly()
-	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"TransactionSynchronizationRegistryImple.setRollbackOnly");
-		}
+        // Set the rollbackOnly status of the transaction bound to the current thread at the time this method is called.
+        public void setRollbackOnly()
+        {
+                if (jtaLogger.logger.isDebugEnabled())
+                {
+                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+                                        VisibilityLevel.VIS_PUBLIC,
+                                        com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+                                        "TransactionSynchronizationRegistryImple.setRollbackOnly");
+                }
 
-		javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-		try
-		{
-			Transaction transaction = tm.getTransaction();
+                javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+                try
+                {
+                        Transaction transaction = tm.getTransaction();
 
-			if(transaction == null)
-			{
-				throw new IllegalStateException();
-			}
+                        if(transaction == null)
+                        {
+                                throw new IllegalStateException();
+                        }
 
-			tm.setRollbackOnly();
-		}
-		catch (SystemException e)
-		{
-			throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
-		}
-	}
+                        tm.setRollbackOnly();
+                }
+                catch (SystemException e)
+                {
+                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
+                }
+        }
 
-	// Get the rollbackOnly status of the transaction bound to the current thread at the time this method is called.
-	public boolean getRollbackOnly()
-	{
-		if (jtaLogger.logger.isDebugEnabled())
-		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-					VisibilityLevel.VIS_PUBLIC,
-					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
-					"TransactionSynchronizationRegistryImple.getRollbackOnly");
-		}
+        // Get the rollbackOnly status of the transaction bound to the current thread at the time this method is called.
+        public boolean getRollbackOnly()
+        {
+                if (jtaLogger.logger.isDebugEnabled())
+                {
+                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+                                        VisibilityLevel.VIS_PUBLIC,
+                                        com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
+                                        "TransactionSynchronizationRegistryImple.getRollbackOnly");
+                }
 
-		TransactionImple transactionImple = getTransactionImple();
+                TransactionImple transactionImple = getTransactionImple();
 
-		if(transactionImple == null) {
-			throw new IllegalStateException();
-		}
+                if(transactionImple == null) {
+                        throw new IllegalStateException();
+                }
 
-		try
-		{
-			return (transactionImple.getStatus() == Status.STATUS_MARKED_ROLLBACK);
-		}
-		catch (SystemException e)
-		{
-			throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
-		}
-	}
+                try
+                {
+                        return (transactionImple.getStatus() == Status.STATUS_MARKED_ROLLBACK);
+                }
+                catch (SystemException e)
+                {
+                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
+                }
+        }
 
-	private TransactionImple getTransactionImple() throws IllegalStateException
-	{
-		javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
-		TransactionImple transactionImple = null;
-		try
-		{
-			transactionImple = (TransactionImple)tm.getTransaction();
-		}
-		catch (SystemException e)
-		{
-			throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
-		}
+        private TransactionImple getTransactionImple() throws IllegalStateException
+        {
+                javax.transaction.TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
+                TransactionImple transactionImple = null;
+                try
+                {
+                        transactionImple = (TransactionImple)tm.getTransaction();
+                }
+                catch (SystemException e)
+                {
+                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.systemexception"), e);
+                }
 
-		if(transactionImple == null)
-		{
-			throw new IllegalStateException();
-		}
+                if(transactionImple == null)
+                {
+                        throw new IllegalStateException();
+                }
 
-		return transactionImple;
-	}
+                return transactionImple;
+        }
 }
