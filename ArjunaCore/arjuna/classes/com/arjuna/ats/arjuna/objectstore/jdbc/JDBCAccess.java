@@ -70,7 +70,6 @@ public interface JDBCAccess
 
     /**
      * @return the name of the table to use for storing the state.
-     * @deprecated
      */
 
      public String tableName ();
@@ -78,7 +77,6 @@ public interface JDBCAccess
     /**
      * @return <code>true</code> if the table is to be deleted and recreated
      * prior to use, <code>false</code> otherwise.
-     * @deprecated
      */
 
     public boolean dropTable ();
