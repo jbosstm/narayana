@@ -34,6 +34,7 @@ package com.arjuna.ats.internal.jta.transaction.jts.subordinate;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.TwoPhaseOutcome;
 
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.internal.jta.transaction.jts.AtomicTransaction;
@@ -77,9 +78,9 @@ public class TransactionImple extends
 
         public boolean equals (Object obj)
         {
-                if (jtaLogger.logger.isDebugEnabled())
+                if (jtaxLogger.logger.isDebugEnabled())
                 {
-                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.equals");
+                        jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.equals");
                 }
 
                 if (obj == null)
@@ -109,7 +110,7 @@ public class TransactionImple extends
         {
                 /*
                  * throw new IllegalStateException(
-                 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
+                 * jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
                  */
 
                 throw new InvalidTerminationStateException();
@@ -125,7 +126,7 @@ public class TransactionImple extends
         {
                 /*
                  * throw new IllegalStateException(
-                 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
+                 * jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
                  */
 
                 throw new InvalidTerminationStateException();
@@ -256,9 +257,9 @@ public class TransactionImple extends
 
                         if (!endSuspendedRMs())
                         {
-                                if (jtaLogger.loggerI18N.isWarnEnabled())
+                                if (jtaxLogger.loggerI18N.isWarnEnabled())
                                 {
-                                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed1");
+                                        jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.arjunacore.endsuspendfailed1");
                                 }
                         }
 
@@ -416,7 +417,7 @@ public class TransactionImple extends
         {
                 /*
                  * throw new IllegalStateException(
-                 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
+                 * jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
                  */
 
                 throw new InactiveTransactionException();
@@ -428,7 +429,7 @@ public class TransactionImple extends
         {
                 /*
                  * throw new IllegalStateException(
-                 * jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
+                 * jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.subordinate.invalidstate"));
                  */
 
                 throw new InactiveTransactionException();

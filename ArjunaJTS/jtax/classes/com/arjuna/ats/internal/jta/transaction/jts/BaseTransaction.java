@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts;
 
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.arjuna.ats.jta.logging.*;
 
@@ -78,9 +79,9 @@ public class BaseTransaction
 	public void begin () throws javax.transaction.NotSupportedException,
 			javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "BaseTransaction.begin");
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "BaseTransaction.begin");
 		}
 
 		/*
@@ -142,9 +143,9 @@ public class BaseTransaction
 			java.lang.SecurityException, java.lang.IllegalStateException,
 			javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "BaseTransaction.commit");
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "BaseTransaction.commit");
 		}
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
@@ -159,7 +160,7 @@ public class BaseTransaction
 
 			throw new IllegalStateException(
 					"BaseTransaction.commit - "
-							+ jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notxe")
+							+ jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notxe")
 							+ ex, ex);
 		}
 
@@ -169,9 +170,9 @@ public class BaseTransaction
 	public void rollback () throws java.lang.IllegalStateException,
 			java.lang.SecurityException, javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "BaseTransaction.rollback");
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "BaseTransaction.rollback");
 		}
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
@@ -191,9 +192,9 @@ public class BaseTransaction
 	public void setRollbackOnly () throws java.lang.IllegalStateException,
 			javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "BaseTransaction.setRollbackOnly");
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "BaseTransaction.setRollbackOnly");
 		}
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
@@ -205,15 +206,15 @@ public class BaseTransaction
 		catch (NullPointerException ex)
 		{
 			throw new IllegalStateException(
-					jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.nosuchtx"), ex);
+					jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.nosuchtx"), ex);
 		}
 	}
 
 	public int getStatus () throws javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "BaseTransaction.getStatus");
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "BaseTransaction.getStatus");
 		}
 
 		TransactionImple theTransaction = TransactionImple.getTransaction();
@@ -299,7 +300,7 @@ public class BaseTransaction
 					{
 						throw new IllegalStateException(
 								"BaseTransaction.checkTransactionState - "
-										+ jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.alreadyassociated"));
+										+ jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.alreadyassociated"));
 					}
 				}
 

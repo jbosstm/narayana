@@ -31,7 +31,7 @@
 
 package com.arjuna.ats.internal.jta.recovery.jts;
 
-import com.arjuna.ats.jta.logging.jtaLogger;
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.ats.jta.recovery.XARecoveryResource;
 
 import com.arjuna.ats.arjuna.common.*;
@@ -40,7 +40,6 @@ import com.arjuna.ats.internal.jta.resources.jts.orbspecific.XAResourceRecord;
 
 import com.arjuna.common.util.logging.*;
 
-import java.util.*;
 import javax.transaction.xa.*;
 
 /*
@@ -108,9 +107,9 @@ class XARecoveryResourceImple extends XAResourceRecord implements XARecoveryReso
     {
 	if (ex.errorCode == XAException.XAER_NOTA)
 	{ 
-	    if (jtaLogger.logger.isDebugEnabled())
+	    if (jtaxLogger.logger.isDebugEnabled())
 	    {
-		jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+		jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				       com.arjuna.ats.arjuna.logging.FacilityCode.FAC_CRASH_RECOVERY, "XARecoveryResourceImple.notAProblem - no error with XAER_NOTA on "
 				       + (commit ? " commit" : " rollback"));
 	    }

@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca;
 
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.common.Uid;
@@ -86,9 +87,9 @@ public class TransactionImple extends
 
 	public boolean equals (Object obj)
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.equals");
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.equals");
 		}
 
 		if (obj == null)

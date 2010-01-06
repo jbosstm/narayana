@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts;
 
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.orbspecific.ControlImple;
 import com.arjuna.ats.internal.jta.utils.jts.XidUtils;
@@ -80,8 +81,8 @@ public class AtomicTransaction extends
 
 	/*
 	 * public synchronized void begin () throws SubtransactionsUnavailable,
-	 * SystemException { if (jtaLogger.loggerI18N.isWarnEnabled()) {
-	 * jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.atomictxnobegin"); }
+	 * SystemException { if (jtaxLogger.loggerI18N.isWarnEnabled()) {
+	 * jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.atomictxnobegin"); }
 	 * 
 	 * throw new INVALID_TRANSACTION(ExceptionCodes.ALREADY_BEGUN,
 	 * CompletionStatus.COMPLETED_NO); }
@@ -95,9 +96,9 @@ public class AtomicTransaction extends
 			throws NoTransaction, HeuristicMixed, HeuristicHazard,
 			WrongTransaction, SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::end ( "
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::end ( "
 					+ report_heuristics + " ) for " + _theAction);
 		}
 
@@ -157,9 +158,9 @@ public class AtomicTransaction extends
 	public synchronized void abort () throws NoTransaction, WrongTransaction,
 			SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::abort for "
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jts.logging.FacilityCode.FAC_OTS, "AtomicTransaction::abort for "
 					+ _theAction);
 		}
 

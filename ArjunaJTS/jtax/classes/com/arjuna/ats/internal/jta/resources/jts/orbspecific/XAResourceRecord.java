@@ -57,6 +57,7 @@ import com.arjuna.ats.jts.utils.Utility;
 import com.arjuna.ats.internal.jts.ORBManager;
 
 import com.arjuna.common.util.logging.*;
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 
 import org.omg.CosTransactions.*;
 
@@ -115,9 +116,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	public XAResourceRecord(TransactionImple tx, XAResource res, Xid xid,
 			Object[] params)
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.CONSTRUCTORS,
+			jtaxLogger.logger.debug(DebugLevel.CONSTRUCTORS,
 					VisibilityLevel.VIS_PUBLIC,
 					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
 					"XAResourceRecord.XAResourceRecord ( " + xid + " )");
@@ -208,9 +209,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	public org.omg.CosTransactions.Vote prepare() throws HeuristicMixed,
 			HeuristicHazard, org.omg.CORBA.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS,
 					VisibilityLevel.VIS_PUBLIC,
 					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
 					"XAResourceRecord.prepare for " + _tranID);
@@ -225,9 +226,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 		if (_tranID == null)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
+			if (jtaxLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N
+				jtaxLogger.loggerI18N
 						.warn(
 								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
 								new Object[]
@@ -282,9 +283,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 		catch (XAException e1)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
+			if (jtaxLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N
+				jtaxLogger.loggerI18N
 						.warn(
 								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed",
 								new Object[]
@@ -322,9 +323,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 		catch (Exception e2)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
+			if (jtaxLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N
+				jtaxLogger.loggerI18N
 						.warn(
 								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.preparefailed",
 								new Object[]
@@ -341,9 +342,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	public void rollback() throws org.omg.CORBA.SystemException,
 			HeuristicCommit, HeuristicMixed, HeuristicHazard
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS,
 					VisibilityLevel.VIS_PUBLIC,
 					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
 					"XAResourceRecord.rollback for " + _tranID);
@@ -364,9 +365,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 		if (_tranID == null)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
+			if (jtaxLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N
+				jtaxLogger.loggerI18N
 						.warn(
 								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
 								new Object[]
@@ -427,9 +428,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					}
 					else
 					{
-						if (jtaLogger.loggerI18N.isWarnEnabled())
+						if (jtaxLogger.loggerI18N.isWarnEnabled())
 						{
-							jtaLogger.loggerI18N
+							jtaxLogger.loggerI18N
 									.warn(
 											"com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror",
 											new Object[]
@@ -480,9 +481,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				catch (Exception e2)
 				{
 
-                                    if (jtaLogger.loggerI18N.isWarnEnabled())
+                                    if (jtaxLogger.loggerI18N.isWarnEnabled())
                                     {
-                                            jtaLogger.loggerI18N
+                                            jtaxLogger.loggerI18N
                                                             .warn(
                                                                             "com.arjuna.ats.internal.jta.resources.jts.orbspecific.generror",
                                                                             new Object[]
@@ -506,9 +507,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	public void commit() throws org.omg.CORBA.SystemException, NotPrepared,
 			HeuristicRollback, HeuristicMixed, HeuristicHazard
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS,
 					VisibilityLevel.VIS_PUBLIC,
 					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
 					"XAResourceRecord.commit for " + _tranID);
@@ -516,9 +517,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 		if (_tranID == null)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
+			if (jtaxLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N
+				jtaxLogger.loggerI18N
 						.warn(
 								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
 								new Object[]
@@ -568,9 +569,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					{
 						_committed = false;
 
-						if (jtaLogger.loggerI18N.isWarnEnabled())
+						if (jtaxLogger.loggerI18N.isWarnEnabled())
 						{
-							jtaLogger.loggerI18N
+							jtaxLogger.loggerI18N
 									.warn(
 											"com.arjuna.ats.internal.jta.resources.jts.orbspecific.xaerror",
 											new Object[]
@@ -639,9 +640,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				{
 					_committed = false;
 
-					if (jtaLogger.loggerI18N.isWarnEnabled())
+					if (jtaxLogger.loggerI18N.isWarnEnabled())
                                         {
-                                                jtaLogger.loggerI18N
+                                                jtaxLogger.loggerI18N
                                                                 .warn(
                                                                                 "com.arjuna.ats.internal.jta.resources.jts.orbspecific.generror",
                                                                                 new Object[]
@@ -759,9 +760,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	public void commit_one_phase() throws HeuristicHazard,
 			org.omg.CORBA.SystemException
 	{
-	    if (jtaLogger.logger.isDebugEnabled())
+	    if (jtaxLogger.logger.isDebugEnabled())
 	    {
-	        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+	        jtaxLogger.logger.debug(DebugLevel.FUNCTIONS,
 	                VisibilityLevel.VIS_PUBLIC,
 	                com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
 	                "XAResourceRecord.commit_one_phase for " + _tranID);
@@ -769,9 +770,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 	    if (_tranID == null)
 	    {
-	        if (jtaLogger.loggerI18N.isWarnEnabled())
+	        if (jtaxLogger.loggerI18N.isWarnEnabled())
 	        {
-	            jtaLogger.loggerI18N
+	            jtaxLogger.loggerI18N
 	            .warn(
 	                    "com.arjuna.ats.internal.jta.resources.jts.orbspecific.nulltransaction",
 	                    new Object[]
@@ -921,9 +922,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	            }
 	            catch (Exception e2)
 	            {
-	                if (jtaLogger.loggerI18N.isWarnEnabled())
+	                if (jtaxLogger.loggerI18N.isWarnEnabled())
 	                {
-	                    jtaLogger.loggerI18N
+	                    jtaxLogger.loggerI18N
 	                    .warn(
 	                            "com.arjuna.ats.internal.jta.resources.jts.orbspecific.coperror",
 	                            new Object[] {e2}, e2);
@@ -943,9 +944,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 	public void forget() throws org.omg.CORBA.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS,
 					VisibilityLevel.VIS_PUBLIC,
 					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
 					"XAResourceRecord.forget for " + _tranID);
@@ -1018,9 +1019,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
         				}
         				catch (NotSerializableException ex)
         				{
-        				    if (jtaLogger.loggerI18N.isWarnEnabled())
+        				    if (jtaxLogger.loggerI18N.isWarnEnabled())
         				    {
-        				        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.saveState");
+        				        jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.saveState");
         				    }
 
         				    return false;
@@ -1110,9 +1111,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 						_theXAResource = (XAResource) o.readObject();
 						o.close();
 
-						if (jtaLogger.logger.isDebugEnabled())
+						if (jtaxLogger.logger.isDebugEnabled())
 						{
-							jtaLogger.logger
+							jtaxLogger.logger
 									.debug(
 											DebugLevel.FUNCTIONS,
 											VisibilityLevel.VIS_PUBLIC,
@@ -1124,9 +1125,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 					{
 						// not serializable in the first place!
 
-						if (jtaLogger.loggerI18N.isWarnEnabled())
+						if (jtaxLogger.loggerI18N.isWarnEnabled())
 						{
-							jtaLogger.loggerI18N
+							jtaxLogger.loggerI18N
 									.warn(
 											"com.arjuna.ats.internal.jta.resources.jts.orbspecific.restoreerror1",
 											new Object[]
@@ -1150,16 +1151,16 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 				if (_theXAResource == null)
 				{
-					jtaLogger.loggerI18N
+					jtaxLogger.loggerI18N
 							.warn(
 									"com.arjuna.ats.internal.jta.resources.jts.orbspecific.norecoveryxa",
 									new Object[]
 									{ _tranID });
 				}
 
-				if (jtaLogger.logger.isDebugEnabled())
+				if (jtaxLogger.logger.isDebugEnabled())
 				{
-					jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+					jtaxLogger.logger.debug(DebugLevel.FUNCTIONS,
 							VisibilityLevel.VIS_PUBLIC,
 							com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
 							"XAResourceRecord.restore_state - XAResource got from "
@@ -1191,9 +1192,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 		catch (Exception e)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
+			if (jtaxLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N
+				jtaxLogger.loggerI18N
 						.warn(
 								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.restoreerror2",
 								new Object[]
@@ -1264,9 +1265,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 	protected int recover()
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS,
 					VisibilityLevel.VIS_PROTECTED,
 					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
 					"XAResourceRecord.recover");
@@ -1293,9 +1294,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			}
 			catch (NotPrepared ex1)
 			{
-				if (jtaLogger.loggerI18N.isWarnEnabled())
+				if (jtaxLogger.loggerI18N.isWarnEnabled())
 				{
-					jtaLogger.loggerI18N
+					jtaxLogger.loggerI18N
 							.warn(
 									"com.arjuna.ats.internal.jta.resources.jts.orbspecific.notprepared",
 									new Object[]
@@ -1316,9 +1317,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				 * Unknown error, so better to do nothing at this stage.
 				 */
 
-				if (jtaLogger.loggerI18N.isWarnEnabled())
+				if (jtaxLogger.loggerI18N.isWarnEnabled())
 				{
-					jtaLogger.loggerI18N
+					jtaxLogger.loggerI18N
 							.warn(
 									"com.arjuna.ats.internal.jta.resources.jts.orbspecific.unexpected",
 									new Object[]
@@ -1328,9 +1329,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				return XARecoveryResource.FAILED_TO_RECOVER;
 			}
 
-			if (jtaLogger.logger.isDebugEnabled())
+			if (jtaxLogger.logger.isDebugEnabled())
 			{
-				jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+				jtaxLogger.logger.debug(DebugLevel.FUNCTIONS,
 						VisibilityLevel.VIS_PROTECTED,
 						com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
 						"XAResourceRecord.recover got status: "
@@ -1406,9 +1407,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 				}
 				catch (Exception e)
 				{
-					if (jtaLogger.loggerI18N.isWarnEnabled())
+					if (jtaxLogger.loggerI18N.isWarnEnabled())
 					{
-						jtaLogger.loggerI18N
+						jtaxLogger.loggerI18N
 								.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.createstate");
 					}
 
@@ -1453,9 +1454,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			}
 			else
 			{
-				if (jtaLogger.loggerI18N.isWarnEnabled())
+				if (jtaxLogger.loggerI18N.isWarnEnabled())
 				{
-					jtaLogger.loggerI18N
+					jtaxLogger.loggerI18N
 							.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.updatestate");
 				}
 
@@ -1478,9 +1479,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 		catch (Exception e)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
+			if (jtaxLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N
+				jtaxLogger.loggerI18N
 						.warn(
 								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.loadstateread",
 								e);
@@ -1558,9 +1559,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		}
 		catch (Exception e)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
+			if (jtaxLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N
+				jtaxLogger.loggerI18N
 						.warn(
 								"com.arjuna.ats.internal.jta.resources.jts.orbspecific.remconn",
 								e);
@@ -1580,9 +1581,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 
 	private final int doRecovery(boolean commit)
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS,
 					VisibilityLevel.VIS_PRIVATE,
 					com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA,
 					"XAResourceRecord.doRecovery ( " + commit + " )");
@@ -1594,16 +1595,16 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 		{
 			try
 			{
-				if (jtaLogger.logger.isInfoEnabled())
+				if (jtaxLogger.logger.isInfoEnabled())
 				{
 					if (commit)
-						jtaLogger.loggerI18N
+						jtaxLogger.loggerI18N
 								.info(
 										"com.arjuna.ats.internal.jta.recovery.jts.orbspecific.commit",
 										new Object[]
 										{ _tranID });
 					else
-						jtaLogger.loggerI18N
+						jtaxLogger.loggerI18N
 								.info(
 										"com.arjuna.ats.internal.jta.recovery.jts.orbspecific.rollback",
 										new Object[]
@@ -1621,9 +1622,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 			}
 			catch (Exception e2)
 			{
-				if (jtaLogger.loggerI18N.isWarnEnabled())
+				if (jtaxLogger.loggerI18N.isWarnEnabled())
 				{
-					jtaLogger.loggerI18N
+					jtaxLogger.loggerI18N
 							.warn(
 									"com.arjuna.ats.internal.jta.resources.jts.orbspecific.recfailed",
 									new Object[]

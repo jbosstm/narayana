@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jta.resources.jts.orbspecific;
 
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.ats.jta.common.*;
 import com.arjuna.ats.jta.xa.*;
 import com.arjuna.ats.jta.utils.XAHelper;
@@ -105,9 +106,9 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
 
     public void before_completion () throws org.omg.CORBA.SystemException
     {
-	if (jtaLogger.logger.isDebugEnabled())
+	if (jtaxLogger.logger.isDebugEnabled())
 	{
-	    jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+	    jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				   com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "SynchronizationImple.before_completion");
 	}
 
@@ -128,9 +129,9 @@ public class SynchronizationImple implements org.omg.CosTransactions.Synchroniza
 
     public void after_completion (org.omg.CosTransactions.Status status) throws org.omg.CORBA.SystemException
     {
-	if (jtaLogger.logger.isDebugEnabled())
+	if (jtaxLogger.logger.isDebugEnabled())
 	{
-	    jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
+	    jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC,
 				   com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "SynchronizationImple.after_completion");
 	}
 

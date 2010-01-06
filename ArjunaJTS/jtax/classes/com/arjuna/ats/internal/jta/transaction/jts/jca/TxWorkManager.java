@@ -42,6 +42,7 @@ import javax.transaction.Transaction;
 
 import com.arjuna.ats.internal.jta.transaction.jts.subordinate.jca.TransactionImple;
 
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import com.arjuna.ats.jta.logging.*;
 
 public class TxWorkManager
@@ -82,7 +83,7 @@ public class TxWorkManager
 				_transactions.put(tx, workers);
 			}
 			else
-				throw new WorkCompletedException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.jca.busy"), WorkException.TX_CONCURRENT_WORK_DISALLOWED);
+				throw new WorkCompletedException(jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.jca.busy"), WorkException.TX_CONCURRENT_WORK_DISALLOWED);
 		}
 
 		synchronized (workers)

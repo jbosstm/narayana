@@ -31,6 +31,7 @@
 
 package com.arjuna.ats.internal.jta.transaction.jts;
 
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 import org.omg.CosTransactions.*;
 
 import com.arjuna.ats.jta.logging.*;
@@ -40,7 +41,6 @@ import com.arjuna.ats.jts.OTSManager;
 
 import com.arjuna.ats.internal.jts.ControlWrapper;
 import com.arjuna.ats.internal.jts.OTSImpleManager;
-import com.arjuna.ats.internal.jta.utils.LoggerSetup;
 
 import javax.transaction.*;
 
@@ -91,9 +91,9 @@ public class TransactionManagerImple extends BaseTransaction implements
 
 	public Transaction suspend () throws javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionManagerImple.suspend");
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionManagerImple.suspend");
 		}
 
 		try
@@ -119,9 +119,9 @@ public class TransactionManagerImple extends BaseTransaction implements
 	public void resume (Transaction which) throws InvalidTransactionException,
 			java.lang.IllegalStateException, javax.transaction.SystemException
 	{
-	    if (jtaLogger.logger.isDebugEnabled())
+	    if (jtaxLogger.logger.isDebugEnabled())
 	    {
-	        jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionManagerImple.resume");
+	        jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionManagerImple.resume");
 	    }
 
 	    super.checkTransactionState();
@@ -177,10 +177,5 @@ public class TransactionManagerImple extends BaseTransaction implements
 			throws Exception
 	{
 		return this;
-	}
-
-	static
-	{
-		LoggerSetup.setup();
 	}
 }

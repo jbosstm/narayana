@@ -166,7 +166,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			 * now.
 			 */
 
-			jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.syncproblem", ex);
+			jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.syncproblem", ex);
 		}
 	}
 
@@ -176,9 +176,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 	public boolean equals (Object obj)
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.OPERATORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.equals");
+			jtaxLogger.logger.debug(DebugLevel.OPERATORS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.equals");
 		}
 
 		if (obj == null)
@@ -239,9 +239,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 			java.lang.SecurityException, javax.transaction.SystemException,
 			java.lang.IllegalStateException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.commit");
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.commit");
 		}
 
 		if (_theTransaction != null)
@@ -261,13 +261,13 @@ public class TransactionImple implements javax.transaction.Transaction,
 			catch (org.omg.CosTransactions.WrongTransaction wt)
 			{
                 InactiveTransactionException inactiveTransactionException = new InactiveTransactionException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"));
+						jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"));
                 inactiveTransactionException.initCause(wt);
                 throw inactiveTransactionException;
 			}
 			catch (org.omg.CosTransactions.NoTransaction e1)
 			{
-                IllegalStateException illegalStateException = new IllegalStateException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"));
+                IllegalStateException illegalStateException = new IllegalStateException(jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"));
                 illegalStateException.initCause(e1);
                 throw illegalStateException;
 			}
@@ -296,7 +296,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			catch (INVALID_TRANSACTION e6)
 			{
 				InactiveTransactionException inactiveTransactionException = new InactiveTransactionException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
+						jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
                 inactiveTransactionException.initCause(e6);
                 throw inactiveTransactionException;
 			}
@@ -313,7 +313,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 		else
 			throw new IllegalStateException(
-					jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
+					jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
 	}
 
 	/**
@@ -329,9 +329,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 	public void rollback () throws java.lang.IllegalStateException,
 			java.lang.SecurityException, javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.rollback");
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.rollback");
 		}
 
 		if (_theTransaction != null)
@@ -346,9 +346,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 			if (endSuspendedFailed)
 			{
-				if (jtaLogger.loggerI18N.isWarnEnabled())
+				if (jtaxLogger.loggerI18N.isWarnEnabled())
 				{
-					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.endsuspendfailed1");
+					jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.endsuspendfailed1");
 				}
 			}
 
@@ -359,7 +359,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			catch (org.omg.CosTransactions.WrongTransaction e1)
 			{
                 InactiveTransactionException inactiveTransactionException =new InactiveTransactionException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"));
+						jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"));
                 inactiveTransactionException.initCause(e1);
                 throw inactiveTransactionException;
 			}
@@ -370,14 +370,14 @@ public class TransactionImple implements javax.transaction.Transaction,
 			catch (INVALID_TRANSACTION e3)
 			{
                 InactiveTransactionException inactiveTransactionException = new InactiveTransactionException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
+						jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
                 inactiveTransactionException.initCause(e3);
                 throw inactiveTransactionException;
 			}
 			catch (NoTransaction e4)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"), e4);
+						jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"), e4);
 			}
 			catch (org.omg.CORBA.SystemException e5)
 			{
@@ -392,19 +392,19 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 			if (endSuspendedFailed)
 				throw new InvalidTerminationStateException (
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.endsuspendfailed2"));
+						jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.endsuspendfailed2"));
 		}
 		else
 			throw new IllegalStateException(
-					jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
+					jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
 	}
 
 	public void setRollbackOnly () throws java.lang.IllegalStateException,
 			javax.transaction.SystemException
 	{
-	    if (jtaLogger.logger.isDebugEnabled())
+	    if (jtaxLogger.logger.isDebugEnabled())
 	    {
-	        jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.setRollbackOnly");
+	        jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.setRollbackOnly");
 	    }
 
 	    if (_theTransaction != null)
@@ -415,13 +415,13 @@ public class TransactionImple implements javax.transaction.Transaction,
 	            // keep a record of why we are rolling back i.e. who called us first, it's a useful debug aid.
 	            if (_rollbackOnlyCallerStacktrace == null)
 	            {
-	                _rollbackOnlyCallerStacktrace = new Throwable(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"));
+	                _rollbackOnlyCallerStacktrace = new Throwable(jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"));
 	            }
 	        }
 	        catch (org.omg.CosTransactions.NoTransaction e3)
 	        {
 	            throw new IllegalStateException(
-	                    jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"), e3);
+	                    jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"), e3);
 	        }
 	        catch (final INVALID_TRANSACTION ex)
 	        {
@@ -450,14 +450,14 @@ public class TransactionImple implements javax.transaction.Transaction,
 	    }
 	    else
 	        throw new IllegalStateException(
-	                jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
+	                jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
 	}
 
 	public int getStatus () throws javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.getStatus");
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.getStatus");
 		}
 
 		int status = javax.transaction.Status.STATUS_NO_TRANSACTION;
@@ -488,15 +488,15 @@ public class TransactionImple implements javax.transaction.Transaction,
 			throws javax.transaction.RollbackException,
 			java.lang.IllegalStateException, javax.transaction.SystemException
 	{
-        if (jtaLogger.logger.isDebugEnabled())
+        if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.registerSynchronization");
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.registerSynchronization");
 		}
 
 		if (sync == null)
 			throw new javax.transaction.SystemException(
 					"TransactionImple.registerSynchronization - "
-							+ jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.nullparam"));
+							+ jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.nullparam"));
 
         registerSynchronizationImple(new ManagedSynchronizationImple(sync));
 	}
@@ -523,17 +523,17 @@ public class TransactionImple implements javax.transaction.Transaction,
 			catch (org.omg.CosTransactions.Inactive e3)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"), e3);
+						jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"), e3);
 			}
 			catch (org.omg.CosTransactions.SynchronizationUnavailable e4)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.syncerror"), e4);
+						jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.syncerror"), e4);
 			}
 			catch (INVALID_TRANSACTION e5)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"), e5);
+						jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"), e5);
 			}
 			catch (org.omg.CORBA.SystemException e6)
 			{
@@ -544,7 +544,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 		else
 			throw new IllegalStateException(
-					jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
+					jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
 	}
 
 
@@ -570,16 +570,16 @@ public class TransactionImple implements javax.transaction.Transaction,
 			throws RollbackException, IllegalStateException,
 			javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.enlistResource ( "
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.enlistResource ( "
 					+ xaRes + " )");
 		}
 
 		if (xaRes == null)
 			throw new javax.transaction.SystemException(
 					"TransactionImple.enlistResource - "
-							+ jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.nullparam"));
+							+ jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.nullparam"));
 
 		int status = getStatus();
 
@@ -587,12 +587,12 @@ public class TransactionImple implements javax.transaction.Transaction,
 		{
 		case javax.transaction.Status.STATUS_MARKED_ROLLBACK:
 			throw new RollbackException("TransactionImple.enlistResource - "
-										+ jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.markedrollback"));
+										+ jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.markedrollback"));
 		case javax.transaction.Status.STATUS_ACTIVE:
 			break;
 		default:
 			throw new IllegalStateException(
-					jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
+					jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
 		}
 
 		XAModifier theModifier = null;
@@ -690,7 +690,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 						// block
 						throw new IllegalStateException(
 								"TransactionImple.enlistResource - "
-										+ jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.illegalstate")
+										+ jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.illegalstate")
 										+ info.getState());
 					}
 					}
@@ -705,9 +705,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 				if (info != null)
 					info.setState(TxInfo.FAILED);
 
-				if (jtaLogger.loggerI18N.isWarnEnabled())
+				if (jtaxLogger.loggerI18N.isWarnEnabled())
 				{
-					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.xaerror", new Object[]
+					jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.xaerror", new Object[]
 					{ "TransactionImple.enlistResource", XAHelper.printXAErrorCode(exp) });
 				}
 
@@ -779,9 +779,9 @@ public class TransactionImple implements javax.transaction.Transaction,
                                 }
                                 catch (XAException te)
                                 {
-                                    if (jtaLogger.loggerI18N.isWarnEnabled())
+                                    if (jtaxLogger.loggerI18N.isWarnEnabled())
                                     {
-                                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.timeouterror", new Object[]
+                                        jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.timeouterror", new Object[]
                                         { "TransactionImple.enlistResource", XAHelper.printXAErrorCode(te), xid });
                                     }
                                 }
@@ -847,9 +847,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 								 * rollback only.
 								 */
 
-								if (jtaLogger.loggerI18N.isWarnEnabled())
+								if (jtaxLogger.loggerI18N.isWarnEnabled())
 								{
-									jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.starterror", new Object[]
+									jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.starterror", new Object[]
 									{ "TransactionImple.enlistResource - XAResource.start", XAHelper.printXAErrorCode(e), xid });
 								}
 
@@ -860,9 +860,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 						if (retry < 0)
 						{
-							if (jtaLogger.loggerI18N.isWarnEnabled())
+							if (jtaxLogger.loggerI18N.isWarnEnabled())
 							{
-								jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.starterror", new Object[]
+								jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.starterror", new Object[]
 								{ "TransactionImple.enlistResource - XAResource.start", XAHelper.printXAErrorCode(e), xid });
 							}
 
@@ -894,9 +894,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 				}
 				catch (XAException ex)
 				{
-					if (jtaLogger.loggerI18N.isWarnEnabled())
+					if (jtaxLogger.loggerI18N.isWarnEnabled())
 					{
-						jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.xaerror", new Object[]
+						jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.xaerror", new Object[]
 						{ "TransactionImple.enlistResource - xa_start: ", XAHelper.printXAErrorCode(ex) });
 					}
 
@@ -977,16 +977,16 @@ public class TransactionImple implements javax.transaction.Transaction,
 	public boolean delistResource (XAResource xaRes, int flags)
 			throws IllegalStateException, javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.delistResource ( "
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.delistResource ( "
 					+ xaRes + " )");
 		}
 
 		if (xaRes == null)
 			throw new javax.transaction.SystemException(
 					"TransactionImple.delistResource - "
-							+ jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.nullparam"));
+							+ jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.nullparam"));
 
 		int status = getStatus();
 
@@ -998,7 +998,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			break;
 		default:
 			throw new IllegalStateException(
-					jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
+					jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
 		}
 
 		TxInfo info = null;
@@ -1015,9 +1015,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 			if (info == null)
 			{
-				if (jtaLogger.loggerI18N.isWarnEnabled())
+				if (jtaxLogger.loggerI18N.isWarnEnabled())
 				{
-					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.unknownres", new Object[]
+					jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.unknownres", new Object[]
 					{ "TransactionImple.delistResource" });
 				}
 
@@ -1108,7 +1108,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 							throw new IllegalStateException(
 									"TransactionImple.delistResource - "
-											+ jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.ressusp"));
+											+ jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.ressusp"));
 						}
 						else
 						{
@@ -1127,7 +1127,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 					if (!optimizedRollback)
 						throw new IllegalStateException(
 								"TransactionImple.delistResource - "
-										+ jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.illegalstate")
+										+ jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.illegalstate")
 										+ info.getState());
 				}
 
@@ -1151,9 +1151,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 
 			markRollbackOnly();
 
-			if (jtaLogger.loggerI18N.isWarnEnabled())
+			if (jtaxLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.xaerror", new Object[]
+				jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.xaerror", new Object[]
 				{ "TransactionImple.delistResource", XAHelper.printXAErrorCode(exp) });
 			}
 
@@ -1161,9 +1161,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 		catch (Exception e)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
+			if (jtaxLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.delistfailed", new Object[]
+				jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.delistfailed", new Object[]
 				{ e });
 			}
 
@@ -1270,9 +1270,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 				}
 				catch (ClassCastException ex)
 				{
-					if (jtaLogger.loggerI18N.isWarnEnabled())
+					if (jtaxLogger.loggerI18N.isWarnEnabled())
 					{
-						jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.nottximple");
+						jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.nottximple");
 					}
 				}
 			}
@@ -1369,7 +1369,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			 * hit for now.
 			 */
 
-			jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.syncproblem", ex);
+			jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.syncproblem", ex);
 		}
 		_xaTransactionTimeoutEnabled = getXATransactionTimeoutEnabled() ;
     }
@@ -1381,9 +1381,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 			java.lang.SecurityException, javax.transaction.SystemException,
 			java.lang.IllegalStateException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.commitAndDisassociate");
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.commitAndDisassociate");
 		}
 
 		if (_theTransaction != null)
@@ -1395,12 +1395,12 @@ public class TransactionImple implements javax.transaction.Transaction,
 			catch (org.omg.CosTransactions.WrongTransaction wt)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"), wt);
+						jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"), wt);
 			}
 			catch (org.omg.CosTransactions.NoTransaction e1)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"), e1);
+						jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"), e1);
 			}
 			catch (org.omg.CosTransactions.HeuristicMixed e2)
 			{
@@ -1435,7 +1435,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			     */
 
 				//throw new IllegalStateException(
-				//		jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
+				//		jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"));
 			}
 			catch (org.omg.CORBA.SystemException e7)
 			{
@@ -1450,16 +1450,16 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 		else
 			throw new IllegalStateException(
-					jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
+					jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
 	}
 
 	protected void rollbackAndDisassociate ()
 			throws java.lang.IllegalStateException,
 			java.lang.SecurityException, javax.transaction.SystemException
 	{
-		if (jtaLogger.logger.isDebugEnabled())
+		if (jtaxLogger.logger.isDebugEnabled())
 		{
-			jtaLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.rollbackAndDisassociate");
+			jtaxLogger.logger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PUBLIC, com.arjuna.ats.jta.logging.FacilityCode.FAC_JTA, "TransactionImple.rollbackAndDisassociate");
 		}
 
 		if (_theTransaction != null)
@@ -1471,7 +1471,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 			catch (org.omg.CosTransactions.WrongTransaction e1)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"), e1);
+						jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.wrongstatetx"), e1);
 			}
 			catch (org.omg.CORBA.NO_PERMISSION e2)
 			{
@@ -1480,12 +1480,12 @@ public class TransactionImple implements javax.transaction.Transaction,
 			catch (INVALID_TRANSACTION e3)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"), e3);
+						jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.invalidtx2"), e3);
 			}
 			catch (NoTransaction e4)
 			{
 				throw new IllegalStateException(
-						jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"), e4);
+						jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.notx"), e4);
 			}
 			catch (org.omg.CORBA.SystemException e5)
 			{
@@ -1500,7 +1500,7 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 		else
 			throw new IllegalStateException(
-					jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
+					jtaxLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.jts.inactivetx"));
 	}
 
 	/**
@@ -1579,9 +1579,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 				}
 				catch (XAException ex)
 				{
-					if (jtaLogger.loggerI18N.isWarnEnabled())
+					if (jtaxLogger.loggerI18N.isWarnEnabled())
 					{
-						jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.xaenderror");
+						jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.xaenderror");
 					}
 
 					result = false;
@@ -1619,9 +1619,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 				}
 				catch (XAException ex)
 				{
-					if (jtaLogger.loggerI18N.isWarnEnabled())
+					if (jtaxLogger.loggerI18N.isWarnEnabled())
 					{
-						jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.xaenderror");
+						jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.xaenderror");
 					}
 
 					result = false;
@@ -1689,9 +1689,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 		catch (Exception e)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
+			if (jtaxLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.threaderror", e);
+				jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.threaderror", e);
 			}
 
 			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
@@ -1748,9 +1748,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 		catch (XAException ex)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
+			if (jtaxLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.xaerror", new Object[]
+				jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.xaerror", new Object[]
 				{ "TransactionImple.isNewRM", XAHelper.printXAErrorCode(ex) });
 			}
 
@@ -1758,9 +1758,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 		catch (Exception e)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
+			if (jtaxLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.rmerror", e);
+				jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.rmerror", e);
 			}
 
 			throw new com.arjuna.ats.arjuna.exceptions.FatalError(e.toString(), e);
@@ -1837,9 +1837,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 		}
 		catch (Exception ex)
 		{
-			if (jtaLogger.loggerI18N.isWarnEnabled())
+			if (jtaxLogger.loggerI18N.isWarnEnabled())
 			{
-				jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.rollbackerror", new Object[]
+				jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.rollbackerror", new Object[]
 				{ "TransactionImple.markRollbackOnly -", ex }, ex);
 			}
 		}
@@ -1904,9 +1904,9 @@ public class TransactionImple implements javax.transaction.Transaction,
 			}
 			catch (final Throwable th)
 			{
-				if (jtaLogger.loggerI18N.isWarnEnabled())
+				if (jtaxLogger.loggerI18N.isWarnEnabled())
 				{
-					jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.lastResourceOptimisationInterface",
+					jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.transaction.jts.lastResourceOptimisationInterface",
 						new Object[] {lastResourceOptimisationInterfaceName}, th);
 				}
 			}

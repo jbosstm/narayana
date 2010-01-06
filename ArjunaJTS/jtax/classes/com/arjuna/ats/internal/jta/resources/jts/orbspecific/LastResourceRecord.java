@@ -46,7 +46,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 import com.arjuna.ats.internal.jta.transaction.jts.TransactionImple;
-import com.arjuna.ats.jta.logging.jtaLogger;
+import com.arjuna.ats.internal.jta.utils.jtaxLogger;
 
 /**
  * XAResourceRecord implementing the Last Resource Commit Optimisation.
@@ -155,11 +155,11 @@ public class LastResourceRecord extends XAResourceRecord
         {
             if(ALLOW_MULTIPLE_LAST_RESOURCES)
             {
-                if (jtaLogger.loggerI18N.isWarnEnabled())
+                if (jtaxLogger.loggerI18N.isWarnEnabled())
                 {
                     if (!_disableMLRWarning || (_disableMLRWarning && !_issuedWarning))
                     {
-                        jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.multipleWarning",
+                        jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.multipleWarning",
                                 new Object[] { record });
                         _issuedWarning = true;
                     }
@@ -169,9 +169,9 @@ public class LastResourceRecord extends XAResourceRecord
             }
             else
             {
-                if (jtaLogger.loggerI18N.isWarnEnabled())
+                if (jtaxLogger.loggerI18N.isWarnEnabled())
                 {
-                    jtaLogger.loggerI18N.warn(
+                    jtaxLogger.loggerI18N.warn(
                             "com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disallow",
                             new Object[] { record });
                 }
@@ -195,14 +195,14 @@ public class LastResourceRecord extends XAResourceRecord
         ALLOW_MULTIPLE_LAST_RESOURCES = arjPropertyManager.getCoreEnvironmentBean().isAllowMultipleLastResources();
 
         if (ALLOW_MULTIPLE_LAST_RESOURCES
-                && jtaLogger.loggerI18N.isWarnEnabled())
+                && jtaxLogger.loggerI18N.isWarnEnabled())
         {
-            jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.startupWarning");
+            jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.startupWarning");
         }
 
         if (arjPropertyManager.getCoreEnvironmentBean().isDisableMultipleLastResourcesWarning())
         {
-            jtaLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disableWarning");
+            jtaxLogger.loggerI18N.warn("com.arjuna.ats.internal.jta.resources.jts.orbspecific.lastResource.disableWarning");
 
             _disableMLRWarning = true;
         }
