@@ -68,14 +68,6 @@ package com.arjuna.common.util.logging;
  */
 public interface Logi18n
 {
-
-   /**
-    * Add the given resource bundle to this logger.
-    *
-    * @param bundleName The name of the resource bundle.
-    */
-   public void addResourceBundle(String bundleName);
-
    /**
     * Determine if this logger is enabled for DEBUG messages.
     *

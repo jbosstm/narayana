@@ -47,16 +47,7 @@ import java.util.MissingResourceException;
  */
 public class Logi18nImpl implements Logi18n
 {
-    private ResourceBundle m_defaultResourceBundle = null;
-
-    /**
-     * extra resource bundles (if more than one is in use)
-     *
-     * Note that there is a performance issue when more than one resource bundles is in use.
-     *
-     * @see #m_defaultResourceBundle
-     */
-    private ResourceBundle[] m_extraResourceBundles = null;
+    private ResourceBundle m_resourceBundle = null;
 
     /**
      * Level for finer-debug logging.
@@ -109,28 +100,11 @@ public class Logi18nImpl implements Logi18n
     *
     * @param bundleName The name of the resource bundle.
     */
-   public synchronized void addResourceBundle(String bundleName)
+   private synchronized void addResourceBundle(String bundleName)
    {
       try
       {
-         // if no default resource bundle has been set, use this one as the default one
-         if (m_defaultResourceBundle == null)
-         {
-            m_defaultResourceBundle = PropertyResourceBundle.getBundle(bundleName, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
-         }
-
-         // otherwise, add it to the extra resource bundles supported by this logger
-         else if (m_extraResourceBundles == null)
-         {
-            m_extraResourceBundles = new ResourceBundle[]{PropertyResourceBundle.getBundle(bundleName, Locale.getDefault(), Thread.currentThread().getContextClassLoader())};
-         }
-         else
-         {
-            ResourceBundle[] oldExtraResBundles = m_extraResourceBundles;
-            m_extraResourceBundles = new ResourceBundle[oldExtraResBundles.length + 1];
-            System.arraycopy(oldExtraResBundles, 0, m_extraResourceBundles, 0, oldExtraResBundles.length);
-            m_extraResourceBundles[oldExtraResBundles.length] = PropertyResourceBundle.getBundle(bundleName, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
-         }
+         m_resourceBundle = PropertyResourceBundle.getBundle(bundleName, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
       }
       catch (MissingResourceException mre)
       {
@@ -400,45 +374,13 @@ public class Logi18nImpl implements Logi18n
    synchronized String getResourceBundleString(String key) throws MissingResourceException
    {
       String resource = null;
-      if (m_defaultResourceBundle == null)
+      if (m_resourceBundle == null)
       {
-         throw new MissingResourceException("no default resource bundle set for this logger", null, null);
+         throw new MissingResourceException("no resource bundle set for this logger", null, null);
       }
       else
       {
-         try
-         {
-            resource = m_defaultResourceBundle.getString(key);
-         }
-               // this exception will occur if no resource for the given key can be found.
-         catch (MissingResourceException mre)
-         {
-            // if no extra res bundles are available, that's it. bail out!
-            if (m_extraResourceBundles == null)
-            {
-               throw mre;
-            }
-            else
-            {
-               for (ResourceBundle bundle : m_extraResourceBundles)
-               {
-                  try
-                  {
-                     resource = bundle.getString(key);
-                  }
-                  catch (MissingResourceException mre2)
-                  {
-                     mre = mre2;
-                  }
-               }
-               // if no resource for the given key could be found in any of the
-               // resource bundles, throw an exception.
-               if (resource == null)
-               {
-                  throw mre;
-               }
-            }
-         }
+          resource = m_resourceBundle.getString(key);
       }
       return resource;
    }
