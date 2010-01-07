@@ -130,7 +130,7 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 					  new java.lang.Object[] { "ContextORBInitializerImpl", "ENCODING_CDR_ENCAPS" }, ex);
 	    }
 
-	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.codeccreate"), ex);
+	    throw new FatalError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.codeccreate"), ex);
 	}
 
 	/*
@@ -157,7 +157,7 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 					  new java.lang.Object[] { "ContextORBInitializerImpl", "ClientRequestInterceptor" }, ex);
 	    }
 
-	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.cie"), ex);
+	    throw new FatalError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.cie"), ex);
 	}
 
 	/*
@@ -184,7 +184,7 @@ public class ContextORBInitializerImpl extends LocalObject implements ORBInitial
 					  new java.lang.Object[] { "ContextORBInitializerImpl", "ServerRequestInterceptor" }, ex);
 	    }
 
-	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.sie"), ex);
+	    throw new FatalError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.javaidl.interceptors.context.sie"), ex);
 	}
     }
 

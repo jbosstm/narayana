@@ -33,7 +33,8 @@ public class txojLogger
 
 	public static LogNoi18n aitLogger;
 	public static Logi18n aitLoggerI18N;
-	public static ResourceBundle log_mesg;
+
+	private static ResourceBundle log_mesg;
 
 	private static String language;
 	private static String country;

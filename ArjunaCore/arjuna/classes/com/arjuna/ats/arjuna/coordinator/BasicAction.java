@@ -2816,7 +2816,7 @@ public class BasicAction extends StateManager
 					}
 
 					throw new com.arjuna.ats.arjuna.exceptions.FatalError(
-							tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.coordinator.BasicAction_69")
+							tsLogger.arjLoggerI18N.getString("com.arjuna.ats.arjuna.coordinator.BasicAction_69")
 									+ get_uid());
 				}
 
@@ -4111,7 +4111,7 @@ public class BasicAction extends StateManager
 	                                            new Object[]{ checkedActionFactory }, ex);
 	            }
 	            
-	            throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.coordinator.cafactoryerror")+" "+checkedActionFactory, ex);	            
+	            throw new FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.arjuna.coordinator.cafactoryerror")+" "+checkedActionFactory, ex);
 	        }
 	    }
 	    else

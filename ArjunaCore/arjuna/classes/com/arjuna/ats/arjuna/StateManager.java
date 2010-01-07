@@ -815,7 +815,7 @@ public class StateManager
                             .warn("com.arjuna.ats.arjuna.StateManager_9");
                 }
 
-                throw new IOException(tsLogger.log_mesg
+                throw new IOException(tsLogger.arjLoggerI18N
                         .getString("com.arjuna.ats.arjuna.StateManager_15"));
             }
             
@@ -1318,7 +1318,7 @@ public class StateManager
             }
             catch (final Throwable ex)
             {
-                throw new FatalError(tsLogger.log_mesg
+                throw new FatalError(tsLogger.arjLoggerI18N
                         .getString("com.arjuna.ats.arjuna.StateManager_16")
                         + " " + objectStoreType);
             }
@@ -1335,7 +1335,7 @@ public class StateManager
                 tsLogger.arjLoggerI18N
                         .warn("com.arjuna.ats.arjuna.StateManager_13");
 
-            throw new FatalError(tsLogger.log_mesg
+            throw new FatalError(tsLogger.arjLoggerI18N
                     .getString("com.arjuna.ats.arjuna.StateManager_14"));
 
             // objectStore = new

@@ -129,7 +129,7 @@ public class CadaverLockRecord extends LockRecord
 		    txojLogger.aitLoggerI18N.fatal("CadaverLockRecord_1");
 		}
 		
-		throw new FatalError(txojLogger.log_mesg.getString("com.arjuna.ats.txoj.CadaverLockRecord_1"));
+		throw new FatalError(txojLogger.aitLoggerI18N.getString("com.arjuna.ats.txoj.CadaverLockRecord_1"));
 	    }
 	    
 	    return (manager.releaseAll(super.actionHandle.get_uid()) ? TwoPhaseOutcome.FINISH_OK : TwoPhaseOutcome.FINISH_ERROR);
@@ -162,7 +162,7 @@ public class CadaverLockRecord extends LockRecord
 		    txojLogger.aitLoggerI18N.fatal("com.arjuna.ats.txoj.CadaverLockRecord_2");
 		}
 		
-		throw new FatalError(txojLogger.log_mesg.getString("com.arjuna.ats.txoj.CadaverLockRecord_2"));
+		throw new FatalError(txojLogger.aitLoggerI18N.getString("com.arjuna.ats.txoj.CadaverLockRecord_2"));
 	    }
     
 	    CadaverLockManager manager = new CadaverLockManager(order(), objectTypeName);
@@ -191,7 +191,7 @@ public class CadaverLockRecord extends LockRecord
 		    txojLogger.aitLoggerI18N.fatal("com.arjuna.ats.txoj.CadaverLockRecord_3");
 		}
 		
-		throw new FatalError(txojLogger.log_mesg.getString("com.arjuna.ats.txoj.CadaverLockRecord_3"));
+		throw new FatalError(txojLogger.aitLoggerI18N.getString("com.arjuna.ats.txoj.CadaverLockRecord_3"));
 	    }
 
 	    CadaverLockManager manager = new CadaverLockManager(order(), objectTypeName);
@@ -220,7 +220,7 @@ public class CadaverLockRecord extends LockRecord
 		    txojLogger.aitLoggerI18N.fatal("com.arjuna.ats.txoj.CadaverLockRecord_4");
 		}
 		
-		throw new FatalError(txojLogger.log_mesg.getString("com.arjuna.ats.txoj.CadaverLockRecord_4"));
+		throw new FatalError(txojLogger.aitLoggerI18N.getString("com.arjuna.ats.txoj.CadaverLockRecord_4"));
 	    }
 
 	    CadaverLockManager manager = new CadaverLockManager(order(), objectTypeName);

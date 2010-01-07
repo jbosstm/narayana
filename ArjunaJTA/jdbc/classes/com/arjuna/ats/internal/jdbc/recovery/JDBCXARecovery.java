@@ -169,7 +169,7 @@ public class JDBCXARecovery implements XAResourceRecovery
                 _dataSource = (XADataSource) context.lookup(_dbName);
 
                 if (_dataSource == null)
-                    throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.xa.recjndierror"));
+                    throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.xa.recjndierror"));
             }
         }
         catch (SQLException ex)

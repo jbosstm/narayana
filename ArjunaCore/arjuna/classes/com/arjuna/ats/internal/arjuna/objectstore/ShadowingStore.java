@@ -291,7 +291,7 @@ public class ShadowingStore extends FileSystemStore
         else
             throw new ObjectStoreException(
                     "ShadowStore::commit_state - "
-                            + tsLogger.log_mesg
+                            + tsLogger.arjLoggerI18N
                                     .getString("com.arjuna.ats.internal.arjuna.objectstore.notypenameuid")
                             + objUid);
 
@@ -626,7 +626,7 @@ public class ShadowingStore extends FileSystemStore
         else
             throw new ObjectStoreException(
                     "ShadowStore::read_state - "
-                            + tsLogger.log_mesg
+                            + tsLogger.arjLoggerI18N
                                     .getString("com.arjuna.ats.internal.arjuna.objectstore.notypenameuid")
                             + objUid);
 
@@ -870,7 +870,7 @@ public class ShadowingStore extends FileSystemStore
         else
             throw new ObjectStoreException(
                     "ShadowStore::write_state - "
-                            + tsLogger.log_mesg
+                            + tsLogger.arjLoggerI18N
                                     .getString("com.arjuna.ats.internal.arjuna.objectstore.notypenameuid")
                             + objUid);
     }

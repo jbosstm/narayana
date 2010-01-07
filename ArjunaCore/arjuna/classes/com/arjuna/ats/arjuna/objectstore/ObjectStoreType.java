@@ -198,7 +198,7 @@ public class ObjectStoreType
         }
 
         throw new com.arjuna.ats.arjuna.exceptions.FatalError(
-                tsLogger.log_mesg
+                tsLogger.arjLoggerI18N
                         .getString("com.arjuna.ats.arjuna.objectstore.ObjectStoreType_2")
                         + c);
     }

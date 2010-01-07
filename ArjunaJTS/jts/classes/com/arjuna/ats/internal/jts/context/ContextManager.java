@@ -119,7 +119,7 @@ public class ContextManager
 
 	    ex.printStackTrace();
 
-	    throw new FatalError("ContextManager "+jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.context.picreffail")+" "+ex, ex);
+	    throw new FatalError("ContextManager "+jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.context.picreffail")+" "+ex, ex);
 	}
 	catch (Exception ex)
 	{
@@ -130,7 +130,7 @@ public class ContextManager
 
 	    ex.printStackTrace();
 
-	    throw new FatalError("ContextManager "+jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.context.picreffail")+" "+ex, ex);
+	    throw new FatalError("ContextManager "+jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.context.picreffail")+" "+ex, ex);
 	}
     }
 

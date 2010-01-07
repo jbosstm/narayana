@@ -951,7 +951,7 @@ public class LogStore extends FileSystemStore
 		else
 			throw new ObjectStoreException(
 					"ShadowStore::write_state - "
-							+ tsLogger.log_mesg
+							+ tsLogger.arjLoggerI18N
 									.getString("com.arjuna.ats.internal.arjuna.objectstore.notypenameuid")
 							+ objUid);
 	}

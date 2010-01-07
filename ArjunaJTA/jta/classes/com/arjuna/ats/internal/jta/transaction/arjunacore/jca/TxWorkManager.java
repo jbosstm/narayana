@@ -79,7 +79,7 @@ public class TxWorkManager
 				_transactions.put(tx, workers);
 			}
 			else
-				throw new WorkCompletedException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.jca.busy"), WorkException.TX_CONCURRENT_WORK_DISALLOWED);
+				throw new WorkCompletedException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.jca.busy"), WorkException.TX_CONCURRENT_WORK_DISALLOWED);
 		}
 		
 		synchronized (workers)

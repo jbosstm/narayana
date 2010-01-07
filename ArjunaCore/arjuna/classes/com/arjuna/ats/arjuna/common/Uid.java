@@ -317,7 +317,7 @@ public class Uid implements Cloneable, Serializable
                                 { uidString });
                     }
 
-                    throw new FatalError(tsLogger.log_mesg
+                    throw new FatalError(tsLogger.arjLoggerI18N
                             .getString("com.arjuna.ats.arjuna.common.Uid_2"), e);
                 }
             }
@@ -330,7 +330,7 @@ public class Uid implements Cloneable, Serializable
                             { uidString });
                 }
 
-                throw new FatalError(tsLogger.log_mesg
+                throw new FatalError(tsLogger.arjLoggerI18N
                         .getString("com.arjuna.ats.arjuna.common.Uid_3")
                         + uidString);
             }
@@ -357,7 +357,7 @@ public class Uid implements Cloneable, Serializable
         {
             _valid = false;
 
-            throw new FatalError(tsLogger.log_mesg
+            throw new FatalError(tsLogger.arjLoggerI18N
                     .getString("com.arjuna.ats.arjuna.common.Uid_11")
                     + ex);
         }

@@ -867,7 +867,7 @@ public class ArjunaTransactionImple extends
 			if (recoveryCoordinator == null)
 				throw new BAD_OPERATION(
 						"RecoveryCoordinator "
-								+ jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.coordinator.rcnotcreated"));
+								+ jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.coordinator.rcnotcreated"));
 		}
 		catch (NO_IMPLEMENT ex)
 		{

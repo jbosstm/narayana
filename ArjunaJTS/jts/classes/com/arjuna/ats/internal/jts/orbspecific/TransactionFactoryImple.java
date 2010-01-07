@@ -401,7 +401,7 @@ public class TransactionFactoryImple extends
 		if (u == null)
 			throw new BAD_PARAM(
 					"otid_t "
-							+ jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.otiderror"));
+							+ jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.otiderror"));
 		else
 		{
 			BasicAction act = ActionManager.manager().get(u);
@@ -447,7 +447,7 @@ public class TransactionFactoryImple extends
 		if (u == null)
 			throw new BAD_PARAM(
 					"otid_t "
-							+ jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.otiderror"));
+							+ jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.otiderror"));
 		else
 			return getCurrentStatus(u);
 	}
@@ -526,7 +526,7 @@ public class TransactionFactoryImple extends
 		if (u == null)
 			throw new BAD_PARAM(
 					"otid_t "
-							+ jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.otiderror"));
+							+ jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.otiderror"));
 		else
 			return getStatus(u);
 	}
@@ -680,7 +680,7 @@ public class TransactionFactoryImple extends
 		if (u == null)
 			throw new BAD_PARAM(
 					"otid_t "
-							+ jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.otiderror"));
+							+ jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.otiderror"));
 		else
 			return getTransactionInfo(u);
 	}
@@ -696,7 +696,7 @@ public class TransactionFactoryImple extends
 	{
 		if (!u.valid())
 			throw new BAD_PARAM(
-					jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.invaliduid"
+					jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.invaliduid"
 							+ " " + u));
 		else
 		{
@@ -750,7 +750,7 @@ public class TransactionFactoryImple extends
 		if (u == null)
 			throw new BAD_PARAM(
 					"otid_t "
-							+ jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.otiderror"));
+							+ jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.otiderror"));
 		else
 			return getTransaction(u);
 	}

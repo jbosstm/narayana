@@ -287,7 +287,7 @@ public abstract class FileSystemStore extends ObjectStore
                 }
                 catch (IOException e)
                 {
-                    throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_2a"), e);
+                    throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_2a"), e);
                 }
             }
         }
@@ -298,7 +298,7 @@ public abstract class FileSystemStore extends ObjectStore
         }
         catch (IOException e)
         {
-            throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_3"), e);
+            throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_3"), e);
         }
 
         state.setBuffer(store.buffer());
@@ -342,7 +342,7 @@ public abstract class FileSystemStore extends ObjectStore
                     }
                     catch (IOException e)
                     {
-                        throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_4"), e);
+                        throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_4"), e);
                     }
                 }
 
@@ -356,7 +356,7 @@ public abstract class FileSystemStore extends ObjectStore
         }
         catch (IOException e)
         {
-            throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_5"), e);
+            throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_5"), e);
         }
 
         foundTypes.setBuffer(store.buffer());
@@ -386,7 +386,7 @@ public abstract class FileSystemStore extends ObjectStore
         }
         catch (ObjectStoreException e)
         {
-            throw new IOException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_6"));
+            throw new IOException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_6"));
         }
     }
 
@@ -653,7 +653,7 @@ public abstract class FileSystemStore extends ObjectStore
                     }
                     catch (IOException e)
                     {
-                        throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_7"), e);
+                        throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_7"), e);
                     }
                 }
             }
@@ -847,7 +847,7 @@ public abstract class FileSystemStore extends ObjectStore
             return f.exists();
         }
         else
-            throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_8"));
+            throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.FileSystemStore_8"));
     }
 
     /**

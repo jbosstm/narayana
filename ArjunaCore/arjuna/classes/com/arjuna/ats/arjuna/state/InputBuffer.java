@@ -223,7 +223,7 @@ public class InputBuffer
     public final synchronized byte unpackByte () throws IOException
     {
         if (!_valid)
-            throw new IOException(tsLogger.log_mesg
+            throw new IOException(tsLogger.arjLoggerI18N
                     .getString("com.arjuna.ats.arjuna.state.InputBuffer_1"));
 
         int i = unpackInt();
@@ -239,7 +239,7 @@ public class InputBuffer
     public final synchronized byte[] unpackBytes () throws IOException
     {
         if (!_valid)
-            throw new IOException(tsLogger.log_mesg
+            throw new IOException(tsLogger.arjLoggerI18N
                     .getString("com.arjuna.ats.arjuna.state.InputBuffer_2"));
 
         int size = unpackInt();
@@ -263,7 +263,7 @@ public class InputBuffer
     public final synchronized boolean unpackBoolean () throws IOException
     {
         if (!_valid)
-            throw new IOException(tsLogger.log_mesg
+            throw new IOException(tsLogger.arjLoggerI18N
                     .getString("com.arjuna.ats.arjuna.state.InputBuffer_3"));
 
         _valid = false;
@@ -285,7 +285,7 @@ public class InputBuffer
     public final synchronized char unpackChar () throws IOException
     {
         if (!_valid)
-            throw new IOException(tsLogger.log_mesg
+            throw new IOException(tsLogger.arjLoggerI18N
                     .getString("com.arjuna.ats.arjuna.state.InputBuffer_4"));
 
         int i = unpackInt();
@@ -301,7 +301,7 @@ public class InputBuffer
     public final synchronized short unpackShort () throws IOException
     {
         if (!_valid)
-            throw new IOException(tsLogger.log_mesg
+            throw new IOException(tsLogger.arjLoggerI18N
                     .getString("com.arjuna.ats.arjuna.state.InputBuffer_5"));
 
         int i = unpackInt();
@@ -317,7 +317,7 @@ public class InputBuffer
     public final synchronized int unpackInt () throws IOException
     {
         if (!_valid)
-            throw new IOException(tsLogger.log_mesg
+            throw new IOException(tsLogger.arjLoggerI18N
                     .getString("com.arjuna.ats.arjuna.state.InputBuffer_6"));
 
         _valid = false;
@@ -337,7 +337,7 @@ public class InputBuffer
     public final synchronized long unpackLong () throws IOException
     {
         if (!_valid)
-            throw new IOException(tsLogger.log_mesg
+            throw new IOException(tsLogger.arjLoggerI18N
                     .getString("com.arjuna.ats.arjuna.state.InputBuffer_7"));
 
         _valid = false;
@@ -357,7 +357,7 @@ public class InputBuffer
     public final synchronized float unpackFloat () throws IOException
     {
         if (!_valid)
-            throw new IOException(tsLogger.log_mesg
+            throw new IOException(tsLogger.arjLoggerI18N
                     .getString("com.arjuna.ats.arjuna.state.InputBuffer_8"));
 
         _valid = false;
@@ -377,7 +377,7 @@ public class InputBuffer
     public final synchronized double unpackDouble () throws IOException
     {
         if (!_valid)
-            throw new IOException(tsLogger.log_mesg
+            throw new IOException(tsLogger.arjLoggerI18N
                     .getString("com.arjuna.ats.arjuna.state.InputBuffer_9"));
 
         _valid = false;
@@ -400,7 +400,7 @@ public class InputBuffer
     public final synchronized String unpackString () throws IOException
     {
         if (!_valid)
-            throw new IOException(tsLogger.log_mesg
+            throw new IOException(tsLogger.arjLoggerI18N
                     .getString("com.arjuna.ats.arjuna.state.InputBuffer_10"));
 
         int length = unpackInt();
@@ -433,7 +433,7 @@ public class InputBuffer
     public synchronized void unpackFrom (InputBuffer buff) throws IOException
     {
         if (buff == null)
-            throw new IOException(tsLogger.log_mesg
+            throw new IOException(tsLogger.arjLoggerI18N
                     .getString("com.arjuna.ats.arjuna.state.InputBuffer_11"));
 
         _valid = false;

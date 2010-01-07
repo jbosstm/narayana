@@ -674,7 +674,7 @@ public class TransactionReaper
         if ((_timeouts.putIfAbsent(reaperElement._control, reaperElement) == null)) {
             _reaperElements.add(reaperElement);
         } else {
-            throw new IllegalStateException(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.coordinator.TransactionReaper_1"));
+            throw new IllegalStateException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.arjuna.coordinator.TransactionReaper_1"));
         }
 
         if (_dynamic && reaperElement.getAbsoluteTimeout() < nextDynamicCheckTime.get()) {

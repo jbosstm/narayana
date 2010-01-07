@@ -137,7 +137,7 @@ private final void initialise ()
                         opLogger.loggerI18N.fatal( "com.arjuna.orbportability.orb.core.ORB.unsupportedorb", je );
                     }
 
-                    throw new ExceptionInInitializerError(opLogger.logMesg.getString("com.arjuna.orbportability.orb.core.ORB.unsupportedorb"));
+                    throw new ExceptionInInitializerError(opLogger.loggerI18N.getString("com.arjuna.orbportability.orb.core.ORB.unsupportedorb"));
                 }
             }
         }
@@ -162,7 +162,7 @@ private final void initialise ()
                                 new Object[] { e }, e );
             }
 
-	    throw new ExceptionInInitializerError( opLogger.logMesg.getString("com.arjuna.orbportability.orb.core.ORB.caughtexception") );
+	    throw new ExceptionInInitializerError( opLogger.loggerI18N.getString("com.arjuna.orbportability.orb.core.ORB.caughtexception") );
 	}
     }
 

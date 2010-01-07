@@ -120,7 +120,7 @@ public void pre_init (ORBInitInfo init_info)
 					  new java.lang.Object[] { "InterpositionORBInitializerImpl", "ENCODING_CDR_ENCAPS" }, ex);
 	    }
 
-	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.codeccreate"), ex);
+	    throw new FatalError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.codeccreate"), ex);
 	}
 
 	/*
@@ -147,7 +147,7 @@ public void pre_init (ORBInitInfo init_info)
 					  new java.lang.Object[] { "InterpositionORBInitializerImpl", "ClientRequestInterceptor" }, ex);
 	    }
 
-	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.cie"), ex);
+	    throw new FatalError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.cie"), ex);
 	}
 
 	/*
@@ -174,7 +174,7 @@ public void pre_init (ORBInitInfo init_info)
 					  new java.lang.Object[] { "InterpositionORBInitializerImpl", "ServerRequestInterceptor" }, ex);
 	    }
 
-	    throw new FatalError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.sie"), ex);
+	    throw new FatalError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.sie"), ex);
 	}
     }
 

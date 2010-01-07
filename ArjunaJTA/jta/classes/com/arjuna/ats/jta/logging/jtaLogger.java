@@ -43,7 +43,8 @@ public class jtaLogger
 
     public static LogNoi18n      logger;
     public static Logi18n        loggerI18N;
-    public static ResourceBundle logMesg;
+
+    private static ResourceBundle logMesg;
 
     private static String _language;
     private static String _country;

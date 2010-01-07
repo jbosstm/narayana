@@ -172,7 +172,7 @@ public class JNDIManager
         try {
             tsr = Class.forName(tsrImplementation).newInstance();
         } catch(Exception e) {
-            NamingException namingException = new ConfigurationException(jtaLogger.logMesg.getString("com.arjuna.ats.jta.utils.JNDIManager.tsr1"));
+            NamingException namingException = new ConfigurationException(jtaLogger.loggerI18N.getString("com.arjuna.ats.jta.utils.JNDIManager.tsr1"));
             namingException.setRootCause(e);
             throw namingException;
         }

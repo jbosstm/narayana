@@ -160,7 +160,7 @@ public class HashedStore extends ShadowNoFileLockStore
                             }
                             catch (IOException e)
                             {
-                                throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_5"), e);
+                                throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_5"), e);
                             }
                         }
                     }
@@ -180,7 +180,7 @@ public class HashedStore extends ShadowNoFileLockStore
         }
         catch (IOException e)
         {
-            throw new ObjectStoreException(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_6"), e);
+            throw new ObjectStoreException(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.objectstore.HashedStore_6"), e);
         }
 
         state.setBuffer(store.buffer());

@@ -183,7 +183,7 @@ public void send_request (ClientRequestInfo request_info) throws SystemException
 		if ( localData != null && (localData.type().kind().value() != TCKind._tk_null) )
 		{
 		    if ( (threadId = localData.extract_string()) == null )
-			throw new UNKNOWN(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.invalidparam"));
+			throw new UNKNOWN(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.jacorb.interceptors.interposition.invalidparam"));
 		}
 		else
 		    threadId = ThreadUtil.getThreadId() ;

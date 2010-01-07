@@ -43,7 +43,8 @@ public class tsLogger
 
 	public static LogNoi18n arjLogger;
 	public static Logi18n arjLoggerI18N;
-	public static ResourceBundle log_mesg;
+
+	private static ResourceBundle log_mesg;
 	
 	private static String language;
 	private static String country;

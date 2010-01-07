@@ -372,7 +372,7 @@ public class DirectRecoverableConnection implements RecoverableXAConnection, Con
 
 	if ((_dynamic == null) || (_dynamic.equals("")))
 	{
-	    throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.dynamicerror"));
+	    throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.dynamicerror"));
 	}
 	else
 	{

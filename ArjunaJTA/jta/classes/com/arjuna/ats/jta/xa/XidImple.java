@@ -333,7 +333,7 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 
 			if (!x.packInto(os))
 				throw new IOException(
-						jtaLogger.logMesg.getString("com.arjuna.ats.jta.xid.packerror"));
+						jtaLogger.loggerI18N.getString("com.arjuna.ats.jta.xid.packerror"));
 		}
 		else
 		{
@@ -390,7 +390,7 @@ public class XidImple implements javax.transaction.xa.Xid, Serializable
 		if (_theXid != null)
 			return _theXid.toString();
 		else
-			return jtaLogger.logMesg.getString("com.arjuna.ats.jta.xa.xidunset");
+			return jtaLogger.loggerI18N.getString("com.arjuna.ats.jta.xa.xidunset");
 	}
 
 	/**

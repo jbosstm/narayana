@@ -109,7 +109,7 @@ public class OTSThread extends Thread
 					      new Object[] { "OTSThread.run", e} );
 		}
 
-		throw new FatalError("OTSThread.run - "+jtsLogger.logMesg.getString("com.arjuna.ats.jts.thread.resumefailederror"+e), e);
+		throw new FatalError("OTSThread.run - "+jtsLogger.loggerI18N.getString("com.arjuna.ats.jts.thread.resumefailederror"+e), e);
 	    }
 
 	    _currentControl = null;

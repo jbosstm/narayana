@@ -44,7 +44,8 @@ public class tsmxLogger
 
 	public static LogNoi18n logger;
 	public static Logi18n loggerI18N;
-	public static ResourceBundle log_mesg;
+
+	private static ResourceBundle log_mesg;
 
 	private static String language;
 	private static String country;

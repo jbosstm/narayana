@@ -237,7 +237,7 @@ public abstract class OA
                 }
 
                 throw new FatalError(
-                        opLogger.logMesg
+                        opLogger.loggerI18N
                                 .getString("com.arjuna.orbportability.OA.uninitialsedorb"));
             }
         }

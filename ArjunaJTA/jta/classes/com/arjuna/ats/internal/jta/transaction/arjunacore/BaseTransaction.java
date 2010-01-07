@@ -132,7 +132,7 @@ public class BaseTransaction
 		if (theTransaction == null)
 			throw new IllegalStateException(
 					"BaseTransaction.commit - "
-							+ jtaLogger.logMesg
+							+ jtaLogger.loggerI18N
 									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.notx"));
 
 		theTransaction.commitAndDisassociate();
@@ -160,7 +160,7 @@ public class BaseTransaction
 		if (theTransaction == null)
 			throw new IllegalStateException(
 					"BaseTransaction.rollback - "
-							+ jtaLogger.logMesg
+							+ jtaLogger.loggerI18N
 									.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.notx"));
 
 		theTransaction.rollbackAndDisassociate();
@@ -190,7 +190,7 @@ public class BaseTransaction
 
 		if (theTransaction == null)
 			throw new IllegalStateException(
-					jtaLogger.logMesg
+					jtaLogger.loggerI18N
 							.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.nosuchtx"));
 
 		theTransaction.setRollbackOnly();
@@ -314,7 +314,7 @@ public class BaseTransaction
 			{
 				throw new IllegalStateException(
 						"BaseTransaction.checkTransactionState - "
-								+ jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.alreadyassociated"));
+								+ jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.alreadyassociated"));
 			}
 		}
 	}

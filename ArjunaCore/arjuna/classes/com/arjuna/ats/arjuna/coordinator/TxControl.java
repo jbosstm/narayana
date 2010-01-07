@@ -209,7 +209,7 @@ public class TxControl
             }
             catch (final Throwable ex)
             {
-                throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.coordinator.invalidos")+" "+recoveryType);
+                throw new FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.arjuna.coordinator.invalidos")+" "+recoveryType);
             }
             
             return _recoveryStore;
@@ -263,7 +263,7 @@ public class TxControl
 	        {
 	            ex.printStackTrace();
 	            
-	            throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.coordinator.invalidos")+" "+actionStoreType);
+	            throw new FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.arjuna.coordinator.invalidos")+" "+actionStoreType);
 	        }
 
         return _objectStore;

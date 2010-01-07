@@ -471,7 +471,7 @@ public class JDBCStore extends ObjectStore
                                                 .fatal("com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_5");
 
                         throw new FatalError(
-                                        tsLogger.log_mesg
+                                        tsLogger.arjLoggerI18N
                                                         .getString("com.arjuna.ats.internal.arjuna.objectstore.JDBCStore_5"));
                 }
 

@@ -112,7 +112,7 @@ public class TransactionImple extends
 			java.lang.IllegalStateException
 	{
 		throw new IllegalStateException(
-				jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.invalidstate"));
+				jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.invalidstate"));
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class TransactionImple extends
 			java.lang.SecurityException, javax.transaction.SystemException
 	{
 		throw new InvalidTerminationStateException(
-				jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.invalidstate"));
+				jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.subordinate.invalidstate"));
 	}
 
 	// Should probably return XA status codes, c.f., XAResource.prepare

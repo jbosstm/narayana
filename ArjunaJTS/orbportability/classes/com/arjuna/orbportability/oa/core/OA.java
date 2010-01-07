@@ -166,7 +166,7 @@ public class OA
                                         je);
                     }
                     throw new ExceptionInInitializerError(
-                            opLogger.logMesg
+                            opLogger.loggerI18N
                                     .getString("com.arjuna.orbportability.oa.core.OA.nosupportedorb"));
                 }
             }
@@ -198,7 +198,7 @@ public class OA
             }
 
             throw new ExceptionInInitializerError(
-                    opLogger.logMesg
+                    opLogger.loggerI18N
                             .getString("com.arjuna.orbportability.oa.core.OA.caughtexception"));
         }
     }

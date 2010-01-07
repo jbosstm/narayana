@@ -73,13 +73,13 @@ public class MBeanProcessId implements com.arjuna.ats.arjuna.utils.Process
                 }
                 catch (final Exception ex)
                 {
-                    throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.utils.MBeanProcessId_2")+" "+name, ex);
+                    throw new FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.utils.MBeanProcessId_2")+" "+name, ex);
                 }
             }
         }
 
         if (_pid == -1)
-            throw new FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.internal.arjuna.utils.MBeanProcessId_1"));
+            throw new FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.internal.arjuna.utils.MBeanProcessId_1"));
 
         return _pid;
     }

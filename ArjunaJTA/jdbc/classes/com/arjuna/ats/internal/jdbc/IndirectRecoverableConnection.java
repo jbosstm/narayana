@@ -383,7 +383,7 @@ public class IndirectRecoverableConnection implements RecoverableXAConnection, C
 		}
 
 		if (_theDataSource == null) {
-		    throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.jndierror"));
+		    throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.jndierror"));
 	    }
 	}
 	catch (SQLException ex)

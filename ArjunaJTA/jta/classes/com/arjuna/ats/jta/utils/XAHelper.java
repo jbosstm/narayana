@@ -54,7 +54,7 @@ public class XAHelper
 	{
 		if (e == null)
 		{
-			return jtaLogger.logMesg.getString("com.arjuna.ats.jta.utils.nullexception");
+			return jtaLogger.loggerI18N.getString("com.arjuna.ats.jta.utils.nullexception");
 		}
 		else
 		{
@@ -105,7 +105,7 @@ public class XAHelper
 			case XAException.XA_RETRY:
 				return "XAException.XA_RETRY";
 			default:
-				return jtaLogger.logMesg.getString("com.arjuna.ats.jta.utils.unknownerrorcode")
+				return jtaLogger.loggerI18N.getString("com.arjuna.ats.jta.utils.unknownerrorcode")
 						+ e.errorCode;
 			}
 		}

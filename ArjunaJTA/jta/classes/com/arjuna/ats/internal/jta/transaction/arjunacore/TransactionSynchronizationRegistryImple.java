@@ -70,7 +70,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch (SystemException e)
                 {
-                        throw new RuntimeException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
+                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
                 }
 
                 if (transactionImple == null) {
@@ -144,11 +144,11 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch (RollbackException e)
                 {
-                        throw new com.arjuna.ats.jta.exceptions.RollbackException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.syncrollbackexception"), e);
+                        throw new com.arjuna.ats.jta.exceptions.RollbackException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.syncrollbackexception"), e);
                 }
                 catch (SystemException e)
                 {
-                        throw new RuntimeException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
+                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
                 }
         }
 
@@ -170,7 +170,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch(SystemException e)
                 {
-                        throw new RuntimeException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
+                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
                 }
 
         }
@@ -200,7 +200,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch (SystemException e)
                 {
-                        throw new RuntimeException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
+                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
                 }
         }
 
@@ -227,7 +227,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch (SystemException e)
                 {
-                        throw new RuntimeException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
+                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
                 }
         }
 
@@ -241,7 +241,7 @@ public class TransactionSynchronizationRegistryImple implements TransactionSynch
                 }
                 catch (SystemException e)
                 {
-                        throw new RuntimeException(jtaLogger.logMesg.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
+                        throw new RuntimeException(jtaLogger.loggerI18N.getString("com.arjuna.ats.internal.jta.transaction.arjunacore.systemexception"), e);
                 }
 
                 if(transactionImple == null)

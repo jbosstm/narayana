@@ -111,7 +111,7 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                     catch (final Exception ex)
                     {
                         throw new FatalError(
-                                tsLogger.log_mesg
+                                tsLogger.arjLoggerI18N
                                         .getString("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_2")+" "+ex, ex);
                     }
                 }
@@ -127,7 +127,7 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                     catch (final IOException ex)
                     {
                         throw new FatalError(
-                                tsLogger.log_mesg
+                                tsLogger.arjLoggerI18N
                                         .getString("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_3")+" "+ex, ex);
                     }
 
@@ -143,7 +143,7 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
                     catch (final Exception ex)
                     {
                         throw new FatalError(
-                                tsLogger.log_mesg
+                                tsLogger.arjLoggerI18N
                                         .getString("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_4")+" "+ex, ex);
                     }
                     finally
@@ -184,7 +184,7 @@ public class ExecProcessId implements com.arjuna.ats.arjuna.utils.Process
 
         if (_pid == -1)
             throw new FatalError(
-                    tsLogger.log_mesg
+                    tsLogger.arjLoggerI18N
                             .getString("com.arjuna.ats.internal.arjuna.utils.ExecProcessId_1"));
 
         return _pid;

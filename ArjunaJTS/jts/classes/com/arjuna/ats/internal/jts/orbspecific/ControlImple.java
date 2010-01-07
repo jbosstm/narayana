@@ -294,7 +294,7 @@ public class ControlImple extends com.arjuna.ArjunaOTS.ActionControlPOA
 
 			throw new BAD_OPERATION(
 					"ControlImple "
-							+ jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.destroyfailed")
+							+ jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.destroyfailed")
 							+ e);
 		}
 	}

@@ -188,7 +188,7 @@ public class TransactionStatusManager
 					  new Object[]{getListenerHostName(), getListenerPort(-1)});
 	  }
 
-	  throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_9"), ex);
+	  throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_9"), ex);
       }
    }
 
@@ -240,7 +240,7 @@ public class TransactionStatusManager
         if (_port == -1)
         {
             // a previous attempt to create the socket failed
-            throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.log_mesg.getString("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_13"));
+            throw new com.arjuna.ats.arjuna.exceptions.FatalError(tsLogger.arjLoggerI18N.getString("com.arjuna.ats.arjuna.recovery.TransactionStatusManager_13"));
         }
 
         try

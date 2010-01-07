@@ -99,7 +99,7 @@ public final synchronized ServerControl deepestControl ()
                         new Object[] {"ServerRestrictedNestedAction.child"});
             }
 
-            throw new com.arjuna.ats.jts.exceptions.TxError(jtsLogger.logMesg.getString("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contx_2"));
+            throw new com.arjuna.ats.jts.exceptions.TxError(jtsLogger.loggerI18N.getString("com.arjuna.ats.internal.jts.orbspecific.interposition.resources.restricted.contx_2"));
         }
         else
         {

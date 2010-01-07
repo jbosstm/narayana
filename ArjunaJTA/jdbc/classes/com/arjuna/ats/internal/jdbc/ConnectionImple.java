@@ -243,7 +243,7 @@ public abstract class ConnectionImple
 		if (transactionRunning())
 		{
 			if (autoCommit)
-				throw new SQLException(jdbcLogger.logMesg
+				throw new SQLException(jdbcLogger.loggerI18N
 						.getString("com.arjuna.ats.internal.jdbc.autocommit"));
 		}
 		else
@@ -271,7 +271,7 @@ public abstract class ConnectionImple
 
 		if (transactionRunning())
 		{
-			throw new SQLException(jdbcLogger.logMesg
+			throw new SQLException(jdbcLogger.loggerI18N
 					.getString("com.arjuna.ats.internal.jdbc.commiterror"));
 		}
 		else
@@ -287,7 +287,7 @@ public abstract class ConnectionImple
 	{
 		if (transactionRunning())
 		{
-			throw new SQLException(jdbcLogger.logMesg
+			throw new SQLException(jdbcLogger.loggerI18N
 					.getString("com.arjuna.ats.internal.jdbc.aborterror"));
 		}
 		else
@@ -350,7 +350,7 @@ public abstract class ConnectionImple
 
 	                if (!tx.delistResource(xares, XAResource.TMSUCCESS))
 	                    throw new SQLException(
-	                            jdbcLogger.logMesg
+	                            jdbcLogger.loggerI18N
 	                            .getString("com.arjuna.ats.internal.jdbc.delisterror"));
 	                
 	                getModifier();
@@ -405,7 +405,7 @@ public abstract class ConnectionImple
 	                }
 	            }
 	            else
-	                throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.closeerrorinvalidtx") + tx);
+	                throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.closeerrorinvalidtx") + tx);
 	        }
 	        
 	        if (!delayClose)  // close now
@@ -429,7 +429,7 @@ public abstract class ConnectionImple
 	    }
 	    catch (Exception e1)
 	    {
-	        SQLException sqlException = new SQLException(jdbcLogger.logMesg
+	        SQLException sqlException = new SQLException(jdbcLogger.loggerI18N
 	                .getString("com.arjuna.ats.internal.jdbc.closeerror")
 	                + e1);
 	        sqlException.initCause(e1);
@@ -472,7 +472,7 @@ public abstract class ConnectionImple
 			getConnection().setReadOnly(ro);
 		}
 		else
-			throw new SQLException(jdbcLogger.logMesg
+			throw new SQLException(jdbcLogger.loggerI18N
 					.getString("com.arjuna.ats.internal.jdbc.setreadonly"));
 	}
 
@@ -509,7 +509,7 @@ public abstract class ConnectionImple
 
 		/*
 		 * if (iso != Connection.TRANSACTION_SERIALIZABLE) throw new
-		 * SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.stateerror")+"Connection.TRANSACTION_SERIALIZABLE");
+		 * SQLException(jdbcLogger.loggerI18N.getString.getString("com.arjuna.ats.internal.jdbc.stateerror")+"Connection.TRANSACTION_SERIALIZABLE");
 		 */
 
 		getConnection().setTransactionIsolation(iso);
@@ -571,7 +571,7 @@ public abstract class ConnectionImple
     {
         if (transactionRunning())
         {
-            throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.setsavepointerror"));
+            throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.setsavepointerror"));
         }
         else
         {
@@ -583,7 +583,7 @@ public abstract class ConnectionImple
     {
         if (transactionRunning())
         {
-            throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.setsavepointerror"));
+            throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.setsavepointerror"));
         }
         else
         {
@@ -602,7 +602,7 @@ public abstract class ConnectionImple
 	{
 		if (transactionRunning())
 		{
-			throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.rollbacksavepointerror"));
+			throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.rollbacksavepointerror"));
 		}
 		else
 		{
@@ -617,7 +617,7 @@ public abstract class ConnectionImple
 	{
 		if (transactionRunning())
 		{
-			throw new SQLException(jdbcLogger.logMesg.getString("com.arjuna.ats.internal.jdbc.releasesavepointerror"));
+			throw new SQLException(jdbcLogger.loggerI18N.getString("com.arjuna.ats.internal.jdbc.releasesavepointerror"));
 		}
 		else
 		{
@@ -777,7 +777,7 @@ public abstract class ConnectionImple
 				}
 
                 SQLException sqlException = new SQLException(
-						jdbcLogger.logMesg
+						jdbcLogger.loggerI18N
 								.getString("com.arjuna.ats.internal.jdbc.conniniterror")
 								+ ":" + e);
                 sqlException.initCause(e);
@@ -868,7 +868,7 @@ public abstract class ConnectionImple
 
 				if (!_recoveryConnection.setTransaction(tx))
 					throw new SQLException(
-							jdbcLogger.logMesg
+							jdbcLogger.loggerI18N
 									.getString("com.arjuna.ats.internal.jdbc.alreadyassociated"));
 
 				Object[] params;
@@ -918,7 +918,7 @@ public abstract class ConnectionImple
 
 					throw new SQLException(
 							"ConnectionImple.registerDatabase - "
-									+ jdbcLogger.logMesg
+									+ jdbcLogger.loggerI18N
 											.getString("com.arjuna.ats.internal.jdbc.enlistfailed"));
 				}
 
@@ -983,7 +983,7 @@ public abstract class ConnectionImple
 				return;
 
 			if (tx.getStatus() != Status.STATUS_ACTIVE)
-				throw new SQLException(jdbcLogger.logMesg
+				throw new SQLException(jdbcLogger.loggerI18N
 						.getString("com.arjuna.ats.internal.jdbc.inactivetransaction"));
 
 			/*
@@ -992,7 +992,7 @@ public abstract class ConnectionImple
 
 			if (!_recoveryConnection.validTransaction(tx))
 				throw new SQLException(
-						jdbcLogger.logMesg
+						jdbcLogger.loggerI18N
 								.getString("com.arjuna.ats.internal.jdbc.alreadyassociatedcheck"));
 		}
 		catch (SQLException ex)
@@ -1001,7 +1001,7 @@ public abstract class ConnectionImple
 		}
 		catch (Exception e3)
 		{
-            SQLException sqlException = new SQLException(jdbcLogger.logMesg
+            SQLException sqlException = new SQLException(jdbcLogger.loggerI18N
 					.getString("com.arjuna.ats.internal.jdbc.infoerror"));
             sqlException.initCause(e3);
             throw sqlException;
