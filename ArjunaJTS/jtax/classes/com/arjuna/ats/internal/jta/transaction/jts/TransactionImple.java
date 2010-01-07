@@ -433,11 +433,11 @@ public class TransactionImple implements javax.transaction.Transaction,
 	            case Status.STATUS_PREPARING:
 	            case Status.STATUS_PREPARED:
                         throw new InvalidTerminationStateException(
-                                jtaLogger.logMesg
+                                jtaLogger.loggerI18N
                                 .getString("com.arjuna.ats.internal.jta.transaction.arjunacore.invalidstate"));
                     default:
                         throw new InactiveTransactionException(
-                                jtaLogger.logMesg
+                                jtaLogger.loggerI18N
                                 .getString("com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"));
                     }
 	        }
