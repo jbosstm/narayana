@@ -100,7 +100,12 @@ public class BeanPopulator
             Class type = field.getType();
 
             String setterMethodName = "set"+capitalizeFirstLetter(field.getName());
-            Method setter = bean.getClass().getMethod(setterMethodName, new Class[] {field.getType()});
+            Method setter;
+            try {
+                setter = bean.getClass().getMethod(setterMethodName, new Class[] {field.getType()});
+            } catch(NoSuchMethodException e) {
+                continue; // emma code coverage tool adds fields to instrumented classes - ignore them.
+            }
 
             String getterMethodName;
             Method getter = null;

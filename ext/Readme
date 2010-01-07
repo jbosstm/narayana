@@ -35,3 +35,4 @@ xalan.jar
 xercesImpl.jar		Xerces 2.3.0
 xmlParserAPIs.jar	Xerces 2.3.0
 byteman.jar		1.0.3.SNAPSHOT (12 August 2009)
+emma.jar, emma_ant.jar  emma code coverage tool 2.0.5312 license: http://www.eclipse.org/legal/cpl-v10.html

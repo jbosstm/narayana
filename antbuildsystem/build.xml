@@ -22,6 +22,8 @@
 
     <property name="modulename" value="buildsystem"/>
 
+    <property name="emma.enabled" value="false"/>
+
     <import file="../sharedbuild.xml"/>
 
     <target name="compile" depends="init">

@@ -24,6 +24,9 @@
 
     <!-- ############################# -->
 
+    <!-- remember to turn emma off for prdn builds or it will be a runtime dep! -->
+    <property name="emma.enabled" value="false"/>
+
     <property name="debug" value="true"/>
     <property name="deprecation" value="true"/>
 
@@ -59,6 +62,16 @@
             <pathelement location="${sharedbuild.base.dir}/antbuildsystem/ant-contrib-1.0b3.jar"/>
         </classpath>
     </taskdef>
+
+    <!-- directory that contains emma.jar and emma_ant.jar: -->
+    <property name="emma.dir" value="${global.ext.lib.dir}" />
+
+    <path id="emma.lib" >
+        <pathelement location="${emma.dir}/emma.jar" />
+        <pathelement location="${emma.dir}/emma_ant.jar" />
+    </path>
+
+    <taskdef resource="emma_ant.properties" classpathref="emma.lib" />
 
 
     <target name="clean">
@@ -105,6 +118,16 @@
             <additional.src.dirs/>
         </javac>
 
+        <emma enabled="${emma.enabled}">
+            <instr mode="overwrite"
+                   metadatafile="${build.dir}/metadata.emma"
+                   merge="true">
+                <instrpath>
+                    <pathelement location="${build.dir}/classes"/>
+                </instrpath>
+            </instr>
+        </emma>
+
         <copy
             file="${etc.dir}/${mappingfile}"
             tofile="${build.dir}/classes/${mappingfile}"
@@ -120,6 +143,8 @@
                 <attribute name="arjuna-properties-file" value="jbossts-properties.xml"/>
             </manifest>
         </jar>
+
+
 
         </sequential>
    </macrodef>
@@ -254,7 +279,7 @@
             </then>
         </if>
 
-        <!-- note: build-release-pkgs.xml overrides this property when approptiate: -->
+        <!-- note: build-release-pkgs.xml overrides this property when appropriate: -->
         <property name="com.hp.mw.sourceid" value="unknown"/>
         <tstamp>
             <format property="buildproperty.date" pattern="yyyy/MMM/dd HH:mm"/>
@@ -473,6 +498,7 @@
                 <fileset dir="${global.ext.lib.dir}" includes="${global.ext.test.libs}"/>
                 <fileset dir="${global.ext.lib.dir}" includes="commons-logging-1.1.jar,log4j*"/>
                 <additional.classpath.aux/>
+                <path refid="emma.lib" />
             </classpath>
 
             <batchtest haltonerror="yes" haltonfailure="yes" fork="yes" todir="${build.dir}/testresults">
