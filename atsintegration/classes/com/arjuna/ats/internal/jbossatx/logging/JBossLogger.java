@@ -23,19 +23,17 @@ package com.arjuna.ats.internal.jbossatx.logging;
 
 import com.arjuna.common.internal.util.logging.LogInterface;
 
+import com.arjuna.common.internal.util.logging.Logi18nInterface;
+import org.jboss.logmanager.ExtLogRecord;
 import org.jboss.logmanager.Logger;
 import org.jboss.logmanager.Level;
 
 /**
  * CLF log impl for integration with JBoss log manager.
  *
- * Note that although jboss log manager supports i18n, we continue to do the
- * i18n in the CLF and pass already processed literals to the jboss layer
- * for consistency. The jboss layer passes these through verbatim, like jdk14 logging.
- *
  * @author Jonathan Halliday (jonathan.halliday@redhat.com) 2009-11
  */
-public final class JBossLogger implements LogInterface
+public final class JBossLogger implements Logi18nInterface
 {
     private final Logger logger;
     private static final String FQCN = JBossLogger.class.getName();
@@ -45,13 +43,17 @@ public final class JBossLogger implements LogInterface
         logger = Logger.getLogger(categoryName);
     }
 
+    public JBossLogger(final String categoryName, final String resourceBundleName) {
+        logger = Logger.getLogger(categoryName, resourceBundleName);
+    }
+
     /////////////
 
     /**
      * Is DEBUG logging currently enabled?
      * <p/>
      * Call this method to prevent having to perform expensive operations
-     * (for example, <code>String</code> concatination)
+     * (for example, <code>String</code> concatenation)
      * when the log level is more than DEBUG.
      *
      * @return True if the logger is enabled for DEBUG, false otherwise
@@ -66,7 +68,7 @@ public final class JBossLogger implements LogInterface
      * Is INFO logging currently enabled?
      * <p/>
      * Call this method to prevent having to perform expensive operations
-     * (for example, <code>String</code> concatination)
+     * (for example, <code>String</code> concatenation)
      * when the log level is more than INFO.
      *
      * @return True if the logger is enabled for INFO, false otherwise
@@ -81,7 +83,7 @@ public final class JBossLogger implements LogInterface
      * Is WARN logging currently enabled?
      * <p/>
      * Call this method to prevent having to perform expensive operations
-     * (for example, <code>String</code> concatination)
+     * (for example, <code>String</code> concatenation)
      * when the log level is more than WARN.
      *
      * @return True if the logger is enabled for WARN, false otherwise
@@ -96,7 +98,7 @@ public final class JBossLogger implements LogInterface
      * Is ERROR logging currently enabled?
      * <p/>
      * Call this method to prevent having to perform expensive operations
-     * (for example, <code>String</code> concatination)
+     * (for example, <code>String</code> concatenation)
      * when the log level is more than ERROR.
      *
      * @return True if the logger is enabled for ERROR, false otherwise
@@ -111,7 +113,7 @@ public final class JBossLogger implements LogInterface
      * Is FATAL logging currently enabled?
      * <p/>
      * Call this method to prevent having to perform expensive operations
-     * (for example, <code>String</code> concatination)
+     * (for example, <code>String</code> concatenation)
      * when the log level is more than FATAL.
      *
      * @return True if the logger is enabled for FATAL, false otherwise
@@ -126,7 +128,7 @@ public final class JBossLogger implements LogInterface
      * Is TRACE logging currently enabled?
      * <p/>
      * Call this method to prevent having to perform expensive operations
-     * (for example, <code>String</code> concatination)
+     * (for example, <code>String</code> concatenation)
      * when the log level is more than TRACE.
      */
     @Override
@@ -157,7 +159,6 @@ public final class JBossLogger implements LogInterface
     {
         logger.log(FQCN, Level.TRACE, message, t);
     }
-
     /**
      * <p> Log a message with debug log level. </p>
      *
@@ -179,6 +180,19 @@ public final class JBossLogger implements LogInterface
     public void debug(String message, Throwable t)
     {
         logger.log(FQCN, Level.DEBUG, message, t);
+    }
+
+
+    @Override
+    public void debug(String key, Object[] params)
+    {
+        logger.log(FQCN, Level.DEBUG, key, ExtLogRecord.FormatStyle.MESSAGE_FORMAT, params, null);
+    }
+
+    @Override
+    public void debug(String key, Object[] params, Throwable throwable)
+    {
+        logger.log(FQCN, Level.DEBUG, key, ExtLogRecord.FormatStyle.MESSAGE_FORMAT, params, throwable);
     }
 
     /**
@@ -204,7 +218,19 @@ public final class JBossLogger implements LogInterface
         logger.log(FQCN, Level.INFO, message, t);
     }
 
-    /**
+     @Override
+    public void info(String key, Object[] params)
+    {
+        logger.log(FQCN, Level.INFO, key, ExtLogRecord.FormatStyle.MESSAGE_FORMAT, params, null);
+    }
+
+    @Override
+    public void info(String key, Object[] params, Throwable throwable)
+    {
+        logger.log(FQCN, Level.INFO, key, ExtLogRecord.FormatStyle.MESSAGE_FORMAT, params, throwable);
+    }
+
+   /**
      * <p> Log a message with warn log level. </p>
      *
      * @param message log this message
@@ -213,6 +239,19 @@ public final class JBossLogger implements LogInterface
     public void warn(String message)
     {
         logger.log(FQCN, Level.WARN, message, null);
+    }
+
+    @Override
+    public void warn(String key, Object[] params)
+    {
+        logger.log(FQCN, Level.WARN, key, ExtLogRecord.FormatStyle.MESSAGE_FORMAT, params, null);
+
+    }
+
+    @Override
+    public void warn(String key, Object[] params, Throwable throwable)
+    {
+        logger.log(FQCN, Level.WARN, key, ExtLogRecord.FormatStyle.MESSAGE_FORMAT, params, throwable);
     }
 
     /**
@@ -250,6 +289,19 @@ public final class JBossLogger implements LogInterface
         logger.log(FQCN, Level.WARN, message, t);
     }
 
+    @Override
+    public void error(String key, Object[] params)
+    {
+        logger.log(FQCN, Level.ERROR, key, ExtLogRecord.FormatStyle.MESSAGE_FORMAT, params, null);
+
+    }
+
+    @Override
+    public void error(String key, Object[] params, Throwable throwable)
+    {
+        logger.log(FQCN, Level.ERROR, key, ExtLogRecord.FormatStyle.MESSAGE_FORMAT, params, throwable);
+    }
+
     /**
      * <p> Log a message with fatal log level. </p>
      *
@@ -271,5 +323,18 @@ public final class JBossLogger implements LogInterface
     public void fatal(String message, Throwable t)
     {
         logger.log(FQCN, Level.FATAL, message, t);
+    }
+
+    @Override
+    public void fatal(String key, Object[] params)
+    {
+        logger.log(FQCN, Level.FATAL, key, ExtLogRecord.FormatStyle.MESSAGE_FORMAT, params, null);
+
+    }
+
+    @Override
+    public void fatal(String key, Object[] params, Throwable throwable)
+    {
+        logger.log(FQCN, Level.FATAL, key, ExtLogRecord.FormatStyle.MESSAGE_FORMAT, params, throwable);
     }
 }

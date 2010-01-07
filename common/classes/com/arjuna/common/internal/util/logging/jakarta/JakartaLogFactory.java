@@ -30,6 +30,7 @@ package com.arjuna.common.internal.util.logging.jakarta;
 
 import com.arjuna.common.internal.util.logging.LogFactoryInterface;
 import com.arjuna.common.internal.util.logging.LogInterface;
+import com.arjuna.common.internal.util.logging.Logi18nInterface;
 import com.arjuna.common.util.exceptions.LogConfigurationException;
 
 /**
@@ -53,7 +54,36 @@ public class JakartaLogFactory implements LogFactoryInterface
         this.logImpl = logImpl;
     }
 
-   /**
+    /**
+     * Determine if the underlying logging framework supports i18n or not.
+     *
+     * @return true if i18n is supported, false otherwise.
+     */
+    @Override
+    public boolean isInternationalizationSupported()
+    {
+        return false;
+    }
+
+    /**
+     * Method to return a named logger with a given ResourceBundle associated.
+     *
+     * @param name               Logical name of the <code>Log</code> instance to be
+     *                           returned (the meaning of this name is only known to the underlying
+     *                           logging implementation that is being wrapped)
+     * @param resourceBundleName The name of the ResourceBundle to associate with the logger
+     * @return an appropriately configured LogInterface implementation
+     * @throws com.arjuna.common.util.exceptions.LogConfigurationException
+     *          if a suitable <code>LogInterface</code>
+     *          instance cannot be returned, including where the logger does not support i18n.
+     */
+    @Override
+    public Logi18nInterface getLog(String name, String resourceBundleName) throws LogConfigurationException
+    {
+        throw new LogConfigurationException("i18n not supported");
+    }
+
+    /**
     * Convenience method to return a named logger, without the application
     * having to care about factories.
     *

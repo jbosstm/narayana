@@ -42,15 +42,36 @@ import com.arjuna.common.util.exceptions.LogConfigurationException;
  */
 public interface LogFactoryInterface
 {
-   /**
-    * Method to return a named logger.
-    *
-    * @param name Logical name of the <code>Log</code> instance to be
-    *  returned (the meaning of this name is only known to the underlying
-    *  logging implementation that is being wrapped)
-    *
-    * @exception LogConfigurationException if a suitable <code>LogInterface</code>
-    *  instance cannot be returned
-    */
-   public LogInterface getLog(String name) throws LogConfigurationException;
+    /**
+     * Method to return a named logger.
+     *
+     * @param name Logical name of the <code>Log</code> instance to be
+     *  returned (the meaning of this name is only known to the underlying
+     *  logging implementation that is being wrapped)
+     * @return an appropriately configured LogInterface implementation
+     * @throws LogConfigurationException if a suitable <code>LogInterface</code>
+     *  instance cannot be returned
+     */
+    public LogInterface getLog(String name) throws LogConfigurationException;
+
+    /**
+     * Determine if the underlying logging framework supports i18n or not.
+     *
+     * @return true if i18n is supported, false otherwise.
+     */
+    public boolean isInternationalizationSupported();
+
+    /**
+     * Method to return a named logger with a given ResourceBundle associated.
+     *
+     * @param name Logical name of the <code>Log</code> instance to be
+     *  returned (the meaning of this name is only known to the underlying
+     *  logging implementation that is being wrapped)
+     * @param resourceBundleName The name of the ResourceBundle to associate with the logger
+     * @return an appropriately configured Logi18nInterface implementation
+     * @throws LogConfigurationException if a suitable <code>Logi18nInterface</code>
+     *  instance cannot be returned, including where the logger does not support i18n.
+     */
+    public Logi18nInterface getLog(String name, String resourceBundleName) throws LogConfigurationException;
+
 }

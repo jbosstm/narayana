@@ -640,15 +640,15 @@ public class Logi18nImpl implements Logi18n
     }
 
     // -------------------------------------------------------------------------------------
-    // private methods
+    // internal methods
     // -------------------------------------------------------------------------------------
 
-    private String evalResourceBundle(String key)
+    protected String evalResourceBundle(String key)
     {
         return getString(key);
     }
 
-    private String evalResourceBundle(String key, Object[] params)
+    protected String evalResourceBundle(String key, Object[] params)
     {
         return getString(key, params);
     }
