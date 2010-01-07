@@ -22,12 +22,10 @@
 
     <property name="modulename" value="buildsystem"/>
 
-    <property name="emma.enabled" value="false"/>
-
     <import file="../sharedbuild.xml"/>
 
     <target name="compile" depends="init">
-        <compile.macro includeant="true"/>
+        <compile.macro includeant="true" includeemma="false"/>
     </target>
 
     <target name="compile-tests"/>

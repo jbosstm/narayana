@@ -101,6 +101,7 @@
 
         <attribute name="excluded.classes" default="${excluded.classes}"/>
         <attribute name="includeant" default="false"/>
+        <attribute name="includeemma" default="${emma.enabled}"/>
 
         <element name="additional.classpath" optional="true"/>
         <element name="additional.src.dirs" optional="true"/>
@@ -118,7 +119,7 @@
             <additional.src.dirs/>
         </javac>
 
-        <emma enabled="${emma.enabled}">
+        <emma enabled="@{includeemma}">
             <instr mode="overwrite"
                    metadatafile="${build.dir}/metadata.emma"
                    merge="true">
@@ -490,7 +491,7 @@
             <classpath>
                 <pathelement location="etc"/>
                 <pathelement location="${build.dir}/lib/${modulename}.jar"/>
-                <!--<pathelement location="${build.dir}/classes/"/>-->
+                <pathelement location="${build.dir}/classes/"/>
                 <pathelement location="${build.dir}/tests/"/>
                 <fileset dir="${build.dir}/lib/ext/" includes="*"/>
                 <fileset dir="${basedir}" includes="${lib.dir}/ext/*"/>
