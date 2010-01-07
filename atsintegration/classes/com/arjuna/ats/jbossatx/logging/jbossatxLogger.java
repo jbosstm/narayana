@@ -41,50 +41,15 @@ public class jbossatxLogger
 {
     public static LogNoi18n      logger;
     public static Logi18n        loggerI18N;
-    private static ResourceBundle logMesg;
 
-    private static String _language;
-    private static String _country;
-    private static Locale _currentLocale;
+    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    {
+        logger = noi18n;
+        loggerI18N = i18n;
+    }
 
     static
     {
-        logger = LogFactory.getLogNoi18n("com.arjuna.ats.jbossatx.logging.logger");
-
-		_language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();
-		_country = commonPropertyManager.getLoggingEnvironmentBean().getCountry();
-
-        _currentLocale = new Locale(_language, _country);
-        
-        try
-        {
-            logMesg = ResourceBundle.getBundle("jbossatx_msg", _currentLocale);
-        }
-        catch (Throwable ex)
-        {
-            logMesg = null;
-        }
-
-        if (logMesg == null)
-        {
-            _currentLocale = new Locale("en", "US");
-            
-            logMesg = ResourceBundle.getBundle("jbossatx_msg", _currentLocale);
-        }
-        
-        try
-        {
-            loggerI18N = LogFactory.getLogi18n("com.arjuna.ats.jbossatx.logging.loggerI18N", "jbossatx_msg_"+_language+"_"+_country);
-        }
-        catch (Throwable ex)
-        {
-            loggerI18N = null;
-        }
-        
-        if (loggerI18N == null)
-            loggerI18N = LogFactory.getLogi18n("com.arjuna.ats.jbossatx.logging.loggerI18N", "jbossatx_msg_en_US");
+        LogFactory.initializeModuleLogger(jbossatxLogger.class, "jbossatx_msg", "com.arjuna.ats.jbossatx");
     }
 }
-
-
-

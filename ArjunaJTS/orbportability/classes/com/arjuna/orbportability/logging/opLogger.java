@@ -35,50 +35,14 @@ public class opLogger
 	public static LogNoi18n logger;
 	public static Logi18n loggerI18N;
 
-	private static ResourceBundle logMesg;
+    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    {
+        logger = noi18n;
+        loggerI18N = i18n;
+    }
 
-	private static String _language;
-	private static String _country;
-	private static Locale _currentLocale;
-
-	static
-	{
-		logger = LogFactory.getLogNoi18n("com.arjuna.orbportability.logging.logger");
-
-		_language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();
-
-		_country = commonPropertyManager.getLoggingEnvironmentBean().getCountry();
-
-		_currentLocale = new Locale(_language, _country);
-		
-		try
-		{
-			logMesg = ResourceBundle.getBundle("orbportability_msg", _currentLocale);
-		}
-		catch (Throwable ex)
-		{
-			logMesg = null;
-		}
-		
-		if (logMesg == null)
-		{
-			_currentLocale = new Locale("en", "US");
-			
-			logMesg = ResourceBundle.getBundle("orbportability_msg", _currentLocale);
-		}
-
-		try
-		{
-			loggerI18N = LogFactory.getLogi18n("com.arjuna.orbportability.logging.loggerI18N", "orbportability_msg_"
-					+ _language + "_" + _country);
-		}
-		catch (Throwable ex)
-		{
-			loggerI18N = null;
-		}
-		
-		if (loggerI18N == null)
-			loggerI18N = LogFactory.getLogi18n("com.arjuna.orbportability.logging.loggerI18N", "orbportability_msg_en_US");
-	}
-
+    static
+    {
+        LogFactory.initializeModuleLogger(opLogger.class, "orbportability_msg", "com.arjuna.orbportability");
+    }
 }

@@ -32,6 +32,9 @@ import com.arjuna.common.internal.util.logging.*;
 import com.arjuna.common.util.exceptions.LogConfigurationException;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Factory for {@link Logi18n} and {@link LogNoi18n} objects.
@@ -92,6 +95,32 @@ public class LogFactory {
      * @see FacilityCode for possible values.
      */
     private static long m_facLevel = FacilityCode.FAC_ALL;
+
+    public static void initializeModuleLogger(Class moduleLogger, String bundleName, String name) {
+
+        LogNoi18n logger = getLogNoi18n(name);
+
+		String _language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();
+		String _country = commonPropertyManager.getLoggingEnvironmentBean().getCountry();
+
+        Logi18n loggerI18N;
+        try
+        {
+            loggerI18N = getLogi18n(name, bundleName+"_"+_language+"_"+_country);
+        }
+        catch (Throwable ex)
+        {
+            loggerI18N = getLogi18n(name, bundleName+"_en_US");
+        }
+
+        try {
+            Method initializer = moduleLogger.getMethod("initialize", new Class[] {LogNoi18n.class, Logi18n.class});
+            initializer.invoke(null, new Object[] {logger, loggerI18N});
+        } catch(Exception e) {
+            throw new RuntimeException("An unexpected exception occurred while initializing the logger: " + e.getMessage(), e);
+        }
+    }
+
 
     /**
      * Convenience method to return a named logger, without the application

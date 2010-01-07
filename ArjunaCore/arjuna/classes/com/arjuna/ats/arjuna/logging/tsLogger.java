@@ -44,54 +44,14 @@ public class tsLogger
 	public static LogNoi18n arjLogger;
 	public static Logi18n arjLoggerI18N;
 
-	private static ResourceBundle log_mesg;
-	
-	private static String language;
-	private static String country;
-	private static Locale currentLocale;
-	private static String dirLocale;
+    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    {
+        arjLogger = noi18n;
+        arjLoggerI18N = i18n;
+    }
 
-	static
-	{
-		arjLogger = LogFactory.getLogNoi18n("com.arjuna.ats.arjuna.logging.arjLogger");
-
-		language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();
-		country = commonPropertyManager.getLoggingEnvironmentBean().getCountry();
-
-		currentLocale = new Locale(language, country);
-		
-		try
-		{
-			log_mesg = ResourceBundle.getBundle("arjuna_msg", currentLocale);
-		}
-		catch (Throwable ex)
-		{
-			log_mesg = null;
-		}
-
-		// the default
-		
-		if (log_mesg == null)
-		{
-			currentLocale = new Locale("en", "US");
-
-			log_mesg = ResourceBundle.getBundle("arjuna_msg", currentLocale);
-		}
-		
-		try
-		{
-			arjLoggerI18N = LogFactory.getLogi18n("com.arjuna.ats.arjuna.logging.arjLoggerI18N", "arjuna_msg_"
-					+ language + "_" + country);
-		}
-		catch (Throwable ex)
-		{
-			arjLoggerI18N = null;
-		}
-
-		// the default
-		
-		if (arjLoggerI18N == null)
-			arjLoggerI18N = LogFactory.getLogi18n("com.arjuna.ats.arjuna.logging.arjLoggerI18N", "arjuna_msg_en_US");
-	}
-
+    static
+    {
+        LogFactory.initializeModuleLogger(tsLogger.class, "arjuna_msg", "com.arjuna.ats.arjuna");
+    }
 }

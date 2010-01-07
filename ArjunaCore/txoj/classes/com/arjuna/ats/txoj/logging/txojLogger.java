@@ -34,50 +34,14 @@ public class txojLogger
 	public static LogNoi18n aitLogger;
 	public static Logi18n aitLoggerI18N;
 
-	private static ResourceBundle log_mesg;
+    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    {
+        aitLogger = noi18n;
+        aitLoggerI18N = i18n;
+    }
 
-	private static String language;
-	private static String country;
-	private static Locale currentLocale;
-
-	static
-	{
-		aitLogger = LogFactory.getLogNoi18n("com.arjuna.ats.txoj.logging.txojLogger");
-
-		language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();
-
-		country = commonPropertyManager.getLoggingEnvironmentBean().getCountry();
-
-		currentLocale = new Locale(language, country);
-		
-		try
-		{
-			log_mesg = ResourceBundle.getBundle("txoj_msg", currentLocale);
-		}
-		catch (Throwable ex)
-		{
-			log_mesg = null;
-		}
-
-		if (log_mesg == null)
-		{
-			currentLocale = new Locale("en", "US");
-			
-			log_mesg = ResourceBundle.getBundle("txoj_msg", currentLocale);
-		}
-		
-		try
-		{
-			aitLoggerI18N = LogFactory.getLogi18n("com.arjuna.ats.txoj.logging.txojLoggerI18N", "txoj_msg_"
-					+ language + "_" + country);
-		}
-		catch (Throwable ex)
-		{
-			aitLoggerI18N = null;
-		}
-		
-		if (aitLoggerI18N == null)
-			aitLoggerI18N = LogFactory.getLogi18n("com.arjuna.ats.txoj.logging.txojLoggerI18N", "txoj_msg_en_US");
-	}
-
+    static
+    {
+        LogFactory.initializeModuleLogger(txojLogger.class, "txoj_msg", "com.arjuna.ats.txoj");
+    }
 }

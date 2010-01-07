@@ -44,51 +44,18 @@ public class jtaLogger
     public static LogNoi18n      logger;
     public static Logi18n        loggerI18N;
 
-    private static ResourceBundle logMesg;
-
-    private static String _language;
-    private static String _country;
-    private static Locale _currentLocale;
+    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    {
+        logger = noi18n;
+        loggerI18N = i18n;
+    }
 
     static
     {
-        logger = LogFactory.getLogNoi18n("com.arjuna.ats.jta.logging.logger");
-
-        _language = System.getProperty("language","en");
-        _country = System.getProperty("country","US");
-
-        _currentLocale = new Locale(_language, _country);
-		
-		try
-		{
-			logMesg = ResourceBundle.getBundle("jta_msg", _currentLocale);
-		}
-		catch (Throwable ex)
-		{
-			logMesg = null;
-		}
-
-		if (logMesg == null)
-		{
-			_currentLocale = new Locale("en", "US");
-			
-			logMesg = ResourceBundle.getBundle("jta_msg", _currentLocale);
-		}
-		
-		try
-		{
-			loggerI18N = LogFactory.getLogi18n("com.arjuna.ats.jta.logging.loggerI18N", "jta_msg_"+_language+"_"+_country);
-		}
-		catch (Throwable ex)
-		{
-			loggerI18N = null;
-		}
-		
-		if (loggerI18N == null)
-			loggerI18N = LogFactory.getLogi18n("com.arjuna.ats.jta.logging.loggerI18N", "jta_msg_en_US");
+        LogFactory.initializeModuleLogger(jtaLogger.class, "jta_msg", "com.arjuna.ats.jta");
     }
-
 }
+
 
 
 

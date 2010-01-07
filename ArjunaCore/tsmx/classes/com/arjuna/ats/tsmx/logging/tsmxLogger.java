@@ -45,49 +45,14 @@ public class tsmxLogger
 	public static LogNoi18n logger;
 	public static Logi18n loggerI18N;
 
-	private static ResourceBundle log_mesg;
+    public static void initialize(LogNoi18n noi18n, Logi18n i18n)
+    {
+        logger = noi18n;
+        loggerI18N = i18n;
+    }
 
-	private static String language;
-	private static String country;
-	private static Locale currentLocale;
-
-	static
-	{
-		logger = LogFactory.getLogNoi18n("com.arjuna.ats.tsmx.logging.tsmxLogger");
-
-		language = commonPropertyManager.getLoggingEnvironmentBean().getLanguage();
-		country = commonPropertyManager.getLoggingEnvironmentBean().getCountry();
-
-		currentLocale = new Locale(language, country);
-		
-		try
-		{
-			log_mesg = ResourceBundle.getBundle("arjuna_msg", currentLocale);
-		}
-		catch (Throwable ex)
-		{
-			log_mesg = null;
-		}
-
-		if (log_mesg == null)
-		{
-			currentLocale = new Locale("en", "US");
-			
-			log_mesg = ResourceBundle.getBundle("arjuna_msg", currentLocale);
-		}
-		
-		try
-		{
-			loggerI18N = LogFactory.getLogi18n("com.arjuna.ats.tsmx.logging.tsmxLoggerI18N", "tsmx_msg_"
-					+ language + "_" + country);
-		}
-		catch (Throwable ex)
-		{
-			loggerI18N = null;
-		}
-		
-		if (loggerI18N == null)
-			loggerI18N = LogFactory.getLogi18n("com.arjuna.ats.tsmx.logging.tsmxLoggerI18N", "tsmx_msg_en_US");
-	}
-
+    static
+    {
+        LogFactory.initializeModuleLogger(tsmxLogger.class, "tsmx_msg", "com.arjuna.ats.tsmx");
+    }
 }
