@@ -151,8 +151,16 @@ public class LogFactory {
      */
     public static Logi18n getLogi18n(String name, String resBundle) {
         setupLogSystem();
-        LogInterface logInterface = m_logFactory.getLog(name);
-        Logi18n log = new Logi18nImpl(logInterface, resBundle, m_debugLevel, m_visLevel, m_facLevel);
+        Logi18n log;
+        if(m_logFactory.isInternationalizationSupported()) {
+            // TODO can all logging frameworks cope with having the same name used twice,
+            // once with and once without a resBundle?
+            Logi18nInterface logi18nInterface = m_logFactory.getLog(name, resBundle);
+            log = new Logi18nDelegatingImpl(logi18nInterface, resBundle, m_debugLevel, m_visLevel, m_facLevel);
+        } else {
+            LogInterface logInterface = m_logFactory.getLog(name);
+            log = new Logi18nImpl(logInterface, resBundle, m_debugLevel, m_visLevel, m_facLevel);
+        }
         return log;
     }
 
