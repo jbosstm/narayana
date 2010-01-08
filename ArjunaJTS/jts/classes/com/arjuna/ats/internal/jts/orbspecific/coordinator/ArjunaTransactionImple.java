@@ -1230,6 +1230,8 @@ public class ArjunaTransactionImple extends
 		{
 			currentStatus = determineStatus(this);
 
+			// https://jira.jboss.org/jira/browse/JBTM-608
+			
 			if ((currentStatus == Status.StatusActive) || (currentStatus == Status.StatusPreparing))// is transaction still
 			    // running?
 			{
