@@ -132,6 +132,7 @@ public class TwoPhaseCoordinator extends BasicAction implements Reapable
 
 		switch (status())
 		{
+		// https://jira.jboss.org/jira/browse/JBTM-608
 		case ActionStatus.RUNNING:
 		case ActionStatus.PREPARING:
 		{
