@@ -1230,7 +1230,7 @@ public class ArjunaTransactionImple extends
 		{
 			currentStatus = determineStatus(this);
 
-			if (currentStatus == Status.StatusActive) // is transaction still
+			if ((currentStatus == Status.StatusActive) || (currentStatus == Status.StatusPreparing))// is transaction still
 			    // running?
 			{
 			    synchronized (this)
