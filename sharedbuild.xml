@@ -462,6 +462,7 @@
                     <additional.jvmargs.aux>
                         <jvmarg value="-javaagent:${global.ext.lib.dir}/byteman.jar=script:${basedir}/tests/byteman-scripts/@{script}"/>
                         <jvmarg value="-Dorg.jboss.byteman.debug"/>
+                        <jvmarg value="-Dorg.jboss.byteman.skip.override.rules"/>
                         <additional.jvmargs/>
                     </additional.jvmargs.aux>
                 </run.tests.macro.aux>
