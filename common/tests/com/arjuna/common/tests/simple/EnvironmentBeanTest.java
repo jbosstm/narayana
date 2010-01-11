@@ -41,6 +41,7 @@ public class EnvironmentBeanTest
 
         DummyEnvironmentBean testBean = new DummyEnvironmentBean();
         DummyProperties testProperties = new DummyProperties(testBean.getProperties());
+        testProperties.addConcatenationKeys(DummyEnvironmentBean.class);
         BeanPopulator.configureFromProperties(testBean, testProperties);
 
         Set<Object> expectedKeys = testBean.getProperties().keySet();

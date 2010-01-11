@@ -18,8 +18,9 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package com.hp.mwtests.commonlogging.debugextension;
+package com.arjuna.common.tests.logging;
 
+import com.arjuna.common.internal.util.logging.LoggingEnvironmentBean;
 import com.arjuna.common.util.logging.*;
 import com.arjuna.common.internal.util.logging.commonPropertyManager;
 import org.junit.Test;
@@ -31,25 +32,40 @@ import java.io.PrintStream;
 public class DebugExt
 {
     @Test
-   public void testDebugExt()
-   {
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		PrintStream bufferedStream = new PrintStream(buffer);
-		PrintStream originalStream = System.out;
+    public void testDebugExt()
+    {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        PrintStream bufferedStream = new PrintStream(buffer);
+        PrintStream originalStream = System.out;
 
-		// TODO: how to configure this on a per-test (not per-JVM) basis?
-		commonPropertyManager.getLoggingEnvironmentBean().setLoggingFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory;com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
-       commonPropertyManager.getLoggingEnvironmentBean().setDebugLevel("0x"+Long.toString(DebugLevel.FUNCS_AND_OPS, 16));
-       commonPropertyManager.getLoggingEnvironmentBean().setVisibilityLevel("0x"+Long.toString(VisibilityLevel.VIS_PACKAGE, 16));
-       commonPropertyManager.getLoggingEnvironmentBean().setFacilityLevel("0xffffffff"); // FacilityCode.FAC_ALL - Long.toString does the wrong thing.
+        LoggingEnvironmentBean loggingEnvironmentBean = commonPropertyManager.getLoggingEnvironmentBean();
+        String originalFactory = loggingEnvironmentBean.getLoggingFactory();
+        String originalDebugLevel = loggingEnvironmentBean.getDebugLevel();
+        String originalVisibilityLevel = loggingEnvironmentBean.getVisibilityLevel();
+        String originalFacilityLevel = loggingEnvironmentBean.getFacilityLevel();
+
+        loggingEnvironmentBean.setLoggingFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory;com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
+        loggingEnvironmentBean.setDebugLevel("0x"+Long.toString(DebugLevel.FUNCS_AND_OPS, 16));
+        loggingEnvironmentBean.setVisibilityLevel("0x"+Long.toString(VisibilityLevel.VIS_PACKAGE, 16));
+        loggingEnvironmentBean.setFacilityLevel("0xffffffff"); // FacilityCode.FAC_ALL - Long.toString does the wrong thing.
 
 		System.setOut(bufferedStream);
-		writeLogMessages();
-		System.setOut(originalStream);
-		verifyResult(buffer.toString());
-	}
+        LogFactory.reset(); // make sure it reloads the modified config.
 
-    public static void writeLogMessages()
+        try {
+    		writeLogMessages();
+        } finally {
+            loggingEnvironmentBean.setLoggingFactory(originalFactory);
+            loggingEnvironmentBean.setDebugLevel(originalDebugLevel);
+            loggingEnvironmentBean.setVisibilityLevel(originalVisibilityLevel);
+            loggingEnvironmentBean.setFacilityLevel(originalFacilityLevel);
+            System.setOut(originalStream);
+            LogFactory.reset();
+        }
+		verifyResult(buffer.toString());
+    }
+
+    private static void writeLogMessages()
     {
         LogNoi18n myNoi18nLog = LogFactory.getLogNoi18n("DebugExt");
 
@@ -63,7 +79,7 @@ public class DebugExt
                 "This debug message is enabled since it the Logger allows full debugging");
     }
 
-    public static void verifyResult(String result) {
+    private static void verifyResult(String result) {
         String[] lines = result.split("\r?\n");
 
         assertNotNull(lines);

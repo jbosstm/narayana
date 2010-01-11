@@ -164,6 +164,10 @@ public class LogFactory {
         return log;
     }
 
+    public static synchronized void reset() {
+        m_isInitialized = false;
+    }
+
     /**
      * set up the log subsystem to use.
      */

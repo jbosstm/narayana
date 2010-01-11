@@ -18,8 +18,9 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package com.hp.mwtests.commonlogging.testlevels;
+package com.arjuna.common.tests.logging;
 
+import com.arjuna.common.internal.util.logging.LoggingEnvironmentBean;
 import com.arjuna.common.util.logging.Logi18n;
 import com.arjuna.common.util.logging.LogFactory;
 import com.arjuna.common.internal.util.logging.commonPropertyManager;
@@ -32,19 +33,18 @@ import static org.junit.Assert.*;
 
 
 /**
- * JUnit test that verifies log statments made through the CLF appear at the expexted log level.
+ * JUnit test that verifies log statements made through the CLF appear at the expected log level.
  * It does this by replacing System.out with a memory backed buffer, writing some log messages
  * and then checking the buffer contents for the expected regexps.
  *
  * Note: due to the way logging is initialized, this is somewhat fragile.
- * In general you can run only one such test in a given JVM without risking interference.
  */
 public class TestLevels
 {
    /**
     * for logging purposes.
     */
-   public static final String CLASS = TestLevels.class.getName();
+   private static final String CLASS = TestLevels.class.getName();
 
    /**
     *
@@ -71,20 +71,30 @@ public class TestLevels
 		PrintStream bufferedStream = new PrintStream(buffer);
 		PrintStream originalStream = System.out;
 
+        LoggingEnvironmentBean loggingEnvironmentBean = commonPropertyManager.getLoggingEnvironmentBean();
+        String originalFactory = loggingEnvironmentBean.getLoggingFactory();
+        String originalDebugLevel = loggingEnvironmentBean.getDebugLevel();
+
 		// test the releveling for AS integration:
-		// TODO: how to configure this on a per-test (not per-JVM) basis?
-        commonPropertyManager.getLoggingEnvironmentBean().setLoggingFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaRelevelingLogFactory;com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
-        commonPropertyManager.getLoggingEnvironmentBean().setDebugLevel("0xffffffff");
+        loggingEnvironmentBean.setLoggingFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaRelevelingLogFactory;com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
+        loggingEnvironmentBean.setDebugLevel("0xffffffff");
 
 		System.setOut(bufferedStream);
-		writeLogMessages();
-		System.setOut(originalStream);
+        LogFactory.reset(); // make sure it reloads the modified config.
+
+        try {
+    		writeLogMessages();
+        } finally {
+            loggingEnvironmentBean.setLoggingFactory(originalFactory);
+            loggingEnvironmentBean.setDebugLevel(originalDebugLevel);
+            System.setOut(originalStream);
+            LogFactory.reset();
+        }
 		verifyResult(buffer.toString(), true);
 	}
 
-	public static void writeLogMessages() {
+	private static void writeLogMessages() {
 		// Don't init the log in a member variable - it must be done AFTER System.out is changed.
-		// TODO: this needs to be cleaner, or we need each test in it's own JVM!
 		Logi18n log = LogFactory.getLogi18n(CLASS, "TestLevels");
 		log.debug("testMessage", new Object[] {"1st", "debug"});
 		log.info("testMessage", new Object[] {"1st", "info"});
@@ -93,7 +103,7 @@ public class TestLevels
 		log.fatal("testMessage", new Object[] {"1st", "fatal"});
 	}
 
-	public static void verifyResult(String result, boolean expectReleveling) {
+	private static void verifyResult(String result, boolean expectReleveling) {
         String[] lines = result.split("\r?\n");
 		assertNotNull(lines);
 		assertEquals(5, lines.length);

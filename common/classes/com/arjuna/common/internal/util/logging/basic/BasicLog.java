@@ -86,28 +86,12 @@ public class BasicLog implements Serializable, LogInterface
 {
     // ------------------------------------------------------- Class Attributes
 
-    /** Properties loaded from simplelog.properties */
-    static protected final Properties simpleLogProps = new Properties();
-
     /** The default format to use when formating dates */
     static protected final String DEFAULT_DATE_TIME_FORMAT =
         "yyyy/MM/dd HH:mm:ss:SSS zzz";
 
-    /** Include the instance name in the log message? */
-    static protected boolean showLogName = false;
-    /** Include the short name ( last component ) of the logger in the log
-     *  message. Defaults to true - otherwise we'll be lost in a flood of
-     *  messages without knowing who sends them.
-     */
-    static protected boolean showShortName = true;
-    /** Include the current time in the log message */
-    static protected boolean showDateTime = true;
-    /** The date and time format to use in the log message */
-    static protected String dateTimeFormat = DEFAULT_DATE_TIME_FORMAT;
-    /** Used to format times */
-    static protected DateFormat dateFormatter = null;
-
     static PrintStream defaultLogFile = null;
+    static String defaultFileName = null;
 
     // ---------------------------------------------------- Log Level Constants
 
@@ -136,18 +120,23 @@ public class BasicLog implements Serializable, LogInterface
     // Initialize class attributes.
     // Load properties file, if found.
     // Override with system properties.
-    static {
+    private void initializeDefaultLog() {
 
-        showLogName = commonPropertyManager.getBasicLogEnvironmentBean().isShowLogName();
-        showShortName = commonPropertyManager.getBasicLogEnvironmentBean().isShowShortLogName();
-        showDateTime = commonPropertyManager.getBasicLogEnvironmentBean().isShowDate();
-        dateFormatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss:SSS zzz");
+        if(defaultLogFile != null) {
+            return;
+        }
 
-        String fileName = commonPropertyManager.getBasicLogEnvironmentBean().getLogFile();
+        defaultFileName = commonPropertyManager.getBasicLogEnvironmentBean().getLogFile();
         boolean fileAppend = commonPropertyManager.getBasicLogEnvironmentBean().isLogFileAppend();
         try {
-            FileOutputStream fOut = new FileOutputStream(fileName, fileAppend);
-            defaultLogFile = new PrintStream(fOut, true);
+
+            if(defaultFileName == null) {
+                defaultLogFile = System.out;
+            } else {
+                FileOutputStream fOut = new FileOutputStream(defaultFileName, fileAppend);
+                defaultLogFile = new PrintStream(fOut, true);
+            }
+
             defaultLogFile.println();
             defaultLogFile.println();
             defaultLogFile.println("---------------------------------------------------------------");
@@ -156,7 +145,7 @@ public class BasicLog implements Serializable, LogInterface
         }
         catch (Exception e)
         {
-            System.err.println("cannot set up default log for error messages to file " + fileName + ": " + e.getMessage());
+            System.err.println("cannot set up default log for error messages to file " + defaultFileName + ": " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -171,6 +160,19 @@ public class BasicLog implements Serializable, LogInterface
     /** The short name of this simple log instance */
     private String shortLogName = null;
 
+    /** Include the instance name in the log message? */
+    protected boolean showLogName = false;
+    /** Include the short name ( last component ) of the logger in the log
+     *  message. Defaults to true - otherwise we'll be lost in a flood of
+     *  messages without knowing who sends them.
+     */
+    protected boolean showShortName = true;
+    /** Include the current time in the log message */
+    protected boolean showDateTime = true;
+    /** The date and time format to use in the log message */
+    protected String dateTimeFormat = DEFAULT_DATE_TIME_FORMAT;
+    /** Used to format times */
+    protected DateFormat dateFormatter = null;
 
     // ------------------------------------------------------------ Constructor
 
@@ -180,6 +182,11 @@ public class BasicLog implements Serializable, LogInterface
      * @param name log name
      */
     public BasicLog(String name) {
+
+        showLogName = commonPropertyManager.getBasicLogEnvironmentBean().isShowLogName();
+        showShortName = commonPropertyManager.getBasicLogEnvironmentBean().isShowShortLogName();
+        showDateTime = commonPropertyManager.getBasicLogEnvironmentBean().isShowDate();
+        dateFormatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss:SSS zzz");
 
         logName = name;
 
@@ -209,6 +216,7 @@ public class BasicLog implements Serializable, LogInterface
             setLevel(BasicLog.LOG_LEVEL_OFF);
         }
 
+        initializeDefaultLog();
     }
 
 

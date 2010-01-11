@@ -29,7 +29,7 @@
     <target name="run.tests">
 
         <javadoc sourcepath="${tests.dir}"
-                 packagenames="com.hp.mwtests.commonlogging.testlevels"
+                 packagenames="com.arjuna.common.tests.logging"
                  failonerror="yes"
                  private="yes"
                  defaultexcludes="yes">
@@ -51,34 +51,9 @@
         </copy>
 
         <run.tests.macro>
-            <tests><fileset dir="tests" includes="**/TestLevels.java"/></tests>
-        </run.tests.macro>
-        <run.tests.macro>
-            <tests><fileset dir="tests" includes="**/logi18n.java"/></tests>
-        </run.tests.macro>
-        <run.tests.macro>
-            <tests><fileset dir="tests" includes="**/DebugExt.java"/></tests>
-        </run.tests.macro>
-        <run.tests.macro>
-            <tests><fileset dir="tests" includes="**/SetPropertyTest.java"/></tests>
-        </run.tests.macro>
-        <run.tests.macro>
-            <tests><fileset dir="tests" includes="**/PropertiesTest.java"/></tests>
-        </run.tests.macro>
-        <run.tests.macro>
-            <tests><fileset dir="tests" includes="**/SimpleTest.java"/></tests>
-        </run.tests.macro>
-        <run.tests.macro>
-            <tests><fileset dir="tests" includes="**/SystemPropertyTest.java"/></tests>
-        </run.tests.macro>
-        <run.tests.macro>
-            <tests><fileset dir="tests" includes="**/IOTest.java"/></tests>
-        </run.tests.macro>
-        <run.tests.macro>
-            <tests><fileset dir="tests" includes="**/EnvironmentBeanTest.java"/></tests>
-        </run.tests.macro>
-        <run.tests.macro>
-            <tests><fileset dir="tests" includes="**/BeanPopulatorTest.java"/></tests>
+            <tests>
+                <fileset dir="tests" includes="**/*.java" excludes="**/Dummy*.java"/>
+            </tests>
         </run.tests.macro>
 
         <emma enabled="${emma.enabled}">

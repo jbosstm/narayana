@@ -129,6 +129,12 @@ public class BeanPopulator
         }
     }
 
+    public static String printBean(Object bean) {
+        StringBuffer buffer = new StringBuffer();
+        printBean(bean, buffer);
+        return buffer.toString();
+    }    
+
     /**
      * Render the state of the known bean instances as text.
      */

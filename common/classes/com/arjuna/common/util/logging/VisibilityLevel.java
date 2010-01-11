@@ -95,8 +95,6 @@ public class VisibilityLevel //implements VisibilityLevel
          sLevel = ((sLevel == null) ? "VIS_PUBLIC" : " & VIS_PUBLIC");
       if ((level & VIS_PACKAGE) != 0)
          sLevel = ((sLevel == null) ? "VIS_PACKAGE" : " & VIS_PACKAGE");
-      if ((level & VisibilityLevel.VIS_ALL) != 0)
-         sLevel = ((sLevel == null) ? "VIS_ALL" : " & VIS_ALL");
 
       return ((sLevel == null) ? "VIS_NONE" : sLevel);
    }

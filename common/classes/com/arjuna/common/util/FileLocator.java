@@ -114,47 +114,6 @@ public class FileLocator
    }
 
    /**
-    * Locate the specific file.
-    * Return the file name in URL form or null.
-    */
-   public static URL locateURL (String findFile) throws FileNotFoundException
-   {
-      URL url;
-      String fullPathName;
-
-      if (findFile == null)
-         throw new FileNotFoundException("locateURL: null file name");
-
-      try {
-         if (findFile.startsWith(absolutePath))
-         {
-            return (new URL("file:/" + findFile.substring(absolutePath.length())));
-         }
-
-         if ((fullPathName = locateByProperty(findFile)) != null)
-         {
-            if(platformIsWindows())
-               url = new URL("file:/" + fullPathName);
-            else
-               url = new URL("file:" + fullPathName);
-            return url;
-         }
-         //TODO: TR: used for testing:  return new URL(findFile);
-      }
-      catch (MalformedURLException e)
-      {
-         System.err.println("locateURL: URL creation problem");
-         FileNotFoundException exception = new FileNotFoundException("locateURL: URL creation problem");
-         exception.initCause(e);
-         throw exception;
-      }
-      if ((url = locateByResource(findFile)) != null)
-         return url;
-
-      throw new FileNotFoundException("locateURL: file not found: " + findFile);
-   }
-
-   /**
     * Search for a file using the properties: user.dir, user.home, java.home
     * Returns absolute path name or null.
     */

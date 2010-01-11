@@ -18,8 +18,9 @@
  * (C) 2005-2006,
  * @author JBoss Inc.
  */
-package com.hp.mwtests.commonlogging.i18n;
+package com.arjuna.common.tests.logging;
 
+import com.arjuna.common.internal.util.logging.LoggingEnvironmentBean;
 import com.arjuna.common.util.logging.Logi18n;
 import com.arjuna.common.util.logging.LogFactory;
 import com.arjuna.common.internal.util.logging.commonPropertyManager;
@@ -31,9 +32,13 @@ import java.io.PrintStream;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/**
+ * Tests that i18n works by outputting the same message for two different locales.
+ *
+ */
 public class logi18n
 {
-    public static final String CLASS = logi18n.class.getName();
+    private static final String CLASS = logi18n.class.getName();
 
     @Test
 	public void testLogi18n() {
@@ -41,40 +46,55 @@ public class logi18n
 		PrintStream bufferedStream = new PrintStream(buffer);
 		PrintStream originalStream = System.out;
 
-		// TODO: how to configure this on a per-test (not per-JVM) basis?
+        LoggingEnvironmentBean loggingEnvironmentBean = commonPropertyManager.getLoggingEnvironmentBean();
+        String originalFactory = loggingEnvironmentBean.getLoggingFactory();
+
         commonPropertyManager.getLoggingEnvironmentBean().setLoggingFactory("com.arjuna.common.internal.util.logging.jakarta.JakartaLogFactory;com.arjuna.common.internal.util.logging.jakarta.Log4JLogger");
 
 		System.setOut(bufferedStream);
-		writeLogMessages();
-		System.setOut(originalStream);
+        LogFactory.reset(); // make sure it reloads the modified config.
+
+        try {
+    		writeLogMessages();
+        } finally {
+            loggingEnvironmentBean.setLoggingFactory(originalFactory);
+            System.setOut(originalStream);
+            LogFactory.reset();
+        }
 		verifyResult(buffer.toString());
+
 	}
 
-   public static void writeLogMessages()
+   private static void writeLogMessages()
    {
        Logi18n log = LogFactory.getLogi18n(CLASS, "logging_msg");
 
-       Locale.setDefault(new Locale("en", "US"));
-       log.info("IDENTIFICATION", new String[] { "Foo", "Bar"});
-       log.fatal("FATAL_Message");
-       log.info("INFO_Message");
+       Locale originalDefault = Locale.getDefault();
+       try {
+           Locale.setDefault(new Locale("en", "US"));
+           log.info("IDENTIFICATION", new String[] { "Foo", "Bar"});
+           log.fatal("fatal_message");
+           log.info("info_message");
 
-       Locale.setDefault(new Locale("fr", "FR"));
-       log = LogFactory.getLogi18n(CLASS, "logging_msg");
-       log.info("IDENTIFICATION", new String[] { "Foo", "Bar"});
-       log.fatal("FATAL_Message");
-       log.info("INFO_Message");
+           Locale.setDefault(new Locale("fr", "FR"));
+           log = LogFactory.getLogi18n(CLASS, "logging_msg");
+           log.info("IDENTIFICATION", new String[] { "Foo", "Bar"});
+           log.fatal("fatal_message");
+           log.info("info_message");
+       } finally {
+           Locale.setDefault(originalDefault);
+       }
    }
 
-    public static void verifyResult(String result) {
+    private static void verifyResult(String result) {
         String[] lines = result.split("\r?\n");
 
         assertNotNull(lines);
         assertEquals(6, lines.length);
         
         assertTrue("Got actual value: "+lines[0], lines[0].matches("\\s*INFO \\[main\\] \\(logi18n.java.*The FirstName is Foo and the LastName is Bar$"));
-        assertTrue("Got actual value: "+lines[1], lines[1].matches("\\s*FATAL \\[main\\] \\(logi18n.java.*This is a Fatal message$"));
-        assertTrue("Got actual value: "+lines[2], lines[2].matches("\\s*INFO \\[main\\] \\(logi18n.java.*This is an Info message$"));
+        assertTrue("Got actual value: "+lines[1], lines[1].matches("\\s*FATAL \\[main\\] \\(logi18n.java.*This is a fatal message$"));
+        assertTrue("Got actual value: "+lines[2], lines[2].matches("\\s*INFO \\[main\\] \\(logi18n.java.*This is a info message$"));
 
         assertTrue("Got actual value: "+lines[3], lines[3].matches("\\s*INFO \\[main\\] \\(logi18n.java.*le prenom est Foo et le nom est Bar$"));
         assertTrue("Got actual value: "+lines[4], lines[4].matches("\\s*FATAL \\[main\\] \\(logi18n.java.*Ceci est un message Fatal$"));
