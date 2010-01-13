@@ -201,6 +201,10 @@ public class TransactionReaper
                 if(reaperElement == null) {
                     nextDynamicCheckTime.set(Long.MAX_VALUE);
                     return;
+                } else {
+                    if(reaperElement.getAbsoluteTimeout() > now) {
+                        return; // nothing to do yet.
+                    }
                 }
             }
 
