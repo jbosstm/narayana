@@ -45,7 +45,7 @@
 
         <compile.macro>
             <additional.classpath>
-                <fileset dir="${global.ext.lib.dir}" includes="jta-1_1-classes.zip"/>
+                <fileset dir="${global.ext.lib.dir}" includes="jta.jar"/>
             </additional.classpath>
             <additional.src.dirs>
                 <src location="bin"/>

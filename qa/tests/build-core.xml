@@ -32,7 +32,7 @@
 		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/">
 			<include name="arjunacore.jar"/>
 		</fileset>
-        <pathelement location="../../ext/junit-4.6.jar"/>
+        <fileset dir="../../build/extlib" includes="junit.jar"/>
         <pathelement location="../ext/jboss-profiler-jvmti.jar"/>
 	</path>
 

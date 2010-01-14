@@ -37,10 +37,11 @@
     <property name="etc.dir" value="etc"/>
 
     <dirname property="sharedbuild.base.dir" file="${ant.file.sharedbuild}" />
-    <property name="global.ext.lib.dir" value="${sharedbuild.base.dir}/ext"/>
+    <!-- build/extlib is populated by maven/build.xml via /build.xml target init_dependencies -->
+    <property name="global.ext.lib.dir" value="${sharedbuild.base.dir}/build/extlib"/>
 
     <property name="global.ext.libs" value="none"/>
-    <property name="global.ext.test.libs" value="junit-4.6.jar"/>
+    <property name="global.ext.test.libs" value="junit.jar"/>
 
     <property name="excluded.classes" value=""/>
     <property name="excluded.test.classes" value=""/>
@@ -498,7 +499,7 @@
                 <fileset dir="${basedir}" includes="${lib.dir}/ext/*"/>
                 <fileset dir="${global.ext.lib.dir}" includes="${global.ext.libs}"/>
                 <fileset dir="${global.ext.lib.dir}" includes="${global.ext.test.libs}"/>
-                <fileset dir="${global.ext.lib.dir}" includes="commons-logging-1.1.jar,log4j*"/>
+                <fileset dir="${global.ext.lib.dir}" includes="commons-logging.jar,log4j.jar"/>
                 <additional.classpath.aux/>
                 <path refid="emma.lib" />
             </classpath>

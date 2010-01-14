@@ -22,7 +22,7 @@
 
     <property name="modulename" value="jbossatx"/>
 
-    <property name="global.ext.libs" value="jta-1_1-classes.zip,connector-api.jar"/>
+    <property name="global.ext.libs" value="jta.jar,jboss-jca-api.jar"/>
 
     <property name="component-module-list" value="../atsintegration"/>
 
@@ -63,10 +63,14 @@
 
         <compile.macro excluded.classes="${exclude-these-classes}">
             <additional.classpath>
-                <!-- jboss-logmanager.jar for linking the CLF integration code. -->
-                <fileset dir="${env.JBOSS_HOME}/lib" includes="jboss-logmanager.jar"/>
-                <!-- jboss-integration.jar has the transactions SPI  jbosssx has security (needed for recovery module only) -->
-                <fileset dir="${env.JBOSS_HOME}/common/lib" includes="jboss-integration.jar jbosssx.jar"/>
+                <fileset dir="${global.ext.lib.dir}">
+                    <!-- jboss-logmanager.jar for linking the CLF integration code. -->
+                    <include name="jboss-logmanager.jar"/>
+                    <include name="jboss-transaction-spi.jar"/>
+                    <include name="jboss-corba-ots-spi.jar"/>
+                    <!-- jbosssx has security (needed for recovery module only) -->
+                    <include name="jbosssx.jar"/>
+                </fileset>
             </additional.classpath>
         </compile.macro>
 
@@ -76,9 +80,5 @@
     <target name="run.tests"/>
 
     <target name="dist" depends="install.lib"/>
-
-
-
-
 
 </project>

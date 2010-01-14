@@ -143,4 +143,126 @@
     </repository>
     </repositories>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+
+                <configuration>
+                    <outputDirectory>@extdir@</outputDirectory>
+                    <overWriteReleases>false</overWriteReleases>
+                    <overWriteSnapshots>false</overWriteSnapshots>
+                    <overWriteIfNewer>true</overWriteIfNewer>
+                    <excludeTransitive>true</excludeTransitive>
+                    <stripVersion>true</stripVersion>
+                </configuration>
+
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+
+        <!-- combined deps for the entire JBossTS. At some point we need to modularize this for different builds -->
+
+        <!-- 'common' module builds against commons-logging and at runtime uses commons-logging+log4j as
+            the default log config. Neither are required at runtime if using certain non-default logger settings -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>apache-log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+        </dependency>
+
+
+        <!-- JTA (local: ArjunaJTA/jta and remote: ArjunaJTS/jtax) need JTA and JCA (for tx inflow) apis. -->
+
+        <dependency>
+            <!-- switch to http://repository.jboss.com/maven2/org/jboss/javaee/jboss-transaction-api/
+                when it becomes available. -->
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.javaee</groupId>
+            <artifactId>jboss-jca-api</artifactId>
+            <version>1.5.0.GA</version>
+        </dependency>
+
+        <!-- unit tests use junit4 and some use byteman -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.6</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.byteman</groupId>
+            <artifactId>byteman</artifactId>
+            <version>1.2.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- build system uses emma for code coverage metrics -->
+        <dependency>
+            <groupId>emma</groupId>
+            <artifactId>emma</artifactId>
+            <version>2.0.5312</version>
+        </dependency>
+
+        <dependency>
+            <groupId>emma</groupId>
+            <artifactId>emma_ant</artifactId>
+            <version>2.0.5312</version>
+        </dependency>
+
+        <!-- installation as a service requires the wrapper, but is an optional deployment model -->
+        <dependency>
+            <groupId>tanukisoft</groupId>
+            <artifactId>wrapper</artifactId>
+            <version>3.2.3</version>
+        </dependency>
+
+
+        <!-- atsintegration (i.e. the JBossAS glue code) requires some app server bits.
+            TODO versions for these (and maybe other deps too) should really come
+            from the JBossAS component-matrix/pom.xml i.e.
+             http://repository.jboss.com/maven2/org/jboss/jbossas/jboss-as-component-matrix/
+             rather than be hardcoded here -->
+
+        <dependency>
+            <groupId>org.jboss.logmanager</groupId>
+            <artifactId>jboss-logmanager</artifactId>
+            <version>1.1.1.GA</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.integration</groupId> 
+            <artifactId>jboss-transaction-spi</artifactId>
+            <version>5.1.0.SP1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.integration</groupId>
+            <artifactId>jboss-corba-ots-spi</artifactId>
+            <version>5.1.0.SP1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.security</groupId>
+            <artifactId>jbosssx</artifactId>
+            <version>2.1.0.20091223</version>
+        </dependency>
+
+    </dependencies>
+
 </project>

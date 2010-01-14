@@ -43,7 +43,7 @@
         <mkdir dir="${basedir}/${src.dir}"/>
         <compile.macro>
             <additional.classpath>
-                <fileset dir="${global.ext.lib.dir}" includes="jta-1_1-classes.zip"/>
+                <fileset dir="${global.ext.lib.dir}" includes="jta.jar"/>
                 <fileset dir="${install.dir}" includes="${modulename}-tools.jar"/>
                 <fileset dir="${install.dir}" includes="${modulename}-objectstorebrowser.jar"/>
             </additional.classpath>

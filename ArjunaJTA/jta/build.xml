@@ -22,7 +22,7 @@
 
     <property name="modulename" value="jta"/>
 
-    <property name="global.ext.libs" value="jta-1_1-classes.zip,connector-api.jar"/>
+    <property name="global.ext.libs" value="jta.jar,jboss-jca-api.jar"/>
 
     <import file="../../sharedbuild.xml"/>
 

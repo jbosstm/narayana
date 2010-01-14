@@ -40,9 +40,9 @@
 			<include name="jbossjta.jar"/>
 		</fileset>
 		<fileset dir="${org.jboss.jbossts.qa.ts.home}/lib/ext">
-			<include name="jta-1_1-classes.zip"/>
+			<include name="jta.jar"/>
 		</fileset>
-        <pathelement location="../../ext/junit-4.6.jar"/>
+        <fileset dir="../../build/extlib" includes="junit.jar"/>
         <pathelement location="../ext/jboss-profiler-jvmti.jar"/>
 
 		<fileset file="${org.jboss.jbossts.qa.server_manager_location}" />

@@ -29,8 +29,8 @@
 
    <property environment="env"/>
 
-    <!-- TODO wire me up -->
-   <property name="com.hp.mw.sourceid" value="unknown"/>
+   <!-- use 'standalone' or 'maven' -->
+   <property name="dependency.handling" value="maven"/>
 
    <target name="help">
       <echo>
@@ -54,19 +54,19 @@ Targets supported in this build.xml file
         </sequential>
     </macrodef>
 
-   <target name="jts" depends="clean, antbuildsystem">
+   <target name="jts" depends="clean, init_dependencies, antbuildsystem">
        <ant dir="ArjunaJTS"/>
        <install.macro src.module="ArjunaJTS"/>
        <ant dir="qa"/>
    </target>
 
-   <target name="jta" depends="clean, antbuildsystem">
+   <target name="jta" depends="clean, init_dependencies, antbuildsystem">
        <ant dir="ArjunaJTA"/>
        <install.macro src.module="ArjunaJTA"/>
        <ant dir="qa"/>
    </target>
 
-   <target name="core" depends="clean, antbuildsystem">
+   <target name="core" depends="clean, init_dependencies, antbuildsystem">
        <ant dir="ArjunaCore"/>
        <install.macro src.module="ArjunaCore"/>
        <ant dir="qa"/>
@@ -110,17 +110,36 @@ Targets supported in this build.xml file
         </if>
 
        <ant dir="atsintegration" target="clean"/>
+
+       <delete dir="build"/>
    </target>
 
    <target name="init_integration">
-      <condition property="jboss.home" value="${env.JBOSS_HOME}">
-         <isset property="env.JBOSS_HOME"/>
-      </condition>
+       <condition property="jboss.home" value="${env.JBOSS_HOME}">
+           <isset property="env.JBOSS_HOME"/>
+       </condition>
 
-      <fail unless="jboss.home">
-The JBoss installation directory must be specified with the JBOSS_HOME environment variable or the jboss.home property.
-      </fail>
+       <if>
+           <equals arg1="${dependency.handling}" arg2="standalone"/>
+           <then>
+               <fail unless="jboss.home">
+                   The JBoss installation directory must be specified with the JBOSS_HOME environment variable or the jboss.home property.
+               </fail>
+           </then>
+       </if>
+       
    </target>
+
+    <target name="init_dependencies">
+        <ant dir="maven" target="${dependency.handling}"/>
+        <if>
+            <isset property="jboss.home"/>
+            <then>
+                <ant dir="maven" target="standalone-atsintegration"/>
+            </then>
+        </if>
+    </target>
+
 </project>
 
 

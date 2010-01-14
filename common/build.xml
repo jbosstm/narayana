@@ -22,7 +22,7 @@
 
     <property name="modulename" value="common"/>
 
-    <property name="global.ext.libs" value="commons-logging-1.1.jar log4j-1.2.14.jar"/>
+    <property name="global.ext.libs" value="commons-logging.jar log4j.jar"/>
 
     <import file="../sharedbuild.xml"/>
 

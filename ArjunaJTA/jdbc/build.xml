@@ -24,7 +24,7 @@
 
     <property name="excluded.classes" value="**/*JDBC3.java"/>
 
-    <property name="global.ext.libs" value="jta-1_1-classes.zip"/>
+    <property name="global.ext.libs" value="jta.jar"/>
 
     <import file="../../sharedbuild.xml"/>
 
