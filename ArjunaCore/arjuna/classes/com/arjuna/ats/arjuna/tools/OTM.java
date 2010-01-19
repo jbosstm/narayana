@@ -34,6 +34,7 @@ package com.arjuna.ats.arjuna.tools;
 import com.arjuna.common.util.propertyservice.PropertiesFactory;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
@@ -802,19 +803,19 @@ public class OTM extends JSplitPane
     {
         switch (status)
         {
-        case ObjectStore.OS_COMMITTED:
-            return "ObjectStore.OS_COMMITTED";
-        case ObjectStore.OS_UNCOMMITTED:
-            return "ObjectStore.OS_UNCOMMITTED";
-        case ObjectStore.OS_HIDDEN:
-            return "ObjectStore.OS_HIDDEN";
-        case ObjectStore.OS_COMMITTED_HIDDEN:
-            return "ObjectStore.OS_COMMITTED_HIDDEN";
-        case ObjectStore.OS_UNCOMMITTED_HIDDEN:
-            return "ObjectStore.OS_UNCOMMITTED_HIDDEN";
+        case StateStatus.OS_COMMITTED:
+            return "StateStatus.OS_COMMITTED";
+        case StateStatus.OS_UNCOMMITTED:
+            return "StateStatus.OS_UNCOMMITTED";
+        case StateStatus.OS_HIDDEN:
+            return "StateStatus.OS_HIDDEN";
+        case StateStatus.OS_COMMITTED_HIDDEN:
+            return "StateStatus.OS_COMMITTED_HIDDEN";
+        case StateStatus.OS_UNCOMMITTED_HIDDEN:
+            return "StateStatus.OS_UNCOMMITTED_HIDDEN";
         default:
-        case ObjectStore.OS_UNKNOWN:
-            return "ObjectStore.OS_UNKNOWN";
+        case StateStatus.OS_UNKNOWN:
+            return "StateStatus.OS_UNKNOWN";
         }
     }
 

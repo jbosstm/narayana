@@ -47,6 +47,7 @@ import com.arjuna.ats.jts.logging.*;
 import com.arjuna.common.util.logging.*;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
@@ -606,16 +607,16 @@ public class TransactionFactoryImple extends
 
 				switch (status)
 				{
-				case ObjectStore.OS_UNKNOWN: // means no state present, so check
+				case StateStatus.OS_UNKNOWN: // means no state present, so check
 											 // if server transaction
 					return ServerFactory.getOSStatus(u);
-				case ObjectStore.OS_COMMITTED:
+				case StateStatus.OS_COMMITTED:
 					return org.omg.CosTransactions.Status.StatusCommitted;
-				case ObjectStore.OS_UNCOMMITTED:
+				case StateStatus.OS_UNCOMMITTED:
 					return org.omg.CosTransactions.Status.StatusPrepared;
-				case ObjectStore.OS_HIDDEN:
-				case ObjectStore.OS_COMMITTED_HIDDEN:
-				case ObjectStore.OS_UNCOMMITTED_HIDDEN:
+				case StateStatus.OS_HIDDEN:
+				case StateStatus.OS_COMMITTED_HIDDEN:
+				case StateStatus.OS_UNCOMMITTED_HIDDEN:
 					return org.omg.CosTransactions.Status.StatusPrepared;
 				default:
 					return ServerFactory.getStatus(u);
@@ -843,7 +844,7 @@ public class TransactionFactoryImple extends
 
 		InputObjectState uids = new InputObjectState();
 
-		if (!TxStoreLog.getTransactions(uids, ObjectStore.OS_COMMITTED_HIDDEN))
+		if (!TxStoreLog.getTransactions(uids, StateStatus.OS_COMMITTED_HIDDEN))
 		{
 			throw new NoTransaction();
 		}

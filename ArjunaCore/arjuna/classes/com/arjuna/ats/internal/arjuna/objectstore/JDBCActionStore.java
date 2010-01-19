@@ -36,8 +36,8 @@ import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 import com.arjuna.ats.arjuna.common.*;
 
@@ -80,7 +80,7 @@ public class JDBCActionStore extends JDBCStore
         if (!storeValid())
             return false;
 
-        if (currentState(objUid, tName) == ObjectStore.OS_COMMITTED)
+        if (currentState(objUid, tName) == StateStatus.OS_COMMITTED)
             result = true;
     
         return result;

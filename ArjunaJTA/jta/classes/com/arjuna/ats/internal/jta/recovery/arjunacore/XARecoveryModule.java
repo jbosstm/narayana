@@ -34,6 +34,7 @@ package com.arjuna.ats.internal.jta.recovery.arjunacore;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -417,7 +418,7 @@ public class XARecoveryModule implements RecoveryModule
 					 */
 
 					if (_objStore.currentState(theUid, _recoveryManagerClass
-							.type()) != ObjectStore.OS_UNKNOWN)
+							.type()) != StateStatus.OS_UNKNOWN)
 					{
 						boolean problem = false;
 						XARecoveryResource record = null;
@@ -1201,7 +1202,7 @@ public class XARecoveryModule implements RecoveryModule
 		{
 			try
 			{
-				if (_transactionStore.currentState(u, _transactionType) != ObjectStore.OS_UNKNOWN)
+				if (_transactionStore.currentState(u, _transactionType) != StateStatus.OS_UNKNOWN)
 				{
 					return true;
 				}

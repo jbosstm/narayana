@@ -33,6 +33,8 @@ package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
@@ -151,15 +153,15 @@ public class ShadowingStore extends FileSystemStore
     public int currentState (Uid objUid, String tName)
             throws ObjectStoreException
     {
-        int theState = ObjectStore.OS_UNKNOWN;
+        int theState = StateStatus.OS_UNKNOWN;
 
         if (storeValid())
         {
-            String path = genPathName(objUid, tName, ObjectStore.OS_SHADOW);
+            String path = genPathName(objUid, tName, StateType.OS_SHADOW);
 
             if (exists(path))
             {
-                theState = ObjectStore.OS_UNCOMMITTED;
+                theState = StateStatus.OS_UNCOMMITTED;
             }
             else
             {
@@ -167,15 +169,15 @@ public class ShadowingStore extends FileSystemStore
 
                 if (exists(path))
                 {
-                    theState = ObjectStore.OS_UNCOMMITTED_HIDDEN;
+                    theState = StateStatus.OS_UNCOMMITTED_HIDDEN;
                 }
                 else
                 {
-                    path = genPathName(objUid, tName, ObjectStore.OS_ORIGINAL);
+                    path = genPathName(objUid, tName, StateType.OS_ORIGINAL);
 
                     if (exists(path))
                     {
-                        theState = ObjectStore.OS_COMMITTED;
+                        theState = StateStatus.OS_COMMITTED;
                     }
                     else
                     {
@@ -183,7 +185,7 @@ public class ShadowingStore extends FileSystemStore
 
                         if (exists(path))
                         {
-                            theState = ObjectStore.OS_COMMITTED_HIDDEN;
+                            theState = StateStatus.OS_COMMITTED_HIDDEN;
                         }
                     }
                 }
@@ -200,7 +202,7 @@ public class ShadowingStore extends FileSystemStore
                             "com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_22",
                             new Object[]
                             { objUid, tName,
-                                    ObjectStore.stateStatusString(theState) });
+                                    StateStatus.stateStatusString(theState) });
         }
 
         return theState;
@@ -240,13 +242,13 @@ public class ShadowingStore extends FileSystemStore
             String filename = null;
             int state = currentState(objUid, tName);
 
-            if ((state == ObjectStore.OS_UNCOMMITTED_HIDDEN)
-                    || (state == ObjectStore.OS_UNCOMMITTED))
+            if ((state == StateStatus.OS_UNCOMMITTED_HIDDEN)
+                    || (state == StateStatus.OS_UNCOMMITTED))
             {
-                shadow = genPathName(objUid, tName, ObjectStore.OS_SHADOW);
-                filename = genPathName(objUid, tName, ObjectStore.OS_ORIGINAL);
+                shadow = genPathName(objUid, tName, StateType.OS_SHADOW);
+                filename = genPathName(objUid, tName, StateType.OS_ORIGINAL);
 
-                if (state == ObjectStore.OS_UNCOMMITTED_HIDDEN)
+                if (state == StateStatus.OS_UNCOMMITTED_HIDDEN)
                 {
                     /* maintain hidden status on rename */
 
@@ -324,12 +326,12 @@ public class ShadowingStore extends FileSystemStore
 
             switch (state)
             {
-            case ObjectStore.OS_UNCOMMITTED_HIDDEN:
-            case ObjectStore.OS_COMMITTED_HIDDEN:
+            case StateStatus.OS_UNCOMMITTED_HIDDEN:
+            case StateStatus.OS_COMMITTED_HIDDEN:
                 break;
-            case ObjectStore.OS_COMMITTED:
+            case StateStatus.OS_COMMITTED:
             {
-                path1 = genPathName(objUid, tName, ObjectStore.OS_ORIGINAL);
+                path1 = genPathName(objUid, tName, StateType.OS_ORIGINAL);
                 path2 = new String(path1) + HIDDINGCHAR;
 
                 File newState = new File(path1);
@@ -357,9 +359,9 @@ public class ShadowingStore extends FileSystemStore
 
                 break;
             }
-            case ObjectStore.OS_UNCOMMITTED:
+            case StateStatus.OS_UNCOMMITTED:
             {
-                path1 = genPathName(objUid, tName, ObjectStore.OS_SHADOW);
+                path1 = genPathName(objUid, tName, StateType.OS_SHADOW);
                 path2 = new String(path1) + HIDDINGCHAR;
 
                 File newState = new File(path1);
@@ -416,9 +418,9 @@ public class ShadowingStore extends FileSystemStore
 
             switch (state)
             {
-            case ObjectStore.OS_UNCOMMITTED_HIDDEN:
+            case StateStatus.OS_UNCOMMITTED_HIDDEN:
             {
-                path1 = genPathName(objUid, tName, ObjectStore.OS_SHADOW);
+                path1 = genPathName(objUid, tName, StateType.OS_SHADOW);
                 path2 = new String(path1) + HIDDINGCHAR;
 
                 File newState = new File(path2);
@@ -446,9 +448,9 @@ public class ShadowingStore extends FileSystemStore
 
                 break;
             }
-            case ObjectStore.OS_COMMITTED_HIDDEN:
+            case StateStatus.OS_COMMITTED_HIDDEN:
             {
-                path1 = genPathName(objUid, tName, ObjectStore.OS_ORIGINAL);
+                path1 = genPathName(objUid, tName, StateType.OS_ORIGINAL);
                 path2 = new String(path1) + HIDDINGCHAR;
 
                 File newState = new File(path2);
@@ -476,8 +478,8 @@ public class ShadowingStore extends FileSystemStore
 
                 break;
             }
-            case ObjectStore.OS_COMMITTED:
-            case ObjectStore.OS_UNCOMMITTED:
+            case StateStatus.OS_COMMITTED:
+            case StateStatus.OS_UNCOMMITTED:
                 break;
             default:
                 revealedOk = false;
@@ -503,12 +505,12 @@ public class ShadowingStore extends FileSystemStore
         if (tsLogger.arjLogger.isDebugEnabled())
         {
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-                                     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.genPathName("+objUid+", "+tName+", "+ObjectStore.stateTypeString(ft)+")");
+                                     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.genPathName("+objUid+", "+tName+", "+StateType.stateTypeString(ft)+")");
         }
 
         String fname = super.genPathName(objUid, tName, ft);
 
-        if (ft == ObjectStore.OS_SHADOW)
+        if (ft == StateType.OS_SHADOW)
             fname = fname + SHADOWCHAR;
 
         return fname;
@@ -533,7 +535,7 @@ public class ShadowingStore extends FileSystemStore
         if (tsLogger.arjLogger.isDebugEnabled())
         {
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-                                     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.read_state("+objUid+", "+tName+", "+ObjectStore.stateTypeString(ft)+")");
+                                     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.read_state("+objUid+", "+tName+", "+StateType.stateTypeString(ft)+")");
         }
 
         if (!storeValid())
@@ -551,15 +553,15 @@ public class ShadowingStore extends FileSystemStore
         {
             int state = currentState(objUid, tName);
 
-            if ((state == ObjectStore.OS_COMMITTED)
-                    || (state == ObjectStore.OS_UNCOMMITTED))
+            if ((state == StateStatus.OS_COMMITTED)
+                    || (state == StateStatus.OS_UNCOMMITTED))
             {
                 /*
                  * Is the current state the same as that requested?
                  */
 
-                if (((state == ObjectStore.OS_COMMITTED) && (ft != ObjectStore.OS_ORIGINAL))
-                        || ((state == ObjectStore.OS_UNCOMMITTED) && (ft != ObjectStore.OS_SHADOW)))
+                if (((state == StateStatus.OS_COMMITTED) && (ft != StateType.OS_ORIGINAL))
+                        || ((state == StateStatus.OS_UNCOMMITTED) && (ft != StateType.OS_SHADOW)))
                 {
                     return null;
                 }
@@ -639,7 +641,7 @@ public class ShadowingStore extends FileSystemStore
         if (tsLogger.arjLogger.isDebugEnabled())
         {
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-                                     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.remove_state("+objUid+", "+name+", "+ObjectStore.stateTypeString(ft)+")");
+                                     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.remove_state("+objUid+", "+name+", "+StateType.stateTypeString(ft)+")");
         }
 
         boolean removeOk = true;
@@ -651,8 +653,8 @@ public class ShadowingStore extends FileSystemStore
         {
             int state = currentState(objUid, name);
 
-            if ((state == ObjectStore.OS_COMMITTED)
-                    || (state == ObjectStore.OS_UNCOMMITTED))
+            if ((state == StateStatus.OS_COMMITTED)
+                    || (state == StateStatus.OS_UNCOMMITTED))
             {
                 String fname = genPathName(objUid, name, ft);
                 File fd = openAndLock(fname, FileLock.F_WRLCK, false);
@@ -663,7 +665,7 @@ public class ShadowingStore extends FileSystemStore
                     {
                         removeOk = false;
 
-                        if (ft == ObjectStore.OS_ORIGINAL)
+                        if (ft == StateType.OS_ORIGINAL)
                         {
                             if (tsLogger.arjLoggerI18N.isWarnEnabled())
                             {
@@ -693,7 +695,7 @@ public class ShadowingStore extends FileSystemStore
                         {
                             removeOk = false;
 
-                            if (ft == ObjectStore.OS_ORIGINAL)
+                            if (ft == StateType.OS_ORIGINAL)
                             {
                                 if (tsLogger.arjLoggerI18N.isWarnEnabled())
                                 {
@@ -730,7 +732,7 @@ public class ShadowingStore extends FileSystemStore
             {
                 removeOk = false;
 
-                if (state == ObjectStore.OS_UNKNOWN)
+                if (state == StateStatus.OS_UNKNOWN)
                     tsLogger.arjLoggerI18N
                             .info(
                                     "com.arjuna.ats.internal.arjuna.objectstore.ShadowingStore_14",
@@ -774,7 +776,7 @@ public class ShadowingStore extends FileSystemStore
         if (tsLogger.arjLogger.isDebugEnabled())
         {
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
-                                     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.write_state("+objUid+", "+tName+", "+ObjectStore.stateTypeString(ft)+")");
+                                     FacilityCode.FAC_OBJECT_STORE, "ShadowingStore.write_state("+objUid+", "+tName+", "+StateType.stateTypeString(ft)+")");
         }
 
         if (!storeValid())
@@ -877,7 +879,7 @@ public class ShadowingStore extends FileSystemStore
 
     public ShadowingStore(String locationOfStore)
     {
-        this(locationOfStore, ObjectStore.OS_SHARED);
+        this(locationOfStore, StateType.OS_SHARED);
     }
 
     public ShadowingStore(String locationOfStore, int shareStatus)
@@ -905,7 +907,7 @@ public class ShadowingStore extends FileSystemStore
 
     public ShadowingStore()
     {
-        this(ObjectStore.OS_SHARED);
+        this(StateType.OS_SHARED);
     }
 
     public ShadowingStore(int shareStatus)

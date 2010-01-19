@@ -34,6 +34,7 @@ package com.hp.mwtests.ts.arjuna.objectstore;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.arjuna.objectstore.StateType;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -52,7 +53,7 @@ public class ObjectStoreTest
         arjPropertyManager.getCoordinatorEnvironmentBean().setTransactionLog(true);
         arjPropertyManager.getObjectStoreEnvironmentBean().setLocalOSRoot(localOSRoot);
         arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreDir(objectStoreDir);
-        arjPropertyManager.getObjectStoreEnvironmentBean().setShare(ObjectStore.OS_SHARED);
+        arjPropertyManager.getObjectStoreEnvironmentBean().setShare(StateType.OS_SHARED);
 
         // check with a known valid implementation
 
@@ -82,7 +83,7 @@ public class ObjectStoreTest
 
         if (objStore.getClass().getName().equals(imple))
         {
-            if (objStore.shareState() == ObjectStore.OS_SHARED) {
+            if (objStore.shareState() == StateType.OS_SHARED) {
                 if (objStore.storeDir().equals(objectStoreDir)) {
                     if (objStore.storeRoot().equals(localOSRoot))
                         passed = true;

@@ -187,7 +187,7 @@ public abstract class TransactionRecoveryModule
 	    try
 	    {
 		// Is the intentions list still there? Is this the best way to check?
-		if (_transactionStore.currentState(currentUid, _transactionType) != ObjectStore.OS_UNKNOWN)
+		if (_transactionStore.currentState(currentUid, _transactionType) != StateStatus.OS_UNKNOWN)
 		{
 		    if (jtsLogger.loggerI18N.isInfoEnabled())
 		    {

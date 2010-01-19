@@ -22,12 +22,12 @@ package com.arjuna.ats.tools.objectstorebrowser.rootprovider;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.logging.tsLogger;
-import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.tools.objectstorebrowser.TransactionLister;
 
@@ -35,7 +35,7 @@ import java.util.Set;
 import java.io.IOException;
 
 /**
- * ObjectStore facade for objtaining a list of live transactions. The facade is required
+ * ObjectStore facade for obtaining a list of live transactions. The facade is required
  * since the browser frame
  * @see com.arjuna.ats.tools.objectstorebrowser.frames.BrowserFrame
  * will only display object store entries.
@@ -120,7 +120,7 @@ public class InFlightTransactionPseudoStore extends ObjectStore
 
     public int currentState(Uid u, String tn) throws ObjectStoreException
     {
-        return ObjectStore.OS_UNCOMMITTED;
+        return StateStatus.OS_UNCOMMITTED;
     }
 
     public String getStoreName()

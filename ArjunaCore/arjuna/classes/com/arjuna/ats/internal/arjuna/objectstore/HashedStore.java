@@ -34,6 +34,8 @@ package com.arjuna.ats.internal.arjuna.objectstore;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.state.*;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
@@ -146,7 +148,7 @@ public class HashedStore extends ShadowNoFileLockStore
                                         aUid = new Uid(revealed);
                                 }
 
-                                if ((aUid.notEquals(Uid.nullUid())) && ((match == ObjectStore.OS_UNKNOWN) ||
+                                if ((aUid.notEquals(Uid.nullUid())) && ((match == StateStatus.OS_UNKNOWN) ||
                                     (isType(aUid, tName, match))))
                                 {
                                     UidHelper.packInto(aUid, store);
@@ -196,7 +198,7 @@ public class HashedStore extends ShadowNoFileLockStore
 
     public HashedStore ()
     {
-        this(ObjectStore.OS_SHARED);
+        this(StateType.OS_SHARED);
     }
 
     public HashedStore (int shareStatus)
@@ -223,7 +225,7 @@ public class HashedStore extends ShadowNoFileLockStore
 
     public HashedStore (String locationOfStore)
     {
-        this(locationOfStore, ObjectStore.OS_SHARED);
+        this(locationOfStore, StateType.OS_SHARED);
     }
 
     public HashedStore (String locationOfStore, int shareStatus)
@@ -291,7 +293,7 @@ public class HashedStore extends ShadowNoFileLockStore
         {
             tsLogger.arjLogger.debug(DebugLevel.FUNCTIONS, VisibilityLevel.VIS_PROTECTED,
                                      FacilityCode.FAC_OBJECT_STORE,
-                                     "HashedStore.genPathName("+objUid+", "+tName+", "+ObjectStore.stateTypeString(otype)+")");
+                                     "HashedStore.genPathName("+objUid+", "+tName+", "+StateType.stateTypeString(otype)+")");
         }
 
         String storeName = locateStore(getStoreName());
@@ -338,7 +340,7 @@ public class HashedStore extends ShadowNoFileLockStore
             fname = fname.substring(0, fname.length() -2);
 
         // mark the shadow copy distinctly
-        if (otype == ObjectStore.OS_SHADOW)
+        if (otype == StateType.OS_SHADOW)
             fname = fname + SHADOWCHAR;
 
         return fname;

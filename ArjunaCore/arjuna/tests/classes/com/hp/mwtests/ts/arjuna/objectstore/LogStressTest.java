@@ -37,6 +37,7 @@ import com.arjuna.ats.arjuna.AtomicAction;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
@@ -124,7 +125,7 @@ public class LogStressTest
         boolean passed = false;
 
         try {
-            TxControl.getStore().allObjUids(new MyAtomicAction().type(), ios, ObjectStore.OS_UNKNOWN);
+            TxControl.getStore().allObjUids(new MyAtomicAction().type(), ios, StateStatus.OS_UNKNOWN);
 
             Uid tempUid = UidHelper.unpackFrom(ios);
 

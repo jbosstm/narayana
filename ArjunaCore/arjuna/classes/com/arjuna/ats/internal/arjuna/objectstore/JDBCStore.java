@@ -40,6 +40,8 @@ import com.arjuna.ats.arjuna.logging.FacilityCode;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
 import com.arjuna.ats.arjuna.common.*;
 
@@ -159,7 +161,7 @@ public class JDBCStore extends ObjectStore
                 if (storeValid())
                         return _theImple.currentState(objUid, tName, getTableName());
                 else
-                        return ObjectStore.OS_UNKNOWN;
+                        return StateStatus.OS_UNKNOWN;
         }
 
         /**
@@ -179,7 +181,7 @@ public class JDBCStore extends ObjectStore
                                                                         + tName + ")");
                 }
 
-                return read_state(storeUid, tName, ObjectStore.OS_COMMITTED);
+                return read_state(storeUid, tName, StateStatus.OS_COMMITTED);
         }
 
         public InputObjectState read_uncommitted(Uid storeUid, String tName)
@@ -193,7 +195,7 @@ public class JDBCStore extends ObjectStore
                                                         + ")");
                 }
 
-                return read_state(storeUid, tName, ObjectStore.OS_UNCOMMITTED);
+                return read_state(storeUid, tName, StateStatus.OS_UNCOMMITTED);
         }
 
         public boolean remove_committed(Uid storeUid, String tName)
@@ -207,7 +209,7 @@ public class JDBCStore extends ObjectStore
                                                         + ")");
                 }
 
-                return remove_state(storeUid, tName, ObjectStore.OS_COMMITTED);
+                return remove_state(storeUid, tName, StateStatus.OS_COMMITTED);
         }
 
         public boolean remove_uncommitted(Uid storeUid, String tName)
@@ -221,7 +223,7 @@ public class JDBCStore extends ObjectStore
                                                         + ")");
                 }
 
-                return remove_state(storeUid, tName, ObjectStore.OS_UNCOMMITTED);
+                return remove_state(storeUid, tName, StateStatus.OS_UNCOMMITTED);
         }
 
         public boolean write_committed(Uid storeUid, String tName,
@@ -235,7 +237,7 @@ public class JDBCStore extends ObjectStore
                                                         + ")");
                 }
 
-                return write_state(storeUid, tName, state, ObjectStore.OS_COMMITTED);
+                return write_state(storeUid, tName, state, StateStatus.OS_COMMITTED);
         }
 
         public boolean write_uncommitted(Uid storeUid, String tName,
@@ -249,7 +251,7 @@ public class JDBCStore extends ObjectStore
                                                         + ", " + state + ")");
                 }
 
-                return write_state(storeUid, tName, state, ObjectStore.OS_UNCOMMITTED);
+                return write_state(storeUid, tName, state, StateStatus.OS_UNCOMMITTED);
         }
 
         public final boolean storeValid()
@@ -329,7 +331,7 @@ public class JDBCStore extends ObjectStore
                                         VisibilityLevel.VIS_PROTECTED,
                                         FacilityCode.FAC_OBJECT_STORE, "JDBCStore.remove_state("
                                                         + objUid + ", " + name + ", "
-                                                        + ObjectStore.stateTypeString(ft) + ")");
+                                                        + StateType.stateTypeString(ft) + ")");
                 }
 
                 if (!storeValid())

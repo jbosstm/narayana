@@ -31,8 +31,8 @@
 
 package com.arjuna.ats.internal.arjuna.objectstore;
 
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.arjuna.objectstore.StateType;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -62,7 +62,7 @@ public class ShadowNoFileLockStore extends ShadowingStore
 
     public ShadowNoFileLockStore(String locationOfStore)
     {
-        this(locationOfStore, ObjectStore.OS_SHARED);
+        this(locationOfStore, StateType.OS_SHARED);
     }
 
     public ShadowNoFileLockStore(String locationOfStore, int shareStatus)
@@ -81,7 +81,7 @@ public class ShadowNoFileLockStore extends ShadowingStore
 
     public ShadowNoFileLockStore()
     {
-        this(ObjectStore.OS_SHARED);
+        this(StateType.OS_SHARED);
     }
 
     public ShadowNoFileLockStore(int shareStatus)

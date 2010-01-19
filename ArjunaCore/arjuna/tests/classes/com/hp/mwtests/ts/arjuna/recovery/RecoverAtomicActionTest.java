@@ -36,6 +36,7 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.recovery.RecoverAtomicAction;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
@@ -62,7 +63,7 @@ public class RecoverAtomicActionTest
 
             os.write_committed(kungfuTx, tn, fluff);
 
-            if (os.currentState(kungfuTx, tn) == ObjectStore.OS_COMMITTED)
+            if (os.currentState(kungfuTx, tn) == StateStatus.OS_COMMITTED)
             {
                 System.err.println("Wrote dummy transaction " + kungfuTx);
 
@@ -76,7 +77,7 @@ public class RecoverAtomicActionTest
                     
                     // state should have been moved
                     
-                    if (os.currentState(kungfuTx, tn) == ObjectStore.OS_UNKNOWN)
+                    if (os.currentState(kungfuTx, tn) == StateStatus.OS_UNKNOWN)
                         passed = true;
                 }
             }

@@ -35,6 +35,7 @@ import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.exceptions.FatalError;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusManager;
 import com.arjuna.ats.arjuna.utils.Utility;
 import com.arjuna.ats.internal.arjuna.objectstore.LogStore;
@@ -199,7 +200,7 @@ public class TxControl
              */
 
             if (sharedTransactionLog)
-                arjPropertyManager.getObjectStoreEnvironmentBean().setShare(ObjectStore.OS_SHARED);
+                arjPropertyManager.getObjectStoreEnvironmentBean().setShare(StateType.OS_SHARED);
             
             try
             {
@@ -251,7 +252,7 @@ public class TxControl
 		 */
 
 		if (sharedTransactionLog)
-	            arjPropertyManager.getObjectStoreEnvironmentBean().setShare(ObjectStore.OS_SHARED);
+	            arjPropertyManager.getObjectStoreEnvironmentBean().setShare(StateType.OS_SHARED);
 	        
 	        try
 	        {

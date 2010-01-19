@@ -33,6 +33,7 @@ package com.arjuna.ats.arjuna.tools;
 
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
@@ -128,7 +129,7 @@ public class ObjectStoreMonitor
                                         {
                                             System.out.print("\t" + theUid
                                                     + " state is ");
-                                            System.out.print(ObjectStore
+                                            System.out.print(StateStatus
                                                     .stateStatusString(imple
                                                             .currentState(
                                                                     theUid,

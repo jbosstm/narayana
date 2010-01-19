@@ -22,6 +22,7 @@ package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
@@ -172,7 +173,7 @@ public class VolatileStore extends ObjectStore
                          "VolatileStore.read_committed(Uid="+u+", typeName="+tn+")");
         }
 
-        return read(u, tn, ObjectStore.OS_COMMITTED);
+        return read(u, tn, StateStatus.OS_COMMITTED);
     }
 
     /**
@@ -206,7 +207,7 @@ public class VolatileStore extends ObjectStore
                          "VolatileStore.remove_committed(Uid="+u+", typeName="+tn+")");
         }
 
-        return remove(u, tn, ObjectStore.OS_COMMITTED);
+        return remove(u, tn, StateStatus.OS_COMMITTED);
     }
 
     /**
@@ -242,7 +243,7 @@ public class VolatileStore extends ObjectStore
                          "VolatileStore.write_committed(Uid="+u+", typeName="+tn+")");
         }
 
-        return write(u, tn, buff, ObjectStore.OS_COMMITTED);
+        return write(u, tn, buff, StateStatus.OS_COMMITTED);
     }
 
     /**
@@ -317,9 +318,9 @@ public class VolatileStore extends ObjectStore
     private int getState(Uid u)
     {
         if(stateMap.containsKey(u)) {
-            return ObjectStore.OS_COMMITTED;
+            return StateStatus.OS_COMMITTED;
         } else {
-            return ObjectStore.OS_UNKNOWN;
+            return StateStatus.OS_UNKNOWN;
         }
     }
 }

@@ -141,7 +141,7 @@ public abstract class FileSystemStore extends ObjectStore
                                      FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.read_committed("+storeUid+", "+tName+")");
         }
 
-        return read_state(storeUid, tName, ObjectStore.OS_ORIGINAL);
+        return read_state(storeUid, tName, StateType.OS_ORIGINAL);
     }
 
     public InputObjectState read_uncommitted (Uid storeUid, String tName) throws ObjectStoreException
@@ -152,7 +152,7 @@ public abstract class FileSystemStore extends ObjectStore
                                      FacilityCode.FAC_OBJECT_STORE, "FileSystemStore.read_uncommitted("+storeUid+", "+tName+")");
         }
 
-        return read_state(storeUid, tName, ObjectStore.OS_SHADOW);
+        return read_state(storeUid, tName, StateType.OS_SHADOW);
     }
 
     public boolean remove_committed (Uid storeUid, String tName) throws ObjectStoreException
@@ -164,7 +164,7 @@ public abstract class FileSystemStore extends ObjectStore
                                      "FileSystemStore.remove_committed("+storeUid+", "+tName+")");
         }
 
-        return remove_state(storeUid, tName, ObjectStore.OS_ORIGINAL);
+        return remove_state(storeUid, tName, StateType.OS_ORIGINAL);
     }
 
     public boolean remove_uncommitted (Uid storeUid, String tName) throws ObjectStoreException
@@ -176,7 +176,7 @@ public abstract class FileSystemStore extends ObjectStore
                                      "FileSystemStore.remove_uncommitted("+storeUid+", "+tName+")");
         }
 
-        return remove_state(storeUid, tName, ObjectStore.OS_SHADOW);
+        return remove_state(storeUid, tName, StateType.OS_SHADOW);
     }
 
     public boolean write_committed (Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException
@@ -188,7 +188,7 @@ public abstract class FileSystemStore extends ObjectStore
                                      "FileSystemStore.write_committed("+storeUid+", "+tName+")");
         }
 
-        return write_state(storeUid, tName, state, ObjectStore.OS_ORIGINAL);
+        return write_state(storeUid, tName, state, StateType.OS_ORIGINAL);
     }
 
     public boolean write_uncommitted (Uid storeUid, String tName, OutputObjectState state) throws ObjectStoreException
@@ -200,7 +200,7 @@ public abstract class FileSystemStore extends ObjectStore
                                      "FileSystemStore.write_uncommitted("+storeUid+", "+tName+", "+state+")");
         }
 
-        return write_state(storeUid, tName, state, ObjectStore.OS_SHADOW);
+        return write_state(storeUid, tName, state, StateType.OS_SHADOW);
     }
 
     public final synchronized boolean storeValid ()
@@ -272,7 +272,7 @@ public abstract class FileSystemStore extends ObjectStore
 
                     if ((aUid != null) && (aUid.valid()))
                     {
-                        if ((aUid.notEquals(Uid.nullUid())) && ((match == ObjectStore.OS_UNKNOWN) ||
+                        if ((aUid.notEquals(Uid.nullUid())) && ((match == StateStatus.OS_UNKNOWN) ||
                                                                 (isType(aUid, tName, match))))
                         {
                             UidHelper.packInto(aUid, store);
@@ -863,7 +863,7 @@ public abstract class FileSystemStore extends ObjectStore
 
     protected final boolean exists (String path)
     {
-        if (super.shareStatus == ObjectStore.OS_UNSHARED)
+        if (super.shareStatus == StateType.OS_UNSHARED)
         {
             if (FileSystemStore.fileCache.get(path) != null)
                 return true;
@@ -885,7 +885,7 @@ public abstract class FileSystemStore extends ObjectStore
 
     protected final void addToCache (String fname)
     {
-        if (super.shareStatus == ObjectStore.OS_UNSHARED)
+        if (super.shareStatus == StateType.OS_UNSHARED)
         {
             FileSystemStore.fileCache.put(fname, fname);
         }
@@ -904,7 +904,7 @@ public abstract class FileSystemStore extends ObjectStore
 
     protected final void removeFromCache (String fname, boolean warn)
     {
-        if (super.shareStatus == ObjectStore.OS_UNSHARED)
+        if (super.shareStatus == StateType.OS_UNSHARED)
         {
             if ((FileSystemStore.fileCache.remove(fname) == null) && warn)
             {

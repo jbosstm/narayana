@@ -140,7 +140,7 @@ public class RecoveredTransaction extends ArjunaTransactionImple implements
 
         try
         {
-            if ((store().currentState(actionUid, effectiveTypeName) != ObjectStore.OS_UNKNOWN))
+            if ((store().currentState(actionUid, effectiveTypeName) != StateStatus.OS_UNKNOWN))
             {
                 if (activate())
                     _recoveryStatus = RecoveryStatus.ACTIVATED;

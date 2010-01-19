@@ -32,6 +32,7 @@
 package com.hp.mwtests.ts.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
@@ -73,7 +74,7 @@ public class LogStoreTest
         boolean passed = false;
 
         try {
-            if (objStore.allObjUids(type, ios, ObjectStore.OS_UNKNOWN)) {
+            if (objStore.allObjUids(type, ios, StateStatus.OS_UNKNOWN)) {
                 Uid id = new Uid(Uid.nullUid());
                 int numberOfEntries = 0;
 

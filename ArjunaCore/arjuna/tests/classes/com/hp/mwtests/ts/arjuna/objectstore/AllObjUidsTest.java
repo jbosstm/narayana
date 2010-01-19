@@ -32,6 +32,7 @@
 package com.hp.mwtests.ts.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
@@ -52,17 +53,17 @@ public class AllObjUidsTest
         String type = "/StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction/DummyAtomicAction";
 
         InputObjectState ios = new InputObjectState();
-        objStore.allObjUids(type, ios, ObjectStore.OS_UNKNOWN);
+        objStore.allObjUids(type, ios, StateStatus.OS_UNKNOWN);
         Uid uid = UidHelper.unpackFrom(ios);
         assertEquals(Uid.nullUid(), uid);
 
         ios = new InputObjectState();
-        objStore.allObjUids(type, ios, ObjectStore.OS_COMMITTED);
+        objStore.allObjUids(type, ios, StateStatus.OS_COMMITTED);
         uid = UidHelper.unpackFrom(ios);
         assertEquals(Uid.nullUid(), uid);
 
         ios = new InputObjectState();
-        objStore.allObjUids(type, ios, ObjectStore.OS_UNCOMMITTED);
+        objStore.allObjUids(type, ios, StateStatus.OS_UNCOMMITTED);
         uid = UidHelper.unpackFrom(ios);
         assertEquals(Uid.nullUid(), uid);
     }

@@ -33,6 +33,7 @@ package com.hp.mwtests.ts.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
@@ -53,7 +54,7 @@ public class RemoveCachedTest
         String type = "ArjunaMS/Destinations/a3d6227_dc656_3b77ce7e_2/Messages";
         InputObjectState buff = new InputObjectState();
 
-        if (store.allObjUids(type, buff, ObjectStore.OS_COMMITTED)) {
+        if (store.allObjUids(type, buff, StateStatus.OS_COMMITTED)) {
             Uid toRemove = new Uid(Uid.nullUid());
 
             do {

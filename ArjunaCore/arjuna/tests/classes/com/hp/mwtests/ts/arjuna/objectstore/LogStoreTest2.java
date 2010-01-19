@@ -32,6 +32,7 @@
 package com.hp.mwtests.ts.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
@@ -97,7 +98,7 @@ public class LogStoreTest2
         boolean passed = false;
 
         try {
-            if (objStore.allObjUids(type, ios, ObjectStore.OS_UNKNOWN)) {
+            if (objStore.allObjUids(type, ios, StateStatus.OS_UNKNOWN)) {
                 Uid id = new Uid(Uid.nullUid());
                 int numberOfEntries = 0;
 
@@ -131,10 +132,10 @@ public class LogStoreTest2
                 while (id.notEquals(Uid.nullUid()));
 
                 if ((numberOfEntries == ids.length - 1) && passed) {
-                    if (objStore.currentState(ids[0], type) != ObjectStore.OS_UNKNOWN)
+                    if (objStore.currentState(ids[0], type) != StateStatus.OS_UNKNOWN)
                         passed = false;
                     else {
-                        if (objStore.currentState(ids[1], type) != ObjectStore.OS_COMMITTED)
+                        if (objStore.currentState(ids[1], type) != StateStatus.OS_COMMITTED)
                             passed = false;
                     }
                 } else {

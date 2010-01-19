@@ -28,6 +28,8 @@ import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.utils.FileLock;
 
@@ -459,7 +461,7 @@ public class LogStore extends FileSystemStore
 		 * recovery, it's not going to cause us  problems anyway.
 		 */
 
-		if (allObjUids(tName, ios, ObjectStore.OS_UNKNOWN))
+		if (allObjUids(tName, ios, StateStatus.OS_UNKNOWN))
 		{
 			Uid tempUid = new Uid(Uid.nullUid());
 
@@ -473,18 +475,18 @@ public class LogStore extends FileSystemStore
 				{
 					ex.printStackTrace();
 
-					return ObjectStore.OS_UNKNOWN;
+					return StateStatus.OS_UNKNOWN;
 				}
 
 				if (tempUid.equals(objUid))
-					return ObjectStore.OS_COMMITTED;
+					return StateStatus.OS_COMMITTED;
 
 			} while (tempUid.notEquals(Uid.nullUid()));
 
-			return ObjectStore.OS_UNKNOWN;
+			return StateStatus.OS_UNKNOWN;
 		}
 		else
-			return ObjectStore.OS_UNKNOWN;
+			return StateStatus.OS_UNKNOWN;
 	}
 
 	/**
@@ -688,7 +690,7 @@ public class LogStore extends FileSystemStore
 
 	public LogStore(String locationOfStore)
 	{
-		this(locationOfStore, ObjectStore.OS_SHARED);
+		this(locationOfStore, StateType.OS_SHARED);
 	}
 
 	public LogStore(String locationOfStore, int shareStatus)
@@ -712,7 +714,7 @@ public class LogStore extends FileSystemStore
 
 	public LogStore()
 	{
-		this(ObjectStore.OS_SHARED);
+		this(StateType.OS_SHARED);
 	}
 
 	public LogStore(int shareStatus)
@@ -810,7 +812,7 @@ public class LogStore extends FileSystemStore
 					VisibilityLevel.VIS_PROTECTED,
 					FacilityCode.FAC_OBJECT_STORE,
 					"ShadowingStore.write_state(" + objUid + ", " + tName
-							+ ", " + ObjectStore.stateTypeString(ft) + ")");
+							+ ", " + StateType.stateTypeString(ft) + ")");
 		}
 
 		if (!storeValid())
@@ -1080,7 +1082,7 @@ public class LogStore extends FileSystemStore
     {
 		String fname = super.genPathName(objUid, tName, ft);
 
-		if (ft == ObjectStore.OS_UNCOMMITTED)
+		if (ft == StateStatus.OS_UNCOMMITTED)
 			fname = fname + HIDDENCHAR;
 
 		return fname;
@@ -1156,7 +1158,7 @@ public class LogStore extends FileSystemStore
 
 		synchronized (_lock)
 		{
-			File fd = new File(genPathName(log.getName(), log.getTypeName(), ObjectStore.OS_COMMITTED));
+			File fd = new File(genPathName(log.getName(), log.getTypeName(), StateStatus.OS_COMMITTED));
 
 			try
 			{
@@ -1182,7 +1184,7 @@ public class LogStore extends FileSystemStore
 					 * recovery purposes.
 					 */
 
-					String fname = genPathName(log.getName(), log.getTypeName(), ObjectStore.OS_UNCOMMITTED);
+					String fname = genPathName(log.getName(), log.getTypeName(), StateStatus.OS_UNCOMMITTED);
 					File fd2 = openAndLock(fname, FileLock.F_WRLCK, true);
 					RandomAccessFile oFile = new RandomAccessFile(fd2, FILE_MODE);
 					int size = 0;
@@ -1288,7 +1290,7 @@ public class LogStore extends FileSystemStore
 		{
 			try
 			{
-				String fname = genPathName(logName, typeName, ObjectStore.OS_COMMITTED);
+				String fname = genPathName(logName, typeName, StateStatus.OS_COMMITTED);
 				File fd = openAndLock(fname, FileLock.F_WRLCK, true);
 				RandomAccessFile iFile = new RandomAccessFile(fd, FILE_MODE);
 				// iFile.getChannel().lock();

@@ -50,7 +50,7 @@ import java.sql.Statement;
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.state.OutputObjectState;
-import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.internal.arjuna.objectstore.JDBCImple;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
@@ -73,7 +73,7 @@ public class oracle_driver extends JDBCImple
 
 		if (tName != null)
 		{
-			if ((ft == ObjectStore.OS_COMMITTED) || (ft == ObjectStore.OS_UNCOMMITTED))
+			if ((ft == StateStatus.OS_COMMITTED) || (ft == StateStatus.OS_UNCOMMITTED))
 			{
 				int pool = getPool();
 				ResultSet rs = null;

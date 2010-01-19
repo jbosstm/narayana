@@ -161,7 +161,7 @@ public class TORecoveryModule implements RecoveryModule
                             // find the uids of anything with an uncommitted
                             // entry in the object store
                             if (_objectStore.allObjUids(theName, uids,
-                                    ObjectStore.OS_UNCOMMITTED))
+                                    StateStatus.OS_UNCOMMITTED))
                             {
                                 Uid theUid = null;
 
@@ -254,7 +254,7 @@ public class TORecoveryModule implements RecoveryModule
 
             try
             {
-                if (_objectStore.currentState(objUid, objType) == ObjectStore.OS_UNCOMMITTED)
+                if (_objectStore.currentState(objUid, objType) == StateStatus.OS_UNCOMMITTED)
                 {
                     recoverObject(objUid, objType);
                 }

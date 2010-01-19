@@ -31,17 +31,15 @@
 
 package com.arjuna.ats.internal.arjuna.recovery ;
 
-import java.io.* ;
-import java.net.* ;
 import java.util.* ;
 
 import com.arjuna.ats.arjuna.AtomicAction ;
 import com.arjuna.ats.arjuna.common.Uid ;
 import com.arjuna.ats.arjuna.coordinator.ActionStatus ;
-import com.arjuna.ats.arjuna.coordinator.BasicAction ;
 import com.arjuna.ats.arjuna.coordinator.TxControl ;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException ;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore ;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.recovery.RecoverAtomicAction ;
 import com.arjuna.ats.arjuna.recovery.RecoveryModule ;
 import com.arjuna.ats.arjuna.recovery.TransactionStatusConnectionManager ;
@@ -294,7 +292,7 @@ public class AtomicActionRecoveryModule implements RecoveryModule
 
          try
          {
-            if ( _transactionStore.currentState( currentUid, _transactionType ) != ObjectStore.OS_UNKNOWN )
+            if ( _transactionStore.currentState( currentUid, _transactionType ) != StateStatus.OS_UNKNOWN )
             {
                doRecoverTransaction( currentUid ) ;
             }

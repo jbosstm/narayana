@@ -33,6 +33,8 @@ package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
@@ -67,7 +69,7 @@ public class NullActionStore extends ShadowNoFileLockStore
     public int currentState (Uid objUid, String tName)
             throws ObjectStoreException
     {
-        return ObjectStore.OS_UNKNOWN;
+        return StateStatus.OS_UNKNOWN;
     }
 
     /**
@@ -130,7 +132,7 @@ public class NullActionStore extends ShadowNoFileLockStore
     
     public NullActionStore(String locationOfStore)
     {
-        this(locationOfStore, ObjectStore.OS_SHARED);
+        this(locationOfStore, StateType.OS_SHARED);
         
         try
         {
@@ -170,7 +172,7 @@ public class NullActionStore extends ShadowNoFileLockStore
 
     public NullActionStore()
     {
-        this(ObjectStore.OS_SHARED);
+        this(StateType.OS_SHARED);
     }
 
     public NullActionStore(int shareStatus)

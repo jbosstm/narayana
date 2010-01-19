@@ -33,6 +33,7 @@ package com.arjuna.ats.arjuna.tools;
 
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.internal.arjuna.common.UidHelper;
 
@@ -87,7 +88,7 @@ public class ObjectStateQuery
 
             InputObjectState buff = new InputObjectState();
 
-            imple.allObjUids(type, buff, ObjectStore.OS_UNCOMMITTED);
+            imple.allObjUids(type, buff, StateStatus.OS_UNCOMMITTED);
 
             Uid u = UidHelper.unpackFrom(buff);
             

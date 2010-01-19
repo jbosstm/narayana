@@ -35,6 +35,7 @@ import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.exceptions.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 
 import com.arjuna.ats.internal.jts.orbspecific.interposition.ServerControl;
 
@@ -47,7 +48,7 @@ public class TxStoreLog
 
     public static boolean getTransactions (InputObjectState os)
     {
-	return getTransactions(os, ObjectStore.OS_UNKNOWN);
+	return getTransactions(os, StateStatus.OS_UNKNOWN);
     }
  
     public static boolean getTransactions (InputObjectState os, int status)

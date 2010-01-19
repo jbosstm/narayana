@@ -33,6 +33,8 @@ package com.arjuna.ats.internal.arjuna.objectstore;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
@@ -73,14 +75,14 @@ public class ActionStore extends ShadowNoFileLockStore
     public int currentState (Uid objUid, String tName)
             throws ObjectStoreException
     {
-        int theState = ObjectStore.OS_UNKNOWN;
+        int theState = StateStatus.OS_UNKNOWN;
 
         if (storeValid())
         {
-            String path = genPathName(objUid, tName, ObjectStore.OS_ORIGINAL);
+            String path = genPathName(objUid, tName, StateType.OS_ORIGINAL);
 
             if (exists(path))
-                theState = ObjectStore.OS_COMMITTED;
+                theState = StateStatus.OS_COMMITTED;
 
             path = null;
         }
@@ -91,7 +93,7 @@ public class ActionStore extends ShadowNoFileLockStore
                     VisibilityLevel.VIS_PUBLIC, FacilityCode.FAC_OBJECT_STORE,
                     "com.arjuna.ats.internal.arjuna.objectstore.ActionStore_1",
                     new Object[]
-                    { objUid, tName, ObjectStore.stateStatusString(theState) });
+                    { objUid, tName, StateStatus.stateStatusString(theState) });
         }
 
         return theState;
@@ -120,7 +122,7 @@ public class ActionStore extends ShadowNoFileLockStore
         if (!storeValid())
             return false;
 
-        if (currentState(objUid, tName) == ObjectStore.OS_COMMITTED)
+        if (currentState(objUid, tName) == StateStatus.OS_COMMITTED)
             result = true;
 
         return result;
@@ -234,7 +236,7 @@ public class ActionStore extends ShadowNoFileLockStore
 
     public ActionStore(String locationOfStore)
     {
-        this(locationOfStore, ObjectStore.OS_SHARED);
+        this(locationOfStore, StateType.OS_SHARED);
     }
 
     public ActionStore(String locationOfStore, int shareStatus)
@@ -259,7 +261,7 @@ public class ActionStore extends ShadowNoFileLockStore
 
     public ActionStore()
     {
-        this(ObjectStore.OS_SHARED);
+        this(StateType.OS_SHARED);
     }
 
     public ActionStore(int shareStatus)

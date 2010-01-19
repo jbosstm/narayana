@@ -40,6 +40,7 @@ import com.arjuna.ats.arjuna.coordinator.BasicAction;
 import com.arjuna.ats.arjuna.coordinator.ActionManager;
 import com.arjuna.ats.arjuna.coordinator.TxControl;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.state.InputObjectState;
 import com.arjuna.ats.arjuna.utils.Utility;
 
@@ -413,16 +414,16 @@ public class ActionStatusService implements Service
 
          switch ( osState )
          {
-	 case ObjectStore.OS_COMMITTED :
+	 case StateStatus.OS_COMMITTED :
 	     action_status = ActionStatus.COMMITTED;
 	     break;
-	 case ObjectStore.OS_UNKNOWN:
+	 case StateStatus.OS_UNKNOWN:
 	     action_status = ActionStatus.ABORTED;  // no state means aborted because of presumed abort rules
 	     break;
-	 case ObjectStore.OS_UNCOMMITTED        :
-	 case ObjectStore.OS_HIDDEN             :
-	 case ObjectStore.OS_COMMITTED_HIDDEN   :
-	 case ObjectStore.OS_UNCOMMITTED_HIDDEN :
+	 case StateStatus.OS_UNCOMMITTED        :
+	 case StateStatus.OS_HIDDEN             :
+	 case StateStatus.OS_COMMITTED_HIDDEN   :
+	 case StateStatus.OS_UNCOMMITTED_HIDDEN :
 	     action_status = ActionStatus.PREPARED;
 	     break;
          }

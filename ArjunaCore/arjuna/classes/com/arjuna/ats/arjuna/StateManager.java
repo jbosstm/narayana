@@ -33,6 +33,7 @@ package com.arjuna.ats.arjuna;
 
 import com.arjuna.ats.arjuna.coordinator.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.utils.Utility;
@@ -1302,8 +1303,8 @@ public class StateManager
         if ((myType == ObjectType.ANDPERSISTENT)
                 || (myType == ObjectType.NEITHER))
         {
-            int sharedStatus = ((objectModel == ObjectModel.SINGLE) ? ObjectStore.OS_UNSHARED
-                    : ObjectStore.OS_SHARED);
+            int sharedStatus = ((objectModel == ObjectModel.SINGLE) ? StateType.OS_UNSHARED
+                    : StateType.OS_SHARED);
 
             arjPropertyManager.getObjectStoreEnvironmentBean().setShare(
                     sharedStatus);

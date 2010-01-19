@@ -34,6 +34,8 @@ package com.arjuna.ats.internal.arjuna.objectstore;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.common.*;
 
 import com.arjuna.ats.arjuna.objectstore.jdbc.JDBCAccess;
@@ -85,7 +87,7 @@ public abstract class JDBCImple
 							.prepareStatement("DELETE FROM "
 									+ tableName
 									+ " WHERE UidString = ? AND TypeName = ? AND StateType = "
-									+ ObjectStore.OS_COMMITTED);
+									+ StateStatus.OS_COMMITTED);
 					_preparedStatements[pool][PRECOMMIT_CLEANUP] = pstmt;
 				}
 				pstmt.setString(1, objUid.stringForm());
@@ -104,13 +106,13 @@ public abstract class JDBCImple
 					_preparedStatements[pool][COMMIT_STATE] = pstmt;
 				}
 
-				if (currState == ObjectStore.OS_UNCOMMITTED)
+				if (currState == StateStatus.OS_UNCOMMITTED)
 				{
-					pstmt.setInt(1, ObjectStore.OS_COMMITTED);
+					pstmt.setInt(1, StateStatus.OS_COMMITTED);
 				}
-				else if (currState == ObjectStore.OS_UNCOMMITTED_HIDDEN)
+				else if (currState == StateStatus.OS_UNCOMMITTED_HIDDEN)
 				{
-					pstmt.setInt(1, ObjectStore.OS_COMMITTED_HIDDEN);
+					pstmt.setInt(1, StateStatus.OS_COMMITTED_HIDDEN);
 				}
 				else
 				{
@@ -204,21 +206,21 @@ public abstract class JDBCImple
 			{
 				switch (state)
 				{
-				case ObjectStore.OS_UNCOMMITTED_HIDDEN:
-				case ObjectStore.OS_COMMITTED_HIDDEN:
+				case StateStatus.OS_UNCOMMITTED_HIDDEN:
+				case StateStatus.OS_COMMITTED_HIDDEN:
 					break;
-				case ObjectStore.OS_UNCOMMITTED:
+				case StateStatus.OS_UNCOMMITTED:
 				{
-					pstmt.setInt(1, ObjectStore.OS_UNCOMMITTED_HIDDEN);
+					pstmt.setInt(1, StateStatus.OS_UNCOMMITTED_HIDDEN);
 					pstmt.setString(2, objUid.stringForm());
 					pstmt.setString(3, typeName);
 					pstmt.setInt(4, state);
 					pstmt.executeUpdate();
 				}
 					break;
-				case ObjectStore.OS_COMMITTED:
+				case StateStatus.OS_COMMITTED:
 				{
-					pstmt.setInt(1, ObjectStore.OS_COMMITTED_HIDDEN);
+					pstmt.setInt(1, StateStatus.OS_COMMITTED_HIDDEN);
 					pstmt.setString(2, objUid.stringForm());
 					pstmt.setString(3, typeName);
 					pstmt.setInt(4, state);
@@ -303,26 +305,26 @@ public abstract class JDBCImple
 			{
 				switch (state)
 				{
-				case ObjectStore.OS_UNCOMMITTED_HIDDEN:
+				case StateStatus.OS_UNCOMMITTED_HIDDEN:
 				{
-					pstmt.setInt(1, ObjectStore.OS_UNCOMMITTED);
+					pstmt.setInt(1, StateStatus.OS_UNCOMMITTED);
 					pstmt.setString(2, objUid.stringForm());
 					pstmt.setString(3, typeName);
 					pstmt.setInt(4, state);
 					pstmt.executeUpdate();
 				}
 					break;
-				case ObjectStore.OS_COMMITTED_HIDDEN:
+				case StateStatus.OS_COMMITTED_HIDDEN:
 				{
-					pstmt.setInt(1, ObjectStore.OS_COMMITTED);
+					pstmt.setInt(1, StateStatus.OS_COMMITTED);
 					pstmt.setString(2, objUid.stringForm());
 					pstmt.setString(3, typeName);
 					pstmt.setInt(4, state);
 					pstmt.executeUpdate();
 				}
 					break;
-				case ObjectStore.OS_COMMITTED:
-				case ObjectStore.OS_UNCOMMITTED:
+				case StateStatus.OS_COMMITTED:
+				case StateStatus.OS_UNCOMMITTED:
 					break;
 				default:
 					revealedOk = false;
@@ -366,7 +368,7 @@ public abstract class JDBCImple
 	public int currentState(Uid objUid, String typeName, String tableName)
 			throws ObjectStoreException
 	{
-		int theState = ObjectStore.OS_UNKNOWN;
+		int theState = StateStatus.OS_UNKNOWN;
 		ResultSet rs = null;
 		boolean cleanup = true;
 
@@ -408,16 +410,16 @@ public abstract class JDBCImple
 
 					switch (stateStatus)
 					{
-					case ObjectStore.OS_UNCOMMITTED:
+					case StateStatus.OS_UNCOMMITTED:
 						have_OS_UNCOMMITTED = true;
 						break;
-					case ObjectStore.OS_COMMITTED:
+					case StateStatus.OS_COMMITTED:
 						have_OS_COMMITTED = true;
 						break;
-					case ObjectStore.OS_COMMITTED_HIDDEN:
+					case StateStatus.OS_COMMITTED_HIDDEN:
 						have_OS_COMMITTED_HIDDEN = true;
 						break;
-					case ObjectStore.OS_UNCOMMITTED_HIDDEN:
+					case StateStatus.OS_UNCOMMITTED_HIDDEN:
 						have_OS_UNCOMMITTED_HIDDEN = true;
 						break;
 					}
@@ -426,19 +428,19 @@ public abstract class JDBCImple
 				// examine in reverse order:
 				if (have_OS_COMMITTED_HIDDEN)
 				{
-					theState = ObjectStore.OS_COMMITTED_HIDDEN;
+					theState = StateStatus.OS_COMMITTED_HIDDEN;
 				}
 				if (have_OS_COMMITTED)
 				{
-					theState = ObjectStore.OS_COMMITTED;
+					theState = StateStatus.OS_COMMITTED;
 				}
 				if (have_OS_UNCOMMITTED_HIDDEN)
 				{
-					theState = ObjectStore.OS_UNCOMMITTED_HIDDEN;
+					theState = StateStatus.OS_UNCOMMITTED_HIDDEN;
 				}
 				if (have_OS_UNCOMMITTED)
 				{
-					theState = ObjectStore.OS_UNCOMMITTED;
+					theState = StateStatus.OS_UNCOMMITTED;
 				}
 			}
 			catch (Throwable e)
@@ -465,7 +467,7 @@ public abstract class JDBCImple
 									new Object[]
 									{ e });
 
-					return ObjectStore.OS_UNKNOWN;
+					return StateStatus.OS_UNKNOWN;
 				}
 			}
 			finally
@@ -765,8 +767,8 @@ public abstract class JDBCImple
 
 		if (name != null)
 		{
-			if ((ft == ObjectStore.OS_COMMITTED)
-					|| (ft == ObjectStore.OS_UNCOMMITTED))
+			if ((ft == StateStatus.OS_COMMITTED)
+					|| (ft == StateStatus.OS_UNCOMMITTED))
 			{
 				int pool = getPool();
 
@@ -860,7 +862,7 @@ public abstract class JDBCImple
 
 		if (tName != null)
 		{
-			if ((ft == ObjectStore.OS_COMMITTED) || (ft == ObjectStore.OS_UNCOMMITTED))
+			if ((ft == StateStatus.OS_COMMITTED) || (ft == StateStatus.OS_UNCOMMITTED))
 			{
 				int pool = getPool();
 				ResultSet rs = null;
@@ -1215,12 +1217,12 @@ public abstract class JDBCImple
 			}
 		}
 
-		return ObjectStore.OS_UNKNOWN;
+		return StateStatus.OS_UNKNOWN;
 	}
 
 	protected final void addToCache(Uid state, int status)
 	{
-		if (shareStatus == ObjectStore.OS_UNSHARED)
+		if (shareStatus == StateType.OS_UNSHARED)
 		{
 			stateCache.put(state, new Integer(status));
 		}
@@ -1240,7 +1242,7 @@ public abstract class JDBCImple
 	 */
 	protected final void removeFromCache(String state, boolean warn)
 	{
-		if (shareStatus == ObjectStore.OS_UNSHARED)
+		if (shareStatus == StateType.OS_UNSHARED)
 		{
 			if ((stateCache.remove(state) == null) && warn)
 			{

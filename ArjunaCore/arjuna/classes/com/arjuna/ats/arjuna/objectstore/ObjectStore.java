@@ -35,7 +35,6 @@ import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.state.*;
 
 import java.io.File;
-import java.io.PrintWriter;
 
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 import java.io.IOException;
@@ -60,195 +59,12 @@ import java.io.IOException;
  * @message com.arjuna.ats.arjuna.objectstore.ObjectStore_1 [com.arjuna.ats.arjuna.objectstore.ObjectStore_1] - No implementation!
  */
 
-public abstract class ObjectStore
+public abstract class ObjectStore implements BaseStore, ParticipantStore, RecoveryStore, TxLog
 {
-
-    /**
-     * StateStatus
-     */
-    
-    public static final int OS_UNKNOWN = 0;  // means no state present.
-    public static final int OS_COMMITTED = 1;
-    public static final int OS_UNCOMMITTED = 2;
-    public static final int OS_HIDDEN = 4;
-    public static final int OS_COMMITTED_HIDDEN = ObjectStore.OS_COMMITTED | ObjectStore.OS_HIDDEN;
-    public static final int OS_UNCOMMITTED_HIDDEN = ObjectStore.OS_UNCOMMITTED | ObjectStore.OS_HIDDEN;
-    
-    /**
-     * StateType.
-     */
-    
-    public static final int OS_SHADOW = 10;
-    public static final int OS_ORIGINAL = 11;
-    public static final int OS_INVISIBLE = 12;
-
-    public static final int OS_SHARED = 13;
-    public static final int OS_UNSHARED = 14;
-
-
-    /**
-     * The type of the object store. This is used to order the
-     * instances in the intentions list.
-     *
-     * @return the type of the record.
-     * @see com.arjuna.ats.arjuna.coordinator.RecordType
-     */
-
-    public abstract int typeIs ();
-
-    /**
-     * Obtain all of the Uids for a specified type.
-     *
-     * @param s The type to scan for.
-     * @param buff The object state in which to store the Uids
-     * @param m The file type to look for (e.g., committed, shadowed).
-     *
-     * @return <code>true</code> if no errors occurred, <code>false</code>
-     * otherwise.
-     */
-
-    public abstract boolean allObjUids (String s, InputObjectState buff, int m) throws ObjectStoreException;
-
     public boolean allObjUids (String s, InputObjectState buff) throws ObjectStoreException
     {
-        return allObjUids(s, buff, ObjectStore.OS_UNKNOWN);
+        return allObjUids(s, buff, StateStatus.OS_UNKNOWN);
     }
-    
-    /**
-     * Obtain all types of objects stored in the object store.
-     *
-     * @param buff The state in which to store the types.
-     *
-     * @return <code>true</code> if no errors occurred, <code>false</code>
-     * otherwise.
-     */
-
-    public abstract boolean allTypes (InputObjectState buff) throws ObjectStoreException;
-
-    /**
-     * @param u The object to query.
-     * @param tn The type of the object to query.
-     *
-     * @return the current state of the object's state (e.g., shadowed,
-     * committed ...)
-     */
-
-    public abstract int currentState (Uid u, String tn) throws ObjectStoreException;
-
-    /**
-     * @return the "name" of the object store. Where in the hierarchy it appears, e.g., /ObjectStore/MyName/...
-     */
-
-    public abstract String getStoreName ();
-
-    /**
-     * Commit the object's state in the object store.
-     *
-     * @param u The object to work on.
-     * @param tn The type of the object to work on.
-     *
-     * @return <code>true</code> if no errors occurred, <code>false</code>
-     * otherwise.
-     */
-
-    public abstract boolean commit_state (Uid u, String tn) throws ObjectStoreException;
-
-    /**
-     * Hide the object's state in the object store. Used by crash
-     * recovery.
-     *
-     * @param u The object to work on.
-     * @param tn The type of the object to work on.
-     *
-     * @return <code>true</code> if no errors occurred, <code>false</code>
-     * otherwise.
-     */
-
-    public abstract boolean hide_state (Uid u, String tn) throws ObjectStoreException;
-
-    /**
-     * Reveal a hidden object's state.
-     *
-     * @param u The object to work on.
-     * @param tn The type of the object to work on.
-     *
-     * @return <code>true</code> if no errors occurred, <code>false</code>
-     * otherwise.
-     */
-
-    public abstract boolean reveal_state (Uid u, String tn) throws ObjectStoreException;
-
-    /**
-     * Read the object's committed state.
-     *
-     * @param u The object to work on.
-     * @param tn The type of the object to work on.
-     *
-     * @return the state of the object.
-     */
-
-    public abstract InputObjectState read_committed (Uid u, String tn) throws ObjectStoreException;
-
-    /**
-     * Read the object's shadowed state.
-     *
-     * @param u The object to work on.
-     * @param tn The type of the object to work on.
-     *
-     * @return the state of the object.
-     */
-
-    public abstract InputObjectState read_uncommitted (Uid u, String tn) throws ObjectStoreException;
-
-    /**
-     * Remove the object's committed state.
-     *
-     * @param u The object to work on.
-     * @param tn The type of the object to work on.
-     *
-     * @return <code>true</code> if no errors occurred, <code>false</code>
-     * otherwise.
-     */
-
-    public abstract boolean remove_committed (Uid u, String tn) throws ObjectStoreException;
-
-    /**
-     * Remove the object's uncommitted state.
-     *
-     * @param u The object to work on.
-     * @param tn The type of the object to work on.
-     *
-     * @return <code>true</code> if no errors occurred, <code>false</code>
-     * otherwise.
-     */
-
-    public abstract boolean remove_uncommitted (Uid u, String tn) throws ObjectStoreException;
-
-    /**
-     * Write a new copy of the object's committed state.
-     *
-     * @param u The object to work on.
-     * @param tn The type of the object to work on.
-     * @param buff The state to write.
-     *
-     * @return <code>true</code> if no errors occurred, <code>false</code>
-     * otherwise.
-     */
-
-    public abstract boolean write_committed (Uid u, String tn, OutputObjectState buff) throws ObjectStoreException;
-
-    /**
-     * Write a copy of the object's uncommitted state.
-     *
-     * @param u The object to work on.
-     * @param tn The type of the object to work on.
-     * @param buff The state to write.
-     *
-     * @return <code>true</code> if no errors occurred, <code>false</code>
-     * otherwise.
-     */
-
-    public abstract boolean write_uncommitted (Uid u, String tn, OutputObjectState buff) throws ObjectStoreException;
 
     /**
      * Some object store implementations may be running with automatic
@@ -380,7 +196,7 @@ public abstract class ObjectStore
 
     protected ObjectStore ()
     {
-        this(OS_SHARED);
+        this(StateType.OS_SHARED);
     }
 
     protected ObjectStore (int ss)
@@ -404,52 +220,6 @@ public abstract class ObjectStore
     {
         return name;
     }
-
-    public static void printStateStatus (PrintWriter strm, int res)
-    {
-        strm.print(stateStatusString(res));
-    }
-
-    public static String stateStatusString (int res)
-    {
-        switch (res)
-        {
-        case ObjectStore.OS_UNKNOWN:
-            return "ObjectStore.OS_UNKNOWN";
-        case ObjectStore.OS_COMMITTED:
-            return "ObjectStore.OS_COMMITTED";
-        case ObjectStore.OS_UNCOMMITTED:
-            return "ObjectStore.OS_UNCOMMITTED";
-        case ObjectStore.OS_HIDDEN:
-            return "ObjectStore.OS_HIDDEN";
-        case ObjectStore.OS_COMMITTED_HIDDEN:
-            return "ObjectStore.OS_COMMITTED_HIDDEN";
-        case ObjectStore.OS_UNCOMMITTED_HIDDEN:
-            return "ObjectStore.OS_UNCOMMITTED_HIDDEN";
-        default:
-            return "Unknown";
-        }
-    }
-
-    public static void printStateType (PrintWriter strm, int res)
-    {
-        strm.print(stateTypeString(res));
-    }
-
-    public static String stateTypeString (int res)
-    {
-        switch (res)
-        {
-        case ObjectStore.OS_SHADOW:
-            return "ObjectStore.OS_SHADOW";
-        case ObjectStore.OS_ORIGINAL:
-            return "ObjectStore.OS_ORIGINAL";
-        case ObjectStore.OS_INVISIBLE:
-            return "ObjectStore.OS_INVISIBLE";
-        default:
-            return "Unknown";
-        }
-    }  
 
     protected int shareStatus = arjPropertyManager.getObjectStoreEnvironmentBean().getShare(); // is the implementation sharing states between VMs?
 

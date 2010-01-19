@@ -34,6 +34,7 @@ package com.arjuna.ats.internal.arjuna.objectstore;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.arjuna.objectstore.StateType;
 
 import com.arjuna.ats.arjuna.logging.tsLogger;
 import com.arjuna.ats.arjuna.logging.FacilityCode;
@@ -71,7 +72,7 @@ public class HashedActionStore extends HashedStore
 
     public HashedActionStore()
     {
-        this(ObjectStore.OS_SHARED);
+        this(StateType.OS_SHARED);
     }
 
     public HashedActionStore(int shareStatus)
@@ -99,7 +100,7 @@ public class HashedActionStore extends HashedStore
 
     public HashedActionStore(String locationOfStore)
     {
-        this(locationOfStore, ObjectStore.OS_SHARED);
+        this(locationOfStore, StateType.OS_SHARED);
 
         if (tsLogger.arjLogger.isDebugEnabled())
         {

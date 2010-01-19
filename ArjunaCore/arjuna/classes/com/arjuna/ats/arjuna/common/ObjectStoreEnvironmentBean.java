@@ -21,6 +21,7 @@
 package com.arjuna.ats.arjuna.common;
 
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.internal.arjuna.objectstore.HashedStore;
 import com.arjuna.ats.internal.arjuna.objectstore.ShadowNoFileLockStore;
 import com.arjuna.common.internal.util.propertyservice.FullPropertyName;
@@ -49,7 +50,7 @@ public class ObjectStoreEnvironmentBean implements ObjectStoreEnvironmentBeanMBe
     private volatile int jdbcPoolSizeMaximum = 1;
     private volatile boolean jdbcPoolPutConnections = false;
 
-    private volatile int share = ObjectStore.OS_UNSHARED;
+    private volatile int share = StateType.OS_UNSHARED;
     private volatile int hierarchyRetry = 100;
     private volatile int hierarchyTimeout = 100;
 

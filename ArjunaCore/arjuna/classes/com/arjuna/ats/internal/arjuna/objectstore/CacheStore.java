@@ -34,6 +34,8 @@ package com.arjuna.ats.internal.arjuna.objectstore;
 import com.arjuna.ats.arjuna.common.*;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 import com.arjuna.ats.arjuna.objectstore.ObjectStoreType;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
+import com.arjuna.ats.arjuna.objectstore.StateType;
 import com.arjuna.ats.arjuna.state.*;
 import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
 
@@ -94,7 +96,7 @@ public class CacheStore extends HashedStore
 
         int fileState = currentState(objUid, name);
 
-        if ((fileState != ObjectStore.OS_UNKNOWN)
+        if ((fileState != StateStatus.OS_UNKNOWN)
                 || (status == AsyncStore.IN_USE))
         {
             return CacheStore._storeManager.addWork(this, AsyncStore.REMOVE,
@@ -102,7 +104,7 @@ public class CacheStore extends HashedStore
         }
         else
         {
-            if (fileState == ObjectStore.OS_UNKNOWN)
+            if (fileState == StateStatus.OS_UNKNOWN)
                 return false;
             else
                 return true;
@@ -166,7 +168,7 @@ public class CacheStore extends HashedStore
 
     public CacheStore(String locationOfStore)
     {
-        this(locationOfStore, ObjectStore.OS_SHARED);
+        this(locationOfStore, StateType.OS_SHARED);
     }
 
     public CacheStore(String locationOfStore, int shareStatus)
@@ -189,7 +191,7 @@ public class CacheStore extends HashedStore
 
    public CacheStore ()
    {
-      this(ObjectStore.OS_UNSHARED);
+      this(StateType.OS_UNSHARED);
    }
 
    public CacheStore (int shareStatus)
@@ -484,6 +486,14 @@ class AsyncStore extends Thread // keep priority same as app. threads
             }
         }
 
+        if (cacheIsFull())
+        {
+            synchronized (_workList)
+            {
+                _workList.notify();
+            }
+        }
+        
         /*
          * Does the worker thread currently have it?
          */
@@ -539,9 +549,9 @@ class AsyncStore extends Thread // keep priority same as app. threads
                     }
                     else
                     {
-                        if (ft == ObjectStore.OS_ORIGINAL)
+                        if (ft == StateType.OS_ORIGINAL)
                         {
-                            if (element.fileType == ObjectStore.OS_SHADOW)
+                            if (element.fileType == StateType.OS_SHADOW)
                             {
                                 synchronized (_workList)
                                 {
@@ -561,7 +571,7 @@ class AsyncStore extends Thread // keep priority same as app. threads
 
                     break;
                 case AsyncStore.COMMIT:
-                    if (ft == ObjectStore.OS_ORIGINAL)
+                    if (ft == StateType.OS_ORIGINAL)
                     {
                         synchronized (_workList)
                         {
@@ -583,6 +593,14 @@ class AsyncStore extends Thread // keep priority same as app. threads
             }
         }
 
+        if (cacheIsFull())
+        {
+            synchronized (_workList)
+            {
+                _workList.notify();
+            }
+        }
+        
         return status;
     }
 

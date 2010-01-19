@@ -40,6 +40,7 @@ import com.arjuna.ats.internal.jts.orbspecific.coordinator.ArjunaTransactionImpl
 
 import com.arjuna.ats.arjuna.common.Uid;
 import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import com.arjuna.ats.arjuna.coordinator.TransactionReaper;
 
 import org.omg.CosTransactions.*;
@@ -204,15 +205,15 @@ public class ServerFactory
 
 				switch (status)
 				{
-				case ObjectStore.OS_UNKNOWN: // means no state present
+				case StateStatus.OS_UNKNOWN: // means no state present
 					return org.omg.CosTransactions.Status.StatusNoTransaction;
-				case ObjectStore.OS_COMMITTED:
+				case StateStatus.OS_COMMITTED:
 					return org.omg.CosTransactions.Status.StatusCommitted;
-				case ObjectStore.OS_UNCOMMITTED:
+				case StateStatus.OS_UNCOMMITTED:
 					return org.omg.CosTransactions.Status.StatusPrepared;
-				case ObjectStore.OS_HIDDEN:
-				case ObjectStore.OS_COMMITTED_HIDDEN:
-				case ObjectStore.OS_UNCOMMITTED_HIDDEN:
+				case StateStatus.OS_HIDDEN:
+				case StateStatus.OS_COMMITTED_HIDDEN:
+				case StateStatus.OS_UNCOMMITTED_HIDDEN:
 					return org.omg.CosTransactions.Status.StatusPrepared;
 				default:
 					return org.omg.CosTransactions.Status.StatusUnknown;

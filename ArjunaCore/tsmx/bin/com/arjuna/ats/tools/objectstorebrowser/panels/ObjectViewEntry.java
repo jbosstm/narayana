@@ -35,7 +35,12 @@ import com.arjuna.ats.tools.objectstorebrowser.treenodes.*;
 
 public class ObjectViewEntry extends IconPanelEntry
 {
-	private final static String OBJECT_VIEW_ICON_FILENAME = "object-icon.gif";
+	/**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    private final static String OBJECT_VIEW_ICON_FILENAME = "object-icon.gif";
 
 	private String	_tn;
     private ObjectStoreBrowserNode _node;
@@ -48,7 +53,7 @@ public class ObjectViewEntry extends IconPanelEntry
         _node = node;
 
 		/** Set tooltip to the state of the underlying object **/
-		this.setToolTipText(com.arjuna.ats.arjuna.objectstore.ObjectStore.stateStatusString(state));
+		this.setToolTipText(com.arjuna.ats.arjuna.objectstore.StateStatus.stateStatusString(state));
 	}
 
 	public String getUID()
