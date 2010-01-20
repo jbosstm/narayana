@@ -20,6 +20,7 @@
  */
 package org.jboss.jbossts.xts.recovery.participant.at;
 
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import org.jboss.jbossts.xts.logging.XTSLogger;
 
 import com.arjuna.ats.arjuna.recovery.RecoveryModule;
@@ -303,7 +304,7 @@ public class ATParticipantRecoveryModule implements RecoveryModule
 
             try
             {
-                if ( _objectStore.currentState( currentUid, _participantType) != ObjectStore.OS_UNKNOWN )
+                if ( _objectStore.currentState( currentUid, _participantType) != StateStatus.OS_UNKNOWN )
                 {
                     doRecoverParticipant( currentUid ) ;
                 }

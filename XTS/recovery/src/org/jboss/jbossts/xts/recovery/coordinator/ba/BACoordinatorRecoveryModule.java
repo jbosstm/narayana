@@ -20,6 +20,7 @@
  */
 package org.jboss.jbossts.xts.recovery.coordinator.ba;
 
+import com.arjuna.ats.arjuna.objectstore.StateStatus;
 import org.jboss.jbossts.xts.logging.XTSLogger;
 import org.jboss.jbossts.xts.recovery.participant.ba.XTSBARecoveryManager;
 
@@ -308,7 +309,7 @@ public class BACoordinatorRecoveryModule implements RecoveryModule
 
             try
             {
-                if ( _transactionStore.currentState( currentUid, _transactionType ) != ObjectStore.OS_UNKNOWN )
+                if ( _transactionStore.currentState( currentUid, _transactionType ) != StateStatus.OS_UNKNOWN )
                 {
                     doRecoverTransaction( currentUid ) ;
                 }
