@@ -735,7 +735,7 @@ public class XARecoveryModule implements RecoveryModule
 			{
 				trans = xares.recover(XAResource.TMSTARTRSCAN);
 
-				if (jtaLogger.loggerI18N.isDebugEnabled())
+				if (jtaLogger.logger.isDebugEnabled())
 				{
 					jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
 							VisibilityLevel.VIS_PUBLIC,
@@ -811,7 +811,7 @@ public class XARecoveryModule implements RecoveryModule
 
 			if (xids != null)
 			{
-				if (jtaLogger.loggerI18N.isDebugEnabled())
+				if (jtaLogger.logger.isDebugEnabled())
 				{
 					jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
 							VisibilityLevel.VIS_PUBLIC,
@@ -853,7 +853,7 @@ public class XARecoveryModule implements RecoveryModule
 							 * have to be rolled back.
 							 */
 
-							if (jtaLogger.loggerI18N.isDebugEnabled())
+							if (jtaLogger.logger.isDebugEnabled())
 							{
 								jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
 										VisibilityLevel.VIS_PRIVATE,
@@ -866,7 +866,7 @@ public class XARecoveryModule implements RecoveryModule
 									.getXANodeName((Xid) xids[j]);
 							boolean doRecovery = false;
 
-							if (jtaLogger.loggerI18N.isDebugEnabled())
+							if (jtaLogger.logger.isDebugEnabled())
 							{
 								jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
 										VisibilityLevel.VIS_PRIVATE,
@@ -884,7 +884,7 @@ public class XARecoveryModule implements RecoveryModule
 									&& (_xaRecoveryNodes
 											.contains(RECOVER_ALL_NODES)))
 							{
-								if (jtaLogger.loggerI18N.isDebugEnabled())
+								if (jtaLogger.logger.isDebugEnabled())
 								{
 									jtaLogger.logger.debug(
 											DebugLevel.FUNCTIONS,
@@ -955,7 +955,7 @@ public class XARecoveryModule implements RecoveryModule
 								}
 								else
 								{
-									if (jtaLogger.loggerI18N.isDebugEnabled())
+									if (jtaLogger.logger.isDebugEnabled())
 									{
 										jtaLogger.logger
 												.debug(
@@ -1198,7 +1198,7 @@ public class XARecoveryModule implements RecoveryModule
 		XidImple theXid = new XidImple(xid);
 		Uid u = theXid.getTransactionUid();
 
-                if (jtaLogger.loggerI18N.isDebugEnabled())
+                if (jtaLogger.logger.isDebugEnabled())
                 {
                         jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
                                         VisibilityLevel.VIS_PRIVATE,
@@ -1212,7 +1212,7 @@ public class XARecoveryModule implements RecoveryModule
 			try
 			{
 
-		                if (jtaLogger.loggerI18N.isDebugEnabled())
+		                if (jtaLogger.logger.isDebugEnabled())
 		                {
 		                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
 		                                        VisibilityLevel.VIS_PRIVATE,
@@ -1222,7 +1222,7 @@ public class XARecoveryModule implements RecoveryModule
 		                
 				if (_transactionStore.currentState(u, _transactionType) != StateStatus.OS_UNKNOWN)
 				{
-	                                if (jtaLogger.loggerI18N.isDebugEnabled())
+	                                if (jtaLogger.logger.isDebugEnabled())
 	                                {
 	                                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
 	                                                        VisibilityLevel.VIS_PRIVATE,
@@ -1234,7 +1234,7 @@ public class XARecoveryModule implements RecoveryModule
 				}
 				else
 				{
-	                                if (jtaLogger.loggerI18N.isDebugEnabled())
+	                                if (jtaLogger.logger.isDebugEnabled())
 	                                {
 	                                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
 	                                                        VisibilityLevel.VIS_PRIVATE,
