@@ -856,7 +856,7 @@ public class XARecoveryModule implements RecoveryModule
 							if (jtaLogger.loggerI18N.isDebugEnabled())
 							{
 								jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-										VisibilityLevel.VIS_PUBLIC,
+										VisibilityLevel.VIS_PRIVATE,
 										FacilityCode.FAC_CRASH_RECOVERY,
 										"Checking node name of "
 												+ ((Xid) xids[j]));
@@ -869,7 +869,7 @@ public class XARecoveryModule implements RecoveryModule
 							if (jtaLogger.loggerI18N.isDebugEnabled())
 							{
 								jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
-										VisibilityLevel.VIS_PUBLIC,
+										VisibilityLevel.VIS_PRIVATE,
 										FacilityCode.FAC_CRASH_RECOVERY,
 										"Node name is " + nodeName);
 							}
@@ -888,9 +888,9 @@ public class XARecoveryModule implements RecoveryModule
 								{
 									jtaLogger.logger.debug(
 											DebugLevel.FUNCTIONS,
-											VisibilityLevel.VIS_PUBLIC,
+											VisibilityLevel.VIS_PRIVATE,
 											FacilityCode.FAC_CRASH_RECOVERY,
-											"Will recover this Xid (a)");
+											"Ignoring node name. Will recover "+(Xid) xids[j]);
 								}
 
 								doRecovery = true;
@@ -918,9 +918,9 @@ public class XARecoveryModule implements RecoveryModule
 												jtaLogger.logger
 														.debug(
 																DebugLevel.FUNCTIONS,
-																VisibilityLevel.VIS_PUBLIC,
+																VisibilityLevel.VIS_PRIVATE,
 																FacilityCode.FAC_CRASH_RECOVERY,
-																"Will recover this Xid (b)");
+																"Node name matches. Will recover "+(Xid) xids[j]);
 											}
 
 											doRecovery = true;
@@ -933,9 +933,9 @@ public class XARecoveryModule implements RecoveryModule
 												jtaLogger.logger
 														.debug(
 																DebugLevel.FUNCTIONS,
-																VisibilityLevel.VIS_PUBLIC,
+																VisibilityLevel.VIS_PRIVATE,
 																FacilityCode.FAC_CRASH_RECOVERY,
-																"Will not recover this Xid (a)");
+																"Node name does not match. Ignoring Xid.");
 											}
 										}
 									}
@@ -947,9 +947,9 @@ public class XARecoveryModule implements RecoveryModule
 											jtaLogger.logger
 													.debug(
 															DebugLevel.FUNCTIONS,
-															VisibilityLevel.VIS_PUBLIC,
+															VisibilityLevel.VIS_PRIVATE,
 															FacilityCode.FAC_CRASH_RECOVERY,
-															"Will not recover this Xid (b)");
+															"Node name not set. Ignoring Xid.");
 										}
 									}
 								}
@@ -960,7 +960,7 @@ public class XARecoveryModule implements RecoveryModule
 										jtaLogger.logger
 												.debug(
 														DebugLevel.FUNCTIONS,
-														VisibilityLevel.VIS_PUBLIC,
+														VisibilityLevel.VIS_PRIVATE,
 														FacilityCode.FAC_CRASH_RECOVERY,
 														"Will not recover this Xid");
 									}
@@ -1194,17 +1194,53 @@ public class XARecoveryModule implements RecoveryModule
 		{
 			_transactionStore = TxControl.getStore();
 		}
-
+		
 		XidImple theXid = new XidImple(xid);
 		Uid u = theXid.getTransactionUid();
 
+                if (jtaLogger.loggerI18N.isDebugEnabled())
+                {
+                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+                                        VisibilityLevel.VIS_PRIVATE,
+                                        FacilityCode.FAC_CRASH_RECOVERY,
+                                        "Checking whether Xid "
+                                                        + theXid + " exists in ObjectStore.");
+                }
+                
 		if (!u.equals(Uid.nullUid()))
 		{
 			try
 			{
+
+		                if (jtaLogger.loggerI18N.isDebugEnabled())
+		                {
+		                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+		                                        VisibilityLevel.VIS_PRIVATE,
+		                                        FacilityCode.FAC_CRASH_RECOVERY,
+		                                        "Looking for "+u+" and "+_transactionType);
+		                }
+		                
 				if (_transactionStore.currentState(u, _transactionType) != StateStatus.OS_UNKNOWN)
 				{
+	                                if (jtaLogger.loggerI18N.isDebugEnabled())
+	                                {
+	                                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+	                                                        VisibilityLevel.VIS_PRIVATE,
+	                                                        FacilityCode.FAC_CRASH_RECOVERY,
+	                                                        "Found record for "+theXid);
+	                                }
+	                                
 					return true;
+				}
+				else
+				{
+	                                if (jtaLogger.loggerI18N.isDebugEnabled())
+	                                {
+	                                        jtaLogger.logger.debug(DebugLevel.FUNCTIONS,
+	                                                        VisibilityLevel.VIS_PRIVATE,
+	                                                        FacilityCode.FAC_CRASH_RECOVERY,
+	                                                        "No record found for "+theXid);
+	                                }
 				}
 			}
 			catch (Exception ex)
