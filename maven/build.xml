@@ -39,6 +39,7 @@
 
     <property name="ext.lib.src" value="../ext"/>
     <property name="ext.lib.dest" value="../build/extlib"/>
+    <property name="xts.ext.lib.dest" value="../XTS/build/extlib"/>
 
     <property name="groupid" value="jboss.jbossts"/>
     <property name="artifact" value="jbossts-build"/>
@@ -49,7 +50,9 @@
             the dependencies into the dir where the build looks for them -->
 
         <delete dir="${ext.lib.dest}"/>
+        <delete dir="${xts.ext.lib.dest}"/>
         <mkdir dir="${ext.lib.dest}"/>
+        <mkdir dir="${xts.ext.lib.dest}"/>
         
         <copy  file="pom-template.xml"
                tofile="pom.xml"
@@ -75,6 +78,17 @@
                 <include name="emma.jar"/>
             </fileset>
         </copy>
+
+        <!-- XTS uses its own copy for now, so it can override some deps -->
+        <copy todir="${xts.ext.lib.dest}" overwrite="true">
+            <fileset dir="${ext.lib.dest}" includes="*"/>
+        </copy>
+        <copy todir="${xts.ext.lib.dest}" overwrite="true">
+            <fileset dir="../XTS/ext">
+                <include name="junit.jar"/>
+            </fileset>
+        </copy>
+
 
     </target>
 
