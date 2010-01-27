@@ -259,7 +259,6 @@ public class DisposeRecord extends CadaverRecord
 	return res;
     }
     
-    @SuppressWarnings("unchecked")
     public boolean restore_state (InputObjectState os, int ot)
     {
 	boolean res = true;
@@ -271,9 +270,9 @@ public class DisposeRecord extends CadaverRecord
 		
 	    if (ObjectStoreType.valid(objStoreType))
 	    {
-		Class osc = ObjectStoreType.typeToClass(objStoreType);
+		Class<? extends ObjectStore> osc = ObjectStoreType.typeToClass(objStoreType);
 			
-		store = (ObjectStore) osc.newInstance();
+		store = osc.newInstance();
 		store.unpack(os);
 			
 		objectUid = UidHelper.unpackFrom(os);

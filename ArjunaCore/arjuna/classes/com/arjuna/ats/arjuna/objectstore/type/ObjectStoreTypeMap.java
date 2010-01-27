@@ -31,15 +31,16 @@
 
 package com.arjuna.ats.arjuna.objectstore.type;
 
+import com.arjuna.ats.arjuna.objectstore.ObjectStore;
+
 /**
  * This allows users to define a mapping between record type integers
  * and specific Class-es. This replaces Gandiva from previous releases.
  */
 
 public interface ObjectStoreTypeMap
-{ 
-    @SuppressWarnings("unchecked")
-    public Class getObjectStoreClass ();
+{
+    public Class<? extends ObjectStore> getObjectStoreClass ();
     
     public int getType ();
 }

@@ -118,7 +118,7 @@ public class ObjectStoreType
      */
 
     @SuppressWarnings("unchecked")
-    public final static Class typeToClass (int rt)
+    public final static Class<? extends ObjectStore> typeToClass (int rt)
     {
         switch (rt)
         {

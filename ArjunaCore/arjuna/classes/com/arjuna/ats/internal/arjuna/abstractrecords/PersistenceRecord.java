@@ -430,7 +430,6 @@ public class PersistenceRecord extends RecoveryRecord
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
     public boolean restore_state (InputObjectState os, int ot)
 	{
 		if (tsLogger.arjLogger.isDebugEnabled())
@@ -460,9 +459,9 @@ public class PersistenceRecord extends RecoveryRecord
 
 				if (store == null)
 				{
-				    Class oc = ObjectStoreType.typeToClass(objStoreType);
+				    Class<? extends ObjectStore> oc = ObjectStoreType.typeToClass(objStoreType);
 				    
-				    store = (ObjectStore) oc.newInstance();
+				    store = oc.newInstance();
 				}
 
 				store.unpack(os);

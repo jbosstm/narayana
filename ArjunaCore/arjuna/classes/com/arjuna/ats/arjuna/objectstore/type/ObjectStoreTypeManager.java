@@ -34,6 +34,7 @@ package com.arjuna.ats.arjuna.objectstore.type;
 import java.util.ArrayList;
 
 import com.arjuna.ats.arjuna.coordinator.RecordType;
+import com.arjuna.ats.arjuna.objectstore.ObjectStore;
 
 /**
  * This allows users to define a mapping between record type integers
@@ -42,8 +43,7 @@ import com.arjuna.ats.arjuna.coordinator.RecordType;
 
 public class ObjectStoreTypeManager
 {
-    @SuppressWarnings("unchecked")
-    public Class getObjectStoreClass (int type)
+    public synchronized Class<? extends ObjectStore> getObjectStoreClass (int type)
     {
         /*
          * Stop at first hit.
@@ -58,8 +58,7 @@ public class ObjectStoreTypeManager
         return null;
     }
     
-    @SuppressWarnings("unchecked")
-    public int getType (Class c)
+    public synchronized int getType (Class<? extends ObjectStore> c)
     {
         for (int i = 0; i < _map.size(); i++)
         {
@@ -70,7 +69,7 @@ public class ObjectStoreTypeManager
         return RecordType.UNTYPED;
     }
     
-    public void add (ObjectStoreTypeMap map)
+    public synchronized void add (ObjectStoreTypeMap map)
     {
         _map.add(map);
     }
@@ -85,12 +84,7 @@ public class ObjectStoreTypeManager
         _map = new ArrayList<ObjectStoreTypeMap>();
     }
     
-    private ArrayList<ObjectStoreTypeMap> _map;
+    private final ArrayList<ObjectStoreTypeMap> _map;
     
     private static final ObjectStoreTypeManager _instance = new ObjectStoreTypeManager();
-    
-    static
-    {
-        // trawl through properties to find bindings
-    }
 }
