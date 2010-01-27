@@ -6,7 +6,7 @@
  *
  * DO NOT INCLUDE THIS FILE, INCLUDE <orb.idl> instead!
  *
- * $Id: Corba.idl,v 1.11 2006/05/15 14:35:52 alphonse.bendt Exp $
+ * $Id: Corba.idl,v 1.11 2006-05-15 14:35:52 alphonse.bendt Exp $
  */
 
 #ifndef _MYORB_IDL

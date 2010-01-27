@@ -3,7 +3,7 @@
 // by other modules. This file is for declaration
 // purposes only!!
 
-// $Id: orb.idl,v 1.10 2006/05/15 14:35:52 alphonse.bendt Exp $
+// $Id: orb.idl,v 1.10 2006-05-15 14:35:52 alphonse.bendt Exp $
 
 #ifndef _ORB_IDL
 #define _ORB_IDL

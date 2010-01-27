@@ -1,5 +1,5 @@
 /* This file contains OMG IDL from  CORBA V2.3.1
- * $Id: BiDirPolicy.idl,v 1.1.1.1 2001/03/17 18:08:09 brose Exp $	
+ * $Id: BiDirPolicy.idl,v 1.1.1.1 2001-03-17 18:08:09 brose Exp $	
  */ 
 
 #ifndef __BiDirPolicy_IDL

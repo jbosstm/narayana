@@ -1,4 +1,4 @@
-// $Id: TimeBase.idl,v 1.1.1.1 2001/03/17 18:08:13 brose Exp $
+// $Id: TimeBase.idl,v 1.1.1.1 2001-03-17 18:08:13 brose Exp $
 
 #ifndef _TIME_BASE_IDL
 #define _TIME_BASE_IDL

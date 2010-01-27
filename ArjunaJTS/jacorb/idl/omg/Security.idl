@@ -1,5 +1,5 @@
 // From CORBASEC V 1.5
-// $Id: Security.idl,v 1.1.1.1 2001/03/17 18:08:13 brose Exp $
+// $Id: Security.idl,v 1.1.1.1 2001-03-17 18:08:13 brose Exp $
 
 
 #ifndef _SECURITY_IDL_

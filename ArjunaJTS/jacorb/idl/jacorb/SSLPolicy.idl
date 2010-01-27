@@ -1,7 +1,7 @@
 /* 
  * SSLPolicy definition
  *
- * $Id: SSLPolicy.idl,v 1.1 2004/10/21 14:39:43 francisco Exp $ 
+ * $Id: SSLPolicy.idl,v 1.1 2004-10-21 14:39:43 francisco Exp $ 
  */ 
 
 #ifndef __SSL_IDL

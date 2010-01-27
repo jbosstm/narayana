@@ -1,5 +1,5 @@
 /* This file contains OMG IDL from  CORBA V2.3.1
-  $Id: IIOP.idl,v 1.1.1.1 2001/03/17 18:08:12 brose Exp $
+  $Id: IIOP.idl,v 1.1.1.1 2001-03-17 18:08:12 brose Exp $
 */
 
 #ifndef __IIOP_IDL

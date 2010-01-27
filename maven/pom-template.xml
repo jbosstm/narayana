@@ -254,6 +254,17 @@
             <version>3.2.3</version>
         </dependency>
 
+        <!-- JTS requires jacorb -->
+        <dependency>
+            <groupId>jacorb</groupId>
+            <artifactId>jacorb</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>jacorb</groupId>
+            <artifactId>idl</artifactId>
+        </dependency>
+
 
         <!-- atsintegration (i.e. the JBossAS glue code) requires some app server bits. -->
 

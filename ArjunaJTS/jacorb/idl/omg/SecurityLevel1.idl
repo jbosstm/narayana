@@ -1,4 +1,4 @@
-// $Id: SecurityLevel1.idl,v 1.1.1.1 2001/03/17 18:08:13 brose Exp $
+// $Id: SecurityLevel1.idl,v 1.1.1.1 2001-03-17 18:08:13 brose Exp $
 
 #ifndef _SECURITY_LEVEL_1_IDL
 #define _SECURITY_LEVEL_1_IDL

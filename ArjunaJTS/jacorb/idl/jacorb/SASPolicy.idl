@@ -1,5 +1,5 @@
 /* This file contains SAS policy
- * $Id: SASPolicy.idl,v 1.2 2005/03/04 20:39:23 david.robison Exp $	
+ * $Id: SASPolicy.idl,v 1.2 2005-03-04 20:39:23 david.robison Exp $	
  */ 
 
 #ifndef __SASPolicy_IDL
