@@ -107,6 +107,18 @@
                 <fileset dir="tests/classes" includes="**/recovery/RecoveryManagerStartStopTest.java"/>
             </tests>
         </run.tests.macro>
+
+        <emma enabled="${emma.enabled}">
+            <report>
+                <fileset dir="${build.dir}" >
+                    <include name="coverage.ec"/>
+                    <include name="metadata.emma"/>
+                </fileset>
+                <txt outfile="${basedir}/${build.dir}/emma/coverage.txt" />
+                <html outfile="${basedir}/${build.dir}/emma/coverage.html" />
+            </report>
+        </emma>
+        
     </target>
 
 </project>

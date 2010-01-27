@@ -62,9 +62,8 @@
                     <include name="coverage.ec"/>
                     <include name="metadata.emma"/>
                 </fileset>
-                <!-- TODO emma incorrectly resolves this as <tsroot>/build not <tsroot>/common/build - investigate/workaround -->
-                <txt outfile="${build.dir}/emma/coverage.txt" />
-                <html outfile="${build.dir}/emma/coverage.html" />
+                <txt outfile="${basedir}/${build.dir}/emma/coverage.txt" />
+                <html outfile="${basedir}/${build.dir}/emma/coverage.html" />
             </report>
         </emma>
 

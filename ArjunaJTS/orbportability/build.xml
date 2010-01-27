@@ -40,7 +40,7 @@
     </target>
 
     <target name="compile" depends="init">
-        <compile.macro includeant="true"/>
+        <compile.macro includeant="true" includeemma="false"/>
     </target>
 
     <target name="compile-tests" depends="compile-tests-idl">
