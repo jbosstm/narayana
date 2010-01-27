@@ -1,0 +1,46 @@
+<property name="dir.xdoclet" value="${basedir}/lib/build" />
+
+<path id="path.xdoclet" >
+  	<fileset dir="${dir.xdoclet}" >
+		<include name="*.jar" />
+	</fileset>
+	
+	<pathelement location="${basedir}/classes"/>
+	<pathelement location="${basedir}/lib/slf4j-api-1.5.6.jar"/>
+</path>
+
+<target name="xdoclet.init-jmx" depends="init" >
+
+	<taskdef name="jmxdoclet" classname="xdoclet.modules.jmx.JMXDocletTask">
+   		<classpath refid="path.xdoclet"/>
+	</taskdef>
+	
+	<macrodef name="jacorb-jmxgen" >
+		<attribute name="destdir" default="${src}/generated" />
+		<attribute name="srcdir" default="${src}" />
+		<element name="files" />
+		<element name="tasks" />
+	
+		<sequential>
+			<jmxdoclet destdir="@{destdir}" force="false" verbose="true" excludedtags="author, version">
+	    			<fileset dir="@{srcdir}">
+	         		<files />
+	      		</fileset>
+	      	
+	      		<tasks />
+	      	
+	      		<!-- Generate the mlet file -->
+      	  		<!--
+      	  			<mlet destinationFile="mbeans.mlet" destdir="${basedir}/conf"/>
+	   			-->
+	   		</jmxdoclet>
+		</sequential>
+	</macrodef>
+</target>
+
+
+<target name="xdoclet.init-xdoclet" >
+	<taskdef name="xdoclet" classname="xdoclet.DocletTask">
+		<classpath refid="path.xdoclet" />
+	</taskdef>
+</target>

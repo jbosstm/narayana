@@ -1,0 +1,20 @@
+List of JacORB modules and the Specification versions that they are
+aimed at. Please edit!
+
+$Id: conformance.txt,v 1.4 2004-01-30 15:20:49 alphonse.bendt Exp $
+-------------------------------------------------------------------
+
+
+IDL language mapping    :    2.3-2.x
+ORB interface           :    2.3, partial ???
+POA                     :    2.3
+AMI                     :    3.0?
+ETF                     :    3.0?
+SAS                     :    3.0 Conformance Levels 0, 1 (partial), 2 (partial)
+PI                      :    pre-something 
+Security                :    Security Service 1.4? (partial)
+...
+
+INaming Service         :    1.1?
+Notification Svc        :    1.0.1
+...
