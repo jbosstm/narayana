@@ -31,6 +31,8 @@
 
 package com.arjuna.ats.arjuna.coordinator.abstractrecord;
 
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
+
 /**
  * This allows users to define a mapping between record type integers
  * and specific Class-es. This replaces Gandiva from previous releases.
@@ -38,8 +40,7 @@ package com.arjuna.ats.arjuna.coordinator.abstractrecord;
 
 public interface RecordTypeMap
 { 
-    @SuppressWarnings("unchecked")
-    public Class getRecordClass ();
+    public Class<AbstractRecord> getRecordClass ();
     
     public int getType ();
 }
