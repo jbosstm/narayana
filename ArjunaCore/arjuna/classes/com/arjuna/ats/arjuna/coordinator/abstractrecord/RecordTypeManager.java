@@ -33,6 +33,7 @@ package com.arjuna.ats.arjuna.coordinator.abstractrecord;
 
 import java.util.ArrayList;
 
+import com.arjuna.ats.arjuna.coordinator.AbstractRecord;
 import com.arjuna.ats.arjuna.coordinator.RecordType;
 
 /**
@@ -42,8 +43,12 @@ import com.arjuna.ats.arjuna.coordinator.RecordType;
 
 public class RecordTypeManager
 {
-    @SuppressWarnings("unchecked")
-    public Class getClass (int type)
+    /*
+     * We can afford to synchronize on the instance because this shouldn't
+     * be a performance problem for recovery.
+     */
+    
+    public synchronized Class<AbstractRecord> getClass (int type)
     {
         /*
          * Stop at first hit.
@@ -58,8 +63,7 @@ public class RecordTypeManager
         return null;
     }
     
-    @SuppressWarnings("unchecked")
-    public int getType (Class c)
+    public synchronized int getType (Class<AbstractRecord> c)
     {
         for (int i = 0; i < _map.size(); i++)
         {
@@ -70,12 +74,12 @@ public class RecordTypeManager
         return RecordType.UNTYPED;
     }
     
-    public void add (RecordTypeMap map)
+    public synchronized void add (RecordTypeMap map)
     {
         _map.add(map);
     }
     
-    public void remove (RecordTypeMap map)
+    public synchronized void remove (RecordTypeMap map)
     {
         _map.remove(map);
     }
