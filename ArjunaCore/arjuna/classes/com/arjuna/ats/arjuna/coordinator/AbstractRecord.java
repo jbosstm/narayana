@@ -581,7 +581,7 @@ public abstract class AbstractRecord extends StateManager
 	}
 
 	/**
-	 * Create a new instance with the specified paramaters.
+	 * Create a new instance with the specified parameters.
 	 *
 	 * @param storeUid the unique id for this instance.
 	 * @param objType the type of the instance.

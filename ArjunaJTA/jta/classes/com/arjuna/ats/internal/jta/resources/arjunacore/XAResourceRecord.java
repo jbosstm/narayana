@@ -624,6 +624,7 @@ public class XAResourceRecord extends AbstractRecord
 						    else
 						        return TwoPhaseOutcome.HEURISTIC_HAZARD;  // something terminated the transaction!
 						case XAException.XA_RETRY:
+						case XAException.XAER_RMFAIL:
 						    _committed = true;  // will cause log to be rewritten
 						    
 	                                            /*
@@ -632,11 +633,7 @@ public class XAResourceRecord extends AbstractRecord
                                                      * the coordinator will continue to commit the other resources immediately.
                                                      */
 							return TwoPhaseOutcome.FINISH_ERROR;
-						case XAException.XAER_INVAL:
-						case XAException.XAER_RMFAIL: // resource manager
-							// failed, did it
-							// rollback?
-							return TwoPhaseOutcome.HEURISTIC_HAZARD;
+						case XAException.XAER_INVAL: // resource manager failed, did it rollback?
 						default:
 							return TwoPhaseOutcome.HEURISTIC_HAZARD;
 						}
@@ -880,14 +877,12 @@ public class XAResourceRecord extends AbstractRecord
 	                    return TwoPhaseOutcome.ONE_PHASE_ERROR;
 	                case XAException.XAER_NOTA:
 	                    return TwoPhaseOutcome.HEURISTIC_HAZARD; // something committed or rolled back without asking us!
-	                case XAException.XAER_INVAL:
-	                case XAException.XAER_RMFAIL: // resource manager
-	                    // failed, did it
-	                    // rollback?
+	                case XAException.XAER_INVAL: // resource manager failed, did it rollback?
 	                    return TwoPhaseOutcome.HEURISTIC_HAZARD;
 	                case XAException.XA_RETRY:  // XA does not allow this to be thrown for 1PC!
 	                case XAException.XAER_PROTO:
 	                    return TwoPhaseOutcome.ONE_PHASE_ERROR; // assume rollback
+	                case XAException.XAER_RMFAIL:
 	                default:
 	                    _committed = true;  // will cause log to be rewritten
 	                    return TwoPhaseOutcome.FINISH_ERROR;  // recovery should retry
@@ -937,6 +932,8 @@ public class XAResourceRecord extends AbstractRecord
 	{
 		if ((_theXAResource != null) && (_tranID != null))
 		{
+		    _heuristic = TwoPhaseOutcome.FINISH_OK;
+		    
 			try
 			{
 				_theXAResource.forget(_tranID);
@@ -1283,7 +1280,12 @@ public class XAResourceRecord extends AbstractRecord
 		_valid = true;
 		_theTransaction = null;
 		_recovered = true;
-	}
+	}	
+	       
+        public String toString ()
+        {
+            return "XAResourceRecord < resource:"+_theXAResource+", txid:"+_tranID+", heuristic"+TwoPhaseOutcome.stringForm(_heuristic)+" "+super.toString()+" >";
+        }
 
 	/**
 	 * For those objects where the original XAResource could not be saved.

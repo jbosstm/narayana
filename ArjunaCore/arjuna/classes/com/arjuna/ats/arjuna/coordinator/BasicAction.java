@@ -288,6 +288,8 @@ import com.arjuna.ats.arjuna.exceptions.ObjectStoreException;
  *          CheckedActionFactory resolution problem with
  * @message com.arjuna.ats.arjuna.coordinator.notrunning
  *          [com.arjuna.ats.arjuna.coordinator.notrunning] - Cannot begin new transaction as TM is disabled. Marking as rollback-only.
+ * @message com.arjuna.ats.arjuna.coordinator.norecordfound
+ *          [com.arjuna.ats.arjuna.coordinator.norecordfound] - Could not recreate abstract record {0}
  */
 
 public class BasicAction extends StateManager
@@ -1314,7 +1316,7 @@ public class BasicAction extends StateManager
 
 					if (temp == first)
 					{
-						heuristicList.putFront(temp);
+						heuristicList.putFront(temp);   
 						temp = null;
 					}
 				}
@@ -1494,10 +1496,10 @@ public class BasicAction extends StateManager
 			{
 			    AbstractRecord record = AbstractRecord.create(record_type);
 
-				res = (record.restore_state(os, ot) && heuristicList.insert(record));
-
 				try
 				{
+	                                res = (record.restore_state(os, ot) && heuristicList.insert(record));
+
 					record_type = os.unpackInt();
 
 					if (tsLogger.arjLoggerI18N.isDebugEnabled())
@@ -1509,6 +1511,13 @@ public class BasicAction extends StateManager
 				catch (IOException e)
 				{
 					res = false;
+				}
+				catch (final NullPointerException ex)
+				{
+				    if (tsLogger.arjLoggerI18N.isWarnEnabled())
+                                        tsLogger.arjLoggerI18N.warn("com.arjuna.ats.arjuna.coordinator.norecordfound", new Object[] { record_type});
+				    
+				    res = false;
 				}
 			}
 		}

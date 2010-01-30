@@ -146,14 +146,12 @@ public class XAOnePhaseResource implements OnePhaseResource
                 return TwoPhaseOutcome.ONE_PHASE_ERROR;
             case XAException.XAER_NOTA:
                 return TwoPhaseOutcome.HEURISTIC_HAZARD; // something committed or rolled back without asking us!
-            case XAException.XAER_INVAL:
-            case XAException.XAER_RMFAIL: // resource manager
-                // failed, did it
-                // rollback?
+            case XAException.XAER_INVAL: // resource manager failed, did it rollback?
                 return TwoPhaseOutcome.HEURISTIC_HAZARD;
             case XAException.XA_RETRY:  // XA does not allow this to be thrown for 1PC!
             case XAException.XAER_PROTO:
                 return TwoPhaseOutcome.ONE_PHASE_ERROR; // assume rollback
+            case XAException.XAER_RMFAIL:
             default:
                 return TwoPhaseOutcome.FINISH_ERROR;  // recovery should retry
             }

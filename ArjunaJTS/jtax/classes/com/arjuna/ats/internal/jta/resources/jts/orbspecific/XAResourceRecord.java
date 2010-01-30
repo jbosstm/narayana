@@ -624,13 +624,10 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
                             throw new TRANSACTION_ROLLEDBACK();
 
 						case XAException.XA_RETRY:
+						case XAException.XAER_RMFAIL:
 						    _committed = true;  // remember for recovery later.
 							throw new UNKNOWN();  // will cause log to be rewritten.
-						case XAException.XAER_INVAL:
-						case XAException.XAER_RMFAIL: // resource manager
-													  // failed, did it
-													  // rollback?
-							throw new org.omg.CosTransactions.HeuristicHazard();
+						case XAException.XAER_INVAL: // resource manager failed, did it rollback?
 						default:
 							throw new org.omg.CosTransactions.HeuristicHazard();
 						}
@@ -900,10 +897,9 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	                    // presumed abort (or we could be really paranoid and throw a heuristic)
 	                    throw new TRANSACTION_ROLLEDBACK();
 
-	                case XAException.XAER_INVAL:
-	                case XAException.XAER_RMFAIL: // resource manager failed,
-	                    // did it rollback?
+	                case XAException.XAER_INVAL: // resource manager failed, did it rollback?
 	                    throw new org.omg.CosTransactions.HeuristicHazard();
+	                case XAException.XAER_RMFAIL:
 	                default:
 	                    _committed = true;  // will cause log to be rewritten
 
@@ -963,6 +959,8 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	{
 		if ((_theXAResource != null) && (_tranID != null))
 		{
+		    _heuristic = TwoPhaseOutcome.FINISH_OK;
+		    
 			try
 			{
 				_theXAResource.forget(_tranID);
@@ -1225,6 +1223,11 @@ public class XAResourceRecord extends com.arjuna.ArjunaOTS.OTSAbstractRecordPOA
 	public final RecoveryCoordinator getRecoveryCoordinator()
 	{
 		return _recoveryCoordinator;
+	}
+	
+	public String toString ()
+	{
+	    return "XAResourceRecord < resource:"+_theXAResource+", txid:"+_tranID+", heuristic"+TwoPhaseOutcome.stringForm(_heuristic)+" "+super.toString()+" >";
 	}
 
 	protected XAResourceRecord(Uid u)
